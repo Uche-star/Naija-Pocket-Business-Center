@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Naija Pocket Business Center</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+        font-family: Arial, sans-serif;
+        background: #0B0B0B;
+        color: white;
+    }
+
+    body {
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 35px 20px 100px;
+        text-align: center;
+    }
+
+    .content {
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .brand-name {
+        font-size: clamp(25px, 7vw, 36px);
+        line-height: 1.15;
+        font-weight: 700;
+        margin: 0 0 14px;
+    }
+
+    .identity {
+        font-size: clamp(16px, 4.5vw, 22px);
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .value {
+        font-size: clamp(14px, 4vw, 18px);
+        font-weight: 700;
+        line-height: 1.5;
+        margin: 5px 0;
+    }
+
+    .services-title {
+        color: #1E90FF;
+        font-size: clamp(15px, 4vw, 19px);
+        font-weight: 700;
+        margin: 25px 0 14px;
+    }
+
+    .services {
+        font-size: clamp(14px, 3.8vw, 17px);
+        line-height: 1.65;
+        margin-bottom: 25px;
+    }
+
+    .start-button {
+        display: inline-block;
+        width: min(100%, 430px);
+        padding: 16px 20px;
+        border: none;
+        border-radius: 6px;
+        background: #CC0000;
+        color: white;
+        font-size: clamp(14px, 4vw, 17px);
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .start-button:active {
+        background: #990000;
+        transform: scale(0.98);
+    }
+
+    .statement {
+        font-size: clamp(13px, 3.6vw, 16px);
+        line-height: 1.5;
+        margin-top: 22px;
+    }
+
+    .signature {
+        font-size: clamp(13px, 3.6vw, 16px);
+        line-height: 1.5;
+        font-weight: 700;
+        margin-top: 15px;
+    }
+
+    .wave {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 70px;
+        pointer-events: none;
+    }
+
+    .wave svg {
+        display: block;
+        width: 100%;
+        height: 70px;
+    }
+
+    @media (max-width: 380px) {
+        .page {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .services {
+            line-height: 1.55;
+        }
+    }
+</style>
+
+</head><body><main class="page">
+    <section class="content">
+
+        <h1 class="brand-name">
+            NAIJA POCKET<br>
+            BUSINESS CENTER
+        </h1>
+
+        <div class="identity">
+            THE DOCUMENT PEOPLE
+        </div>
+
+        <div class="value">
+            Fast • Convenient • Open 24/7
+        </div>
+
+        <div class="value">
+            Prepare Your Documents In Minutes
+        </div>
+
+        <div class="value">
+            Do Everything Concerning Your Documents<br>
+            From Your Phone, Wherever You Are In Nigeria
+        </div>
+
+        <div class="services-title">
+            ENJOY THE BEST IN DOCUMENT PROCESSING
+        </div>
+
+        <div class="services">
+            <strong>SERVICES</strong><br><br>
+
+            ✓ CVs &amp; Résumés<br>
+            ✓ Handwritten Note Typing<br>
+            ✓ Assignments &amp; Projects<br>
+            ✓ Business Documents<br>
+            ✓ Letters &amp; Proposals<br>
+            ✓ Editing &amp; Formatting<br>
+            ✓ PDF Services<br>
+            ✓ Document Conversion<br>
+            ✓ Translation<br>
+            ✓ Printing Preparation<br>
+            ✓ And Much More
+        </div>
+
+        <a
+            class="start-button"
+            href="#"
+            onclick="startRequest(); return false;"
+        >
+            PRESS HERE TO START YOUR REQUEST
+        </a>
+
+        <div class="statement">
+            Get your documents, business services and<br>
+            everyday office work done from your phone.
+        </div>
+
+        <div class="signature">
+            Naija Pocket Business Center<br>
+            Your Business Center In Your Pocket
+        </div>
+
+    </section>
+</main>
+
+<div class="wave">
+    <svg
+        viewBox="0 0 800 70"
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <path
+            d="M0 53 Q200 17 400 53 T800 53"
+            fill="none"
+            stroke="#1E90FF"
+            stroke-width="8"
+        />
+
+        <path
+            d="M0 48 Q200 12 400 48 T800 48"
+            fill="none"
+            stroke="white"
+            stroke-width="3"
+        />
+
+        <path
+            d="M0 62 Q200 38 400 62 T800 62"
+            fill="none"
+            stroke="#1E90FF"
+            stroke-width="3"
+        />
+    </svg>
+</div>
+
+<script>
+    function startRequest() {
+        alert("Ada conversation will open here.");
+    }
+</script>
+
+</body>
+</html> 
