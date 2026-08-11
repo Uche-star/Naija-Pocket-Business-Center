@@ -1,281 +1,163 @@
 <!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Ada — Naija Pocket Business Center</title><style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naija Pocket Business Center</title><style>
     * {
         box-sizing: border-box;
     }
 
-    html,
     body {
         margin: 0;
-        padding: 0;
-        width: 100%;
-        min-height: 100%;
-    }
-
-    body {
-        font-family: Arial, sans-serif;
         background: #0B0B0B;
         color: white;
-        overflow-x: hidden;
+        font-family: Arial, sans-serif;
     }
 
     .page {
-        width: 100%;
         min-height: 100vh;
-        min-height: 100dvh;
-        padding:
-            max(20px, env(safe-area-inset-top))
-            16px
-            calc(30px + env(safe-area-inset-bottom));
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        padding: 15px 35px 20px;
     }
 
-    .content {
-        width: 100%;
-        max-width: 700px;
-    }
-
-    .title {
-        text-align: center;
-        color: #FFD700;
-        font-size: clamp(24px, 7vw, 34px);
-        font-weight: 700;
-        margin: 8px 0 4px;
-    }
-
-    .subtitle {
-        text-align: center;
-        font-size: clamp(14px, 4vw, 18px);
-        font-weight: 700;
-        margin-bottom: 18px;
-    }
-
-    /* =========================
-       CHAT AREA
-    ========================= */
-
-    .chat-area {
-        width: 100%;
+    .chat-frame {
         background: #171717;
-        border-radius: 8px;
-        padding: 20px;
-        min-height: 390px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+        padding: 15px 10px 5px;
+        margin-bottom: 10px;
     }
 
-    .ada-message {
+    .chat-box {
+        background: #171717;
         color: white;
-        font-size: clamp(14px, 4vw, 17px);
-        line-height: 1.55;
+        font-size: 12px;
+        line-height: 1.45;
+        padding: 5px 10px;
+        min-height: 250px;
         white-space: pre-line;
     }
 
-    .ada-name {
-        color: #FFD700;
-        font-weight: 700;
-        margin-bottom: 12px;
-    }
-
-    /* =========================
-       SERVICE BUTTONS
-    ========================= */
-
-    .services-title {
-        color: #1E90FF;
-        text-align: center;
-        font-size: clamp(15px, 4vw, 19px);
-        font-weight: 700;
-        margin: 24px 0 12px;
-    }
-
-    .service-buttons {
-        display: flex;
-        flex-direction: column;
+    .services {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 10px;
+        width: 100%;
+        margin: 10px 0;
     }
 
     .service-button {
         width: 100%;
-        min-height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
+        min-height: 48px;
         background: white;
         color: #1E90FF;
-
-        border: none;
-        border-radius: 6px;
-
-        padding: 12px 16px;
-
-        font-size: clamp(13px, 3.8vw, 17px);
-        font-weight: 700;
-        text-decoration: none;
-
+        border: 1px solid #d0d0d0;
+        border-radius: 2px;
+        font-family: Arial, sans-serif;
+        font-size: 10px;
+        font-weight: bold;
         cursor: pointer;
-
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
     }
 
-    .service-button:active {
-        transform: scale(0.98);
+    .service-button:hover {
+        background: #f2f2f2;
     }
-
-    /* =========================
-       BACK BUTTON
-    ========================= */
 
     .back-button {
         width: 100%;
-        min-height: 50px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        margin-top: 18px;
-
-        background: #CC0000;
+        min-height: 48px;
+        margin-top: 10px;
+        background: #B00020;
         color: white;
-
         border: none;
-        border-radius: 6px;
-
-        padding: 12px 16px;
-
-        font-size: clamp(13px, 3.8vw, 17px);
-        font-weight: 700;
-        text-decoration: none;
-
+        border-radius: 2px;
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+        font-weight: bold;
         cursor: pointer;
-
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
-    .back-button:active {
-        background: #990000;
-        transform: scale(0.98);
+    .back-button:hover {
+        filter: brightness(0.92);
     }
 
-    @media (max-width: 360px) {
+    @media (max-width: 600px) {
         .page {
-            padding-left: 12px;
-            padding-right: 12px;
+            padding: 15px 20px 20px;
         }
 
-        .chat-area {
-            padding: 16px;
+        .services {
+            gap: 8px;
+        }
+
+        .service-button {
+            font-size: 9px;
         }
     }
 </style>
 
-</head><body><main class="page">
-    <section class="content">    <h1 class="title">ADA</h1>
+</head><body><div class="page"><div class="chat-frame">
+    <div class="chat-box">Welcome to Naija Pocket Business Center 😊
 
-    <div class="subtitle">
-        Naija Pocket Business Center
-    </div>
+Thank you for choosing us.
 
-    <section class="chat-area">
-        <div class="ada-name">
-            Ada:
-        </div>
+We provide professional document services, business materials, academic work, career documents, and other digital services with ease.
 
-        <div class="ada-message">Hello 😊 I am Ada.
+Getting started is simple.
 
-Your AI Business Center Assistant.
+Press a button below to choose a service.
 
-Here are more things I fit help you with so that we get started:
+Ada, Naija Pocket Business Center's agent, will begin working on your request immediately.
 
-✓ Document formatting
-✓ Document editing
-✓ Grammar correction
-✓ Translation
-✓ Document summarization
-✓ PDF conversion
-✓ Research assistance
-✓ Business proposals
-✓ Company profiles
-✓ Invoices and quotations
-✓ Meeting minutes
-✓ Seminar papers
-✓ AI writing assistance
-✓ Rewrite and improve documents
-✓ Explain difficult topics
-✓ Voice-to-text
-✓ Image-to-text
+We are ready when you are 😊</div>
+</div>
 
-Send your document or chat with me.
+<div class="services">
 
-If your document na paper, tap Snap Document to take am picture.
+    <button class="service-button">Document Typing</button>
+    <button class="service-button">Document Formatting</button>
 
-If you prefer talking, tap Voice.</div>
-</section>
+    <button class="service-button">Document Editing</button>
+    <button class="service-button">Grammar Correction</button>
 
-    <div class="services-title">
-        CHOOSE A SERVICE
-    </div>
+    <button class="service-button">Assignments</button>
+    <button class="service-button">Projects</button>
 
-    <div class="service-buttons">
+    <button class="service-button">Research Assistance</button>
+    <button class="service-button">Seminar Papers</button>
 
-        <a class="service-button" href="workspace.html">
-            CVs &amp; Résumés
-        </a>
+    <button class="service-button">CVs &amp; Résumés</button>
+    <button class="service-button">Cover Letters</button>
 
-        <a class="service-button" href="workspace.html">
-            Handwritten Note Typing
-        </a>
+    <button class="service-button">Business Proposals</button>
+    <button class="service-button">Company Profiles</button>
 
-        <a class="service-button" href="workspace.html">
-            Assignments &amp; Projects
-        </a>
+    <button class="service-button">Business Letters &amp; Letterhead</button>
+    <button class="service-button">Invoices</button>
 
-        <a class="service-button" href="workspace.html">
-            Business Documents
-        </a>
+    <button class="service-button">Quotations</button>
+    <button class="service-button">Meeting Minutes</button>
 
-        <a class="service-button" href="workspace.html">
-            Letters &amp; Proposals
-        </a>
+    <button class="service-button">AI Writing Assistance</button>
+    <button class="service-button">Document Rewriting</button>
 
-        <a class="service-button" href="workspace.html">
-            Editing &amp; Formatting
-        </a>
+    <button class="service-button">Translation</button>
+    <button class="service-button">Document Summarization</button>
 
-        <a class="service-button" href="workspace.html">
-            PDF Services
-        </a>
+    <button class="service-button">PDF Conversion</button>
+    <button class="service-button">Voice To Text</button>
 
-        <a class="service-button" href="workspace.html">
-            Document Conversion
-        </a>
+    <button class="service-button">Topic Explanations</button>
+    <button class="service-button">Printing Preparation</button>
 
-        <a class="service-button" href="workspace.html">
-            Translation
-        </a>
+    <button class="service-button">Excel Spreadsheets</button>
+    <button class="service-button">Data Entry</button>
 
-        <a class="service-button" href="workspace.html">
-            Printing Preparation
-        </a>
+    <button class="service-button">Data Analysis</button>
+    <button class="service-button">Presentations</button>
 
-        <a class="service-button" href="workspace.html">
-            And Much More
-        </a>
+</div>
 
-    </div>
+<button class="back-button" onclick="window.location.href='index.html'">
+    ⬅ Back To Welcome Page
+</button>
 
-    <a class="back-button" href="index.html">
-        BACK TO WELCOME PAGE
-    </a>
-
-</section>
-
-</main></body>
+</div></body>
 </html> 
