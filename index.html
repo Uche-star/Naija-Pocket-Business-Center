@@ -1,8 +1,9 @@
-<!DOCTYPE html><html lang="en">
+YPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Naija Pocket Business Center</title><style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><title>Naija Pocket Business Center</title>
+
+<style>
     * {
         box-sizing: border-box;
     }
@@ -26,13 +27,16 @@
         width: 100%;
         min-height: 100vh;
         min-height: 100dvh;
+
         display: flex;
         flex-direction: column;
         align-items: center;
+
         padding:
             max(24px, env(safe-area-inset-top))
             16px
             calc(95px + env(safe-area-inset-bottom));
+
         text-align: center;
     }
 
@@ -43,7 +47,6 @@
     }
 
     .brand-name {
-        color: white;
         font-size: clamp(24px, 7vw, 36px);
         line-height: 1.12;
         font-weight: 700;
@@ -65,7 +68,7 @@
     }
 
     .services-title {
-        color: #008000;
+        color: #1E90FF;
         font-size: clamp(14px, 4vw, 19px);
         line-height: 1.3;
         font-weight: 700;
@@ -86,21 +89,30 @@
         display: flex;
         align-items: center;
         justify-content: center;
+
         width: 100%;
         max-width: 430px;
         min-height: 52px;
+
         margin: 0 auto;
+
         padding: 14px 18px;
+
         border: none;
         border-radius: 6px;
+
         background: #CC0000;
         color: white;
+
         font-size: clamp(13px, 3.8vw, 17px);
         line-height: 1.25;
         font-weight: 700;
+
         text-decoration: none;
         cursor: pointer;
+
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
         -webkit-tap-highlight-color: transparent;
     }
 
@@ -126,8 +138,10 @@
         position: fixed;
         left: 0;
         bottom: 0;
+
         width: 100%;
         height: 55px;
+
         pointer-events: none;
         z-index: 1;
     }
@@ -138,6 +152,11 @@
         height: 55px;
     }
 
+    /*
+        Short phones:
+        Reduce vertical spacing so more of the welcome
+        page is visible without cutting off content.
+    */
     @media (max-height: 700px) {
         .page {
             padding-top: 18px;
@@ -171,6 +190,9 @@
         }
     }
 
+    /*
+        Very small phones.
+    */
     @media (max-width: 360px) {
         .page {
             padding-left: 12px;
@@ -191,106 +213,124 @@
         }
     }
 
+    /*
+        Larger phones and tablets.
+    */
     @media (min-width: 600px) {
         .page {
             padding-left: 24px;
             padding-right: 24px;
         }
     }
-</style></head><body><main class="page">
-    <section class="content">    <h1 class="brand-name">
-        NAIJA POCKET<br>
-        BUSINESS CENTER
-    </h1>
+</style>
 
-    <div class="identity">
-        THE DOCUMENT PEOPLE
-    </div>
+</head><body><main class="page">
 
-    <div class="value">
-        Fast • Convenient • Open 24/7
-    </div>
+    <section class="content">
 
-    <div class="value">
-        Prepare Your Documents In Minutes
-    </div>
+        <h1 class="brand-name">
+            NAIJA POCKET<br>
+            BUSINESS CENTER
+        </h1>
 
-    <div class="value">
-        Do Everything Concerning Your Documents<br>
-        From Your Phone, Wherever You Are In Nigeria
-    </div>
+        <div class="identity">
+            THE DOCUMENT PEOPLE
+        </div>
 
-    <div class="services-title">
-        ENJOY THE BEST IN DOCUMENT PROCESSING
-    </div>
+        <div class="value">
+            Fast • Convenient • Open 24/7
+        </div>
 
-    <div class="services">
-        <strong>SERVICES</strong><br><br>
+        <div class="value">
+            Prepare Your Documents In Minutes
+        </div>
 
-        ✓ CVs &amp; Résumés<br>
-        ✓ Handwritten Note Typing<br>
-        ✓ Assignments &amp; Projects<br>
-        ✓ Business Documents<br>
-        ✓ Letters &amp; Proposals<br>
-        ✓ Editing &amp; Formatting<br>
-        ✓ PDF Services<br>
-        ✓ Document Conversion<br>
-        ✓ Translation<br>
-        ✓ Printing Preparation<br>
-        ✓ And Much More
-    </div>
+        <div class="value">
+            Do Everything Concerning Your Documents<br>
+            From Your Phone, Wherever You Are In Nigeria
+        </div>
 
-    <a
-        class="start-button"
-        href="#"
-        onclick="startRequest(); return false;"
-    >
-        PRESS HERE TO START YOUR REQUEST
-    </a>
+        <div class="services-title">
+            ENJOY THE BEST IN DOCUMENT PROCESSING
+        </div>
 
-    <div class="statement">
-        Get your documents, business services and<br>
-        everyday office work done from your phone.
-    </div>
+        <div class="services">
+            <strong>SERVICES</strong><br><br>
 
-    <div class="signature">
-        Naija Pocket Business Center<br>
-        Your Business Center In Your Pocket
-    </div>
+            ✓ CVs &amp; Résumés<br>
+            ✓ Handwritten Note Typing<br>
+            ✓ Assignments &amp; Projects<br>
+            ✓ Business Documents<br>
+            ✓ Letters &amp; Proposals<br>
+            ✓ Editing &amp; Formatting<br>
+            ✓ PDF Services<br>
+            ✓ Document Conversion<br>
+            ✓ Translation<br>
+            ✓ Printing Preparation<br>
+            ✓ And Much More
+        </div>
 
-</section>
+        <a
+            class="start-button"
+            href="#"
+            onclick="startRequest(); return false;"
+        >
+            PRESS HERE TO START YOUR REQUEST
+        </a>
 
-</main><div class="wave">
+        <div class="statement">
+            Get your documents, business services and<br>
+            everyday office work done from your phone.
+        </div>
+
+        <div class="signature">
+            Naija Pocket Business Center<br>
+            Your Business Center In Your Pocket
+        </div>
+
+    </section>
+
+</main>
+
+<div class="wave">
+
     <svg
         viewBox="0 0 800 70"
         preserveAspectRatio="none"
         xmlns="http://www.w3.org/2000/svg"
-    >    <path
-        d="M0 53 Q200 17 400 53 T800 53"
-        fill="none"
-        stroke="#008000"
-        stroke-width="8"
-    />
+    >
 
-    <path
-        d="M0 48 Q200 12 400 48 T800 48"
-        fill="none"
-        stroke="white"
-        stroke-width="3"
-    />
+        <path
+            d="M0 53 Q200 17 400 53 T800 53"
+            fill="none"
+            stroke="#1E90FF"
+            stroke-width="8"
+        />
 
-    <path
-        d="M0 62 Q200 38 400 62 T800 62"
-        fill="none"
-        stroke="#008000"
-        stroke-width="3"
-    />
+        <path
+            d="M0 48 Q200 12 400 48 T800 48"
+            fill="none"
+            stroke="white"
+            stroke-width="3"
+        />
 
-</svg>
+        <path
+            d="M0 62 Q200 38 400 62 T800 62"
+            fill="none"
+            stroke="#1E90FF"
+            stroke-width="3"
+        />
 
-</div><script>
+    </svg>
+
+</div>
+
+<script>
     function startRequest() {
         alert("Ada conversation will open here.");
     }
-</script></body>
+</script>
+
+</body>
 </html>
+ 

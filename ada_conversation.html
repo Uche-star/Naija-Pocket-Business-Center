@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Naija Pocket Business Center - Ada</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0B0B0B;
+            color: white;
+        }
+
+        .page {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* =========================
+           CHAT AREA
+        ========================= */
+
+        .chat-frame {
+            width: 100%;
+            flex: 1;
+            background: #171717;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            overflow-y: auto;
+        }
+
+        .chat-box {
+            width: 100%;
+            min-height: 60vh;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .welcome-message {
+            color: white;
+        }
+
+        .ada-label {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .user-label {
+            color: #00FF99;
+            font-weight: bold;
+        }
+
+        /* =========================
+           SERVICE BUTTONS
+        ========================= */
+
+        .services {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .service-button {
+            width: 100%;
+            min-height: 52px;
+            padding: 14px 18px;
+
+            background: white;
+            color: #1E90FF;
+
+            border: none;
+            border-radius: 6px;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+            text-decoration: none;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+        }
+
+        .service-button:active {
+            transform: scale(0.98);
+        }
+
+        /* =========================
+           BACK BUTTON
+        ========================= */
+
+        .back-button {
+            width: 100%;
+            min-height: 52px;
+            padding: 14px 18px;
+
+            background: #CC0000;
+            color: white;
+
+            border: none;
+            border-radius: 6px;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+            text-decoration: none;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+        }
+
+        .back-button:active {
+            background: #990000;
+            transform: scale(0.98);
+        }
+
+        /* =========================
+           DESKTOP
+        ========================= */
+
+        @media (min-width: 700px) {
+            .page {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            .chat-frame {
+                min-height: 65vh;
+            }
+
+            .service-button,
+            .back-button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- =========================
+         CHAT AREA
+    ========================= -->
+
+    <div class="chat-frame">
+
+        <div class="chat-box welcome-message">
+
+            Hello 😊 I am Ada.
+
+            Your AI Business Center Assistant.
+
+            Here are more things I fit help you with so that we get started:
+
+            ✓ Document formatting
+            ✓ Document editing
+            ✓ Grammar correction
+            ✓ Translation
+            ✓ Document summarization
+            ✓ PDF conversion
+            ✓ Research assistance
+            ✓ Business proposals
+            ✓ Company profiles
+            ✓ Invoices and quotations
+            ✓ Meeting minutes
+            ✓ Seminar papers
+            ✓ AI writing assistance
+            ✓ Rewrite and improve documents
+            ✓ Explain difficult topics
+            ✓ Voice-to-text
+            ✓ Image-to-text
+
+            Send your document or chat with me.
+
+            If your document na paper, tap Snap Document to take am picture.
+
+            If you prefer talking, tap Voice.
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SERVICE BUTTONS
+         These take the customer
+         to the Workspace.
+    ========================= -->
+
+    <div class="services">
+
+        <a href="#" class="service-button">
+            Document Formatting
+        </a>
+
+        <a href="#" class="service-button">
+            Document Editing
+        </a>
+
+        <a href="#" class="service-button">
+            Grammar Correction
+        </a>
+
+        <a href="#" class="service-button">
+            Translation
+        </a>
+
+        <a href="#" class="service-button">
+            Document Summarization
+        </a>
+
+        <a href="#" class="service-button">
+            PDF Conversion
+        </a>
+
+        <a href="#" class="service-button">
+            Research Assistance
+        </a>
+
+        <a href="#" class="service-button">
+            Business Proposals
+        </a>
+
+        <a href="#" class="service-button">
+            Company Profiles
+        </a>
+
+        <a href="#" class="service-button">
+            Invoices & Quotations
+        </a>
+
+        <a href="#" class="service-button">
+            Meeting Minutes
+        </a>
+
+        <a href="#" class="service-button">
+            Seminar Papers
+        </a>
+
+        <a href="#" class="service-button">
+            AI Writing Assistance
+        </a>
+
+        <a href="#" class="service-button">
+            Rewrite & Improve Documents
+        </a>
+
+        <a href="#" class="service-button">
+            Explain Difficult Topics
+        </a>
+
+        <a href="#" class="service-button">
+            Voice-to-Text
+        </a>
+
+        <a href="#" class="service-button">
+            Image-to-Text
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         ONLY BUTTON INSIDE
+         CONVERSATION ITSELF
+    ========================= -->
+
+    <a href="index.html" class="back-button">
+        BACK TO WELCOME PAGE
+    </a>
+
+</div>
+
+</body>
+</html> 
