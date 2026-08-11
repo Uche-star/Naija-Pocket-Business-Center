@@ -1,0 +1,281 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Ada — Naija Pocket Business Center</title><style>
+    * {
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #0B0B0B;
+        color: white;
+        overflow-x: hidden;
+    }
+
+    .page {
+        width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding:
+            max(20px, env(safe-area-inset-top))
+            16px
+            calc(30px + env(safe-area-inset-bottom));
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .content {
+        width: 100%;
+        max-width: 700px;
+    }
+
+    .title {
+        text-align: center;
+        color: #FFD700;
+        font-size: clamp(24px, 7vw, 34px);
+        font-weight: 700;
+        margin: 8px 0 4px;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: clamp(14px, 4vw, 18px);
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    /* =========================
+       CHAT AREA
+    ========================= */
+
+    .chat-area {
+        width: 100%;
+        background: #171717;
+        border-radius: 8px;
+        padding: 20px;
+        min-height: 390px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    }
+
+    .ada-message {
+        color: white;
+        font-size: clamp(14px, 4vw, 17px);
+        line-height: 1.55;
+        white-space: pre-line;
+    }
+
+    .ada-name {
+        color: #FFD700;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    /* =========================
+       SERVICE BUTTONS
+    ========================= */
+
+    .services-title {
+        color: #1E90FF;
+        text-align: center;
+        font-size: clamp(15px, 4vw, 19px);
+        font-weight: 700;
+        margin: 24px 0 12px;
+    }
+
+    .service-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .service-button {
+        width: 100%;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: white;
+        color: #1E90FF;
+
+        border: none;
+        border-radius: 6px;
+
+        padding: 12px 16px;
+
+        font-size: clamp(13px, 3.8vw, 17px);
+        font-weight: 700;
+        text-decoration: none;
+
+        cursor: pointer;
+
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .service-button:active {
+        transform: scale(0.98);
+    }
+
+    /* =========================
+       BACK BUTTON
+    ========================= */
+
+    .back-button {
+        width: 100%;
+        min-height: 50px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin-top: 18px;
+
+        background: #CC0000;
+        color: white;
+
+        border: none;
+        border-radius: 6px;
+
+        padding: 12px 16px;
+
+        font-size: clamp(13px, 3.8vw, 17px);
+        font-weight: 700;
+        text-decoration: none;
+
+        cursor: pointer;
+
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .back-button:active {
+        background: #990000;
+        transform: scale(0.98);
+    }
+
+    @media (max-width: 360px) {
+        .page {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        .chat-area {
+            padding: 16px;
+        }
+    }
+</style>
+
+</head><body><main class="page">
+    <section class="content">    <h1 class="title">ADA</h1>
+
+    <div class="subtitle">
+        Naija Pocket Business Center
+    </div>
+
+    <section class="chat-area">
+        <div class="ada-name">
+            Ada:
+        </div>
+
+        <div class="ada-message">Hello 😊 I am Ada.
+
+Your AI Business Center Assistant.
+
+Here are more things I fit help you with so that we get started:
+
+✓ Document formatting
+✓ Document editing
+✓ Grammar correction
+✓ Translation
+✓ Document summarization
+✓ PDF conversion
+✓ Research assistance
+✓ Business proposals
+✓ Company profiles
+✓ Invoices and quotations
+✓ Meeting minutes
+✓ Seminar papers
+✓ AI writing assistance
+✓ Rewrite and improve documents
+✓ Explain difficult topics
+✓ Voice-to-text
+✓ Image-to-text
+
+Send your document or chat with me.
+
+If your document na paper, tap Snap Document to take am picture.
+
+If you prefer talking, tap Voice.</div>
+</section>
+
+    <div class="services-title">
+        CHOOSE A SERVICE
+    </div>
+
+    <div class="service-buttons">
+
+        <a class="service-button" href="workspace.html">
+            CVs &amp; Résumés
+        </a>
+
+        <a class="service-button" href="workspace.html">
+            Handwritten Note Typing
+        </a>
+
+        <a class="service-button" href="workspace.html">
+            Assignments &amp; Projects
+        </a>
+
+        <a class="service-button" href="workspace.html">
+            Business Documents
+        </a>
+
+        <a class="service-button" href="workspace.html">
+            Letters &amp; Proposals
+        </a>
+
+        <a class="service-button" href="workspace.html">
+            Editing &amp; Formatting
+        </a>
+
+        <a class="service-button" href="workspace.html">
+            PDF Services
+        </a>
+
+        <a class="service-button" href="workspace.html">
+            Document Conversion
+        </a>
+
+        <a class="service-button" href="workspace.html">
+            Translation
+        </a>
+
+        <a class="service-button" href="workspace.html">
+            Printing Preparation
+        </a>
+
+        <a class="service-button" href="workspace.html">
+            And Much More
+        </a>
+
+    </div>
+
+    <a class="back-button" href="index.html">
+        BACK TO WELCOME PAGE
+    </a>
+
+</section>
+
+</main></body>
+</html> 
