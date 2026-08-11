@@ -12,8 +12,8 @@
         margin: 0;
         padding: 0;
         width: 100%;
-        min-height: 100%;
-        overflow-x: hidden;
+        height: 100%;
+        overflow: hidden;
     }
 
     body {
@@ -24,41 +24,41 @@
 
     .page {
         width: 100%;
-        min-height: 100vh;
-        padding: 15px 35px 20px;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 12px 35px 0;
     }
 
-    .chat-frame {
-        width: 100%;
-        background: #171717;
-        padding: 15px 10px 5px;
-        margin-bottom: 10px;
-    }
-
-    .chat-box {
-        width: 100%;
+    .instruction {
+        flex-shrink: 0;
         background: #171717;
         color: white;
-        font-size: 12px;
-        line-height: 1.45;
-        padding: 5px 10px;
-        white-space: pre-line;
-        overflow-wrap: break-word;
+        padding: 14px 15px;
+        margin-bottom: 10px;
+        font-size: 13px;
+        line-height: 1.4;
+        text-align: center;
     }
 
     .services {
+        flex: 1;
+        min-height: 0;
         width: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        margin: 10px 0;
+        align-content: start;
+        gap: 8px;
+        padding: 2px 0 12px;
     }
 
     .service-button {
         width: 100%;
         min-width: 0;
-        min-height: 48px;
-        padding: 8px 5px;
+        min-height: 44px;
+        padding: 7px 5px;
         background: white;
         color: #1E90FF;
         border: 1px solid #d0d0d0;
@@ -68,7 +68,6 @@
         font-weight: bold;
         line-height: 1.15;
         overflow-wrap: break-word;
-        word-break: normal;
         cursor: pointer;
     }
 
@@ -76,11 +75,16 @@
         background: #f2f2f2;
     }
 
+    .back-area {
+        flex-shrink: 0;
+        width: 100%;
+        background: #0B0B0B;
+        padding: 8px 0 12px;
+    }
+
     .back-button {
         width: 100%;
         min-height: 48px;
-        margin-top: 10px;
-        padding: 8px;
         background: #B00020;
         color: white;
         border: none;
@@ -95,44 +99,47 @@
         filter: brightness(0.92);
     }
 
-    /* Smaller phones */
     @media (max-width: 480px) {
         .page {
-            padding: 10px 12px 15px;
+            padding: 8px 12px 0;
         }
 
-        .chat-frame {
-            padding: 10px 6px 4px;
-        }
-
-        .chat-box {
+        .instruction {
+            padding: 10px 8px;
+            margin-bottom: 7px;
             font-size: 11px;
-            line-height: 1.4;
-            padding: 4px 6px;
+            line-height: 1.35;
         }
 
         .services {
-            gap: 7px;
-            margin: 8px 0;
+            gap: 6px;
+            padding-bottom: 8px;
         }
 
         .service-button {
-            min-height: 44px;
-            padding: 7px 3px;
+            min-height: 42px;
+            padding: 6px 3px;
             font-size: 9px;
+        }
+
+        .back-area {
+            padding: 6px 0 9px;
         }
 
         .back-button {
             min-height: 44px;
-            margin-top: 8px;
             font-size: 10px;
         }
     }
 
-    /* Very small phones */
     @media (max-width: 360px) {
         .page {
-            padding: 8px 8px 12px;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
+        .instruction {
+            font-size: 10px;
         }
 
         .services {
@@ -140,31 +147,20 @@
         }
 
         .service-button {
-            min-height: 42px;
-            padding: 6px 2px;
+            min-height: 40px;
+            padding: 5px 2px;
             font-size: 8px;
         }
 
-        .chat-box {
-            font-size: 10px;
+        .back-button {
+            min-height: 42px;
+            font-size: 9px;
         }
     }
 </style>
 
-</head><body><div class="page"><div class="chat-frame">
-    <div class="chat-box">Welcome to Naija Pocket Business Center 😊
-
-Thank you for choosing us.
-
-We provide professional document services, business materials, academic work, career documents, and other digital services with ease.
-
-Getting started is simple.
-
-Press a button below to choose a service.
-
-Ada, Naija Pocket Business Center's agent, will begin working on your request immediately.
-
-We are ready when you are 😊</div>
+</head><body><div class="page"><div class="instruction">
+    There are 28 services available. Please scroll through the list, find the service you need, and tap on it. Your request will be attended to immediately.
 </div>
 
 <div class="services">
@@ -213,9 +209,11 @@ We are ready when you are 😊</div>
 
 </div>
 
-<button class="back-button" onclick="window.location.href='index.html'">
-    ⬅ Back To Welcome Page
-</button>
+<div class="back-area">
+    <button class="back-button" onclick="window.location.href='index.html'">
+        ⬅ Back To Welcome Page
+    </button>
+</div>
 
 </div></body>
-</html> 
+</html>
