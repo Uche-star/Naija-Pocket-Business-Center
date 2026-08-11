@@ -7,45 +7,58 @@
         box-sizing: border-box;
     }
 
+    html,
     body {
         margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+    }
+
+    body {
         background: #0B0B0B;
         color: white;
         font-family: Arial, sans-serif;
     }
 
     .page {
+        width: 100%;
         min-height: 100vh;
         padding: 15px 35px 20px;
     }
 
     .chat-frame {
+        width: 100%;
         background: #171717;
         padding: 15px 10px 5px;
         margin-bottom: 10px;
     }
 
     .chat-box {
+        width: 100%;
         background: #171717;
         color: white;
         font-size: 12px;
         line-height: 1.45;
         padding: 5px 10px;
-        min-height: 250px;
         white-space: pre-line;
+        overflow-wrap: break-word;
     }
 
     .services {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
         width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
         margin: 10px 0;
     }
 
     .service-button {
         width: 100%;
+        min-width: 0;
         min-height: 48px;
+        padding: 8px 5px;
         background: white;
         color: #1E90FF;
         border: 1px solid #d0d0d0;
@@ -53,6 +66,9 @@
         font-family: Arial, sans-serif;
         font-size: 10px;
         font-weight: bold;
+        line-height: 1.15;
+        overflow-wrap: break-word;
+        word-break: normal;
         cursor: pointer;
     }
 
@@ -64,6 +80,7 @@
         width: 100%;
         min-height: 48px;
         margin-top: 10px;
+        padding: 8px;
         background: #B00020;
         color: white;
         border: none;
@@ -78,17 +95,58 @@
         filter: brightness(0.92);
     }
 
-    @media (max-width: 600px) {
+    /* Smaller phones */
+    @media (max-width: 480px) {
         .page {
-            padding: 15px 20px 20px;
+            padding: 10px 12px 15px;
+        }
+
+        .chat-frame {
+            padding: 10px 6px 4px;
+        }
+
+        .chat-box {
+            font-size: 11px;
+            line-height: 1.4;
+            padding: 4px 6px;
         }
 
         .services {
-            gap: 8px;
+            gap: 7px;
+            margin: 8px 0;
         }
 
         .service-button {
+            min-height: 44px;
+            padding: 7px 3px;
             font-size: 9px;
+        }
+
+        .back-button {
+            min-height: 44px;
+            margin-top: 8px;
+            font-size: 10px;
+        }
+    }
+
+    /* Very small phones */
+    @media (max-width: 360px) {
+        .page {
+            padding: 8px 8px 12px;
+        }
+
+        .services {
+            gap: 5px;
+        }
+
+        .service-button {
+            min-height: 42px;
+            padding: 6px 2px;
+            font-size: 8px;
+        }
+
+        .chat-box {
+            font-size: 10px;
         }
     }
 </style>
