@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>
+        Naija Pocket Business Center - Payment
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: #0B0B0B;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+
+            padding:
+                max(12px, env(safe-area-inset-top))
+                12px
+                calc(24px + env(safe-area-inset-bottom));
+
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .header {
+            background: #171717;
+            border-radius: 6px;
+            padding: 16px;
+            border-bottom: 2px solid #D4AF37;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            font-size: 19px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .title {
+            margin-top: 6px;
+            color: #D4AF37;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* =====================================================
+           INFORMATION CARDS
+        ===================================================== */
+
+        .card {
+            width: 100%;
+            background: #171717;
+            border: 1px solid #292929;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            color: #D4AF37;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 7px 0;
+            border-bottom: 1px solid #292929;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            color: #AAAAAA;
+        }
+
+        .value {
+            color: white;
+            font-weight: bold;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .amount {
+            color: #D4AF37;
+            font-size: 18px;
+        }
+
+        /* =====================================================
+           BANK TRANSFER
+        ===================================================== */
+
+        .payment-method {
+            background: #0B0B0B;
+            border: 1px solid #D4AF37;
+            border-radius: 6px;
+            padding: 13px;
+        }
+
+        .method-name {
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .account-line {
+            padding: 7px 0;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .account-label {
+            color: #AAAAAA;
+        }
+
+        .account-value {
+            color: white;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        .transfer-note {
+            margin-top: 10px;
+            color: #CCCCCC;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .button {
+            width: 100%;
+            min-height: 46px;
+            border: none;
+            border-radius: 5px;
+            padding: 11px 12px;
+            margin-top: 9px;
+
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .button:active {
+            transform: scale(0.98);
+        }
+
+        .transfer-button {
+            background: #008000;
+            color: white;
+        }
+
+        .service-button {
+            background: #1E90FF;
+            color: white;
+        }
+
+        .complaint-button {
+            background: #CC0000;
+            color: white;
+        }
+
+        .download-button {
+            background: #D4AF37;
+            color: black;
+        }
+
+        .download-button.locked {
+            background: #555555;
+            color: #BBBBBB;
+            cursor: not-allowed;
+        }
+
+        /* =====================================================
+           COMING SOON METHODS
+        ===================================================== */
+
+        .coming-soon {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px;
+        }
+
+        .future-method {
+            background: #222222;
+            border: 1px solid #333333;
+            border-radius: 5px;
+            padding: 11px 7px;
+            text-align: center;
+            color: #AAAAAA;
+            font-size: 10px;
+            line-height: 1.35;
+        }
+
+        .future-method strong {
+            display: block;
+            color: white;
+            margin-bottom: 3px;
+        }
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status {
+            background: #222222;
+            border-left: 3px solid #D4AF37;
+            padding: 11px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .status-title {
+            color: #D4AF37;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        /* =====================================================
+           CUSTOMER SERVICE
+        ===================================================== */
+
+        .contact-text {
+            color: #CCCCCC;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+            text-align: center;
+            color: #777777;
+            font-size: 9px;
+            line-height: 1.4;
+            margin-top: 12px;
+        }
+
+        /* =====================================================
+           SMALL PHONES
+        ===================================================== */
+
+        @media (max-width: 360px) {
+
+            .page {
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+
+            .header {
+                padding: 13px;
+            }
+
+            .card {
+                padding: 12px;
+            }
+
+            .brand {
+                font-size: 17px;
+            }
+
+            .row {
+                font-size: 11px;
+            }
+
+            .button {
+                min-height: 43px;
+                font-size: 11px;
+            }
+
+            .future-method {
+                font-size: 9px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <main class="container">
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <section class="header">
+
+            <div class="brand">
+                NAIJA POCKET BUSINESS CENTER
+            </div>
+
+            <div class="title">
+                PAYMENT &amp; DOWNLOAD
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ORDER INFORMATION
+        ================================================== -->
+
+        <section class="card">
+
+            <div class="card-title">
+                YOUR ORDER
+            </div>
+
+            <div class="row">
+
+                <span class="label">
+                    Service
+                </span>
+
+                <span
+                    id="serviceName"
+                    class="value"
+                >
+                    Loading...
+                </span>
+
+            </div>
+
+            <div class="row">
+
+                <span class="label">
+                    Order Number
+                </span>
+
+                <span
+                    id="orderNumber"
+                    class="value"
+                >
+                    Pending
+                </span>
+
+            </div>
+
+            <div class="row">
+
+                <span class="label">
+                    Amount to Pay
+                </span>
+
+                <span
+                    id="amount"
+                    class="value amount"
+                >
+                    ₦0.00
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PAYMENT METHOD
+        ================================================== -->
+
+        <section class="card">
+
+            <div class="card-title">
+                PAYMENT METHOD
+            </div>
+
+            <div class="payment-method">
+
+                <div class="method-name">
+                    🏦 Bank Transfer
+                </div>
+
+                <div class="account-line">
+
+                    <span class="account-label">
+                        Bank:
+                    </span>
+
+                    <span
+                        id="bankName"
+                        class="account-value"
+                    >
+                        Bank details will be provided here
+                    </span>
+
+                </div>
+
+                <div class="account-line">
+
+                    <span class="account-label">
+                        Account Name:
+                    </span>
+
+                    <span
+                        id="accountName"
+                        class="account-value"
+                    >
+                        Account name will be provided here
+                    </span>
+
+                </div>
+
+                <div class="account-line">
+
+                    <span class="account-label">
+                        Account Number:
+                    </span>
+
+                    <span
+                        id="accountNumber"
+                        class="account-value"
+                    >
+                        Account number will be provided here
+                    </span>
+
+                </div>
+
+                <div class="account-line">
+
+                    <span class="account-label">
+                        Amount:
+                    </span>
+
+                    <span
+                        id="transferAmount"
+                        class="account-value"
+                    >
+                        ₦0.00
+                    </span>
+
+                </div>
+
+                <div class="transfer-note">
+
+                    Make your transfer using the details above.
+                    After making payment, tap the button below
+                    so your payment can be verified.
+
+                </div>
+
+                <button
+                    type="button"
+                    class="button transfer-button"
+                    onclick="markPaymentMade()"
+                >
+                    I HAVE MADE PAYMENT
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             OTHER PAYMENT METHODS
+        ================================================== -->
+
+        <section class="card">
+
+            <div class="card-title">
+                OTHER PAYMENT METHODS
+            </div>
+
+            <div class="coming-soon">
+
+                <div class="future-method">
+
+                    <strong>💳 Card</strong>
+
+                    Coming Soon
+
+                </div>
+
+                <div class="future-method">
+
+                    <strong>📱 USSD</strong>
+
+                    Coming Soon
+
+                </div>
+
+                <div class="future-method">
+
+                    <strong>🏦 Bank App</strong>
+
+                    Coming Soon
+
+                </div>
+
+                <div class="future-method">
+
+                    <strong>💰 Other Options</strong>
+
+                    Coming Soon
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PAYMENT STATUS
+        ================================================== -->
+
+        <section class="card">
+
+            <div class="card-title">
+                PAYMENT STATUS
+            </div>
+
+            <div
+                id="paymentStatus"
+                class="status"
+            >
+
+                <div class="status-title">
+                    Payment Pending
+                </div>
+
+                Make your bank transfer and tap
+                "I HAVE MADE PAYMENT".
+
+                Customer Service can also help confirm
+                your payment.
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DOWNLOAD
+        ================================================== -->
+
+        <section class="card">
+
+            <div class="card-title">
+                YOUR DOCUMENT
+            </div>
+
+            <button
+                id="downloadButton"
+                type="button"
+                class="button download-button locked"
+                onclick="downloadDocument()"
+                disabled
+            >
+                🔒 DOWNLOAD YOUR DOCUMENT
+            </button>
+
+            <div
+                id="downloadMessage"
+                class="transfer-note"
+            >
+
+                Download will become available after
+                your payment has been confirmed.
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CUSTOMER SERVICE
+        ================================================== -->
+
+        <section class="card">
+
+            <div class="card-title">
+                CUSTOMER SERVICE &amp; COMPLAINTS
+            </div>
+
+            <div class="contact-text">
+
+                Need help with your payment, order,
+                document, or download?
+
+                <br><br>
+
+                You can contact Customer Service to:
+
+                <br>
+
+                • Confirm your payment<br>
+                • Report a payment problem<br>
+                • Make a complaint<br>
+                • Get help with your document
+
+            </div>
+
+            <button
+                type="button"
+                class="button service-button"
+                onclick="contactCustomerService()"
+            >
+                CUSTOMER SERVICE
+            </button>
+
+            <button
+                type="button"
+                class="button complaint-button"
+                onclick="makeComplaint()"
+            >
+                REPORT A PROBLEM / COMPLAINT
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <div class="footer">
+
+            Naija Pocket Business Center<br>
+
+            Your Business Center In Your Pocket
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /* ========================================================
+       ORDER INFORMATION
+    ======================================================== */
+
+    let selectedService = "";
+    let orderNumber = "";
+    let amount = "";
+
+    function loadOrderInformation() {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        selectedService =
+            params.get("service") ||
+            localStorage.getItem(
+                "selectedService"
+            ) ||
+            "Service not selected";
+
+        orderNumber =
+            params.get("order") ||
+            localStorage.getItem(
+                "orderNumber"
+            ) ||
+            "Pending";
+
+        amount =
+            params.get("amount") ||
+            localStorage.getItem(
+                "orderAmount"
+            ) ||
+            "0.00";
+
+        document.getElementById(
+            "serviceName"
+        ).innerText =
+            selectedService;
+
+        document.getElementById(
+            "orderNumber"
+        ).innerText =
+            orderNumber;
+
+        document.getElementById(
+            "amount"
+        ).innerText =
+            formatAmount(amount);
+
+        document.getElementById(
+            "transferAmount"
+        ).innerText =
+            formatAmount(amount);
+
+    }
+
+
+    /* ========================================================
+       AMOUNT DISPLAY
+    ======================================================== */
+
+    function formatAmount(value) {
+
+        const numericAmount =
+            Number(
+                String(value)
+                    .replace(/,/g, "")
+                    .replace(/[₦]/g, "")
+            );
+
+        if (
+            Number.isNaN(
+                numericAmount
+            )
+        ) {
+
+            return "₦0.00";
+
+        }
+
+        return "₦" +
+            numericAmount.toLocaleString(
+                "en-NG",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
+
+    }
+
+
+    /* ========================================================
+       CUSTOMER SAYS PAYMENT HAS BEEN MADE
+    ======================================================== */
+
+    function markPaymentMade() {
+
+        const status =
+            document.getElementById(
+                "paymentStatus"
+            );
+
+        status.innerHTML =
+
+            "<div class='status-title'>" +
+            "Payment Verification Pending" +
+            "</div>" +
+
+            "Your payment has been reported. " +
+            "Customer Service can verify the transfer " +
+            "using your order information.";
+
+        addPaymentMessage();
+
+    }
+
+
+    /* ========================================================
+       PAYMENT MESSAGE
+    ======================================================== */
+
+    function addPaymentMessage() {
+
+        const message =
+            "Payment reported for order " +
+            orderNumber +
+            ".";
+
+        localStorage.setItem(
+            "paymentReported",
+            "true"
+        );
+
+        localStorage.setItem(
+            "paymentOrder",
+            orderNumber
+        );
+
+        console.log(
+            message
+        );
+
+    }
+
+
+    /* ========================================================
+       CUSTOMER SERVICE
+    ======================================================== */
+
+    function contactCustomerService() {
+
+        const message =
+            "Hello Customer Service. " +
+            "I need help with my order " +
+            orderNumber +
+            " for " +
+            selectedService +
+            ".";
+
+        /*
+         * BACKEND CONNECTION POINT
+         *
+         * This will later connect to the
+         * actual Customer Service system.
+         */
+
+        alert(
+            message +
+            "\n\nCustomer Service connection will be connected to the backend."
+        );
+
+    }
+
+
+    /* ========================================================
+       COMPLAINT
+    ======================================================== */
+
+    function makeComplaint() {
+
+        const message =
+            "Hello Customer Service. " +
+            "I want to report a problem or make a complaint " +
+            "about order " +
+            orderNumber +
+            ".";
+
+        /*
+         * BACKEND CONNECTION POINT
+         */
+
+        alert(
+            message +
+            "\n\nComplaint handling will be connected to the backend."
+        );
+
+    }
+
+
+    /* ========================================================
+       DOWNLOAD
+    ======================================================== */
+
+    function downloadDocument() {
+
+        /*
+         * IMPORTANT
+         *
+         * The download must NOT happen simply because
+         * the customer presses the button.
+         *
+         * The backend must confirm:
+         *
+         * payment_status == "paid"
+         *
+         * before returning the document.
+         */
+
+        alert(
+            "Your document will be available here after payment has been confirmed."
+        );
+
+    }
+
+
+    /* ========================================================
+       PAYMENT CONFIRMATION HOOK
+       ======================================================== */
+
+    function paymentConfirmed() {
+
+        const button =
+            document.getElementById(
+                "downloadButton"
+            );
+
+        const status =
+            document.getElementById(
+                "paymentStatus"
+            );
+
+        const message =
+            document.getElementById(
+                "downloadMessage"
+            );
+
+        status.innerHTML =
+
+            "<div class='status-title'>" +
+            "Payment Confirmed ✓" +
+            "</div>" +
+
+            "Your payment has been confirmed. " +
+            "Your document is now available for download.";
+
+        button.disabled = false;
+
+        button.classList.remove(
+            "locked"
+        );
+
+        button.innerText =
+            "⬇ DOWNLOAD YOUR DOCUMENT";
+
+        message.innerText =
+            "Your document is ready.";
+
+    }
+
+
+    /* ========================================================
+       START
+    ======================================================== */
+
+    loadOrderInformation();
+
+</script>
+
+</body>
+</html> 
