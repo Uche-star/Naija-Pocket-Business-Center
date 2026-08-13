@@ -36,6 +36,7 @@
                 max(12px, env(safe-area-inset-top))
                 12px
                 calc(20px + env(safe-area-inset-bottom));
+
             display: flex;
             flex-direction: column;
         }
@@ -206,26 +207,14 @@
             color: black;
         }
 
-        .voice-button {
-            background: #1E90FF;
-            color: white;
-        }
-
-        .review-button {
-            background: #1E90FF;
-            color: white;
-        }
-
+        .voice-button,
+        .review-button,
         .approve-button {
             background: #1E90FF;
             color: white;
         }
 
-        .payment-button {
-            background: #CC0000;
-            color: white;
-        }
-
+        .payment-button,
         .customer-service-button {
             background: #CC0000;
             color: white;
@@ -280,6 +269,11 @@
             transform: scale(0.98);
         }
 
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         /* =====================================================
            HIDDEN FILE INPUT
         ===================================================== */
@@ -289,7 +283,7 @@
         }
 
         /* =====================================================
-           PRICING AREA
+           PRICING
         ===================================================== */
 
         .pricing-box {
@@ -321,10 +315,23 @@
         }
 
         /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+            text-align: center;
+            color: #777777;
+            font-size: 10px;
+            line-height: 1.5;
+            padding-top: 12px;
+        }
+
+        /* =====================================================
            SMALL PHONES
         ===================================================== */
 
         @media (max-width: 360px) {
+
             .page {
                 padding-left: 8px;
                 padding-right: 8px;
@@ -362,6 +369,7 @@
         ===================================================== */
 
         @media (min-width: 600px) {
+
             .page {
                 padding-left: 20px;
                 padding-right: 20px;
@@ -420,38 +428,24 @@
             <div class="message ada">
 
                 <div class="message-label">
-                    BUSINESS CENTER
+                    ADA
                 </div>
 
-                <div class="bubble">Hello 😊
+                <div class="bubble">
+Hello 😊
 
-Welcome to your workspace.
+Welcome to Naija Pocket Business Center.
+
+I am Ada, your Business Center assistant.
+
+I can understand what you need, ask you the right questions, help you provide the information required for your selected service, and guide the work from there.
 
 Your selected service is shown above.
 
-How to use this workspace:
+Please tell me what you want me to help you with.
 
-📎 Tap Upload — Send the document or file you want us to work on.
-
-🎤 Tap Voice — Send your instruction by voice.
-
-⌨️ Type your message... — You can type your instruction, part of the job, or the actual content you want us to type, format, edit, rewrite, or work on. Then tap SEND.
-
-👀 Tap Review Document — Check your completed document before approval.
-
-✅ Tap Approve Document — Confirm that you are satisfied with the document.
-
-💳 Tap Payment & Download — View your payment information and download your completed document after payment has been confirmed.
-
-📞 Tap Customer Service — Contact Customer Service for questions, complaints, or payment confirmation.
-
-Estimated Cost:
-You will receive an estimated price before work begins. The final price may change after the actual work has been reviewed.
-
-Payment Notice:
-Payments for jobs completed at night are confirmed the following morning.
-
-Please send your document, message, or instruction to begin immediately.</div>
+You can type your request below, upload a document, or send a voice instruction.
+                </div>
 
             </div>
 
@@ -467,7 +461,7 @@ Please send your document, message, or instruction to begin immediately.</div>
         ></div>
 
         <!-- =================================================
-             STATIC ACTION BUTTONS
+             ACTION BUTTONS
         ================================================== -->
 
         <section class="actions">
@@ -531,12 +525,13 @@ Please send your document, message, or instruction to begin immediately.</div>
             <textarea
                 id="messageInput"
                 class="message-input"
-                placeholder="Type your message..."
+                placeholder="Talk to Ada... type your request here."
                 rows="2"
             ></textarea>
 
             <button
                 type="button"
+                id="sendButton"
                 class="send-button"
                 onclick="sendMessage()"
             >
@@ -557,7 +552,7 @@ Please send your document, message, or instruction to begin immediately.</div>
         >
 
         <!-- =================================================
-             PRICING AREA
+             PRICING
         ================================================== -->
 
         <section
@@ -587,350 +582,557 @@ Please send your document, message, or instruction to begin immediately.</div>
 
 </div>
 
+
 <script>
 
-    /* ========================================================
-       SELECTED SERVICE
-    ======================================================== */
+/* ========================================================
+   SELECTED SERVICE
+======================================================== */
 
-    let selectedService = "";
+let selectedService = "";
 
-    function getSelectedService() {
 
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
+function getSelectedService() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    selectedService =
+        params.get("service") || "";
+
+    if (!selectedService) {
 
         selectedService =
-            params.get("service") || "";
-
-        if (!selectedService) {
-
-            selectedService =
-                localStorage.getItem(
-                    "selectedService"
-                ) || "";
-
-        }
-
-        if (!selectedService) {
-
-            selectedService =
-                "Service not selected";
-
-        }
-
-        document.getElementById(
-            "selectedService"
-        ).innerText =
-            selectedService;
-
-        localStorage.setItem(
-            "selectedService",
-            selectedService
-        );
+            localStorage.getItem(
+                "selectedService"
+            ) || "";
     }
 
-    /* ========================================================
-       CHAT MESSAGE
-    ======================================================== */
+    if (!selectedService) {
 
-    function addMessage(
-        sender,
+        selectedService =
+            "Service not selected";
+    }
+
+    document.getElementById(
+        "selectedService"
+    ).innerText =
+        selectedService;
+
+    localStorage.setItem(
+        "selectedService",
+        selectedService
+    );
+}
+
+
+/* ========================================================
+   ADD CHAT MESSAGE
+======================================================== */
+
+function addMessage(
+    sender,
+    message
+) {
+
+    const chatArea =
+        document.getElementById(
+            "chatArea"
+        );
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.className =
+        "message " +
+        (
+            sender === "You"
+                ? "you"
+                : "ada"
+        );
+
+    const label =
+        document.createElement(
+            "div"
+        );
+
+    label.className =
+        "message-label";
+
+    label.innerText =
+        sender === "You"
+            ? "YOU"
+            : "ADA";
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+    bubble.className =
+        "bubble";
+
+    bubble.innerText =
+        message;
+
+    wrapper.appendChild(
+        label
+    );
+
+    wrapper.appendChild(
+        bubble
+    );
+
+    chatArea.appendChild(
+        wrapper
+    );
+
+    chatArea.scrollTop =
+        chatArea.scrollHeight;
+}
+
+
+/* ========================================================
+   SEND MESSAGE TO REAL ADA
+======================================================== */
+
+async function sendMessage() {
+
+    const input =
+        document.getElementById(
+            "messageInput"
+        );
+
+    const sendButton =
+        document.getElementById(
+            "sendButton"
+        );
+
+    const message =
+        input.value.trim();
+
+    if (!message) {
+        return;
+    }
+
+    /*
+     * SHOW CUSTOMER MESSAGE
+     */
+
+    addMessage(
+        "You",
         message
-    ) {
+    );
+
+    input.value = "";
+
+    /*
+     * PREVENT DOUBLE SEND
+     */
+
+    sendButton.disabled = true;
+
+    sendButton.innerText =
+        "WAIT...";
+
+    /*
+     * SHOW ADA THINKING STATE
+     */
+
+    addMessage(
+        "Ada",
+        "One moment... I am looking at your request."
+    );
+
+    /*
+     * REAL BACKEND CONNECTION
+     *
+     * This calls:
+     *
+     * /api/chat
+     *
+     * which is handled by phone_bridge.py
+     *
+     * phone_bridge.py then calls:
+     *
+     * AdaController.process_message()
+     *
+     * which connects the request to Ada's
+     * actual intelligence.
+     */
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/chat",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        message: message,
+
+                        service:
+                            selectedService
+
+                    })
+                }
+            );
+
+        let result;
+
+        try {
+
+            result =
+                await response.json();
+
+        } catch (jsonError) {
+
+            throw new Error(
+                "Ada returned an invalid server response."
+            );
+        }
+
+        /*
+         * REMOVE THE TEMPORARY THINKING MESSAGE
+         */
 
         const chatArea =
             document.getElementById(
                 "chatArea"
             );
 
-        const wrapper =
-            document.createElement(
-                "div"
+        const messages =
+            chatArea.querySelectorAll(
+                ".message"
             );
 
-        wrapper.className =
-            "message " +
-            (
-                sender === "You"
-                    ? "you"
-                    : "ada"
+        if (messages.length > 0) {
+
+            const lastMessage =
+                messages[
+                    messages.length - 1
+                ];
+
+            if (
+                lastMessage
+                    .querySelector(
+                        ".message-label"
+                    )
+                    ?.innerText === "ADA"
+                ) {
+
+                chatArea.removeChild(
+                    lastMessage
+                );
+            }
+        }
+
+        /*
+         * REAL ADA RESPONSE
+         */
+
+        if (
+            response.ok &&
+            result &&
+            result.success
+        ) {
+
+            addMessage(
+                "Ada",
+                result.response ||
+                "I received your request. Please tell me a little more about what you need."
             );
 
-        const label =
-            document.createElement(
-                "div"
+        } else {
+
+            addMessage(
+                "Ada",
+                result.error ||
+                "I am having trouble processing your request right now. Please try again."
             );
+        }
 
-        label.className =
-            "message-label";
+    } catch (error) {
 
-        label.innerText =
-            sender === "You"
-                ? "YOU"
-                : "BUSINESS CENTER";
+        /*
+         * REMOVE THINKING MESSAGE
+         */
 
-        const bubble =
-            document.createElement(
-                "div"
-            );
-
-        bubble.className =
-            "bubble";
-
-        bubble.innerText =
-            message;
-
-        wrapper.appendChild(
-            label
-        );
-
-        wrapper.appendChild(
-            bubble
-        );
-
-        chatArea.appendChild(
-            wrapper
-        );
-
-        chatArea.scrollTop =
-            chatArea.scrollHeight;
-    }
-
-    /* ========================================================
-       SEND MESSAGE
-    ======================================================== */
-
-    function sendMessage() {
-
-        const input =
+        const chatArea =
             document.getElementById(
-                "messageInput"
+                "chatArea"
             );
 
-        const message =
-            input.value.trim();
+        const messages =
+            chatArea.querySelectorAll(
+                ".message"
+            );
 
-        if (!message) {
-            return;
+        if (messages.length > 0) {
+
+            const lastMessage =
+                messages[
+                    messages.length - 1
+                ];
+
+            if (
+                lastMessage
+                    .querySelector(
+                        ".message-label"
+                    )
+                    ?.innerText === "ADA"
+            ) {
+
+                chatArea.removeChild(
+                    lastMessage
+                );
+            }
         }
 
         addMessage(
-            "You",
-            message
+            "Ada",
+            "I could not connect to my Business Center service right now. Please try again."
         );
 
-        input.value = "";
-
-        /*
-         * BACKEND CONNECTION POINT
-         *
-         * The VPS/AdaController connection
-         * will be connected here.
-         */
-
-        addMessage(
-            "Business Center",
-            "Your message has been received. Your " +
-            selectedService +
-            " request is ready to continue."
+        console.error(
+            "Ada connection error:",
+            error
         );
+
+    } finally {
+
+        sendButton.disabled =
+            false;
+
+        sendButton.innerText =
+            "SEND";
     }
+}
 
-    /* ========================================================
-       ENTER TO SEND
-    ======================================================== */
+
+/* ========================================================
+   ENTER TO SEND
+======================================================== */
+
+document
+    .getElementById(
+        "messageInput"
+    )
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                sendMessage();
+            }
+        }
+    );
+
+
+/* ========================================================
+   UPLOAD
+======================================================== */
+
+function openFilePicker() {
 
     document
         .getElementById(
-            "messageInput"
+            "fileInput"
         )
-        .addEventListener(
-            "keydown",
-            function(event) {
+        .click();
+}
 
-                if (
-                    event.key === "Enter" &&
-                    !event.shiftKey
-                ) {
 
-                    event.preventDefault();
+function handleFileSelected(
+    event
+) {
 
-                    sendMessage();
-                }
-            }
-        );
+    const file =
+        event.target.files[0];
 
-    /* ========================================================
-       UPLOAD
-    ======================================================== */
-
-    function openFilePicker() {
-
-        document
-            .getElementById(
-                "fileInput"
-            )
-            .click();
+    if (!file) {
+        return;
     }
 
-    function handleFileSelected(
-        event
-    ) {
-
-        const file =
-            event.target.files[0];
-
-        if (!file) {
-            return;
-        }
-
-        const status =
-            document.getElementById(
-                "uploadStatus"
-            );
-
-        status.classList.add(
-            "show"
-        );
-
-        status.innerText =
-            "File selected: " +
-            file.name +
-            "\n\n" +
-            "The file is ready to be sent to the business center.";
-
-        addMessage(
-            "You",
-            "Uploaded: " +
-            file.name
-        );
-
-        /*
-         * BACKEND CONNECTION POINT
-         *
-         * Actual file upload/OCR processing
-         * will be connected to the VPS backend.
-         */
-    }
-
-    /* ========================================================
-       VOICE
-    ======================================================== */
-
-    function openVoice() {
-
-        /*
-         * Existing phone_bridge.py will be
-         * connected here.
-         */
-
-        addMessage(
-            "Business Center",
-            "Voice recording will open through the phone voice bridge. Your recorded instruction will be transcribed and sent with your request."
-        );
-    }
-
-    /* ========================================================
-       REVIEW DOCUMENT
-    ======================================================== */
-
-    function reviewDocument() {
-
-        addMessage(
-            "You",
-            "I want to review my document."
-        );
-
-        addMessage(
-            "Business Center",
-            "Your completed document will be displayed here for you to review carefully before approval."
-        );
-    }
-
-    /* ========================================================
-       APPROVE DOCUMENT
-    ======================================================== */
-
-    function approveDocument() {
-
-        addMessage(
-            "You",
-            "I approve the document."
-        );
-
-        addMessage(
-            "Business Center",
-            "Your approval has been received. You can proceed to Payment & Download."
-        );
-    }
-
-    /* ========================================================
-       PAYMENT & DOWNLOAD
-    ======================================================== */
-
-    function openPayment() {
-
-        const pricingBox =
-            document.getElementById(
-                "pricingBox"
-            );
-
-        pricingBox.classList.add(
-            "show"
-        );
-
+    const status =
         document.getElementById(
-            "pricingText"
-        ).innerText =
-            "Your estimated and final payment information will appear here.\n\n" +
-            "Payment confirmation is required before your completed document can be downloaded.\n\n" +
-            "If you make a transfer, you can contact Customer Service to confirm your payment.";
-
-        addMessage(
-            "Business Center",
-            "Payment & Download is ready. Please complete payment and contact Customer Service if you need payment confirmation."
-        );
-    }
-
-    /* ========================================================
-       CUSTOMER SERVICE
-    ======================================================== */
-
-    function contactCustomerService() {
-
-        /*
-         * CUSTOMER SERVICE NUMBER
-         *
-         * Replace the placeholder below with
-         * the real Customer Service number.
-         */
-
-        const customerServiceNumber =
-            "08000000000";
-
-        addMessage(
-            "You",
-            "I want to contact Customer Service."
+            "uploadStatus"
         );
 
-        addMessage(
-            "Business Center",
-            "Opening Customer Service..."
+    status.classList.add(
+        "show"
+    );
+
+    status.innerText =
+        "File selected: " +
+        file.name +
+        "\n\n" +
+        "Your file is ready to be connected to Ada's document workflow.";
+
+    addMessage(
+        "You",
+        "Uploaded: " +
+        file.name
+    );
+
+    /*
+     * The actual document/OCR upload endpoint
+     * will be connected separately.
+     *
+     * We do NOT pretend that the file was
+     * processed when it has only been selected.
+     */
+}
+
+
+/* ========================================================
+   VOICE
+======================================================== */
+
+function openVoice() {
+
+    /*
+     * Open the existing phone voice bridge.
+     *
+     * Because this workspace and the bridge
+     * may be hosted separately, the URL can
+     * be supplied using:
+     *
+     * ?voice=YOUR_VOICE_URL
+     */
+
+    const params =
+        new URLSearchParams(
+            window.location.search
         );
+
+    const voiceUrl =
+        params.get("voice");
+
+    if (voiceUrl) {
 
         window.location.href =
-            "tel:" +
-            customerServiceNumber;
+            voiceUrl;
+
+        return;
     }
 
-    /* ========================================================
-       START
-    ======================================================== */
+    addMessage(
+        "Ada",
+        "Voice is available through the Ada voice bridge. The voice bridge URL has not yet been connected to this workspace."
+    );
+}
 
-    getSelectedService();
+
+/* ========================================================
+   REVIEW DOCUMENT
+======================================================== */
+
+function reviewDocument() {
+
+    addMessage(
+        "You",
+        "I want to review my document."
+    );
+
+    addMessage(
+        "Ada",
+        "Your document review stage will appear here when your job reaches the review stage."
+    );
+}
+
+
+/* ========================================================
+   APPROVE DOCUMENT
+======================================================== */
+
+function approveDocument() {
+
+    addMessage(
+        "You",
+        "I approve the document."
+    );
+
+    addMessage(
+        "Ada",
+        "Your approval request has been received. Ada will continue the job workflow when the document is ready for approval."
+    );
+}
+
+
+/* ========================================================
+   PAYMENT & DOWNLOAD
+======================================================== */
+
+function openPayment() {
+
+    const pricingBox =
+        document.getElementById(
+            "pricingBox"
+        );
+
+    pricingBox.classList.add(
+        "show"
+    );
+
+    document.getElementById(
+        "pricingText"
+    ).innerText =
+        "Your payment information will appear here when Ada has determined that your job is ready for payment.\n\n" +
+        "Payment confirmation is required before a completed document can be downloaded.";
+
+    addMessage(
+        "You",
+        "I want to check Payment & Download."
+    );
+
+    addMessage(
+        "Ada",
+        "Payment information will be shown here when your job reaches the payment stage."
+    );
+}
+
+
+/* ========================================================
+   CUSTOMER SERVICE
+======================================================== */
+
+function contactCustomerService() {
+
+    addMessage(
+        "You",
+        "I want to contact Customer Service."
+    );
+
+    addMessage(
+        "Ada",
+        "Customer Service can assist with questions, complaints and payment confirmation."
+    );
+}
+
+
+/* ========================================================
+   START
+======================================================== */
+
+getSelectedService();
 
 </script>
 
