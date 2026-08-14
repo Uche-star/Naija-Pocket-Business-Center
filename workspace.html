@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -50,10 +50,6 @@
             min-height: calc(100dvh - 32px);
         }
 
-        /* =====================================================
-           HEADER
-        ===================================================== */
-
         .header {
             background: #171717;
             border-radius: 6px;
@@ -65,17 +61,14 @@
         .brand {
             font-size: 18px;
             font-weight: bold;
-            line-height: 1.2;
         }
 
         .selected-service {
             margin-top: 10px;
             background: #0B0B0B;
-            border: 1px solid #444444;
+            border: 1px solid #444;
             border-radius: 5px;
             padding: 9px 10px;
-            font-size: 12px;
-            line-height: 1.35;
         }
 
         .selected-service-label {
@@ -86,6 +79,7 @@
 
         .selected-service-name {
             color: white;
+            font-size: 14px;
             font-weight: bold;
         }
 
@@ -95,10 +89,6 @@
             font-size: 13px;
             font-weight: bold;
         }
-
-        /* =====================================================
-           CHAT
-        ===================================================== */
 
         .chat-area {
             flex: 1;
@@ -131,7 +121,6 @@
             border-radius: 8px;
             font-size: 13px;
             line-height: 1.5;
-            text-align: left;
             white-space: pre-wrap;
             word-break: break-word;
         }
@@ -148,34 +137,10 @@
             border-bottom-right-radius: 2px;
         }
 
-        /* =====================================================
-           UPLOAD STATUS
-        ===================================================== */
-
-        .upload-status {
-            display: none;
-            background: #222222;
-            border-left: 3px solid #1E90FF;
-            padding: 9px 10px;
-            margin-top: 10px;
-            font-size: 11px;
-            line-height: 1.4;
-            text-align: left;
-        }
-
-        .upload-status.show {
-            display: block;
-        }
-
-        /* =====================================================
-           CUSTOMER WORKFLOW BUTTONS
-        ===================================================== */
-
         .actions {
             width: 100%;
             display: grid;
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 6px;
             margin-top: 10px;
         }
@@ -186,20 +151,9 @@
             border: none;
             border-radius: 5px;
             padding: 8px 6px;
-            font-family: Arial, sans-serif;
             font-size: 11px;
             font-weight: bold;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .action-button:active {
-            transform: scale(0.98);
-        }
-
-        .action-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .upload-button {
@@ -220,16 +174,11 @@
             color: white;
         }
 
-        /* =====================================================
-           MESSAGE INPUT
-        ===================================================== */
-
         .input-area {
             width: 100%;
             margin-top: 10px;
             display: flex;
             gap: 6px;
-            align-items: stretch;
         }
 
         .message-input {
@@ -242,14 +191,8 @@
             border: none;
             border-radius: 5px;
             padding: 12px;
-            font-family: Arial, sans-serif;
             font-size: 13px;
-            line-height: 1.4;
             outline: none;
-        }
-
-        .message-input:focus {
-            box-shadow: 0 0 0 2px #1E90FF;
         }
 
         .send-button {
@@ -259,76 +202,26 @@
             border-radius: 5px;
             background: #1E90FF;
             color: white;
-            font-family: Arial, sans-serif;
             font-size: 11px;
             font-weight: bold;
             cursor: pointer;
         }
 
-        .send-button:active {
-            transform: scale(0.98);
-        }
-
         .send-button:disabled {
             opacity: 0.5;
-            cursor: not-allowed;
         }
-
-        /* =====================================================
-           HIDDEN FILE INPUT
-        ===================================================== */
 
         #fileInput {
             display: none;
         }
 
-        /* =====================================================
-           PRICING
-        ===================================================== */
-
-        .pricing-box {
-            width: 100%;
-            display: none;
-            margin-top: 10px;
-            padding: 12px;
-            background: #171717;
-            border: 1px solid #1E90FF;
-            border-radius: 6px;
-            text-align: left;
-        }
-
-        .pricing-box.show {
-            display: block;
-        }
-
-        .pricing-title {
-            color: #1E90FF;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .pricing-text {
-            color: white;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
         .footer {
             text-align: center;
-            color: #777777;
+            color: #777;
             font-size: 10px;
             line-height: 1.5;
             padding-top: 12px;
         }
-
-        /* =====================================================
-           SMALL PHONES
-        ===================================================== */
 
         @media (max-width: 360px) {
             .page {
@@ -336,16 +229,8 @@
                 padding-right: 8px;
             }
 
-            .header {
-                padding: 12px;
-            }
-
             .chat-area {
                 padding: 11px;
-            }
-
-            .actions {
-                gap: 4px;
             }
 
             .action-button {
@@ -353,19 +238,10 @@
                 font-size: 9px;
             }
 
-            .message-input {
-                font-size: 12px;
-            }
-
             .send-button {
                 width: 72px;
-                font-size: 10px;
             }
         }
-
-        /* =====================================================
-           LARGER SCREENS
-        ===================================================== */
 
         @media (min-width: 600px) {
             .page {
@@ -374,8 +250,7 @@
             }
 
             .actions {
-                grid-template-columns:
-                    repeat(3, minmax(0, 1fr));
+                grid-template-columns: repeat(3, minmax(0, 1fr));
             }
         }
     </style>
@@ -386,10 +261,6 @@
 <div class="page">
 
     <main class="workspace">
-
-        <!-- =================================================
-             HEADER
-        ================================================== -->
 
         <section class="header">
 
@@ -419,27 +290,10 @@
 
         </section>
 
-        <!-- =================================================
-             ADA CONVERSATION
-        ================================================== -->
-
         <section
             id="chatArea"
             class="chat-area"
         ></section>
-
-        <!-- =================================================
-             UPLOAD STATUS
-        ================================================== -->
-
-        <div
-            id="uploadStatus"
-            class="upload-status"
-        ></div>
-
-        <!-- =================================================
-             CUSTOMER WORKFLOW BUTTONS
-        ================================================== -->
 
         <section class="actions">
 
@@ -464,7 +318,7 @@
                 class="action-button review-button"
                 onclick="reviewDocument()"
             >
-                👀 Review
+                🔍 Review
             </button>
 
             <button
@@ -488,14 +342,10 @@
                 class="action-button customer-service-button"
                 onclick="contactCustomerService()"
             >
-                📞 Customer Service
+                🆘 Customer Service
             </button>
 
         </section>
-
-        <!-- =================================================
-             MESSAGE BOX
-        ================================================== -->
 
         <section class="input-area">
 
@@ -517,40 +367,12 @@
 
         </section>
 
-        <!-- =================================================
-             FILE INPUT
-        ================================================== -->
-
         <input
             type="file"
             id="fileInput"
             accept=".pdf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.csv,.ppt,.pptx,.jpg,.jpeg,.png,.webp"
             onchange="handleFileSelected(event)"
         >
-
-        <!-- =================================================
-             PRICING
-        ================================================== -->
-
-        <section
-            id="pricingBox"
-            class="pricing-box"
-        >
-
-            <div class="pricing-title">
-                SERVICE PRICE
-            </div>
-
-            <div
-                id="pricingText"
-                class="pricing-text"
-            ></div>
-
-        </section>
-
-        <!-- =================================================
-             FOOTER
-        ================================================== -->
 
         <div class="footer">
             Naija Pocket Business Center<br>
@@ -563,17 +385,13 @@
 
 <script>
 
-/* ============================================================
-   WORKSPACE STATE
-============================================================ */
-
 let selectedService = "";
 let intelligenceStarted = false;
 let requestInProgress = false;
 
 
 /* ============================================================
-   GET SELECTED SERVICE
+   GET SERVICE FROM SERVICE BOARD
 ============================================================ */
 
 function getSelectedService() {
@@ -592,12 +410,14 @@ function getSelectedService() {
             localStorage.getItem(
                 "selectedService"
             ) || "";
+
     }
 
     if (!selectedService) {
 
         selectedService =
             "Service not selected";
+
     }
 
     document.getElementById(
@@ -613,8 +433,7 @@ function getSelectedService() {
 
 
 /* ============================================================
-   ADD MESSAGE
-   No ADA / YOU labels are displayed.
+   DISPLAY MESSAGE
 ============================================================ */
 
 function addMessage(
@@ -665,76 +484,12 @@ function addMessage(
 
 
 /* ============================================================
-   DISPLAY PRICE
-============================================================ */
-
-function displayPrice(price) {
-
-    if (
-        price === undefined ||
-        price === null ||
-        price === ""
-    ) {
-        return;
-    }
-
-    const servicePrice =
-        document.getElementById(
-            "servicePrice"
-        );
-
-    const pricingBox =
-        document.getElementById(
-            "pricingBox"
-        );
-
-    const pricingText =
-        document.getElementById(
-            "pricingText"
-        );
-
-    let formattedPrice =
-        String(price);
-
-    if (
-        !formattedPrice.includes("₦")
-    ) {
-
-        formattedPrice =
-            "₦" +
-            formattedPrice;
-    }
-
-    servicePrice.innerText =
-        "SERVICE PRICE: " +
-        formattedPrice;
-
-    pricingText.innerText =
-        formattedPrice;
-
-    pricingBox.classList.add(
-        "show"
-    );
-}
-
-
-/* ============================================================
-   SEND MESSAGE TO ADA
-
-   Browser
-       ↓
-   /api/chat
-       ↓
-   phone_bridge.py
-       ↓
-   AdaController
-       ↓
-   AdaAIEngine / Groq
+   SEND TO ADA
 ============================================================ */
 
 async function sendToAda(
     message,
-    eventName = ""
+    eventName
 ) {
 
     const response =
@@ -761,7 +516,6 @@ async function sendToAda(
 
                     activate_intelligence:
                         true
-
                 })
             }
         );
@@ -785,9 +539,17 @@ async function sendToAda(
         result.price !== undefined
     ) {
 
-        displayPrice(
-            result.price
-        );
+        const price =
+            String(
+                result.price
+            );
+
+        document.getElementById(
+            "servicePrice"
+        ).innerText =
+            price.includes("₦")
+                ? "SERVICE PRICE: " + price
+                : "SERVICE PRICE: ₦" + price;
     }
 
     if (
@@ -798,7 +560,7 @@ async function sendToAda(
 
         return (
             result.response ||
-            "Alright 😊 I’m taking care of your request."
+            "Ada is ready to help you."
         );
     }
 
@@ -813,7 +575,11 @@ async function sendToAda(
 
 
 /* ============================================================
-   START ADA INTELLIGENCE
+   AUTOMATIC ADA ACTIVATION
+
+   THIS HAPPENS WHEN THE WORKSPACE OPENS.
+
+   THE CUSTOMER DOES NOT HAVE TO TYPE FIRST.
 ============================================================ */
 
 async function startAdaIntelligence() {
@@ -832,30 +598,26 @@ async function startAdaIntelligence() {
 
         addMessage(
             "Ada",
-            "Please return to the services and select the service you need. 😊"
+            "Please return to the services and select the service you need."
         );
 
         return;
     }
 
-    /*
-       This is Ada's first visible
-       communication to the customer.
-    */
 
-    addMessage(
-        "Ada",
-        "Hello 😊\n\n" +
-        "Welcome to Naija Pocket Business Center\n\n" +
-        "I am Ada, your Business Center assistant. As you can see, I am already taking care of your request."
-    );
+    /*
+       Ada is activated by the selected service.
+       The customer has not typed anything yet.
+    */
 
     try {
 
         const response =
             await sendToAda(
 
-                "The customer has already selected the service shown on the page. Begin helping the customer with that service immediately. Do not ask which service they want. Communicate naturally and warmly. Start with the first useful question or instruction needed to handle the request. Explain the page buttons naturally and simply when appropriate: Upload is for sending a document or file when needed. Voice lets the customer speak instead of typing. Review lets the customer check the work when it is ready. Approve tells you the customer is satisfied with the work. Payment & Download is used when the work is ready for payment and delivery. Customer Service is for getting help. Do not describe these as technical system functions.",
+                "The customer has selected the service '" +
+                selectedService +
+                "'. Ada should now take over the conversation immediately. Welcome the customer, acknowledge the selected service, and begin the normal conversation for this service. Do not ask which service the customer wants because the service has already been selected. Ask only the first useful question needed to begin the work.",
 
                 "service_selected"
             );
@@ -868,20 +630,24 @@ async function startAdaIntelligence() {
     } catch (error) {
 
         console.error(
-            "Ada intelligence error:",
+            "ADA ACTIVATION ERROR:",
             error
         );
 
         addMessage(
             "Ada",
-            "I’m ready to take care of your request, but I could not connect to the service right now. Please try again."
+            "I’m ready to help with your " +
+            selectedService +
+            " request, but I could not connect to Ada right now. Please try again."
         );
     }
 }
 
 
 /* ============================================================
-   SEND CUSTOMER MESSAGE
+   CUSTOMER MESSAGE
+
+   THIS HAPPENS AFTER ADA HAS ALREADY STARTED.
 ============================================================ */
 
 async function sendMessage() {
@@ -922,35 +688,6 @@ async function sendMessage() {
     sendButton.innerText =
         "WAIT...";
 
-    const waitingMessage =
-        document.createElement(
-            "div"
-        );
-
-    waitingMessage.className =
-        "message ada";
-
-    const waitingBubble =
-        document.createElement(
-            "div"
-        );
-
-    waitingBubble.className =
-        "bubble";
-
-    waitingBubble.innerText =
-        "One moment...";
-
-    waitingMessage.appendChild(
-        waitingBubble
-    );
-
-    document.getElementById(
-        "chatArea"
-    ).appendChild(
-        waitingMessage
-    );
-
     try {
 
         const response =
@@ -958,8 +695,6 @@ async function sendMessage() {
                 message,
                 "customer_message"
             );
-
-        waitingMessage.remove();
 
         addMessage(
             "Ada",
@@ -969,11 +704,9 @@ async function sendMessage() {
     } catch (error) {
 
         console.error(
-            "Ada connection error:",
+            "CUSTOMER MESSAGE ERROR:",
             error
         );
-
-        waitingMessage.remove();
 
         addMessage(
             "Ada",
@@ -1015,6 +748,7 @@ document
 
                 sendMessage();
             }
+
         }
     );
 
@@ -1042,53 +776,23 @@ async function handleFileSelected(event) {
         return;
     }
 
-    const fileName =
-        file.name;
-
-    const status =
-        document.getElementById(
-            "uploadStatus"
-        );
-
-    status.classList.add(
-        "show"
-    );
-
-    status.innerText =
-        "File selected: " +
-        fileName;
-
     addMessage(
         "You",
         "I have uploaded " +
-        fileName
+        file.name
     );
-
-    /*
-       IMPORTANT:
-
-       The selected document is acknowledged
-       through /api/chat.
-
-       We do NOT send normal customer documents
-       to /upload because that endpoint was used
-       by the phone/recording bridge and expects audio.
-    */
 
     try {
 
         const response =
             await sendToAda(
 
-                "The customer has uploaded a document or file named '" +
-                fileName +
-                "'. The customer is working on the selected service. Acknowledge the uploaded material naturally and tell the customer what you need next. Do not ask the customer to select the service again.",
+                "The customer has uploaded a file named '" +
+                file.name +
+                "'. Continue helping with the selected service.",
 
                 "file_uploaded"
             );
-
-        status.innerText =
-            "Your file has been received.";
 
         addMessage(
             "Ada",
@@ -1097,23 +801,11 @@ async function handleFileSelected(event) {
 
     } catch (error) {
 
-        console.error(
-            "Upload workflow error:",
-            error
-        );
-
-        status.innerText =
-            "The file could not be processed.";
-
         addMessage(
             "Ada",
-            "I received the file selection, but I could not continue the request right now. Please try again."
+            "I could not continue with the uploaded file right now. Please try again."
         );
     }
-
-    /*
-       Allow the same file to be selected again.
-    */
 
     event.target.value = "";
 }
@@ -1125,25 +817,9 @@ async function handleFileSelected(event) {
 
 function openVoice() {
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    const voiceUrl =
-        params.get("voice");
-
-    if (voiceUrl) {
-
-        window.location.href =
-            voiceUrl;
-
-        return;
-    }
-
     addMessage(
         "Ada",
-        "You can use Voice when you would rather speak than type. The voice recording page will handle your recording."
+        "Voice input can be used when you would rather speak than type."
     );
 }
 
@@ -1155,11 +831,8 @@ function openVoice() {
 async function reviewDocument() {
 
     await performAdaAction(
-
         "I want to review my work.",
-
-        "The customer wants to review the current work. Check the active service request and respond naturally. If the work is ready, tell the customer how to review it. If more information or work is still needed, explain that simply.",
-
+        "The customer wants to review the current work. Continue the active service request and explain the next appropriate step.",
         "review"
     );
 }
@@ -1172,28 +845,22 @@ async function reviewDocument() {
 async function approveDocument() {
 
     await performAdaAction(
-
         "I approve the work.",
-
-        "The customer has approved the current work. Check the active service request and continue with the next appropriate step. Do not say payment has been completed unless the system confirms it.",
-
+        "The customer has approved the current work. Continue with the next appropriate step. Do not claim payment has been completed.",
         "approve"
     );
 }
 
 
 /* ============================================================
-   PAYMENT & DOWNLOAD
+   PAYMENT
 ============================================================ */
 
 async function openPayment() {
 
     await performAdaAction(
-
         "I want to continue with Payment & Download.",
-
-        "The customer wants to continue with Payment & Download. Check the active service request and explain the next appropriate step for payment or delivery. Do not claim that payment has been completed unless it has actually been confirmed.",
-
+        "The customer wants to continue with Payment and Download. Explain the next appropriate payment or delivery step. Do not claim payment is completed unless confirmed.",
         "payment_download"
     );
 }
@@ -1206,18 +873,15 @@ async function openPayment() {
 async function contactCustomerService() {
 
     await performAdaAction(
-
         "I want help from Customer Service.",
-
-        "The customer wants Customer Service assistance. Respond naturally and ask what help the customer needs.",
-
+        "The customer wants Customer Service assistance. Ask what help the customer needs.",
         "customer_service"
     );
 }
 
 
 /* ============================================================
-   COMMON ADA BUTTON ACTION
+   COMMON ACTION
 ============================================================ */
 
 async function performAdaAction(
@@ -1237,35 +901,6 @@ async function performAdaAction(
         customerMessage
     );
 
-    const waitingMessage =
-        document.createElement(
-            "div"
-        );
-
-    waitingMessage.className =
-        "message ada";
-
-    const waitingBubble =
-        document.createElement(
-            "div"
-        );
-
-    waitingBubble.className =
-        "bubble";
-
-    waitingBubble.innerText =
-        "One moment...";
-
-    waitingMessage.appendChild(
-        waitingBubble
-    );
-
-    document.getElementById(
-        "chatArea"
-    ).appendChild(
-        waitingMessage
-    );
-
     try {
 
         const response =
@@ -1273,8 +908,6 @@ async function performAdaAction(
                 controllerMessage,
                 eventName
             );
-
-        waitingMessage.remove();
 
         addMessage(
             "Ada",
@@ -1285,11 +918,9 @@ async function performAdaAction(
 
         console.error(
             eventName +
-            " workflow error:",
+            " ERROR:",
             error
         );
-
-        waitingMessage.remove();
 
         addMessage(
             "Ada",
@@ -1306,6 +937,9 @@ async function performAdaAction(
 
 /* ============================================================
    START WORKSPACE
+
+   SERVICE IS ALREADY SELECTED.
+   ADA STARTS AUTOMATICALLY.
 ============================================================ */
 
 getSelectedService();
