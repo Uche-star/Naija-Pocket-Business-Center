@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
-    <title>Naija Pocket Business Center - Workspace</title>
+
+    <title>Naija Pocket Business Center</title>
 
     <style>
         * {
@@ -32,6 +34,7 @@
             width: 100%;
             min-height: 100vh;
             min-height: 100dvh;
+
             padding:
                 max(12px, env(safe-area-inset-top))
                 12px
@@ -45,8 +48,10 @@
             width: 100%;
             max-width: 700px;
             margin: 0 auto;
+
             display: flex;
             flex-direction: column;
+
             min-height: calc(100vh - 32px);
             min-height: calc(100dvh - 32px);
         }
@@ -58,8 +63,10 @@
         .header {
             background: #171717;
             border-radius: 6px;
+
             padding: 14px 15px;
             margin-bottom: 10px;
+
             border-bottom: 2px solid #1E90FF;
         }
 
@@ -71,10 +78,13 @@
 
         .selected-service {
             margin-top: 10px;
+
             background: #0B0B0B;
             border: 1px solid #444444;
             border-radius: 5px;
+
             padding: 9px 10px;
+
             font-size: 12px;
             line-height: 1.35;
         }
@@ -90,17 +100,30 @@
             font-weight: bold;
         }
 
+        .service-price {
+            margin-top: 8px;
+
+            color: #1E90FF;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
         /* =====================================================
            CHAT
         ===================================================== */
 
         .chat-area {
             flex: 1;
+
             background: #171717;
             border-radius: 6px;
+
             padding: 15px;
+
             overflow-y: auto;
+
             min-height: 280px;
+
             border: 1px solid #292929;
         }
 
@@ -133,12 +156,18 @@
 
         .bubble {
             display: inline-block;
+
             max-width: 92%;
+
             padding: 11px 13px;
+
             border-radius: 8px;
+
             font-size: 13px;
             line-height: 1.5;
+
             text-align: left;
+
             white-space: pre-wrap;
             word-break: break-word;
         }
@@ -154,17 +183,71 @@
         }
 
         /* =====================================================
+           WORKSPACE INFORMATION
+        ===================================================== */
+
+        .workspace-info {
+            margin-top: 10px;
+
+            background: #171717;
+
+            border: 1px solid #292929;
+            border-radius: 6px;
+
+            padding: 14px;
+
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .workspace-info-title {
+            color: #1E90FF;
+            font-size: 12px;
+            font-weight: bold;
+
+            margin-bottom: 10px;
+        }
+
+        .workspace-info-section {
+            margin-bottom: 12px;
+        }
+
+        .workspace-info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .workspace-info-section strong {
+            display: block;
+
+            color: white;
+
+            font-size: 12px;
+
+            margin-bottom: 3px;
+        }
+
+        .workspace-info-section span {
+            color: #CCCCCC;
+        }
+
+        /* =====================================================
            UPLOAD STATUS
         ===================================================== */
 
         .upload-status {
             display: none;
+
             background: #222222;
+
             border-left: 3px solid #1E90FF;
+
             padding: 9px 10px;
+
             margin-top: 10px;
+
             font-size: 11px;
             line-height: 1.4;
+
             text-align: left;
         }
 
@@ -178,23 +261,34 @@
 
         .actions {
             width: 100%;
+
             display: grid;
+
             grid-template-columns:
                 repeat(2, minmax(0, 1fr));
+
             gap: 6px;
+
             margin-top: 10px;
         }
 
         .action-button {
             width: 100%;
+
             min-height: 42px;
+
             border: none;
             border-radius: 5px;
+
             padding: 8px 6px;
+
             font-family: Arial, sans-serif;
+
             font-size: 11px;
             font-weight: bold;
+
             cursor: pointer;
+
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -226,25 +320,37 @@
 
         .input-area {
             width: 100%;
+
             margin-top: 10px;
+
             display: flex;
+
             gap: 6px;
+
             align-items: stretch;
         }
 
         .message-input {
             flex: 1;
+
             min-width: 0;
             min-height: 48px;
+
             resize: vertical;
+
             background: white;
             color: black;
+
             border: none;
             border-radius: 5px;
+
             padding: 12px;
+
             font-family: Arial, sans-serif;
+
             font-size: 13px;
             line-height: 1.4;
+
             outline: none;
         }
 
@@ -254,14 +360,20 @@
 
         .send-button {
             width: 82px;
+
             min-height: 48px;
+
             border: none;
             border-radius: 5px;
+
             background: #1E90FF;
             color: white;
+
             font-family: Arial, sans-serif;
+
             font-size: 11px;
             font-weight: bold;
+
             cursor: pointer;
         }
 
@@ -288,12 +400,19 @@
 
         .pricing-box {
             width: 100%;
+
             display: none;
+
             margin-top: 10px;
+
             padding: 12px;
+
             background: #171717;
+
             border: 1px solid #1E90FF;
+
             border-radius: 6px;
+
             text-align: left;
         }
 
@@ -303,14 +422,18 @@
 
         .pricing-title {
             color: #1E90FF;
+
             font-size: 12px;
             font-weight: bold;
+
             margin-bottom: 6px;
         }
 
         .pricing-text {
             color: white;
-            font-size: 12px;
+
+            font-size: 13px;
+
             line-height: 1.5;
         }
 
@@ -320,9 +443,13 @@
 
         .footer {
             text-align: center;
+
             color: #777777;
+
             font-size: 10px;
+
             line-height: 1.5;
+
             padding-top: 12px;
         }
 
@@ -412,12 +539,18 @@
                     Loading service...
                 </div>
 
+                <div
+                    id="servicePrice"
+                    class="service-price"
+                ></div>
+
             </div>
 
         </section>
 
+
         <!-- =================================================
-             CHAT AREA
+             INTELLIGENT ADA CONVERSATION
         ================================================== -->
 
         <section
@@ -425,31 +558,110 @@
             class="chat-area"
         >
 
-            <div class="message ada">
+            <!-- Ada's intelligent response is inserted here
+                 after the selected service activates her. -->
 
-                <div class="message-label">
-                    ADA
-                </div>
+        </section>
 
-                <div class="bubble">
-Hello 😊
 
-Welcome to Naija Pocket Business Center.
+        <!-- =================================================
+             BUTTON EXPLANATIONS
+        ================================================== -->
 
-I am Ada, your Business Center assistant.
+        <section class="workspace-info">
 
-I can understand what you need, ask you the right questions, help you provide the information required for your selected service, and guide the work from there.
+            <div class="workspace-info-title">
+                HERE ARE THE OPTIONS AVAILABLE TO YOU
+            </div>
 
-Your selected service is shown above.
+            <div class="workspace-info-section">
 
-Please tell me what you want me to help you with.
+                <strong>📎 Upload</strong>
 
-You can type your request below, upload a document, or send a voice instruction.
-                </div>
+                <span>
+                    Press Upload whenever you want to give me
+                    a document, file, content, or other material
+                    that I need for your request. Once you select
+                    it, I will receive it and use the information
+                    to continue taking care of your work.
+                </span>
+
+            </div>
+
+
+            <div class="workspace-info-section">
+
+                <strong>🎤 Voice</strong>
+
+                <span>
+                    Press Voice when you want to send me your
+                    instructions by speaking instead of typing.
+                    Record what you want me to know, send it to me,
+                    and I will understand your instruction and
+                    continue from there.
+                </span>
+
+            </div>
+
+
+            <div class="workspace-info-section">
+
+                <strong>💬 Message box &amp; Send</strong>
+
+                <span>
+                    Use the message box whenever I ask you a
+                    question or whenever you have something you
+                    want me to know. Type your answer or instruction
+                    in the box, then press Send so I can receive it
+                    and continue with your request.
+                </span>
+
+            </div>
+
+
+            <div class="workspace-info-section">
+
+                <strong>👀 Review</strong>
+
+                <span>
+                    When I have your work ready for you to check,
+                    press Review. You can look through the work and
+                    tell me about anything you would like corrected
+                    or changed.
+                </span>
+
+            </div>
+
+
+            <div class="workspace-info-section">
+
+                <strong>✅ Approve</strong>
+
+                <span>
+                    When you are satisfied with everything, press
+                    Approve. This tells me that you are happy with
+                    the work and want me to move on to the next stage.
+                </span>
+
+            </div>
+
+
+            <div class="workspace-info-section">
+
+                <strong>💳 Payment &amp; Download</strong>
+
+                <span>
+                    When your work is complete and ready for payment,
+                    press Payment &amp; Download. I will take you
+                    through the payment stage and, after payment is
+                    confirmed, your completed work will be made
+                    available to you.
+                </span>
 
             </div>
 
         </section>
+
 
         <!-- =================================================
              UPLOAD STATUS
@@ -459,6 +671,7 @@ You can type your request below, upload a document, or send a voice instruction.
             id="uploadStatus"
             class="upload-status"
         ></div>
+
 
         <!-- =================================================
              ACTION BUTTONS
@@ -474,6 +687,7 @@ You can type your request below, upload a document, or send a voice instruction.
                 📎 Upload
             </button>
 
+
             <button
                 type="button"
                 class="action-button voice-button"
@@ -482,29 +696,33 @@ You can type your request below, upload a document, or send a voice instruction.
                 🎤 Voice
             </button>
 
+
             <button
                 type="button"
                 class="action-button review-button"
                 onclick="reviewDocument()"
             >
-                👀 Review Document
+                👀 Review
             </button>
+
 
             <button
                 type="button"
                 class="action-button approve-button"
                 onclick="approveDocument()"
             >
-                ✅ Approve Document
+                ✅ Approve
             </button>
+
 
             <button
                 type="button"
                 class="action-button payment-button"
                 onclick="openPayment()"
             >
-                💳 Payment & Download
+                💳 Payment &amp; Download
             </button>
+
 
             <button
                 type="button"
@@ -516,8 +734,9 @@ You can type your request below, upload a document, or send a voice instruction.
 
         </section>
 
+
         <!-- =================================================
-             MESSAGE INPUT
+             MESSAGE BOX
         ================================================== -->
 
         <section class="input-area">
@@ -525,9 +744,10 @@ You can type your request below, upload a document, or send a voice instruction.
             <textarea
                 id="messageInput"
                 class="message-input"
-                placeholder="Talk to Ada... type your request here."
+                placeholder="Write your message here..."
                 rows="2"
             ></textarea>
+
 
             <button
                 type="button"
@@ -540,6 +760,7 @@ You can type your request below, upload a document, or send a voice instruction.
 
         </section>
 
+
         <!-- =================================================
              HIDDEN FILE INPUT
         ================================================== -->
@@ -547,9 +768,10 @@ You can type your request below, upload a document, or send a voice instruction.
         <input
             type="file"
             id="fileInput"
-            accept=".pdf,.doc,.docx,.txt,.rtf,.jpg,.jpeg,.png,.webp,.xls,.xlsx,.csv,.ppt,.pptx"
+            accept=".pdf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.csv,.ppt,.pptx"
             onchange="handleFileSelected(event)"
         >
+
 
         <!-- =================================================
              PRICING
@@ -561,21 +783,27 @@ You can type your request below, upload a document, or send a voice instruction.
         >
 
             <div class="pricing-title">
-                SERVICE PRICING
+                SERVICE PRICE
             </div>
 
             <div
                 id="pricingText"
                 class="pricing-text"
-            >
-                Pricing information will appear here.
-            </div>
+            ></div>
 
         </section>
 
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
         <div class="footer">
+
             Naija Pocket Business Center<br>
+
             Your Business Center In Your Pocket
+
         </div>
 
     </main>
@@ -591,6 +819,12 @@ You can type your request below, upload a document, or send a voice instruction.
 
 let selectedService = "";
 
+let intelligenceStarted = false;
+
+
+/* ========================================================
+   GET SELECTED SERVICE
+======================================================== */
 
 function getSelectedService() {
 
@@ -599,8 +833,10 @@ function getSelectedService() {
             window.location.search
         );
 
+
     selectedService =
         params.get("service") || "";
+
 
     if (!selectedService) {
 
@@ -608,18 +844,23 @@ function getSelectedService() {
             localStorage.getItem(
                 "selectedService"
             ) || "";
+
     }
+
 
     if (!selectedService) {
 
         selectedService =
             "Service not selected";
+
     }
+
 
     document.getElementById(
         "selectedService"
     ).innerText =
         selectedService;
+
 
     localStorage.setItem(
         "selectedService",
@@ -642,10 +883,12 @@ function addMessage(
             "chatArea"
         );
 
+
     const wrapper =
         document.createElement(
             "div"
         );
+
 
     wrapper.className =
         "message " +
@@ -655,41 +898,51 @@ function addMessage(
                 : "ada"
         );
 
+
     const label =
         document.createElement(
             "div"
         );
 
+
     label.className =
         "message-label";
+
 
     label.innerText =
         sender === "You"
             ? "YOU"
             : "ADA";
 
+
     const bubble =
         document.createElement(
             "div"
         );
 
+
     bubble.className =
         "bubble";
 
+
     bubble.innerText =
         message;
+
 
     wrapper.appendChild(
         label
     );
 
+
     wrapper.appendChild(
         bubble
     );
 
+
     chatArea.appendChild(
         wrapper
     );
+
 
     chatArea.scrollTop =
         chatArea.scrollHeight;
@@ -697,73 +950,103 @@ function addMessage(
 
 
 /* ========================================================
-   SEND MESSAGE TO REAL ADA
+   DISPLAY PRICE FROM REAL BACKEND
 ======================================================== */
 
-async function sendMessage() {
+function displayPrice(price) {
 
-    const input =
-        document.getElementById(
-            "messageInput"
-        );
-
-    const sendButton =
-        document.getElementById(
-            "sendButton"
-        );
-
-    const message =
-        input.value.trim();
-
-    if (!message) {
+    if (
+        price === undefined ||
+        price === null ||
+        price === ""
+    ) {
         return;
     }
 
-    /*
-     * SHOW CUSTOMER MESSAGE
-     */
 
-    addMessage(
-        "You",
-        message
+    const servicePrice =
+        document.getElementById(
+            "servicePrice"
+        );
+
+
+    const pricingBox =
+        document.getElementById(
+            "pricingBox"
+        );
+
+
+    const pricingText =
+        document.getElementById(
+            "pricingText"
+        );
+
+
+    let displayPrice =
+        String(price);
+
+
+    if (
+        !displayPrice
+            .toLowerCase()
+            .includes("₦")
+    ) {
+
+        displayPrice =
+            "₦" + displayPrice;
+
+    }
+
+
+    servicePrice.innerText =
+        "SERVICE PRICE: " +
+        displayPrice;
+
+
+    pricingText.innerText =
+        displayPrice;
+
+
+    pricingBox.classList.add(
+        "show"
     );
+}
 
-    input.value = "";
 
-    /*
-     * PREVENT DOUBLE SEND
-     */
+/* ========================================================
+   ACTIVATE ADA INTELLIGENCE
+======================================================== */
 
-    sendButton.disabled = true;
+async function startAdaIntelligence() {
 
-    sendButton.innerText =
-        "WAIT...";
+    if (intelligenceStarted) {
+        return;
+    }
 
-    /*
-     * SHOW ADA THINKING STATE
-     */
+
+    intelligenceStarted = true;
+
+
+    if (
+        !selectedService ||
+        selectedService ===
+        "Service not selected"
+    ) {
+
+        addMessage(
+            "Ada",
+            "Please return to the services and select the service you need. 😊"
+        );
+
+        return;
+    }
+
 
     addMessage(
         "Ada",
-        "One moment... I am looking at your request."
+        "One moment... I am getting everything ready for your request."
     );
 
-    /*
-     * REAL BACKEND CONNECTION
-     *
-     * This calls:
-     *
-     * /api/chat
-     *
-     * which is handled by phone_bridge.py
-     *
-     * phone_bridge.py then calls:
-     *
-     * AdaController.process_message()
-     *
-     * which connects the request to Ada's
-     * actual intelligence.
-     */
 
     try {
 
@@ -780,16 +1063,25 @@ async function sendMessage() {
 
                     body: JSON.stringify({
 
-                        message: message,
+                        message:
+                            "The customer has selected this service. Activate the appropriate service workflow and begin the customer interview. Do not ask the customer what service they want. You already know the selected service. Ask the first appropriate question needed to take care of the request.",
 
                         service:
-                            selectedService
+                            selectedService,
+
+                        event:
+                            "service_selected",
+
+                        activate_intelligence:
+                            true
 
                     })
                 }
             );
 
+
         let result;
+
 
         try {
 
@@ -801,21 +1093,21 @@ async function sendMessage() {
             throw new Error(
                 "Ada returned an invalid server response."
             );
+
         }
 
-        /*
-         * REMOVE THE TEMPORARY THINKING MESSAGE
-         */
 
         const chatArea =
             document.getElementById(
                 "chatArea"
             );
 
+
         const messages =
             chatArea.querySelectorAll(
                 ".message"
             );
+
 
         if (messages.length > 0) {
 
@@ -824,67 +1116,6 @@ async function sendMessage() {
                     messages.length - 1
                 ];
 
-            if (
-                lastMessage
-                    .querySelector(
-                        ".message-label"
-                    )
-                    ?.innerText === "ADA"
-                ) {
-
-                chatArea.removeChild(
-                    lastMessage
-                );
-            }
-        }
-
-        /*
-         * REAL ADA RESPONSE
-         */
-
-        if (
-            response.ok &&
-            result &&
-            result.success
-        ) {
-
-            addMessage(
-                "Ada",
-                result.response ||
-                "I received your request. Please tell me a little more about what you need."
-            );
-
-        } else {
-
-            addMessage(
-                "Ada",
-                result.error ||
-                "I am having trouble processing your request right now. Please try again."
-            );
-        }
-
-    } catch (error) {
-
-        /*
-         * REMOVE THINKING MESSAGE
-         */
-
-        const chatArea =
-            document.getElementById(
-                "chatArea"
-            );
-
-        const messages =
-            chatArea.querySelectorAll(
-                ".message"
-            );
-
-        if (messages.length > 0) {
-
-            const lastMessage =
-                messages[
-                    messages.length - 1
-                ];
 
             if (
                 lastMessage
@@ -897,13 +1128,312 @@ async function sendMessage() {
                 chatArea.removeChild(
                     lastMessage
                 );
+
             }
+
         }
+
+
+        if (
+            result &&
+            result.price !== undefined
+        ) {
+
+            displayPrice(
+                result.price
+            );
+
+        }
+
+
+        if (
+            response.ok &&
+            result &&
+            result.success
+        ) {
+
+            addMessage(
+                "Ada",
+                result.response ||
+                "Alright 😊 I’m taking care of your request. Let’s get started."
+            );
+
+        } else {
+
+            addMessage(
+                "Ada",
+                result.error ||
+                "I’m ready to take care of your request. Please give me a moment and try again."
+            );
+
+        }
+
+    } catch (error) {
+
+        const chatArea =
+            document.getElementById(
+                "chatArea"
+            );
+
+
+        const messages =
+            chatArea.querySelectorAll(
+                ".message"
+            );
+
+
+        if (messages.length > 0) {
+
+            const lastMessage =
+                messages[
+                    messages.length - 1
+                ];
+
+
+            if (
+                lastMessage
+                    .querySelector(
+                        ".message-label"
+                    )
+                    ?.innerText === "ADA"
+            ) {
+
+                chatArea.removeChild(
+                    lastMessage
+                );
+
+            }
+
+        }
+
+
+        addMessage(
+            "Ada",
+            "I’m ready to take care of your request, but I could not connect to the service right now. Please try again."
+        );
+
+
+        console.error(
+            "Ada intelligence error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ========================================================
+   SEND CUSTOMER MESSAGE
+======================================================== */
+
+async function sendMessage() {
+
+    const input =
+        document.getElementById(
+            "messageInput"
+        );
+
+
+    const sendButton =
+        document.getElementById(
+            "sendButton"
+        );
+
+
+    const message =
+        input.value.trim();
+
+
+    if (!message) {
+        return;
+    }
+
+
+    addMessage(
+        "You",
+        message
+    );
+
+
+    input.value = "";
+
+
+    sendButton.disabled =
+        true;
+
+
+    sendButton.innerText =
+        "WAIT...";
+
+
+    addMessage(
+        "Ada",
+        "One moment..."
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/chat",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        message:
+                            message,
+
+                        service:
+                            selectedService,
+
+                        activate_intelligence:
+                            true
+
+                    })
+                }
+            );
+
+
+        let result;
+
+
+        try {
+
+            result =
+                await response.json();
+
+        } catch (jsonError) {
+
+            throw new Error(
+                "Ada returned an invalid server response."
+            );
+
+        }
+
+
+        const chatArea =
+            document.getElementById(
+                "chatArea"
+            );
+
+
+        const messages =
+            chatArea.querySelectorAll(
+                ".message"
+            );
+
+
+        if (messages.length > 0) {
+
+            const lastMessage =
+                messages[
+                    messages.length - 1
+                ];
+
+
+            if (
+                lastMessage
+                    .querySelector(
+                        ".message-label"
+                    )
+                    ?.innerText === "ADA"
+            ) {
+
+                chatArea.removeChild(
+                    lastMessage
+                );
+
+            }
+
+        }
+
+
+        if (
+            result &&
+            result.price !== undefined
+        ) {
+
+            displayPrice(
+                result.price
+            );
+
+        }
+
+
+        if (
+            response.ok &&
+            result &&
+            result.success
+        ) {
+
+            addMessage(
+                "Ada",
+                result.response ||
+                "I have received that. Let’s continue."
+            );
+
+        } else {
+
+            addMessage(
+                "Ada",
+                result.error ||
+                "I’m having trouble processing that right now. Please try again."
+            );
+
+        }
+
+    } catch (error) {
+
+        const chatArea =
+            document.getElementById(
+                "chatArea"
+            );
+
+
+        const messages =
+            chatArea.querySelectorAll(
+                ".message"
+            );
+
+
+        if (messages.length > 0) {
+
+            const lastMessage =
+                messages[
+                    messages.length - 1
+                ];
+
+
+            if (
+                lastMessage
+                    .querySelector(
+                        ".message-label"
+                    )
+                    ?.innerText === "ADA"
+            ) {
+
+                chatArea.removeChild(
+                    lastMessage
+                );
+
+            }
+
+        }
+
 
         addMessage(
             "Ada",
             "I could not connect to my Business Center service right now. Please try again."
         );
+
 
         console.error(
             "Ada connection error:",
@@ -917,7 +1447,9 @@ async function sendMessage() {
 
         sendButton.innerText =
             "SEND";
+
     }
+
 }
 
 
@@ -941,7 +1473,9 @@ document
                 event.preventDefault();
 
                 sendMessage();
+
             }
+
         }
     );
 
@@ -957,6 +1491,7 @@ function openFilePicker() {
             "fileInput"
         )
         .click();
+
 }
 
 
@@ -967,24 +1502,27 @@ function handleFileSelected(
     const file =
         event.target.files[0];
 
+
     if (!file) {
         return;
     }
+
 
     const status =
         document.getElementById(
             "uploadStatus"
         );
 
+
     status.classList.add(
         "show"
     );
 
+
     status.innerText =
         "File selected: " +
-        file.name +
-        "\n\n" +
-        "Your file is ready to be connected to Ada's document workflow.";
+        file.name;
+
 
     addMessage(
         "You",
@@ -992,12 +1530,16 @@ function handleFileSelected(
         file.name
     );
 
+
+    addMessage(
+        "Ada",
+        "I have received your file. I’ll use it as part of your request and continue from there."
+    );
+
+
     /*
-     * The actual document/OCR upload endpoint
-     * will be connected separately.
-     *
-     * We do NOT pretend that the file was
-     * processed when it has only been selected.
+     * The existing upload/OCR/document
+     * workflow remains separate.
      */
 }
 
@@ -1008,23 +1550,15 @@ function handleFileSelected(
 
 function openVoice() {
 
-    /*
-     * Open the existing phone voice bridge.
-     *
-     * Because this workspace and the bridge
-     * may be hosted separately, the URL can
-     * be supplied using:
-     *
-     * ?voice=YOUR_VOICE_URL
-     */
-
     const params =
         new URLSearchParams(
             window.location.search
         );
 
+
     const voiceUrl =
         params.get("voice");
+
 
     if (voiceUrl) {
 
@@ -1032,48 +1566,107 @@ function openVoice() {
             voiceUrl;
 
         return;
+
     }
+
 
     addMessage(
         "Ada",
-        "Voice is available through the Ada voice bridge. The voice bridge URL has not yet been connected to this workspace."
+        "Voice is available through the Ada voice service. The voice connection is not yet connected to this page."
     );
+
 }
 
 
 /* ========================================================
-   REVIEW DOCUMENT
+   REVIEW
 ======================================================== */
 
 function reviewDocument() {
 
     addMessage(
         "You",
-        "I want to review my document."
+        "I want to review my work."
     );
+
+
+    try {
+
+        if (
+            window.parent &&
+            window.parent.adaWorkspace &&
+            typeof
+            window.parent.adaWorkspace.review_document
+            === "function"
+        ) {
+
+            window.parent.adaWorkspace.review_document();
+
+            return;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Review workflow error:",
+            error
+        );
+
+    }
+
 
     addMessage(
         "Ada",
-        "Your document review stage will appear here when your job reaches the review stage."
+        "Your work is ready for you to check. Please look through it carefully and tell me if anything needs to be corrected or changed."
     );
+
 }
 
 
 /* ========================================================
-   APPROVE DOCUMENT
+   APPROVE
 ======================================================== */
 
 function approveDocument() {
 
     addMessage(
         "You",
-        "I approve the document."
+        "I approve the work."
     );
+
+
+    try {
+
+        if (
+            window.parent &&
+            window.parent.adaWorkspace &&
+            typeof
+            window.parent.adaWorkspace.approve_document
+            === "function"
+        ) {
+
+            window.parent.adaWorkspace.approve_document();
+
+            return;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Approval workflow error:",
+            error
+        );
+
+    }
+
 
     addMessage(
         "Ada",
-        "Your approval request has been received. Ada will continue the job workflow when the document is ready for approval."
+        "Thank you. Your approval has been received and the request can move to the next stage."
     );
+
 }
 
 
@@ -1088,25 +1681,39 @@ function openPayment() {
             "pricingBox"
         );
 
+
     pricingBox.classList.add(
         "show"
     );
 
-    document.getElementById(
-        "pricingText"
-    ).innerText =
-        "Your payment information will appear here when Ada has determined that your job is ready for payment.\n\n" +
-        "Payment confirmation is required before a completed document can be downloaded.";
+
+    if (
+        !document
+            .getElementById(
+                "pricingText"
+            )
+            .innerText
+    ) {
+
+        document.getElementById(
+            "pricingText"
+        ).innerText =
+            "Your payment information will appear here when your request reaches the payment stage.";
+
+    }
+
 
     addMessage(
         "You",
         "I want to check Payment & Download."
     );
 
+
     addMessage(
         "Ada",
-        "Payment information will be shown here when your job reaches the payment stage."
+        "I’ll take care of the payment stage when your request is ready for it."
     );
+
 }
 
 
@@ -1121,10 +1728,12 @@ function contactCustomerService() {
         "I want to contact Customer Service."
     );
 
+
     addMessage(
         "Ada",
         "Customer Service can assist with questions, complaints and payment confirmation."
     );
+
 }
 
 
@@ -1133,6 +1742,8 @@ function contactCustomerService() {
 ======================================================== */
 
 getSelectedService();
+
+startAdaIntelligence();
 
 </script>
 
