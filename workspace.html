@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -259,17 +259,14 @@
 <body>
 
 <div class="page">
-
     <main class="workspace">
 
         <section class="header">
-
             <div class="brand">
                 NAIJA POCKET BUSINESS CENTER
             </div>
 
             <div class="selected-service">
-
                 <div class="selected-service-label">
                     SELECTED SERVICE
                 </div>
@@ -285,9 +282,7 @@
                     id="servicePrice"
                     class="service-price"
                 ></div>
-
             </div>
-
         </section>
 
         <section
@@ -380,7 +375,6 @@
         </div>
 
     </main>
-
 </div>
 
 <script>
@@ -410,14 +404,12 @@ function getSelectedService() {
             localStorage.getItem(
                 "selectedService"
             ) || "";
-
     }
 
     if (!selectedService) {
 
         selectedService =
             "Service not selected";
-
     }
 
     document.getElementById(
@@ -534,6 +526,11 @@ async function sendToAda(
         );
     }
 
+
+    /* ========================================================
+       SERVICE PRICE
+    ======================================================== */
+
     if (
         result &&
         result.price !== undefined
@@ -552,6 +549,13 @@ async function sendToAda(
                 : "SERVICE PRICE: ₦" + price;
     }
 
+
+    /* ========================================================
+       IMPORTANT FIX:
+       Flask returns "reply".
+       Also accept response/message.
+    ======================================================== */
+
     if (
         response.ok &&
         result &&
@@ -559,7 +563,9 @@ async function sendToAda(
     ) {
 
         return (
+            result.reply ||
             result.response ||
+            result.message ||
             "Ada is ready to help you."
         );
     }
@@ -576,10 +582,6 @@ async function sendToAda(
 
 /* ============================================================
    AUTOMATIC ADA ACTIVATION
-
-   THIS HAPPENS WHEN THE WORKSPACE OPENS.
-
-   THE CUSTOMER DOES NOT HAVE TO TYPE FIRST.
 ============================================================ */
 
 async function startAdaIntelligence() {
@@ -603,12 +605,6 @@ async function startAdaIntelligence() {
 
         return;
     }
-
-
-    /*
-       Ada is activated by the selected service.
-       The customer has not typed anything yet.
-    */
 
     try {
 
@@ -646,8 +642,6 @@ async function startAdaIntelligence() {
 
 /* ============================================================
    CUSTOMER MESSAGE
-
-   THIS HAPPENS AFTER ADA HAS ALREADY STARTED.
 ============================================================ */
 
 async function sendMessage() {
@@ -748,7 +742,6 @@ document
 
                 sendMessage();
             }
-
         }
     );
 
@@ -831,8 +824,11 @@ function openVoice() {
 async function reviewDocument() {
 
     await performAdaAction(
+
         "I want to review my work.",
+
         "The customer wants to review the current work. Continue the active service request and explain the next appropriate step.",
+
         "review"
     );
 }
@@ -845,8 +841,11 @@ async function reviewDocument() {
 async function approveDocument() {
 
     await performAdaAction(
+
         "I approve the work.",
+
         "The customer has approved the current work. Continue with the next appropriate step. Do not claim payment has been completed.",
+
         "approve"
     );
 }
@@ -859,8 +858,11 @@ async function approveDocument() {
 async function openPayment() {
 
     await performAdaAction(
+
         "I want to continue with Payment & Download.",
+
         "The customer wants to continue with Payment and Download. Explain the next appropriate payment or delivery step. Do not claim payment is completed unless confirmed.",
+
         "payment_download"
     );
 }
@@ -873,15 +875,18 @@ async function openPayment() {
 async function contactCustomerService() {
 
     await performAdaAction(
+
         "I want help from Customer Service.",
+
         "The customer wants Customer Service assistance. Ask what help the customer needs.",
+
         "customer_service"
     );
 }
 
 
 /* ============================================================
-   COMMON ACTION
+   COMMON ADA ACTION
 ============================================================ */
 
 async function performAdaAction(
@@ -937,13 +942,11 @@ async function performAdaAction(
 
 /* ============================================================
    START WORKSPACE
-
    SERVICE IS ALREADY SELECTED.
    ADA STARTS AUTOMATICALLY.
 ============================================================ */
 
 getSelectedService();
-
 startAdaIntelligence();
 
 </script>
