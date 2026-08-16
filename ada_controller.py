@@ -1,100 +1,229 @@
+
 """
 ada_controller.py
 
-Connection Controller for
-Ada
+Connection Controller for Ada
 Naija Pocket Business Center
+
+PRIMARY INTELLIGENCE
+--------------------
+AdaAIEngine V8 / Groq
+
+The controller sends the customer's message
+and selected Workspace service directly to
+AdaAIEngine.
 """
 
-from assistant_intelligence import AssistantIntelligence
-from ada_intelligence_extension import AdaIntelligenceExtension
-from ada_intelligence_extension_extra import AdaIntelligenceExtensionExtra
-from ada_workflow import AdaWorkflow
-from ada_workflow_extension import AdaWorkflowExtension
+from ada_ai_engine import AdaAIEngine
 
 
 class AdaController:
 
+    # ==========================================================
+    # INITIALIZE
+    # ==========================================================
     def __init__(self):
 
-        self.intelligence = AssistantIntelligence()
+        print()
+        print("=" * 60)
+        print("ADA CONTROLLER")
+        print("=" * 60)
 
-        self.extension = AdaIntelligenceExtension()
+        self.intelligence = AdaAIEngine()
 
-        self.extra_extension = AdaIntelligenceExtensionExtra()
+        print("Primary Intelligence: AdaAIEngine V8")
+        print(
+            "Groq Connected:",
+            self.intelligence.is_connected()
+        )
 
-        self.workflow = AdaWorkflow()
+        print("=" * 60)
+        print()
 
-        self.workflow_extension = AdaWorkflowExtension()
+    # ==========================================================
+    # PROCESS CUSTOMER MESSAGE
+    # ==========================================================
+    def process_message(
+        self,
+        message,
+        service=None
+    ):
 
-        self.extension_services = {
-            "cv_preparation",
-            "cover_letter",
-            "research_assistance",
-            "business_proposal",
-            "seminar_paper",
-            "business_letter",
-            "company_profile",
-            "invoice",
-            "quotation",
-            "meeting_minutes",
-            "ai_writing",
-            "rewrite_document",
-            "explain_topic",
-            "voice_to_text",
-            "image_to_text"
-        }
-
-    def process_message(self, message):
-
-        result = self.intelligence.understand_customer(message)
-
-        intent = result["intent"]
-
-        if intent == "unknown":
-            intent = self.extension.detect_extra_intent(message)
-
-        if intent == "unknown":
-            intent = self.extra_extension.detect_extra_intent(message)
-
-        if intent == "unknown":
+        if not message:
             return (
-                "No wahala.\n\n"
-                "I no understand that request yet.\n\n"
-                "Kindly tell me what you would like me to help you with."
+                "Please tell me what you need "
+                "help with."
             )
 
-        if intent in self.extension_services:
-            return self.workflow_extension.create_workflow(intent)
+        message = str(message).strip()
 
-        reply = self.workflow.create_workflow(intent)
-
-        if reply is None:
+        if not message:
             return (
-                "No wahala.\n\n"
-                "That service has not been configured yet."
+                "Please tell me what you need "
+                "help with."
             )
 
-        return reply
+        # ------------------------------------------------------
+        # SELECTED SERVICE
+        # ------------------------------------------------------
+
+        selected_service = None
+
+        if service:
+
+            service_text = str(service).strip()
+
+            if (
+                service_text
+                and service_text.lower()
+                != "service not selected"
+            ):
+                selected_service = service_text
+
+        # ------------------------------------------------------
+        # LOG REQUEST
+        # ------------------------------------------------------
+
+        print()
+        print("=" * 60)
+        print("ADA CONTROLLER REQUEST")
+        print("=" * 60)
+        print(
+            "Selected Service:",
+            selected_service
+        )
+        print(
+            "Customer Message:",
+            message
+        )
+        print("=" * 60)
+        print()
+
+        # ------------------------------------------------------
+        # SEND DIRECTLY TO ADA AI ENGINE
+        # ------------------------------------------------------
+
+        try:
+
+            response = self.intelligence.process_message(
+                customer_message=message,
+                service=selected_service
+            )
+
+        except Exception as error:
+
+            print()
+            print("=" * 60)
+            print("ADA AI ENGINE ERROR")
+            print("=" * 60)
+            print("Error:", repr(error))
+            print("=" * 60)
+            print()
+
+            return (
+                "No wahala. "
+                "I ran into a temporary problem "
+                "while processing your request. "
+                "Please try again."
+            )
+
+        # ------------------------------------------------------
+        # SAFETY FALLBACK
+        # ------------------------------------------------------
+
+        if response is None:
+
+            return (
+                "No wahala. "
+                "I received your request, "
+                "but Ada could not generate "
+                "a response yet."
+            )
+
+        response = str(response).strip()
+
+        if not response:
+
+            return (
+                "No wahala. "
+                "I received your request, "
+                "but Ada could not generate "
+                "a response yet."
+            )
+
+        return response
+
+    # ==========================================================
+    # ACTIVE SERVICE
+    # ==========================================================
+    def set_active_service(self, service):
+
+        if not service:
+            return False
+
+        return self.intelligence.set_active_service(
+            service
+        )
+
+    # ==========================================================
+    # GET ACTIVE SERVICE
+    # ==========================================================
+    def get_active_service(self):
+
+        return self.intelligence.get_active_service()
+
+    # ==========================================================
+    # RESET ADA JOB
+    # ==========================================================
+    def reset_job(self):
+
+        self.intelligence.reset_job()
+
+    # ==========================================================
+    # JOB STATUS
+    # ==========================================================
+    def get_job_state(self):
+
+        return self.intelligence.get_job_state()
 
 
+# ==============================================================
+# TEST
+# ==============================================================
 if __name__ == "__main__":
 
     ada = AdaController()
 
-    print("Ada Controller Test")
-
-    print("=" * 40)
+    print()
+    print("=" * 60)
+    print("ADA CONTROLLER TEST")
+    print("=" * 60)
 
     while True:
 
-        message = input("\nCustomer: ")
+        message = input(
+            "\nCustomer: "
+        ).strip()
 
         if message.lower() == "exit":
             break
 
-        print("\nAda:\n")
+        service = input(
+            "Selected service "
+            "(leave blank if none): "
+        ).strip()
+
+        if not service:
+            service = None
+
+        print()
+        print("Ada:")
+        print()
 
         print(
-            ada.process_message(message)
+            ada.process_message(
+                message,
+                service=service
+            )
         ) 
+
