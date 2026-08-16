@@ -1,49 +1,139 @@
+
+"""
+phone_bridge.py
+
+Naija Pocket Business Center
+Website / Phone → Ada Bridge
+
+ARCHITECTURE
+------------
+Customer Website
+       ↓
+Cloudflare Worker
+       ↓
+Flask /api/chat
+       ↓
+AdaController
+       ↓
+AdaAIEngine V8
+       ↓
+Groq
+       ↓
+Ada response
+       ↓
+Website
+
+This file also preserves the existing phone voice
+recording bridge.
+
+IMPORTANT
+---------
+• AdaController remains the controller.
+• AdaAIEngine V8 remains the primary intelligence.
+• Groq remains the AI provider.
+• This file does NOT perform OCR.
+• This file does NOT use NumPy.
+• This file does NOT use OpenCV.
+• This file does NOT use sounddevice.
+• This file does NOT replace Ada's intelligence.
+"""
+
 import os
 import uuid
 import datetime
 
-from flask import Flask, request, jsonify, render_template_string
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    render_template_string
+)
+
+from flask_cors import CORS
+
+from ada_controller import AdaController
 
 
-# ============================================================
-# NAIJA POCKET BUSINESS CENTER
-# PHONE TO ADA VOICE BRIDGE
-# ============================================================
+# ==========================================================
+# CONFIGURATION
+# ==========================================================
 
 HOST = "0.0.0.0"
 PORT = 8080
 
 AUDIO_FOLDER = "phone_voice_records"
 
-os.makedirs(AUDIO_FOLDER, exist_ok=True)
+os.makedirs(
+    AUDIO_FOLDER,
+    exist_ok=True
+)
+
+
+# ==========================================================
+# FLASK APPLICATION
+# ==========================================================
 
 app = Flask(__name__)
 
+CORS(app)
 
-# ============================================================
-# PHONE VOICE PAGE
-# ============================================================
+
+# ==========================================================
+# ADA CONTROLLER
+# ==========================================================
+
+print()
+print("=" * 60)
+print("NAIJA POCKET BUSINESS CENTER")
+print("STARTING ADA CONNECTION")
+print("=" * 60)
+print()
+
+try:
+    ada_controller = AdaController()
+
+    print(
+        "Ada Controller loaded successfully."
+    )
+
+except Exception as error:
+
+    ada_controller = None
+
+    print()
+    print("=" * 60)
+    print("ADA CONTROLLER STARTUP ERROR")
+    print("=" * 60)
+
+    print(
+        "Error:",
+        repr(error)
+    )
+
+    print("=" * 60)
+    print()
+
+
+# ==========================================================
+# CUSTOMER PHONE PAGE
+# ==========================================================
 
 PHONE_PAGE = """
 <!DOCTYPE html>
-<html lang="en">
+
+<html>
 
 <head>
 
-<meta charset="UTF-8">
-
 <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width,
+             initial-scale=1.0"
 >
 
 <title>Ada Voice</title>
 
 <style>
-
-* {
-    box-sizing: border-box;
-}
 
 body {
     background: #0B0B0B;
@@ -51,11 +141,9 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 25px;
-    margin: 0;
 }
 
 .container {
-    width: 100%;
     max-width: 500px;
     margin: auto;
 }
@@ -64,12 +152,17 @@ h1 {
     margin-bottom: 8px;
 }
 
+.subtitle {
+    margin-bottom: 20px;
+}
+
 .status {
     background: white;
     color: black;
     padding: 20px;
     border-radius: 10px;
     margin: 25px 0;
+    font-size: 16px;
 }
 
 button {
@@ -80,7 +173,6 @@ button {
     border-radius: 8px;
     font-size: 16px;
     font-weight: bold;
-    cursor: pointer;
 }
 
 .start {
@@ -98,7 +190,7 @@ button {
     color: white;
 }
 
-.again {
+.record-again {
     background: #777777;
     color: white;
 }
@@ -110,7 +202,6 @@ button {
 
 button:disabled {
     opacity: 0.45;
-    cursor: not-allowed;
 }
 
 audio {
@@ -128,33 +219,31 @@ audio {
 
 </head>
 
-
 <body>
 
 <div class="container">
 
-<h1>Talk to Ada</h1>
+<h1>🎤 Talk to Ada</h1>
 
-<p>Naija Pocket Business Center</p>
-
+<p class="subtitle">
+Naija Pocket Business Center
+</p>
 
 <div class="status">
 
 <div id="status">
-Ready to record your message.
+Ready to record your message for Ada.
 </div>
 
 </div>
-
 
 <button
     id="startButton"
     class="start"
     onclick="startRecording()"
 >
-Start Recording
+🎙 Start Recording
 </button>
-
 
 <button
     id="stopButton"
@@ -162,15 +251,13 @@ Start Recording
     onclick="stopRecording()"
     disabled
 >
-Stop Recording
+⏹ Stop Recording
 </button>
-
 
 <audio
     id="audioPlayer"
     controls
 ></audio>
-
 
 <button
     id="playButton"
@@ -178,19 +265,17 @@ Stop Recording
     onclick="playRecording()"
     disabled
 >
-Play Recording
+▶ Play Recording
 </button>
 
-
 <button
-    id="againButton"
-    class="again"
+    id="recordAgainButton"
+    class="record-again"
     onclick="recordAgain()"
     disabled
 >
-Record Again
+🔄 Record Again
 </button>
-
 
 <button
     id="sendButton"
@@ -198,9 +283,8 @@ Record Again
     onclick="sendToAda()"
     disabled
 >
-Send Recording to Ada
+🎤 Send Recording to Ada
 </button>
-
 
 <div id="result"></div>
 
@@ -210,73 +294,15 @@ Send Recording to Ada
 <script>
 
 let mediaRecorder = null;
-
 let audioChunks = [];
-
 let recordedBlob = null;
-
 let recordedUrl = null;
-
 let activeStream = null;
 
 
-function stopMicrophone() {
-
-    if (!activeStream) {
-        return;
-    }
-
-    activeStream
-        .getTracks()
-        .forEach(function(track) {
-            track.stop();
-        });
-
-    activeStream = null;
-}
-
-
-function clearRecording() {
-
-    recordedBlob = null;
-
-    audioChunks = [];
-
-    const player =
-        document.getElementById("audioPlayer");
-
-    player.pause();
-
-    player.removeAttribute("src");
-
-    player.load();
-
-    player.style.display = "none";
-
-
-    if (recordedUrl) {
-
-        URL.revokeObjectURL(recordedUrl);
-
-        recordedUrl = null;
-    }
-
-
-    document.getElementById(
-        "playButton"
-    ).disabled = true;
-
-
-    document.getElementById(
-        "againButton"
-    ).disabled = true;
-
-
-    document.getElementById(
-        "sendButton"
-    ).disabled = true;
-}
-
+// ==========================================================
+// FIND SUPPORTED AUDIO FORMAT
+// ==========================================================
 
 function getSupportedMimeType() {
 
@@ -286,29 +312,81 @@ function getSupportedMimeType() {
         "audio/mp4"
     ];
 
-
     for (const type of types) {
 
         if (
-            typeof MediaRecorder !== "undefined" &&
+            typeof MediaRecorder !== "undefined"
+            &&
             MediaRecorder.isTypeSupported(type)
         ) {
 
             return type;
-        }
-    }
 
+        }
+
+    }
 
     return "";
 }
 
+
+// ==========================================================
+// RESET RECORDED AUDIO
+// ==========================================================
+
+function clearRecording() {
+
+    recordedBlob = null;
+    audioChunks = [];
+
+    const player =
+        document.getElementById(
+            "audioPlayer"
+        );
+
+    player.pause();
+
+    player.removeAttribute(
+        "src"
+    );
+
+    player.style.display =
+        "none";
+
+    if (recordedUrl) {
+
+        URL.revokeObjectURL(
+            recordedUrl
+        );
+
+        recordedUrl = null;
+    }
+
+    document.getElementById(
+        "playButton"
+    ).disabled = true;
+
+    document.getElementById(
+        "recordAgainButton"
+    ).disabled = true;
+
+    document.getElementById(
+        "sendButton"
+    ).disabled = true;
+}
+
+
+// ==========================================================
+// START RECORDING
+// ==========================================================
 
 async function startRecording() {
 
     try {
 
         if (
-            !navigator.mediaDevices ||
+            !navigator.mediaDevices
+            ||
             !navigator.mediaDevices.getUserMedia
         ) {
 
@@ -320,19 +398,15 @@ async function startRecording() {
             return;
         }
 
-
         clearRecording();
-
 
         activeStream =
             await navigator.mediaDevices.getUserMedia({
                 audio: true
             });
 
-
         const mimeType =
             getSupportedMimeType();
-
 
         if (mimeType) {
 
@@ -347,22 +421,25 @@ async function startRecording() {
         } else {
 
             mediaRecorder =
-                new MediaRecorder(activeStream);
+                new MediaRecorder(
+                    activeStream
+                );
         }
 
-
         audioChunks = [];
-
 
         mediaRecorder.ondataavailable =
             function(event) {
 
                 if (
-                    event.data &&
+                    event.data
+                    &&
                     event.data.size > 0
                 ) {
 
-                    audioChunks.push(event.data);
+                    audioChunks.push(
+                        event.data
+                    );
                 }
             };
 
@@ -371,9 +448,9 @@ async function startRecording() {
             function() {
 
                 const finalType =
-                    mediaRecorder.mimeType ||
+                    mediaRecorder.mimeType
+                    ||
                     "audio/webm";
-
 
                 recordedBlob =
                     new Blob(
@@ -383,54 +460,50 @@ async function startRecording() {
                         }
                     );
 
-
-                if (recordedUrl) {
-
-                    URL.revokeObjectURL(
-                        recordedUrl
-                    );
-                }
-
-
                 recordedUrl =
                     URL.createObjectURL(
                         recordedBlob
                     );
-
 
                 const player =
                     document.getElementById(
                         "audioPlayer"
                     );
 
+                player.src =
+                    recordedUrl;
 
-                player.src = recordedUrl;
-
-                player.style.display = "block";
-
+                player.style.display =
+                    "block";
 
                 document.getElementById(
                     "playButton"
                 ).disabled = false;
 
-
                 document.getElementById(
-                    "againButton"
+                    "recordAgainButton"
                 ).disabled = false;
-
 
                 document.getElementById(
                     "sendButton"
                 ).disabled = false;
 
-
                 document.getElementById(
                     "status"
                 ).innerText =
-                    "Recording ready. You can play it or send it to Ada.";
+                    "✅ Recording ready. You can play it or send it to Ada.";
 
+                if (activeStream) {
 
-                stopMicrophone();
+                    activeStream
+                        .getTracks()
+                        .forEach(
+                            track =>
+                                track.stop()
+                        );
+
+                    activeStream = null;
+                }
             };
 
 
@@ -441,50 +514,55 @@ async function startRecording() {
             "startButton"
         ).disabled = true;
 
-
         document.getElementById(
             "stopButton"
         ).disabled = false;
-
 
         document.getElementById(
             "playButton"
         ).disabled = true;
 
-
         document.getElementById(
-            "againButton"
+            "recordAgainButton"
         ).disabled = true;
-
 
         document.getElementById(
             "sendButton"
         ).disabled = true;
 
-
-        document.getElementById(
-            "result"
-        ).innerText = "";
-
-
         document.getElementById(
             "status"
         ).innerText =
-            "Recording. Speak normally to Ada.";
+            "🎙 Recording... Speak normally to Ada.";
 
 
     } catch (error) {
 
-        stopMicrophone();
-
-
         document.getElementById(
             "status"
         ).innerText =
-            "Microphone access failed. Please allow microphone access and try again.";
+            "Microphone error: "
+            +
+            error.message;
+
+        if (activeStream) {
+
+            activeStream
+                .getTracks()
+                .forEach(
+                    track =>
+                        track.stop()
+                );
+
+            activeStream = null;
+        }
     }
 }
 
+
+// ==========================================================
+// STOP RECORDING
+// ==========================================================
 
 function stopRecording() {
 
@@ -492,17 +570,16 @@ function stopRecording() {
         return;
     }
 
-
-    if (mediaRecorder.state === "recording") {
+    if (
+        mediaRecorder.state === "recording"
+    ) {
 
         mediaRecorder.stop();
     }
 
-
     document.getElementById(
         "startButton"
     ).disabled = false;
-
 
     document.getElementById(
         "stopButton"
@@ -510,55 +587,55 @@ function stopRecording() {
 }
 
 
+// ==========================================================
+// PLAY RECORDING
+// ==========================================================
+
 function playRecording() {
-
-    if (!recordedBlob) {
-        return;
-    }
-
 
     const player =
         document.getElementById(
             "audioPlayer"
         );
 
+    if (!recordedBlob) {
+        return;
+    }
 
-    player.play().catch(function() {
-
-        document.getElementById(
-            "status"
-        ).innerText =
-            "Tap the play control to hear your recording.";
-    });
+    player.play();
 }
 
+
+// ==========================================================
+// RECORD AGAIN
+// ==========================================================
 
 function recordAgain() {
 
     clearRecording();
 
+    document.getElementById(
+        "status"
+    ).innerText =
+        "Ready to record again.";
 
     document.getElementById(
         "startButton"
     ).disabled = false;
 
-
     document.getElementById(
         "stopButton"
     ).disabled = true;
 
-
     document.getElementById(
         "result"
     ).innerText = "";
-
-
-    document.getElementById(
-        "status"
-    ).innerText =
-        "Ready to record again.";
 }
 
+
+// ==========================================================
+// SEND RECORDING TO ADA
+// ==========================================================
 
 async function sendToAda() {
 
@@ -566,47 +643,33 @@ async function sendToAda() {
         return;
     }
 
-
-    const sendButton =
-        document.getElementById(
-            "sendButton"
-        );
-
-
-    sendButton.disabled = true;
-
+    document.getElementById(
+        "sendButton"
+    ).disabled = true;
 
     document.getElementById(
         "status"
     ).innerText =
-        "Sending your recording to Ada...";
-
-
-    document.getElementById(
-        "result"
-    ).innerText = "";
+        "🎤 Sending your recording to Ada...";
 
 
     const formData =
         new FormData();
 
-
-    let extension = "webm";
-
-
-    if (
-        recordedBlob.type &&
+    const extension =
         recordedBlob.type.includes("mp4")
-    ) {
+        ? "mp4"
+        : "webm";
 
-        extension = "mp4";
-    }
-
+    const filename =
+        "ada_voice_message."
+        +
+        extension;
 
     formData.append(
         "audio",
         recordedBlob,
-        "ada_voice_message." + extension
+        filename
     );
 
 
@@ -622,68 +685,57 @@ async function sendToAda() {
             );
 
 
-        let result = null;
+        if (!response.ok) {
 
-
-        try {
-
-            result =
-                await response.json();
-
-        } catch (jsonError) {
-
-            result = {
-                success: false,
-                error:
-                    "The server returned an invalid response."
-            };
+            throw new Error(
+                "Server returned HTTP "
+                +
+                response.status
+            );
         }
 
 
-        if (
-            response.ok &&
-            result &&
-            result.success
-        ) {
+        const result =
+            await response.json();
+
+
+        if (result.success) {
 
             document.getElementById(
                 "status"
             ).innerText =
-                "Your recording has been received by Ada.";
-
+                "✅ Ada has received your recording.";
 
             document.getElementById(
                 "result"
             ).innerText =
-                "Voice message received successfully.";
-
+                "Your voice message has been received.";
 
             document.getElementById(
                 "playButton"
             ).disabled = true;
 
-
             document.getElementById(
-                "againButton"
+                "recordAgainButton"
             ).disabled = true;
-
 
         } else {
 
             document.getElementById(
                 "status"
             ).innerText =
-                "Ada could not receive the recording.";
-
+                "❌ Ada could not receive the recording.";
 
             document.getElementById(
                 "result"
             ).innerText =
-                (result && result.error) ||
-                "Please try again.";
+                result.error
+                ||
+                "Unknown upload error.";
 
-
-            sendButton.disabled = false;
+            document.getElementById(
+                "sendButton"
+            ).disabled = false;
         }
 
 
@@ -692,16 +744,16 @@ async function sendToAda() {
         document.getElementById(
             "status"
         ).innerText =
-            "Ada could not receive the recording.";
-
+            "❌ Connection error.";
 
         document.getElementById(
             "result"
         ).innerText =
-            "Please check the connection and try again.";
+            error.message;
 
-
-        sendButton.disabled = false;
+        document.getElementById(
+            "sendButton"
+        ).disabled = false;
     }
 }
 
@@ -713,179 +765,481 @@ async function sendToAda() {
 """
 
 
-# ============================================================
+# ==========================================================
 # HOME
-# ============================================================
+# ==========================================================
 
 @app.route("/")
 def home():
 
-    return render_template_string(PHONE_PAGE)
+    return render_template_string(
+        PHONE_PAGE
+    )
 
 
-# ============================================================
+# ==========================================================
 # HEALTH CHECK
-# ============================================================
+# ==========================================================
 
-@app.route("/health")
+@app.route(
+    "/health",
+    methods=["GET"]
+)
 def health():
 
-    return jsonify({
-        "success": True,
-        "service": "phone_bridge",
-        "status": "online"
-    })
+    return jsonify(
+        {
+            "success": True,
+            "service": "phone_bridge",
+            "status": "online",
+            "ada_controller_loaded":
+                ada_controller is not None
+        }
+    )
 
 
-# ============================================================
-# AUDIO UPLOAD
-# ============================================================
+# ==========================================================
+# ADA CHAT API
+# ==========================================================
 
-@app.route("/upload", methods=["POST"])
-def upload_audio():
+@app.route(
+    "/api/chat",
+    methods=["POST"]
+)
+def api_chat():
+
+    print()
+    print("=" * 60)
+    print("ADA CHAT REQUEST RECEIVED")
+    print("=" * 60)
+
+
+    # ------------------------------------------------------
+    # CHECK CONTROLLER
+    # ------------------------------------------------------
+
+    if ada_controller is None:
+
+        print(
+            "ERROR: AdaController is not loaded."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error":
+                    "Ada Controller is not available."
+            }
+        ), 500
+
+
+    # ------------------------------------------------------
+    # READ JSON
+    # ------------------------------------------------------
+
+    data = request.get_json(
+        silent=True
+    )
+
+    print(
+        "Request JSON:",
+        data
+    )
+
+
+    if not isinstance(data, dict):
+
+        print(
+            "ERROR: No valid JSON object received."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error":
+                    "No valid message data received."
+            }
+        ), 400
+
+
+    # ------------------------------------------------------
+    # ACCEPT COMMON MESSAGE FIELD NAMES
+    # ------------------------------------------------------
+
+    message = (
+        data.get("message")
+        or data.get("text")
+        or data.get("content")
+    )
+
+
+    if message is None:
+
+        print(
+            "ERROR: Message field missing."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error":
+                    "Message field is missing."
+            }
+        ), 400
+
+
+    message = str(
+        message
+    ).strip()
+
+
+    if not message:
+
+        print(
+            "ERROR: Empty message."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error":
+                    "Message cannot be empty."
+            }
+        ), 400
+
+
+    # ------------------------------------------------------
+    # SERVICE CONTEXT
+    # ------------------------------------------------------
+
+    service = (
+        data.get("service")
+        or data.get("selected_service")
+        or data.get("selectedService")
+    )
+
+
+    if service:
+
+        service = str(
+            service
+        ).strip()
+
+    else:
+
+        service = None
+
+
+    print(
+        "Website Service Context:",
+        service
+    )
+
+    print(
+        "Customer Message:",
+        message
+    )
+
+    print("=" * 60)
+
+
+    # ------------------------------------------------------
+    # SEND TO ADA CONTROLLER
+    # ------------------------------------------------------
 
     try:
 
-        if "audio" not in request.files:
-
-            return jsonify({
-                "success": False,
-                "error": "No recording was received."
-            }), 400
-
-
-        audio_file = request.files["audio"]
-
-
-        if not audio_file.filename:
-
-            return jsonify({
-                "success": False,
-                "error": "The recording was empty."
-            }), 400
-
-
-        original_name = audio_file.filename.lower()
-
-
-        if original_name.endswith(".mp4"):
-
-            extension = "mp4"
-
-        else:
-
-            extension = "webm"
-
-
-        timestamp = datetime.datetime.now().strftime(
-            "%Y%m%d_%H%M%S"
-        )
-
-
-        unique_id = uuid.uuid4().hex[:8]
-
-
-        filename = (
-            "ada_voice_"
-            + timestamp
-            + "_"
-            + unique_id
-            + "."
-            + extension
-        )
-
-
-        file_path = os.path.join(
-            AUDIO_FOLDER,
-            filename
-        )
-
-
-        audio_file.save(file_path)
-
-
-        if not os.path.exists(file_path):
-
-            raise RuntimeError(
-                "Recording could not be saved."
+        reply = (
+            ada_controller
+            .process_message(
+                message,
+                service=service
             )
-
-
-        file_size = os.path.getsize(file_path)
-
-
-        if file_size <= 0:
-
-            os.remove(file_path)
-
-            raise RuntimeError(
-                "The received recording was empty."
-            )
-
-
-        print()
-        print("=" * 60)
-        print("ADA VOICE RECORDING RECEIVED")
-        print("=" * 60)
-        print("File:", file_path)
-        print("Size:", file_size, "bytes")
-        print("=" * 60)
-        print()
-
-
-        return jsonify({
-            "success": True,
-            "filename": filename,
-            "message": "Voice recording received."
-        })
+        )
 
 
     except Exception as error:
 
         print()
         print("=" * 60)
-        print("ADA VOICE UPLOAD ERROR")
+        print("ADA CHAT ERROR")
         print("=" * 60)
-        print("Error:", repr(error))
+
+        print(
+            "Exception:",
+            repr(error)
+        )
+
         print("=" * 60)
         print()
 
+        return jsonify(
+            {
+                "success": False,
+                "error":
+                    "Ada encountered a temporary processing error.",
+                "details":
+                    str(error)
+            }
+        ), 500
 
-        return jsonify({
-            "success": False,
-            "error": "Ada could not receive the recording."
-        }), 500
+
+    # ------------------------------------------------------
+    # VALIDATE ADA RESPONSE
+    # ------------------------------------------------------
+
+    if reply is None:
+
+        print(
+            "ERROR: Ada returned None."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error":
+                    "Ada did not return a response."
+            }
+        ), 500
 
 
-# ============================================================
+    reply = str(
+        reply
+    ).strip()
+
+
+    if not reply:
+
+        print(
+            "ERROR: Ada returned an empty response."
+        )
+
+        return jsonify(
+            {
+                "success": False,
+                "error":
+                    "Ada returned an empty response."
+            }
+        ), 500
+
+
+    # ------------------------------------------------------
+    # SUCCESS
+    # ------------------------------------------------------
+
+    print()
+    print("=" * 60)
+    print("ADA RESPONSE SUCCESSFUL")
+    print("=" * 60)
+
+    print(
+        "Reply:",
+        reply
+    )
+
+    print("=" * 60)
+    print()
+
+
+    return jsonify(
+        {
+            "success": True,
+            "reply": reply,
+            "message": reply
+        }
+    ), 200
+
+
+# ==========================================================
+# RECEIVE PHONE AUDIO
+# ==========================================================
+
+@app.route(
+    "/upload",
+    methods=["POST"]
+)
+def upload_audio():
+
+    if "audio" not in request.files:
+
+        return jsonify(
+            {
+                "success": False,
+                "error":
+                    "No audio file received."
+            }
+        ), 400
+
+
+    audio_file = request.files[
+        "audio"
+    ]
+
+
+    if not audio_file.filename:
+
+        return jsonify(
+            {
+                "success": False,
+                "error":
+                    "Empty audio file."
+            }
+        ), 400
+
+
+    timestamp = (
+        datetime.datetime.now()
+        .strftime(
+            "%Y%m%d_%H%M%S"
+        )
+    )
+
+
+    unique_id = (
+        uuid.uuid4()
+        .hex[:8]
+    )
+
+
+    original_name = (
+        audio_file.filename
+        .lower()
+    )
+
+
+    if original_name.endswith(
+        ".mp4"
+    ):
+
+        extension = "mp4"
+
+    else:
+
+        extension = "webm"
+
+
+    filename = (
+        "ada_voice_"
+        +
+        timestamp
+        +
+        "_"
+        +
+        unique_id
+        +
+        "."
+        +
+        extension
+    )
+
+
+    file_path = os.path.join(
+        AUDIO_FOLDER,
+        filename
+    )
+
+
+    audio_file.save(
+        file_path
+    )
+
+
+    file_size = os.path.getsize(
+        file_path
+    )
+
+
+    print()
+    print("=" * 60)
+    print("ADA VOICE RECORDING RECEIVED")
+    print("=" * 60)
+
+    print(
+        "File:",
+        file_path
+    )
+
+    print(
+        "Size:",
+        file_size,
+        "bytes"
+    )
+
+    print("=" * 60)
+    print()
+
+
+    return jsonify(
+        {
+            "success": True,
+            "filename": filename,
+            "message":
+                "Voice recording received for Ada."
+        }
+    )
+
+
+# ==========================================================
 # START SERVER
-# ============================================================
+# ==========================================================
 
 if __name__ == "__main__":
 
     print()
     print("=" * 60)
     print("NAIJA POCKET BUSINESS CENTER")
-    print("PHONE TO ADA VOICE BRIDGE")
+    print("ADA WEBSITE / PHONE BRIDGE")
     print("=" * 60)
     print()
 
-    print("Local bridge:")
-    print("http://127.0.0.1:8080/")
+    print(
+        "Local bridge address:"
+    )
+
+    print(
+        f"http://127.0.0.1:{PORT}"
+    )
 
     print()
 
-    print("Direct network bridge:")
-    print("http://<VPS-IP>:8080/")
+    print(
+        "Network bridge address:"
+    )
+
+    print(
+        f"http://0.0.0.0:{PORT}"
+    )
 
     print()
 
-    print("Bridge is waiting for phone connection...")
+    print(
+        "Ada Controller:",
+        "READY"
+        if ada_controller is not None
+        else "NOT AVAILABLE"
+    )
+
     print()
 
+    print(
+        "Available API:"
+    )
+
+    print(
+        "POST /api/chat"
+    )
+
+    print()
+
+    print(
+        "Bridge is waiting for website connection..."
+    )
+
+    print()
 
     app.run(
         host=HOST,
         port=PORT,
-        debug=False
+        debug=True
     ) 
+
