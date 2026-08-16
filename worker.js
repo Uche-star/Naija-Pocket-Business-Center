@@ -3,14 +3,12 @@ export default {
     const url = new URL(request.url);
 
     // =====================================================
-    // API REQUESTS → FLASK /api/*
+    // API REQUESTS → RENDER / FLASK /api/*
     // =====================================================
     if (url.pathname.startsWith("/api/")) {
 
-      // IMPORTANT:
-      // We will put your public Flask/VPS address here
-      // once we confirm the current address.
-      const BACKEND_URL = "YOUR_FLASK_PUBLIC_URL";
+      const BACKEND_URL =
+        "https://naija-pocket-business-center.onrender.com";
 
       const backendUrl =
         BACKEND_URL.replace(/\/$/, "") +
