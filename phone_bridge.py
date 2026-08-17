@@ -131,7 +131,7 @@ except Exception as error:
 # ==========================================================
 #
 # IMPORTANT:
-# welcome.html must be in the same folder as this file.
+# index.html must be in the same folder as this file.
 #
 # "/" = CUSTOMER WELCOME PAGE
 #
@@ -144,7 +144,7 @@ def home():
     try:
 
         return render_template(
-            "welcome.html"
+            "index.html"
         )
 
     except Exception as error:
@@ -164,7 +164,7 @@ def home():
 
         return (
             "Welcome page could not be loaded. "
-            "Make sure welcome.html is in the project folder.",
+            "Make sure index.html is in the project folder.",
             500
         )
 
