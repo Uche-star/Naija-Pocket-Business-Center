@@ -1,2 +1,6 @@
 __pycache__/
 *.pyc
+ada_ai_config.py
+.env
+.venv/
+__pycache__/

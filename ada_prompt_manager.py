@@ -11,7 +11,8 @@ Responsibilities:
 - Load Nigerian Context Intelligence
 - Load service-specific prompts
 - Load writing styles
-- Load workflow, review and delivery rules
+- Load workflow and review rules
+- Load document delivery intelligence
 - Apply core business rules
 - Apply BillingManager rules supplied by AdaAIEngine
 
@@ -27,6 +28,7 @@ from cover_letter_prompt import COVER_LETTER_PROMPT
 from business_documents_prompt import BUSINESS_DOCUMENTS_PROMPT
 from academic_documents_prompt import ACADEMIC_DOCUMENTS_PROMPT
 from document_processing_prompt import DOCUMENT_PROCESSING_PROMPT
+
 from review_prompt import REVIEW_PROMPT
 from workflow_prompt import WORKFLOW_PROMPT
 from delivery_prompt import DELIVERY_PROMPT
@@ -73,6 +75,8 @@ class AdaPromptManager:
             "document_processing": DOCUMENT_PROCESSING_PROMPT,
             "review": REVIEW_PROMPT,
             "workflow": WORKFLOW_PROMPT,
+
+            # Dedicated document delivery intelligence
             "delivery": DELIVERY_PROMPT,
         }
 
@@ -81,7 +85,6 @@ class AdaPromptManager:
         # ----------------------------------------------
 
         self.writing_styles = {
-
             "cv":
                 GENERAL_STYLE
                 + "\n\n"
@@ -114,7 +117,7 @@ class AdaPromptManager:
                 ADA_STYLE,
 
             "delivery":
-                ADA_STYLE,
+                GENERAL_STYLE,
         }
 
     # ==================================================
@@ -245,7 +248,6 @@ Ada provides professional digital document
 services for customers.
 
 Default delivery formats are:
-
 • DOCX
 • PDF
 
@@ -262,7 +264,6 @@ CUSTOMER INFORMATION
 Use information supplied by the customer.
 
 Do not invent:
-
 • Names
 • Addresses
 • Phone numbers
@@ -308,21 +309,13 @@ BillingManager is the ONLY official source of
 Naija Pocket Business Center service prices.
 
 Never guess a price.
-
 Never estimate a price.
-
 Never create a market price.
-
 Never change a BillingManager price.
-
 Never increase a BillingManager price.
-
 Never reduce a BillingManager price.
-
 Never invent a discount.
-
 Never invent an additional charge.
-
 Never apologise for an official price.
 
 If BillingManager provides a fixed price,
@@ -444,11 +437,49 @@ It must never override actual customer information.
 
 BillingManager remains the sole authority for
 official service prices.
+
+==================================================
+WORKFLOW AND DELIVERY
+==================================================
+
+Ada may guide customers through the normal
+document workflow:
+
+• Request
+• Information gathering
+• Writing/preparation
+• Review
+• Revision
+• Approval
+• Payment
+• Delivery
+
+Delivery communication must remain clear,
+professional and customer-friendly.
+
+Do not claim that payment has been received,
+a document has been delivered, or a file is ready
+unless the application actually confirms that state.
+
+Default document delivery formats are DOCX and PDF.
+
+==================================================
+DELIVERY INTELLIGENCE
+==================================================
+
+The dedicated Document Delivery Prompt is also
+active and must be followed whenever Ada is handling
+final document delivery, release, receiving completed
+work, delivery problems, or printing-related delivery.
+
+The dedicated delivery instructions are supplied
+by delivery_prompt.py and are part of Ada's central
+prompt assembly.
 """
         )
 
         # ==================================================
-        # FINAL PROMPT
+        # 7. FINAL PROMPT
         # ==================================================
 
         return "\n\n".join(
@@ -471,6 +502,12 @@ if __name__ == "__main__":
 
     prompt = manager.build_prompt(
         service="cv"
+    )
+
+    delivery_prompt = (
+        manager.get_service_prompt(
+            "delivery"
+        )
     )
 
     print(
@@ -501,21 +538,60 @@ if __name__ == "__main__":
         )
     )
 
+    print(
+        "Review prompt loaded:",
+        bool(
+            manager.get_service_prompt(
+                "review"
+            )
+        )
+    )
+
+    print(
+        "Workflow prompt loaded:",
+        bool(
+            manager.get_service_prompt(
+                "workflow"
+            )
+        )
+    )
+
+    print(
+        "Delivery prompt loaded:",
+        bool(delivery_prompt)
+    )
+
+    print(
+        "Delivery prompt length:",
+        len(delivery_prompt)
+        if delivery_prompt
+        else 0
+    )
+
     print()
 
     print(
         "NIGERIAN CONTEXT PRESENT:",
-        "NIGERIAN CONTEXT"
-        in prompt
+        "NIGERIAN CONTEXT" in prompt
     )
 
     print(
         "BILLING RULES PRESENT:",
-        "BILLING RULES"
-        in prompt
+        "BILLING RULES" in prompt
+    )
+
+    print(
+        "WORKFLOW AND DELIVERY PRESENT:",
+        "WORKFLOW AND DELIVERY" in prompt
+    )
+
+    print(
+        "DELIVERY INTELLIGENCE PRESENT:",
+        "DELIVERY INTELLIGENCE" in prompt
     )
 
     print()
+
     print(
         "ADA PROMPT MANAGER READY"
     ) 
