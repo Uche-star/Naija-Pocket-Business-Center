@@ -1,20 +1,26 @@
 """
 ada_ai_engine.py
-Ada AI Engine V8
+Ada AI Engine V9
 Naija Pocket Business Center
 
 PRIMARY INTELLIGENCE:
     Groq
 
-IMPORTANT:
-This version does NOT require a specific API_KEY import name
-from ada_ai_config.py.
+MODEL:
+    Read from GROQ_MODEL environment variable.
+    Falls back to llama-3.3-70b-versatile.
 
-It safely reads the existing saved configuration.
+API KEY:
+    Read from GROQ_API_KEY environment variable.
+
+IMPORTANT:
+    This file DOES NOT import ada_ai_config.py.
+    The Groq API key must NEVER be stored in GitHub.
 """
 
+import os
+
 from groq import Groq
-import ada_ai_config
 
 from ada_prompt_manager import AdaPromptManager
 from ada_conversation_memory import AdaConversationMemory
@@ -53,32 +59,36 @@ class AdaAIEngine:
         self.connect()
 
     # ==================================================
-    # GET GROQ CONFIG
+    # GET GROQ API KEY
     # ==================================================
 
     def get_api_key(self):
         """
-        Read the API key from the existing ada_ai_config.py
-        without forcing a particular variable name.
+        Get the Groq API key from the environment.
+
+        Render:
+            GROQ_API_KEY
+
+        Local development:
+            GROQ_API_KEY
+
+        The key is never stored in this source file.
         """
 
         possible_names = [
-            "API_KEY",
             "GROQ_API_KEY",
             "GROQ_KEY",
-            "api_key",
-            "groq_api_key"
+            "API_KEY"
         ]
 
         for name in possible_names:
-            value = getattr(
-                ada_ai_config,
-                name,
-                None
-            )
+            value = os.getenv(name)
 
             if value:
-                return str(value).strip()
+                value = str(value).strip()
+
+                if value:
+                    return value
 
         return None
 
@@ -87,24 +97,30 @@ class AdaAIEngine:
     # ==================================================
 
     def get_model(self):
+        """
+        Read the Groq model from the environment.
+
+        Render variable:
+            GROQ_MODEL
+
+        Default:
+            llama-3.3-70b-versatile
+        """
+
         possible_names = [
-            "MODEL",
             "GROQ_MODEL",
-            "model",
-            "groq_model"
+            "MODEL"
         ]
 
         for name in possible_names:
-            value = getattr(
-                ada_ai_config,
-                name,
-                None
-            )
+            value = os.getenv(name)
 
             if value:
-                return str(value).strip()
+                value = str(value).strip()
 
-        # Safe fallback
+                if value:
+                    return value
+
         return "llama-3.3-70b-versatile"
 
     # ==================================================
@@ -118,8 +134,9 @@ class AdaAIEngine:
             if not api_key:
                 print(
                     "Groq Connection Error: "
-                    "No API key found in ada_ai_config.py"
+                    "GROQ_API_KEY environment variable was not found."
                 )
+
                 self.connected = False
                 return False
 
@@ -129,14 +146,16 @@ class AdaAIEngine:
 
             self.connected = True
 
+            print("Groq Connected: True")
             print(
-                "Groq Connected: True"
+                "Groq Model:",
+                self.get_model()
             )
 
             return True
 
         except Exception as error:
-
+            self.client = None
             self.connected = False
 
             print(
@@ -172,13 +191,8 @@ class AdaAIEngine:
         if not extracted_text:
             return False
 
-        self.active_document_text = (
-            extracted_text
-        )
-
-        self.active_document_path = (
-            file_path
-        )
+        self.active_document_text = extracted_text
+        self.active_document_path = file_path
 
         return True
 
@@ -199,7 +213,6 @@ class AdaAIEngine:
     # ==================================================
 
     def normalize_service(self, service):
-
         if not service:
             return None
 
@@ -209,7 +222,6 @@ class AdaAIEngine:
             )
 
         except Exception as error:
-
             print(
                 "Service Normalization Error:",
                 repr(error)
@@ -222,9 +234,7 @@ class AdaAIEngine:
     # ==================================================
 
     def service_exists(self, service):
-
         try:
-
             normalized = self.normalize_service(
                 service
             )
@@ -234,7 +244,6 @@ class AdaAIEngine:
             )
 
         except Exception:
-
             return False
 
     # ==================================================
@@ -242,7 +251,6 @@ class AdaAIEngine:
     # ==================================================
 
     def get_service_price(self, service):
-
         normalized = self.normalize_service(
             service
         )
@@ -256,11 +264,9 @@ class AdaAIEngine:
     # ==================================================
 
     def get_billing_rules(self):
-
         services = []
 
         try:
-
             price_list = (
                 self.billing.get_price_list()
             )
@@ -300,7 +306,6 @@ class AdaAIEngine:
                     )
 
         except Exception as error:
-
             print(
                 "Billing Rules Error:",
                 repr(error)
@@ -404,13 +409,11 @@ class AdaAIEngine:
         messages = []
 
         try:
-
             stored_messages = (
                 self.memory.messages
             )
 
         except Exception as error:
-
             print(
                 "Memory Access Error:",
                 repr(error)
@@ -440,7 +443,6 @@ class AdaAIEngine:
                 )
 
                 if content:
-
                     messages.append(
                         {
                             "role": "user",
@@ -458,7 +460,6 @@ class AdaAIEngine:
                 )
 
                 if content:
-
                     messages.append(
                         {
                             "role": "assistant",
@@ -873,6 +874,7 @@ Use ONLY this official BillingManager information:
 {price_information}
 
 Rules:
+
 - Never change the official price.
 - Never invent another amount.
 - Never estimate.
@@ -906,9 +908,16 @@ Return ONLY the customer-facing response.
 
         if not self.connected:
 
-            return self.billing.bill_message(
-                normalized_service
-            )
+            try:
+                return self.billing.bill_message(
+                    normalized_service
+                )
+            except Exception:
+                return (
+                    f"The official price for "
+                    f"{service_name} is "
+                    f"₦{amount:,}."
+                )
 
         try:
 
@@ -945,9 +954,17 @@ Return ONLY the customer-facing response.
                 repr(error)
             )
 
-        return self.billing.bill_message(
-            normalized_service
-        )
+        try:
+            return self.billing.bill_message(
+                normalized_service
+            )
+        except Exception:
+
+            return (
+                f"The official price for "
+                f"{service_name} is "
+                f"₦{amount:,}."
+            )
 
     # ==================================================
     # SEND MESSAGE TO GROQ
@@ -1418,6 +1435,7 @@ CUSTOMER INTERVIEW:
 {document_context}
 
 Rules:
+
 - Use ONLY information supplied by customer.
 - If a document is supplied, use its text.
 - Do NOT ask for text that is already available.
@@ -1432,52 +1450,17 @@ Rules:
 - Do not summarize when asked to type.
 - Do not rewrite when asked to type.
 - Follow the selected service prompt.
-- Return ONLY the completed document.
-"""
 
-        draft = (
-            self.generate_response(
-                customer_message=writer_prompt,
-                temperature=0.3,
-                service=active_service
-            )
-        )
-
-        self.job_state[
-            "draft_generated"
-        ] = True
-
-        return draft
-
-    # ==================================================
-    # NIGERIAN DOCUMENT EDITOR
-    # ==================================================
-
-    def edit_document(self, draft):
-
-        editor_prompt = f"""
-You are Ada's Senior Nigerian Document Editor.
-
-Improve the document below.
-
-Rules:
-- Preserve every customer fact.
-- Never invent information.
-- Correct grammar where appropriate.
-- Improve formatting.
-- Improve professionalism where requested.
-- Do not change the customer's meaning.
-- If this is a typing job, preserve wording.
-- Use modern Nigerian professional English.
-- Return ONLY the finished document.
-
-DOCUMENT:
-
-{draft}
+Return ONLY the finished document.
 """
 
         if not self.connected:
-            return draft
+
+            return (
+                "Ada is temporarily unable to prepare "
+                "the document because the intelligence "
+                "service is not connected."
+            )
 
         try:
 
@@ -1490,64 +1473,206 @@ DOCUMENT:
                     messages=[
                         {
                             "role": "system",
-                            "content": editor_prompt
+                            "content": self.get_system_prompt(
+                                active_service
+                            )
+                        },
+                        {
+                            "role": "user",
+                            "content": writer_prompt
                         }
                     ],
                     temperature=0.4
                 )
             )
 
-            final_document = (
+            draft = (
                 response
                 .choices[0]
                 .message
                 .content
-                .strip()
             )
 
-            self.job_state[
-                "awaiting_review"
-            ] = True
+            if draft:
 
-            return final_document
+                self.job_state[
+                    "draft_generated"
+                ] = True
+
+                self.job_state[
+                    "awaiting_review"
+                ] = True
+
+                return draft.strip()
+
+            return (
+                "I couldn't prepare the document draft."
+            )
 
         except Exception as error:
 
             print(
-                "Editor Error:",
+                "Document Draft Error:",
                 repr(error)
             )
 
-            return draft
+            return (
+                "I'm having a temporary problem "
+                "preparing the document. "
+                "Please try again."
+            )
 
+    # ==================================================
+    # REVISE DOCUMENT
+    # ==================================================
 
-# ==========================================================
-# TEST
-# ==========================================================
+    def revise_document(
+        self,
+        current_draft,
+        revision_request,
+        service=None
+    ):
 
-if __name__ == "__main__":
+        active_service = (
+            self.normalize_service(
+                service
+            )
+            or self.get_active_service()
+        )
 
-    ada = AdaAIEngine()
+        prompt = f"""
+You are Ada, the professional document
+assistant for Naija Pocket Business Center.
 
-    print()
-    print("=" * 60)
-    print("NAIJA POCKET BUSINESS CENTER")
-    print("ADA AI ENGINE V8")
-    print("=" * 60)
-    print()
+SERVICE:
+{active_service}
 
-    print(
-        "Groq Connected:",
-        ada.is_connected()
-    )
+CURRENT DOCUMENT:
 
-    print(
-        "Groq Model:",
-        ada.get_model()
-    )
+{current_draft}
 
-    print()
+CUSTOMER REVISION REQUEST:
 
-    print(
-        "Ada Engine Ready"
-    ) 
+{revision_request}
+
+Instructions:
+
+- Apply the customer's requested changes.
+- Preserve all correct information.
+- Do not invent facts.
+- Do not remove information unless the
+  customer specifically requests it.
+- Maintain professional formatting.
+- Return ONLY the revised document.
+"""
+
+        if not self.connected:
+
+            return (
+                "Ada is temporarily unable to revise "
+                "the document because the intelligence "
+                "service is not connected."
+            )
+
+        try:
+
+            response = (
+                self.client
+                .chat
+                .completions
+                .create(
+                    model=self.get_model(),
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": self.get_system_prompt(
+                                active_service
+                            )
+                        },
+                        {
+                            "role": "user",
+                            "content": prompt
+                        }
+                    ],
+                    temperature=0.3
+                )
+            )
+
+            revised = (
+                response
+                .choices[0]
+                .message
+                .content
+            )
+
+            if revised:
+
+                self.job_state[
+                    "revision_requested"
+                ] = True
+
+                self.job_state[
+                    "revision_count"
+                ] += 1
+
+                self.job_state[
+                    "awaiting_review"
+                ] = True
+
+                return revised.strip()
+
+            return (
+                "I couldn't revise the document."
+            )
+
+        except Exception as error:
+
+            print(
+                "Document Revision Error:",
+                repr(error)
+            )
+
+            return (
+                "I'm having a temporary problem "
+                "revising the document."
+            )
+
+    # ==================================================
+    # APPROVE DOCUMENT
+    # ==================================================
+
+    def approve_document(self):
+
+        self.job_state[
+            "approved"
+        ] = True
+
+        self.job_state[
+            "awaiting_review"
+        ] = False
+
+        return True
+
+    # ==================================================
+    # MARK PAYMENT RECEIVED
+    # ==================================================
+
+    def mark_payment_received(self):
+
+        self.job_state[
+            "payment_received"
+        ] = True
+
+        return True
+
+    # ==================================================
+    # MARK DELIVERED
+    # ==================================================
+
+    def mark_delivered(self):
+
+        self.job_state[
+            "delivered"
+        ] = True
+
+        return True
