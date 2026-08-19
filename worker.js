@@ -2,38 +2,29 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // =====================================================
-    // API REQUESTS → RENDER / FLASK /api/*
-    // =====================================================
+    // API REQUESTS → FASTAPI
     if (url.pathname.startsWith("/api/")) {
-
       const BACKEND_URL =
-        "https://naija-pocket-business-center.onrender.com";
+        "https://graphs-immediate-forbes-milian.trycloudflare.com";
 
       const backendUrl =
         BACKEND_URL.replace(/\/$/, "") +
         url.pathname +
         url.search;
 
-      const backendRequest = new Request(
-        backendUrl,
-        {
-          method: request.method,
-          headers: request.headers,
-          body:
-            request.method === "GET" ||
-            request.method === "HEAD"
-              ? undefined
-              : request.body
-        }
-      );
+      const backendRequest = new Request(backendUrl, {
+        method: request.method,
+        headers: request.headers,
+        body:
+          request.method === "GET" || request.method === "HEAD"
+            ? undefined
+            : request.body,
+      });
 
       return fetch(backendRequest);
     }
 
-    // =====================================================
-    // EVERYTHING ELSE → GITHUB STATIC WEBSITE
-    // =====================================================
+    // EVERYTHING ELSE → WEBSITE
     return env.ASSETS.fetch(request);
-  }
+  },
 };
