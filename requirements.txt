@@ -5,3 +5,4 @@ gunicorn
 fastapi
 uvicorn
 pydantic
+uvicorn[standard]
