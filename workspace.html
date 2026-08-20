@@ -477,6 +477,7 @@ function addMessage(
 
 /* ============================================================
    SEND TO ADA
+   RENDER FASTAPI CONNECTION
 ============================================================ */
 
 async function sendToAda(
@@ -486,7 +487,7 @@ async function sendToAda(
 
     const response =
         await fetch(
-            "/api/chat",
+            "https://naija-pocket-business-center.onrender.com/api/chat",
             {
                 method: "POST",
 
@@ -551,9 +552,8 @@ async function sendToAda(
 
 
     /* ========================================================
-       IMPORTANT FIX:
-       Flask returns "reply".
-       Also accept response/message.
+       FASTAPI RETURNS "reply".
+       ALSO ACCEPT response/message.
     ======================================================== */
 
     if (
@@ -952,4 +952,4 @@ startAdaIntelligence();
 </script>
 
 </body>
-</html> 
+</html>
