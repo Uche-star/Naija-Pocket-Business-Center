@@ -50,12 +50,28 @@ class ChatRequest(BaseModel):
 
 # ============================================================
 # FRONTEND
+#
+# WEBSITE FLOW:
+#
+# index.html
+#     ↓
+# conversation.html
+#     ↓
+# workspace.html?service=...
+#
 # ============================================================
 
 @app.get("/")
 def home():
     return FileResponse(
         BASE_DIR / "index.html"
+    )
+
+
+@app.get("/conversation.html")
+def conversation():
+    return FileResponse(
+        BASE_DIR / "conversation.html"
     )
 
 
@@ -88,7 +104,7 @@ def chat(req: ChatRequest):
     try:
 
         # Create the existing Ada controller.
-        # We are NOT changing AdaController.
+        # AdaController is not being changed here.
 
         controller = AdaController()
 
