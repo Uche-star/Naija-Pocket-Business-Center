@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
     <title>Naija Pocket Business Center</title>
 
@@ -19,14 +16,15 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;
-            overflow: hidden;
+            min-height: 100%;
         }
 
         body {
             font-family: Arial, sans-serif;
             background: #0B0B0B;
             color: white;
+            overflow-x: hidden;
+            overflow-y: hidden;
         }
 
         .page {
@@ -39,27 +37,27 @@
             justify-content: center;
 
             padding:
-                max(18px, env(safe-area-inset-top))
+                max(20px, env(safe-area-inset-top))
                 18px
-                max(18px, env(safe-area-inset-bottom))
+                max(20px, env(safe-area-inset-bottom))
                 18px;
         }
 
         .main-container {
             width: 100%;
             max-width: 1100px;
-            height: 100%;
+            max-height: 100%;
 
             display: grid;
             grid-template-columns: 1fr 0.75fr;
-            gap: 38px;
+            gap: 40px;
 
             align-items: center;
         }
 
-        /* =========================================
+        /* ==============================
            LEFT SIDE
-        ========================================= */
+        ============================== */
 
         .content {
             width: 100%;
@@ -67,91 +65,81 @@
         }
 
         .brand-name {
-            font-size: clamp(25px, 4.2vw, 44px);
-            line-height: 1.02;
+            font-size: clamp(28px, 5vw, 46px);
+            line-height: 1.05;
             font-weight: 800;
-            margin: 0 0 9px;
+            margin: 0 0 12px;
             letter-spacing: -0.5px;
         }
 
         .identity {
-            font-size: clamp(15px, 2.3vw, 22px);
-            line-height: 1.2;
+            font-size: clamp(16px, 2.5vw, 23px);
+            line-height: 1.25;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .value {
-            font-size: clamp(13px, 1.75vw, 17px);
-            line-height: 1.42;
+            font-size: clamp(14px, 2vw, 18px);
+            line-height: 1.5;
             font-weight: 600;
-            margin: 5px 0;
+            margin: 6px 0;
         }
 
         .services-title {
             color: #1E90FF;
-            font-size: clamp(14px, 2vw, 19px);
-            line-height: 1.2;
+            font-size: clamp(15px, 2.2vw, 20px);
+            line-height: 1.3;
             font-weight: 800;
-            margin: 18px 0 9px;
+            margin: 25px 0 14px;
         }
 
-        /* =========================================
-           MOVING DOCUMENT PEOPLE
-        ========================================= */
+        /* ==============================
+           DOCUMENT PEOPLE
+           MOVES HORIZONTALLY
+        ============================== */
 
         .document-people-window {
             width: 100%;
             overflow: hidden;
-            white-space: nowrap;
-            margin: 8px 0 9px;
-            padding: 3px 0;
+            margin: 4px 0 14px;
         }
 
         .document-people-track {
-            display: inline-flex;
-            width: max-content;
+            display: inline-block;
+            white-space: nowrap;
+
+            font-size: clamp(14px, 2vw, 17px);
+            font-weight: 900;
+            letter-spacing: 0.5px;
 
             animation: documentPeopleMove 18s linear infinite;
         }
 
-        .document-people {
+        .document-people-track span {
             display: inline-block;
             padding-right: 70px;
-
-            color: #FFFFFF;
-            font-size: clamp(13px, 1.8vw, 17px);
-            font-weight: 800;
-            letter-spacing: 1.5px;
         }
 
         @keyframes documentPeopleMove {
-            from {
-                transform: translateX(100vw);
+            0% {
+                transform: translateX(100%);
             }
 
-            to {
+            100% {
                 transform: translateX(-100%);
             }
         }
 
-        /* =========================================
-           SERVICES
-        ========================================= */
-
         .services {
-            font-size: clamp(13px, 1.7vw, 16px);
-            line-height: 1.48;
-            margin-bottom: 13px;
+            font-size: clamp(14px, 2vw, 17px);
+            line-height: 1.65;
+            margin-bottom: 24px;
         }
 
         .services strong {
             font-weight: 800;
         }
-
-        /* =========================================
-           START BUTTON
-        ========================================= */
 
         .start-button {
             display: flex;
@@ -160,9 +148,9 @@
 
             width: 100%;
             max-width: 470px;
-            min-height: 48px;
+            min-height: 54px;
 
-            padding: 11px 16px;
+            padding: 14px 18px;
 
             border: none;
             border-radius: 7px;
@@ -170,11 +158,12 @@
             background: #CC0000;
             color: white;
 
-            font-size: clamp(12px, 1.8vw, 16px);
-            line-height: 1.2;
+            font-size: clamp(13px, 2vw, 17px);
+            line-height: 1.25;
             font-weight: 800;
 
             text-decoration: none;
+
             cursor: pointer;
 
             box-shadow:
@@ -195,125 +184,229 @@
         }
 
         .statement {
-            font-size: clamp(11px, 1.6vw, 15px);
-            line-height: 1.35;
-            margin-top: 11px;
+            font-size: clamp(12px, 1.8vw, 16px);
+            line-height: 1.45;
+            margin-top: 18px;
         }
 
         .signature {
-            font-size: clamp(11px, 1.6vw, 15px);
-            line-height: 1.35;
+            font-size: clamp(12px, 1.8vw, 16px);
+            line-height: 1.45;
             font-weight: 700;
-            margin-top: 7px;
+            margin-top: 12px;
         }
 
-        /* =========================================
-           RIGHT SIDE — ADA AREA
-        ========================================= */
+        /* ==============================
+           RIGHT SIDE
+           CSS DOCUMENT VISUAL
+        ============================== */
 
         .ada-area {
             width: 100%;
-            height: 100%;
-
-            min-height: 360px;
+            min-height: 500px;
 
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .ada-placeholder {
-            width: min(100%, 400px);
-            min-height: 430px;
+        .document-visual {
+            position: relative;
 
-            border-radius: 22px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #181818,
-                    #101010
-                );
-
-            border: 1px solid #292929;
+            width: min(100%, 430px);
+            height: 500px;
 
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+        }
 
-            padding: 25px;
+        .document-back {
+            position: absolute;
+
+            width: 76%;
+            height: 76%;
+
+            border-radius: 10px;
+
+            background: #171717;
+
+            border: 1px solid #303030;
 
             box-shadow:
-                0 15px 45px rgba(0, 0, 0, 0.55);
+                0 18px 40px rgba(0, 0, 0, 0.45);
         }
 
-        .placeholder-circle {
-            width: 180px;
-            height: 180px;
+        .document-back-one {
+            transform:
+                rotate(-8deg)
+                translate(-8px, 10px);
+        }
+
+        .document-back-two {
+            transform:
+                rotate(7deg)
+                translate(8px, 6px);
+        }
+
+        .document-sheet {
+            position: relative;
+            z-index: 3;
+
+            width: 78%;
+            height: 82%;
+
+            padding: 25px 24px;
+
+            border-radius: 9px;
+
+            background: #F7F7F7;
+
+            color: #111111;
+
+            box-shadow:
+                0 22px 50px rgba(0, 0, 0, 0.6);
+
+            transform: rotate(-2deg);
+
+            overflow: hidden;
+        }
+
+        .document-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+
+            font-size: 8px;
+            font-weight: 800;
+
+            color: #555555;
+
+            border-bottom: 2px solid #1E90FF;
+
+            padding-bottom: 9px;
+        }
+
+        .document-top span:last-child {
+            text-align: right;
+        }
+
+        .document-title {
+            margin-top: 22px;
+
+            font-size: 22px;
+            line-height: 1.05;
+
+            font-weight: 900;
+
+            color: #111111;
+        }
+
+        .document-line {
+            height: 5px;
+
+            margin-top: 12px;
+
+            border-radius: 5px;
+
+            background: #D5D5D5;
+        }
+
+        .document-line.long {
+            width: 94%;
+        }
+
+        .document-line.medium {
+            width: 72%;
+        }
+
+        .document-line.short {
+            width: 48%;
+        }
+
+        .document-section {
+            margin-top: 27px;
+
+            padding-top: 14px;
+
+            border-top: 1px solid #DDDDDD;
+        }
+
+        .document-section-title {
+            font-size: 10px;
+            font-weight: 900;
+
+            color: #1E90FF;
+        }
+
+        .document-check {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            margin-top: 30px;
+
+            font-size: 9px;
+            font-weight: 900;
+
+            color: #222222;
+        }
+
+        .document-check span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 22px;
+            height: 22px;
 
             border-radius: 50%;
 
-            background:
-                linear-gradient(
-                    145deg,
-                    #333333,
-                    #171717
-                );
+            background: #1E90FF;
+            color: white;
 
-            border: 3px solid #1E90FF;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            margin-bottom: 20px;
-
-            font-size: 60px;
+            font-size: 13px;
         }
 
-        .placeholder-name {
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 6px;
+        .document-footer {
+            position: absolute;
+
+            left: 24px;
+            right: 24px;
+            bottom: 18px;
+
+            padding-top: 10px;
+
+            border-top: 1px solid #DDDDDD;
+
+            font-size: 8px;
+            font-weight: 900;
+
+            letter-spacing: 0.5px;
+
+            color: #777777;
         }
 
-        .placeholder-role {
-            color: #1E90FF;
-            font-size: 15px;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .placeholder-note {
-            margin-top: 16px;
-
-            font-size: 12px;
-            line-height: 1.4;
-
-            color: #AAAAAA;
-
-            text-align: center;
-        }
-
-        /* =========================================
-           TABLET / PHONE
-        ========================================= */
+        /* ==============================
+           TABLET
+        ============================== */
 
         @media (max-width: 800px) {
 
+            body {
+                overflow-y: auto;
+            }
+
             .page {
-                padding:
-                    max(12px, env(safe-area-inset-top))
-                    14px
-                    max(12px, env(safe-area-inset-bottom))
-                    14px;
+                height: auto;
+                min-height: 100vh;
+                min-height: 100dvh;
             }
 
             .main-container {
                 grid-template-columns: 1fr;
-                gap: 10px;
-                overflow: hidden;
+                gap: 25px;
             }
 
             .content {
@@ -326,113 +419,60 @@
             }
 
             .ada-area {
-                min-height: 0;
-                height: auto;
+                min-height: 360px;
             }
 
-            .ada-placeholder {
-                width: min(100%, 300px);
-                min-height: 190px;
-                padding: 15px;
-                border-radius: 18px;
+            .document-visual {
+                height: 360px;
             }
 
-            .placeholder-circle {
-                width: 90px;
-                height: 90px;
-                font-size: 35px;
-                margin-bottom: 8px;
-            }
-
-            .placeholder-name {
-                font-size: 21px;
-            }
-
-            .placeholder-role {
-                font-size: 12px;
-            }
-
-            .placeholder-note {
-                display: none;
+            .document-sheet {
+                width: 72%;
+                height: 80%;
             }
         }
+
+        /* ==============================
+           SMALL PHONES
+        ============================== */
 
         @media (max-width: 430px) {
 
             .page {
-                padding-left: 11px;
-                padding-right: 11px;
+                padding-left: 14px;
+                padding-right: 14px;
             }
 
             .main-container {
-                gap: 7px;
+                gap: 20px;
             }
 
             .brand-name {
-                font-size: 25px;
-            }
-
-            .identity {
-                font-size: 15px;
-                margin-bottom: 10px;
-            }
-
-            .value {
-                font-size: 12.5px;
-                line-height: 1.32;
-            }
-
-            .services-title {
-                font-size: 13px;
-                margin-top: 11px;
-                margin-bottom: 6px;
-            }
-
-            .document-people-window {
-                margin: 5px 0 6px;
-            }
-
-            .document-people {
-                font-size: 12px;
+                font-size: 27px;
             }
 
             .services {
-                font-size: 12px;
-                line-height: 1.35;
-                margin-bottom: 8px;
+                line-height: 1.55;
             }
 
-            .start-button {
-                min-height: 43px;
-                font-size: 11px;
+            .document-visual {
+                height: 330px;
             }
 
-            .statement {
-                font-size: 10.5px;
-                margin-top: 7px;
+            .document-sheet {
+                width: 70%;
+                height: 78%;
+
+                padding: 20px 19px;
             }
 
-            .signature {
-                font-size: 10.5px;
-                margin-top: 4px;
-            }
-
-            .ada-placeholder {
-                min-height: 150px;
-            }
-
-            .placeholder-circle {
-                width: 65px;
-                height: 65px;
-                font-size: 28px;
-            }
-
-            .placeholder-name {
+            .document-title {
                 font-size: 18px;
             }
 
-            .placeholder-role {
-                font-size: 10px;
+            .document-footer {
+                left: 19px;
+                right: 19px;
             }
         }
     </style>
@@ -476,16 +516,10 @@
                 ENJOY THE BEST IN DOCUMENT PROCESSING
             </div>
 
-            <!-- MOVING DOCUMENT PEOPLE -->
             <div class="document-people-window">
                 <div class="document-people-track">
-                    <span class="document-people">
-                        THE DOCUMENT PEOPLE
-                    </span>
-
-                    <span class="document-people">
-                        THE DOCUMENT PEOPLE
-                    </span>
+                    <span>THE DOCUMENT PEOPLE</span>
+                    <span>THE DOCUMENT PEOPLE</span>
                 </div>
             </div>
 
@@ -509,6 +543,8 @@
 
             </div>
 
+            <!-- EXISTING CONVERSATION ENTRY -->
+
             <a
                 class="start-button"
                 href="conversation.html"
@@ -530,28 +566,53 @@
 
 
         <!-- =========================================
-             RIGHT SIDE — ADA
+             RIGHT SIDE — DOCUMENT VISUAL
         ========================================== -->
 
         <section class="ada-area">
 
-            <div class="ada-placeholder">
+            <div class="document-visual">
 
-                <div class="placeholder-circle">
-                    👩🏽‍💼
-                </div>
+                <div class="document-back document-back-one"></div>
 
-                <div class="placeholder-name">
-                    Ada
-                </div>
+                <div class="document-back document-back-two"></div>
 
-                <div class="placeholder-role">
-                    Your Business Center Assistant
-                </div>
+                <div class="document-sheet">
 
-                <div class="placeholder-note">
-                    Your friendly Business Center assistant,
-                    ready to help with your documents.
+                    <div class="document-top">
+                        <span>NAIJA POCKET</span>
+                        <span>DOCUMENT SERVICES</span>
+                    </div>
+
+                    <div class="document-title">
+                        BUSINESS CENTER
+                    </div>
+
+                    <div class="document-line long"></div>
+                    <div class="document-line medium"></div>
+                    <div class="document-line long"></div>
+
+                    <div class="document-section">
+
+                        <div class="document-section-title">
+                            DOCUMENT PROCESSING
+                        </div>
+
+                        <div class="document-line short"></div>
+                        <div class="document-line medium"></div>
+                        <div class="document-line long"></div>
+
+                    </div>
+
+                    <div class="document-check">
+                        <span>✓</span>
+                        READY FOR PROCESSING
+                    </div>
+
+                    <div class="document-footer">
+                        THE DOCUMENT PEOPLE
+                    </div>
+
                 </div>
 
             </div>
