@@ -1013,11 +1013,27 @@ Return ONLY the customer-facing response.
             print("=" * 60)
             print("REAL GROQ ERROR")
             print("=" * 60)
-            print("ERROR:", repr(error))
+            print(
+                "MODEL:",
+                self.get_model()
+            )
+            print(
+                "ERROR TYPE:",
+                type(error).__name__
+            )
+            print(
+                "ERROR:",
+                repr(error)
+            )
             traceback.print_exc()
             print("=" * 60)
             print()
 
+            # IMPORTANT:
+            # Re-raise the original exception.
+            # This allows FastAPI/AdaController to expose
+            # the actual failure instead of hiding it behind
+            # "I'm having a temporary problem."
             raise
 
     # ==================================================
