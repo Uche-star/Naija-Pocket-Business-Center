@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
+
     <title>Naija Pocket Business Center</title>
 
     <style>
@@ -32,6 +34,7 @@
             width: 100%;
             height: 100vh;
             height: 100dvh;
+
             padding:
                 max(8px, env(safe-area-inset-top))
                 8px
@@ -40,6 +43,7 @@
 
             display: flex;
             flex-direction: column;
+
             overflow: hidden;
         }
 
@@ -48,6 +52,7 @@
             max-width: 700px;
             height: 100%;
             min-height: 0;
+
             margin: 0 auto;
 
             display: flex;
@@ -56,16 +61,20 @@
             overflow: hidden;
         }
 
+
         /* =====================================================
-           FIXED TOP — SERVICE INFORMATION
+           FIXED TOP
         ===================================================== */
 
         .header {
             flex: 0 0 auto;
 
             background: #171717;
+
             border-radius: 6px;
+
             padding: 10px 11px;
+
             margin-bottom: 6px;
 
             border-bottom: 2px solid #FFFFFF;
@@ -80,7 +89,9 @@
             margin-top: 7px;
 
             background: #0B0B0B;
+
             border: 1px solid #444444;
+
             border-radius: 5px;
 
             padding: 7px 9px;
@@ -88,40 +99,88 @@
 
         .selected-service-label {
             color: #AAAAAA;
+
             font-size: 9px;
+
             margin-bottom: 2px;
         }
 
         .selected-service-name {
             color: white;
+
             font-size: 14px;
+
             font-weight: bold;
+
+            overflow-wrap: anywhere;
         }
 
         .service-price {
             margin-top: 6px;
+
             color: white;
+
             font-size: 12px;
+
             font-weight: bold;
         }
 
 
         /* =====================================================
-           MIDDLE — ONLY THIS AREA SCROLLS
+           NETWORK STATUS
+        ===================================================== */
+
+        .connection-status {
+            display: none;
+
+            flex: 0 0 auto;
+
+            width: 100%;
+
+            margin-bottom: 5px;
+
+            padding: 7px 9px;
+
+            border-radius: 5px;
+
+            background: #242424;
+
+            border: 1px solid #444444;
+
+            color: white;
+
+            font-size: 10px;
+
+            line-height: 1.35;
+
+            text-align: center;
+        }
+
+        .connection-status.show {
+            display: block;
+        }
+
+
+        /* =====================================================
+           CHAT AREA
+           ONLY THIS AREA SCROLLS
         ===================================================== */
 
         .chat-area {
             flex: 1 1 auto;
 
             min-height: 0;
+
             width: 100%;
 
             background: #171717;
+
             border-radius: 6px;
 
             padding: 12px;
 
             overflow-y: auto;
+
             overflow-x: hidden;
 
             border: 1px solid #292929;
@@ -131,6 +190,7 @@
 
         .message {
             width: 100%;
+
             margin-bottom: 13px;
 
             display: flex;
@@ -154,15 +214,19 @@
             border-radius: 8px;
 
             font-size: 13px;
+
             line-height: 1.5;
 
             white-space: pre-wrap;
+
             word-break: break-word;
+
             overflow-wrap: anywhere;
         }
 
         .message.ada .bubble {
             background: #242424;
+
             color: white;
 
             border-bottom-left-radius: 2px;
@@ -170,6 +234,7 @@
 
         .message.you .bubble {
             background: #111111;
+
             color: white;
 
             border: 1px solid #444444;
@@ -179,7 +244,7 @@
 
 
         /* =====================================================
-           FIXED BOTTOM ACTION BUTTONS
+           FIXED ACTION BUTTONS
         ===================================================== */
 
         .actions {
@@ -199,19 +264,23 @@
 
         .action-button {
             width: 100%;
+
             min-width: 0;
 
             min-height: 40px;
 
             border: 1px solid #444444;
+
             border-radius: 5px;
 
             padding: 7px 5px;
 
             background: #000000;
+
             color: white;
 
             font-size: 10px;
+
             font-weight: bold;
 
             line-height: 1.15;
@@ -227,17 +296,14 @@
 
         .action-button:active {
             background: #242424;
+
             transform: scale(0.98);
         }
 
-        .upload-button,
-        .voice-button,
-        .review-button,
-        .approve-button,
-        .payment-button,
-        .customer-service-button {
-            background: #000000;
-            color: white;
+        .action-button:disabled {
+            opacity: 0.5;
+
+            cursor: not-allowed;
         }
 
 
@@ -253,22 +319,27 @@
             margin-top: 6px;
 
             display: flex;
+
             gap: 5px;
         }
 
         .message-input {
             flex: 1 1 auto;
+
             min-width: 0;
 
             min-height: 44px;
+
             max-height: 90px;
 
             resize: none;
 
             background: white;
+
             color: black;
 
             border: none;
+
             border-radius: 5px;
 
             padding: 10px;
@@ -284,12 +355,15 @@
             min-height: 44px;
 
             border: 1px solid #444444;
+
             border-radius: 5px;
 
             background: #000000;
+
             color: white;
 
             font-size: 10px;
+
             font-weight: bold;
 
             cursor: pointer;
@@ -303,6 +377,7 @@
 
         .send-button:active {
             background: #242424;
+
             transform: scale(0.98);
         }
 
@@ -327,6 +402,7 @@
             color: #777777;
 
             font-size: 9px;
+
             line-height: 1.3;
 
             padding-top: 5px;
@@ -341,6 +417,7 @@
 
             .page {
                 padding-left: 6px;
+
                 padding-right: 6px;
             }
 
@@ -366,6 +443,7 @@
 
             .bubble {
                 font-size: 12px;
+
                 padding: 9px 10px;
             }
 
@@ -375,17 +453,21 @@
 
             .action-button {
                 min-height: 37px;
+
                 font-size: 9px;
+
                 padding: 5px 3px;
             }
 
             .message-input {
                 min-height: 42px;
+
                 font-size: 12px;
             }
 
             .send-button {
                 flex-basis: 68px;
+
                 min-height: 42px;
             }
 
@@ -403,6 +485,7 @@
 
             .page {
                 padding-left: 16px;
+
                 padding-right: 16px;
             }
 
@@ -415,6 +498,7 @@
 
             .action-button {
                 min-height: 42px;
+
                 font-size: 11px;
             }
         }
@@ -422,11 +506,13 @@
     </style>
 </head>
 
+
 <body>
 
 <div class="page">
 
     <main class="workspace">
+
 
         <!-- =================================================
              FIXED TOP
@@ -462,9 +548,18 @@
 
 
         <!-- =================================================
-             MIDDLE — ADA INTELLIGENCE / CUSTOMER CONVERSATION
+             NETWORK STATUS
+        ================================================== -->
 
-             ONLY THIS AREA SCROLLS.
+        <div
+            id="connectionStatus"
+            class="connection-status"
+        ></div>
+
+
+        <!-- =================================================
+             MIDDLE
+             ONLY THIS AREA SCROLLS
         ================================================== -->
 
         <section
@@ -579,58 +674,236 @@
 
 <script>
 
+/* ============================================================
+   CORE STATE
+============================================================ */
+
 let selectedService = "";
+
 let intelligenceStarted = false;
+
 let requestInProgress = false;
+
+let reconnectTimer = null;
+
+let pendingRequest = null;
+
+let conversation = [];
 
 
 /* ============================================================
-   GET SERVICE FROM SERVICE BOARD
+   STORAGE
 ============================================================ */
 
-function getSelectedService() {
+const STORAGE_KEY =
+    "naijaPocketConversation";
 
-    const params =
-        new URLSearchParams(
-            window.location.search
+const SERVICE_KEY =
+    "selectedService";
+
+const PENDING_KEY =
+    "naijaPocketPendingRequest";
+
+
+/* ============================================================
+   CUSTOMER-FACING NETWORK MESSAGE
+============================================================ */
+
+const NETWORK_MESSAGE =
+    "Your work has been saved safely. We are experiencing a temporary network connection issue. Your request has not been lost. Please stay on this page. When the connection returns, we will continue your work from where we stopped.";
+
+
+/* ============================================================
+   LOAD SAVED WORK
+============================================================ */
+
+function loadSavedWork() {
+
+    try {
+
+        const savedConversation =
+            localStorage.getItem(
+                STORAGE_KEY
+            );
+
+        if (savedConversation) {
+
+            const parsed =
+                JSON.parse(
+                    savedConversation
+                );
+
+            if (
+                Array.isArray(parsed)
+            ) {
+
+                conversation =
+                    parsed;
+            }
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Conversation restore error:",
+            error
         );
 
-    selectedService =
-        params.get("service") || "";
+        conversation = [];
+    }
 
-    if (!selectedService) {
 
-        selectedService =
+    try {
+
+        const savedPending =
             localStorage.getItem(
-                "selectedService"
-            ) || "";
+                PENDING_KEY
+            );
+
+        if (savedPending) {
+
+            const parsedPending =
+                JSON.parse(
+                    savedPending
+                );
+
+            if (
+                parsedPending &&
+                parsedPending.message
+            ) {
+
+                pendingRequest =
+                    parsedPending;
+            }
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Pending request restore error:",
+            error
+        );
+
+        pendingRequest = null;
     }
-
-    if (!selectedService) {
-
-        selectedService =
-            "Service not selected";
-    }
-
-    document.getElementById(
-        "selectedService"
-    ).innerText =
-        selectedService;
-
-    localStorage.setItem(
-        "selectedService",
-        selectedService
-    );
 }
 
 
 /* ============================================================
-   DISPLAY MESSAGE
+   SAVE COMPLETE CONVERSATION
 ============================================================ */
 
-function addMessage(
+function saveConversation() {
+
+    try {
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(
+                conversation
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Conversation save error:",
+            error
+        );
+    }
+}
+
+
+/* ============================================================
+   SAVE PENDING REQUEST
+============================================================ */
+
+function savePendingRequest(
+    request
+) {
+
+    pendingRequest =
+        request;
+
+    try {
+
+        localStorage.setItem(
+            PENDING_KEY,
+            JSON.stringify(
+                request
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Pending request save error:",
+            error
+        );
+    }
+}
+
+
+/* ============================================================
+   CLEAR PENDING REQUEST
+============================================================ */
+
+function clearPendingRequest() {
+
+    pendingRequest = null;
+
+    try {
+
+        localStorage.removeItem(
+            PENDING_KEY
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Pending request clear error:",
+            error
+        );
+    }
+}
+
+
+/* ============================================================
+   DISPLAY SAVED CONVERSATION
+============================================================ */
+
+function restoreConversationToScreen() {
+
+    const chatArea =
+        document.getElementById(
+            "chatArea"
+        );
+
+    chatArea.innerHTML = "";
+
+    for (
+        const item of conversation
+    ) {
+
+        renderMessage(
+            item.sender,
+            item.message,
+            false
+        );
+    }
+
+    scrollChatToBottom();
+}
+
+
+/* ============================================================
+   RENDER MESSAGE
+============================================================ */
+
+function renderMessage(
     sender,
-    message
+    message,
+    save = true
 ) {
 
     const chatArea =
@@ -670,14 +943,391 @@ function addMessage(
         wrapper
     );
 
-    chatArea.scrollTop =
-        chatArea.scrollHeight;
+    if (save) {
+
+        conversation.push({
+
+            sender:
+                sender,
+
+            message:
+                message,
+
+            timestamp:
+                Date.now()
+        });
+
+        saveConversation();
+    }
+
+    scrollChatToBottom();
 }
 
 
 /* ============================================================
-   SEND TO ADA
-   RENDER FASTAPI CONNECTION
+   ADD MESSAGE
+============================================================ */
+
+function addMessage(
+    sender,
+    message
+) {
+
+    renderMessage(
+        sender,
+        message,
+        true
+    );
+}
+
+
+/* ============================================================
+   SCROLL CHAT ONLY
+============================================================ */
+
+function scrollChatToBottom() {
+
+    const chatArea =
+        document.getElementById(
+            "chatArea"
+        );
+
+    requestAnimationFrame(
+        function() {
+
+            chatArea.scrollTop =
+                chatArea.scrollHeight;
+        }
+    );
+}
+
+
+/* ============================================================
+   GET SERVICE
+============================================================ */
+
+function getSelectedService() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    selectedService =
+        params.get("service") || "";
+
+    if (!selectedService) {
+
+        selectedService =
+            localStorage.getItem(
+                SERVICE_KEY
+            ) || "";
+    }
+
+    if (!selectedService) {
+
+        selectedService =
+            "Service not selected";
+    }
+
+    document.getElementById(
+        "selectedService"
+    ).innerText =
+        selectedService;
+
+    localStorage.setItem(
+        SERVICE_KEY,
+        selectedService
+    );
+}
+
+
+/* ============================================================
+   CONNECTION STATUS
+============================================================ */
+
+function showConnectionStatus(
+    message
+) {
+
+    const status =
+        document.getElementById(
+            "connectionStatus"
+        );
+
+    status.innerText =
+        message;
+
+    status.classList.add(
+        "show"
+    );
+}
+
+
+function hideConnectionStatus() {
+
+    const status =
+        document.getElementById(
+            "connectionStatus"
+        );
+
+    status.classList.remove(
+        "show"
+    );
+
+    status.innerText = "";
+}
+
+
+/* ============================================================
+   CREATE REQUEST ID
+============================================================ */
+
+function createRequestId() {
+
+    return (
+        Date.now().toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .substring(2, 10)
+    );
+}
+
+
+/* ============================================================
+   CHECK WHETHER ERROR IS TEMPORARY NETWORK FAILURE
+============================================================ */
+
+function isNetworkError(
+    error
+) {
+
+    if (!error) {
+        return false;
+    }
+
+    if (
+        error.name ===
+        "AbortError"
+    ) {
+
+        return true;
+    }
+
+    if (
+        error instanceof
+        TypeError
+    ) {
+
+        return true;
+    }
+
+    const text =
+        String(
+            error.message || ""
+        ).toLowerCase();
+
+    return (
+        text.includes("network") ||
+        text.includes("failed to fetch") ||
+        text.includes("fetch") ||
+        text.includes("connection") ||
+        text.includes("timeout") ||
+        text.includes("offline")
+    );
+}
+
+
+/* ============================================================
+   WAIT
+============================================================ */
+
+function wait(
+    milliseconds
+) {
+
+    return new Promise(
+        function(resolve) {
+
+            setTimeout(
+                resolve,
+                milliseconds
+            );
+        }
+    );
+}
+
+
+/* ============================================================
+   RAW FASTAPI REQUEST
+============================================================ */
+
+async function requestFastAPI(
+    request
+) {
+
+    const controller =
+        new AbortController();
+
+    const timeout =
+        setTimeout(
+            function() {
+
+                controller.abort();
+
+            },
+            30000
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "https://naija-pocket-business-center.onrender.com/api/chat",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            message:
+                                request.message,
+
+                            service:
+                                selectedService,
+
+                            event:
+                                request.event,
+
+                            activate_intelligence:
+                                true,
+
+                            client_request_id:
+                                request.requestId
+                        }),
+
+                    signal:
+                        controller.signal
+                }
+            );
+
+
+        let result;
+
+        try {
+
+            result =
+                await response.json();
+
+        } catch (error) {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Server returned an invalid response."
+                );
+            }
+
+            throw new Error(
+                "Server returned an invalid response."
+            );
+        }
+
+
+        /* ====================================================
+           SERVICE PRICE
+        ==================================================== */
+
+        if (
+            result &&
+            result.price !== undefined
+        ) {
+
+            const price =
+                String(
+                    result.price
+                );
+
+            document.getElementById(
+                "servicePrice"
+            ).innerText =
+                price.includes("₦")
+                    ? "SERVICE PRICE: " + price
+                    : "SERVICE PRICE: ₦" + price;
+        }
+
+
+        /* ====================================================
+           SUCCESS
+        ==================================================== */
+
+        if (
+            response.ok &&
+            result &&
+            result.success
+        ) {
+
+            return {
+
+                reply:
+                    result.reply ||
+                    result.response ||
+                    result.message ||
+                    "Your request is ready to continue.",
+
+                result:
+                    result
+            };
+        }
+
+
+        /* ====================================================
+           REAL SERVER ERROR
+           This is NOT treated as a temporary network
+           fluctuation.
+        ==================================================== */
+
+        const serverError =
+            (
+                result &&
+                (
+                    result.error ||
+                    result.message
+                )
+            ) ||
+            "The Business Center could not process the request.";
+
+        const error =
+            new Error(
+                serverError
+            );
+
+        error.serverError =
+            true;
+
+        error.status =
+            response.status;
+
+        throw error;
+
+    } finally {
+
+        clearTimeout(
+            timeout
+        );
+    }
+}
+
+
+/* ============================================================
+   SEND TO BUSINESS CENTER WITH CONTROLLED RETRIES
 ============================================================ */
 
 async function sendToAda(
@@ -685,112 +1335,195 @@ async function sendToAda(
     eventName
 ) {
 
-    const response =
-        await fetch(
-            "https://naija-pocket-business-center.onrender.com/api/chat",
-            {
-                method: "POST",
+    const request = {
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+        requestId:
+            createRequestId(),
 
-                body: JSON.stringify({
+        message:
+            message,
 
-                    message:
-                        message,
-
-                    service:
-                        selectedService,
-
-                    event:
-                        eventName,
-
-                    activate_intelligence:
-                        true
-                })
-            }
-        );
-
-    let result;
-
-    try {
-
-        result =
-            await response.json();
-
-    } catch (error) {
-
-        throw new Error(
-            "Ada returned an invalid server response."
-        );
-    }
+        event:
+            eventName
+    };
 
 
-    /* ========================================================
-       SERVICE PRICE
-    ======================================================== */
+    /*
+       Save the request before contacting the server.
+       If the network disappears, the work remains saved.
+    */
 
-    if (
-        result &&
-        result.price !== undefined
+    savePendingRequest(
+        request
+    );
+
+
+    const retryDelays = [
+        1500,
+        3000,
+        6000,
+        10000
+    ];
+
+
+    let lastError =
+        null;
+
+
+    for (
+        let attempt = 0;
+        attempt <= retryDelays.length;
+        attempt++
     ) {
 
-        const price =
-            String(
-                result.price
+        try {
+
+            if (
+                !navigator.onLine
+            ) {
+
+                throw new TypeError(
+                    "Network is currently offline."
+                );
+            }
+
+
+            if (
+                attempt > 0
+            ) {
+
+                showConnectionStatus(
+                    "Your work is saved. Reconnecting and continuing your request..."
+                );
+            }
+
+
+            const result =
+                await requestFastAPI(
+                    request
+                );
+
+
+            /*
+               The request succeeded.
+               Remove it from the pending queue.
+            */
+
+            clearPendingRequest();
+
+            hideConnectionStatus();
+
+            return result.reply;
+
+        } catch (error) {
+
+            lastError =
+                error;
+
+            console.error(
+                "Business Center request attempt " +
+                (attempt + 1) +
+                " failed:",
+                error
             );
 
-        document.getElementById(
-            "servicePrice"
-        ).innerText =
-            price.includes("₦")
-                ? "SERVICE PRICE: " + price
-                : "SERVICE PRICE: ₦" + price;
+
+            /*
+               Real server/application errors should not
+               blindly be repeated.
+            */
+
+            if (
+                error.serverError
+            ) {
+
+                break;
+            }
+
+
+            /*
+               Temporary network failure.
+               Retry automatically.
+            */
+
+            if (
+                attempt <
+                retryDelays.length
+            ) {
+
+                showConnectionStatus(
+                    "Your work is saved. There is a temporary network connection issue. Reconnecting..."
+                );
+
+                await wait(
+                    retryDelays[attempt]
+                );
+
+                continue;
+            }
+        }
     }
 
 
-    /* ========================================================
-       FASTAPI RETURNS "reply".
-       ALSO ACCEPT response/message.
-    ======================================================== */
+    /*
+       All controlled retries failed.
+       The request remains saved in localStorage.
+    */
 
-    if (
-        response.ok &&
-        result &&
-        result.success
-    ) {
-
-        return (
-            result.reply ||
-            result.response ||
-            result.message ||
-            "Ada is ready to help you."
-        );
-    }
-
-    throw new Error(
-        (
-            result &&
-            result.error
-        ) ||
-        "Ada could not process the request."
+    showConnectionStatus(
+        NETWORK_MESSAGE
     );
+
+    throw lastError ||
+        new Error(
+            "Temporary network connection issue."
+        );
 }
 
 
 /* ============================================================
-   AUTOMATIC ADA ACTIVATION
+   SHOW SAVED-WORK MESSAGE ONCE
+============================================================ */
+
+function showSavedNetworkMessage() {
+
+    const alreadyShown =
+        conversation.some(
+            function(item) {
+
+                return (
+                    item.message ===
+                    NETWORK_MESSAGE
+                );
+            }
+        );
+
+    if (!alreadyShown) {
+
+        addMessage(
+            "Business Center",
+            NETWORK_MESSAGE
+        );
+    }
+}
+
+
+/* ============================================================
+   AUTOMATIC SERVICE ACTIVATION
 ============================================================ */
 
 async function startAdaIntelligence() {
 
-    if (intelligenceStarted) {
+    if (
+        intelligenceStarted
+    ) {
+
         return;
     }
 
-    intelligenceStarted = true;
+    intelligenceStarted =
+        true;
+
 
     if (
         !selectedService ||
@@ -799,12 +1532,28 @@ async function startAdaIntelligence() {
     ) {
 
         addMessage(
-            "Ada",
+            "Business Center",
             "Please return to the services and select the service you need."
         );
 
         return;
     }
+
+
+    /*
+       If this service already has a saved conversation,
+       do not start a second welcome request.
+    */
+
+    const hasConversation =
+        conversation.length > 0;
+
+
+    if (hasConversation) {
+
+        return;
+    }
+
 
     try {
 
@@ -813,29 +1562,38 @@ async function startAdaIntelligence() {
 
                 "The customer has selected the service '" +
                 selectedService +
-                "'. Ada should now take over the conversation immediately. Welcome the customer, acknowledge the selected service, and begin the normal conversation for this service. Do not ask which service the customer wants because the service has already been selected. Ask only the first useful question needed to begin the work.",
+                "'. Begin the normal conversation for this service. Welcome the customer, acknowledge the selected service, and ask only the first useful question needed to begin the work. Do not ask which service the customer wants because the service has already been selected.",
 
                 "service_selected"
             );
 
         addMessage(
-            "Ada",
+            "Business Center",
             response
         );
 
     } catch (error) {
 
         console.error(
-            "ADA ACTIVATION ERROR:",
+            "SERVICE ACTIVATION ERROR:",
             error
         );
 
-        addMessage(
-            "Ada",
-            "I’m ready to help with your " +
-            selectedService +
-            " request, but I could not connect to Ada right now. Please try again."
-        );
+        if (
+            isNetworkError(
+                error
+            )
+        ) {
+
+            showSavedNetworkMessage();
+
+        } else {
+
+            addMessage(
+                "Business Center",
+                "We could not complete that request at the moment. Your work has been saved. Please continue when the connection is available."
+            );
+        }
     }
 }
 
@@ -846,9 +1604,13 @@ async function startAdaIntelligence() {
 
 async function sendMessage() {
 
-    if (requestInProgress) {
+    if (
+        requestInProgress
+    ) {
+
         return;
     }
+
 
     const input =
         document.getElementById(
@@ -860,27 +1622,41 @@ async function sendMessage() {
             "sendButton"
         );
 
+
     const message =
         input.value.trim();
 
+
     if (!message) {
+
         return;
     }
 
-    requestInProgress = true;
+
+    requestInProgress =
+        true;
+
+
+    /*
+       Save the customer's message immediately.
+       It is therefore not lost even if the network disappears.
+    */
 
     addMessage(
         "You",
         message
     );
 
+
     input.value = "";
+
 
     sendButton.disabled =
         true;
 
     sendButton.innerText =
         "WAIT...";
+
 
     try {
 
@@ -890,8 +1666,9 @@ async function sendMessage() {
                 "customer_message"
             );
 
+
         addMessage(
-            "Ada",
+            "Business Center",
             response
         );
 
@@ -902,10 +1679,22 @@ async function sendMessage() {
             error
         );
 
-        addMessage(
-            "Ada",
-            "I could not connect to my Business Center service right now. Please try again."
-        );
+
+        if (
+            isNetworkError(
+                error
+            )
+        ) {
+
+            showSavedNetworkMessage();
+
+        } else {
+
+            addMessage(
+                "Business Center",
+                "Your message has been saved. We could not complete the request right now. Please continue when the connection is available."
+            );
+        }
 
     } finally {
 
@@ -960,20 +1749,26 @@ function openFilePicker() {
 }
 
 
-async function handleFileSelected(event) {
+async function handleFileSelected(
+    event
+) {
 
     const file =
         event.target.files[0];
 
+
     if (!file) {
+
         return;
     }
+
 
     addMessage(
         "You",
         "I have uploaded " +
         file.name
     );
+
 
     try {
 
@@ -987,18 +1782,37 @@ async function handleFileSelected(event) {
                 "file_uploaded"
             );
 
+
         addMessage(
-            "Ada",
+            "Business Center",
             response
         );
 
     } catch (error) {
 
-        addMessage(
-            "Ada",
-            "I could not continue with the uploaded file right now. Please try again."
+        console.error(
+            "FILE UPLOAD REQUEST ERROR:",
+            error
         );
+
+
+        if (
+            isNetworkError(
+                error
+            )
+        ) {
+
+            showSavedNetworkMessage();
+
+        } else {
+
+            addMessage(
+                "Business Center",
+                "Your uploaded file and work have been saved. We could not continue the request right now. Please continue when the connection is available."
+            );
+        }
     }
+
 
     event.target.value = "";
 }
@@ -1011,7 +1825,7 @@ async function handleFileSelected(event) {
 function openVoice() {
 
     addMessage(
-        "Ada",
+        "Business Center",
         "Voice input can be used when you would rather speak than type."
     );
 }
@@ -1023,7 +1837,7 @@ function openVoice() {
 
 async function reviewDocument() {
 
-    await performAdaAction(
+    await performBusinessAction(
 
         "I want to review my work.",
 
@@ -1040,7 +1854,7 @@ async function reviewDocument() {
 
 async function approveDocument() {
 
-    await performAdaAction(
+    await performBusinessAction(
 
         "I approve the work.",
 
@@ -1057,7 +1871,7 @@ async function approveDocument() {
 
 async function openPayment() {
 
-    await performAdaAction(
+    await performBusinessAction(
 
         "I want to continue with Payment & Download.",
 
@@ -1074,7 +1888,7 @@ async function openPayment() {
 
 async function contactCustomerService() {
 
-    await performAdaAction(
+    await performBusinessAction(
 
         "I want help from Customer Service.",
 
@@ -1086,25 +1900,32 @@ async function contactCustomerService() {
 
 
 /* ============================================================
-   COMMON ADA ACTION
+   COMMON BUSINESS ACTION
 ============================================================ */
 
-async function performAdaAction(
+async function performBusinessAction(
     customerMessage,
     controllerMessage,
     eventName
 ) {
 
-    if (requestInProgress) {
+    if (
+        requestInProgress
+    ) {
+
         return;
     }
 
-    requestInProgress = true;
+
+    requestInProgress =
+        true;
+
 
     addMessage(
         "You",
         customerMessage
     );
+
 
     try {
 
@@ -1114,8 +1935,9 @@ async function performAdaAction(
                 eventName
             );
 
+
         addMessage(
-            "Ada",
+            "Business Center",
             response
         );
 
@@ -1127,10 +1949,22 @@ async function performAdaAction(
             error
         );
 
-        addMessage(
-            "Ada",
-            "I could not continue that part of your request right now. Please try again."
-        );
+
+        if (
+            isNetworkError(
+                error
+            )
+        ) {
+
+            showSavedNetworkMessage();
+
+        } else {
+
+            addMessage(
+                "Business Center",
+                "Your work has been saved. We could not complete this step right now. Please continue when the connection is available."
+            );
+        }
 
     } finally {
 
@@ -1141,13 +1975,278 @@ async function performAdaAction(
 
 
 /* ============================================================
-   START WORKSPACE
-   SERVICE IS ALREADY SELECTED.
-   ADA STARTS AUTOMATICALLY.
+   CONTINUE PENDING WORK AFTER CONNECTION RETURNS
 ============================================================ */
 
+async function resumePendingRequest() {
+
+    if (
+        !pendingRequest
+    ) {
+
+        hideConnectionStatus();
+
+        return;
+    }
+
+
+    if (
+        requestInProgress
+    ) {
+
+        return;
+    }
+
+
+    if (
+        !navigator.onLine
+    ) {
+
+        showConnectionStatus(
+            NETWORK_MESSAGE
+        );
+
+        return;
+    }
+
+
+    requestInProgress =
+        true;
+
+
+    showConnectionStatus(
+        "Your connection is back. Continuing your saved work..."
+    );
+
+
+    try {
+
+        const request =
+            pendingRequest;
+
+
+        const response =
+            await requestFastAPI(
+                request
+            );
+
+
+        clearPendingRequest();
+
+        hideConnectionStatus();
+
+
+        /*
+           Only display the returned response.
+           The original customer message was already saved.
+        */
+
+        addMessage(
+            "Business Center",
+            response.reply
+        );
+
+    } catch (error) {
+
+        console.error(
+            "PENDING REQUEST RESUME ERROR:",
+            error
+        );
+
+
+        if (
+            isNetworkError(
+                error
+            )
+        ) {
+
+            showConnectionStatus(
+                NETWORK_MESSAGE
+            );
+
+        } else {
+
+            clearPendingRequest();
+
+            showConnectionStatus(
+                ""
+            );
+
+            hideConnectionStatus();
+
+            addMessage(
+                "Business Center",
+                "Your work is still saved. We could not complete that step right now. Please continue when the connection is available."
+            );
+        }
+
+    } finally {
+
+        requestInProgress =
+            false;
+    }
+}
+
+
+/* ============================================================
+   NETWORK RETURNS
+============================================================ */
+
+window.addEventListener(
+    "online",
+    function() {
+
+        showConnectionStatus(
+            "Your connection is back. Checking your saved work..."
+        );
+
+
+        /*
+           Give the browser a moment to restore the connection
+           before sending the saved request.
+        */
+
+        clearTimeout(
+            reconnectTimer
+        );
+
+
+        reconnectTimer =
+            setTimeout(
+                function() {
+
+                    resumePendingRequest();
+
+                },
+                1200
+            );
+    }
+);
+
+
+/* ============================================================
+   NETWORK GOES OFFLINE
+============================================================ */
+
+window.addEventListener(
+    "offline",
+    function() {
+
+        if (
+            pendingRequest
+        ) {
+
+            showConnectionStatus(
+                NETWORK_MESSAGE
+            );
+
+        } else {
+
+            showConnectionStatus(
+                "There is a temporary network connection issue. Your work is being kept safely on this page."
+            );
+        }
+    }
+);
+
+
+/* ============================================================
+   PERIODIC CONNECTION CHECK
+   Helps when the browser does not fire online reliably.
+============================================================ */
+
+setInterval(
+    function() {
+
+        if (
+            pendingRequest &&
+            navigator.onLine &&
+            !requestInProgress
+        ) {
+
+            resumePendingRequest();
+        }
+
+    },
+    15000
+);
+
+
+/* ============================================================
+   SAVE BEFORE PAGE IS HIDDEN
+============================================================ */
+
+document.addEventListener(
+    "visibilitychange",
+    function() {
+
+        if (
+            document.visibilityState ===
+            "hidden"
+        ) {
+
+            saveConversation();
+
+            if (
+                pendingRequest
+            ) {
+
+                savePendingRequest(
+                    pendingRequest
+                );
+            }
+        }
+    }
+);
+
+
+/* ============================================================
+   START WORKSPACE
+============================================================ */
+
+loadSavedWork();
+
 getSelectedService();
-startAdaIntelligence();
+
+restoreConversationToScreen();
+
+
+/*
+   If a previous request was waiting for the network,
+   do not create another automatic service-selection request.
+*/
+
+if (
+    pendingRequest
+) {
+
+    intelligenceStarted =
+        true;
+
+    if (
+        navigator.onLine
+    ) {
+
+        setTimeout(
+            function() {
+
+                resumePendingRequest();
+
+            },
+            1000
+        );
+
+    } else {
+
+        showConnectionStatus(
+            NETWORK_MESSAGE
+        );
+    }
+
+} else {
+
+    startAdaIntelligence();
+}
 
 </script>
 
