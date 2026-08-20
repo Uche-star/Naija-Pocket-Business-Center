@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
     <title>Naija Pocket Business Center</title>
 
@@ -16,101 +19,246 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            min-height: 100%;
+            height: 100%;
+            overflow: hidden;
         }
 
         body {
             font-family: Arial, sans-serif;
             background: #0B0B0B;
             color: white;
-            overflow-x: hidden;
         }
 
         .page {
             width: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
+            height: 100vh;
+            height: 100dvh;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
             padding:
-                max(28px, env(safe-area-inset-top))
+                max(18px, env(safe-area-inset-top))
                 18px
-                calc(80px + env(safe-area-inset-bottom))
+                calc(82px + env(safe-area-inset-bottom))
                 18px;
+
+            overflow: hidden;
         }
 
         .main-container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1050px;
+            max-height: 100%;
 
-            display: grid;
-            grid-template-columns: 1fr 0.75fr;
-            gap: 40px;
+            display: flex;
+            flex-direction: column;
 
-            align-items: center;
+            justify-content: center;
         }
 
-        /* ==============================
-           LEFT SIDE
-        ============================== */
-
-        .content {
-            width: 100%;
-        }
+        /* =========================================
+           BRAND
+        ========================================= */
 
         .brand-name {
-            font-size: clamp(28px, 5vw, 46px);
-            line-height: 1.05;
+            margin: 0;
+
+            font-size: clamp(27px, 5vw, 46px);
+            line-height: 1.02;
             font-weight: 800;
-            margin: 0 0 12px;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.8px;
+
+            text-align: center;
         }
 
-        .identity {
-            font-size: clamp(16px, 2.5vw, 23px);
-            line-height: 1.25;
-            font-weight: 700;
-            margin-bottom: 20px;
+        /* =========================================
+           MOVING DOCUMENT PEOPLE
+        ========================================= */
+
+        .document-people-window {
+            width: 100%;
+            overflow: hidden;
+
+            margin: 8px 0 14px;
+
+            border-top: 1px solid #292929;
+            border-bottom: 1px solid #292929;
+
+            padding: 7px 0;
+
+            white-space: nowrap;
+        }
+
+        .document-people-track {
+            display: inline-flex;
+
+            white-space: nowrap;
+
+            animation:
+                documentPeopleMove
+                18s
+                linear
+                infinite;
+        }
+
+        .document-people {
+            display: inline-block;
+
+            padding-right: 70px;
+
+            color: #1E90FF;
+
+            font-size: clamp(14px, 2.3vw, 20px);
+            line-height: 1.2;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        @keyframes documentPeopleMove {
+
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* =========================================
+           VALUE STATEMENTS
+        ========================================= */
+
+        .values {
+            width: 100%;
+
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 9px;
+
+            margin-bottom: 13px;
         }
 
         .value {
-            font-size: clamp(14px, 2vw, 18px);
-            line-height: 1.5;
+            background: #171717;
+
+            border: 1px solid #292929;
+            border-radius: 7px;
+
+            padding: 10px 11px;
+
+            font-size: clamp(11px, 1.7vw, 15px);
+            line-height: 1.35;
+
             font-weight: 600;
-            margin: 6px 0;
-        }
 
-        .services-title {
-            color: #1E90FF;
-            font-size: clamp(15px, 2.2vw, 20px);
-            line-height: 1.3;
-            font-weight: 800;
-            margin: 25px 0 14px;
-        }
-
-        .services {
-            font-size: clamp(14px, 2vw, 17px);
-            line-height: 1.65;
-            margin-bottom: 24px;
-        }
-
-        .services strong {
-            font-weight: 800;
-        }
-
-        .start-button {
             display: flex;
             align-items: center;
             justify-content: center;
 
-            width: 100%;
-            max-width: 470px;
-            min-height: 54px;
+            text-align: center;
+        }
 
-            padding: 14px 18px;
+        /* =========================================
+           SERVICES TITLE
+        ========================================= */
+
+        .services-title {
+            color: #1E90FF;
+
+            font-size: clamp(14px, 2.2vw, 19px);
+            line-height: 1.2;
+
+            font-weight: 800;
+
+            text-align: center;
+
+            margin: 2px 0 9px;
+        }
+
+        /* =========================================
+           SERVICES
+        ========================================= */
+
+        .services-box {
+            width: 100%;
+
+            background: #121212;
+
+            border: 1px solid #292929;
+            border-radius: 8px;
+
+            padding: 10px;
+        }
+
+        .services-heading {
+            font-size: clamp(12px, 1.8vw, 15px);
+
+            font-weight: 800;
+
+            text-align: center;
+
+            margin-bottom: 8px;
+        }
+
+        .services {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 6px;
+        }
+
+        .service-item {
+            min-height: 34px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #202020;
+
+            border: 1px solid #303030;
+            border-radius: 5px;
+
+            padding: 6px 5px;
+
+            text-align: center;
+
+            font-size: clamp(9px, 1.5vw, 13px);
+            line-height: 1.2;
+
+            font-weight: 600;
+        }
+
+        .service-item:last-child {
+            grid-column: span 4;
+
+            background: #063D2A;
+            border-color: #075C3F;
+
+            font-weight: 800;
+        }
+
+        /* =========================================
+           START BUTTON
+        ========================================= */
+
+        .start-button {
+            width: 100%;
+
+            min-height: 48px;
+
+            margin-top: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
             border: none;
             border-radius: 7px;
@@ -118,8 +266,9 @@
             background: #CC0000;
             color: white;
 
-            font-size: clamp(13px, 2vw, 17px);
-            line-height: 1.25;
+            font-size: clamp(12px, 2vw, 16px);
+            line-height: 1.2;
+
             font-weight: 800;
 
             text-decoration: none;
@@ -130,8 +279,8 @@
                 0 5px 18px rgba(0, 0, 0, 0.45);
 
             transition:
-                transform 0.15s ease,
-                background 0.15s ease;
+                background 0.15s ease,
+                transform 0.15s ease;
         }
 
         .start-button:hover {
@@ -143,113 +292,41 @@
             transform: scale(0.98);
         }
 
+        /* =========================================
+           FOOTER
+        ========================================= */
+
         .statement {
-            font-size: clamp(12px, 1.8vw, 16px);
-            line-height: 1.45;
-            margin-top: 18px;
+            margin-top: 10px;
+
+            text-align: center;
+
+            font-size: clamp(10px, 1.6vw, 14px);
+            line-height: 1.3;
+
+            color: #DDDDDD;
         }
 
         .signature {
-            font-size: clamp(12px, 1.8vw, 16px);
-            line-height: 1.45;
-            font-weight: 700;
-            margin-top: 12px;
-        }
-
-        /* ==============================
-           RIGHT SIDE
-           TEMPORARY ADA PLACEHOLDER
-        ============================== */
-
-        .ada-area {
-            width: 100%;
-            min-height: 520px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .ada-placeholder {
-            width: min(100%, 430px);
-            min-height: 500px;
-
-            border-radius: 24px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #181818,
-                    #101010
-                );
-
-            border: 1px solid #292929;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-
-            padding: 30px;
-
-            box-shadow:
-                0 15px 45px rgba(0, 0, 0, 0.55);
-        }
-
-        .placeholder-circle {
-            width: 210px;
-            height: 210px;
-
-            border-radius: 50%;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #333333,
-                    #171717
-                );
-
-            border: 3px solid #1E90FF;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            margin-bottom: 25px;
-
-            font-size: 70px;
-        }
-
-        .placeholder-name {
-            font-size: 30px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .placeholder-role {
-            color: #1E90FF;
-            font-size: 16px;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .placeholder-note {
-            margin-top: 20px;
-
-            font-size: 13px;
-            line-height: 1.45;
-
-            color: #AAAAAA;
+            margin-top: 5px;
 
             text-align: center;
+
+            font-size: clamp(10px, 1.6vw, 14px);
+            line-height: 1.3;
+
+            font-weight: 700;
+
+            color: white;
         }
 
-        /* ==============================
+        /* =========================================
            BOTTOM WAVE
-        ============================== */
+        ========================================= */
 
         .wave {
             position: fixed;
+
             left: 0;
             bottom: 0;
 
@@ -257,92 +334,184 @@
             height: 55px;
 
             pointer-events: none;
+
             z-index: 1;
+
+            overflow: hidden;
         }
 
         .wave svg {
             display: block;
+
             width: 100%;
             height: 55px;
         }
 
-        /* ==============================
+        /* =========================================
            TABLET
-        ============================== */
+        ========================================= */
 
         @media (max-width: 800px) {
-
-            .main-container {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .start-button {
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .ada-area {
-                min-height: 380px;
-            }
-
-            .ada-placeholder {
-                min-height: 380px;
-                max-width: 360px;
-            }
-
-            .placeholder-circle {
-                width: 160px;
-                height: 160px;
-                font-size: 55px;
-            }
-
-            .placeholder-name {
-                font-size: 26px;
-            }
-        }
-
-        /* ==============================
-           SMALL PHONES
-        ============================== */
-
-        @media (max-width: 430px) {
 
             .page {
                 padding-left: 14px;
                 padding-right: 14px;
+
+                padding-bottom:
+                    calc(76px + env(safe-area-inset-bottom));
             }
 
-            .main-container {
-                gap: 25px;
-            }
-
-            .brand-name {
-                font-size: 27px;
+            .values {
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
             }
 
             .services {
-                line-height: 1.55;
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
             }
 
-            .ada-placeholder {
-                min-height: 340px;
-                border-radius: 20px;
-                padding: 22px;
+            .service-item:last-child {
+                grid-column: span 3;
+            }
+        }
+
+        /* =========================================
+           PHONE
+        ========================================= */
+
+        @media (max-width: 520px) {
+
+            .page {
+                padding-left: 10px;
+                padding-right: 10px;
+
+                padding-top:
+                    max(10px, env(safe-area-inset-top));
+
+                padding-bottom:
+                    calc(70px + env(safe-area-inset-bottom));
             }
 
-            .placeholder-circle {
-                width: 135px;
-                height: 135px;
-                font-size: 45px;
+            .brand-name {
+                font-size: 25px;
             }
 
-            .placeholder-name {
-                font-size: 24px;
+            .document-people-window {
+                margin-top: 6px;
+                margin-bottom: 9px;
+            }
+
+            .values {
+                gap: 5px;
+                margin-bottom: 9px;
+            }
+
+            .value {
+                padding: 7px 5px;
+                font-size: 10px;
+            }
+
+            .services-box {
+                padding: 7px;
+            }
+
+            .services {
+                gap: 4px;
+            }
+
+            .service-item {
+                min-height: 30px;
+                padding: 4px 3px;
+                font-size: 8.5px;
+            }
+
+            .start-button {
+                min-height: 44px;
+                margin-top: 9px;
+                font-size: 11px;
+            }
+
+            .statement {
+                margin-top: 7px;
+                font-size: 9.5px;
+            }
+
+            .signature {
+                margin-top: 4px;
+                font-size: 9.5px;
+            }
+
+            .wave {
+                height: 45px;
+            }
+
+            .wave svg {
+                height: 45px;
+            }
+        }
+
+        /* =========================================
+           VERY SMALL PHONES
+        ========================================= */
+
+        @media (max-height: 680px) and (max-width: 520px) {
+
+            .brand-name {
+                font-size: 22px;
+            }
+
+            .document-people-window {
+                padding: 5px 0;
+                margin-bottom: 6px;
+            }
+
+            .values {
+                margin-bottom: 6px;
+            }
+
+            .value {
+                padding: 5px 4px;
+                font-size: 8.5px;
+            }
+
+            .services-box {
+                padding: 5px;
+            }
+
+            .services-heading {
+                margin-bottom: 5px;
+                font-size: 10px;
+            }
+
+            .service-item {
+                min-height: 26px;
+                font-size: 7.5px;
+            }
+
+            .start-button {
+                min-height: 40px;
+                margin-top: 6px;
+            }
+
+            .statement {
+                margin-top: 5px;
+                font-size: 8px;
+            }
+
+            .signature {
+                font-size: 8px;
+            }
+        }
+
+        /* =========================================
+           REDUCE MOTION ACCESSIBILITY
+        ========================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .document-people-track {
+                animation: none;
             }
         }
     </style>
@@ -355,19 +524,49 @@
     <div class="main-container">
 
         <!-- =========================================
-             LEFT SIDE — BUSINESS CENTER INFORMATION
+             BRAND
         ========================================== -->
 
-        <section class="content">
+        <h1 class="brand-name">
+            NAIJA POCKET<br>
+            BUSINESS CENTER
+        </h1>
 
-            <h1 class="brand-name">
-                NAIJA POCKET<br>
-                BUSINESS CENTER
-            </h1>
 
-            <div class="identity">
-                THE DOCUMENT PEOPLE
+        <!-- =========================================
+             MOVING IDENTITY
+        ========================================== -->
+
+        <div class="document-people-window">
+
+            <div class="document-people-track">
+
+                <span class="document-people">
+                    THE DOCUMENT PEOPLE •
+                </span>
+
+                <span class="document-people">
+                    THE DOCUMENT PEOPLE •
+                </span>
+
+                <span class="document-people">
+                    THE DOCUMENT PEOPLE •
+                </span>
+
+                <span class="document-people">
+                    THE DOCUMENT PEOPLE •
+                </span>
+
             </div>
+
+        </div>
+
+
+        <!-- =========================================
+             VALUE STATEMENTS
+        ========================================== -->
+
+        <section class="values">
 
             <div class="value">
                 Fast • Convenient • Open 24/7
@@ -382,85 +581,99 @@
                 From Your Phone, Wherever You Are In Nigeria
             </div>
 
-            <div class="services-title">
-                ENJOY THE BEST IN DOCUMENT PROCESSING
+        </section>
+
+
+        <!-- =========================================
+             SERVICES
+        ========================================== -->
+
+        <div class="services-title">
+            ENJOY THE BEST IN DOCUMENT PROCESSING
+        </div>
+
+        <section class="services-box">
+
+            <div class="services-heading">
+                SERVICES
             </div>
 
             <div class="services">
 
-                <strong>SERVICES</strong>
+                <div class="service-item">
+                    ✓ CVs &amp; Résumés
+                </div>
 
-                <br><br>
+                <div class="service-item">
+                    ✓ Handwritten Note Typing
+                </div>
 
-                ✓ CVs &amp; Résumés<br>
-                ✓ Handwritten Note Typing<br>
-                ✓ Assignments &amp; Projects<br>
-                ✓ Business Documents<br>
-                ✓ Letters &amp; Proposals<br>
-                ✓ Editing &amp; Formatting<br>
-                ✓ PDF Services<br>
-                ✓ Document Conversion<br>
-                ✓ Translation<br>
-                ✓ Printing Preparation<br>
-                ✓ And Much More
+                <div class="service-item">
+                    ✓ Assignments &amp; Projects
+                </div>
 
-            </div>
+                <div class="service-item">
+                    ✓ Business Documents
+                </div>
 
-            <!-- IMPORTANT:
-                 This remains the entrance into the existing
-                 conversation flow. -->
+                <div class="service-item">
+                    ✓ Letters &amp; Proposals
+                </div>
 
-            <a
-                class="start-button"
-                href="conversation.html"
-            >
-                PRESS HERE TO START YOUR REQUEST
-            </a>
+                <div class="service-item">
+                    ✓ Editing &amp; Formatting
+                </div>
 
-            <div class="statement">
-                Get your documents, business services and
-                everyday office work done from your phone.
-            </div>
+                <div class="service-item">
+                    ✓ PDF Services
+                </div>
 
-            <div class="signature">
-                Naija Pocket Business Center<br>
-                Your Business Center In Your Pocket
+                <div class="service-item">
+                    ✓ Document Conversion
+                </div>
+
+                <div class="service-item">
+                    ✓ Translation
+                </div>
+
+                <div class="service-item">
+                    ✓ Printing Preparation
+                </div>
+
+                <div class="service-item">
+                    ✓ And Much More
+                </div>
+
             </div>
 
         </section>
 
 
         <!-- =========================================
-             RIGHT SIDE — TEMPORARY ADA PLACEHOLDER
-            
-             THIS IS WHERE THE REAL ADA IMAGE WILL GO.
+             START
         ========================================== -->
 
-        <section class="ada-area">
+        <a
+            class="start-button"
+            href="conversation.html"
+        >
+            PRESS HERE TO START YOUR REQUEST
+        </a>
 
-            <div class="ada-placeholder">
 
-                <div class="placeholder-circle">
-                    👩🏽‍💼
-                </div>
+        <!-- =========================================
+             FOOTER INFORMATION
+        ========================================== -->
 
-                <div class="placeholder-name">
-                    Ada
-                </div>
+        <div class="statement">
+            Get your documents, business services and
+            everyday office work done from your phone.
+        </div>
 
-                <div class="placeholder-role">
-                    Your Business Center Assistant
-                </div>
-
-                <div class="placeholder-note">
-                    Temporary image placeholder.
-                    The final Ada lady image can be inserted
-                    here later without changing the connection.
-                </div>
-
-            </div>
-
-        </section>
+        <div class="signature">
+            Naija Pocket Business Center<br>
+            Your Business Center In Your Pocket
+        </div>
 
     </div>
 
@@ -505,4 +718,4 @@
 </div>
 
 </body>
-</html> 
+</html>
