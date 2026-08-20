@@ -1,523 +1,921 @@
-<<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
+    <title>Naija Pocket Business Center</title><style>
+    * {
+        box-sizing: border-box;
+    }
 
-    <title>Naija Pocket Business Center</title>
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    body {
+        background: #0B0B0B;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100%;
-            overflow-x: hidden;
-        }
+    .page {
+        width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding:
+            max(12px, env(safe-area-inset-top))
+            12px
+            calc(20px + env(safe-area-inset-bottom));
+        display: flex;
+        flex-direction: column;
+    }
 
-        body {
-            background: #0B0B0B;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
+    .workspace {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100vh - 32px);
+        min-height: calc(100dvh - 32px);
+    }
 
+    .header {
+        background: #171717;
+        border-radius: 6px;
+        padding: 14px 15px;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #1E90FF;
+    }
+
+    .brand {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .selected-service {
+        margin-top: 10px;
+        background: #0B0B0B;
+        border: 1px solid #444;
+        border-radius: 5px;
+        padding: 9px 10px;
+    }
+
+    .selected-service-label {
+        color: #AAAAAA;
+        font-size: 10px;
+        margin-bottom: 3px;
+    }
+
+    .selected-service-name {
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .service-price {
+        margin-top: 8px;
+        color: #1E90FF;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .chat-area {
+        flex: 1;
+        background: #171717;
+        border-radius: 6px;
+        padding: 15px;
+        overflow-y: auto;
+        min-height: 280px;
+        border: 1px solid #292929;
+    }
+
+    .message {
+        width: 100%;
+        margin-bottom: 15px;
+        display: flex;
+    }
+
+    .message.ada {
+        justify-content: flex-start;
+    }
+
+    .message.you {
+        justify-content: flex-end;
+    }
+
+    .bubble {
+        display: inline-block;
+        max-width: 92%;
+        padding: 11px 13px;
+        border-radius: 8px;
+        font-size: 13px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .message.ada .bubble {
+        background: #242424;
+        color: white;
+        border-bottom-left-radius: 2px;
+    }
+
+    .message.you .bubble {
+        background: #063D2A;
+        color: white;
+        border-bottom-right-radius: 2px;
+    }
+
+    .actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .action-button {
+        width: 100%;
+        min-height: 44px;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 6px;
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .upload-button {
+        background: white;
+        color: black;
+    }
+
+    .voice-button,
+    .review-button,
+    .approve-button {
+        background: #1E90FF;
+        color: white;
+    }
+
+    .payment-button,
+    .customer-service-button {
+        background: #CC0000;
+        color: white;
+    }
+
+    .input-area {
+        width: 100%;
+        margin-top: 10px;
+        display: flex;
+        gap: 6px;
+    }
+
+    .message-input {
+        flex: 1;
+        min-width: 0;
+        min-height: 48px;
+        resize: vertical;
+        background: white;
+        color: black;
+        border: none;
+        border-radius: 5px;
+        padding: 12px;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .send-button {
+        width: 82px;
+        min-height: 48px;
+        border: none;
+        border-radius: 5px;
+        background: #1E90FF;
+        color: white;
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .send-button:disabled {
+        opacity: 0.5;
+    }
+
+    #fileInput {
+        display: none;
+    }
+
+    .footer {
+        text-align: center;
+        color: #777;
+        font-size: 10px;
+        line-height: 1.5;
+        padding-top: 12px;
+    }
+
+    @media (max-width: 360px) {
         .page {
-            width: 100%;
-            min-height: 100vh;
-            padding: 10px 12px 12px;
-            display: flex;
-            flex-direction: column;
+            padding-left: 8px;
+            padding-right: 8px;
         }
 
-        /* =====================================================
-           TOP AREA
-        ===================================================== */
-
-        .instruction {
-            width: 100%;
-            background: #171717;
-            color: white;
-            padding: 9px 8px;
-            margin-bottom: 8px;
-            text-align: center;
-            font-size: 11px;
-            line-height: 1.3;
+        .chat-area {
+            padding: 11px;
         }
 
-        /* =====================================================
-           SERVICE AREA
-        ===================================================== */
-
-        .services {
-            width: 100%;
-            display: grid;
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-            gap: 5px;
-            align-content: start;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-bottom: 12px;
+        .action-button {
+            min-height: 40px;
+            font-size: 9px;
         }
 
-        .service-button {
-            width: 100%;
-            min-width: 0;
-            height: 36px;
-            padding: 3px 2px;
+        .send-button {
+            width: 72px;
+        }
+    }
 
-            background: #3A3A3A;
-            color: white;
-
-            border: 1px solid #555555;
-            border-radius: 2px;
-
-            font-family: Arial, sans-serif;
-            font-size: 10px;
-            font-weight: bold;
-            line-height: 1.1;
-
-            overflow-wrap: break-word;
-            word-break: normal;
-
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
+    @media (min-width: 600px) {
+        .page {
+            padding-left: 20px;
+            padding-right: 20px;
         }
 
-        .service-button:hover {
-            background: #464646;
+        .actions {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
-
-        .service-button:active {
-            background: #555555;
-            transform: scale(0.98);
-        }
-
-        /* =====================================================
-           BUTTON WORKING STATE
-        ===================================================== */
-
-        .service-button.working {
-            background: #CC0000;
-            color: white;
-            border-color: #CC0000;
-        }
-
-        .service-button:disabled {
-            cursor: wait;
-        }
-
-        /* =====================================================
-           RED AREA AFTER SERVICES
-        ===================================================== */
-
-        .bottom-red {
-            width: calc(100% + 24px);
-
-            flex: 1;
-            min-height: 180px;
-
-            background: #CC0000;
-
-            margin-left: -12px;
-            margin-right: -12px;
-            margin-top: 0;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding: 25px 18px;
-        }
-
-        .bottom-message {
-            max-width: 600px;
-
-            color: white;
-            text-align: center;
-
-            font-size: 13px;
-            line-height: 1.5;
-            font-weight: bold;
-        }
-
-        /* =====================================================
-           SLIGHTLY LARGER PHONES
-        ===================================================== */
-
-        @media (min-width: 481px) {
-
-            .page {
-                padding: 12px 20px 0;
-            }
-
-            .instruction {
-                font-size: 12px;
-                padding: 10px;
-            }
-
-            .services {
-                gap: 6px;
-            }
-
-            .service-button {
-                height: 40px;
-                font-size: 10px;
-            }
-
-            .bottom-red {
-                margin-left: -20px;
-                margin-right: -20px;
-                width: calc(100% + 40px);
-            }
-        }
-
-        /* =====================================================
-           VERY SMALL PHONES
-        ===================================================== */
-
-        @media (max-width: 360px) {
-
-            .page {
-                padding: 8px 8px 0;
-            }
-
-            .instruction {
-                font-size: 10px;
-                padding: 8px 5px;
-            }
-
-            .services {
-                gap: 4px;
-            }
-
-            .service-button {
-                height: 34px;
-                padding: 2px;
-                font-size: 9px;
-            }
-
-            .bottom-red {
-                margin-left: -8px;
-                margin-right: -8px;
-                width: calc(100% + 16px);
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="page">
-
-    <!-- =================================================
-         INSTRUCTION
-    ================================================== -->
-
-    <div class="instruction">
-        There are 28 services available.
-        Please scroll through the list,
-        find the service you need,
-        and tap on it.
-        Your request will be attended to immediately.
-    </div>
-
-
-    <!-- =================================================
-         28 ADA SERVICE BUTTONS
-    ================================================== -->
-
-    <div class="services">
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Document Typing"
-        >
-            Document Typing
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Document Formatting"
-        >
-            Document Formatting
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Document Editing"
-        >
-            Document Editing
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Grammar Correction"
-        >
-            Grammar Correction
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Assignments"
-        >
-            Assignments
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Projects"
-        >
-            Projects
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Research Assistance"
-        >
-            Research Assistance
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Seminar Papers"
-        >
-            Seminar Papers
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="CVs & Résumés"
-        >
-            CVs &amp; Résumés
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Cover Letters"
-        >
-            Cover Letters
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Business Proposals"
-        >
-            Business Proposals
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Company Profiles"
-        >
-            Company Profiles
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Business Letters & Letterhead"
-        >
-            Business Letters &amp; Letterhead
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Invoices"
-        >
-            Invoices
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Quotations"
-        >
-            Quotations
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Meeting Minutes"
-        >
-            Meeting Minutes
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="AI Writing Assistance"
-        >
-            AI Writing Assistance
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Document Rewriting"
-        >
-            Document Rewriting
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Translation"
-        >
-            Translation
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Document Summarization"
-        >
-            Document Summarization
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="PDF Conversion"
-        >
-            PDF Conversion
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Voice To Text"
-        >
-            Voice To Text
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Topic Explanations"
-        >
-            Topic Explanations
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Printing Preparation"
-        >
-            Printing Preparation
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Excel Spreadsheets"
-        >
-            Excel Spreadsheets
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Data Entry"
-        >
-            Data Entry
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Data Analysis"
-        >
-            Data Analysis
-        </button>
-
-        <button
-            type="button"
-            class="service-button"
-            data-service="Presentations"
-        >
-            Presentations
-        </button>
-
-    </div>
-
-
-    <!-- =================================================
-         RED AREA AFTER LAST BUTTON
-    ================================================== -->
-
-    <div class="bottom-red">
-
-        <div
-            id="bottomMessage"
-            class="bottom-message"
-        >
-            Tap the service you need.
-            Ada and her intelligence will begin working
-            on your request immediately.
+    }
+</style>
+
+</head><body><div class="page">
+    <main class="workspace">    <section class="header">
+        <div class="brand">
+            NAIJA POCKET BUSINESS CENTER
         </div>
 
+        <div class="selected-service">
+            <div class="selected-service-label">
+                SELECTED SERVICE
+            </div>
+
+            <div
+                id="selectedService"
+                class="selected-service-name"
+            >
+                Loading service...
+            </div>
+
+            <div
+                id="servicePrice"
+                class="service-price"
+            ></div>
+        </div>
+    </section>
+
+    <section
+        id="chatArea"
+        class="chat-area"
+    ></section>
+
+    <section class="actions">
+
+        <button
+            type="button"
+            class="action-button upload-button"
+            onclick="openFilePicker()"
+        >
+            📎 Upload
+        </button>
+
+        <button
+            type="button"
+            class="action-button voice-button"
+            onclick="openVoice()"
+        >
+            🎤 Voice
+        </button>
+
+        <button
+            type="button"
+            class="action-button review-button"
+            onclick="reviewDocument()"
+        >
+            🔍 Review
+        </button>
+
+        <button
+            type="button"
+            class="action-button approve-button"
+            onclick="approveDocument()"
+        >
+            ✅ Approve
+        </button>
+
+        <button
+            type="button"
+            class="action-button payment-button"
+            onclick="openPayment()"
+        >
+            💳 Payment &amp; Download
+        </button>
+
+        <button
+            type="button"
+            class="action-button customer-service-button"
+            onclick="contactCustomerService()"
+        >
+            🆘 Customer Service
+        </button>
+
+    </section>
+
+    <section class="input-area">
+
+        <textarea
+            id="messageInput"
+            class="message-input"
+            placeholder="Write your message here..."
+            rows="2"
+        ></textarea>
+
+        <button
+            type="button"
+            id="sendButton"
+            class="send-button"
+            onclick="sendMessage()"
+        >
+            SEND
+        </button>
+
+    </section>
+
+    <input
+        type="file"
+        id="fileInput"
+        accept=".pdf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.csv,.ppt,.pptx,.jpg,.jpeg,.png,.webp"
+        onchange="handleFileSelected(event)"
+    >
+
+    <div class="footer">
+        Naija Pocket Business Center<br>
+        Your Business Center In Your Pocket
     </div>
 
-</div>
+</main>
 
-
-<script>
+</div><script>
 
 /* ============================================================
-   ADA SERVICE SELECTION
-
-   SERVICE BUTTON
-        ↓
-   SAVE SERVICE
-        ↓
-   OPEN WORKSPACE
-        ↓
-   workspace.html?service=...
-        ↓
-   WORKSPACE ACTIVATES ADA INTELLIGENCE
-
-   THIS PAGE DOES NOT ASK THE CUSTOMER TO TYPE.
+   ADA FASTAPI CONNECTION
 ============================================================ */
 
-const serviceButtons =
-    document.querySelectorAll(
-        ".service-button"
-    );
+/*
+    The website is hosted on Render.
 
+    Ada intelligence is handled by the FastAPI application
+    running at the same Render service.
+
+    FastAPI route:
+
+        POST /api/chat
+
+    FastAPI then calls:
+
+        AdaController
+            ↓
+        AdaAIEngine
+            ↓
+        Groq
+*/
+
+const ADA_API_URL =
+    "https://naija-pocket-business-center.onrender.com/api/chat";
+
+
+let selectedService = "";
+let intelligenceStarted = false;
 let requestInProgress = false;
 
 
 /* ============================================================
-   OPEN CUSTOMER WORKSPACE
+   GET SERVICE FROM SERVICE BOARD
 ============================================================ */
 
-function openWorkspace(
-    service,
-    button
+function getSelectedService() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    selectedService =
+        params.get("service") || "";
+
+    if (!selectedService) {
+
+        selectedService =
+            localStorage.getItem(
+                "selectedService"
+            ) || "";
+    }
+
+    if (!selectedService) {
+
+        selectedService =
+            "Service not selected";
+    }
+
+    document.getElementById(
+        "selectedService"
+    ).innerText =
+        selectedService;
+
+    localStorage.setItem(
+        "selectedService",
+        selectedService
+    );
+}
+
+
+/* ============================================================
+   DISPLAY MESSAGE
+============================================================ */
+
+function addMessage(
+    sender,
+    message
+) {
+
+    const chatArea =
+        document.getElementById(
+            "chatArea"
+        );
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.className =
+        "message " +
+        (
+            sender === "You"
+                ? "you"
+                : "ada"
+        );
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+    bubble.className =
+        "bubble";
+
+    bubble.innerText =
+        message;
+
+    wrapper.appendChild(
+        bubble
+    );
+
+    chatArea.appendChild(
+        wrapper
+    );
+
+    chatArea.scrollTop =
+        chatArea.scrollHeight;
+}
+
+
+/* ============================================================
+   SEND TO ADA FASTAPI
+============================================================ */
+
+async function sendToAda(
+    message,
+    eventName
+) {
+
+    const response =
+        await fetch(
+            ADA_API_URL,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    message:
+                        message,
+
+                    service:
+                        selectedService,
+
+                    event:
+                        eventName,
+
+                    activate_intelligence:
+                        true
+                })
+            }
+        );
+
+    let result;
+
+    try {
+
+        result =
+            await response.json();
+
+    } catch (error) {
+
+        throw new Error(
+            "Ada FastAPI returned an invalid server response."
+        );
+    }
+
+
+    /* ========================================================
+       SERVICE PRICE
+    ======================================================== */
+
+    if (
+        result &&
+        result.price !== undefined &&
+        result.price !== null
+    ) {
+
+        const price =
+            String(
+                result.price
+            );
+
+        document.getElementById(
+            "servicePrice"
+        ).innerText =
+            price.includes("₦")
+                ? "SERVICE PRICE: " + price
+                : "SERVICE PRICE: ₦" + price;
+    }
+
+
+    /* ========================================================
+       SUCCESS
+    ======================================================== */
+
+    if (
+        response.ok &&
+        result &&
+        result.success
+    ) {
+
+        return (
+            result.reply ||
+            result.response ||
+            result.message ||
+            "Ada is ready to help you."
+        );
+    }
+
+
+    throw new Error(
+        (
+            result &&
+            result.error
+        ) ||
+        "Ada FastAPI could not process the request."
+    );
+}
+
+
+/* ============================================================
+   AUTOMATIC ADA ACTIVATION
+============================================================ */
+
+async function startAdaIntelligence() {
+
+    if (intelligenceStarted) {
+        return;
+    }
+
+    intelligenceStarted = true;
+
+    if (
+        !selectedService ||
+        selectedService ===
+        "Service not selected"
+    ) {
+
+        addMessage(
+            "Ada",
+            "Please return to the services and select the service you need."
+        );
+
+        return;
+    }
+
+    try {
+
+        const response =
+            await sendToAda(
+
+                "The customer has selected the service '" +
+                selectedService +
+                "'. Ada should now take over the conversation immediately. Welcome the customer, acknowledge the selected service, and begin the normal conversation for this service. Do not ask which service the customer wants because the service has already been selected. Ask only the first useful question needed to begin the work.",
+
+                "service_selected"
+            );
+
+        addMessage(
+            "Ada",
+            response
+        );
+
+    } catch (error) {
+
+        console.error(
+            "ADA FASTAPI ACTIVATION ERROR:",
+            error
+        );
+
+        addMessage(
+            "Ada",
+            "I’m ready to help with your " +
+            selectedService +
+            " request, but I could not connect to Ada right now. Please try again."
+        );
+    }
+}
+
+
+/* ============================================================
+   CUSTOMER MESSAGE
+============================================================ */
+
+async function sendMessage() {
+
+    if (requestInProgress) {
+        return;
+    }
+
+    const input =
+        document.getElementById(
+            "messageInput"
+        );
+
+    const sendButton =
+        document.getElementById(
+            "sendButton"
+        );
+
+    const message =
+        input.value.trim();
+
+    if (!message) {
+        return;
+    }
+
+    requestInProgress = true;
+
+    addMessage(
+        "You",
+        message
+    );
+
+    input.value = "";
+
+    sendButton.disabled =
+        true;
+
+    sendButton.innerText =
+        "WAIT...";
+
+    try {
+
+        const response =
+            await sendToAda(
+                message,
+                "customer_message"
+            );
+
+        addMessage(
+            "Ada",
+            response
+        );
+
+    } catch (error) {
+
+        console.error(
+            "CUSTOMER MESSAGE ERROR:",
+            error
+        );
+
+        addMessage(
+            "Ada",
+            "I could not connect to my Business Center service right now. Please try again."
+        );
+
+    } finally {
+
+        requestInProgress =
+            false;
+
+        sendButton.disabled =
+            false;
+
+        sendButton.innerText =
+            "SEND";
+    }
+}
+
+
+/* ============================================================
+   ENTER TO SEND
+============================================================ */
+
+document
+    .getElementById(
+        "messageInput"
+    )
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                sendMessage();
+            }
+        }
+    );
+
+
+/* ============================================================
+   UPLOAD
+============================================================ */
+
+function openFilePicker() {
+
+    document
+        .getElementById(
+            "fileInput"
+        )
+        .click();
+}
+
+
+async function handleFileSelected(event) {
+
+    const file =
+        event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    addMessage(
+        "You",
+        "I have uploaded " +
+        file.name
+    );
+
+    try {
+
+        const response =
+            await sendToAda(
+
+                "The customer has uploaded a file named '" +
+                file.name +
+                "'. Continue helping with the selected service.",
+
+                "file_uploaded"
+            );
+
+        addMessage(
+            "Ada",
+            response
+        );
+
+    } catch (error) {
+
+        console.error(
+            "FILE UPLOAD EVENT ERROR:",
+            error
+        );
+
+        addMessage(
+            "Ada",
+            "I could not continue with the uploaded file right now. Please try again."
+        );
+    }
+
+    event.target.value = "";
+}
+
+
+/* ============================================================
+   VOICE
+============================================================ */
+
+function openVoice() {
+
+    addMessage(
+        "Ada",
+        "Voice input can be used when you would rather speak than type."
+    );
+}
+
+
+/* ============================================================
+   REVIEW
+============================================================ */
+
+async function reviewDocument() {
+
+    await performAdaAction(
+
+        "I want to review my work.",
+
+        "The customer wants to review the current work. Continue the active service request and explain the next appropriate step.",
+
+        "review"
+    );
+}
+
+
+/* ============================================================
+   APPROVE
+============================================================ */
+
+async function approveDocument() {
+
+    await performAdaAction(
+
+        "I approve the work.",
+
+        "The customer has approved the current work. Continue with the next appropriate step. Do not claim payment has been completed.",
+
+        "approve"
+    );
+}
+
+
+/* ============================================================
+   PAYMENT
+============================================================ */
+
+async function openPayment() {
+
+    await performAdaAction(
+
+        "I want to continue with Payment & Download.",
+
+        "The customer wants to continue with Payment and Download. Explain the next appropriate payment or delivery step. Do not claim payment is completed unless confirmed.",
+
+        "payment_download"
+    );
+}
+
+
+/* ============================================================
+   CUSTOMER SERVICE
+============================================================ */
+
+async function contactCustomerService() {
+
+    await performAdaAction(
+
+        "I want help from Customer Service.",
+
+        "The customer wants Customer Service assistance. Ask what help the customer needs.",
+
+        "customer_service"
+    );
+}
+
+
+/* ============================================================
+   COMMON ADA ACTION
+============================================================ */
+
+async function performAdaAction(
+    customerMessage,
+    controllerMessage,
+    eventName
 ) {
 
     if (requestInProgress) {
@@ -526,100 +924,53 @@ function openWorkspace(
 
     requestInProgress = true;
 
-
-    /* --------------------------------------------------------
-       MARK SELECTED BUTTON
-    -------------------------------------------------------- */
-
-    button.classList.add(
-        "working"
+    addMessage(
+        "You",
+        customerMessage
     );
 
+    try {
 
-    /* --------------------------------------------------------
-       DISABLE OTHER BUTTONS
-    -------------------------------------------------------- */
+        const response =
+            await sendToAda(
+                controllerMessage,
+                eventName
+            );
 
-    serviceButtons.forEach(
-        function(otherButton) {
-
-            if (
-                otherButton !== button
-            ) {
-
-                otherButton.disabled =
-                    true;
-            }
-        }
-    );
-
-
-    /* --------------------------------------------------------
-       SAVE SELECTED SERVICE
-    -------------------------------------------------------- */
-
-    localStorage.setItem(
-        "selectedService",
-        service
-    );
-
-
-    /* --------------------------------------------------------
-       UPDATE RED AREA
-    -------------------------------------------------------- */
-
-    document.getElementById(
-        "bottomMessage"
-    ).innerText =
-        "Opening your workspace for " +
-        service +
-        "...";
-
-
-    /* --------------------------------------------------------
-       OPEN WORKSPACE
-
-       The selected service is passed directly
-       to workspace.html.
-    -------------------------------------------------------- */
-
-    window.location.href =
-        "workspace.html?service=" +
-        encodeURIComponent(
-            service
+        addMessage(
+            "Ada",
+            response
         );
+
+    } catch (error) {
+
+        console.error(
+            eventName +
+            " ERROR:",
+            error
+        );
+
+        addMessage(
+            "Ada",
+            "I could not continue that part of your request right now. Please try again."
+        );
+
+    } finally {
+
+        requestInProgress =
+            false;
+    }
 }
 
 
 /* ============================================================
-   BUTTON EVENTS
+   START WORKSPACE
+   SERVICE IS ALREADY SELECTED.
+   ADA STARTS AUTOMATICALLY.
 ============================================================ */
 
-serviceButtons.forEach(
-    function(button) {
+getSelectedService();
+startAdaIntelligence();
 
-        button.addEventListener(
-            "click",
-            function() {
-
-                const service =
-                    button.dataset.service;
-
-                if (!service) {
-                    return;
-                }
-
-                openWorkspace(
-                    service,
-                    button
-                );
-            }
-        );
-
-    }
-);
-
-</script>
-
-</body>
-</html> 
+</script></body>
+</html>
