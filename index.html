@@ -16,15 +16,14 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            min-height: 100%;
+            height: 100%;
+            overflow: hidden;
         }
 
         body {
             font-family: Arial, sans-serif;
             background: #0B0B0B;
             color: white;
-            overflow-x: hidden;
-            overflow-y: hidden;
         }
 
         .page {
@@ -37,10 +36,12 @@
             justify-content: center;
 
             padding:
-                max(20px, env(safe-area-inset-top))
-                18px
-                max(20px, env(safe-area-inset-bottom))
-                18px;
+                max(12px, env(safe-area-inset-top))
+                14px
+                max(12px, env(safe-area-inset-bottom))
+                14px;
+
+            overflow: hidden;
         }
 
         .main-container {
@@ -48,68 +49,70 @@
             max-width: 1100px;
             max-height: 100%;
 
-            display: grid;
-            grid-template-columns: 1fr 0.75fr;
-            gap: 40px;
-
+            display: flex;
             align-items: center;
+            justify-content: center;
         }
-
-        /* ==============================
-           LEFT SIDE
-        ============================== */
 
         .content {
             width: 100%;
+            max-width: 900px;
             min-width: 0;
         }
 
+        /* ==============================
+           BRAND
+        ============================== */
+
         .brand-name {
-            font-size: clamp(28px, 5vw, 46px);
-            line-height: 1.05;
+            font-size: clamp(25px, 7vw, 46px);
+            line-height: 1.02;
             font-weight: 800;
-            margin: 0 0 12px;
+            margin: 0 0 9px;
             letter-spacing: -0.5px;
         }
 
         .identity {
-            font-size: clamp(16px, 2.5vw, 23px);
-            line-height: 1.25;
+            font-size: clamp(14px, 4vw, 23px);
+            line-height: 1.2;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 13px;
         }
 
+        /* ==============================
+           MAIN INFORMATION
+        ============================== */
+
         .value {
-            font-size: clamp(14px, 2vw, 18px);
-            line-height: 1.5;
+            font-size: clamp(12px, 3.4vw, 18px);
+            line-height: 1.35;
             font-weight: 600;
-            margin: 6px 0;
+            margin: 4px 0;
         }
 
         .services-title {
             color: #1E90FF;
-            font-size: clamp(15px, 2.2vw, 20px);
-            line-height: 1.3;
+            font-size: clamp(13px, 3.5vw, 20px);
+            line-height: 1.2;
             font-weight: 800;
-            margin: 25px 0 14px;
+            margin: 15px 0 8px;
         }
 
         /* ==============================
-           DOCUMENT PEOPLE
-           MOVES HORIZONTALLY
+           MOVING DOCUMENT PEOPLE
         ============================== */
 
         .document-people-window {
             width: 100%;
             overflow: hidden;
-            margin: 4px 0 14px;
+            margin: 2px 0 8px;
         }
 
         .document-people-track {
             display: inline-block;
             white-space: nowrap;
 
-            font-size: clamp(14px, 2vw, 17px);
+            font-size: clamp(12px, 3.3vw, 17px);
             font-weight: 900;
             letter-spacing: 0.5px;
 
@@ -131,15 +134,23 @@
             }
         }
 
+        /* ==============================
+           SERVICES
+        ============================== */
+
         .services {
-            font-size: clamp(14px, 2vw, 17px);
-            line-height: 1.65;
-            margin-bottom: 24px;
+            font-size: clamp(11px, 3.1vw, 17px);
+            line-height: 1.38;
+            margin-bottom: 13px;
         }
 
         .services strong {
             font-weight: 800;
         }
+
+        /* ==============================
+           START BUTTON
+        ============================== */
 
         .start-button {
             display: flex;
@@ -148,9 +159,9 @@
 
             width: 100%;
             max-width: 470px;
-            min-height: 54px;
+            min-height: 44px;
 
-            padding: 14px 18px;
+            padding: 10px 14px;
 
             border: none;
             border-radius: 7px;
@@ -158,8 +169,8 @@
             background: #CC0000;
             color: white;
 
-            font-size: clamp(13px, 2vw, 17px);
-            line-height: 1.25;
+            font-size: clamp(11px, 3vw, 17px);
+            line-height: 1.2;
             font-weight: 800;
 
             text-decoration: none;
@@ -183,296 +194,139 @@
             transform: scale(0.98);
         }
 
+        /* ==============================
+           FINAL MESSAGE
+        ============================== */
+
         .statement {
-            font-size: clamp(12px, 1.8vw, 16px);
-            line-height: 1.45;
-            margin-top: 18px;
+            font-size: clamp(10px, 2.8vw, 16px);
+            line-height: 1.3;
+            margin-top: 10px;
         }
 
         .signature {
-            font-size: clamp(12px, 1.8vw, 16px);
-            line-height: 1.45;
+            font-size: clamp(10px, 2.8vw, 16px);
+            line-height: 1.3;
             font-weight: 700;
-            margin-top: 12px;
+            margin-top: 7px;
         }
 
         /* ==============================
-           RIGHT SIDE
-           CSS DOCUMENT VISUAL
-        ============================== */
-
-        .ada-area {
-            width: 100%;
-            min-height: 500px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .document-visual {
-            position: relative;
-
-            width: min(100%, 430px);
-            height: 500px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .document-back {
-            position: absolute;
-
-            width: 76%;
-            height: 76%;
-
-            border-radius: 10px;
-
-            background: #171717;
-
-            border: 1px solid #303030;
-
-            box-shadow:
-                0 18px 40px rgba(0, 0, 0, 0.45);
-        }
-
-        .document-back-one {
-            transform:
-                rotate(-8deg)
-                translate(-8px, 10px);
-        }
-
-        .document-back-two {
-            transform:
-                rotate(7deg)
-                translate(8px, 6px);
-        }
-
-        .document-sheet {
-            position: relative;
-            z-index: 3;
-
-            width: 78%;
-            height: 82%;
-
-            padding: 25px 24px;
-
-            border-radius: 9px;
-
-            background: #F7F7F7;
-
-            color: #111111;
-
-            box-shadow:
-                0 22px 50px rgba(0, 0, 0, 0.6);
-
-            transform: rotate(-2deg);
-
-            overflow: hidden;
-        }
-
-        .document-top {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-
-            font-size: 8px;
-            font-weight: 800;
-
-            color: #555555;
-
-            border-bottom: 2px solid #1E90FF;
-
-            padding-bottom: 9px;
-        }
-
-        .document-top span:last-child {
-            text-align: right;
-        }
-
-        .document-title {
-            margin-top: 22px;
-
-            font-size: 22px;
-            line-height: 1.05;
-
-            font-weight: 900;
-
-            color: #111111;
-        }
-
-        .document-line {
-            height: 5px;
-
-            margin-top: 12px;
-
-            border-radius: 5px;
-
-            background: #D5D5D5;
-        }
-
-        .document-line.long {
-            width: 94%;
-        }
-
-        .document-line.medium {
-            width: 72%;
-        }
-
-        .document-line.short {
-            width: 48%;
-        }
-
-        .document-section {
-            margin-top: 27px;
-
-            padding-top: 14px;
-
-            border-top: 1px solid #DDDDDD;
-        }
-
-        .document-section-title {
-            font-size: 10px;
-            font-weight: 900;
-
-            color: #1E90FF;
-        }
-
-        .document-check {
-            display: flex;
-            align-items: center;
-
-            gap: 8px;
-
-            margin-top: 30px;
-
-            font-size: 9px;
-            font-weight: 900;
-
-            color: #222222;
-        }
-
-        .document-check span {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            width: 22px;
-            height: 22px;
-
-            border-radius: 50%;
-
-            background: #1E90FF;
-            color: white;
-
-            font-size: 13px;
-        }
-
-        .document-footer {
-            position: absolute;
-
-            left: 24px;
-            right: 24px;
-            bottom: 18px;
-
-            padding-top: 10px;
-
-            border-top: 1px solid #DDDDDD;
-
-            font-size: 8px;
-            font-weight: 900;
-
-            letter-spacing: 0.5px;
-
-            color: #777777;
-        }
-
-        /* ==============================
-           TABLET
-        ============================== */
-
-        @media (max-width: 800px) {
-
-            body {
-                overflow-y: auto;
-            }
-
-            .page {
-                height: auto;
-                min-height: 100vh;
-                min-height: 100dvh;
-            }
-
-            .main-container {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .start-button {
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .ada-area {
-                min-height: 360px;
-            }
-
-            .document-visual {
-                height: 360px;
-            }
-
-            .document-sheet {
-                width: 72%;
-                height: 80%;
-            }
-        }
-
-        /* ==============================
-           SMALL PHONES
+           ANDROID / SMALL PHONE
         ============================== */
 
         @media (max-width: 430px) {
 
             .page {
-                padding-left: 14px;
-                padding-right: 14px;
-            }
-
-            .main-container {
-                gap: 20px;
+                padding-left: 12px;
+                padding-right: 12px;
             }
 
             .brand-name {
-                font-size: 27px;
+                font-size: 25px;
+                margin-bottom: 7px;
+            }
+
+            .identity {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .value {
+                font-size: 12px;
+                line-height: 1.28;
+                margin: 3px 0;
+            }
+
+            .services-title {
+                font-size: 13px;
+                margin-top: 12px;
+                margin-bottom: 6px;
+            }
+
+            .document-people-window {
+                margin-bottom: 6px;
+            }
+
+            .document-people-track {
+                font-size: 12px;
             }
 
             .services {
-                line-height: 1.55;
+                font-size: 11px;
+                line-height: 1.32;
+                margin-bottom: 10px;
             }
 
-            .document-visual {
-                height: 330px;
+            .start-button {
+                min-height: 42px;
+                font-size: 11px;
+                padding: 9px 12px;
             }
 
-            .document-sheet {
-                width: 70%;
-                height: 78%;
-
-                padding: 20px 19px;
+            .statement {
+                font-size: 10px;
+                line-height: 1.25;
+                margin-top: 8px;
             }
 
-            .document-title {
-                font-size: 18px;
+            .signature {
+                font-size: 10px;
+                line-height: 1.25;
+                margin-top: 5px;
+            }
+        }
+
+        /* ==============================
+           VERY SMALL PHONES
+        ============================== */
+
+        @media (max-height: 650px) and (max-width: 430px) {
+
+            .brand-name {
+                font-size: 22px;
             }
 
-            .document-footer {
-                left: 19px;
-                right: 19px;
+            .identity {
+                font-size: 12px;
+                margin-bottom: 7px;
+            }
+
+            .value {
+                font-size: 10px;
+                line-height: 1.2;
+            }
+
+            .services-title {
+                font-size: 11px;
+                margin-top: 8px;
+                margin-bottom: 4px;
+            }
+
+            .document-people-track {
+                font-size: 10px;
+            }
+
+            .services {
+                font-size: 9.5px;
+                line-height: 1.2;
+                margin-bottom: 7px;
+            }
+
+            .start-button {
+                min-height: 37px;
+                font-size: 9.5px;
+                padding: 7px 10px;
+            }
+
+            .statement {
+                font-size: 8.5px;
+                margin-top: 5px;
+            }
+
+            .signature {
+                font-size: 8.5px;
+                margin-top: 3px;
             }
         }
     </style>
@@ -483,10 +337,6 @@
 <main class="page">
 
     <div class="main-container">
-
-        <!-- =========================================
-             LEFT SIDE — BUSINESS CENTER INFORMATION
-        ========================================== -->
 
         <section class="content">
 
@@ -543,8 +393,6 @@
 
             </div>
 
-            <!-- EXISTING CONVERSATION ENTRY -->
-
             <a
                 class="start-button"
                 href="conversation.html"
@@ -560,61 +408,6 @@
             <div class="signature">
                 Naija Pocket Business Center<br>
                 Your Business Center In Your Pocket
-            </div>
-
-        </section>
-
-
-        <!-- =========================================
-             RIGHT SIDE — DOCUMENT VISUAL
-        ========================================== -->
-
-        <section class="ada-area">
-
-            <div class="document-visual">
-
-                <div class="document-back document-back-one"></div>
-
-                <div class="document-back document-back-two"></div>
-
-                <div class="document-sheet">
-
-                    <div class="document-top">
-                        <span>NAIJA POCKET</span>
-                        <span>DOCUMENT SERVICES</span>
-                    </div>
-
-                    <div class="document-title">
-                        BUSINESS CENTER
-                    </div>
-
-                    <div class="document-line long"></div>
-                    <div class="document-line medium"></div>
-                    <div class="document-line long"></div>
-
-                    <div class="document-section">
-
-                        <div class="document-section-title">
-                            DOCUMENT PROCESSING
-                        </div>
-
-                        <div class="document-line short"></div>
-                        <div class="document-line medium"></div>
-                        <div class="document-line long"></div>
-
-                    </div>
-
-                    <div class="document-check">
-                        <span>✓</span>
-                        READY FOR PROCESSING
-                    </div>
-
-                    <div class="document-footer">
-                        THE DOCUMENT PEOPLE
-                    </div>
-
-                </div>
-
             </div>
 
         </section>
