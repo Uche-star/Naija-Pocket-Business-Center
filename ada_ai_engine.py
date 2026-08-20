@@ -29,10 +29,6 @@ from billing_manager import BillingManager
 
 class AdaAIEngine:
 
-    # ==================================================
-    # INITIALIZE
-    # ==================================================
-
     def __init__(self):
         self.client = None
         self.connected = False
@@ -59,21 +55,10 @@ class AdaAIEngine:
         self.connect()
 
     # ==================================================
-    # GET GROQ API KEY
+    # GROQ API KEY
     # ==================================================
 
     def get_api_key(self):
-        """
-        Get the Groq API key from the environment.
-
-        Render:
-            GROQ_API_KEY
-
-        Local development:
-            GROQ_API_KEY
-
-        The key is never stored in this source file.
-        """
 
         possible_names = [
             "GROQ_API_KEY",
@@ -82,9 +67,11 @@ class AdaAIEngine:
         ]
 
         for name in possible_names:
+
             value = os.getenv(name)
 
             if value:
+
                 value = str(value).strip()
 
                 if value:
@@ -93,19 +80,10 @@ class AdaAIEngine:
         return None
 
     # ==================================================
-    # GET MODEL
+    # GROQ MODEL
     # ==================================================
 
     def get_model(self):
-        """
-        Read the Groq model from the environment.
-
-        Render variable:
-            GROQ_MODEL
-
-        Default:
-            llama-3.3-70b-versatile
-        """
 
         possible_names = [
             "GROQ_MODEL",
@@ -113,9 +91,11 @@ class AdaAIEngine:
         ]
 
         for name in possible_names:
+
             value = os.getenv(name)
 
             if value:
+
                 value = str(value).strip()
 
                 if value:
@@ -128,13 +108,17 @@ class AdaAIEngine:
     # ==================================================
 
     def connect(self):
+
         try:
+
             api_key = self.get_api_key()
 
             if not api_key:
+
                 print(
                     "Groq Connection Error: "
-                    "GROQ_API_KEY environment variable was not found."
+                    "GROQ_API_KEY environment variable "
+                    "was not found."
                 )
 
                 self.connected = False
@@ -155,6 +139,7 @@ class AdaAIEngine:
             return True
 
         except Exception as error:
+
             self.client = None
             self.connected = False
 
@@ -181,6 +166,7 @@ class AdaAIEngine:
         extracted_text,
         file_path=None
     ):
+
         if not extracted_text:
             return False
 
@@ -200,28 +186,33 @@ class AdaAIEngine:
         return self.active_document_text
 
     def has_document_context(self):
+
         return bool(
             self.active_document_text.strip()
         )
 
     def clear_document_context(self):
+
         self.active_document_text = ""
         self.active_document_path = None
 
     # ==================================================
-    # NORMALIZE SERVICE
+    # SERVICE NORMALIZATION
     # ==================================================
 
     def normalize_service(self, service):
+
         if not service:
             return None
 
         try:
+
             return self.billing.normalize_service(
                 service
             )
 
         except Exception as error:
+
             print(
                 "Service Normalization Error:",
                 repr(error)
@@ -234,7 +225,9 @@ class AdaAIEngine:
     # ==================================================
 
     def service_exists(self, service):
+
         try:
+
             normalized = self.normalize_service(
                 service
             )
@@ -244,13 +237,15 @@ class AdaAIEngine:
             )
 
         except Exception:
+
             return False
 
     # ==================================================
-    # GET SERVICE PRICE
+    # SERVICE PRICE
     # ==================================================
 
     def get_service_price(self, service):
+
         normalized = self.normalize_service(
             service
         )
@@ -260,26 +255,23 @@ class AdaAIEngine:
         )
 
     # ==================================================
-    # GET BILLING RULES
+    # BILLING RULES
     # ==================================================
 
     def get_billing_rules(self):
+
         services = []
 
         try:
+
             price_list = (
                 self.billing.get_price_list()
             )
 
             for service, info in price_list.items():
 
-                billing = info.get(
-                    "billing"
-                )
-
-                price = info.get(
-                    "price"
-                )
+                billing = info.get("billing")
+                price = info.get("price")
 
                 name = (
                     service
@@ -306,6 +298,7 @@ class AdaAIEngine:
                     )
 
         except Exception as error:
+
             print(
                 "Billing Rules Error:",
                 repr(error)
@@ -324,7 +317,7 @@ class AdaAIEngine:
         )
 
     # ==================================================
-    # GET SERVICE DISPLAY NAME
+    # SERVICE DISPLAY NAME
     # ==================================================
 
     def get_service_display_name(self, service):
@@ -345,7 +338,7 @@ class AdaAIEngine:
         )
 
     # ==================================================
-    # BUILD SYSTEM PROMPT
+    # SYSTEM PROMPT
     # ==================================================
 
     def get_system_prompt(self, service=None):
@@ -409,11 +402,13 @@ class AdaAIEngine:
         messages = []
 
         try:
+
             stored_messages = (
                 self.memory.messages
             )
 
         except Exception as error:
+
             print(
                 "Memory Access Error:",
                 repr(error)
@@ -433,9 +428,7 @@ class AdaAIEngine:
             if not text:
                 continue
 
-            if text.startswith(
-                "Customer:"
-            ):
+            if text.startswith("Customer:"):
 
                 content = (
                     text[len("Customer:"):]
@@ -443,6 +436,7 @@ class AdaAIEngine:
                 )
 
                 if content:
+
                     messages.append(
                         {
                             "role": "user",
@@ -450,9 +444,7 @@ class AdaAIEngine:
                         }
                     )
 
-            elif text.startswith(
-                "Ada:"
-            ):
+            elif text.startswith("Ada:"):
 
                 content = (
                     text[len("Ada:"):]
@@ -460,6 +452,7 @@ class AdaAIEngine:
                 )
 
                 if content:
+
                     messages.append(
                         {
                             "role": "assistant",
@@ -681,75 +674,29 @@ class AdaAIEngine:
             "cv": "cv",
             "resume": "cv",
             "résumé": "cv",
-
-            "cover letter":
-                "cover_letter",
-
-            "assignment":
-                "assignment_typing",
-
-            "project":
-                "project_typing",
-
-            "seminar":
-                "seminar_paper",
-
-            "business proposal":
-                "business_proposal",
-
-            "company profile":
-                "company_profile",
-
-            "invoice":
-                "invoices",
-
-            "quotation":
-                "quotations",
-
-            "meeting minutes":
-                "meeting_minutes",
-
-            "typing":
-                "document_typing",
-
-            "formatting":
-                "document_formatting",
-
-            "editing":
-                "document_editing",
-
-            "grammar":
-                "grammar_correction",
-
-            "translation":
-                "translation",
-
-            "summarize":
-                "summarization",
-
-            "summarisation":
-                "summarization",
-
-            "pdf":
-                "pdf_conversion",
-
-            "voice to text":
-                "voice_to_text",
-
-            "excel":
-                "excel_spreadsheets",
-
-            "data entry":
-                "data_entry",
-
-            "data analysis":
-                "data_analysis",
-
-            "presentation":
-                "presentations",
-
-            "presentations":
-                "presentations"
+            "cover letter": "cover_letter",
+            "assignment": "assignment_typing",
+            "project": "project_typing",
+            "seminar": "seminar_paper",
+            "business proposal": "business_proposal",
+            "company profile": "company_profile",
+            "invoice": "invoices",
+            "quotation": "quotations",
+            "meeting minutes": "meeting_minutes",
+            "typing": "document_typing",
+            "formatting": "document_formatting",
+            "editing": "document_editing",
+            "grammar": "grammar_correction",
+            "translation": "translation",
+            "summarize": "summarization",
+            "summarisation": "summarization",
+            "pdf": "pdf_conversion",
+            "voice to text": "voice_to_text",
+            "excel": "excel_spreadsheets",
+            "data entry": "data_entry",
+            "data analysis": "data_analysis",
+            "presentation": "presentations",
+            "presentations": "presentations"
         }
 
         sorted_phrases = sorted(
@@ -769,10 +716,7 @@ class AdaAIEngine:
     # PRICE RESPONSE
     # ==================================================
 
-    def generate_price_response(
-        self,
-        service
-    ):
+    def generate_price_response(self, service):
 
         normalized_service = (
             self.normalize_service(
@@ -825,13 +769,8 @@ class AdaAIEngine:
             )
         )
 
-        billing_type = info[
-            "billing"
-        ]
-
-        amount = info[
-            "price"
-        ]
+        billing_type = info["billing"]
+        amount = info["price"]
 
         if billing_type == "fixed":
 
@@ -909,10 +848,13 @@ Return ONLY the customer-facing response.
         if not self.connected:
 
             try:
+
                 return self.billing.bill_message(
                     normalized_service
                 )
+
             except Exception:
+
                 return (
                     f"The official price for "
                     f"{service_name} is "
@@ -955,9 +897,11 @@ Return ONLY the customer-facing response.
             )
 
         try:
+
             return self.billing.bill_message(
                 normalized_service
             )
+
         except Exception:
 
             return (
@@ -1063,17 +1007,18 @@ Return ONLY the customer-facing response.
 
         except Exception as error:
 
+            import traceback
+
             print()
-            print(
-                "Groq Error:",
-                repr(error)
-            )
+            print("=" * 60)
+            print("REAL GROQ ERROR")
+            print("=" * 60)
+            print("ERROR:", repr(error))
+            traceback.print_exc()
+            print("=" * 60)
             print()
 
-            return (
-                "I'm having a temporary problem. "
-                "Please try again."
-            )
+            raise
 
     # ==================================================
     # INTERVIEW CHECK
@@ -1152,9 +1097,7 @@ NO
                 .upper()
             )
 
-            return answer.startswith(
-                "YES"
-            )
+            return answer.startswith("YES")
 
         except Exception as error:
 
@@ -1182,9 +1125,7 @@ NO
         )
 
         normalized_service = (
-            self.normalize_service(
-                service
-            )
+            self.normalize_service(service)
             if service
             else None
         )
@@ -1243,9 +1184,7 @@ NO
         )
 
         active_service = (
-            self.job_state.get(
-                "service"
-            )
+            self.job_state.get("service")
         )
 
         if (
@@ -1395,9 +1334,7 @@ NO
     ):
 
         active_service = (
-            self.normalize_service(
-                service
-            )
+            self.normalize_service(service)
             or self.get_active_service()
         )
 
@@ -1534,9 +1471,7 @@ Return ONLY the finished document.
     ):
 
         active_service = (
-            self.normalize_service(
-                service
-            )
+            self.normalize_service(service)
             or self.get_active_service()
         )
 
