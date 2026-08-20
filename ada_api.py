@@ -2,24 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from typing import Optional
 from pathlib import Path
 
 from ada_controller import AdaController
 
 
-# ============================================================
-# APP
-# ============================================================
-
 app = FastAPI(
     title="Ada Intelligence API - Naija Pocket"
 )
 
-
-# ============================================================
-# CORS
-# ============================================================
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,36 +21,13 @@ app.add_middleware(
 )
 
 
-# ============================================================
-# FILE LOCATIONS
-# ============================================================
-
 BASE_DIR = Path(__file__).resolve().parent
 
 
-# ============================================================
-# REQUEST MODEL
-# ============================================================
-
 class ChatRequest(BaseModel):
     message: str
-    service: str
-    event: Optional[str] = None
-    activate_intelligence: Optional[bool] = True
+    service: str | None = None
 
-
-# ============================================================
-# FRONTEND
-#
-# WEBSITE FLOW:
-#
-# index.html
-#     ↓
-# conversation.html
-#     ↓
-# workspace.html?service=...
-#
-# ============================================================
 
 @app.get("/")
 def home():
@@ -82,10 +50,6 @@ def workspace():
     )
 
 
-# ============================================================
-# HEALTH CHECK
-# ============================================================
-
 @app.get("/health")
 def health():
     return {
@@ -94,89 +58,50 @@ def health():
     }
 
 
-# ============================================================
-# ADA CHAT
-# ============================================================
-
 @app.post("/api/chat")
 def chat(req: ChatRequest):
 
-    try:
+    print()
+    print("=" * 60)
+    print("FASTAPI → ADA CONTROLLER")
+    print("=" * 60)
+    print("Service:", req.service)
+    print("Message:", req.message)
+    print("=" * 60)
 
-        # Create the existing Ada controller.
-        # AdaController is not being changed here.
+    try:
 
         controller = AdaController()
 
-        # Existing confirmed signature:
-        # AdaController.process_message(message, service)
-
-        result = controller.process_message(
+        reply = controller.process_message(
             message=req.message,
             service=req.service
         )
 
-        # ====================================================
-        # RESULT IS A DICTIONARY
-        # ====================================================
-
-        if isinstance(result, dict):
-
-            return {
-                "success": result.get(
-                    "success",
-                    True
-                ),
-
-                "reply": result.get(
-                    "reply",
-                    result.get(
-                        "response",
-                        str(result)
-                    )
-                ),
-
-                "price": result.get(
-                    "price",
-                    None
-                )
-            }
-
-        # ====================================================
-        # RESULT IS A STRING
-        # ====================================================
-
-        if isinstance(result, str):
-
-            return {
-                "success": True,
-                "reply": result,
-                "price": None
-            }
-
-        # ====================================================
-        # OTHER RESULT TYPE
-        # ====================================================
-
         return {
             "success": True,
-            "reply": str(result),
-            "price": None
+            "reply": str(reply)
         }
 
-    except Exception as e:
-
-        # Print complete error in Render logs.
+    except Exception as error:
 
         import traceback
 
+        print()
+        print("=" * 60)
+        print("FASTAPI → ADA ERROR")
+        print("=" * 60)
+
         traceback.print_exc()
+
+        print("=" * 60)
 
         return {
             "success": False,
-            "error": str(e),
             "reply": (
-                "Ada encountered an error. "
+                "No wahala. "
+                "Ada encountered a temporary problem. "
                 "Please try again."
-            )
+            ),
+            "error": str(error)
         }
