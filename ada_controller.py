@@ -1,18 +1,26 @@
-
 """
 ada_controller.py
 
 Connection Controller for Ada
 Naija Pocket Business Center
 
-PRIMARY INTELLIGENCE
---------------------
-AdaAIEngine V8 / Groq
+DIAGNOSTIC VERSION
+------------------
+This version is intentionally designed to expose
+the REAL AdaAIEngine error.
 
-The controller sends the customer's message
-and selected Workspace service directly to
-AdaAIEngine.
+It does NOT replace exceptions with friendly
+fallback messages.
+
+If AdaAIEngine fails:
+    - error type is printed
+    - error message is printed
+    - full traceback is printed
+    - original exception is re-raised
 """
+
+
+import traceback
 
 from ada_ai_engine import AdaAIEngine
 
@@ -22,45 +30,71 @@ class AdaController:
     # ==========================================================
     # INITIALIZE
     # ==========================================================
+
     def __init__(self):
 
         print()
-        print("=" * 60)
-        print("ADA CONTROLLER")
-        print("=" * 60)
+        print("=" * 70)
+        print("ADA CONTROLLER INITIALIZING")
+        print("=" * 70)
 
         self.intelligence = AdaAIEngine()
 
-        print("Primary Intelligence: AdaAIEngine V8")
+        print(
+            "Primary Intelligence:",
+            "AdaAIEngine V9"
+        )
+
         print(
             "Groq Connected:",
             self.intelligence.is_connected()
         )
 
-        print("=" * 60)
+        try:
+
+            print(
+                "Groq Model:",
+                self.intelligence.get_model()
+            )
+
+        except Exception:
+
+            print(
+                "Groq Model:",
+                "Unable to read model"
+            )
+
+        print("=" * 70)
         print()
 
     # ==========================================================
     # PROCESS CUSTOMER MESSAGE
     # ==========================================================
+
     def process_message(
         self,
         message,
         service=None
     ):
 
-        if not message:
-            return (
-                "Please tell me what you need "
-                "help with."
+        # ------------------------------------------------------
+        # VALIDATE MESSAGE
+        # ------------------------------------------------------
+
+        if message is None:
+
+            raise ValueError(
+                "AdaController received message=None"
             )
 
-        message = str(message).strip()
+        message = str(
+            message
+        ).strip()
 
         if not message:
-            return (
-                "Please tell me what you need "
-                "help with."
+
+            raise ValueError(
+                "AdaController received an empty message"
             )
 
         # ------------------------------------------------------
@@ -69,86 +103,142 @@ class AdaController:
 
         selected_service = None
 
-        if service:
+        if service is not None:
 
-            service_text = str(service).strip()
+            service_text = str(
+                service
+            ).strip()
 
-            if (
-                service_text
-                and service_text.lower()
-                != "service not selected"
-            ):
-                selected_service = service_text
+            if service_text:
+
+                if (
+                    service_text.lower()
+                    != "service not selected"
+                ):
+
+                    selected_service = service_text
 
         # ------------------------------------------------------
         # LOG REQUEST
         # ------------------------------------------------------
 
         print()
-        print("=" * 60)
+        print("=" * 70)
         print("ADA CONTROLLER REQUEST")
-        print("=" * 60)
+        print("=" * 70)
+
         print(
             "Selected Service:",
-            selected_service
+            repr(selected_service)
         )
+
         print(
             "Customer Message:",
-            message
+            repr(message)
         )
-        print("=" * 60)
+
+        print("=" * 70)
         print()
 
         # ------------------------------------------------------
-        # SEND DIRECTLY TO ADA AI ENGINE
+        # CALL ADA AI ENGINE
         # ------------------------------------------------------
 
         try:
 
-            response = self.intelligence.process_message(
-                customer_message=message,
-                service=selected_service
+            response = (
+                self.intelligence.process_message(
+                    customer_message=message,
+                    service=selected_service
+                )
             )
+
+        # ------------------------------------------------------
+        # REAL ERROR
+        # ------------------------------------------------------
 
         except Exception as error:
 
             print()
-            print("=" * 60)
-            print("ADA AI ENGINE ERROR")
-            print("=" * 60)
-            print("Error:", repr(error))
-            print("=" * 60)
-            print()
+            print("=" * 70)
+            print("!!!!!!!! REAL ADA ERROR !!!!!!!!")
+            print("=" * 70)
 
-            return (
-                "No wahala. "
-                "I ran into a temporary problem "
-                "while processing your request. "
-                "Please try again."
+            print(
+                "ERROR TYPE:",
+                type(error).__name__
             )
 
+            print(
+                "ERROR MESSAGE:",
+                str(error)
+            )
+
+            print()
+            print("ERROR REPRESENTATION:")
+            print(
+                repr(error)
+            )
+
+            print()
+            print("FULL TRACEBACK:")
+            print()
+
+            traceback.print_exc()
+
+            print()
+            print("=" * 70)
+            print("!!!!!!!! END REAL ADA ERROR !!!!!!!!")
+            print("=" * 70)
+            print()
+
+            # IMPORTANT:
+            # Do NOT replace the real error with
+            # a fake customer response.
+            raise
+
         # ------------------------------------------------------
-        # SAFETY FALLBACK
+        # CHECK ENGINE RESPONSE
+        # ------------------------------------------------------
+
+        print()
+        print("=" * 70)
+        print("ADA AI ENGINE RETURNED")
+        print("=" * 70)
+
+        print(
+            "Response Type:",
+            type(response).__name__
+        )
+
+        print(
+            "Response:",
+            repr(response)
+        )
+
+        print("=" * 70)
+        print()
+
+        # ------------------------------------------------------
+        # DO NOT HIDE AN EMPTY ENGINE RESPONSE
         # ------------------------------------------------------
 
         if response is None:
 
-            return (
-                "No wahala. "
-                "I received your request, "
-                "but Ada could not generate "
-                "a response yet."
+            raise RuntimeError(
+                "AdaAIEngine.process_message() "
+                "returned None"
             )
 
-        response = str(response).strip()
+        response = str(
+            response
+        ).strip()
 
         if not response:
 
-            return (
-                "No wahala. "
-                "I received your request, "
-                "but Ada could not generate "
-                "a response yet."
+            raise RuntimeError(
+                "AdaAIEngine.process_message() "
+                "returned an empty response"
             )
 
         return response
@@ -156,74 +246,122 @@ class AdaController:
     # ==========================================================
     # ACTIVE SERVICE
     # ==========================================================
-    def set_active_service(self, service):
+
+    def set_active_service(
+        self,
+        service
+    ):
 
         if not service:
-            return False
 
-        return self.intelligence.set_active_service(
-            service
+            raise ValueError(
+                "Cannot set an empty active service"
+            )
+
+        return (
+            self.intelligence.set_active_service(
+                service
+            )
         )
 
     # ==========================================================
     # GET ACTIVE SERVICE
     # ==========================================================
+
     def get_active_service(self):
 
-        return self.intelligence.get_active_service()
+        return (
+            self.intelligence.get_active_service()
+        )
 
     # ==========================================================
     # RESET ADA JOB
     # ==========================================================
+
     def reset_job(self):
 
-        self.intelligence.reset_job()
+        return (
+            self.intelligence.reset_job()
+        )
 
     # ==========================================================
     # JOB STATUS
     # ==========================================================
+
     def get_job_state(self):
 
-        return self.intelligence.get_job_state()
+        return (
+            self.intelligence.get_job_state()
+        )
 
 
 # ==============================================================
-# TEST
+# DIRECT TEST
 # ==============================================================
+
 if __name__ == "__main__":
 
-    ada = AdaController()
-
     print()
-    print("=" * 60)
-    print("ADA CONTROLLER TEST")
-    print("=" * 60)
+    print("=" * 70)
+    print("ADA CONTROLLER DIRECT TEST")
+    print("=" * 70)
+    print()
 
-    while True:
+    try:
+
+        ada = AdaController()
 
         message = input(
-            "\nCustomer: "
+            "Customer message: "
         ).strip()
 
-        if message.lower() == "exit":
-            break
-
         service = input(
-            "Selected service "
-            "(leave blank if none): "
+            "Service (optional): "
         ).strip()
 
         if not service:
             service = None
 
         print()
-        print("Ada:")
+        print("=" * 70)
+        print("SENDING REQUEST")
+        print("=" * 70)
         print()
 
-        print(
-            ada.process_message(
-                message,
-                service=service
-            )
-        ) 
+        response = ada.process_message(
+            message=message,
+            service=service
+        )
 
+        print()
+        print("=" * 70)
+        print("ADA RESPONSE")
+        print("=" * 70)
+        print(response)
+        print("=" * 70)
+
+    except Exception as error:
+
+        print()
+        print("=" * 70)
+        print("!!!!!!!! DIRECT TEST REAL ERROR !!!!!!!!")
+        print("=" * 70)
+
+        print(
+            "ERROR TYPE:",
+            type(error).__name__
+        )
+
+        print(
+            "ERROR MESSAGE:",
+            str(error)
+        )
+
+        print()
+        print("FULL TRACEBACK:")
+        print()
+
+        traceback.print_exc()
+
+        print()
+        print("=" * 70)
