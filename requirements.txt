@@ -1,4 +1,7 @@
 Flask
 flask-cors
-grpoq
+groq
 gunicorn 
+fastapi
+uvicorn
+pydantic
