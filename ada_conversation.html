@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Naija Pocket Business Center - Ada</title>
 
@@ -28,8 +31,10 @@
         .page {
             width: 100%;
             min-height: 100vh;
+
             display: flex;
             flex-direction: column;
+
             padding: 20px;
         }
 
@@ -40,18 +45,24 @@
         .chat-frame {
             width: 100%;
             flex: 1;
+
             background: #171717;
+
             border-radius: 8px;
+
             padding: 20px;
             margin-bottom: 20px;
+
             overflow-y: auto;
         }
 
         .chat-box {
             width: 100%;
             min-height: 60vh;
+
             white-space: pre-wrap;
             word-wrap: break-word;
+
             font-size: 16px;
             line-height: 1.5;
         }
@@ -76,15 +87,19 @@
 
         .services {
             width: 100%;
+
             display: flex;
             flex-direction: column;
+
             gap: 10px;
+
             margin-bottom: 15px;
         }
 
         .service-button {
             width: 100%;
             min-height: 52px;
+
             padding: 14px 18px;
 
             background: white;
@@ -104,6 +119,16 @@
             justify-content: center;
 
             text-align: center;
+
+            -webkit-tap-highlight-color: transparent;
+
+            transition:
+                transform 0.1s ease,
+                background 0.1s ease;
+        }
+
+        .service-button:hover {
+            background: #F2F2F2;
         }
 
         .service-button:active {
@@ -117,6 +142,7 @@
         .back-button {
             width: 100%;
             min-height: 52px;
+
             padding: 14px 18px;
 
             background: #CC0000;
@@ -136,6 +162,12 @@
             justify-content: center;
 
             text-align: center;
+
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .back-button:hover {
+            background: #E00000;
         }
 
         .back-button:active {
@@ -148,6 +180,7 @@
         ========================= */
 
         @media (min-width: 700px) {
+
             .page {
                 max-width: 800px;
                 margin: 0 auto;
@@ -163,6 +196,39 @@
                 font-size: 16px;
             }
         }
+
+        /* =========================
+           SMALL PHONES
+        ========================= */
+
+        @media (max-width: 430px) {
+
+            .page {
+                padding: 12px;
+            }
+
+            .chat-frame {
+                padding: 14px;
+                margin-bottom: 14px;
+            }
+
+            .chat-box {
+                font-size: 14px;
+                line-height: 1.45;
+            }
+
+            .service-button,
+            .back-button {
+                min-height: 48px;
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+
+            .services {
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+        }
     </style>
 </head>
 
@@ -171,42 +237,52 @@
 <div class="page">
 
     <!-- =========================
-         CHAT AREA
+         ADA INTRODUCTION
     ========================= -->
 
     <div class="chat-frame">
 
         <div class="chat-box welcome-message">
 
-            Hello 😊 I am Ada.
+            <span class="ada-label">Hello 😊 I am Ada.</span>
 
-            Your AI Business Center Assistant.
+            <br><br>
 
-            Here are more things I fit help you with so that we get started:
+            Welcome to Naija Pocket Business Center.
 
-            ✓ Document formatting
-            ✓ Document editing
-            ✓ Grammar correction
-            ✓ Translation
-            ✓ Document summarization
-            ✓ PDF conversion
-            ✓ Research assistance
-            ✓ Business proposals
-            ✓ Company profiles
-            ✓ Invoices and quotations
-            ✓ Meeting minutes
-            ✓ Seminar papers
-            ✓ AI writing assistance
-            ✓ Rewrite and improve documents
-            ✓ Explain difficult topics
-            ✓ Voice-to-text
+            <br><br>
+
+            Your Business Center assistant.
+
+            <br><br>
+
+            Here are some of the things I can help you with:
+
+            <br><br>
+
+            ✓ Document formatting<br>
+            ✓ Document editing<br>
+            ✓ Grammar correction<br>
+            ✓ Translation<br>
+            ✓ Document summarization<br>
+            ✓ PDF conversion<br>
+            ✓ Research assistance<br>
+            ✓ Business proposals<br>
+            ✓ Company profiles<br>
+            ✓ Invoices and quotations<br>
+            ✓ Meeting minutes<br>
+            ✓ Seminar papers<br>
+            ✓ AI writing assistance<br>
+            ✓ Rewrite and improve documents<br>
+            ✓ Explain difficult topics<br>
+            ✓ Voice-to-text<br>
             ✓ Image-to-text
 
-            Send your document or chat with me.
+            <br><br>
 
-            If your document na paper, tap Snap Document to take am picture.
-
-            If you prefer talking, tap Voice.
+            <span class="ada-label">
+                Select the service you need below and I will take you into your workspace to begin the request.
+            </span>
 
         </div>
 
@@ -214,78 +290,130 @@
 
 
     <!-- =========================
-         SERVICE BUTTONS
-         These take the customer
-         to the Workspace.
+         SERVICES
+         EACH BUTTON SENDS THE
+         SELECTED SERVICE TO
+         workspace.html
     ========================= -->
 
     <div class="services">
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Document%20Formatting"
+            class="service-button"
+        >
             Document Formatting
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Document%20Editing"
+            class="service-button"
+        >
             Document Editing
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Grammar%20Correction"
+            class="service-button"
+        >
             Grammar Correction
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Translation"
+            class="service-button"
+        >
             Translation
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Document%20Summarization"
+            class="service-button"
+        >
             Document Summarization
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=PDF%20Conversion"
+            class="service-button"
+        >
             PDF Conversion
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Research%20Assistance"
+            class="service-button"
+        >
             Research Assistance
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Business%20Proposals"
+            class="service-button"
+        >
             Business Proposals
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Company%20Profiles"
+            class="service-button"
+        >
             Company Profiles
         </a>
 
-        <a href="#" class="service-button">
-            Invoices & Quotations
+        <a
+            href="workspace.html?service=Invoices%20%26%20Quotations"
+            class="service-button"
+        >
+            Invoices &amp; Quotations
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Meeting%20Minutes"
+            class="service-button"
+        >
             Meeting Minutes
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Seminar%20Papers"
+            class="service-button"
+        >
             Seminar Papers
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=AI%20Writing%20Assistance"
+            class="service-button"
+        >
             AI Writing Assistance
         </a>
 
-        <a href="#" class="service-button">
-            Rewrite & Improve Documents
+        <a
+            href="workspace.html?service=Rewrite%20%26%20Improve%20Documents"
+            class="service-button"
+        >
+            Rewrite &amp; Improve Documents
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Explain%20Difficult%20Topics"
+            class="service-button"
+        >
             Explain Difficult Topics
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Voice-to-Text"
+            class="service-button"
+        >
             Voice-to-Text
         </a>
 
-        <a href="#" class="service-button">
+        <a
+            href="workspace.html?service=Image-to-Text"
+            class="service-button"
+        >
             Image-to-Text
         </a>
 
@@ -293,15 +421,17 @@
 
 
     <!-- =========================
-         ONLY BUTTON INSIDE
-         CONVERSATION ITSELF
+         BACK TO WELCOME PAGE
     ========================= -->
 
-    <a href="index.html" class="back-button">
+    <a
+        href="index.html"
+        class="back-button"
+    >
         BACK TO WELCOME PAGE
     </a>
 
 </div>
 
 </body>
-</html> 
+</html>
