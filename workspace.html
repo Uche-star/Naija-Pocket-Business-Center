@@ -675,10 +675,73 @@
 <script>
 
 /* ============================================================
+   CUSTOMER / JOB IDENTITY
+============================================================ */
+
+/*
+   This ID belongs to this browser.
+
+   It is created once and reused.
+
+   It is NOT the service ID.
+
+   It identifies the browser/customer session so the backend
+   can later associate saved work with the same customer.
+*/
+
+const CUSTOMER_ID_KEY =
+    "naijaPocketCustomerId";
+
+
+function createPersistentId(prefix) {
+
+    return (
+        prefix +
+        "-" +
+        Date.now().toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .substring(2, 12)
+    );
+}
+
+
+function getCustomerId() {
+
+    let customerId =
+        localStorage.getItem(
+            CUSTOMER_ID_KEY
+        );
+
+    if (!customerId) {
+
+        customerId =
+            createPersistentId(
+                "customer"
+            );
+
+        localStorage.setItem(
+            CUSTOMER_ID_KEY,
+            customerId
+        );
+    }
+
+    return customerId;
+}
+
+
+const customerId =
+    getCustomerId();
+
+
+/* ============================================================
    CORE STATE
 ============================================================ */
 
 let selectedService = "";
+
+let currentJobId = "";
 
 let intelligenceStarted = false;
 
@@ -686,31 +749,114 @@ let requestInProgress = false;
 
 let reconnectTimer = null;
 
-let pendingRequest = null;
+let pendingRequests = {};
 
 let conversation = [];
 
 
 /* ============================================================
-   STORAGE
+   STORAGE KEYS
 ============================================================ */
 
-const STORAGE_KEY =
-    "naijaPocketConversation";
+const CONVERSATION_PREFIX =
+    "naijaPocketConversation:";
+
+const JOB_PREFIX =
+    "naijaPocketJob:";
 
 const SERVICE_KEY =
     "selectedService";
 
 const PENDING_KEY =
-    "naijaPocketPendingRequest";
+    "naijaPocketPendingRequests";
+
+const CUSTOMER_KEY =
+    "naijaPocketCustomerId";
 
 
 /* ============================================================
-   CUSTOMER-FACING NETWORK MESSAGE
+   CONNECTION STATUS
 ============================================================ */
 
 const NETWORK_MESSAGE =
-    "Your work has been saved safely. We are experiencing a temporary network connection issue. Your request has not been lost. Please stay on this page. When the connection returns, we will continue your work from where we stopped.";
+    "There is a temporary network connection issue. Your current request is being kept safely. We will continue it when the connection is available.";
+
+
+/* ============================================================
+   SERVICE NORMALISATION
+============================================================ */
+
+function normaliseService(
+    service
+) {
+
+    return String(
+        service || ""
+    ).trim();
+}
+
+
+function createJobId(
+    service
+) {
+
+    return (
+        "job-" +
+        encodeURIComponent(
+            normaliseService(
+                service
+            )
+        ) +
+        "-" +
+        Date.now().toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .substring(2, 8)
+    );
+}
+
+
+/* ============================================================
+   JOB STORAGE KEY
+============================================================ */
+
+function getJobStorageKey(
+    service
+) {
+
+    return (
+        JOB_PREFIX +
+        customerId +
+        ":" +
+        encodeURIComponent(
+            normaliseService(
+                service
+            )
+        )
+    );
+}
+
+
+/* ============================================================
+   CONVERSATION STORAGE KEY
+============================================================ */
+
+function getConversationStorageKey(
+    service
+) {
+
+    return (
+        CONVERSATION_PREFIX +
+        customerId +
+        ":" +
+        encodeURIComponent(
+            normaliseService(
+                service
+            )
+        )
+    );
+}
 
 
 /* ============================================================
@@ -719,18 +865,91 @@ const NETWORK_MESSAGE =
 
 function loadSavedWork() {
 
+    /*
+       Load all pending requests.
+    */
+
     try {
 
-        const savedConversation =
+        const savedPending =
             localStorage.getItem(
-                STORAGE_KEY
+                PENDING_KEY
             );
 
-        if (savedConversation) {
+        if (savedPending) {
 
             const parsed =
                 JSON.parse(
-                    savedConversation
+                    savedPending
+                );
+
+            if (
+                parsed &&
+                typeof parsed === "object"
+            ) {
+
+                pendingRequests =
+                    parsed;
+
+            } else {
+
+                pendingRequests = {};
+            }
+
+        } else {
+
+            pendingRequests = {};
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Pending request restore error:",
+            error
+        );
+
+        pendingRequests = {};
+    }
+
+
+    /*
+       The currently selected service gets its own
+       conversation.
+    */
+
+    loadConversationForService(
+        selectedService
+    );
+}
+
+
+/* ============================================================
+   LOAD CONVERSATION FOR CURRENT SERVICE
+============================================================ */
+
+function loadConversationForService(
+    service
+) {
+
+    conversation = [];
+
+    const key =
+        getConversationStorageKey(
+            service
+        );
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                key
+            );
+
+        if (saved) {
+
+            const parsed =
+                JSON.parse(
+                    saved
                 );
 
             if (
@@ -751,41 +970,6 @@ function loadSavedWork() {
 
         conversation = [];
     }
-
-
-    try {
-
-        const savedPending =
-            localStorage.getItem(
-                PENDING_KEY
-            );
-
-        if (savedPending) {
-
-            const parsedPending =
-                JSON.parse(
-                    savedPending
-                );
-
-            if (
-                parsedPending &&
-                parsedPending.message
-            ) {
-
-                pendingRequest =
-                    parsedPending;
-            }
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Pending request restore error:",
-            error
-        );
-
-        pendingRequest = null;
-    }
 }
 
 
@@ -798,7 +982,11 @@ function saveConversation() {
     try {
 
         localStorage.setItem(
-            STORAGE_KEY,
+
+            getConversationStorageKey(
+                selectedService
+            ),
+
             JSON.stringify(
                 conversation
             )
@@ -815,29 +1003,24 @@ function saveConversation() {
 
 
 /* ============================================================
-   SAVE PENDING REQUEST
+   SAVE PENDING REQUESTS
 ============================================================ */
 
-function savePendingRequest(
-    request
-) {
-
-    pendingRequest =
-        request;
+function savePendingRequests() {
 
     try {
 
         localStorage.setItem(
             PENDING_KEY,
             JSON.stringify(
-                request
+                pendingRequests
             )
         );
 
     } catch (error) {
 
         console.error(
-            "Pending request save error:",
+            "Pending requests save error:",
             error
         );
     }
@@ -845,26 +1028,104 @@ function savePendingRequest(
 
 
 /* ============================================================
-   CLEAR PENDING REQUEST
+   SAVE ONE PENDING REQUEST
 ============================================================ */
 
-function clearPendingRequest() {
+function savePendingRequest(
+    request
+) {
 
-    pendingRequest = null;
+    if (
+        !request ||
+        !request.requestId
+    ) {
 
-    try {
-
-        localStorage.removeItem(
-            PENDING_KEY
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Pending request clear error:",
-            error
-        );
+        return;
     }
+
+
+    pendingRequests[
+        request.requestId
+    ] = request;
+
+
+    savePendingRequests();
+}
+
+
+/* ============================================================
+   REMOVE ONE PENDING REQUEST
+============================================================ */
+
+function clearPendingRequest(
+    requestId
+) {
+
+    if (!requestId) {
+
+        return;
+    }
+
+
+    delete pendingRequests[
+        requestId
+    ];
+
+
+    savePendingRequests();
+}
+
+
+/* ============================================================
+   GET PENDING REQUESTS
+============================================================ */
+
+function getPendingRequestList() {
+
+    return Object.values(
+        pendingRequests
+    ).filter(
+        function(request) {
+
+            return (
+                request &&
+                request.requestId &&
+                request.message !== undefined
+            );
+        }
+    );
+}
+
+
+/* ============================================================
+   GET PENDING REQUEST FOR CURRENT JOB
+============================================================ */
+
+function getPendingRequestForCurrentJob() {
+
+    const requests =
+        getPendingRequestList();
+
+    for (
+        const request of requests
+    ) {
+
+        if (
+            request.customerId ===
+                customerId &&
+
+            request.service ===
+                selectedService &&
+
+            request.jobId ===
+                currentJobId
+        ) {
+
+            return request;
+        }
+    }
+
+    return null;
 }
 
 
@@ -881,6 +1142,7 @@ function restoreConversationToScreen() {
 
     chatArea.innerHTML = "";
 
+
     for (
         const item of conversation
     ) {
@@ -891,6 +1153,7 @@ function restoreConversationToScreen() {
             false
         );
     }
+
 
     scrollChatToBottom();
 }
@@ -924,6 +1187,7 @@ function renderMessage(
                 : "ada"
         );
 
+
     const bubble =
         document.createElement(
             "div"
@@ -935,6 +1199,7 @@ function renderMessage(
     bubble.innerText =
         message;
 
+
     wrapper.appendChild(
         bubble
     );
@@ -942,6 +1207,7 @@ function renderMessage(
     chatArea.appendChild(
         wrapper
     );
+
 
     if (save) {
 
@@ -959,6 +1225,7 @@ function renderMessage(
 
         saveConversation();
     }
+
 
     scrollChatToBottom();
 }
@@ -1013,16 +1280,23 @@ function getSelectedService() {
             window.location.search
         );
 
+
     selectedService =
-        params.get("service") || "";
+        normaliseService(
+            params.get("service")
+        );
+
 
     if (!selectedService) {
 
         selectedService =
-            localStorage.getItem(
-                SERVICE_KEY
-            ) || "";
+            normaliseService(
+                localStorage.getItem(
+                    SERVICE_KEY
+                )
+            );
     }
+
 
     if (!selectedService) {
 
@@ -1030,15 +1304,136 @@ function getSelectedService() {
             "Service not selected";
     }
 
+
     document.getElementById(
         "selectedService"
     ).innerText =
         selectedService;
 
+
     localStorage.setItem(
         SERVICE_KEY,
         selectedService
     );
+
+
+    /*
+       Load the correct service conversation.
+    */
+
+    loadConversationForService(
+        selectedService
+    );
+
+
+    /*
+       Load or create the correct job for this
+       customer + service.
+    */
+
+    loadOrCreateCurrentJob();
+}
+
+
+/* ============================================================
+   LOAD OR CREATE CURRENT JOB
+============================================================ */
+
+function loadOrCreateCurrentJob() {
+
+    const key =
+        getJobStorageKey(
+            selectedService
+        );
+
+
+    try {
+
+        const savedJob =
+            localStorage.getItem(
+                key
+            );
+
+
+        if (savedJob) {
+
+            const parsed =
+                JSON.parse(
+                    savedJob
+                );
+
+
+            if (
+                parsed &&
+                parsed.jobId &&
+                parsed.service ===
+                    selectedService
+            ) {
+
+                currentJobId =
+                    parsed.jobId;
+
+                return;
+            }
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Job restore error:",
+            error
+        );
+    }
+
+
+    currentJobId =
+        createJobId(
+            selectedService
+        );
+
+
+    saveCurrentJob();
+}
+
+
+/* ============================================================
+   SAVE CURRENT JOB
+============================================================ */
+
+function saveCurrentJob() {
+
+    try {
+
+        localStorage.setItem(
+
+            getJobStorageKey(
+                selectedService
+            ),
+
+            JSON.stringify({
+
+                customerId:
+                    customerId,
+
+                jobId:
+                    currentJobId,
+
+                service:
+                    selectedService,
+
+                updatedAt:
+                    Date.now()
+
+            })
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Job save error:",
+            error
+        );
+    }
 }
 
 
@@ -1055,8 +1450,10 @@ function showConnectionStatus(
             "connectionStatus"
         );
 
+
     status.innerText =
         message;
+
 
     status.classList.add(
         "show"
@@ -1071,21 +1468,24 @@ function hideConnectionStatus() {
             "connectionStatus"
         );
 
+
     status.classList.remove(
         "show"
     );
+
 
     status.innerText = "";
 }
 
 
 /* ============================================================
-   CREATE REQUEST ID
+   REQUEST ID
 ============================================================ */
 
 function createRequestId() {
 
     return (
+        "request-" +
         Date.now().toString(36) +
         "-" +
         Math.random()
@@ -1096,7 +1496,45 @@ function createRequestId() {
 
 
 /* ============================================================
-   CHECK WHETHER ERROR IS TEMPORARY NETWORK FAILURE
+   CREATE COMPLETE REQUEST OBJECT
+============================================================ */
+
+function createRequest(
+    message,
+    eventName
+) {
+
+    return {
+
+        requestId:
+            createRequestId(),
+
+        customerId:
+            customerId,
+
+        jobId:
+            currentJobId,
+
+        service:
+            selectedService,
+
+        message:
+            message,
+
+        event:
+            eventName,
+
+        createdAt:
+            Date.now(),
+
+        attempts:
+            0
+    };
+}
+
+
+/* ============================================================
+   NETWORK ERROR CHECK
 ============================================================ */
 
 function isNetworkError(
@@ -1104,8 +1542,10 @@ function isNetworkError(
 ) {
 
     if (!error) {
+
         return false;
     }
+
 
     if (
         error.name ===
@@ -1115,6 +1555,7 @@ function isNetworkError(
         return true;
     }
 
+
     if (
         error instanceof
         TypeError
@@ -1123,18 +1564,38 @@ function isNetworkError(
         return true;
     }
 
+
     const text =
         String(
             error.message || ""
         ).toLowerCase();
 
+
     return (
-        text.includes("network") ||
-        text.includes("failed to fetch") ||
-        text.includes("fetch") ||
-        text.includes("connection") ||
-        text.includes("timeout") ||
-        text.includes("offline")
+
+        text.includes(
+            "network"
+        ) ||
+
+        text.includes(
+            "failed to fetch"
+        ) ||
+
+        text.includes(
+            "fetch"
+        ) ||
+
+        text.includes(
+            "connection"
+        ) ||
+
+        text.includes(
+            "timeout"
+        ) ||
+
+        text.includes(
+            "offline"
+        )
     );
 }
 
@@ -1167,14 +1628,15 @@ async function requestFastAPI(
     request
 ) {
 
-    const controller =
+    const abortController =
         new AbortController();
+
 
     const timeout =
         setTimeout(
             function() {
 
-                controller.abort();
+                abortController.abort();
 
             },
             30000
@@ -1183,15 +1645,32 @@ async function requestFastAPI(
 
     try {
 
+        /*
+           VERY IMPORTANT:
+
+           Use the service stored INSIDE the request.
+
+           Never use the current page's selectedService here.
+
+           This prevents Service A from accidentally being
+           submitted as Service B after the customer switches.
+        */
+
         const response =
             await fetch(
+
                 "https://naija-pocket-business-center.onrender.com/api/chat",
+
                 {
-                    method: "POST",
+
+                    method:
+                        "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:
@@ -1201,25 +1680,33 @@ async function requestFastAPI(
                                 request.message,
 
                             service:
-                                selectedService,
+                                request.service,
 
                             event:
                                 request.event,
 
-                            activate_intelligence:
-                                true,
+                            customer_id:
+                                request.customerId,
+
+                            job_id:
+                                request.jobId,
 
                             client_request_id:
-                                request.requestId
+                                request.requestId,
+
+                            activate_intelligence:
+                                true
+
                         }),
 
                     signal:
-                        controller.signal
+                        abortController.signal
                 }
             );
 
 
         let result;
+
 
         try {
 
@@ -1228,16 +1715,18 @@ async function requestFastAPI(
 
         } catch (error) {
 
-            if (!response.ok) {
-
-                throw new Error(
+            const invalidResponse =
+                new Error(
                     "Server returned an invalid response."
                 );
-            }
 
-            throw new Error(
-                "Server returned an invalid response."
-            );
+            invalidResponse.serverError =
+                !response.ok;
+
+            invalidResponse.status =
+                response.status;
+
+            throw invalidResponse;
         }
 
 
@@ -1255,12 +1744,18 @@ async function requestFastAPI(
                     result.price
                 );
 
+
             document.getElementById(
                 "servicePrice"
             ).innerText =
+
                 price.includes("₦")
-                    ? "SERVICE PRICE: " + price
-                    : "SERVICE PRICE: ₦" + price;
+
+                    ? "SERVICE PRICE: " +
+                      price
+
+                    : "SERVICE PRICE: ₦" +
+                      price;
         }
 
 
@@ -1289,9 +1784,7 @@ async function requestFastAPI(
 
 
         /* ====================================================
-           REAL SERVER ERROR
-           This is NOT treated as a temporary network
-           fluctuation.
+           SERVER ERROR
         ==================================================== */
 
         const serverError =
@@ -1302,18 +1795,23 @@ async function requestFastAPI(
                     result.message
                 )
             ) ||
+
             "The Business Center could not process the request.";
+
 
         const error =
             new Error(
                 serverError
             );
 
+
         error.serverError =
             true;
 
+
         error.status =
             response.status;
+
 
         throw error;
 
@@ -1327,7 +1825,7 @@ async function requestFastAPI(
 
 
 /* ============================================================
-   SEND TO BUSINESS CENTER WITH CONTROLLED RETRIES
+   SEND TO ADA
 ============================================================ */
 
 async function sendToAda(
@@ -1335,23 +1833,19 @@ async function sendToAda(
     eventName
 ) {
 
-    const request = {
-
-        requestId:
-            createRequestId(),
-
-        message:
-            message,
-
-        event:
-            eventName
-    };
-
-
     /*
-       Save the request before contacting the server.
-       If the network disappears, the work remains saved.
+       The request captures the CURRENT service and job.
+
+       Once created, it never changes even if the customer
+       navigates to another service.
     */
+
+    const request =
+        createRequest(
+            message,
+            eventName
+        );
+
 
     savePendingRequest(
         request
@@ -1359,10 +1853,12 @@ async function sendToAda(
 
 
     const retryDelays = [
+
         1500,
         3000,
         6000,
         10000
+
     ];
 
 
@@ -1388,12 +1884,21 @@ async function sendToAda(
             }
 
 
+            request.attempts =
+                attempt + 1;
+
+
+            savePendingRequest(
+                request
+            );
+
+
             if (
                 attempt > 0
             ) {
 
                 showConnectionStatus(
-                    "Your work is saved. Reconnecting and continuing your request..."
+                    "Reconnecting and continuing your request..."
                 );
             }
 
@@ -1405,13 +1910,18 @@ async function sendToAda(
 
 
             /*
-               The request succeeded.
-               Remove it from the pending queue.
+               SUCCESS.
+
+               Remove only THIS request.
             */
 
-            clearPendingRequest();
+            clearPendingRequest(
+                request.requestId
+            );
+
 
             hideConnectionStatus();
+
 
             return result.reply;
 
@@ -1419,6 +1929,7 @@ async function sendToAda(
 
             lastError =
                 error;
+
 
             console.error(
                 "Business Center request attempt " +
@@ -1429,8 +1940,7 @@ async function sendToAda(
 
 
             /*
-               Real server/application errors should not
-               blindly be repeated.
+               Real server errors are not blindly retried.
             */
 
             if (
@@ -1442,8 +1952,7 @@ async function sendToAda(
 
 
             /*
-               Temporary network failure.
-               Retry automatically.
+               Temporary network problem.
             */
 
             if (
@@ -1452,12 +1961,16 @@ async function sendToAda(
             ) {
 
                 showConnectionStatus(
-                    "Your work is saved. There is a temporary network connection issue. Reconnecting..."
+                    "Reconnecting..."
                 );
 
+
                 await wait(
-                    retryDelays[attempt]
+                    retryDelays[
+                        attempt
+                    ]
                 );
+
 
                 continue;
             }
@@ -1466,45 +1979,27 @@ async function sendToAda(
 
 
     /*
-       All controlled retries failed.
-       The request remains saved in localStorage.
+       IMPORTANT:
+
+       The request remains inside pendingRequests.
+
+       It has NOT been deleted.
+
+       Therefore network recovery can resume this exact
+       request later.
     */
 
     showConnectionStatus(
         NETWORK_MESSAGE
     );
 
-    throw lastError ||
+
+    throw (
+        lastError ||
         new Error(
             "Temporary network connection issue."
-        );
-}
-
-
-/* ============================================================
-   SHOW SAVED-WORK MESSAGE ONCE
-============================================================ */
-
-function showSavedNetworkMessage() {
-
-    const alreadyShown =
-        conversation.some(
-            function(item) {
-
-                return (
-                    item.message ===
-                    NETWORK_MESSAGE
-                );
-            }
-        );
-
-    if (!alreadyShown) {
-
-        addMessage(
-            "Business Center",
-            NETWORK_MESSAGE
-        );
-    }
+        )
+    );
 }
 
 
@@ -1520,6 +2015,7 @@ async function startAdaIntelligence() {
 
         return;
     }
+
 
     intelligenceStarted =
         true;
@@ -1541,15 +2037,28 @@ async function startAdaIntelligence() {
 
 
     /*
-       If this service already has a saved conversation,
-       do not start a second welcome request.
+       Existing conversation means this service/job has
+       already started.
+
+       Do not send another service-selection message.
     */
 
-    const hasConversation =
-        conversation.length > 0;
+    if (
+        conversation.length > 0
+    ) {
+
+        return;
+    }
 
 
-    if (hasConversation) {
+    /*
+       If THIS service has a pending request, let the
+       pending-resume system handle it.
+    */
+
+    if (
+        getPendingRequestForCurrentJob()
+    ) {
 
         return;
     }
@@ -1567,6 +2076,7 @@ async function startAdaIntelligence() {
                 "service_selected"
             );
 
+
         addMessage(
             "Business Center",
             response
@@ -1579,19 +2089,16 @@ async function startAdaIntelligence() {
             error
         );
 
+
         if (
-            isNetworkError(
+            !isNetworkError(
                 error
             )
         ) {
 
-            showSavedNetworkMessage();
-
-        } else {
-
             addMessage(
                 "Business Center",
-                "We could not complete that request at the moment. Your work has been saved. Please continue when the connection is available."
+                "We could not complete that request at the moment. Please try again shortly."
             );
         }
     }
@@ -1617,6 +2124,7 @@ async function sendMessage() {
             "messageInput"
         );
 
+
     const sendButton =
         document.getElementById(
             "sendButton"
@@ -1638,8 +2146,10 @@ async function sendMessage() {
 
 
     /*
-       Save the customer's message immediately.
-       It is therefore not lost even if the network disappears.
+       Save the message immediately.
+
+       It belongs to the CURRENT service and therefore
+       the CURRENT job.
     */
 
     addMessage(
@@ -1654,6 +2164,7 @@ async function sendMessage() {
     sendButton.disabled =
         true;
 
+
     sendButton.innerText =
         "WAIT...";
 
@@ -1662,8 +2173,11 @@ async function sendMessage() {
 
         const response =
             await sendToAda(
+
                 message,
+
                 "customer_message"
+
             );
 
 
@@ -1680,19 +2194,22 @@ async function sendMessage() {
         );
 
 
+        /*
+           Do NOT add the embarrassing network message
+           into the actual conversation.
+
+           The status bar handles temporary connectivity.
+        */
+
         if (
-            isNetworkError(
+            !isNetworkError(
                 error
             )
         ) {
 
-            showSavedNetworkMessage();
-
-        } else {
-
             addMessage(
                 "Business Center",
-                "Your message has been saved. We could not complete the request right now. Please continue when the connection is available."
+                "I could not complete that request right now. Please try again shortly."
             );
         }
 
@@ -1701,8 +2218,10 @@ async function sendMessage() {
         requestInProgress =
             false;
 
+
         sendButton.disabled =
             false;
+
 
         sendButton.innerText =
             "SEND";
@@ -1765,7 +2284,7 @@ async function handleFileSelected(
 
     addMessage(
         "You",
-        "I have uploaded " +
+        "I have selected " +
         file.name
     );
 
@@ -1775,11 +2294,13 @@ async function handleFileSelected(
         const response =
             await sendToAda(
 
-                "The customer has uploaded a file named '" +
+                "The customer has selected a file named '" +
                 file.name +
-                "'. Continue helping with the selected service.",
+                "' for the active '" +
+                selectedService +
+                "' service. Continue helping with the selected service.",
 
-                "file_uploaded"
+                "file_selected"
             );
 
 
@@ -1791,30 +2312,27 @@ async function handleFileSelected(
     } catch (error) {
 
         console.error(
-            "FILE UPLOAD REQUEST ERROR:",
+            "FILE REQUEST ERROR:",
             error
         );
 
 
         if (
-            isNetworkError(
+            !isNetworkError(
                 error
             )
         ) {
 
-            showSavedNetworkMessage();
-
-        } else {
-
             addMessage(
                 "Business Center",
-                "Your uploaded file and work have been saved. We could not continue the request right now. Please continue when the connection is available."
+                "I could not continue with that file right now. Please try again shortly."
             );
         }
+
+    } finally {
+
+        event.target.value = "";
     }
-
-
-    event.target.value = "";
 }
 
 
@@ -1931,8 +2449,11 @@ async function performBusinessAction(
 
         const response =
             await sendToAda(
+
                 controllerMessage,
+
                 eventName
+
             );
 
 
@@ -1951,18 +2472,14 @@ async function performBusinessAction(
 
 
         if (
-            isNetworkError(
+            !isNetworkError(
                 error
             )
         ) {
 
-            showSavedNetworkMessage();
-
-        } else {
-
             addMessage(
                 "Business Center",
-                "Your work has been saved. We could not complete this step right now. Please continue when the connection is available."
+                "I could not complete that step right now. Please try again shortly."
             );
         }
 
@@ -1975,20 +2492,169 @@ async function performBusinessAction(
 
 
 /* ============================================================
-   CONTINUE PENDING WORK AFTER CONNECTION RETURNS
+   RESUME ONE SAVED REQUEST
 ============================================================ */
 
-async function resumePendingRequest() {
+async function resumePendingRequest(
+    request
+) {
 
-    if (
-        !pendingRequest
-    ) {
-
-        hideConnectionStatus();
+    if (!request) {
 
         return;
     }
 
+
+    if (
+        request.customerId !==
+        customerId
+    ) {
+
+        return;
+    }
+
+
+    /*
+       The request must be resumed using the service/job
+       stored in the request.
+
+       It does NOT matter what service the customer is
+       currently looking at.
+    */
+
+    if (
+        !navigator.onLine
+    ) {
+
+        showConnectionStatus(
+            NETWORK_MESSAGE
+        );
+
+        return;
+    }
+
+
+    try {
+
+        showConnectionStatus(
+            "Your connection is back. Continuing your saved request..."
+        );
+
+
+        const result =
+            await requestFastAPI(
+                request
+            );
+
+
+        /*
+           Only clear THIS request after successful
+           completion.
+        */
+
+        clearPendingRequest(
+            request.requestId
+        );
+
+
+        /*
+           Only show the reply if the customer is still
+           viewing the same service/job.
+
+           If they have moved elsewhere, the result remains
+           saved and is not incorrectly inserted into the
+           new service's conversation.
+        */
+
+        if (
+            selectedService ===
+                request.service &&
+
+            currentJobId ===
+                request.jobId
+        ) {
+
+            addMessage(
+                "Business Center",
+                result.reply
+            );
+
+            hideConnectionStatus();
+
+        } else {
+
+            hideConnectionStatus();
+
+            console.log(
+                "Saved request completed for another service/job:",
+                request.service,
+                request.jobId
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            "PENDING REQUEST RESUME ERROR:",
+            error
+        );
+
+
+        /*
+           Keep the pending request for a temporary
+           network failure.
+        */
+
+        if (
+            isNetworkError(
+                error
+            )
+        ) {
+
+            showConnectionStatus(
+                NETWORK_MESSAGE
+            );
+
+            return;
+        }
+
+
+        /*
+           A genuine server/application error should not
+           be endlessly retried by the browser.
+
+           Keep the work record but remove this network
+           retry entry.
+        */
+
+        clearPendingRequest(
+            request.requestId
+        );
+
+
+        if (
+            selectedService ===
+                request.service &&
+
+            currentJobId ===
+                request.jobId
+        ) {
+
+            addMessage(
+                "Business Center",
+                "I could not complete that saved request right now. Please try again shortly."
+            );
+        }
+
+    }
+}
+
+
+/* ============================================================
+   RESUME SAVED WORK
+============================================================ */
+
+async function resumeSavedWork() {
 
     if (
         requestInProgress
@@ -2010,73 +2676,53 @@ async function resumePendingRequest() {
     }
 
 
+    const requests =
+        getPendingRequestList();
+
+
+    if (
+        requests.length === 0
+    ) {
+
+        hideConnectionStatus();
+
+        return;
+    }
+
+
     requestInProgress =
         true;
 
 
-    showConnectionStatus(
-        "Your connection is back. Continuing your saved work..."
-    );
-
-
     try {
 
-        const request =
-            pendingRequest;
-
-
-        const response =
-            await requestFastAPI(
-                request
-            );
-
-
-        clearPendingRequest();
-
-        hideConnectionStatus();
-
-
         /*
-           Only display the returned response.
-           The original customer message was already saved.
+           Resume each saved request individually.
+
+           Each request carries its own:
+
+           customerId
+           jobId
+           service
+           message
+           event
+           requestId
         */
 
-        addMessage(
-            "Business Center",
-            response.reply
-        );
-
-    } catch (error) {
-
-        console.error(
-            "PENDING REQUEST RESUME ERROR:",
-            error
-        );
-
-
-        if (
-            isNetworkError(
-                error
-            )
+        for (
+            const request of requests
         ) {
 
-            showConnectionStatus(
-                NETWORK_MESSAGE
-            );
+            if (
+                !navigator.onLine
+            ) {
 
-        } else {
+                break;
+            }
 
-            clearPendingRequest();
 
-            showConnectionStatus(
-                ""
-            );
-
-            hideConnectionStatus();
-
-            addMessage(
-                "Business Center",
-                "Your work is still saved. We could not complete that step right now. Please continue when the connection is available."
+            await resumePendingRequest(
+                request
             );
         }
 
@@ -2097,14 +2743,9 @@ window.addEventListener(
     function() {
 
         showConnectionStatus(
-            "Your connection is back. Checking your saved work..."
+            "Connection restored. Continuing saved work..."
         );
 
-
-        /*
-           Give the browser a moment to restore the connection
-           before sending the saved request.
-        */
 
         clearTimeout(
             reconnectTimer
@@ -2115,7 +2756,7 @@ window.addEventListener(
             setTimeout(
                 function() {
 
-                    resumePendingRequest();
+                    resumeSavedWork();
 
                 },
                 1200
@@ -2132,39 +2773,30 @@ window.addEventListener(
     "offline",
     function() {
 
-        if (
-            pendingRequest
-        ) {
-
-            showConnectionStatus(
-                NETWORK_MESSAGE
-            );
-
-        } else {
-
-            showConnectionStatus(
-                "There is a temporary network connection issue. Your work is being kept safely on this page."
-            );
-        }
+        showConnectionStatus(
+            NETWORK_MESSAGE
+        );
     }
 );
 
 
 /* ============================================================
    PERIODIC CONNECTION CHECK
-   Helps when the browser does not fire online reliably.
 ============================================================ */
 
 setInterval(
     function() {
 
         if (
-            pendingRequest &&
+            getPendingRequestList()
+                .length > 0 &&
+
             navigator.onLine &&
+
             !requestInProgress
         ) {
 
-            resumePendingRequest();
+            resumeSavedWork();
         }
 
     },
@@ -2187,15 +2819,27 @@ document.addEventListener(
 
             saveConversation();
 
-            if (
-                pendingRequest
-            ) {
+            saveCurrentJob();
 
-                savePendingRequest(
-                    pendingRequest
-                );
-            }
+            savePendingRequests();
         }
+    }
+);
+
+
+/* ============================================================
+   BEFORE PAGE UNLOAD
+============================================================ */
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        saveConversation();
+
+        saveCurrentJob();
+
+        savePendingRequests();
     }
 );
 
@@ -2204,24 +2848,27 @@ document.addEventListener(
    START WORKSPACE
 ============================================================ */
 
-loadSavedWork();
-
 getSelectedService();
+
+loadSavedWork();
 
 restoreConversationToScreen();
 
 
 /*
-   If a previous request was waiting for the network,
-   do not create another automatic service-selection request.
+   If there are pending requests, attempt to resume them.
+
+   Otherwise start Ada for a brand-new service.
 */
 
 if (
-    pendingRequest
+    getPendingRequestList()
+        .length > 0
 ) {
 
     intelligenceStarted =
         true;
+
 
     if (
         navigator.onLine
@@ -2230,7 +2877,7 @@ if (
         setTimeout(
             function() {
 
-                resumePendingRequest();
+                resumeSavedWork();
 
             },
             1000
