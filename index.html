@@ -39,225 +39,130 @@
             justify-content: center;
 
             padding:
-                max(12px, env(safe-area-inset-top))
-                14px
-                calc(78px + env(safe-area-inset-bottom))
-                14px;
-
-            overflow: hidden;
+                max(18px, env(safe-area-inset-top))
+                18px
+                max(18px, env(safe-area-inset-bottom))
+                18px;
         }
 
         .main-container {
             width: 100%;
-            max-width: 1050px;
-            max-height: 100%;
+            max-width: 1100px;
+            height: 100%;
 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: 1fr 0.75fr;
+            gap: 38px;
+
+            align-items: center;
         }
 
         /* =========================================
-           BRAND
-        ========================================== */
+           LEFT SIDE
+        ========================================= */
+
+        .content {
+            width: 100%;
+            min-width: 0;
+        }
 
         .brand-name {
-            margin: 0;
-
-            font-size: clamp(27px, 5vw, 46px);
+            font-size: clamp(25px, 4.2vw, 44px);
             line-height: 1.02;
             font-weight: 800;
-            letter-spacing: -0.8px;
+            margin: 0 0 9px;
+            letter-spacing: -0.5px;
+        }
 
-            text-align: center;
+        .identity {
+            font-size: clamp(15px, 2.3vw, 22px);
+            line-height: 1.2;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .value {
+            font-size: clamp(13px, 1.75vw, 17px);
+            line-height: 1.42;
+            font-weight: 600;
+            margin: 5px 0;
+        }
+
+        .services-title {
+            color: #1E90FF;
+            font-size: clamp(14px, 2vw, 19px);
+            line-height: 1.2;
+            font-weight: 800;
+            margin: 18px 0 9px;
         }
 
         /* =========================================
-           THE DOCUMENT PEOPLE
-        ========================================== */
+           MOVING DOCUMENT PEOPLE
+        ========================================= */
 
         .document-people-window {
             width: 100%;
             overflow: hidden;
-
-            margin: 8px 0 13px;
-
-            border-top: 1px solid #292929;
-            border-bottom: 1px solid #292929;
-
-            padding: 7px 0;
-
             white-space: nowrap;
+            margin: 8px 0 9px;
+            padding: 3px 0;
         }
 
         .document-people-track {
             display: inline-flex;
-            white-space: nowrap;
+            width: max-content;
 
-            animation:
-                documentPeopleMove
-                18s
-                linear
-                infinite;
+            animation: documentPeopleMove 18s linear infinite;
         }
 
         .document-people {
             display: inline-block;
-
             padding-right: 70px;
 
-            color: #1E90FF;
-
-            font-size: clamp(14px, 2.3vw, 20px);
-            line-height: 1.2;
-
+            color: #FFFFFF;
+            font-size: clamp(13px, 1.8vw, 17px);
             font-weight: 800;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
 
         @keyframes documentPeopleMove {
-
             from {
-                transform: translateX(0);
+                transform: translateX(100vw);
             }
 
             to {
-                transform: translateX(-50%);
+                transform: translateX(-100%);
             }
-        }
-
-        /* =========================================
-           VALUE STATEMENTS
-        ========================================== */
-
-        .values {
-            width: 100%;
-
-            display: grid;
-            grid-template-columns:
-                repeat(3, minmax(0, 1fr));
-
-            gap: 9px;
-
-            margin-bottom: 13px;
-        }
-
-        .value {
-            background: #171717;
-
-            border: 1px solid #292929;
-            border-radius: 7px;
-
-            padding: 10px 11px;
-
-            font-size: clamp(11px, 1.7vw, 15px);
-            line-height: 1.35;
-
-            font-weight: 600;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            text-align: center;
-        }
-
-        /* =========================================
-           SERVICES TITLE
-        ========================================== */
-
-        .services-title {
-            color: #1E90FF;
-
-            font-size: clamp(14px, 2.2vw, 19px);
-            line-height: 1.2;
-
-            font-weight: 800;
-
-            text-align: center;
-
-            margin: 2px 0 9px;
         }
 
         /* =========================================
            SERVICES
-        ========================================== */
-
-        .services-box {
-            width: 100%;
-
-            background: #121212;
-
-            border: 1px solid #292929;
-            border-radius: 8px;
-
-            padding: 10px;
-        }
-
-        .services-heading {
-            font-size: clamp(12px, 1.8vw, 15px);
-
-            font-weight: 800;
-
-            text-align: center;
-
-            margin-bottom: 8px;
-        }
+        ========================================= */
 
         .services {
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, minmax(0, 1fr));
-
-            gap: 6px;
+            font-size: clamp(13px, 1.7vw, 16px);
+            line-height: 1.48;
+            margin-bottom: 13px;
         }
 
-        .service-item {
-            min-height: 34px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: #202020;
-
-            border: 1px solid #303030;
-            border-radius: 5px;
-
-            padding: 6px 5px;
-
-            text-align: center;
-
-            font-size: clamp(9px, 1.5vw, 13px);
-            line-height: 1.2;
-
-            font-weight: 600;
-        }
-
-        .service-item:last-child {
-            grid-column: span 4;
-
-            background: #202020;
-            border-color: #303030;
-
+        .services strong {
             font-weight: 800;
         }
 
         /* =========================================
            START BUTTON
-        ========================================== */
+        ========================================= */
 
         .start-button {
-            width: 100%;
-
-            min-height: 48px;
-
-            margin-top: 12px;
-
             display: flex;
             align-items: center;
             justify-content: center;
+
+            width: 100%;
+            max-width: 470px;
+            min-height: 48px;
+
+            padding: 11px 16px;
 
             border: none;
             border-radius: 7px;
@@ -265,21 +170,19 @@
             background: #CC0000;
             color: white;
 
-            font-size: clamp(12px, 2vw, 16px);
+            font-size: clamp(12px, 1.8vw, 16px);
             line-height: 1.2;
-
             font-weight: 800;
 
             text-decoration: none;
-
             cursor: pointer;
 
             box-shadow:
                 0 5px 18px rgba(0, 0, 0, 0.45);
 
             transition:
-                background 0.15s ease,
-                transform 0.15s ease;
+                transform 0.15s ease,
+                background 0.15s ease;
         }
 
         .start-button:hover {
@@ -291,226 +194,245 @@
             transform: scale(0.98);
         }
 
-        /* =========================================
-           FOOTER
-        ========================================== */
-
         .statement {
-            margin-top: 10px;
-
-            text-align: center;
-
-            font-size: clamp(10px, 1.6vw, 14px);
-            line-height: 1.3;
-
-            color: #DDDDDD;
+            font-size: clamp(11px, 1.6vw, 15px);
+            line-height: 1.35;
+            margin-top: 11px;
         }
 
         .signature {
-            margin-top: 5px;
+            font-size: clamp(11px, 1.6vw, 15px);
+            line-height: 1.35;
+            font-weight: 700;
+            margin-top: 7px;
+        }
+
+        /* =========================================
+           RIGHT SIDE — ADA AREA
+        ========================================= */
+
+        .ada-area {
+            width: 100%;
+            height: 100%;
+
+            min-height: 360px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ada-placeholder {
+            width: min(100%, 400px);
+            min-height: 430px;
+
+            border-radius: 22px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #181818,
+                    #101010
+                );
+
+            border: 1px solid #292929;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            padding: 25px;
+
+            box-shadow:
+                0 15px 45px rgba(0, 0, 0, 0.55);
+        }
+
+        .placeholder-circle {
+            width: 180px;
+            height: 180px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #333333,
+                    #171717
+                );
+
+            border: 3px solid #1E90FF;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 20px;
+
+            font-size: 60px;
+        }
+
+        .placeholder-name {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .placeholder-role {
+            color: #1E90FF;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .placeholder-note {
+            margin-top: 16px;
+
+            font-size: 12px;
+            line-height: 1.4;
+
+            color: #AAAAAA;
 
             text-align: center;
-
-            font-size: clamp(10px, 1.6vw, 14px);
-            line-height: 1.3;
-
-            font-weight: 700;
-
-            color: white;
         }
 
         /* =========================================
-           BOTTOM WAVE
-        ========================================== */
-
-        .wave {
-            position: fixed;
-
-            left: 0;
-            bottom: 0;
-
-            width: 100%;
-            height: 55px;
-
-            pointer-events: none;
-
-            z-index: 1;
-
-            overflow: hidden;
-        }
-
-        .wave svg {
-            display: block;
-
-            width: 100%;
-            height: 55px;
-        }
-
-        /* =========================================
-           TABLET
-        ========================================== */
+           TABLET / PHONE
+        ========================================= */
 
         @media (max-width: 800px) {
 
             .page {
-                padding-left: 12px;
-                padding-right: 12px;
-
-                padding-bottom:
-                    calc(74px + env(safe-area-inset-bottom));
+                padding:
+                    max(12px, env(safe-area-inset-top))
+                    14px
+                    max(12px, env(safe-area-inset-bottom))
+                    14px;
             }
 
-            .values {
-                grid-template-columns:
-                    repeat(3, minmax(0, 1fr));
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                overflow: hidden;
             }
 
-            .services {
-                grid-template-columns:
-                    repeat(3, minmax(0, 1fr));
+            .content {
+                text-align: center;
             }
 
-            .service-item:last-child {
-                grid-column: span 3;
+            .start-button {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .ada-area {
+                min-height: 0;
+                height: auto;
+            }
+
+            .ada-placeholder {
+                width: min(100%, 300px);
+                min-height: 190px;
+                padding: 15px;
+                border-radius: 18px;
+            }
+
+            .placeholder-circle {
+                width: 90px;
+                height: 90px;
+                font-size: 35px;
+                margin-bottom: 8px;
+            }
+
+            .placeholder-name {
+                font-size: 21px;
+            }
+
+            .placeholder-role {
+                font-size: 12px;
+            }
+
+            .placeholder-note {
+                display: none;
             }
         }
 
-        /* =========================================
-           PHONE
-        ========================================== */
-
-        @media (max-width: 520px) {
+        @media (max-width: 430px) {
 
             .page {
-                padding-left: 9px;
-                padding-right: 9px;
+                padding-left: 11px;
+                padding-right: 11px;
+            }
 
-                padding-top:
-                    max(9px, env(safe-area-inset-top));
-
-                padding-bottom:
-                    calc(69px + env(safe-area-inset-bottom));
+            .main-container {
+                gap: 7px;
             }
 
             .brand-name {
                 font-size: 25px;
             }
 
-            .document-people-window {
-                margin-top: 6px;
-                margin-bottom: 9px;
-            }
-
-            .values {
-                gap: 5px;
-                margin-bottom: 9px;
+            .identity {
+                font-size: 15px;
+                margin-bottom: 10px;
             }
 
             .value {
-                padding: 7px 5px;
-                font-size: 10px;
+                font-size: 12.5px;
+                line-height: 1.32;
             }
 
-            .services-box {
-                padding: 7px;
+            .services-title {
+                font-size: 13px;
+                margin-top: 11px;
+                margin-bottom: 6px;
+            }
+
+            .document-people-window {
+                margin: 5px 0 6px;
+            }
+
+            .document-people {
+                font-size: 12px;
             }
 
             .services {
-                gap: 4px;
-            }
-
-            .service-item {
-                min-height: 30px;
-                padding: 4px 3px;
-                font-size: 8.5px;
+                font-size: 12px;
+                line-height: 1.35;
+                margin-bottom: 8px;
             }
 
             .start-button {
-                min-height: 44px;
-                margin-top: 9px;
+                min-height: 43px;
                 font-size: 11px;
             }
 
             .statement {
+                font-size: 10.5px;
                 margin-top: 7px;
-                font-size: 9.5px;
             }
 
             .signature {
+                font-size: 10.5px;
                 margin-top: 4px;
-                font-size: 9.5px;
             }
 
-            .wave {
-                height: 45px;
+            .ada-placeholder {
+                min-height: 150px;
             }
 
-            .wave svg {
-                height: 45px;
-            }
-        }
-
-        /* =========================================
-           VERY SMALL PHONES
-        ========================================== */
-
-        @media (max-height: 680px) and (max-width: 520px) {
-
-            .brand-name {
-                font-size: 22px;
+            .placeholder-circle {
+                width: 65px;
+                height: 65px;
+                font-size: 28px;
             }
 
-            .document-people-window {
-                padding: 5px 0;
-                margin-bottom: 6px;
+            .placeholder-name {
+                font-size: 18px;
             }
 
-            .values {
-                margin-bottom: 6px;
-            }
-
-            .value {
-                padding: 5px 4px;
-                font-size: 8.5px;
-            }
-
-            .services-box {
-                padding: 5px;
-            }
-
-            .services-heading {
-                margin-bottom: 5px;
+            .placeholder-role {
                 font-size: 10px;
-            }
-
-            .service-item {
-                min-height: 26px;
-                font-size: 7.5px;
-            }
-
-            .start-button {
-                min-height: 40px;
-                margin-top: 6px;
-            }
-
-            .statement {
-                margin-top: 5px;
-                font-size: 8px;
-            }
-
-            .signature {
-                font-size: 8px;
-            }
-        }
-
-        /* =========================================
-           ACCESSIBILITY
-        ========================================== */
-
-        @media (prefers-reduced-motion: reduce) {
-
-            .document-people-track {
-                animation: none;
             }
         }
     </style>
@@ -523,49 +445,19 @@
     <div class="main-container">
 
         <!-- =========================================
-             BRAND
+             LEFT SIDE — BUSINESS CENTER INFORMATION
         ========================================== -->
 
-        <h1 class="brand-name">
-            NAIJA POCKET<br>
-            BUSINESS CENTER
-        </h1>
+        <section class="content">
 
+            <h1 class="brand-name">
+                NAIJA POCKET<br>
+                BUSINESS CENTER
+            </h1>
 
-        <!-- =========================================
-             MOVING IDENTITY
-        ========================================== -->
-
-        <div class="document-people-window">
-
-            <div class="document-people-track">
-
-                <span class="document-people">
-                    THE DOCUMENT PEOPLE •
-                </span>
-
-                <span class="document-people">
-                    THE DOCUMENT PEOPLE •
-                </span>
-
-                <span class="document-people">
-                    THE DOCUMENT PEOPLE •
-                </span>
-
-                <span class="document-people">
-                    THE DOCUMENT PEOPLE •
-                </span>
-
+            <div class="identity">
+                THE DOCUMENT PEOPLE
             </div>
-
-        </div>
-
-
-        <!-- =========================================
-             VALUE STATEMENTS
-        ========================================== -->
-
-        <section class="values">
 
             <div class="value">
                 Fast • Convenient • Open 24/7
@@ -580,141 +472,95 @@
                 From Your Phone, Wherever You Are In Nigeria
             </div>
 
-        </section>
+            <div class="services-title">
+                ENJOY THE BEST IN DOCUMENT PROCESSING
+            </div>
 
+            <!-- MOVING DOCUMENT PEOPLE -->
+            <div class="document-people-window">
+                <div class="document-people-track">
+                    <span class="document-people">
+                        THE DOCUMENT PEOPLE
+                    </span>
 
-        <!-- =========================================
-             SERVICES
-        ========================================== -->
-
-        <div class="services-title">
-            ENJOY THE BEST IN DOCUMENT PROCESSING
-        </div>
-
-        <section class="services-box">
-
-            <div class="services-heading">
-                SERVICES
+                    <span class="document-people">
+                        THE DOCUMENT PEOPLE
+                    </span>
+                </div>
             </div>
 
             <div class="services">
 
-                <div class="service-item">
-                    ✓ CVs &amp; Résumés
-                </div>
+                <strong>SERVICES</strong>
 
-                <div class="service-item">
-                    ✓ Handwritten Note Typing
-                </div>
+                <br><br>
 
-                <div class="service-item">
-                    ✓ Assignments &amp; Projects
-                </div>
+                ✓ CVs &amp; Résumés<br>
+                ✓ Handwritten Note Typing<br>
+                ✓ Assignments &amp; Projects<br>
+                ✓ Business Documents<br>
+                ✓ Letters &amp; Proposals<br>
+                ✓ Editing &amp; Formatting<br>
+                ✓ PDF Services<br>
+                ✓ Document Conversion<br>
+                ✓ Translation<br>
+                ✓ Printing Preparation<br>
+                ✓ And Much More
 
-                <div class="service-item">
-                    ✓ Business Documents
-                </div>
+            </div>
 
-                <div class="service-item">
-                    ✓ Letters &amp; Proposals
-                </div>
+            <a
+                class="start-button"
+                href="conversation.html"
+            >
+                PRESS HERE TO START YOUR REQUEST
+            </a>
 
-                <div class="service-item">
-                    ✓ Editing &amp; Formatting
-                </div>
+            <div class="statement">
+                Get your documents, business services and
+                everyday office work done from your phone.
+            </div>
 
-                <div class="service-item">
-                    ✓ PDF Services
-                </div>
-
-                <div class="service-item">
-                    ✓ Document Conversion
-                </div>
-
-                <div class="service-item">
-                    ✓ Translation
-                </div>
-
-                <div class="service-item">
-                    ✓ Printing Preparation
-                </div>
-
-                <div class="service-item">
-                    ✓ And Much More
-                </div>
-
+            <div class="signature">
+                Naija Pocket Business Center<br>
+                Your Business Center In Your Pocket
             </div>
 
         </section>
 
 
         <!-- =========================================
-             START BUTTON
+             RIGHT SIDE — ADA
         ========================================== -->
 
-        <a
-            class="start-button"
-            href="conversation.html"
-        >
-            PRESS HERE TO START YOUR REQUEST
-        </a>
+        <section class="ada-area">
 
+            <div class="ada-placeholder">
 
-        <!-- =========================================
-             FOOTER
-        ========================================== -->
+                <div class="placeholder-circle">
+                    👩🏽‍💼
+                </div>
 
-        <div class="statement">
-            Get your documents, business services and
-            everyday office work done from your phone.
-        </div>
+                <div class="placeholder-name">
+                    Ada
+                </div>
 
-        <div class="signature">
-            Naija Pocket Business Center<br>
-            Your Business Center In Your Pocket
-        </div>
+                <div class="placeholder-role">
+                    Your Business Center Assistant
+                </div>
+
+                <div class="placeholder-note">
+                    Your friendly Business Center assistant,
+                    ready to help with your documents.
+                </div>
+
+            </div>
+
+        </section>
 
     </div>
 
 </main>
-
-
-<!-- =========================================
-     BOTTOM WAVE
-========================================== -->
-
-<div class="wave">
-
-    <svg
-        viewBox="0 0 800 70"
-        preserveAspectRatio="none"
-        xmlns="http://www.w3.org/2000/svg"
-    >
-
-        <path
-            d="M0 53 Q200 17 400 53 T800 53"
-            fill="none"
-            stroke="#1E90FF"
-            stroke-width="8"
-        />
-
-        <path
-            d="M0 48 Q200 12 400 48 T800 48"
-            fill="none"
-            stroke="white"
-            stroke-width="3"
-        />
-
-        <path
-            d="M0 62 Q200 38 400 62 T800 62"
-            fill="none"
-            stroke="#1E90FF"
-            stroke-width="3"
-        />
-
-    </svg>
-
-</div>
 
 </body>
 </html>
