@@ -1,6 +1,6 @@
 """
 ada_ai_engine.py
-Ada AI Engine V9
+Ada AI Engine V10
 Naija Pocket Business Center
 
 PRIMARY INTELLIGENCE:
@@ -8,7 +8,16 @@ PRIMARY INTELLIGENCE:
 
 MODEL:
     Read from GROQ_MODEL environment variable.
-    Falls back to llama-3.3-70b-versatile.
+
+    IMPORTANT:
+    Groq permanently shut down:
+        llama-3.1-8b-instant
+        llama-3.3-70b-versatile
+
+    If either deprecated model is found in the environment,
+    this engine automatically uses:
+
+        openai/gpt-oss-20b
 
 API KEY:
     Read from GROQ_API_KEY environment variable.
@@ -16,9 +25,22 @@ API KEY:
 IMPORTANT:
     This file DOES NOT import ada_ai_config.py.
     The Groq API key must NEVER be stored in GitHub.
+
+ERROR HANDLING:
+    Real Groq errors are deliberately NOT hidden.
+
+    Every Groq request prints:
+        MODEL
+        ERROR TYPE
+        REAL GROQ ERROR
+        FULL TRACEBACK
+
+    The original exception is then re-raised so that
+    FastAPI / AdaController can expose the actual failure.
 """
 
 import os
+import traceback
 
 from groq import Groq
 
@@ -29,7 +51,26 @@ from billing_manager import BillingManager
 
 class AdaAIEngine:
 
+    # ==================================================
+    # CURRENT GROQ DEFAULT MODEL
+    # ==================================================
+
+    DEFAULT_MODEL = "openai/gpt-oss-20b"
+
+    # Groq models that have already been shut down.
+    # If one is still present in Render environment variables,
+    # do NOT use it.
+    DEPRECATED_MODELS = {
+        "llama-3.1-8b-instant",
+        "llama-3.3-70b-versatile",
+    }
+
+    # ==================================================
+    # INITIALIZE
+    # ==================================================
+
     def __init__(self):
+
         self.client = None
         self.connected = False
 
@@ -85,23 +126,48 @@ class AdaAIEngine:
 
     def get_model(self):
 
-        possible_names = [
-            "GROQ_MODEL",
-            "MODEL"
-        ]
+        configured_model = os.getenv(
+            "GROQ_MODEL"
+        )
 
-        for name in possible_names:
+        if configured_model:
 
-            value = os.getenv(name)
+            configured_model = str(
+                configured_model
+            ).strip()
 
-            if value:
+            if configured_model:
 
-                value = str(value).strip()
+                # ------------------------------------------
+                # IMPORTANT:
+                # Never use the old shut-down Groq models.
+                # ------------------------------------------
 
-                if value:
-                    return value
+                if configured_model in self.DEPRECATED_MODELS:
 
-        return "llama-3.3-70b-versatile"
+                    print()
+                    print("=" * 60)
+                    print("DEPRECATED GROQ MODEL DETECTED")
+                    print("=" * 60)
+                    print(
+                        "Configured Model:",
+                        configured_model
+                    )
+                    print(
+                        "Replacement Model:",
+                        self.DEFAULT_MODEL
+                    )
+                    print(
+                        "The deprecated model will NOT be used."
+                    )
+                    print("=" * 60)
+                    print()
+
+                    return self.DEFAULT_MODEL
+
+                return configured_model
+
+        return self.DEFAULT_MODEL
 
     # ==================================================
     # CONNECT TO GROQ
@@ -115,13 +181,19 @@ class AdaAIEngine:
 
             if not api_key:
 
+                print()
+                print("=" * 60)
+                print("GROQ CONNECTION ERROR")
+                print("=" * 60)
                 print(
-                    "Groq Connection Error: "
                     "GROQ_API_KEY environment variable "
                     "was not found."
                 )
+                print("=" * 60)
+                print()
 
                 self.connected = False
+
                 return False
 
             self.client = Groq(
@@ -130,11 +202,17 @@ class AdaAIEngine:
 
             self.connected = True
 
+            print()
+            print("=" * 60)
+            print("GROQ CONNECTION")
+            print("=" * 60)
             print("Groq Connected: True")
             print(
                 "Groq Model:",
                 self.get_model()
             )
+            print("=" * 60)
+            print()
 
             return True
 
@@ -143,12 +221,51 @@ class AdaAIEngine:
             self.client = None
             self.connected = False
 
-            print(
-                "Groq Connection Error:",
-                repr(error)
+            self._log_groq_error(
+                "GROQ CONNECTION ERROR",
+                error
             )
 
             return False
+
+    # ==================================================
+    # CENTRAL GROQ ERROR LOGGER
+    # ==================================================
+
+    def _log_groq_error(
+        self,
+        title,
+        error
+    ):
+
+        print()
+        print("=" * 70)
+        print(title)
+        print("=" * 70)
+
+        print(
+            "MODEL:",
+            self.get_model()
+        )
+
+        print(
+            "ERROR TYPE:",
+            type(error).__name__
+        )
+
+        print(
+            "ERROR:",
+            repr(error)
+        )
+
+        print()
+        print("FULL TRACEBACK")
+        print("-" * 70)
+
+        traceback.print_exc()
+
+        print("=" * 70)
+        print()
 
     # ==================================================
     # CONNECTION STATUS
@@ -177,12 +294,18 @@ class AdaAIEngine:
         if not extracted_text:
             return False
 
-        self.active_document_text = extracted_text
-        self.active_document_path = file_path
+        self.active_document_text = (
+            extracted_text
+        )
+
+        self.active_document_path = (
+            file_path
+        )
 
         return True
 
     def get_document_context(self):
+
         return self.active_document_text
 
     def has_document_context(self):
@@ -228,15 +351,22 @@ class AdaAIEngine:
 
         try:
 
-            normalized = self.normalize_service(
-                service
+            normalized = (
+                self.normalize_service(
+                    service
+                )
             )
 
             return self.billing.has_service(
                 normalized
             )
 
-        except Exception:
+        except Exception as error:
+
+            print(
+                "Service Exists Error:",
+                repr(error)
+            )
 
             return False
 
@@ -246,8 +376,10 @@ class AdaAIEngine:
 
     def get_service_price(self, service):
 
-        normalized = self.normalize_service(
-            service
+        normalized = (
+            self.normalize_service(
+                service
+            )
         )
 
         return self.billing.get_price(
@@ -320,7 +452,10 @@ class AdaAIEngine:
     # SERVICE DISPLAY NAME
     # ==================================================
 
-    def get_service_display_name(self, service):
+    def get_service_display_name(
+        self,
+        service
+    ):
 
         internal_service = (
             self.normalize_service(
@@ -341,7 +476,10 @@ class AdaAIEngine:
     # SYSTEM PROMPT
     # ==================================================
 
-    def get_system_prompt(self, service=None):
+    def get_system_prompt(
+        self,
+        service=None
+    ):
 
         normalized_service = (
             self.normalize_service(
@@ -431,8 +569,9 @@ class AdaAIEngine:
             if text.startswith("Customer:"):
 
                 content = (
-                    text[len("Customer:"):]
-                    .strip()
+                    text[
+                        len("Customer:"):
+                    ].strip()
                 )
 
                 if content:
@@ -447,8 +586,9 @@ class AdaAIEngine:
             elif text.startswith("Ada:"):
 
                 content = (
-                    text[len("Ada:"):]
-                    .strip()
+                    text[
+                        len("Ada:"):
+                    ].strip()
                 )
 
                 if content:
@@ -507,13 +647,17 @@ class AdaAIEngine:
     # ==================================================
 
     def get_job_state(self):
+
         return self.job_state
 
     # ==================================================
     # SET ACTIVE SERVICE
     # ==================================================
 
-    def set_active_service(self, service):
+    def set_active_service(
+        self,
+        service
+    ):
 
         normalized_service = (
             self.normalize_service(
@@ -716,7 +860,10 @@ class AdaAIEngine:
     # PRICE RESPONSE
     # ==================================================
 
-    def generate_price_response(self, service):
+    def generate_price_response(
+        self,
+        service
+    ):
 
         normalized_service = (
             self.normalize_service(
@@ -727,7 +874,6 @@ class AdaAIEngine:
         if not normalized_service:
 
             return (
-                "No wahala.\n\n"
                 "I couldn't match that service "
                 "to our current price list.\n\n"
                 "Please tell me the exact service "
@@ -758,10 +904,7 @@ class AdaAIEngine:
                 repr(error)
             )
 
-            return (
-                "Sorry, I couldn't retrieve the "
-                "official price right now."
-            )
+            raise
 
         service_name = (
             self.get_service_display_name(
@@ -847,19 +990,10 @@ Return ONLY the customer-facing response.
 
         if not self.connected:
 
-            try:
-
-                return self.billing.bill_message(
-                    normalized_service
-                )
-
-            except Exception:
-
-                return (
-                    f"The official price for "
-                    f"{service_name} is "
-                    f"₦{amount:,}."
-                )
+            raise RuntimeError(
+                "Groq is not connected. "
+                "Check GROQ_API_KEY."
+            )
 
         try:
 
@@ -889,26 +1023,18 @@ Return ONLY the customer-facing response.
             if reply:
                 return reply.strip()
 
+            raise RuntimeError(
+                "Groq returned an empty price response."
+            )
+
         except Exception as error:
 
-            print(
-                "Price Response Error:",
-                repr(error)
+            self._log_groq_error(
+                "REAL GROQ PRICE ERROR",
+                error
             )
 
-        try:
-
-            return self.billing.bill_message(
-                normalized_service
-            )
-
-        except Exception:
-
-            return (
-                f"The official price for "
-                f"{service_name} is "
-                f"₦{amount:,}."
-            )
+            raise
 
     # ==================================================
     # SEND MESSAGE TO GROQ
@@ -923,9 +1049,9 @@ Return ONLY the customer-facing response.
 
         if not self.connected:
 
-            return (
-                "I'm having a temporary connection "
-                "problem. Please try again shortly."
+            raise RuntimeError(
+                "Groq is not connected. "
+                "Check GROQ_API_KEY."
             )
 
         normalized_service = (
@@ -980,6 +1106,25 @@ Return ONLY the customer-facing response.
 
         try:
 
+            print()
+            print("=" * 60)
+            print("ADA → GROQ REQUEST")
+            print("=" * 60)
+            print(
+                "MODEL:",
+                self.get_model()
+            )
+            print(
+                "SERVICE:",
+                normalized_service
+            )
+            print(
+                "CUSTOMER MESSAGE:",
+                customer_message
+            )
+            print("=" * 60)
+            print()
+
             response = (
                 self.client
                 .chat
@@ -999,41 +1144,25 @@ Return ONLY the customer-facing response.
             )
 
             if reply:
+
                 return reply.strip()
 
-            return (
-                "I couldn't generate a reply."
+            raise RuntimeError(
+                "Groq returned an empty response."
             )
 
         except Exception as error:
 
-            import traceback
+            self._log_groq_error(
+                "REAL GROQ ERROR",
+                error
+            )
 
-            print()
-            print("=" * 60)
-            print("REAL GROQ ERROR")
-            print("=" * 60)
-            print(
-                "MODEL:",
-                self.get_model()
-            )
-            print(
-                "ERROR TYPE:",
-                type(error).__name__
-            )
-            print(
-                "ERROR:",
-                repr(error)
-            )
-            traceback.print_exc()
-            print("=" * 60)
-            print()
+            # --------------------------------------------------
+            # CRITICAL:
+            # DO NOT HIDE THE REAL ERROR.
+            # --------------------------------------------------
 
-            # IMPORTANT:
-            # Re-raise the original exception.
-            # This allows FastAPI/AdaController to expose
-            # the actual failure instead of hiding it behind
-            # "I'm having a temporary problem."
             raise
 
     # ==================================================
@@ -1084,6 +1213,7 @@ NO
 """
 
         if not self.connected:
+
             return False
 
         try:
@@ -1117,12 +1247,12 @@ NO
 
         except Exception as error:
 
-            print(
-                "Interview Check Error:",
-                repr(error)
+            self._log_groq_error(
+                "REAL GROQ INTERVIEW CHECK ERROR",
+                error
             )
 
-            return False
+            raise
 
     # ==================================================
     # START CONVERSATION
@@ -1147,7 +1277,10 @@ NO
         )
 
         if not normalized_service:
-            normalized_service = detected_service
+
+            normalized_service = (
+                detected_service
+            )
 
         self.start_job(
             normalized_service
@@ -1409,10 +1542,9 @@ Return ONLY the finished document.
 
         if not self.connected:
 
-            return (
-                "Ada is temporarily unable to prepare "
-                "the document because the intelligence "
-                "service is not connected."
+            raise RuntimeError(
+                "Groq is not connected. "
+                "Check GROQ_API_KEY."
             )
 
         try:
@@ -1458,22 +1590,18 @@ Return ONLY the finished document.
 
                 return draft.strip()
 
-            return (
-                "I couldn't prepare the document draft."
+            raise RuntimeError(
+                "Groq returned an empty document draft."
             )
 
         except Exception as error:
 
-            print(
-                "Document Draft Error:",
-                repr(error)
+            self._log_groq_error(
+                "REAL GROQ DOCUMENT DRAFT ERROR",
+                error
             )
 
-            return (
-                "I'm having a temporary problem "
-                "preparing the document. "
-                "Please try again."
-            )
+            raise
 
     # ==================================================
     # REVISE DOCUMENT
@@ -1519,10 +1647,9 @@ Instructions:
 
         if not self.connected:
 
-            return (
-                "Ada is temporarily unable to revise "
-                "the document because the intelligence "
-                "service is not connected."
+            raise RuntimeError(
+                "Groq is not connected. "
+                "Check GROQ_API_KEY."
             )
 
         try:
@@ -1572,21 +1699,18 @@ Instructions:
 
                 return revised.strip()
 
-            return (
-                "I couldn't revise the document."
+            raise RuntimeError(
+                "Groq returned an empty revised document."
             )
 
         except Exception as error:
 
-            print(
-                "Document Revision Error:",
-                repr(error)
+            self._log_groq_error(
+                "REAL GROQ DOCUMENT REVISION ERROR",
+                error
             )
 
-            return (
-                "I'm having a temporary problem "
-                "revising the document."
-            )
+            raise
 
     # ==================================================
     # APPROVE DOCUMENT
@@ -1627,3 +1751,81 @@ Instructions:
         ] = True
 
         return True
+
+
+# ==============================================================
+# DIRECT ENGINE TEST
+# ==============================================================
+
+if __name__ == "__main__":
+
+    print()
+    print("=" * 70)
+    print("ADA AI ENGINE DIRECT TEST")
+    print("=" * 70)
+
+    ada = AdaAIEngine()
+
+    print(
+        "Connected:",
+        ada.is_connected()
+    )
+
+    print(
+        "Model:",
+        ada.get_model()
+    )
+
+    print("=" * 70)
+    print()
+
+    if not ada.is_connected():
+
+        print(
+            "TEST STOPPED:"
+        )
+
+        print(
+            "Groq is not connected."
+        )
+
+        print(
+            "Check GROQ_API_KEY."
+        )
+
+    else:
+
+        try:
+
+            result = ada.process_message(
+                customer_message=(
+                    "Hello Ada, please introduce yourself."
+                ),
+                service="CV"
+            )
+
+            print()
+            print("=" * 70)
+            print("ADA RESPONSE")
+            print("=" * 70)
+            print(result)
+            print("=" * 70)
+            print()
+
+        except Exception as error:
+
+            print()
+            print("=" * 70)
+            print("DIRECT TEST REAL ERROR")
+            print("=" * 70)
+            print(
+                "ERROR TYPE:",
+                type(error).__name__
+            )
+            print(
+                "ERROR:",
+                repr(error)
+            )
+            traceback.print_exc()
+            print("=" * 70)
+            print()
