@@ -227,14 +227,41 @@ def chat(req: ChatRequest):
     # ------------------------------------------------------
     # CONTROLLER CHECK
     # ------------------------------------------------------
+    #
+    # NEVER expose an internal Ada availability message
+    # to the customer.
+    #
+    # The customer-facing response follows the agreed
+    # saved-work / temporary-network procedure.
+    #
+    # The actual internal error remains available in the
+    # "error" field for server-side troubleshooting.
+    # ------------------------------------------------------
 
     if controller is None:
+
+        print()
+        print("=" * 60)
+        print("ADA CONTROLLER UNAVAILABLE")
+        print("=" * 60)
+
+        print(
+            "Customer request cannot currently reach "
+            "the Ada Controller."
+        )
+
+        print("=" * 60)
+        print()
 
         return {
             "success": False,
             "reply": (
-                "Ada is currently unavailable. "
-                "Please try again shortly."
+                "Your work has been saved safely. "
+                "We are experiencing a temporary network connection issue. "
+                "Your request has not been lost. "
+                "Please stay on this page. "
+                "When the connection returns, we will continue your work "
+                "from where we stopped."
             ),
             "error": (
                 "AdaController was not created "
@@ -298,16 +325,25 @@ def chat(req: ChatRequest):
         print()
 
         # --------------------------------------------------
-        # DEBUG RESPONSE
+        # CUSTOMER-FACING RESPONSE
         #
-        # Do NOT hide the real exception.
-        # The API response will contain the actual
-        # error so we can see exactly what failed.
+        # Never expose Ada, Groq, FastAPI, controllers,
+        # Python errors, APIs, or internal system details.
+        #
+        # The customer's work remains saved by the
+        # workspace's localStorage procedure.
         # --------------------------------------------------
 
         return {
             "success": False,
-            "reply": "Ada could not process the request.",
+            "reply": (
+                "Your work has been saved safely. "
+                "We are experiencing a temporary network connection issue. "
+                "Your request has not been lost. "
+                "Please stay on this page. "
+                "When the connection returns, we will continue your work "
+                "from where we stopped."
+            ),
             "error": (
                 f"{type(error).__name__}: "
                 f"{str(error)}"
