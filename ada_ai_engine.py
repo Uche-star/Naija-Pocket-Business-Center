@@ -1,50 +1,64 @@
 """
 ada_ai_engine.py
-
 Ada AI Engine V11
 Naija Pocket Business Center
 
 PURPOSE
 -------
-Groq is the primary conversational intelligence.
+This version deliberately simplifies Ada's intelligence flow.
 
-V11 simplifies Ada's conversation flow.
+Groq is the primary intelligence.
 
-IMPORTANT CHANGE FROM V10
--------------------------
-The normal customer conversation NO LONGER calls:
+Groq handles:
+    - understanding the customer's request
+    - asking questions
+    - understanding answers
+    - continuing the conversation
+    - deciding when enough information has been supplied
+    - responding naturally
 
-    interview_is_complete()
+Python handles:
+    - conversation memory
+    - selected service
+    - document context
+    - job state
+    - document generation
+    - revision
+    - approval
+    - payment state
+    - delivery state
 
-after every Ada response.
+IMPORTANT
+---------
+There is NO separate interview_is_complete() Groq call
+after every customer message.
 
 This is intentional.
 
-Groq has already produced the customer's response.
-A second Groq request should not be allowed to break
-the successful conversation.
+One customer message should produce ONE intelligence request.
 
-The application/workflow can decide when to move from:
+The previous architecture could do:
 
-    CONVERSATION
-        ↓
-    DOCUMENT DRAFT
-        ↓
-    REVIEW
-        ↓
-    REVISION
-        ↓
-    APPROVAL
-        ↓
-    PAYMENT
-        ↓
-    DELIVERY
+    Customer message
+          ↓
+    Groq response
+          ↓
+    second Groq request
+          ↓
+    interview_is_complete()
 
-Groq remains responsible for natural conversation
-and understanding the customer's request.
+That second request was unnecessary and could break the
+conversation flow.
 
-The application remains responsible for business
-workflow, pricing, documents and delivery.
+Groq is allowed to conduct the conversation naturally.
+
+MODEL
+-----
+Read from GROQ_MODEL.
+
+Deprecated models are automatically replaced with:
+
+    openai/gpt-oss-20b
 """
 
 import os
@@ -59,9 +73,9 @@ from billing_manager import BillingManager
 
 class AdaAIEngine:
 
-    # ==================================================
-    # CURRENT GROQ MODEL
-    # ==================================================
+    # ==========================================================
+    # DEFAULT MODEL
+    # ==========================================================
 
     DEFAULT_MODEL = "openai/gpt-oss-20b"
 
@@ -70,9 +84,9 @@ class AdaAIEngine:
         "llama-3.3-70b-versatile",
     }
 
-    # ==================================================
+    # ==========================================================
     # INITIALIZE
-    # ==================================================
+    # ==========================================================
 
     def __init__(self):
 
@@ -95,24 +109,22 @@ class AdaAIEngine:
             "revision_count": 0,
             "approved": False,
             "payment_received": False,
-            "delivered": False
+            "delivered": False,
         }
 
         self.connect()
 
-    # ==================================================
-    # GROQ API KEY
-    # ==================================================
+    # ==========================================================
+    # API KEY
+    # ==========================================================
 
     def get_api_key(self):
 
-        possible_names = [
+        for name in (
             "GROQ_API_KEY",
             "GROQ_KEY",
-            "API_KEY"
-        ]
-
-        for name in possible_names:
+            "API_KEY",
+        ):
 
             value = os.getenv(name)
 
@@ -125,15 +137,13 @@ class AdaAIEngine:
 
         return None
 
-    # ==================================================
-    # GROQ MODEL
-    # ==================================================
+    # ==========================================================
+    # MODEL
+    # ==========================================================
 
     def get_model(self):
 
-        configured_model = os.getenv(
-            "GROQ_MODEL"
-        )
+        configured_model = os.getenv("GROQ_MODEL")
 
         if configured_model:
 
@@ -147,23 +157,16 @@ class AdaAIEngine:
 
                     print()
                     print("=" * 60)
-                    print("DEPRECATED GROQ MODEL DETECTED")
+                    print("DEPRECATED GROQ MODEL")
                     print("=" * 60)
-
                     print(
-                        "Configured Model:",
+                        "Configured:",
                         configured_model
                     )
-
                     print(
-                        "Replacement Model:",
+                        "Using:",
                         self.DEFAULT_MODEL
                     )
-
-                    print(
-                        "The deprecated model will NOT be used."
-                    )
-
                     print("=" * 60)
                     print()
 
@@ -173,9 +176,9 @@ class AdaAIEngine:
 
         return self.DEFAULT_MODEL
 
-    # ==================================================
-    # CONNECT TO GROQ
-    # ==================================================
+    # ==========================================================
+    # CONNECT
+    # ==========================================================
 
     def connect(self):
 
@@ -189,12 +192,9 @@ class AdaAIEngine:
                 print("=" * 60)
                 print("GROQ CONNECTION ERROR")
                 print("=" * 60)
-
                 print(
-                    "GROQ_API_KEY environment variable "
-                    "was not found."
+                    "GROQ_API_KEY was not found."
                 )
-
                 print("=" * 60)
                 print()
 
@@ -210,19 +210,24 @@ class AdaAIEngine:
 
             print()
             print("=" * 60)
-            print("GROQ CONNECTION")
+            print("ADA AI ENGINE V11")
             print("=" * 60)
-
             print(
                 "Groq Connected:",
                 True
             )
-
             print(
                 "Groq Model:",
                 self.get_model()
             )
-
+            print(
+                "Conversation Mode:",
+                "DIRECT GROQ MULTI-TURN"
+            )
+            print(
+                "Interview Check:",
+                "DISABLED"
+            )
             print("=" * 60)
             print()
 
@@ -233,18 +238,18 @@ class AdaAIEngine:
             self.client = None
             self.connected = False
 
-            self._log_groq_error(
+            self._log_error(
                 "GROQ CONNECTION ERROR",
                 error
             )
 
             return False
 
-    # ==================================================
-    # GROQ ERROR LOGGER
-    # ==================================================
+    # ==========================================================
+    # ERROR LOGGER
+    # ==========================================================
 
-    def _log_groq_error(
+    def _log_error(
         self,
         title,
         error
@@ -255,10 +260,13 @@ class AdaAIEngine:
         print(title)
         print("=" * 70)
 
-        print(
-            "MODEL:",
-            self.get_model()
-        )
+        try:
+            print(
+                "MODEL:",
+                self.get_model()
+            )
+        except Exception:
+            pass
 
         print(
             "ERROR TYPE:",
@@ -279,17 +287,17 @@ class AdaAIEngine:
         print("=" * 70)
         print()
 
-    # ==================================================
+    # ==========================================================
     # CONNECTION STATUS
-    # ==================================================
+    # ==========================================================
 
     def is_connected(self):
 
         return self.connected
 
-    # ==================================================
+    # ==========================================================
     # DOCUMENT CONTEXT
-    # ==================================================
+    # ==========================================================
 
     def set_document_context(
         self,
@@ -332,11 +340,14 @@ class AdaAIEngine:
         self.active_document_text = ""
         self.active_document_path = None
 
-    # ==================================================
+    # ==========================================================
     # SERVICE NORMALIZATION
-    # ==================================================
+    # ==========================================================
 
-    def normalize_service(self, service):
+    def normalize_service(
+        self,
+        service
+    ):
 
         if not service:
             return None
@@ -356,11 +367,14 @@ class AdaAIEngine:
 
             return service
 
-    # ==================================================
+    # ==========================================================
     # SERVICE EXISTS
-    # ==================================================
+    # ==========================================================
 
-    def service_exists(self, service):
+    def service_exists(
+        self,
+        service
+    ):
 
         try:
 
@@ -383,11 +397,14 @@ class AdaAIEngine:
 
             return False
 
-    # ==================================================
+    # ==========================================================
     # SERVICE PRICE
-    # ==================================================
+    # ==========================================================
 
-    def get_service_price(self, service):
+    def get_service_price(
+        self,
+        service
+    ):
 
         normalized = (
             self.normalize_service(
@@ -399,9 +416,9 @@ class AdaAIEngine:
             normalized
         )
 
-    # ==================================================
+    # ==========================================================
     # BILLING RULES
-    # ==================================================
+    # ==========================================================
 
     def get_billing_rules(self):
 
@@ -457,13 +474,13 @@ class AdaAIEngine:
             "Never estimate prices.\n"
             "Never change prices.\n"
             "Never offer discounts unless instructed.\n\n"
-            "Official Price List\n\n"
+            "OFFICIAL PRICE LIST\n\n"
             + "\n".join(services)
         )
 
-    # ==================================================
+    # ==========================================================
     # SERVICE DISPLAY NAME
-    # ==================================================
+    # ==========================================================
 
     def get_service_display_name(
         self,
@@ -485,9 +502,9 @@ class AdaAIEngine:
             .title()
         )
 
-    # ==================================================
+    # ==========================================================
     # SYSTEM PROMPT
-    # ==================================================
+    # ==========================================================
 
     def get_system_prompt(
         self,
@@ -506,47 +523,123 @@ class AdaAIEngine:
             )
         )
 
+        workflow_instructions = f"""
+
+==================================================
+ADA WORKFLOW INSTRUCTION
+==================================================
+
+You are Ada, the customer-facing Business Center
+assistant for Naija Pocket Business Center.
+
+SELECTED SERVICE:
+{self.get_service_display_name(normalized_service)
+ if normalized_service else "Not yet selected"}
+
+YOUR MAIN RESPONSIBILITY
+------------------------
+Work naturally with the customer from the beginning
+of the request until enough information is available
+for the requested work.
+
+Do NOT force the customer through an artificial
+question sequence.
+
+Do NOT ask unnecessary questions.
+
+Do NOT repeat a question that the customer has
+already answered.
+
+Use the conversation history to understand what the
+customer has already told you.
+
+If the customer's request is already clear enough,
+move forward instead of asking another unnecessary
+question.
+
+If important information is missing, ask for it
+naturally.
+
+If the customer answers a question, use that answer
+immediately.
+
+If the customer changes or clarifies the request,
+adapt to the new information.
+
+IMPORTANT:
+You are allowed to have a normal multi-turn
+conversation.
+
+You do NOT need a separate interview-complete check.
+
+When enough information has been gathered, tell the
+customer that you have enough information and that
+the work can proceed to preparation/review.
+
+Do not claim that a document has been created unless
+the document-generation operation has actually created
+one.
+
+Do not claim that payment has been received unless
+the application has confirmed payment.
+
+Do not claim that a document has been delivered unless
+the application has confirmed delivery.
+
+Never expose internal Python, FastAPI, Groq,
+controller, memory, API, or workflow details.
+
+==================================================
+CONVERSATION PRIORITY
+==================================================
+
+1. Understand the customer's actual request.
+2. Remember previous answers.
+3. Ask only necessary questions.
+4. Do not restart the interview.
+5. Do not forget earlier answers.
+6. Do not fabricate information.
+7. Move toward completing the selected service.
+"""
+
         document_context = ""
 
         if self.has_document_context():
 
-            document_context = (
-                "\n\n"
-                "==================================================\n"
-                "ACTIVE DOCUMENT CONTEXT\n"
-                "==================================================\n"
-                "The customer has already supplied "
-                "a document and its readable text "
-                "has already been extracted.\n\n"
-                "IMPORTANT:\n"
-                "Do NOT ask the customer to provide "
-                "the document text again.\n"
-                "Do NOT pretend the document has not "
-                "been received.\n"
-                "Treat the extracted text below as "
-                "customer-provided document content.\n"
-                "Use it when the customer asks you "
-                "to type, rewrite, format, edit, "
-                "summarize, convert or otherwise "
-                "work on the document.\n"
-                "Do not invent missing words or facts.\n\n"
-                "EXTRACTED DOCUMENT TEXT\n"
-                "------------------------\n"
-                + self.active_document_text
-                + "\n"
-                "------------------------\n"
-            )
+            document_context = f"""
+
+==================================================
+ACTIVE DOCUMENT CONTEXT
+==================================================
+
+The customer has already supplied document content.
+
+Do NOT ask the customer to provide the document
+text again.
+
+Do NOT pretend that the document is missing.
+
+Use the supplied text when appropriate.
+
+EXTRACTED DOCUMENT TEXT
+------------------------
+
+{self.active_document_text}
+
+------------------------
+"""
 
         return (
             prompt
+            + workflow_instructions
             + document_context
             + "\n\n"
             + self.get_billing_rules()
         )
 
-    # ==================================================
-    # CONVERT MEMORY TO GROQ MESSAGES
-    # ==================================================
+    # ==========================================================
+    # MEMORY → GROQ FORMAT
+    # ==========================================================
 
     def build_history_messages(self):
 
@@ -615,9 +708,9 @@ class AdaAIEngine:
 
         return messages
 
-    # ==================================================
+    # ==========================================================
     # RESET JOB
-    # ==================================================
+    # ==========================================================
 
     def reset_job(self):
 
@@ -634,14 +727,17 @@ class AdaAIEngine:
             "revision_count": 0,
             "approved": False,
             "payment_received": False,
-            "delivered": False
+            "delivered": False,
         }
 
-    # ==================================================
-    # START NEW JOB
-    # ==================================================
+    # ==========================================================
+    # START JOB
+    # ==========================================================
 
-    def start_job(self, service):
+    def start_job(
+        self,
+        service
+    ):
 
         self.reset_job()
 
@@ -655,17 +751,17 @@ class AdaAIEngine:
             "service"
         ] = normalized_service
 
-    # ==================================================
-    # JOB STATUS
-    # ==================================================
+    # ==========================================================
+    # JOB STATE
+    # ==========================================================
 
     def get_job_state(self):
 
         return self.job_state
 
-    # ==================================================
-    # SET ACTIVE SERVICE
-    # ==================================================
+    # ==========================================================
+    # ACTIVE SERVICE
+    # ==========================================================
 
     def set_active_service(
         self,
@@ -688,62 +784,15 @@ class AdaAIEngine:
 
         return False
 
-    # ==================================================
-    # GET ACTIVE SERVICE
-    # ==================================================
-
     def get_active_service(self):
 
         return self.job_state.get(
             "service"
         )
 
-    # ==================================================
-    # PRICE REQUEST DETECTION
-    # ==================================================
-
-    def detect_price_request(
-        self,
-        customer_message
-    ):
-
-        if not customer_message:
-            return False
-
-        text = (
-            str(customer_message)
-            .strip()
-            .lower()
-        )
-
-        price_words = (
-            "price",
-            "pricing",
-            "cost",
-            "charge",
-            "charges",
-            "how much",
-            "how much is",
-            "how much for",
-            "what is the price",
-            "what's the price",
-            "what is your price",
-            "what do you charge",
-            "how much una",
-            "how much una dey charge",
-            "how much do you charge",
-            "fee",
-            "fees"
-        )
-
-        return any(
-            word in text
-            for word in price_words
-        )
-
-    # ==================================================
-    # FIND SERVICE IN MESSAGE
-    # ==================================================
+    # ==========================================================
+    # FIND SERVICE
+    # ==========================================================
 
     def find_service_in_message(
         self,
@@ -817,6 +866,7 @@ class AdaAIEngine:
                 )
 
                 if readable in text:
+
                     return service
 
         except Exception as error:
@@ -835,8 +885,6 @@ class AdaAIEngine:
             "assignment": "assignment_typing",
             "project": "project_typing",
             "seminar": "seminar_paper",
-            "topic explanation": "topic_explanations",
-            "topic explanations": "topic_explanations",
             "business proposal": "business_proposal",
             "company profile": "company_profile",
             "invoice": "invoices",
@@ -855,7 +903,11 @@ class AdaAIEngine:
             "data entry": "data_entry",
             "data analysis": "data_analysis",
             "presentation": "presentations",
-            "presentations": "presentations"
+            "presentations": "presentations",
+            "research": "research_assistance",
+            "research assistance": "research_assistance",
+            "topic explanation": "topic_explanations",
+            "topic explanations": "topic_explanations",
         }
 
         sorted_phrases = sorted(
@@ -867,193 +919,14 @@ class AdaAIEngine:
         for phrase, service in sorted_phrases:
 
             if phrase in text:
+
                 return service
 
         return None
 
-    # ==================================================
-    # PRICE RESPONSE
-    # ==================================================
-
-    def generate_price_response(
-        self,
-        service
-    ):
-
-        normalized_service = (
-            self.normalize_service(
-                service
-            )
-        )
-
-        if not normalized_service:
-
-            return (
-                "I couldn't match that service "
-                "to our current price list.\n\n"
-                "Please tell me the exact service "
-                "you need."
-            )
-
-        if not self.billing.has_service(
-            normalized_service
-        ):
-
-            return (
-                "Sorry, pricing is currently "
-                "unavailable for that service."
-            )
-
-        try:
-
-            info = (
-                self.billing.get_service(
-                    normalized_service
-                )
-            )
-
-        except Exception as error:
-
-            print(
-                "Billing Service Error:",
-                repr(error)
-            )
-
-            raise
-
-        service_name = (
-            self.get_service_display_name(
-                normalized_service
-            )
-        )
-
-        billing_type = info["billing"]
-        amount = info["price"]
-
-        if billing_type == "fixed":
-
-            price_information = (
-                f"Service: {service_name}\n"
-                f"Official Price: ₦{amount:,}\n"
-                f"Billing Type: Fixed"
-            )
-
-        elif billing_type == "per_page":
-
-            price_information = (
-                f"Service: {service_name}\n"
-                f"Official Price: ₦{amount:,} per page\n"
-                f"Billing Type: Per Page"
-            )
-
-        elif billing_type == "quotation":
-
-            price_information = (
-                f"Service: {service_name}\n"
-                "Billing Type: Quotation Required"
-            )
-
-        else:
-
-            price_information = (
-                f"Service: {service_name}\n"
-                "Billing Type: Internal"
-            )
-
-        prompt = f"""
-You are Ada, the friendly Nigerian Business
-Center Agent for Naija Pocket Business Center.
-
-The customer has asked about the price of a service.
-
-Use ONLY this official BillingManager information:
-
-{price_information}
-
-Rules:
-
-- Never change the official price.
-- Never invent another amount.
-- Never estimate.
-- Never add a charge.
-- Never remove a charge.
-- Never invent a discount.
-- Speak naturally.
-- Be friendly and professional.
-- Use clear Nigerian English.
-- A small amount of natural Nigerian warmth
-  is acceptable.
-- Do not overuse Pidgin.
-
-If fixed price:
-State the exact price.
-
-If per page:
-State the exact price per page and explain
-that the final amount depends on the number
-of pages.
-
-If quotation:
-Explain that the document/details need to
-be reviewed before quotation.
-
-After giving the price, naturally tell the
-customer what they can do next.
-
-Return ONLY the customer-facing response.
-"""
-
-        if not self.connected:
-
-            raise RuntimeError(
-                "Groq is not connected. "
-                "Check GROQ_API_KEY."
-            )
-
-        try:
-
-            response = (
-                self.client
-                .chat
-                .completions
-                .create(
-                    model=self.get_model(),
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": prompt
-                        }
-                    ],
-                    temperature=0.4
-                )
-            )
-
-            reply = (
-                response
-                .choices[0]
-                .message
-                .content
-            )
-
-            if reply:
-                return reply.strip()
-
-            raise RuntimeError(
-                "Groq returned an empty price response."
-            )
-
-        except Exception as error:
-
-            self._log_groq_error(
-                "REAL GROQ PRICE ERROR",
-                error
-            )
-
-            raise
-
-    # ==================================================
-    # SEND MESSAGE TO GROQ
-    # ==================================================
+    # ==========================================================
+    # GENERATE NORMAL CONVERSATION RESPONSE
+    # ==========================================================
 
     def generate_response(
         self,
@@ -1092,25 +965,23 @@ Return ONLY the customer-facing response.
             history_messages
         )
 
-        current_message_exists = False
+        # ------------------------------------------------------
+        # IMPORTANT
+        #
+        # The current customer message is normally already
+        # stored in memory before this function is called.
+        #
+        # Therefore we do NOT automatically append it again.
+        #
+        # This prevents:
+        #
+        # Customer answer
+        # Customer answer
+        #
+        # appearing twice in the Groq conversation.
+        # ------------------------------------------------------
 
-        if history_messages:
-
-            last_message = (
-                history_messages[-1]
-            )
-
-            if (
-                last_message.get("role")
-                == "user"
-                and
-                last_message.get("content")
-                == customer_message
-            ):
-
-                current_message_exists = True
-
-        if not current_message_exists:
+        if not history_messages:
 
             messages.append(
                 {
@@ -1122,9 +993,9 @@ Return ONLY the customer-facing response.
         try:
 
             print()
-            print("=" * 60)
-            print("ADA → GROQ REQUEST")
-            print("=" * 60)
+            print("=" * 70)
+            print("ADA → GROQ")
+            print("=" * 70)
 
             print(
                 "MODEL:",
@@ -1137,16 +1008,21 @@ Return ONLY the customer-facing response.
             )
 
             print(
-                "CUSTOMER MESSAGE:",
-                customer_message
-            )
-
-            print(
-                "HISTORY MESSAGES:",
+                "MEMORY MESSAGES:",
                 len(history_messages)
             )
 
-            print("=" * 60)
+            print(
+                "CUSTOMER MESSAGE:",
+                repr(customer_message)
+            )
+
+            print(
+                "GROQ REQUEST COUNT THIS TURN:",
+                1
+            )
+
+            print("=" * 70)
             print()
 
             response = (
@@ -1167,322 +1043,49 @@ Return ONLY the customer-facing response.
                 .content
             )
 
-            if reply:
+            if not reply:
 
-                return reply.strip()
+                raise RuntimeError(
+                    "Groq returned an empty response."
+                )
 
-            raise RuntimeError(
-                "Groq returned an empty response."
+            reply = str(
+                reply
+            ).strip()
+
+            if not reply:
+
+                raise RuntimeError(
+                    "Groq returned an empty response."
+                )
+
+            print()
+            print("=" * 70)
+            print("GROQ RESPONSE RECEIVED")
+            print("=" * 70)
+
+            print(
+                "Response:",
+                repr(reply)
             )
+
+            print("=" * 70)
+            print()
+
+            return reply
 
         except Exception as error:
 
-            self._log_groq_error(
-                "REAL GROQ ERROR",
+            self._log_error(
+                "REAL GROQ CONVERSATION ERROR",
                 error
             )
 
             raise
 
-    # ==================================================
-    # INTERVIEW CHECK
-    # ==================================================
-    #
-    # RETAINED FOR EXPLICIT USE BY THE APPLICATION.
-    #
-    # IMPORTANT:
-    # This method is NO LONGER called automatically
-    # after every customer message.
-    #
-    # This prevents a second Groq request from breaking
-    # a successful conversation response.
-    # ==================================================
-
-    def interview_is_complete(self):
-
-        history = (
-            self.memory.get_conversation()
-        )
-
-        document_context = ""
-
-        if self.has_document_context():
-
-            document_context = (
-                "\n\n"
-                "The customer has already supplied "
-                "a document and its text has already "
-                "been extracted. Do not treat the "
-                "document text as missing."
-            )
-
-        prompt = f"""
-You are monitoring Ada's interview.
-
-Conversation:
-{history}
-
-{document_context}
-
-Determine whether Ada now has enough
-information to prepare the customer's
-requested document.
-
-If the customer has already supplied
-document text and clearly instructed Ada
-what to do with it, that may be enough.
-
-Reply with ONLY one word:
-
-YES
-
-or
-
-NO
-"""
-
-        if not self.connected:
-
-            return False
-
-        try:
-
-            response = (
-                self.client
-                .chat
-                .completions
-                .create(
-                    model=self.get_model(),
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": prompt
-                        }
-                    ],
-                    temperature=0
-                )
-            )
-
-            answer = (
-                response
-                .choices[0]
-                .message
-                .content
-                .strip()
-                .upper()
-            )
-
-            return answer.startswith("YES")
-
-        except Exception as error:
-
-            self._log_groq_error(
-                "REAL GROQ INTERVIEW CHECK ERROR",
-                error
-            )
-
-            raise
-
-    # ==================================================
-    # START CONVERSATION
-    # ==================================================
-
-    def start_conversation(
-        self,
-        customer_message,
-        service=None
-    ):
-
-        detected_service = (
-            self.find_service_in_message(
-                customer_message
-            )
-        )
-
-        normalized_service = (
-            self.normalize_service(service)
-            if service
-            else None
-        )
-
-        if not normalized_service:
-
-            normalized_service = (
-                detected_service
-            )
-
-        self.start_job(
-            normalized_service
-        )
-
-        self.memory.add_customer_message(
-            customer_message
-        )
-
-        if (
-            self.detect_price_request(
-                customer_message
-            )
-            and detected_service
-        ):
-
-            reply = (
-                self.generate_price_response(
-                    detected_service
-                )
-            )
-
-        else:
-
-            reply = (
-                self.generate_response(
-                    customer_message,
-                    service=normalized_service
-                )
-            )
-
-        self.memory.add_ada_message(
-            reply
-        )
-
-        return reply
-
-    # ==================================================
-    # CONTINUE CONVERSATION
-    # ==================================================
-
-    def continue_conversation(
-        self,
-        customer_reply,
-        service=None
-    ):
-
-        # --------------------------------------------------
-        # ADD CUSTOMER MESSAGE TO THE EXISTING MEMORY
-        # --------------------------------------------------
-
-        self.memory.add_customer_message(
-            customer_reply
-        )
-
-        # --------------------------------------------------
-        # KEEP THE EXISTING SERVICE
-        # --------------------------------------------------
-
-        active_service = (
-            self.job_state.get("service")
-        )
-
-        if (
-            not active_service
-            and service
-        ):
-
-            active_service = (
-                self.normalize_service(
-                    service
-                )
-            )
-
-            self.job_state[
-                "service"
-            ] = active_service
-
-        # --------------------------------------------------
-        # DETECT SERVICE IF CUSTOMER MENTIONS ONE
-        # --------------------------------------------------
-
-        detected_service = (
-            self.find_service_in_message(
-                customer_reply
-            )
-        )
-
-        if detected_service:
-
-            active_service = detected_service
-
-            self.job_state[
-                "service"
-            ] = active_service
-
-        # --------------------------------------------------
-        # PRICE REQUEST
-        # --------------------------------------------------
-
-        if self.detect_price_request(
-            customer_reply
-        ):
-
-            price_service = (
-                detected_service
-                or active_service
-            )
-
-            if price_service:
-
-                reply = (
-                    self.generate_price_response(
-                        price_service
-                    )
-                )
-
-            else:
-
-                reply = (
-                    self.generate_response(
-                        customer_reply,
-                        service=active_service
-                    )
-                )
-
-        # --------------------------------------------------
-        # NORMAL CONVERSATION
-        # --------------------------------------------------
-
-        else:
-
-            reply = (
-                self.generate_response(
-                    customer_reply,
-                    service=active_service
-                )
-            )
-
-        # --------------------------------------------------
-        # SAVE ADA'S RESPONSE
-        # --------------------------------------------------
-
-        self.memory.add_ada_message(
-            reply
-        )
-
-        # --------------------------------------------------
-        # CRITICAL V11 CHANGE
-        # --------------------------------------------------
-        #
-        # DO NOT call:
-        #
-        #     self.interview_is_complete()
-        #
-        # here.
-        #
-        # Ada has already successfully answered the
-        # customer's message.
-        #
-        # A second Groq request must not be allowed
-        # to turn that successful response into a
-        # failed /api/chat request.
-        #
-        # The workflow will handle the transition to
-        # document generation separately.
-        # --------------------------------------------------
-
-        return reply
-
-    # ==================================================
+    # ==========================================================
     # PROCESS MESSAGE
-    # ==================================================
+    # ==========================================================
 
     def process_message(
         self,
@@ -1490,11 +1093,10 @@ NO
         service=None
     ):
 
-        if not customer_message:
+        if customer_message is None:
 
-            return (
-                "Please tell me what you need "
-                "help with."
+            raise ValueError(
+                "Customer message cannot be None."
             )
 
         customer_message = (
@@ -1504,44 +1106,127 @@ NO
 
         if not customer_message:
 
-            return (
-                "Please tell me what you need "
-                "help with."
+            raise ValueError(
+                "Customer message cannot be empty."
             )
 
-        # --------------------------------------------------
-        # FIRST MESSAGE
-        # --------------------------------------------------
+        # ------------------------------------------------------
+        # DETERMINE SERVICE
+        # ------------------------------------------------------
 
-        if not self.memory.messages:
-
-            return self.start_conversation(
-                customer_message,
-                service=service
-            )
-
-        # --------------------------------------------------
-        # CONTINUING MESSAGE
-        # --------------------------------------------------
-
-        return self.continue_conversation(
-            customer_message,
-            service=service
+        active_service = (
+            self.get_active_service()
         )
 
-    # ==================================================
-    # MARK INTERVIEW COMPLETE
-    # ==================================================
+        supplied_service = (
+            self.normalize_service(service)
+            if service
+            else None
+        )
 
-    def interview_completed(self):
+        detected_service = (
+            self.find_service_in_message(
+                customer_message
+            )
+        )
 
-        self.job_state[
-            "interview_complete"
-        ] = True
+        if supplied_service:
 
-    # ==================================================
+            active_service = supplied_service
+
+        elif not active_service and detected_service:
+
+            active_service = detected_service
+
+        elif detected_service:
+
+            active_service = detected_service
+
+        if active_service:
+
+            self.job_state[
+                "service"
+            ] = active_service
+
+        # ------------------------------------------------------
+        # FIRST MESSAGE
+        # ------------------------------------------------------
+
+        if not self.memory.has_conversation():
+
+            print()
+            print("=" * 70)
+            print("ADA NEW CONVERSATION")
+            print("=" * 70)
+
+            print(
+                "Service:",
+                active_service
+            )
+
+            print(
+                "Customer:",
+                customer_message
+            )
+
+            print("=" * 70)
+            print()
+
+            self.memory.add_customer_message(
+                customer_message
+            )
+
+            reply = self.generate_response(
+                customer_message=customer_message,
+                service=active_service
+            )
+
+            self.memory.add_ada_message(
+                reply
+            )
+
+            return reply
+
+        # ------------------------------------------------------
+        # CONTINUING MESSAGE
+        # ------------------------------------------------------
+
+        print()
+        print("=" * 70)
+        print("ADA CONTINUING CONVERSATION")
+        print("=" * 70)
+
+        print(
+            "Active Service:",
+            active_service
+        )
+
+        print(
+            "Customer:",
+            customer_message
+        )
+
+        print("=" * 70)
+        print()
+
+        self.memory.add_customer_message(
+            customer_message
+        )
+
+        reply = self.generate_response(
+            customer_message=customer_message,
+            service=active_service
+        )
+
+        self.memory.add_ada_message(
+            reply
+        )
+
+        return reply
+
+    # ==========================================================
     # CUSTOMER HISTORY
-    # ==================================================
+    # ==========================================================
 
     def get_customer_history(self):
 
@@ -1549,9 +1234,37 @@ NO
             self.memory.get_conversation()
         )
 
-    # ==================================================
-    # DOCUMENT WRITER
-    # ==================================================
+    # ==========================================================
+    # INTERVIEW STATUS
+    # ==========================================================
+    #
+    # IMPORTANT:
+    # No extra Groq request.
+    #
+    # This method remains only for compatibility with
+    # older controller code.
+    #
+    # The application should not use this to trigger
+    # another intelligence request.
+    # ==========================================================
+
+    def interview_is_complete(self):
+
+        return bool(
+            self.job_state.get(
+                "interview_complete"
+            )
+        )
+
+    def interview_completed(self):
+
+        self.job_state[
+            "interview_complete"
+        ] = True
+
+    # ==========================================================
+    # DOCUMENT DRAFT
+    # ==========================================================
 
     def generate_document_draft(
         self,
@@ -1571,49 +1284,47 @@ NO
 
         if self.has_document_context():
 
-            document_context = (
-                "\n\n"
-                "DOCUMENT ALREADY SUPPLIED BY CUSTOMER\n"
-                "======================================\n"
-                "Use the extracted text below as the "
-                "source document to be typed/prepared.\n\n"
-                + self.active_document_text
-                + "\n"
-                "======================================\n"
-            )
+            document_context = f"""
+
+DOCUMENT ALREADY SUPPLIED BY CUSTOMER
+=====================================
+
+{self.active_document_text}
+
+=====================================
+"""
 
         writer_prompt = f"""
 You are Ada's Senior Nigerian Professional
 Document Writer.
 
-Prepare the customer's requested document.
+Prepare the customer's requested work.
 
 SERVICE:
 {active_service}
 
-CUSTOMER INTERVIEW:
+CUSTOMER CONVERSATION:
 {history}
 
 {document_context}
 
 Rules:
 
-- Use ONLY information supplied by customer.
-- If a document is supplied, use its text.
-- Do NOT ask for text that is already available.
-- Preserve customer meaning.
-- Never invent information.
-- Never remove customer facts.
-- Use professional Nigerian English where
-  appropriate.
-- Use proper headings where necessary.
-- If the request is typing, reproduce readable
-  text faithfully.
-- Do not summarize when asked to type.
-- Do not rewrite when asked to type.
-- Follow the selected service prompt.
-
-Return ONLY the finished document.
+- Use information supplied by the customer.
+- Do not invent facts.
+- Do not invent names, dates, qualifications,
+  figures or events.
+- Preserve the customer's intended meaning.
+- Follow the selected service.
+- If the customer requested an explanation,
+  produce a complete, clear explanation.
+- If the customer requested typing,
+  reproduce the supplied content faithfully.
+- If the customer requested rewriting,
+  improve the writing without changing facts.
+- If the customer requested research assistance,
+  organize the requested research clearly.
+- Return ONLY the finished document content.
 """
 
         if not self.connected:
@@ -1624,6 +1335,17 @@ Return ONLY the finished document.
             )
 
         try:
+
+            print()
+            print("=" * 70)
+            print("ADA DOCUMENT GENERATION → GROQ")
+            print("=" * 70)
+            print(
+                "SERVICE:",
+                active_service
+            )
+            print("=" * 70)
+            print()
 
             response = (
                 self.client
@@ -1654,38 +1376,44 @@ Return ONLY the finished document.
                 .content
             )
 
-            if draft:
+            if not draft:
 
-                self.job_state[
-                    "interview_complete"
-                ] = True
+                raise RuntimeError(
+                    "Groq returned an empty document draft."
+                )
 
-                self.job_state[
-                    "draft_generated"
-                ] = True
+            draft = str(
+                draft
+            ).strip()
 
-                self.job_state[
-                    "awaiting_review"
-                ] = True
+            if not draft:
 
-                return draft.strip()
+                raise RuntimeError(
+                    "Groq returned an empty document draft."
+                )
 
-            raise RuntimeError(
-                "Groq returned an empty document draft."
-            )
+            self.job_state[
+                "draft_generated"
+            ] = True
+
+            self.job_state[
+                "awaiting_review"
+            ] = True
+
+            return draft
 
         except Exception as error:
 
-            self._log_groq_error(
-                "REAL GROQ DOCUMENT DRAFT ERROR",
+            self._log_error(
+                "REAL GROQ DOCUMENT GENERATION ERROR",
                 error
             )
 
             raise
 
-    # ==================================================
+    # ==========================================================
     # REVISE DOCUMENT
-    # ==================================================
+    # ==========================================================
 
     def revise_document(
         self,
@@ -1707,21 +1435,23 @@ SERVICE:
 {active_service}
 
 CURRENT DOCUMENT:
-
+-----------------
 {current_draft}
+-----------------
 
 CUSTOMER REVISION REQUEST:
-
+--------------------------
 {revision_request}
+--------------------------
 
-Instructions:
+Apply the customer's requested changes.
 
-- Apply the customer's requested changes.
-- Preserve all correct information.
+Rules:
+
+- Preserve correct information.
 - Do not invent facts.
-- Do not remove information unless the
-  customer specifically requests it.
-- Maintain professional formatting.
+- Do not remove information unless requested.
+- Keep the document professional.
 - Return ONLY the revised document.
 """
 
@@ -1763,38 +1493,42 @@ Instructions:
                 .content
             )
 
-            if revised:
+            if not revised:
 
-                self.job_state[
-                    "revision_requested"
-                ] = True
+                raise RuntimeError(
+                    "Groq returned an empty revised document."
+                )
 
-                self.job_state[
-                    "revision_count"
-                ] += 1
+            revised = str(
+                revised
+            ).strip()
 
-                self.job_state[
-                    "awaiting_review"
-                ] = True
+            self.job_state[
+                "revision_requested"
+            ] = True
 
-                return revised.strip()
+            self.job_state[
+                "revision_count"
+            ] += 1
 
-            raise RuntimeError(
-                "Groq returned an empty revised document."
-            )
+            self.job_state[
+                "awaiting_review"
+            ] = True
+
+            return revised
 
         except Exception as error:
 
-            self._log_groq_error(
+            self._log_error(
                 "REAL GROQ DOCUMENT REVISION ERROR",
                 error
             )
 
             raise
 
-    # ==================================================
-    # APPROVE DOCUMENT
-    # ==================================================
+    # ==========================================================
+    # APPROVE
+    # ==========================================================
 
     def approve_document(self):
 
@@ -1808,9 +1542,9 @@ Instructions:
 
         return True
 
-    # ==================================================
-    # MARK PAYMENT RECEIVED
-    # ==================================================
+    # ==========================================================
+    # PAYMENT
+    # ==========================================================
 
     def mark_payment_received(self):
 
@@ -1820,9 +1554,9 @@ Instructions:
 
         return True
 
-    # ==================================================
-    # MARK DELIVERED
-    # ==================================================
+    # ==========================================================
+    # DELIVERY
+    # ==========================================================
 
     def mark_delivered(self):
 
@@ -1834,7 +1568,7 @@ Instructions:
 
 
 # ==============================================================
-# DIRECT ENGINE TEST
+# DIRECT TEST
 # ==============================================================
 
 if __name__ == "__main__":
@@ -1843,6 +1577,7 @@ if __name__ == "__main__":
     print("=" * 70)
     print("ADA AI ENGINE V11 DIRECT TEST")
     print("=" * 70)
+    print()
 
     ada = AdaAIEngine()
 
@@ -1856,49 +1591,58 @@ if __name__ == "__main__":
         ada.get_model()
     )
 
-    print("=" * 70)
     print()
 
     if not ada.is_connected():
 
         print(
-            "TEST STOPPED:"
-        )
-
-        print(
-            "Groq is not connected."
-        )
-
-        print(
-            "Check GROQ_API_KEY."
+            "TEST STOPPED: Groq is not connected."
         )
 
     else:
 
         try:
 
-            result = ada.process_message(
-                customer_message=(
-                    "Hello Ada, please introduce yourself."
-                ),
-                service="Topic Explanations"
+            while True:
+
+                customer_message = input(
+                    "Customer: "
+                ).strip()
+
+                if not customer_message:
+
+                    continue
+
+                if customer_message.lower() in {
+                    "exit",
+                    "quit",
+                    "stop",
+                }:
+
+                    break
+
+                response = ada.process_message(
+                    customer_message=customer_message,
+                    service="Research Assistance"
+                )
+
+                print()
+                print("Ada:")
+                print(response)
+                print()
+
+        except KeyboardInterrupt:
+
+            print()
+            print(
+                "Ada test stopped."
             )
-
-            print()
-            print("=" * 70)
-            print("ADA RESPONSE")
-            print("=" * 70)
-
-            print(result)
-
-            print("=" * 70)
-            print()
 
         except Exception as error:
 
             print()
             print("=" * 70)
-            print("DIRECT TEST REAL ERROR")
+            print("DIRECT TEST ERROR")
             print("=" * 70)
 
             print(
@@ -1914,4 +1658,3 @@ if __name__ == "__main__":
             traceback.print_exc()
 
             print("=" * 70)
-            print()
