@@ -4,21 +4,45 @@ ada_api.py
 Ada Intelligence API
 Naija Pocket Business Center
 
-IMPORTANT:
-AdaController is created once when the FastAPI
-application starts.
+FLOW:
 
-This keeps AdaConversationMemory alive between
-successive /api/chat requests during the same
-running application instance.
+    Conversation Page
+          ↓
+    Cloudflare Worker
+          ↓
+    FastAPI
+          ↓
+    AdaController
+          ↓
+    AdaAIEngine V10
+          ↓
+    Groq
+          ↓
+    Ada response
+
+IMPORTANT:
+
+1. AdaController is created ONCE when FastAPI starts.
+2. AdaConversationMemory therefore remains alive between
+   successive /api/chat requests while this application
+   instance remains running.
+3. Every customer message goes through the SAME controller.
+4. The selected service is passed to AdaController on every
+   request.
+5. Real backend errors are printed with a full traceback.
+6. The API never silently converts a real Ada error into a
+   successful response.
+7. Empty Ada responses are treated as errors.
 """
+
+
+from pathlib import Path
+import traceback
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from pathlib import Path
-import traceback
 
 from ada_controller import AdaController
 
@@ -28,8 +52,8 @@ from ada_controller import AdaController
 # ==========================================================
 
 app = FastAPI(
-    title="Ada Intelligence API - Naija Pocket",
-    version="0.1.0"
+    title="Ada Intelligence API - Naija Pocket Business Center",
+    version="1.0.0"
 )
 
 
@@ -67,26 +91,29 @@ class ChatRequest(BaseModel):
 # CREATE ADA CONTROLLER ONCE
 # ==========================================================
 #
-# DO NOT move this into /api/chat.
+# THIS IS VERY IMPORTANT.
 #
-# If AdaController is created inside /api/chat,
-# every customer message creates:
+# DO NOT create AdaController inside /api/chat.
 #
-#     new AdaController
-#         ↓
+# If we did this:
+#
+#     every message
+#          ↓
+#     new controller
+#          ↓
 #     new AdaAIEngine
-#         ↓
-#     new AdaConversationMemory
+#          ↓
+#     new conversation memory
 #
-# That causes Ada to forget previous messages.
+# Ada would forget the previous question.
 #
-# Creating it here allows the same memory to be reused.
+# We therefore create ONE controller here.
 # ==========================================================
 
 print()
-print("=" * 60)
-print("STARTING ADA INTELLIGENCE")
-print("=" * 60)
+print("=" * 70)
+print("STARTING ADA INTELLIGENCE API")
+print("=" * 70)
 
 controller = None
 
@@ -94,22 +121,43 @@ try:
 
     controller = AdaController()
 
-    print(
-        "Ada Controller Created:",
-        True
-    )
+    print()
+    print("ADA CONTROLLER CREATED: True")
 
-    print(
-        "Groq Connected:",
-        controller.intelligence.is_connected()
-    )
+    try:
+
+        print(
+            "GROQ CONNECTED:",
+            controller.intelligence.is_connected()
+        )
+
+    except Exception as error:
+
+        print(
+            "GROQ STATUS ERROR:",
+            repr(error)
+        )
+
+    try:
+
+        print(
+            "GROQ MODEL:",
+            controller.intelligence.get_model()
+        )
+
+    except Exception as error:
+
+        print(
+            "GROQ MODEL ERROR:",
+            repr(error)
+        )
 
 except Exception as error:
 
     print()
-    print("=" * 60)
-    print("ADA STARTUP ERROR")
-    print("=" * 60)
+    print("=" * 70)
+    print("!!!!!!!! ADA STARTUP ERROR !!!!!!!!")
+    print("=" * 70)
 
     print(
         "ERROR TYPE:",
@@ -121,12 +169,20 @@ except Exception as error:
         repr(error)
     )
 
+    print()
+    print("FULL TRACEBACK:")
     traceback.print_exc()
 
-    print("=" * 60)
+    print("=" * 70)
     print()
 
     controller = None
+
+
+print("=" * 70)
+print("ADA INTELLIGENCE API READY")
+print("=" * 70)
+print()
 
 
 # ==========================================================
@@ -172,142 +228,95 @@ def workspace():
 @app.get("/health")
 def health():
 
+    controller_exists = (
+        controller is not None
+    )
+
     groq_connected = False
 
-    if controller is not None:
+    active_service = None
+
+    if controller_exists:
 
         try:
 
             groq_connected = (
-                controller.intelligence.is_connected()
+                controller
+                .intelligence
+                .is_connected()
             )
 
-        except Exception:
+        except Exception as error:
 
-            groq_connected = False
+            print(
+                "Health Groq Check Error:",
+                repr(error)
+            )
+
+        try:
+
+            active_service = (
+                controller
+                .get_active_service()
+            )
+
+        except Exception as error:
+
+            print(
+                "Health Service Check Error:",
+                repr(error)
+            )
 
     return {
         "status": "ok",
         "service": "Ada FastAPI",
-        "ada_controller": controller is not None,
-        "groq_connected": groq_connected
+        "ada_controller": controller_exists,
+        "groq_connected": groq_connected,
+        "active_service": active_service
     }
 
 
 # ==========================================================
-# CHAT
+# ADA STATUS
 # ==========================================================
 
-@app.post("/api/chat")
-def chat(req: ChatRequest):
-
-    print()
-    print("=" * 60)
-    print("FASTAPI → ADA CONTROLLER")
-    print("=" * 60)
-
-    print(
-        "Service:",
-        req.service
-    )
-
-    print(
-        "Message:",
-        req.message
-    )
-
-    print(
-        "Controller Exists:",
-        controller is not None
-    )
-
-    print("=" * 60)
-    print()
-
-    # ------------------------------------------------------
-    # CONTROLLER CHECK
-    # ------------------------------------------------------
-    #
-    # NEVER expose an internal Ada availability message
-    # to the customer.
-    #
-    # The customer-facing response follows the agreed
-    # saved-work / temporary-network procedure.
-    #
-    # The actual internal error remains available in the
-    # "error" field for server-side troubleshooting.
-    # ------------------------------------------------------
+@app.get("/api/status")
+def ada_status():
 
     if controller is None:
 
-        print()
-        print("=" * 60)
-        print("ADA CONTROLLER UNAVAILABLE")
-        print("=" * 60)
-
-        print(
-            "Customer request cannot currently reach "
-            "the Ada Controller."
-        )
-
-        print("=" * 60)
-        print()
-
         return {
             "success": False,
-            "reply": (
-                "Your work has been saved safely. "
-                "We are experiencing a temporary network connection issue. "
-                "Your request has not been lost. "
-                "Please stay on this page. "
-                "When the connection returns, we will continue your work "
-                "from where we stopped."
-            ),
-            "error": (
-                "AdaController was not created "
-                "during application startup."
-            )
+            "controller": False,
+            "groq_connected": False,
+            "active_service": None,
+            "job_state": None
         }
-
-    # ------------------------------------------------------
-    # SEND MESSAGE TO ADA
-    # ------------------------------------------------------
 
     try:
 
-        reply = controller.process_message(
-            message=req.message,
-            service=req.service
-        )
-
-        print()
-        print("=" * 60)
-        print("ADA RESPONSE SUCCESS")
-        print("=" * 60)
-
-        print(
-            "Reply:",
-            str(reply)
-        )
-
-        print("=" * 60)
-        print()
+        intelligence = controller.intelligence
 
         return {
             "success": True,
-            "reply": str(reply)
+            "controller": True,
+            "groq_connected": (
+                intelligence.is_connected()
+            ),
+            "active_service": (
+                controller.get_active_service()
+            ),
+            "job_state": (
+                controller.get_job_state()
+            )
         }
-
-    # ------------------------------------------------------
-    # REAL ERROR
-    # ------------------------------------------------------
 
     except Exception as error:
 
         print()
-        print("=" * 60)
-        print("FASTAPI → ADA REAL ERROR")
-        print("=" * 60)
+        print("=" * 70)
+        print("ADA STATUS ERROR")
+        print("=" * 70)
 
         print(
             "ERROR TYPE:",
@@ -321,29 +330,547 @@ def chat(req: ChatRequest):
 
         traceback.print_exc()
 
-        print("=" * 60)
+        print("=" * 70)
+        print()
+
+        return {
+            "success": False,
+            "controller": True,
+            "groq_connected": False,
+            "active_service": None,
+            "job_state": None,
+            "error": (
+                f"{type(error).__name__}: "
+                f"{str(error)}"
+            )
+        }
+
+
+# ==========================================================
+# CHAT
+# ==========================================================
+
+@app.post("/api/chat")
+def chat(req: ChatRequest):
+
+    print()
+    print("=" * 70)
+    print("FASTAPI → ADA CONTROLLER")
+    print("=" * 70)
+
+    print(
+        "REQUEST SERVICE:",
+        repr(req.service)
+    )
+
+    print(
+        "REQUEST MESSAGE:",
+        repr(req.message)
+    )
+
+    print(
+        "CONTROLLER EXISTS:",
+        controller is not None
+    )
+
+    print("=" * 70)
+    print()
+
+    # ======================================================
+    # VALIDATE MESSAGE
+    # ======================================================
+
+    if req.message is None:
+
+        raise ValueError(
+            "FastAPI received message=None"
+        )
+
+    message = str(
+        req.message
+    ).strip()
+
+    if not message:
+
+        raise ValueError(
+            "FastAPI received an empty message"
+        )
+
+    # ======================================================
+    # NORMALIZE SERVICE
+    # ======================================================
+
+    selected_service = None
+
+    if req.service is not None:
+
+        service_text = str(
+            req.service
+        ).strip()
+
+        if service_text:
+
+            if (
+                service_text.lower()
+                != "service not selected"
+            ):
+
+                selected_service = service_text
+
+    print(
+        "NORMALIZED SERVICE:",
+        repr(selected_service)
+    )
+
+    print(
+        "NORMALIZED MESSAGE:",
+        repr(message)
+    )
+
+    # ======================================================
+    # CONTROLLER CHECK
+    # ======================================================
+
+    if controller is None:
+
+        print()
+        print("=" * 70)
+        print("ADA CONTROLLER IS NOT AVAILABLE")
+        print("=" * 70)
+        print(
+            "The controller failed during FastAPI startup."
+        )
+        print("=" * 70)
+        print()
+
+        return {
+            "success": False,
+            "reply": (
+                "Your request could not be connected "
+                "to the Business Center right now. "
+                "Please try again shortly."
+            ),
+            "error": (
+                "AdaController was not created "
+                "during FastAPI startup."
+            )
+        }
+
+    # ======================================================
+    # CHECK GROQ CONNECTION
+    # ======================================================
+
+    try:
+
+        groq_connected = (
+            controller
+            .intelligence
+            .is_connected()
+        )
+
+    except Exception as error:
+
+        print()
+        print("=" * 70)
+        print("GROQ CONNECTION STATUS CHECK FAILED")
+        print("=" * 70)
+
+        print(
+            "ERROR TYPE:",
+            type(error).__name__
+        )
+
+        print(
+            "ERROR:",
+            repr(error)
+        )
+
+        traceback.print_exc()
+
+        print("=" * 70)
+        print()
+
+        raise
+
+    if not groq_connected:
+
+        print()
+        print("=" * 70)
+        print("GROQ IS NOT CONNECTED")
+        print("=" * 70)
+        print("=" * 70)
+        print()
+
+        return {
+            "success": False,
+            "reply": (
+                "Your request could not be processed "
+                "right now. Please try again shortly."
+            ),
+            "error": (
+                "AdaAIEngine reports that Groq "
+                "is not connected."
+            )
+        }
+
+    # ======================================================
+    # SEND MESSAGE TO ADA CONTROLLER
+    # ======================================================
+
+    try:
+
+        print()
+        print("=" * 70)
+        print("SENDING MESSAGE TO ADA CONTROLLER")
+        print("=" * 70)
+
+        print(
+            "SERVICE:",
+            repr(selected_service)
+        )
+
+        print(
+            "MESSAGE:",
+            repr(message)
+        )
+
+        print("=" * 70)
+        print()
+
+        response = controller.process_message(
+            message=message,
+            service=selected_service
+        )
+
+    # ======================================================
+    # REAL ADA ERROR
+    # ======================================================
+
+    except Exception as error:
+
+        print()
+        print("=" * 70)
+        print("!!!!!!!! FASTAPI → ADA REAL ERROR !!!!!!!!")
+        print("=" * 70)
+
+        print(
+            "ERROR TYPE:",
+            type(error).__name__
+        )
+
+        print(
+            "ERROR MESSAGE:",
+            str(error)
+        )
+
+        print()
+        print("ERROR REPRESENTATION:")
+        print(
+            repr(error)
+        )
+
+        print()
+        print("FULL TRACEBACK:")
+        print()
+
+        traceback.print_exc()
+
+        print()
+        print("=" * 70)
+        print("!!!!!!!! END REAL ADA ERROR !!!!!!!!")
+        print("=" * 70)
         print()
 
         # --------------------------------------------------
-        # CUSTOMER-FACING RESPONSE
+        # IMPORTANT
         #
-        # Never expose Ada, Groq, FastAPI, controllers,
-        # Python errors, APIs, or internal system details.
+        # Do NOT pretend this was a successful Ada response.
+        # The frontend receives success=False.
         #
-        # The customer's work remains saved by the
-        # workspace's localStorage procedure.
+        # The REAL exception is printed above.
         # --------------------------------------------------
 
         return {
             "success": False,
             "reply": (
-                "Your work has been saved safely. "
-                "We are experiencing a temporary network connection issue. "
-                "Your request has not been lost. "
-                "Please stay on this page. "
-                "When the connection returns, we will continue your work "
-                "from where we stopped."
+                "I could not complete that request "
+                "right now. Please try again shortly."
             ),
+            "error": (
+                f"{type(error).__name__}: "
+                f"{str(error)}"
+            )
+        }
+
+    # ======================================================
+    # CHECK ADA RESPONSE
+    # ======================================================
+
+    print()
+    print("=" * 70)
+    print("ADA CONTROLLER RETURNED")
+    print("=" * 70)
+
+    print(
+        "RESPONSE TYPE:",
+        type(response).__name__
+    )
+
+    print(
+        "RESPONSE:",
+        repr(response)
+    )
+
+    print("=" * 70)
+    print()
+
+    if response is None:
+
+        error_message = (
+            "AdaController.process_message() "
+            "returned None."
+        )
+
+        print()
+        print("=" * 70)
+        print("EMPTY ADA RESPONSE")
+        print("=" * 70)
+        print(error_message)
+        print("=" * 70)
+        print()
+
+        return {
+            "success": False,
+            "reply": (
+                "I could not complete that request "
+                "right now. Please try again shortly."
+            ),
+            "error": error_message
+        }
+
+    reply = str(
+        response
+    ).strip()
+
+    if not reply:
+
+        error_message = (
+            "AdaController.process_message() "
+            "returned an empty response."
+        )
+
+        print()
+        print("=" * 70)
+        print("EMPTY ADA RESPONSE")
+        print("=" * 70)
+        print(error_message)
+        print("=" * 70)
+        print()
+
+        return {
+            "success": False,
+            "reply": (
+                "I could not complete that request "
+                "right now. Please try again shortly."
+            ),
+            "error": error_message
+        }
+
+    # ======================================================
+    # SUCCESS
+    # ======================================================
+
+    try:
+
+        current_job_state = (
+            controller.get_job_state()
+        )
+
+    except Exception:
+
+        current_job_state = None
+
+    print()
+    print("=" * 70)
+    print("ADA RESPONSE SUCCESS")
+    print("=" * 70)
+
+    print(
+        "REPLY:",
+        reply
+    )
+
+    print(
+        "JOB STATE:",
+        current_job_state
+    )
+
+    print("=" * 70)
+    print()
+
+    return {
+        "success": True,
+        "reply": reply,
+        "service": (
+            controller.get_active_service()
+        ),
+        "job_state": current_job_state
+    }
+
+
+# ==========================================================
+# RESET CURRENT ADA JOB
+# ==========================================================
+#
+# This endpoint is intentionally separate from /api/chat.
+#
+# It allows the frontend to explicitly begin a completely
+# new customer job rather than accidentally carrying the
+# previous conversation into a new request.
+# ==========================================================
+
+@app.post("/api/reset")
+def reset_ada_job():
+
+    print()
+    print("=" * 70)
+    print("RESET ADA JOB")
+    print("=" * 70)
+
+    if controller is None:
+
+        print(
+            "Cannot reset: controller unavailable."
+        )
+
+        return {
+            "success": False,
+            "error": (
+                "AdaController is unavailable."
+            )
+        }
+
+    try:
+
+        controller.reset_job()
+
+        print(
+            "Ada conversation memory cleared."
+        )
+
+        print(
+            "Ada job state reset."
+        )
+
+        print("=" * 70)
+        print()
+
+        return {
+            "success": True,
+            "message": (
+                "Ada job reset successfully."
+            ),
+            "job_state": (
+                controller.get_job_state()
+            )
+        }
+
+    except Exception as error:
+
+        print()
+        print("=" * 70)
+        print("ADA RESET ERROR")
+        print("=" * 70)
+
+        print(
+            "ERROR TYPE:",
+            type(error).__name__
+        )
+
+        print(
+            "ERROR:",
+            repr(error)
+        )
+
+        traceback.print_exc()
+
+        print("=" * 70)
+        print()
+
+        return {
+            "success": False,
+            "error": (
+                f"{type(error).__name__}: "
+                f"{str(error)}"
+            )
+        }
+
+
+# ==========================================================
+# APPLICATION STARTUP INFORMATION
+# ==========================================================
+
+@app.get("/api/debug")
+def debug():
+
+    if controller is None:
+
+        return {
+            "controller_created": False,
+            "groq_connected": False,
+            "active_service": None,
+            "job_state": None
+        }
+
+    try:
+
+        intelligence = (
+            controller.intelligence
+        )
+
+        return {
+            "controller_created": True,
+            "groq_connected": (
+                intelligence.is_connected()
+            ),
+            "groq_model": (
+                intelligence.get_model()
+            ),
+            "active_service": (
+                controller.get_active_service()
+            ),
+            "job_state": (
+                controller.get_job_state()
+            ),
+            "memory_message_count": (
+                intelligence.memory.get_message_count()
+            )
+        }
+
+    except Exception as error:
+
+        print()
+        print("=" * 70)
+        print("ADA DEBUG ERROR")
+        print("=" * 70)
+
+        print(
+            "ERROR TYPE:",
+            type(error).__name__
+        )
+
+        print(
+            "ERROR:",
+            repr(error)
+        )
+
+        traceback.print_exc()
+
+        print("=" * 70)
+        print()
+
+        return {
+            "controller_created": True,
             "error": (
                 f"{type(error).__name__}: "
                 f"{str(error)}"
