@@ -4,45 +4,45 @@ ada_api.py
 Ada Intelligence API
 Naija Pocket Business Center
 
-FLOW:
+DIAGNOSTIC VERSION
+------------------
 
-    Conversation Page
-          ↓
-    Cloudflare Worker
-          ↓
+Purpose:
+    Expose the REAL backend/intelligence error.
+
+Flow:
+
+    workspace.html
+        ↓
     FastAPI
-          ↓
+        ↓
     AdaController
-          ↓
-    AdaAIEngine V10
-          ↓
+        ↓
+    AdaAIEngine
+        ↓
     Groq
-          ↓
-    Ada response
 
 IMPORTANT:
+    This version does NOT hide the real exception in the
+    server terminal.
 
-1. AdaController is created ONCE when FastAPI starts.
-2. AdaConversationMemory therefore remains alive between
-   successive /api/chat requests while this application
-   instance remains running.
-3. Every customer message goes through the SAME controller.
-4. The selected service is passed to AdaController on every
-   request.
-5. Real backend errors are printed with a full traceback.
-6. The API never silently converts a real Ada error into a
-   successful response.
-7. Empty Ada responses are treated as errors.
+    Every failure prints:
+        - error type
+        - error message
+        - representation
+        - full traceback
+
+    The customer-facing response remains simple, while
+    the terminal exposes the real technical problem.
 """
-
-
-from pathlib import Path
-import traceback
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from pathlib import Path
+import traceback
+
 
 from ada_controller import AdaController
 
@@ -53,7 +53,7 @@ from ada_controller import AdaController
 
 app = FastAPI(
     title="Ada Intelligence API - Naija Pocket Business Center",
-    version="1.0.0"
+    version="0.2.0"
 )
 
 
@@ -86,43 +86,34 @@ class ChatRequest(BaseModel):
     message: str
     service: str | None = None
 
+    # These fields are accepted because workspace.html
+    # already sends them.
+
+    event: str | None = None
+    customer_id: str | None = None
+    job_id: str | None = None
+    client_request_id: str | None = None
+    activate_intelligence: bool | None = None
+
 
 # ==========================================================
-# CREATE ADA CONTROLLER ONCE
-# ==========================================================
-#
-# THIS IS VERY IMPORTANT.
-#
-# DO NOT create AdaController inside /api/chat.
-#
-# If we did this:
-#
-#     every message
-#          ↓
-#     new controller
-#          ↓
-#     new AdaAIEngine
-#          ↓
-#     new conversation memory
-#
-# Ada would forget the previous question.
-#
-# We therefore create ONE controller here.
+# ADA CONTROLLER
 # ==========================================================
 
 print()
-print("=" * 70)
+print("=" * 80)
 print("STARTING ADA INTELLIGENCE API")
-print("=" * 70)
+print("=" * 80)
 
 controller = None
+
 
 try:
 
     controller = AdaController()
 
     print()
-    print("ADA CONTROLLER CREATED: True")
+    print("ADA CONTROLLER CREATED:", True)
 
     try:
 
@@ -133,10 +124,11 @@ try:
 
     except Exception as error:
 
-        print(
-            "GROQ STATUS ERROR:",
-            repr(error)
-        )
+        print()
+        print("!!!!!!!! GROQ CONNECTION CHECK FAILED !!!!!!!!")
+        print("ERROR TYPE:", type(error).__name__)
+        print("ERROR:", str(error))
+        traceback.print_exc()
 
     try:
 
@@ -147,41 +139,55 @@ try:
 
     except Exception as error:
 
-        print(
-            "GROQ MODEL ERROR:",
-            repr(error)
-        )
+        print()
+        print("!!!!!!!! GROQ MODEL CHECK FAILED !!!!!!!!")
+        print("ERROR TYPE:", type(error).__name__)
+        print("ERROR:", str(error))
+        traceback.print_exc()
 
 except Exception as error:
 
     print()
-    print("=" * 70)
-    print("!!!!!!!! ADA STARTUP ERROR !!!!!!!!")
-    print("=" * 70)
+    print("=" * 80)
+    print("!!!!!!!! ADA STARTUP REAL ERROR !!!!!!!!")
+    print("=" * 80)
 
-    print(
-        "ERROR TYPE:",
-        type(error).__name__
-    )
+    print()
+    print("ERROR TYPE:")
+    print(type(error).__name__)
 
-    print(
-        "ERROR:",
-        repr(error)
-    )
+    print()
+    print("ERROR MESSAGE:")
+    print(str(error))
+
+    print()
+    print("ERROR REPRESENTATION:")
+    print(repr(error))
 
     print()
     print("FULL TRACEBACK:")
+    print()
+
     traceback.print_exc()
 
-    print("=" * 70)
+    print()
+    print("=" * 80)
+    print("!!!!!!!! END ADA STARTUP REAL ERROR !!!!!!!!")
+    print("=" * 80)
     print()
 
     controller = None
 
 
-print("=" * 70)
+print()
+print("=" * 80)
 print("ADA INTELLIGENCE API READY")
-print("=" * 70)
+print("=" * 80)
+print(
+    "CONTROLLER AVAILABLE:",
+    controller is not None
+)
+print("=" * 80)
 print()
 
 
@@ -228,122 +234,56 @@ def workspace():
 @app.get("/health")
 def health():
 
-    controller_exists = (
-        controller is not None
-    )
-
     groq_connected = False
+    groq_model = None
 
-    active_service = None
-
-    if controller_exists:
+    if controller is not None:
 
         try:
 
             groq_connected = (
-                controller
-                .intelligence
-                .is_connected()
+                controller.intelligence.is_connected()
             )
 
         except Exception as error:
 
-            print(
-                "Health Groq Check Error:",
-                repr(error)
-            )
+            print()
+            print("HEALTH CHECK GROQ ERROR:")
+            print(type(error).__name__)
+            print(str(error))
+            traceback.print_exc()
 
         try:
 
-            active_service = (
-                controller
-                .get_active_service()
+            groq_model = (
+                controller.intelligence.get_model()
             )
 
         except Exception as error:
 
-            print(
-                "Health Service Check Error:",
-                repr(error)
-            )
+            print()
+            print("HEALTH CHECK MODEL ERROR:")
+            print(type(error).__name__)
+            print(str(error))
+            traceback.print_exc()
 
     return {
+
         "status": "ok",
-        "service": "Ada FastAPI",
-        "ada_controller": controller_exists,
-        "groq_connected": groq_connected,
-        "active_service": active_service
+
+        "service":
+            "Ada FastAPI",
+
+        "ada_controller":
+            controller is not None,
+
+        "groq_connected":
+            groq_connected,
+
+        "groq_model":
+            groq_model
+
     }
-
-
-# ==========================================================
-# ADA STATUS
-# ==========================================================
-
-@app.get("/api/status")
-def ada_status():
-
-    if controller is None:
-
-        return {
-            "success": False,
-            "controller": False,
-            "groq_connected": False,
-            "active_service": None,
-            "job_state": None
-        }
-
-    try:
-
-        intelligence = controller.intelligence
-
-        return {
-            "success": True,
-            "controller": True,
-            "groq_connected": (
-                intelligence.is_connected()
-            ),
-            "active_service": (
-                controller.get_active_service()
-            ),
-            "job_state": (
-                controller.get_job_state()
-            )
-        }
-
-    except Exception as error:
-
-        print()
-        print("=" * 70)
-        print("ADA STATUS ERROR")
-        print("=" * 70)
-
-        print(
-            "ERROR TYPE:",
-            type(error).__name__
-        )
-
-        print(
-            "ERROR:",
-            repr(error)
-        )
-
-        traceback.print_exc()
-
-        print("=" * 70)
-        print()
-
-        return {
-            "success": False,
-            "controller": True,
-            "groq_connected": False,
-            "active_service": None,
-            "job_state": None,
-            "error": (
-                f"{type(error).__name__}: "
-                f"{str(error)}"
-            )
-        }
 
 
 # ==========================================================
@@ -354,78 +294,70 @@ def ada_status():
 def chat(req: ChatRequest):
 
     print()
-    print("=" * 70)
-    print("FASTAPI → ADA CONTROLLER")
-    print("=" * 70)
+    print("=" * 80)
+    print("!!!!!!!! NEW ADA CHAT REQUEST !!!!!!!!")
+    print("=" * 80)
 
-    print(
-        "REQUEST SERVICE:",
-        repr(req.service)
-    )
-
-    print(
-        "REQUEST MESSAGE:",
-        repr(req.message)
-    )
-
-    print(
-        "CONTROLLER EXISTS:",
-        controller is not None
-    )
-
-    print("=" * 70)
     print()
+    print("SERVICE:")
+    print(repr(req.service))
+
+    print()
+    print("MESSAGE:")
+    print(repr(req.message))
+
+    print()
+    print("EVENT:")
+    print(repr(req.event))
+
+    print()
+    print("CUSTOMER ID:")
+    print(repr(req.customer_id))
+
+    print()
+    print("JOB ID:")
+    print(repr(req.job_id))
+
+    print()
+    print("CLIENT REQUEST ID:")
+    print(repr(req.client_request_id))
+
+    print()
+    print("ACTIVATE INTELLIGENCE:")
+    print(repr(req.activate_intelligence))
+
+    print()
+    print("CONTROLLER EXISTS:")
+    print(controller is not None)
+
+    print()
+    print("=" * 80)
+
 
     # ======================================================
-    # VALIDATE MESSAGE
+    # REQUEST VALIDATION
     # ======================================================
 
-    if req.message is None:
+    if not req.message:
 
-        raise ValueError(
-            "FastAPI received message=None"
-        )
+        print()
+        print("=" * 80)
+        print("!!!!!!!! EMPTY MESSAGE !!!!!!!!")
+        print("=" * 80)
 
-    message = str(
-        req.message
-    ).strip()
+        return {
 
-    if not message:
+            "success":
+                False,
 
-        raise ValueError(
-            "FastAPI received an empty message"
-        )
+            "reply":
+                "Please enter a message.",
 
-    # ======================================================
-    # NORMALIZE SERVICE
-    # ======================================================
+            "error":
+                "FastAPI received an empty message."
 
-    selected_service = None
+        }
 
-    if req.service is not None:
-
-        service_text = str(
-            req.service
-        ).strip()
-
-        if service_text:
-
-            if (
-                service_text.lower()
-                != "service not selected"
-            ):
-
-                selected_service = service_text
-
-    print(
-        "NORMALIZED SERVICE:",
-        repr(selected_service)
-    )
-
-    print(
-        "NORMALIZED MESSAGE:",
-        repr(message)
-    )
 
     # ======================================================
     # CONTROLLER CHECK
@@ -434,140 +366,195 @@ def chat(req: ChatRequest):
     if controller is None:
 
         print()
-        print("=" * 70)
-        print("ADA CONTROLLER IS NOT AVAILABLE")
-        print("=" * 70)
-        print(
-            "The controller failed during FastAPI startup."
-        )
-        print("=" * 70)
-        print()
+        print("=" * 80)
+        print("!!!!!!!! CONTROLLER IS NONE !!!!!!!!")
+        print("=" * 80)
 
         return {
-            "success": False,
-            "reply": (
-                "Your request could not be connected "
-                "to the Business Center right now. "
-                "Please try again shortly."
-            ),
-            "error": (
-                "AdaController was not created "
-                "during FastAPI startup."
-            )
+
+            "success":
+                False,
+
+            "reply":
+                "Your request could not be connected to the Business Center right now.",
+
+            "error":
+                "AdaController was not created during startup."
+
         }
 
-    # ======================================================
-    # CHECK GROQ CONNECTION
-    # ======================================================
-
-    try:
-
-        groq_connected = (
-            controller
-            .intelligence
-            .is_connected()
-        )
-
-    except Exception as error:
-
-        print()
-        print("=" * 70)
-        print("GROQ CONNECTION STATUS CHECK FAILED")
-        print("=" * 70)
-
-        print(
-            "ERROR TYPE:",
-            type(error).__name__
-        )
-
-        print(
-            "ERROR:",
-            repr(error)
-        )
-
-        traceback.print_exc()
-
-        print("=" * 70)
-        print()
-
-        raise
-
-    if not groq_connected:
-
-        print()
-        print("=" * 70)
-        print("GROQ IS NOT CONNECTED")
-        print("=" * 70)
-        print("=" * 70)
-        print()
-
-        return {
-            "success": False,
-            "reply": (
-                "Your request could not be processed "
-                "right now. Please try again shortly."
-            ),
-            "error": (
-                "AdaAIEngine reports that Groq "
-                "is not connected."
-            )
-        }
 
     # ======================================================
-    # SEND MESSAGE TO ADA CONTROLLER
+    # CONTROLLER DIAGNOSTICS
     # ======================================================
 
     try:
 
         print()
-        print("=" * 70)
-        print("SENDING MESSAGE TO ADA CONTROLLER")
-        print("=" * 70)
+        print("=" * 80)
+        print("ADA CONTROLLER STATUS")
+        print("=" * 80)
 
-        print(
-            "SERVICE:",
-            repr(selected_service)
-        )
+        try:
 
-        print(
-            "MESSAGE:",
-            repr(message)
-        )
+            print(
+                "Groq Connected:",
+                controller.intelligence.is_connected()
+            )
 
-        print("=" * 70)
+        except Exception as error:
+
+            print()
+            print("GROQ STATUS CHECK FAILED")
+
+            print(
+                "ERROR TYPE:",
+                type(error).__name__
+            )
+
+            print(
+                "ERROR:",
+                str(error)
+            )
+
+            traceback.print_exc()
+
+
+        try:
+
+            print(
+                "Groq Model:",
+                controller.intelligence.get_model()
+            )
+
+        except Exception as error:
+
+            print()
+            print("MODEL CHECK FAILED")
+
+            print(
+                "ERROR TYPE:",
+                type(error).__name__
+            )
+
+            print(
+                "ERROR:",
+                str(error)
+            )
+
+            traceback.print_exc()
+
+
+        print("=" * 80)
+
+
+        # ==================================================
+        # SEND TO ADA CONTROLLER
+        # ==================================================
+
         print()
+        print("=" * 80)
+        print("SENDING REQUEST TO ADA CONTROLLER")
+        print("=" * 80)
 
-        response = controller.process_message(
-            message=message,
-            service=selected_service
+        print(
+            "message =",
+            repr(req.message)
         )
+
+        print(
+            "service =",
+            repr(req.service)
+        )
+
+        print("=" * 80)
+
+
+        reply = controller.process_message(
+
+            message=
+                req.message,
+
+            service=
+                req.service
+
+        )
+
+
+        # ==================================================
+        # ENGINE SUCCESS
+        # ==================================================
+
+        print()
+        print("=" * 80)
+        print("!!!!!!!! ADA INTELLIGENCE SUCCESS !!!!!!!!")
+        print("=" * 80)
+
+        print()
+        print("RESPONSE TYPE:")
+        print(type(reply).__name__)
+
+        print()
+        print("RESPONSE:")
+        print(repr(reply))
+
+        print()
+        print("=" * 80)
+
+
+        if reply is None:
+
+            raise RuntimeError(
+                "AdaController returned None."
+            )
+
+
+        reply = str(
+            reply
+        ).strip()
+
+
+        if not reply:
+
+            raise RuntimeError(
+                "AdaController returned an empty response."
+            )
+
+
+        return {
+
+            "success":
+                True,
+
+            "reply":
+                reply
+
+        }
+
 
     # ======================================================
-    # REAL ADA ERROR
+    # REAL EXCEPTION
     # ======================================================
 
     except Exception as error:
 
         print()
-        print("=" * 70)
-        print("!!!!!!!! FASTAPI → ADA REAL ERROR !!!!!!!!")
-        print("=" * 70)
+        print()
+        print("#" * 80)
+        print("!!!!!!!! REAL ADA INTELLIGENCE ERROR !!!!!!!!")
+        print("#" * 80)
 
-        print(
-            "ERROR TYPE:",
-            type(error).__name__
-        )
+        print()
+        print("ERROR TYPE:")
+        print(type(error).__name__)
 
-        print(
-            "ERROR MESSAGE:",
-            str(error)
-        )
+        print()
+        print("ERROR MESSAGE:")
+        print(str(error))
 
         print()
         print("ERROR REPRESENTATION:")
-        print(
-            repr(error)
-        )
+        print(repr(error))
 
         print()
         print("FULL TRACEBACK:")
@@ -576,303 +563,73 @@ def chat(req: ChatRequest):
         traceback.print_exc()
 
         print()
-        print("=" * 70)
-        print("!!!!!!!! END REAL ADA ERROR !!!!!!!!")
-        print("=" * 70)
+        print("#" * 80)
+        print("!!!!!!!! END REAL ADA INTELLIGENCE ERROR !!!!!!!!")
+        print("#" * 80)
         print()
+
 
         # --------------------------------------------------
         # IMPORTANT
         #
-        # Do NOT pretend this was a successful Ada response.
-        # The frontend receives success=False.
+        # We deliberately expose the actual error in the
+        # JSON response too.
         #
-        # The REAL exception is printed above.
+        # This is a diagnostic version.
+        # Do NOT leave this version exposed publicly once
+        # debugging is finished.
         # --------------------------------------------------
 
         return {
-            "success": False,
-            "reply": (
-                "I could not complete that request "
-                "right now. Please try again shortly."
-            ),
-            "error": (
-                f"{type(error).__name__}: "
-                f"{str(error)}"
-            )
+
+            "success":
+                False,
+
+            "reply":
+                "Ada encountered a real processing error. The technical details have been exposed for troubleshooting.",
+
+            "error":
+                (
+                    f"{type(error).__name__}: "
+                    f"{str(error)}"
+                )
+
         }
 
-    # ======================================================
-    # CHECK ADA RESPONSE
-    # ======================================================
+
+# ==========================================================
+# DIRECT SERVER DIAGNOSTIC
+# ==========================================================
+
+if __name__ == "__main__":
 
     print()
-    print("=" * 70)
-    print("ADA CONTROLLER RETURNED")
-    print("=" * 70)
+    print("=" * 80)
+    print("ADA API MODULE DIRECT EXECUTION")
+    print("=" * 80)
+    print()
 
     print(
-        "RESPONSE TYPE:",
-        type(response).__name__
+        "Controller:",
+        controller
     )
 
-    print(
-        "RESPONSE:",
-        repr(response)
-    )
+    if controller is not None:
 
-    print("=" * 70)
-    print()
+        try:
 
-    if response is None:
+            print(
+                "Groq Connected:",
+                controller.intelligence.is_connected()
+            )
 
-        error_message = (
-            "AdaController.process_message() "
-            "returned None."
-        )
+        except Exception as error:
 
-        print()
-        print("=" * 70)
-        print("EMPTY ADA RESPONSE")
-        print("=" * 70)
-        print(error_message)
-        print("=" * 70)
-        print()
-
-        return {
-            "success": False,
-            "reply": (
-                "I could not complete that request "
-                "right now. Please try again shortly."
-            ),
-            "error": error_message
-        }
-
-    reply = str(
-        response
-    ).strip()
-
-    if not reply:
-
-        error_message = (
-            "AdaController.process_message() "
-            "returned an empty response."
-        )
-
-        print()
-        print("=" * 70)
-        print("EMPTY ADA RESPONSE")
-        print("=" * 70)
-        print(error_message)
-        print("=" * 70)
-        print()
-
-        return {
-            "success": False,
-            "reply": (
-                "I could not complete that request "
-                "right now. Please try again shortly."
-            ),
-            "error": error_message
-        }
-
-    # ======================================================
-    # SUCCESS
-    # ======================================================
-
-    try:
-
-        current_job_state = (
-            controller.get_job_state()
-        )
-
-    except Exception:
-
-        current_job_state = None
+            print()
+            print("GROQ CHECK FAILED")
+            print(type(error).__name__)
+            print(str(error))
+            traceback.print_exc()
 
     print()
-    print("=" * 70)
-    print("ADA RESPONSE SUCCESS")
-    print("=" * 70)
-
-    print(
-        "REPLY:",
-        reply
-    )
-
-    print(
-        "JOB STATE:",
-        current_job_state
-    )
-
-    print("=" * 70)
-    print()
-
-    return {
-        "success": True,
-        "reply": reply,
-        "service": (
-            controller.get_active_service()
-        ),
-        "job_state": current_job_state
-    }
-
-
-# ==========================================================
-# RESET CURRENT ADA JOB
-# ==========================================================
-#
-# This endpoint is intentionally separate from /api/chat.
-#
-# It allows the frontend to explicitly begin a completely
-# new customer job rather than accidentally carrying the
-# previous conversation into a new request.
-# ==========================================================
-
-@app.post("/api/reset")
-def reset_ada_job():
-
-    print()
-    print("=" * 70)
-    print("RESET ADA JOB")
-    print("=" * 70)
-
-    if controller is None:
-
-        print(
-            "Cannot reset: controller unavailable."
-        )
-
-        return {
-            "success": False,
-            "error": (
-                "AdaController is unavailable."
-            )
-        }
-
-    try:
-
-        controller.reset_job()
-
-        print(
-            "Ada conversation memory cleared."
-        )
-
-        print(
-            "Ada job state reset."
-        )
-
-        print("=" * 70)
-        print()
-
-        return {
-            "success": True,
-            "message": (
-                "Ada job reset successfully."
-            ),
-            "job_state": (
-                controller.get_job_state()
-            )
-        }
-
-    except Exception as error:
-
-        print()
-        print("=" * 70)
-        print("ADA RESET ERROR")
-        print("=" * 70)
-
-        print(
-            "ERROR TYPE:",
-            type(error).__name__
-        )
-
-        print(
-            "ERROR:",
-            repr(error)
-        )
-
-        traceback.print_exc()
-
-        print("=" * 70)
-        print()
-
-        return {
-            "success": False,
-            "error": (
-                f"{type(error).__name__}: "
-                f"{str(error)}"
-            )
-        }
-
-
-# ==========================================================
-# APPLICATION STARTUP INFORMATION
-# ==========================================================
-
-@app.get("/api/debug")
-def debug():
-
-    if controller is None:
-
-        return {
-            "controller_created": False,
-            "groq_connected": False,
-            "active_service": None,
-            "job_state": None
-        }
-
-    try:
-
-        intelligence = (
-            controller.intelligence
-        )
-
-        return {
-            "controller_created": True,
-            "groq_connected": (
-                intelligence.is_connected()
-            ),
-            "groq_model": (
-                intelligence.get_model()
-            ),
-            "active_service": (
-                controller.get_active_service()
-            ),
-            "job_state": (
-                controller.get_job_state()
-            ),
-            "memory_message_count": (
-                intelligence.memory.get_message_count()
-            )
-        }
-
-    except Exception as error:
-
-        print()
-        print("=" * 70)
-        print("ADA DEBUG ERROR")
-        print("=" * 70)
-
-        print(
-            "ERROR TYPE:",
-            type(error).__name__
-        )
-
-        print(
-            "ERROR:",
-            repr(error)
-        )
-
-        traceback.print_exc()
-
-        print("=" * 70)
-        print()
-
-        return {
-            "controller_created": True,
-            "error": (
-                f"{type(error).__name__}: "
-                f"{str(error)}"
-            )
-        }
+    print("=" * 80)
