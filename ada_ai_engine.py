@@ -1,38 +1,50 @@
 """
 ada_ai_engine.py
-Ada AI Engine V10
+
+Ada AI Engine V11
 Naija Pocket Business Center
 
-PRIMARY INTELLIGENCE:
-    Groq
+PURPOSE
+-------
+Groq is the primary conversational intelligence.
 
-MODEL:
-    Read from GROQ_MODEL environment variable.
+V11 simplifies Ada's conversation flow.
 
-DEFAULT MODEL:
-    openai/gpt-oss-20b
+IMPORTANT CHANGE FROM V10
+-------------------------
+The normal customer conversation NO LONGER calls:
 
-IMPORTANT:
-    Deprecated Groq models are automatically replaced.
+    interview_is_complete()
 
-CRITICAL FLOW FIX:
-    The interview completion check is NON-FATAL.
+after every Ada response.
 
-    Ada's main response is the important operation.
+This is intentional.
 
-    If Ada successfully answers the customer but the
-    secondary interview_is_complete() check fails,
-    the customer's successful Ada response is NOT lost.
+Groq has already produced the customer's response.
+A second Groq request should not be allowed to break
+the successful conversation.
 
-    The interview simply remains open and the customer
-    can continue answering questions.
+The application/workflow can decide when to move from:
 
-API KEY:
-    Read from GROQ_API_KEY environment variable.
+    CONVERSATION
+        ↓
+    DOCUMENT DRAFT
+        ↓
+    REVIEW
+        ↓
+    REVISION
+        ↓
+    APPROVAL
+        ↓
+    PAYMENT
+        ↓
+    DELIVERY
 
-IMPORTANT:
-    This file does NOT import ada_ai_config.py.
-    The Groq API key must never be stored in GitHub.
+Groq remains responsible for natural conversation
+and understanding the customer's request.
+
+The application remains responsible for business
+workflow, pricing, documents and delivery.
 """
 
 import os
@@ -48,7 +60,7 @@ from billing_manager import BillingManager
 class AdaAIEngine:
 
     # ==================================================
-    # CURRENT GROQ DEFAULT MODEL
+    # CURRENT GROQ MODEL
     # ==================================================
 
     DEFAULT_MODEL = "openai/gpt-oss-20b"
@@ -83,7 +95,7 @@ class AdaAIEngine:
             "revision_count": 0,
             "approved": False,
             "payment_received": False,
-            "delivered": False,
+            "delivered": False
         }
 
         self.connect()
@@ -97,7 +109,7 @@ class AdaAIEngine:
         possible_names = [
             "GROQ_API_KEY",
             "GROQ_KEY",
-            "API_KEY",
+            "API_KEY"
         ]
 
         for name in possible_names:
@@ -119,7 +131,9 @@ class AdaAIEngine:
 
     def get_model(self):
 
-        configured_model = os.getenv("GROQ_MODEL")
+        configured_model = os.getenv(
+            "GROQ_MODEL"
+        )
 
         if configured_model:
 
@@ -227,7 +241,7 @@ class AdaAIEngine:
             return False
 
     # ==================================================
-    # CENTRAL GROQ ERROR LOGGER
+    # GROQ ERROR LOGGER
     # ==================================================
 
     def _log_groq_error(
@@ -351,7 +365,9 @@ class AdaAIEngine:
         try:
 
             normalized = (
-                self.normalize_service(service)
+                self.normalize_service(
+                    service
+                )
             )
 
             return self.billing.has_service(
@@ -374,7 +390,9 @@ class AdaAIEngine:
     def get_service_price(self, service):
 
         normalized = (
-            self.normalize_service(service)
+            self.normalize_service(
+                service
+            )
         )
 
         return self.billing.get_price(
@@ -453,7 +471,9 @@ class AdaAIEngine:
     ):
 
         internal_service = (
-            self.normalize_service(service)
+            self.normalize_service(
+                service
+            )
         )
 
         if not internal_service:
@@ -475,7 +495,9 @@ class AdaAIEngine:
     ):
 
         normalized_service = (
-            self.normalize_service(service)
+            self.normalize_service(
+                service
+            )
         )
 
         prompt = (
@@ -570,7 +592,7 @@ class AdaAIEngine:
                     messages.append(
                         {
                             "role": "user",
-                            "content": content,
+                            "content": content
                         }
                     )
 
@@ -587,7 +609,7 @@ class AdaAIEngine:
                     messages.append(
                         {
                             "role": "assistant",
-                            "content": content,
+                            "content": content
                         }
                     )
 
@@ -612,7 +634,7 @@ class AdaAIEngine:
             "revision_count": 0,
             "approved": False,
             "payment_received": False,
-            "delivered": False,
+            "delivered": False
         }
 
     # ==================================================
@@ -624,7 +646,9 @@ class AdaAIEngine:
         self.reset_job()
 
         normalized_service = (
-            self.normalize_service(service)
+            self.normalize_service(
+                service
+            )
         )
 
         self.job_state[
@@ -649,7 +673,9 @@ class AdaAIEngine:
     ):
 
         normalized_service = (
-            self.normalize_service(service)
+            self.normalize_service(
+                service
+            )
         )
 
         if normalized_service:
@@ -707,7 +733,7 @@ class AdaAIEngine:
             "how much una dey charge",
             "how much do you charge",
             "fee",
-            "fees",
+            "fees"
         )
 
         return any(
@@ -757,7 +783,7 @@ class AdaAIEngine:
                     matches.append(
                         (
                             len(alias_lower),
-                            service,
+                            service
                         )
                     )
 
@@ -791,7 +817,6 @@ class AdaAIEngine:
                 )
 
                 if readable in text:
-
                     return service
 
         except Exception as error:
@@ -810,6 +835,8 @@ class AdaAIEngine:
             "assignment": "assignment_typing",
             "project": "project_typing",
             "seminar": "seminar_paper",
+            "topic explanation": "topic_explanations",
+            "topic explanations": "topic_explanations",
             "business proposal": "business_proposal",
             "company profile": "company_profile",
             "invoice": "invoices",
@@ -828,7 +855,7 @@ class AdaAIEngine:
             "data entry": "data_entry",
             "data analysis": "data_analysis",
             "presentation": "presentations",
-            "presentations": "presentations",
+            "presentations": "presentations"
         }
 
         sorted_phrases = sorted(
@@ -840,7 +867,6 @@ class AdaAIEngine:
         for phrase, service in sorted_phrases:
 
             if phrase in text:
-
                 return service
 
         return None
@@ -855,7 +881,9 @@ class AdaAIEngine:
     ):
 
         normalized_service = (
-            self.normalize_service(service)
+            self.normalize_service(
+                service
+            )
         )
 
         if not normalized_service:
@@ -993,10 +1021,10 @@ Return ONLY the customer-facing response.
                     messages=[
                         {
                             "role": "system",
-                            "content": prompt,
+                            "content": prompt
                         }
                     ],
-                    temperature=0.4,
+                    temperature=0.4
                 )
             )
 
@@ -1008,7 +1036,6 @@ Return ONLY the customer-facing response.
             )
 
             if reply:
-
                 return reply.strip()
 
             raise RuntimeError(
@@ -1043,7 +1070,9 @@ Return ONLY the customer-facing response.
             )
 
         normalized_service = (
-            self.normalize_service(service)
+            self.normalize_service(
+                service
+            )
         )
 
         messages = [
@@ -1051,7 +1080,7 @@ Return ONLY the customer-facing response.
                 "role": "system",
                 "content": self.get_system_prompt(
                     normalized_service
-                ),
+                )
             }
         ]
 
@@ -1086,7 +1115,7 @@ Return ONLY the customer-facing response.
             messages.append(
                 {
                     "role": "user",
-                    "content": customer_message,
+                    "content": customer_message
                 }
             )
 
@@ -1113,7 +1142,7 @@ Return ONLY the customer-facing response.
             )
 
             print(
-                "HISTORY MESSAGE COUNT:",
+                "HISTORY MESSAGES:",
                 len(history_messages)
             )
 
@@ -1127,7 +1156,7 @@ Return ONLY the customer-facing response.
                 .create(
                     model=self.get_model(),
                     messages=messages,
-                    temperature=temperature,
+                    temperature=temperature
                 )
             )
 
@@ -1159,21 +1188,14 @@ Return ONLY the customer-facing response.
     # INTERVIEW CHECK
     # ==================================================
     #
-    # IMPORTANT FLOW FIX
+    # RETAINED FOR EXPLICIT USE BY THE APPLICATION.
     #
-    # This is a SECONDARY check.
+    # IMPORTANT:
+    # This method is NO LONGER called automatically
+    # after every customer message.
     #
-    # It must NEVER destroy a successful Ada response.
-    #
-    # If this check fails:
-    #
-    #     log the real error
-    #     return False
-    #
-    # It must NOT:
-    #
-    #     raise the exception
-    #
+    # This prevents a second Groq request from breaking
+    # a successful conversation response.
     # ==================================================
 
     def interview_is_complete(self):
@@ -1221,11 +1243,6 @@ NO
 
         if not self.connected:
 
-            print(
-                "Interview completion check skipped: "
-                "Groq is not connected."
-            )
-
             return False
 
         try:
@@ -1239,10 +1256,10 @@ NO
                     messages=[
                         {
                             "role": "user",
-                            "content": prompt,
+                            "content": prompt
                         }
                     ],
-                    temperature=0,
+                    temperature=0
                 )
             )
 
@@ -1251,19 +1268,6 @@ NO
                 .choices[0]
                 .message
                 .content
-            )
-
-            if not answer:
-
-                print(
-                    "Interview completion check returned "
-                    "an empty response."
-                )
-
-                return False
-
-            answer = (
-                answer
                 .strip()
                 .upper()
             )
@@ -1272,39 +1276,12 @@ NO
 
         except Exception as error:
 
-            # --------------------------------------------------
-            # CRITICAL FLOW FIX:
-            #
-            # This secondary check must NOT break the main
-            # customer conversation.
-            #
-            # Ada has already generated the customer-facing
-            # response before this method is called.
-            #
-            # Therefore:
-            #
-            #     log error
-            #     return False
-            #
-            # NOT:
-            #
-            #     raise
-            # --------------------------------------------------
-
             self._log_groq_error(
-                "NON-FATAL INTERVIEW CHECK ERROR",
+                "REAL GROQ INTERVIEW CHECK ERROR",
                 error
             )
 
-            print(
-                "Interview completion check failed."
-            )
-
-            print(
-                "The conversation will remain open."
-            )
-
-            return False
+            raise
 
     # ==================================================
     # START CONVERSATION
@@ -1368,31 +1345,6 @@ NO
             reply
         )
 
-        # --------------------------------------------------
-        # NON-FATAL INTERVIEW CHECK
-        # --------------------------------------------------
-
-        try:
-
-            if self.interview_is_complete():
-
-                self.job_state[
-                    "interview_complete"
-                ] = True
-
-        except Exception as error:
-
-            # Defensive protection.
-            # interview_is_complete() already handles
-            # its own errors, but this prevents the
-            # conversation from ever being destroyed
-            # by the status check.
-
-            print(
-                "Non-fatal interview status error:",
-                repr(error)
-            )
-
         return reply
 
     # ==================================================
@@ -1405,9 +1357,17 @@ NO
         service=None
     ):
 
+        # --------------------------------------------------
+        # ADD CUSTOMER MESSAGE TO THE EXISTING MEMORY
+        # --------------------------------------------------
+
         self.memory.add_customer_message(
             customer_reply
         )
+
+        # --------------------------------------------------
+        # KEEP THE EXISTING SERVICE
+        # --------------------------------------------------
 
         active_service = (
             self.job_state.get("service")
@@ -1428,6 +1388,10 @@ NO
                 "service"
             ] = active_service
 
+        # --------------------------------------------------
+        # DETECT SERVICE IF CUSTOMER MENTIONS ONE
+        # --------------------------------------------------
+
         detected_service = (
             self.find_service_in_message(
                 customer_reply
@@ -1441,6 +1405,10 @@ NO
             self.job_state[
                 "service"
             ] = active_service
+
+        # --------------------------------------------------
+        # PRICE REQUEST
+        # --------------------------------------------------
 
         if self.detect_price_request(
             customer_reply
@@ -1468,6 +1436,10 @@ NO
                     )
                 )
 
+        # --------------------------------------------------
+        # NORMAL CONVERSATION
+        # --------------------------------------------------
+
         else:
 
             reply = (
@@ -1478,10 +1450,7 @@ NO
             )
 
         # --------------------------------------------------
-        # CRITICAL:
-        #
-        # Ada's successful response is stored BEFORE
-        # performing the secondary completion check.
+        # SAVE ADA'S RESPONSE
         # --------------------------------------------------
 
         self.memory.add_ada_message(
@@ -1489,23 +1458,25 @@ NO
         )
 
         # --------------------------------------------------
-        # NON-FATAL INTERVIEW CHECK
+        # CRITICAL V11 CHANGE
         # --------------------------------------------------
-
-        try:
-
-            if self.interview_is_complete():
-
-                self.job_state[
-                    "interview_complete"
-                ] = True
-
-        except Exception as error:
-
-            print(
-                "Non-fatal interview status error:",
-                repr(error)
-            )
+        #
+        # DO NOT call:
+        #
+        #     self.interview_is_complete()
+        #
+        # here.
+        #
+        # Ada has already successfully answered the
+        # customer's message.
+        #
+        # A second Groq request must not be allowed
+        # to turn that successful response into a
+        # failed /api/chat request.
+        #
+        # The workflow will handle the transition to
+        # document generation separately.
+        # --------------------------------------------------
 
         return reply
 
@@ -1538,12 +1509,20 @@ NO
                 "help with."
             )
 
+        # --------------------------------------------------
+        # FIRST MESSAGE
+        # --------------------------------------------------
+
         if not self.memory.messages:
 
             return self.start_conversation(
                 customer_message,
                 service=service
             )
+
+        # --------------------------------------------------
+        # CONTINUING MESSAGE
+        # --------------------------------------------------
 
         return self.continue_conversation(
             customer_message,
@@ -1657,14 +1636,14 @@ Return ONLY the finished document.
                             "role": "system",
                             "content": self.get_system_prompt(
                                 active_service
-                            ),
+                            )
                         },
                         {
                             "role": "user",
-                            "content": writer_prompt,
-                        },
+                            "content": writer_prompt
+                        }
                     ],
-                    temperature=0.4,
+                    temperature=0.4
                 )
             )
 
@@ -1676,6 +1655,10 @@ Return ONLY the finished document.
             )
 
             if draft:
+
+                self.job_state[
+                    "interview_complete"
+                ] = True
 
                 self.job_state[
                     "draft_generated"
@@ -1762,14 +1745,14 @@ Instructions:
                             "role": "system",
                             "content": self.get_system_prompt(
                                 active_service
-                            ),
+                            )
                         },
                         {
                             "role": "user",
-                            "content": prompt,
-                        },
+                            "content": prompt
+                        }
                     ],
-                    temperature=0.3,
+                    temperature=0.3
                 )
             )
 
@@ -1858,7 +1841,7 @@ if __name__ == "__main__":
 
     print()
     print("=" * 70)
-    print("ADA AI ENGINE V10 DIRECT TEST")
+    print("ADA AI ENGINE V11 DIRECT TEST")
     print("=" * 70)
 
     ada = AdaAIEngine()
@@ -1898,14 +1881,16 @@ if __name__ == "__main__":
                 customer_message=(
                     "Hello Ada, please introduce yourself."
                 ),
-                service="CV"
+                service="Topic Explanations"
             )
 
             print()
             print("=" * 70)
             print("ADA RESPONSE")
             print("=" * 70)
+
             print(result)
+
             print("=" * 70)
             print()
 
