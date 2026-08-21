@@ -61,7 +61,6 @@
             overflow: hidden;
         }
 
-
         /* =====================================================
            FIXED TOP
         ===================================================== */
@@ -125,7 +124,6 @@
             font-weight: bold;
         }
 
-
         /* =====================================================
            NETWORK STATUS
         ===================================================== */
@@ -160,10 +158,8 @@
             display: block;
         }
 
-
         /* =====================================================
            CHAT AREA
-           ONLY THIS AREA SCROLLS
         ===================================================== */
 
         .chat-area {
@@ -242,7 +238,6 @@
             border-bottom-right-radius: 2px;
         }
 
-
         /* =====================================================
            FIXED ACTION BUTTONS
         ===================================================== */
@@ -305,7 +300,6 @@
 
             cursor: not-allowed;
         }
-
 
         /* =====================================================
            FIXED MESSAGE INPUT
@@ -389,9 +383,8 @@
             display: none;
         }
 
-
         /* =====================================================
-           FIXED FOOTER
+           FOOTER
         ===================================================== */
 
         .footer {
@@ -408,7 +401,6 @@
             padding-top: 5px;
         }
 
-
         /* =====================================================
            SMALL PHONES
         ===================================================== */
@@ -417,7 +409,6 @@
 
             .page {
                 padding-left: 6px;
-
                 padding-right: 6px;
             }
 
@@ -443,7 +434,6 @@
 
             .bubble {
                 font-size: 12px;
-
                 padding: 9px 10px;
             }
 
@@ -453,21 +443,17 @@
 
             .action-button {
                 min-height: 37px;
-
                 font-size: 9px;
-
                 padding: 5px 3px;
             }
 
             .message-input {
                 min-height: 42px;
-
                 font-size: 12px;
             }
 
             .send-button {
                 flex-basis: 68px;
-
                 min-height: 42px;
             }
 
@@ -475,7 +461,6 @@
                 font-size: 8px;
             }
         }
-
 
         /* =====================================================
            LARGER PHONES / TABLETS
@@ -485,7 +470,6 @@
 
             .page {
                 padding-left: 16px;
-
                 padding-right: 16px;
             }
 
@@ -498,21 +482,17 @@
 
             .action-button {
                 min-height: 42px;
-
                 font-size: 11px;
             }
         }
-
     </style>
 </head>
-
 
 <body>
 
 <div class="page">
 
     <main class="workspace">
-
 
         <!-- =================================================
              FIXED TOP
@@ -546,7 +526,6 @@
 
         </section>
 
-
         <!-- =================================================
              NETWORK STATUS
         ================================================== -->
@@ -556,17 +535,14 @@
             class="connection-status"
         ></div>
 
-
         <!-- =================================================
-             MIDDLE
-             ONLY THIS AREA SCROLLS
+             CHAT AREA
         ================================================== -->
 
         <section
             id="chatArea"
             class="chat-area"
         ></section>
-
 
         <!-- =================================================
              FIXED ACTION BUTTONS
@@ -624,9 +600,8 @@
 
         </section>
 
-
         <!-- =================================================
-             FIXED MESSAGE INPUT
+             MESSAGE INPUT
         ================================================== -->
 
         <section class="input-area">
@@ -649,14 +624,12 @@
 
         </section>
 
-
         <input
             type="file"
             id="fileInput"
             accept=".pdf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.csv,.ppt,.pptx,.jpg,.jpeg,.png,.webp"
             onchange="handleFileSelected(event)"
         >
-
 
         <!-- =================================================
              FOOTER
@@ -671,23 +644,11 @@
 
 </div>
 
-
 <script>
 
 /* ============================================================
-   CUSTOMER / JOB IDENTITY
+   CUSTOMER ID
 ============================================================ */
-
-/*
-   This ID belongs to this browser.
-
-   It is created once and reused.
-
-   It is NOT the service ID.
-
-   It identifies the browser/customer session so the backend
-   can later associate saved work with the same customer.
-*/
 
 const CUSTOMER_ID_KEY =
     "naijaPocketCustomerId";
@@ -770,12 +731,9 @@ const SERVICE_KEY =
 const PENDING_KEY =
     "naijaPocketPendingRequests";
 
-const CUSTOMER_KEY =
-    "naijaPocketCustomerId";
-
 
 /* ============================================================
-   CONNECTION STATUS
+   NETWORK MESSAGE
 ============================================================ */
 
 const NETWORK_MESSAGE =
@@ -786,9 +744,7 @@ const NETWORK_MESSAGE =
    SERVICE NORMALISATION
 ============================================================ */
 
-function normaliseService(
-    service
-) {
+function normaliseService(service) {
 
     return String(
         service || ""
@@ -796,16 +752,16 @@ function normaliseService(
 }
 
 
-function createJobId(
-    service
-) {
+/* ============================================================
+   JOB ID
+============================================================ */
+
+function createJobId(service) {
 
     return (
         "job-" +
         encodeURIComponent(
-            normaliseService(
-                service
-            )
+            normaliseService(service)
         ) +
         "-" +
         Date.now().toString(36) +
@@ -818,87 +774,65 @@ function createJobId(
 
 
 /* ============================================================
-   JOB STORAGE KEY
+   STORAGE KEYS
 ============================================================ */
 
-function getJobStorageKey(
-    service
-) {
+function getJobStorageKey(service) {
 
     return (
         JOB_PREFIX +
         customerId +
         ":" +
         encodeURIComponent(
-            normaliseService(
-                service
-            )
+            normaliseService(service)
         )
     );
 }
 
 
-/* ============================================================
-   CONVERSATION STORAGE KEY
-============================================================ */
-
-function getConversationStorageKey(
-    service
-) {
+function getConversationStorageKey(service) {
 
     return (
         CONVERSATION_PREFIX +
         customerId +
         ":" +
         encodeURIComponent(
-            normaliseService(
-                service
-            )
+            normaliseService(service)
         )
     );
 }
 
 
 /* ============================================================
-   LOAD SAVED WORK
+   LOAD PENDING REQUESTS
 ============================================================ */
 
-function loadSavedWork() {
+function loadPendingRequests() {
 
-    /*
-       Load all pending requests.
-    */
+    pendingRequests = {};
 
     try {
 
-        const savedPending =
+        const saved =
             localStorage.getItem(
                 PENDING_KEY
             );
 
-        if (savedPending) {
+        if (!saved) {
 
-            const parsed =
-                JSON.parse(
-                    savedPending
-                );
+            return;
+        }
 
-            if (
-                parsed &&
-                typeof parsed === "object"
-            ) {
+        const parsed =
+            JSON.parse(saved);
 
-                pendingRequests =
-                    parsed;
+        if (
+            parsed &&
+            typeof parsed === "object"
+        ) {
 
-            } else {
-
-                pendingRequests = {};
-            }
-
-        } else {
-
-            pendingRequests = {};
+            pendingRequests =
+                parsed;
         }
 
     } catch (error) {
@@ -910,55 +844,211 @@ function loadSavedWork() {
 
         pendingRequests = {};
     }
+}
 
+
+/* ============================================================
+   SAVE PENDING REQUESTS
+============================================================ */
+
+function savePendingRequests() {
+
+    try {
+
+        localStorage.setItem(
+            PENDING_KEY,
+            JSON.stringify(
+                pendingRequests
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Pending request save error:",
+            error
+        );
+    }
+}
+
+
+/* ============================================================
+   SAVE PENDING REQUEST
+============================================================ */
+
+function savePendingRequest(request) {
+
+    if (
+        !request ||
+        !request.requestId
+    ) {
+
+        return;
+    }
 
     /*
-       The currently selected service gets its own
-       conversation.
+       Pending requests are ONLY for temporary network
+       failures.
+
+       A server/application failure must NEVER be stored
+       as a permanent pending request.
     */
 
-    loadConversationForService(
-        selectedService
+    request.pendingReason =
+        "network";
+
+    pendingRequests[
+        request.requestId
+    ] = request;
+
+    savePendingRequests();
+}
+
+
+/* ============================================================
+   CLEAR PENDING REQUEST
+============================================================ */
+
+function clearPendingRequest(requestId) {
+
+    if (!requestId) {
+
+        return;
+    }
+
+    delete pendingRequests[
+        requestId
+    ];
+
+    savePendingRequests();
+}
+
+
+/* ============================================================
+   GET ALL PENDING REQUESTS
+============================================================ */
+
+function getPendingRequestList() {
+
+    return Object.values(
+        pendingRequests
+    ).filter(
+        function(request) {
+
+            return (
+                request &&
+                request.requestId &&
+                request.customerId ===
+                    customerId &&
+                request.message !== undefined
+            );
+        }
     );
 }
 
 
 /* ============================================================
-   LOAD CONVERSATION FOR CURRENT SERVICE
+   GET PENDING REQUEST FOR CURRENT JOB
+   IMPORTANT:
+   OLD REQUESTS FROM OTHER JOBS DO NOT BLOCK THIS JOB.
 ============================================================ */
 
-function loadConversationForService(
-    service
-) {
+function getPendingRequestForCurrentJob() {
+
+    const requests =
+        getPendingRequestList();
+
+    for (
+        const request of requests
+    ) {
+
+        if (
+            request.service ===
+                selectedService &&
+
+            request.jobId ===
+                currentJobId
+        ) {
+
+            return request;
+        }
+    }
+
+    return null;
+}
+
+
+/* ============================================================
+   CLEAN OLD / INVALID PENDING REQUESTS
+============================================================ */
+
+function cleanInvalidPendingRequests() {
+
+    let changed = false;
+
+    const requests =
+        getPendingRequestList();
+
+    for (
+        const request of requests
+    ) {
+
+        /*
+           Any request without a valid service/job identity
+           cannot safely be resumed.
+        */
+
+        if (
+            !request.service ||
+            !request.jobId
+        ) {
+
+            delete pendingRequests[
+                request.requestId
+            ];
+
+            changed = true;
+        }
+    }
+
+    if (changed) {
+
+        savePendingRequests();
+    }
+}
+
+
+/* ============================================================
+   LOAD CONVERSATION
+============================================================ */
+
+function loadConversationForService(service) {
 
     conversation = [];
-
-    const key =
-        getConversationStorageKey(
-            service
-        );
 
     try {
 
         const saved =
             localStorage.getItem(
-                key
+                getConversationStorageKey(
+                    service
+                )
             );
 
-        if (saved) {
+        if (!saved) {
 
-            const parsed =
-                JSON.parse(
-                    saved
-                );
+            return;
+        }
 
-            if (
-                Array.isArray(parsed)
-            ) {
+        const parsed =
+            JSON.parse(saved);
 
-                conversation =
-                    parsed;
-            }
+        if (
+            Array.isArray(parsed)
+        ) {
+
+            conversation =
+                parsed;
         }
 
     } catch (error) {
@@ -974,7 +1064,7 @@ function loadConversationForService(
 
 
 /* ============================================================
-   SAVE COMPLETE CONVERSATION
+   SAVE CONVERSATION
 ============================================================ */
 
 function saveConversation() {
@@ -1003,134 +1093,7 @@ function saveConversation() {
 
 
 /* ============================================================
-   SAVE PENDING REQUESTS
-============================================================ */
-
-function savePendingRequests() {
-
-    try {
-
-        localStorage.setItem(
-            PENDING_KEY,
-            JSON.stringify(
-                pendingRequests
-            )
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Pending requests save error:",
-            error
-        );
-    }
-}
-
-
-/* ============================================================
-   SAVE ONE PENDING REQUEST
-============================================================ */
-
-function savePendingRequest(
-    request
-) {
-
-    if (
-        !request ||
-        !request.requestId
-    ) {
-
-        return;
-    }
-
-
-    pendingRequests[
-        request.requestId
-    ] = request;
-
-
-    savePendingRequests();
-}
-
-
-/* ============================================================
-   REMOVE ONE PENDING REQUEST
-============================================================ */
-
-function clearPendingRequest(
-    requestId
-) {
-
-    if (!requestId) {
-
-        return;
-    }
-
-
-    delete pendingRequests[
-        requestId
-    ];
-
-
-    savePendingRequests();
-}
-
-
-/* ============================================================
-   GET PENDING REQUESTS
-============================================================ */
-
-function getPendingRequestList() {
-
-    return Object.values(
-        pendingRequests
-    ).filter(
-        function(request) {
-
-            return (
-                request &&
-                request.requestId &&
-                request.message !== undefined
-            );
-        }
-    );
-}
-
-
-/* ============================================================
-   GET PENDING REQUEST FOR CURRENT JOB
-============================================================ */
-
-function getPendingRequestForCurrentJob() {
-
-    const requests =
-        getPendingRequestList();
-
-    for (
-        const request of requests
-    ) {
-
-        if (
-            request.customerId ===
-                customerId &&
-
-            request.service ===
-                selectedService &&
-
-            request.jobId ===
-                currentJobId
-        ) {
-
-            return request;
-        }
-    }
-
-    return null;
-}
-
-
-/* ============================================================
-   DISPLAY SAVED CONVERSATION
+   RENDER SAVED CONVERSATION
 ============================================================ */
 
 function restoreConversationToScreen() {
@@ -1142,7 +1105,6 @@ function restoreConversationToScreen() {
 
     chatArea.innerHTML = "";
 
-
     for (
         const item of conversation
     ) {
@@ -1153,7 +1115,6 @@ function restoreConversationToScreen() {
             false
         );
     }
-
 
     scrollChatToBottom();
 }
@@ -1187,7 +1148,6 @@ function renderMessage(
                 : "ada"
         );
 
-
     const bubble =
         document.createElement(
             "div"
@@ -1199,7 +1159,6 @@ function renderMessage(
     bubble.innerText =
         message;
 
-
     wrapper.appendChild(
         bubble
     );
@@ -1207,7 +1166,6 @@ function renderMessage(
     chatArea.appendChild(
         wrapper
     );
-
 
     if (save) {
 
@@ -1225,7 +1183,6 @@ function renderMessage(
 
         saveConversation();
     }
-
 
     scrollChatToBottom();
 }
@@ -1249,7 +1206,7 @@ function addMessage(
 
 
 /* ============================================================
-   SCROLL CHAT ONLY
+   SCROLL
 ============================================================ */
 
 function scrollChatToBottom() {
@@ -1270,7 +1227,7 @@ function scrollChatToBottom() {
 
 
 /* ============================================================
-   GET SERVICE
+   GET SELECTED SERVICE
 ============================================================ */
 
 function getSelectedService() {
@@ -1280,12 +1237,10 @@ function getSelectedService() {
             window.location.search
         );
 
-
     selectedService =
         normaliseService(
             params.get("service")
         );
-
 
     if (!selectedService) {
 
@@ -1297,46 +1252,32 @@ function getSelectedService() {
             );
     }
 
-
     if (!selectedService) {
 
         selectedService =
             "Service not selected";
     }
 
-
     document.getElementById(
         "selectedService"
     ).innerText =
         selectedService;
-
 
     localStorage.setItem(
         SERVICE_KEY,
         selectedService
     );
 
-
-    /*
-       Load the correct service conversation.
-    */
-
     loadConversationForService(
         selectedService
     );
-
-
-    /*
-       Load or create the correct job for this
-       customer + service.
-    */
 
     loadOrCreateCurrentJob();
 }
 
 
 /* ============================================================
-   LOAD OR CREATE CURRENT JOB
+   LOAD / CREATE CURRENT JOB
 ============================================================ */
 
 function loadOrCreateCurrentJob() {
@@ -1346,22 +1287,17 @@ function loadOrCreateCurrentJob() {
             selectedService
         );
 
-
     try {
 
-        const savedJob =
+        const saved =
             localStorage.getItem(
                 key
             );
 
-
-        if (savedJob) {
+        if (saved) {
 
             const parsed =
-                JSON.parse(
-                    savedJob
-                );
-
+                JSON.parse(saved);
 
             if (
                 parsed &&
@@ -1385,12 +1321,10 @@ function loadOrCreateCurrentJob() {
         );
     }
 
-
     currentJobId =
         createJobId(
             selectedService
         );
-
 
     saveCurrentJob();
 }
@@ -1441,19 +1375,15 @@ function saveCurrentJob() {
    CONNECTION STATUS
 ============================================================ */
 
-function showConnectionStatus(
-    message
-) {
+function showConnectionStatus(message) {
 
     const status =
         document.getElementById(
             "connectionStatus"
         );
 
-
     status.innerText =
         message;
-
 
     status.classList.add(
         "show"
@@ -1468,11 +1398,9 @@ function hideConnectionStatus() {
             "connectionStatus"
         );
 
-
     status.classList.remove(
         "show"
     );
-
 
     status.innerText = "";
 }
@@ -1496,7 +1424,7 @@ function createRequestId() {
 
 
 /* ============================================================
-   CREATE COMPLETE REQUEST OBJECT
+   CREATE REQUEST
 ============================================================ */
 
 function createRequest(
@@ -1528,24 +1456,24 @@ function createRequest(
             Date.now(),
 
         attempts:
-            0
+            0,
+
+        pendingReason:
+            "network"
     };
 }
 
 
 /* ============================================================
-   NETWORK ERROR CHECK
+   NETWORK ERROR
 ============================================================ */
 
-function isNetworkError(
-    error
-) {
+function isNetworkError(error) {
 
     if (!error) {
 
         return false;
     }
-
 
     if (
         error.name ===
@@ -1555,7 +1483,6 @@ function isNetworkError(
         return true;
     }
 
-
     if (
         error instanceof
         TypeError
@@ -1564,38 +1491,24 @@ function isNetworkError(
         return true;
     }
 
-
     const text =
         String(
             error.message || ""
         ).toLowerCase();
 
-
     return (
 
-        text.includes(
-            "network"
-        ) ||
+        text.includes("network") ||
 
-        text.includes(
-            "failed to fetch"
-        ) ||
+        text.includes("failed to fetch") ||
 
-        text.includes(
-            "fetch"
-        ) ||
+        text.includes("connection") ||
 
-        text.includes(
-            "connection"
-        ) ||
+        text.includes("timeout") ||
 
-        text.includes(
-            "timeout"
-        ) ||
+        text.includes("offline") ||
 
-        text.includes(
-            "offline"
-        )
+        text.includes("fetch")
     );
 }
 
@@ -1604,9 +1517,7 @@ function isNetworkError(
    WAIT
 ============================================================ */
 
-function wait(
-    milliseconds
-) {
+function wait(milliseconds) {
 
     return new Promise(
         function(resolve) {
@@ -1621,16 +1532,13 @@ function wait(
 
 
 /* ============================================================
-   RAW FASTAPI REQUEST
+   FASTAPI REQUEST
 ============================================================ */
 
-async function requestFastAPI(
-    request
-) {
+async function requestFastAPI(request) {
 
     const abortController =
         new AbortController();
-
 
     const timeout =
         setTimeout(
@@ -1642,19 +1550,7 @@ async function requestFastAPI(
             30000
         );
 
-
     try {
-
-        /*
-           VERY IMPORTANT:
-
-           Use the service stored INSIDE the request.
-
-           Never use the current page's selectedService here.
-
-           This prevents Service A from accidentally being
-           submitted as Service B after the customer switches.
-        */
 
         const response =
             await fetch(
@@ -1704,9 +1600,7 @@ async function requestFastAPI(
                 }
             );
 
-
         let result;
-
 
         try {
 
@@ -1721,7 +1615,7 @@ async function requestFastAPI(
                 );
 
             invalidResponse.serverError =
-                !response.ok;
+                true;
 
             invalidResponse.status =
                 response.status;
@@ -1731,7 +1625,7 @@ async function requestFastAPI(
 
 
         /* ====================================================
-           SERVICE PRICE
+           PRICE
         ==================================================== */
 
         if (
@@ -1743,7 +1637,6 @@ async function requestFastAPI(
                 String(
                     result.price
                 );
-
 
             document.getElementById(
                 "servicePrice"
@@ -1795,23 +1688,18 @@ async function requestFastAPI(
                     result.message
                 )
             ) ||
-
             "The Business Center could not process the request.";
-
 
         const error =
             new Error(
                 serverError
             );
 
-
         error.serverError =
             true;
 
-
         error.status =
             response.status;
-
 
         throw error;
 
@@ -1833,13 +1721,6 @@ async function sendToAda(
     eventName
 ) {
 
-    /*
-       The request captures the CURRENT service and job.
-
-       Once created, it never changes even if the customer
-       navigates to another service.
-    */
-
     const request =
         createRequest(
             message,
@@ -1847,10 +1728,14 @@ async function sendToAda(
         );
 
 
-    savePendingRequest(
-        request
-    );
+    /*
+       IMPORTANT:
 
+       Do NOT immediately store every request.
+
+       We only store it if a temporary network failure
+       actually occurs.
+    */
 
     const retryDelays = [
 
@@ -1860,7 +1745,6 @@ async function sendToAda(
         10000
 
     ];
-
 
     let lastError =
         null;
@@ -1883,14 +1767,8 @@ async function sendToAda(
                 );
             }
 
-
             request.attempts =
                 attempt + 1;
-
-
-            savePendingRequest(
-                request
-            );
 
 
             if (
@@ -1912,16 +1790,11 @@ async function sendToAda(
             /*
                SUCCESS.
 
-               Remove only THIS request.
+               There is no pending request to clear
+               because successful requests were never stored.
             */
 
-            clearPendingRequest(
-                request.requestId
-            );
-
-
             hideConnectionStatus();
-
 
             return result.reply;
 
@@ -1929,7 +1802,6 @@ async function sendToAda(
 
             lastError =
                 error;
-
 
             console.error(
                 "Business Center request attempt " +
@@ -1940,7 +1812,11 @@ async function sendToAda(
 
 
             /*
-               Real server errors are not blindly retried.
+               SERVER ERROR:
+
+               NEVER save it as pending.
+
+               NEVER let it block a new job.
             */
 
             if (
@@ -1952,7 +1828,9 @@ async function sendToAda(
 
 
             /*
-               Temporary network problem.
+               NETWORK ERROR:
+
+               Retry temporarily.
             */
 
             if (
@@ -1964,30 +1842,30 @@ async function sendToAda(
                     "Reconnecting..."
                 );
 
-
                 await wait(
                     retryDelays[
                         attempt
                     ]
                 );
 
-
                 continue;
             }
+
+
+            /*
+               All temporary retries failed.
+
+               NOW and ONLY NOW store the request.
+            */
+
+            savePendingRequest(
+                request
+            );
+
+            break;
         }
     }
 
-
-    /*
-       IMPORTANT:
-
-       The request remains inside pendingRequests.
-
-       It has NOT been deleted.
-
-       Therefore network recovery can resume this exact
-       request later.
-    */
 
     showConnectionStatus(
         NETWORK_MESSAGE
@@ -2004,7 +1882,7 @@ async function sendToAda(
 
 
 /* ============================================================
-   AUTOMATIC SERVICE ACTIVATION
+   START ADA
 ============================================================ */
 
 async function startAdaIntelligence() {
@@ -2016,7 +1894,6 @@ async function startAdaIntelligence() {
         return;
     }
 
-
     intelligenceStarted =
         true;
 
@@ -2024,7 +1901,7 @@ async function startAdaIntelligence() {
     if (
         !selectedService ||
         selectedService ===
-        "Service not selected"
+            "Service not selected"
     ) {
 
         addMessage(
@@ -2037,10 +1914,10 @@ async function startAdaIntelligence() {
 
 
     /*
-       Existing conversation means this service/job has
-       already started.
+       Existing conversation means Ada already started
+       this job.
 
-       Do not send another service-selection message.
+       Do not send another welcome message.
     */
 
     if (
@@ -2052,13 +1929,16 @@ async function startAdaIntelligence() {
 
 
     /*
-       If THIS service has a pending request, let the
-       pending-resume system handle it.
+       ONLY the current service/job can affect startup.
+
+       Old pending requests from another service/job
+       are completely ignored here.
     */
 
-    if (
-        getPendingRequestForCurrentJob()
-    ) {
+    const currentPending =
+        getPendingRequestForCurrentJob();
+
+    if (currentPending) {
 
         return;
     }
@@ -2091,14 +1971,12 @@ async function startAdaIntelligence() {
 
 
         if (
-            !isNetworkError(
-                error
-            )
+            !isNetworkError(error)
         ) {
 
             addMessage(
                 "Business Center",
-                "We could not complete that request at the moment. Please try again shortly."
+                "We could not start your request at the moment. Please try again."
             );
         }
     }
@@ -2106,7 +1984,7 @@ async function startAdaIntelligence() {
 
 
 /* ============================================================
-   CUSTOMER MESSAGE
+   SEND CUSTOMER MESSAGE
 ============================================================ */
 
 async function sendMessage() {
@@ -2124,12 +2002,10 @@ async function sendMessage() {
             "messageInput"
         );
 
-
     const sendButton =
         document.getElementById(
             "sendButton"
         );
-
 
     const message =
         input.value.trim();
@@ -2145,13 +2021,6 @@ async function sendMessage() {
         true;
 
 
-    /*
-       Save the message immediately.
-
-       It belongs to the CURRENT service and therefore
-       the CURRENT job.
-    */
-
     addMessage(
         "You",
         message
@@ -2160,10 +2029,8 @@ async function sendMessage() {
 
     input.value = "";
 
-
     sendButton.disabled =
         true;
-
 
     sendButton.innerText =
         "WAIT...";
@@ -2177,7 +2044,6 @@ async function sendMessage() {
                 message,
 
                 "customer_message"
-
             );
 
 
@@ -2194,22 +2060,13 @@ async function sendMessage() {
         );
 
 
-        /*
-           Do NOT add the embarrassing network message
-           into the actual conversation.
-
-           The status bar handles temporary connectivity.
-        */
-
         if (
-            !isNetworkError(
-                error
-            )
+            !isNetworkError(error)
         ) {
 
             addMessage(
                 "Business Center",
-                "I could not complete that request right now. Please try again shortly."
+                "I could not complete that request right now. Please try again."
             );
         }
 
@@ -2218,10 +2075,8 @@ async function sendMessage() {
         requestInProgress =
             false;
 
-
         sendButton.disabled =
             false;
-
 
         sendButton.innerText =
             "SEND";
@@ -2268,13 +2123,10 @@ function openFilePicker() {
 }
 
 
-async function handleFileSelected(
-    event
-) {
+async function handleFileSelected(event) {
 
     const file =
         event.target.files[0];
-
 
     if (!file) {
 
@@ -2318,14 +2170,12 @@ async function handleFileSelected(
 
 
         if (
-            !isNetworkError(
-                error
-            )
+            !isNetworkError(error)
         ) {
 
             addMessage(
                 "Business Center",
-                "I could not continue with that file right now. Please try again shortly."
+                "I could not continue with that file right now. Please try again."
             );
         }
 
@@ -2453,7 +2303,6 @@ async function performBusinessAction(
                 controllerMessage,
 
                 eventName
-
             );
 
 
@@ -2472,14 +2321,12 @@ async function performBusinessAction(
 
 
         if (
-            !isNetworkError(
-                error
-            )
+            !isNetworkError(error)
         ) {
 
             addMessage(
                 "Business Center",
-                "I could not complete that step right now. Please try again shortly."
+                "I could not complete that step right now. Please try again."
             );
         }
 
@@ -2492,35 +2339,28 @@ async function performBusinessAction(
 
 
 /* ============================================================
-   RESUME ONE SAVED REQUEST
+   RESUME CURRENT JOB'S SAVED REQUEST ONLY
 ============================================================ */
 
-async function resumePendingRequest(
-    request
-) {
+async function resumeCurrentJobPendingRequest() {
 
-    if (!request) {
-
-        return;
-    }
-
-
-    if (
-        request.customerId !==
-        customerId
-    ) {
-
-        return;
-    }
+    const request =
+        getPendingRequestForCurrentJob();
 
 
     /*
-       The request must be resumed using the service/job
-       stored in the request.
+       NO CURRENT-JOB REQUEST?
 
-       It does NOT matter what service the customer is
-       currently looking at.
+       That is completely fine.
+
+       Start a normal new conversation.
     */
+
+    if (!request) {
+
+        return false;
+    }
+
 
     if (
         !navigator.onLine
@@ -2530,8 +2370,12 @@ async function resumePendingRequest(
             NETWORK_MESSAGE
         );
 
-        return;
+        return true;
     }
+
+
+    requestInProgress =
+        true;
 
 
     try {
@@ -2547,23 +2391,14 @@ async function resumePendingRequest(
             );
 
 
-        /*
-           Only clear THIS request after successful
-           completion.
-        */
-
         clearPendingRequest(
             request.requestId
         );
 
 
         /*
-           Only show the reply if the customer is still
-           viewing the same service/job.
-
-           If they have moved elsewhere, the result remains
-           saved and is not incorrectly inserted into the
-           new service's conversation.
+           Only display the response in this exact
+           service/job.
         */
 
         if (
@@ -2578,159 +2413,293 @@ async function resumePendingRequest(
                 "Business Center",
                 result.reply
             );
-
-            hideConnectionStatus();
-
-        } else {
-
-            hideConnectionStatus();
-
-            console.log(
-                "Saved request completed for another service/job:",
-                request.service,
-                request.jobId
-            );
         }
+
+
+        hideConnectionStatus();
+
+        return true;
 
     } catch (error) {
 
         console.error(
-            "PENDING REQUEST RESUME ERROR:",
+            "CURRENT JOB RESUME ERROR:",
             error
         );
 
 
         /*
-           Keep the pending request for a temporary
-           network failure.
+           Server/application errors are permanently removed
+           from the retry queue.
+
+           They cannot block the customer anymore.
         */
 
         if (
-            isNetworkError(
-                error
-            )
+            error.serverError
         ) {
+
+            clearPendingRequest(
+                request.requestId
+            );
+
+            hideConnectionStatus();
+
+            return false;
+        }
+
+
+        /*
+           Network failure:
+
+           Keep it pending.
+        */
+
+        if (
+            isNetworkError(error)
+        ) {
+
+            savePendingRequest(
+                request
+            );
 
             showConnectionStatus(
                 NETWORK_MESSAGE
             );
 
-            return;
+            return true;
         }
 
-
-        /*
-           A genuine server/application error should not
-           be endlessly retried by the browser.
-
-           Keep the work record but remove this network
-           retry entry.
-        */
 
         clearPendingRequest(
             request.requestId
         );
 
-
-        if (
-            selectedService ===
-                request.service &&
-
-            currentJobId ===
-                request.jobId
-        ) {
-
-            addMessage(
-                "Business Center",
-                "I could not complete that saved request right now. Please try again shortly."
-            );
-        }
-
-    }
-}
-
-
-/* ============================================================
-   RESUME SAVED WORK
-============================================================ */
-
-async function resumeSavedWork() {
-
-    if (
-        requestInProgress
-    ) {
-
-        return;
-    }
-
-
-    if (
-        !navigator.onLine
-    ) {
-
-        showConnectionStatus(
-            NETWORK_MESSAGE
-        );
-
-        return;
-    }
-
-
-    const requests =
-        getPendingRequestList();
-
-
-    if (
-        requests.length === 0
-    ) {
-
         hideConnectionStatus();
 
-        return;
-    }
-
-
-    requestInProgress =
-        true;
-
-
-    try {
-
-        /*
-           Resume each saved request individually.
-
-           Each request carries its own:
-
-           customerId
-           jobId
-           service
-           message
-           event
-           requestId
-        */
-
-        for (
-            const request of requests
-        ) {
-
-            if (
-                !navigator.onLine
-            ) {
-
-                break;
-            }
-
-
-            await resumePendingRequest(
-                request
-            );
-        }
+        return false;
 
     } finally {
 
         requestInProgress =
             false;
     }
+}
+
+
+/* ============================================================
+   RESUME OLD REQUESTS IN BACKGROUND
+   IMPORTANT:
+   They NEVER BLOCK THE CURRENT SERVICE.
+============================================================ */
+
+async function resumeOtherPendingRequests() {
+
+    const requests =
+        getPendingRequestList();
+
+
+    for (
+        const request of requests
+    ) {
+
+        /*
+           Ignore the current job here.
+
+           It is handled separately.
+        */
+
+        if (
+            request.service ===
+                selectedService &&
+
+            request.jobId ===
+                currentJobId
+        ) {
+
+            continue;
+        }
+
+
+        if (
+            !navigator.onLine
+        ) {
+
+            return;
+        }
+
+
+        try {
+
+            const result =
+                await requestFastAPI(
+                    request
+                );
+
+
+            /*
+               Successful old request.
+
+               Remove it.
+            */
+
+            clearPendingRequest(
+                request.requestId
+            );
+
+
+            console.log(
+                "Old saved request completed:",
+                request.service,
+                request.jobId,
+                result
+            );
+
+        } catch (error) {
+
+            console.error(
+                "OLD REQUEST RESUME ERROR:",
+                error
+            );
+
+
+            /*
+               NEVER allow an old server error to remain
+               capable of blocking the dashboard.
+            */
+
+            if (
+                error.serverError
+            ) {
+
+                clearPendingRequest(
+                    request.requestId
+                );
+
+                continue;
+            }
+
+
+            /*
+               Network error remains pending.
+            */
+
+            if (
+                isNetworkError(error)
+            ) {
+
+                continue;
+            }
+
+
+            /*
+               Unknown permanent error.
+
+               Remove it rather than trapping the dashboard.
+            */
+
+            clearPendingRequest(
+                request.requestId
+            );
+        }
+    }
+}
+
+
+/* ============================================================
+   STARTUP WORKFLOW
+============================================================ */
+
+async function initialiseWorkspace() {
+
+    /*
+       Load pending requests.
+    */
+
+    loadPendingRequests();
+
+    cleanInvalidPendingRequests();
+
+
+    /*
+       Load selected service and current job.
+    */
+
+    getSelectedService();
+
+
+    /*
+       Restore conversation for this service.
+    */
+
+    restoreConversationToScreen();
+
+
+    /*
+       CURRENT JOB GETS PRIORITY.
+
+       An old request belonging to another service/job
+       cannot stop this service from starting.
+    */
+
+    const resumed =
+        await resumeCurrentJobPendingRequest();
+
+
+    if (
+        resumed
+    ) {
+
+        /*
+           Current request is being resumed.
+
+           Do not start another service-selection request.
+        */
+
+        intelligenceStarted =
+            true;
+
+    } else {
+
+        /*
+           If this service already has conversation history,
+           continue it.
+
+           If it has no history, start Ada normally.
+        */
+
+        if (
+            conversation.length > 0
+        ) {
+
+            intelligenceStarted =
+                true;
+
+        } else {
+
+            intelligenceStarted =
+                false;
+
+            await startAdaIntelligence();
+        }
+    }
+
+
+    /*
+       Old requests from other services/jobs can be handled
+       separately.
+
+       They NEVER block the current customer experience.
+    */
+
+    setTimeout(
+        function() {
+
+            resumeOtherPendingRequests();
+
+        },
+        1500
+    );
 }
 
 
@@ -2754,9 +2723,19 @@ window.addEventListener(
 
         reconnectTimer =
             setTimeout(
-                function() {
+                async function() {
 
-                    resumeSavedWork();
+                    const resumed =
+                        await resumeCurrentJobPendingRequest();
+
+
+                    if (!resumed) {
+
+                        hideConnectionStatus();
+                    }
+
+
+                    resumeOtherPendingRequests();
 
                 },
                 1200
@@ -2781,22 +2760,19 @@ window.addEventListener(
 
 
 /* ============================================================
-   PERIODIC CONNECTION CHECK
+   PERIODIC CURRENT-JOB RECOVERY
 ============================================================ */
 
 setInterval(
     function() {
 
         if (
-            getPendingRequestList()
-                .length > 0 &&
-
             navigator.onLine &&
-
-            !requestInProgress
+            !requestInProgress &&
+            getPendingRequestForCurrentJob()
         ) {
 
-            resumeSavedWork();
+            resumeCurrentJobPendingRequest();
         }
 
     },
@@ -2805,7 +2781,7 @@ setInterval(
 
 
 /* ============================================================
-   SAVE BEFORE PAGE IS HIDDEN
+   SAVE BEFORE PAGE HIDDEN
 ============================================================ */
 
 document.addEventListener(
@@ -2814,7 +2790,7 @@ document.addEventListener(
 
         if (
             document.visibilityState ===
-            "hidden"
+                "hidden"
         ) {
 
             saveConversation();
@@ -2845,55 +2821,10 @@ window.addEventListener(
 
 
 /* ============================================================
-   START WORKSPACE
+   START
 ============================================================ */
 
-getSelectedService();
-
-loadSavedWork();
-
-restoreConversationToScreen();
-
-
-/*
-   If there are pending requests, attempt to resume them.
-
-   Otherwise start Ada for a brand-new service.
-*/
-
-if (
-    getPendingRequestList()
-        .length > 0
-) {
-
-    intelligenceStarted =
-        true;
-
-
-    if (
-        navigator.onLine
-    ) {
-
-        setTimeout(
-            function() {
-
-                resumeSavedWork();
-
-            },
-            1000
-        );
-
-    } else {
-
-        showConnectionStatus(
-            NETWORK_MESSAGE
-        );
-    }
-
-} else {
-
-    startAdaIntelligence();
-}
+initialiseWorkspace();
 
 </script>
 
