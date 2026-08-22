@@ -2,12 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
-
     <title>Naija Pocket Business Center</title>
 
     <style>
@@ -34,16 +32,13 @@
             width: 100%;
             height: 100vh;
             height: 100dvh;
-
             padding:
                 max(8px, env(safe-area-inset-top))
                 8px
                 max(8px, env(safe-area-inset-bottom))
                 8px;
-
             display: flex;
             flex-direction: column;
-
             overflow: hidden;
         }
 
@@ -52,30 +47,18 @@
             max-width: 700px;
             height: 100%;
             min-height: 0;
-
             margin: 0 auto;
-
             display: flex;
             flex-direction: column;
-
             overflow: hidden;
         }
 
-        /* =====================================================
-           FIXED TOP
-        ===================================================== */
-
         .header {
             flex: 0 0 auto;
-
             background: #171717;
-
             border-radius: 6px;
-
             padding: 10px 11px;
-
             margin-bottom: 6px;
-
             border-bottom: 2px solid #FFFFFF;
         }
 
@@ -86,71 +69,44 @@
 
         .selected-service {
             margin-top: 7px;
-
             background: #0B0B0B;
-
             border: 1px solid #444444;
-
             border-radius: 5px;
-
             padding: 7px 9px;
         }
 
         .selected-service-label {
             color: #AAAAAA;
-
             font-size: 9px;
-
             margin-bottom: 2px;
         }
 
         .selected-service-name {
             color: white;
-
             font-size: 14px;
-
             font-weight: bold;
-
             overflow-wrap: anywhere;
         }
 
         .service-price {
             margin-top: 6px;
-
             color: white;
-
             font-size: 12px;
-
             font-weight: bold;
         }
 
-        /* =====================================================
-           NETWORK STATUS
-        ===================================================== */
-
         .connection-status {
             display: none;
-
             flex: 0 0 auto;
-
             width: 100%;
-
             margin-bottom: 5px;
-
             padding: 7px 9px;
-
             border-radius: 5px;
-
             background: #242424;
-
             border: 1px solid #444444;
-
             color: white;
-
             font-size: 10px;
-
             line-height: 1.35;
-
             text-align: center;
         }
 
@@ -158,37 +114,22 @@
             display: block;
         }
 
-        /* =====================================================
-           CHAT AREA
-        ===================================================== */
-
         .chat-area {
             flex: 1 1 auto;
-
             min-height: 0;
-
             width: 100%;
-
             background: #171717;
-
             border-radius: 6px;
-
             padding: 12px;
-
             overflow-y: auto;
-
             overflow-x: hidden;
-
             border: 1px solid #292929;
-
             -webkit-overflow-scrolling: touch;
         }
 
         .message {
             width: 100%;
-
             margin-bottom: 13px;
-
             display: flex;
         }
 
@@ -202,86 +143,60 @@
 
         .bubble {
             display: inline-block;
-
             max-width: 92%;
-
             padding: 10px 12px;
-
             border-radius: 8px;
-
             font-size: 13px;
-
             line-height: 1.5;
-
             white-space: pre-wrap;
-
             word-break: break-word;
-
             overflow-wrap: anywhere;
         }
 
         .message.ada .bubble {
             background: #242424;
-
             color: white;
-
             border-bottom-left-radius: 2px;
         }
 
         .message.you .bubble {
             background: #111111;
-
             color: white;
-
             border: 1px solid #444444;
-
             border-bottom-right-radius: 2px;
         }
 
-        /* =====================================================
-           FIXED ACTION BUTTONS
-        ===================================================== */
+        .message.system .bubble {
+            background: #202020;
+            color: #CCCCCC;
+            border: 1px solid #333333;
+            width: 100%;
+            max-width: 100%;
+            text-align: center;
+        }
 
         .actions {
             flex: 0 0 auto;
-
             width: 100%;
-
             display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 5px;
-
             margin-top: 6px;
         }
 
         .action-button {
             width: 100%;
-
             min-width: 0;
-
             min-height: 40px;
-
             border: 1px solid #444444;
-
             border-radius: 5px;
-
             padding: 7px 5px;
-
             background: #000000;
-
             color: white;
-
             font-size: 10px;
-
             font-weight: bold;
-
             line-height: 1.15;
-
             cursor: pointer;
-
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -291,122 +206,68 @@
 
         .action-button:active {
             background: #242424;
-
             transform: scale(0.98);
         }
 
         .action-button:disabled {
             opacity: 0.5;
-
             cursor: not-allowed;
         }
 
-        /* =====================================================
-           FIXED MESSAGE INPUT
-        ===================================================== */
-
         .input-area {
             flex: 0 0 auto;
-
             width: 100%;
-
             margin-top: 6px;
-
             display: flex;
-
             gap: 5px;
         }
 
         .message-input {
             flex: 1 1 auto;
-
             min-width: 0;
-
             min-height: 44px;
-
             max-height: 90px;
-
             resize: none;
-
             background: white;
-
             color: black;
-
             border: none;
-
             border-radius: 5px;
-
             padding: 10px;
-
             font-size: 13px;
-
             outline: none;
         }
 
         .send-button {
             flex: 0 0 76px;
-
             min-height: 44px;
-
             border: 1px solid #444444;
-
             border-radius: 5px;
-
             background: #000000;
-
             color: white;
-
             font-size: 10px;
-
             font-weight: bold;
-
             cursor: pointer;
-
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .send-button:hover {
-            background: #171717;
-        }
-
-        .send-button:active {
-            background: #242424;
-
-            transform: scale(0.98);
         }
 
         .send-button:disabled {
             opacity: 0.5;
         }
 
-        #fileInput {
+        #fileInput,
+        #voiceInput {
             display: none;
         }
 
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
         .footer {
             flex: 0 0 auto;
-
             text-align: center;
-
             color: #777777;
-
             font-size: 9px;
-
             line-height: 1.3;
-
             padding-top: 5px;
         }
 
-        /* =====================================================
-           SMALL PHONES
-        ===================================================== */
-
         @media (max-width: 360px) {
-
             .page {
                 padding-left: 6px;
                 padding-right: 6px;
@@ -462,21 +323,14 @@
             }
         }
 
-        /* =====================================================
-           LARGER PHONES / TABLETS
-        ===================================================== */
-
         @media (min-width: 600px) {
-
             .page {
                 padding-left: 16px;
                 padding-right: 16px;
             }
 
             .actions {
-                grid-template-columns:
-                    repeat(3, minmax(0, 1fr));
-
+                grid-template-columns: repeat(3, minmax(0, 1fr));
                 gap: 6px;
             }
 
@@ -491,21 +345,14 @@
 <body>
 
 <div class="page">
-
     <main class="workspace">
 
-        <!-- =================================================
-             FIXED TOP
-        ================================================== -->
-
         <section class="header">
-
             <div class="brand">
                 NAIJA POCKET BUSINESS CENTER
             </div>
 
             <div class="selected-service">
-
                 <div class="selected-service-label">
                     SELECTED SERVICE
                 </div>
@@ -521,38 +368,25 @@
                     id="servicePrice"
                     class="service-price"
                 ></div>
-
             </div>
-
         </section>
-
-        <!-- =================================================
-             NETWORK STATUS
-        ================================================== -->
 
         <div
             id="connectionStatus"
             class="connection-status"
         ></div>
 
-        <!-- =================================================
-             CHAT AREA
-        ================================================== -->
-
         <section
             id="chatArea"
             class="chat-area"
         ></section>
 
-        <!-- =================================================
-             FIXED ACTION BUTTONS
-        ================================================== -->
-
         <section class="actions">
 
             <button
                 type="button"
-                class="action-button upload-button"
+                id="uploadButton"
+                class="action-button"
                 onclick="openFilePicker()"
             >
                 📎 Upload
@@ -560,7 +394,8 @@
 
             <button
                 type="button"
-                class="action-button voice-button"
+                id="voiceButton"
+                class="action-button"
                 onclick="openVoice()"
             >
                 🎤 Voice
@@ -568,7 +403,8 @@
 
             <button
                 type="button"
-                class="action-button review-button"
+                id="reviewButton"
+                class="action-button"
                 onclick="reviewDocument()"
             >
                 🔍 Review
@@ -576,7 +412,8 @@
 
             <button
                 type="button"
-                class="action-button approve-button"
+                id="approveButton"
+                class="action-button"
                 onclick="approveDocument()"
             >
                 ✅ Approve
@@ -584,7 +421,8 @@
 
             <button
                 type="button"
-                class="action-button payment-button"
+                id="paymentButton"
+                class="action-button"
                 onclick="openPayment()"
             >
                 💳 Payment &amp; Download
@@ -592,17 +430,14 @@
 
             <button
                 type="button"
-                class="action-button customer-service-button"
+                id="customerServiceButton"
+                class="action-button"
                 onclick="contactCustomerService()"
             >
                 🆘 Customer Service
             </button>
 
         </section>
-
-        <!-- =================================================
-             MESSAGE INPUT
-        ================================================== -->
 
         <section class="input-area">
 
@@ -631,9 +466,13 @@
             onchange="handleFileSelected(event)"
         >
 
-        <!-- =================================================
-             FOOTER
-        ================================================== -->
+        <input
+            type="file"
+            id="voiceInput"
+            accept="audio/*"
+            capture="microphone"
+            onchange="handleVoiceSelected(event)"
+        >
 
         <div class="footer">
             Naija Pocket Business Center<br>
@@ -641,10 +480,26 @@
         </div>
 
     </main>
-
 </div>
 
 <script>
+
+/* ============================================================
+   CONFIGURATION
+============================================================ */
+
+const API_BASE =
+    "https://naija-pocket-business-center.onrender.com";
+
+const CHAT_ENDPOINT =
+    API_BASE + "/api/chat";
+
+const UPLOAD_ENDPOINT =
+    API_BASE + "/upload";
+
+const VOICE_PAGE_ENDPOINT =
+    API_BASE + "/voice";
+
 
 /* ============================================================
    CUSTOMER ID
@@ -652,7 +507,6 @@
 
 const CUSTOMER_ID_KEY =
     "naijaPocketCustomerId";
-
 
 function createPersistentId(prefix) {
 
@@ -666,7 +520,6 @@ function createPersistentId(prefix) {
             .substring(2, 12)
     );
 }
-
 
 function getCustomerId() {
 
@@ -691,32 +544,26 @@ function getCustomerId() {
     return customerId;
 }
 
-
 const customerId =
     getCustomerId();
 
 
 /* ============================================================
-   CORE STATE
+   STATE
 ============================================================ */
 
 let selectedService = "";
-
 let currentJobId = "";
-
-let intelligenceStarted = false;
-
 let requestInProgress = false;
-
+let intelligenceStarted = false;
+let conversation = [];
 let reconnectTimer = null;
 
 let pendingRequests = {};
 
-let conversation = [];
-
 
 /* ============================================================
-   STORAGE KEYS
+   STORAGE
 ============================================================ */
 
 const CONVERSATION_PREFIX =
@@ -741,7 +588,7 @@ const NETWORK_MESSAGE =
 
 
 /* ============================================================
-   SERVICE NORMALISATION
+   SERVICE
 ============================================================ */
 
 function normaliseService(service) {
@@ -753,7 +600,7 @@ function normaliseService(service) {
 
 
 /* ============================================================
-   JOB ID
+   JOB
 ============================================================ */
 
 function createJobId(service) {
@@ -772,11 +619,6 @@ function createJobId(service) {
     );
 }
 
-
-/* ============================================================
-   STORAGE KEYS
-============================================================ */
-
 function getJobStorageKey(service) {
 
     return (
@@ -788,7 +630,6 @@ function getJobStorageKey(service) {
         )
     );
 }
-
 
 function getConversationStorageKey(service) {
 
@@ -802,483 +643,39 @@ function getConversationStorageKey(service) {
     );
 }
 
-
-/* ============================================================
-   LOAD PENDING REQUESTS
-============================================================ */
-
-function loadPendingRequests() {
-
-    pendingRequests = {};
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                PENDING_KEY
-            );
-
-        if (!saved) {
-
-            return;
-        }
-
-        const parsed =
-            JSON.parse(saved);
-
-        if (
-            parsed &&
-            typeof parsed === "object"
-        ) {
-
-            pendingRequests =
-                parsed;
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Pending request restore error:",
-            error
-        );
-
-        pendingRequests = {};
-    }
-}
-
-
-/* ============================================================
-   SAVE PENDING REQUESTS
-============================================================ */
-
-function savePendingRequests() {
+function saveCurrentJob() {
 
     try {
 
         localStorage.setItem(
-            PENDING_KEY,
-            JSON.stringify(
-                pendingRequests
-            )
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Pending request save error:",
-            error
-        );
-    }
-}
-
-
-/* ============================================================
-   SAVE PENDING REQUEST
-============================================================ */
-
-function savePendingRequest(request) {
-
-    if (
-        !request ||
-        !request.requestId
-    ) {
-
-        return;
-    }
-
-    /*
-       Pending requests are ONLY for temporary network
-       failures.
-
-       A server/application failure must NEVER be stored
-       as a permanent pending request.
-    */
-
-    request.pendingReason =
-        "network";
-
-    pendingRequests[
-        request.requestId
-    ] = request;
-
-    savePendingRequests();
-}
-
-
-/* ============================================================
-   CLEAR PENDING REQUEST
-============================================================ */
-
-function clearPendingRequest(requestId) {
-
-    if (!requestId) {
-
-        return;
-    }
-
-    delete pendingRequests[
-        requestId
-    ];
-
-    savePendingRequests();
-}
-
-
-/* ============================================================
-   GET ALL PENDING REQUESTS
-============================================================ */
-
-function getPendingRequestList() {
-
-    return Object.values(
-        pendingRequests
-    ).filter(
-        function(request) {
-
-            return (
-                request &&
-                request.requestId &&
-                request.customerId ===
-                    customerId &&
-                request.message !== undefined
-            );
-        }
-    );
-}
-
-
-/* ============================================================
-   GET PENDING REQUEST FOR CURRENT JOB
-   IMPORTANT:
-   OLD REQUESTS FROM OTHER JOBS DO NOT BLOCK THIS JOB.
-============================================================ */
-
-function getPendingRequestForCurrentJob() {
-
-    const requests =
-        getPendingRequestList();
-
-    for (
-        const request of requests
-    ) {
-
-        if (
-            request.service ===
-                selectedService &&
-
-            request.jobId ===
-                currentJobId
-        ) {
-
-            return request;
-        }
-    }
-
-    return null;
-}
-
-
-/* ============================================================
-   CLEAN OLD / INVALID PENDING REQUESTS
-============================================================ */
-
-function cleanInvalidPendingRequests() {
-
-    let changed = false;
-
-    const requests =
-        getPendingRequestList();
-
-    for (
-        const request of requests
-    ) {
-
-        /*
-           Any request without a valid service/job identity
-           cannot safely be resumed.
-        */
-
-        if (
-            !request.service ||
-            !request.jobId
-        ) {
-
-            delete pendingRequests[
-                request.requestId
-            ];
-
-            changed = true;
-        }
-    }
-
-    if (changed) {
-
-        savePendingRequests();
-    }
-}
-
-
-/* ============================================================
-   LOAD CONVERSATION
-============================================================ */
-
-function loadConversationForService(service) {
-
-    conversation = [];
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                getConversationStorageKey(
-                    service
-                )
-            );
-
-        if (!saved) {
-
-            return;
-        }
-
-        const parsed =
-            JSON.parse(saved);
-
-        if (
-            Array.isArray(parsed)
-        ) {
-
-            conversation =
-                parsed;
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Conversation restore error:",
-            error
-        );
-
-        conversation = [];
-    }
-}
-
-
-/* ============================================================
-   SAVE CONVERSATION
-============================================================ */
-
-function saveConversation() {
-
-    try {
-
-        localStorage.setItem(
-
-            getConversationStorageKey(
+            getJobStorageKey(
                 selectedService
             ),
+            JSON.stringify({
 
-            JSON.stringify(
-                conversation
-            )
+                customerId:
+                    customerId,
+
+                jobId:
+                    currentJobId,
+
+                service:
+                    selectedService,
+
+                updatedAt:
+                    Date.now()
+
+            })
         );
 
     } catch (error) {
 
         console.error(
-            "Conversation save error:",
+            "Job save error:",
             error
         );
     }
 }
-
-
-/* ============================================================
-   RENDER SAVED CONVERSATION
-============================================================ */
-
-function restoreConversationToScreen() {
-
-    const chatArea =
-        document.getElementById(
-            "chatArea"
-        );
-
-    chatArea.innerHTML = "";
-
-    for (
-        const item of conversation
-    ) {
-
-        renderMessage(
-            item.sender,
-            item.message,
-            false
-        );
-    }
-
-    scrollChatToBottom();
-}
-
-
-/* ============================================================
-   RENDER MESSAGE
-============================================================ */
-
-function renderMessage(
-    sender,
-    message,
-    save = true
-) {
-
-    const chatArea =
-        document.getElementById(
-            "chatArea"
-        );
-
-    const wrapper =
-        document.createElement(
-            "div"
-        );
-
-    wrapper.className =
-        "message " +
-        (
-            sender === "You"
-                ? "you"
-                : "ada"
-        );
-
-    const bubble =
-        document.createElement(
-            "div"
-        );
-
-    bubble.className =
-        "bubble";
-
-    bubble.innerText =
-        message;
-
-    wrapper.appendChild(
-        bubble
-    );
-
-    chatArea.appendChild(
-        wrapper
-    );
-
-    if (save) {
-
-        conversation.push({
-
-            sender:
-                sender,
-
-            message:
-                message,
-
-            timestamp:
-                Date.now()
-        });
-
-        saveConversation();
-    }
-
-    scrollChatToBottom();
-}
-
-
-/* ============================================================
-   ADD MESSAGE
-============================================================ */
-
-function addMessage(
-    sender,
-    message
-) {
-
-    renderMessage(
-        sender,
-        message,
-        true
-    );
-}
-
-
-/* ============================================================
-   SCROLL
-============================================================ */
-
-function scrollChatToBottom() {
-
-    const chatArea =
-        document.getElementById(
-            "chatArea"
-        );
-
-    requestAnimationFrame(
-        function() {
-
-            chatArea.scrollTop =
-                chatArea.scrollHeight;
-        }
-    );
-}
-
-
-/* ============================================================
-   GET SELECTED SERVICE
-============================================================ */
-
-function getSelectedService() {
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    selectedService =
-        normaliseService(
-            params.get("service")
-        );
-
-    if (!selectedService) {
-
-        selectedService =
-            normaliseService(
-                localStorage.getItem(
-                    SERVICE_KEY
-                )
-            );
-    }
-
-    if (!selectedService) {
-
-        selectedService =
-            "Service not selected";
-    }
-
-    document.getElementById(
-        "selectedService"
-    ).innerText =
-        selectedService;
-
-    localStorage.setItem(
-        SERVICE_KEY,
-        selectedService
-    );
-
-    loadConversationForService(
-        selectedService
-    );
-
-    loadOrCreateCurrentJob();
-}
-
-
-/* ============================================================
-   LOAD / CREATE CURRENT JOB
-============================================================ */
 
 function loadOrCreateCurrentJob() {
 
@@ -1331,43 +728,282 @@ function loadOrCreateCurrentJob() {
 
 
 /* ============================================================
-   SAVE CURRENT JOB
+   CONVERSATION
 ============================================================ */
 
-function saveCurrentJob() {
+function loadConversationForService(service) {
+
+    conversation = [];
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                getConversationStorageKey(
+                    service
+                )
+            );
+
+        if (!saved) {
+            return;
+        }
+
+        const parsed =
+            JSON.parse(saved);
+
+        if (
+            Array.isArray(parsed)
+        ) {
+
+            conversation =
+                parsed;
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Conversation restore error:",
+            error
+        );
+
+        conversation = [];
+    }
+}
+
+function saveConversation() {
 
     try {
 
         localStorage.setItem(
-
-            getJobStorageKey(
+            getConversationStorageKey(
                 selectedService
             ),
-
-            JSON.stringify({
-
-                customerId:
-                    customerId,
-
-                jobId:
-                    currentJobId,
-
-                service:
-                    selectedService,
-
-                updatedAt:
-                    Date.now()
-
-            })
+            JSON.stringify(
+                conversation
+            )
         );
 
     } catch (error) {
 
         console.error(
-            "Job save error:",
+            "Conversation save error:",
             error
         );
     }
+}
+
+function renderMessage(
+    sender,
+    message,
+    save = true
+) {
+
+    const chatArea =
+        document.getElementById(
+            "chatArea"
+        );
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    let messageClass = "ada";
+
+    if (sender === "You") {
+        messageClass = "you";
+    }
+
+    if (sender === "System") {
+        messageClass = "system";
+    }
+
+    wrapper.className =
+        "message " +
+        messageClass;
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+    bubble.className =
+        "bubble";
+
+    bubble.innerText =
+        message;
+
+    wrapper.appendChild(
+        bubble
+    );
+
+    chatArea.appendChild(
+        wrapper
+    );
+
+    if (save) {
+
+        conversation.push({
+
+            sender:
+                sender,
+
+            message:
+                message,
+
+            timestamp:
+                Date.now()
+
+        });
+
+        saveConversation();
+    }
+
+    scrollChatToBottom();
+}
+
+function addMessage(
+    sender,
+    message
+) {
+
+    if (
+        !message ||
+        !String(message).trim()
+    ) {
+        return;
+    }
+
+    renderMessage(
+        sender,
+        String(message).trim(),
+        true
+    );
+}
+
+function restoreConversationToScreen() {
+
+    const chatArea =
+        document.getElementById(
+            "chatArea"
+        );
+
+    chatArea.innerHTML = "";
+
+    for (
+        const item of conversation
+    ) {
+
+        if (
+            !item ||
+            !item.message
+        ) {
+            continue;
+        }
+
+        renderMessage(
+            item.sender,
+            item.message,
+            false
+        );
+    }
+
+    scrollChatToBottom();
+}
+
+function scrollChatToBottom() {
+
+    const chatArea =
+        document.getElementById(
+            "chatArea"
+        );
+
+    requestAnimationFrame(
+        function() {
+
+            chatArea.scrollTop =
+                chatArea.scrollHeight;
+
+        }
+    );
+}
+
+
+/* ============================================================
+   SELECTED SERVICE
+============================================================ */
+
+function getSelectedService() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    selectedService =
+        normaliseService(
+            params.get("service")
+        );
+
+    if (!selectedService) {
+
+        selectedService =
+            normaliseService(
+                localStorage.getItem(
+                    SERVICE_KEY
+                )
+            );
+    }
+
+    if (!selectedService) {
+
+        selectedService =
+            "Service not selected";
+    }
+
+    document.getElementById(
+        "selectedService"
+    ).innerText =
+        selectedService;
+
+    localStorage.setItem(
+        SERVICE_KEY,
+        selectedService
+    );
+
+    loadConversationForService(
+        selectedService
+    );
+
+    loadOrCreateCurrentJob();
+}
+
+
+/* ============================================================
+   PRICE
+============================================================ */
+
+function updatePrice(result) {
+
+    if (
+        !result ||
+        result.price === undefined ||
+        result.price === null
+    ) {
+        return;
+    }
+
+    const price =
+        String(
+            result.price
+        );
+
+    document.getElementById(
+        "servicePrice"
+    ).innerText =
+        price.includes("₦")
+            ? "SERVICE PRICE: " + price
+            : "SERVICE PRICE: ₦" + price;
 }
 
 
@@ -1390,7 +1026,6 @@ function showConnectionStatus(message) {
     );
 }
 
-
 function hideConnectionStatus() {
 
     const status =
@@ -1407,7 +1042,7 @@ function hideConnectionStatus() {
 
 
 /* ============================================================
-   REQUEST ID
+   REQUEST IDS
 ============================================================ */
 
 function createRequestId() {
@@ -1421,11 +1056,6 @@ function createRequestId() {
             .substring(2, 10)
     );
 }
-
-
-/* ============================================================
-   CREATE REQUEST
-============================================================ */
 
 function createRequest(
     message,
@@ -1456,22 +1086,178 @@ function createRequest(
             Date.now(),
 
         attempts:
-            0,
+            0
 
-        pendingReason:
-            "network"
     };
 }
 
 
 /* ============================================================
-   NETWORK ERROR
+   PENDING REQUESTS
+============================================================ */
+
+function loadPendingRequests() {
+
+    pendingRequests = {};
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                PENDING_KEY
+            );
+
+        if (!saved) {
+            return;
+        }
+
+        const parsed =
+            JSON.parse(saved);
+
+        if (
+            parsed &&
+            typeof parsed === "object"
+        ) {
+
+            pendingRequests =
+                parsed;
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Pending request restore error:",
+            error
+        );
+    }
+}
+
+function savePendingRequests() {
+
+    try {
+
+        localStorage.setItem(
+            PENDING_KEY,
+            JSON.stringify(
+                pendingRequests
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Pending request save error:",
+            error
+        );
+    }
+}
+
+function savePendingRequest(request) {
+
+    if (
+        !request ||
+        !request.requestId
+    ) {
+        return;
+    }
+
+    pendingRequests[
+        request.requestId
+    ] = request;
+
+    savePendingRequests();
+}
+
+function clearPendingRequest(requestId) {
+
+    if (!requestId) {
+        return;
+    }
+
+    delete pendingRequests[
+        requestId
+    ];
+
+    savePendingRequests();
+}
+
+function getPendingRequestList() {
+
+    return Object.values(
+        pendingRequests
+    ).filter(
+        function(request) {
+
+            return (
+                request &&
+                request.requestId &&
+                request.customerId ===
+                    customerId &&
+                request.message !==
+                    undefined
+            );
+        }
+    );
+}
+
+function getPendingRequestForCurrentJob() {
+
+    const requests =
+        getPendingRequestList();
+
+    for (
+        const request of requests
+    ) {
+
+        if (
+            request.service ===
+                selectedService &&
+            request.jobId ===
+                currentJobId
+        ) {
+
+            return request;
+        }
+    }
+
+    return null;
+}
+
+function cleanInvalidPendingRequests() {
+
+    let changed = false;
+
+    for (
+        const request of
+        getPendingRequestList()
+    ) {
+
+        if (
+            !request.service ||
+            !request.jobId
+        ) {
+
+            delete pendingRequests[
+                request.requestId
+            ];
+
+            changed = true;
+        }
+    }
+
+    if (changed) {
+        savePendingRequests();
+    }
+}
+
+
+/* ============================================================
+   NETWORK
 ============================================================ */
 
 function isNetworkError(error) {
 
     if (!error) {
-
         return false;
     }
 
@@ -1479,7 +1265,6 @@ function isNetworkError(error) {
         error.name ===
         "AbortError"
     ) {
-
         return true;
     }
 
@@ -1487,7 +1272,6 @@ function isNetworkError(error) {
         error instanceof
         TypeError
     ) {
-
         return true;
     }
 
@@ -1497,25 +1281,14 @@ function isNetworkError(error) {
         ).toLowerCase();
 
     return (
-
         text.includes("network") ||
-
         text.includes("failed to fetch") ||
-
         text.includes("connection") ||
-
         text.includes("timeout") ||
-
         text.includes("offline") ||
-
         text.includes("fetch")
     );
 }
-
-
-/* ============================================================
-   WAIT
-============================================================ */
 
 function wait(milliseconds) {
 
@@ -1526,25 +1299,26 @@ function wait(milliseconds) {
                 resolve,
                 milliseconds
             );
+
         }
     );
 }
 
 
 /* ============================================================
-   FASTAPI REQUEST
+   CHAT REQUEST
 ============================================================ */
 
 async function requestFastAPI(request) {
 
-    const abortController =
+    const controller =
         new AbortController();
 
     const timeout =
         setTimeout(
             function() {
 
-                abortController.abort();
+                controller.abort();
 
             },
             30000
@@ -1554,19 +1328,14 @@ async function requestFastAPI(request) {
 
         const response =
             await fetch(
-
-                "https://naija-pocket-business-center.onrender.com/api/chat",
-
+                CHAT_ENDPOINT,
                 {
-
                     method:
                         "POST",
 
                     headers: {
-
                         "Content-Type":
                             "application/json"
-
                     },
 
                     body:
@@ -1596,7 +1365,7 @@ async function requestFastAPI(request) {
                         }),
 
                     signal:
-                        abortController.signal
+                        controller.signal
                 }
             );
 
@@ -1609,52 +1378,21 @@ async function requestFastAPI(request) {
 
         } catch (error) {
 
-            const invalidResponse =
+            const invalid =
                 new Error(
                     "Server returned an invalid response."
                 );
 
-            invalidResponse.serverError =
+            invalid.serverError =
                 true;
 
-            invalidResponse.status =
+            invalid.status =
                 response.status;
 
-            throw invalidResponse;
+            throw invalid;
         }
 
-
-        /* ====================================================
-           PRICE
-        ==================================================== */
-
-        if (
-            result &&
-            result.price !== undefined
-        ) {
-
-            const price =
-                String(
-                    result.price
-                );
-
-            document.getElementById(
-                "servicePrice"
-            ).innerText =
-
-                price.includes("₦")
-
-                    ? "SERVICE PRICE: " +
-                      price
-
-                    : "SERVICE PRICE: ₦" +
-                      price;
-        }
-
-
-        /* ====================================================
-           SUCCESS
-        ==================================================== */
+        updatePrice(result);
 
         if (
             response.ok &&
@@ -1663,7 +1401,6 @@ async function requestFastAPI(request) {
         ) {
 
             return {
-
                 reply:
                     result.reply ||
                     result.response ||
@@ -1674,11 +1411,6 @@ async function requestFastAPI(request) {
                     result
             };
         }
-
-
-        /* ====================================================
-           SERVER ERROR
-        ==================================================== */
 
         const serverError =
             (
@@ -1701,6 +1433,9 @@ async function requestFastAPI(request) {
         error.status =
             response.status;
 
+        error.result =
+            result;
+
         throw error;
 
     } finally {
@@ -1713,7 +1448,7 @@ async function requestFastAPI(request) {
 
 
 /* ============================================================
-   SEND TO ADA
+   SEND CHAT REQUEST
 ============================================================ */
 
 async function sendToAda(
@@ -1727,28 +1462,14 @@ async function sendToAda(
             eventName
         );
 
-
-    /*
-       IMPORTANT:
-
-       Do NOT immediately store every request.
-
-       We only store it if a temporary network failure
-       actually occurs.
-    */
-
     const retryDelays = [
-
         1500,
         3000,
         6000,
         10000
-
     ];
 
-    let lastError =
-        null;
-
+    let lastError = null;
 
     for (
         let attempt = 0;
@@ -1770,7 +1491,6 @@ async function sendToAda(
             request.attempts =
                 attempt + 1;
 
-
             if (
                 attempt > 0
             ) {
@@ -1780,19 +1500,10 @@ async function sendToAda(
                 );
             }
 
-
             const result =
                 await requestFastAPI(
                     request
                 );
-
-
-            /*
-               SUCCESS.
-
-               There is no pending request to clear
-               because successful requests were never stored.
-            */
 
             hideConnectionStatus();
 
@@ -1804,34 +1515,17 @@ async function sendToAda(
                 error;
 
             console.error(
-                "Business Center request attempt " +
+                "Ada request attempt " +
                 (attempt + 1) +
                 " failed:",
                 error
             );
 
-
-            /*
-               SERVER ERROR:
-
-               NEVER save it as pending.
-
-               NEVER let it block a new job.
-            */
-
             if (
                 error.serverError
             ) {
-
                 break;
             }
-
-
-            /*
-               NETWORK ERROR:
-
-               Retry temporarily.
-            */
 
             if (
                 attempt <
@@ -1851,13 +1545,6 @@ async function sendToAda(
                 continue;
             }
 
-
-            /*
-               All temporary retries failed.
-
-               NOW and ONLY NOW store the request.
-            */
-
             savePendingRequest(
                 request
             );
@@ -1866,11 +1553,9 @@ async function sendToAda(
         }
     }
 
-
     showConnectionStatus(
         NETWORK_MESSAGE
     );
-
 
     throw (
         lastError ||
@@ -1890,13 +1575,8 @@ async function startAdaIntelligence() {
     if (
         intelligenceStarted
     ) {
-
         return;
     }
-
-    intelligenceStarted =
-        true;
-
 
     if (
         !selectedService ||
@@ -1905,44 +1585,32 @@ async function startAdaIntelligence() {
     ) {
 
         addMessage(
-            "Business Center",
+            "System",
             "Please return to the services and select the service you need."
         );
 
         return;
     }
 
-
-    /*
-       Existing conversation means Ada already started
-       this job.
-
-       Do not send another welcome message.
-    */
-
     if (
         conversation.length > 0
+    ) {
+
+        intelligenceStarted =
+            true;
+
+        return;
+    }
+
+    if (
+        getPendingRequestForCurrentJob()
     ) {
 
         return;
     }
 
-
-    /*
-       ONLY the current service/job can affect startup.
-
-       Old pending requests from another service/job
-       are completely ignored here.
-    */
-
-    const currentPending =
-        getPendingRequestForCurrentJob();
-
-    if (currentPending) {
-
-        return;
-    }
-
+    intelligenceStarted =
+        true;
 
     try {
 
@@ -1956,7 +1624,6 @@ async function startAdaIntelligence() {
                 "service_selected"
             );
 
-
         addMessage(
             "Business Center",
             response
@@ -1969,13 +1636,15 @@ async function startAdaIntelligence() {
             error
         );
 
-
         if (
             !isNetworkError(error)
         ) {
 
+            intelligenceStarted =
+                false;
+
             addMessage(
-                "Business Center",
+                "System",
                 "We could not start your request at the moment. Please try again."
             );
         }
@@ -1984,7 +1653,7 @@ async function startAdaIntelligence() {
 
 
 /* ============================================================
-   SEND CUSTOMER MESSAGE
+   CUSTOMER MESSAGE
 ============================================================ */
 
 async function sendMessage() {
@@ -1992,17 +1661,15 @@ async function sendMessage() {
     if (
         requestInProgress
     ) {
-
         return;
     }
-
 
     const input =
         document.getElementById(
             "messageInput"
         );
 
-    const sendButton =
+    const button =
         document.getElementById(
             "sendButton"
         );
@@ -2010,42 +1677,33 @@ async function sendMessage() {
     const message =
         input.value.trim();
 
-
     if (!message) {
-
         return;
     }
 
-
     requestInProgress =
         true;
-
 
     addMessage(
         "You",
         message
     );
 
-
     input.value = "";
 
-    sendButton.disabled =
+    button.disabled =
         true;
 
-    sendButton.innerText =
+    button.innerText =
         "WAIT...";
-
 
     try {
 
         const response =
             await sendToAda(
-
                 message,
-
                 "customer_message"
             );
-
 
         addMessage(
             "Business Center",
@@ -2059,13 +1717,12 @@ async function sendMessage() {
             error
         );
 
-
         if (
             !isNetworkError(error)
         ) {
 
             addMessage(
-                "Business Center",
+                "System",
                 "I could not complete that request right now. Please try again."
             );
         }
@@ -2075,10 +1732,10 @@ async function sendMessage() {
         requestInProgress =
             false;
 
-        sendButton.disabled =
+        button.disabled =
             false;
 
-        sendButton.innerText =
+        button.innerText =
             "SEND";
     }
 }
@@ -2110,10 +1767,16 @@ document
 
 
 /* ============================================================
-   UPLOAD
+   REAL FILE UPLOAD
 ============================================================ */
 
 function openFilePicker() {
+
+    if (
+        requestInProgress
+    ) {
+        return;
+    }
 
     document
         .getElementById(
@@ -2122,6 +1785,117 @@ function openFilePicker() {
         .click();
 }
 
+async function uploadFileToBackend(file) {
+
+    const formData =
+        new FormData();
+
+    /*
+       These fields keep the uploaded document tied
+       to the same customer/job/service that Ada is
+       already handling.
+    */
+
+    formData.append(
+        "file",
+        file
+    );
+
+    formData.append(
+        "customer_id",
+        customerId
+    );
+
+    formData.append(
+        "job_id",
+        currentJobId
+    );
+
+    formData.append(
+        "service",
+        selectedService
+    );
+
+    const controller =
+        new AbortController();
+
+    const timeout =
+        setTimeout(
+            function() {
+
+                controller.abort();
+
+            },
+            60000
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                UPLOAD_ENDPOINT,
+                {
+                    method:
+                        "POST",
+
+                    body:
+                        formData,
+
+                    signal:
+                        controller.signal
+                }
+            );
+
+        let result = null;
+
+        try {
+
+            result =
+                await response.json();
+
+        } catch (error) {
+
+            result = null;
+        }
+
+        if (
+            !response.ok
+        ) {
+
+            const error =
+                new Error(
+                    (
+                        result &&
+                        (
+                            result.error ||
+                            result.message
+                        )
+                    ) ||
+                    "The file could not be uploaded."
+                );
+
+            error.serverError =
+                true;
+
+            error.status =
+                response.status;
+
+            throw error;
+        }
+
+        return (
+            result || {
+                success: true
+            }
+        );
+
+    } finally {
+
+        clearTimeout(
+            timeout
+        );
+    }
+}
 
 async function handleFileSelected(event) {
 
@@ -2129,32 +1903,59 @@ async function handleFileSelected(event) {
         event.target.files[0];
 
     if (!file) {
+        return;
+    }
+
+    if (
+        requestInProgress
+    ) {
+
+        event.target.value = "";
 
         return;
     }
 
+    requestInProgress =
+        true;
 
     addMessage(
         "You",
-        "I have selected " +
+        "📎 Uploading: " +
         file.name
     );
 
+    showConnectionStatus(
+        "Uploading your file..."
+    );
 
     try {
+
+        const result =
+            await uploadFileToBackend(
+                file
+            );
+
+        hideConnectionStatus();
+
+        /*
+           The backend has now received the actual file.
+
+           We tell Ada what happened through the normal
+           ONE-request chat path so the conversation can
+           continue naturally.
+        */
 
         const response =
             await sendToAda(
 
-                "The customer has selected a file named '" +
+                "The customer has successfully uploaded the file '" +
                 file.name +
-                "' for the active '" +
+                "'. The uploaded file is now available to the Business Center for the active '" +
                 selectedService +
-                "' service. Continue helping with the selected service.",
+                "' service. Continue the customer's request naturally. Use the uploaded document context if available. Do not ask the customer to upload the same file again.",
 
-                "file_selected"
+                "file_uploaded"
             );
-
 
         addMessage(
             "Business Center",
@@ -2164,22 +1965,32 @@ async function handleFileSelected(event) {
     } catch (error) {
 
         console.error(
-            "FILE REQUEST ERROR:",
+            "REAL FILE UPLOAD ERROR:",
             error
         );
 
-
         if (
-            !isNetworkError(error)
+            isNetworkError(error)
         ) {
 
+            showConnectionStatus(
+                NETWORK_MESSAGE
+            );
+
+        } else {
+
+            hideConnectionStatus();
+
             addMessage(
-                "Business Center",
-                "I could not continue with that file right now. Please try again."
+                "System",
+                "The file could not be uploaded. Please try again."
             );
         }
 
     } finally {
+
+        requestInProgress =
+            false;
 
         event.target.value = "";
     }
@@ -2192,9 +2003,38 @@ async function handleFileSelected(event) {
 
 function openVoice() {
 
-    addMessage(
-        "Business Center",
-        "Voice input can be used when you would rather speak than type."
+    if (
+        requestInProgress
+    ) {
+        return;
+    }
+
+    /*
+       Open the existing phone/VPS voice interface.
+
+       This preserves the established voice workflow rather
+       than pretending that a voice recording has already
+       been transcribed.
+    */
+
+    const voiceUrl =
+        VOICE_PAGE_ENDPOINT +
+        "?customer_id=" +
+        encodeURIComponent(
+            customerId
+        ) +
+        "&job_id=" +
+        encodeURIComponent(
+            currentJobId
+        ) +
+        "&service=" +
+        encodeURIComponent(
+            selectedService
+        );
+
+    window.open(
+        voiceUrl,
+        "_blank"
     );
 }
 
@@ -2209,7 +2049,7 @@ async function reviewDocument() {
 
         "I want to review my work.",
 
-        "The customer wants to review the current work. Continue the active service request and explain the next appropriate step.",
+        "The customer wants to review the current work. Continue the active service request and explain the next appropriate step. Do not claim that a document has been generated unless the application has actually generated it.",
 
         "review"
     );
@@ -2226,7 +2066,7 @@ async function approveDocument() {
 
         "I approve the work.",
 
-        "The customer has approved the current work. Continue with the next appropriate step. Do not claim payment has been completed.",
+        "The customer has approved the current work. Continue with the next appropriate application step. Do not claim payment has been completed unless payment is confirmed.",
 
         "approve"
     );
@@ -2234,7 +2074,7 @@ async function approveDocument() {
 
 
 /* ============================================================
-   PAYMENT
+   PAYMENT / DOWNLOAD
 ============================================================ */
 
 async function openPayment() {
@@ -2243,7 +2083,7 @@ async function openPayment() {
 
         "I want to continue with Payment & Download.",
 
-        "The customer wants to continue with Payment and Download. Explain the next appropriate payment or delivery step. Do not claim payment is completed unless confirmed.",
+        "The customer wants to continue with Payment & Download. Explain the next appropriate payment or delivery step. Do not claim that payment has been completed unless the application confirms it.",
 
         "payment_download"
     );
@@ -2260,7 +2100,7 @@ async function contactCustomerService() {
 
         "I want help from Customer Service.",
 
-        "The customer wants Customer Service assistance. Ask what help the customer needs.",
+        "The customer wants Customer Service assistance. Ask what help the customer needs and continue appropriately.",
 
         "customer_service"
     );
@@ -2280,31 +2120,24 @@ async function performBusinessAction(
     if (
         requestInProgress
     ) {
-
         return;
     }
 
-
     requestInProgress =
         true;
-
 
     addMessage(
         "You",
         customerMessage
     );
 
-
     try {
 
         const response =
             await sendToAda(
-
                 controllerMessage,
-
                 eventName
             );
-
 
         addMessage(
             "Business Center",
@@ -2319,13 +2152,12 @@ async function performBusinessAction(
             error
         );
 
-
         if (
             !isNetworkError(error)
         ) {
 
             addMessage(
-                "Business Center",
+                "System",
                 "I could not complete that step right now. Please try again."
             );
         }
@@ -2339,7 +2171,7 @@ async function performBusinessAction(
 
 
 /* ============================================================
-   RESUME CURRENT JOB'S SAVED REQUEST ONLY
+   RESUME CURRENT JOB
 ============================================================ */
 
 async function resumeCurrentJobPendingRequest() {
@@ -2347,20 +2179,9 @@ async function resumeCurrentJobPendingRequest() {
     const request =
         getPendingRequestForCurrentJob();
 
-
-    /*
-       NO CURRENT-JOB REQUEST?
-
-       That is completely fine.
-
-       Start a normal new conversation.
-    */
-
     if (!request) {
-
         return false;
     }
-
 
     if (
         !navigator.onLine
@@ -2373,10 +2194,8 @@ async function resumeCurrentJobPendingRequest() {
         return true;
     }
 
-
     requestInProgress =
         true;
-
 
     try {
 
@@ -2384,27 +2203,18 @@ async function resumeCurrentJobPendingRequest() {
             "Your connection is back. Continuing your saved request..."
         );
 
-
         const result =
             await requestFastAPI(
                 request
             );
 
-
         clearPendingRequest(
             request.requestId
         );
 
-
-        /*
-           Only display the response in this exact
-           service/job.
-        */
-
         if (
             selectedService ===
                 request.service &&
-
             currentJobId ===
                 request.jobId
         ) {
@@ -2414,7 +2224,6 @@ async function resumeCurrentJobPendingRequest() {
                 result.reply
             );
         }
-
 
         hideConnectionStatus();
 
@@ -2426,14 +2235,6 @@ async function resumeCurrentJobPendingRequest() {
             "CURRENT JOB RESUME ERROR:",
             error
         );
-
-
-        /*
-           Server/application errors are permanently removed
-           from the retry queue.
-
-           They cannot block the customer anymore.
-        */
 
         if (
             error.serverError
@@ -2447,13 +2248,6 @@ async function resumeCurrentJobPendingRequest() {
 
             return false;
         }
-
-
-        /*
-           Network failure:
-
-           Keep it pending.
-        */
 
         if (
             isNetworkError(error)
@@ -2470,7 +2264,6 @@ async function resumeCurrentJobPendingRequest() {
             return true;
         }
 
-
         clearPendingRequest(
             request.requestId
         );
@@ -2488,9 +2281,7 @@ async function resumeCurrentJobPendingRequest() {
 
 
 /* ============================================================
-   RESUME OLD REQUESTS IN BACKGROUND
-   IMPORTANT:
-   They NEVER BLOCK THE CURRENT SERVICE.
+   OLD REQUESTS
 ============================================================ */
 
 async function resumeOtherPendingRequests() {
@@ -2498,36 +2289,24 @@ async function resumeOtherPendingRequests() {
     const requests =
         getPendingRequestList();
 
-
     for (
         const request of requests
     ) {
 
-        /*
-           Ignore the current job here.
-
-           It is handled separately.
-        */
-
         if (
             request.service ===
                 selectedService &&
-
             request.jobId ===
                 currentJobId
         ) {
-
             continue;
         }
-
 
         if (
             !navigator.onLine
         ) {
-
             return;
         }
-
 
         try {
 
@@ -2536,17 +2315,9 @@ async function resumeOtherPendingRequests() {
                     request
                 );
 
-
-            /*
-               Successful old request.
-
-               Remove it.
-            */
-
             clearPendingRequest(
                 request.requestId
             );
-
 
             console.log(
                 "Old saved request completed:",
@@ -2562,135 +2333,56 @@ async function resumeOtherPendingRequests() {
                 error
             );
 
-
-            /*
-               NEVER allow an old server error to remain
-               capable of blocking the dashboard.
-            */
-
             if (
-                error.serverError
+                error.serverError ||
+                !isNetworkError(error)
             ) {
 
                 clearPendingRequest(
                     request.requestId
                 );
-
-                continue;
             }
-
-
-            /*
-               Network error remains pending.
-            */
-
-            if (
-                isNetworkError(error)
-            ) {
-
-                continue;
-            }
-
-
-            /*
-               Unknown permanent error.
-
-               Remove it rather than trapping the dashboard.
-            */
-
-            clearPendingRequest(
-                request.requestId
-            );
         }
     }
 }
 
 
 /* ============================================================
-   STARTUP WORKFLOW
+   STARTUP
 ============================================================ */
 
 async function initialiseWorkspace() {
-
-    /*
-       Load pending requests.
-    */
 
     loadPendingRequests();
 
     cleanInvalidPendingRequests();
 
-
-    /*
-       Load selected service and current job.
-    */
-
     getSelectedService();
 
-
-    /*
-       Restore conversation for this service.
-    */
-
     restoreConversationToScreen();
-
-
-    /*
-       CURRENT JOB GETS PRIORITY.
-
-       An old request belonging to another service/job
-       cannot stop this service from starting.
-    */
 
     const resumed =
         await resumeCurrentJobPendingRequest();
 
+    if (resumed) {
 
-    if (
-        resumed
+        intelligenceStarted =
+            true;
+
+    } else if (
+        conversation.length > 0
     ) {
-
-        /*
-           Current request is being resumed.
-
-           Do not start another service-selection request.
-        */
 
         intelligenceStarted =
             true;
 
     } else {
 
-        /*
-           If this service already has conversation history,
-           continue it.
+        intelligenceStarted =
+            false;
 
-           If it has no history, start Ada normally.
-        */
-
-        if (
-            conversation.length > 0
-        ) {
-
-            intelligenceStarted =
-                true;
-
-        } else {
-
-            intelligenceStarted =
-                false;
-
-            await startAdaIntelligence();
-        }
+        await startAdaIntelligence();
     }
-
-
-    /*
-       Old requests from other services/jobs can be handled
-       separately.
-
-       They NEVER block the current customer experience.
-    */
 
     setTimeout(
         function() {
@@ -2704,7 +2396,7 @@ async function initialiseWorkspace() {
 
 
 /* ============================================================
-   NETWORK RETURNS
+   NETWORK RESTORED
 ============================================================ */
 
 window.addEventListener(
@@ -2715,11 +2407,9 @@ window.addEventListener(
             "Connection restored. Continuing saved work..."
         );
 
-
         clearTimeout(
             reconnectTimer
         );
-
 
         reconnectTimer =
             setTimeout(
@@ -2728,12 +2418,9 @@ window.addEventListener(
                     const resumed =
                         await resumeCurrentJobPendingRequest();
 
-
                     if (!resumed) {
-
                         hideConnectionStatus();
                     }
-
 
                     resumeOtherPendingRequests();
 
@@ -2745,7 +2432,7 @@ window.addEventListener(
 
 
 /* ============================================================
-   NETWORK GOES OFFLINE
+   NETWORK LOST
 ============================================================ */
 
 window.addEventListener(
@@ -2760,7 +2447,7 @@ window.addEventListener(
 
 
 /* ============================================================
-   PERIODIC CURRENT-JOB RECOVERY
+   PERIODIC RECOVERY
 ============================================================ */
 
 setInterval(
@@ -2781,7 +2468,7 @@ setInterval(
 
 
 /* ============================================================
-   SAVE BEFORE PAGE HIDDEN
+   SAVE
 ============================================================ */
 
 document.addEventListener(
@@ -2801,11 +2488,6 @@ document.addEventListener(
         }
     }
 );
-
-
-/* ============================================================
-   BEFORE PAGE UNLOAD
-============================================================ */
 
 window.addEventListener(
     "beforeunload",
