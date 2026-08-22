@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
-    <title>Naija Pocket Business Center</title>
+
+    <title>Ada — Naija Pocket Business Center</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -20,807 +23,828 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            background: #000;
+            color: #fff;
+            font-family: Inter, Arial, sans-serif;
         }
 
         body {
-            background: #0B0B0B;
-            color: white;
-            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
         }
 
-        .page {
+        /* ==================================================
+           HEADER
+        ================================================== */
+
+        .top-header {
+            flex: 0 0 auto;
+
             width: 100%;
-            height: 100vh;
-            height: 100dvh;
+
             padding:
-                max(8px, env(safe-area-inset-top))
-                8px
-                max(8px, env(safe-area-inset-bottom))
-                8px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+                calc(12px + env(safe-area-inset-top))
+                16px
+                12px
+                16px;
 
-        .workspace {
-            width: 100%;
-            max-width: 700px;
-            height: 100%;
-            min-height: 0;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+            background: #000;
 
-        .header {
-            flex: 0 0 auto;
-            background: #171717;
-            border-radius: 6px;
-            padding: 10px 11px;
-            margin-bottom: 6px;
-            border-bottom: 2px solid #FFFFFF;
-        }
+            border-bottom: 1px solid #222;
 
-        .brand {
-            font-size: 17px;
-            font-weight: bold;
-        }
-
-        .selected-service {
-            margin-top: 7px;
-            background: #0B0B0B;
-            border: 1px solid #444444;
-            border-radius: 5px;
-            padding: 7px 9px;
-        }
-
-        .selected-service-label {
-            color: #AAAAAA;
-            font-size: 9px;
-            margin-bottom: 2px;
-        }
-
-        .selected-service-name {
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            overflow-wrap: anywhere;
-        }
-
-        .service-price {
-            margin-top: 6px;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .connection-status {
-            display: none;
-            flex: 0 0 auto;
-            width: 100%;
-            margin-bottom: 5px;
-            padding: 7px 9px;
-            border-radius: 5px;
-            background: #242424;
-            border: 1px solid #444444;
-            color: white;
-            font-size: 10px;
-            line-height: 1.35;
             text-align: center;
         }
 
-        .connection-status.show {
-            display: block;
+        .brand {
+            margin: 0;
+
+            font-family:
+                Montserrat,
+                Arial,
+                sans-serif;
+
+            font-size: 22px;
+
+            font-weight: 800;
+
+            color: #d4af37;
+
+            letter-spacing: .3px;
         }
 
-        .chat-area {
+        .ada-label {
+            margin-top: 4px;
+
+            font-size: 13px;
+
+            color: #aaa;
+        }
+
+        .service-label {
+            margin-top: 8px;
+
+            padding: 8px 12px;
+
+            border-radius: 8px;
+
+            background: #181818;
+
+            color: #fff;
+
+            font-size: 14px;
+
+            font-weight: 700;
+        }
+
+        /* ==================================================
+           MAIN CONVERSATION AREA
+        ================================================== */
+
+        .conversation-area {
             flex: 1 1 auto;
+
             min-height: 0;
+
             width: 100%;
-            background: #171717;
-            border-radius: 6px;
-            padding: 12px;
+
             overflow-y: auto;
             overflow-x: hidden;
-            border: 1px solid #292929;
+
+            padding: 14px;
+
+            background: #000;
+
             -webkit-overflow-scrolling: touch;
+        }
+
+        .conversation-area::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .conversation-area::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
         }
 
         .message {
             width: 100%;
-            margin-bottom: 13px;
+
             display: flex;
+
+            margin-bottom: 12px;
         }
 
         .message.ada {
             justify-content: flex-start;
         }
 
-        .message.you {
+        .message.customer {
             justify-content: flex-end;
         }
 
         .bubble {
-            display: inline-block;
-            max-width: 92%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 13px;
+            max-width: 88%;
+
+            padding: 12px 14px;
+
+            border-radius: 14px;
+
+            font-size: 15px;
+
             line-height: 1.5;
+
             white-space: pre-wrap;
-            word-break: break-word;
+
             overflow-wrap: anywhere;
         }
 
         .message.ada .bubble {
-            background: #242424;
-            color: white;
-            border-bottom-left-radius: 2px;
+            background: #181818;
+
+            color: #fff;
+
+            border:
+                1px solid
+                #292929;
+
+            border-bottom-left-radius: 4px;
         }
 
-        .message.you .bubble {
-            background: #111111;
-            color: white;
-            border: 1px solid #444444;
-            border-bottom-right-radius: 2px;
+        .message.customer .bubble {
+            background: #d4af37;
+
+            color: #000;
+
+            border-bottom-right-radius: 4px;
+
+            font-weight: 600;
         }
 
-        .message.system .bubble {
-            background: #202020;
-            color: #CCCCCC;
-            border: 1px solid #333333;
-            width: 100%;
-            max-width: 100%;
+        .typing {
+            display: none;
+
+            color: #999;
+
+            font-size: 13px;
+
+            margin:
+                4px
+                4px
+                12px
+                4px;
+        }
+
+        /* ==================================================
+           UPLOAD / VOICE STATUS
+        ================================================== */
+
+        .attachment-status {
+            display: none;
+
+            margin: 0 0 10px 0;
+
+            padding: 10px 12px;
+
+            border-radius: 8px;
+
+            background: #151515;
+
+            border: 1px solid #292929;
+
+            color: #ddd;
+
+            font-size: 13px;
+
+            overflow-wrap: anywhere;
+        }
+
+        .recording-status {
+            display: none;
+
+            margin: 0 0 10px 0;
+
+            padding: 10px 12px;
+
+            border-radius: 8px;
+
+            background: #351515;
+
+            border: 1px solid #6b2222;
+
+            color: #fff;
+
+            font-size: 13px;
+
             text-align: center;
         }
 
-        .actions {
+        /* ==================================================
+           BOTTOM CONTROLS
+        ================================================== */
+
+        .bottom-area {
             flex: 0 0 auto;
+
             width: 100%;
+
+            padding:
+                10px
+                10px
+                calc(10px + env(safe-area-inset-bottom))
+                10px;
+
+            background: #000;
+
+            border-top: 1px solid #222;
+        }
+
+        .action-row {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 5px;
-            margin-top: 6px;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 7px;
+
+            margin-bottom: 9px;
         }
 
         .action-button {
-            width: 100%;
-            min-width: 0;
-            min-height: 40px;
-            border: 1px solid #444444;
-            border-radius: 5px;
-            padding: 7px 5px;
-            background: #000000;
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            line-height: 1.15;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
+            min-height: 44px;
 
-        .action-button:hover {
-            background: #171717;
+            padding: 8px 5px;
+
+            border: 1px solid #333;
+
+            border-radius: 8px;
+
+            background: #111;
+
+            color: #fff;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            touch-action: manipulation;
         }
 
         .action-button:active {
-            background: #242424;
-            transform: scale(0.98);
+            transform: scale(.98);
         }
 
         .action-button:disabled {
-            opacity: 0.5;
+            opacity: .45;
+
             cursor: not-allowed;
         }
 
-        .input-area {
-            flex: 0 0 auto;
-            width: 100%;
-            margin-top: 6px;
+        .message-row {
             display: flex;
-            gap: 5px;
+
+            align-items: center;
+
+            gap: 8px;
         }
 
         .message-input {
-            flex: 1 1 auto;
+            flex: 1;
+
             min-width: 0;
-            min-height: 44px;
-            max-height: 90px;
-            resize: none;
-            background: white;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 13px;
+
+            height: 46px;
+
+            padding:
+                0
+                13px;
+
+            border:
+                1px solid
+                #333;
+
+            border-radius: 10px;
+
             outline: none;
+
+            background: #151515;
+
+            color: #fff;
+
+            font-family: inherit;
+
+            font-size: 15px;
+        }
+
+        .message-input::placeholder {
+            color: #777;
         }
 
         .send-button {
-            flex: 0 0 76px;
-            min-height: 44px;
-            border: 1px solid #444444;
-            border-radius: 5px;
-            background: #000000;
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
+            flex: 0 0 72px;
+
+            height: 46px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #d4af37;
+
+            color: #000;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
             cursor: pointer;
+
+            touch-action: manipulation;
         }
 
         .send-button:disabled {
-            opacity: 0.5;
+            opacity: .45;
+
+            cursor: not-allowed;
         }
 
-        #fileInput,
-        #voiceInput {
-            display: none;
-        }
+        /* ==================================================
+           SMALL SCREENS
+        ================================================== */
 
-        .footer {
-            flex: 0 0 auto;
-            text-align: center;
-            color: #777777;
-            font-size: 9px;
-            line-height: 1.3;
-            padding-top: 5px;
-        }
-
-        @media (max-width: 360px) {
-            .page {
-                padding-left: 6px;
-                padding-right: 6px;
-            }
-
-            .header {
-                padding: 8px 9px;
-            }
+        @media (max-width: 420px) {
 
             .brand {
-                font-size: 15px;
-            }
-
-            .selected-service {
-                padding: 6px 8px;
-            }
-
-            .selected-service-name {
-                font-size: 13px;
-            }
-
-            .chat-area {
-                padding: 9px;
+                font-size: 20px;
             }
 
             .bubble {
-                font-size: 12px;
-                padding: 9px 10px;
+                max-width: 92%;
+
+                font-size: 14px;
             }
 
-            .actions {
-                gap: 4px;
+            .action-row {
+                gap: 5px;
             }
 
             .action-button {
-                min-height: 37px;
-                font-size: 9px;
-                padding: 5px 3px;
-            }
-
-            .message-input {
                 min-height: 42px;
-                font-size: 12px;
+
+                font-size: 11px;
             }
 
             .send-button {
-                flex-basis: 68px;
-                min-height: 42px;
-            }
-
-            .footer {
-                font-size: 8px;
+                flex-basis: 64px;
             }
         }
 
-        @media (min-width: 600px) {
-            .page {
-                padding-left: 16px;
-                padding-right: 16px;
-            }
-
-            .actions {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 6px;
-            }
-
-            .action-button {
-                min-height: 42px;
-                font-size: 11px;
-            }
-        }
     </style>
 </head>
 
+
 <body>
 
-<div class="page">
-    <main class="workspace">
+    <!-- ==================================================
+         HEADER
+    ================================================== -->
 
-        <section class="header">
-            <div class="brand">
-                NAIJA POCKET BUSINESS CENTER
-            </div>
+    <header class="top-header">
 
-            <div class="selected-service">
-                <div class="selected-service-label">
-                    SELECTED SERVICE
-                </div>
+        <h1 class="brand">
+            Naija Pocket Business Center
+        </h1>
 
-                <div
-                    id="selectedService"
-                    class="selected-service-name"
-                >
-                    Loading service...
-                </div>
-
-                <div
-                    id="servicePrice"
-                    class="service-price"
-                ></div>
-            </div>
-        </section>
+        <div class="ada-label">
+            Ada — Business Center Assistant
+        </div>
 
         <div
-            id="connectionStatus"
-            class="connection-status"
-        ></div>
-
-        <section
-            id="chatArea"
-            class="chat-area"
-        ></section>
-
-        <section class="actions">
-
-            <button
-                type="button"
-                id="uploadButton"
-                class="action-button"
-                onclick="openFilePicker()"
-            >
-                📎 Upload
-            </button>
-
-            <button
-                type="button"
-                id="voiceButton"
-                class="action-button"
-                onclick="openVoice()"
-            >
-                🎤 Voice
-            </button>
-
-            <button
-                type="button"
-                id="reviewButton"
-                class="action-button"
-                onclick="reviewDocument()"
-            >
-                🔍 Review
-            </button>
-
-            <button
-                type="button"
-                id="approveButton"
-                class="action-button"
-                onclick="approveDocument()"
-            >
-                ✅ Approve
-            </button>
-
-            <button
-                type="button"
-                id="paymentButton"
-                class="action-button"
-                onclick="openPayment()"
-            >
-                💳 Payment &amp; Download
-            </button>
-
-            <button
-                type="button"
-                id="customerServiceButton"
-                class="action-button"
-                onclick="contactCustomerService()"
-            >
-                🆘 Customer Service
-            </button>
-
-        </section>
-
-        <section class="input-area">
-
-            <textarea
-                id="messageInput"
-                class="message-input"
-                placeholder="Write your message here..."
-                rows="2"
-            ></textarea>
-
-            <button
-                type="button"
-                id="sendButton"
-                class="send-button"
-                onclick="sendMessage()"
-            >
-                SEND
-            </button>
-
-        </section>
-
-        <input
-            type="file"
-            id="fileInput"
-            accept=".pdf,.doc,.docx,.txt,.rtf,.xls,.xlsx,.csv,.ppt,.pptx,.jpg,.jpeg,.png,.webp"
-            onchange="handleFileSelected(event)"
+            id="serviceLabel"
+            class="service-label"
         >
+            Service not selected
+        </div>
 
-        <input
-            type="file"
-            id="voiceInput"
-            accept="audio/*"
-            capture="microphone"
-            onchange="handleVoiceSelected(event)"
+    </header>
+
+
+    <!-- ==================================================
+         CONVERSATION
+    ================================================== -->
+
+    <main
+        id="conversationArea"
+        class="conversation-area"
+    >
+
+        <div
+            id="typingIndicator"
+            class="typing"
         >
-
-        <div class="footer">
-            Naija Pocket Business Center<br>
-            Your Business Center In Your Pocket
+            Ada is working on it...
         </div>
 
     </main>
-</div>
+
+
+    <!-- ==================================================
+         BOTTOM AREA
+    ================================================== -->
+
+    <section class="bottom-area">
+
+        <div
+            id="attachmentStatus"
+            class="attachment-status"
+        ></div>
+
+        <div
+            id="recordingStatus"
+            class="recording-status"
+        >
+            Recording voice message...
+        </div>
+
+
+        <!-- ==================================================
+             ACTION BUTTONS
+        ================================================== -->
+
+        <div class="action-row">
+
+            <button
+                id="uploadButton"
+                class="action-button"
+                type="button"
+            >
+                Upload
+            </button>
+
+            <button
+                id="voiceButton"
+                class="action-button"
+                type="button"
+            >
+                Voice
+            </button>
+
+            <button
+                id="reviewButton"
+                class="action-button"
+                type="button"
+            >
+                Review
+            </button>
+
+            <button
+                id="approveButton"
+                class="action-button"
+                type="button"
+            >
+                Approve
+            </button>
+
+        </div>
+
+
+        <div class="action-row">
+
+            <button
+                id="paymentButton"
+                class="action-button"
+                type="button"
+            >
+                Payment
+            </button>
+
+            <button
+                id="customerServiceButton"
+                class="action-button"
+                type="button"
+            >
+                Customer Service
+            </button>
+
+            <button
+                id="newJobButton"
+                class="action-button"
+                type="button"
+            >
+                New Job
+            </button>
+
+            <button
+                id="backButton"
+                class="action-button"
+                type="button"
+            >
+                Back
+            </button>
+
+        </div>
+
+
+        <!-- ==================================================
+             MESSAGE INPUT
+        ================================================== -->
+
+        <div class="message-row">
+
+            <input
+                id="messageInput"
+                class="message-input"
+                type="text"
+                autocomplete="off"
+                placeholder="Type your message..."
+            >
+
+            <button
+                id="sendButton"
+                class="send-button"
+                type="button"
+            >
+                Send
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         HIDDEN FILE INPUT
+    ================================================== -->
+
+    <input
+        id="fileInput"
+        type="file"
+        hidden
+    >
+
 
 <script>
 
-/* ============================================================
-   CONFIGURATION
-============================================================ */
-
-const API_BASE =
-    "https://naija-pocket-business-center.onrender.com";
-
-const CHAT_ENDPOINT =
-    API_BASE + "/api/chat";
-
-const UPLOAD_ENDPOINT =
-    API_BASE + "/upload";
-
-const VOICE_PAGE_ENDPOINT =
-    API_BASE + "/voice";
+"use strict";
 
 
-/* ============================================================
-   CUSTOMER ID
-============================================================ */
+/* ==========================================================
+   API
+========================================================== */
 
-const CUSTOMER_ID_KEY =
-    "naijaPocketCustomerId";
+/*
+    Workspace is served by the same FastAPI application.
 
-function createPersistentId(prefix) {
+    Therefore use relative API paths.
+
+    This avoids hard-coding an old Render/Cloudflare/Flask
+    address into the page.
+*/
+
+const API_CHAT = "/api/chat";
+const API_UPLOAD = "/upload";
+
+
+/* ==========================================================
+   DOM
+========================================================== */
+
+const conversationArea =
+    document.getElementById(
+        "conversationArea"
+    );
+
+const typingIndicator =
+    document.getElementById(
+        "typingIndicator"
+    );
+
+const serviceLabel =
+    document.getElementById(
+        "serviceLabel"
+    );
+
+const messageInput =
+    document.getElementById(
+        "messageInput"
+    );
+
+const sendButton =
+    document.getElementById(
+        "sendButton"
+    );
+
+const uploadButton =
+    document.getElementById(
+        "uploadButton"
+    );
+
+const voiceButton =
+    document.getElementById(
+        "voiceButton"
+    );
+
+const reviewButton =
+    document.getElementById(
+        "reviewButton"
+    );
+
+const approveButton =
+    document.getElementById(
+        "approveButton"
+    );
+
+const paymentButton =
+    document.getElementById(
+        "paymentButton"
+    );
+
+const customerServiceButton =
+    document.getElementById(
+        "customerServiceButton"
+    );
+
+const newJobButton =
+    document.getElementById(
+        "newJobButton"
+    );
+
+const backButton =
+    document.getElementById(
+        "backButton"
+    );
+
+const fileInput =
+    document.getElementById(
+        "fileInput"
+    );
+
+const attachmentStatus =
+    document.getElementById(
+        "attachmentStatus"
+    );
+
+const recordingStatus =
+    document.getElementById(
+        "recordingStatus"
+    );
+
+
+/* ==========================================================
+   SERVICE
+========================================================== */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+let service =
+    params.get("service");
+
+if (!service) {
+
+    service =
+        localStorage.getItem(
+            "selectedService"
+        );
+}
+
+if (!service) {
+
+    service =
+        "Service not selected";
+}
+
+service =
+    String(service).trim();
+
+serviceLabel.textContent =
+    service;
+
+
+/* ==========================================================
+   CUSTOMER / JOB IDENTIFIERS
+========================================================== */
+
+/*
+    These identifiers remain in sessionStorage so that:
+
+        conversation
+             ↓
+        workspace
+             ↓
+        upload
+             ↓
+        voice
+             ↓
+        chat
+
+    all belong to the same customer/job session.
+*/
+
+function createId(prefix) {
+
+    if (
+        window.crypto &&
+        crypto.randomUUID
+    ) {
+
+        return (
+            prefix +
+            "_" +
+            crypto.randomUUID()
+        );
+    }
 
     return (
         prefix +
-        "-" +
-        Date.now().toString(36) +
-        "-" +
+        "_" +
+        Date.now() +
+        "_" +
         Math.random()
             .toString(36)
-            .substring(2, 12)
+            .slice(2)
     );
 }
 
-function getCustomerId() {
 
-    let customerId =
-        localStorage.getItem(
-            CUSTOMER_ID_KEY
-        );
+let customerId =
+    sessionStorage.getItem(
+        "ada_customer_id"
+    );
 
-    if (!customerId) {
+if (!customerId) {
 
-        customerId =
-            createPersistentId(
-                "customer"
-            );
+    customerId =
+        createId("customer");
 
-        localStorage.setItem(
-            CUSTOMER_ID_KEY,
-            customerId
-        );
-    }
-
-    return customerId;
-}
-
-const customerId =
-    getCustomerId();
-
-
-/* ============================================================
-   STATE
-============================================================ */
-
-let selectedService = "";
-let currentJobId = "";
-let requestInProgress = false;
-let intelligenceStarted = false;
-let conversation = [];
-let reconnectTimer = null;
-
-let pendingRequests = {};
-
-
-/* ============================================================
-   STORAGE
-============================================================ */
-
-const CONVERSATION_PREFIX =
-    "naijaPocketConversation:";
-
-const JOB_PREFIX =
-    "naijaPocketJob:";
-
-const SERVICE_KEY =
-    "selectedService";
-
-const PENDING_KEY =
-    "naijaPocketPendingRequests";
-
-
-/* ============================================================
-   NETWORK MESSAGE
-============================================================ */
-
-const NETWORK_MESSAGE =
-    "There is a temporary network connection issue. Your current request is being kept safely. We will continue it when the connection is available.";
-
-
-/* ============================================================
-   SERVICE
-============================================================ */
-
-function normaliseService(service) {
-
-    return String(
-        service || ""
-    ).trim();
-}
-
-
-/* ============================================================
-   JOB
-============================================================ */
-
-function createJobId(service) {
-
-    return (
-        "job-" +
-        encodeURIComponent(
-            normaliseService(service)
-        ) +
-        "-" +
-        Date.now().toString(36) +
-        "-" +
-        Math.random()
-            .toString(36)
-            .substring(2, 8)
+    sessionStorage.setItem(
+        "ada_customer_id",
+        customerId
     );
 }
 
-function getJobStorageKey(service) {
 
-    return (
-        JOB_PREFIX +
-        customerId +
-        ":" +
-        encodeURIComponent(
-            normaliseService(service)
-        )
+let jobId =
+    sessionStorage.getItem(
+        "ada_job_id"
+    );
+
+if (!jobId) {
+
+    jobId =
+        createId("job");
+
+    sessionStorage.setItem(
+        "ada_job_id",
+        jobId
     );
 }
 
-function getConversationStorageKey(service) {
 
-    return (
-        CONVERSATION_PREFIX +
-        customerId +
-        ":" +
-        encodeURIComponent(
-            normaliseService(service)
-        )
+/* ==========================================================
+   CLIENT REQUEST ID
+========================================================== */
+
+function createRequestId() {
+
+    return createId(
+        "request"
     );
 }
 
-function saveCurrentJob() {
 
-    try {
+/* ==========================================================
+   DISPLAY MESSAGE
+========================================================== */
 
-        localStorage.setItem(
-            getJobStorageKey(
-                selectedService
-            ),
-            JSON.stringify({
-
-                customerId:
-                    customerId,
-
-                jobId:
-                    currentJobId,
-
-                service:
-                    selectedService,
-
-                updatedAt:
-                    Date.now()
-
-            })
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Job save error:",
-            error
-        );
-    }
-}
-
-function loadOrCreateCurrentJob() {
-
-    const key =
-        getJobStorageKey(
-            selectedService
-        );
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                key
-            );
-
-        if (saved) {
-
-            const parsed =
-                JSON.parse(saved);
-
-            if (
-                parsed &&
-                parsed.jobId &&
-                parsed.service ===
-                    selectedService
-            ) {
-
-                currentJobId =
-                    parsed.jobId;
-
-                return;
-            }
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Job restore error:",
-            error
-        );
-    }
-
-    currentJobId =
-        createJobId(
-            selectedService
-        );
-
-    saveCurrentJob();
-}
-
-
-/* ============================================================
-   CONVERSATION
-============================================================ */
-
-function loadConversationForService(service) {
-
-    conversation = [];
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                getConversationStorageKey(
-                    service
-                )
-            );
-
-        if (!saved) {
-            return;
-        }
-
-        const parsed =
-            JSON.parse(saved);
-
-        if (
-            Array.isArray(parsed)
-        ) {
-
-            conversation =
-                parsed;
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Conversation restore error:",
-            error
-        );
-
-        conversation = [];
-    }
-}
-
-function saveConversation() {
-
-    try {
-
-        localStorage.setItem(
-            getConversationStorageKey(
-                selectedService
-            ),
-            JSON.stringify(
-                conversation
-            )
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Conversation save error:",
-            error
-        );
-    }
-}
-
-function renderMessage(
-    sender,
-    message,
-    save = true
+function addMessage(
+    text,
+    sender
 ) {
 
-    const chatArea =
-        document.getElementById(
-            "chatArea"
-        );
+    if (
+        text === null ||
+        text === undefined
+    ) {
 
-    const wrapper =
+        return;
+    }
+
+    const message =
         document.createElement(
             "div"
         );
 
-    let messageClass = "ada";
-
-    if (sender === "You") {
-        messageClass = "you";
-    }
-
-    if (sender === "System") {
-        messageClass = "system";
-    }
-
-    wrapper.className =
+    message.className =
         "message " +
-        messageClass;
+        (
+            sender === "customer"
+                ? "customer"
+                : "ada"
+        );
 
     const bubble =
         document.createElement(
@@ -830,1021 +854,181 @@ function renderMessage(
     bubble.className =
         "bubble";
 
-    bubble.innerText =
-        message;
+    bubble.textContent =
+        String(text);
 
-    wrapper.appendChild(
+    message.appendChild(
         bubble
     );
 
-    chatArea.appendChild(
-        wrapper
+    conversationArea.insertBefore(
+        message,
+        typingIndicator
     );
 
-    if (save) {
-
-        conversation.push({
-
-            sender:
-                sender,
-
-            message:
-                message,
-
-            timestamp:
-                Date.now()
-
-        });
-
-        saveConversation();
-    }
-
-    scrollChatToBottom();
+    scrollToBottom();
 }
 
-function addMessage(
-    sender,
-    message
-) {
 
-    if (
-        !message ||
-        !String(message).trim()
-    ) {
-        return;
-    }
+/* ==========================================================
+   SCROLL
+========================================================== */
 
-    renderMessage(
-        sender,
-        String(message).trim(),
-        true
-    );
-}
-
-function restoreConversationToScreen() {
-
-    const chatArea =
-        document.getElementById(
-            "chatArea"
-        );
-
-    chatArea.innerHTML = "";
-
-    for (
-        const item of conversation
-    ) {
-
-        if (
-            !item ||
-            !item.message
-        ) {
-            continue;
-        }
-
-        renderMessage(
-            item.sender,
-            item.message,
-            false
-        );
-    }
-
-    scrollChatToBottom();
-}
-
-function scrollChatToBottom() {
-
-    const chatArea =
-        document.getElementById(
-            "chatArea"
-        );
+function scrollToBottom() {
 
     requestAnimationFrame(
-        function() {
+        function () {
 
-            chatArea.scrollTop =
-                chatArea.scrollHeight;
+            conversationArea.scrollTop =
+                conversationArea.scrollHeight;
 
         }
     );
 }
 
 
-/* ============================================================
-   SELECTED SERVICE
-============================================================ */
+/* ==========================================================
+   TYPING
+========================================================== */
 
-function getSelectedService() {
+function showTyping() {
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+    typingIndicator.style.display =
+        "block";
 
-    selectedService =
-        normaliseService(
-            params.get("service")
-        );
-
-    if (!selectedService) {
-
-        selectedService =
-            normaliseService(
-                localStorage.getItem(
-                    SERVICE_KEY
-                )
-            );
-    }
-
-    if (!selectedService) {
-
-        selectedService =
-            "Service not selected";
-    }
-
-    document.getElementById(
-        "selectedService"
-    ).innerText =
-        selectedService;
-
-    localStorage.setItem(
-        SERVICE_KEY,
-        selectedService
-    );
-
-    loadConversationForService(
-        selectedService
-    );
-
-    loadOrCreateCurrentJob();
+    scrollToBottom();
 }
 
 
-/* ============================================================
-   PRICE
-============================================================ */
+function hideTyping() {
 
-function updatePrice(result) {
-
-    if (
-        !result ||
-        result.price === undefined ||
-        result.price === null
-    ) {
-        return;
-    }
-
-    const price =
-        String(
-            result.price
-        );
-
-    document.getElementById(
-        "servicePrice"
-    ).innerText =
-        price.includes("₦")
-            ? "SERVICE PRICE: " + price
-            : "SERVICE PRICE: ₦" + price;
+    typingIndicator.style.display =
+        "none";
 }
 
 
-/* ============================================================
-   CONNECTION STATUS
-============================================================ */
+/* ==========================================================
+   BUTTON LOCK
+========================================================== */
 
-function showConnectionStatus(message) {
-
-    const status =
-        document.getElementById(
-            "connectionStatus"
-        );
-
-    status.innerText =
-        message;
-
-    status.classList.add(
-        "show"
-    );
-}
-
-function hideConnectionStatus() {
-
-    const status =
-        document.getElementById(
-            "connectionStatus"
-        );
-
-    status.classList.remove(
-        "show"
-    );
-
-    status.innerText = "";
-}
-
-
-/* ============================================================
-   REQUEST IDS
-============================================================ */
-
-function createRequestId() {
-
-    return (
-        "request-" +
-        Date.now().toString(36) +
-        "-" +
-        Math.random()
-            .toString(36)
-            .substring(2, 10)
-    );
-}
-
-function createRequest(
-    message,
-    eventName
+function setBusy(
+    busy
 ) {
 
-    return {
+    sendButton.disabled =
+        busy;
 
-        requestId:
-            createRequestId(),
+    uploadButton.disabled =
+        busy;
 
-        customerId:
-            customerId,
+    reviewButton.disabled =
+        busy;
 
-        jobId:
-            currentJobId,
+    approveButton.disabled =
+        busy;
 
-        service:
-            selectedService,
+    paymentButton.disabled =
+        busy;
 
-        message:
+    customerServiceButton.disabled =
+        busy;
+
+    newJobButton.disabled =
+        busy;
+}
+
+
+/* ==========================================================
+   CHAT
+========================================================== */
+
+async function sendToAda(
+    message,
+    eventName = null,
+    displayCustomerMessage = true
+) {
+
+    message =
+        String(message || "")
+            .trim();
+
+    if (!message) {
+
+        return;
+    }
+
+    if (
+        displayCustomerMessage
+    ) {
+
+        addMessage(
             message,
+            "customer"
+        );
+    }
 
-        event:
-            eventName,
+    showTyping();
 
-        createdAt:
-            Date.now(),
-
-        attempts:
-            0
-
-    };
-}
-
-
-/* ============================================================
-   PENDING REQUESTS
-============================================================ */
-
-function loadPendingRequests() {
-
-    pendingRequests = {};
+    setBusy(true);
 
     try {
 
-        const saved =
-            localStorage.getItem(
-                PENDING_KEY
-            );
+        const payload = {
 
-        if (!saved) {
-            return;
-        }
+            message:
 
-        const parsed =
-            JSON.parse(saved);
+                message,
 
-        if (
-            parsed &&
-            typeof parsed === "object"
-        ) {
+            service:
 
-            pendingRequests =
-                parsed;
-        }
+                service,
 
-    } catch (error) {
+            event:
 
-        console.error(
-            "Pending request restore error:",
-            error
-        );
-    }
-}
+                eventName,
 
-function savePendingRequests() {
+            customer_id:
 
-    try {
+                customerId,
 
-        localStorage.setItem(
-            PENDING_KEY,
-            JSON.stringify(
-                pendingRequests
-            )
-        );
+            job_id:
 
-    } catch (error) {
+                jobId,
 
-        console.error(
-            "Pending request save error:",
-            error
-        );
-    }
-}
+            client_request_id:
 
-function savePendingRequest(request) {
+                createRequestId(),
 
-    if (
-        !request ||
-        !request.requestId
-    ) {
-        return;
-    }
+            activate_intelligence:
 
-    pendingRequests[
-        request.requestId
-    ] = request;
+                true
 
-    savePendingRequests();
-}
+        };
 
-function clearPendingRequest(requestId) {
-
-    if (!requestId) {
-        return;
-    }
-
-    delete pendingRequests[
-        requestId
-    ];
-
-    savePendingRequests();
-}
-
-function getPendingRequestList() {
-
-    return Object.values(
-        pendingRequests
-    ).filter(
-        function(request) {
-
-            return (
-                request &&
-                request.requestId &&
-                request.customerId ===
-                    customerId &&
-                request.message !==
-                    undefined
-            );
-        }
-    );
-}
-
-function getPendingRequestForCurrentJob() {
-
-    const requests =
-        getPendingRequestList();
-
-    for (
-        const request of requests
-    ) {
-
-        if (
-            request.service ===
-                selectedService &&
-            request.jobId ===
-                currentJobId
-        ) {
-
-            return request;
-        }
-    }
-
-    return null;
-}
-
-function cleanInvalidPendingRequests() {
-
-    let changed = false;
-
-    for (
-        const request of
-        getPendingRequestList()
-    ) {
-
-        if (
-            !request.service ||
-            !request.jobId
-        ) {
-
-            delete pendingRequests[
-                request.requestId
-            ];
-
-            changed = true;
-        }
-    }
-
-    if (changed) {
-        savePendingRequests();
-    }
-}
-
-
-/* ============================================================
-   NETWORK
-============================================================ */
-
-function isNetworkError(error) {
-
-    if (!error) {
-        return false;
-    }
-
-    if (
-        error.name ===
-        "AbortError"
-    ) {
-        return true;
-    }
-
-    if (
-        error instanceof
-        TypeError
-    ) {
-        return true;
-    }
-
-    const text =
-        String(
-            error.message || ""
-        ).toLowerCase();
-
-    return (
-        text.includes("network") ||
-        text.includes("failed to fetch") ||
-        text.includes("connection") ||
-        text.includes("timeout") ||
-        text.includes("offline") ||
-        text.includes("fetch")
-    );
-}
-
-function wait(milliseconds) {
-
-    return new Promise(
-        function(resolve) {
-
-            setTimeout(
-                resolve,
-                milliseconds
-            );
-
-        }
-    );
-}
-
-
-/* ============================================================
-   CHAT REQUEST
-============================================================ */
-
-async function requestFastAPI(request) {
-
-    const controller =
-        new AbortController();
-
-    const timeout =
-        setTimeout(
-            function() {
-
-                controller.abort();
-
-            },
-            30000
-        );
-
-    try {
 
         const response =
             await fetch(
-                CHAT_ENDPOINT,
+                API_CHAT,
                 {
+
                     method:
                         "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:
-                        JSON.stringify({
+                        JSON.stringify(
+                            payload
+                        )
 
-                            message:
-                                request.message,
-
-                            service:
-                                request.service,
-
-                            event:
-                                request.event,
-
-                            customer_id:
-                                request.customerId,
-
-                            job_id:
-                                request.jobId,
-
-                            client_request_id:
-                                request.requestId,
-
-                            activate_intelligence:
-                                true
-
-                        }),
-
-                    signal:
-                        controller.signal
                 }
             );
 
-        let result;
-
-        try {
-
-            result =
-                await response.json();
-
-        } catch (error) {
-
-            const invalid =
-                new Error(
-                    "Server returned an invalid response."
-                );
-
-            invalid.serverError =
-                true;
-
-            invalid.status =
-                response.status;
-
-            throw invalid;
-        }
-
-        updatePrice(result);
-
-        if (
-            response.ok &&
-            result &&
-            result.success
-        ) {
-
-            return {
-                reply:
-                    result.reply ||
-                    result.response ||
-                    result.message ||
-                    "Your request is ready to continue.",
-
-                result:
-                    result
-            };
-        }
-
-        const serverError =
-            (
-                result &&
-                (
-                    result.error ||
-                    result.message
-                )
-            ) ||
-            "The Business Center could not process the request.";
-
-        const error =
-            new Error(
-                serverError
-            );
-
-        error.serverError =
-            true;
-
-        error.status =
-            response.status;
-
-        error.result =
-            result;
-
-        throw error;
-
-    } finally {
-
-        clearTimeout(
-            timeout
-        );
-    }
-}
-
-
-/* ============================================================
-   SEND CHAT REQUEST
-============================================================ */
-
-async function sendToAda(
-    message,
-    eventName
-) {
-
-    const request =
-        createRequest(
-            message,
-            eventName
-        );
-
-    const retryDelays = [
-        1500,
-        3000,
-        6000,
-        10000
-    ];
-
-    let lastError = null;
-
-    for (
-        let attempt = 0;
-        attempt <= retryDelays.length;
-        attempt++
-    ) {
-
-        try {
-
-            if (
-                !navigator.onLine
-            ) {
-
-                throw new TypeError(
-                    "Network is currently offline."
-                );
-            }
-
-            request.attempts =
-                attempt + 1;
-
-            if (
-                attempt > 0
-            ) {
-
-                showConnectionStatus(
-                    "Reconnecting and continuing your request..."
-                );
-            }
-
-            const result =
-                await requestFastAPI(
-                    request
-                );
-
-            hideConnectionStatus();
-
-            return result.reply;
-
-        } catch (error) {
-
-            lastError =
-                error;
-
-            console.error(
-                "Ada request attempt " +
-                (attempt + 1) +
-                " failed:",
-                error
-            );
-
-            if (
-                error.serverError
-            ) {
-                break;
-            }
-
-            if (
-                attempt <
-                retryDelays.length
-            ) {
-
-                showConnectionStatus(
-                    "Reconnecting..."
-                );
-
-                await wait(
-                    retryDelays[
-                        attempt
-                    ]
-                );
-
-                continue;
-            }
-
-            savePendingRequest(
-                request
-            );
-
-            break;
-        }
-    }
-
-    showConnectionStatus(
-        NETWORK_MESSAGE
-    );
-
-    throw (
-        lastError ||
-        new Error(
-            "Temporary network connection issue."
-        )
-    );
-}
-
-
-/* ============================================================
-   START ADA
-============================================================ */
-
-async function startAdaIntelligence() {
-
-    if (
-        intelligenceStarted
-    ) {
-        return;
-    }
-
-    if (
-        !selectedService ||
-        selectedService ===
-            "Service not selected"
-    ) {
-
-        addMessage(
-            "System",
-            "Please return to the services and select the service you need."
-        );
-
-        return;
-    }
-
-    if (
-        conversation.length > 0
-    ) {
-
-        intelligenceStarted =
-            true;
-
-        return;
-    }
-
-    if (
-        getPendingRequestForCurrentJob()
-    ) {
-
-        return;
-    }
-
-    intelligenceStarted =
-        true;
-
-    try {
-
-        const response =
-            await sendToAda(
-
-                "The customer has selected the service '" +
-                selectedService +
-                "'. Begin the normal conversation for this service. Welcome the customer, acknowledge the selected service, and ask only the first useful question needed to begin the work. Do not ask which service the customer wants because the service has already been selected.",
-
-                "service_selected"
-            );
-
-        addMessage(
-            "Business Center",
-            response
-        );
-
-    } catch (error) {
-
-        console.error(
-            "SERVICE ACTIVATION ERROR:",
-            error
-        );
-
-        if (
-            !isNetworkError(error)
-        ) {
-
-            intelligenceStarted =
-                false;
-
-            addMessage(
-                "System",
-                "We could not start your request at the moment. Please try again."
-            );
-        }
-    }
-}
-
-
-/* ============================================================
-   CUSTOMER MESSAGE
-============================================================ */
-
-async function sendMessage() {
-
-    if (
-        requestInProgress
-    ) {
-        return;
-    }
-
-    const input =
-        document.getElementById(
-            "messageInput"
-        );
-
-    const button =
-        document.getElementById(
-            "sendButton"
-        );
-
-    const message =
-        input.value.trim();
-
-    if (!message) {
-        return;
-    }
-
-    requestInProgress =
-        true;
-
-    addMessage(
-        "You",
-        message
-    );
-
-    input.value = "";
-
-    button.disabled =
-        true;
-
-    button.innerText =
-        "WAIT...";
-
-    try {
-
-        const response =
-            await sendToAda(
-                message,
-                "customer_message"
-            );
-
-        addMessage(
-            "Business Center",
-            response
-        );
-
-    } catch (error) {
-
-        console.error(
-            "CUSTOMER MESSAGE ERROR:",
-            error
-        );
-
-        if (
-            !isNetworkError(error)
-        ) {
-
-            addMessage(
-                "System",
-                "I could not complete that request right now. Please try again."
-            );
-        }
-
-    } finally {
-
-        requestInProgress =
-            false;
-
-        button.disabled =
-            false;
-
-        button.innerText =
-            "SEND";
-    }
-}
-
-
-/* ============================================================
-   ENTER TO SEND
-============================================================ */
-
-document
-    .getElementById(
-        "messageInput"
-    )
-    .addEventListener(
-        "keydown",
-        function(event) {
-
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
-
-                event.preventDefault();
-
-                sendMessage();
-            }
-        }
-    );
-
-
-/* ============================================================
-   REAL FILE UPLOAD
-============================================================ */
-
-function openFilePicker() {
-
-    if (
-        requestInProgress
-    ) {
-        return;
-    }
-
-    document
-        .getElementById(
-            "fileInput"
-        )
-        .click();
-}
-
-async function uploadFileToBackend(file) {
-
-    const formData =
-        new FormData();
-
-    /*
-       These fields keep the uploaded document tied
-       to the same customer/job/service that Ada is
-       already handling.
-    */
-
-    formData.append(
-        "file",
-        file
-    );
-
-    formData.append(
-        "customer_id",
-        customerId
-    );
-
-    formData.append(
-        "job_id",
-        currentJobId
-    );
-
-    formData.append(
-        "service",
-        selectedService
-    );
-
-    const controller =
-        new AbortController();
-
-    const timeout =
-        setTimeout(
-            function() {
-
-                controller.abort();
-
-            },
-            60000
-        );
-
-    try {
-
-        const response =
-            await fetch(
-                UPLOAD_ENDPOINT,
-                {
-                    method:
-                        "POST",
-
-                    body:
-                        formData,
-
-                    signal:
-                        controller.signal
-                }
-            );
 
         let result = null;
 
@@ -1853,660 +1037,1055 @@ async function uploadFileToBackend(file) {
             result =
                 await response.json();
 
-        } catch (error) {
+        } catch {
 
             result = null;
+
         }
+
 
         if (
             !response.ok
         ) {
 
-            const error =
-                new Error(
-                    (
-                        result &&
-                        (
-                            result.error ||
-                            result.message
-                        )
-                    ) ||
-                    "The file could not be uploaded."
-                );
+            throw new Error(
+                "Chat request failed."
+            );
 
-            error.serverError =
-                true;
-
-            error.status =
-                response.status;
-
-            throw error;
         }
 
-        return (
-            result || {
-                success: true
-            }
-        );
 
-    } finally {
-
-        clearTimeout(
-            timeout
-        );
-    }
-}
-
-async function handleFileSelected(event) {
-
-    const file =
-        event.target.files[0];
-
-    if (!file) {
-        return;
-    }
-
-    if (
-        requestInProgress
-    ) {
-
-        event.target.value = "";
-
-        return;
-    }
-
-    requestInProgress =
-        true;
-
-    addMessage(
-        "You",
-        "📎 Uploading: " +
-        file.name
-    );
-
-    showConnectionStatus(
-        "Uploading your file..."
-    );
-
-    try {
-
-        const result =
-            await uploadFileToBackend(
-                file
+        const reply =
+            result &&
+            (
+                result.reply ||
+                result.response ||
+                result.message
             );
 
-        hideConnectionStatus();
 
-        /*
-           The backend has now received the actual file.
+        if (reply) {
 
-           We tell Ada what happened through the normal
-           ONE-request chat path so the conversation can
-           continue naturally.
-        */
-
-        const response =
-            await sendToAda(
-
-                "The customer has successfully uploaded the file '" +
-                file.name +
-                "'. The uploaded file is now available to the Business Center for the active '" +
-                selectedService +
-                "' service. Continue the customer's request naturally. Use the uploaded document context if available. Do not ask the customer to upload the same file again.",
-
-                "file_uploaded"
-            );
-
-        addMessage(
-            "Business Center",
-            response
-        );
-
-    } catch (error) {
-
-        console.error(
-            "REAL FILE UPLOAD ERROR:",
-            error
-        );
-
-        if (
-            isNetworkError(error)
-        ) {
-
-            showConnectionStatus(
-                NETWORK_MESSAGE
+            addMessage(
+                reply,
+                "ada"
             );
 
         } else {
 
-            hideConnectionStatus();
-
             addMessage(
-                "System",
-                "The file could not be uploaded. Please try again."
+                "Sorry, Ada could not complete that step right now. Please try again.",
+                "ada"
             );
+
         }
 
-    } finally {
 
-        requestInProgress =
-            false;
+        if (
+            result &&
+            result.price !== undefined &&
+            result.price !== null
+        ) {
 
-        event.target.value = "";
-    }
-}
-
-
-/* ============================================================
-   VOICE
-============================================================ */
-
-function openVoice() {
-
-    if (
-        requestInProgress
-    ) {
-        return;
-    }
-
-    /*
-       Open the existing phone/VPS voice interface.
-
-       This preserves the established voice workflow rather
-       than pretending that a voice recording has already
-       been transcribed.
-    */
-
-    const voiceUrl =
-        VOICE_PAGE_ENDPOINT +
-        "?customer_id=" +
-        encodeURIComponent(
-            customerId
-        ) +
-        "&job_id=" +
-        encodeURIComponent(
-            currentJobId
-        ) +
-        "&service=" +
-        encodeURIComponent(
-            selectedService
-        );
-
-    window.open(
-        voiceUrl,
-        "_blank"
-    );
-}
-
-
-/* ============================================================
-   REVIEW
-============================================================ */
-
-async function reviewDocument() {
-
-    await performBusinessAction(
-
-        "I want to review my work.",
-
-        "The customer wants to review the current work. Continue the active service request and explain the next appropriate step. Do not claim that a document has been generated unless the application has actually generated it.",
-
-        "review"
-    );
-}
-
-
-/* ============================================================
-   APPROVE
-============================================================ */
-
-async function approveDocument() {
-
-    await performBusinessAction(
-
-        "I approve the work.",
-
-        "The customer has approved the current work. Continue with the next appropriate application step. Do not claim payment has been completed unless payment is confirmed.",
-
-        "approve"
-    );
-}
-
-
-/* ============================================================
-   PAYMENT / DOWNLOAD
-============================================================ */
-
-async function openPayment() {
-
-    await performBusinessAction(
-
-        "I want to continue with Payment & Download.",
-
-        "The customer wants to continue with Payment & Download. Explain the next appropriate payment or delivery step. Do not claim that payment has been completed unless the application confirms it.",
-
-        "payment_download"
-    );
-}
-
-
-/* ============================================================
-   CUSTOMER SERVICE
-============================================================ */
-
-async function contactCustomerService() {
-
-    await performBusinessAction(
-
-        "I want help from Customer Service.",
-
-        "The customer wants Customer Service assistance. Ask what help the customer needs and continue appropriately.",
-
-        "customer_service"
-    );
-}
-
-
-/* ============================================================
-   COMMON BUSINESS ACTION
-============================================================ */
-
-async function performBusinessAction(
-    customerMessage,
-    controllerMessage,
-    eventName
-) {
-
-    if (
-        requestInProgress
-    ) {
-        return;
-    }
-
-    requestInProgress =
-        true;
-
-    addMessage(
-        "You",
-        customerMessage
-    );
-
-    try {
-
-        const response =
-            await sendToAda(
-                controllerMessage,
-                eventName
+            addMessage(
+                "Price: ₦" +
+                result.price,
+                "ada"
             );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "ADA CHAT ERROR:",
+            error
+        );
 
         addMessage(
-            "Business Center",
-            response
+            "Sorry, we could not complete that step right now. Please try again in a moment.",
+            "ada"
         );
-
-    } catch (error) {
-
-        console.error(
-            eventName +
-            " ERROR:",
-            error
-        );
-
-        if (
-            !isNetworkError(error)
-        ) {
-
-            addMessage(
-                "System",
-                "I could not complete that step right now. Please try again."
-            );
-        }
 
     } finally {
 
-        requestInProgress =
-            false;
+        hideTyping();
+
+        setBusy(false);
+
+        messageInput.focus();
+
     }
 }
 
 
-/* ============================================================
-   RESUME CURRENT JOB
-============================================================ */
+/* ==========================================================
+   SEND BUTTON
+========================================================== */
 
-async function resumeCurrentJobPendingRequest() {
+async function sendCurrentMessage() {
 
-    const request =
-        getPendingRequestForCurrentJob();
+    const message =
+        messageInput.value.trim();
 
-    if (!request) {
-        return false;
+    if (!message) {
+
+        addMessage(
+            "Please enter a message so Ada can continue helping you.",
+            "ada"
+        );
+
+        return;
     }
 
-    if (
-        !navigator.onLine
-    ) {
+    messageInput.value = "";
 
-        showConnectionStatus(
-            NETWORK_MESSAGE
-        );
-
-        return true;
-    }
-
-    requestInProgress =
-        true;
-
-    try {
-
-        showConnectionStatus(
-            "Your connection is back. Continuing your saved request..."
-        );
-
-        const result =
-            await requestFastAPI(
-                request
-            );
-
-        clearPendingRequest(
-            request.requestId
-        );
-
-        if (
-            selectedService ===
-                request.service &&
-            currentJobId ===
-                request.jobId
-        ) {
-
-            addMessage(
-                "Business Center",
-                result.reply
-            );
-        }
-
-        hideConnectionStatus();
-
-        return true;
-
-    } catch (error) {
-
-        console.error(
-            "CURRENT JOB RESUME ERROR:",
-            error
-        );
-
-        if (
-            error.serverError
-        ) {
-
-            clearPendingRequest(
-                request.requestId
-            );
-
-            hideConnectionStatus();
-
-            return false;
-        }
-
-        if (
-            isNetworkError(error)
-        ) {
-
-            savePendingRequest(
-                request
-            );
-
-            showConnectionStatus(
-                NETWORK_MESSAGE
-            );
-
-            return true;
-        }
-
-        clearPendingRequest(
-            request.requestId
-        );
-
-        hideConnectionStatus();
-
-        return false;
-
-    } finally {
-
-        requestInProgress =
-            false;
-    }
+    await sendToAda(
+        message,
+        null,
+        true
+    );
 }
 
 
-/* ============================================================
-   OLD REQUESTS
-============================================================ */
+sendButton.addEventListener(
+    "click",
+    sendCurrentMessage
+);
 
-async function resumeOtherPendingRequests() {
 
-    const requests =
-        getPendingRequestList();
-
-    for (
-        const request of requests
-    ) {
+messageInput.addEventListener(
+    "keydown",
+    function (event) {
 
         if (
-            request.service ===
-                selectedService &&
-            request.jobId ===
-                currentJobId
+            event.key === "Enter"
         ) {
-            continue;
+
+            event.preventDefault();
+
+            sendCurrentMessage();
+
         }
 
-        if (
-            !navigator.onLine
-        ) {
+    }
+);
+
+
+/* ==========================================================
+   REAL FILE UPLOAD
+========================================================== */
+
+uploadButton.addEventListener(
+    "click",
+    function () {
+
+        fileInput.value = "";
+
+        fileInput.click();
+
+    }
+);
+
+
+fileInput.addEventListener(
+    "change",
+    async function () {
+
+        const file =
+            fileInput.files &&
+            fileInput.files[0];
+
+        if (!file) {
+
             return;
         }
 
+        await uploadActualFile(
+            file
+        );
+
+    }
+);
+
+
+async function uploadActualFile(
+    file
+) {
+
+    attachmentStatus.style.display =
+        "block";
+
+    attachmentStatus.textContent =
+        "Uploading " +
+        file.name +
+        "...";
+
+    uploadButton.disabled =
+        true;
+
+    try {
+
+        const formData =
+            new FormData();
+
+        /*
+            IMPORTANT:
+
+            This sends the actual file bytes.
+
+            The field name "file" matches:
+
+                file: UploadFile = File(...)
+
+            in ada_api.py.
+        */
+
+        formData.append(
+            "file",
+            file,
+            file.name
+        );
+
+
+        formData.append(
+            "customer_id",
+            customerId
+        );
+
+
+        formData.append(
+            "job_id",
+            jobId
+        );
+
+
+        formData.append(
+            "service",
+            service
+        );
+
+
+        const response =
+            await fetch(
+                API_UPLOAD,
+                {
+
+                    method:
+                        "POST",
+
+                    body:
+                        formData
+
+                }
+            );
+
+
+        let result = null;
+
         try {
 
-            const result =
-                await requestFastAPI(
-                    request
-                );
+            result =
+                await response.json();
 
-            clearPendingRequest(
-                request.requestId
-            );
+        } catch {
 
-            console.log(
-                "Old saved request completed:",
-                request.service,
-                request.jobId,
-                result
-            );
+            result = null;
 
-        } catch (error) {
-
-            console.error(
-                "OLD REQUEST RESUME ERROR:",
-                error
-            );
-
-            if (
-                error.serverError ||
-                !isNetworkError(error)
-            ) {
-
-                clearPendingRequest(
-                    request.requestId
-                );
-            }
         }
+
+
+        if (
+            !response.ok ||
+            !result ||
+            result.success !== true
+        ) {
+
+            throw new Error(
+                "Upload failed."
+            );
+
+        }
+
+
+        const storedName =
+            result.stored_filename ||
+            file.name;
+
+
+        attachmentStatus.textContent =
+            "File received: " +
+            file.name;
+
+
+        addMessage(
+            "I have received your file: " +
+            file.name +
+            ". Ada can now continue with your request.",
+            "ada"
+        );
+
+
+        /*
+            Tell Ada that a real file has been
+            attached to the current job.
+
+            The actual file was already sent to
+            /upload above.
+        */
+
+        await sendToAda(
+
+            "A file has been uploaded for this request. " +
+            "The uploaded file is: " +
+            file.name +
+            ". Stored file reference: " +
+            storedName +
+            ". Please continue helping me with my request.",
+
+            "file_uploaded",
+
+            false
+
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "FILE UPLOAD ERROR:",
+            error
+        );
+
+        attachmentStatus.textContent =
+            "We could not receive that file. Please try again.";
+
+        addMessage(
+            "Sorry, we could not receive that file right now. Please try again.",
+            "ada"
+        );
+
+    } finally {
+
+        uploadButton.disabled =
+            false;
+
     }
 }
 
 
-/* ============================================================
-   STARTUP
-============================================================ */
+/* ==========================================================
+   VOICE RECORDING
+========================================================== */
 
-async function initialiseWorkspace() {
+let mediaRecorder =
+    null;
 
-    loadPendingRequests();
+let recordedChunks =
+    [];
 
-    cleanInvalidPendingRequests();
+let recordingStream =
+    null;
 
-    getSelectedService();
+let isRecording =
+    false;
 
-    restoreConversationToScreen();
 
-    const resumed =
-        await resumeCurrentJobPendingRequest();
+/* ==========================================================
+   VOICE BUTTON
+========================================================== */
 
-    if (resumed) {
+voiceButton.addEventListener(
+    "click",
+    async function () {
 
-        intelligenceStarted =
-            true;
+        if (isRecording) {
 
-    } else if (
-        conversation.length > 0
+            stopVoiceRecording();
+
+            return;
+
+        }
+
+        await startVoiceRecording();
+
+    }
+);
+
+
+/* ==========================================================
+   START VOICE
+========================================================== */
+
+async function startVoiceRecording() {
+
+    if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
     ) {
 
-        intelligenceStarted =
+        addMessage(
+            "Voice recording is not available on this device.",
+            "ada"
+        );
+
+        return;
+    }
+
+
+    try {
+
+        recordingStream =
+            await navigator
+                .mediaDevices
+                .getUserMedia({
+                    audio: true
+                });
+
+
+        recordedChunks = [];
+
+
+        let mimeType = "";
+
+
+        if (
+            MediaRecorder.isTypeSupported(
+                "audio/webm;codecs=opus"
+            )
+        ) {
+
+            mimeType =
+                "audio/webm;codecs=opus";
+
+        } else if (
+            MediaRecorder.isTypeSupported(
+                "audio/webm"
+            )
+        ) {
+
+            mimeType =
+                "audio/webm";
+
+        }
+
+
+        mediaRecorder =
+            mimeType
+                ? new MediaRecorder(
+                    recordingStream,
+                    {
+                        mimeType:
+                            mimeType
+                    }
+                )
+                : new MediaRecorder(
+                    recordingStream
+                );
+
+
+        mediaRecorder.ondataavailable =
+            function (event) {
+
+                if (
+                    event.data &&
+                    event.data.size > 0
+                ) {
+
+                    recordedChunks.push(
+                        event.data
+                    );
+
+                }
+
+            };
+
+
+        mediaRecorder.onstop =
+            async function () {
+
+                const finalType =
+                    mimeType ||
+                    "audio/webm";
+
+
+                const audioBlob =
+                    new Blob(
+                        recordedChunks,
+                        {
+                            type:
+                                finalType
+                        }
+                    );
+
+
+                stopRecordingStream();
+
+
+                if (
+                    audioBlob.size <= 0
+                ) {
+
+                    recordingStatus.style.display =
+                        "none";
+
+                    voiceButton.textContent =
+                        "Voice";
+
+                    isRecording =
+                        false;
+
+                    addMessage(
+                        "No voice recording was captured. Please try again.",
+                        "ada"
+                    );
+
+                    return;
+
+                }
+
+
+                await uploadVoiceRecording(
+                    audioBlob
+                );
+
+            };
+
+
+        mediaRecorder.start();
+
+
+        isRecording =
             true;
+
+
+        recordingStatus.style.display =
+            "block";
+
+
+        recordingStatus.textContent =
+            "Recording voice message... Tap Voice again to stop.";
+
+
+        voiceButton.textContent =
+            "Stop Voice";
+
+
+        uploadButton.disabled =
+            true;
+
+
+    } catch (error) {
+
+        console.error(
+            "VOICE START ERROR:",
+            error
+        );
+
+        stopRecordingStream();
+
+
+        recordingStatus.style.display =
+            "none";
+
+
+        voiceButton.textContent =
+            "Voice";
+
+
+        isRecording =
+            false;
+
+
+        addMessage(
+            "Sorry, we could not start voice recording. Please allow microphone access and try again.",
+            "ada"
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   STOP VOICE
+========================================================== */
+
+function stopVoiceRecording() {
+
+    if (
+        mediaRecorder &&
+        mediaRecorder.state !== "inactive"
+    ) {
+
+        mediaRecorder.stop();
 
     } else {
 
-        intelligenceStarted =
+        stopRecordingStream();
+
+        isRecording =
             false;
 
-        await startAdaIntelligence();
+        recordingStatus.style.display =
+            "none";
+
+        voiceButton.textContent =
+            "Voice";
+
+        uploadButton.disabled =
+            false;
+
     }
 
-    setTimeout(
-        function() {
-
-            resumeOtherPendingRequests();
-
-        },
-        1500
-    );
 }
 
 
-/* ============================================================
-   NETWORK RESTORED
-============================================================ */
+/* ==========================================================
+   STOP MICROPHONE STREAM
+========================================================== */
 
-window.addEventListener(
-    "online",
-    function() {
+function stopRecordingStream() {
 
-        showConnectionStatus(
-            "Connection restored. Continuing saved work..."
-        );
+    if (
+        recordingStream
+    ) {
 
-        clearTimeout(
-            reconnectTimer
-        );
+        recordingStream
+            .getTracks()
+            .forEach(
+                function (track) {
 
-        reconnectTimer =
-            setTimeout(
-                async function() {
+                    track.stop();
 
-                    const resumed =
-                        await resumeCurrentJobPendingRequest();
-
-                    if (!resumed) {
-                        hideConnectionStatus();
-                    }
-
-                    resumeOtherPendingRequests();
-
-                },
-                1200
+                }
             );
+
+    }
+
+    recordingStream =
+        null;
+
+}
+
+
+/* ==========================================================
+   UPLOAD VOICE
+========================================================== */
+
+async function uploadVoiceRecording(
+    audioBlob
+) {
+
+    recordingStatus.style.display =
+        "block";
+
+    recordingStatus.textContent =
+        "Sending your voice message to Ada...";
+
+
+    try {
+
+        const filename =
+            "voice_" +
+            Date.now() +
+            ".webm";
+
+
+        const voiceFile =
+            new File(
+                [audioBlob],
+                filename,
+                {
+                    type:
+                        audioBlob.type ||
+                        "audio/webm"
+                }
+            );
+
+
+        /*
+            Voice uses the same real /upload
+            endpoint as ordinary files.
+
+            FastAPI receives it as UploadFile.
+        */
+
+        await uploadActualVoiceFile(
+            voiceFile
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "VOICE UPLOAD ERROR:",
+            error
+        );
+
+        recordingStatus.textContent =
+            "Sorry, we could not send the voice message.";
+
+        addMessage(
+            "Sorry, we could not send your voice message right now. Please try again.",
+            "ada"
+        );
+
+    } finally {
+
+        isRecording =
+            false;
+
+        mediaRecorder =
+            null;
+
+        voiceButton.textContent =
+            "Voice";
+
+        uploadButton.disabled =
+            false;
+
+        setTimeout(
+            function () {
+
+                recordingStatus.style.display =
+                    "none";
+
+            },
+            1500
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   UPLOAD VOICE FILE
+========================================================== */
+
+async function uploadActualVoiceFile(
+    voiceFile
+) {
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        voiceFile,
+        voiceFile.name
+    );
+
+
+    formData.append(
+        "customer_id",
+        customerId
+    );
+
+
+    formData.append(
+        "job_id",
+        jobId
+    );
+
+
+    formData.append(
+        "service",
+        service
+    );
+
+
+    const response =
+        await fetch(
+            API_UPLOAD,
+            {
+
+                method:
+                    "POST",
+
+                body:
+                    formData
+
+            }
+        );
+
+
+    let result = null;
+
+    try {
+
+        result =
+            await response.json();
+
+    } catch {
+
+        result = null;
+
+    }
+
+
+    if (
+        !response.ok ||
+        !result ||
+        result.success !== true
+    ) {
+
+        throw new Error(
+            "Voice upload failed."
+        );
+
+    }
+
+
+    recordingStatus.textContent =
+        "Voice message received.";
+
+
+    addMessage(
+        "I have received your voice message. Ada can now continue with your request.",
+        "ada"
+    );
+
+
+    /*
+        Notify Ada through the normal
+        intelligence route.
+
+        This keeps the conversation in
+        the same customer/job session.
+    */
+
+    await sendToAda(
+
+        "A voice message has been uploaded for this request. " +
+        "The voice recording is attached to the current job. " +
+        "Please continue helping me with my request.",
+
+        "voice_uploaded",
+
+        false
+
+    );
+
+}
+
+
+/* ==========================================================
+   REVIEW
+========================================================== */
+
+reviewButton.addEventListener(
+    "click",
+    async function () {
+
+        await sendToAda(
+            "Please review my current request and tell me what has been completed and what you still need from me.",
+            "review",
+            true
+        );
+
     }
 );
 
 
-/* ============================================================
-   NETWORK LOST
-============================================================ */
+/* ==========================================================
+   APPROVE
+========================================================== */
+
+approveButton.addEventListener(
+    "click",
+    async function () {
+
+        await sendToAda(
+            "I approve the current work and would like you to continue to the next step.",
+            "approve",
+            true
+        );
+
+    }
+);
+
+
+/* ==========================================================
+   PAYMENT
+========================================================== */
+
+paymentButton.addEventListener(
+    "click",
+    async function () {
+
+        await sendToAda(
+            "Please continue to the payment step for my current request.",
+            "payment",
+            true
+        );
+
+    }
+);
+
+
+/* ==========================================================
+   CUSTOMER SERVICE
+========================================================== */
+
+customerServiceButton.addEventListener(
+    "click",
+    async function () {
+
+        await sendToAda(
+            "I need Customer Service assistance with my current request.",
+            "customer_service",
+            true
+        );
+
+    }
+);
+
+
+/* ==========================================================
+   NEW JOB
+========================================================== */
+
+newJobButton.addEventListener(
+    "click",
+    async function () {
+
+        const confirmed =
+            window.confirm(
+                "Start a new job?"
+            );
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
+        /*
+            Keep the same customer.
+
+            Replace only the job ID.
+
+            This gives the customer a fresh
+            AdaController session.
+        */
+
+        jobId =
+            createId("job");
+
+
+        sessionStorage.setItem(
+            "ada_job_id",
+            jobId
+        );
+
+
+        conversationArea.innerHTML =
+            "";
+
+
+        conversationArea.appendChild(
+            typingIndicator
+        );
+
+
+        addMessage(
+            "Starting a new request...",
+            "customer"
+        );
+
+
+        await sendToAda(
+            "I am starting a new job. Please begin a fresh request for me.",
+            "new_job",
+            false
+        );
+
+    }
+);
+
+
+/* ==========================================================
+   BACK
+========================================================== */
+
+backButton.addEventListener(
+    "click",
+    function () {
+
+        window.location.href =
+            "conversation.html";
+
+    }
+);
+
+
+/* ==========================================================
+   START ADA SESSION
+========================================================== */
+
+async function startAdaSession() {
+
+    /*
+        This is deliberately done once.
+
+        Selecting a service should immediately
+        enter the Ada workflow.
+    */
+
+    await sendToAda(
+
+        "I have selected the service: " +
+        service +
+        ". Please begin working with me on this request and tell me what you need from me.",
+
+        "service_selected",
+
+        false
+
+    );
+
+}
+
+
+/* ==========================================================
+   PAGE START
+========================================================== */
 
 window.addEventListener(
-    "offline",
-    function() {
+    "load",
+    async function () {
 
-        showConnectionStatus(
-            NETWORK_MESSAGE
+        addMessage(
+            "Hello 😊\n\nWelcome to Naija Pocket Business Center.\n\nI am Ada, your Business Center assistant. I am ready to take care of your request.",
+            "ada"
         );
+
+
+        await startAdaSession();
+
+
+        messageInput.focus();
+
     }
 );
 
 
-/* ============================================================
-   PERIODIC RECOVERY
-============================================================ */
-
-setInterval(
-    function() {
-
-        if (
-            navigator.onLine &&
-            !requestInProgress &&
-            getPendingRequestForCurrentJob()
-        ) {
-
-            resumeCurrentJobPendingRequest();
-        }
-
-    },
-    15000
-);
-
-
-/* ============================================================
-   SAVE
-============================================================ */
-
-document.addEventListener(
-    "visibilitychange",
-    function() {
-
-        if (
-            document.visibilityState ===
-                "hidden"
-        ) {
-
-            saveConversation();
-
-            saveCurrentJob();
-
-            savePendingRequests();
-        }
-    }
-);
+/* ==========================================================
+   PAGE EXIT
+========================================================== */
 
 window.addEventListener(
     "beforeunload",
-    function() {
+    function () {
 
-        saveConversation();
+        stopRecordingStream();
 
-        saveCurrentJob();
-
-        savePendingRequests();
     }
 );
-
-
-/* ============================================================
-   START
-============================================================ */
-
-initialiseWorkspace();
 
 </script>
 
