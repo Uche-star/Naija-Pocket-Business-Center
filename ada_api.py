@@ -4,8 +4,8 @@ ada_api.py
 Ada Intelligence API
 Naija Pocket Business Center
 
-SESSION-ISOLATED DIAGNOSTIC VERSION
------------------------------------
+CUSTOMER/JOB SESSION-ISOLATED VERSION
+--------------------------------------
 
 Flow:
 
@@ -17,31 +17,31 @@ Flow:
         ↓
     AdaController
         ↓
-    AdaAIEngine V11
+    AdaAIEngine
         ↓
     Groq
 
 IMPORTANT
 ---------
-Each customer/job gets its own AdaController and therefore
+Each customer/job receives its own AdaController and therefore
 its own AdaAIEngine conversation memory.
 
-This prevents:
+This prevents one customer's failed/old conversation from
+interfering with another customer's new job.
 
-    Customer A
-        ↓
-    failed conversation
-        ↓
-    Customer B
-        ↓
-    old conversation blocking Customer B
+This file also keeps technical diagnostics on the server while
+returning CUSTOMER-SERVICE language to the customer.
 
-A genuinely new job receives a fresh Ada conversation.
+Customer-facing messages must NOT expose:
+    - Groq
+    - FastAPI
+    - traceback
+    - HTTP errors
+    - Python errors
+    - server errors
+    - technical network terminology
 
-Existing conversation messages for the same job continue
-using the same AdaController/AdaAIEngine instance.
-
-This version deliberately preserves diagnostic logging.
+Technical details remain available in the server console.
 """
 
 from fastapi import FastAPI
@@ -61,7 +61,7 @@ from ada_controller import AdaController
 
 app = FastAPI(
     title="Ada Intelligence API - Naija Pocket Business Center",
-    version="0.3.0"
+    version="0.4.0"
 )
 
 
@@ -83,6 +83,48 @@ app.add_middleware(
 # ==========================================================
 
 BASE_DIR = Path(__file__).resolve().parent
+
+
+# ==========================================================
+# CUSTOMER-FACING MESSAGES
+# ==========================================================
+
+CUSTOMER_NETWORK_MESSAGE = (
+    "Sorry, we are having trouble connecting right now. "
+    "Please check your internet connection and try again. "
+    "If the problem continues, please contact Customer Service."
+)
+
+
+CUSTOMER_PROCESSING_MESSAGE = (
+    "Sorry, we could not complete that step right now. "
+    "Please try again in a moment. "
+    "If the problem continues, please contact Customer Service."
+)
+
+
+CUSTOMER_START_MESSAGE = (
+    "Sorry, we could not start your request right now. "
+    "Please check your internet connection and try again. "
+    "If the problem continues, please contact Customer Service."
+)
+
+
+CUSTOMER_EMPTY_MESSAGE = (
+    "Please enter a message so Ada can continue helping you."
+)
+
+
+CUSTOMER_FILE_MESSAGE = (
+    "Your file has been received. "
+    "Ada can now continue with your request."
+)
+
+
+CUSTOMER_SERVICE_MESSAGE = (
+    "Customer Service is available to help. "
+    "Please tell us what you need assistance with."
+)
 
 
 # ==========================================================
@@ -108,42 +150,6 @@ class ChatRequest(BaseModel):
 # ==========================================================
 # ADA SESSION STORAGE
 # ==========================================================
-#
-# IMPORTANT
-# ---------
-# DO NOT create one global AdaController anymore.
-#
-# Instead:
-#
-#     customer/job
-#          ↓
-#     AdaController
-#          ↓
-#     AdaAIEngine
-#          ↓
-#     conversation memory
-#
-# Example:
-#
-#     customer_001 + job_001
-#         → Controller A
-#
-#     customer_001 + job_002
-#         → Controller B
-#
-#     customer_002 + job_003
-#         → Controller C
-#
-# Therefore old failed conversations cannot interfere
-# with new jobs.
-#
-# This is an in-memory session store.
-#
-# It is appropriate for the current single-instance
-# Render deployment and gives us the simplest reliable
-# solution without introducing a database/session system.
-#
-# ==========================================================
 
 ADA_SESSIONS = {}
 
@@ -151,22 +157,12 @@ ADA_SESSIONS = {}
 # ==========================================================
 # SESSION LIMIT
 # ==========================================================
-#
-# Prevent unlimited memory growth on the Render instance.
-#
-# When the limit is reached, the oldest stored session
-# is removed.
-#
-# This does NOT affect active customer conversations
-# until the server reaches this limit.
-#
-# ==========================================================
 
 MAX_SESSIONS = 100
 
 
 # ==========================================================
-# NORMALIZE SESSION VALUE
+# SESSION HELPERS
 # ==========================================================
 
 def clean_session_value(value):
@@ -190,10 +186,6 @@ def clean_session_value(value):
     return value
 
 
-# ==========================================================
-# CREATE SESSION KEY
-# ==========================================================
-
 def get_session_key(req: ChatRequest):
 
     customer_id = clean_session_value(
@@ -214,8 +206,6 @@ def get_session_key(req: ChatRequest):
 
     # ------------------------------------------------------
     # BEST CASE
-    #
-    # customer_id + job_id
     # ------------------------------------------------------
 
     if customer_id and job_id:
@@ -226,70 +216,45 @@ def get_session_key(req: ChatRequest):
         )
 
     # ------------------------------------------------------
-    # SECOND BEST
-    #
-    # job_id alone
-    #
-    # A job should normally be unique.
+    # JOB ONLY
     # ------------------------------------------------------
 
     if job_id:
 
-        return (
-            f"job:{job_id}"
-        )
+        return f"job:{job_id}"
 
     # ------------------------------------------------------
     # CUSTOMER ONLY
-    #
-    # Useful if the workspace has a customer ID but
-    # has not yet created a job ID.
     # ------------------------------------------------------
 
     if customer_id:
 
-        return (
-            f"customer:{customer_id}"
-        )
+        return f"customer:{customer_id}"
 
     # ------------------------------------------------------
-    # CLIENT REQUEST ID
-    #
-    # We intentionally DO NOT use this as the primary
-    # session identifier because it may be unique for
-    # every individual HTTP request.
-    #
-    # It is therefore only used as a temporary fallback
-    # when no customer/job information exists.
+    # REQUEST FALLBACK
     # ------------------------------------------------------
 
     if client_request_id:
 
-        return (
-            f"client:{client_request_id}"
-        )
+        return f"client:{client_request_id}"
 
     # ------------------------------------------------------
-    # SWAGGER / MANUAL TEST FALLBACK
-    #
-    # This allows Swagger testing to continue working
-    # even when no customer/job IDs are supplied.
-    #
-    # Service is included so different Swagger services
-    # do not immediately collide.
+    # MANUAL / SWAGGER FALLBACK
     # ------------------------------------------------------
 
     if service:
 
         return (
-            f"swagger-service:{service.lower()}"
+            f"swagger-service:"
+            f"{service.lower()}"
         )
 
     return "anonymous"
 
 
 # ==========================================================
-# GET OR CREATE ADA SESSION
+# ADA SESSION CREATION
 # ==========================================================
 
 def get_ada_controller(session_key):
@@ -320,9 +285,8 @@ def get_ada_controller(session_key):
 
         return ADA_SESSIONS[session_key]
 
-
     # ------------------------------------------------------
-    # SESSION DOES NOT EXIST
+    # NEW SESSION
     # ------------------------------------------------------
 
     print()
@@ -338,9 +302,7 @@ def get_ada_controller(session_key):
     print("=" * 80)
     print()
 
-
     controller = AdaController()
-
 
     # ------------------------------------------------------
     # SESSION LIMIT
@@ -352,7 +314,6 @@ def get_ada_controller(session_key):
             iter(ADA_SESSIONS)
         )
 
-        print()
         print(
             "ADA SESSION LIMIT REACHED."
         )
@@ -367,13 +328,11 @@ def get_ada_controller(session_key):
             None
         )
 
-
     # ------------------------------------------------------
-    # STORE NEW CONTROLLER
+    # STORE SESSION
     # ------------------------------------------------------
 
     ADA_SESSIONS[session_key] = controller
-
 
     print()
     print("=" * 80)
@@ -393,20 +352,17 @@ def get_ada_controller(session_key):
     print("=" * 80)
     print()
 
-
     return controller
 
 
 # ==========================================================
-# REMOVE ADA SESSION
+# REMOVE SESSION
 # ==========================================================
 
 def remove_ada_session(session_key):
 
     if session_key not in ADA_SESSIONS:
-
         return False
-
 
     print()
     print("=" * 80)
@@ -420,7 +376,6 @@ def remove_ada_session(session_key):
 
     print("=" * 80)
     print()
-
 
     ADA_SESSIONS.pop(
         session_key,
@@ -514,9 +469,7 @@ def health():
     print("=" * 80)
     print()
 
-
     session_status = []
-
 
     for session_key, controller in ADA_SESSIONS.items():
 
@@ -533,7 +486,7 @@ def health():
 
             print()
             print(
-                "HEALTH SESSION GROQ ERROR:"
+                "HEALTH SESSION CONNECTION ERROR"
             )
 
             print(
@@ -552,7 +505,6 @@ def health():
             )
 
             traceback.print_exc()
-
 
         try:
 
@@ -564,7 +516,7 @@ def health():
 
             print()
             print(
-                "HEALTH SESSION MODEL ERROR:"
+                "HEALTH SESSION MODEL ERROR"
             )
 
             print(
@@ -583,7 +535,6 @@ def health():
             )
 
             traceback.print_exc()
-
 
         session_status.append({
 
@@ -597,7 +548,6 @@ def health():
                 groq_model
 
         })
-
 
     return {
 
@@ -662,16 +612,14 @@ def chat(req: ChatRequest):
     print("ACTIVATE INTELLIGENCE:")
     print(repr(req.activate_intelligence))
 
-
     # ======================================================
-    # REQUEST VALIDATION
+    # MESSAGE VALIDATION
     # ======================================================
 
     if req.message is None:
 
-        print()
         print(
-            "!!!!!!!! MESSAGE IS NONE !!!!!!!!"
+            "MESSAGE IS NONE"
         )
 
         return {
@@ -680,24 +628,21 @@ def chat(req: ChatRequest):
                 False,
 
             "reply":
-                "Please enter a message.",
+                CUSTOMER_EMPTY_MESSAGE,
 
             "error":
                 "FastAPI received message=None."
 
         }
 
-
     message = str(
         req.message
     ).strip()
 
-
     if not message:
 
-        print()
         print(
-            "!!!!!!!! EMPTY MESSAGE !!!!!!!!"
+            "EMPTY MESSAGE"
         )
 
         return {
@@ -706,22 +651,20 @@ def chat(req: ChatRequest):
                 False,
 
             "reply":
-                "Please enter a message.",
+                CUSTOMER_EMPTY_MESSAGE,
 
             "error":
                 "FastAPI received an empty message."
 
         }
 
-
     # ======================================================
-    # DETERMINE SESSION
+    # SESSION
     # ======================================================
 
     session_key = get_session_key(
         req
     )
-
 
     print()
     print("=" * 80)
@@ -745,27 +688,13 @@ def chat(req: ChatRequest):
 
     print("=" * 80)
 
-
     # ======================================================
-    # NEW JOB EVENT
-    # ======================================================
-    #
-    # If workspace explicitly says that a genuinely new
-    # job is beginning, remove the old session first.
-    #
-    # Supported event names:
-    #
-    #     new_job
-    #     start_job
-    #     reset_job
-    #     new_conversation
-    #
+    # EVENT
     # ======================================================
 
     event = clean_session_value(
         req.event
     )
-
 
     if event:
 
@@ -779,6 +708,9 @@ def chat(req: ChatRequest):
 
         normalized_event = None
 
+    # ======================================================
+    # NEW JOB EVENTS
+    # ======================================================
 
     new_job_events = {
 
@@ -791,12 +723,11 @@ def chat(req: ChatRequest):
 
     }
 
-
     if normalized_event in new_job_events:
 
         print()
         print("=" * 80)
-        print("!!!!!!!! NEW JOB EVENT RECEIVED !!!!!!!!")
+        print("NEW JOB EVENT RECEIVED")
         print("=" * 80)
 
         print(
@@ -811,14 +742,12 @@ def chat(req: ChatRequest):
 
         print("=" * 80)
 
-
         remove_ada_session(
             session_key
         )
 
-
     # ======================================================
-    # GET SESSION CONTROLLER
+    # GET CONTROLLER
     # ======================================================
 
     try:
@@ -831,37 +760,27 @@ def chat(req: ChatRequest):
 
         print()
         print("#" * 80)
-        print("!!!!!!!! ADA SESSION CREATION ERROR !!!!!!!!")
+        print("ADA SESSION CREATION ERROR")
         print("#" * 80)
 
-        print()
-        print("ERROR TYPE:")
         print(
+            "ERROR TYPE:",
             type(error).__name__
         )
 
-        print()
-        print("ERROR MESSAGE:")
         print(
+            "ERROR MESSAGE:",
             str(error)
         )
 
-        print()
-        print("ERROR REPRESENTATION:")
         print(
+            "ERROR REPRESENTATION:",
             repr(error)
         )
 
-        print()
-        print("FULL TRACEBACK:")
-        print()
-
         traceback.print_exc()
 
-        print()
         print("#" * 80)
-        print()
-
 
         return {
 
@@ -869,16 +788,18 @@ def chat(req: ChatRequest):
                 False,
 
             "reply":
-                "Ada could not start your request right now.",
+                CUSTOMER_START_MESSAGE,
 
             "error":
                 (
                     f"{type(error).__name__}: "
                     f"{str(error)}"
-                )
+                ),
+
+            "session_id":
+                session_key
 
         }
-
 
     # ======================================================
     # CONTROLLER DIAGNOSTICS
@@ -892,74 +813,53 @@ def chat(req: ChatRequest):
         print("=" * 80)
 
         print(
-            "Session:",
+            "SESSION:",
             repr(session_key)
         )
 
         print(
-            "Controller:",
+            "CONTROLLER:",
             type(controller).__name__
         )
-
 
         try:
 
             print(
-                "Groq Connected:",
+                "GROQ CONNECTED:",
                 controller.intelligence.is_connected()
             )
 
         except Exception as error:
 
-            print()
             print(
-                "GROQ STATUS CHECK FAILED"
-            )
-
-            print(
-                "ERROR TYPE:",
-                type(error).__name__
-            )
-
-            print(
-                "ERROR:",
+                "GROQ STATUS CHECK FAILED:",
+                type(error).__name__,
                 str(error)
             )
 
             traceback.print_exc()
 
-
         try:
 
             print(
-                "Groq Model:",
+                "GROQ MODEL:",
                 controller.intelligence.get_model()
             )
 
         except Exception as error:
 
-            print()
             print(
-                "MODEL CHECK FAILED"
-            )
-
-            print(
-                "ERROR TYPE:",
-                type(error).__name__
-            )
-
-            print(
-                "ERROR:",
+                "MODEL CHECK FAILED:",
+                type(error).__name__,
                 str(error)
             )
 
             traceback.print_exc()
 
-
         try:
 
             print(
-                "Active Service Before:",
+                "ACTIVE SERVICE BEFORE:",
                 repr(
                     controller.get_active_service()
                 )
@@ -968,8 +868,7 @@ def chat(req: ChatRequest):
         except Exception as error:
 
             print(
-                "Active Service:",
-                "Unable to read"
+                "ACTIVE SERVICE: UNAVAILABLE"
             )
 
             print(
@@ -977,19 +876,17 @@ def chat(req: ChatRequest):
                 str(error)
             )
 
-
         try:
 
             print(
-                "Job State Before:",
+                "JOB STATE BEFORE:",
                 controller.get_job_state()
             )
 
         except Exception as error:
 
             print(
-                "Job State:",
-                "Unable to read"
+                "JOB STATE: UNAVAILABLE"
             )
 
             print(
@@ -997,9 +894,7 @@ def chat(req: ChatRequest):
                 str(error)
             )
 
-
         print("=" * 80)
-
 
         # ==================================================
         # SEND TO ADA CONTROLLER
@@ -1011,79 +906,63 @@ def chat(req: ChatRequest):
         print("=" * 80)
 
         print(
-            "SESSION =",
+            "SESSION:",
             repr(session_key)
         )
 
         print(
-            "MESSAGE =",
+            "MESSAGE:",
             repr(message)
         )
 
         print(
-            "SERVICE =",
+            "SERVICE:",
             repr(req.service)
         )
 
-        print("=" * 80)
+        print(
+            "EVENT:",
+            repr(normalized_event)
+        )
 
+        print("=" * 80)
 
         reply = controller.process_message(
 
-            message=
-                message,
+            message=message,
 
-            service=
-                req.service
+            service=req.service
 
         )
 
-
         # ==================================================
-        # ENGINE SUCCESS
+        # SUCCESS
         # ==================================================
 
         print()
         print("=" * 80)
-        print("!!!!!!!! ADA INTELLIGENCE SUCCESS !!!!!!!!")
+        print("ADA INTELLIGENCE SUCCESS")
         print("=" * 80)
 
-        print()
         print(
-            "SESSION:"
-        )
-
-        print(
+            "SESSION:",
             repr(session_key)
         )
 
-        print()
         print(
-            "RESPONSE TYPE:"
-        )
-
-        print(
+            "RESPONSE TYPE:",
             type(reply).__name__
         )
 
-        print()
         print(
-            "RESPONSE:"
-        )
-
-        print(
+            "RESPONSE:",
             repr(reply)
         )
 
-
         try:
 
-            print()
             print(
-                "ACTIVE SERVICE AFTER:"
-            )
-
-            print(
+                "ACTIVE SERVICE AFTER:",
                 repr(
                     controller.get_active_service()
                 )
@@ -1093,15 +972,10 @@ def chat(req: ChatRequest):
 
             pass
 
-
         try:
 
-            print()
             print(
-                "JOB STATE AFTER:"
-            )
-
-            print(
+                "JOB STATE AFTER:",
                 controller.get_job_state()
             )
 
@@ -1109,10 +983,7 @@ def chat(req: ChatRequest):
 
             pass
 
-
-        print()
         print("=" * 80)
-
 
         if reply is None:
 
@@ -1120,18 +991,15 @@ def chat(req: ChatRequest):
                 "AdaController returned None."
             )
 
-
         reply = str(
             reply
         ).strip()
-
 
         if not reply:
 
             raise RuntimeError(
                 "AdaController returned an empty response."
             )
-
 
         return {
 
@@ -1142,13 +1010,23 @@ def chat(req: ChatRequest):
                 reply,
 
             "session_id":
-                session_key
+                session_key,
+
+            "event":
+                normalized_event,
+
+            "service":
+                req.service,
+
+            "job_id":
+                clean_session_value(
+                    req.job_id
+                )
 
         }
 
-
     # ======================================================
-    # REAL EXCEPTION
+    # REAL ADA ERROR
     # ======================================================
 
     except Exception as error:
@@ -1163,6 +1041,18 @@ def chat(req: ChatRequest):
         print("SESSION:")
         print(
             repr(session_key)
+        )
+
+        print()
+        print("SERVICE:")
+        print(
+            repr(req.service)
+        )
+
+        print()
+        print("EVENT:")
+        print(
+            repr(normalized_event)
         )
 
         print()
@@ -1195,18 +1085,13 @@ def chat(req: ChatRequest):
         print("#" * 80)
         print()
 
-
         # --------------------------------------------------
         # IMPORTANT
         #
-        # DO NOT DELETE THE SESSION HERE.
+        # The session is intentionally preserved.
         #
-        # A temporary Groq/network failure should NOT destroy
-        # the customer's conversation.
-        #
-        # The same job can retry the request.
-        #
-        # A genuinely new job gets a new session key/event.
+        # A temporary service/network/provider failure must
+        # not destroy the customer's active conversation.
         # --------------------------------------------------
 
         return {
@@ -1215,7 +1100,7 @@ def chat(req: ChatRequest):
                 False,
 
             "reply":
-                "Ada encountered a processing error. Please try again.",
+                CUSTOMER_PROCESSING_MESSAGE,
 
             "error":
                 (
@@ -1224,7 +1109,18 @@ def chat(req: ChatRequest):
                 ),
 
             "session_id":
-                session_key
+                session_key,
+
+            "event":
+                normalized_event,
+
+            "service":
+                req.service,
+
+            "job_id":
+                clean_session_value(
+                    req.job_id
+                )
 
         }
 
@@ -1242,12 +1138,12 @@ if __name__ == "__main__":
     print()
 
     print(
-        "Active Sessions:",
+        "ACTIVE SESSIONS:",
         len(ADA_SESSIONS)
     )
 
     print(
-        "Session Keys:",
+        "SESSION KEYS:",
         list(ADA_SESSIONS.keys())
     )
 
