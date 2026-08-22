@@ -8,20 +8,19 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
-    <title>Ada — Naija Pocket Business Center</title>
+    <title>Naija Pocket Business Center — Ada Workspace</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
 
         html,
         body {
-            margin: 0;
-            padding: 0;
             width: 100%;
             height: 100%;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
             background: #000;
             color: #fff;
@@ -37,100 +36,50 @@
            HEADER
         ================================================== */
 
-        .top-header {
+        .header {
             flex: 0 0 auto;
-
             width: 100%;
-
-            padding:
-                calc(12px + env(safe-area-inset-top))
-                16px
-                12px
-                16px;
-
             background: #000;
-
-            border-bottom: 1px solid #222;
-
+            border-bottom: 1px solid #292929;
+            padding: 12px 14px;
             text-align: center;
         }
 
         .brand {
             margin: 0;
-
-            font-family:
-                Montserrat,
-                Arial,
-                sans-serif;
-
-            font-size: 22px;
-
-            font-weight: 800;
-
             color: #d4af37;
-
-            letter-spacing: .3px;
+            font-family: Montserrat, Arial, sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            line-height: 1.2;
         }
 
-        .ada-label {
-            margin-top: 4px;
-
-            font-size: 13px;
-
-            color: #aaa;
-        }
-
-        .service-label {
-            margin-top: 8px;
-
-            padding: 8px 12px;
-
-            border-radius: 8px;
-
-            background: #181818;
-
+        .service-title {
+            margin-top: 5px;
             color: #fff;
-
-            font-size: 14px;
-
-            font-weight: 700;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.25;
         }
 
         /* ==================================================
-           MAIN CONVERSATION AREA
+           CHAT AREA
         ================================================== */
 
-        .conversation-area {
+        .conversation {
             flex: 1 1 auto;
-
             min-height: 0;
-
             width: 100%;
-
             overflow-y: auto;
             overflow-x: hidden;
-
             padding: 14px;
-
-            background: #000;
-
+            background: #050505;
             -webkit-overflow-scrolling: touch;
-        }
-
-        .conversation-area::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .conversation-area::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 10px;
         }
 
         .message {
             width: 100%;
-
             display: flex;
-
             margin-bottom: 12px;
         }
 
@@ -143,336 +92,250 @@
         }
 
         .bubble {
-            max-width: 88%;
-
+            max-width: 92%;
             padding: 12px 14px;
-
             border-radius: 14px;
-
-            font-size: 15px;
-
-            line-height: 1.5;
-
             white-space: pre-wrap;
-
             overflow-wrap: anywhere;
+            line-height: 1.5;
+            font-size: 15px;
         }
 
         .message.ada .bubble {
             background: #181818;
-
+            border: 1px solid #303030;
             color: #fff;
-
-            border:
-                1px solid
-                #292929;
-
-            border-bottom-left-radius: 4px;
+            border-top-left-radius: 4px;
         }
 
         .message.customer .bubble {
             background: #d4af37;
-
             color: #000;
-
-            border-bottom-right-radius: 4px;
-
-            font-weight: 600;
+            border-top-right-radius: 4px;
+            font-weight: 500;
         }
 
         .typing {
-            display: none;
-
-            color: #999;
-
-            font-size: 13px;
-
-            margin:
-                4px
-                4px
-                12px
-                4px;
+            opacity: 0.7;
+            font-style: italic;
         }
 
         /* ==================================================
-           UPLOAD / VOICE STATUS
+           COMPOSER
         ================================================== */
 
-        .attachment-status {
-            display: none;
-
-            margin: 0 0 10px 0;
-
-            padding: 10px 12px;
-
-            border-radius: 8px;
-
-            background: #151515;
-
-            border: 1px solid #292929;
-
-            color: #ddd;
-
-            font-size: 13px;
-
-            overflow-wrap: anywhere;
-        }
-
-        .recording-status {
-            display: none;
-
-            margin: 0 0 10px 0;
-
-            padding: 10px 12px;
-
-            border-radius: 8px;
-
-            background: #351515;
-
-            border: 1px solid #6b2222;
-
-            color: #fff;
-
-            font-size: 13px;
-
-            text-align: center;
-        }
-
-        /* ==================================================
-           BOTTOM CONTROLS
-        ================================================== */
-
-        .bottom-area {
+        .composer {
             flex: 0 0 auto;
-
             width: 100%;
-
-            padding:
-                10px
-                10px
-                calc(10px + env(safe-area-inset-bottom))
-                10px;
-
             background: #000;
-
-            border-top: 1px solid #222;
+            border-top: 1px solid #292929;
+            padding: 9px;
         }
 
-        .action-row {
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, minmax(0, 1fr));
-
-            gap: 7px;
-
-            margin-bottom: 9px;
-        }
-
-        .action-button {
-            min-height: 44px;
-
-            padding: 8px 5px;
-
-            border: 1px solid #333;
-
-            border-radius: 8px;
-
-            background: #111;
-
-            color: #fff;
-
-            font-size: 12px;
-
-            font-weight: 700;
-
-            cursor: pointer;
-
-            touch-action: manipulation;
-        }
-
-        .action-button:active {
-            transform: scale(.98);
-        }
-
-        .action-button:disabled {
-            opacity: .45;
-
-            cursor: not-allowed;
-        }
-
-        .message-row {
+        .input-row {
             display: flex;
-
-            align-items: center;
-
-            gap: 8px;
+            align-items: flex-end;
+            gap: 7px;
+            width: 100%;
         }
 
-        .message-input {
+        #messageInput {
             flex: 1;
-
             min-width: 0;
-
-            height: 46px;
-
-            padding:
-                0
-                13px;
-
-            border:
-                1px solid
-                #333;
-
-            border-radius: 10px;
-
+            min-height: 46px;
+            max-height: 100px;
+            resize: none;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 12px;
             outline: none;
-
-            background: #151515;
-
+            background: #171717;
             color: #fff;
-
-            font-family: inherit;
-
+            font-family: Inter, Arial, sans-serif;
             font-size: 15px;
         }
 
-        .message-input::placeholder {
-            color: #777;
+        #messageInput::placeholder {
+            color: #888;
         }
 
         .send-button {
-            flex: 0 0 72px;
-
-            height: 46px;
-
-            border: none;
-
-            border-radius: 10px;
-
+            flex: 0 0 auto;
+            min-width: 68px;
+            min-height: 46px;
+            border: 0;
+            border-radius: 12px;
             background: #d4af37;
-
             color: #000;
-
-            font-size: 14px;
-
             font-weight: 800;
-
+            font-size: 14px;
             cursor: pointer;
-
-            touch-action: manipulation;
         }
 
         .send-button:disabled {
-            opacity: .45;
-
+            opacity: 0.45;
             cursor: not-allowed;
         }
 
         /* ==================================================
-           SMALL SCREENS
+           ACTION BUTTONS
         ================================================== */
 
-        @media (max-width: 420px) {
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 6px;
+            margin-top: 7px;
+        }
+
+        .action-button {
+            min-height: 38px;
+            padding: 8px 5px;
+            border: 1px solid #333;
+            border-radius: 9px;
+            background: #111;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .action-button:active {
+            transform: scale(0.98);
+        }
+
+        .action-button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .back-button {
+            background: #8f1717;
+            border-color: #b52626;
+        }
+
+        /* ==================================================
+           HIDDEN FILE INPUT
+        ================================================== */
+
+        #fileInput {
+            display: none;
+        }
+
+        /* ==================================================
+           STATUS
+        ================================================== */
+
+        .status {
+            min-height: 16px;
+            margin-top: 5px;
+            color: #888;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        /* ==================================================
+           MOBILE
+        ================================================== */
+
+        @media (max-width: 480px) {
 
             .brand {
-                font-size: 20px;
+                font-size: 18px;
             }
 
-            .bubble {
-                max-width: 92%;
-
+            .service-title {
                 font-size: 14px;
             }
 
-            .action-row {
-                gap: 5px;
+            .conversation {
+                padding: 10px;
+            }
+
+            .bubble {
+                max-width: 94%;
+                font-size: 14px;
+            }
+
+            .actions {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
             }
 
             .action-button {
-                min-height: 42px;
-
                 font-size: 11px;
+                min-height: 36px;
             }
 
             .send-button {
-                flex-basis: 64px;
+                min-width: 62px;
             }
         }
-
     </style>
 </head>
-
 
 <body>
 
     <!-- ==================================================
-         HEADER
+         FIXED HEADER
     ================================================== -->
 
-    <header class="top-header">
-
-        <h1 class="brand">
-            Naija Pocket Business Center
-        </h1>
-
-        <div class="ada-label">
+    <header class="header">
+        <h1 class="brand">Naija Pocket Business Center</h1>
+        <div id="serviceTitle" class="service-title">
             Ada — Business Center Assistant
         </div>
-
-        <div
-            id="serviceLabel"
-            class="service-label"
-        >
-            Service not selected
-        </div>
-
     </header>
 
 
     <!-- ==================================================
-         CONVERSATION
+         ADA CONVERSATION
+         
+         IMPORTANT:
+         No Ada welcome/reply is hardcoded here.
+         Ada's first response comes from /api/chat.
     ================================================== -->
 
     <main
-        id="conversationArea"
-        class="conversation-area"
-    >
-
-        <div
-            id="typingIndicator"
-            class="typing"
-        >
-            Ada is working on it...
-        </div>
-
-    </main>
+        id="conversation"
+        class="conversation"
+        aria-live="polite"
+    ></main>
 
 
     <!-- ==================================================
-         BOTTOM AREA
+         FIXED BOTTOM WORKSPACE
     ================================================== -->
 
-    <section class="bottom-area">
+    <section class="composer">
 
-        <div
-            id="attachmentStatus"
-            class="attachment-status"
-        ></div>
+        <div class="input-row">
 
-        <div
-            id="recordingStatus"
-            class="recording-status"
-        >
-            Recording voice message...
+            <textarea
+                id="messageInput"
+                rows="1"
+                placeholder="Type your message to Ada..."
+                autocomplete="off"
+            ></textarea>
+
+            <button
+                id="sendButton"
+                class="send-button"
+                type="button"
+            >
+                Send
+            </button>
+
         </div>
 
 
-        <!-- ==================================================
-             ACTION BUTTONS
-        ================================================== -->
+        <!-- Hidden native file picker -->
+        <input
+            id="fileInput"
+            type="file"
+        >
 
-        <div class="action-row">
+
+        <div class="actions">
 
             <button
                 id="uploadButton"
@@ -506,11 +369,6 @@
                 Approve
             </button>
 
-        </div>
-
-
-        <div class="action-row">
-
             <button
                 id="paymentButton"
                 class="action-button"
@@ -537,7 +395,7 @@
 
             <button
                 id="backButton"
-                class="action-button"
+                class="action-button back-button"
                 type="button"
             >
                 Back
@@ -546,1548 +404,886 @@
         </div>
 
 
-        <!-- ==================================================
-             MESSAGE INPUT
-        ================================================== -->
-
-        <div class="message-row">
-
-            <input
-                id="messageInput"
-                class="message-input"
-                type="text"
-                autocomplete="off"
-                placeholder="Type your message..."
-            >
-
-            <button
-                id="sendButton"
-                class="send-button"
-                type="button"
-            >
-                Send
-            </button>
-
-        </div>
+        <div
+            id="status"
+            class="status"
+        ></div>
 
     </section>
 
 
-    <!-- ==================================================
-         HIDDEN FILE INPUT
-    ================================================== -->
+    <script>
+        "use strict";
 
-    <input
-        id="fileInput"
-        type="file"
-        hidden
-    >
 
+        /* ==================================================
+           SESSION / SERVICE
+        ================================================== */
 
-<script>
-
-"use strict";
-
-
-/* ==========================================================
-   API
-========================================================== */
-
-/*
-    Workspace is served by the same FastAPI application.
-
-    Therefore use relative API paths.
-
-    This avoids hard-coding an old Render/Cloudflare/Flask
-    address into the page.
-*/
-
-const API_CHAT = "/api/chat";
-const API_UPLOAD = "/upload";
-
-
-/* ==========================================================
-   DOM
-========================================================== */
-
-const conversationArea =
-    document.getElementById(
-        "conversationArea"
-    );
-
-const typingIndicator =
-    document.getElementById(
-        "typingIndicator"
-    );
-
-const serviceLabel =
-    document.getElementById(
-        "serviceLabel"
-    );
-
-const messageInput =
-    document.getElementById(
-        "messageInput"
-    );
-
-const sendButton =
-    document.getElementById(
-        "sendButton"
-    );
-
-const uploadButton =
-    document.getElementById(
-        "uploadButton"
-    );
-
-const voiceButton =
-    document.getElementById(
-        "voiceButton"
-    );
-
-const reviewButton =
-    document.getElementById(
-        "reviewButton"
-    );
-
-const approveButton =
-    document.getElementById(
-        "approveButton"
-    );
-
-const paymentButton =
-    document.getElementById(
-        "paymentButton"
-    );
-
-const customerServiceButton =
-    document.getElementById(
-        "customerServiceButton"
-    );
-
-const newJobButton =
-    document.getElementById(
-        "newJobButton"
-    );
-
-const backButton =
-    document.getElementById(
-        "backButton"
-    );
-
-const fileInput =
-    document.getElementById(
-        "fileInput"
-    );
-
-const attachmentStatus =
-    document.getElementById(
-        "attachmentStatus"
-    );
-
-const recordingStatus =
-    document.getElementById(
-        "recordingStatus"
-    );
-
-
-/* ==========================================================
-   SERVICE
-========================================================== */
-
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
-
-let service =
-    params.get("service");
-
-if (!service) {
-
-    service =
-        localStorage.getItem(
-            "selectedService"
-        );
-}
-
-if (!service) {
-
-    service =
-        "Service not selected";
-}
-
-service =
-    String(service).trim();
-
-serviceLabel.textContent =
-    service;
-
-
-/* ==========================================================
-   CUSTOMER / JOB IDENTIFIERS
-========================================================== */
-
-/*
-    These identifiers remain in sessionStorage so that:
-
-        conversation
-             ↓
-        workspace
-             ↓
-        upload
-             ↓
-        voice
-             ↓
-        chat
-
-    all belong to the same customer/job session.
-*/
-
-function createId(prefix) {
-
-    if (
-        window.crypto &&
-        crypto.randomUUID
-    ) {
-
-        return (
-            prefix +
-            "_" +
-            crypto.randomUUID()
-        );
-    }
-
-    return (
-        prefix +
-        "_" +
-        Date.now() +
-        "_" +
-        Math.random()
-            .toString(36)
-            .slice(2)
-    );
-}
-
-
-let customerId =
-    sessionStorage.getItem(
-        "ada_customer_id"
-    );
-
-if (!customerId) {
-
-    customerId =
-        createId("customer");
-
-    sessionStorage.setItem(
-        "ada_customer_id",
-        customerId
-    );
-}
-
-
-let jobId =
-    sessionStorage.getItem(
-        "ada_job_id"
-    );
-
-if (!jobId) {
-
-    jobId =
-        createId("job");
-
-    sessionStorage.setItem(
-        "ada_job_id",
-        jobId
-    );
-}
-
-
-/* ==========================================================
-   CLIENT REQUEST ID
-========================================================== */
-
-function createRequestId() {
-
-    return createId(
-        "request"
-    );
-}
-
-
-/* ==========================================================
-   DISPLAY MESSAGE
-========================================================== */
-
-function addMessage(
-    text,
-    sender
-) {
-
-    if (
-        text === null ||
-        text === undefined
-    ) {
-
-        return;
-    }
-
-    const message =
-        document.createElement(
-            "div"
+        const params = new URLSearchParams(
+            window.location.search
         );
 
-    message.className =
-        "message " +
-        (
-            sender === "customer"
-                ? "customer"
-                : "ada"
-        );
+        const selectedService =
+            params.get("service") || "General Assistance";
 
-    const bubble =
-        document.createElement(
-            "div"
-        );
+        let customerId =
+            params.get("customer_id");
 
-    bubble.className =
-        "bubble";
+        let jobId =
+            params.get("job_id");
 
-    bubble.textContent =
-        String(text);
-
-    message.appendChild(
-        bubble
-    );
-
-    conversationArea.insertBefore(
-        message,
-        typingIndicator
-    );
-
-    scrollToBottom();
-}
-
-
-/* ==========================================================
-   SCROLL
-========================================================== */
-
-function scrollToBottom() {
-
-    requestAnimationFrame(
-        function () {
-
-            conversationArea.scrollTop =
-                conversationArea.scrollHeight;
-
-        }
-    );
-}
-
-
-/* ==========================================================
-   TYPING
-========================================================== */
-
-function showTyping() {
-
-    typingIndicator.style.display =
-        "block";
-
-    scrollToBottom();
-}
-
-
-function hideTyping() {
-
-    typingIndicator.style.display =
-        "none";
-}
-
-
-/* ==========================================================
-   BUTTON LOCK
-========================================================== */
-
-function setBusy(
-    busy
-) {
-
-    sendButton.disabled =
-        busy;
-
-    uploadButton.disabled =
-        busy;
-
-    reviewButton.disabled =
-        busy;
-
-    approveButton.disabled =
-        busy;
-
-    paymentButton.disabled =
-        busy;
-
-    customerServiceButton.disabled =
-        busy;
-
-    newJobButton.disabled =
-        busy;
-}
-
-
-/* ==========================================================
-   CHAT
-========================================================== */
-
-async function sendToAda(
-    message,
-    eventName = null,
-    displayCustomerMessage = true
-) {
-
-    message =
-        String(message || "")
-            .trim();
-
-    if (!message) {
-
-        return;
-    }
-
-    if (
-        displayCustomerMessage
-    ) {
-
-        addMessage(
-            message,
-            "customer"
-        );
-    }
-
-    showTyping();
-
-    setBusy(true);
-
-    try {
-
-        const payload = {
-
-            message:
-
-                message,
-
-            service:
-
-                service,
-
-            event:
-
-                eventName,
-
-            customer_id:
-
-                customerId,
-
-            job_id:
-
-                jobId,
-
-            client_request_id:
-
-                createRequestId(),
-
-            activate_intelligence:
-
-                true
-
-        };
-
-
-        const response =
-            await fetch(
-                API_CHAT,
-                {
-
-                    method:
-                        "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
-
-                }
-            );
-
-
-        let result = null;
-
-        try {
-
-            result =
-                await response.json();
-
-        } catch {
-
-            result = null;
-
-        }
-
-
-        if (
-            !response.ok
-        ) {
-
-            throw new Error(
-                "Chat request failed."
-            );
-
-        }
-
-
-        const reply =
-            result &&
-            (
-                result.reply ||
-                result.response ||
-                result.message
-            );
-
-
-        if (reply) {
-
-            addMessage(
-                reply,
-                "ada"
-            );
-
-        } else {
-
-            addMessage(
-                "Sorry, Ada could not complete that step right now. Please try again.",
-                "ada"
-            );
-
-        }
-
-
-        if (
-            result &&
-            result.price !== undefined &&
-            result.price !== null
-        ) {
-
-            addMessage(
-                "Price: ₦" +
-                result.price,
-                "ada"
-            );
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "ADA CHAT ERROR:",
-            error
-        );
-
-        addMessage(
-            "Sorry, we could not complete that step right now. Please try again in a moment.",
-            "ada"
-        );
-
-    } finally {
-
-        hideTyping();
-
-        setBusy(false);
-
-        messageInput.focus();
-
-    }
-}
-
-
-/* ==========================================================
-   SEND BUTTON
-========================================================== */
-
-async function sendCurrentMessage() {
-
-    const message =
-        messageInput.value.trim();
-
-    if (!message) {
-
-        addMessage(
-            "Please enter a message so Ada can continue helping you.",
-            "ada"
-        );
-
-        return;
-    }
-
-    messageInput.value = "";
-
-    await sendToAda(
-        message,
-        null,
-        true
-    );
-}
-
-
-sendButton.addEventListener(
-    "click",
-    sendCurrentMessage
-);
-
-
-messageInput.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (
-            event.key === "Enter"
-        ) {
-
-            event.preventDefault();
-
-            sendCurrentMessage();
-
-        }
-
-    }
-);
-
-
-/* ==========================================================
-   REAL FILE UPLOAD
-========================================================== */
-
-uploadButton.addEventListener(
-    "click",
-    function () {
-
-        fileInput.value = "";
-
-        fileInput.click();
-
-    }
-);
-
-
-fileInput.addEventListener(
-    "change",
-    async function () {
-
-        const file =
-            fileInput.files &&
-            fileInput.files[0];
-
-        if (!file) {
-
-            return;
-        }
-
-        await uploadActualFile(
-            file
-        );
-
-    }
-);
-
-
-async function uploadActualFile(
-    file
-) {
-
-    attachmentStatus.style.display =
-        "block";
-
-    attachmentStatus.textContent =
-        "Uploading " +
-        file.name +
-        "...";
-
-    uploadButton.disabled =
-        true;
-
-    try {
-
-        const formData =
-            new FormData();
-
-        /*
-            IMPORTANT:
-
-            This sends the actual file bytes.
-
-            The field name "file" matches:
-
-                file: UploadFile = File(...)
-
-            in ada_api.py.
-        */
-
-        formData.append(
-            "file",
-            file,
-            file.name
-        );
-
-
-        formData.append(
-            "customer_id",
-            customerId
-        );
-
-
-        formData.append(
-            "job_id",
-            jobId
-        );
-
-
-        formData.append(
-            "service",
-            service
-        );
-
-
-        const response =
-            await fetch(
-                API_UPLOAD,
-                {
-
-                    method:
-                        "POST",
-
-                    body:
-                        formData
-
-                }
-            );
-
-
-        let result = null;
-
-        try {
-
-            result =
-                await response.json();
-
-        } catch {
-
-            result = null;
-
-        }
-
-
-        if (
-            !response.ok ||
-            !result ||
-            result.success !== true
-        ) {
-
-            throw new Error(
-                "Upload failed."
-            );
-
-        }
-
-
-        const storedName =
-            result.stored_filename ||
-            file.name;
-
-
-        attachmentStatus.textContent =
-            "File received: " +
-            file.name;
-
-
-        addMessage(
-            "I have received your file: " +
-            file.name +
-            ". Ada can now continue with your request.",
-            "ada"
-        );
+        let clientRequestId =
+            params.get("client_request_id");
 
 
         /*
-            Tell Ada that a real file has been
-            attached to the current job.
+         * Create browser-side identifiers only when the
+         * previous page did not provide them.
+         *
+         * These identifiers remain stable during this job.
+         */
 
-            The actual file was already sent to
-            /upload above.
-        */
+        if (!customerId) {
 
-        await sendToAda(
-
-            "A file has been uploaded for this request. " +
-            "The uploaded file is: " +
-            file.name +
-            ". Stored file reference: " +
-            storedName +
-            ". Please continue helping me with my request.",
-
-            "file_uploaded",
-
-            false
-
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "FILE UPLOAD ERROR:",
-            error
-        );
-
-        attachmentStatus.textContent =
-            "We could not receive that file. Please try again.";
-
-        addMessage(
-            "Sorry, we could not receive that file right now. Please try again.",
-            "ada"
-        );
-
-    } finally {
-
-        uploadButton.disabled =
-            false;
-
-    }
-}
-
-
-/* ==========================================================
-   VOICE RECORDING
-========================================================== */
-
-let mediaRecorder =
-    null;
-
-let recordedChunks =
-    [];
-
-let recordingStream =
-    null;
-
-let isRecording =
-    false;
-
-
-/* ==========================================================
-   VOICE BUTTON
-========================================================== */
-
-voiceButton.addEventListener(
-    "click",
-    async function () {
-
-        if (isRecording) {
-
-            stopVoiceRecording();
-
-            return;
-
-        }
-
-        await startVoiceRecording();
-
-    }
-);
-
-
-/* ==========================================================
-   START VOICE
-========================================================== */
-
-async function startVoiceRecording() {
-
-    if (
-        !navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia
-    ) {
-
-        addMessage(
-            "Voice recording is not available on this device.",
-            "ada"
-        );
-
-        return;
-    }
-
-
-    try {
-
-        recordingStream =
-            await navigator
-                .mediaDevices
-                .getUserMedia({
-                    audio: true
-                });
-
-
-        recordedChunks = [];
-
-
-        let mimeType = "";
-
-
-        if (
-            MediaRecorder.isTypeSupported(
-                "audio/webm;codecs=opus"
-            )
-        ) {
-
-            mimeType =
-                "audio/webm;codecs=opus";
-
-        } else if (
-            MediaRecorder.isTypeSupported(
-                "audio/webm"
-            )
-        ) {
-
-            mimeType =
-                "audio/webm";
-
-        }
-
-
-        mediaRecorder =
-            mimeType
-                ? new MediaRecorder(
-                    recordingStream,
-                    {
-                        mimeType:
-                            mimeType
-                    }
-                )
-                : new MediaRecorder(
-                    recordingStream
+            customerId =
+                localStorage.getItem(
+                    "naija_pocket_customer_id"
                 );
 
+            if (!customerId) {
 
-        mediaRecorder.ondataavailable =
-            function (event) {
+                customerId =
+                    "customer-" +
+                    crypto.randomUUID();
 
-                if (
-                    event.data &&
-                    event.data.size > 0
-                ) {
-
-                    recordedChunks.push(
-                        event.data
-                    );
-
-                }
-
-            };
+                localStorage.setItem(
+                    "naija_pocket_customer_id",
+                    customerId
+                );
+            }
+        }
 
 
-        mediaRecorder.onstop =
-            async function () {
+        if (!jobId) {
 
-                const finalType =
-                    mimeType ||
-                    "audio/webm";
+            jobId =
+                sessionStorage.getItem(
+                    "naija_pocket_job_id"
+                );
+
+            if (!jobId) {
+
+                jobId =
+                    "job-" +
+                    crypto.randomUUID();
+
+                sessionStorage.setItem(
+                    "naija_pocket_job_id",
+                    jobId
+                );
+            }
+        }
 
 
-                const audioBlob =
-                    new Blob(
-                        recordedChunks,
+        if (!clientRequestId) {
+
+            clientRequestId =
+                sessionStorage.getItem(
+                    "naija_pocket_client_request_id"
+                );
+
+            if (!clientRequestId) {
+
+                clientRequestId =
+                    "client-" +
+                    crypto.randomUUID();
+
+                sessionStorage.setItem(
+                    "naija_pocket_client_request_id",
+                    clientRequestId
+                );
+            }
+        }
+
+
+        /* ==================================================
+           DOM
+        ================================================== */
+
+        const conversation =
+            document.getElementById(
+                "conversation"
+            );
+
+        const serviceTitle =
+            document.getElementById(
+                "serviceTitle"
+            );
+
+        const messageInput =
+            document.getElementById(
+                "messageInput"
+            );
+
+        const sendButton =
+            document.getElementById(
+                "sendButton"
+            );
+
+        const uploadButton =
+            document.getElementById(
+                "uploadButton"
+            );
+
+        const voiceButton =
+            document.getElementById(
+                "voiceButton"
+            );
+
+        const reviewButton =
+            document.getElementById(
+                "reviewButton"
+            );
+
+        const approveButton =
+            document.getElementById(
+                "approveButton"
+            );
+
+        const paymentButton =
+            document.getElementById(
+                "paymentButton"
+            );
+
+        const customerServiceButton =
+            document.getElementById(
+                "customerServiceButton"
+            );
+
+        const newJobButton =
+            document.getElementById(
+                "newJobButton"
+            );
+
+        const backButton =
+            document.getElementById(
+                "backButton"
+            );
+
+        const fileInput =
+            document.getElementById(
+                "fileInput"
+            );
+
+        const status =
+            document.getElementById(
+                "status"
+            );
+
+
+        serviceTitle.textContent =
+            selectedService;
+
+
+        /* ==================================================
+           UI HELPERS
+        ================================================== */
+
+        function setStatus(text) {
+
+            status.textContent =
+                text || "";
+        }
+
+
+        function scrollConversation() {
+
+            conversation.scrollTop =
+                conversation.scrollHeight;
+        }
+
+
+        function addMessage(
+            text,
+            sender = "ada"
+        ) {
+
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.className =
+                "message " + sender;
+
+            const bubble =
+                document.createElement("div");
+
+            bubble.className =
+                "bubble";
+
+            bubble.textContent =
+                String(text || "");
+
+            wrapper.appendChild(
+                bubble
+            );
+
+            conversation.appendChild(
+                wrapper
+            );
+
+            scrollConversation();
+
+            return wrapper;
+        }
+
+
+        function addTypingMessage() {
+
+            return addMessage(
+                "Ada is preparing your response...",
+                "ada"
+            );
+        }
+
+
+        function removeMessage(element) {
+
+            if (
+                element &&
+                element.parentNode
+            ) {
+                element.parentNode.removeChild(
+                    element
+                );
+            }
+        }
+
+
+        /* ==================================================
+           API REQUEST
+        ================================================== */
+
+        async function sendToAda(
+            message,
+            event = null,
+            showCustomerMessage = true
+        ) {
+
+            const cleanMessage =
+                String(message || "").trim();
+
+            if (!cleanMessage) {
+                return null;
+            }
+
+
+            if (showCustomerMessage) {
+
+                addMessage(
+                    cleanMessage,
+                    "customer"
+                );
+            }
+
+
+            const typing =
+                addTypingMessage();
+
+
+            setStatus(
+                "Ada is working on your request..."
+            );
+
+
+            sendButton.disabled = true;
+
+
+            try {
+
+                const payload = {
+
+                    message:
+                        cleanMessage,
+
+                    service:
+                        selectedService,
+
+                    event:
+                        event,
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId,
+
+                    client_request_id:
+                        clientRequestId,
+
+                    activate_intelligence:
+                        true
+                };
+
+
+                const response =
+                    await fetch(
+                        "/api/chat",
                         {
-                            type:
-                                finalType
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    payload
+                                )
                         }
                     );
 
 
-                stopRecordingStream();
+                let result = null;
+
+
+                try {
+
+                    result =
+                        await response.json();
+
+                } catch (jsonError) {
+
+                    result = null;
+                }
+
+
+                removeMessage(
+                    typing
+                );
 
 
                 if (
-                    audioBlob.size <= 0
+                    !response.ok ||
+                    !result ||
+                    !result.success
                 ) {
 
-                    recordingStatus.style.display =
-                        "none";
-
-                    voiceButton.textContent =
-                        "Voice";
-
-                    isRecording =
-                        false;
-
-                    addMessage(
-                        "No voice recording was captured. Please try again.",
-                        "ada"
+                    throw new Error(
+                        "Ada request was not completed."
                     );
-
-                    return;
-
                 }
 
 
-                await uploadVoiceRecording(
-                    audioBlob
+                const reply =
+                    result.reply ||
+                    result.message;
+
+
+                if (!reply) {
+
+                    throw new Error(
+                        "Ada returned no response."
+                    );
+                }
+
+
+                addMessage(
+                    reply,
+                    "ada"
                 );
 
-            };
+
+                setStatus(
+                    "Ada is ready."
+                );
 
 
-        mediaRecorder.start();
+                return result;
 
 
-        isRecording =
-            true;
+            } catch (error) {
+
+                removeMessage(
+                    typing
+                );
 
 
-        recordingStatus.style.display =
-            "block";
+                /*
+                 * Do not manufacture an Ada reply here.
+                 * The actual intelligence response must come
+                 * from the API.
+                 */
+
+                addMessage(
+                    "Sorry, Ada could not complete that request right now. Please try again.",
+                    "ada"
+                );
 
 
-        recordingStatus.textContent =
-            "Recording voice message... Tap Voice again to stop.";
+                setStatus(
+                    "Please try again."
+                );
 
 
-        voiceButton.textContent =
-            "Stop Voice";
+                console.error(
+                    "Ada request failed:",
+                    error
+                );
 
 
-        uploadButton.disabled =
-            true;
+                return null;
 
 
-    } catch (error) {
+            } finally {
 
-        console.error(
-            "VOICE START ERROR:",
-            error
-        );
+                sendButton.disabled =
+                    false;
 
-        stopRecordingStream();
-
-
-        recordingStatus.style.display =
-            "none";
+                messageInput.focus();
+            }
+        }
 
 
-        voiceButton.textContent =
-            "Voice";
+        /* ==================================================
+           IMMEDIATE ADA ACTIVATION
+           
+           THIS IS THE IMPORTANT PART.
+           
+           There is NO hardcoded Ada welcome response.
+           
+           Opening a selected service immediately sends an
+           instruction through FastAPI → AdaController →
+           AdaAIEngine → intelligence provider.
+        ================================================== */
 
+        async function activateAdaForService() {
 
-        isRecording =
-            false;
+            const startMessage =
+                "Begin working with me on the selected service. Introduce yourself naturally, explain how you will help me with this service and explain what I can use Upload, Voice, Message, Review, Approve, Payment and Customer Service for. Then ask me the single most important question you need to continue.";
 
-
-        addMessage(
-            "Sorry, we could not start voice recording. Please allow microphone access and try again.",
-            "ada"
-        );
-
-    }
-
-}
-
-
-/* ==========================================================
-   STOP VOICE
-========================================================== */
-
-function stopVoiceRecording() {
-
-    if (
-        mediaRecorder &&
-        mediaRecorder.state !== "inactive"
-    ) {
-
-        mediaRecorder.stop();
-
-    } else {
-
-        stopRecordingStream();
-
-        isRecording =
-            false;
-
-        recordingStatus.style.display =
-            "none";
-
-        voiceButton.textContent =
-            "Voice";
-
-        uploadButton.disabled =
-            false;
-
-    }
-
-}
-
-
-/* ==========================================================
-   STOP MICROPHONE STREAM
-========================================================== */
-
-function stopRecordingStream() {
-
-    if (
-        recordingStream
-    ) {
-
-        recordingStream
-            .getTracks()
-            .forEach(
-                function (track) {
-
-                    track.stop();
-
-                }
+            await sendToAda(
+                startMessage,
+                "new_job",
+                false
             );
-
-    }
-
-    recordingStream =
-        null;
-
-}
+        }
 
 
-/* ==========================================================
-   UPLOAD VOICE
-========================================================== */
+        /* ==================================================
+           SEND BUTTON
+        ================================================== */
 
-async function uploadVoiceRecording(
-    audioBlob
-) {
+        async function handleSend() {
 
-    recordingStatus.style.display =
-        "block";
+            const message =
+                messageInput.value.trim();
 
-    recordingStatus.textContent =
-        "Sending your voice message to Ada...";
+            if (!message) {
 
+                setStatus(
+                    "Please enter a message."
+                );
 
-    try {
+                messageInput.focus();
 
-        const filename =
-            "voice_" +
-            Date.now() +
-            ".webm";
+                return;
+            }
 
 
-        const voiceFile =
-            new File(
-                [audioBlob],
-                filename,
-                {
-                    type:
-                        audioBlob.type ||
-                        "audio/webm"
-                }
+            messageInput.value = "";
+
+            messageInput.style.height =
+                "46px";
+
+
+            await sendToAda(
+                message,
+                null,
+                true
             );
+        }
 
 
-        /*
-            Voice uses the same real /upload
-            endpoint as ordinary files.
-
-            FastAPI receives it as UploadFile.
-        */
-
-        await uploadActualVoiceFile(
-            voiceFile
+        sendButton.addEventListener(
+            "click",
+            handleSend
         );
 
 
-    } catch (error) {
+        messageInput.addEventListener(
+            "keydown",
+            function(event) {
 
-        console.error(
-            "VOICE UPLOAD ERROR:",
-            error
-        );
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
 
-        recordingStatus.textContent =
-            "Sorry, we could not send the voice message.";
+                    event.preventDefault();
 
-        addMessage(
-            "Sorry, we could not send your voice message right now. Please try again.",
-            "ada"
-        );
-
-    } finally {
-
-        isRecording =
-            false;
-
-        mediaRecorder =
-            null;
-
-        voiceButton.textContent =
-            "Voice";
-
-        uploadButton.disabled =
-            false;
-
-        setTimeout(
-            function () {
-
-                recordingStatus.style.display =
-                    "none";
-
-            },
-            1500
-        );
-
-    }
-
-}
-
-
-/* ==========================================================
-   UPLOAD VOICE FILE
-========================================================== */
-
-async function uploadActualVoiceFile(
-    voiceFile
-) {
-
-    const formData =
-        new FormData();
-
-
-    formData.append(
-        "file",
-        voiceFile,
-        voiceFile.name
-    );
-
-
-    formData.append(
-        "customer_id",
-        customerId
-    );
-
-
-    formData.append(
-        "job_id",
-        jobId
-    );
-
-
-    formData.append(
-        "service",
-        service
-    );
-
-
-    const response =
-        await fetch(
-            API_UPLOAD,
-            {
-
-                method:
-                    "POST",
-
-                body:
-                    formData
-
+                    handleSend();
+                }
             }
         );
 
 
-    let result = null;
+        messageInput.addEventListener(
+            "input",
+            function() {
 
-    try {
+                this.style.height =
+                    "46px";
 
-        result =
-            await response.json();
-
-    } catch {
-
-        result = null;
-
-    }
-
-
-    if (
-        !response.ok ||
-        !result ||
-        result.success !== true
-    ) {
-
-        throw new Error(
-            "Voice upload failed."
-        );
-
-    }
-
-
-    recordingStatus.textContent =
-        "Voice message received.";
-
-
-    addMessage(
-        "I have received your voice message. Ada can now continue with your request.",
-        "ada"
-    );
-
-
-    /*
-        Notify Ada through the normal
-        intelligence route.
-
-        This keeps the conversation in
-        the same customer/job session.
-    */
-
-    await sendToAda(
-
-        "A voice message has been uploaded for this request. " +
-        "The voice recording is attached to the current job. " +
-        "Please continue helping me with my request.",
-
-        "voice_uploaded",
-
-        false
-
-    );
-
-}
-
-
-/* ==========================================================
-   REVIEW
-========================================================== */
-
-reviewButton.addEventListener(
-    "click",
-    async function () {
-
-        await sendToAda(
-            "Please review my current request and tell me what has been completed and what you still need from me.",
-            "review",
-            true
-        );
-
-    }
-);
-
-
-/* ==========================================================
-   APPROVE
-========================================================== */
-
-approveButton.addEventListener(
-    "click",
-    async function () {
-
-        await sendToAda(
-            "I approve the current work and would like you to continue to the next step.",
-            "approve",
-            true
-        );
-
-    }
-);
-
-
-/* ==========================================================
-   PAYMENT
-========================================================== */
-
-paymentButton.addEventListener(
-    "click",
-    async function () {
-
-        await sendToAda(
-            "Please continue to the payment step for my current request.",
-            "payment",
-            true
-        );
-
-    }
-);
-
-
-/* ==========================================================
-   CUSTOMER SERVICE
-========================================================== */
-
-customerServiceButton.addEventListener(
-    "click",
-    async function () {
-
-        await sendToAda(
-            "I need Customer Service assistance with my current request.",
-            "customer_service",
-            true
-        );
-
-    }
-);
-
-
-/* ==========================================================
-   NEW JOB
-========================================================== */
-
-newJobButton.addEventListener(
-    "click",
-    async function () {
-
-        const confirmed =
-            window.confirm(
-                "Start a new job?"
-            );
-
-        if (!confirmed) {
-
-            return;
-
-        }
-
-
-        /*
-            Keep the same customer.
-
-            Replace only the job ID.
-
-            This gives the customer a fresh
-            AdaController session.
-        */
-
-        jobId =
-            createId("job");
-
-
-        sessionStorage.setItem(
-            "ada_job_id",
-            jobId
+                this.style.height =
+                    Math.min(
+                        this.scrollHeight,
+                        100
+                    ) + "px";
+            }
         );
 
 
-        conversationArea.innerHTML =
-            "";
+        /* ==================================================
+           UPLOAD
+        ================================================== */
 
+        uploadButton.addEventListener(
+            "click",
+            function() {
 
-        conversationArea.appendChild(
-            typingIndicator
+                fileInput.click();
+            }
         );
 
 
-        addMessage(
-            "Starting a new request...",
-            "customer"
+        fileInput.addEventListener(
+            "change",
+            async function() {
+
+                const file =
+                    this.files &&
+                    this.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+
+                setStatus(
+                    "Uploading your file..."
+                );
+
+
+                uploadButton.disabled =
+                    true;
+
+
+                try {
+
+                    const formData =
+                        new FormData();
+
+
+                    formData.append(
+                        "file",
+                        file
+                    );
+
+
+                    formData.append(
+                        "customer_id",
+                        customerId
+                    );
+
+
+                    formData.append(
+                        "job_id",
+                        jobId
+                    );
+
+
+                    formData.append(
+                        "service",
+                        selectedService
+                    );
+
+
+                    const response =
+                        await fetch(
+                            "/upload",
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+
+                    let result = null;
+
+
+                    try {
+
+                        result =
+                            await response.json();
+
+                    } catch (jsonError) {
+
+                        result = null;
+                    }
+
+
+                    if (
+                        !response.ok ||
+                        !result ||
+                        !result.success
+                    ) {
+
+                        throw new Error(
+                            "Upload failed."
+                        );
+                    }
+
+
+                    addMessage(
+                        "File uploaded: " +
+                        file.name,
+                        "customer"
+                    );
+
+
+                    /*
+                     * The upload itself is now recorded.
+                     * Tell Ada about it through the same
+                     * intelligence/session path.
+                     */
+
+                    await sendToAda(
+                        "I have uploaded a file named \"" +
+                        file.name +
+                        "\" for my " +
+                        selectedService +
+                        " request. Please continue with the file and tell me the next thing you need.",
+                        "file_uploaded",
+                        false
+                    );
+
+
+                    setStatus(
+                        "File received."
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Upload failed:",
+                        error
+                    );
+
+
+                    addMessage(
+                        "Sorry, the file could not be uploaded. Please try again.",
+                        "ada"
+                    );
+
+
+                    setStatus(
+                        "Upload failed."
+                    );
+
+
+                } finally {
+
+                    uploadButton.disabled =
+                        false;
+
+                    fileInput.value =
+                        "";
+                }
+            }
         );
 
 
-        await sendToAda(
-            "I am starting a new job. Please begin a fresh request for me.",
-            "new_job",
-            false
-        );
+        /* ==================================================
+           VOICE
+           
+           Uses the existing FastAPI /voice route rather
+           than creating another voice backend here.
+        ================================================== */
 
-    }
-);
+        voiceButton.addEventListener(
+            "click",
+            function() {
 
-
-/* ==========================================================
-   BACK
-========================================================== */
-
-backButton.addEventListener(
-    "click",
-    function () {
-
-        window.location.href =
-            "conversation.html";
-
-    }
-);
-
-
-/* ==========================================================
-   START ADA SESSION
-========================================================== */
-
-async function startAdaSession() {
-
-    /*
-        This is deliberately done once.
-
-        Selecting a service should immediately
-        enter the Ada workflow.
-    */
-
-    await sendToAda(
-
-        "I have selected the service: " +
-        service +
-        ". Please begin working with me on this request and tell me what you need from me.",
-
-        "service_selected",
-
-        false
-
-    );
-
-}
+                const voiceUrl =
+                    "/voice" +
+                    "?customer_id=" +
+                    encodeURIComponent(
+                        customerId
+                    ) +
+                    "&job_id=" +
+                    encodeURIComponent(
+                        jobId
+                    ) +
+                    "&service=" +
+                    encodeURIComponent(
+                        selectedService
+                    );
 
 
-/* ==========================================================
-   PAGE START
-========================================================== */
-
-window.addEventListener(
-    "load",
-    async function () {
-
-        addMessage(
-            "Hello 😊\n\nWelcome to Naija Pocket Business Center.\n\nI am Ada, your Business Center assistant. I am ready to take care of your request.",
-            "ada"
+                window.location.href =
+                    voiceUrl;
+            }
         );
 
 
-        await startAdaSession();
+        /* ==================================================
+           REVIEW
+        ================================================== */
+
+        reviewButton.addEventListener(
+            "click",
+            async function() {
+
+                await sendToAda(
+                    "Please show me the current work for review and tell me what I should check before approving it.",
+                    "review",
+                    true
+                );
+            }
+        );
 
 
-        messageInput.focus();
+        /* ==================================================
+           APPROVE
+        ================================================== */
 
-    }
-);
+        approveButton.addEventListener(
+            "click",
+            async function() {
+
+                await sendToAda(
+                    "I am ready to approve the current work. Please confirm what is being approved and tell me the next step.",
+                    "approve",
+                    true
+                );
+            }
+        );
 
 
-/* ==========================================================
-   PAGE EXIT
-========================================================== */
+        /* ==================================================
+           PAYMENT
+        ================================================== */
 
-window.addEventListener(
-    "beforeunload",
-    function () {
+        paymentButton.addEventListener(
+            "click",
+            async function() {
 
-        stopRecordingStream();
+                await sendToAda(
+                    "I want to proceed to payment for my current request. Please tell me the next step.",
+                    "payment",
+                    true
+                );
+            }
+        );
 
-    }
-);
 
-</script>
+        /* ==================================================
+           CUSTOMER SERVICE
+        ================================================== */
+
+        customerServiceButton.addEventListener(
+            "click",
+            async function() {
+
+                await sendToAda(
+                    "I need Customer Service assistance with my current request. Please assist me.",
+                    "customer_service",
+                    true
+                );
+            }
+        );
+
+
+        /* ==================================================
+           NEW JOB
+        ================================================== */
+
+        newJobButton.addEventListener(
+            "click",
+            async function() {
+
+                const confirmed =
+                    window.confirm(
+                        "Start a new job? Your current Ada conversation will be replaced with a new job."
+                    );
+
+
+                if (!confirmed) {
+                    return;
+                }
+
+
+                /*
+                 * Create a completely new job identifier.
+                 * The customer identity remains the same.
+                 */
+
+                jobId =
+                    "job-" +
+                    crypto.randomUUID();
+
+
+                sessionStorage.setItem(
+                    "naija_pocket_job_id",
+                    jobId
+                );
+
+
+                conversation.innerHTML =
+                    "";
+
+
+                await sendToAda(
+                    "Start a completely new job for the selected service. Begin by explaining how you will help me and ask me the single most important question needed to start.",
+                    "new_job",
+                    false
+                );
+            }
+        );
+
+
+        /* ==================================================
+           BACK
+        ================================================== */
+
+        backButton.addEventListener(
+            "click",
+            function() {
+
+                window.location.href =
+                    "/conversation.html";
+            }
+        );
+
+
+        /* ==================================================
+           START WORKSPACE
+           
+           Ada intelligence is activated immediately.
+        ================================================== */
+
+        window.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                activateAdaForService();
+            }
+        );
+
+    </script>
 
 </body>
 </html>
