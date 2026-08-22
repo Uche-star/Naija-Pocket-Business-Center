@@ -32,10 +32,6 @@
             flex-direction: column;
         }
 
-        /* ==================================================
-           HEADER
-           ================================================== */
-
         .header {
             flex: 0 0 auto;
             background: #000;
@@ -69,10 +65,6 @@
             color: #a9a9a9;
         }
 
-        /* ==================================================
-           MAIN WORKSPACE
-           ================================================== */
-
         .workspace {
             flex: 1 1 auto;
             min-height: 0;
@@ -80,10 +72,6 @@
             flex-direction: column;
             background: #000;
         }
-
-        /* ==================================================
-           CONVERSATION
-           ================================================== */
 
         .conversation {
             flex: 1 1 auto;
@@ -148,10 +136,6 @@
             padding: 7px 15px;
         }
 
-        /* ==================================================
-           ATTACHMENT STATUS
-           ================================================== */
-
         .attachment-area {
             flex: 0 0 auto;
             padding: 0 10px 7px;
@@ -182,10 +166,6 @@
             font-size: 12px;
             color: #aaa;
         }
-
-        /* ==================================================
-           MESSAGE INPUT
-           ================================================== */
 
         .input-area {
             flex: 0 0 auto;
@@ -237,10 +217,6 @@
             opacity: .5;
         }
 
-        /* ==================================================
-           ACTION BUTTONS
-           ================================================== */
-
         .actions {
             flex: 0 0 auto;
             background: #000;
@@ -280,17 +256,9 @@
             border-color: #b52a2a;
         }
 
-        /* ==================================================
-           HIDDEN PHONE INPUTS
-           ================================================== */
-
         .hidden-input {
             display: none;
         }
-
-        /* ==================================================
-           VOICE PANEL
-           ================================================== */
 
         .voice-panel {
             display: none;
@@ -373,10 +341,6 @@
             display: none;
         }
 
-        /* ==================================================
-           SMALL PHONES
-           ================================================== */
-
         @media (max-width: 390px) {
 
             .brand {
@@ -410,290 +374,78 @@
 
 <body>
 
-    <!-- ==================================================
-         HEADER
-         ================================================== -->
+<header class="header">
 
-    <header class="header">
+    <div class="brand">
+        Naija Pocket Business Center
+    </div>
 
-        <div class="brand">
-            Naija Pocket Business Center
-        </div>
-
-        <div
-            id="serviceTitle"
-            class="service-title"
-        >
-            Business Center Service
-        </div>
-
-        <div
-            id="statusLine"
-            class="status-line"
-        >
-            Connecting...
-        </div>
-
-    </header>
-
-
-    <!-- ==================================================
-         WORKSPACE
-         ================================================== -->
-
-    <main class="workspace">
-
-        <!-- ==============================================
-             CONVERSATION
-             ============================================== -->
-
-        <section
-            id="conversation"
-            class="conversation"
-            aria-live="polite"
-        >
-        </section>
-
-
-        <!-- ==============================================
-             ATTACHMENT STATUS
-             ============================================== -->
-
-        <section class="attachment-area">
-
-            <div
-                id="attachmentCard"
-                class="attachment-card"
-            >
-
-                <div
-                    id="attachmentName"
-                    class="attachment-name"
-                >
-                </div>
-
-                <div
-                    id="attachmentStatus"
-                    class="attachment-status"
-                >
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==============================================
-             MESSAGE INPUT
-             ============================================== -->
-
-        <section class="input-area">
-
-            <div class="input-row">
-
-                <textarea
-                    id="messageInput"
-                    class="message-input"
-                    placeholder="Type your message..."
-                    rows="1"
-                    autocomplete="off"
-                ></textarea>
-
-                <button
-                    id="sendButton"
-                    class="send-button"
-                    type="button"
-                >
-                    Send
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==============================================
-             ACTION BUTTONS
-             ============================================== -->
-
-        <section class="actions">
-
-            <div class="action-grid">
-
-                <button
-                    id="uploadButton"
-                    class="action-button"
-                    type="button"
-                >
-                    Upload
-                </button>
-
-                <button
-                    id="voiceButton"
-                    class="action-button"
-                    type="button"
-                >
-                    Voice
-                </button>
-
-                <button
-                    id="reviewButton"
-                    class="action-button"
-                    type="button"
-                >
-                    Review
-                </button>
-
-                <button
-                    id="approveButton"
-                    class="action-button"
-                    type="button"
-                >
-                    Approve
-                </button>
-
-                <button
-                    id="paymentButton"
-                    class="action-button"
-                    type="button"
-                >
-                    Payment
-                </button>
-
-                <button
-                    id="customerServiceButton"
-                    class="action-button"
-                    type="button"
-                >
-                    Customer Service
-                </button>
-
-                <button
-                    id="newJobButton"
-                    class="action-button"
-                    type="button"
-                >
-                    New Job
-                </button>
-
-                <button
-                    id="backButton"
-                    class="action-button back-button"
-                    type="button"
-                >
-                    Back
-                </button>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- ==================================================
-         PHONE FILE INPUT
-         
-         IMPORTANT:
-         This is intentionally a real browser file input.
-         On Android/iPhone, clicking it opens the phone's
-         native file/document picker.
-         ================================================== -->
-
-    <input
-        id="documentInput"
-        class="hidden-input"
-        type="file"
-        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.jpg,.jpeg,.png,.webp,.heic"
+    <div
+        id="serviceTitle"
+        class="service-title"
     >
+        Business Center Service
+    </div>
 
-
-    <!-- ==================================================
-         PHONE CAMERA INPUT
-         ================================================== -->
-
-    <input
-        id="cameraInput"
-        class="hidden-input"
-        type="file"
-        accept="image/*"
-        capture="environment"
+    <div
+        id="statusLine"
+        class="status-line"
     >
+        Connecting...
+    </div>
+
+</header>
 
 
-    <!-- ==================================================
-         VOICE PANEL
-         ================================================== -->
+<main class="workspace">
 
     <section
-        id="voicePanel"
-        class="voice-panel"
-    >
+        id="conversation"
+        class="conversation"
+        aria-live="polite"
+    ></section>
 
-        <div class="voice-box">
 
-            <div class="voice-title">
-                Voice
-            </div>
+    <section class="attachment-area">
+
+        <div
+            id="attachmentCard"
+            class="attachment-card"
+        >
 
             <div
-                id="voiceStatus"
-                class="voice-status"
-            >
-                Tap Record and allow microphone access when your phone asks.
-            </div>
+                id="attachmentName"
+                class="attachment-name"
+            ></div>
 
-            <audio
-                id="audioPreview"
-                class="audio-preview"
-                controls
-            ></audio>
+            <div
+                id="attachmentStatus"
+                class="attachment-status"
+            ></div>
 
-            <div class="voice-buttons">
+        </div>
 
-                <button
-                    id="recordButton"
-                    class="voice-button"
-                    type="button"
-                >
-                    Record
-                </button>
+    </section>
 
-                <button
-                    id="stopRecordButton"
-                    class="voice-button"
-                    type="button"
-                    disabled
-                >
-                    Stop
-                </button>
 
-                <button
-                    id="sendVoiceButton"
-                    class="voice-button send"
-                    type="button"
-                    disabled
-                >
-                    Send Voice
-                </button>
+    <section class="input-area">
 
-                <button
-                    id="againVoiceButton"
-                    class="voice-button"
-                    type="button"
-                    disabled
-                >
-                    Record Again
-                </button>
+        <div class="input-row">
 
-            </div>
+            <textarea
+                id="messageInput"
+                class="message-input"
+                placeholder="Type your message..."
+                rows="1"
+                autocomplete="off"
+            ></textarea>
 
             <button
-                id="closeVoiceButton"
-                class="voice-close"
+                id="sendButton"
+                class="send-button"
                 type="button"
             >
-                Close
+                Send
             </button>
 
         </div>
@@ -701,1691 +453,1802 @@
     </section>
 
 
-    <script>
-        "use strict";
+    <section class="actions">
+
+        <div class="action-grid">
+
+            <button
+                id="uploadButton"
+                class="action-button"
+                type="button"
+            >
+                Upload
+            </button>
+
+            <button
+                id="voiceButton"
+                class="action-button"
+                type="button"
+            >
+                Voice
+            </button>
+
+            <button
+                id="reviewButton"
+                class="action-button"
+                type="button"
+            >
+                Review
+            </button>
+
+            <button
+                id="approveButton"
+                class="action-button"
+                type="button"
+            >
+                Approve
+            </button>
+
+            <button
+                id="paymentButton"
+                class="action-button"
+                type="button"
+            >
+                Payment &amp; Download
+            </button>
+
+            <button
+                id="customerServiceButton"
+                class="action-button"
+                type="button"
+            >
+                Customer Service
+            </button>
+
+            <button
+                id="newJobButton"
+                class="action-button"
+                type="button"
+            >
+                New Job
+            </button>
+
+            <button
+                id="backButton"
+                class="action-button back-button"
+                type="button"
+            >
+                Back
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
 
 
-        /* ==================================================
-           URL / SESSION INFORMATION
-           ================================================== */
+<input
+    id="documentInput"
+    class="hidden-input"
+    type="file"
+    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.jpg,.jpeg,.png,.webp,.heic"
+>
 
-        const params = new URLSearchParams(
-            window.location.search
+
+<input
+    id="cameraInput"
+    class="hidden-input"
+    type="file"
+    accept="image/*"
+    capture="environment"
+>
+
+
+<section
+    id="voicePanel"
+    class="voice-panel"
+>
+
+    <div class="voice-box">
+
+        <div class="voice-title">
+            Voice
+        </div>
+
+        <div
+            id="voiceStatus"
+            class="voice-status"
+        >
+            Tap Record and allow microphone access when your phone asks.
+        </div>
+
+        <audio
+            id="audioPreview"
+            class="audio-preview"
+            controls
+        ></audio>
+
+        <div class="voice-buttons">
+
+            <button
+                id="recordButton"
+                class="voice-button"
+                type="button"
+            >
+                Record
+            </button>
+
+            <button
+                id="stopRecordButton"
+                class="voice-button"
+                type="button"
+                disabled
+            >
+                Stop
+            </button>
+
+            <button
+                id="sendVoiceButton"
+                class="voice-button send"
+                type="button"
+                disabled
+            >
+                Send Voice
+            </button>
+
+            <button
+                id="againVoiceButton"
+                class="voice-button"
+                type="button"
+                disabled
+            >
+                Record Again
+            </button>
+
+        </div>
+
+        <button
+            id="closeVoiceButton"
+            class="voice-close"
+            type="button"
+        >
+            Close
+        </button>
+
+    </div>
+
+</section>
+
+
+<script>
+"use strict";
+
+
+/* ==================================================
+   URL / SESSION INFORMATION
+   ================================================== */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+function cleanValue(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    const text =
+        String(value).trim();
+
+    if (!text) {
+        return "";
+    }
+
+    if (
+        text.toLowerCase() === "null" ||
+        text.toLowerCase() === "undefined" ||
+        text.toLowerCase() === "none"
+    ) {
+        return "";
+    }
+
+    return text;
+}
+
+
+let selectedService =
+    cleanValue(
+        params.get("service")
+    );
+
+let customerId =
+    cleanValue(
+        params.get("customer_id")
+    );
+
+let jobId =
+    cleanValue(
+        params.get("job_id")
+    );
+
+let clientRequestId =
+    cleanValue(
+        params.get("client_request_id")
+    );
+
+
+if (!customerId) {
+
+    customerId =
+        localStorage.getItem(
+            "npbc_customer_id"
         );
 
+    if (!customerId) {
 
-        function cleanValue(value) {
+        customerId =
+            "customer_" +
+            cryptoRandomId();
 
-            if (
-                value === null ||
-                value === undefined
-            ) {
-                return "";
-            }
-
-            const text = String(value).trim();
-
-            if (!text) {
-                return "";
-            }
-
-            if (
-                text.toLowerCase() === "null" ||
-                text.toLowerCase() === "undefined" ||
-                text.toLowerCase() === "none"
-            ) {
-                return "";
-            }
-
-            return text;
-        }
+        localStorage.setItem(
+            "npbc_customer_id",
+            customerId
+        );
+    }
+}
 
 
-        let selectedService = cleanValue(
-            params.get("service")
+if (!jobId) {
+
+    jobId =
+        sessionStorage.getItem(
+            "npbc_job_id"
         );
 
-        let customerId = cleanValue(
-            params.get("customer_id")
+    if (!jobId) {
+
+        jobId =
+            "job_" +
+            cryptoRandomId();
+
+        sessionStorage.setItem(
+            "npbc_job_id",
+            jobId
+        );
+    }
+}
+
+
+if (!clientRequestId) {
+
+    clientRequestId =
+        sessionStorage.getItem(
+            "npbc_client_request_id"
         );
 
-        let jobId = cleanValue(
-            params.get("job_id")
+    if (!clientRequestId) {
+
+        clientRequestId =
+            "request_" +
+            cryptoRandomId();
+
+        sessionStorage.setItem(
+            "npbc_client_request_id",
+            clientRequestId
+        );
+    }
+}
+
+
+function cryptoRandomId() {
+
+    if (
+        window.crypto &&
+        window.crypto.randomUUID
+    ) {
+        return window.crypto.randomUUID();
+    }
+
+    return (
+        Date.now().toString(36) +
+        Math.random()
+            .toString(36)
+            .substring(2)
+    );
+}
+
+
+/* ==================================================
+   DOM
+   ================================================== */
+
+const conversation =
+    document.getElementById(
+        "conversation"
+    );
+
+const serviceTitle =
+    document.getElementById(
+        "serviceTitle"
+    );
+
+const statusLine =
+    document.getElementById(
+        "statusLine"
+    );
+
+const messageInput =
+    document.getElementById(
+        "messageInput"
+    );
+
+const sendButton =
+    document.getElementById(
+        "sendButton"
+    );
+
+const documentInput =
+    document.getElementById(
+        "documentInput"
+    );
+
+const cameraInput =
+    document.getElementById(
+        "cameraInput"
+    );
+
+const attachmentCard =
+    document.getElementById(
+        "attachmentCard"
+    );
+
+const attachmentName =
+    document.getElementById(
+        "attachmentName"
+    );
+
+const attachmentStatus =
+    document.getElementById(
+        "attachmentStatus"
+    );
+
+const voicePanel =
+    document.getElementById(
+        "voicePanel"
+    );
+
+const voiceStatus =
+    document.getElementById(
+        "voiceStatus"
+    );
+
+const audioPreview =
+    document.getElementById(
+        "audioPreview"
+    );
+
+const recordButton =
+    document.getElementById(
+        "recordButton"
+    );
+
+const stopRecordButton =
+    document.getElementById(
+        "stopRecordButton"
+    );
+
+const sendVoiceButton =
+    document.getElementById(
+        "sendVoiceButton"
+    );
+
+const againVoiceButton =
+    document.getElementById(
+        "againVoiceButton"
+    );
+
+
+serviceTitle.textContent =
+    selectedService ||
+    "Business Center Service";
+
+
+/* ==================================================
+   CHAT UI
+   ================================================== */
+
+function addMessage(
+    text,
+    type
+) {
+
+    const wrapper =
+        document.createElement(
+            "div"
         );
 
-        let clientRequestId = cleanValue(
-            params.get("client_request_id")
+    wrapper.className =
+        "message " +
+        (
+            type === "customer"
+                ? "customer"
+                : "assistant"
         );
 
+    const bubble =
+        document.createElement(
+            "div"
+        );
 
-        /*
-         * Keep a browser-side session identifier so the same
-         * customer/job continues using the same API session.
-         */
+    bubble.className =
+        "bubble";
 
-        if (!customerId) {
+    bubble.textContent =
+        String(text || "");
 
-            customerId =
-                localStorage.getItem(
-                    "npbc_customer_id"
-                );
+    wrapper.appendChild(
+        bubble
+    );
 
-            if (!customerId) {
+    conversation.appendChild(
+        wrapper
+    );
 
-                customerId =
-                    "customer_" +
-                    cryptoRandomId();
+    conversation.scrollTop =
+        conversation.scrollHeight;
+}
 
-                localStorage.setItem(
-                    "npbc_customer_id",
-                    customerId
-                );
-            }
-        }
-
 
-        if (!jobId) {
+function addSystemMessage(
+    text
+) {
 
-            jobId =
-                sessionStorage.getItem(
-                    "npbc_job_id"
-                );
-
-            if (!jobId) {
-
-                jobId =
-                    "job_" +
-                    cryptoRandomId();
-
-                sessionStorage.setItem(
-                    "npbc_job_id",
-                    jobId
-                );
-            }
-        }
-
+    const element =
+        document.createElement(
+            "div"
+        );
 
-        if (!clientRequestId) {
-
-            clientRequestId =
-                sessionStorage.getItem(
-                    "npbc_client_request_id"
-                );
-
-            if (!clientRequestId) {
-
-                clientRequestId =
-                    "request_" +
-                    cryptoRandomId();
-
-                sessionStorage.setItem(
-                    "npbc_client_request_id",
-                    clientRequestId
-                );
-            }
-        }
-
-
-        function cryptoRandomId() {
-
-            if (
-                window.crypto &&
-                window.crypto.randomUUID
-            ) {
-                return window.crypto.randomUUID();
-            }
-
-            return (
-                Date.now().toString(36) +
-                Math.random()
-                    .toString(36)
-                    .substring(2)
-            );
-        }
-
-
-        /* ==================================================
-           DOM
-           ================================================== */
-
-        const conversation =
-            document.getElementById(
-                "conversation"
-            );
-
-        const serviceTitle =
-            document.getElementById(
-                "serviceTitle"
-            );
-
-        const statusLine =
-            document.getElementById(
-                "statusLine"
-            );
-
-        const messageInput =
-            document.getElementById(
-                "messageInput"
-            );
-
-        const sendButton =
-            document.getElementById(
-                "sendButton"
-            );
-
-        const documentInput =
-            document.getElementById(
-                "documentInput"
-            );
-
-        const cameraInput =
-            document.getElementById(
-                "cameraInput"
-            );
-
-        const attachmentCard =
-            document.getElementById(
-                "attachmentCard"
-            );
-
-        const attachmentName =
-            document.getElementById(
-                "attachmentName"
-            );
-
-        const attachmentStatus =
-            document.getElementById(
-                "attachmentStatus"
-            );
-
-
-        const voicePanel =
-            document.getElementById(
-                "voicePanel"
-            );
-
-        const voiceStatus =
-            document.getElementById(
-                "voiceStatus"
-            );
-
-        const audioPreview =
-            document.getElementById(
-                "audioPreview"
-            );
-
-        const recordButton =
-            document.getElementById(
-                "recordButton"
-            );
-
-        const stopRecordButton =
-            document.getElementById(
-                "stopRecordButton"
-            );
+    element.className =
+        "system-message";
 
-        const sendVoiceButton =
-            document.getElementById(
-                "sendVoiceButton"
-            );
+    element.textContent =
+        text;
 
-        const againVoiceButton =
-            document.getElementById(
-                "againVoiceButton"
-            );
+    conversation.appendChild(
+        element
+    );
 
+    conversation.scrollTop =
+        conversation.scrollHeight;
+}
 
-        /* ==================================================
-           SERVICE DISPLAY
-           ================================================== */
 
-        serviceTitle.textContent =
-            selectedService ||
-            "Business Center Service";
+function setStatus(
+    text
+) {
 
+    statusLine.textContent =
+        text;
+}
 
-        /* ==================================================
-           CHAT UI
-           ================================================== */
 
-        function addMessage(
-            text,
-            type
-        ) {
+/* ==================================================
+   API CHAT
+   ================================================== */
 
-            const wrapper =
-                document.createElement(
-                    "div"
-                );
+async function sendToIntelligence(
+    message,
+    eventName = null
+) {
 
-            wrapper.className =
-                "message " +
-                (
-                    type === "customer"
-                        ? "customer"
-                        : "assistant"
-                );
+    const payload = {
 
-            const bubble =
-                document.createElement(
-                    "div"
-                );
-
-            bubble.className =
-                "bubble";
-
-            bubble.textContent =
-                String(text || "");
-
-            wrapper.appendChild(
-                bubble
-            );
-
-            conversation.appendChild(
-                wrapper
-            );
-
-            conversation.scrollTop =
-                conversation.scrollHeight;
-        }
-
-
-        function addSystemMessage(
-            text
-        ) {
-
-            const element =
-                document.createElement(
-                    "div"
-                );
-
-            element.className =
-                "system-message";
-
-            element.textContent =
-                text;
-
-            conversation.appendChild(
-                element
-            );
-
-            conversation.scrollTop =
-                conversation.scrollHeight;
-        }
-
-
-        function setStatus(
-            text
-        ) {
-
-            statusLine.textContent =
-                text;
-        }
-
-
-        /* ==================================================
-           API CHAT
-           ================================================== */
-
-        async function sendToIntelligence(
+        message:
             message,
-            eventName = null
+
+        service:
+            selectedService || null,
+
+        event:
+            eventName,
+
+        customer_id:
+            customerId,
+
+        job_id:
+            jobId,
+
+        client_request_id:
+            clientRequestId,
+
+        activate_intelligence:
+            true
+
+    };
+
+
+    setStatus(
+        "Working on your request..."
+    );
+
+
+    const response =
+        await fetch(
+            "/api/chat",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(
+                        payload
+                    )
+            }
+        );
+
+
+    let result = null;
+
+
+    try {
+
+        result =
+            await response.json();
+
+    } catch (error) {
+
+        throw new Error(
+            "The service returned an invalid response."
+        );
+    }
+
+
+    if (
+        !response.ok ||
+        !result ||
+        result.success !== true
+    ) {
+
+        throw new Error(
+            "The request could not be completed."
+        );
+    }
+
+
+    setStatus(
+        "Ready"
+    );
+
+
+    return result;
+}
+
+
+/* ==================================================
+   INITIAL SERVICE ACTIVATION
+   ================================================== */
+
+async function startService() {
+
+    if (!selectedService) {
+
+        setStatus(
+            "Ready"
+        );
+
+        addSystemMessage(
+            "Please select a service to begin."
+        );
+
+        return;
+    }
+
+
+    addSystemMessage(
+        "Starting your selected service..."
+    );
+
+
+    try {
+
+        const result =
+            await sendToIntelligence(
+                "I have selected this service and I am ready to begin. Please explain what you need from me and how I should use the Upload, Voice, Review, Approve and other available options for this request.",
+                "start_new_job"
+            );
+
+
+        if (
+            result &&
+            result.reply
         ) {
-
-            const payload = {
-
-                message:
-                    message,
-
-                service:
-                    selectedService || null,
-
-                event:
-                    eventName,
-
-                customer_id:
-                    customerId,
-
-                job_id:
-                    jobId,
-
-                client_request_id:
-                    clientRequestId,
-
-                activate_intelligence:
-                    true
-
-            };
-
-
-            setStatus(
-                "Working on your request..."
-            );
-
-
-            const response =
-                await fetch(
-                    "/api/chat",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify(
-                                payload
-                            )
-                    }
-                );
-
-
-            let result = null;
-
-
-            try {
-
-                result =
-                    await response.json();
-
-            } catch (error) {
-
-                throw new Error(
-                    "The service returned an invalid response."
-                );
-            }
-
-
-            if (
-                !response.ok ||
-                !result ||
-                result.success !== true
-            ) {
-
-                throw new Error(
-                    "The request could not be completed."
-                );
-            }
-
-
-            setStatus(
-                "Ready"
-            );
-
-
-            return result;
-        }
-
-
-        /* ==================================================
-           INITIAL SERVICE ACTIVATION
-           
-           IMPORTANT:
-           There is deliberately NO hardcoded Ada
-           welcome message here.
-
-           The first response comes through /api/chat.
-           ================================================== */
-
-        async function startService() {
-
-            if (!selectedService) {
-
-                setStatus(
-                    "Ready"
-                );
-
-                addSystemMessage(
-                    "Please select a service to begin."
-                );
-
-                return;
-            }
-
-
-            addSystemMessage(
-                "Starting your selected service..."
-            );
-
-
-            try {
-
-                const result =
-                    await sendToIntelligence(
-                        "I have selected this service and I am ready to begin. Please explain what you need from me and how I should use the Upload, Voice, Review, Approve and other available options for this request.",
-                        "start_new_job"
-                    );
-
-
-                if (
-                    result &&
-                    result.reply
-                ) {
-
-                    addMessage(
-                        result.reply,
-                        "assistant"
-                    );
-                }
-
-
-            } catch (error) {
-
-                console.error(
-                    "SERVICE START ERROR:",
-                    error
-                );
-
-                setStatus(
-                    "Please try again."
-                );
-
-                addMessage(
-                    "Sorry, we could not start your request right now. Please try again in a moment.",
-                    "assistant"
-                );
-            }
-        }
-
-
-        /* ==================================================
-           SEND MESSAGE
-           ================================================== */
-
-        async function sendMessage() {
-
-            const message =
-                messageInput.value.trim();
-
-
-            if (!message) {
-                return;
-            }
-
 
             addMessage(
-                message,
-                "customer"
+                result.reply,
+                "assistant"
+            );
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "SERVICE START ERROR:",
+            error
+        );
+
+        setStatus(
+            "Please try again."
+        );
+
+        addMessage(
+            "Sorry, we could not start your request right now. Please try again in a moment.",
+            "assistant"
+        );
+    }
+}
+
+
+/* ==================================================
+   SEND MESSAGE
+   ================================================== */
+
+async function sendMessage() {
+
+    const message =
+        messageInput.value.trim();
+
+
+    if (!message) {
+        return;
+    }
+
+
+    addMessage(
+        message,
+        "customer"
+    );
+
+
+    messageInput.value =
+        "";
+
+    resizeTextarea();
+
+    sendButton.disabled =
+        true;
+
+
+    try {
+
+        const result =
+            await sendToIntelligence(
+                message
             );
 
 
-            messageInput.value =
-                "";
-
-            resizeTextarea();
-
-
-            sendButton.disabled =
-                true;
-
-
-            try {
-
-                const result =
-                    await sendToIntelligence(
-                        message
-                    );
-
-
-                if (
-                    result &&
-                    result.reply
-                ) {
-
-                    addMessage(
-                        result.reply,
-                        "assistant"
-                    );
-                }
-
-
-            } catch (error) {
-
-                console.error(
-                    "CHAT ERROR:",
-                    error
-                );
-
-                setStatus(
-                    "Please try again."
-                );
-
-                addMessage(
-                    "Sorry, we could not complete that step right now. Please try again in a moment.",
-                    "assistant"
-                );
-
-            } finally {
-
-                sendButton.disabled =
-                    false;
-
-                messageInput.focus();
-            }
-        }
-
-
-        sendButton.addEventListener(
-            "click",
-            sendMessage
-        );
-
-
-        messageInput.addEventListener(
-            "keydown",
-            function(event) {
-
-                if (
-                    event.key === "Enter" &&
-                    !event.shiftKey
-                ) {
-
-                    event.preventDefault();
-
-                    sendMessage();
-                }
-            }
-        );
-
-
-        /* ==================================================
-           TEXTAREA RESIZE
-           ================================================== */
-
-        function resizeTextarea() {
-
-            messageInput.style.height =
-                "auto";
-
-            messageInput.style.height =
-                Math.min(
-                    messageInput.scrollHeight,
-                    110
-                ) + "px";
-        }
-
-
-        messageInput.addEventListener(
-            "input",
-            resizeTextarea
-        );
-
-
-        /* ==================================================
-           DOCUMENT UPLOAD
-           
-           THIS OPENS THE PHONE'S NATIVE FILE PICKER.
-           
-           Android:
-               Files / Documents / Downloads /
-               device storage / cloud storage
-
-           iPhone:
-               Files / iCloud Drive / On My iPhone /
-               supported document locations
-           ================================================== */
-
-        document.getElementById(
-            "uploadButton"
-        ).addEventListener(
-            "click",
-            function() {
-
-                documentInput.value =
-                    "";
-
-                documentInput.click();
-            }
-        );
-
-
-        documentInput.addEventListener(
-            "change",
-            async function() {
-
-                if (
-                    !documentInput.files ||
-                    !documentInput.files.length
-                ) {
-                    return;
-                }
-
-
-                const file =
-                    documentInput.files[0];
-
-
-                await uploadDocument(
-                    file
-                );
-            }
-        );
-
-
-        /* ==================================================
-           CAMERA / SNAP
-           
-           Long-pressing / alternate use is not required.
-           The camera input remains available through the
-           Upload action when appropriate file types are
-           supported by the phone.
-           
-           The function is retained for future camera button
-           integration without changing the API.
-           ================================================== */
-
-        async function snapDocument() {
-
-            cameraInput.value =
-                "";
-
-            cameraInput.click();
-        }
-
-
-        cameraInput.addEventListener(
-            "change",
-            async function() {
-
-                if (
-                    !cameraInput.files ||
-                    !cameraInput.files.length
-                ) {
-                    return;
-                }
-
-
-                const file =
-                    cameraInput.files[0];
-
-
-                await uploadDocument(
-                    file
-                );
-            }
-        );
-
-
-        /* ==================================================
-           DOCUMENT UPLOAD TO FASTAPI
-           ================================================== */
-
-        async function uploadDocument(
-            file
+        if (
+            result &&
+            result.reply
         ) {
 
-            if (!file) {
-                return;
-            }
-
-
-            attachmentCard.classList.add(
-                "visible"
+            addMessage(
+                result.reply,
+                "assistant"
             );
-
-            attachmentName.textContent =
-                file.name;
-
-            attachmentStatus.textContent =
-                "Sending file...";
-
-
-            addSystemMessage(
-                "Uploading " + file.name + "..."
-            );
-
-
-            const formData =
-                new FormData();
-
-
-            /*
-             * This field name matches the FastAPI
-             * UploadFile parameter:
-             *
-             *     file: UploadFile = File(...)
-             */
-
-            formData.append(
-                "file",
-                file,
-                file.name
-            );
-
-
-            formData.append(
-                "customer_id",
-                customerId
-            );
-
-            formData.append(
-                "job_id",
-                jobId
-            );
-
-            formData.append(
-                "service",
-                selectedService
-            );
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        "/upload",
-                        {
-                            method: "POST",
-                            body: formData
-                        }
-                    );
-
-
-                let result = null;
-
-
-                try {
-
-                    result =
-                        await response.json();
-
-                } catch (error) {
-
-                    throw new Error(
-                        "The upload service returned an invalid response."
-                    );
-                }
-
-
-                if (
-                    !response.ok ||
-                    !result ||
-                    result.success !== true
-                ) {
-
-                    throw new Error(
-                        "The file could not be uploaded."
-                    );
-                }
-
-
-                attachmentStatus.textContent =
-                    "File received.";
-
-
-                addSystemMessage(
-                    "Your file has been received and attached to this request."
-                );
-
-
-                /*
-                 * Tell the intelligence that a document has
-                 * arrived. The actual response comes from
-                 * /api/chat.
-                 */
-
-                const resultFromIntelligence =
-                    await sendToIntelligence(
-                        "A document named \"" +
-                        file.name +
-                        "\" has just been uploaded to this request. Please continue with the selected service and tell me the next step.",
-                        "file_uploaded"
-                    );
-
-
-                if (
-                    resultFromIntelligence &&
-                    resultFromIntelligence.reply
-                ) {
-
-                    addMessage(
-                        resultFromIntelligence.reply,
-                        "assistant"
-                    );
-                }
-
-
-            } catch (error) {
-
-                console.error(
-                    "DOCUMENT UPLOAD ERROR:",
-                    error
-                );
-
-                attachmentStatus.textContent =
-                    "Upload could not be completed.";
-
-
-                addMessage(
-                    "Sorry, we could not receive that file right now. Please try again.",
-                    "assistant"
-                );
-            }
         }
 
 
-        /* ==================================================
-           VOICE
-           ================================================== */
+    } catch (error) {
 
-        let mediaRecorder =
-            null;
+        console.error(
+            "CHAT ERROR:",
+            error
+        );
 
-        let recordedChunks =
+        setStatus(
+            "Please try again."
+        );
+
+        addMessage(
+            "Sorry, we could not complete that step right now. Please try again in a moment.",
+            "assistant"
+        );
+
+    } finally {
+
+        sendButton.disabled =
+            false;
+
+        messageInput.focus();
+    }
+}
+
+
+sendButton.addEventListener(
+    "click",
+    sendMessage
+);
+
+
+messageInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+        }
+    }
+);
+
+
+/* ==================================================
+   TEXTAREA RESIZE
+   ================================================== */
+
+function resizeTextarea() {
+
+    messageInput.style.height =
+        "auto";
+
+    messageInput.style.height =
+        Math.min(
+            messageInput.scrollHeight,
+            110
+        ) + "px";
+}
+
+
+messageInput.addEventListener(
+    "input",
+    resizeTextarea
+);
+
+
+/* ==================================================
+   DOCUMENT UPLOAD
+   ================================================== */
+
+document.getElementById(
+    "uploadButton"
+).addEventListener(
+    "click",
+    function() {
+
+        documentInput.value =
+            "";
+
+        documentInput.click();
+    }
+);
+
+
+documentInput.addEventListener(
+    "change",
+    async function() {
+
+        if (
+            !documentInput.files ||
+            !documentInput.files.length
+        ) {
+            return;
+        }
+
+        await uploadDocument(
+            documentInput.files[0]
+        );
+    }
+);
+
+
+/* ==================================================
+   CAMERA
+   ================================================== */
+
+async function snapDocument() {
+
+    cameraInput.value =
+        "";
+
+    cameraInput.click();
+}
+
+
+cameraInput.addEventListener(
+    "change",
+    async function() {
+
+        if (
+            !cameraInput.files ||
+            !cameraInput.files.length
+        ) {
+            return;
+        }
+
+        await uploadDocument(
+            cameraInput.files[0]
+        );
+    }
+);
+
+
+/* ==================================================
+   DOCUMENT UPLOAD
+   ================================================== */
+
+async function uploadDocument(
+    file
+) {
+
+    if (!file) {
+        return;
+    }
+
+
+    attachmentCard.classList.add(
+        "visible"
+    );
+
+    attachmentName.textContent =
+        file.name;
+
+    attachmentStatus.textContent =
+        "Sending file...";
+
+
+    addSystemMessage(
+        "Uploading " + file.name + "..."
+    );
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        file,
+        file.name
+    );
+
+    formData.append(
+        "customer_id",
+        customerId
+    );
+
+    formData.append(
+        "job_id",
+        jobId
+    );
+
+    formData.append(
+        "service",
+        selectedService
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/upload",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        let result = null;
+
+
+        try {
+
+            result =
+                await response.json();
+
+        } catch (error) {
+
+            throw new Error(
+                "The upload service returned an invalid response."
+            );
+        }
+
+
+        if (
+            !response.ok ||
+            !result ||
+            result.success !== true
+        ) {
+
+            throw new Error(
+                "The file could not be uploaded."
+            );
+        }
+
+
+        attachmentStatus.textContent =
+            "File received.";
+
+
+        addSystemMessage(
+            "Your file has been received and attached to this request."
+        );
+
+
+        const intelligenceResult =
+            await sendToIntelligence(
+                "A document named \"" +
+                file.name +
+                "\" has just been uploaded to this request. Please continue with the selected service and tell me the next step.",
+                "file_uploaded"
+            );
+
+
+        if (
+            intelligenceResult &&
+            intelligenceResult.reply
+        ) {
+
+            addMessage(
+                intelligenceResult.reply,
+                "assistant"
+            );
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "DOCUMENT UPLOAD ERROR:",
+            error
+        );
+
+        attachmentStatus.textContent =
+            "Upload could not be completed.";
+
+
+        addMessage(
+            "Sorry, we could not receive that file right now. Please try again.",
+            "assistant"
+        );
+    }
+}
+
+
+/* ==================================================
+   VOICE
+   ================================================== */
+
+let mediaRecorder =
+    null;
+
+let recordedChunks =
+    [];
+
+let recordedBlob =
+    null;
+
+let microphoneStream =
+    null;
+
+
+document.getElementById(
+    "voiceButton"
+).addEventListener(
+    "click",
+    openVoicePanel
+);
+
+
+function openVoicePanel() {
+
+    voicePanel.classList.add(
+        "visible"
+    );
+
+    voiceStatus.textContent =
+        "Tap Record and allow microphone access when your phone asks.";
+}
+
+
+function closeVoicePanel() {
+
+    if (
+        mediaRecorder &&
+        mediaRecorder.state === "recording"
+    ) {
+
+        mediaRecorder.stop();
+    }
+
+    stopMicrophone();
+
+    voicePanel.classList.remove(
+        "visible"
+    );
+}
+
+
+document.getElementById(
+    "closeVoiceButton"
+).addEventListener(
+    "click",
+    closeVoicePanel
+);
+
+
+async function startRecording() {
+
+    if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+    ) {
+
+        voiceStatus.textContent =
+            "Voice recording is not available in this browser.";
+
+        return;
+    }
+
+
+    try {
+
+        microphoneStream =
+            await navigator.mediaDevices.getUserMedia(
+                {
+                    audio: true
+                }
+            );
+
+
+        recordedChunks =
             [];
 
-        let recordedBlob =
-            null;
-
-        let microphoneStream =
+        recordedBlob =
             null;
 
 
-        document.getElementById(
-            "voiceButton"
-        ).addEventListener(
-            "click",
-            openVoicePanel
-        );
+        let mimeType =
+            "";
 
 
-        function openVoicePanel() {
-
-            voicePanel.classList.add(
-                "visible"
-            );
-
-            voiceStatus.textContent =
-                "Tap Record and allow microphone access when your phone asks.";
-        }
+        const possibleTypes = [
+            "audio/webm;codecs=opus",
+            "audio/webm",
+            "audio/mp4"
+        ];
 
 
-        function closeVoicePanel() {
+        for (
+            const candidate
+            of possibleTypes
+        ) {
 
             if (
-                mediaRecorder &&
-                mediaRecorder.state === "recording"
-            ) {
-
-                mediaRecorder.stop();
-            }
-
-
-            stopMicrophone();
-
-
-            voicePanel.classList.remove(
-                "visible"
-            );
-        }
-
-
-        document.getElementById(
-            "closeVoiceButton"
-        ).addEventListener(
-            "click",
-            closeVoicePanel
-        );
-
-
-        async function startRecording() {
-
-            if (
-                !navigator.mediaDevices ||
-                !navigator.mediaDevices.getUserMedia
-            ) {
-
-                voiceStatus.textContent =
-                    "Voice recording is not available in this browser.";
-
-                return;
-            }
-
-
-            try {
-
-                microphoneStream =
-                    await navigator.mediaDevices.getUserMedia(
-                        {
-                            audio: true
-                        }
-                    );
-
-
-                recordedChunks =
-                    [];
-
-                recordedBlob =
-                    null;
-
-
-                let mimeType =
-                    "";
-
-
-                const possibleTypes = [
-
-                    "audio/webm;codecs=opus",
-                    "audio/webm",
-                    "audio/mp4"
-
-                ];
-
-
-                for (
-                    const candidate
-                    of possibleTypes
-                ) {
-
-                    if (
-                        window.MediaRecorder &&
-                        MediaRecorder.isTypeSupported &&
-                        MediaRecorder.isTypeSupported(
-                            candidate
-                        )
-                    ) {
-
-                        mimeType =
-                            candidate;
-
-                        break;
-                    }
-                }
-
-
-                if (mimeType) {
-
-                    mediaRecorder =
-                        new MediaRecorder(
-                            microphoneStream,
-                            {
-                                mimeType:
-                                    mimeType
-                            }
-                        );
-
-                } else {
-
-                    mediaRecorder =
-                        new MediaRecorder(
-                            microphoneStream
-                        );
-                }
-
-
-                mediaRecorder.ondataavailable =
-                    function(event) {
-
-                        if (
-                            event.data &&
-                            event.data.size > 0
-                        ) {
-
-                            recordedChunks.push(
-                                event.data
-                            );
-                        }
-                    };
-
-
-                mediaRecorder.onstop =
-                    function() {
-
-                        const finalType =
-                            mediaRecorder.mimeType ||
-                            "audio/webm";
-
-
-                        recordedBlob =
-                            new Blob(
-                                recordedChunks,
-                                {
-                                    type:
-                                        finalType
-                                }
-                            );
-
-
-                        const audioUrl =
-                            URL.createObjectURL(
-                                recordedBlob
-                            );
-
-
-                        audioPreview.src =
-                            audioUrl;
-
-                        audioPreview.style.display =
-                            "block";
-
-
-                        sendVoiceButton.disabled =
-                            false;
-
-                        againVoiceButton.disabled =
-                            false;
-
-                        recordButton.disabled =
-                            false;
-
-                        stopRecordButton.disabled =
-                            true;
-
-
-                        voiceStatus.textContent =
-                            "Recording ready. You can play it or send it.";
-
-
-                        stopMicrophone();
-                    };
-
-
-                mediaRecorder.start();
-
-
-                recordButton.disabled =
-                    true;
-
-                stopRecordButton.disabled =
-                    false;
-
-                sendVoiceButton.disabled =
-                    true;
-
-                againVoiceButton.disabled =
-                    true;
-
-
-                voiceStatus.textContent =
-                    "Recording... speak normally.";
-
-
-            } catch (error) {
-
-                console.error(
-                    "MICROPHONE ERROR:",
-                    error
-                );
-
-                stopMicrophone();
-
-                voiceStatus.textContent =
-                    "Microphone access was not granted. Please allow microphone access and try again.";
-            }
-        }
-
-
-        recordButton.addEventListener(
-            "click",
-            startRecording
-        );
-
-
-        stopRecordButton.addEventListener(
-            "click",
-            function() {
-
-                if (
-                    mediaRecorder &&
-                    mediaRecorder.state === "recording"
-                ) {
-
-                    mediaRecorder.stop();
-                }
-            }
-        );
-
-
-        againVoiceButton.addEventListener(
-            "click",
-            function() {
-
-                recordedChunks =
-                    [];
-
-                recordedBlob =
-                    null;
-
-                audioPreview.removeAttribute(
-                    "src"
-                );
-
-                audioPreview.style.display =
-                    "none";
-
-                sendVoiceButton.disabled =
-                    true;
-
-                againVoiceButton.disabled =
-                    true;
-
-                recordButton.disabled =
-                    false;
-
-                stopRecordButton.disabled =
-                    true;
-
-                voiceStatus.textContent =
-                    "Ready to record again.";
-            }
-        );
-
-
-        /* ==================================================
-           STOP MICROPHONE
-           ================================================== */
-
-        function stopMicrophone() {
-
-            if (!microphoneStream) {
-                return;
-            }
-
-
-            microphoneStream
-                .getTracks()
-                .forEach(
-                    function(track) {
-                        track.stop();
-                    }
-                );
-
-
-            microphoneStream =
-                null;
-        }
-
-
-        /* ==================================================
-           SEND VOICE
-           
-           IMPORTANT:
-           The existing phone bridge expects:
-
-               FormData field = "audio"
-
-           NOT "file".
-           ================================================== */
-
-        sendVoiceButton.addEventListener(
-            "click",
-            sendVoice
-        );
-
-
-        async function sendVoice() {
-
-            if (!recordedBlob) {
-                return;
-            }
-
-
-            sendVoiceButton.disabled =
-                true;
-
-
-            voiceStatus.textContent =
-                "Sending your recording...";
-
-
-            const formData =
-                new FormData();
-
-
-            let extension =
-                "webm";
-
-
-            if (
-                recordedBlob.type &&
-                recordedBlob.type.includes(
-                    "mp4"
+                window.MediaRecorder &&
+                MediaRecorder.isTypeSupported &&
+                MediaRecorder.isTypeSupported(
+                    candidate
                 )
             ) {
 
-                extension =
-                    "mp4";
-            }
+                mimeType =
+                    candidate;
 
-
-            formData.append(
-                "audio",
-                recordedBlob,
-                "voice_message." +
-                extension
-            );
-
-
-            /*
-             * These extra fields are harmless for the
-             * existing bridge and allow a compatible
-             * FastAPI upload endpoint to associate the
-             * recording with this customer/job.
-             */
-
-            formData.append(
-                "customer_id",
-                customerId
-            );
-
-            formData.append(
-                "job_id",
-                jobId
-            );
-
-            formData.append(
-                "service",
-                selectedService
-            );
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        "/upload",
-                        {
-                            method: "POST",
-                            body: formData
-                        }
-                    );
-
-
-                let result = null;
-
-
-                try {
-
-                    result =
-                        await response.json();
-
-                } catch (error) {
-
-                    throw new Error(
-                        "The voice service returned an invalid response."
-                    );
-                }
-
-
-                if (
-                    !response.ok ||
-                    !result ||
-                    result.success !== true
-                ) {
-
-                    throw new Error(
-                        "Voice upload failed."
-                    );
-                }
-
-
-                voiceStatus.textContent =
-                    "Your voice recording has been received.";
-
-
-                addSystemMessage(
-                    "Voice recording received."
-                );
-
-
-                /*
-                 * Tell the intelligence that a voice
-                 * recording has arrived.
-                 *
-                 * The intelligence itself remains responsible
-                 * for deciding what happens next.
-                 */
-
-                try {
-
-                    const intelligenceResult =
-                        await sendToIntelligence(
-                            "A voice recording has just been uploaded for this request. Please continue with the selected service and tell me the next step.",
-                            "voice_uploaded"
-                        );
-
-
-                    if (
-                        intelligenceResult &&
-                        intelligenceResult.reply
-                    ) {
-
-                        addMessage(
-                            intelligenceResult.reply,
-                            "assistant"
-                        );
-                    }
-
-                } catch (error) {
-
-                    console.error(
-                        "VOICE INTELLIGENCE ERROR:",
-                        error
-                    );
-
-                    addSystemMessage(
-                        "The recording was received."
-                    );
-                }
-
-
-                sendVoiceButton.disabled =
-                    true;
-
-
-            } catch (error) {
-
-                console.error(
-                    "VOICE UPLOAD ERROR:",
-                    error
-                );
-
-                voiceStatus.textContent =
-                    "The recording could not be sent. Please try again.";
-
-                sendVoiceButton.disabled =
-                    false;
+                break;
             }
         }
 
 
-        /* ==================================================
-           REVIEW
-           ================================================== */
+        if (mimeType) {
 
-        document.getElementById(
-            "reviewButton"
-        ).addEventListener(
-            "click",
-            async function() {
-
-                addSystemMessage(
-                    "Requesting a review..."
-                );
-
-
-                try {
-
-                    const result =
-                        await sendToIntelligence(
-                            "Please review the work and information currently provided for this request and tell me what needs attention before I approve it.",
-                            "review"
-                        );
-
-
-                    if (
-                        result &&
-                        result.reply
-                    ) {
-
-                        addMessage(
-                            result.reply,
-                            "assistant"
-                        );
+            mediaRecorder =
+                new MediaRecorder(
+                    microphoneStream,
+                    {
+                        mimeType:
+                            mimeType
                     }
-
-                } catch (error) {
-
-                    console.error(
-                        "REVIEW ERROR:",
-                        error
-                    );
-
-                    addMessage(
-                        "Sorry, we could not complete the review right now. Please try again.",
-                        "assistant"
-                    );
-                }
-            }
-        );
-
-
-        /* ==================================================
-           APPROVE
-           ================================================== */
-
-        document.getElementById(
-            "approveButton"
-        ).addEventListener(
-            "click",
-            async function() {
-
-                addSystemMessage(
-                    "Sending your approval..."
                 );
 
+        } else {
 
-                try {
-
-                    const result =
-                        await sendToIntelligence(
-                            "I approve the current work. Please continue to the next step for this request.",
-                            "approve"
-                        );
-
-
-                    if (
-                        result &&
-                        result.reply
-                    ) {
-
-                        addMessage(
-                            result.reply,
-                            "assistant"
-                        );
-                    }
-
-                } catch (error) {
-
-                    console.error(
-                        "APPROVAL ERROR:",
-                        error
-                    );
-
-                    addMessage(
-                        "Sorry, we could not process the approval right now. Please try again.",
-                        "assistant"
-                    );
-                }
-            }
-        );
-
-
-        /* ==================================================
-           PAYMENT
-           ================================================== */
-
-        document.getElementById(
-            "paymentButton"
-        ).addEventListener(
-            "click",
-            async function() {
-
-                addSystemMessage(
-                    "Checking your payment step..."
+            mediaRecorder =
+                new MediaRecorder(
+                    microphoneStream
                 );
+        }
 
 
-                try {
-
-                    const result =
-                        await sendToIntelligence(
-                            "Please explain the payment step for my current request, including what I need to do next.",
-                            "payment"
-                        );
-
-
-                    if (
-                        result &&
-                        result.reply
-                    ) {
-
-                        addMessage(
-                            result.reply,
-                            "assistant"
-                        );
-                    }
-
-                } catch (error) {
-
-                    console.error(
-                        "PAYMENT ERROR:",
-                        error
-                    );
-
-                    addMessage(
-                        "Sorry, we could not load the payment step right now. Please try again.",
-                        "assistant"
-                    );
-                }
-            }
-        );
-
-
-        /* ==================================================
-           CUSTOMER SERVICE
-           ================================================== */
-
-        document.getElementById(
-            "customerServiceButton"
-        ).addEventListener(
-            "click",
-            async function() {
-
-                addSystemMessage(
-                    "Connecting you with Customer Service..."
-                );
-
-
-                try {
-
-                    const result =
-                        await sendToIntelligence(
-                            "I need Customer Service assistance with my current request. Please tell me what help is available and what I should do next.",
-                            "customer_service"
-                        );
-
-
-                    if (
-                        result &&
-                        result.reply
-                    ) {
-
-                        addMessage(
-                            result.reply,
-                            "assistant"
-                        );
-                    }
-
-                } catch (error) {
-
-                    console.error(
-                        "CUSTOMER SERVICE ERROR:",
-                        error
-                    );
-
-                    addMessage(
-                        "Customer Service is available to help. Please try again.",
-                        "assistant"
-                    );
-                }
-            }
-        );
-
-
-        /* ==================================================
-           NEW JOB
-           ================================================== */
-
-        document.getElementById(
-            "newJobButton"
-        ).addEventListener(
-            "click",
-            function() {
-
-                const newJobId =
-                    "job_" +
-                    cryptoRandomId();
-
-
-                sessionStorage.setItem(
-                    "npbc_job_id",
-                    newJobId
-                );
-
-
-                const newUrl =
-                    "conversation.html" +
-                    "?customer_id=" +
-                    encodeURIComponent(
-                        customerId
-                    );
-
-
-                window.location.href =
-                    newUrl;
-            }
-        );
-
-
-        /* ==================================================
-           BACK
-           ================================================== */
-
-        document.getElementById(
-            "backButton"
-        ).addEventListener(
-            "click",
-            function() {
-
-                window.location.href =
-                    "conversation.html";
-            }
-        );
-
-
-        /* ==================================================
-           INITIAL START
-           ================================================== */
-
-        window.addEventListener(
-            "load",
-            function() {
-
-                resizeTextarea();
-
-                startService();
-            }
-        );
-
-
-        /* ==================================================
-           CLEANUP
-           ================================================== */
-
-        window.addEventListener(
-            "beforeunload",
-            function() {
-
-                stopMicrophone();
+        mediaRecorder.ondataavailable =
+            function(event) {
 
                 if (
-                    audioPreview.src &&
-                    audioPreview.src.startsWith(
-                        "blob:"
-                    )
+                    event.data &&
+                    event.data.size > 0
                 ) {
 
-                    URL.revokeObjectURL(
-                        audioPreview.src
+                    recordedChunks.push(
+                        event.data
                     );
                 }
+            };
+
+
+        mediaRecorder.onstop =
+            function() {
+
+                const finalType =
+                    mediaRecorder.mimeType ||
+                    "audio/webm";
+
+
+                recordedBlob =
+                    new Blob(
+                        recordedChunks,
+                        {
+                            type:
+                                finalType
+                        }
+                    );
+
+
+                const audioUrl =
+                    URL.createObjectURL(
+                        recordedBlob
+                    );
+
+
+                audioPreview.src =
+                    audioUrl;
+
+                audioPreview.style.display =
+                    "block";
+
+
+                sendVoiceButton.disabled =
+                    false;
+
+                againVoiceButton.disabled =
+                    false;
+
+                recordButton.disabled =
+                    false;
+
+                stopRecordButton.disabled =
+                    true;
+
+
+                voiceStatus.textContent =
+                    "Recording ready. You can play it or send it.";
+
+
+                stopMicrophone();
+            };
+
+
+        mediaRecorder.start();
+
+
+        recordButton.disabled =
+            true;
+
+        stopRecordButton.disabled =
+            false;
+
+        sendVoiceButton.disabled =
+            true;
+
+        againVoiceButton.disabled =
+            true;
+
+
+        voiceStatus.textContent =
+            "Recording... speak normally.";
+
+
+    } catch (error) {
+
+        console.error(
+            "MICROPHONE ERROR:",
+            error
+        );
+
+        stopMicrophone();
+
+        voiceStatus.textContent =
+            "Microphone access was not granted. Please allow microphone access and try again.";
+    }
+}
+
+
+recordButton.addEventListener(
+    "click",
+    startRecording
+);
+
+
+stopRecordButton.addEventListener(
+    "click",
+    function() {
+
+        if (
+            mediaRecorder &&
+            mediaRecorder.state === "recording"
+        ) {
+
+            mediaRecorder.stop();
+        }
+    }
+);
+
+
+againVoiceButton.addEventListener(
+    "click",
+    function() {
+
+        recordedChunks =
+            [];
+
+        recordedBlob =
+            null;
+
+        audioPreview.removeAttribute(
+            "src"
+        );
+
+        audioPreview.style.display =
+            "none";
+
+        sendVoiceButton.disabled =
+            true;
+
+        againVoiceButton.disabled =
+            true;
+
+        recordButton.disabled =
+            false;
+
+        stopRecordButton.disabled =
+            true;
+
+        voiceStatus.textContent =
+            "Ready to record again.";
+    }
+);
+
+
+function stopMicrophone() {
+
+    if (!microphoneStream) {
+        return;
+    }
+
+
+    microphoneStream
+        .getTracks()
+        .forEach(
+            function(track) {
+                track.stop();
             }
         );
 
-    </script>
+
+    microphoneStream =
+        null;
+}
+
+
+/* ==================================================
+   SEND VOICE
+   ================================================== */
+
+sendVoiceButton.addEventListener(
+    "click",
+    sendVoice
+);
+
+
+async function sendVoice() {
+
+    if (!recordedBlob) {
+        return;
+    }
+
+
+    sendVoiceButton.disabled =
+        true;
+
+
+    voiceStatus.textContent =
+        "Sending your recording...";
+
+
+    const formData =
+        new FormData();
+
+
+    let extension =
+        "webm";
+
+
+    if (
+        recordedBlob.type &&
+        recordedBlob.type.includes(
+            "mp4"
+        )
+    ) {
+
+        extension =
+            "mp4";
+    }
+
+
+    formData.append(
+        "audio",
+        recordedBlob,
+        "voice_message." +
+        extension
+    );
+
+    formData.append(
+        "customer_id",
+        customerId
+    );
+
+    formData.append(
+        "job_id",
+        jobId
+    );
+
+    formData.append(
+        "service",
+        selectedService
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/upload",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        let result = null;
+
+
+        try {
+
+            result =
+                await response.json();
+
+        } catch (error) {
+
+            throw new Error(
+                "The voice service returned an invalid response."
+            );
+        }
+
+
+        if (
+            !response.ok ||
+            !result ||
+            result.success !== true
+        ) {
+
+            throw new Error(
+                "Voice upload failed."
+            );
+        }
+
+
+        voiceStatus.textContent =
+            "Your voice recording has been received.";
+
+
+        addSystemMessage(
+            "Voice recording received."
+        );
+
+
+        try {
+
+            const intelligenceResult =
+                await sendToIntelligence(
+                    "A voice recording has just been uploaded for this request. Please continue with the selected service and tell me the next step.",
+                    "voice_uploaded"
+                );
+
+
+            if (
+                intelligenceResult &&
+                intelligenceResult.reply
+            ) {
+
+                addMessage(
+                    intelligenceResult.reply,
+                    "assistant"
+                );
+            }
+
+        } catch (error) {
+
+            console.error(
+                "VOICE INTELLIGENCE ERROR:",
+                error
+            );
+
+            addSystemMessage(
+                "The recording was received."
+            );
+        }
+
+
+        sendVoiceButton.disabled =
+            true;
+
+
+    } catch (error) {
+
+        console.error(
+            "VOICE UPLOAD ERROR:",
+            error
+        );
+
+        voiceStatus.textContent =
+            "The recording could not be sent. Please try again.";
+
+        sendVoiceButton.disabled =
+            false;
+    }
+}
+
+
+/* ==================================================
+   REVIEW
+   ================================================== */
+
+document.getElementById(
+    "reviewButton"
+).addEventListener(
+    "click",
+    async function() {
+
+        addSystemMessage(
+            "Requesting a review..."
+        );
+
+
+        try {
+
+            const result =
+                await sendToIntelligence(
+                    "Please review the work and information currently provided for this request and tell me what needs attention before I approve it.",
+                    "review"
+                );
+
+
+            if (
+                result &&
+                result.reply
+            ) {
+
+                addMessage(
+                    result.reply,
+                    "assistant"
+                );
+            }
+
+        } catch (error) {
+
+            console.error(
+                "REVIEW ERROR:",
+                error
+            );
+
+            addMessage(
+                "Sorry, we could not complete the review right now. Please try again.",
+                "assistant"
+            );
+        }
+    }
+);
+
+
+/* ==================================================
+   APPROVE → PAYMENT
+   ================================================== */
+
+document.getElementById(
+    "approveButton"
+).addEventListener(
+    "click",
+    async function() {
+
+        const button =
+            document.getElementById(
+                "approveButton"
+            );
+
+
+        button.disabled =
+            true;
+
+
+        addSystemMessage(
+            "Sending your approval..."
+        );
+
+
+        try {
+
+            const result =
+                await sendToIntelligence(
+                    "I approve the current work. Please continue to the payment step for this request.",
+                    "approve"
+                );
+
+
+            if (
+                result &&
+                result.reply
+            ) {
+
+                addMessage(
+                    result.reply,
+                    "assistant"
+                );
+            }
+
+
+            /*
+             * Approval has been sent to the intelligence
+             * endpoint. Now continue directly to payment.
+             */
+
+            setTimeout(
+                function() {
+
+                    openPaymentPage();
+
+                },
+                500
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "APPROVAL ERROR:",
+                error
+            );
+
+
+            button.disabled =
+                false;
+
+
+            addMessage(
+                "Sorry, we could not process the approval right now. Please try again.",
+                "assistant"
+            );
+        }
+    }
+);
+
+
+/* ==================================================
+   PAYMENT & DOWNLOAD → PAYMENT PAGE
+   ================================================== */
+
+document.getElementById(
+    "paymentButton"
+).addEventListener(
+    "click",
+    function() {
+
+        openPaymentPage();
+
+    }
+);
+
+
+/* ==================================================
+   OPEN PAYMENT PAGE
+   ================================================== */
+
+function openPaymentPage() {
+
+    const paymentUrl =
+        "payment.html" +
+        "?service=" +
+        encodeURIComponent(
+            selectedService || ""
+        ) +
+        "&customer_id=" +
+        encodeURIComponent(
+            customerId || ""
+        ) +
+        "&job_id=" +
+        encodeURIComponent(
+            jobId || ""
+        ) +
+        "&client_request_id=" +
+        encodeURIComponent(
+            clientRequestId || ""
+        );
+
+
+    window.location.href =
+        paymentUrl;
+}
+
+
+/* ==================================================
+   CUSTOMER SERVICE
+   ================================================== */
+
+document.getElementById(
+    "customerServiceButton"
+).addEventListener(
+    "click",
+    async function() {
+
+        addSystemMessage(
+            "Connecting you with Customer Service..."
+        );
+
+
+        try {
+
+            const result =
+                await sendToIntelligence(
+                    "I need Customer Service assistance with my current request. Please tell me what help is available and what I should do next.",
+                    "customer_service"
+                );
+
+
+            if (
+                result &&
+                result.reply
+            ) {
+
+                addMessage(
+                    result.reply,
+                    "assistant"
+                );
+            }
+
+        } catch (error) {
+
+            console.error(
+                "CUSTOMER SERVICE ERROR:",
+                error
+            );
+
+            addMessage(
+                "Customer Service is available to help. Please try again.",
+                "assistant"
+            );
+        }
+    }
+);
+
+
+/* ==================================================
+   NEW JOB
+   ================================================== */
+
+document.getElementById(
+    "newJobButton"
+).addEventListener(
+    "click",
+    function() {
+
+        const newJobId =
+            "job_" +
+            cryptoRandomId();
+
+
+        sessionStorage.setItem(
+            "npbc_job_id",
+            newJobId
+        );
+
+
+        const newUrl =
+            "conversation.html" +
+            "?customer_id=" +
+            encodeURIComponent(
+                customerId
+            );
+
+
+        window.location.href =
+            newUrl;
+    }
+);
+
+
+/* ==================================================
+   BACK
+   ================================================== */
+
+document.getElementById(
+    "backButton"
+).addEventListener(
+    "click",
+    function() {
+
+        window.location.href =
+            "conversation.html";
+    }
+);
+
+
+/* ==================================================
+   INITIAL START
+   ================================================== */
+
+window.addEventListener(
+    "load",
+    function() {
+
+        resizeTextarea();
+
+        startService();
+    }
+);
+
+
+/* ==================================================
+   CLEANUP
+   ================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        stopMicrophone();
+
+        if (
+            audioPreview.src &&
+            audioPreview.src.startsWith(
+                "blob:"
+            )
+        ) {
+
+            URL.revokeObjectURL(
+                audioPreview.src
+            );
+        }
+    }
+);
+
+</script>
 
 </body>
 </html>
