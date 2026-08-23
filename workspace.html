@@ -1,13 +1,11 @@
 <!DOCTYPE html><html lang="en">
 <head>
-    <meta charset="UTF-8"><meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
-
-<title>Naija Pocket Business Center</title>
-
-<style>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+    <title>Naija Pocket Business Center</title><style>
     * {
         box-sizing: border-box;
     }
@@ -362,7 +360,6 @@
     }
 
     @media (max-width: 390px) {
-
         .brand {
             font-size: 18px;
         }
@@ -391,21 +388,14 @@
     }
 </style>
 
-</head><body><header class="header"><div class="brand">
-    Naija Pocket Business Center
-</div>
-
-<div
-    id="serviceTitle"
-    class="service-title"
->
+</head><body><header class="header">
+    <div class="brand">
+        Naija Pocket Business Center
+    </div><div id="serviceTitle" class="service-title">
     Business Center Service
 </div>
 
-<div
-    id="statusLine"
-    class="status-line"
->
+<div id="statusLine" class="status-line">
     Connecting...
 </div>
 
@@ -416,28 +406,13 @@
 ></section>
 
 <section class="attachment-area">
-
-    <div
-        id="attachmentCard"
-        class="attachment-card"
-    >
-
-        <div
-            id="attachmentName"
-            class="attachment-name"
-        ></div>
-
-        <div
-            id="attachmentStatus"
-            class="attachment-status"
-        ></div>
-
+    <div id="attachmentCard" class="attachment-card">
+        <div id="attachmentName" class="attachment-name"></div>
+        <div id="attachmentStatus" class="attachment-status"></div>
     </div>
-
 </section>
 
 <section class="input-area">
-
     <div class="input-row">
 
         <textarea
@@ -457,7 +432,6 @@
         </button>
 
     </div>
-
 </section>
 
 <section class="actions">
@@ -529,7 +503,6 @@
         </button>
 
     </div>
-
 </section>
 
 </main><input
@@ -549,19 +522,13 @@ capture="environment"
 
 «»
 
-<section
-    id="voicePanel"
-    class="voice-panel"
-><div class="voice-box">
+<section id="voicePanel" class="voice-panel"><div class="voice-box">
 
     <div class="voice-title">
         Voice
     </div>
 
-    <div
-        id="voiceStatus"
-        class="voice-status"
-    >
+    <div id="voiceStatus" class="voice-status">
         Tap Record and allow microphone access when your phone asks.
     </div>
 
@@ -623,19 +590,15 @@ capture="environment"
 </section><script>
 "use strict";
 
-
 /* ==================================================
-   URL / SESSION INFORMATION
+   SESSION
    ================================================== */
 
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
-
+const params = new URLSearchParams(
+    window.location.search
+);
 
 function cleanValue(value) {
-
     if (
         value === null ||
         value === undefined
@@ -643,18 +606,15 @@ function cleanValue(value) {
         return "";
     }
 
-    const text =
-        String(value).trim();
+    const text = String(value).trim();
 
     if (!text) {
         return "";
     }
 
     if (
-        text.toLowerCase() === "null" ||
-        text.toLowerCase() === "undefined" ||
-        text.toLowerCase() === "none" ||
-        text.toLowerCase() === "unknown"
+        ["null", "undefined", "none", "unknown"]
+            .includes(text.toLowerCase())
     ) {
         return "";
     }
@@ -662,93 +622,7 @@ function cleanValue(value) {
     return text;
 }
 
-
-let selectedService =
-    cleanValue(
-        params.get("service")
-    );
-
-let customerId =
-    cleanValue(
-        params.get("customer_id")
-    );
-
-let jobId =
-    cleanValue(
-        params.get("job_id")
-    );
-
-let clientRequestId =
-    cleanValue(
-        params.get("client_request_id")
-    );
-
-
-if (!customerId) {
-
-    customerId =
-        localStorage.getItem(
-            "npbc_customer_id"
-        );
-
-    if (!customerId) {
-
-        customerId =
-            "customer_" +
-            cryptoRandomId();
-
-        localStorage.setItem(
-            "npbc_customer_id",
-            customerId
-        );
-    }
-}
-
-
-if (!jobId) {
-
-    jobId =
-        sessionStorage.getItem(
-            "npbc_job_id"
-        );
-
-    if (!jobId) {
-
-        jobId =
-            "job_" +
-            cryptoRandomId();
-
-        sessionStorage.setItem(
-            "npbc_job_id",
-            jobId
-        );
-    }
-}
-
-
-if (!clientRequestId) {
-
-    clientRequestId =
-        sessionStorage.getItem(
-            "npbc_client_request_id"
-        );
-
-    if (!clientRequestId) {
-
-        clientRequestId =
-            "request_" +
-            cryptoRandomId();
-
-        sessionStorage.setItem(
-            "npbc_client_request_id",
-            clientRequestId
-        );
-    }
-}
-
-
 function cryptoRandomId() {
-
     if (
         window.crypto &&
         window.crypto.randomUUID
@@ -764,115 +638,123 @@ function cryptoRandomId() {
     );
 }
 
+let selectedService = cleanValue(
+    params.get("service")
+);
+
+let customerId = cleanValue(
+    params.get("customer_id")
+);
+
+let jobId = cleanValue(
+    params.get("job_id")
+);
+
+let clientRequestId = cleanValue(
+    params.get("client_request_id")
+);
+
+if (!customerId) {
+    customerId =
+        localStorage.getItem("npbc_customer_id") ||
+        "customer_" + cryptoRandomId();
+
+    localStorage.setItem(
+        "npbc_customer_id",
+        customerId
+    );
+}
+
+if (!jobId) {
+    jobId =
+        sessionStorage.getItem("npbc_job_id") ||
+        "job_" + cryptoRandomId();
+
+    sessionStorage.setItem(
+        "npbc_job_id",
+        jobId
+    );
+}
+
+if (!clientRequestId) {
+    clientRequestId =
+        sessionStorage.getItem(
+            "npbc_client_request_id"
+        ) ||
+        "request_" + cryptoRandomId();
+
+    sessionStorage.setItem(
+        "npbc_client_request_id",
+        clientRequestId
+    );
+}
 
 /* ==================================================
    DOM
    ================================================== */
 
 const conversation =
-    document.getElementById(
-        "conversation"
-    );
+    document.getElementById("conversation");
 
 const serviceTitle =
-    document.getElementById(
-        "serviceTitle"
-    );
+    document.getElementById("serviceTitle");
 
 const statusLine =
-    document.getElementById(
-        "statusLine"
-    );
+    document.getElementById("statusLine");
 
 const messageInput =
-    document.getElementById(
-        "messageInput"
-    );
+    document.getElementById("messageInput");
 
 const sendButton =
-    document.getElementById(
-        "sendButton"
-    );
+    document.getElementById("sendButton");
 
 const documentInput =
-    document.getElementById(
-        "documentInput"
-    );
+    document.getElementById("documentInput");
 
 const cameraInput =
-    document.getElementById(
-        "cameraInput"
-    );
+    document.getElementById("cameraInput");
 
 const attachmentCard =
-    document.getElementById(
-        "attachmentCard"
-    );
+    document.getElementById("attachmentCard");
 
 const attachmentName =
-    document.getElementById(
-        "attachmentName"
-    );
+    document.getElementById("attachmentName");
 
 const attachmentStatus =
-    document.getElementById(
-        "attachmentStatus"
-    );
+    document.getElementById("attachmentStatus");
 
 const voicePanel =
-    document.getElementById(
-        "voicePanel"
-    );
+    document.getElementById("voicePanel");
 
 const voiceStatus =
-    document.getElementById(
-        "voiceStatus"
-    );
+    document.getElementById("voiceStatus");
 
 const audioPreview =
-    document.getElementById(
-        "audioPreview"
-    );
+    document.getElementById("audioPreview");
 
 const recordButton =
-    document.getElementById(
-        "recordButton"
-    );
+    document.getElementById("recordButton");
 
 const stopRecordButton =
-    document.getElementById(
-        "stopRecordButton"
-    );
+    document.getElementById("stopRecordButton");
 
 const sendVoiceButton =
-    document.getElementById(
-        "sendVoiceButton"
-    );
+    document.getElementById("sendVoiceButton");
 
 const againVoiceButton =
-    document.getElementById(
-        "againVoiceButton"
-    );
-
+    document.getElementById("againVoiceButton");
 
 serviceTitle.textContent =
     selectedService ||
     "Business Center Service";
 
-
 /* ==================================================
-   CHAT UI
+   CHAT DISPLAY
    ================================================== */
 
-function addMessage(
-    text,
-    type
-) {
-
+function addMessage(text, type) {
     const wrapper =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     wrapper.className =
         "message " +
@@ -883,82 +765,57 @@ function addMessage(
         );
 
     const bubble =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
-    bubble.className =
-        "bubble";
+    bubble.className = "bubble";
 
     bubble.textContent =
         String(text || "");
 
-    wrapper.appendChild(
-        bubble
-    );
-
-    conversation.appendChild(
-        wrapper
-    );
+    wrapper.appendChild(bubble);
+    conversation.appendChild(wrapper);
 
     conversation.scrollTop =
         conversation.scrollHeight;
 }
 
-
-function addSystemMessage(
-    text
-) {
-
+function addSystemMessage(text) {
     const element =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     element.className =
         "system-message";
 
-    element.textContent =
-        text;
+    element.textContent = text;
 
-    conversation.appendChild(
-        element
-    );
+    conversation.appendChild(element);
 
     conversation.scrollTop =
         conversation.scrollHeight;
 }
 
-
 /* ==================================================
-   DIAGNOSTIC DISPLAY
+   DIAGNOSTICS
    ================================================== */
 
 function addDiagnosticMessage(
     result,
     httpStatus = null
 ) {
-
     const diagnostic =
         result &&
         result.diagnostic
             ? result.diagnostic
             : null;
 
-
     const element =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     element.className =
         "diagnostic-message";
 
-
     const title =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     title.className =
         "diagnostic-title";
@@ -966,15 +823,10 @@ function addDiagnosticMessage(
     title.textContent =
         "ADA DIAGNOSTIC ERROR";
 
-    element.appendChild(
-        title
-    );
-
+    element.appendChild(title);
 
     const diagnosticData = {
-
-        http_status:
-            httpStatus,
+        http_status: httpStatus,
 
         stage:
             diagnostic &&
@@ -1023,9 +875,7 @@ function addDiagnosticMessage(
             diagnostic.traceback
                 ? diagnostic.traceback
                 : null
-
     };
-
 
     element.appendChild(
         document.createTextNode(
@@ -1037,14 +887,10 @@ function addDiagnosticMessage(
         )
     );
 
-
-    conversation.appendChild(
-        element
-    );
+    conversation.appendChild(element);
 
     conversation.scrollTop =
         conversation.scrollHeight;
-
 
     console.error(
         "ADA DIAGNOSTIC RESPONSE:",
@@ -1052,33 +898,24 @@ function addDiagnosticMessage(
     );
 }
 
-
 /* ==================================================
    STATUS
    ================================================== */
 
-function setStatus(
-    text
-) {
-
-    statusLine.textContent =
-        text;
+function setStatus(text) {
+    statusLine.textContent = text;
 }
 
-
 /* ==================================================
-   API CHAT
+   ADA API
    ================================================== */
 
 async function sendToIntelligence(
     message,
     eventName = null
 ) {
-
     const payload = {
-
-        message:
-            message,
+        message: message,
 
         service:
             selectedService || null,
@@ -1097,46 +934,35 @@ async function sendToIntelligence(
 
         activate_intelligence:
             true
-
     };
-
 
     console.log(
         "ADA CHAT REQUEST:",
         payload
     );
 
-
     setStatus(
         "Working on your request..."
     );
 
-
     let response;
 
-
     try {
+        response = await fetch(
+            "/api/chat",
+            {
+                method: "POST",
 
-        response =
-            await fetch(
-                "/api/chat",
-                {
-                    method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
-                }
-            );
-
+                body:
+                    JSON.stringify(payload)
+            }
+        );
     } catch (networkError) {
-
         console.error(
             "ADA CHAT NETWORK ERROR:",
             networkError
@@ -1147,17 +973,12 @@ async function sendToIntelligence(
         );
     }
 
-
-    let result = null;
-
+    let result;
 
     try {
-
         result =
             await response.json();
-
     } catch (parseError) {
-
         console.error(
             "ADA CHAT RESPONSE PARSE ERROR:",
             parseError
@@ -1168,34 +989,20 @@ async function sendToIntelligence(
         );
     }
 
-
     console.log(
         "ADA CHAT RESPONSE:",
         result
     );
-
-
-    /*
-     * IMPORTANT:
-     *
-     * ada_api.py diagnostic mode returns HTTP 200
-     * even when AdaController fails.
-     *
-     * Therefore success:false must be checked
-     * independently of response.ok.
-     */
 
     if (
         !response.ok ||
         !result ||
         result.success !== true
     ) {
-
         if (
             result &&
             result.diagnostic
         ) {
-
             addDiagnosticMessage(
                 result,
                 response.status
@@ -1206,7 +1013,6 @@ async function sendToIntelligence(
             "Ada request failed."
         );
 
-
         const error =
             new Error(
                 result &&
@@ -1216,38 +1022,24 @@ async function sendToIntelligence(
                     : "The request could not be completed."
             );
 
-
-        error.apiResult =
-            result;
-
-        error.httpStatus =
-            response.status;
-
+        error.apiResult = result;
+        error.httpStatus = response.status;
 
         throw error;
     }
 
-
-    setStatus(
-        "Ready"
-    );
-
+    setStatus("Ready");
 
     return result;
 }
 
-
 /* ==================================================
-   INITIAL SERVICE ACTIVATION
+   INITIAL ADA ACTIVATION
    ================================================== */
 
 async function startService() {
-
     if (!selectedService) {
-
-        setStatus(
-            "Ready"
-        );
+        setStatus("Ready");
 
         addSystemMessage(
             "Please select a service to begin."
@@ -1256,51 +1048,40 @@ async function startService() {
         return;
     }
 
-
     addSystemMessage(
         "Starting your selected service..."
     );
 
-
     try {
-
         const result =
             await sendToIntelligence(
-                "I have selected this service and I am ready to begin. Please explain what you need from me and how I should use the Upload, Voice, Review, Approve and other available options for this request.",
+                "I have selected this service and I am ready to begin. Please explain what you need from me and how I should use the available options for this request.",
                 "start_new_job"
             );
-
 
         if (
             result &&
             result.reply
         ) {
-
             addMessage(
                 result.reply,
                 "assistant"
             );
         }
-
-
     } catch (error) {
-
         console.error(
             "SERVICE START ERROR:",
             error
         );
 
-
         setStatus(
             "Please try again."
         );
-
 
         if (
             !error.apiResult ||
             !error.apiResult.diagnostic
         ) {
-
             addMessage(
                 "Sorry, we could not start your request right now. Please try again in a moment.",
                 "assistant"
@@ -1309,129 +1090,93 @@ async function startService() {
     }
 }
 
-
 /* ==================================================
-   SEND MESSAGE
+   SEND TEXT MESSAGE
    ================================================== */
 
 async function sendMessage() {
-
     const message =
         messageInput.value.trim();
-
 
     if (!message) {
         return;
     }
-
 
     addMessage(
         message,
         "customer"
     );
 
-
-    messageInput.value =
-        "";
+    messageInput.value = "";
 
     resizeTextarea();
 
-    sendButton.disabled =
-        true;
-
+    sendButton.disabled = true;
 
     try {
-
         const result =
             await sendToIntelligence(
                 message
             );
 
-
         if (
             result &&
             result.reply
         ) {
-
             addMessage(
                 result.reply,
                 "assistant"
             );
         }
-
-
     } catch (error) {
-
         console.error(
             "CHAT ERROR:",
             error
         );
 
-
         setStatus(
             "Please try again."
         );
-
-
-        /*
-         * If ada_api.py supplied diagnostic data,
-         * addDiagnosticMessage() has already displayed it.
-         *
-         * Do not hide it behind another generic message.
-         */
 
         if (
             !error.apiResult ||
             !error.apiResult.diagnostic
         ) {
-
             addMessage(
                 "Sorry, we could not complete that step right now. Please try again in a moment.",
                 "assistant"
             );
         }
-
     } finally {
-
-        sendButton.disabled =
-            false;
-
+        sendButton.disabled = false;
         messageInput.focus();
     }
 }
-
 
 sendButton.addEventListener(
     "click",
     sendMessage
 );
 
-
 messageInput.addEventListener(
     "keydown",
     function(event) {
-
         if (
             event.key === "Enter" &&
             !event.shiftKey
         ) {
-
             event.preventDefault();
-
             sendMessage();
         }
     }
 );
 
-
 /* ==================================================
-   TEXTAREA RESIZE
+   TEXTAREA
    ================================================== */
 
 function resizeTextarea() {
-
-    messageInput.style.height =
-        "auto";
+    messageInput.style.height = "auto";
 
     messageInput.style.height =
         Math.min(
@@ -1440,15 +1185,13 @@ function resizeTextarea() {
         ) + "px";
 }
 
-
 messageInput.addEventListener(
     "input",
     resizeTextarea
 );
 
-
 /* ==================================================
-   DOCUMENT UPLOAD
+   UPLOAD
    ================================================== */
 
 document.getElementById(
@@ -1456,76 +1199,29 @@ document.getElementById(
 ).addEventListener(
     "click",
     function() {
-
-        documentInput.value =
-            "";
-
+        documentInput.value = "";
         documentInput.click();
     }
 );
 
-
 documentInput.addEventListener(
     "change",
     async function() {
-
         if (
-            !documentInput.files ||
-            !documentInput.files.length
+            documentInput.files &&
+            documentInput.files.length
         ) {
-            return;
+            await uploadDocument(
+                documentInput.files[0]
+            );
         }
-
-        await uploadDocument(
-            documentInput.files[0]
-        );
     }
 );
 
-
-/* ==================================================
-   CAMERA
-   ================================================== */
-
-async function snapDocument() {
-
-    cameraInput.value =
-        "";
-
-    cameraInput.click();
-}
-
-
-cameraInput.addEventListener(
-    "change",
-    async function() {
-
-        if (
-            !cameraInput.files ||
-            !cameraInput.files.length
-        ) {
-            return;
-        }
-
-        await uploadDocument(
-            cameraInput.files[0]
-        );
-    }
-);
-
-
-/* ==================================================
-   DOCUMENT UPLOAD
-   ================================================== */
-
-async function uploadDocument(
-    file
-) {
-
+async function uploadDocument(file) {
     if (!file) {
         return;
     }
-
 
     attachmentCard.classList.add(
         "visible"
@@ -1537,15 +1233,14 @@ async function uploadDocument(
     attachmentStatus.textContent =
         "Sending file...";
 
-
     addSystemMessage(
-        "Uploading " + file.name + "..."
+        "Uploading " +
+        file.name +
+        "..."
     );
-
 
     const formData =
         new FormData();
-
 
     formData.append(
         "file",
@@ -1573,9 +1268,7 @@ async function uploadDocument(
         selectedService
     );
 
-
     try {
-
         const response =
             await fetch(
                 "/upload",
@@ -1585,29 +1278,22 @@ async function uploadDocument(
                 }
             );
 
-
-        let result = null;
-
+        let result;
 
         try {
-
             result =
                 await response.json();
-
         } catch (error) {
-
             throw new Error(
                 "The upload service returned an invalid response."
             );
         }
-
 
         if (
             !response.ok ||
             !result ||
             result.success !== true
         ) {
-
             console.error(
                 "DOCUMENT UPLOAD API ERROR:",
                 result
@@ -1621,16 +1307,17 @@ async function uploadDocument(
             );
         }
 
-
         attachmentStatus.textContent =
             "File received.";
-
 
         addSystemMessage(
             "Your file has been received and attached to this request."
         );
 
-
+        /*
+         * One and only one Ada continuation request
+         * for the uploaded document.
+         */
         const intelligenceResult =
             await sendToIntelligence(
                 "A document named \"" +
@@ -1639,30 +1326,23 @@ async function uploadDocument(
                 "file_uploaded"
             );
 
-
         if (
             intelligenceResult &&
             intelligenceResult.reply
         ) {
-
             addMessage(
                 intelligenceResult.reply,
                 "assistant"
             );
         }
-
-
     } catch (error) {
-
         console.error(
             "DOCUMENT UPLOAD ERROR:",
             error
         );
 
-
         attachmentStatus.textContent =
             "Upload could not be completed.";
-
 
         addMessage(
             "Sorry, we could not receive that file right now. Please try again.",
@@ -1671,23 +1351,14 @@ async function uploadDocument(
     }
 }
 
-
 /* ==================================================
    VOICE
    ================================================== */
 
-let mediaRecorder =
-    null;
-
-let recordedChunks =
-    [];
-
-let recordedBlob =
-    null;
-
-let microphoneStream =
-    null;
-
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordedBlob = null;
+let microphoneStream = null;
 
 document.getElementById(
     "voiceButton"
@@ -1696,9 +1367,7 @@ document.getElementById(
     openVoicePanel
 );
 
-
 function openVoicePanel() {
-
     voicePanel.classList.add(
         "visible"
     );
@@ -1707,14 +1376,11 @@ function openVoicePanel() {
         "Tap Record and allow microphone access when your phone asks.";
 }
 
-
 function closeVoicePanel() {
-
     if (
         mediaRecorder &&
         mediaRecorder.state === "recording"
     ) {
-
         mediaRecorder.stop();
     }
 
@@ -1725,7 +1391,6 @@ function closeVoicePanel() {
     );
 }
 
-
 document.getElementById(
     "closeVoiceButton"
 ).addEventListener(
@@ -1733,23 +1398,18 @@ document.getElementById(
     closeVoicePanel
 );
 
-
 async function startRecording() {
-
     if (
         !navigator.mediaDevices ||
         !navigator.mediaDevices.getUserMedia
     ) {
-
         voiceStatus.textContent =
             "Voice recording is not available in this browser.";
 
         return;
     }
 
-
     try {
-
         microphoneStream =
             await navigator.mediaDevices.getUserMedia(
                 {
@@ -1757,17 +1417,10 @@ async function startRecording() {
                 }
             );
 
+        recordedChunks = [];
+        recordedBlob = null;
 
-        recordedChunks =
-            [];
-
-        recordedBlob =
-            null;
-
-
-        let mimeType =
-            "";
-
+        let mimeType = "";
 
         const possibleTypes = [
             "audio/webm;codecs=opus",
@@ -1775,12 +1428,10 @@ async function startRecording() {
             "audio/mp4"
         ];
 
-
         for (
             const candidate
             of possibleTypes
         ) {
-
             if (
                 window.MediaRecorder &&
                 MediaRecorder.isTypeSupported &&
@@ -1788,57 +1439,41 @@ async function startRecording() {
                     candidate
                 )
             ) {
-
-                mimeType =
-                    candidate;
-
+                mimeType = candidate;
                 break;
             }
         }
 
-
-        if (mimeType) {
-
-            mediaRecorder =
-                new MediaRecorder(
+        mediaRecorder =
+            mimeType
+                ? new MediaRecorder(
                     microphoneStream,
                     {
                         mimeType:
                             mimeType
                     }
-                );
-
-        } else {
-
-            mediaRecorder =
-                new MediaRecorder(
+                )
+                : new MediaRecorder(
                     microphoneStream
                 );
-        }
-
 
         mediaRecorder.ondataavailable =
             function(event) {
-
                 if (
                     event.data &&
                     event.data.size > 0
                 ) {
-
                     recordedChunks.push(
                         event.data
                     );
                 }
             };
 
-
         mediaRecorder.onstop =
             function() {
-
                 const finalType =
                     mediaRecorder.mimeType ||
                     "audio/webm";
-
 
                 recordedBlob =
                     new Blob(
@@ -1849,19 +1484,16 @@ async function startRecording() {
                         }
                     );
 
-
                 const audioUrl =
                     URL.createObjectURL(
                         recordedBlob
                     );
-
 
                 audioPreview.src =
                     audioUrl;
 
                 audioPreview.style.display =
                     "block";
-
 
                 sendVoiceButton.disabled =
                     false;
@@ -1875,37 +1507,23 @@ async function startRecording() {
                 stopRecordButton.disabled =
                     true;
 
-
                 voiceStatus.textContent =
                     "Recording ready. You can play it or send it.";
-
 
                 stopMicrophone();
             };
 
-
         mediaRecorder.start();
 
-
-        recordButton.disabled =
-            true;
-
-        stopRecordButton.disabled =
-            false;
-
-        sendVoiceButton.disabled =
-            true;
-
-        againVoiceButton.disabled =
-            true;
-
+        recordButton.disabled = true;
+        stopRecordButton.disabled = false;
+        sendVoiceButton.disabled = true;
+        againVoiceButton.disabled = true;
 
         voiceStatus.textContent =
             "Recording... speak normally.";
 
-
     } catch (error) {
-
         console.error(
             "MICROPHONE ERROR:",
             error
@@ -1918,37 +1536,28 @@ async function startRecording() {
     }
 }
 
-
 recordButton.addEventListener(
     "click",
     startRecording
 );
 
-
 stopRecordButton.addEventListener(
     "click",
     function() {
-
         if (
             mediaRecorder &&
             mediaRecorder.state === "recording"
         ) {
-
             mediaRecorder.stop();
         }
     }
 );
 
-
 againVoiceButton.addEventListener(
     "click",
     function() {
-
-        recordedChunks =
-            [];
-
-        recordedBlob =
-            null;
+        recordedChunks = [];
+        recordedBlob = null;
 
         audioPreview.removeAttribute(
             "src"
@@ -1957,30 +1566,20 @@ againVoiceButton.addEventListener(
         audioPreview.style.display =
             "none";
 
-        sendVoiceButton.disabled =
-            true;
-
-        againVoiceButton.disabled =
-            true;
-
-        recordButton.disabled =
-            false;
-
-        stopRecordButton.disabled =
-            true;
+        sendVoiceButton.disabled = true;
+        againVoiceButton.disabled = true;
+        recordButton.disabled = false;
+        stopRecordButton.disabled = true;
 
         voiceStatus.textContent =
             "Ready to record again.";
     }
 );
 
-
 function stopMicrophone() {
-
     if (!microphoneStream) {
         return;
     }
-
 
     microphoneStream
         .getTracks()
@@ -1990,11 +1589,8 @@ function stopMicrophone() {
             }
         );
 
-
-    microphoneStream =
-        null;
+    microphoneStream = null;
 }
-
 
 /* ==================================================
    SEND VOICE
@@ -2005,55 +1601,27 @@ sendVoiceButton.addEventListener(
     sendVoice
 );
 
-
 async function sendVoice() {
-
     if (!recordedBlob) {
         return;
     }
 
-
-    sendVoiceButton.disabled =
-        true;
-
+    sendVoiceButton.disabled = true;
 
     voiceStatus.textContent =
-        "Sending your recording...";
-
+        "Sending your recording to Ada...";
 
     const formData =
         new FormData();
 
-
-    let extension =
-        "webm";
-
+    let extension = "webm";
 
     if (
         recordedBlob.type &&
-        recordedBlob.type.includes(
-            "mp4"
-        )
+        recordedBlob.type.includes("mp4")
     ) {
-
-        extension =
-            "mp4";
+        extension = "mp4";
     }
-
-
-    /*
-     * IMPORTANT:
-     *
-     * ada_api.py expects:
-     *
-     * POST /api/voice
-     *
-     * form field:
-     * file
-     *
-     * The previous workspace incorrectly sent
-     * the recording to /upload using "audio".
-     */
 
     formData.append(
         "file",
@@ -2082,9 +1650,20 @@ async function sendVoice() {
         selectedService
     );
 
-
     try {
-
+        /*
+         * IMPORTANT:
+         *
+         * Voice is processed ONCE.
+         *
+         * /api/voice receives the recording and Ada's
+         * voice/transcription processing happens there.
+         *
+         * We DO NOT call /api/chat again afterwards.
+         *
+         * This removes the previous duplicate voice
+         * processing.
+         */
         const response =
             await fetch(
                 "/api/voice",
@@ -2094,110 +1673,100 @@ async function sendVoice() {
                 }
             );
 
-
-        let result = null;
-
+        let result;
 
         try {
-
             result =
                 await response.json();
-
         } catch (error) {
-
             throw new Error(
                 "The voice service returned an invalid response."
             );
         }
 
+        console.log(
+            "ADA VOICE RESPONSE:",
+            result
+        );
 
         if (
             !response.ok ||
             !result ||
             result.success !== true
         ) {
-
-            console.error(
-                "VOICE API ERROR:",
-                result
-            );
+            if (
+                result &&
+                result.diagnostic
+            ) {
+                addDiagnosticMessage(
+                    result,
+                    response.status
+                );
+            }
 
             throw new Error(
                 result &&
                 result.message
                     ? result.message
-                    : "Voice upload failed."
+                    : result &&
+                      result.diagnostic &&
+                      result.diagnostic.error
+                        ? result.diagnostic.error
+                        : "Voice processing failed."
             );
         }
-
 
         voiceStatus.textContent =
-            "Your voice recording has been received.";
-
+            "Ada received your voice message.";
 
         addSystemMessage(
-            "Voice recording received."
+            "Voice message received."
         );
 
-
-        try {
-
-            const intelligenceResult =
-                await sendToIntelligence(
-                    "A voice recording has just been uploaded for this request. Please continue with the selected service and tell me the next step.",
-                    "voice_uploaded"
-                );
-
-
-            if (
-                intelligenceResult &&
-                intelligenceResult.reply
-            ) {
-
-                addMessage(
-                    intelligenceResult.reply,
-                    "assistant"
-                );
-            }
-
-        } catch (error) {
-
-            console.error(
-                "VOICE INTELLIGENCE ERROR:",
-                error
+        /*
+         * Use the response from /api/voice directly.
+         *
+         * Different API versions may return the Ada
+         * response under reply or response.
+         */
+        const voiceReply =
+            result.reply ||
+            result.response ||
+            (
+                result.data &&
+                (
+                    result.data.reply ||
+                    result.data.response
+                )
             );
 
-            if (
-                !error.apiResult ||
-                !error.apiResult.diagnostic
-            ) {
-
-                addSystemMessage(
-                    "The recording was received, but Ada could not continue with the request."
-                );
-            }
+        if (voiceReply) {
+            addMessage(
+                voiceReply,
+                "assistant"
+            );
+        } else {
+            addSystemMessage(
+                "Ada received your voice message and is processing it."
+            );
         }
 
+        setStatus("Ready");
 
-        sendVoiceButton.disabled =
-            true;
-
+        sendVoiceButton.disabled = true;
 
     } catch (error) {
-
         console.error(
-            "VOICE UPLOAD ERROR:",
+            "VOICE PROCESSING ERROR:",
             error
         );
 
         voiceStatus.textContent =
-            "The recording could not be sent. Please try again.";
+            "The recording could not be processed. Please try again.";
 
-        sendVoiceButton.disabled =
-            false;
+        sendVoiceButton.disabled = false;
     }
 }
-
 
 /* ==================================================
    REVIEW
@@ -2208,34 +1777,27 @@ document.getElementById(
 ).addEventListener(
     "click",
     async function() {
-
         addSystemMessage(
             "Requesting a review..."
         );
 
-
         try {
-
             const result =
                 await sendToIntelligence(
                     "Please review the work and information currently provided for this request and tell me what needs attention before I approve it.",
                     "review"
                 );
 
-
             if (
                 result &&
                 result.reply
             ) {
-
                 addMessage(
                     result.reply,
                     "assistant"
                 );
             }
-
         } catch (error) {
-
             console.error(
                 "REVIEW ERROR:",
                 error
@@ -2245,7 +1807,6 @@ document.getElementById(
                 !error.apiResult ||
                 !error.apiResult.diagnostic
             ) {
-
                 addMessage(
                     "Sorry, we could not complete the review right now. Please try again.",
                     "assistant"
@@ -2255,9 +1816,8 @@ document.getElementById(
     }
 );
 
-
 /* ==================================================
-   APPROVE → PAYMENT
+   APPROVE
    ================================================== */
 
 document.getElementById(
@@ -2265,70 +1825,51 @@ document.getElementById(
 ).addEventListener(
     "click",
     async function() {
-
         const button =
             document.getElementById(
                 "approveButton"
             );
 
-
-        button.disabled =
-            true;
-
+        button.disabled = true;
 
         addSystemMessage(
             "Sending your approval..."
         );
 
-
         try {
-
             const result =
                 await sendToIntelligence(
                     "I approve the current work. Please continue to the payment step for this request.",
                     "approve"
                 );
 
-
             if (
                 result &&
                 result.reply
             ) {
-
                 addMessage(
                     result.reply,
                     "assistant"
                 );
             }
 
-
             setTimeout(
-                function() {
-
-                    openPaymentPage();
-
-                },
+                openPaymentPage,
                 500
             );
 
-
         } catch (error) {
-
             console.error(
                 "APPROVAL ERROR:",
                 error
             );
 
-
-            button.disabled =
-                false;
-
+            button.disabled = false;
 
             if (
                 !error.apiResult ||
                 !error.apiResult.diagnostic
             ) {
-
                 addMessage(
                     "Sorry, we could not process the approval right now. Please try again.",
                     "assistant"
@@ -2338,29 +1879,18 @@ document.getElementById(
     }
 );
 
-
 /* ==================================================
-   PAYMENT & DOWNLOAD
+   PAYMENT
    ================================================== */
 
 document.getElementById(
     "paymentButton"
 ).addEventListener(
     "click",
-    function() {
-
-        openPaymentPage();
-
-    }
+    openPaymentPage
 );
 
-
-/* ==================================================
-   OPEN PAYMENT PAGE
-   ================================================== */
-
 function openPaymentPage() {
-
     const paymentUrl =
         "payment.html" +
         "?service=" +
@@ -2380,11 +1910,9 @@ function openPaymentPage() {
             clientRequestId || ""
         );
 
-
     window.location.href =
         paymentUrl;
 }
-
 
 /* ==================================================
    CUSTOMER SERVICE
@@ -2395,34 +1923,27 @@ document.getElementById(
 ).addEventListener(
     "click",
     async function() {
-
         addSystemMessage(
             "Connecting you with Customer Service..."
         );
 
-
         try {
-
             const result =
                 await sendToIntelligence(
                     "I need Customer Service assistance with my current request. Please tell me what help is available and what I should do next.",
                     "customer_service"
                 );
 
-
             if (
                 result &&
                 result.reply
             ) {
-
                 addMessage(
                     result.reply,
                     "assistant"
                 );
             }
-
         } catch (error) {
-
             console.error(
                 "CUSTOMER SERVICE ERROR:",
                 error
@@ -2432,7 +1953,6 @@ document.getElementById(
                 !error.apiResult ||
                 !error.apiResult.diagnostic
             ) {
-
                 addMessage(
                     "Customer Service is available to help. Please try again.",
                     "assistant"
@@ -2441,7 +1961,6 @@ document.getElementById(
         }
     }
 );
-
 
 /* ==================================================
    NEW JOB
@@ -2452,42 +1971,32 @@ document.getElementById(
 ).addEventListener(
     "click",
     function() {
-
         const newJobId =
             "job_" +
             cryptoRandomId();
-
 
         sessionStorage.setItem(
             "npbc_job_id",
             newJobId
         );
 
-
         const newRequestId =
             "request_" +
             cryptoRandomId();
-
 
         sessionStorage.setItem(
             "npbc_client_request_id",
             newRequestId
         );
 
-
-        const newUrl =
+        window.location.href =
             "conversation.html" +
             "?customer_id=" +
             encodeURIComponent(
                 customerId
             );
-
-
-        window.location.href =
-            newUrl;
     }
 );
-
 
 /* ==================================================
    BACK
@@ -2498,27 +2007,44 @@ document.getElementById(
 ).addEventListener(
     "click",
     function() {
-
         window.location.href =
             "conversation.html";
     }
 );
 
+/* ==================================================
+   CAMERA INPUT
+   ==================================================
+
+   Kept available for the existing camera input,
+   without adding another visible Voice control.
+   ================================================== */
+
+cameraInput.addEventListener(
+    "change",
+    async function() {
+        if (
+            cameraInput.files &&
+            cameraInput.files.length
+        ) {
+            await uploadDocument(
+                cameraInput.files[0]
+            );
+        }
+    }
+);
 
 /* ==================================================
-   INITIAL START
+   START
    ================================================== */
 
 window.addEventListener(
     "load",
     function() {
-
         resizeTextarea();
-
         startService();
     }
 );
-
 
 /* ==================================================
    CLEANUP
@@ -2527,22 +2053,17 @@ window.addEventListener(
 window.addEventListener(
     "beforeunload",
     function() {
-
         stopMicrophone();
 
         if (
             audioPreview.src &&
-            audioPreview.src.startsWith(
-                "blob:"
-            )
+            audioPreview.src.startsWith("blob:")
         ) {
-
             URL.revokeObjectURL(
                 audioPreview.src
             );
         }
     }
 );
-
 </script></body>
 </html>
