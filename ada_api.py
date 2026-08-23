@@ -1,57 +1,24 @@
+ada_api.py — Diagnostic Replacement
+
 """
 ada_api.py
 
 Ada Intelligence API
 Naija Pocket Business Center
 
-CUSTOMER / JOB SESSION-ISOLATED VERSION
+DIAGNOSTIC VERSION
+------------------
 
-FLOW
+This version preserves the existing customer/job session architecture
+but temporarily exposes the REAL AdaController exception through the
+/api/chat response when an intelligence request fails.
 
-    workspace.html
-          ↓
-    FastAPI
-          ↓
-    Customer / Job Session
-          ↓
-    AdaController
-          ↓
-    AdaAIEngine
-          ↓
-    Groq
+IMPORTANT:
+This is for debugging only.
 
-
-PURPOSE
--------
-This is the single FastAPI gateway used by the customer-facing
-workspace.
-
-It handles:
-
-    1. Workspace pages
-    2. Ada chat
-    3. File uploads
-    4. Voice/audio uploads
-    5. Customer/job session isolation
-    6. Server-side diagnostics
-    7. Health checking
-
-IMPORTANT
----------
-Customer-facing responses must never expose:
-
-    - Groq
-    - FastAPI
-    - Python
-    - traceback
-    - HTTP errors
-    - internal exception details
-    - server paths
-    - technical network terminology
-
-Technical details are printed only to the server console.
+Once the actual failure is identified, replace the diagnostic error
+response with the normal customer-safe message again.
 """
-
 
 # ==========================================================
 # IMPORTS
@@ -65,7 +32,6 @@ from fastapi import (
 )
 
 from fastapi.middleware.cors import CORSMiddleware
-
 from fastapi.responses import FileResponse
 
 from pydantic import BaseModel
@@ -112,7 +78,6 @@ UPLOAD_DIR = BASE_DIR / "uploads"
 
 VOICE_DIR = BASE_DIR / "voice_uploads"
 
-
 UPLOAD_DIR.mkdir(
     parents=True,
     exist_ok=True,
@@ -125,7 +90,7 @@ VOICE_DIR.mkdir(
 
 
 # ==========================================================
-# CUSTOMER-FACING MESSAGES
+# CUSTOMER MESSAGES
 # ==========================================================
 
 CUSTOMER_PROCESSING_MESSAGE = (
@@ -134,42 +99,35 @@ CUSTOMER_PROCESSING_MESSAGE = (
     "If the problem continues, please contact Customer Service."
 )
 
-
 CUSTOMER_START_MESSAGE = (
     "Sorry, we could not start your request right now. "
     "Please try again in a moment. "
     "If the problem continues, please contact Customer Service."
 )
 
-
 CUSTOMER_EMPTY_MESSAGE = (
     "Please enter a message so Ada can continue helping you."
 )
-
 
 CUSTOMER_UPLOAD_SUCCESS_MESSAGE = (
     "Your file has been received and is now attached "
     "to your active request."
 )
 
-
 CUSTOMER_UPLOAD_ERROR_MESSAGE = (
     "Sorry, we could not receive that file right now. "
     "Please try again."
 )
-
 
 CUSTOMER_VOICE_SUCCESS_MESSAGE = (
     "Your voice recording has been received. "
     "Ada can now continue with your request."
 )
 
-
 CUSTOMER_VOICE_ERROR_MESSAGE = (
     "Sorry, we could not receive your voice recording right now. "
     "Please try again."
 )
-
 
 CUSTOMER_SERVICE_MESSAGE = (
     "Customer Service is available to help. "
@@ -199,11 +157,10 @@ class ChatRequest(BaseModel):
 
 
 # ==========================================================
-# ADA SESSION STORAGE
+# SESSION STORAGE
 # ==========================================================
 
 ADA_SESSIONS = {}
-
 
 MAX_SESSIONS = 100
 
@@ -211,12 +168,6 @@ MAX_SESSIONS = 100
 # ==========================================================
 # UPLOAD REGISTRY
 # ==========================================================
-#
-# Keeps uploaded-file information associated with the
-# current customer/job session while the server is running.
-#
-# The actual files remain on disk.
-#
 
 ADA_UPLOADS = {}
 
@@ -276,25 +227,15 @@ def get_session_key(
     service=None,
 ):
 
-    customer_id = clean_session_value(
-        customer_id
-    )
+    customer_id = clean_session_value(customer_id)
 
-    job_id = clean_session_value(
-        job_id
-    )
+    job_id = clean_session_value(job_id)
 
     client_request_id = clean_session_value(
         client_request_id
     )
 
-    service = clean_session_value(
-        service
-    )
-
-    # ------------------------------------------------------
-    # CUSTOMER + JOB
-    # ------------------------------------------------------
+    service = clean_session_value(service)
 
     if customer_id and job_id:
 
@@ -303,33 +244,17 @@ def get_session_key(
             f"job:{job_id}"
         )
 
-    # ------------------------------------------------------
-    # JOB ONLY
-    # ------------------------------------------------------
-
     if job_id:
 
         return f"job:{job_id}"
-
-    # ------------------------------------------------------
-    # CUSTOMER ONLY
-    # ------------------------------------------------------
 
     if customer_id:
 
         return f"customer:{customer_id}"
 
-    # ------------------------------------------------------
-    # CLIENT REQUEST
-    # ------------------------------------------------------
-
     if client_request_id:
 
         return f"client:{client_request_id}"
-
-    # ------------------------------------------------------
-    # SERVICE FALLBACK
-    # ------------------------------------------------------
 
     if service:
 
@@ -337,10 +262,6 @@ def get_session_key(
             "service:"
             f"{service.lower()}"
         )
-
-    # ------------------------------------------------------
-    # LAST RESORT
-    # ------------------------------------------------------
 
     return "anonymous"
 
@@ -350,10 +271,6 @@ def get_session_key(
 # ==========================================================
 
 def get_ada_controller(session_key):
-
-    # ------------------------------------------------------
-    # EXISTING SESSION
-    # ------------------------------------------------------
 
     if session_key in ADA_SESSIONS:
 
@@ -377,10 +294,6 @@ def get_ada_controller(session_key):
 
         return ADA_SESSIONS[session_key]
 
-    # ------------------------------------------------------
-    # NEW SESSION
-    # ------------------------------------------------------
-
     print()
     print("=" * 80)
     print("CREATING NEW ADA SESSION")
@@ -395,10 +308,6 @@ def get_ada_controller(session_key):
     print()
 
     controller = AdaController()
-
-    # ------------------------------------------------------
-    # SESSION LIMIT
-    # ------------------------------------------------------
 
     if len(ADA_SESSIONS) >= MAX_SESSIONS:
 
@@ -424,10 +333,6 @@ def get_ada_controller(session_key):
             oldest_key,
             None
         )
-
-    # ------------------------------------------------------
-    # STORE
-    # ------------------------------------------------------
 
     ADA_SESSIONS[session_key] = controller
 
@@ -509,7 +414,7 @@ def register_upload(
 
 
 # ==========================================================
-# STARTUP DIAGNOSTICS
+# STARTUP
 # ==========================================================
 
 print()
@@ -537,6 +442,11 @@ print(
     str(VOICE_DIR)
 )
 
+print(
+    "DIAGNOSTIC MODE:",
+    "ENABLED"
+)
+
 print("=" * 80)
 print()
 
@@ -554,7 +464,7 @@ def home():
 
 
 # ==========================================================
-# CONVERSATION PAGE
+# CONVERSATION
 # ==========================================================
 
 @app.get("/conversation.html")
@@ -566,7 +476,7 @@ def conversation():
 
 
 # ==========================================================
-# WORKSPACE PAGE
+# WORKSPACE
 # ==========================================================
 
 @app.get("/workspace.html")
@@ -631,10 +541,6 @@ def health():
 
         groq_model = None
 
-        # --------------------------------------------------
-        # CONNECTION
-        # --------------------------------------------------
-
         try:
 
             groq_connected = bool(
@@ -643,31 +549,13 @@ def health():
 
         except Exception as error:
 
-            print()
             print(
-                "HEALTH CONNECTION ERROR"
-            )
-
-            print(
-                "SESSION:",
-                repr(session_key)
-            )
-
-            print(
-                "ERROR TYPE:",
-                type(error).__name__
-            )
-
-            print(
-                "ERROR:",
+                "HEALTH CONNECTION ERROR:",
+                type(error).__name__,
                 str(error)
             )
 
             traceback.print_exc()
-
-        # --------------------------------------------------
-        # MODEL
-        # --------------------------------------------------
 
         try:
 
@@ -677,23 +565,9 @@ def health():
 
         except Exception as error:
 
-            print()
             print(
-                "HEALTH MODEL ERROR"
-            )
-
-            print(
-                "SESSION:",
-                repr(session_key)
-            )
-
-            print(
-                "ERROR TYPE:",
-                type(error).__name__
-            )
-
-            print(
-                "ERROR:",
+                "HEALTH MODEL ERROR:",
+                type(error).__name__,
                 str(error)
             )
 
@@ -744,7 +618,7 @@ def health():
 
 
 # ==========================================================
-# FILE UPLOAD INTERNAL HANDLER
+# FILE UPLOAD HANDLER
 # ==========================================================
 
 async def handle_file_upload(
@@ -755,45 +629,6 @@ async def handle_file_upload(
     service=None,
 ):
 
-    print()
-    print("=" * 80)
-    print("NEW ADA FILE UPLOAD")
-    print("=" * 80)
-
-    print(
-        "FILE:",
-        repr(file.filename)
-    )
-
-    print(
-        "CONTENT TYPE:",
-        repr(file.content_type)
-    )
-
-    print(
-        "CUSTOMER ID:",
-        repr(customer_id)
-    )
-
-    print(
-        "JOB ID:",
-        repr(job_id)
-    )
-
-    print(
-        "CLIENT REQUEST ID:",
-        repr(client_request_id)
-    )
-
-    print(
-        "SERVICE:",
-        repr(service)
-    )
-
-    # ------------------------------------------------------
-    # SESSION
-    # ------------------------------------------------------
-
     session_key = get_session_key(
         customer_id=customer_id,
         job_id=job_id,
@@ -801,16 +636,7 @@ async def handle_file_upload(
         service=service,
     )
 
-    print(
-        "SESSION KEY:",
-        repr(session_key)
-    )
-
     try:
-
-        # --------------------------------------------------
-        # SAFE IDENTIFIERS
-        # --------------------------------------------------
 
         safe_customer = (
             clean_session_value(customer_id)
@@ -824,18 +650,10 @@ async def handle_file_upload(
             "job"
         )
 
-        # --------------------------------------------------
-        # SAFE ORIGINAL FILE NAME
-        # --------------------------------------------------
-
         original_name = Path(
             file.filename or
             "uploaded_file"
         ).name
-
-        # --------------------------------------------------
-        # UNIQUE STORAGE NAME
-        # --------------------------------------------------
 
         unique_name = (
             uuid.uuid4().hex
@@ -843,18 +661,10 @@ async def handle_file_upload(
             + original_name
         )
 
-        # --------------------------------------------------
-        # CUSTOMER DIRECTORY
-        # --------------------------------------------------
-
         customer_folder = (
             UPLOAD_DIR /
             safe_customer
         )
-
-        # --------------------------------------------------
-        # JOB DIRECTORY
-        # --------------------------------------------------
 
         job_folder = (
             customer_folder /
@@ -866,18 +676,10 @@ async def handle_file_upload(
             exist_ok=True
         )
 
-        # --------------------------------------------------
-        # DESTINATION
-        # --------------------------------------------------
-
         destination = (
             job_folder /
             unique_name
         )
-
-        # --------------------------------------------------
-        # SAVE FILE
-        # --------------------------------------------------
 
         content = await file.read()
 
@@ -885,13 +687,7 @@ async def handle_file_upload(
             content
         )
 
-        file_size = len(
-            content
-        )
-
-        # --------------------------------------------------
-        # REGISTER
-        # --------------------------------------------------
+        file_size = len(content)
 
         upload_information = {
 
@@ -932,23 +728,29 @@ async def handle_file_upload(
             upload_information
         )
 
-        # --------------------------------------------------
-        # SERVER DIAGNOSTICS
-        # --------------------------------------------------
+        print()
+        print("=" * 80)
+        print("ADA FILE UPLOAD SUCCESS")
+        print("=" * 80)
 
         print(
-            "FILE SAVED:",
-            str(destination)
+            "SESSION:",
+            repr(session_key)
         )
 
         print(
-            "FILE SIZE:",
+            "FILE:",
+            repr(original_name)
+        )
+
+        print(
+            "SIZE:",
             file_size
         )
 
         print(
-            "REGISTERED SESSION:",
-            repr(session_key)
+            "PATH:",
+            str(destination)
         )
 
         print("=" * 80)
@@ -994,11 +796,6 @@ async def handle_file_upload(
         print("#" * 80)
         print("FILE UPLOAD ERROR")
         print("#" * 80)
-
-        print(
-            "SESSION:",
-            repr(session_key)
-        )
 
         print(
             "ERROR TYPE:",
@@ -1052,7 +849,7 @@ async def upload_file(
 
 
 # ==========================================================
-# FILE UPLOAD ALIAS
+# API FILE UPLOAD
 # ==========================================================
 
 @app.post("/api/upload")
@@ -1074,7 +871,7 @@ async def api_upload_file(
 
 
 # ==========================================================
-# VOICE UPLOAD INTERNAL HANDLER
+# VOICE UPLOAD HANDLER
 # ==========================================================
 
 async def handle_voice_upload(
@@ -1085,55 +882,11 @@ async def handle_voice_upload(
     service=None,
 ):
 
-    print()
-    print("=" * 80)
-    print("NEW ADA VOICE UPLOAD")
-    print("=" * 80)
-
-    print(
-        "FILE:",
-        repr(file.filename)
-    )
-
-    print(
-        "CONTENT TYPE:",
-        repr(file.content_type)
-    )
-
-    print(
-        "CUSTOMER ID:",
-        repr(customer_id)
-    )
-
-    print(
-        "JOB ID:",
-        repr(job_id)
-    )
-
-    print(
-        "CLIENT REQUEST ID:",
-        repr(client_request_id)
-    )
-
-    print(
-        "SERVICE:",
-        repr(service)
-    )
-
-    # ------------------------------------------------------
-    # SESSION
-    # ------------------------------------------------------
-
     session_key = get_session_key(
         customer_id=customer_id,
         job_id=job_id,
         client_request_id=client_request_id,
         service=service,
-    )
-
-    print(
-        "SESSION KEY:",
-        repr(session_key)
     )
 
     try:
@@ -1154,10 +907,6 @@ async def handle_voice_upload(
             file.filename or
             "voice_recording"
         ).name
-
-        # --------------------------------------------------
-        # FORCE A VOICE-SAFE EXTENSION WHEN NECESSARY
-        # --------------------------------------------------
 
         suffix = Path(
             original_name
@@ -1198,9 +947,7 @@ async def handle_voice_upload(
             content
         )
 
-        file_size = len(
-            content
-        )
+        file_size = len(content)
 
         voice_information = {
 
@@ -1241,19 +988,29 @@ async def handle_voice_upload(
             voice_information
         )
 
+        print()
+        print("=" * 80)
+        print("ADA VOICE UPLOAD SUCCESS")
+        print("=" * 80)
+
         print(
-            "VOICE SAVED:",
-            str(destination)
+            "SESSION:",
+            repr(session_key)
         )
 
         print(
-            "VOICE SIZE:",
+            "FILE:",
+            repr(original_name)
+        )
+
+        print(
+            "SIZE:",
             file_size
         )
 
         print(
-            "REGISTERED SESSION:",
-            repr(session_key)
+            "PATH:",
+            str(destination)
         )
 
         print("=" * 80)
@@ -1301,11 +1058,6 @@ async def handle_voice_upload(
         print("#" * 80)
 
         print(
-            "SESSION:",
-            repr(session_key)
-        )
-
-        print(
             "ERROR TYPE:",
             type(error).__name__
         )
@@ -1335,7 +1087,7 @@ async def handle_voice_upload(
 
 
 # ==========================================================
-# VOICE UPLOAD
+# VOICE
 # ==========================================================
 
 @app.post("/api/voice")
@@ -1357,7 +1109,7 @@ async def api_voice_upload(
 
 
 # ==========================================================
-# VOICE UPLOAD ALIAS
+# VOICE ALIAS
 # ==========================================================
 
 @app.post("/api/voice/upload")
@@ -1426,7 +1178,7 @@ def chat(req: ChatRequest):
     )
 
     # ======================================================
-    # MESSAGE VALIDATION
+    # VALIDATE MESSAGE
     # ======================================================
 
     message = clean_session_value(
@@ -1434,10 +1186,6 @@ def chat(req: ChatRequest):
     )
 
     if not message:
-
-        print(
-            "EMPTY CHAT MESSAGE"
-        )
 
         return {
 
@@ -1529,7 +1277,7 @@ def chat(req: ChatRequest):
         )
 
     # ======================================================
-    # CREATE / GET ADA CONTROLLER
+    # CREATE / GET CONTROLLER
     # ======================================================
 
     try:
@@ -1544,11 +1292,6 @@ def chat(req: ChatRequest):
         print("#" * 80)
         print("ADA SESSION CREATION ERROR")
         print("#" * 80)
-
-        print(
-            "SESSION:",
-            repr(session_key)
-        )
 
         print(
             "ERROR TYPE:",
@@ -1575,10 +1318,26 @@ def chat(req: ChatRequest):
             "session_id":
                 session_key,
 
+            # DIAGNOSTIC
+            "diagnostic":
+                {
+                    "stage":
+                        "controller_creation",
+
+                    "error_type":
+                        type(error).__name__,
+
+                    "error":
+                        str(error),
+
+                    "traceback":
+                        traceback.format_exc(),
+                },
+
         }
 
     # ======================================================
-    # CONTROLLER DIAGNOSTICS
+    # CONTROLLER STATUS
     # ======================================================
 
     print()
@@ -1642,11 +1401,8 @@ def chat(req: ChatRequest):
     except Exception as error:
 
         print(
-            "ACTIVE SERVICE BEFORE: UNAVAILABLE"
-        )
-
-        print(
-            "ERROR:",
+            "ACTIVE SERVICE BEFORE UNAVAILABLE:",
+            type(error).__name__,
             str(error)
         )
 
@@ -1660,18 +1416,15 @@ def chat(req: ChatRequest):
     except Exception as error:
 
         print(
-            "JOB STATE BEFORE: UNAVAILABLE"
-        )
-
-        print(
-            "ERROR:",
+            "JOB STATE BEFORE UNAVAILABLE:",
+            type(error).__name__,
             str(error)
         )
 
     print("=" * 80)
 
     # ======================================================
-    # SEND MESSAGE TO ADA
+    # SEND TO ADA CONTROLLER
     # ======================================================
 
     try:
@@ -1704,13 +1457,7 @@ def chat(req: ChatRequest):
         print("=" * 80)
 
         # --------------------------------------------------
-        # IMPORTANT
-        #
-        # Service selection is passed directly into the
-        # existing AdaController.
-        #
-        # The FastAPI layer does NOT implement keyword-only
-        # service logic.
+        # THIS IS THE IMPORTANT CALL
         # --------------------------------------------------
 
         reply = controller.process_message(
@@ -1765,30 +1512,6 @@ def chat(req: ChatRequest):
             repr(reply)
         )
 
-        try:
-
-            print(
-                "ACTIVE SERVICE AFTER:",
-                repr(
-                    controller.get_active_service()
-                )
-            )
-
-        except Exception:
-
-            pass
-
-        try:
-
-            print(
-                "JOB STATE AFTER:",
-                controller.get_job_state()
-            )
-
-        except Exception:
-
-            pass
-
         print("=" * 80)
         print()
 
@@ -1817,10 +1540,16 @@ def chat(req: ChatRequest):
         }
 
     # ======================================================
-    # REAL ADA ERROR
+    # DIAGNOSTIC ADA ERROR
     # ======================================================
 
     except Exception as error:
+
+        error_type = type(error).__name__
+
+        error_message = str(error)
+
+        error_traceback = traceback.format_exc()
 
         print()
         print()
@@ -1839,35 +1568,55 @@ def chat(req: ChatRequest):
         )
 
         print(
+            "MESSAGE:",
+            repr(message)
+        )
+
+        print(
             "EVENT:",
             repr(normalized_event)
         )
 
         print(
             "ERROR TYPE:",
-            type(error).__name__
+            error_type
         )
 
         print(
             "ERROR MESSAGE:",
-            str(error)
+            error_message
         )
 
         print()
         print("FULL TRACEBACK:")
         print()
 
-        traceback.print_exc()
+        print(
+            error_traceback
+        )
+
+        print(
+            "#" * 80
+        )
+
+        print(
+            "END REAL ADA INTELLIGENCE ERROR"
+        )
+
+        print(
+            "#" * 80
+        )
 
         print()
-        print("#" * 80)
-        print("END REAL ADA INTELLIGENCE ERROR")
-        print("#" * 80)
-        print()
 
-        # --------------------------------------------------
-        # KEEP SESSION ALIVE
-        # --------------------------------------------------
+        # ==================================================
+        # IMPORTANT
+        #
+        # TEMPORARY DIAGNOSTIC RESPONSE
+        #
+        # This is deliberately exposing the actual exception
+        # so Swagger can tell us what is failing.
+        # ==================================================
 
         return {
 
@@ -1890,6 +1639,35 @@ def chat(req: ChatRequest):
                 clean_session_value(
                     req.job_id
                 ),
+
+            "diagnostic":
+                {
+
+                    "stage":
+                        "controller_process_message",
+
+                    "error_type":
+                        error_type,
+
+                    "error":
+                        error_message,
+
+                    "traceback":
+                        error_traceback,
+
+                    "controller":
+                        type(controller).__name__,
+
+                    "session":
+                        session_key,
+
+                    "service":
+                        req.service,
+
+                    "message":
+                        message,
+
+                },
 
         }
 
