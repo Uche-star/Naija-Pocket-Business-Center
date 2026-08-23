@@ -1,40 +1,77 @@
 """
 ada_controller.py
 
-Ada Controller V10
+Ada Controller V11
 Naija Pocket Business Center
 
-ROLE
-----
-AdaController is the coordination layer between the
-customer-facing API/workspace and AdaAIEngine V10.
+PURPOSE
+-------
+AdaController is a THIN application coordination layer.
 
-AdaAIEngine remains responsible for:
-    - Groq intelligence
-    - conversation memory
-    - interview progression
-    - service handling
-    - document drafting
-    - document revision
-    - job state
+The intelligence belongs to AdaAIEngine / Groq.
 
-AdaController is responsible for:
-    - validating incoming requests
-    - passing the correct service to AdaAIEngine
-    - exposing the job/workflow operations
-    - preserving real errors
-    - preventing silent/empty responses
+Groq is responsible for:
+    - understanding the customer's request
+    - maintaining conversational context
+    - deciding what information is needed
+    - deciding when enough information has been supplied
+    - generating requested documents
+    - understanding revision requests
+    - revising documents
+    - producing natural customer-facing responses
+
+Python is responsible only for:
+    - receiving application requests
+    - passing customer messages to AdaAIEngine
+    - preserving the active AdaAIEngine instance
+    - storing/retrieving document context
+    - exposing application state
+    - forwarding document/payment/delivery operations
+    - validating that real results were returned
 
 IMPORTANT
 ---------
-This controller does NOT create its own conversation memory.
+This controller does NOT:
 
-This controller does NOT generate fallback AI responses.
+    - conduct an interview
+    - decide what question Ada should ask
+    - decide whether the customer is ready
+    - inspect keywords to determine readiness
+    - generate fallback AI responses
+    - manufacture document content
+    - decide when a revision is required
+    - automatically revise documents
+    - pretend payment happened
+    - pretend delivery happened
 
-This controller does NOT replace real exceptions
-with friendly fake messages.
+The controller must never compete with Groq for intelligence.
 
-All real AdaAIEngine errors are allowed to surface.
+The intended customer flow is:
+
+    SERVICE
+       ↓
+    CUSTOMER CONVERSATION
+       ↓
+    GROQ UNDERSTANDS REQUEST
+       ↓
+    GROQ DECIDES INFORMATION IS SUFFICIENT
+       ↓
+    DOCUMENT GENERATION
+       ↓
+    CUSTOMER REVIEW
+       ↓
+    REVISION ONLY IF CUSTOMER REQUESTS IT
+       ↓
+    APPROVAL
+       ↓
+    PAYMENT
+       ↓
+    DELIVERY / DOWNLOAD
+
+One customer message should result in one normal
+AdaAIEngine conversation request.
+
+There are no hidden secondary intelligence requests here.
 """
 
 import traceback
@@ -45,21 +82,21 @@ from ada_ai_engine import AdaAIEngine
 class AdaController:
 
     # ==========================================================
-    # INITIALIZE
+    # INITIALIZATION
     # ==========================================================
 
     def __init__(self):
 
         print()
-        print("=" * 70)
-        print("ADA CONTROLLER V10 INITIALIZING")
-        print("=" * 70)
+        print("=" * 72)
+        print("ADA CONTROLLER V11")
+        print("=" * 72)
 
         self.intelligence = AdaAIEngine()
 
         print(
-            "Primary Intelligence:",
-            "AdaAIEngine V10"
+            "Intelligence:",
+            "AdaAIEngine"
         )
 
         print(
@@ -68,24 +105,41 @@ class AdaController:
         )
 
         try:
-
             print(
                 "Groq Model:",
                 self.intelligence.get_model()
             )
-
         except Exception:
-
             print(
                 "Groq Model:",
-                "Unable to read model"
+                "Unavailable"
             )
 
-        print("=" * 70)
+        print(
+            "Role:",
+            "THIN APPLICATION COORDINATION"
+        )
+
+        print(
+            "Python Interview Logic:",
+            "DISABLED"
+        )
+
+        print(
+            "Fallback AI:",
+            "DISABLED"
+        )
+
+        print(
+            "Keyword Readiness Logic:",
+            "DISABLED"
+        )
+
+        print("=" * 72)
         print()
 
     # ==========================================================
-    # NORMALIZE SELECTED SERVICE
+    # INTERNAL VALIDATION
     # ==========================================================
 
     def _clean_service(self, service):
@@ -93,57 +147,70 @@ class AdaController:
         if service is None:
             return None
 
-        service_text = str(
-            service
-        ).strip()
+        value = str(service).strip()
 
-        if not service_text:
+        if not value:
             return None
 
-        if (
-            service_text.lower()
-            in {
-                "service not selected",
-                "none",
-                "null"
-            }
-        ):
+        if value.lower() in {
+            "none",
+            "null",
+            "service not selected",
+        }:
             return None
 
-        return service_text
-
-    # ==========================================================
-    # VALIDATE CUSTOMER MESSAGE
-    # ==========================================================
+        return value
 
     def _validate_message(self, message):
 
         if message is None:
-
             raise ValueError(
-                "AdaController received message=None"
+                "AdaController received message=None."
             )
 
-        message = str(
-            message
-        ).strip()
+        value = str(message).strip()
 
-        if not message:
-
+        if not value:
             raise ValueError(
-                "AdaController received an empty message"
+                "AdaController received an empty customer message."
             )
 
-        return message
+        return value
+
+    def _require_result(
+        self,
+        result,
+        operation
+    ):
+
+        if result is None:
+            raise RuntimeError(
+                f"{operation} returned None."
+            )
+
+        if isinstance(result, str):
+
+            if not result.strip():
+                raise RuntimeError(
+                    f"{operation} returned an empty result."
+                )
+
+            return result.strip()
+
+        return result
 
     # ==========================================================
-    # PROCESS CUSTOMER MESSAGE
+    # MAIN ADA CONVERSATION
     #
-    # THIS IS THE MAIN CONVERSATION ENTRY POINT.
+    # IMPORTANT:
     #
-    # The same AdaAIEngine instance is deliberately reused.
-    # Therefore AdaAIEngine's conversation memory survives
-    # from question 1 → question 2 → question 3 → completion.
+    # No interview logic exists here.
+    #
+    # No question sequence exists here.
+    #
+    # No readiness detection exists here.
+    #
+    # The message goes directly to AdaAIEngine.
     # ==========================================================
 
     def process_message(
@@ -152,22 +219,18 @@ class AdaController:
         service=None
     ):
 
-        message = self._validate_message(
-            message
-        )
+        message = self._validate_message(message)
 
-        selected_service = (
-            self._clean_service(service)
-        )
+        service = self._clean_service(service)
 
         print()
-        print("=" * 70)
-        print("ADA CONTROLLER REQUEST")
-        print("=" * 70)
+        print("=" * 72)
+        print("ADA CONTROLLER → ADA AI ENGINE")
+        print("=" * 72)
 
         print(
-            "Selected Service:",
-            repr(selected_service)
+            "Service:",
+            repr(service)
         )
 
         print(
@@ -176,87 +239,45 @@ class AdaController:
         )
 
         print(
-            "Active Service Before:",
+            "Active Service:",
             repr(
                 self.intelligence.get_active_service()
             )
         )
 
-        print("=" * 70)
-        print()
+        print(
+            "Intelligence Request:",
+            "1"
+        )
 
-        # ------------------------------------------------------
-        # IMPORTANT:
-        #
-        # DO NOT call reset_job() here.
-        #
-        # Every customer message after the first one must
-        # continue the existing conversation.
-        #
-        # AdaAIEngine.process_message() decides whether this
-        # is the first message or a continuation.
-        # ------------------------------------------------------
+        print("=" * 72)
+        print()
 
         try:
 
-            response = (
-                self.intelligence.process_message(
-                    customer_message=message,
-                    service=selected_service
-                )
+            response = self.intelligence.process_message(
+                customer_message=message,
+                service=service
             )
 
         except Exception as error:
 
-            print()
-            print("=" * 70)
-            print("!!!!!!!! REAL ADA V10 ERROR !!!!!!!!")
-            print("=" * 70)
-
-            print(
-                "ERROR TYPE:",
-                type(error).__name__
+            self._log_error(
+                "ADA CONVERSATION ERROR",
+                error
             )
 
-            print(
-                "ERROR MESSAGE:",
-                str(error)
-            )
-
-            print()
-            print("ERROR REPRESENTATION:")
-            print(
-                repr(error)
-            )
-
-            print()
-            print("FULL TRACEBACK:")
-            print()
-
-            traceback.print_exc()
-
-            print()
-            print("=" * 70)
-            print("!!!!!!!! END REAL ADA V10 ERROR !!!!!!!!")
-            print("=" * 70)
-            print()
-
-            # NEVER hide the real intelligence error.
             raise
 
-        # ------------------------------------------------------
-        # RESPONSE VALIDATION
-        # ------------------------------------------------------
+        response = self._require_result(
+            response,
+            "AdaAIEngine.process_message()"
+        )
 
         print()
-        print("=" * 70)
-        print("ADA AI ENGINE V10 RETURNED")
-        print("=" * 70)
-
-        print(
-            "Response Type:",
-            type(response).__name__
-        )
+        print("=" * 72)
+        print("ADA CONTROLLER ← ADA AI ENGINE")
+        print("=" * 72)
 
         print(
             "Response:",
@@ -264,152 +285,115 @@ class AdaController:
         )
 
         print(
-            "Active Service After:",
+            "Active Service:",
             repr(
                 self.intelligence.get_active_service()
             )
         )
 
-        print(
-            "Job State:",
-            self.intelligence.get_job_state()
-        )
-
-        print("=" * 70)
+        print("=" * 72)
         print()
-
-        if response is None:
-
-            raise RuntimeError(
-                "AdaAIEngine V10.process_message() "
-                "returned None"
-            )
-
-        response = str(
-            response
-        ).strip()
-
-        if not response:
-
-            raise RuntimeError(
-                "AdaAIEngine V10.process_message() "
-                "returned an empty response"
-            )
 
         return response
 
     # ==========================================================
     # START NEW JOB
     #
-    # Used when a NEW service/job is intentionally selected.
+    # This is an APPLICATION operation.
+    #
+    # It does not decide anything about the customer's request.
     # ==========================================================
 
     def start_job(self, service):
 
-        service = self._clean_service(
-            service
-        )
+        service = self._clean_service(service)
 
         if not service:
-
             raise ValueError(
-                "Cannot start an Ada job without a service"
+                "Cannot start a job without a service."
             )
 
         print()
-        print("=" * 70)
-        print("ADA CONTROLLER STARTING NEW JOB")
-        print("=" * 70)
+        print("=" * 72)
+        print("ADA CONTROLLER → START NEW JOB")
+        print("=" * 72)
+
         print(
             "Service:",
             repr(service)
         )
-        print("=" * 70)
+
+        print("=" * 72)
         print()
 
-        return (
-            self.intelligence.start_job(
+        try:
+
+            result = self.intelligence.start_job(
                 service
             )
+
+        except Exception as error:
+
+            self._log_error(
+                "START JOB ERROR",
+                error
+            )
+
+            raise
+
+        return self._require_result(
+            result,
+            "AdaAIEngine.start_job()"
         )
 
     # ==========================================================
-    # SET ACTIVE SERVICE
+    # ACTIVE SERVICE
     # ==========================================================
 
-    def set_active_service(
-        self,
-        service
-    ):
+    def set_active_service(self, service):
 
-        service = self._clean_service(
+        service = self._clean_service(service)
+
+        if not service:
+            raise ValueError(
+                "Cannot set an empty active service."
+            )
+
+        return self.intelligence.set_active_service(
             service
         )
 
-        if not service:
-
-            raise ValueError(
-                "Cannot set an empty active service"
-            )
-
-        return (
-            self.intelligence.set_active_service(
-                service
-            )
-        )
-
-    # ==========================================================
-    # GET ACTIVE SERVICE
-    # ==========================================================
-
     def get_active_service(self):
 
-        return (
-            self.intelligence.get_active_service()
-        )
+        return self.intelligence.get_active_service()
 
     # ==========================================================
-    # GET JOB STATE
+    # JOB STATE
+    #
+    # State is application state.
+    #
+    # The controller does not interpret the state to make
+    # intelligence decisions.
     # ==========================================================
 
     def get_job_state(self):
 
-        return (
-            self.intelligence.get_job_state()
-        )
+        return self.intelligence.get_job_state()
 
     # ==========================================================
-    # GET CUSTOMER HISTORY
+    # CUSTOMER HISTORY
     # ==========================================================
 
     def get_customer_history(self):
 
-        return (
-            self.intelligence.get_customer_history()
-        )
-
-    # ==========================================================
-    # INTERVIEW STATUS
-    # ==========================================================
-
-    def interview_is_complete(self):
-
-        return (
-            self.intelligence.interview_is_complete()
-        )
-
-    # ==========================================================
-    # MARK INTERVIEW COMPLETE
-    # ==========================================================
-
-    def interview_completed(self):
-
-        return (
-            self.intelligence.interview_completed()
-        )
+        return self.intelligence.get_customer_history()
 
     # ==========================================================
     # DOCUMENT CONTEXT
+    #
+    # Python may store supplied material.
+    #
+    # It does NOT interpret that material.
     # ==========================================================
 
     def set_document_context(
@@ -418,41 +402,35 @@ class AdaController:
         file_path=None
     ):
 
-        return (
-            self.intelligence.set_document_context(
-                extracted_text,
-                file_path=file_path
-            )
+        return self.intelligence.set_document_context(
+            extracted_text,
+            file_path=file_path
         )
 
     def get_document_context(self):
 
-        return (
-            self.intelligence.get_document_context()
-        )
+        return self.intelligence.get_document_context()
 
     def has_document_context(self):
 
-        return (
-            self.intelligence.has_document_context()
-        )
+        return self.intelligence.has_document_context()
 
     def clear_document_context(self):
 
-        return (
-            self.intelligence.clear_document_context()
-        )
+        return self.intelligence.clear_document_context()
 
     # ==========================================================
-    # GENERATE DOCUMENT DRAFT
+    # DOCUMENT GENERATION
     #
-    # This moves the workflow from:
+    # IMPORTANT:
     #
-    # INTERVIEW
-    #     ↓
-    # DRAFT
-    #     ↓
-    # REVIEW
+    # This method does NOT decide whether the customer is ready.
+    #
+    # The application/UI should call this only when the workflow
+    # has reached the document-generation stage.
+    #
+    # The actual document intelligence remains Groq's job through
+    # AdaAIEngine.
     # ==========================================================
 
     def generate_document_draft(
@@ -460,86 +438,50 @@ class AdaController:
         service=None
     ):
 
-        selected_service = (
-            self._clean_service(service)
-        )
+        service = self._clean_service(service)
 
         print()
-        print("=" * 70)
-        print("ADA CONTROLLER → GENERATE DOCUMENT DRAFT")
-        print("=" * 70)
+        print("=" * 72)
+        print("ADA CONTROLLER → DOCUMENT GENERATION")
+        print("=" * 72)
 
         print(
             "Service:",
             repr(
-                selected_service
+                service
                 or self.get_active_service()
             )
         )
 
-        print("=" * 70)
+        print("=" * 72)
         print()
 
         try:
 
-            draft = (
-                self.intelligence.generate_document_draft(
-                    service=selected_service
-                )
+            draft = self.intelligence.generate_document_draft(
+                service=service
             )
 
         except Exception as error:
 
-            print()
-            print("=" * 70)
-            print("!!!!!!!! DOCUMENT DRAFT ERROR !!!!!!!!")
-            print("=" * 70)
-
-            print(
-                "ERROR TYPE:",
-                type(error).__name__
+            self._log_error(
+                "DOCUMENT GENERATION ERROR",
+                error
             )
-
-            print(
-                "ERROR:",
-                repr(error)
-            )
-
-            traceback.print_exc()
-
-            print("=" * 70)
-            print()
 
             raise
 
-        if draft is None:
-
-            raise RuntimeError(
-                "AdaAIEngine returned None while "
-                "generating document draft"
-            )
-
-        draft = str(
-            draft
-        ).strip()
-
-        if not draft:
-
-            raise RuntimeError(
-                "AdaAIEngine returned an empty "
-                "document draft"
-            )
-
-        return draft
+        return self._require_result(
+            draft,
+            "AdaAIEngine.generate_document_draft()"
+        )
 
     # ==========================================================
-    # REVISE DOCUMENT
+    # DOCUMENT REVISION
     #
-    # REVIEW
-    #   ↓
-    # REVISION
-    #   ↓
-    # REVIEW AGAIN
+    # Revision happens ONLY because the customer requested it.
+    #
+    # Python does not decide whether the document needs revision.
     # ==========================================================
 
     def revise_document(
@@ -550,9 +492,8 @@ class AdaController:
     ):
 
         if current_draft is None:
-
             raise ValueError(
-                "Cannot revise a document that is None"
+                "Current document cannot be None."
             )
 
         current_draft = str(
@@ -560,15 +501,13 @@ class AdaController:
         ).strip()
 
         if not current_draft:
-
             raise ValueError(
-                "Cannot revise an empty document"
+                "Current document cannot be empty."
             )
 
         if revision_request is None:
-
             raise ValueError(
-                "Revision request cannot be None"
+                "Revision request cannot be None."
             )
 
         revision_request = str(
@@ -576,112 +515,252 @@ class AdaController:
         ).strip()
 
         if not revision_request:
-
             raise ValueError(
-                "Revision request cannot be empty"
+                "Revision request cannot be empty."
             )
 
-        selected_service = (
-            self._clean_service(service)
+        service = self._clean_service(service)
+
+        print()
+        print("=" * 72)
+        print("ADA CONTROLLER → DOCUMENT REVISION")
+        print("=" * 72)
+
+        print(
+            "Service:",
+            repr(
+                service
+                or self.get_active_service()
+            )
         )
 
-        return (
-            self.intelligence.revise_document(
+        print(
+            "Revision Requested:",
+            True
+        )
+
+        print("=" * 72)
+        print()
+
+        try:
+
+            revised = self.intelligence.revise_document(
                 current_draft=current_draft,
                 revision_request=revision_request,
-                service=selected_service
+                service=service
             )
+
+        except Exception as error:
+
+            self._log_error(
+                "DOCUMENT REVISION ERROR",
+                error
+            )
+
+            raise
+
+        return self._require_result(
+            revised,
+            "AdaAIEngine.revise_document()"
         )
 
     # ==========================================================
-    # APPROVE DOCUMENT
+    # APPROVAL
     #
-    # REVIEW
-    #   ↓
-    # APPROVED
-    #   ↓
-    # PAYMENT
+    # This is NOT an intelligence decision.
+    #
+    # The customer has explicitly pressed Approve.
+    # Python records that application event.
     # ==========================================================
 
     def approve_document(self):
 
-        return (
-            self.intelligence.approve_document()
+        print()
+        print(
+            "ADA CONTROLLER → CUSTOMER APPROVAL"
         )
 
+        try:
+
+            return self.intelligence.approve_document()
+
+        except Exception as error:
+
+            self._log_error(
+                "DOCUMENT APPROVAL ERROR",
+                error
+            )
+
+            raise
+
     # ==========================================================
-    # PAYMENT RECEIVED
-    #
     # PAYMENT
-    #   ↓
-    # PAYMENT CONFIRMED
-    #   ↓
-    # DELIVERY
+    #
+    # Python records the result of the actual payment system.
+    #
+    # It must never claim payment without confirmation from the
+    # payment layer.
     # ==========================================================
 
     def mark_payment_received(self):
 
-        return (
-            self.intelligence.mark_payment_received()
+        print()
+        print(
+            "ADA CONTROLLER → PAYMENT CONFIRMED"
         )
 
+        try:
+
+            return self.intelligence.mark_payment_received()
+
+        except Exception as error:
+
+            self._log_error(
+                "PAYMENT STATE ERROR",
+                error
+            )
+
+            raise
+
     # ==========================================================
-    # MARK DELIVERED
-    #
     # DELIVERY
-    #   ↓
-    # COMPLETED
+    #
+    # Python performs/records delivery.
+    #
+    # It does not generate or modify the document content here.
     # ==========================================================
 
     def mark_delivered(self):
 
-        return (
-            self.intelligence.mark_delivered()
+        print()
+        print(
+            "ADA CONTROLLER → DELIVERY CONFIRMED"
         )
 
+        try:
+
+            return self.intelligence.mark_delivered()
+
+        except Exception as error:
+
+            self._log_error(
+                "DELIVERY STATE ERROR",
+                error
+            )
+
+            raise
+
     # ==========================================================
-    # RESET ADA JOB
+    # RESET
     #
-    # IMPORTANT:
-    # This must ONLY happen when starting a genuinely
-    # new job/conversation.
-    #
-    # It must NEVER happen automatically for every
-    # customer message.
+    # Only for an explicitly new job.
     # ==========================================================
 
     def reset_job(self):
 
         print()
-        print("=" * 70)
-        print("ADA CONTROLLER RESETTING JOB")
-        print("=" * 70)
+        print("=" * 72)
+        print("ADA CONTROLLER → RESET JOB")
+        print("=" * 72)
         print()
 
-        return (
-            self.intelligence.reset_job()
+        try:
+
+            return self.intelligence.reset_job()
+
+        except Exception as error:
+
+            self._log_error(
+                "RESET JOB ERROR",
+                error
+            )
+
+            raise
+
+    # ==========================================================
+    # LEGACY INTERVIEW COMPATIBILITY
+    #
+    # These methods remain ONLY so older application code does
+    # not immediately break.
+    #
+    # They do NOT perform an interview.
+    #
+    # They do NOT call Groq.
+    #
+    # They should not be used to decide whether Ada should
+    # generate a document.
+    # ==========================================================
+
+    def interview_is_complete(self):
+
+        return self.intelligence.interview_is_complete()
+
+    def interview_completed(self):
+
+        return self.intelligence.interview_completed()
+
+    # ==========================================================
+    # ERROR LOGGER
+    # ==========================================================
+
+    def _log_error(
+        self,
+        title,
+        error
+    ):
+
+        print()
+        print("=" * 80)
+        print(title)
+        print("=" * 80)
+
+        print(
+            "ERROR TYPE:",
+            type(error).__name__
         )
+
+        print(
+            "ERROR:",
+            repr(error)
+        )
+
+        print()
+        print("FULL TRACEBACK")
+        print("-" * 80)
+
+        traceback.print_exc()
+
+        print("=" * 80)
+        print()
 
 
 # ==============================================================
-# DIRECT CONTROLLER TEST
+# DIRECT TEST
 # ==============================================================
 
 if __name__ == "__main__":
 
     print()
-    print("=" * 70)
-    print("ADA CONTROLLER V10 DIRECT TEST")
-    print("=" * 70)
+    print("=" * 72)
+    print("ADA CONTROLLER V11 DIRECT TEST")
+    print("=" * 72)
     print()
 
     try:
 
         ada = AdaController()
 
-        message = input(
-            "Customer message: "
-        ).strip()
+        print(
+            "Connected:",
+            ada.intelligence.is_connected()
+        )
+
+        print(
+            "Model:",
+            ada.intelligence.get_model()
+        )
+
+        print()
 
         service = input(
             "Service (optional): "
@@ -690,25 +769,45 @@ if __name__ == "__main__":
         if not service:
             service = None
 
-        response = ada.process_message(
-            message=message,
-            service=service
-        )
+        while True:
+
+            message = input(
+                "Customer: "
+            ).strip()
+
+            if not message:
+                continue
+
+            if message.lower() in {
+                "exit",
+                "quit",
+                "stop",
+            }:
+                break
+
+            response = ada.process_message(
+                message=message,
+                service=service
+            )
+
+            print()
+            print("Ada:")
+            print(response)
+            print()
+
+    except KeyboardInterrupt:
 
         print()
-        print("=" * 70)
-        print("ADA RESPONSE")
-        print("=" * 70)
-        print(response)
-        print("=" * 70)
-        print()
+        print(
+            "Ada Controller test stopped."
+        )
 
     except Exception as error:
 
         print()
-        print("=" * 70)
-        print("!!!!!!!! DIRECT TEST REAL ERROR !!!!!!!!")
-        print("=" * 70)
+        print("=" * 72)
+        print("ADA CONTROLLER DIRECT TEST ERROR")
+        print("=" * 72)
 
         print(
             "ERROR TYPE:",
@@ -716,16 +815,11 @@ if __name__ == "__main__":
         )
 
         print(
-            "ERROR MESSAGE:",
-            str(error)
+            "ERROR:",
+            repr(error)
         )
-
-        print()
-        print("FULL TRACEBACK:")
-        print()
 
         traceback.print_exc()
 
-        print()
-        print("=" * 70)
+        print("=" * 72)
         print()
