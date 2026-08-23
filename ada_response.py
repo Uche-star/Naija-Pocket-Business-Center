@@ -14,7 +14,6 @@ This is the customer-facing intelligence layer used by:
         +-- AdaPromptManager
         |
         +-- BillingManager context supplied by API
-        |
         +-- Conversation history
         |
         v
@@ -643,10 +642,6 @@ another supported request.
         )
 
         # Keep the conversation bounded.
-        #
-        # We keep the most recent messages because the
-        # system prompt already contains the permanent
-        # Ada intelligence.
 
         if len(
             self.history
@@ -692,6 +687,122 @@ another supported request.
         )
 
         return messages
+
+    # ========================================================
+    # FORMAT PROVIDER ERROR
+    # ========================================================
+
+    @staticmethod
+    def format_provider_error(
+        error: Exception,
+    ) -> str:
+
+        """
+        Produce a useful diagnostic string for ada_api.py.
+
+        We deliberately do not expose API keys or complete
+        request payloads.
+
+        Groq's SDK exposes status_code and response on
+        APIStatusError subclasses, including rate-limit,
+        authentication, bad-request and other API failures.
+        """
+
+        error_type = (
+            type(error).__name__
+        )
+
+        status_code = getattr(
+            error,
+            "status_code",
+            None,
+        )
+
+        response = getattr(
+            error,
+            "response",
+            None,
+        )
+
+        parts = [
+            f"error_type={error_type}"
+        ]
+
+        if status_code is not None:
+
+            parts.append(
+                f"status_code={status_code}"
+            )
+
+        # ----------------------------------------------------
+        # Try to obtain the provider's response body.
+        # ----------------------------------------------------
+
+        response_text = None
+
+        if response is not None:
+
+            try:
+
+                response_text = (
+                    response.text
+                )
+
+            except Exception:
+
+                response_text = None
+
+        if response_text:
+
+            response_text = (
+                str(response_text)
+                .strip()
+            )
+
+            # Never include an API key if a provider response
+            # somehow contains one.
+
+            if API_KEY:
+
+                response_text = (
+                    response_text.replace(
+                        API_KEY,
+                        "[REDACTED]",
+                    )
+                )
+
+            parts.append(
+                "provider_response="
+                + response_text
+            )
+
+        # ----------------------------------------------------
+        # Fallback to exception message.
+        # ----------------------------------------------------
+
+        error_message = str(
+            error
+        ).strip()
+
+        if error_message:
+
+            if API_KEY:
+
+                error_message = (
+                    error_message.replace(
+                        API_KEY,
+                        "[REDACTED]",
+                    )
+                )
+
+            parts.append(
+                "message="
+                + error_message
+            )
+
+        return " | ".join(
+            parts
+        )
 
     # ========================================================
     # RESPOND
@@ -751,10 +862,10 @@ another supported request.
 
         if client is None:
 
-            return (
-                "Sorry, Ada's intelligence service "
-                "is temporarily unavailable. "
-                "Please try again shortly."
+            raise RuntimeError(
+                "Groq client is not configured. "
+                "Check the GROQ_API_KEY environment variable "
+                "and the groq package installation."
             )
 
         # ----------------------------------------------------
@@ -826,68 +937,83 @@ another supported request.
                 )
             )
 
-            reply = ""
-
-            if response.choices:
-
-                choice = (
-                    response.choices[0]
-                )
-
-                if choice.message:
-
-                    reply = (
-                        choice.message.content
-                        or
-                        ""
-                    )
-
-            reply = str(
-                reply
-            ).strip()
-
-            if not reply:
-
-                reply = (
-                    "I am ready to help with your "
-                    "request. Please tell me what "
-                    "you would like me to do next."
-                )
-
-            # ------------------------------------------------
-            # STORE CONVERSATION
-            # ------------------------------------------------
-
-            self.add_history(
-                "user",
-                message,
-            )
-
-            self.add_history(
-                "assistant",
-                reply,
-            )
-
-            return reply
-
         except Exception as error:
+
+            # ------------------------------------------------
+            # IMPORTANT
+            #
+            # Do NOT swallow the provider failure here.
+            #
+            # ada_api.py already has a diagnostic exception
+            # handler. Raising this error allows /api/chat to
+            # report the actual failure instead of returning
+            # success=True with a fake Ada reply.
+            # ------------------------------------------------
+
+            diagnostic = (
+                self.format_provider_error(
+                    error
+                )
+            )
 
             print(
                 "ADA RESPONSE ERROR:",
-                type(error).__name__,
-                str(error),
+                diagnostic,
             )
 
             traceback.print_exc()
 
-            # ------------------------------------------------
-            # Do not expose provider details to customer.
-            # ------------------------------------------------
+            raise RuntimeError(
+                diagnostic
+            ) from error
 
-            return (
-                "Sorry, I could not process your request "
-                "right now. Please try again in a moment."
+        # ----------------------------------------------------
+        # EXTRACT REPLY
+        # ----------------------------------------------------
+
+        reply = ""
+
+        if response.choices:
+
+            choice = (
+                response.choices[0]
             )
+
+            if choice.message:
+
+                reply = (
+                    choice.message.content
+                    or
+                    ""
+                )
+
+        reply = str(
+            reply
+        ).strip()
+
+        if not reply:
+
+            reply = (
+                "I am ready to help with your "
+                "request. Please tell me what "
+                "you would like me to do next."
+            )
+
+        # ----------------------------------------------------
+        # STORE CONVERSATION
+        # ----------------------------------------------------
+
+        self.add_history(
+            "user",
+            message,
+        )
+
+        self.add_history(
+            "assistant",
+            reply,
+        )
+
+        return reply
 
 
 # ============================================================
