@@ -1095,16 +1095,8 @@
 "use strict";
 
 
-/* ============================================================
-   CURRENT FASTAPI APPLICATION
-============================================================ */
-
 const API_BASE = "";
 
-
-/* ============================================================
-   ELEMENTS
-============================================================ */
 
 const main =
     document.querySelector(".main");
@@ -1218,10 +1210,6 @@ const paymentCheckButton =
     );
 
 
-/* ============================================================
-   SERVICE
-============================================================ */
-
 const params =
     new URLSearchParams(
         window.location.search
@@ -1233,10 +1221,6 @@ const service =
     ) ||
     "Business Center Service";
 
-
-/* ============================================================
-   CUSTOMER / JOB IDENTIFIERS
-============================================================ */
 
 let customerId =
     getStored(
@@ -1283,10 +1267,6 @@ store(
 );
 
 
-/* ============================================================
-   STATE
-============================================================ */
-
 let busy = false;
 let approved = false;
 let paymentId = null;
@@ -1298,10 +1278,6 @@ let mediaRecorder = null;
 let recordedChunks = [];
 let recordingStream = null;
 
-
-/* ============================================================
-   HELPERS
-============================================================ */
 
 function clean(value) {
 
@@ -1420,10 +1396,6 @@ function setBusy(value) {
         value;
 }
 
-
-/* ============================================================
-   SERVICE FORM DEFINITIONS
-============================================================ */
 
 const serviceForms = {
 
@@ -1858,29 +1830,6 @@ function collectFormData() {
 }
 
 
-/* ============================================================
-   SERVICE INTRODUCTION — INTELLIGENCE
-============================================================
-
-   IMPORTANT:
-
-   This request happens when the service page opens.
-
-   It does NOT create the customer's work.
-
-   Its only purpose is to give the customer useful service
-   guidance before the form is completed.
-
-   The response should contain:
-   1. What the service is for.
-   2. The amount to pay, when the service has a fixed price.
-   3. Useful information the customer should prepare.
-   4. Practical tips that make the form easier to complete.
-   5. Any documents that may be useful to upload.
-
-   No internal system names are requested or exposed.
-============================================================ */
-
 async function loadServiceGuidance() {
 
     setStatus(
@@ -1997,13 +1946,6 @@ async function loadServiceGuidance() {
         );
 
 
-        /*
-            The form remains available even if the guidance
-            request fails. The customer's actual work is never
-            blocked simply because the introductory guidance
-            could not be loaded.
-        */
-
         introText.textContent =
             "Please provide the information requested in the form. " +
             "If you are unsure what to provide, you can type your " +
@@ -2087,12 +2029,6 @@ function displayServiceGuidance(
         guidance;
 
 
-    /*
-        If the backend supplies a structured amount, use it.
-        Otherwise try to find a Nigerian Naira amount in the
-        returned customer-facing guidance.
-    */
-
     let amount =
         data.amount ||
         data.price ||
@@ -2168,10 +2104,6 @@ function displayServiceGuidance(
 }
 
 
-/* ============================================================
-   FORM SUBMISSION
-============================================================ */
-
 serviceForm.addEventListener(
     "submit",
     async function(event) {
@@ -2207,10 +2139,6 @@ serviceForm.addEventListener(
     }
 );
 
-
-/* ============================================================
-   CREATE ACTUAL WORK
-============================================================ */
 
 async function createWorkFromForm(
     formData
@@ -2428,10 +2356,6 @@ function formatFieldName(
 }
 
 
-/* ============================================================
-   REVIEW
-============================================================ */
-
 function showReview(
     work
 ) {
@@ -2484,10 +2408,6 @@ function showReview(
     );
 }
 
-
-/* ============================================================
-   CORRECTIONS
-============================================================ */
 
 applyCorrectionsButton.addEventListener(
     "click",
@@ -2657,10 +2577,6 @@ applyCorrectionsButton.addEventListener(
 );
 
 
-/* ============================================================
-   APPROVE & PAY
-============================================================ */
-
 approveButton.addEventListener(
     "click",
     async function() {
@@ -2810,10 +2726,6 @@ approveButton.addEventListener(
     }
 );
 
-
-/* ============================================================
-   PAYMENT REPORT
-============================================================ */
 
 paymentReportButton.addEventListener(
     "click",
@@ -2971,10 +2883,6 @@ paymentReportButton.addEventListener(
 );
 
 
-/* ============================================================
-   PAYMENT STATUS
-============================================================ */
-
 paymentCheckButton.addEventListener(
     "click",
     checkPaymentStatus
@@ -3088,10 +2996,6 @@ async function checkPaymentStatus() {
 }
 
 
-/* ============================================================
-   DOWNLOAD
-============================================================ */
-
 function activateDownload() {
 
     downloadButton.disabled =
@@ -3144,10 +3048,6 @@ async function downloadWork() {
         query.toString();
 }
 
-
-/* ============================================================
-   DOCUMENTS CUSTOMER WANTS TO GIVE US
-============================================================ */
 
 uploadButton.addEventListener(
     "click",
@@ -3271,13 +3171,6 @@ async function uploadDocument(
         );
 
 
-        /*
-            The uploaded document remains part of the active
-            job context. Intelligence is notified so it can
-            use the document when continuing the customer's
-            request.
-        */
-
         const response2 =
             await fetch(
                 API_BASE +
@@ -3376,10 +3269,6 @@ async function uploadDocument(
     }
 }
 
-
-/* ============================================================
-   VOICE
-============================================================ */
 
 voiceButton.addEventListener(
     "click",
@@ -3700,10 +3589,6 @@ async function sendVoice() {
 }
 
 
-/* ============================================================
-   MESSAGE BOX
-============================================================ */
-
 sendButton.addEventListener(
     "click",
     handleMessageSend
@@ -3779,10 +3664,6 @@ async function handleMessageSend() {
 
 }
 
-
-/* ============================================================
-   INTELLIGENCE MESSAGE
-============================================================ */
 
 async function sendIntelligenceMessage(
     message,
@@ -3948,10 +3829,6 @@ async function sendIntelligenceMessage(
 }
 
 
-/* ============================================================
-   CUSTOMER SERVICE
-============================================================ */
-
 customerServiceButton.addEventListener(
     "click",
     async function() {
@@ -4056,10 +3933,6 @@ customerServiceButton.addEventListener(
 );
 
 
-/* ============================================================
-   INITIALIZATION
-============================================================ */
-
 async function initializeWorkspace() {
 
     serviceBadge.textContent =
@@ -4080,18 +3953,6 @@ async function initializeWorkspace() {
 
     renderForm();
 
-
-    /*
-        The service selection now triggers intelligence.
-
-        IMPORTANT:
-        This is guidance only.
-
-        It does NOT create the customer's work.
-
-        The customer's completed form remains the trigger
-        for actual work creation.
-    */
 
     await loadServiceGuidance();
 
