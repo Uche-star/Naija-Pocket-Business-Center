@@ -1,6 +1,6 @@
 """
 Naija Pocket Business Center
-Current FastAPI Application
+CURRENT FastAPI APPLICATION
 
 CUSTOMER WEBSITE
     /
@@ -14,11 +14,20 @@ CURRENT INTELLIGENCE
         ↓
     Groq
 
+CURRENT ARCHITECTURE ONLY
 NO FLASK
 NO phone_bridge.py
 NO AdaController
 NO AdaAIEngine
 NO RETIRED INTELLIGENCE CHAIN
+
+DEBUG MODE
+------------
+Real application errors are returned by the API so that
+the actual failure can be seen during troubleshooting.
+
+Sensitive configuration values such as API keys are NEVER
+returned.
 """
 
 from __future__ import annotations
@@ -40,13 +49,35 @@ from ada_response import (
 
 
 # ============================================================
+# CONFIGURATION
+# ============================================================
+
+DEBUG_ERRORS = (
+    os.getenv(
+        "ADA_DEBUG_ERRORS",
+        "true",
+    )
+    .strip()
+    .lower()
+    in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+)
+
+
+# ============================================================
 # PATHS
 # ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent
 
 
-def find_file(filename: str) -> Path | None:
+def find_file(
+    filename: str,
+) -> Path | None:
 
     candidates = [
         BASE_DIR / filename,
@@ -99,13 +130,15 @@ def session_key(
 ) -> str:
 
     customer = (
-        str(customer_id or "anonymous")
-        .strip()
+        str(
+            customer_id or "anonymous"
+        ).strip()
     )
 
     job = (
-        str(job_id or "default")
-        .strip()
+        str(
+            job_id or "default"
+        ).strip()
     )
 
     return f"{customer}:{job}"
@@ -135,6 +168,69 @@ def get_session(
         )
 
     return _sessions[key]
+
+
+# ============================================================
+# ERROR FORMAT
+# ============================================================
+
+def error_response(
+    *,
+    stage: str,
+    error: Exception | str,
+    status_code: int = 500,
+    error_code: str | None = None,
+):
+
+    error_type = (
+        type(error).__name__
+        if isinstance(error, Exception)
+        else "Error"
+    )
+
+    error_message = str(error)
+
+    print()
+    print("=" * 70)
+    print("NAIJA POCKET BUSINESS CENTER ERROR")
+    print("=" * 70)
+    print("Stage:", stage)
+    print("Type:", error_type)
+    print("Message:", error_message)
+    print("=" * 70)
+
+    if isinstance(error, Exception):
+        traceback.print_exc()
+
+    content = {
+        "success": False,
+        "stage": stage,
+        "error": error_code or "APPLICATION_ERROR",
+        "error_type": error_type,
+        "error_message": error_message,
+    }
+
+    if DEBUG_ERRORS:
+
+        content[
+            "debug"
+        ] = (
+            "Real exception exposed because "
+            "ADA_DEBUG_ERRORS is enabled."
+        )
+
+    else:
+
+        content[
+            "error_message"
+        ] = (
+            "An internal application error occurred."
+        )
+
+    return JSONResponse(
+        status_code=status_code,
+        content=content,
+    )
 
 
 # ============================================================
@@ -175,15 +271,14 @@ async def customer_home():
 
     if index_file is None:
 
-        return JSONResponse(
+        return error_response(
+            stage="CUSTOMER_HOME",
+            error=(
+                "index.html was not found. "
+                f"BASE_DIR={BASE_DIR}"
+            ),
             status_code=500,
-            content={
-                "success": False,
-                "error": "index.html not found",
-                "base_directory": str(
-                    BASE_DIR
-                ),
-            },
+            error_code="INDEX_HTML_NOT_FOUND",
         )
 
     return FileResponse(
@@ -207,14 +302,14 @@ async def customer_conversation():
 
     if file is None:
 
-        return JSONResponse(
+        return error_response(
+            stage="CONVERSATION_PAGE",
+            error=(
+                "conversation.html was not found. "
+                f"BASE_DIR={BASE_DIR}"
+            ),
             status_code=404,
-            content={
-                "success": False,
-                "error": (
-                    "conversation.html not found"
-                ),
-            },
+            error_code="CONVERSATION_HTML_NOT_FOUND",
         )
 
     return FileResponse(
@@ -232,14 +327,14 @@ async def customer_workspace():
 
     if file is None:
 
-        return JSONResponse(
+        return error_response(
+            stage="WORKSPACE_PAGE",
+            error=(
+                "workspace.html was not found. "
+                f"BASE_DIR={BASE_DIR}"
+            ),
             status_code=404,
-            content={
-                "success": False,
-                "error": (
-                    "workspace.html not found"
-                ),
-            },
+            error_code="WORKSPACE_HTML_NOT_FOUND",
         )
 
     return FileResponse(
@@ -262,6 +357,7 @@ async def health():
         "intelligence": "AdaResponse",
         "model": get_ada_model(),
         "configured": is_configured(),
+        "debug_errors": DEBUG_ERRORS,
     }
 
 
@@ -277,6 +373,7 @@ async def api_status():
         "active_sessions": len(
             _sessions
         ),
+        "debug_errors": DEBUG_ERRORS,
     }
 
 
@@ -289,43 +386,108 @@ async def chat(
     request: ChatRequest,
 ):
 
+    print()
+    print("-" * 70)
+    print("CHAT REQUEST RECEIVED")
+    print("-" * 70)
+
+    print(
+        "Service:",
+        request.service,
+    )
+
+    print(
+        "Customer:",
+        request.customer_id,
+    )
+
+    print(
+        "Job:",
+        request.job_id,
+    )
+
+    print(
+        "Event:",
+        request.event,
+    )
+
+    print(
+        "Message:",
+        request.message,
+    )
+
+    print(
+        "Activate intelligence:",
+        request.activate_intelligence,
+    )
+
+    print("-" * 70)
+
+
+    # --------------------------------------------------------
+    # MESSAGE
+    # --------------------------------------------------------
+
     message = (
         str(
             request.message or ""
-        )
-        .strip()
+        ).strip()
     )
+
 
     if not message:
 
-        return {
-            "success": False,
-            "reply": (
-                "Please tell me what "
-                "you would like help with."
+        return error_response(
+            stage="CHAT_VALIDATION",
+            error=(
+                "The chat message is empty."
             ),
-        }
-
-
-    if not is_configured():
-
-        print(
-            "CHAT ERROR: "
-            "AdaResponse is not configured."
+            status_code=400,
+            error_code="EMPTY_MESSAGE",
         )
 
-        return {
-            "success": False,
-            "reply": (
-                "The business center service "
-                "is temporarily unavailable. "
-                "Please try again shortly."
+
+    # --------------------------------------------------------
+    # INTELLIGENCE CONFIGURATION
+    # --------------------------------------------------------
+
+    try:
+
+        configured = (
+            is_configured()
+        )
+
+    except Exception as error:
+
+        return error_response(
+            stage="INTELLIGENCE_CONFIGURATION_CHECK",
+            error=error,
+            status_code=500,
+            error_code=(
+                "CONFIGURATION_CHECK_ERROR"
             ),
-            "error": (
+        )
+
+
+    if not configured:
+
+        return error_response(
+            stage="INTELLIGENCE_CONFIGURATION",
+            error=(
+                "AdaResponse is not configured. "
+                "Check GROQ_API_KEY and the Groq "
+                "client configuration."
+            ),
+            status_code=503,
+            error_code=(
                 "INTELLIGENCE_NOT_CONFIGURED"
             ),
-        }
+        )
 
+
+    # --------------------------------------------------------
+    # SESSION
+    # --------------------------------------------------------
 
     try:
 
@@ -337,23 +499,12 @@ async def chat(
 
     except Exception as error:
 
-        print(
-            "SESSION ERROR:",
-            type(error).__name__,
-            str(error),
+        return error_response(
+            stage="SESSION_CREATION",
+            error=error,
+            status_code=500,
+            error_code="SESSION_ERROR",
         )
-
-        traceback.print_exc()
-
-        return {
-            "success": False,
-            "reply": (
-                "Sorry, I could not start "
-                "your request right now. "
-                "Please try again."
-            ),
-            "error": "SESSION_ERROR",
-        }
 
 
     # --------------------------------------------------------
@@ -428,15 +579,37 @@ async def chat(
     event = (
         str(
             request.event or ""
-        )
-        .strip()
+        ).strip()
         or None
     )
 
 
     # --------------------------------------------------------
-    # CURRENT INTELLIGENCE
+    # INTELLIGENCE CALL
     # --------------------------------------------------------
+
+    print()
+    print(
+        "CALLING AdaResponse..."
+    )
+
+    print(
+        "Model:",
+        get_ada_model(),
+    )
+
+    print(
+        "Service:",
+        request.service,
+    )
+
+    print(
+        "Event:",
+        event,
+    )
+
+    print()
+
 
     try:
 
@@ -452,24 +625,19 @@ async def chat(
 
     except Exception as error:
 
-        print(
-            "ADA INTELLIGENCE ERROR:",
-            type(error).__name__,
-            str(error),
+        return error_response(
+            stage="ADA_INTELLIGENCE",
+            error=error,
+            status_code=500,
+            error_code=(
+                "INTELLIGENCE_ERROR"
+            ),
         )
 
-        traceback.print_exc()
 
-        return {
-            "success": False,
-            "reply": (
-                "Sorry, I could not process "
-                "your request right now. "
-                "Please try again."
-            ),
-            "error": "INTELLIGENCE_ERROR",
-        }
-
+    # --------------------------------------------------------
+    # RESPONSE
+    # --------------------------------------------------------
 
     reply = str(
         reply or ""
@@ -478,17 +646,29 @@ async def chat(
 
     if not reply:
 
-        return {
-            "success": False,
-            "reply": (
-                "I am ready to help. "
-                "Please tell me what you "
-                "would like to do next."
+        return error_response(
+            stage="ADA_INTELLIGENCE_RESPONSE",
+            error=(
+                "AdaResponse returned an empty response."
             ),
-            "error": (
+            status_code=500,
+            error_code=(
                 "EMPTY_INTELLIGENCE_RESPONSE"
             ),
-        }
+        )
+
+
+    print()
+    print(
+        "AdaResponse returned successfully."
+    )
+
+    print(
+        "Reply:",
+        reply,
+    )
+
+    print()
 
 
     return {
@@ -520,25 +700,36 @@ async def clear_chat(
     job_id: str | None = None,
 ):
 
-    key = session_key(
-        customer_id,
-        job_id,
-    )
+    try:
 
-    session = _sessions.get(
-        key
-    )
+        key = session_key(
+            customer_id,
+            job_id,
+        )
 
-    if session:
+        session = _sessions.get(
+            key
+        )
 
-        session.clear_history()
+        if session:
 
-    return {
-        "success": True,
-        "message": (
-            "Conversation cleared."
-        ),
-    }
+            session.clear_history()
+
+        return {
+            "success": True,
+            "message": (
+                "Conversation cleared."
+            ),
+        }
+
+    except Exception as error:
+
+        return error_response(
+            stage="CLEAR_CHAT",
+            error=error,
+            status_code=500,
+            error_code="CLEAR_CHAT_ERROR",
+        )
 
 
 # ============================================================
@@ -579,22 +770,14 @@ async def customer_service(
 
     except Exception as error:
 
-        print(
-            "CUSTOMER SERVICE ERROR:",
-            type(error).__name__,
-            str(error),
-        )
-
-        traceback.print_exc()
-
-        return {
-            "success": False,
-            "reply": (
-                "Customer Service is "
-                "temporarily unavailable. "
-                "Please try again."
+        return error_response(
+            stage="CUSTOMER_SERVICE",
+            error=error,
+            status_code=500,
+            error_code=(
+                "CUSTOMER_SERVICE_ERROR"
             ),
-        }
+        )
 
 
 # ============================================================
@@ -630,6 +813,11 @@ async def startup():
     )
 
     print(
+        "Debug errors:",
+        DEBUG_ERRORS,
+    )
+
+    print(
         "Website:",
         "FastAPI FileResponse",
     )
@@ -641,6 +829,11 @@ async def startup():
 
     print(
         "Flask:",
+        "NOT USED",
+    )
+
+    print(
+        "phone_bridge.py:",
         "NOT USED",
     )
 
@@ -669,7 +862,7 @@ if __name__ == "__main__":
     port = int(
         os.getenv(
             "PORT",
-            "8000"
+            "8000",
         )
     )
 
