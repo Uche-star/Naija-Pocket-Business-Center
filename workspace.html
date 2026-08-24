@@ -2002,7 +2002,6 @@ function buildServiceGuidanceInstruction() {
         "this particular service instead of generic advice.\n\n" +
 
         "Do not create the customer's actual work yet. " +
-        "Do not ask the customer to pay yet. " +
         "Do not ask for an email address unless it is genuinely " +
         "required for this particular service. " +
         "Do not mention internal software, models, APIs, providers, " +
@@ -2949,7 +2948,8 @@ async function checkPaymentStatus() {
 
 
         if (
-            status === "paid"
+            status ===
+            "paid"
         ) {
 
             paymentConfirmed =
@@ -2993,6 +2993,7 @@ async function checkPaymentStatus() {
         );
 
     }
+
 }
 
 
@@ -3010,6 +3011,7 @@ function activateDownload() {
 
     downloadButton.onclick =
         downloadWork;
+
 }
 
 
@@ -3046,6 +3048,7 @@ async function downloadWork() {
         API_BASE +
         "/api/download?" +
         query.toString();
+
 }
 
 
