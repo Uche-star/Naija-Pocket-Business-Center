@@ -66,6 +66,17 @@ API_KEY = (
 
 
 # ============================================================
+# TOKEN REQUEST LIMITS
+# ============================================================
+# These limits only control the amount of conversation/context
+# sent to Groq. They do not change the service workflow.
+
+MAX_HISTORY_MESSAGES = 2
+MAX_SYSTEM_CONTEXT_CHARS = 24000
+MAX_OUTPUT_TOKENS = 600
+
+
+# ============================================================
 # CLIENT
 # ============================================================
 
@@ -133,7 +144,9 @@ class AdaResponse:
             dict[str, str]
         ] = []
 
-        self.max_history_messages = 6
+        self.max_history_messages = (
+            MAX_HISTORY_MESSAGES
+        )
 
     # ========================================================
     # SERVICE
@@ -763,8 +776,37 @@ instruction.
                 "role": "system",
                 "content": system_prompt,
             },
-            *self.history,
+            *self.history[
+                -MAX_HISTORY_MESSAGES:
+            ],
         ]
+
+    # ========================================================
+    # LIMIT SYSTEM CONTEXT
+    # ========================================================
+
+    def limit_system_context(
+        self,
+        system_prompt: str,
+    ) -> str:
+
+        if len(system_prompt) <= (
+            MAX_SYSTEM_CONTEXT_CHARS
+        ):
+
+            return system_prompt
+
+        print(
+            "TOKEN CONTROL: system/context prompt "
+            f"reduced from {len(system_prompt)} "
+            f"to {MAX_SYSTEM_CONTEXT_CHARS} characters."
+        )
+
+        return (
+            system_prompt[
+                -MAX_SYSTEM_CONTEXT_CHARS:
+            ]
+        )
 
     # ========================================================
     # RESPOND
@@ -819,6 +861,12 @@ instruction.
             )
         )
 
+        system_prompt = (
+            self.limit_system_context(
+                system_prompt
+            )
+        )
+
         messages = (
             self.build_messages(
                 system_prompt
@@ -851,7 +899,7 @@ instruction.
                     model=MODEL,
                     messages=messages,
                     temperature=0.3,
-                    max_tokens=1200,
+                    max_tokens=MAX_OUTPUT_TOKENS,
                 )
             )
 
