@@ -49,6 +49,7 @@
 
         :root {
             --black: #000000;
+            --dark: #070707;
             --panel: #111111;
             --panel-2: #181818;
             --panel-3: #222222;
@@ -57,15 +58,21 @@
             --gold-light: #f0d36a;
 
             --white: #ffffff;
-            --muted: #bdbdbd;
+            --muted: #a9a9a9;
 
             --red: #b30000;
             --red-hover: #d00000;
 
             --green: #167a3d;
 
-            --border: rgba(212, 175, 55, 0.30);
+            --border:
+                rgba(212, 175, 55, 0.30);
         }
+
+
+        /* =====================================================
+           APP
+        ===================================================== */
 
         .app {
             width: 100%;
@@ -76,6 +83,7 @@
 
             background: var(--black);
         }
+
 
         /* =====================================================
            HEADER
@@ -173,6 +181,7 @@
             text-overflow: ellipsis;
         }
 
+
         /* =====================================================
            CONVERSATION
         ===================================================== */
@@ -215,13 +224,18 @@
             gap: 12px;
         }
 
+
+        /* =====================================================
+           CHAT MESSAGES
+        ===================================================== */
+
         .message-row {
             width: 100%;
 
             display: flex;
         }
 
-        .message-row.system {
+        .message-row.ada {
             justify-content: flex-start;
         }
 
@@ -247,7 +261,7 @@
             font-size: 15px;
         }
 
-        .message-row.system .message {
+        .message-row.ada .message {
             background: #171717;
 
             color: #ffffff;
@@ -271,10 +285,14 @@
             border-top-right-radius: 4px;
         }
 
-        /*
-            No sender heading is displayed.
-            The customer sees the message itself.
-        */
+        .message-content {
+            display: block;
+        }
+
+
+        /* =====================================================
+           TYPING
+        ===================================================== */
 
         .typing {
             display: none;
@@ -302,12 +320,21 @@
             display: block;
         }
 
+
         /* =====================================================
            INFORMATION FORM
         ===================================================== */
 
-        .form-card {
+        .information-card {
             width: 100%;
+
+            margin:
+                4px
+                0
+                8px;
+
+            padding:
+                18px;
 
             background:
                 linear-gradient(
@@ -318,50 +345,58 @@
 
             border:
                 1px solid
-                rgba(212, 175, 55, 0.38);
+                rgba(212, 175, 55, 0.42);
 
             border-radius: 18px;
-
-            padding: 18px;
 
             box-shadow:
                 0 12px 35px
                 rgba(0, 0, 0, 0.45);
-
-            margin-top: 3px;
         }
 
-        .form-header {
-            margin-bottom: 17px;
+        .information-header {
+            margin-bottom: 16px;
         }
 
-        .form-title {
+        .information-title {
             margin: 0;
 
             color: var(--gold-light);
 
-            font-size: 20px;
+            font-family:
+                Montserrat,
+                Inter,
+                Arial,
+                sans-serif;
+
+            font-size: 19px;
             font-weight: 800;
+
+            line-height: 1.25;
         }
 
-        .form-description {
-            margin-top: 7px;
+        .information-description {
+            margin:
+                7px
+                0
+                0;
 
-            color: #d0d0d0;
+            color: #c9c9c9;
 
             font-size: 13px;
 
             line-height: 1.55;
         }
 
-        .form-note {
-            margin-top: 10px;
+        .form-notice {
+            margin-bottom: 15px;
 
             padding:
-                9px
-                11px;
+                10px
+                12px;
 
-            background: #101010;
+            background:
+                rgba(212, 175, 55, 0.08);
 
             border-left:
                 3px solid
@@ -369,9 +404,9 @@
 
             border-radius: 7px;
 
-            color: #cfcfcf;
+            color: #dddddd;
 
-            font-size: 11px;
+            font-size: 12px;
 
             line-height: 1.5;
         }
@@ -382,7 +417,7 @@
             grid-template-columns:
                 repeat(2, minmax(0, 1fr));
 
-            gap: 12px;
+            gap: 13px;
         }
 
         .form-field {
@@ -406,47 +441,61 @@
         }
 
         .optional {
-            color: #888888;
+            color: #858585;
 
             font-size: 10px;
             font-weight: 500;
         }
 
-        .form-control {
+        .form-input,
+        .form-select,
+        .form-textarea {
             width: 100%;
 
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.15);
+
+            border-radius: 9px;
+
+            background: #111111;
+
+            color: #ffffff;
+
+            outline: none;
+        }
+
+        .form-input,
+        .form-select {
             min-height: 43px;
 
             padding:
                 10px
                 11px;
-
-            background: #090909;
-
-            color: #ffffff;
-
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.16);
-
-            border-radius: 9px;
-
-            outline: none;
         }
 
-        textarea.form-control {
-            min-height: 88px;
+        .form-textarea {
+            min-height: 82px;
 
             resize: vertical;
+
+            padding:
+                10px
+                11px;
+
+            line-height: 1.45;
         }
 
-        .form-control::placeholder {
-            color: #707070;
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: #777777;
         }
 
-        .form-control:focus {
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
             border-color:
-                rgba(212, 175, 55, 0.65);
+                rgba(212, 175, 55, 0.70);
 
             box-shadow:
                 0 0 0 2px
@@ -458,7 +507,7 @@
 
             gap: 9px;
 
-            margin-top: 15px;
+            margin-top: 16px;
         }
 
         .form-submit {
@@ -483,17 +532,19 @@
         }
 
         .form-clear {
-            flex: 0 0 90px;
+            flex:
+                0 0
+                90px;
 
             min-height: 45px;
 
             border:
                 1px solid
-                rgba(255, 255, 255, 0.16);
+                rgba(255, 255, 255, 0.15);
 
             border-radius: 9px;
 
-            background: #202020;
+            background: #222222;
 
             color: #ffffff;
 
@@ -501,44 +552,13 @@
             font-weight: 700;
         }
 
-        .form-submit:disabled,
-        .form-clear:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
+        .form-clear:hover {
+            background: #2d2d2d;
         }
+
 
         /* =====================================================
-           FORM HELP
-        ===================================================== */
-
-        .instruction-card {
-            width: 100%;
-
-            padding:
-                13px
-                14px;
-
-            background: #111111;
-
-            border:
-                1px solid
-                rgba(212, 175, 55, 0.20);
-
-            border-radius: 12px;
-
-            color: #d7d7d7;
-
-            font-size: 12px;
-
-            line-height: 1.55;
-        }
-
-        .instruction-card strong {
-            color: var(--gold-light);
-        }
-
-        /* =====================================================
-           BOTTOM
+           BOTTOM AREA
         ===================================================== */
 
         .bottom {
@@ -557,9 +577,7 @@
                 10px
                 calc(
                     8px +
-                    env(
-                        safe-area-inset-bottom
-                    )
+                    env(safe-area-inset-bottom)
                 );
 
             position: relative;
@@ -573,8 +591,38 @@
             margin: 0 auto;
         }
 
+
         /* =====================================================
-           ACTIONS
+           ACTION EXPLANATION
+        ===================================================== */
+
+        .workspace-help {
+            margin-bottom: 8px;
+
+            padding:
+                8px
+                10px;
+
+            background: #101010;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.08);
+
+            border-radius: 8px;
+
+            color: #9e9e9e;
+
+            font-size: 10px;
+
+            line-height: 1.4;
+
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           ACTION BUTTONS
         ===================================================== */
 
         .actions {
@@ -589,10 +637,10 @@
         }
 
         .action-button {
-            min-height: 39px;
+            min-height: 40px;
 
             padding:
-                8px
+                7px
                 5px;
 
             border:
@@ -637,8 +685,7 @@
 
             color: #ffffff;
 
-            border-color:
-                var(--red);
+            border-color: var(--red);
         }
 
         .action-button.red:hover {
@@ -647,23 +694,28 @@
 
         .action-button:disabled {
             opacity: 0.45;
+
             cursor: not-allowed;
         }
 
+
         /* =====================================================
-           COMPOSER
+           COMPOSER EXPLANATION
         ===================================================== */
 
-        .composer-help {
-            margin-bottom: 5px;
+        .message-help {
+            margin:
+                0
+                0
+                5px;
 
-            padding-left: 2px;
-
-            color: #898989;
+            color: #929292;
 
             font-size: 10px;
 
             line-height: 1.4;
+
+            text-align: center;
         }
 
         .composer {
@@ -729,18 +781,10 @@
 
             font-size: 13px;
             font-weight: 900;
-
-            transition:
-                background 0.15s ease,
-                transform 0.15s ease;
         }
 
         .send-button:hover {
             background: var(--gold-light);
-        }
-
-        .send-button:active {
-            transform: scale(0.97);
         }
 
         .send-button:disabled {
@@ -749,9 +793,19 @@
             cursor: not-allowed;
         }
 
+
+        /* =====================================================
+           FILE INPUT
+        ===================================================== */
+
         #fileInput {
             display: none;
         }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
 
         .status {
             min-height: 16px;
@@ -765,8 +819,6 @@
             font-size: 10px;
 
             text-align: center;
-
-            overflow-wrap: anywhere;
         }
 
         .status.error {
@@ -776,6 +828,7 @@
         .status.success {
             color: #7edc9c;
         }
+
 
         /* =====================================================
            PAYMENT
@@ -838,7 +891,6 @@
             border: none;
 
             font-weight: 800;
-
             font-size: 12px;
         }
 
@@ -857,6 +909,7 @@
                 1px solid
                 rgba(255, 255, 255, 0.15) !important;
         }
+
 
         /* =====================================================
            VOICE
@@ -887,6 +940,7 @@
         .voice-recording.show {
             display: block;
         }
+
 
         /* =====================================================
            MOBILE
@@ -937,19 +991,18 @@
                     12px;
             }
 
-            .form-card {
+            .information-card {
                 padding: 14px;
 
-                border-radius: 14px;
+                border-radius: 15px;
             }
 
-            .form-title {
-                font-size: 18px;
+            .information-title {
+                font-size: 17px;
             }
 
             .form-grid {
-                grid-template-columns:
-                    1fr;
+                grid-template-columns: 1fr;
             }
 
             .form-field.full {
@@ -1002,12 +1055,8 @@
                 font-size: 8px;
             }
 
-            .form-actions {
-                flex-direction: column;
-            }
-
-            .form-clear {
-                flex-basis: auto;
+            .information-card {
+                padding: 12px;
             }
         }
     </style>
@@ -1017,9 +1066,9 @@
 
 <div class="app">
 
-    <!-- =====================================================
+    <!-- ======================================================
          HEADER
-    ====================================================== -->
+    ======================================================= -->
 
     <header class="header">
 
@@ -1045,9 +1094,9 @@
     </header>
 
 
-    <!-- =====================================================
+    <!-- ======================================================
          CONVERSATION
-    ====================================================== -->
+    ======================================================= -->
 
     <main
         id="conversation"
@@ -1071,13 +1120,14 @@
     </main>
 
 
-    <!-- =====================================================
-         BOTTOM CONTROLS
-    ====================================================== -->
+    <!-- ======================================================
+         BOTTOM
+    ======================================================= -->
 
     <section class="bottom">
 
         <div class="bottom-inner">
+
 
             <!-- PAYMENT -->
 
@@ -1128,6 +1178,16 @@
             </div>
 
 
+            <!-- BUTTON EXPLANATION -->
+
+            <div class="workspace-help">
+                Use <strong>Upload</strong> for files,
+                <strong>Voice</strong> to speak,
+                <strong>Review</strong> to check the work,
+                and <strong>Approve</strong> when you are satisfied.
+            </div>
+
+
             <!-- ACTION BUTTONS -->
 
             <div class="actions">
@@ -1153,7 +1213,7 @@
                     class="action-button gold"
                     type="button"
                 >
-                    Review
+                    ✓ Review
                 </button>
 
                 <button
@@ -1180,17 +1240,15 @@
             <input
                 id="fileInput"
                 type="file"
-                multiple
             >
 
 
             <!-- MESSAGE EXPLANATION -->
 
-            <div class="composer-help">
-                Type your message in the box below and tap
-                <strong>SEND</strong>.
-                You can use the message box whenever you need
-                to add information, instructions or corrections.
+            <div class="message-help">
+                You can also use the message box to add information,
+                give special instructions, correct something,
+                or tell us anything else that should be considered.
             </div>
 
 
@@ -1360,7 +1418,6 @@ let customerId =
         "npbc_customer_id"
     );
 
-
 if (!customerId) {
 
     customerId =
@@ -1380,7 +1437,6 @@ let jobId =
     getStored(
         "npbc_job_id"
     );
-
 
 if (!jobId) {
 
@@ -1403,7 +1459,6 @@ const clientRequestId =
     createId(
         "request_"
     );
-
 
 store(
     "npbc_client_request_id",
@@ -1473,10 +1528,12 @@ function createId(prefix) {
         window.crypto &&
         crypto.randomUUID
     ) {
+
         return (
             prefix +
             crypto.randomUUID()
         );
+
     }
 
     return (
@@ -1585,6 +1642,9 @@ function setBusy(value) {
 
 /* ============================================================
    MESSAGE DISPLAY
+   IMPORTANT:
+   NO CUSTOMER-FACING "ASSISTANT" LABEL
+   NO CUSTOMER-FACING "ADA" LABEL
 ============================================================ */
 
 function addMessage(
@@ -1602,7 +1662,7 @@ function addMessage(
         (
             sender === "customer"
                 ? "customer"
-                : "system"
+                : "ada"
         );
 
 
@@ -1615,15 +1675,21 @@ function addMessage(
         "message";
 
 
-    /*
-        IMPORTANT:
-        No sender label is displayed.
-        The customer sees only the message.
-    */
+    const content =
+        document.createElement(
+            "div"
+        );
 
-    bubble.textContent =
+    content.className =
+        "message-content";
+
+    content.textContent =
         text || "";
 
+
+    bubble.appendChild(
+        content
+    );
 
     row.appendChild(
         bubble
@@ -1644,281 +1710,20 @@ function addMessage(
    INFORMATION FORM
 ============================================================ */
 
-/*
-    The form is deliberately compact.
-
-    It gathers common information in one place instead of
-    forcing a customer through a long chain of individual
-    questions.
-
-    The selected service is still supplied to the real
-    intelligence endpoint so the intelligence can interpret
-    the customer's actual request.
-*/
-
-const SERVICE_FORMS = {
-
-    "CVs & Résumés": [
-        {
-            label: "Full name",
-            name: "full_name",
-            placeholder: "Your full name",
-            required: true
-        },
-        {
-            label: "Phone number",
-            name: "phone",
-            placeholder: "080..."
-        },
-        {
-            label: "Email address",
-            name: "email",
-            placeholder: "you@example.com"
-        },
-        {
-            label: "Career / job target",
-            name: "career_target",
-            placeholder: "Job or position you want"
-        },
-        {
-            label: "Education",
-            name: "education",
-            placeholder: "School, qualification, course or year",
-            full: true
-        },
-        {
-            label: "Work experience",
-            name: "experience",
-            placeholder: "Companies, positions, responsibilities and dates",
-            full: true
-        },
-        {
-            label: "Skills",
-            name: "skills",
-            placeholder: "Your important skills",
-            full: true
-        },
-        {
-            label: "Other information",
-            name: "other_information",
-            placeholder: "Anything else you want included",
-            full: true
-        }
-    ],
-
-    "Cover Letter": [
-        {
-            label: "Full name",
-            name: "full_name",
-            placeholder: "Your full name",
-            required: true
-        },
-        {
-            label: "Phone number",
-            name: "phone",
-            placeholder: "080..."
-        },
-        {
-            label: "Email address",
-            name: "email",
-            placeholder: "you@example.com"
-        },
-        {
-            label: "Job / position",
-            name: "position",
-            placeholder: "Position you are applying for",
-            required: true
-        },
-        {
-            label: "Company / organisation",
-            name: "company",
-            placeholder: "Company name"
-        },
-        {
-            label: "Relevant experience",
-            name: "experience",
-            placeholder: "Experience relevant to the position",
-            full: true
-        },
-        {
-            label: "Other information",
-            name: "other_information",
-            placeholder: "Anything else that should be considered",
-            full: true
-        }
-    ],
-
-    "Business Documents": [
-        {
-            label: "Your name / business name",
-            name: "name",
-            placeholder: "Name or business name",
-            required: true
-        },
-        {
-            label: "Document purpose",
-            name: "purpose",
-            placeholder: "What the document is for",
-            required: true
-        },
-        {
-            label: "Business / organisation",
-            name: "organisation",
-            placeholder: "Business or organisation name"
-        },
-        {
-            label: "Document details",
-            name: "details",
-            placeholder: "Important information to include",
-            full: true
-        },
-        {
-            label: "Other instructions",
-            name: "instructions",
-            placeholder: "Anything else you want included",
-            full: true
-        }
-    ],
-
-    "Academic Documents": [
-        {
-            label: "Full name",
-            name: "full_name",
-            placeholder: "Your full name",
-            required: true
-        },
-        {
-            label: "School / institution",
-            name: "institution",
-            placeholder: "School or institution"
-        },
-        {
-            label: "Course / programme",
-            name: "course",
-            placeholder: "Course or programme"
-        },
-        {
-            label: "Academic level",
-            name: "level",
-            placeholder: "Level / class / year"
-        },
-        {
-            label: "Topic / subject",
-            name: "topic",
-            placeholder: "Topic or subject",
-            full: true
-        },
-        {
-            label: "Instructions / requirements",
-            name: "instructions",
-            placeholder: "What the school requires",
-            full: true
-        }
-    ],
-
-    "Business Plans": [
-        {
-            label: "Business name",
-            name: "business_name",
-            placeholder: "Business name",
-            required: true
-        },
-        {
-            label: "Business type",
-            name: "business_type",
-            placeholder: "What the business does"
-        },
-        {
-            label: "Location",
-            name: "location",
-            placeholder: "Business location"
-        },
-        {
-            label: "Target customers",
-            name: "customers",
-            placeholder: "Who you sell to",
-            full: true
-        },
-        {
-            label: "Products / services",
-            name: "products",
-            placeholder: "What you sell or provide",
-            full: true
-        },
-        {
-            label: "Business details",
-            name: "details",
-            placeholder: "Any other information",
-            full: true
-        }
-    ]
-
-};
-
-
-/*
-    Generic form for services that do not have a specialised
-    field set above.
-
-    This keeps the workflow global instead of making the
-    application dependent on CV-specific questions.
-*/
-
-const GENERIC_FORM = [
-    {
-        label: "Your name",
-        name: "name",
-        placeholder: "Your name"
-    },
-    {
-        label: "Phone number",
-        name: "phone",
-        placeholder: "080..."
-    },
-    {
-        label: "Email address",
-        name: "email",
-        placeholder: "you@example.com"
-    },
-    {
-        label: "What do you need?",
-        name: "request",
-        placeholder: "Briefly describe what you need",
-        required: true,
-        full: true
-    },
-    {
-        label: "Important details",
-        name: "details",
-        placeholder: "Information that will help with your request",
-        full: true
-    },
-    {
-        label: "Other instructions",
-        name: "instructions",
-        placeholder: "Anything else you want considered",
-        full: true
-    }
-];
-
-
-function getFormFields() {
-
-    return (
-        SERVICE_FORMS[service] ||
-        GENERIC_FORM
-    );
-}
-
-
-function createServiceForm() {
+function createInformationForm() {
 
     const existing =
         document.getElementById(
-            "serviceInformationForm"
+            "informationCard"
         );
 
     if (existing) {
+
+        existing.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
         return;
     }
 
@@ -1928,302 +1733,176 @@ function createServiceForm() {
             "section"
         );
 
-    card.className =
-        "form-card";
-
     card.id =
-        "serviceInformationForm";
+        "informationCard";
 
+    card.className =
+        "information-card";
 
-    const header =
-        document.createElement(
-            "div"
-        );
 
-    header.className =
-        "form-header";
+    card.innerHTML = `
 
+        <div class="information-header">
 
-    const title =
-        document.createElement(
-            "h2"
-        );
+            <h2 class="information-title">
+                Your Information
+            </h2>
 
-    title.className =
-        "form-title";
+            <p class="information-description">
+                Fill in the information that is most useful
+                for your request. You do not need to complete
+                every box. You can always add more information
+                later through the message box or Upload button.
+            </p>
 
-    title.textContent =
-        "Your Information";
+        </div>
 
 
-    const description =
-        document.createElement(
-            "div"
-        );
+        <div class="form-notice">
+            Only information that is relevant to your request
+            is needed. Leave any box blank if it does not apply.
+        </div>
 
-    description.className =
-        "form-description";
 
-    description.textContent =
-        "Fill in the information you have. You do not need to complete every box. The information that is most relevant to your request is enough to get started.";
+        <form id="serviceInformationForm">
 
+            <div class="form-grid">
 
-    const note =
-        document.createElement(
-            "div"
-        );
+                <div class="form-field">
 
-    note.className =
-        "form-note";
+                    <label class="form-label">
+                        Your name
+                        <span class="optional">
+                            Optional
+                        </span>
+                    </label>
 
-    note.textContent =
-        "Fields marked Required are the only ones you need to complete before submitting. You can add more information later through the message box or Upload button.";
+                    <input
+                        class="form-input"
+                        name="name"
+                        type="text"
+                        autocomplete="name"
+                        placeholder="Full name"
+                    >
 
+                </div>
 
-    header.appendChild(
-        title
-    );
 
-    header.appendChild(
-        description
-    );
+                <div class="form-field">
 
-    header.appendChild(
-        note
-    );
+                    <label class="form-label">
+                        Phone number
+                        <span class="optional">
+                            Optional
+                        </span>
+                    </label>
 
+                    <input
+                        class="form-input"
+                        name="phone"
+                        type="tel"
+                        autocomplete="tel"
+                        placeholder="Phone number"
+                    >
 
-    const grid =
-        document.createElement(
-            "div"
-        );
+                </div>
 
-    grid.className =
-        "form-grid";
 
+                <div class="form-field">
 
-    getFormFields().forEach(
-        function(field) {
+                    <label class="form-label">
+                        Email
+                        <span class="optional">
+                            Optional
+                        </span>
+                    </label>
 
-            const wrapper =
-                document.createElement(
-                    "div"
-                );
+                    <input
+                        class="form-input"
+                        name="email"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="Email address"
+                    >
 
-            wrapper.className =
-                "form-field" +
-                (
-                    field.full
-                        ? " full"
-                        : ""
-                );
+                </div>
 
 
-            const label =
-                document.createElement(
-                    "label"
-                );
+                <div class="form-field">
 
-            label.className =
-                "form-label";
+                    <label class="form-label">
+                        What do you need?
+                    </label>
 
-            label.textContent =
-                field.label;
+                    <input
+                        class="form-input"
+                        name="request"
+                        type="text"
+                        placeholder="Briefly describe what you need"
+                    >
 
+                </div>
 
-            if (!field.required) {
 
-                const optional =
-                    document.createElement(
-                        "span"
-                    );
+                <div class="form-field full">
 
-                optional.className =
-                    "optional";
+                    <label class="form-label">
+                        Important details
+                        <span class="optional">
+                            Optional
+                        </span>
+                    </label>
 
-                optional.textContent =
-                    "  Optional";
+                    <textarea
+                        class="form-textarea"
+                        name="details"
+                        placeholder="Add the information that matters most to this request"
+                    ></textarea>
 
-                label.appendChild(
-                    optional
-                );
+                </div>
 
-            }
 
+                <div class="form-field full">
 
-            let control;
+                    <label class="form-label">
+                        Other instructions
+                        <span class="optional">
+                            Optional
+                        </span>
+                    </label>
 
+                    <textarea
+                        class="form-textarea"
+                        name="instructions"
+                        placeholder="Special instructions, preferences, corrections or anything else"
+                    ></textarea>
 
-            /*
-                Longer information uses textarea.
-            */
+                </div>
 
-            const longField =
-                field.full ||
-                [
-                    "experience",
-                    "education",
-                    "details",
-                    "instructions",
-                    "skills",
-                    "other_information"
-                ].includes(
-                    field.name
-                );
+            </div>
 
 
-            if (longField) {
+            <div class="form-actions">
 
-                control =
-                    document.createElement(
-                        "textarea"
-                    );
+                <button
+                    type="submit"
+                    class="form-submit"
+                >
+                    Continue With My Information
+                </button>
 
-                control.rows = 3;
+                <button
+                    type="button"
+                    id="clearInformationButton"
+                    class="form-clear"
+                >
+                    Clear
+                </button>
 
-            } else {
+            </div>
 
-                control =
-                    document.createElement(
-                        "input"
-                    );
-
-                control.type =
-                    field.name === "email"
-                        ? "email"
-                        : "text";
-
-            }
-
-
-            control.className =
-                "form-control";
-
-            control.name =
-                field.name;
-
-            control.placeholder =
-                field.placeholder || "";
-
-            control.autocomplete =
-                "off";
-
-            if (field.required) {
-
-                control.required =
-                    true;
-
-            }
-
-
-            wrapper.appendChild(
-                label
-            );
-
-            wrapper.appendChild(
-                control
-            );
-
-            grid.appendChild(
-                wrapper
-            );
-
-        }
-    );
-
-
-    const actions =
-        document.createElement(
-            "div"
-        );
-
-    actions.className =
-        "form-actions";
-
-
-    const submit =
-        document.createElement(
-            "button"
-        );
-
-    submit.type =
-        "button";
-
-    submit.className =
-        "form-submit";
-
-    submit.textContent =
-        "Continue With My Information";
-
-
-    const clear =
-        document.createElement(
-            "button"
-        );
-
-    clear.type =
-        "button";
-
-    clear.className =
-        "form-clear";
-
-    clear.textContent =
-        "Clear";
-
-
-    clear.addEventListener(
-        "click",
-        function() {
-
-            card
-                .querySelectorAll(
-                    ".form-control"
-                )
-                .forEach(
-                    function(input) {
-
-                        input.value =
-                            "";
-
-                    }
-                );
-
-        }
-    );
-
-
-    submit.addEventListener(
-        "click",
-        function() {
-
-            submitServiceForm(
-                card
-            );
-
-        }
-    );
-
-
-    actions.appendChild(
-        submit
-    );
-
-    actions.appendChild(
-        clear
-    );
-
-
-    card.appendChild(
-        header
-    );
-
-    card.appendChild(
-        grid
-    );
-
-    card.appendChild(
-        actions
-    );
+        </form>
+    `;
 
 
     conversationInner.insertBefore(
@@ -2232,78 +1911,166 @@ function createServiceForm() {
     );
 
 
+    const form =
+        document.getElementById(
+            "serviceInformationForm"
+        );
+
+
+    form.addEventListener(
+        "submit",
+        handleInformationSubmit
+    );
+
+
+    document
+        .getElementById(
+            "clearInformationButton"
+        )
+        .addEventListener(
+            "click",
+            function() {
+
+                form.reset();
+
+                setStatus(
+                    "Information form cleared."
+                );
+
+            }
+        );
+
+
     scrollToBottom();
 }
 
 
-async function submitServiceForm(
-    card
+/* ============================================================
+   FORM SUBMISSION
+============================================================ */
+
+async function handleInformationSubmit(
+    event
 ) {
+
+    event.preventDefault();
+
 
     if (busy) {
         return;
     }
 
 
-    const controls =
-        Array.from(
-            card.querySelectorAll(
-                ".form-control"
+    const form =
+        event.currentTarget;
+
+
+    const formData =
+        new FormData(form);
+
+
+    const fields = {
+
+        name:
+            clean(
+                formData.get("name")
+            ),
+
+        phone:
+            clean(
+                formData.get("phone")
+            ),
+
+        email:
+            clean(
+                formData.get("email")
+            ),
+
+        request:
+            clean(
+                formData.get("request")
+            ),
+
+        details:
+            clean(
+                formData.get("details")
+            ),
+
+        instructions:
+            clean(
+                formData.get("instructions")
             )
+
+    };
+
+
+    const suppliedFields = [];
+
+
+    if (fields.name) {
+
+        suppliedFields.push(
+            "Name: " +
+            fields.name
         );
 
-
-    const values = {};
-
-    let missingRequired =
-        false;
+    }
 
 
-    controls.forEach(
-        function(control) {
+    if (fields.phone) {
 
-            const value =
-                clean(
-                    control.value
-                );
+        suppliedFields.push(
+            "Phone: " +
+            fields.phone
+        );
 
-
-            if (
-                control.required &&
-                !value
-            ) {
-
-                missingRequired =
-                    true;
-
-                control.style.borderColor =
-                    "#b30000";
-
-            } else {
-
-                control.style.borderColor =
-                    "";
-
-            }
+    }
 
 
-            if (value) {
+    if (fields.email) {
 
-                values[
-                    control.name
-                ] =
-                    value;
+        suppliedFields.push(
+            "Email: " +
+            fields.email
+        );
 
-            }
-
-        }
-    );
+    }
 
 
-    if (missingRequired) {
+    if (fields.request) {
+
+        suppliedFields.push(
+            "Request: " +
+            fields.request
+        );
+
+    }
+
+
+    if (fields.details) {
+
+        suppliedFields.push(
+            "Important details: " +
+            fields.details
+        );
+
+    }
+
+
+    if (fields.instructions) {
+
+        suppliedFields.push(
+            "Other instructions: " +
+            fields.instructions
+        );
+
+    }
+
+
+    if (!suppliedFields.length) {
 
         setStatus(
-            "Please complete the required information.",
+            "Please provide at least some information about your request.",
             "error"
         );
 
@@ -2311,68 +2078,48 @@ async function submitServiceForm(
     }
 
 
-    const entries =
-        Object.entries(
-            values
-        );
-
-
-    if (!entries.length) {
-
-        setStatus(
-            "Please enter the information you want to submit.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    let formatted =
-        "Information submitted for " +
+    const combinedMessage =
+        "I have completed the information form for my " +
         service +
-        ":\n\n";
+        " request.\n\n" +
+        suppliedFields.join(
+            "\n"
+        ) +
+        "\n\nPlease use the information supplied here as the current request information. Do not ask me again for information I have already provided. Tell me the next appropriate step."
 
 
-    entries.forEach(
-        function(entry) {
-
-            const key =
-                entry[0];
-
-            const value =
-                entry[1];
-
-            formatted +=
-                key.replace(
-                    /_/g,
-                    " "
-                ) +
-                ": " +
-                value +
-                "\n";
-
-        }
-    );
+    const card =
+        document.getElementById(
+            "informationCard"
+        );
 
 
-    card.remove();
+    if (card) {
 
+        card.style.opacity =
+            "0.72";
 
-    addMessage(
-        "customer",
-        "I have submitted my service information."
-    );
+    }
 
 
     await sendMessage(
-        formatted,
+
+        combinedMessage,
+
         {
             event:
-                "service_information_submitted"
+                "information_form_submitted"
         }
+
     );
 
+
+    if (card) {
+
+        card.style.opacity =
+            "1";
+
+    }
 }
 
 
@@ -2492,11 +2239,7 @@ async function sendMessage(
                 data.reply ||
                 data.message ||
                 data.error ||
-                (
-                    "HTTP " +
-                    response.status +
-                    " request failed."
-                )
+                "The request could not be processed."
             );
 
         }
@@ -2511,7 +2254,7 @@ async function sendMessage(
         if (reply) {
 
             addMessage(
-                "system",
+                "assistant",
                 reply
             );
 
@@ -2534,6 +2277,21 @@ async function sendMessage(
         }
 
 
+        /*
+            The intelligence has introduced the service.
+            The workspace now presents the structured form.
+        */
+
+        if (
+            options.event ===
+            "start_job"
+        ) {
+
+            createInformationForm();
+
+        }
+
+
         setStatus(
             "Ready for your next instruction.",
             "success"
@@ -2552,27 +2310,20 @@ async function sendMessage(
 
 
         /*
-            Do not hide the real API error.
-            The customer sees the actual response when
-            the server supplies one.
+            Show the actual application error instead of
+            hiding it behind a false connection message.
         */
 
-        const realError =
-            clean(
-                error &&
-                error.message
-            ) ||
-            "The request failed.";
-
-
         addMessage(
-            "system",
-            realError
+            "assistant",
+            error.message ||
+            "The request could not be processed."
         );
 
 
         setStatus(
-            realError,
+            error.message ||
+            "The request could not be processed.",
             "error"
         );
 
@@ -2598,93 +2349,23 @@ async function sendMessage(
    INITIAL INTELLIGENCE ACTIVATION
 ============================================================ */
 
-async function startService() {
+async function startAssistant() {
 
-    const result =
-        await sendMessage(
+    await sendMessage(
 
-            "I have selected this service and I am ready to begin. Introduce the service process, explain the information form, explain that not every field is compulsory, and help me provide the information needed to begin.",
+        "I have selected this service and I am ready to begin. Please introduce the service, explain briefly how the workspace works, and then begin the information-gathering stage. The customer should be presented with a structured information form where only relevant information needs to be supplied.",
 
-            {
-                silent: true,
+        {
 
-                event:
-                    "start_job"
-            }
+            silent:
+                true,
 
-        );
+            event:
+                "start_job"
 
+        }
 
-    /*
-        The form appears after the service has been
-        activated through the real intelligence endpoint.
-    */
-
-    if (result) {
-
-        createServiceForm();
-
-        addInstruction();
-
-    }
-
-}
-
-
-function addInstruction() {
-
-    const existing =
-        document.getElementById(
-            "messageInstruction"
-        );
-
-    if (existing) {
-        return;
-    }
-
-
-    const card =
-        document.createElement(
-            "div"
-        );
-
-    card.id =
-        "messageInstruction";
-
-    card.className =
-        "instruction-card";
-
-
-    const strong =
-        document.createElement(
-            "strong"
-        );
-
-    strong.textContent =
-        "You can also send a message.";
-
-    const text =
-        document.createTextNode(
-            " Use the message box below to add information, give special instructions, correct something, or tell us anything else that should be considered."
-        );
-
-
-    card.appendChild(
-        strong
     );
-
-    card.appendChild(
-        text
-    );
-
-
-    conversationInner.insertBefore(
-        card,
-        typing
-    );
-
-
-    scrollToBottom();
 }
 
 
@@ -2720,7 +2401,6 @@ async function handleSend() {
     await sendMessage(
         text
     );
-
 }
 
 
@@ -2775,6 +2455,7 @@ messageInput.addEventListener(
 
 /* ============================================================
    UPLOAD
+   NORMAL PHONE FILE PICKER
 ============================================================ */
 
 uploadButton.addEventListener(
@@ -2786,12 +2467,8 @@ uploadButton.addEventListener(
         }
 
         /*
-            This deliberately opens the browser's normal
-            file picker.
-
-            On a phone this gives the customer access to
-            the normal Files / Documents interface instead
-            of a Quick Share interface.
+            This opens the normal device/browser file
+            selection interface. No Quick Share.
         */
 
         fileInput.click();
@@ -2804,27 +2481,21 @@ fileInput.addEventListener(
     "change",
     async function() {
 
-        const files =
-            Array.from(
-                fileInput.files || []
-            );
+        const file =
+            fileInput.files &&
+            fileInput.files[0];
 
 
-        if (!files.length) {
+        if (!file) {
+
             return;
-        }
-
-
-        for (
-            const file
-            of files
-        ) {
-
-            await uploadFile(
-                file
-            );
 
         }
+
+
+        await uploadFile(
+            file
+        );
 
 
         fileInput.value =
@@ -2834,7 +2505,9 @@ fileInput.addEventListener(
 );
 
 
-async function uploadFile(file) {
+async function uploadFile(
+    file
+) {
 
     const formData =
         new FormData();
@@ -2878,11 +2551,13 @@ async function uploadFile(file) {
                 API_BASE +
                 "/api/upload",
                 {
+
                     method:
                         "POST",
 
                     body:
                         formData
+
                 }
             );
 
@@ -2903,12 +2578,7 @@ async function uploadFile(file) {
 
             throw new Error(
                 data.message ||
-                data.error ||
-                (
-                    "HTTP " +
-                    response.status +
-                    " upload failed."
-                )
+                "File upload failed."
             );
 
         }
@@ -2921,14 +2591,11 @@ async function uploadFile(file) {
         );
 
 
-        if (data.message) {
-
-            addMessage(
-                "system",
-                data.message
-            );
-
-        }
+        addMessage(
+            "assistant",
+            data.message ||
+            "Your file has been received and attached to your active request."
+        );
 
 
         setStatus(
@@ -2937,19 +2604,17 @@ async function uploadFile(file) {
         );
 
 
-        /*
-            One compact intelligence call after upload.
-        */
-
         await sendMessage(
 
-            "A file named \"" +
+            "I have uploaded a file named \"" +
             file.name +
-            "\" has been uploaded to this active service. Consider it part of the current request and determine the next appropriate step.",
+            "\". Please examine the current request and continue from the information already supplied.",
 
             {
+
                 event:
                     "file_uploaded"
+
             }
 
         );
@@ -2963,22 +2628,16 @@ async function uploadFile(file) {
         );
 
 
-        const realError =
-            clean(
-                error &&
-                error.message
-            ) ||
-            "File upload failed.";
-
-
         addMessage(
-            "system",
-            realError
+            "assistant",
+            error.message ||
+            "The file could not be received."
         );
 
 
         setStatus(
-            realError,
+            error.message ||
+            "Upload failed.",
             "error"
         );
 
@@ -3042,10 +2701,12 @@ async function startRecording() {
                 );
 
 
-        recordedChunks = [];
+        recordedChunks =
+            [];
 
 
-        let mimeType = "";
+        let mimeType =
+            "";
 
 
         if (
@@ -3074,8 +2735,7 @@ async function startRecording() {
                 ? new MediaRecorder(
                     recordingStream,
                     {
-                        mimeType:
-                            mimeType
+                        mimeType
                     }
                 )
                 : new MediaRecorder(
@@ -3109,9 +2769,7 @@ async function startRecording() {
                         .getTracks()
                         .forEach(
                             function(track) {
-
                                 track.stop();
-
                             }
                         );
 
@@ -3171,7 +2829,6 @@ async function startRecording() {
         );
 
     }
-
 }
 
 
@@ -3186,7 +2843,6 @@ function stopRecording() {
         mediaRecorder.stop();
 
     }
-
 }
 
 
@@ -3202,7 +2858,6 @@ async function sendVoice() {
         );
 
         return;
-
     }
 
 
@@ -3225,6 +2880,7 @@ async function sendVoice() {
         blob,
         "voice_message.webm"
     );
+
 
     formData.append(
         "customer_id",
@@ -3259,11 +2915,13 @@ async function sendVoice() {
                 API_BASE +
                 "/api/voice",
                 {
+
                     method:
                         "POST",
 
                     body:
                         formData
+
                 }
             );
 
@@ -3284,12 +2942,7 @@ async function sendVoice() {
 
             throw new Error(
                 data.message ||
-                data.error ||
-                (
-                    "HTTP " +
-                    response.status +
-                    " voice upload failed."
-                )
+                "Voice upload failed."
             );
 
         }
@@ -3301,14 +2954,11 @@ async function sendVoice() {
         );
 
 
-        if (data.message) {
-
-            addMessage(
-                "system",
-                data.message
-            );
-
-        }
+        addMessage(
+            "assistant",
+            data.message ||
+            "Your voice recording has been received."
+        );
 
 
         setStatus(
@@ -3319,11 +2969,13 @@ async function sendVoice() {
 
         await sendMessage(
 
-            "A voice recording has been attached to this active service. Use the recording as part of the current request and determine the next appropriate step.",
+            "I have sent a voice recording with my request. Please continue using the information already available.",
 
             {
+
                 event:
                     "voice_uploaded"
+
             }
 
         );
@@ -3337,32 +2989,26 @@ async function sendVoice() {
         );
 
 
-        const realError =
-            clean(
-                error &&
-                error.message
-            ) ||
-            "Voice upload failed.";
-
-
         addMessage(
-            "system",
-            realError
+            "assistant",
+            error.message ||
+            "The voice recording could not be received."
         );
 
 
         setStatus(
-            realError,
+            error.message ||
+            "Voice upload failed.",
             "error"
         );
 
     }
-
 }
 
 
 /* ============================================================
    REVIEW
+   REVIEW IS NOT APPROVAL
 ============================================================ */
 
 reviewButton.addEventListener(
@@ -3374,19 +3020,36 @@ reviewButton.addEventListener(
         }
 
 
-        reviewed = true;
-
-
-        await sendMessage(
-
-            "Please review everything currently supplied for this service. Identify whether anything important is still missing, explain what needs attention if necessary, and prepare the request for customer review. Do not invent missing information.",
-
-            {
-                event:
-                    "review_requested"
-            }
-
+        setStatus(
+            "Preparing your work for review..."
         );
+
+
+        const result =
+            await sendMessage(
+
+                "Please review the current work for my selected service using all information and files already supplied. Show me what has been prepared and tell me if anything important still needs to be corrected or supplied. Do not treat this as approval.",
+
+                {
+
+                    event:
+                        "review_request"
+
+                }
+
+            );
+
+
+        if (result) {
+
+            reviewed = true;
+
+            setStatus(
+                "Review stage completed. Please check the work before approving.",
+                "success"
+            );
+
+        }
 
     }
 );
@@ -3394,6 +3057,7 @@ reviewButton.addEventListener(
 
 /* ============================================================
    APPROVE
+   APPROVE IS SEPARATE FROM REVIEW
 ============================================================ */
 
 approveButton.addEventListener(
@@ -3408,9 +3072,16 @@ approveButton.addEventListener(
         if (!reviewed) {
 
             setStatus(
-                "Please review the request before approving it.",
+                "Please review the work before approving it.",
                 "error"
             );
+
+
+            addMessage(
+                "assistant",
+                "Please use Review first so you can check the work before giving approval."
+            );
+
 
             return;
 
@@ -3436,15 +3107,18 @@ approveButton.addEventListener(
                 customerId
             );
 
+
             query.set(
                 "job_id",
                 jobId
             );
 
+
             query.set(
                 "client_request_id",
                 clientRequestId
             );
+
 
             query.set(
                 "service",
@@ -3458,8 +3132,10 @@ approveButton.addEventListener(
                     "/api/approve?" +
                     query.toString(),
                     {
+
                         method:
                             "POST"
+
                     }
                 );
 
@@ -3480,12 +3156,7 @@ approveButton.addEventListener(
 
                 throw new Error(
                     data.message ||
-                    data.error ||
-                    (
-                        "HTTP " +
-                        response.status +
-                        " approval failed."
-                    )
+                    "Approval could not be completed."
                 );
 
             }
@@ -3497,12 +3168,12 @@ approveButton.addEventListener(
 
             addMessage(
                 "customer",
-                "✓ I approve the reviewed request."
+                "✓ I approve the request."
             );
 
 
             addMessage(
-                "system",
+                "assistant",
                 data.message ||
                 "Your request has been approved and is ready for the payment step."
             );
@@ -3557,22 +3228,16 @@ approveButton.addEventListener(
             );
 
 
-            const realError =
-                clean(
-                    error &&
-                    error.message
-                ) ||
-                "Approval failed.";
-
-
             addMessage(
-                "system",
-                realError
+                "assistant",
+                error.message ||
+                "Approval could not be completed."
             );
 
 
             setStatus(
-                realError,
+                error.message ||
+                "Approval failed.",
                 "error"
             );
 
@@ -3614,7 +3279,8 @@ paymentReportButton.addEventListener(
                 );
 
 
-        let amount = 0;
+        let amount =
+            0;
 
 
         if (amountText) {
@@ -3630,7 +3296,8 @@ paymentReportButton.addEventListener(
             amount =
                 Number(
                     numeric
-                ) || 0;
+                ) ||
+                0;
 
         }
 
@@ -3709,12 +3376,7 @@ paymentReportButton.addEventListener(
 
                 throw new Error(
                     data.message ||
-                    data.error ||
-                    (
-                        "HTTP " +
-                        response.status +
-                        " payment request failed."
-                    )
+                    "Payment record could not be created."
                 );
 
             }
@@ -3737,7 +3399,7 @@ paymentReportButton.addEventListener(
 
 
             addMessage(
-                "system",
+                "assistant",
                 data.message ||
                 "Your payment has been reported successfully. Payment verification is now pending."
             );
@@ -3763,23 +3425,10 @@ paymentReportButton.addEventListener(
             );
 
 
-            const realError =
-                clean(
-                    error &&
-                    error.message
-                ) ||
-                "Payment could not be created.";
-
-
             setStatus(
-                realError,
+                error.message ||
+                "Payment could not be created.",
                 "error"
-            );
-
-
-            addMessage(
-                "system",
-                realError
             );
 
         }
@@ -3841,12 +3490,7 @@ async function checkPaymentStatus() {
 
             throw new Error(
                 data.message ||
-                data.error ||
-                (
-                    "HTTP " +
-                    response.status +
-                    " payment status request failed."
-                )
+                "Payment status could not be checked."
             );
 
         }
@@ -3869,7 +3513,7 @@ async function checkPaymentStatus() {
         ) {
 
             addMessage(
-                "system",
+                "assistant",
                 "Your payment has been confirmed successfully. Your document can now be released when the delivery file is ready."
             );
 
@@ -3890,7 +3534,7 @@ async function checkPaymentStatus() {
         } else {
 
             addMessage(
-                "system",
+                "assistant",
                 "Payment is still pending. Your document will become available after payment has been confirmed."
             );
 
@@ -3910,21 +3554,13 @@ async function checkPaymentStatus() {
         );
 
 
-        const realError =
-            clean(
-                error &&
-                error.message
-            ) ||
-            "Could not check payment status.";
-
-
         setStatus(
-            realError,
+            error.message ||
+            "Could not check payment status.",
             "error"
         );
 
     }
-
 }
 
 
@@ -3962,8 +3598,10 @@ async function checkDownloadReady() {
                 "/api/download?" +
                 query.toString(),
                 {
+
                     method:
                         "GET"
+
                 }
             );
 
@@ -3982,7 +3620,7 @@ async function checkDownloadReady() {
         ) {
 
             addMessage(
-                "system",
+                "assistant",
                 "Your document is ready for download."
             );
 
@@ -4020,7 +3658,6 @@ async function checkDownloadReady() {
         );
 
     }
-
 }
 
 
@@ -4033,7 +3670,9 @@ function showDownloadButton() {
 
 
     if (existing) {
+
         return;
+
     }
 
 
@@ -4046,11 +3685,14 @@ function showDownloadButton() {
     button.id =
         "downloadButton";
 
+
     button.className =
         "action-button red";
 
+
     button.type =
         "button";
+
 
     button.textContent =
         "⬇ Download";
@@ -4086,7 +3728,9 @@ function showDownloadButton() {
 
 
     document
-        .querySelector(".actions")
+        .querySelector(
+            ".actions"
+        )
         .appendChild(
             button
         );
@@ -4126,10 +3770,12 @@ customerServiceButton.addEventListener(
                 customerId
             );
 
+
             query.set(
                 "job_id",
                 jobId
             );
+
 
             query.set(
                 "service",
@@ -4143,8 +3789,10 @@ customerServiceButton.addEventListener(
                     "/api/customer-service?" +
                     query.toString(),
                     {
+
                         method:
                             "POST"
+
                     }
                 );
 
@@ -4166,12 +3814,7 @@ customerServiceButton.addEventListener(
                 throw new Error(
                     data.reply ||
                     data.message ||
-                    data.error ||
-                    (
-                        "HTTP " +
-                        response.status +
-                        " Customer Service request failed."
-                    )
+                    "Customer Service is unavailable."
                 );
 
             }
@@ -4184,7 +3827,7 @@ customerServiceButton.addEventListener(
 
 
             addMessage(
-                "system",
+                "assistant",
                 data.reply ||
                 "Customer Service is available to help."
             );
@@ -4204,22 +3847,16 @@ customerServiceButton.addEventListener(
             );
 
 
-            const realError =
-                clean(
-                    error &&
-                    error.message
-                ) ||
-                "Customer Service could not be reached.";
-
-
             addMessage(
-                "system",
-                realError
+                "assistant",
+                error.message ||
+                "Customer Service could not be reached."
             );
 
 
             setStatus(
-                realError,
+                error.message ||
+                "Customer Service could not be reached.",
                 "error"
             );
 
@@ -4245,11 +3882,12 @@ function initializeWorkspace() {
 
 
     /*
-        The real intelligence endpoint is activated first.
-        The information form then appears for the customer.
+        The first request goes to the real intelligence
+        endpoint. After that response, the workspace creates
+        the structured customer information form.
     */
 
-    startService();
+    startAssistant();
 
 }
 
