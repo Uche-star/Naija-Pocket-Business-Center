@@ -1,38 +1,35 @@
 """
 Naija Pocket Business Center
-Current FastAPI Intelligence Gateway
+Current FastAPI Application
 
-CURRENT ARCHITECTURE
+CUSTOMER WEBSITE
+    /
+    /conversation.html
+    /workspace.html
 
-workspace.html
+CURRENT INTELLIGENCE
+    /api/chat
         ↓
-POST /api/chat
+    AdaResponse
         ↓
-AdaResponse
-        ↓
-Groq
-        ↓
-customer response
+    Groq
 
-This file belongs to the current FastAPI architecture.
-
-IMPORTANT:
-- No Flask
-- No phone_bridge.py
-- No AdaController
-- No AdaAIEngine
-- No keyword workflow
-- No retired architecture
+NO FLASK
+NO phone_bridge.py
+NO AdaController
+NO AdaAIEngine
+NO RETIRED INTELLIGENCE CHAIN
 """
 
 from __future__ import annotations
 
 import os
 import traceback
-from typing import Any
+from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 
 from ada_response import (
@@ -40,6 +37,30 @@ from ada_response import (
     get_ada_model,
     is_configured,
 )
+
+
+# ============================================================
+# PATHS
+# ============================================================
+
+BASE_DIR = Path(__file__).resolve().parent
+
+
+def find_file(filename: str) -> Path | None:
+
+    candidates = [
+        BASE_DIR / filename,
+        BASE_DIR / "app" / filename,
+        BASE_DIR / "static" / filename,
+        BASE_DIR / "public" / filename,
+    ]
+
+    for path in candidates:
+
+        if path.is_file():
+            return path
+
+    return None
 
 
 # ============================================================
@@ -66,16 +87,8 @@ app.add_middleware(
 
 
 # ============================================================
-# ACTIVE ADA SESSIONS
+# ADA SESSIONS
 # ============================================================
-
-"""
-Each customer/job receives its own AdaResponse instance.
-
-This allows conversation history to remain attached to the
-active request instead of creating a new intelligence object
-for every message.
-"""
 
 _sessions: dict[str, AdaResponse] = {}
 
@@ -86,11 +99,13 @@ def session_key(
 ) -> str:
 
     customer = (
-        str(customer_id or "anonymous").strip()
+        str(customer_id or "anonymous")
+        .strip()
     )
 
     job = (
-        str(job_id or "default").strip()
+        str(job_id or "default")
+        .strip()
     )
 
     return f"{customer}:{job}"
@@ -110,7 +125,7 @@ def get_session(
     if key not in _sessions:
 
         _sessions[key] = AdaResponse(
-            service=service,
+            service=service
         )
 
     elif service:
@@ -123,13 +138,13 @@ def get_session(
 
 
 # ============================================================
-# REQUEST MODELS
+# CHAT REQUEST
 # ============================================================
 
 class ChatRequest(BaseModel):
 
     message: str = Field(
-        default="",
+        default=""
     )
 
     service: str | None = None
@@ -148,24 +163,93 @@ class ChatRequest(BaseModel):
 
 
 # ============================================================
-# BASIC RESPONSE
+# CUSTOMER WEBSITE
 # ============================================================
 
 @app.get("/")
-async def root():
+async def customer_home():
 
-    return {
-        "success": True,
-        "service": "Naija Pocket Business Center",
-        "api": "FastAPI",
-        "intelligence": "AdaResponse",
-        "model": get_ada_model(),
-        "configured": is_configured(),
-    }
+    index_file = find_file(
+        "index.html"
+    )
+
+    if index_file is None:
+
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "error": "index.html not found",
+                "base_directory": str(
+                    BASE_DIR
+                ),
+            },
+        )
+
+    return FileResponse(
+        index_file,
+        media_type="text/html",
+    )
+
+
+@app.get("/index.html")
+async def customer_index():
+
+    return await customer_home()
+
+
+@app.get("/conversation.html")
+async def customer_conversation():
+
+    file = find_file(
+        "conversation.html"
+    )
+
+    if file is None:
+
+        return JSONResponse(
+            status_code=404,
+            content={
+                "success": False,
+                "error": (
+                    "conversation.html not found"
+                ),
+            },
+        )
+
+    return FileResponse(
+        file,
+        media_type="text/html",
+    )
+
+
+@app.get("/workspace.html")
+async def customer_workspace():
+
+    file = find_file(
+        "workspace.html"
+    )
+
+    if file is None:
+
+        return JSONResponse(
+            status_code=404,
+            content={
+                "success": False,
+                "error": (
+                    "workspace.html not found"
+                ),
+            },
+        )
+
+    return FileResponse(
+        file,
+        media_type="text/html",
+    )
 
 
 # ============================================================
-# HEALTH
+# API STATUS
 # ============================================================
 
 @app.get("/health")
@@ -174,8 +258,25 @@ async def health():
     return {
         "success": True,
         "status": "ok",
-        "intelligence_configured": is_configured(),
+        "api": "FastAPI",
+        "intelligence": "AdaResponse",
         "model": get_ada_model(),
+        "configured": is_configured(),
+    }
+
+
+@app.get("/api/status")
+async def api_status():
+
+    return {
+        "success": True,
+        "api": "FastAPI",
+        "intelligence": "AdaResponse",
+        "model": get_ada_model(),
+        "configured": is_configured(),
+        "active_sessions": len(
+            _sessions
+        ),
     }
 
 
@@ -189,7 +290,9 @@ async def chat(
 ):
 
     message = (
-        str(request.message or "")
+        str(
+            request.message or ""
+        )
         .strip()
     )
 
@@ -197,34 +300,32 @@ async def chat(
 
         return {
             "success": False,
-            "reply": "Please tell me what you would like help with.",
-            "message": "Message is required.",
+            "reply": (
+                "Please tell me what "
+                "you would like help with."
+            ),
         }
 
-
-    # --------------------------------------------------------
-    # INTELLIGENCE CHECK
-    # --------------------------------------------------------
 
     if not is_configured():
 
         print(
-            "CHAT ERROR: AdaResponse is not configured."
+            "CHAT ERROR: "
+            "AdaResponse is not configured."
         )
 
         return {
             "success": False,
             "reply": (
-                "The business center service is "
-                "temporarily unavailable. Please try again shortly."
+                "The business center service "
+                "is temporarily unavailable. "
+                "Please try again shortly."
             ),
-            "error": "INTELLIGENCE_NOT_CONFIGURED",
+            "error": (
+                "INTELLIGENCE_NOT_CONFIGURED"
+            ),
         }
 
-
-    # --------------------------------------------------------
-    # SESSION
-    # --------------------------------------------------------
 
     try:
 
@@ -247,8 +348,9 @@ async def chat(
         return {
             "success": False,
             "reply": (
-                "Sorry, I could not start your request "
-                "right now. Please try again."
+                "Sorry, I could not start "
+                "your request right now. "
+                "Please try again."
             ),
             "error": "SESSION_ERROR",
         }
@@ -258,42 +360,65 @@ async def chat(
     # APPLICATION CONTEXT
     # --------------------------------------------------------
 
-    application_context = (
-        request.context
-        or ""
-    ).strip()
+    context_parts: list[str] = []
+
+
+    if request.context:
+
+        context_parts.append(
+            str(
+                request.context
+            ).strip()
+        )
 
 
     if request.customer_id:
 
-        application_context += (
-            "\n\nCUSTOMER REQUEST IDENTIFIER\n"
-            f"{request.customer_id}"
+        context_parts.append(
+            "CUSTOMER ID\n"
+            + str(
+                request.customer_id
+            )
         )
 
 
     if request.job_id:
 
-        application_context += (
-            "\n\nACTIVE JOB IDENTIFIER\n"
-            f"{request.job_id}"
+        context_parts.append(
+            "ACTIVE JOB ID\n"
+            + str(
+                request.job_id
+            )
         )
 
 
     if request.client_request_id:
 
-        application_context += (
-            "\n\nCLIENT REQUEST IDENTIFIER\n"
-            f"{request.client_request_id}"
+        context_parts.append(
+            "CLIENT REQUEST ID\n"
+            + str(
+                request.client_request_id
+            )
         )
 
 
     if request.service:
 
-        application_context += (
-            "\n\nCURRENT SELECTED SERVICE\n"
-            f"{request.service}"
+        context_parts.append(
+            "CURRENT SELECTED SERVICE\n"
+            + str(
+                request.service
+            )
         )
+
+
+    application_context = (
+        "\n\n".join(
+            part
+            for part in context_parts
+            if part
+        )
+    )
 
 
     # --------------------------------------------------------
@@ -301,13 +426,16 @@ async def chat(
     # --------------------------------------------------------
 
     event = (
-        request.event
-        or ""
-    ).strip()
+        str(
+            request.event or ""
+        )
+        .strip()
+        or None
+    )
 
 
     # --------------------------------------------------------
-    # CALL CURRENT INTELLIGENCE
+    # CURRENT INTELLIGENCE
     # --------------------------------------------------------
 
     try:
@@ -315,8 +443,11 @@ async def chat(
         reply = ada.respond(
             message=message,
             service=request.service,
-            event=event or None,
-            context=application_context or None,
+            event=event,
+            context=(
+                application_context
+                or None
+            ),
         )
 
     except Exception as error:
@@ -332,16 +463,13 @@ async def chat(
         return {
             "success": False,
             "reply": (
-                "Sorry, I could not process your "
-                "request right now. Please try again."
+                "Sorry, I could not process "
+                "your request right now. "
+                "Please try again."
             ),
             "error": "INTELLIGENCE_ERROR",
         }
 
-
-    # --------------------------------------------------------
-    # VALIDATE RESPONSE
-    # --------------------------------------------------------
 
     reply = str(
         reply or ""
@@ -354,15 +482,14 @@ async def chat(
             "success": False,
             "reply": (
                 "I am ready to help. "
-                "Please tell me what you would like to do next."
+                "Please tell me what you "
+                "would like to do next."
             ),
-            "error": "EMPTY_INTELLIGENCE_RESPONSE",
+            "error": (
+                "EMPTY_INTELLIGENCE_RESPONSE"
+            ),
         }
 
-
-    # --------------------------------------------------------
-    # SUCCESS
-    # --------------------------------------------------------
 
     return {
         "success": True,
@@ -371,15 +498,20 @@ async def chat(
             request.service
             or ada.service
         ),
-        "customer_id": request.customer_id,
-        "job_id": request.job_id,
-        "client_request_id": request.client_request_id,
-        "intelligence": "AdaResponse",
+        "customer_id": (
+            request.customer_id
+        ),
+        "job_id": (
+            request.job_id
+        ),
+        "client_request_id": (
+            request.client_request_id
+        ),
     }
 
 
 # ============================================================
-# CLEAR CURRENT CHAT SESSION
+# CLEAR CHAT
 # ============================================================
 
 @app.post("/api/chat/clear")
@@ -403,133 +535,8 @@ async def clear_chat(
 
     return {
         "success": True,
-        "message": "Conversation cleared.",
-    }
-
-
-# ============================================================
-# CURRENT INTELLIGENCE STATUS
-# ============================================================
-
-@app.get("/api/status")
-async def api_status():
-
-    return {
-        "success": True,
-        "fastapi": True,
-        "intelligence": "AdaResponse",
-        "configured": is_configured(),
-        "model": get_ada_model(),
-        "active_sessions": len(
-            _sessions
-        ),
-    }
-
-
-# ============================================================
-# UPLOAD
-# ============================================================
-
-@app.post("/api/upload")
-async def upload_placeholder():
-
-    """
-    The current intelligence architecture does not fabricate
-    upload success.
-
-    The actual document/upload implementation should remain
-    in the application's existing upload system.
-
-    This endpoint deliberately reports that an upload handler
-    is not connected rather than pretending that a file was
-    received.
-    """
-
-    return {
-        "success": False,
         "message": (
-            "The current upload handler is not connected "
-            "to this FastAPI gateway yet."
-        ),
-    }
-
-
-# ============================================================
-# VOICE
-# ============================================================
-
-@app.post("/api/voice")
-async def voice_placeholder():
-
-    return {
-        "success": False,
-        "message": (
-            "The current voice handler is not connected "
-            "to this FastAPI gateway yet."
-        ),
-    }
-
-
-# ============================================================
-# APPROVAL
-# ============================================================
-
-@app.post("/api/approve")
-async def approve_placeholder():
-
-    return {
-        "success": False,
-        "message": (
-            "Approval processing is not connected "
-            "to this FastAPI gateway yet."
-        ),
-    }
-
-
-# ============================================================
-# PAYMENT CREATE
-# ============================================================
-
-@app.post("/api/payment/create")
-async def payment_create_placeholder():
-
-    return {
-        "success": False,
-        "message": (
-            "Payment processing is not connected "
-            "to this FastAPI gateway yet."
-        ),
-    }
-
-
-# ============================================================
-# PAYMENT STATUS
-# ============================================================
-
-@app.get("/api/payment/status")
-async def payment_status_placeholder():
-
-    return {
-        "success": False,
-        "message": (
-            "Payment status processing is not connected "
-            "to this FastAPI gateway yet."
-        ),
-    }
-
-
-# ============================================================
-# DOWNLOAD
-# ============================================================
-
-@app.get("/api/download")
-async def download_placeholder():
-
-    return {
-        "success": False,
-        "message": (
-            "Download delivery is not connected "
-            "to this FastAPI gateway yet."
+            "Conversation cleared."
         ),
     }
 
@@ -545,23 +552,24 @@ async def customer_service(
     service: str | None = None,
 ):
 
-    ada = get_session(
-        customer_id=customer_id,
-        job_id=job_id,
-        service=service,
-    )
-
     try:
+
+        ada = get_session(
+            customer_id=customer_id,
+            job_id=job_id,
+            service=service,
+        )
 
         reply = ada.respond(
             message=(
-                "The customer has requested "
+                "The customer is requesting "
                 "Customer Service assistance. "
-                "Please respond appropriately "
-                "to their request."
+                "Respond appropriately."
             ),
             service=service,
-            event="customer_service_requested",
+            event=(
+                "customer_service_requested"
+            ),
         )
 
         return {
@@ -582,8 +590,9 @@ async def customer_service(
         return {
             "success": False,
             "reply": (
-                "Customer Service is temporarily "
-                "unavailable. Please try again."
+                "Customer Service is "
+                "temporarily unavailable. "
+                "Please try again."
             ),
         }
 
@@ -597,43 +606,60 @@ async def startup():
 
     print()
     print("=" * 70)
-    print("NAIJA POCKET BUSINESS CENTER")
-    print("CURRENT FASTAPI INTELLIGENCE GATEWAY")
+    print(
+        "NAIJA POCKET BUSINESS CENTER"
+    )
+    print(
+        "CURRENT FASTAPI APPLICATION"
+    )
     print("=" * 70)
+
     print(
         "Intelligence:",
         "AdaResponse",
     )
+
     print(
         "Model:",
         get_ada_model(),
     )
+
     print(
         "Configured:",
         is_configured(),
     )
+
+    print(
+        "Website:",
+        "FastAPI FileResponse",
+    )
+
     print(
         "Keyword workflow:",
         "DISABLED",
     )
+
     print(
         "Flask:",
         "NOT USED",
     )
+
     print(
         "AdaController:",
         "NOT USED",
     )
+
     print(
         "AdaAIEngine:",
         "NOT USED",
     )
+
     print("=" * 70)
     print()
 
 
 # ============================================================
-# LOCAL RUN
+# LOCAL START
 # ============================================================
 
 if __name__ == "__main__":
@@ -643,7 +669,7 @@ if __name__ == "__main__":
     port = int(
         os.getenv(
             "PORT",
-            "8000",
+            "8000"
         )
     )
 
