@@ -25,8 +25,8 @@
         }
 
         body {
-            background: #000000;
-            color: #ffffff;
+            background: #000;
+            color: #fff;
             font-family:
                 Inter,
                 -apple-system,
@@ -48,69 +48,44 @@
         }
 
         :root {
-            --black: #000000;
-            --dark: #070707;
-            --panel: #111111;
+            --black: #000;
+            --panel: #111;
             --panel-2: #181818;
-            --panel-3: #222222;
+            --panel-3: #222;
 
             --gold: #d4af37;
             --gold-light: #f0d36a;
 
-            --white: #ffffff;
-            --muted: #a9a9a9;
+            --white: #fff;
+            --muted: #bdbdbd;
 
             --red: #b30000;
             --red-hover: #d00000;
 
             --green: #167a3d;
 
-            --border:
-                rgba(212, 175, 55, 0.30);
+            --border: rgba(212, 175, 55, 0.30);
         }
-
-
-        /* =====================================================
-           APP
-        ===================================================== */
 
         .app {
             width: 100%;
             height: 100dvh;
-
             display: flex;
             flex-direction: column;
-
             background: var(--black);
         }
 
-
-        /* =====================================================
-           HEADER
-        ===================================================== */
-
         .header {
             flex: 0 0 auto;
-
             width: 100%;
             min-height: 76px;
-
-            padding:
-                12px
-                16px
-                10px
-                16px;
-
+            padding: 12px 16px 10px;
             background: #050505;
-
-            border-bottom:
-                1px solid
-                var(--border);
+            border-bottom: 1px solid var(--border);
 
             display: flex;
             align-items: center;
             justify-content: space-between;
-
             gap: 12px;
 
             position: relative;
@@ -123,7 +98,6 @@
 
         .brand-title {
             margin: 0;
-
             color: var(--gold);
 
             font-family:
@@ -132,41 +106,25 @@
                 Arial,
                 sans-serif;
 
-            font-size:
-                clamp(18px, 4vw, 25px);
-
+            font-size: clamp(18px, 4vw, 25px);
             font-weight: 800;
-
             line-height: 1.1;
         }
 
         .brand-subtitle {
             margin-top: 5px;
-
-            color: #dddddd;
-
+            color: #ddd;
             font-size: 12px;
-
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .service-badge {
             flex: 0 0 auto;
-
             max-width: 48%;
 
-            padding:
-                8px
-                11px;
+            padding: 8px 11px;
 
             background: #171717;
-
-            border:
-                1px solid
-                rgba(212, 175, 55, 0.55);
-
+            border: 1px solid rgba(212, 175, 55, 0.55);
             border-radius: 999px;
 
             color: var(--gold-light);
@@ -181,25 +139,15 @@
             text-overflow: ellipsis;
         }
 
-
-        /* =====================================================
-           CONVERSATION
-        ===================================================== */
-
         .conversation {
             flex: 1 1 auto;
-
             min-height: 0;
-
             width: 100%;
 
             overflow-y: auto;
             overflow-x: hidden;
 
-            padding:
-                16px
-                12px
-                18px;
+            padding: 16px 12px 18px;
 
             scroll-behavior: smooth;
 
@@ -208,48 +156,37 @@
                     circle at top,
                     #151515 0%,
                     #050505 38%,
-                    #000000 100%
+                    #000 100%
                 );
         }
 
         .conversation-inner {
             width: 100%;
             max-width: 850px;
-
             margin: 0 auto;
 
             display: flex;
             flex-direction: column;
-
             gap: 12px;
         }
 
-
-        /* =====================================================
-           CHAT MESSAGES
-        ===================================================== */
-
         .message-row {
             width: 100%;
-
             display: flex;
-        }
-
-        .message-row.ada {
-            justify-content: flex-start;
         }
 
         .message-row.customer {
             justify-content: flex-end;
         }
 
-        .message {
-            max-width:
-                min(86%, 680px);
+        .message-row.service {
+            justify-content: flex-start;
+        }
 
-            padding:
-                12px
-                14px;
+        .message {
+            max-width: min(90%, 720px);
+
+            padding: 12px 14px;
 
             border-radius: 15px;
 
@@ -257,14 +194,12 @@
             overflow-wrap: anywhere;
 
             line-height: 1.52;
-
             font-size: 15px;
         }
 
-        .message-row.ada .message {
+        .message-row.service .message {
             background: #171717;
-
-            color: #ffffff;
+            color: #fff;
 
             border:
                 1px solid
@@ -275,8 +210,7 @@
 
         .message-row.customer .message {
             background: #2b2b2b;
-
-            color: #ffffff;
+            color: #fff;
 
             border:
                 1px solid
@@ -285,23 +219,25 @@
             border-top-right-radius: 4px;
         }
 
-        .message-content {
+        .message-label {
             display: block;
+            margin-bottom: 5px;
+
+            color: var(--gold);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
         }
-
-
-        /* =====================================================
-           TYPING
-        ===================================================== */
 
         .typing {
             display: none;
 
             width: fit-content;
 
-            padding:
-                10px
-                14px;
+            padding: 10px 14px;
 
             background: #171717;
 
@@ -312,7 +248,6 @@
             border-radius: 15px;
 
             color: var(--gold);
-
             font-size: 13px;
         }
 
@@ -320,137 +255,101 @@
             display: block;
         }
 
-
-        /* =====================================================
+        /* ====================================================
            INFORMATION FORM
-        ===================================================== */
+        ==================================================== */
 
-        .information-card {
+        .service-form-card {
+            display: none;
+
             width: 100%;
 
-            margin:
-                4px
-                0
-                8px;
-
-            padding:
-                18px;
+            padding: 18px;
 
             background:
                 linear-gradient(
                     145deg,
-                    #191919,
-                    #0d0d0d
+                    #1c1c1c,
+                    #101010
                 );
 
             border:
                 1px solid
                 rgba(212, 175, 55, 0.42);
 
-            border-radius: 18px;
+            border-radius: 16px;
 
             box-shadow:
                 0 12px 35px
-                rgba(0, 0, 0, 0.45);
+                rgba(0, 0, 0, 0.35);
         }
 
-        .information-header {
+        .service-form-card.show {
+            display: block;
+        }
+
+        .service-form-header {
             margin-bottom: 16px;
         }
 
-        .information-title {
+        .service-form-title {
             margin: 0;
 
             color: var(--gold-light);
 
-            font-family:
-                Montserrat,
-                Inter,
-                Arial,
-                sans-serif;
-
-            font-size: 19px;
-            font-weight: 800;
-
-            line-height: 1.25;
+            font-size: 18px;
+            font-weight: 850;
         }
 
-        .information-description {
-            margin:
-                7px
-                0
-                0;
+        .service-form-description {
+            margin-top: 7px;
 
-            color: #c9c9c9;
+            color: #d2d2d2;
 
             font-size: 13px;
-
-            line-height: 1.55;
-        }
-
-        .form-notice {
-            margin-bottom: 15px;
-
-            padding:
-                10px
-                12px;
-
-            background:
-                rgba(212, 175, 55, 0.08);
-
-            border-left:
-                3px solid
-                var(--gold);
-
-            border-radius: 7px;
-
-            color: #dddddd;
-
-            font-size: 12px;
-
             line-height: 1.5;
         }
 
-        .form-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
+        .service-form-fields {
+            display: flex;
+            flex-direction: column;
             gap: 13px;
         }
 
         .form-field {
-            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
-        .form-field.full {
-            grid-column:
-                1 / -1;
+        .form-field-label {
+            color: #f2f2f2;
+
+            font-size: 13px;
+            font-weight: 750;
         }
 
-        .form-label {
-            display: block;
-
-            margin-bottom: 6px;
-
-            color: #eeeeee;
-
-            font-size: 12px;
-            font-weight: 700;
+        .required-star {
+            color: #ff7272;
+            margin-left: 3px;
         }
 
-        .optional {
-            color: #858585;
-
-            font-size: 10px;
-            font-weight: 500;
+        .form-field-help {
+            color: #969696;
+            font-size: 11px;
+            line-height: 1.4;
         }
 
-        .form-input,
-        .form-select,
-        .form-textarea {
+        .form-control {
             width: 100%;
+
+            min-height: 44px;
+
+            padding: 11px 12px;
+
+            background: #080808;
+
+            color: #fff;
 
             border:
                 1px solid
@@ -458,85 +357,50 @@
 
             border-radius: 9px;
 
-            background: #111111;
-
-            color: #ffffff;
-
             outline: none;
         }
 
-        .form-input,
-        .form-select {
-            min-height: 43px;
-
-            padding:
-                10px
-                11px;
-        }
-
-        .form-textarea {
+        textarea.form-control {
             min-height: 82px;
-
             resize: vertical;
-
-            padding:
-                10px
-                11px;
-
-            line-height: 1.45;
         }
 
-        .form-input::placeholder,
-        .form-textarea::placeholder {
-            color: #777777;
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
+        .form-control:focus {
             border-color:
                 rgba(212, 175, 55, 0.70);
-
-            box-shadow:
-                0 0 0 2px
-                rgba(212, 175, 55, 0.08);
         }
 
-        .form-actions {
+        .form-control::placeholder {
+            color: #777;
+        }
+
+        .service-form-footer {
             display: flex;
+            gap: 8px;
 
-            gap: 9px;
-
-            margin-top: 16px;
+            margin-top: 17px;
         }
 
         .form-submit {
             flex: 1;
 
-            min-height: 45px;
+            min-height: 44px;
 
             border: none;
-
             border-radius: 9px;
 
             background: var(--gold);
-
-            color: #000000;
+            color: #000;
 
             font-size: 13px;
             font-weight: 900;
         }
 
-        .form-submit:hover {
-            background: var(--gold-light);
-        }
-
         .form-clear {
-            flex:
-                0 0
-                90px;
+            flex: 0 0 auto;
 
-            min-height: 45px;
+            min-width: 90px;
+            min-height: 44px;
 
             border:
                 1px solid
@@ -544,41 +408,35 @@
 
             border-radius: 9px;
 
-            background: #222222;
-
-            color: #ffffff;
+            background: #222;
+            color: #fff;
 
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 750;
         }
 
-        .form-clear:hover {
-            background: #2d2d2d;
+        .form-submit:disabled,
+        .form-clear:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
         }
 
-
-        /* =====================================================
-           BOTTOM AREA
-        ===================================================== */
+        /* ====================================================
+           BOTTOM
+        ==================================================== */
 
         .bottom {
             flex: 0 0 auto;
-
             width: 100%;
 
             background: #090909;
 
-            border-top:
-                1px solid
-                var(--border);
+            border-top: 1px solid var(--border);
 
             padding:
                 8px
                 10px
-                calc(
-                    8px +
-                    env(safe-area-inset-bottom)
-                );
+                calc(8px + env(safe-area-inset-bottom));
 
             position: relative;
             z-index: 20;
@@ -587,43 +445,8 @@
         .bottom-inner {
             width: 100%;
             max-width: 850px;
-
             margin: 0 auto;
         }
-
-
-        /* =====================================================
-           ACTION EXPLANATION
-        ===================================================== */
-
-        .workspace-help {
-            margin-bottom: 8px;
-
-            padding:
-                8px
-                10px;
-
-            background: #101010;
-
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.08);
-
-            border-radius: 8px;
-
-            color: #9e9e9e;
-
-            font-size: 10px;
-
-            line-height: 1.4;
-
-            text-align: center;
-        }
-
-
-        /* =====================================================
-           ACTION BUTTONS
-        ===================================================== */
 
         .actions {
             display: grid;
@@ -637,11 +460,9 @@
         }
 
         .action-button {
-            min-height: 40px;
+            min-height: 39px;
 
-            padding:
-                7px
-                5px;
+            padding: 8px 5px;
 
             border:
                 1px solid
@@ -650,11 +471,10 @@
             border-radius: 8px;
 
             background: #181818;
-
-            color: #ffffff;
+            color: #fff;
 
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 750;
 
             transition:
                 background 0.15s ease,
@@ -682,9 +502,7 @@
 
         .action-button.red {
             background: var(--red);
-
-            color: #ffffff;
-
+            color: #fff;
             border-color: var(--red);
         }
 
@@ -692,43 +510,14 @@
             background: var(--red-hover);
         }
 
-        .action-button:disabled {
-            opacity: 0.45;
-
-            cursor: not-allowed;
-        }
-
-
-        /* =====================================================
-           COMPOSER EXPLANATION
-        ===================================================== */
-
-        .message-help {
-            margin:
-                0
-                0
-                5px;
-
-            color: #929292;
-
-            font-size: 10px;
-
-            line-height: 1.4;
-
-            text-align: center;
-        }
-
         .composer {
             display: flex;
-
             align-items: flex-end;
-
             gap: 7px;
         }
 
         .message-input {
             flex: 1 1 auto;
-
             min-width: 0;
 
             min-height: 48px;
@@ -736,13 +525,10 @@
 
             resize: none;
 
-            padding:
-                13px
-                13px;
+            padding: 13px;
 
             background: #171717;
-
-            color: #ffffff;
+            color: #fff;
 
             border:
                 1px solid
@@ -756,7 +542,7 @@
         }
 
         .message-input::placeholder {
-            color: #888888;
+            color: #888;
         }
 
         .message-input:focus {
@@ -768,16 +554,13 @@
             flex: 0 0 auto;
 
             width: 72px;
-
             min-height: 48px;
 
             border: none;
-
             border-radius: 11px;
 
             background: var(--gold);
-
-            color: #000000;
+            color: #000;
 
             font-size: 13px;
             font-weight: 900;
@@ -789,35 +572,22 @@
 
         .send-button:disabled {
             opacity: 0.45;
-
             cursor: not-allowed;
         }
-
-
-        /* =====================================================
-           FILE INPUT
-        ===================================================== */
 
         #fileInput {
             display: none;
         }
 
-
-        /* =====================================================
-           STATUS
-        ===================================================== */
-
         .status {
             min-height: 16px;
 
             margin-top: 5px;
-
             padding-left: 2px;
 
-            color: #888888;
+            color: #888;
 
             font-size: 10px;
-
             text-align: center;
         }
 
@@ -829,16 +599,14 @@
             color: #7edc9c;
         }
 
-
-        /* =====================================================
+        /* ====================================================
            PAYMENT
-        ===================================================== */
+        ==================================================== */
 
         .payment-panel {
             display: none;
 
             margin-bottom: 8px;
-
             padding: 12px;
 
             background: #121212;
@@ -864,10 +632,9 @@
         }
 
         .payment-details {
-            color: #eeeeee;
+            color: #eee;
 
             font-size: 12px;
-
             line-height: 1.5;
 
             white-space: pre-wrap;
@@ -875,9 +642,7 @@
 
         .payment-buttons {
             display: flex;
-
             gap: 7px;
-
             margin-top: 9px;
         }
 
@@ -887,7 +652,6 @@
             min-height: 40px;
 
             border-radius: 8px;
-
             border: none;
 
             font-weight: 800;
@@ -896,30 +660,22 @@
 
         .payment-report {
             background: var(--gold);
-
-            color: #000000;
+            color: #000;
         }
 
         .payment-check {
             background: #292929;
-
-            color: #ffffff;
+            color: #fff;
 
             border:
                 1px solid
                 rgba(255, 255, 255, 0.15) !important;
         }
 
-
-        /* =====================================================
-           VOICE
-        ===================================================== */
-
         .voice-recording {
             display: none;
 
             margin-bottom: 8px;
-
             padding: 9px;
 
             background: #160707;
@@ -933,7 +689,6 @@
             color: #ff8a8a;
 
             font-size: 12px;
-
             text-align: center;
         }
 
@@ -941,19 +696,11 @@
             display: block;
         }
 
-
-        /* =====================================================
-           MOBILE
-        ===================================================== */
-
         @media (max-width: 620px) {
 
             .header {
                 min-height: 68px;
-
-                padding:
-                    10px
-                    11px;
+                padding: 10px 11px;
             }
 
             .brand-title {
@@ -966,77 +713,46 @@
 
             .service-badge {
                 max-width: 42%;
-
-                padding:
-                    7px
-                    9px;
-
+                padding: 7px 9px;
                 font-size: 10px;
             }
 
             .conversation {
-                padding:
-                    11px
-                    8px
-                    14px;
+                padding: 11px 8px 14px;
             }
 
             .message {
-                max-width: 90%;
-
+                max-width: 94%;
                 font-size: 14px;
-
-                padding:
-                    11px
-                    12px;
+                padding: 11px 12px;
             }
 
-            .information-card {
+            .service-form-card {
                 padding: 14px;
-
-                border-radius: 15px;
             }
 
-            .information-title {
-                font-size: 17px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-field.full {
-                grid-column: auto;
+            .service-form-title {
+                font-size: 16px;
             }
 
             .actions {
-                grid-template-columns:
-                    repeat(5, minmax(0, 1fr));
-
                 gap: 4px;
             }
 
             .action-button {
                 min-height: 36px;
-
-                padding:
-                    6px
-                    2px;
-
+                padding: 6px 2px;
                 font-size: 9px;
             }
 
             .message-input {
                 min-height: 46px;
-
                 font-size: 14px;
             }
 
             .send-button {
                 width: 64px;
-
                 min-height: 46px;
-
                 font-size: 12px;
             }
         }
@@ -1054,10 +770,6 @@
             .action-button {
                 font-size: 8px;
             }
-
-            .information-card {
-                padding: 12px;
-            }
         }
     </style>
 </head>
@@ -1065,10 +777,6 @@
 <body>
 
 <div class="app">
-
-    <!-- ======================================================
-         HEADER
-    ======================================================= -->
 
     <header class="header">
 
@@ -1079,7 +787,7 @@
             </h1>
 
             <div class="brand-subtitle">
-                Your Business Center Service
+                Your Business Center
             </div>
 
         </div>
@@ -1093,10 +801,6 @@
 
     </header>
 
-
-    <!-- ======================================================
-         CONVERSATION
-    ======================================================= -->
 
     <main
         id="conversation"
@@ -1120,16 +824,9 @@
     </main>
 
 
-    <!-- ======================================================
-         BOTTOM
-    ======================================================= -->
-
     <section class="bottom">
 
         <div class="bottom-inner">
-
-
-            <!-- PAYMENT -->
 
             <div
                 id="paymentPanel"
@@ -1168,8 +865,6 @@
             </div>
 
 
-            <!-- VOICE -->
-
             <div
                 id="voiceRecording"
                 class="voice-recording"
@@ -1177,18 +872,6 @@
                 🔴 Recording... tap Voice again to stop.
             </div>
 
-
-            <!-- BUTTON EXPLANATION -->
-
-            <div class="workspace-help">
-                Use <strong>Upload</strong> for files,
-                <strong>Voice</strong> to speak,
-                <strong>Review</strong> to check the work,
-                and <strong>Approve</strong> when you are satisfied.
-            </div>
-
-
-            <!-- ACTION BUTTONS -->
 
             <div class="actions">
 
@@ -1235,24 +918,11 @@
             </div>
 
 
-            <!-- NORMAL PHONE FILE ACCESS -->
-
             <input
                 id="fileInput"
                 type="file"
             >
 
-
-            <!-- MESSAGE EXPLANATION -->
-
-            <div class="message-help">
-                You can also use the message box to add information,
-                give special instructions, correct something,
-                or tell us anything else that should be considered.
-            </div>
-
-
-            <!-- MESSAGE BOX -->
 
             <div class="composer">
 
@@ -1260,7 +930,7 @@
                     id="messageInput"
                     class="message-input"
                     rows="1"
-                    placeholder="Type your message here..."
+                    placeholder="Type your message..."
                     autocomplete="off"
                 ></textarea>
 
@@ -1303,94 +973,58 @@ const API_BASE = "";
 ============================================================ */
 
 const conversation =
-    document.getElementById(
-        "conversation"
-    );
+    document.getElementById("conversation");
 
 const conversationInner =
-    document.getElementById(
-        "conversationInner"
-    );
+    document.getElementById("conversationInner");
 
 const typing =
-    document.getElementById(
-        "typing"
-    );
+    document.getElementById("typing");
 
 const serviceBadge =
-    document.getElementById(
-        "serviceBadge"
-    );
+    document.getElementById("serviceBadge");
 
 const messageInput =
-    document.getElementById(
-        "messageInput"
-    );
+    document.getElementById("messageInput");
 
 const sendButton =
-    document.getElementById(
-        "sendButton"
-    );
+    document.getElementById("sendButton");
 
 const uploadButton =
-    document.getElementById(
-        "uploadButton"
-    );
+    document.getElementById("uploadButton");
 
 const voiceButton =
-    document.getElementById(
-        "voiceButton"
-    );
+    document.getElementById("voiceButton");
 
 const reviewButton =
-    document.getElementById(
-        "reviewButton"
-    );
+    document.getElementById("reviewButton");
 
 const approveButton =
-    document.getElementById(
-        "approveButton"
-    );
+    document.getElementById("approveButton");
 
 const customerServiceButton =
-    document.getElementById(
-        "customerServiceButton"
-    );
+    document.getElementById("customerServiceButton");
 
 const fileInput =
-    document.getElementById(
-        "fileInput"
-    );
+    document.getElementById("fileInput");
 
 const statusElement =
-    document.getElementById(
-        "status"
-    );
+    document.getElementById("status");
 
 const voiceRecording =
-    document.getElementById(
-        "voiceRecording"
-    );
+    document.getElementById("voiceRecording");
 
 const paymentPanel =
-    document.getElementById(
-        "paymentPanel"
-    );
+    document.getElementById("paymentPanel");
 
 const paymentDetails =
-    document.getElementById(
-        "paymentDetails"
-    );
+    document.getElementById("paymentDetails");
 
 const paymentReportButton =
-    document.getElementById(
-        "paymentReportButton"
-    );
+    document.getElementById("paymentReportButton");
 
 const paymentCheckButton =
-    document.getElementById(
-        "paymentCheckButton"
-    );
+    document.getElementById("paymentCheckButton");
 
 
 /* ============================================================
@@ -1471,18 +1105,21 @@ store(
 ============================================================ */
 
 let busy = false;
-
 let approved = false;
-
-let reviewed = false;
-
 let paymentId = null;
 
 let mediaRecorder = null;
-
 let recordedChunks = [];
-
 let recordingStream = null;
+
+
+/* ============================================================
+   FORM STATE
+============================================================ */
+
+let serviceFormCard = null;
+let serviceFormFields = [];
+let formAlreadySubmitted = false;
 
 
 /* ============================================================
@@ -1528,12 +1165,10 @@ function createId(prefix) {
         window.crypto &&
         crypto.randomUUID
     ) {
-
         return (
             prefix +
             crypto.randomUUID()
         );
-
     }
 
     return (
@@ -1547,10 +1182,7 @@ function createId(prefix) {
 }
 
 
-function store(
-    key,
-    value
-) {
+function store(key, value) {
 
     try {
 
@@ -1600,7 +1232,7 @@ function setStatus(
 function scrollToBottom() {
 
     requestAnimationFrame(
-        function() {
+        () => {
 
             conversation.scrollTop =
                 conversation.scrollHeight;
@@ -1633,18 +1265,13 @@ function setBusy(value) {
         value;
 
     if (!value) {
-
         messageInput.focus();
-
     }
 }
 
 
 /* ============================================================
    MESSAGE DISPLAY
-   IMPORTANT:
-   NO CUSTOMER-FACING "ASSISTANT" LABEL
-   NO CUSTOMER-FACING "ADA" LABEL
 ============================================================ */
 
 function addMessage(
@@ -1662,7 +1289,7 @@ function addMessage(
         (
             sender === "customer"
                 ? "customer"
-                : "ada"
+                : "service"
         );
 
 
@@ -1675,13 +1302,40 @@ function addMessage(
         "message";
 
 
+    const label =
+        document.createElement(
+            "span"
+        );
+
+    label.className =
+        "message-label";
+
+
+    /*
+        IMPORTANT:
+        No customer-facing Ada name.
+        No "Assistant" label.
+    */
+
+    label.textContent =
+        sender === "customer"
+            ? "You"
+            : "";
+
+
+    if (label.textContent) {
+
+        bubble.appendChild(
+            label
+        );
+
+    }
+
+
     const content =
         document.createElement(
             "div"
         );
-
-    content.className =
-        "message-content";
 
     content.textContent =
         text || "";
@@ -1702,246 +1356,774 @@ function addMessage(
     );
 
 
+    /*
+        Let the intelligence response determine whether
+        a service-specific information form should appear.
+    */
+
+    if (
+        sender !== "customer" &&
+        text
+    ) {
+
+        detectAndBuildServiceForm(
+            text
+        );
+
+    }
+
+
     scrollToBottom();
 }
 
 
 /* ============================================================
-   INFORMATION FORM
+   SERVICE FORM
 ============================================================ */
 
-function createInformationForm() {
+/*
+    This is deliberately NOT a list of services.
 
-    const existing =
-        document.getElementById(
-            "informationCard"
+    The selected service is already supplied to /api/chat.
+
+    The intelligence response determines what information
+    is needed. This function simply turns an information-form
+    description from that response into the beautiful form
+    container.
+
+    There is no generic Name / Phone / Email form here.
+*/
+
+function detectAndBuildServiceForm(
+    responseText
+) {
+
+    const text =
+        String(
+            responseText || ""
         );
 
-    if (existing) {
+    if (
+        formAlreadySubmitted
+    ) {
+        return;
+    }
 
-        existing.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
+
+    /*
+        Look for the form section introduced by the
+        intelligence. This is intentionally generic.
+    */
+
+    const lower =
+        text.toLowerCase();
+
+
+    const hasFormLanguage =
+        lower.includes(
+            "information form"
+        ) ||
+        lower.includes(
+            "form"
+        ) &&
+        (
+            lower.includes(
+                "required"
+            ) ||
+            lower.includes(
+                "optional"
+            )
+        );
+
+
+    if (!hasFormLanguage) {
+        return;
+    }
+
+
+    const fields =
+        extractFormFields(
+            text
+        );
+
+
+    if (!fields.length) {
+        return;
+    }
+
+
+    buildServiceForm(
+        fields
+    );
+}
+
+
+/*
+    Extract fields from numbered/bulleted form descriptions.
+
+    Examples understood:
+
+    1. Document title (required)
+    2. Document type (required)
+    3. Formatting style (optional)
+
+    Also understands simple bullet fields.
+
+    "Deadline" is deliberately ignored because it is not
+    a standard field for this business-center workflow.
+*/
+
+function extractFormFields(
+    text
+) {
+
+    const results = [];
+
+    const lines =
+        text.split(
+            /\r?\n/
+        );
+
+
+    for (
+        let i = 0;
+        i < lines.length;
+        i++
+    ) {
+
+        let line =
+            lines[i]
+                .replace(
+                    /\*\*/g,
+                    ""
+                )
+                .trim();
+
+
+        if (!line) {
+            continue;
+        }
+
+
+        /*
+            Ignore headings.
+        */
+
+        if (
+            /information form/i.test(
+                line
+            )
+        ) {
+            continue;
+        }
+
+
+        /*
+            Numbered field.
+        */
+
+        let match =
+            line.match(
+                /^\s*\d+[\.\)]\s+(.+?)\s*$/
+            );
+
+
+        /*
+            Bullet field.
+        */
+
+        if (!match) {
+
+            match =
+                line.match(
+                    /^\s*[-•]\s+(.+?)\s*$/
+                );
+
+        }
+
+
+        if (!match) {
+            continue;
+        }
+
+
+        let fieldText =
+            match[1]
+                .trim();
+
+
+        /*
+            Remove table-like trailing text.
+        */
+
+        fieldText =
+            fieldText
+                .replace(
+                    /\s*\|.*$/,
+                    ""
+                )
+                .trim();
+
+
+        /*
+            Remove deadline completely.
+        */
+
+        if (
+            /\bdeadline\b/i.test(
+                fieldText
+            )
+        ) {
+            continue;
+        }
+
+
+        const required =
+            /\brequired\b/i.test(
+                fieldText
+            );
+
+
+        const optional =
+            /\boptional\b/i.test(
+                fieldText
+            );
+
+
+        fieldText =
+            fieldText
+                .replace(
+                    /\(\s*required\s*\)/ig,
+                    ""
+                )
+                .replace(
+                    /\(\s*optional\s*\)/ig,
+                    ""
+                )
+                .replace(
+                    /\brequired\b/ig,
+                    ""
+                )
+                .replace(
+                    /\boptional\b/ig,
+                    ""
+                )
+                .trim();
+
+
+        /*
+            Separate an example/help explanation.
+        */
+
+        let label =
+            fieldText;
+
+        let help = "";
+
+
+        const helpMatch =
+            fieldText.match(
+                /^(.+?)\s*(?:\((.+)\))$/
+            );
+
+
+        if (helpMatch) {
+
+            label =
+                helpMatch[1]
+                    .trim();
+
+            help =
+                helpMatch[2]
+                    .trim();
+
+        }
+
+
+        /*
+            Remove markdown emphasis.
+        */
+
+        label =
+            label
+                .replace(
+                    /[*_`]/g,
+                    ""
+                )
+                .trim();
+
+
+        help =
+            help
+                .replace(
+                    /[*_`]/g,
+                    ""
+                )
+                .trim();
+
+
+        if (!label) {
+            continue;
+        }
+
+
+        /*
+            Avoid duplicate fields.
+        */
+
+        const duplicate =
+            results.some(
+                item =>
+                    item.label.toLowerCase() ===
+                    label.toLowerCase()
+            );
+
+
+        if (duplicate) {
+            continue;
+        }
+
+
+        results.push(
+            {
+                label,
+                help,
+                required
+            }
+        );
+
+    }
+
+
+    return results;
+}
+
+
+/* ============================================================
+   BUILD SERVICE FORM
+============================================================ */
+
+function buildServiceForm(
+    fields
+) {
+
+    if (
+        serviceFormCard
+    ) {
+
+        serviceFormFields =
+            fields;
+
+        rebuildExistingServiceForm();
 
         return;
     }
 
 
-    const card =
+    serviceFormFields =
+        fields;
+
+
+    serviceFormCard =
         document.createElement(
             "section"
         );
 
-    card.id =
-        "informationCard";
-
-    card.className =
-        "information-card";
+    serviceFormCard.className =
+        "service-form-card show";
 
 
-    card.innerHTML = `
+    const header =
+        document.createElement(
+            "div"
+        );
 
-        <div class="information-header">
-
-            <h2 class="information-title">
-                Your Information
-            </h2>
-
-            <p class="information-description">
-                Fill in the information that is most useful
-                for your request. You do not need to complete
-                every box. You can always add more information
-                later through the message box or Upload button.
-            </p>
-
-        </div>
+    header.className =
+        "service-form-header";
 
 
-        <div class="form-notice">
-            Only information that is relevant to your request
-            is needed. Leave any box blank if it does not apply.
-        </div>
+    const title =
+        document.createElement(
+            "h2"
+        );
+
+    title.className =
+        "service-form-title";
+
+    title.textContent =
+        "Your Information";
 
 
-        <form id="serviceInformationForm">
+    const description =
+        document.createElement(
+            "div"
+        );
 
-            <div class="form-grid">
+    description.className =
+        "service-form-description";
 
-                <div class="form-field">
-
-                    <label class="form-label">
-                        Your name
-                        <span class="optional">
-                            Optional
-                        </span>
-                    </label>
-
-                    <input
-                        class="form-input"
-                        name="name"
-                        type="text"
-                        autocomplete="name"
-                        placeholder="Full name"
-                    >
-
-                </div>
+    description.textContent =
+        "Fill in the information that is most useful for your request. You do not need to complete every box. Only information that is relevant to your request is needed.";
 
 
-                <div class="form-field">
+    header.appendChild(
+        title
+    );
 
-                    <label class="form-label">
-                        Phone number
-                        <span class="optional">
-                            Optional
-                        </span>
-                    </label>
-
-                    <input
-                        class="form-input"
-                        name="phone"
-                        type="tel"
-                        autocomplete="tel"
-                        placeholder="Phone number"
-                    >
-
-                </div>
+    header.appendChild(
+        description
+    );
 
 
-                <div class="form-field">
+    const fieldsContainer =
+        document.createElement(
+            "div"
+        );
 
-                    <label class="form-label">
-                        Email
-                        <span class="optional">
-                            Optional
-                        </span>
-                    </label>
-
-                    <input
-                        class="form-input"
-                        name="email"
-                        type="email"
-                        autocomplete="email"
-                        placeholder="Email address"
-                    >
-
-                </div>
+    fieldsContainer.className =
+        "service-form-fields";
 
 
-                <div class="form-field">
+    serviceFormCard.appendChild(
+        header
+    );
 
-                    <label class="form-label">
-                        What do you need?
-                    </label>
-
-                    <input
-                        class="form-input"
-                        name="request"
-                        type="text"
-                        placeholder="Briefly describe what you need"
-                    >
-
-                </div>
+    serviceFormCard.appendChild(
+        fieldsContainer
+    );
 
 
-                <div class="form-field full">
+    const footer =
+        document.createElement(
+            "div"
+        );
 
-                    <label class="form-label">
-                        Important details
-                        <span class="optional">
-                            Optional
-                        </span>
-                    </label>
-
-                    <textarea
-                        class="form-textarea"
-                        name="details"
-                        placeholder="Add the information that matters most to this request"
-                    ></textarea>
-
-                </div>
+    footer.className =
+        "service-form-footer";
 
 
-                <div class="form-field full">
+    const submit =
+        document.createElement(
+            "button"
+        );
 
-                    <label class="form-label">
-                        Other instructions
-                        <span class="optional">
-                            Optional
-                        </span>
-                    </label>
+    submit.type =
+        "button";
 
-                    <textarea
-                        class="form-textarea"
-                        name="instructions"
-                        placeholder="Special instructions, preferences, corrections or anything else"
-                    ></textarea>
+    submit.className =
+        "form-submit";
 
-                </div>
-
-            </div>
+    submit.textContent =
+        "Continue With My Information";
 
 
-            <div class="form-actions">
+    const clear =
+        document.createElement(
+            "button"
+        );
 
-                <button
-                    type="submit"
-                    class="form-submit"
-                >
-                    Continue With My Information
-                </button>
+    clear.type =
+        "button";
 
-                <button
-                    type="button"
-                    id="clearInformationButton"
-                    class="form-clear"
-                >
-                    Clear
-                </button>
+    clear.className =
+        "form-clear";
 
-            </div>
+    clear.textContent =
+        "Clear";
 
-        </form>
-    `;
 
+    footer.appendChild(
+        submit
+    );
+
+    footer.appendChild(
+        clear
+    );
+
+
+    serviceFormCard.appendChild(
+        footer
+    );
+
+
+    /*
+        Put the form before the conversation's typing
+        indicator, so it remains part of the conversation.
+    */
 
     conversationInner.insertBefore(
-        card,
+        serviceFormCard,
         typing
     );
 
 
-    const form =
-        document.getElementById(
-            "serviceInformationForm"
-        );
-
-
-    form.addEventListener(
-        "submit",
-        handleInformationSubmit
+    renderFormFields(
+        fieldsContainer
     );
 
 
-    document
-        .getElementById(
-            "clearInformationButton"
-        )
-        .addEventListener(
-            "click",
-            function() {
+    submit.addEventListener(
+        "click",
+        submitServiceForm
+    );
 
-                form.reset();
 
-                setStatus(
-                    "Information form cleared."
+    clear.addEventListener(
+        "click",
+        clearServiceForm
+    );
+
+
+    scrollToBottom();
+}
+
+
+/* ============================================================
+   REBUILD EXISTING FORM
+============================================================ */
+
+function rebuildExistingServiceForm() {
+
+    if (
+        !serviceFormCard
+    ) {
+        return;
+    }
+
+
+    const container =
+        serviceFormCard.querySelector(
+            ".service-form-fields"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    renderFormFields(
+        container
+    );
+}
+
+
+/* ============================================================
+   RENDER FORM FIELDS
+============================================================ */
+
+function renderFormFields(
+    container
+) {
+
+    container.innerHTML = "";
+
+
+    serviceFormFields.forEach(
+        function(field, index) {
+
+            const wrapper =
+                document.createElement(
+                    "div"
                 );
 
+            wrapper.className =
+                "form-field";
+
+
+            const label =
+                document.createElement(
+                    "label"
+                );
+
+            label.className =
+                "form-field-label";
+
+            label.textContent =
+                field.label;
+
+
+            if (
+                field.required
+            ) {
+
+                const star =
+                    document.createElement(
+                        "span"
+                    );
+
+                star.className =
+                    "required-star";
+
+                star.textContent =
+                    "*";
+
+                label.appendChild(
+                    star
+                );
+
+            }
+
+
+            const lower =
+                field.label.toLowerCase();
+
+
+            let control;
+
+
+            /*
+                Longer instructions get a textarea.
+            */
+
+            if (
+                lower.includes(
+                    "instruction"
+                ) ||
+                lower.includes(
+                    "guideline"
+                ) ||
+                lower.includes(
+                    "description"
+                ) ||
+                lower.includes(
+                    "experience"
+                ) ||
+                lower.includes(
+                    "education"
+                ) ||
+                lower.includes(
+                    "qualification"
+                ) ||
+                lower.includes(
+                    "skill"
+                ) ||
+                lower.includes(
+                    "objective"
+                )
+            ) {
+
+                control =
+                    document.createElement(
+                        "textarea"
+                    );
+
+            } else {
+
+                control =
+                    document.createElement(
+                        "input"
+                    );
+
+                control.type =
+                    "text";
+
+            }
+
+
+            control.className =
+                "form-control";
+
+
+            control.dataset.fieldLabel =
+                field.label;
+
+
+            control.dataset.required =
+                field.required
+                    ? "true"
+                    : "false";
+
+
+            control.placeholder =
+                field.help ||
+                "Enter " +
+                field.label.toLowerCase();
+
+
+            if (
+                field.required
+            ) {
+
+                control.required =
+                    true;
+
+            }
+
+
+            if (
+                field.help
+            ) {
+
+                const help =
+                    document.createElement(
+                        "div"
+                    );
+
+                help.className =
+                    "form-field-help";
+
+                help.textContent =
+                    field.help;
+
+                wrapper.appendChild(
+                    label
+                );
+
+                wrapper.appendChild(
+                    help
+                );
+
+            } else {
+
+                wrapper.appendChild(
+                    label
+                );
+
+            }
+
+
+            wrapper.appendChild(
+                control
+            );
+
+
+            container.appendChild(
+                wrapper
+            );
+
+        }
+    );
+}
+
+
+/* ============================================================
+   FORM CLEAR
+============================================================ */
+
+function clearServiceForm() {
+
+    if (
+        !serviceFormCard
+    ) {
+        return;
+    }
+
+
+    serviceFormCard
+        .querySelectorAll(
+            ".form-control"
+        )
+        .forEach(
+            field => {
+                field.value = "";
             }
         );
 
 
-    scrollToBottom();
+    setStatus(
+        "Form cleared."
+    );
 }
 
 
@@ -1949,128 +2131,95 @@ function createInformationForm() {
    FORM SUBMISSION
 ============================================================ */
 
-async function handleInformationSubmit(
-    event
-) {
+async function submitServiceForm() {
 
-    event.preventDefault();
-
-
-    if (busy) {
+    if (
+        busy
+    ) {
         return;
     }
 
 
-    const form =
-        event.currentTarget;
+    if (
+        !serviceFormCard
+    ) {
+        return;
+    }
 
 
-    const formData =
-        new FormData(form);
-
-
-    const fields = {
-
-        name:
-            clean(
-                formData.get("name")
-            ),
-
-        phone:
-            clean(
-                formData.get("phone")
-            ),
-
-        email:
-            clean(
-                formData.get("email")
-            ),
-
-        request:
-            clean(
-                formData.get("request")
-            ),
-
-        details:
-            clean(
-                formData.get("details")
-            ),
-
-        instructions:
-            clean(
-                formData.get("instructions")
+    const controls =
+        Array.from(
+            serviceFormCard.querySelectorAll(
+                ".form-control"
             )
-
-    };
-
-
-    const suppliedFields = [];
-
-
-    if (fields.name) {
-
-        suppliedFields.push(
-            "Name: " +
-            fields.name
         );
+
+
+    const information = [];
+
+
+    for (
+        const control of controls
+    ) {
+
+        const value =
+            clean(
+                control.value
+            );
+
+
+        const required =
+            control.dataset.required ===
+            "true";
+
+
+        const label =
+            control.dataset.fieldLabel;
+
+
+        if (
+            required &&
+            !value
+        ) {
+
+            control.focus();
+
+
+            setStatus(
+                "Please complete the required information.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /*
+            Optional empty fields are not sent.
+            This is important for reducing request size.
+        */
+
+        if (
+            value
+        ) {
+
+            information.push(
+                label +
+                ": " +
+                value
+            );
+
+        }
 
     }
 
 
-    if (fields.phone) {
-
-        suppliedFields.push(
-            "Phone: " +
-            fields.phone
-        );
-
-    }
-
-
-    if (fields.email) {
-
-        suppliedFields.push(
-            "Email: " +
-            fields.email
-        );
-
-    }
-
-
-    if (fields.request) {
-
-        suppliedFields.push(
-            "Request: " +
-            fields.request
-        );
-
-    }
-
-
-    if (fields.details) {
-
-        suppliedFields.push(
-            "Important details: " +
-            fields.details
-        );
-
-    }
-
-
-    if (fields.instructions) {
-
-        suppliedFields.push(
-            "Other instructions: " +
-            fields.instructions
-        );
-
-    }
-
-
-    if (!suppliedFields.length) {
+    if (
+        !information.length
+    ) {
 
         setStatus(
-            "Please provide at least some information about your request.",
+            "Please provide the information that is relevant to your request.",
             "error"
         );
 
@@ -2078,48 +2227,51 @@ async function handleInformationSubmit(
     }
 
 
-    const combinedMessage =
-        "I have completed the information form for my " +
-        service +
-        " request.\n\n" +
-        suppliedFields.join(
+    const compactFormMessage =
+        "SERVICE INFORMATION FORM\n" +
+        information.join(
             "\n"
-        ) +
-        "\n\nPlease use the information supplied here as the current request information. Do not ask me again for information I have already provided. Tell me the next appropriate step."
-
-
-    const card =
-        document.getElementById(
-            "informationCard"
         );
 
 
-    if (card) {
-
-        card.style.opacity =
-            "0.72";
-
-    }
+    formAlreadySubmitted =
+        true;
 
 
-    await sendMessage(
+    serviceFormCard
+        .classList
+        .remove(
+            "show"
+        );
 
-        combinedMessage,
 
-        {
-            event:
-                "information_form_submitted"
-        }
-
+    addMessage(
+        "customer",
+        information.join(
+            "\n"
+        )
     );
 
 
-    if (card) {
+    /*
+        Send only the completed fields.
+        Do not resend the entire form or unnecessary
+        empty fields.
+    */
 
-        card.style.opacity =
-            "1";
+    await sendMessage(
+        compactFormMessage,
+        {
+            event:
+                "service_information_submitted"
+        }
+    );
 
-    }
+
+    setStatus(
+        "Your information has been received.",
+        "success"
+    );
 }
 
 
@@ -2148,18 +2300,27 @@ async function sendMessage(
 
 
     if (busy) {
-
         return null;
-
     }
 
 
     if (!options.silent) {
 
-        addMessage(
-            "customer",
-            text
-        );
+        /*
+            Do not display form data twice if the caller
+            already displayed it.
+        */
+
+        if (
+            !options.alreadyDisplayed
+        ) {
+
+            addMessage(
+                "customer",
+                text
+            );
+
+        }
 
     }
 
@@ -2224,9 +2385,7 @@ async function sendMessage(
         const data =
             await response.json()
                 .catch(
-                    function() {
-                        return {};
-                    }
+                    () => ({})
                 );
 
 
@@ -2254,7 +2413,7 @@ async function sendMessage(
         if (reply) {
 
             addMessage(
-                "assistant",
+                "service",
                 reply
             );
 
@@ -2277,21 +2436,6 @@ async function sendMessage(
         }
 
 
-        /*
-            The intelligence has introduced the service.
-            The workspace now presents the structured form.
-        */
-
-        if (
-            options.event ===
-            "start_job"
-        ) {
-
-            createInformationForm();
-
-        }
-
-
         setStatus(
             "Ready for your next instruction.",
             "success"
@@ -2310,20 +2454,19 @@ async function sendMessage(
 
 
         /*
-            Show the actual application error instead of
-            hiding it behind a false connection message.
+            Show the actual server error in the browser
+            console while keeping customer-facing wording
+            clean.
         */
 
         addMessage(
-            "assistant",
-            error.message ||
-            "The request could not be processed."
+            "service",
+            "Sorry, I could not complete that step right now. Please try again."
         );
 
 
         setStatus(
-            error.message ||
-            "The request could not be processed.",
+            "Connection problem. Please try again.",
             "error"
         );
 
@@ -2353,16 +2496,13 @@ async function startAssistant() {
 
     await sendMessage(
 
-        "I have selected this service and I am ready to begin. Please introduce the service, explain briefly how the workspace works, and then begin the information-gathering stage. The customer should be presented with a structured information form where only relevant information needs to be supplied.",
+        "I have selected this service and I am ready to begin. Please understand the service I selected, introduce the appropriate information form for this service, ask only for information that is genuinely useful, and explain how I should use Upload, Voice, the message box, Review and Approve.",
 
         {
-
-            silent:
-                true,
+            silent: true,
 
             event:
                 "start_job"
-
         }
 
     );
@@ -2392,8 +2532,7 @@ async function handleSend() {
     }
 
 
-    messageInput.value =
-        "";
+    messageInput.value = "";
 
     autoResize();
 
@@ -2442,8 +2581,7 @@ function autoResize() {
         Math.min(
             messageInput.scrollHeight,
             110
-        ) +
-        "px";
+        ) + "px";
 }
 
 
@@ -2455,7 +2593,6 @@ messageInput.addEventListener(
 
 /* ============================================================
    UPLOAD
-   NORMAL PHONE FILE PICKER
 ============================================================ */
 
 uploadButton.addEventListener(
@@ -2467,8 +2604,8 @@ uploadButton.addEventListener(
         }
 
         /*
-            This opens the normal device/browser file
-            selection interface. No Quick Share.
+            Normal device file picker.
+            No Quick Share interface.
         */
 
         fileInput.click();
@@ -2487,9 +2624,7 @@ fileInput.addEventListener(
 
 
         if (!file) {
-
             return;
-
         }
 
 
@@ -2498,8 +2633,7 @@ fileInput.addEventListener(
         );
 
 
-        fileInput.value =
-            "";
+        fileInput.value = "";
 
     }
 );
@@ -2551,13 +2685,11 @@ async function uploadFile(
                 API_BASE +
                 "/api/upload",
                 {
-
                     method:
                         "POST",
 
                     body:
                         formData
-
                 }
             );
 
@@ -2565,9 +2697,7 @@ async function uploadFile(
         const data =
             await response.json()
                 .catch(
-                    function() {
-                        return {};
-                    }
+                    () => ({})
                 );
 
 
@@ -2591,11 +2721,16 @@ async function uploadFile(
         );
 
 
-        addMessage(
-            "assistant",
-            data.message ||
-            "Your file has been received and attached to your active request."
-        );
+        if (
+            data.message
+        ) {
+
+            addMessage(
+                "service",
+                data.message
+            );
+
+        }
 
 
         setStatus(
@@ -2604,17 +2739,19 @@ async function uploadFile(
         );
 
 
+        /*
+            Compact follow-up message.
+        */
+
         await sendMessage(
 
-            "I have uploaded a file named \"" +
+            "The file \"" +
             file.name +
-            "\". Please examine the current request and continue from the information already supplied.",
+            "\" has been uploaded to this service. Please continue with the information already provided and tell me the next step.",
 
             {
-
                 event:
                     "file_uploaded"
-
             }
 
         );
@@ -2629,9 +2766,8 @@ async function uploadFile(
 
 
         addMessage(
-            "assistant",
-            error.message ||
-            "The file could not be received."
+            "service",
+            "Sorry, I could not receive that file right now. Please try again."
         );
 
 
@@ -2662,7 +2798,6 @@ voiceButton.addEventListener(
             stopRecording();
 
             return;
-
         }
 
 
@@ -2685,7 +2820,6 @@ async function startRecording() {
         );
 
         return;
-
     }
 
 
@@ -2701,12 +2835,10 @@ async function startRecording() {
                 );
 
 
-        recordedChunks =
-            [];
+        recordedChunks = [];
 
 
-        let mimeType =
-            "";
+        let mimeType = "";
 
 
         if (
@@ -2768,16 +2900,14 @@ async function startRecording() {
                     recordingStream
                         .getTracks()
                         .forEach(
-                            function(track) {
-                                track.stop();
-                            }
+                            track =>
+                                track.stop()
                         );
 
                 }
 
 
-                recordingStream =
-                    null;
+                recordingStream = null;
 
 
                 voiceRecording
@@ -2881,7 +3011,6 @@ async function sendVoice() {
         "voice_message.webm"
     );
 
-
     formData.append(
         "customer_id",
         customerId
@@ -2915,13 +3044,11 @@ async function sendVoice() {
                 API_BASE +
                 "/api/voice",
                 {
-
                     method:
                         "POST",
 
                     body:
                         formData
-
                 }
             );
 
@@ -2929,9 +3056,7 @@ async function sendVoice() {
         const data =
             await response.json()
                 .catch(
-                    function() {
-                        return {};
-                    }
+                    () => ({})
                 );
 
 
@@ -2954,11 +3079,16 @@ async function sendVoice() {
         );
 
 
-        addMessage(
-            "assistant",
-            data.message ||
-            "Your voice recording has been received."
-        );
+        if (
+            data.message
+        ) {
+
+            addMessage(
+                "service",
+                data.message
+            );
+
+        }
 
 
         setStatus(
@@ -2969,13 +3099,11 @@ async function sendVoice() {
 
         await sendMessage(
 
-            "I have sent a voice recording with my request. Please continue using the information already available.",
+            "My voice recording has been attached to this service. Please continue with the request.",
 
             {
-
                 event:
                     "voice_uploaded"
-
             }
 
         );
@@ -2990,9 +3118,8 @@ async function sendVoice() {
 
 
         addMessage(
-            "assistant",
-            error.message ||
-            "The voice recording could not be received."
+            "service",
+            "Sorry, I could not receive your voice recording right now. Please try again."
         );
 
 
@@ -3008,7 +3135,6 @@ async function sendVoice() {
 
 /* ============================================================
    REVIEW
-   REVIEW IS NOT APPROVAL
 ============================================================ */
 
 reviewButton.addEventListener(
@@ -3020,44 +3146,23 @@ reviewButton.addEventListener(
         }
 
 
-        setStatus(
-            "Preparing your work for review..."
+        await sendMessage(
+
+            "Please show me the current completed work for review. Do not treat this as approval. I only want to review what has been prepared.",
+
+            {
+                event:
+                    "review_requested"
+            }
+
         );
-
-
-        const result =
-            await sendMessage(
-
-                "Please review the current work for my selected service using all information and files already supplied. Show me what has been prepared and tell me if anything important still needs to be corrected or supplied. Do not treat this as approval.",
-
-                {
-
-                    event:
-                        "review_request"
-
-                }
-
-            );
-
-
-        if (result) {
-
-            reviewed = true;
-
-            setStatus(
-                "Review stage completed. Please check the work before approving.",
-                "success"
-            );
-
-        }
 
     }
 );
 
 
 /* ============================================================
-   APPROVE
-   APPROVE IS SEPARATE FROM REVIEW
+   APPROVAL
 ============================================================ */
 
 approveButton.addEventListener(
@@ -3066,25 +3171,6 @@ approveButton.addEventListener(
 
         if (busy) {
             return;
-        }
-
-
-        if (!reviewed) {
-
-            setStatus(
-                "Please review the work before approving it.",
-                "error"
-            );
-
-
-            addMessage(
-                "assistant",
-                "Please use Review first so you can check the work before giving approval."
-            );
-
-
-            return;
-
         }
 
 
@@ -3107,18 +3193,15 @@ approveButton.addEventListener(
                 customerId
             );
 
-
             query.set(
                 "job_id",
                 jobId
             );
 
-
             query.set(
                 "client_request_id",
                 clientRequestId
             );
-
 
             query.set(
                 "service",
@@ -3132,10 +3215,8 @@ approveButton.addEventListener(
                     "/api/approve?" +
                     query.toString(),
                     {
-
                         method:
                             "POST"
-
                     }
                 );
 
@@ -3143,9 +3224,7 @@ approveButton.addEventListener(
             const data =
                 await response.json()
                     .catch(
-                        function() {
-                            return {};
-                        }
+                        () => ({})
                     );
 
 
@@ -3162,8 +3241,7 @@ approveButton.addEventListener(
             }
 
 
-            approved =
-                true;
+            approved = true;
 
 
             addMessage(
@@ -3173,7 +3251,7 @@ approveButton.addEventListener(
 
 
             addMessage(
-                "assistant",
+                "service",
                 data.message ||
                 "Your request has been approved and is ready for the payment step."
             );
@@ -3229,9 +3307,8 @@ approveButton.addEventListener(
 
 
             addMessage(
-                "assistant",
-                error.message ||
-                "Approval could not be completed."
+                "service",
+                "Sorry, I could not complete the approval step right now."
             );
 
 
@@ -3268,7 +3345,6 @@ paymentReportButton.addEventListener(
             );
 
             return;
-
         }
 
 
@@ -3279,8 +3355,7 @@ paymentReportButton.addEventListener(
                 );
 
 
-        let amount =
-            0;
+        let amount = 0;
 
 
         if (amountText) {
@@ -3296,8 +3371,7 @@ paymentReportButton.addEventListener(
             amount =
                 Number(
                     numeric
-                ) ||
-                0;
+                ) || 0;
 
         }
 
@@ -3310,7 +3384,6 @@ paymentReportButton.addEventListener(
             );
 
             return;
-
         }
 
 
@@ -3363,9 +3436,7 @@ paymentReportButton.addEventListener(
             const data =
                 await response.json()
                     .catch(
-                        function() {
-                            return {};
-                        }
+                        () => ({})
                     );
 
 
@@ -3388,7 +3459,9 @@ paymentReportButton.addEventListener(
 
             store(
                 "npbc_payment_id",
-                String(paymentId)
+                String(
+                    paymentId
+                )
             );
 
 
@@ -3399,7 +3472,7 @@ paymentReportButton.addEventListener(
 
 
             addMessage(
-                "assistant",
+                "service",
                 data.message ||
                 "Your payment has been reported successfully. Payment verification is now pending."
             );
@@ -3477,9 +3550,7 @@ async function checkPaymentStatus() {
         const data =
             await response.json()
                 .catch(
-                    function() {
-                        return {};
-                    }
+                    () => ({})
                 );
 
 
@@ -3513,7 +3584,7 @@ async function checkPaymentStatus() {
         ) {
 
             addMessage(
-                "assistant",
+                "service",
                 "Your payment has been confirmed successfully. Your document can now be released when the delivery file is ready."
             );
 
@@ -3534,7 +3605,7 @@ async function checkPaymentStatus() {
         } else {
 
             addMessage(
-                "assistant",
+                "service",
                 "Payment is still pending. Your document will become available after payment has been confirmed."
             );
 
@@ -3598,10 +3669,8 @@ async function checkDownloadReady() {
                 "/api/download?" +
                 query.toString(),
                 {
-
                     method:
                         "GET"
-
                 }
             );
 
@@ -3620,7 +3689,7 @@ async function checkDownloadReady() {
         ) {
 
             addMessage(
-                "assistant",
+                "service",
                 "Your document is ready for download."
             );
 
@@ -3628,20 +3697,19 @@ async function checkDownloadReady() {
             showDownloadButton();
 
             return;
-
         }
 
 
         const data =
             await response.json()
                 .catch(
-                    function() {
-                        return {};
-                    }
+                    () => ({})
                 );
 
 
-        if (data.message) {
+        if (
+            data.message
+        ) {
 
             setStatus(
                 data.message
@@ -3670,9 +3738,7 @@ function showDownloadButton() {
 
 
     if (existing) {
-
         return;
-
     }
 
 
@@ -3728,9 +3794,7 @@ function showDownloadButton() {
 
 
     document
-        .querySelector(
-            ".actions"
-        )
+        .querySelector(".actions")
         .appendChild(
             button
         );
@@ -3770,12 +3834,10 @@ customerServiceButton.addEventListener(
                 customerId
             );
 
-
             query.set(
                 "job_id",
                 jobId
             );
-
 
             query.set(
                 "service",
@@ -3789,10 +3851,8 @@ customerServiceButton.addEventListener(
                     "/api/customer-service?" +
                     query.toString(),
                     {
-
                         method:
                             "POST"
-
                     }
                 );
 
@@ -3800,9 +3860,7 @@ customerServiceButton.addEventListener(
             const data =
                 await response.json()
                     .catch(
-                        function() {
-                            return {};
-                        }
+                        () => ({})
                     );
 
 
@@ -3827,7 +3885,7 @@ customerServiceButton.addEventListener(
 
 
             addMessage(
-                "assistant",
+                "service",
                 data.reply ||
                 "Customer Service is available to help."
             );
@@ -3848,9 +3906,8 @@ customerServiceButton.addEventListener(
 
 
             addMessage(
-                "assistant",
-                error.message ||
-                "Customer Service could not be reached."
+                "service",
+                "Customer Service is available to help. Please try again."
             );
 
 
@@ -3880,12 +3937,6 @@ function initializeWorkspace() {
     serviceBadge.textContent =
         service;
 
-
-    /*
-        The first request goes to the real intelligence
-        endpoint. After that response, the workspace creates
-        the structured customer information form.
-    */
 
     startAssistant();
 
