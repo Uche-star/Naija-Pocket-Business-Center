@@ -1,440 +1,430 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
-    <title>Naija Pocket Business Center</title>
+    <title>Naija Pocket Business Center</title><style>
+    * {
+        box-sizing: border-box;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #0B0B0B;
+        color: #FFFFFF;
+    }
+
+    .page {
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding:
+            max(20px, env(safe-area-inset-top))
+            18px
+            max(20px, env(safe-area-inset-bottom))
+            18px;
+
+        overflow: hidden;
+
+        opacity: 1;
+        transform: translateX(0);
+
+        transition:
+            opacity 0.35s ease,
+            transform 0.35s ease;
+    }
+
+    .page.page-leaving {
+        opacity: 0;
+        transform: translateX(-18px);
+    }
+
+    .main-container {
+        width: 100%;
+        max-width: 1100px;
+        max-height: 100%;
+
+        display: grid;
+        grid-template-columns: 1fr 0.75fr;
+        gap: 40px;
+
+        align-items: center;
+    }
+
+    .content {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .brand-name {
+        font-size: clamp(28px, 5vw, 46px);
+        line-height: 1.05;
+        font-weight: 800;
+        margin: 0 0 12px;
+        letter-spacing: -0.5px;
+        color: #D4AF37;
+    }
+
+    .identity {
+        font-size: clamp(16px, 2.5vw, 23px);
+        line-height: 1.25;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #FFFFFF;
+    }
+
+    .value {
+        font-size: clamp(14px, 2vw, 18px);
+        line-height: 1.5;
+        font-weight: 600;
+        margin: 6px 0;
+        color: #FFFFFF;
+    }
+
+    .services-title {
+        color: #FFFFFF;
+        font-size: clamp(15px, 2.2vw, 20px);
+        line-height: 1.3;
+        font-weight: 800;
+        margin: 25px 0 14px;
+    }
+
+    .document-people-window {
+        width: 100%;
+        overflow: hidden;
+        margin: 4px 0 14px;
+    }
+
+    .document-people-track {
+        display: inline-block;
+        white-space: nowrap;
+
+        font-size: clamp(14px, 2vw, 17px);
+        font-weight: 900;
+        letter-spacing: 0.5px;
+
+        color: #D4AF37;
+
+        animation: documentPeopleMove 18s linear infinite;
+    }
+
+    .document-people-track span {
+        display: inline-block;
+        padding-right: 70px;
+    }
+
+    @keyframes documentPeopleMove {
+        0% {
+            transform: translateX(100%);
         }
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
+        100% {
+            transform: translateX(-100%);
         }
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #0B0B0B;
-            color: #FFFFFF;
-        }
+    .services {
+        font-size: clamp(14px, 2vw, 17px);
+        line-height: 1.65;
+        margin-bottom: 24px;
+        color: #FFFFFF;
+    }
+
+    .services strong {
+        font-weight: 800;
+        color: #FFFFFF;
+    }
+
+    .start-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 100%;
+        max-width: 470px;
+        min-height: 54px;
+
+        padding: 14px 18px;
+
+        border: 1px solid #D4AF37;
+        border-radius: 7px;
+
+        background: #000000;
+        color: #FFFFFF;
+
+        font-size: clamp(13px, 2vw, 17px);
+        line-height: 1.25;
+        font-weight: 800;
+
+        text-decoration: none;
+
+        cursor: pointer;
+
+        box-shadow:
+            0 5px 18px rgba(0, 0, 0, 0.45);
+
+        transition:
+            transform 0.15s ease,
+            background 0.15s ease,
+            border-color 0.15s ease;
+    }
+
+    .start-button:hover {
+        background: #3D3D3D;
+        border-color: #D4AF37;
+    }
+
+    .start-button:active {
+        background: #292929;
+        transform: scale(0.98);
+    }
+
+    @media (max-width: 1000px) {
 
         .page {
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding:
-                max(20px, env(safe-area-inset-top))
-                18px
-                max(20px, env(safe-area-inset-bottom))
-                18px;
-
-            overflow: hidden;
-
-            opacity: 1;
-            transform: translateX(0);
-
-            transition:
-                opacity 0.35s ease,
-                transform 0.35s ease;
-        }
-
-        .page.page-leaving {
-            opacity: 0;
-            transform: translateX(-18px);
+            padding-left: 24px;
+            padding-right: 24px;
         }
 
         .main-container {
-            width: 100%;
-            max-width: 1100px;
-            max-height: 100%;
-
-            display: grid;
-            grid-template-columns: 1fr 0.75fr;
-            gap: 40px;
-
-            align-items: center;
+            max-width: 850px;
+            grid-template-columns: 1fr;
+            gap: 0;
         }
 
         .content {
-            width: 100%;
-            min-width: 0;
-        }
-
-        .brand-name {
-            font-size: clamp(28px, 5vw, 46px);
-            line-height: 1.05;
-            font-weight: 800;
-            margin: 0 0 12px;
-            letter-spacing: -0.5px;
-            color: #D4AF37;
-        }
-
-        .identity {
-            font-size: clamp(16px, 2.5vw, 23px);
-            line-height: 1.25;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #FFFFFF;
-        }
-
-        .value {
-            font-size: clamp(14px, 2vw, 18px);
-            line-height: 1.5;
-            font-weight: 600;
-            margin: 6px 0;
-            color: #FFFFFF;
-        }
-
-        .services-title {
-            color: #FFFFFF;
-            font-size: clamp(15px, 2.2vw, 20px);
-            line-height: 1.3;
-            font-weight: 800;
-            margin: 25px 0 14px;
-        }
-
-        .document-people-window {
-            width: 100%;
-            overflow: hidden;
-            margin: 4px 0 14px;
-        }
-
-        .document-people-track {
-            display: inline-block;
-            white-space: nowrap;
-
-            font-size: clamp(14px, 2vw, 17px);
-            font-weight: 900;
-            letter-spacing: 0.5px;
-
-            color: #D4AF37;
-
-            animation: documentPeopleMove 18s linear infinite;
-        }
-
-        .document-people-track span {
-            display: inline-block;
-            padding-right: 70px;
-        }
-
-        @keyframes documentPeopleMove {
-            0% {
-                transform: translateX(100%);
-            }
-
-            100% {
-                transform: translateX(-100%);
-            }
-        }
-
-        .services {
-            font-size: clamp(14px, 2vw, 17px);
-            line-height: 1.65;
-            margin-bottom: 24px;
-            color: #FFFFFF;
-        }
-
-        .services strong {
-            font-weight: 800;
-            color: #FFFFFF;
+            text-align: center;
         }
 
         .start-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
 
-            width: 100%;
-            max-width: 470px;
-            min-height: 54px;
+    @media (max-width: 800px) {
 
-            padding: 14px 18px;
-
-            border: 1px solid #D4AF37;
-            border-radius: 7px;
-
-            background: #333333;
-            color: #FFFFFF;
-
-            font-size: clamp(13px, 2vw, 17px);
-            line-height: 1.25;
-            font-weight: 800;
-
-            text-decoration: none;
-
-            cursor: pointer;
-
-            box-shadow:
-                0 5px 18px rgba(0, 0, 0, 0.45);
-
-            transition:
-                transform 0.15s ease,
-                background 0.15s ease,
-                border-color 0.15s ease;
+        .main-container {
+            grid-template-columns: 1fr;
+            gap: 0;
         }
 
-        .start-button:hover {
-            background: #3D3D3D;
-            border-color: #D4AF37;
+        .content {
+            text-align: center;
         }
 
-        .start-button:active {
-            background: #292929;
-            transform: scale(0.98);
+        .start-button {
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    @media (max-width: 600px) {
+
+        .page {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+    }
+
+    @media (max-width: 430px) {
+
+        .page {
+            padding-left: 14px;
+            padding-right: 14px;
         }
 
-        @media (max-width: 1000px) {
-
-            .page {
-                padding-left: 24px;
-                padding-right: 24px;
-            }
-
-            .main-container {
-                max-width: 850px;
-                grid-template-columns: 1fr;
-                gap: 0;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .start-button {
-                margin-left: auto;
-                margin-right: auto;
-            }
+        .brand-name {
+            font-size: 27px;
         }
 
-        @media (max-width: 800px) {
-
-            .main-container {
-                grid-template-columns: 1fr;
-                gap: 0;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .start-button {
-                margin-left: auto;
-                margin-right: auto;
-            }
+        .identity {
+            font-size: 14px;
+            margin-bottom: 12px;
         }
 
-        @media (max-width: 600px) {
-
-            .page {
-                padding-left: 16px;
-                padding-right: 16px;
-            }
+        .value {
+            font-size: 12px;
+            line-height: 1.3;
+            margin: 4px 0;
         }
 
-        @media (max-width: 430px) {
-
-            .page {
-                padding-left: 14px;
-                padding-right: 14px;
-            }
-
-            .brand-name {
-                font-size: 27px;
-            }
-
-            .identity {
-                font-size: 14px;
-                margin-bottom: 12px;
-            }
-
-            .value {
-                font-size: 12px;
-                line-height: 1.3;
-                margin: 4px 0;
-            }
-
-            .services-title {
-                font-size: 13px;
-                margin-top: 15px;
-                margin-bottom: 8px;
-            }
-
-            .document-people-window {
-                margin: 2px 0 8px;
-            }
-
-            .document-people-track {
-                font-size: 12px;
-            }
-
-            .services {
-                font-size: 11px;
-                line-height: 1.38;
-                margin-bottom: 12px;
-            }
-
-            .start-button {
-                min-height: 44px;
-                padding: 10px 12px;
-                font-size: 11px;
-            }
+        .services-title {
+            font-size: 13px;
+            margin-top: 15px;
+            margin-bottom: 8px;
         }
 
-        @media (max-width: 360px) {
-
-            .page {
-                padding-left: 10px;
-                padding-right: 10px;
-            }
-
-            .brand-name {
-                font-size: 23px;
-                margin-bottom: 8px;
-            }
-
-            .identity {
-                font-size: 12px;
-                margin-bottom: 9px;
-            }
-
-            .value {
-                font-size: 10px;
-                line-height: 1.2;
-                margin: 3px 0;
-            }
-
-            .services-title {
-                font-size: 11px;
-                margin-top: 10px;
-                margin-bottom: 5px;
-            }
-
-            .document-people-track {
-                font-size: 10px;
-            }
-
-            .services {
-                font-size: 9px;
-                line-height: 1.2;
-                margin-bottom: 8px;
-            }
-
-            .start-button {
-                min-height: 38px;
-                font-size: 9px;
-                padding: 7px 9px;
-            }
+        .document-people-window {
+            margin: 2px 0 8px;
         }
 
-        @media (min-width: 1200px) {
-
-            .page {
-                padding-left: 40px;
-                padding-right: 40px;
-            }
-
-            .main-container {
-                max-width: 1180px;
-            }
+        .document-people-track {
+            font-size: 12px;
         }
-    </style>
-</head>
 
-<body>
+        .services {
+            font-size: 11px;
+            line-height: 1.38;
+            margin-bottom: 12px;
+        }
 
-<main class="page" id="welcomePage">
+        .start-button {
+            min-height: 44px;
+            padding: 10px 12px;
+            font-size: 11px;
+        }
+    }
 
-    <div class="main-container">
+    @media (max-width: 360px) {
 
-        <section class="content">
+        .page {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
 
-            <h1 class="brand-name">
-                NAIJA POCKET<br>
-                BUSINESS CENTER
-            </h1>
+        .brand-name {
+            font-size: 23px;
+            margin-bottom: 8px;
+        }
 
-            <div class="identity">
-                YOUR BUSINESS CENTER IN YOUR POCKET
-            </div>
+        .identity {
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
 
-            <div class="value">
-                Fast • Convenient • Open 24/7
-            </div>
+        .value {
+            font-size: 10px;
+            line-height: 1.2;
+            margin: 3px 0;
+        }
 
-            <div class="value">
-                Prepare Your Documents In Minutes
-            </div>
+        .services-title {
+            font-size: 11px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
 
-            <div class="value">
-                Do Everything Concerning Your Documents
-                From Your Phone, Wherever You Are In Nigeria
-            </div>
+        .document-people-track {
+            font-size: 10px;
+        }
 
-            <div class="services-title">
-                ENJOY THE BEST IN DOCUMENT PROCESSING
-            </div>
+        .services {
+            font-size: 9px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
 
-            <div class="document-people-window">
+        .start-button {
+            min-height: 38px;
+            font-size: 9px;
+            padding: 7px 9px;
+        }
+    }
 
-                <div class="document-people-track">
+    @media (min-width: 1200px) {
 
-                    <span>THE DOCUMENT PEOPLE</span>
-                    <span>THE DOCUMENT PEOPLE</span>
+        .page {
+            padding-left: 40px;
+            padding-right: 40px;
+        }
 
-                </div>
+        .main-container {
+            max-width: 1180px;
+        }
+    }
+</style>
+
+</head><body><main class="page" id="welcomePage"><div class="main-container">
+
+    <section class="content">
+
+        <h1 class="brand-name">
+            NAIJA POCKET<br>
+            BUSINESS CENTER
+        </h1>
+
+        <div class="identity">
+            YOUR BUSINESS CENTER IN YOUR POCKET
+        </div>
+
+        <div class="value">
+            Fast • Convenient • Open 24/7
+        </div>
+
+        <div class="value">
+            Prepare Your Documents In Minutes
+        </div>
+
+        <div class="value">
+            Do Everything Concerning Your Documents
+            From Your Phone, Wherever You Are In Nigeria
+        </div>
+
+        <div class="services-title">
+            ENJOY THE BEST IN DOCUMENT PROCESSING
+        </div>
+
+        <div class="document-people-window">
+
+            <div class="document-people-track">
+
+                <span>THE DOCUMENT PEOPLE</span>
+                <span>THE DOCUMENT PEOPLE</span>
 
             </div>
 
-            <div class="services">
+        </div>
 
-                <strong>SERVICES</strong>
+        <div class="services">
 
-                <br><br>
+            <strong>SERVICES</strong>
 
-                ✓ CVs &amp; Résumés<br>
-                ✓ Handwritten Note Typing<br>
-                ✓ Assignments &amp; Projects<br>
-                ✓ Business Documents<br>
-                ✓ Letters &amp; Proposals<br>
-                ✓ Editing &amp; Formatting<br>
-                ✓ PDF Services<br>
-                ✓ Document Conversion<br>
-                ✓ Translation<br>
-                ✓ Printing Preparation<br>
-                ✓ And Much More
+            <br><br>
 
-            </div>
+            ✓ CVs &amp; Résumés<br>
+            ✓ Handwritten Note Typing<br>
+            ✓ Assignments &amp; Projects<br>
+            ✓ Business Documents<br>
+            ✓ Letters &amp; Proposals<br>
+            ✓ Editing &amp; Formatting<br>
+            ✓ PDF Services<br>
+            ✓ Document Conversion<br>
+            ✓ Translation<br>
+            ✓ Printing Preparation<br>
+            ✓ And Much More
 
-            <a
-                class="start-button"
-                id="startButton"
-                href="conversation.html"
-            >
-                PRESS HERE TO START YOUR REQUEST
-            </a>
+        </div>
 
-        </section>
+        <a
+            class="start-button"
+            id="startButton"
+            href="conversation.html"
+        >
+            PRESS HERE TO START YOUR REQUEST
+        </a>
 
-    </div>
+    </section>
 
-</main>
+</div>
 
-<script>
+</main><script>
     const welcomePage = document.getElementById("welcomePage");
     const startButton = document.getElementById("startButton");
 
@@ -451,7 +441,5 @@
     window.addEventListener("pageshow", function () {
         welcomePage.classList.remove("page-leaving");
     });
-</script>
-
-</body>
+</script></body>
 </html>
