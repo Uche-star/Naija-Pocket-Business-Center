@@ -1,965 +1,863 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"><meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
+<title>Naija Pocket Business Center</title>
 
-    <title>Naija Pocket Business Center</title>
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
 
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
+    body {
+        background: #000000;
+        color: #ffffff;
+        font-family:
+            Inter,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Arial,
+            sans-serif;
+    }
 
-        body {
-            background: #000;
-            color: #fff;
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Arial,
-                sans-serif;
-        }
+    button,
+    input,
+    textarea {
+        font: inherit;
+    }
 
-        button,
-        input,
-        textarea,
-        select {
-            font: inherit;
-        }
+    button {
+        cursor: pointer;
+    }
 
-        button {
-            cursor: pointer;
-        }
+    :root {
+        --black: #000000;
+        --panel: #111111;
+        --panel-2: #181818;
+        --panel-3: #222222;
 
-        :root {
-            --black: #000;
-            --panel: #111;
-            --panel-2: #181818;
-            --panel-3: #222;
+        --gold: #d4af37;
+        --gold-light: #f0d36a;
 
-            --gold: #d4af37;
-            --gold-light: #f0d36a;
+        --white: #ffffff;
+        --muted: #bdbdbd;
 
-            --white: #fff;
-            --muted: #bdbdbd;
+        --red: #b30000;
+        --red-hover: #d00000;
 
-            --red: #b30000;
-            --red-hover: #d00000;
+        --green: #167a3d;
 
-            --green: #167a3d;
+        --border: rgba(212, 175, 55, 0.30);
+    }
 
-            --border: rgba(212, 175, 55, 0.30);
-        }
+    .app {
+        width: 100%;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        background: var(--black);
+    }
 
-        .app {
-            width: 100%;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            background: var(--black);
-        }
+    .header {
+        flex: 0 0 auto;
+        width: 100%;
+        min-height: 76px;
+
+        padding:
+            12px
+            16px
+            10px
+            16px;
+
+        background: #050505;
+
+        border-bottom:
+            1px solid
+            var(--border);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 12px;
+
+        position: relative;
+        z-index: 20;
+    }
+
+    .brand {
+        min-width: 0;
+    }
+
+    .brand-title {
+        margin: 0;
+
+        color: var(--gold);
+
+        font-family:
+            Montserrat,
+            Inter,
+            Arial,
+            sans-serif;
+
+        font-size: clamp(18px, 4vw, 25px);
+
+        font-weight: 800;
+
+        line-height: 1.1;
+    }
+
+    .brand-subtitle {
+        margin-top: 5px;
+
+        color: #dddddd;
+
+        font-size: 12px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .service-badge {
+        flex: 0 0 auto;
+
+        max-width: 48%;
+
+        padding:
+            8px
+            11px;
+
+        background: #171717;
+
+        border:
+            1px solid
+            rgba(212, 175, 55, 0.55);
+
+        border-radius: 999px;
+
+        color: var(--gold-light);
+
+        font-size: 12px;
+        font-weight: 700;
+
+        text-align: center;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .conversation {
+        flex: 1 1 auto;
+
+        min-height: 0;
+
+        width: 100%;
+
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        padding:
+            16px
+            12px
+            18px;
+
+        scroll-behavior: smooth;
+
+        background:
+            radial-gradient(
+                circle at top,
+                #151515 0%,
+                #050505 38%,
+                #000000 100%
+            );
+    }
+
+    .conversation-inner {
+        width: 100%;
+        max-width: 850px;
+
+        margin: 0 auto;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+    .message-row {
+        width: 100%;
+        display: flex;
+    }
+
+    .message-row.ada {
+        justify-content: flex-start;
+    }
+
+    .message-row.customer {
+        justify-content: flex-end;
+    }
+
+    .message {
+        max-width: min(86%, 680px);
+
+        padding:
+            12px
+            14px;
+
+        border-radius: 15px;
+
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+
+        line-height: 1.52;
+
+        font-size: 15px;
+    }
+
+    .message-row.ada .message {
+        background: #171717;
+
+        color: #ffffff;
+
+        border:
+            1px solid
+            rgba(212, 175, 55, 0.28);
+
+        border-top-left-radius: 4px;
+    }
+
+    .message-row.customer .message {
+        background: #2b2b2b;
+
+        color: #ffffff;
+
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.12);
+
+        border-top-right-radius: 4px;
+    }
+
+    .message-label {
+        display: block;
+
+        margin-bottom: 5px;
+
+        color: var(--gold);
+
+        font-size: 11px;
+        font-weight: 800;
+
+        letter-spacing: 0.4px;
+
+        text-transform: uppercase;
+    }
+
+    .typing {
+        display: none;
+
+        width: fit-content;
+
+        padding:
+            10px
+            14px;
+
+        background: #171717;
+
+        border:
+            1px solid
+            rgba(212, 175, 55, 0.25);
+
+        border-radius: 15px;
+
+        color: var(--gold);
+
+        font-size: 13px;
+    }
+
+    .typing.show {
+        display: block;
+    }
+
+    .bottom {
+        flex: 0 0 auto;
+
+        width: 100%;
+
+        background: #090909;
+
+        border-top:
+            1px solid
+            var(--border);
+
+        padding:
+            8px
+            10px
+            calc(8px + env(safe-area-inset-bottom));
+
+        position: relative;
+        z-index: 20;
+    }
+
+    .bottom-inner {
+        width: 100%;
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .actions {
+        display: grid;
+
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+        gap: 7px;
+
+        margin-bottom: 8px;
+    }
+
+    .action-button {
+        min-height: 39px;
+
+        padding:
+            8px
+            6px;
+
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.15);
+
+        border-radius: 8px;
+
+        background: #181818;
+
+        color: #ffffff;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        transition:
+            background 0.15s ease,
+            border-color 0.15s ease,
+            transform 0.15s ease;
+    }
+
+    .action-button:hover {
+        background: #252525;
+
+        border-color:
+            rgba(212, 175, 55, 0.55);
+    }
+
+    .action-button:active {
+        transform: scale(0.98);
+    }
+
+    .action-button.gold {
+        color: var(--gold-light);
+
+        border-color:
+            rgba(212, 175, 55, 0.45);
+    }
+
+    .action-button.red {
+        background: var(--red);
+        color: #ffffff;
+        border-color: var(--red);
+    }
+
+    .action-button.red:hover {
+        background: var(--red-hover);
+    }
+
+    .composer {
+        display: flex;
+        align-items: flex-end;
+        gap: 7px;
+    }
+
+    .message-input {
+        flex: 1 1 auto;
+
+        min-width: 0;
+
+        min-height: 48px;
+        max-height: 110px;
+
+        resize: none;
+
+        padding:
+            13px
+            13px;
+
+        background: #171717;
+
+        color: #ffffff;
+
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.18);
+
+        border-radius: 11px;
+
+        outline: none;
+
+        line-height: 1.4;
+    }
+
+    .message-input::placeholder {
+        color: #888888;
+    }
+
+    .message-input:focus {
+        border-color:
+            rgba(212, 175, 55, 0.65);
+    }
+
+    .send-button {
+        flex: 0 0 auto;
+
+        width: 72px;
+        min-height: 48px;
+
+        border: none;
+
+        border-radius: 11px;
+
+        background: var(--gold);
+
+        color: #000000;
+
+        font-size: 13px;
+        font-weight: 900;
+
+        transition:
+            background 0.15s ease,
+            transform 0.15s ease;
+    }
+
+    .send-button:hover {
+        background: var(--gold-light);
+    }
+
+    .send-button:active {
+        transform: scale(0.97);
+    }
+
+    .send-button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    /*
+        NORMAL PHONE DOCUMENT PICKER
+
+        The Upload button uses the device's standard
+        file picker and requests document/file types,
+        rather than Photos/Gallery image selection.
+    */
+    #fileInput {
+        display: none;
+    }
+
+    .status {
+        min-height: 16px;
+
+        margin-top: 5px;
+
+        padding-left: 2px;
+
+        color: #888888;
+
+        font-size: 10px;
+
+        text-align: center;
+    }
+
+    .status.error {
+        color: #ff7070;
+    }
+
+    .status.success {
+        color: #7edc9c;
+    }
+
+    .payment-panel {
+        display: none;
+
+        margin-bottom: 8px;
+
+        padding: 12px;
+
+        background: #121212;
+
+        border:
+            1px solid
+            rgba(212, 175, 55, 0.40);
+
+        border-radius: 10px;
+    }
+
+    .payment-panel.show {
+        display: block;
+    }
+
+    .payment-title {
+        color: var(--gold);
+
+        font-size: 13px;
+        font-weight: 800;
+
+        margin-bottom: 7px;
+    }
+
+    .payment-details {
+        color: #eeeeee;
+
+        font-size: 12px;
+
+        line-height: 1.5;
+
+        white-space: pre-wrap;
+    }
+
+    .payment-buttons {
+        display: flex;
+        gap: 7px;
+        margin-top: 9px;
+    }
+
+    .payment-buttons button {
+        flex: 1;
+
+        min-height: 40px;
+
+        border-radius: 8px;
+
+        border: none;
+
+        font-weight: 800;
+        font-size: 12px;
+    }
+
+    .payment-report {
+        background: var(--gold);
+        color: #000000;
+    }
+
+    .payment-check {
+        background: #292929;
+        color: #ffffff;
+
+        border:
+            1px solid
+            rgba(255, 255, 255, 0.15) !important;
+    }
+
+    .voice-recording {
+        display: none;
+
+        margin-bottom: 8px;
+
+        padding: 9px;
+
+        background: #160707;
+
+        border:
+            1px solid
+            rgba(179, 0, 0, 0.60);
+
+        border-radius: 9px;
+
+        color: #ff8a8a;
+
+        font-size: 12px;
+
+        text-align: center;
+    }
+
+    .voice-recording.show {
+        display: block;
+    }
+
+    @media (max-width: 620px) {
 
         .header {
-            flex: 0 0 auto;
-            width: 100%;
-            min-height: 76px;
-            padding: 12px 16px 10px;
-            background: #050505;
-            border-bottom: 1px solid var(--border);
+            min-height: 68px;
 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-
-            position: relative;
-            z-index: 20;
-        }
-
-        .brand {
-            min-width: 0;
+            padding:
+                10px
+                11px;
         }
 
         .brand-title {
-            margin: 0;
-            color: var(--gold);
-
-            font-family:
-                Montserrat,
-                Inter,
-                Arial,
-                sans-serif;
-
-            font-size: clamp(18px, 4vw, 25px);
-            font-weight: 800;
-            line-height: 1.1;
+            font-size: 18px;
         }
 
         .brand-subtitle {
-            margin-top: 5px;
-            color: #ddd;
-            font-size: 12px;
+            font-size: 10px;
         }
 
         .service-badge {
-            flex: 0 0 auto;
-            max-width: 48%;
+            max-width: 42%;
 
-            padding: 8px 11px;
+            padding:
+                7px
+                9px;
 
-            background: #171717;
-            border: 1px solid rgba(212, 175, 55, 0.55);
-            border-radius: 999px;
-
-            color: var(--gold-light);
-
-            font-size: 12px;
-            font-weight: 700;
-
-            text-align: center;
-
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 10px;
         }
 
         .conversation {
-            flex: 1 1 auto;
-            min-height: 0;
-            width: 100%;
-
-            overflow-y: auto;
-            overflow-x: hidden;
-
-            padding: 16px 12px 18px;
-
-            scroll-behavior: smooth;
-
-            background:
-                radial-gradient(
-                    circle at top,
-                    #151515 0%,
-                    #050505 38%,
-                    #000 100%
-                );
-        }
-
-        .conversation-inner {
-            width: 100%;
-            max-width: 850px;
-            margin: 0 auto;
-
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .message-row {
-            width: 100%;
-            display: flex;
-        }
-
-        .message-row.customer {
-            justify-content: flex-end;
-        }
-
-        .message-row.service {
-            justify-content: flex-start;
+            padding:
+                11px
+                8px
+                14px;
         }
 
         .message {
-            max-width: min(90%, 720px);
+            max-width: 90%;
 
-            padding: 12px 14px;
-
-            border-radius: 15px;
-
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-
-            line-height: 1.52;
-            font-size: 15px;
-        }
-
-        .message-row.service .message {
-            background: #171717;
-            color: #fff;
-
-            border:
-                1px solid
-                rgba(212, 175, 55, 0.28);
-
-            border-top-left-radius: 4px;
-        }
-
-        .message-row.customer .message {
-            background: #2b2b2b;
-            color: #fff;
-
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.12);
-
-            border-top-right-radius: 4px;
-        }
-
-        .message-label {
-            display: block;
-            margin-bottom: 5px;
-
-            color: var(--gold);
-
-            font-size: 11px;
-            font-weight: 800;
-
-            letter-spacing: 0.4px;
-            text-transform: uppercase;
-        }
-
-        .typing {
-            display: none;
-
-            width: fit-content;
-
-            padding: 10px 14px;
-
-            background: #171717;
-
-            border:
-                1px solid
-                rgba(212, 175, 55, 0.25);
-
-            border-radius: 15px;
-
-            color: var(--gold);
-            font-size: 13px;
-        }
-
-        .typing.show {
-            display: block;
-        }
-
-        /* ====================================================
-           INFORMATION FORM
-        ==================================================== */
-
-        .service-form-card {
-            display: none;
-
-            width: 100%;
-
-            padding: 18px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #1c1c1c,
-                    #101010
-                );
-
-            border:
-                1px solid
-                rgba(212, 175, 55, 0.42);
-
-            border-radius: 16px;
-
-            box-shadow:
-                0 12px 35px
-                rgba(0, 0, 0, 0.35);
-        }
-
-        .service-form-card.show {
-            display: block;
-        }
-
-        .service-form-header {
-            margin-bottom: 16px;
-        }
-
-        .service-form-title {
-            margin: 0;
-
-            color: var(--gold-light);
-
-            font-size: 18px;
-            font-weight: 850;
-        }
-
-        .service-form-description {
-            margin-top: 7px;
-
-            color: #d2d2d2;
-
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .service-form-fields {
-            display: flex;
-            flex-direction: column;
-            gap: 13px;
-        }
-
-        .form-field {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-field-label {
-            color: #f2f2f2;
-
-            font-size: 13px;
-            font-weight: 750;
-        }
-
-        .required-star {
-            color: #ff7272;
-            margin-left: 3px;
-        }
-
-        .form-field-help {
-            color: #969696;
-            font-size: 11px;
-            line-height: 1.4;
-        }
-
-        .form-control {
-            width: 100%;
-
-            min-height: 44px;
-
-            padding: 11px 12px;
-
-            background: #080808;
-
-            color: #fff;
-
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.15);
-
-            border-radius: 9px;
-
-            outline: none;
-        }
-
-        textarea.form-control {
-            min-height: 82px;
-            resize: vertical;
-        }
-
-        .form-control:focus {
-            border-color:
-                rgba(212, 175, 55, 0.70);
-        }
-
-        .form-control::placeholder {
-            color: #777;
-        }
-
-        .service-form-footer {
-            display: flex;
-            gap: 8px;
-
-            margin-top: 17px;
-        }
-
-        .form-submit {
-            flex: 1;
-
-            min-height: 44px;
-
-            border: none;
-            border-radius: 9px;
-
-            background: var(--gold);
-            color: #000;
-
-            font-size: 13px;
-            font-weight: 900;
-        }
-
-        .form-clear {
-            flex: 0 0 auto;
-
-            min-width: 90px;
-            min-height: 44px;
-
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.15);
-
-            border-radius: 9px;
-
-            background: #222;
-            color: #fff;
-
-            font-size: 12px;
-            font-weight: 750;
-        }
-
-        .form-submit:disabled,
-        .form-clear:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-        }
-
-        /* ====================================================
-           BOTTOM
-        ==================================================== */
-
-        .bottom {
-            flex: 0 0 auto;
-            width: 100%;
-
-            background: #090909;
-
-            border-top: 1px solid var(--border);
+            font-size: 14px;
 
             padding:
-                8px
-                10px
-                calc(8px + env(safe-area-inset-bottom));
-
-            position: relative;
-            z-index: 20;
-        }
-
-        .bottom-inner {
-            width: 100%;
-            max-width: 850px;
-            margin: 0 auto;
+                11px
+                12px;
         }
 
         .actions {
-            display: grid;
-
             grid-template-columns:
-                repeat(5, minmax(0, 1fr));
+                repeat(4, minmax(0, 1fr));
 
-            gap: 6px;
-
-            margin-bottom: 8px;
+            gap: 5px;
         }
 
         .action-button {
-            min-height: 39px;
+            min-height: 36px;
 
-            padding: 8px 5px;
+            padding:
+                6px
+                3px;
 
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.15);
-
-            border-radius: 8px;
-
-            background: #181818;
-            color: #fff;
-
-            font-size: 11px;
-            font-weight: 750;
-
-            transition:
-                background 0.15s ease,
-                border-color 0.15s ease,
-                transform 0.15s ease;
-        }
-
-        .action-button:hover {
-            background: #252525;
-
-            border-color:
-                rgba(212, 175, 55, 0.55);
-        }
-
-        .action-button:active {
-            transform: scale(0.98);
-        }
-
-        .action-button.gold {
-            color: var(--gold-light);
-
-            border-color:
-                rgba(212, 175, 55, 0.45);
-        }
-
-        .action-button.red {
-            background: var(--red);
-            color: #fff;
-            border-color: var(--red);
-        }
-
-        .action-button.red:hover {
-            background: var(--red-hover);
-        }
-
-        .composer {
-            display: flex;
-            align-items: flex-end;
-            gap: 7px;
+            font-size: 10px;
         }
 
         .message-input {
-            flex: 1 1 auto;
-            min-width: 0;
-
-            min-height: 48px;
-            max-height: 110px;
-
-            resize: none;
-
-            padding: 13px;
-
-            background: #171717;
-            color: #fff;
-
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.18);
-
-            border-radius: 11px;
-
-            outline: none;
-
-            line-height: 1.4;
-        }
-
-        .message-input::placeholder {
-            color: #888;
-        }
-
-        .message-input:focus {
-            border-color:
-                rgba(212, 175, 55, 0.65);
+            min-height: 46px;
+            font-size: 14px;
         }
 
         .send-button {
-            flex: 0 0 auto;
-
-            width: 72px;
-            min-height: 48px;
-
-            border: none;
-            border-radius: 11px;
-
-            background: var(--gold);
-            color: #000;
-
-            font-size: 13px;
-            font-weight: 900;
+            width: 64px;
+            min-height: 46px;
+            font-size: 12px;
         }
+    }
 
-        .send-button:hover {
-            background: var(--gold-light);
-        }
+    @media (max-width: 390px) {
 
-        .send-button:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-        }
-
-        #fileInput {
+        .brand-subtitle {
             display: none;
         }
 
-        .status {
-            min-height: 16px;
-
-            margin-top: 5px;
-            padding-left: 2px;
-
-            color: #888;
-
-            font-size: 10px;
-            text-align: center;
+        .service-badge {
+            max-width: 45%;
         }
 
-        .status.error {
-            color: #ff7070;
+        .action-button {
+            font-size: 9px;
         }
+    }
+</style>
 
-        .status.success {
-            color: #7edc9c;
-        }
+</head><body><div class="app"><header class="header">
 
-        /* ====================================================
-           PAYMENT
-        ==================================================== */
+    <div class="brand">
 
-        .payment-panel {
-            display: none;
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
 
-            margin-bottom: 8px;
-            padding: 12px;
-
-            background: #121212;
-
-            border:
-                1px solid
-                rgba(212, 175, 55, 0.40);
-
-            border-radius: 10px;
-        }
-
-        .payment-panel.show {
-            display: block;
-        }
-
-        .payment-title {
-            color: var(--gold);
-
-            font-size: 13px;
-            font-weight: 800;
-
-            margin-bottom: 7px;
-        }
-
-        .payment-details {
-            color: #eee;
-
-            font-size: 12px;
-            line-height: 1.5;
-
-            white-space: pre-wrap;
-        }
-
-        .payment-buttons {
-            display: flex;
-            gap: 7px;
-            margin-top: 9px;
-        }
-
-        .payment-buttons button {
-            flex: 1;
-
-            min-height: 40px;
-
-            border-radius: 8px;
-            border: none;
-
-            font-weight: 800;
-            font-size: 12px;
-        }
-
-        .payment-report {
-            background: var(--gold);
-            color: #000;
-        }
-
-        .payment-check {
-            background: #292929;
-            color: #fff;
-
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.15) !important;
-        }
-
-        .voice-recording {
-            display: none;
-
-            margin-bottom: 8px;
-            padding: 9px;
-
-            background: #160707;
-
-            border:
-                1px solid
-                rgba(179, 0, 0, 0.60);
-
-            border-radius: 9px;
-
-            color: #ff8a8a;
-
-            font-size: 12px;
-            text-align: center;
-        }
-
-        .voice-recording.show {
-            display: block;
-        }
-
-        @media (max-width: 620px) {
-
-            .header {
-                min-height: 68px;
-                padding: 10px 11px;
-            }
-
-            .brand-title {
-                font-size: 18px;
-            }
-
-            .brand-subtitle {
-                font-size: 10px;
-            }
-
-            .service-badge {
-                max-width: 42%;
-                padding: 7px 9px;
-                font-size: 10px;
-            }
-
-            .conversation {
-                padding: 11px 8px 14px;
-            }
-
-            .message {
-                max-width: 94%;
-                font-size: 14px;
-                padding: 11px 12px;
-            }
-
-            .service-form-card {
-                padding: 14px;
-            }
-
-            .service-form-title {
-                font-size: 16px;
-            }
-
-            .actions {
-                gap: 4px;
-            }
-
-            .action-button {
-                min-height: 36px;
-                padding: 6px 2px;
-                font-size: 9px;
-            }
-
-            .message-input {
-                min-height: 46px;
-                font-size: 14px;
-            }
-
-            .send-button {
-                width: 64px;
-                min-height: 46px;
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 390px) {
-
-            .brand-subtitle {
-                display: none;
-            }
-
-            .service-badge {
-                max-width: 45%;
-            }
-
-            .action-button {
-                font-size: 8px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="app">
-
-    <header class="header">
-
-        <div class="brand">
-
-            <h1 class="brand-title">
-                Naija Pocket Business Center
-            </h1>
-
-            <div class="brand-subtitle">
-                Your Business Center
-            </div>
-
+        <div class="brand-subtitle">
+            Your Business Center Assistant
         </div>
 
-        <div
-            id="serviceBadge"
-            class="service-badge"
-        >
-            Service
-        </div>
+    </div>
 
-    </header>
+    <div
+        id="serviceBadge"
+        class="service-badge"
+    >
+        Service
+    </div>
 
+</header>
 
-    <main
-        id="conversation"
-        class="conversation"
+<main
+    id="conversation"
+    class="conversation"
+>
+
+    <div
+        id="conversationInner"
+        class="conversation-inner"
     >
 
         <div
-            id="conversationInner"
-            class="conversation-inner"
+            id="typing"
+            class="typing"
+        >
+            Working...
+        </div>
+
+    </div>
+
+</main>
+
+<section class="bottom">
+
+    <div class="bottom-inner">
+
+        <div
+            id="paymentPanel"
+            class="payment-panel"
         >
 
-            <div
-                id="typing"
-                class="typing"
-            >
-                Working...
+            <div class="payment-title">
+                Payment
             </div>
-
-        </div>
-
-    </main>
-
-
-    <section class="bottom">
-
-        <div class="bottom-inner">
 
             <div
-                id="paymentPanel"
-                class="payment-panel"
-            >
-
-                <div class="payment-title">
-                    Payment
-                </div>
-
-                <div
-                    id="paymentDetails"
-                    class="payment-details"
-                ></div>
-
-                <div class="payment-buttons">
-
-                    <button
-                        id="paymentReportButton"
-                        class="payment-report"
-                        type="button"
-                    >
-                        Report Payment
-                    </button>
-
-                    <button
-                        id="paymentCheckButton"
-                        class="payment-check"
-                        type="button"
-                    >
-                        Check Status
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="voiceRecording"
-                class="voice-recording"
-            >
-                🔴 Recording... tap Voice again to stop.
-            </div>
-
-
-            <div class="actions">
-
-                <button
-                    id="uploadButton"
-                    class="action-button"
-                    type="button"
-                >
-                    📎 Upload
-                </button>
-
-                <button
-                    id="voiceButton"
-                    class="action-button gold"
-                    type="button"
-                >
-                    🎤 Voice
-                </button>
-
-                <button
-                    id="reviewButton"
-                    class="action-button gold"
-                    type="button"
-                >
-                    ✓ Review
-                </button>
-
-                <button
-                    id="approveButton"
-                    class="action-button gold"
-                    type="button"
-                >
-                    ✓ Approve
-                </button>
-
-                <button
-                    id="customerServiceButton"
-                    class="action-button"
-                    type="button"
-                >
-                    Customer Service
-                </button>
-
-            </div>
-
-
-            <input
-                id="fileInput"
-                type="file"
-            >
-
-
-            <div class="composer">
-
-                <textarea
-                    id="messageInput"
-                    class="message-input"
-                    rows="1"
-                    placeholder="Type your message..."
-                    autocomplete="off"
-                ></textarea>
-
-                <button
-                    id="sendButton"
-                    class="send-button"
-                    type="button"
-                >
-                    SEND
-                </button>
-
-            </div>
-
-
-            <div
-                id="status"
-                class="status"
+                id="paymentDetails"
+                class="payment-details"
             ></div>
 
+            <div class="payment-buttons">
+
+                <button
+                    id="paymentReportButton"
+                    class="payment-report"
+                    type="button"
+                >
+                    Report Payment
+                </button>
+
+                <button
+                    id="paymentCheckButton"
+                    class="payment-check"
+                    type="button"
+                >
+                    Check Status
+                </button>
+
+            </div>
+
         </div>
 
-    </section>
+        <div
+            id="voiceRecording"
+            class="voice-recording"
+        >
+            🔴 Recording... tap Voice again to stop.
+        </div>
 
-</div>
+        <div class="actions">
 
+            <button
+                id="uploadButton"
+                class="action-button"
+                type="button"
+            >
+                📎 Upload
+            </button>
 
-<script>
+            <button
+                id="voiceButton"
+                class="action-button gold"
+                type="button"
+            >
+                🎤 Voice
+            </button>
+
+            <button
+                id="approveButton"
+                class="action-button gold"
+                type="button"
+            >
+                ✓ Review / Approve
+            </button>
+
+            <button
+                id="customerServiceButton"
+                class="action-button"
+                type="button"
+            >
+                Customer Service
+            </button>
+
+        </div>
+
+        <!--
+            Normal device document/file picker.
+
+            No Quick Share code.
+            No custom photo picker.
+            No image-only accept filter.
+
+            The accept list requests common document formats.
+        -->
+        <input
+            id="fileInput"
+            type="file"
+            accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+        >
+
+        <div class="composer">
+
+            <textarea
+                id="messageInput"
+                class="message-input"
+                rows="1"
+                placeholder="Type your message..."
+                autocomplete="off"
+            ></textarea>
+
+            <button
+                id="sendButton"
+                class="send-button"
+                type="button"
+            >
+                SEND
+            </button>
+
+        </div>
+
+        <div
+            id="status"
+            class="status"
+        ></div>
+
+    </div>
+
+</section>
+
+</div><script>
 "use strict";
-
 
 /* ============================================================
    CURRENT FASTAPI APPLICATION
@@ -995,9 +893,6 @@ const uploadButton =
 
 const voiceButton =
     document.getElementById("voiceButton");
-
-const reviewButton =
-    document.getElementById("reviewButton");
 
 const approveButton =
     document.getElementById("approveButton");
@@ -1111,15 +1006,6 @@ let paymentId = null;
 let mediaRecorder = null;
 let recordedChunks = [];
 let recordingStream = null;
-
-
-/* ============================================================
-   FORM STATE
-============================================================ */
-
-let serviceFormCard = null;
-let serviceFormFields = [];
-let formAlreadySubmitted = false;
 
 
 /* ============================================================
@@ -1252,12 +1138,6 @@ function setBusy(value) {
     uploadButton.disabled =
         value;
 
-    voiceButton.disabled =
-        value;
-
-    reviewButton.disabled =
-        value;
-
     approveButton.disabled =
         value;
 
@@ -1289,7 +1169,7 @@ function addMessage(
         (
             sender === "customer"
                 ? "customer"
-                : "service"
+                : "ada"
         );
 
 
@@ -1311,25 +1191,10 @@ function addMessage(
         "message-label";
 
 
-    /*
-        IMPORTANT:
-        No customer-facing Ada name.
-        No "Assistant" label.
-    */
-
     label.textContent =
         sender === "customer"
             ? "You"
-            : "";
-
-
-    if (label.textContent) {
-
-        bubble.appendChild(
-            label
-        );
-
-    }
+            : "Assistant";
 
 
     const content =
@@ -1340,6 +1205,10 @@ function addMessage(
     content.textContent =
         text || "";
 
+
+    bubble.appendChild(
+        label
+    );
 
     bubble.appendChild(
         content
@@ -1356,922 +1225,7 @@ function addMessage(
     );
 
 
-    /*
-        Let the intelligence response determine whether
-        a service-specific information form should appear.
-    */
-
-    if (
-        sender !== "customer" &&
-        text
-    ) {
-
-        detectAndBuildServiceForm(
-            text
-        );
-
-    }
-
-
     scrollToBottom();
-}
-
-
-/* ============================================================
-   SERVICE FORM
-============================================================ */
-
-/*
-    This is deliberately NOT a list of services.
-
-    The selected service is already supplied to /api/chat.
-
-    The intelligence response determines what information
-    is needed. This function simply turns an information-form
-    description from that response into the beautiful form
-    container.
-
-    There is no generic Name / Phone / Email form here.
-*/
-
-function detectAndBuildServiceForm(
-    responseText
-) {
-
-    const text =
-        String(
-            responseText || ""
-        );
-
-    if (
-        formAlreadySubmitted
-    ) {
-        return;
-    }
-
-
-    /*
-        Look for the form section introduced by the
-        intelligence. This is intentionally generic.
-    */
-
-    const lower =
-        text.toLowerCase();
-
-
-    const hasFormLanguage =
-        lower.includes(
-            "information form"
-        ) ||
-        lower.includes(
-            "form"
-        ) &&
-        (
-            lower.includes(
-                "required"
-            ) ||
-            lower.includes(
-                "optional"
-            )
-        );
-
-
-    if (!hasFormLanguage) {
-        return;
-    }
-
-
-    const fields =
-        extractFormFields(
-            text
-        );
-
-
-    if (!fields.length) {
-        return;
-    }
-
-
-    buildServiceForm(
-        fields
-    );
-}
-
-
-/*
-    Extract fields from numbered/bulleted form descriptions.
-
-    Examples understood:
-
-    1. Document title (required)
-    2. Document type (required)
-    3. Formatting style (optional)
-
-    Also understands simple bullet fields.
-
-    "Deadline" is deliberately ignored because it is not
-    a standard field for this business-center workflow.
-*/
-
-function extractFormFields(
-    text
-) {
-
-    const results = [];
-
-    const lines =
-        text.split(
-            /\r?\n/
-        );
-
-
-    for (
-        let i = 0;
-        i < lines.length;
-        i++
-    ) {
-
-        let line =
-            lines[i]
-                .replace(
-                    /\*\*/g,
-                    ""
-                )
-                .trim();
-
-
-        if (!line) {
-            continue;
-        }
-
-
-        /*
-            Ignore headings.
-        */
-
-        if (
-            /information form/i.test(
-                line
-            )
-        ) {
-            continue;
-        }
-
-
-        /*
-            Numbered field.
-        */
-
-        let match =
-            line.match(
-                /^\s*\d+[\.\)]\s+(.+?)\s*$/
-            );
-
-
-        /*
-            Bullet field.
-        */
-
-        if (!match) {
-
-            match =
-                line.match(
-                    /^\s*[-•]\s+(.+?)\s*$/
-                );
-
-        }
-
-
-        if (!match) {
-            continue;
-        }
-
-
-        let fieldText =
-            match[1]
-                .trim();
-
-
-        /*
-            Remove table-like trailing text.
-        */
-
-        fieldText =
-            fieldText
-                .replace(
-                    /\s*\|.*$/,
-                    ""
-                )
-                .trim();
-
-
-        /*
-            Remove deadline completely.
-        */
-
-        if (
-            /\bdeadline\b/i.test(
-                fieldText
-            )
-        ) {
-            continue;
-        }
-
-
-        const required =
-            /\brequired\b/i.test(
-                fieldText
-            );
-
-
-        const optional =
-            /\boptional\b/i.test(
-                fieldText
-            );
-
-
-        fieldText =
-            fieldText
-                .replace(
-                    /\(\s*required\s*\)/ig,
-                    ""
-                )
-                .replace(
-                    /\(\s*optional\s*\)/ig,
-                    ""
-                )
-                .replace(
-                    /\brequired\b/ig,
-                    ""
-                )
-                .replace(
-                    /\boptional\b/ig,
-                    ""
-                )
-                .trim();
-
-
-        /*
-            Separate an example/help explanation.
-        */
-
-        let label =
-            fieldText;
-
-        let help = "";
-
-
-        const helpMatch =
-            fieldText.match(
-                /^(.+?)\s*(?:\((.+)\))$/
-            );
-
-
-        if (helpMatch) {
-
-            label =
-                helpMatch[1]
-                    .trim();
-
-            help =
-                helpMatch[2]
-                    .trim();
-
-        }
-
-
-        /*
-            Remove markdown emphasis.
-        */
-
-        label =
-            label
-                .replace(
-                    /[*_`]/g,
-                    ""
-                )
-                .trim();
-
-
-        help =
-            help
-                .replace(
-                    /[*_`]/g,
-                    ""
-                )
-                .trim();
-
-
-        if (!label) {
-            continue;
-        }
-
-
-        /*
-            Avoid duplicate fields.
-        */
-
-        const duplicate =
-            results.some(
-                item =>
-                    item.label.toLowerCase() ===
-                    label.toLowerCase()
-            );
-
-
-        if (duplicate) {
-            continue;
-        }
-
-
-        results.push(
-            {
-                label,
-                help,
-                required
-            }
-        );
-
-    }
-
-
-    return results;
-}
-
-
-/* ============================================================
-   BUILD SERVICE FORM
-============================================================ */
-
-function buildServiceForm(
-    fields
-) {
-
-    if (
-        serviceFormCard
-    ) {
-
-        serviceFormFields =
-            fields;
-
-        rebuildExistingServiceForm();
-
-        return;
-    }
-
-
-    serviceFormFields =
-        fields;
-
-
-    serviceFormCard =
-        document.createElement(
-            "section"
-        );
-
-    serviceFormCard.className =
-        "service-form-card show";
-
-
-    const header =
-        document.createElement(
-            "div"
-        );
-
-    header.className =
-        "service-form-header";
-
-
-    const title =
-        document.createElement(
-            "h2"
-        );
-
-    title.className =
-        "service-form-title";
-
-    title.textContent =
-        "Your Information";
-
-
-    const description =
-        document.createElement(
-            "div"
-        );
-
-    description.className =
-        "service-form-description";
-
-    description.textContent =
-        "Fill in the information that is most useful for your request. You do not need to complete every box. Only information that is relevant to your request is needed.";
-
-
-    header.appendChild(
-        title
-    );
-
-    header.appendChild(
-        description
-    );
-
-
-    const fieldsContainer =
-        document.createElement(
-            "div"
-        );
-
-    fieldsContainer.className =
-        "service-form-fields";
-
-
-    serviceFormCard.appendChild(
-        header
-    );
-
-    serviceFormCard.appendChild(
-        fieldsContainer
-    );
-
-
-    const footer =
-        document.createElement(
-            "div"
-        );
-
-    footer.className =
-        "service-form-footer";
-
-
-    const submit =
-        document.createElement(
-            "button"
-        );
-
-    submit.type =
-        "button";
-
-    submit.className =
-        "form-submit";
-
-    submit.textContent =
-        "Continue With My Information";
-
-
-    const clear =
-        document.createElement(
-            "button"
-        );
-
-    clear.type =
-        "button";
-
-    clear.className =
-        "form-clear";
-
-    clear.textContent =
-        "Clear";
-
-
-    footer.appendChild(
-        submit
-    );
-
-    footer.appendChild(
-        clear
-    );
-
-
-    serviceFormCard.appendChild(
-        footer
-    );
-
-
-    /*
-        Put the form before the conversation's typing
-        indicator, so it remains part of the conversation.
-    */
-
-    conversationInner.insertBefore(
-        serviceFormCard,
-        typing
-    );
-
-
-    renderFormFields(
-        fieldsContainer
-    );
-
-
-    submit.addEventListener(
-        "click",
-        submitServiceForm
-    );
-
-
-    clear.addEventListener(
-        "click",
-        clearServiceForm
-    );
-
-
-    scrollToBottom();
-}
-
-
-/* ============================================================
-   REBUILD EXISTING FORM
-============================================================ */
-
-function rebuildExistingServiceForm() {
-
-    if (
-        !serviceFormCard
-    ) {
-        return;
-    }
-
-
-    const container =
-        serviceFormCard.querySelector(
-            ".service-form-fields"
-        );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    renderFormFields(
-        container
-    );
-}
-
-
-/* ============================================================
-   RENDER FORM FIELDS
-============================================================ */
-
-function renderFormFields(
-    container
-) {
-
-    container.innerHTML = "";
-
-
-    serviceFormFields.forEach(
-        function(field, index) {
-
-            const wrapper =
-                document.createElement(
-                    "div"
-                );
-
-            wrapper.className =
-                "form-field";
-
-
-            const label =
-                document.createElement(
-                    "label"
-                );
-
-            label.className =
-                "form-field-label";
-
-            label.textContent =
-                field.label;
-
-
-            if (
-                field.required
-            ) {
-
-                const star =
-                    document.createElement(
-                        "span"
-                    );
-
-                star.className =
-                    "required-star";
-
-                star.textContent =
-                    "*";
-
-                label.appendChild(
-                    star
-                );
-
-            }
-
-
-            const lower =
-                field.label.toLowerCase();
-
-
-            let control;
-
-
-            /*
-                Longer instructions get a textarea.
-            */
-
-            if (
-                lower.includes(
-                    "instruction"
-                ) ||
-                lower.includes(
-                    "guideline"
-                ) ||
-                lower.includes(
-                    "description"
-                ) ||
-                lower.includes(
-                    "experience"
-                ) ||
-                lower.includes(
-                    "education"
-                ) ||
-                lower.includes(
-                    "qualification"
-                ) ||
-                lower.includes(
-                    "skill"
-                ) ||
-                lower.includes(
-                    "objective"
-                )
-            ) {
-
-                control =
-                    document.createElement(
-                        "textarea"
-                    );
-
-            } else {
-
-                control =
-                    document.createElement(
-                        "input"
-                    );
-
-                control.type =
-                    "text";
-
-            }
-
-
-            control.className =
-                "form-control";
-
-
-            control.dataset.fieldLabel =
-                field.label;
-
-
-            control.dataset.required =
-                field.required
-                    ? "true"
-                    : "false";
-
-
-            control.placeholder =
-                field.help ||
-                "Enter " +
-                field.label.toLowerCase();
-
-
-            if (
-                field.required
-            ) {
-
-                control.required =
-                    true;
-
-            }
-
-
-            if (
-                field.help
-            ) {
-
-                const help =
-                    document.createElement(
-                        "div"
-                    );
-
-                help.className =
-                    "form-field-help";
-
-                help.textContent =
-                    field.help;
-
-                wrapper.appendChild(
-                    label
-                );
-
-                wrapper.appendChild(
-                    help
-                );
-
-            } else {
-
-                wrapper.appendChild(
-                    label
-                );
-
-            }
-
-
-            wrapper.appendChild(
-                control
-            );
-
-
-            container.appendChild(
-                wrapper
-            );
-
-        }
-    );
-}
-
-
-/* ============================================================
-   FORM CLEAR
-============================================================ */
-
-function clearServiceForm() {
-
-    if (
-        !serviceFormCard
-    ) {
-        return;
-    }
-
-
-    serviceFormCard
-        .querySelectorAll(
-            ".form-control"
-        )
-        .forEach(
-            field => {
-                field.value = "";
-            }
-        );
-
-
-    setStatus(
-        "Form cleared."
-    );
-}
-
-
-/* ============================================================
-   FORM SUBMISSION
-============================================================ */
-
-async function submitServiceForm() {
-
-    if (
-        busy
-    ) {
-        return;
-    }
-
-
-    if (
-        !serviceFormCard
-    ) {
-        return;
-    }
-
-
-    const controls =
-        Array.from(
-            serviceFormCard.querySelectorAll(
-                ".form-control"
-            )
-        );
-
-
-    const information = [];
-
-
-    for (
-        const control of controls
-    ) {
-
-        const value =
-            clean(
-                control.value
-            );
-
-
-        const required =
-            control.dataset.required ===
-            "true";
-
-
-        const label =
-            control.dataset.fieldLabel;
-
-
-        if (
-            required &&
-            !value
-        ) {
-
-            control.focus();
-
-
-            setStatus(
-                "Please complete the required information.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        /*
-            Optional empty fields are not sent.
-            This is important for reducing request size.
-        */
-
-        if (
-            value
-        ) {
-
-            information.push(
-                label +
-                ": " +
-                value
-            );
-
-        }
-
-    }
-
-
-    if (
-        !information.length
-    ) {
-
-        setStatus(
-            "Please provide the information that is relevant to your request.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    const compactFormMessage =
-        "SERVICE INFORMATION FORM\n" +
-        information.join(
-            "\n"
-        );
-
-
-    formAlreadySubmitted =
-        true;
-
-
-    serviceFormCard
-        .classList
-        .remove(
-            "show"
-        );
-
-
-    addMessage(
-        "customer",
-        information.join(
-            "\n"
-        )
-    );
-
-
-    /*
-        Send only the completed fields.
-        Do not resend the entire form or unnecessary
-        empty fields.
-    */
-
-    await sendMessage(
-        compactFormMessage,
-        {
-            event:
-                "service_information_submitted"
-        }
-    );
-
-
-    setStatus(
-        "Your information has been received.",
-        "success"
-    );
 }
 
 
@@ -2287,7 +1241,6 @@ async function sendMessage(
     const text =
         clean(message);
 
-
     if (!text) {
 
         setStatus(
@@ -2298,32 +1251,18 @@ async function sendMessage(
         return null;
     }
 
-
     if (busy) {
         return null;
     }
 
-
     if (!options.silent) {
 
-        /*
-            Do not display form data twice if the caller
-            already displayed it.
-        */
-
-        if (
-            !options.alreadyDisplayed
-        ) {
-
-            addMessage(
-                "customer",
-                text
-            );
-
-        }
+        addMessage(
+            "customer",
+            text
+        );
 
     }
-
 
     setBusy(true);
 
@@ -2413,7 +1352,7 @@ async function sendMessage(
         if (reply) {
 
             addMessage(
-                "service",
+                "assistant",
                 reply
             );
 
@@ -2453,14 +1392,8 @@ async function sendMessage(
         );
 
 
-        /*
-            Show the actual server error in the browser
-            console while keeping customer-facing wording
-            clean.
-        */
-
         addMessage(
-            "service",
+            "assistant",
             "Sorry, I could not complete that step right now. Please try again."
         );
 
@@ -2496,7 +1429,7 @@ async function startAssistant() {
 
     await sendMessage(
 
-        "I have selected this service and I am ready to begin. Please understand the service I selected, introduce the appropriate information form for this service, ask only for information that is genuinely useful, and explain how I should use Upload, Voice, the message box, Review and Approve.",
+        "I have selected this service and I am ready to begin. Please start by understanding what I need and tell me the most appropriate next step.",
 
         {
             silent: true,
@@ -2520,7 +1453,6 @@ async function handleSend() {
             messageInput.value
         );
 
-
     if (!text) {
 
         setStatus(
@@ -2531,11 +1463,9 @@ async function handleSend() {
         return;
     }
 
-
     messageInput.value = "";
 
     autoResize();
-
 
     await sendMessage(
         text
@@ -2604,8 +1534,12 @@ uploadButton.addEventListener(
         }
 
         /*
-            Normal device file picker.
-            No Quick Share interface.
+            This invokes the browser/phone's normal
+            file-selection interface.
+
+            Because fileInput has a document accept list,
+            the picker is requested for documents rather
+            than Photos/Gallery images.
         */
 
         fileInput.click();
@@ -2622,16 +1556,11 @@ fileInput.addEventListener(
             fileInput.files &&
             fileInput.files[0];
 
-
         if (!file) {
             return;
         }
 
-
-        await uploadFile(
-            file
-        );
-
+        await uploadFile(file);
 
         fileInput.value = "";
 
@@ -2639,13 +1568,10 @@ fileInput.addEventListener(
 );
 
 
-async function uploadFile(
-    file
-) {
+async function uploadFile(file) {
 
     const formData =
         new FormData();
-
 
     formData.append(
         "file",
@@ -2685,11 +1611,8 @@ async function uploadFile(
                 API_BASE +
                 "/api/upload",
                 {
-                    method:
-                        "POST",
-
-                    body:
-                        formData
+                    method: "POST",
+                    body: formData
                 }
             );
 
@@ -2721,16 +1644,11 @@ async function uploadFile(
         );
 
 
-        if (
-            data.message
-        ) {
-
-            addMessage(
-                "service",
-                data.message
-            );
-
-        }
+        addMessage(
+            "assistant",
+            data.message ||
+            "Your file has been received and attached to your active request."
+        );
 
 
         setStatus(
@@ -2739,15 +1657,11 @@ async function uploadFile(
         );
 
 
-        /*
-            Compact follow-up message.
-        */
-
         await sendMessage(
 
-            "The file \"" +
+            "I have uploaded a file named \"" +
             file.name +
-            "\" has been uploaded to this service. Please continue with the information already provided and tell me the next step.",
+            "\". Please examine the request context and tell me the next step.",
 
             {
                 event:
@@ -2764,12 +1678,10 @@ async function uploadFile(
             error
         );
 
-
         addMessage(
-            "service",
+            "assistant",
             "Sorry, I could not receive that file right now. Please try again."
         );
-
 
         setStatus(
             error.message ||
@@ -2799,7 +1711,6 @@ voiceButton.addEventListener(
 
             return;
         }
-
 
         await startRecording();
 
@@ -2837,9 +1748,7 @@ async function startRecording() {
 
         recordedChunks = [];
 
-
         let mimeType = "";
-
 
         if (
             MediaRecorder.isTypeSupported(
@@ -2906,9 +1815,7 @@ async function startRecording() {
 
                 }
 
-
                 recordingStream = null;
-
 
                 voiceRecording
                     .classList
@@ -2916,10 +1823,8 @@ async function startRecording() {
                         "show"
                     );
 
-
                 voiceButton.textContent =
                     "🎤 Voice";
-
 
                 await sendVoice();
 
@@ -2928,17 +1833,14 @@ async function startRecording() {
 
         mediaRecorder.start();
 
-
         voiceRecording
             .classList
             .add(
                 "show"
             );
 
-
         voiceButton.textContent =
             "⏹ Stop Voice";
-
 
         setStatus(
             "Recording your voice..."
@@ -2951,7 +1853,6 @@ async function startRecording() {
             "VOICE START ERROR:",
             error
         );
-
 
         setStatus(
             "Could not access your microphone.",
@@ -3044,11 +1945,8 @@ async function sendVoice() {
                 API_BASE +
                 "/api/voice",
                 {
-                    method:
-                        "POST",
-
-                    body:
-                        formData
+                    method: "POST",
+                    body: formData
                 }
             );
 
@@ -3079,16 +1977,11 @@ async function sendVoice() {
         );
 
 
-        if (
-            data.message
-        ) {
-
-            addMessage(
-                "service",
-                data.message
-            );
-
-        }
+        addMessage(
+            "assistant",
+            data.message ||
+            "Your voice recording has been received and attached to your active request."
+        );
 
 
         setStatus(
@@ -3099,7 +1992,7 @@ async function sendVoice() {
 
         await sendMessage(
 
-            "My voice recording has been attached to this service. Please continue with the request.",
+            "I have sent a voice recording with my request. The recording has been attached to this active service. Please continue by telling me what you need next.",
 
             {
                 event:
@@ -3118,7 +2011,7 @@ async function sendVoice() {
 
 
         addMessage(
-            "service",
+            "assistant",
             "Sorry, I could not receive your voice recording right now. Please try again."
         );
 
@@ -3134,34 +2027,6 @@ async function sendVoice() {
 
 
 /* ============================================================
-   REVIEW
-============================================================ */
-
-reviewButton.addEventListener(
-    "click",
-    async function() {
-
-        if (busy) {
-            return;
-        }
-
-
-        await sendMessage(
-
-            "Please show me the current completed work for review. Do not treat this as approval. I only want to review what has been prepared.",
-
-            {
-                event:
-                    "review_requested"
-            }
-
-        );
-
-    }
-);
-
-
-/* ============================================================
    APPROVAL
 ============================================================ */
 
@@ -3173,9 +2038,7 @@ approveButton.addEventListener(
             return;
         }
 
-
         setBusy(true);
-
 
         setStatus(
             "Preparing your approval and billing step..."
@@ -3186,7 +2049,6 @@ approveButton.addEventListener(
 
             const query =
                 new URLSearchParams();
-
 
             query.set(
                 "customer_id",
@@ -3251,7 +2113,7 @@ approveButton.addEventListener(
 
 
             addMessage(
-                "service",
+                "assistant",
                 data.message ||
                 "Your request has been approved and is ready for the payment step."
             );
@@ -3307,7 +2169,7 @@ approveButton.addEventListener(
 
 
             addMessage(
-                "service",
+                "assistant",
                 "Sorry, I could not complete the approval step right now."
             );
 
@@ -3366,7 +2228,6 @@ paymentReportButton.addEventListener(
                         /[^0-9.]/g,
                         ""
                     );
-
 
             amount =
                 Number(
@@ -3459,9 +2320,7 @@ paymentReportButton.addEventListener(
 
             store(
                 "npbc_payment_id",
-                String(
-                    paymentId
-                )
+                String(paymentId)
             );
 
 
@@ -3472,7 +2331,7 @@ paymentReportButton.addEventListener(
 
 
             addMessage(
-                "service",
+                "assistant",
                 data.message ||
                 "Your payment has been reported successfully. Payment verification is now pending."
             );
@@ -3532,7 +2391,6 @@ async function checkPaymentStatus() {
         const query =
             new URLSearchParams();
 
-
         query.set(
             "job_id",
             jobId
@@ -3584,7 +2442,7 @@ async function checkPaymentStatus() {
         ) {
 
             addMessage(
-                "service",
+                "assistant",
                 "Your payment has been confirmed successfully. Your document can now be released when the delivery file is ready."
             );
 
@@ -3605,7 +2463,7 @@ async function checkPaymentStatus() {
         } else {
 
             addMessage(
-                "service",
+                "assistant",
                 "Payment is still pending. Your document will become available after payment has been confirmed."
             );
 
@@ -3689,7 +2547,7 @@ async function checkDownloadReady() {
         ) {
 
             addMessage(
-                "service",
+                "assistant",
                 "Your document is ready for download."
             );
 
@@ -3707,9 +2565,7 @@ async function checkDownloadReady() {
                 );
 
 
-        if (
-            data.message
-        ) {
+        if (data.message) {
 
             setStatus(
                 data.message
@@ -3751,14 +2607,11 @@ function showDownloadButton() {
     button.id =
         "downloadButton";
 
-
     button.className =
         "action-button red";
 
-
     button.type =
         "button";
-
 
     button.textContent =
         "⬇ Download";
@@ -3776,7 +2629,6 @@ function showDownloadButton() {
                 "job_id",
                 jobId
             );
-
 
             query.set(
                 "customer_id",
@@ -3885,7 +2737,7 @@ customerServiceButton.addEventListener(
 
 
             addMessage(
-                "service",
+                "assistant",
                 data.reply ||
                 "Customer Service is available to help."
             );
@@ -3906,7 +2758,7 @@ customerServiceButton.addEventListener(
 
 
             addMessage(
-                "service",
+                "assistant",
                 "Customer Service is available to help. Please try again."
             );
 
@@ -3937,6 +2789,10 @@ function initializeWorkspace() {
     serviceBadge.textContent =
         service;
 
+    /*
+        The first response comes from the real
+        current /api/chat intelligence endpoint.
+    */
 
     startAssistant();
 
@@ -3945,7 +2801,5 @@ function initializeWorkspace() {
 
 initializeWorkspace();
 
-</script>
-
-</body>
+</script></body>
 </html>
