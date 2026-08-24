@@ -8,13 +8,9 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
-    <title>Ada — Naija Pocket Business Center</title>
+    <title>Naija Pocket Business Center</title>
 
     <style>
-        /* =====================================================
-           RESET
-        ===================================================== */
-
         * {
             box-sizing: border-box;
         }
@@ -50,11 +46,6 @@
             cursor: pointer;
         }
 
-
-        /* =====================================================
-           COLOURS
-        ===================================================== */
-
         :root {
             --black: #000000;
             --panel: #111111;
@@ -75,11 +66,6 @@
             --border: rgba(212, 175, 55, 0.30);
         }
 
-
-        /* =====================================================
-           APP
-        ===================================================== */
-
         .app {
             width: 100%;
             height: 100dvh;
@@ -88,16 +74,9 @@
             background: var(--black);
         }
 
-
-        /* =====================================================
-           HEADER
-        ===================================================== */
-
         .header {
             flex: 0 0 auto;
-
             width: 100%;
-
             min-height: 76px;
 
             padding:
@@ -185,11 +164,6 @@
             text-overflow: ellipsis;
         }
 
-
-        /* =====================================================
-           CONVERSATION AREA
-        ===================================================== */
-
         .conversation {
             flex: 1 1 auto;
 
@@ -228,14 +202,8 @@
             gap: 12px;
         }
 
-
-        /* =====================================================
-           MESSAGE BUBBLES
-        ===================================================== */
-
         .message-row {
             width: 100%;
-
             display: flex;
         }
 
@@ -303,11 +271,6 @@
             text-transform: uppercase;
         }
 
-
-        /* =====================================================
-           TYPING INDICATOR
-        ===================================================== */
-
         .typing {
             display: none;
 
@@ -334,11 +297,6 @@
             display: block;
         }
 
-
-        /* =====================================================
-           BOTTOM WORKSPACE
-        ===================================================== */
-
         .bottom {
             flex: 0 0 auto;
 
@@ -362,14 +320,8 @@
         .bottom-inner {
             width: 100%;
             max-width: 850px;
-
             margin: 0 auto;
         }
-
-
-        /* =====================================================
-           ACTION BUTTONS
-        ===================================================== */
 
         .actions {
             display: grid;
@@ -428,9 +380,7 @@
 
         .action-button.red {
             background: var(--red);
-
             color: #ffffff;
-
             border-color: var(--red);
         }
 
@@ -438,16 +388,9 @@
             background: var(--red-hover);
         }
 
-
-        /* =====================================================
-           COMPOSER
-        ===================================================== */
-
         .composer {
             display: flex;
-
             align-items: flex-end;
-
             gap: 7px;
         }
 
@@ -524,19 +467,9 @@
             cursor: not-allowed;
         }
 
-
-        /* =====================================================
-           FILE INPUT
-        ===================================================== */
-
         #fileInput {
             display: none;
         }
-
-
-        /* =====================================================
-           STATUS
-        ===================================================== */
 
         .status {
             min-height: 16px;
@@ -559,11 +492,6 @@
         .status.success {
             color: #7edc9c;
         }
-
-
-        /* =====================================================
-           PAYMENT PANEL
-        ===================================================== */
 
         .payment-panel {
             display: none;
@@ -606,9 +534,7 @@
 
         .payment-buttons {
             display: flex;
-
             gap: 7px;
-
             margin-top: 9px;
         }
 
@@ -622,30 +548,22 @@
             border: none;
 
             font-weight: 800;
-
             font-size: 12px;
         }
 
         .payment-report {
             background: var(--gold);
-
             color: #000000;
         }
 
         .payment-check {
             background: #292929;
-
             color: #ffffff;
 
             border:
                 1px solid
                 rgba(255, 255, 255, 0.15) !important;
         }
-
-
-        /* =====================================================
-           RECORDING STATE
-        ===================================================== */
 
         .voice-recording {
             display: none;
@@ -672,11 +590,6 @@
         .voice-recording.show {
             display: block;
         }
-
-
-        /* =====================================================
-           RESPONSIVE
-        ===================================================== */
 
         @media (max-width: 620px) {
 
@@ -742,15 +655,12 @@
 
             .message-input {
                 min-height: 46px;
-
                 font-size: 14px;
             }
 
             .send-button {
                 width: 64px;
-
                 min-height: 46px;
-
                 font-size: 12px;
             }
         }
@@ -772,30 +682,23 @@
     </style>
 </head>
 
-
 <body>
 
 <div class="app">
-
-
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
 
     <header class="header">
 
         <div class="brand">
 
             <h1 class="brand-title">
-                Ada
+                Naija Pocket Business Center
             </h1>
 
             <div class="brand-subtitle">
-                Naija Pocket Business Center
+                Your Business Center Assistant
             </div>
 
         </div>
-
 
         <div
             id="serviceBadge"
@@ -805,12 +708,6 @@
         </div>
 
     </header>
-
-
-
-    <!-- =====================================================
-         CONVERSATION
-    ====================================================== -->
 
     <main
         id="conversation"
@@ -826,27 +723,16 @@
                 id="typing"
                 class="typing"
             >
-                Ada is working...
+                Working...
             </div>
 
         </div>
 
     </main>
 
-
-
-    <!-- =====================================================
-         BOTTOM WORKSPACE
-    ====================================================== -->
-
     <section class="bottom">
 
         <div class="bottom-inner">
-
-
-            <!-- =============================================
-                 PAYMENT PANEL
-            ============================================== -->
 
             <div
                 id="paymentPanel"
@@ -884,24 +770,12 @@
 
             </div>
 
-
-
-            <!-- =============================================
-                 VOICE STATUS
-            ============================================== -->
-
             <div
                 id="voiceRecording"
                 class="voice-recording"
             >
                 🔴 Recording... tap Voice again to stop.
             </div>
-
-
-
-            <!-- =============================================
-                 ACTIONS
-            ============================================== -->
 
             <div class="actions">
 
@@ -912,8 +786,6 @@
                 >
                     📎 Upload
                 </button>
-
-                <!-- ONE VOICE BUTTON ONLY -->
 
                 <button
                     id="voiceButton"
@@ -941,22 +813,10 @@
 
             </div>
 
-
-
-            <!-- =============================================
-                 HIDDEN FILE INPUT
-            ============================================== -->
-
             <input
                 id="fileInput"
                 type="file"
             >
-
-
-
-            <!-- =============================================
-                 MESSAGE COMPOSER
-            ============================================== -->
 
             <div class="composer">
 
@@ -964,10 +824,9 @@
                     id="messageInput"
                     class="message-input"
                     rows="1"
-                    placeholder="Type your message to Ada..."
+                    placeholder="Type your message..."
                     autocomplete="off"
                 ></textarea>
-
 
                 <button
                     id="sendButton"
@@ -978,7 +837,6 @@
                 </button>
 
             </div>
-
 
             <div
                 id="status"
@@ -991,32 +849,14 @@
 
 </div>
 
-
-
 <script>
 "use strict";
 
-
 /* ============================================================
-   CURRENT ADA API
+   CURRENT FASTAPI APPLICATION
 ============================================================ */
 
-/*
-    This workspace talks directly to the current FastAPI app.
-
-    workspace.html
-          ↓
-    /api/chat
-          ↓
-    ada_api.py
-          ↓
-    AdaResponse
-          ↓
-    Ada intelligence/model
-*/
-
 const API_BASE = "";
-
 
 
 /* ============================================================
@@ -1075,7 +915,6 @@ const paymentCheckButton =
     document.getElementById("paymentCheckButton");
 
 
-
 /* ============================================================
    SERVICE
 ============================================================ */
@@ -1090,7 +929,6 @@ const service =
         params.get("service")
     ) ||
     "Business Center Service";
-
 
 
 /* ============================================================
@@ -1122,11 +960,6 @@ let jobId =
         "npbc_job_id"
     );
 
-
-/*
-    A new workspace should have one stable job identifier.
-*/
-
 if (!jobId) {
 
     jobId =
@@ -1149,12 +982,10 @@ const clientRequestId =
         "request_"
     );
 
-
 store(
     "npbc_client_request_id",
     clientRequestId
 );
-
 
 
 /* ============================================================
@@ -1162,17 +993,12 @@ store(
 ============================================================ */
 
 let busy = false;
-
 let approved = false;
-
 let paymentId = null;
 
 let mediaRecorder = null;
-
 let recordedChunks = [];
-
 let recordingStream = null;
-
 
 
 /* ============================================================
@@ -1235,10 +1061,7 @@ function createId(prefix) {
 }
 
 
-function store(
-    key,
-    value
-) {
+function store(key, value) {
 
     try {
 
@@ -1298,9 +1121,7 @@ function scrollToBottom() {
 }
 
 
-function setBusy(
-    value
-) {
+function setBusy(value) {
 
     busy = value;
 
@@ -1317,12 +1138,9 @@ function setBusy(
         value;
 
     if (!value) {
-
         messageInput.focus();
-
     }
 }
-
 
 
 /* ============================================================
@@ -1366,10 +1184,14 @@ function addMessage(
         "message-label";
 
 
+    /*
+        Customer-facing assistant name removed.
+    */
+
     label.textContent =
         sender === "customer"
             ? "You"
-            : "Ada";
+            : "Assistant";
 
 
     const content =
@@ -1404,9 +1226,8 @@ function addMessage(
 }
 
 
-
 /* ============================================================
-   ADA CHAT
+   CURRENT /api/chat
 ============================================================ */
 
 async function sendMessage(
@@ -1416,7 +1237,6 @@ async function sendMessage(
 
     const text =
         clean(message);
-
 
     if (!text) {
 
@@ -1428,15 +1248,11 @@ async function sendMessage(
         return null;
     }
 
-
     if (busy) {
         return null;
     }
 
-
-    if (
-        !options.silent
-    ) {
+    if (!options.silent) {
 
         addMessage(
             "customer",
@@ -1445,10 +1261,7 @@ async function sendMessage(
 
     }
 
-
-    setBusy(
-        true
-    );
+    setBusy(true);
 
     typing.classList.add(
         "show"
@@ -1521,10 +1334,7 @@ async function sendMessage(
                 data.reply ||
                 data.message ||
                 data.error ||
-                (
-                    "Ada could not process "
-                    + "your request."
-                )
+                "The request could not be processed."
             );
 
         }
@@ -1539,7 +1349,7 @@ async function sendMessage(
         if (reply) {
 
             addMessage(
-                "ada",
+                "assistant",
                 reply
             );
 
@@ -1563,7 +1373,7 @@ async function sendMessage(
 
 
         setStatus(
-            "Ada is ready for your next instruction.",
+            "Ready for your next instruction.",
             "success"
         );
 
@@ -1574,30 +1384,19 @@ async function sendMessage(
     } catch (error) {
 
         console.error(
-            "ADA CHAT ERROR:",
+            "CHAT ERROR:",
             error
         );
 
 
-        if (!options.silent) {
-
-            addMessage(
-                "ada",
-                "Sorry, I could not complete that step right now. Please try again."
-            );
-
-        } else {
-
-            addMessage(
-                "ada",
-                "Sorry, I could not start your request right now. Please try again."
-            );
-
-        }
+        addMessage(
+            "assistant",
+            "Sorry, I could not complete that step right now. Please try again."
+        );
 
 
         setStatus(
-            "Ada connection problem. Please try again.",
+            "Connection problem. Please try again.",
             "error"
         );
 
@@ -1611,9 +1410,7 @@ async function sendMessage(
             "show"
         );
 
-        setBusy(
-            false
-        );
+        setBusy(false);
 
         scrollToBottom();
 
@@ -1621,40 +1418,29 @@ async function sendMessage(
 }
 
 
-
 /* ============================================================
-   INITIAL ADA INTELLIGENCE
+   INITIAL INTELLIGENCE ACTIVATION
 ============================================================ */
 
-async function startAda() {
-
-    /*
-        This is deliberately NOT a hard-coded Ada reply.
-
-        It sends the service into the real /api/chat endpoint,
-        which sends it to AdaResponse.
-    */
+async function startAssistant() {
 
     await sendMessage(
 
-        "I have selected this service and I am ready to begin. Please start by telling me what information or materials you need from me.",
+        "I have selected this service and I am ready to begin. Please start by understanding what I need and tell me the most appropriate next step.",
 
         {
-            silent:
-                true,
+            silent: true,
 
             event:
                 "start_job"
-
         }
 
     );
 }
 
 
-
 /* ============================================================
-   SEND BUTTON
+   SEND
 ============================================================ */
 
 async function handleSend() {
@@ -1663,7 +1449,6 @@ async function handleSend() {
         clean(
             messageInput.value
         );
-
 
     if (!text) {
 
@@ -1675,11 +1460,9 @@ async function handleSend() {
         return;
     }
 
-
     messageInput.value = "";
 
     autoResize();
-
 
     await sendMessage(
         text
@@ -1692,11 +1475,6 @@ sendButton.addEventListener(
     handleSend
 );
 
-
-
-/* ============================================================
-   ENTER TO SEND
-============================================================ */
 
 messageInput.addEventListener(
     "keydown",
@@ -1717,9 +1495,8 @@ messageInput.addEventListener(
 );
 
 
-
 /* ============================================================
-   AUTO RESIZE MESSAGE BOX
+   AUTO RESIZE
 ============================================================ */
 
 function autoResize() {
@@ -1739,7 +1516,6 @@ messageInput.addEventListener(
     "input",
     autoResize
 );
-
 
 
 /* ============================================================
@@ -1768,31 +1544,22 @@ fileInput.addEventListener(
             fileInput.files &&
             fileInput.files[0];
 
-
         if (!file) {
             return;
         }
 
+        await uploadFile(file);
 
-        await uploadFile(
-            file
-        );
-
-
-        fileInput.value =
-            "";
+        fileInput.value = "";
 
     }
 );
 
 
-async function uploadFile(
-    file
-) {
+async function uploadFile(file) {
 
     const formData =
         new FormData();
-
 
     formData.append(
         "file",
@@ -1832,13 +1599,8 @@ async function uploadFile(
                 API_BASE +
                 "/api/upload",
                 {
-
-                    method:
-                        "POST",
-
-                    body:
-                        formData
-
+                    method: "POST",
+                    body: formData
                 }
             );
 
@@ -1871,7 +1633,7 @@ async function uploadFile(
 
 
         addMessage(
-            "ada",
+            "assistant",
             data.message ||
             "Your file has been received and attached to your active request."
         );
@@ -1882,10 +1644,6 @@ async function uploadFile(
             "success"
         );
 
-
-        /*
-            Let actual Ada decide what to do next.
-        */
 
         await sendMessage(
 
@@ -1908,12 +1666,10 @@ async function uploadFile(
             error
         );
 
-
         addMessage(
-            "ada",
+            "assistant",
             "Sorry, I could not receive that file right now. Please try again."
         );
-
 
         setStatus(
             error.message ||
@@ -1925,21 +1681,9 @@ async function uploadFile(
 }
 
 
-
 /* ============================================================
    VOICE
 ============================================================ */
-
-/*
-    THERE IS ONLY ONE VOICE BUTTON.
-
-    It uses the current FastAPI endpoint:
-
-        POST /api/voice
-
-    It does NOT use phone_bridge.py.
-    It does NOT use the old AdaController.
-*/
 
 voiceButton.addEventListener(
     "click",
@@ -1955,7 +1699,6 @@ voiceButton.addEventListener(
 
             return;
         }
-
 
         await startRecording();
 
@@ -1991,13 +1734,9 @@ async function startRecording() {
                 );
 
 
-        recordedChunks =
-            [];
+        recordedChunks = [];
 
-
-        let mimeType =
-            "";
-
+        let mimeType = "";
 
         if (
             MediaRecorder.isTypeSupported(
@@ -2053,9 +1792,7 @@ async function startRecording() {
         mediaRecorder.onstop =
             async function() {
 
-                if (
-                    recordingStream
-                ) {
+                if (recordingStream) {
 
                     recordingStream
                         .getTracks()
@@ -2066,10 +1803,7 @@ async function startRecording() {
 
                 }
 
-
-                recordingStream =
-                    null;
-
+                recordingStream = null;
 
                 voiceRecording
                     .classList
@@ -2077,10 +1811,8 @@ async function startRecording() {
                         "show"
                     );
 
-
                 voiceButton.textContent =
                     "🎤 Voice";
-
 
                 await sendVoice();
 
@@ -2089,17 +1821,14 @@ async function startRecording() {
 
         mediaRecorder.start();
 
-
         voiceRecording
             .classList
             .add(
                 "show"
             );
 
-
         voiceButton.textContent =
             "⏹ Stop Voice";
-
 
         setStatus(
             "Recording your voice..."
@@ -2112,7 +1841,6 @@ async function startRecording() {
             "VOICE START ERROR:",
             error
         );
-
 
         setStatus(
             "Could not access your microphone.",
@@ -2194,7 +1922,7 @@ async function sendVoice() {
 
 
     setStatus(
-        "Sending your voice recording to Ada..."
+        "Sending your voice recording..."
     );
 
 
@@ -2205,13 +1933,8 @@ async function sendVoice() {
                 API_BASE +
                 "/api/voice",
                 {
-
-                    method:
-                        "POST",
-
-                    body:
-                        formData
-
+                    method: "POST",
+                    body: formData
                 }
             );
 
@@ -2243,7 +1966,7 @@ async function sendVoice() {
 
 
         addMessage(
-            "ada",
+            "assistant",
             data.message ||
             "Your voice recording has been received and attached to your active request."
         );
@@ -2254,19 +1977,6 @@ async function sendVoice() {
             "success"
         );
 
-
-        /*
-            Current truth:
-            /api/voice stores the recording.
-
-            It does not itself transcribe the recording.
-
-            Therefore we do NOT falsely claim that Ada has
-            already understood the audio.
-
-            We notify Ada through the normal intelligence
-            channel that a voice recording is now attached.
-        */
 
         await sendMessage(
 
@@ -2289,7 +1999,7 @@ async function sendVoice() {
 
 
         addMessage(
-            "ada",
+            "assistant",
             "Sorry, I could not receive your voice recording right now. Please try again."
         );
 
@@ -2304,9 +2014,8 @@ async function sendVoice() {
 }
 
 
-
 /* ============================================================
-   APPROVE
+   APPROVAL
 ============================================================ */
 
 approveButton.addEventListener(
@@ -2317,11 +2026,7 @@ approveButton.addEventListener(
             return;
         }
 
-
-        setBusy(
-            true
-        );
-
+        setBusy(true);
 
         setStatus(
             "Preparing your approval and billing step..."
@@ -2332,7 +2037,6 @@ approveButton.addEventListener(
 
             const query =
                 new URLSearchParams();
-
 
             query.set(
                 "customer_id",
@@ -2361,10 +2065,8 @@ approveButton.addEventListener(
                     "/api/approve?" +
                     query.toString(),
                     {
-
                         method:
                             "POST"
-
                     }
                 );
 
@@ -2389,8 +2091,7 @@ approveButton.addEventListener(
             }
 
 
-            approved =
-                true;
+            approved = true;
 
 
             addMessage(
@@ -2400,7 +2101,7 @@ approveButton.addEventListener(
 
 
             addMessage(
-                "ada",
+                "assistant",
                 data.message ||
                 "Your request has been approved and is ready for the payment step."
             );
@@ -2456,7 +2157,7 @@ approveButton.addEventListener(
 
 
             addMessage(
-                "ada",
+                "assistant",
                 "Sorry, I could not complete the approval step right now."
             );
 
@@ -2470,15 +2171,12 @@ approveButton.addEventListener(
 
         } finally {
 
-            setBusy(
-                false
-            );
+            setBusy(false);
 
         }
 
     }
 );
-
 
 
 /* ============================================================
@@ -2610,9 +2308,7 @@ paymentReportButton.addEventListener(
 
             store(
                 "npbc_payment_id",
-                String(
-                    paymentId
-                )
+                String(paymentId)
             );
 
 
@@ -2623,7 +2319,7 @@ paymentReportButton.addEventListener(
 
 
             addMessage(
-                "ada",
+                "assistant",
                 data.message ||
                 "Your payment has been reported successfully. Payment verification is now pending."
             );
@@ -2661,7 +2357,6 @@ paymentReportButton.addEventListener(
 );
 
 
-
 /* ============================================================
    PAYMENT STATUS
 ============================================================ */
@@ -2683,7 +2378,6 @@ async function checkPaymentStatus() {
 
         const query =
             new URLSearchParams();
-
 
         query.set(
             "job_id",
@@ -2736,7 +2430,7 @@ async function checkPaymentStatus() {
         ) {
 
             addMessage(
-                "ada",
+                "assistant",
                 "Your payment has been confirmed successfully. Your document can now be released when the delivery file is ready."
             );
 
@@ -2751,28 +2445,19 @@ async function checkPaymentStatus() {
                 "\nStatus: Paid";
 
 
-            /*
-                The current backend protects /api/download
-                until both payment and delivery are ready.
-
-                We therefore check the actual download endpoint
-                rather than assuming a document exists.
-            */
-
             await checkDownloadReady();
 
 
         } else {
 
             addMessage(
-                "ada",
+                "assistant",
                 "Payment is still pending. Your document will become available after payment has been confirmed."
             );
 
 
             setStatus(
-                "Payment is still pending.",
-                ""
+                "Payment is still pending."
             );
 
         }
@@ -2796,9 +2481,8 @@ async function checkPaymentStatus() {
 }
 
 
-
 /* ============================================================
-   DOWNLOAD CHECK
+   DOWNLOAD
 ============================================================ */
 
 async function checkDownloadReady() {
@@ -2840,8 +2524,7 @@ async function checkDownloadReady() {
         const contentType =
             response.headers.get(
                 "content-type"
-            ) ||
-            "";
+            ) || "";
 
 
         if (
@@ -2852,7 +2535,7 @@ async function checkDownloadReady() {
         ) {
 
             addMessage(
-                "ada",
+                "assistant",
                 "Your document is ready for download."
             );
 
@@ -2860,7 +2543,6 @@ async function checkDownloadReady() {
             showDownloadButton();
 
             return;
-
         }
 
 
@@ -2891,11 +2573,6 @@ async function checkDownloadReady() {
 }
 
 
-
-/* ============================================================
-   DOWNLOAD BUTTON
-============================================================ */
-
 function showDownloadButton() {
 
     const existing =
@@ -2918,14 +2595,11 @@ function showDownloadButton() {
     button.id =
         "downloadButton";
 
-
     button.className =
         "action-button red";
 
-
     button.type =
         "button";
-
 
     button.textContent =
         "⬇ Download";
@@ -2943,7 +2617,6 @@ function showDownloadButton() {
                 "job_id",
                 jobId
             );
-
 
             query.set(
                 "customer_id",
@@ -2969,7 +2642,6 @@ function showDownloadButton() {
 }
 
 
-
 /* ============================================================
    CUSTOMER SERVICE
 ============================================================ */
@@ -2983,9 +2655,7 @@ customerServiceButton.addEventListener(
         }
 
 
-        setBusy(
-            true
-        );
+        setBusy(true);
 
 
         setStatus(
@@ -3021,10 +2691,8 @@ customerServiceButton.addEventListener(
                     "/api/customer-service?" +
                     query.toString(),
                     {
-
                         method:
                             "POST"
-
                     }
                 );
 
@@ -3057,7 +2725,7 @@ customerServiceButton.addEventListener(
 
 
             addMessage(
-                "ada",
+                "assistant",
                 data.reply ||
                 "Customer Service is available to help."
             );
@@ -3078,7 +2746,7 @@ customerServiceButton.addEventListener(
 
 
             addMessage(
-                "ada",
+                "assistant",
                 "Customer Service is available to help. Please try again."
             );
 
@@ -3092,9 +2760,7 @@ customerServiceButton.addEventListener(
 
         } finally {
 
-            setBusy(
-                false
-            );
+            setBusy(false);
 
         }
 
@@ -3102,9 +2768,8 @@ customerServiceButton.addEventListener(
 );
 
 
-
 /* ============================================================
-   PAGE INITIALIZATION
+   INITIALIZATION
 ============================================================ */
 
 function initializeWorkspace() {
@@ -3112,15 +2777,12 @@ function initializeWorkspace() {
     serviceBadge.textContent =
         service;
 
-
     /*
-        Do not add a fake welcome message here.
-
-        The first Ada message must come from the actual
-        intelligence endpoint.
+        The first response comes from the real
+        current /api/chat intelligence endpoint.
     */
 
-    startAda();
+    startAssistant();
 
 }
 
