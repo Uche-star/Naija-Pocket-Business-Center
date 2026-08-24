@@ -597,6 +597,37 @@
             cursor: not-allowed;
         }
 
+        /*
+         * CHOOSE ANOTHER SERVICE
+         * This is the only new workspace control.
+         * Black background with white lettering.
+         */
+        .choose-service-button {
+            width: 100%;
+            min-height: 42px;
+            margin-bottom: 8px;
+            padding: 8px 10px;
+            border-radius: 9px;
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            font-size: 11px;
+            font-weight: 850;
+        }
+
+        .choose-service-button:hover {
+            border-color: rgba(255, 255, 255, 0.30);
+        }
+
+        .choose-service-button:active {
+            transform: scale(0.99);
+        }
+
+        .choose-service-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         .composer {
             display: flex;
             align-items: flex-end;
@@ -739,6 +770,10 @@
                 font-size: 9px;
             }
 
+            .choose-service-button {
+                font-size: 10px;
+            }
+
             .message-input {
                 font-size: 13px;
             }
@@ -760,6 +795,10 @@
 
             .tool-button {
                 font-size: 8px;
+            }
+
+            .choose-service-button {
+                font-size: 9px;
             }
         }
     </style>
@@ -1051,6 +1090,15 @@
             </div>
 
 
+            <button
+                id="chooseServiceButton"
+                class="choose-service-button"
+                type="button"
+            >
+                Choose Another Service
+            </button>
+
+
             <input
                 id="fileInput"
                 type="file"
@@ -1162,6 +1210,11 @@ const voiceButton =
 const customerServiceButton =
     document.getElementById(
         "customerServiceButton"
+    );
+
+const chooseServiceButton =
+    document.getElementById(
+        "chooseServiceButton"
     );
 
 const fileInput =
@@ -1387,6 +1440,9 @@ function setBusy(value) {
         value;
 
     customerServiceButton.disabled =
+        value;
+
+    chooseServiceButton.disabled =
         value;
 
     applyCorrectionsButton.disabled =
@@ -1931,12 +1987,6 @@ async function loadServiceGuidance() {
             data
         );
 
-
-        /*
-         * Do not display a post-guidance status message here.
-         * The information block itself is the customer-facing
-         * guidance. The status area remains empty.
-         */
 
         setStatus(
             "",
@@ -3934,6 +3984,30 @@ customerServiceButton.addEventListener(
             setBusy(false);
 
         }
+
+    }
+);
+
+
+/*
+ * CHOOSE ANOTHER SERVICE
+ *
+ * This sends the customer directly back to the
+ * service-selection page instead of the welcome page.
+ *
+ * A fresh service selection will then open a new
+ * workspace URL with the newly selected service.
+ */
+chooseServiceButton.addEventListener(
+    "click",
+    function() {
+
+        if (busy) {
+            return;
+        }
+
+        window.location.href =
+            "conversation.html";
 
     }
 );
