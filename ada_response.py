@@ -66,17 +66,6 @@ API_KEY = (
 
 
 # ============================================================
-# TOKEN REQUEST LIMITS
-# ============================================================
-# These limits only control the amount of conversation/context
-# sent to Groq. They do not change the service workflow.
-
-MAX_HISTORY_MESSAGES = 2
-MAX_SYSTEM_CONTEXT_CHARS = 24000
-MAX_OUTPUT_TOKENS = 600
-
-
-# ============================================================
 # CLIENT
 # ============================================================
 
@@ -144,9 +133,11 @@ class AdaResponse:
             dict[str, str]
         ] = []
 
-        self.max_history_messages = (
-            MAX_HISTORY_MESSAGES
-        )
+        # TOKEN CONTROL ONLY:
+        # Keep a short recent conversation so the complete
+        # intelligence prompt remains within the provider's
+        # current request limit.
+        self.max_history_messages = 2
 
     # ========================================================
     # SERVICE
@@ -776,37 +767,8 @@ instruction.
                 "role": "system",
                 "content": system_prompt,
             },
-            *self.history[
-                -MAX_HISTORY_MESSAGES:
-            ],
+            *self.history,
         ]
-
-    # ========================================================
-    # LIMIT SYSTEM CONTEXT
-    # ========================================================
-
-    def limit_system_context(
-        self,
-        system_prompt: str,
-    ) -> str:
-
-        if len(system_prompt) <= (
-            MAX_SYSTEM_CONTEXT_CHARS
-        ):
-
-            return system_prompt
-
-        print(
-            "TOKEN CONTROL: system/context prompt "
-            f"reduced from {len(system_prompt)} "
-            f"to {MAX_SYSTEM_CONTEXT_CHARS} characters."
-        )
-
-        return (
-            system_prompt[
-                -MAX_SYSTEM_CONTEXT_CHARS:
-            ]
-        )
 
     # ========================================================
     # RESPOND
@@ -861,12 +823,6 @@ instruction.
             )
         )
 
-        system_prompt = (
-            self.limit_system_context(
-                system_prompt
-            )
-        )
-
         messages = (
             self.build_messages(
                 system_prompt
@@ -899,7 +855,12 @@ instruction.
                     model=MODEL,
                     messages=messages,
                     temperature=0.3,
-                    max_tokens=MAX_OUTPUT_TOKENS,
+
+                    # TOKEN CONTROL ONLY:
+                    # Keep the generated response compact so
+                    # the complete request stays below the
+                    # provider's current TPM limit.
+                    max_tokens=800,
                 )
             )
 
@@ -953,9 +914,8 @@ instruction.
             traceback.print_exc()
 
             return (
-                f"ADA RESPONSE ERROR: "
-                f"{type(error).__name__}: "
-                f"{str(error)}"
+                "Sorry, I could not process your request "
+                "right now. Please try again in a moment."
             )
 
 
