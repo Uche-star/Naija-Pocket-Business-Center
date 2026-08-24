@@ -1,706 +1,1039 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
-    <title>Naija Pocket Business Center</title><style>
-    * {
-        box-sizing: border-box;
-    }
 
-    html,
-    body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background: #000;
-        color: #fff;
-        font-family: Inter, Arial, sans-serif;
-    }
+    <title>Ada — Naija Pocket Business Center</title>
 
-    body {
-        display: flex;
-        flex-direction: column;
-    }
+    <style>
+        /* =====================================================
+           RESET
+        ===================================================== */
 
-    .header {
-        flex: 0 0 auto;
-        background: #000;
-        border-bottom: 1px solid #292929;
-        padding:
-            max(12px, env(safe-area-inset-top))
-            16px
-            12px
-            16px;
-        text-align: center;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    .brand {
-        font-family: Montserrat, Arial, sans-serif;
-        font-size: 20px;
-        font-weight: 800;
-        color: #d4af37;
-        line-height: 1.2;
-    }
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
 
-    .service-title {
-        margin-top: 5px;
-        font-size: 15px;
-        font-weight: 700;
-        color: #fff;
-    }
+        body {
+            background: #000000;
+            color: #ffffff;
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+        }
 
-    .status-line {
-        margin-top: 4px;
-        font-size: 12px;
-        color: #a9a9a9;
-    }
+        button,
+        input,
+        textarea {
+            font: inherit;
+        }
 
-    .workspace {
-        flex: 1 1 auto;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        background: #000;
-    }
+        button {
+            cursor: pointer;
+        }
 
-    .conversation {
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow-y: auto;
-        overflow-x: hidden;
-        padding: 14px 12px 10px;
-        scroll-behavior: smooth;
-    }
 
-    .conversation::-webkit-scrollbar {
-        width: 5px;
-    }
+        /* =====================================================
+           COLOURS
+        ===================================================== */
 
-    .conversation::-webkit-scrollbar-thumb {
-        background: #3b3b3b;
-        border-radius: 10px;
-    }
+        :root {
+            --black: #000000;
+            --panel: #111111;
+            --panel-2: #181818;
+            --panel-3: #222222;
 
-    .message {
-        width: 100%;
-        display: flex;
-        margin-bottom: 10px;
-    }
+            --gold: #d4af37;
+            --gold-light: #f0d36a;
 
-    .message.customer {
-        justify-content: flex-end;
-    }
+            --white: #ffffff;
+            --muted: #bdbdbd;
 
-    .message.assistant {
-        justify-content: flex-start;
-    }
+            --red: #b30000;
+            --red-hover: #d00000;
 
-    .bubble {
-        max-width: 88%;
-        padding: 11px 13px;
-        border-radius: 13px;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        overflow-wrap: anywhere;
-        font-size: 15px;
-        line-height: 1.48;
-    }
+            --green: #167a3d;
 
-    .assistant .bubble {
-        background: #202020;
-        color: #fff;
-        border: 1px solid #303030;
-        border-bottom-left-radius: 4px;
-    }
+            --border: rgba(212, 175, 55, 0.30);
+        }
 
-    .customer .bubble {
-        background: #333;
-        color: #fff;
-        border-bottom-right-radius: 4px;
-    }
 
-    .diagnostic-message {
-        width: 100%;
-        margin: 8px 0 12px;
-        padding: 12px;
-        background: #241010;
-        border: 1px solid #8e3030;
-        border-radius: 10px;
-        color: #fff;
-        font-family: Consolas, monospace;
-        font-size: 12px;
-        line-height: 1.45;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-    }
+        /* =====================================================
+           APP
+        ===================================================== */
 
-    .diagnostic-title {
-        color: #ff7373;
-        font-family: Inter, Arial, sans-serif;
-        font-size: 13px;
-        font-weight: 800;
-        margin-bottom: 8px;
-    }
+        .app {
+            width: 100%;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            background: var(--black);
+        }
 
-    .system-message {
-        text-align: center;
-        color: #888;
-        font-size: 12px;
-        padding: 7px 15px;
-    }
 
-    .attachment-area {
-        flex: 0 0 auto;
-        padding: 0 10px 7px;
-        background: #000;
-    }
+        /* =====================================================
+           HEADER
+        ===================================================== */
 
-    .attachment-card {
-        display: none;
-        background: #181818;
-        border: 1px solid #303030;
-        border-radius: 10px;
-        padding: 9px 10px;
-    }
+        .header {
+            flex: 0 0 auto;
 
-    .attachment-card.visible {
-        display: block;
-    }
+            width: 100%;
 
-    .attachment-name {
-        font-size: 13px;
-        font-weight: 700;
-        color: #fff;
-        word-break: break-word;
-    }
+            min-height: 76px;
 
-    .attachment-status {
-        margin-top: 3px;
-        font-size: 12px;
-        color: #aaa;
-    }
+            padding:
+                12px
+                16px
+                10px
+                16px;
 
-    .input-area {
-        flex: 0 0 auto;
-        background: #000;
-        border-top: 1px solid #292929;
-        padding: 8px 9px;
-    }
+            background: #050505;
 
-    .input-row {
-        display: flex;
-        gap: 7px;
-        align-items: flex-end;
-    }
+            border-bottom:
+                1px solid
+                var(--border);
 
-    .message-input {
-        flex: 1;
-        min-width: 0;
-        min-height: 43px;
-        max-height: 110px;
-        resize: none;
-        border: 1px solid #363636;
-        border-radius: 11px;
-        background: #181818;
-        color: #fff;
-        padding: 11px 12px;
-        font-family: Inter, Arial, sans-serif;
-        font-size: 15px;
-        outline: none;
-    }
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
 
-    .message-input:focus {
-        border-color: #555;
-    }
+            gap: 12px;
 
-    .send-button {
-        flex: 0 0 auto;
-        min-height: 43px;
-        border: 0;
-        border-radius: 11px;
-        padding: 0 16px;
-        background: #d4af37;
-        color: #000;
-        font-size: 14px;
-        font-weight: 800;
-        cursor: pointer;
-    }
+            position: relative;
+            z-index: 20;
+        }
 
-    .send-button:disabled {
-        opacity: .5;
-    }
-
-    .actions {
-        flex: 0 0 auto;
-        background: #000;
-        border-top: 1px solid #292929;
-        padding: 8px 9px;
-        padding-bottom: max(8px, env(safe-area-inset-bottom));
-    }
-
-    .action-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 6px;
-    }
-
-    .action-button {
-        min-height: 40px;
-        border: 1px solid #3a3a3a;
-        border-radius: 9px;
-        background: #111;
-        color: #fff;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        padding: 6px 4px;
-    }
-
-    .action-button:active {
-        background: #262626;
-    }
-
-    .action-button:disabled {
-        opacity: .45;
-    }
-
-    .back-button {
-        background: #9b1c1c;
-        border-color: #b52a2a;
-    }
-
-    .hidden-input {
-        display: none;
-    }
-
-    .voice-panel {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        inset: 0;
-        background: rgba(0, 0, 0, .92);
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .voice-panel.visible {
-        display: flex;
-    }
-
-    .voice-box {
-        width: 100%;
-        max-width: 420px;
-        background: #181818;
-        border: 1px solid #3a3a3a;
-        border-radius: 16px;
-        padding: 20px;
-        text-align: center;
-    }
-
-    .voice-title {
-        color: #d4af37;
-        font-size: 20px;
-        font-weight: 800;
-        margin-bottom: 8px;
-    }
-
-    .voice-status {
-        color: #bbb;
-        font-size: 14px;
-        line-height: 1.4;
-        min-height: 42px;
-        margin-bottom: 15px;
-    }
-
-    .voice-buttons {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-
-    .voice-button {
-        min-height: 44px;
-        border: 1px solid #3c3c3c;
-        border-radius: 10px;
-        background: #101010;
-        color: #fff;
-        font-weight: 700;
-    }
-
-    .voice-button.recording {
-        background: #8e1b1b;
-    }
-
-    .voice-button.send {
-        background: #d4af37;
-        color: #000;
-    }
-
-    .voice-close {
-        width: 100%;
-        margin-top: 9px;
-        min-height: 42px;
-        border: 0;
-        border-radius: 10px;
-        background: #333;
-        color: #fff;
-        font-weight: 700;
-    }
-
-    .audio-preview {
-        width: 100%;
-        margin: 8px 0 12px;
-        display: none;
-    }
-
-    @media (max-width: 390px) {
         .brand {
-            font-size: 18px;
+            min-width: 0;
         }
 
-        .service-title {
-            font-size: 14px;
+        .brand-title {
+            margin: 0;
+
+            color: var(--gold);
+
+            font-family:
+                Montserrat,
+                Inter,
+                Arial,
+                sans-serif;
+
+            font-size: clamp(18px, 4vw, 25px);
+
+            font-weight: 800;
+
+            line-height: 1.1;
         }
 
-        .bubble {
-            max-width: 92%;
-            font-size: 14px;
+        .brand-subtitle {
+            margin-top: 5px;
+
+            color: #dddddd;
+
+            font-size: 12px;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .action-grid {
-            gap: 5px;
+        .service-badge {
+            flex: 0 0 auto;
+
+            max-width: 48%;
+
+            padding:
+                8px
+                11px;
+
+            background: #171717;
+
+            border:
+                1px solid
+                rgba(212, 175, 55, 0.55);
+
+            border-radius: 999px;
+
+            color: var(--gold-light);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            text-align: center;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        /* =====================================================
+           CONVERSATION AREA
+        ===================================================== */
+
+        .conversation {
+            flex: 1 1 auto;
+
+            min-height: 0;
+
+            width: 100%;
+
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            padding:
+                16px
+                12px
+                18px;
+
+            scroll-behavior: smooth;
+
+            background:
+                radial-gradient(
+                    circle at top,
+                    #151515 0%,
+                    #050505 38%,
+                    #000000 100%
+                );
+        }
+
+        .conversation-inner {
+            width: 100%;
+            max-width: 850px;
+
+            margin: 0 auto;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 12px;
+        }
+
+
+        /* =====================================================
+           MESSAGE BUBBLES
+        ===================================================== */
+
+        .message-row {
+            width: 100%;
+
+            display: flex;
+        }
+
+        .message-row.ada {
+            justify-content: flex-start;
+        }
+
+        .message-row.customer {
+            justify-content: flex-end;
+        }
+
+        .message {
+            max-width: min(86%, 680px);
+
+            padding:
+                12px
+                14px;
+
+            border-radius: 15px;
+
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+
+            line-height: 1.52;
+
+            font-size: 15px;
+        }
+
+        .message-row.ada .message {
+            background: #171717;
+
+            color: #ffffff;
+
+            border:
+                1px solid
+                rgba(212, 175, 55, 0.28);
+
+            border-top-left-radius: 4px;
+        }
+
+        .message-row.customer .message {
+            background: #2b2b2b;
+
+            color: #ffffff;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.12);
+
+            border-top-right-radius: 4px;
+        }
+
+        .message-label {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: var(--gold);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            letter-spacing: 0.4px;
+
+            text-transform: uppercase;
+        }
+
+
+        /* =====================================================
+           TYPING INDICATOR
+        ===================================================== */
+
+        .typing {
+            display: none;
+
+            width: fit-content;
+
+            padding:
+                10px
+                14px;
+
+            background: #171717;
+
+            border:
+                1px solid
+                rgba(212, 175, 55, 0.25);
+
+            border-radius: 15px;
+
+            color: var(--gold);
+
+            font-size: 13px;
+        }
+
+        .typing.show {
+            display: block;
+        }
+
+
+        /* =====================================================
+           BOTTOM WORKSPACE
+        ===================================================== */
+
+        .bottom {
+            flex: 0 0 auto;
+
+            width: 100%;
+
+            background: #090909;
+
+            border-top:
+                1px solid
+                var(--border);
+
+            padding:
+                8px
+                10px
+                calc(8px + env(safe-area-inset-bottom));
+
+            position: relative;
+            z-index: 20;
+        }
+
+        .bottom-inner {
+            width: 100%;
+            max-width: 850px;
+
+            margin: 0 auto;
+        }
+
+
+        /* =====================================================
+           ACTION BUTTONS
+        ===================================================== */
+
+        .actions {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 7px;
+
+            margin-bottom: 8px;
         }
 
         .action-button {
-            font-size: 11px;
-            min-height: 38px;
+            min-height: 39px;
+
+            padding:
+                8px
+                6px;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.15);
+
+            border-radius: 8px;
+
+            background: #181818;
+
+            color: #ffffff;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            transition:
+                background 0.15s ease,
+                border-color 0.15s ease,
+                transform 0.15s ease;
+        }
+
+        .action-button:hover {
+            background: #252525;
+
+            border-color:
+                rgba(212, 175, 55, 0.55);
+        }
+
+        .action-button:active {
+            transform: scale(0.98);
+        }
+
+        .action-button.gold {
+            color: var(--gold-light);
+
+            border-color:
+                rgba(212, 175, 55, 0.45);
+        }
+
+        .action-button.red {
+            background: var(--red);
+
+            color: #ffffff;
+
+            border-color: var(--red);
+        }
+
+        .action-button.red:hover {
+            background: var(--red-hover);
+        }
+
+
+        /* =====================================================
+           COMPOSER
+        ===================================================== */
+
+        .composer {
+            display: flex;
+
+            align-items: flex-end;
+
+            gap: 7px;
+        }
+
+        .message-input {
+            flex: 1 1 auto;
+
+            min-width: 0;
+
+            min-height: 48px;
+            max-height: 110px;
+
+            resize: none;
+
+            padding:
+                13px
+                13px;
+
+            background: #171717;
+
+            color: #ffffff;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.18);
+
+            border-radius: 11px;
+
+            outline: none;
+
+            line-height: 1.4;
+        }
+
+        .message-input::placeholder {
+            color: #888888;
+        }
+
+        .message-input:focus {
+            border-color:
+                rgba(212, 175, 55, 0.65);
         }
 
         .send-button {
-            padding: 0 12px;
+            flex: 0 0 auto;
+
+            width: 72px;
+            min-height: 48px;
+
+            border: none;
+
+            border-radius: 11px;
+
+            background: var(--gold);
+
+            color: #000000;
+
+            font-size: 13px;
+            font-weight: 900;
+
+            transition:
+                background 0.15s ease,
+                transform 0.15s ease;
         }
-    }
-</style>
 
-</head><body><header class="header">
-    <div class="brand">
-        Naija Pocket Business Center
-    </div><div id="serviceTitle" class="service-title">
-    Business Center Service
-</div>
+        .send-button:hover {
+            background: var(--gold-light);
+        }
 
-<div id="statusLine" class="status-line">
-    Connecting...
-</div>
+        .send-button:active {
+            transform: scale(0.97);
+        }
 
-</header><main class="workspace"><section
-    id="conversation"
-    class="conversation"
-    aria-live="polite"
-></section>
+        .send-button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
 
-<section class="attachment-area">
-    <div id="attachmentCard" class="attachment-card">
-        <div id="attachmentName" class="attachment-name"></div>
-        <div id="attachmentStatus" class="attachment-status"></div>
-    </div>
-</section>
 
-<section class="input-area">
-    <div class="input-row">
+        /* =====================================================
+           FILE INPUT
+        ===================================================== */
 
-        <textarea
-            id="messageInput"
-            class="message-input"
-            placeholder="Type your message..."
-            rows="1"
-            autocomplete="off"
-        ></textarea>
+        #fileInput {
+            display: none;
+        }
 
-        <button
-            id="sendButton"
-            class="send-button"
-            type="button"
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status {
+            min-height: 16px;
+
+            margin-top: 5px;
+
+            padding-left: 2px;
+
+            color: #888888;
+
+            font-size: 10px;
+
+            text-align: center;
+        }
+
+        .status.error {
+            color: #ff7070;
+        }
+
+        .status.success {
+            color: #7edc9c;
+        }
+
+
+        /* =====================================================
+           PAYMENT PANEL
+        ===================================================== */
+
+        .payment-panel {
+            display: none;
+
+            margin-bottom: 8px;
+
+            padding: 12px;
+
+            background: #121212;
+
+            border:
+                1px solid
+                rgba(212, 175, 55, 0.40);
+
+            border-radius: 10px;
+        }
+
+        .payment-panel.show {
+            display: block;
+        }
+
+        .payment-title {
+            color: var(--gold);
+
+            font-size: 13px;
+            font-weight: 800;
+
+            margin-bottom: 7px;
+        }
+
+        .payment-details {
+            color: #eeeeee;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+
+            white-space: pre-wrap;
+        }
+
+        .payment-buttons {
+            display: flex;
+
+            gap: 7px;
+
+            margin-top: 9px;
+        }
+
+        .payment-buttons button {
+            flex: 1;
+
+            min-height: 40px;
+
+            border-radius: 8px;
+
+            border: none;
+
+            font-weight: 800;
+
+            font-size: 12px;
+        }
+
+        .payment-report {
+            background: var(--gold);
+
+            color: #000000;
+        }
+
+        .payment-check {
+            background: #292929;
+
+            color: #ffffff;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.15) !important;
+        }
+
+
+        /* =====================================================
+           RECORDING STATE
+        ===================================================== */
+
+        .voice-recording {
+            display: none;
+
+            margin-bottom: 8px;
+
+            padding: 9px;
+
+            background: #160707;
+
+            border:
+                1px solid
+                rgba(179, 0, 0, 0.60);
+
+            border-radius: 9px;
+
+            color: #ff8a8a;
+
+            font-size: 12px;
+
+            text-align: center;
+        }
+
+        .voice-recording.show {
+            display: block;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 620px) {
+
+            .header {
+                min-height: 68px;
+
+                padding:
+                    10px
+                    11px;
+            }
+
+            .brand-title {
+                font-size: 18px;
+            }
+
+            .brand-subtitle {
+                font-size: 10px;
+            }
+
+            .service-badge {
+                max-width: 42%;
+
+                padding:
+                    7px
+                    9px;
+
+                font-size: 10px;
+            }
+
+            .conversation {
+                padding:
+                    11px
+                    8px
+                    14px;
+            }
+
+            .message {
+                max-width: 90%;
+
+                font-size: 14px;
+
+                padding:
+                    11px
+                    12px;
+            }
+
+            .actions {
+                grid-template-columns:
+                    repeat(4, minmax(0, 1fr));
+
+                gap: 5px;
+            }
+
+            .action-button {
+                min-height: 36px;
+
+                padding:
+                    6px
+                    3px;
+
+                font-size: 10px;
+            }
+
+            .message-input {
+                min-height: 46px;
+
+                font-size: 14px;
+            }
+
+            .send-button {
+                width: 64px;
+
+                min-height: 46px;
+
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 390px) {
+
+            .brand-subtitle {
+                display: none;
+            }
+
+            .service-badge {
+                max-width: 45%;
+            }
+
+            .action-button {
+                font-size: 9px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="header">
+
+        <div class="brand">
+
+            <h1 class="brand-title">
+                Ada
+            </h1>
+
+            <div class="brand-subtitle">
+                Naija Pocket Business Center
+            </div>
+
+        </div>
+
+
+        <div
+            id="serviceBadge"
+            class="service-badge"
         >
-            Send
-        </button>
+            Service
+        </div>
 
-    </div>
-</section>
+    </header>
 
-<section class="actions">
 
-    <div class="action-grid">
 
-        <button
-            id="uploadButton"
-            class="action-button"
-            type="button"
-        >
-            Upload
-        </button>
+    <!-- =====================================================
+         CONVERSATION
+    ====================================================== -->
 
-        <button
-            id="voiceButton"
-            class="action-button"
-            type="button"
-        >
-            Voice
-        </button>
-
-        <button
-            id="reviewButton"
-            class="action-button"
-            type="button"
-        >
-            Review
-        </button>
-
-        <button
-            id="approveButton"
-            class="action-button"
-            type="button"
-        >
-            Approve
-        </button>
-
-        <button
-            id="paymentButton"
-            class="action-button"
-            type="button"
-        >
-            Payment &amp; Download
-        </button>
-
-        <button
-            id="customerServiceButton"
-            class="action-button"
-            type="button"
-        >
-            Customer Service
-        </button>
-
-        <button
-            id="newJobButton"
-            class="action-button"
-            type="button"
-        >
-            New Job
-        </button>
-
-        <button
-            id="backButton"
-            class="action-button back-button"
-            type="button"
-        >
-            Back
-        </button>
-
-    </div>
-</section>
-
-</main><input
-id="documentInput"
-class="hidden-input"
-type="file"
-accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.odt,.ods,.odp,.jpg,.jpeg,.png,.webp,.heic"
-
-«»
-
-<input
-id="cameraInput"
-class="hidden-input"
-type="file"
-accept="image/*"
-capture="environment"
-
-«»
-
-<section id="voicePanel" class="voice-panel"><div class="voice-box">
-
-    <div class="voice-title">
-        Voice
-    </div>
-
-    <div id="voiceStatus" class="voice-status">
-        Tap Record and allow microphone access when your phone asks.
-    </div>
-
-    <audio
-        id="audioPreview"
-        class="audio-preview"
-        controls
-    ></audio>
-
-    <div class="voice-buttons">
-
-        <button
-            id="recordButton"
-            class="voice-button"
-            type="button"
-        >
-            Record
-        </button>
-
-        <button
-            id="stopRecordButton"
-            class="voice-button"
-            type="button"
-            disabled
-        >
-            Stop
-        </button>
-
-        <button
-            id="sendVoiceButton"
-            class="voice-button send"
-            type="button"
-            disabled
-        >
-            Send Voice
-        </button>
-
-        <button
-            id="againVoiceButton"
-            class="voice-button"
-            type="button"
-            disabled
-        >
-            Record Again
-        </button>
-
-    </div>
-
-    <button
-        id="closeVoiceButton"
-        class="voice-close"
-        type="button"
+    <main
+        id="conversation"
+        class="conversation"
     >
-        Close
-    </button>
+
+        <div
+            id="conversationInner"
+            class="conversation-inner"
+        >
+
+            <div
+                id="typing"
+                class="typing"
+            >
+                Ada is working...
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         BOTTOM WORKSPACE
+    ====================================================== -->
+
+    <section class="bottom">
+
+        <div class="bottom-inner">
+
+
+            <!-- =============================================
+                 PAYMENT PANEL
+            ============================================== -->
+
+            <div
+                id="paymentPanel"
+                class="payment-panel"
+            >
+
+                <div class="payment-title">
+                    Payment
+                </div>
+
+                <div
+                    id="paymentDetails"
+                    class="payment-details"
+                ></div>
+
+                <div class="payment-buttons">
+
+                    <button
+                        id="paymentReportButton"
+                        class="payment-report"
+                        type="button"
+                    >
+                        Report Payment
+                    </button>
+
+                    <button
+                        id="paymentCheckButton"
+                        class="payment-check"
+                        type="button"
+                    >
+                        Check Status
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =============================================
+                 VOICE STATUS
+            ============================================== -->
+
+            <div
+                id="voiceRecording"
+                class="voice-recording"
+            >
+                🔴 Recording... tap Voice again to stop.
+            </div>
+
+
+
+            <!-- =============================================
+                 ACTIONS
+            ============================================== -->
+
+            <div class="actions">
+
+                <button
+                    id="uploadButton"
+                    class="action-button"
+                    type="button"
+                >
+                    📎 Upload
+                </button>
+
+                <!-- ONE VOICE BUTTON ONLY -->
+
+                <button
+                    id="voiceButton"
+                    class="action-button gold"
+                    type="button"
+                >
+                    🎤 Voice
+                </button>
+
+                <button
+                    id="approveButton"
+                    class="action-button gold"
+                    type="button"
+                >
+                    ✓ Review / Approve
+                </button>
+
+                <button
+                    id="customerServiceButton"
+                    class="action-button"
+                    type="button"
+                >
+                    Customer Service
+                </button>
+
+            </div>
+
+
+
+            <!-- =============================================
+                 HIDDEN FILE INPUT
+            ============================================== -->
+
+            <input
+                id="fileInput"
+                type="file"
+            >
+
+
+
+            <!-- =============================================
+                 MESSAGE COMPOSER
+            ============================================== -->
+
+            <div class="composer">
+
+                <textarea
+                    id="messageInput"
+                    class="message-input"
+                    rows="1"
+                    placeholder="Type your message to Ada..."
+                    autocomplete="off"
+                ></textarea>
+
+
+                <button
+                    id="sendButton"
+                    class="send-button"
+                    type="button"
+                >
+                    SEND
+                </button>
+
+            </div>
+
+
+            <div
+                id="status"
+                class="status"
+            ></div>
+
+        </div>
+
+    </section>
 
 </div>
 
-</section><script>
+
+
+<script>
 "use strict";
 
-/* ==================================================
-   SESSION
-   ================================================== */
 
-const params = new URLSearchParams(
-    window.location.search
-);
+/* ============================================================
+   CURRENT ADA API
+============================================================ */
 
-function cleanValue(value) {
-    if (
-        value === null ||
-        value === undefined
-    ) {
-        return "";
-    }
+/*
+    This workspace talks directly to the current FastAPI app.
 
-    const text = String(value).trim();
+    workspace.html
+          ↓
+    /api/chat
+          ↓
+    ada_api.py
+          ↓
+    AdaResponse
+          ↓
+    Ada intelligence/model
+*/
 
-    if (!text) {
-        return "";
-    }
+const API_BASE = "";
 
-    if (
-        ["null", "undefined", "none", "unknown"]
-            .includes(text.toLowerCase())
-    ) {
-        return "";
-    }
 
-    return text;
-}
 
-function cryptoRandomId() {
-    if (
-        window.crypto &&
-        window.crypto.randomUUID
-    ) {
-        return window.crypto.randomUUID();
-    }
-
-    return (
-        Date.now().toString(36) +
-        Math.random()
-            .toString(36)
-            .substring(2)
-    );
-}
-
-let selectedService = cleanValue(
-    params.get("service")
-);
-
-let customerId = cleanValue(
-    params.get("customer_id")
-);
-
-let jobId = cleanValue(
-    params.get("job_id")
-);
-
-let clientRequestId = cleanValue(
-    params.get("client_request_id")
-);
-
-if (!customerId) {
-    customerId =
-        localStorage.getItem("npbc_customer_id") ||
-        "customer_" + cryptoRandomId();
-
-    localStorage.setItem(
-        "npbc_customer_id",
-        customerId
-    );
-}
-
-if (!jobId) {
-    jobId =
-        sessionStorage.getItem("npbc_job_id") ||
-        "job_" + cryptoRandomId();
-
-    sessionStorage.setItem(
-        "npbc_job_id",
-        jobId
-    );
-}
-
-if (!clientRequestId) {
-    clientRequestId =
-        sessionStorage.getItem(
-            "npbc_client_request_id"
-        ) ||
-        "request_" + cryptoRandomId();
-
-    sessionStorage.setItem(
-        "npbc_client_request_id",
-        clientRequestId
-    );
-}
-
-/* ==================================================
-   DOM
-   ================================================== */
+/* ============================================================
+   ELEMENTS
+============================================================ */
 
 const conversation =
     document.getElementById("conversation");
 
-const serviceTitle =
-    document.getElementById("serviceTitle");
+const conversationInner =
+    document.getElementById("conversationInner");
 
-const statusLine =
-    document.getElementById("statusLine");
+const typing =
+    document.getElementById("typing");
+
+const serviceBadge =
+    document.getElementById("serviceBadge");
 
 const messageInput =
     document.getElementById("messageInput");
@@ -708,475 +1041,691 @@ const messageInput =
 const sendButton =
     document.getElementById("sendButton");
 
-const documentInput =
-    document.getElementById("documentInput");
+const uploadButton =
+    document.getElementById("uploadButton");
 
-const cameraInput =
-    document.getElementById("cameraInput");
+const voiceButton =
+    document.getElementById("voiceButton");
 
-const attachmentCard =
-    document.getElementById("attachmentCard");
+const approveButton =
+    document.getElementById("approveButton");
 
-const attachmentName =
-    document.getElementById("attachmentName");
+const customerServiceButton =
+    document.getElementById("customerServiceButton");
 
-const attachmentStatus =
-    document.getElementById("attachmentStatus");
+const fileInput =
+    document.getElementById("fileInput");
 
-const voicePanel =
-    document.getElementById("voicePanel");
+const statusElement =
+    document.getElementById("status");
 
-const voiceStatus =
-    document.getElementById("voiceStatus");
+const voiceRecording =
+    document.getElementById("voiceRecording");
 
-const audioPreview =
-    document.getElementById("audioPreview");
+const paymentPanel =
+    document.getElementById("paymentPanel");
 
-const recordButton =
-    document.getElementById("recordButton");
+const paymentDetails =
+    document.getElementById("paymentDetails");
 
-const stopRecordButton =
-    document.getElementById("stopRecordButton");
+const paymentReportButton =
+    document.getElementById("paymentReportButton");
 
-const sendVoiceButton =
-    document.getElementById("sendVoiceButton");
+const paymentCheckButton =
+    document.getElementById("paymentCheckButton");
 
-const againVoiceButton =
-    document.getElementById("againVoiceButton");
 
-serviceTitle.textContent =
-    selectedService ||
+
+/* ============================================================
+   SERVICE
+============================================================ */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const service =
+    clean(
+        params.get("service")
+    ) ||
     "Business Center Service";
 
-/* ==================================================
-   CHAT DISPLAY
-   ================================================== */
 
-function addMessage(text, type) {
-    const wrapper =
-        document.createElement("div");
 
-    wrapper.className =
-        "message " +
-        (
-            type === "customer"
-                ? "customer"
-                : "assistant"
-        );
+/* ============================================================
+   CUSTOMER / JOB IDENTIFIERS
+============================================================ */
 
-    const bubble =
-        document.createElement("div");
-
-    bubble.className = "bubble";
-
-    bubble.textContent =
-        String(text || "");
-
-    wrapper.appendChild(bubble);
-    conversation.appendChild(wrapper);
-
-    conversation.scrollTop =
-        conversation.scrollHeight;
-}
-
-function addSystemMessage(text) {
-    const element =
-        document.createElement("div");
-
-    element.className =
-        "system-message";
-
-    element.textContent = text;
-
-    conversation.appendChild(element);
-
-    conversation.scrollTop =
-        conversation.scrollHeight;
-}
-
-/* ==================================================
-   DIAGNOSTICS
-   ================================================== */
-
-function addDiagnosticMessage(
-    result,
-    httpStatus = null
-) {
-    const diagnostic =
-        result &&
-        result.diagnostic
-            ? result.diagnostic
-            : null;
-
-    const element =
-        document.createElement("div");
-
-    element.className =
-        "diagnostic-message";
-
-    const title =
-        document.createElement("div");
-
-    title.className =
-        "diagnostic-title";
-
-    title.textContent =
-        "ADA DIAGNOSTIC ERROR";
-
-    element.appendChild(title);
-
-    const diagnosticData = {
-        http_status: httpStatus,
-
-        stage:
-            diagnostic &&
-            diagnostic.stage
-                ? diagnostic.stage
-                : "unknown",
-
-        error_type:
-            diagnostic &&
-            diagnostic.error_type
-                ? diagnostic.error_type
-                : "unknown",
-
-        error:
-            diagnostic &&
-            diagnostic.error
-                ? diagnostic.error
-                : "No diagnostic error was returned.",
-
-        controller:
-            diagnostic &&
-            diagnostic.controller
-                ? diagnostic.controller
-                : null,
-
-        session:
-            diagnostic &&
-            diagnostic.session
-                ? diagnostic.session
-                : result &&
-                  result.session_id
-                    ? result.session_id
-                    : null,
-
-        service:
-            diagnostic &&
-            diagnostic.service
-                ? diagnostic.service
-                : result &&
-                  result.service
-                    ? result.service
-                    : null,
-
-        traceback:
-            diagnostic &&
-            diagnostic.traceback
-                ? diagnostic.traceback
-                : null
-    };
-
-    element.appendChild(
-        document.createTextNode(
-            JSON.stringify(
-                diagnosticData,
-                null,
-                2
-            )
-        )
+let customerId =
+    getStored(
+        "npbc_customer_id"
     );
 
-    conversation.appendChild(element);
+if (!customerId) {
 
-    conversation.scrollTop =
-        conversation.scrollHeight;
+    customerId =
+        createId(
+            "customer_"
+        );
 
-    console.error(
-        "ADA DIAGNOSTIC RESPONSE:",
-        diagnosticData
+    store(
+        "npbc_customer_id",
+        customerId
     );
 }
 
-/* ==================================================
-   STATUS
-   ================================================== */
 
-function setStatus(text) {
-    statusLine.textContent = text;
+let jobId =
+    params.get("job_id") ||
+    getStored(
+        "npbc_job_id"
+    );
+
+
+/*
+    A new workspace should have one stable job identifier.
+*/
+
+if (!jobId) {
+
+    jobId =
+        createId(
+            "job_"
+        );
+
+    store(
+        "npbc_job_id",
+        jobId
+    );
 }
 
-/* ==================================================
-   ADA API
-   ================================================== */
 
-async function sendToIntelligence(
-    message,
-    eventName = null
-) {
-    const payload = {
-        message: message,
-
-        service:
-            selectedService || null,
-
-        event:
-            eventName,
-
-        customer_id:
-            customerId,
-
-        job_id:
-            jobId,
-
-        client_request_id:
-            clientRequestId,
-
-        activate_intelligence:
-            true
-    };
-
-    console.log(
-        "ADA CHAT REQUEST:",
-        payload
+const clientRequestId =
+    getStored(
+        "npbc_client_request_id"
+    ) ||
+    createId(
+        "request_"
     );
 
-    setStatus(
-        "Working on your request..."
-    );
 
-    let response;
+store(
+    "npbc_client_request_id",
+    clientRequestId
+);
 
-    try {
-        response = await fetch(
-            "/api/chat",
-            {
-                method: "POST",
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
 
-                body:
-                    JSON.stringify(payload)
-            }
-        );
-    } catch (networkError) {
-        console.error(
-            "ADA CHAT NETWORK ERROR:",
-            networkError
-        );
+/* ============================================================
+   STATE
+============================================================ */
 
-        throw new Error(
-            "Could not connect to the Ada service."
-        );
-    }
+let busy = false;
 
-    let result;
+let approved = false;
 
-    try {
-        result =
-            await response.json();
-    } catch (parseError) {
-        console.error(
-            "ADA CHAT RESPONSE PARSE ERROR:",
-            parseError
-        );
+let paymentId = null;
 
-        throw new Error(
-            "The Ada service returned an invalid response."
-        );
-    }
+let mediaRecorder = null;
 
-    console.log(
-        "ADA CHAT RESPONSE:",
-        result
-    );
+let recordedChunks = [];
+
+let recordingStream = null;
+
+
+
+/* ============================================================
+   HELPERS
+============================================================ */
+
+function clean(value) {
 
     if (
-        !response.ok ||
-        !result ||
-        result.success !== true
+        value === null ||
+        value === undefined
     ) {
-        if (
-            result &&
-            result.diagnostic
-        ) {
-            addDiagnosticMessage(
-                result,
-                response.status
-            );
-        }
-
-        setStatus(
-            "Ada request failed."
-        );
-
-        const error =
-            new Error(
-                result &&
-                result.diagnostic &&
-                result.diagnostic.error
-                    ? result.diagnostic.error
-                    : "The request could not be completed."
-            );
-
-        error.apiResult = result;
-        error.httpStatus = response.status;
-
-        throw error;
+        return null;
     }
 
-    setStatus("Ready");
+    const result =
+        String(value).trim();
+
+    if (!result) {
+        return null;
+    }
+
+    if (
+        [
+            "none",
+            "null",
+            "undefined",
+            "unknown"
+        ].includes(
+            result.toLowerCase()
+        )
+    ) {
+        return null;
+    }
 
     return result;
 }
 
-/* ==================================================
-   INITIAL ADA ACTIVATION
-   ================================================== */
 
-async function startService() {
-    if (!selectedService) {
-        setStatus("Ready");
+function createId(prefix) {
 
-        addSystemMessage(
-            "Please select a service to begin."
+    if (
+        window.crypto &&
+        crypto.randomUUID
+    ) {
+        return (
+            prefix +
+            crypto.randomUUID()
         );
-
-        return;
     }
 
-    addSystemMessage(
-        "Starting your selected service..."
+    return (
+        prefix +
+        Date.now() +
+        "_" +
+        Math.random()
+            .toString(36)
+            .slice(2)
     );
+}
+
+
+function store(
+    key,
+    value
+) {
 
     try {
-        const result =
-            await sendToIntelligence(
-                "I have selected this service and I am ready to begin. Please explain what you need from me and how I should use the available options for this request.",
-                "start_new_job"
-            );
 
-        if (
-            result &&
-            result.reply
-        ) {
-            addMessage(
-                result.reply,
-                "assistant"
-            );
-        }
+        localStorage.setItem(
+            key,
+            value
+        );
+
     } catch (error) {
-        console.error(
-            "SERVICE START ERROR:",
+
+        console.warn(
+            "Local storage unavailable.",
             error
         );
-
-        setStatus(
-            "Please try again."
-        );
-
-        if (
-            !error.apiResult ||
-            !error.apiResult.diagnostic
-        ) {
-            addMessage(
-                "Sorry, we could not start your request right now. Please try again in a moment.",
-                "assistant"
-            );
-        }
     }
 }
 
-/* ==================================================
-   SEND TEXT MESSAGE
-   ================================================== */
 
-async function sendMessage() {
-    const message =
-        messageInput.value.trim();
+function getStored(key) {
 
-    if (!message) {
+    try {
+
+        return localStorage.getItem(
+            key
+        );
+
+    } catch (error) {
+
+        return null;
+    }
+}
+
+
+function setStatus(
+    message,
+    type = ""
+) {
+
+    statusElement.textContent =
+        message || "";
+
+    statusElement.className =
+        "status " + type;
+}
+
+
+function scrollToBottom() {
+
+    requestAnimationFrame(
+        () => {
+
+            conversation.scrollTop =
+                conversation.scrollHeight;
+
+        }
+    );
+}
+
+
+function setBusy(
+    value
+) {
+
+    busy = value;
+
+    sendButton.disabled =
+        value;
+
+    uploadButton.disabled =
+        value;
+
+    approveButton.disabled =
+        value;
+
+    customerServiceButton.disabled =
+        value;
+
+    if (!value) {
+
+        messageInput.focus();
+
+    }
+}
+
+
+
+/* ============================================================
+   MESSAGE DISPLAY
+============================================================ */
+
+function addMessage(
+    sender,
+    text
+) {
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+    row.className =
+        "message-row " +
+        (
+            sender === "customer"
+                ? "customer"
+                : "ada"
+        );
+
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+    bubble.className =
+        "message";
+
+
+    const label =
+        document.createElement(
+            "span"
+        );
+
+    label.className =
+        "message-label";
+
+
+    label.textContent =
+        sender === "customer"
+            ? "You"
+            : "Ada";
+
+
+    const content =
+        document.createElement(
+            "div"
+        );
+
+    content.textContent =
+        text || "";
+
+
+    bubble.appendChild(
+        label
+    );
+
+    bubble.appendChild(
+        content
+    );
+
+    row.appendChild(
+        bubble
+    );
+
+
+    conversationInner.insertBefore(
+        row,
+        typing
+    );
+
+
+    scrollToBottom();
+}
+
+
+
+/* ============================================================
+   ADA CHAT
+============================================================ */
+
+async function sendMessage(
+    message,
+    options = {}
+) {
+
+    const text =
+        clean(message);
+
+
+    if (!text) {
+
+        setStatus(
+            "Please enter a message.",
+            "error"
+        );
+
+        return null;
+    }
+
+
+    if (busy) {
+        return null;
+    }
+
+
+    if (
+        !options.silent
+    ) {
+
+        addMessage(
+            "customer",
+            text
+        );
+
+    }
+
+
+    setBusy(
+        true
+    );
+
+    typing.classList.add(
+        "show"
+    );
+
+    scrollToBottom();
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_BASE +
+                "/api/chat",
+                {
+
+                    method:
+                        "POST",
+
+                    headers:
+                        {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                    body:
+                        JSON.stringify({
+
+                            message:
+                                text,
+
+                            service:
+                                service,
+
+                            event:
+                                options.event ||
+                                null,
+
+                            customer_id:
+                                customerId,
+
+                            job_id:
+                                jobId,
+
+                            client_request_id:
+                                clientRequestId,
+
+                            activate_intelligence:
+                                true
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json()
+                .catch(
+                    () => ({})
+                );
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.reply ||
+                data.message ||
+                data.error ||
+                (
+                    "Ada could not process "
+                    + "your request."
+                )
+            );
+
+        }
+
+
+        const reply =
+            clean(
+                data.reply
+            );
+
+
+        if (reply) {
+
+            addMessage(
+                "ada",
+                reply
+            );
+
+        }
+
+
+        if (
+            data.job_id &&
+            data.job_id !== jobId
+        ) {
+
+            jobId =
+                data.job_id;
+
+            store(
+                "npbc_job_id",
+                jobId
+            );
+
+        }
+
+
+        setStatus(
+            "Ada is ready for your next instruction.",
+            "success"
+        );
+
+
+        return data;
+
+
+    } catch (error) {
+
+        console.error(
+            "ADA CHAT ERROR:",
+            error
+        );
+
+
+        if (!options.silent) {
+
+            addMessage(
+                "ada",
+                "Sorry, I could not complete that step right now. Please try again."
+            );
+
+        } else {
+
+            addMessage(
+                "ada",
+                "Sorry, I could not start your request right now. Please try again."
+            );
+
+        }
+
+
+        setStatus(
+            "Ada connection problem. Please try again.",
+            "error"
+        );
+
+
+        return null;
+
+
+    } finally {
+
+        typing.classList.remove(
+            "show"
+        );
+
+        setBusy(
+            false
+        );
+
+        scrollToBottom();
+
+    }
+}
+
+
+
+/* ============================================================
+   INITIAL ADA INTELLIGENCE
+============================================================ */
+
+async function startAda() {
+
+    /*
+        This is deliberately NOT a hard-coded Ada reply.
+
+        It sends the service into the real /api/chat endpoint,
+        which sends it to AdaResponse.
+    */
+
+    await sendMessage(
+
+        "I have selected this service and I am ready to begin. Please start by telling me what information or materials you need from me.",
+
+        {
+            silent:
+                true,
+
+            event:
+                "start_job"
+
+        }
+
+    );
+}
+
+
+
+/* ============================================================
+   SEND BUTTON
+============================================================ */
+
+async function handleSend() {
+
+    const text =
+        clean(
+            messageInput.value
+        );
+
+
+    if (!text) {
+
+        setStatus(
+            "Please type your message first.",
+            "error"
+        );
+
         return;
     }
 
-    addMessage(
-        message,
-        "customer"
-    );
 
     messageInput.value = "";
 
-    resizeTextarea();
+    autoResize();
 
-    sendButton.disabled = true;
 
-    try {
-        const result =
-            await sendToIntelligence(
-                message
-            );
-
-        if (
-            result &&
-            result.reply
-        ) {
-            addMessage(
-                result.reply,
-                "assistant"
-            );
-        }
-    } catch (error) {
-        console.error(
-            "CHAT ERROR:",
-            error
-        );
-
-        setStatus(
-            "Please try again."
-        );
-
-        if (
-            !error.apiResult ||
-            !error.apiResult.diagnostic
-        ) {
-            addMessage(
-                "Sorry, we could not complete that step right now. Please try again in a moment.",
-                "assistant"
-            );
-        }
-    } finally {
-        sendButton.disabled = false;
-        messageInput.focus();
-    }
+    await sendMessage(
+        text
+    );
 }
+
 
 sendButton.addEventListener(
     "click",
-    sendMessage
+    handleSend
 );
+
+
+
+/* ============================================================
+   ENTER TO SEND
+============================================================ */
 
 messageInput.addEventListener(
     "keydown",
     function(event) {
+
         if (
             event.key === "Enter" &&
             !event.shiftKey
         ) {
+
             event.preventDefault();
-            sendMessage();
+
+            handleSend();
+
         }
+
     }
 );
 
-/* ==================================================
-   TEXTAREA
-   ================================================== */
 
-function resizeTextarea() {
-    messageInput.style.height = "auto";
+
+/* ============================================================
+   AUTO RESIZE MESSAGE BOX
+============================================================ */
+
+function autoResize() {
+
+    messageInput.style.height =
+        "auto";
 
     messageInput.style.height =
         Math.min(
@@ -1185,67 +1734,69 @@ function resizeTextarea() {
         ) + "px";
 }
 
+
 messageInput.addEventListener(
     "input",
-    resizeTextarea
+    autoResize
 );
 
-/* ==================================================
-   UPLOAD
-   ================================================== */
 
-document.getElementById(
-    "uploadButton"
-).addEventListener(
+
+/* ============================================================
+   UPLOAD
+============================================================ */
+
+uploadButton.addEventListener(
     "click",
     function() {
-        documentInput.value = "";
-        documentInput.click();
+
+        if (busy) {
+            return;
+        }
+
+        fileInput.click();
+
     }
 );
 
-documentInput.addEventListener(
+
+fileInput.addEventListener(
     "change",
     async function() {
-        if (
-            documentInput.files &&
-            documentInput.files.length
-        ) {
-            await uploadDocument(
-                documentInput.files[0]
-            );
+
+        const file =
+            fileInput.files &&
+            fileInput.files[0];
+
+
+        if (!file) {
+            return;
         }
+
+
+        await uploadFile(
+            file
+        );
+
+
+        fileInput.value =
+            "";
+
     }
 );
 
-async function uploadDocument(file) {
-    if (!file) {
-        return;
-    }
 
-    attachmentCard.classList.add(
-        "visible"
-    );
-
-    attachmentName.textContent =
-        file.name;
-
-    attachmentStatus.textContent =
-        "Sending file...";
-
-    addSystemMessage(
-        "Uploading " +
-        file.name +
-        "..."
-    );
+async function uploadFile(
+    file
+) {
 
     const formData =
         new FormData();
 
+
     formData.append(
         "file",
-        file,
-        file.name
+        file
     );
 
     formData.append(
@@ -1265,369 +1816,360 @@ async function uploadDocument(file) {
 
     formData.append(
         "service",
-        selectedService
+        service
     );
 
+
+    setStatus(
+        "Uploading your file..."
+    );
+
+
     try {
+
         const response =
             await fetch(
-                "/upload",
+                API_BASE +
+                "/api/upload",
                 {
-                    method: "POST",
-                    body: formData
+
+                    method:
+                        "POST",
+
+                    body:
+                        formData
+
                 }
             );
 
-        let result;
 
-        try {
-            result =
-                await response.json();
-        } catch (error) {
-            throw new Error(
-                "The upload service returned an invalid response."
-            );
-        }
+        const data =
+            await response.json()
+                .catch(
+                    () => ({})
+                );
+
 
         if (
             !response.ok ||
-            !result ||
-            result.success !== true
+            !data.success
         ) {
-            console.error(
-                "DOCUMENT UPLOAD API ERROR:",
-                result
-            );
 
             throw new Error(
-                result &&
-                result.message
-                    ? result.message
-                    : "The file could not be uploaded."
+                data.message ||
+                "File upload failed."
             );
+
         }
 
-        attachmentStatus.textContent =
-            "File received.";
 
-        addSystemMessage(
-            "Your file has been received and attached to this request."
+        addMessage(
+            "customer",
+            "📎 Uploaded: " +
+            file.name
         );
 
-        /*
-         * One and only one Ada continuation request
-         * for the uploaded document.
-         */
-        const intelligenceResult =
-            await sendToIntelligence(
-                "A document named \"" +
-                file.name +
-                "\" has just been uploaded to this request. Please continue with the selected service and tell me the next step.",
-                "file_uploaded"
-            );
 
-        if (
-            intelligenceResult &&
-            intelligenceResult.reply
-        ) {
-            addMessage(
-                intelligenceResult.reply,
-                "assistant"
-            );
-        }
+        addMessage(
+            "ada",
+            data.message ||
+            "Your file has been received and attached to your active request."
+        );
+
+
+        setStatus(
+            "File received successfully.",
+            "success"
+        );
+
+
+        /*
+            Let actual Ada decide what to do next.
+        */
+
+        await sendMessage(
+
+            "I have uploaded a file named \"" +
+            file.name +
+            "\". Please examine the request context and tell me the next step.",
+
+            {
+                event:
+                    "file_uploaded"
+            }
+
+        );
+
+
     } catch (error) {
+
         console.error(
-            "DOCUMENT UPLOAD ERROR:",
+            "UPLOAD ERROR:",
             error
         );
 
-        attachmentStatus.textContent =
-            "Upload could not be completed.";
 
         addMessage(
-            "Sorry, we could not receive that file right now. Please try again.",
-            "assistant"
+            "ada",
+            "Sorry, I could not receive that file right now. Please try again."
         );
+
+
+        setStatus(
+            error.message ||
+            "Upload failed.",
+            "error"
+        );
+
     }
 }
 
-/* ==================================================
+
+
+/* ============================================================
    VOICE
-   ================================================== */
+============================================================ */
 
-let mediaRecorder = null;
-let recordedChunks = [];
-let recordedBlob = null;
-let microphoneStream = null;
+/*
+    THERE IS ONLY ONE VOICE BUTTON.
 
-document.getElementById(
-    "voiceButton"
-).addEventListener(
+    It uses the current FastAPI endpoint:
+
+        POST /api/voice
+
+    It does NOT use phone_bridge.py.
+    It does NOT use the old AdaController.
+*/
+
+voiceButton.addEventListener(
     "click",
-    openVoicePanel
-);
+    async function() {
 
-function openVoicePanel() {
-    voicePanel.classList.add(
-        "visible"
-    );
+        if (
+            mediaRecorder &&
+            mediaRecorder.state ===
+                "recording"
+        ) {
 
-    voiceStatus.textContent =
-        "Tap Record and allow microphone access when your phone asks.";
-}
+            stopRecording();
 
-function closeVoicePanel() {
-    if (
-        mediaRecorder &&
-        mediaRecorder.state === "recording"
-    ) {
-        mediaRecorder.stop();
+            return;
+        }
+
+
+        await startRecording();
+
     }
-
-    stopMicrophone();
-
-    voicePanel.classList.remove(
-        "visible"
-    );
-}
-
-document.getElementById(
-    "closeVoiceButton"
-).addEventListener(
-    "click",
-    closeVoicePanel
 );
+
 
 async function startRecording() {
+
     if (
         !navigator.mediaDevices ||
         !navigator.mediaDevices.getUserMedia
     ) {
-        voiceStatus.textContent =
-            "Voice recording is not available in this browser.";
+
+        setStatus(
+            "Voice recording is not supported on this device.",
+            "error"
+        );
 
         return;
     }
 
+
     try {
-        microphoneStream =
-            await navigator.mediaDevices.getUserMedia(
-                {
-                    audio: true
-                }
-            );
 
-        recordedChunks = [];
-        recordedBlob = null;
+        recordingStream =
+            await navigator
+                .mediaDevices
+                .getUserMedia(
+                    {
+                        audio: true
+                    }
+                );
 
-        let mimeType = "";
 
-        const possibleTypes = [
-            "audio/webm;codecs=opus",
-            "audio/webm",
-            "audio/mp4"
-        ];
+        recordedChunks =
+            [];
 
-        for (
-            const candidate
-            of possibleTypes
+
+        let mimeType =
+            "";
+
+
+        if (
+            MediaRecorder.isTypeSupported(
+                "audio/webm;codecs=opus"
+            )
         ) {
-            if (
-                window.MediaRecorder &&
-                MediaRecorder.isTypeSupported &&
-                MediaRecorder.isTypeSupported(
-                    candidate
-                )
-            ) {
-                mimeType = candidate;
-                break;
-            }
+
+            mimeType =
+                "audio/webm;codecs=opus";
+
+        } else if (
+            MediaRecorder.isTypeSupported(
+                "audio/webm"
+            )
+        ) {
+
+            mimeType =
+                "audio/webm";
+
         }
+
 
         mediaRecorder =
             mimeType
                 ? new MediaRecorder(
-                    microphoneStream,
+                    recordingStream,
                     {
-                        mimeType:
-                            mimeType
+                        mimeType
                     }
                 )
                 : new MediaRecorder(
-                    microphoneStream
+                    recordingStream
                 );
+
 
         mediaRecorder.ondataavailable =
             function(event) {
+
                 if (
                     event.data &&
                     event.data.size > 0
                 ) {
+
                     recordedChunks.push(
                         event.data
                     );
+
                 }
+
             };
+
 
         mediaRecorder.onstop =
-            function() {
-                const finalType =
-                    mediaRecorder.mimeType ||
-                    "audio/webm";
+            async function() {
 
-                recordedBlob =
-                    new Blob(
-                        recordedChunks,
-                        {
-                            type:
-                                finalType
-                        }
+                if (
+                    recordingStream
+                ) {
+
+                    recordingStream
+                        .getTracks()
+                        .forEach(
+                            track =>
+                                track.stop()
+                        );
+
+                }
+
+
+                recordingStream =
+                    null;
+
+
+                voiceRecording
+                    .classList
+                    .remove(
+                        "show"
                     );
 
-                const audioUrl =
-                    URL.createObjectURL(
-                        recordedBlob
-                    );
 
-                audioPreview.src =
-                    audioUrl;
+                voiceButton.textContent =
+                    "🎤 Voice";
 
-                audioPreview.style.display =
-                    "block";
 
-                sendVoiceButton.disabled =
-                    false;
+                await sendVoice();
 
-                againVoiceButton.disabled =
-                    false;
-
-                recordButton.disabled =
-                    false;
-
-                stopRecordButton.disabled =
-                    true;
-
-                voiceStatus.textContent =
-                    "Recording ready. You can play it or send it.";
-
-                stopMicrophone();
             };
+
 
         mediaRecorder.start();
 
-        recordButton.disabled = true;
-        stopRecordButton.disabled = false;
-        sendVoiceButton.disabled = true;
-        againVoiceButton.disabled = true;
 
-        voiceStatus.textContent =
-            "Recording... speak normally.";
+        voiceRecording
+            .classList
+            .add(
+                "show"
+            );
+
+
+        voiceButton.textContent =
+            "⏹ Stop Voice";
+
+
+        setStatus(
+            "Recording your voice..."
+        );
+
 
     } catch (error) {
+
         console.error(
-            "MICROPHONE ERROR:",
+            "VOICE START ERROR:",
             error
         );
 
-        stopMicrophone();
 
-        voiceStatus.textContent =
-            "Microphone access was not granted. Please allow microphone access and try again.";
+        setStatus(
+            "Could not access your microphone.",
+            "error"
+        );
+
     }
 }
 
-recordButton.addEventListener(
-    "click",
-    startRecording
-);
 
-stopRecordButton.addEventListener(
-    "click",
-    function() {
-        if (
-            mediaRecorder &&
-            mediaRecorder.state === "recording"
-        ) {
-            mediaRecorder.stop();
-        }
+function stopRecording() {
+
+    if (
+        mediaRecorder &&
+        mediaRecorder.state ===
+            "recording"
+    ) {
+
+        mediaRecorder.stop();
+
     }
-);
+}
 
-againVoiceButton.addEventListener(
-    "click",
-    function() {
-        recordedChunks = [];
-        recordedBlob = null;
 
-        audioPreview.removeAttribute(
-            "src"
+async function sendVoice() {
+
+    if (
+        !recordedChunks.length
+    ) {
+
+        setStatus(
+            "No voice recording was captured.",
+            "error"
         );
 
-        audioPreview.style.display =
-            "none";
-
-        sendVoiceButton.disabled = true;
-        againVoiceButton.disabled = true;
-        recordButton.disabled = false;
-        stopRecordButton.disabled = true;
-
-        voiceStatus.textContent =
-            "Ready to record again.";
-    }
-);
-
-function stopMicrophone() {
-    if (!microphoneStream) {
         return;
     }
 
-    microphoneStream
-        .getTracks()
-        .forEach(
-            function(track) {
-                track.stop();
+
+    const blob =
+        new Blob(
+            recordedChunks,
+            {
+                type:
+                    "audio/webm"
             }
         );
 
-    microphoneStream = null;
-}
-
-/* ==================================================
-   SEND VOICE
-   ================================================== */
-
-sendVoiceButton.addEventListener(
-    "click",
-    sendVoice
-);
-
-async function sendVoice() {
-    if (!recordedBlob) {
-        return;
-    }
-
-    sendVoiceButton.disabled = true;
-
-    voiceStatus.textContent =
-        "Sending your recording to Ada...";
 
     const formData =
         new FormData();
 
-    let extension = "webm";
-
-    if (
-        recordedBlob.type &&
-        recordedBlob.type.includes("mp4")
-    ) {
-        extension = "mp4";
-    }
 
     formData.append(
         "file",
-        recordedBlob,
-        "voice_message." +
-        extension
+        blob,
+        "voice_message.webm"
     );
 
     formData.append(
@@ -1647,423 +2189,945 @@ async function sendVoice() {
 
     formData.append(
         "service",
-        selectedService
+        service
     );
 
+
+    setStatus(
+        "Sending your voice recording to Ada..."
+    );
+
+
     try {
-        /*
-         * IMPORTANT:
-         *
-         * Voice is processed ONCE.
-         *
-         * /api/voice receives the recording and Ada's
-         * voice/transcription processing happens there.
-         *
-         * We DO NOT call /api/chat again afterwards.
-         *
-         * This removes the previous duplicate voice
-         * processing.
-         */
+
         const response =
             await fetch(
+                API_BASE +
                 "/api/voice",
                 {
-                    method: "POST",
-                    body: formData
+
+                    method:
+                        "POST",
+
+                    body:
+                        formData
+
                 }
             );
 
-        let result;
 
-        try {
-            result =
-                await response.json();
-        } catch (error) {
-            throw new Error(
-                "The voice service returned an invalid response."
-            );
-        }
+        const data =
+            await response.json()
+                .catch(
+                    () => ({})
+                );
 
-        console.log(
-            "ADA VOICE RESPONSE:",
-            result
-        );
 
         if (
             !response.ok ||
-            !result ||
-            result.success !== true
+            !data.success
         ) {
-            if (
-                result &&
-                result.diagnostic
-            ) {
-                addDiagnosticMessage(
-                    result,
-                    response.status
-                );
-            }
 
             throw new Error(
-                result &&
-                result.message
-                    ? result.message
-                    : result &&
-                      result.diagnostic &&
-                      result.diagnostic.error
-                        ? result.diagnostic.error
-                        : "Voice processing failed."
+                data.message ||
+                "Voice upload failed."
             );
+
         }
 
-        voiceStatus.textContent =
-            "Ada received your voice message.";
 
-        addSystemMessage(
-            "Voice message received."
+        addMessage(
+            "customer",
+            "🎤 Voice recording sent."
         );
 
+
+        addMessage(
+            "ada",
+            data.message ||
+            "Your voice recording has been received and attached to your active request."
+        );
+
+
+        setStatus(
+            "Voice recording received.",
+            "success"
+        );
+
+
         /*
-         * Use the response from /api/voice directly.
-         *
-         * Different API versions may return the Ada
-         * response under reply or response.
-         */
-        const voiceReply =
-            result.reply ||
-            result.response ||
-            (
-                result.data &&
-                (
-                    result.data.reply ||
-                    result.data.response
-                )
-            );
+            Current truth:
+            /api/voice stores the recording.
 
-        if (voiceReply) {
-            addMessage(
-                voiceReply,
-                "assistant"
-            );
-        } else {
-            addSystemMessage(
-                "Ada received your voice message and is processing it."
-            );
-        }
+            It does not itself transcribe the recording.
 
-        setStatus("Ready");
+            Therefore we do NOT falsely claim that Ada has
+            already understood the audio.
 
-        sendVoiceButton.disabled = true;
+            We notify Ada through the normal intelligence
+            channel that a voice recording is now attached.
+        */
+
+        await sendMessage(
+
+            "I have sent a voice recording with my request. The recording has been attached to this active service. Please continue by telling me what you need next.",
+
+            {
+                event:
+                    "voice_uploaded"
+            }
+
+        );
+
 
     } catch (error) {
+
         console.error(
-            "VOICE PROCESSING ERROR:",
+            "VOICE UPLOAD ERROR:",
             error
         );
 
-        voiceStatus.textContent =
-            "The recording could not be processed. Please try again.";
 
-        sendVoiceButton.disabled = false;
+        addMessage(
+            "ada",
+            "Sorry, I could not receive your voice recording right now. Please try again."
+        );
+
+
+        setStatus(
+            error.message ||
+            "Voice upload failed.",
+            "error"
+        );
+
     }
 }
 
-/* ==================================================
-   REVIEW
-   ================================================== */
 
-document.getElementById(
-    "reviewButton"
-).addEventListener(
-    "click",
-    async function() {
-        addSystemMessage(
-            "Requesting a review..."
-        );
 
-        try {
-            const result =
-                await sendToIntelligence(
-                    "Please review the work and information currently provided for this request and tell me what needs attention before I approve it.",
-                    "review"
-                );
-
-            if (
-                result &&
-                result.reply
-            ) {
-                addMessage(
-                    result.reply,
-                    "assistant"
-                );
-            }
-        } catch (error) {
-            console.error(
-                "REVIEW ERROR:",
-                error
-            );
-
-            if (
-                !error.apiResult ||
-                !error.apiResult.diagnostic
-            ) {
-                addMessage(
-                    "Sorry, we could not complete the review right now. Please try again.",
-                    "assistant"
-                );
-            }
-        }
-    }
-);
-
-/* ==================================================
+/* ============================================================
    APPROVE
-   ================================================== */
+============================================================ */
 
-document.getElementById(
-    "approveButton"
-).addEventListener(
+approveButton.addEventListener(
     "click",
     async function() {
-        const button =
-            document.getElementById(
-                "approveButton"
-            );
 
-        button.disabled = true;
+        if (busy) {
+            return;
+        }
 
-        addSystemMessage(
-            "Sending your approval..."
+
+        setBusy(
+            true
         );
 
+
+        setStatus(
+            "Preparing your approval and billing step..."
+        );
+
+
         try {
-            const result =
-                await sendToIntelligence(
-                    "I approve the current work. Please continue to the payment step for this request.",
-                    "approve"
-                );
 
-            if (
-                result &&
-                result.reply
-            ) {
-                addMessage(
-                    result.reply,
-                    "assistant"
-                );
-            }
+            const query =
+                new URLSearchParams();
 
-            setTimeout(
-                openPaymentPage,
-                500
+
+            query.set(
+                "customer_id",
+                customerId
             );
 
+            query.set(
+                "job_id",
+                jobId
+            );
+
+            query.set(
+                "client_request_id",
+                clientRequestId
+            );
+
+            query.set(
+                "service",
+                service
+            );
+
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/approve?" +
+                    query.toString(),
+                    {
+
+                        method:
+                            "POST"
+
+                    }
+                );
+
+
+            const data =
+                await response.json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Approval could not be completed."
+                );
+
+            }
+
+
+            approved =
+                true;
+
+
+            addMessage(
+                "customer",
+                "✓ I approve the request."
+            );
+
+
+            addMessage(
+                "ada",
+                data.message ||
+                "Your request has been approved and is ready for the payment step."
+            );
+
+
+            const amount =
+                Number(
+                    data.amount || 0
+                );
+
+
+            paymentPanel
+                .classList
+                .add(
+                    "show"
+                );
+
+
+            paymentDetails.textContent =
+                "Service: " +
+                (
+                    data.service ||
+                    service
+                ) +
+                "\n" +
+                "Amount: " +
+                (
+                    amount > 0
+                        ? "₦" +
+                          amount.toLocaleString()
+                        : "Quotation required"
+                ) +
+                "\n" +
+                "Order: " +
+                (
+                    data.order_number ||
+                    "Pending"
+                );
+
+
+            setStatus(
+                "Request approved. Payment step is ready.",
+                "success"
+            );
+
+
         } catch (error) {
+
             console.error(
                 "APPROVAL ERROR:",
                 error
             );
 
-            button.disabled = false;
 
-            if (
-                !error.apiResult ||
-                !error.apiResult.diagnostic
-            ) {
-                addMessage(
-                    "Sorry, we could not process the approval right now. Please try again.",
-                    "assistant"
-                );
-            }
+            addMessage(
+                "ada",
+                "Sorry, I could not complete the approval step right now."
+            );
+
+
+            setStatus(
+                error.message ||
+                "Approval failed.",
+                "error"
+            );
+
+
+        } finally {
+
+            setBusy(
+                false
+            );
+
         }
+
     }
 );
 
-/* ==================================================
-   PAYMENT
-   ================================================== */
 
-document.getElementById(
-    "paymentButton"
-).addEventListener(
-    "click",
-    openPaymentPage
-);
 
-function openPaymentPage() {
-    const paymentUrl =
-        "payment.html" +
-        "?service=" +
-        encodeURIComponent(
-            selectedService || ""
-        ) +
-        "&customer_id=" +
-        encodeURIComponent(
-            customerId || ""
-        ) +
-        "&job_id=" +
-        encodeURIComponent(
-            jobId || ""
-        ) +
-        "&client_request_id=" +
-        encodeURIComponent(
-            clientRequestId || ""
-        );
+/* ============================================================
+   PAYMENT REPORT
+============================================================ */
 
-    window.location.href =
-        paymentUrl;
-}
-
-/* ==================================================
-   CUSTOMER SERVICE
-   ================================================== */
-
-document.getElementById(
-    "customerServiceButton"
-).addEventListener(
+paymentReportButton.addEventListener(
     "click",
     async function() {
-        addSystemMessage(
-            "Connecting you with Customer Service..."
+
+        if (!approved) {
+
+            setStatus(
+                "Please approve your request first.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const amountText =
+            paymentDetails.textContent
+                .match(
+                    /Amount:\s*([^\n]+)/
+                );
+
+
+        let amount = 0;
+
+
+        if (amountText) {
+
+            const numeric =
+                amountText[1]
+                    .replace(
+                        /[^0-9.]/g,
+                        ""
+                    );
+
+            amount =
+                Number(
+                    numeric
+                ) || 0;
+
+        }
+
+
+        if (amount <= 0) {
+
+            setStatus(
+                "This service requires a quotation before payment.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        setStatus(
+            "Creating your payment record..."
         );
 
+
         try {
-            const result =
-                await sendToIntelligence(
-                    "I need Customer Service assistance with my current request. Please tell me what help is available and what I should do next.",
-                    "customer_service"
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/payment/create",
+                    {
+
+                        method:
+                            "POST",
+
+                        headers:
+                            {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                        body:
+                            JSON.stringify({
+
+                                job_id:
+                                    jobId,
+
+                                customer_id:
+                                    customerId,
+
+                                service:
+                                    service,
+
+                                amount:
+                                    amount,
+
+                                payment_method:
+                                    "bank_transfer"
+
+                            })
+
+                    }
                 );
 
+
+            const data =
+                await response.json()
+                    .catch(
+                        () => ({})
+                    );
+
+
             if (
-                result &&
-                result.reply
+                !response.ok ||
+                !data.success
             ) {
-                addMessage(
-                    result.reply,
-                    "assistant"
+
+                throw new Error(
+                    data.message ||
+                    "Payment record could not be created."
                 );
+
             }
+
+
+            paymentId =
+                data.payment_id;
+
+
+            store(
+                "npbc_payment_id",
+                String(
+                    paymentId
+                )
+            );
+
+
+            addMessage(
+                "customer",
+                "I have reported my payment."
+            );
+
+
+            addMessage(
+                "ada",
+                data.message ||
+                "Your payment has been reported successfully. Payment verification is now pending."
+            );
+
+
+            paymentDetails.textContent +=
+                "\nPayment ID: " +
+                paymentId +
+                "\nStatus: Pending";
+
+
+            setStatus(
+                "Payment reported. Verification is pending.",
+                "success"
+            );
+
+
         } catch (error) {
+
+            console.error(
+                "PAYMENT ERROR:",
+                error
+            );
+
+
+            setStatus(
+                error.message ||
+                "Payment could not be created.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+
+/* ============================================================
+   PAYMENT STATUS
+============================================================ */
+
+paymentCheckButton.addEventListener(
+    "click",
+    checkPaymentStatus
+);
+
+
+async function checkPaymentStatus() {
+
+    setStatus(
+        "Checking payment status..."
+    );
+
+
+    try {
+
+        const query =
+            new URLSearchParams();
+
+
+        query.set(
+            "job_id",
+            jobId
+        );
+
+
+        const response =
+            await fetch(
+                API_BASE +
+                "/api/payment/status?" +
+                query.toString()
+            );
+
+
+        const data =
+            await response.json()
+                .catch(
+                    () => ({})
+                );
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Payment status could not be checked."
+            );
+
+        }
+
+
+        paymentId =
+            data.payment_id ||
+            paymentId;
+
+
+        const status =
+            String(
+                data.status ||
+                "pending"
+            ).toLowerCase();
+
+
+        if (
+            status === "paid"
+        ) {
+
+            addMessage(
+                "ada",
+                "Your payment has been confirmed successfully. Your document can now be released when the delivery file is ready."
+            );
+
+
+            setStatus(
+                "Payment confirmed.",
+                "success"
+            );
+
+
+            paymentDetails.textContent +=
+                "\nStatus: Paid";
+
+
+            /*
+                The current backend protects /api/download
+                until both payment and delivery are ready.
+
+                We therefore check the actual download endpoint
+                rather than assuming a document exists.
+            */
+
+            await checkDownloadReady();
+
+
+        } else {
+
+            addMessage(
+                "ada",
+                "Payment is still pending. Your document will become available after payment has been confirmed."
+            );
+
+
+            setStatus(
+                "Payment is still pending.",
+                ""
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "PAYMENT STATUS ERROR:",
+            error
+        );
+
+
+        setStatus(
+            error.message ||
+            "Could not check payment status.",
+            "error"
+        );
+
+    }
+}
+
+
+
+/* ============================================================
+   DOWNLOAD CHECK
+============================================================ */
+
+async function checkDownloadReady() {
+
+    const query =
+        new URLSearchParams();
+
+
+    query.set(
+        "job_id",
+        jobId
+    );
+
+
+    if (customerId) {
+
+        query.set(
+            "customer_id",
+            customerId
+        );
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_BASE +
+                "/api/download?" +
+                query.toString(),
+                {
+                    method:
+                        "GET"
+                }
+            );
+
+
+        const contentType =
+            response.headers.get(
+                "content-type"
+            ) ||
+            "";
+
+
+        if (
+            response.ok &&
+            !contentType.includes(
+                "application/json"
+            )
+        ) {
+
+            addMessage(
+                "ada",
+                "Your document is ready for download."
+            );
+
+
+            showDownloadButton();
+
+            return;
+
+        }
+
+
+        const data =
+            await response.json()
+                .catch(
+                    () => ({})
+                );
+
+
+        if (data.message) {
+
+            setStatus(
+                data.message
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "DOWNLOAD CHECK ERROR:",
+            error
+        );
+
+    }
+}
+
+
+
+/* ============================================================
+   DOWNLOAD BUTTON
+============================================================ */
+
+function showDownloadButton() {
+
+    const existing =
+        document.getElementById(
+            "downloadButton"
+        );
+
+
+    if (existing) {
+        return;
+    }
+
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+
+    button.id =
+        "downloadButton";
+
+
+    button.className =
+        "action-button red";
+
+
+    button.type =
+        "button";
+
+
+    button.textContent =
+        "⬇ Download";
+
+
+    button.addEventListener(
+        "click",
+        function() {
+
+            const query =
+                new URLSearchParams();
+
+
+            query.set(
+                "job_id",
+                jobId
+            );
+
+
+            query.set(
+                "customer_id",
+                customerId
+            );
+
+
+            window.location.href =
+                API_BASE +
+                "/api/download?" +
+                query.toString();
+
+        }
+    );
+
+
+    document
+        .querySelector(".actions")
+        .appendChild(
+            button
+        );
+
+}
+
+
+
+/* ============================================================
+   CUSTOMER SERVICE
+============================================================ */
+
+customerServiceButton.addEventListener(
+    "click",
+    async function() {
+
+        if (busy) {
+            return;
+        }
+
+
+        setBusy(
+            true
+        );
+
+
+        setStatus(
+            "Connecting you to Customer Service..."
+        );
+
+
+        try {
+
+            const query =
+                new URLSearchParams();
+
+
+            query.set(
+                "customer_id",
+                customerId
+            );
+
+            query.set(
+                "job_id",
+                jobId
+            );
+
+            query.set(
+                "service",
+                service
+            );
+
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/customer-service?" +
+                    query.toString(),
+                    {
+
+                        method:
+                            "POST"
+
+                    }
+                );
+
+
+            const data =
+                await response.json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.reply ||
+                    data.message ||
+                    "Customer Service is unavailable."
+                );
+
+            }
+
+
+            addMessage(
+                "customer",
+                "I need Customer Service assistance."
+            );
+
+
+            addMessage(
+                "ada",
+                data.reply ||
+                "Customer Service is available to help."
+            );
+
+
+            setStatus(
+                "Customer Service response received.",
+                "success"
+            );
+
+
+        } catch (error) {
+
             console.error(
                 "CUSTOMER SERVICE ERROR:",
                 error
             );
 
-            if (
-                !error.apiResult ||
-                !error.apiResult.diagnostic
-            ) {
-                addMessage(
-                    "Customer Service is available to help. Please try again.",
-                    "assistant"
-                );
-            }
-        }
-    }
-);
 
-/* ==================================================
-   NEW JOB
-   ================================================== */
-
-document.getElementById(
-    "newJobButton"
-).addEventListener(
-    "click",
-    function() {
-        const newJobId =
-            "job_" +
-            cryptoRandomId();
-
-        sessionStorage.setItem(
-            "npbc_job_id",
-            newJobId
-        );
-
-        const newRequestId =
-            "request_" +
-            cryptoRandomId();
-
-        sessionStorage.setItem(
-            "npbc_client_request_id",
-            newRequestId
-        );
-
-        window.location.href =
-            "conversation.html" +
-            "?customer_id=" +
-            encodeURIComponent(
-                customerId
+            addMessage(
+                "ada",
+                "Customer Service is available to help. Please try again."
             );
-    }
-);
 
-/* ==================================================
-   BACK
-   ================================================== */
 
-document.getElementById(
-    "backButton"
-).addEventListener(
-    "click",
-    function() {
-        window.location.href =
-            "conversation.html";
-    }
-);
-
-/* ==================================================
-   CAMERA INPUT
-   ==================================================
-
-   Kept available for the existing camera input,
-   without adding another visible Voice control.
-   ================================================== */
-
-cameraInput.addEventListener(
-    "change",
-    async function() {
-        if (
-            cameraInput.files &&
-            cameraInput.files.length
-        ) {
-            await uploadDocument(
-                cameraInput.files[0]
+            setStatus(
+                error.message ||
+                "Customer Service could not be reached.",
+                "error"
             );
-        }
-    }
-);
 
-/* ==================================================
-   START
-   ================================================== */
 
-window.addEventListener(
-    "load",
-    function() {
-        resizeTextarea();
-        startService();
-    }
-);
+        } finally {
 
-/* ==================================================
-   CLEANUP
-   ================================================== */
-
-window.addEventListener(
-    "beforeunload",
-    function() {
-        stopMicrophone();
-
-        if (
-            audioPreview.src &&
-            audioPreview.src.startsWith("blob:")
-        ) {
-            URL.revokeObjectURL(
-                audioPreview.src
+            setBusy(
+                false
             );
+
         }
+
     }
 );
-</script></body>
+
+
+
+/* ============================================================
+   PAGE INITIALIZATION
+============================================================ */
+
+function initializeWorkspace() {
+
+    serviceBadge.textContent =
+        service;
+
+
+    /*
+        Do not add a fake welcome message here.
+
+        The first Ada message must come from the actual
+        intelligence endpoint.
+    */
+
+    startAda();
+
+}
+
+
+initializeWorkspace();
+
+</script>
+
+</body>
 </html>
