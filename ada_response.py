@@ -13,27 +13,28 @@ Customer-facing intelligence layer:
         |
         +-- AdaPromptManager
         +-- BillingManager
-        +-- Conversation history
+        +-- bounded conversation history
         |
         v
     Groq / gpt-oss-20b
 
-The old AdaController / AdaAIEngine chain is NOT used.
+IMPORTANT:
+- Render is the deployment platform.
+- FastAPI is the API layer.
+- Groq is the intelligence provider.
+- AdaPromptManager remains the central prompt intelligence.
+- BillingManager remains the official pricing authority.
+- The old AdaController / AdaAIEngine chain is not used here.
 
-This version is intentionally optimized for Groq's
-8,000-token-per-minute request limit.
-
-The permanent Ada intelligence remains centralized in
-AdaPromptManager.
-
-The response engine adds only the application-specific
-instructions that are necessary for the current request.
+This version deliberately limits the amount of prompt/history sent to
+Groq so that the request stays safely below the current Groq TPM limit.
 """
 
 from __future__ import annotations
 
 import os
 import traceback
+from typing import Any
 
 
 # ============================================================
@@ -79,6 +80,26 @@ API_KEY = (
 
 
 # ============================================================
+# REQUEST SIZE PROTECTION
+# ============================================================
+
+# Groq previously reported:
+#
+#   TPM limit: 8000
+#   Requested: 10142
+#
+# Therefore this engine deliberately stays well below that limit.
+
+MAX_SYSTEM_PROMPT_CHARS = 14000
+MAX_HISTORY_MESSAGES = 6
+MAX_HISTORY_CHARS = 6000
+MAX_MESSAGE_CHARS = 6000
+MAX_CONTEXT_CHARS = 5000
+
+MAX_OUTPUT_TOKENS = 1000
+
+
+# ============================================================
 # MODEL CLIENT
 # ============================================================
 
@@ -86,10 +107,6 @@ _client = None
 
 
 def get_client():
-    """
-    Create the Groq client once and reuse it.
-    """
-
     global _client
 
     if _client is not None:
@@ -117,8 +134,30 @@ def get_ada_model():
 
 
 def is_configured():
-    return bool(
-        get_client()
+    return get_client() is not None
+
+
+# ============================================================
+# TEXT LIMITER
+# ============================================================
+
+def limit_text(
+    text: Any,
+    maximum: int,
+) -> str:
+
+    if text is None:
+        return ""
+
+    text = str(text).strip()
+
+    if len(text) <= maximum:
+        return text
+
+    return (
+        text[:maximum]
+        + "\n\n[Additional content omitted to keep "
+          "the request within the model context limit.]"
     )
 
 
@@ -147,26 +186,13 @@ class AdaResponse:
             BillingManager()
         )
 
-        # ----------------------------------------------------
-        # Keep history deliberately small.
-        #
-        # The permanent intelligence is already contained
-        # in AdaPromptManager. We do not need a large
-        # conversation history on every Groq request.
-        # ----------------------------------------------------
-
         self.history: list[
             dict[str, str]
         ] = []
 
-        self.max_history_messages = 6
-
-        # ----------------------------------------------------
-        # Prevent unusually large application context from
-        # consuming the Groq request budget.
-        # ----------------------------------------------------
-
-        self.max_context_characters = 6000
+        self.max_history_messages = (
+            MAX_HISTORY_MESSAGES
+        )
 
     # ========================================================
     # SERVICE
@@ -214,7 +240,7 @@ class AdaResponse:
                 str(error),
             )
 
-        return str(service).strip()
+        return service
 
     # ========================================================
     # BILLING CONTEXT
@@ -245,19 +271,33 @@ class AdaResponse:
         except Exception as error:
 
             print(
-                "BILLING CONTEXT ERROR:",
+                "BILLING ERROR:",
                 type(error).__name__,
                 str(error),
             )
 
-            return ""
+            return """
+==================================================
+BILLING INFORMATION
+==================================================
+
+Billing information could not be loaded.
+
+Do not invent or estimate a price.
+"""
 
         if not item:
 
             return """
-OFFICIAL BILLING:
-No BillingManager information is available for
-this service. Never invent or estimate a price.
+==================================================
+BILLING INFORMATION
+==================================================
+
+No official BillingManager information was found
+for the currently selected service.
+
+Do not invent a price.
+Do not estimate a price.
 """
 
         price = item.get(
@@ -297,107 +337,211 @@ this service. Never invent or estimate a price.
                 f"Billing type: {billing_type}"
             )
 
-        return (
-            "OFFICIAL BILLING INFORMATION\n"
-            f"Service: {service}\n"
-            f"{pricing}\n"
-            "BillingManager is the only authority "
-            "for official prices. Never invent a price."
-        )
+        return f"""
+==================================================
+OFFICIAL BILLING INFORMATION
+==================================================
 
-    # ========================================================
-    # LIGHTWEIGHT RESPONSE RULES
-    # ========================================================
+Service: {service}
 
-    def get_response_rules(self) -> str:
-        """
-        These are intentionally short.
+{pricing}
 
-        The former implementation repeated many permanent
-        Ada rules that are already supplied by
-        AdaPromptManager.
+BillingManager is the ONLY authority for the
+official price.
 
-        Repeating them consumed thousands of tokens.
-        """
-
-        return """
-CUSTOMER RESPONSE RULES
-
-You are Ada, the customer-facing assistant for
-Naija Pocket Business Center.
-
-Help the customer complete the selected Business
-Center service naturally and professionally.
-
-Use the selected service as the primary context.
-
-Understand Nigerian English and ordinary Nigerian
-informal expressions. Pidgin may be used naturally
-when appropriate.
-
-Do not behave like a keyword-only menu.
-
-Do not ask the customer to repeat information already
-available in the conversation or application context.
-
-Ask only the next necessary question.
-
-Never invent customer information, application state,
-prices, discounts, charges, qualifications, employment
-history, school information, company information,
-business information, references, certificates or
-registration numbers.
-
-If required information is missing, ask for it.
-
-BillingManager is the only authority for official
-service prices.
-
-Never claim payment, approval, delivery or completion
-unless the application context explicitly confirms it.
-
-Formal documents must remain professional, clear,
-natural and suitable for editing and printing.
-
-Follow the application context supplied with the request.
-It is authoritative.
+Never invent another price.
 """
 
     # ========================================================
-    # TRIM CONTEXT
+    # CORE RESPONSE RULES
     # ========================================================
 
-    def trim_context(
-        self,
-        context: str | None,
-    ) -> str:
+    def get_response_rules(self) -> str:
 
-        if not context:
-            return ""
+        return """
+==================================================
+ADA RESPONSE ENGINE
+==================================================
 
-        context = str(
-            context
-        ).strip()
+You are Ada, the customer-facing Business Center
+assistant for Naija Pocket Business Center.
 
-        if not context:
-            return ""
+You are not a generic chatbot.
 
-        if len(context) <= self.max_context_characters:
-            return context
+Your job is to help the customer complete their
+requested Business Center service.
 
-        # Keep the beginning and end because application
-        # state commonly contains important information
-        # at both locations.
+Understand the customer's actual request before
+responding.
 
-        half = (
-            self.max_context_characters // 2
-        )
+Do not behave like a keyword-only menu.
 
-        return (
-            context[:half]
-            + "\n\n[APPLICATION CONTEXT TRIMMED]\n\n"
-            + context[-half:]
-        )
+Do not restart the conversation unnecessarily.
+
+Do not ask the customer to repeat information that
+is already available in the conversation or
+application context.
+
+Ask only the next necessary question.
+
+==================================================
+CUSTOMER INFORMATION
+==================================================
+
+Never invent customer information.
+
+Never manufacture:
+
+• Names
+• Phone numbers
+• Addresses
+• Email addresses
+• Qualifications
+• Employment history
+• School information
+• Company information
+• Business information
+• Financial information
+• Statistics
+• References
+• Certificates
+• Registration numbers
+
+If required information is missing, ask for it.
+
+==================================================
+SERVICE HANDLING
+==================================================
+
+The selected service is supplied by the application.
+
+Use the selected service as the primary context.
+
+If the customer's message clearly indicates a
+different supported service, understand the request
+intelligently.
+
+Do not blindly follow a keyword when the surrounding
+conversation clearly establishes another meaning.
+
+==================================================
+BILLING
+==================================================
+
+BillingManager is the ONLY official source of
+service prices.
+
+Never guess a price.
+
+Never estimate a price.
+
+Never invent a discount or extra charge.
+
+If the customer asks about price, use the official
+BillingManager information supplied to you.
+
+==================================================
+COMMUNICATION
+==================================================
+
+Be:
+
+• Warm
+• Friendly
+• Respectful
+• Professional
+• Clear
+• Practical
+• Reassuring
+
+Understand Nigerian English and informal Nigerian
+customer language.
+
+Understand expressions such as:
+
+"I need CV."
+
+"How much CV?"
+
+"Abeg help me."
+
+"I wan do project."
+
+"How much una dey charge?"
+
+"I want to type this."
+
+"Help me write this."
+
+Do not require perfect English.
+
+Pidgin may be used naturally when appropriate.
+
+Do not overuse Pidgin.
+
+Formal documents must remain professional.
+
+==================================================
+DOCUMENT QUALITY
+==================================================
+
+Documents should be:
+
+• Natural
+• Professional
+• Clear
+• Accurate
+• Practical
+• Suitable for editing
+• Suitable for printing
+• Appropriate for Nigeria when relevant
+
+Never invent Nigerian facts merely to make a document
+appear Nigerian.
+
+==================================================
+WORKFLOW
+==================================================
+
+Naturally guide the customer through:
+
+Request
+→ Information gathering
+→ Preparation
+→ Review
+→ Revision
+→ Approval
+→ Payment
+→ Delivery
+
+Do not claim that payment has been received,
+confirmed, or that a document has been delivered
+unless the application context explicitly confirms it.
+
+==================================================
+DELIVERY
+==================================================
+
+Default document delivery formats are:
+
+• DOCX
+• PDF
+
+Do not discuss printing unless the customer asks.
+
+==================================================
+APPLICATION STATE
+==================================================
+
+The application context supplied with each request
+is authoritative.
+
+Use it.
+
+Do not contradict it.
+
+Do not invent application state.
+"""
 
     # ========================================================
     # BUILD SYSTEM PROMPT
@@ -418,7 +562,7 @@ It is authoritative.
         parts: list[str] = []
 
         # ----------------------------------------------------
-        # 1. CENTRAL ADA PROMPT
+        # CENTRAL PROMPT MANAGER
         # ----------------------------------------------------
 
         try:
@@ -432,7 +576,7 @@ It is authoritative.
             if central_prompt:
 
                 parts.append(
-                    central_prompt.strip()
+                    central_prompt
                 )
 
         except Exception as error:
@@ -446,7 +590,7 @@ It is authoritative.
             traceback.print_exc()
 
         # ----------------------------------------------------
-        # 2. SHORT RESPONSE RULES
+        # ADA RULES
         # ----------------------------------------------------
 
         parts.append(
@@ -454,7 +598,7 @@ It is authoritative.
         )
 
         # ----------------------------------------------------
-        # 3. BILLING
+        # BILLING
         # ----------------------------------------------------
 
         billing_context = (
@@ -470,42 +614,68 @@ It is authoritative.
             )
 
         # ----------------------------------------------------
-        # 4. APPLICATION STATE
+        # APPLICATION STATE
         # ----------------------------------------------------
 
-        trimmed_context = (
-            self.trim_context(
-                context
-            )
-        )
+        if context:
 
-        if trimmed_context:
+            safe_context = limit_text(
+                context,
+                MAX_CONTEXT_CHARS,
+            )
 
             parts.append(
-                "CURRENT APPLICATION STATE\n"
-                "Use this state as authoritative:\n\n"
-                + trimmed_context
+                f"""
+==================================================
+CURRENT APPLICATION STATE
+==================================================
+
+{safe_context}
+
+==================================================
+END APPLICATION STATE
+==================================================
+"""
             )
 
         # ----------------------------------------------------
-        # 5. ACTIVE SERVICE
+        # ACTIVE SERVICE
         # ----------------------------------------------------
 
         if service:
 
             parts.append(
-                "ACTIVE SERVICE\n"
-                f"The customer's selected service is: {service}\n"
-                "Treat it as the active workflow unless "
-                "the conversation clearly establishes "
-                "another supported request."
+                f"""
+==================================================
+ACTIVE CUSTOMER SERVICE
+==================================================
+
+The customer is currently using:
+
+{service}
+
+Treat this service as the active workflow unless
+the conversation clearly establishes another
+supported request.
+"""
             )
 
-        return "\n\n".join(
+        prompt = "\n\n".join(
             part
             for part in parts
             if part
         )
+
+        # ----------------------------------------------------
+        # FINAL PROMPT SIZE PROTECTION
+        # ----------------------------------------------------
+
+        prompt = limit_text(
+            prompt,
+            MAX_SYSTEM_PROMPT_CHARS,
+        )
+
+        return prompt
 
     # ========================================================
     # CONVERSATION HISTORY
@@ -520,24 +690,21 @@ It is authoritative.
         if not content:
             return
 
-        content = str(
-            content
-        ).strip()
-
-        if not content:
-            return
+        safe_content = limit_text(
+            content,
+            MAX_MESSAGE_CHARS,
+        )
 
         self.history.append(
             {
                 "role": role,
-                "content": content,
+                "content": safe_content,
             }
         )
 
-        if (
-            len(self.history)
-            > self.max_history_messages
-        ):
+        if len(
+            self.history
+        ) > self.max_history_messages:
 
             self.history = (
                 self.history[
@@ -550,10 +717,11 @@ It is authoritative.
     # ========================================================
 
     def clear_history(self):
+
         self.history.clear()
 
     # ========================================================
-    # BUILD MESSAGES
+    # BUILD HISTORY
     # ========================================================
 
     def build_messages(
@@ -568,11 +736,104 @@ It is authoritative.
             }
         ]
 
-        messages.extend(
+        total_history_chars = 0
+
+        # Most recent messages first.
+        # We stop when the history budget is reached.
+
+        for item in reversed(
             self.history
-        )
+        ):
+
+            content = limit_text(
+                item.get(
+                    "content",
+                    "",
+                ),
+                MAX_MESSAGE_CHARS,
+            )
+
+            if not content:
+                continue
+
+            role = item.get(
+                "role",
+                "user",
+            )
+
+            proposed_size = (
+                total_history_chars
+                + len(content)
+            )
+
+            if (
+                proposed_size
+                > MAX_HISTORY_CHARS
+            ):
+
+                break
+
+            messages.insert(
+                1,
+                {
+                    "role": role,
+                    "content": content,
+                },
+            )
+
+            total_history_chars = (
+                proposed_size
+            )
 
         return messages
+
+    # ========================================================
+    # GROQ CALL
+    # ========================================================
+
+    def _call_groq(
+        self,
+        client,
+        messages,
+    ):
+
+        return (
+            client.chat.completions.create(
+                model=MODEL,
+                messages=messages,
+                temperature=0.4,
+                max_tokens=MAX_OUTPUT_TOKENS,
+            )
+        )
+
+    # ========================================================
+    # EXTRACT REPLY
+    # ========================================================
+
+    def _extract_reply(
+        self,
+        response,
+    ) -> str:
+
+        if not response:
+            return ""
+
+        if not response.choices:
+            return ""
+
+        choice = response.choices[0]
+
+        if not choice.message:
+            return ""
+
+        content = (
+            choice.message.content
+            or ""
+        )
+
+        return str(
+            content
+        ).strip()
 
     # ========================================================
     # RESPOND
@@ -615,12 +876,36 @@ It is authoritative.
         )
 
         # ----------------------------------------------------
+        # LIMIT CUSTOMER MESSAGE
+        # ----------------------------------------------------
+
+        message = limit_text(
+            message,
+            MAX_MESSAGE_CHARS,
+        )
+
+        # ----------------------------------------------------
+        # EVENT
+        # ----------------------------------------------------
+
+        active_event = (
+            str(event).strip()
+            if event
+            else ""
+        )
+
+        # ----------------------------------------------------
         # CLIENT
         # ----------------------------------------------------
 
         client = get_client()
 
         if client is None:
+
+            print(
+                "ADA RESPONSE ERROR: "
+                "Groq client is not configured."
+            )
 
             return (
                 "Sorry, Ada's intelligence service "
@@ -640,7 +925,7 @@ It is authoritative.
         )
 
         # ----------------------------------------------------
-        # HISTORY
+        # BUILD MESSAGES
         # ----------------------------------------------------
 
         messages = (
@@ -650,21 +935,22 @@ It is authoritative.
         )
 
         # ----------------------------------------------------
-        # CURRENT EVENT
+        # CURRENT APPLICATION EVENT
         # ----------------------------------------------------
 
-        active_event = (
-            str(event or "").strip()
-        )
-
         if active_event:
+
+            safe_event = limit_text(
+                active_event,
+                1500,
+            )
 
             messages.append(
                 {
                     "role": "system",
                     "content": (
-                        "CURRENT APPLICATION EVENT\n"
-                        + active_event
+                        "Current application event:\n"
+                        + safe_event
                     ),
                 }
             )
@@ -686,33 +972,16 @@ It is authoritative.
 
         try:
 
-            response = (
-                client.chat.completions.create(
-                    model=MODEL,
-                    messages=messages,
-                    temperature=0.4,
-                    max_completion_tokens=800,
-                )
+            response = self._call_groq(
+                client,
+                messages,
             )
 
-            reply = ""
-
-            if response.choices:
-
-                choice = (
-                    response.choices[0]
+            reply = (
+                self._extract_reply(
+                    response
                 )
-
-                if choice.message:
-
-                    reply = (
-                        choice.message.content
-                        or ""
-                    )
-
-            reply = str(
-                reply
-            ).strip()
+            )
 
             if not reply:
 
@@ -740,13 +1009,28 @@ It is authoritative.
 
         except Exception as error:
 
+            error_type = (
+                type(error).__name__
+            )
+
+            error_text = str(
+                error
+            )
+
             print(
                 "ADA RESPONSE ERROR:",
-                type(error).__name__,
-                str(error),
+                error_type,
+                error_text,
             )
 
             traceback.print_exc()
+
+            # ------------------------------------------------
+            # IMPORTANT:
+            #
+            # Do not expose provider diagnostics to the
+            # customer.
+            # ------------------------------------------------
 
             return (
                 "Sorry, I could not process your request "
@@ -800,80 +1084,58 @@ if __name__ == "__main__":
         ),
     )
 
-    print(
-        "CV Prompt:",
-        bool(
-            manager.get_service_prompt(
-                "cv"
-            )
-        ),
-    )
+    services_to_test = [
+        "cv",
+        "cover_letter",
+        "business",
+        "academic",
+        "document_processing",
+        "review",
+        "workflow",
+        "delivery",
+    ]
 
-    print(
-        "Cover Letter Prompt:",
-        bool(
-            manager.get_service_prompt(
-                "cover_letter"
-            )
-        ),
-    )
+    for service_name in services_to_test:
 
-    print(
-        "Business Prompt:",
-        bool(
-            manager.get_service_prompt(
-                "business"
-            )
-        ),
-    )
+        try:
 
-    print(
-        "Academic Prompt:",
-        bool(
-            manager.get_service_prompt(
-                "academic"
+            available = bool(
+                manager.get_service_prompt(
+                    service_name
+                )
             )
-        ),
-    )
 
-    print(
-        "Document Processing:",
-        bool(
-            manager.get_service_prompt(
-                "document_processing"
-            )
-        ),
-    )
+        except Exception:
 
-    print(
-        "Review Prompt:",
-        bool(
-            manager.get_service_prompt(
-                "review"
-            )
-        ),
-    )
+            available = False
 
-    print(
-        "Workflow Prompt:",
-        bool(
-            manager.get_service_prompt(
-                "workflow"
-            )
-        ),
-    )
-
-    print(
-        "Delivery Prompt:",
-        bool(
-            manager.get_service_prompt(
-                "delivery"
-            )
-        ),
-    )
+        print(
+            f"{service_name}:",
+            available,
+        )
 
     print()
+
     print(
         "Ada Response Engine READY"
     )
+
+    print(
+        "Maximum system prompt:",
+        MAX_SYSTEM_PROMPT_CHARS,
+        "characters",
+    )
+
+    print(
+        "Maximum history:",
+        MAX_HISTORY_MESSAGES,
+        "messages",
+    )
+
+    print(
+        "Maximum output:",
+        MAX_OUTPUT_TOKENS,
+        "tokens",
+    )
+
     print("=" * 70)
