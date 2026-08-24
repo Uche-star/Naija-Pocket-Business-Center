@@ -905,8 +905,9 @@ instruction.
             traceback.print_exc()
 
             return (
-                "Sorry, I could not process your request "
-                "right now. Please try again in a moment."
+                f"ADA RESPONSE ERROR: "
+                f"{type(error).__name__}: "
+                f"{str(error)}"
             )
 
 
