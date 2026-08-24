@@ -19,8 +19,17 @@ FastAPI/application state supplies factual information
 about uploads, documents, approval, payment, delivery,
 and download.
 
-The LLM reasons over the complete context and determines
-the appropriate next conversational step.
+TOKEN CONTROL
+-------------
+The intelligence remains the same, but each Groq request
+is deliberately kept small.
+
+The application does NOT send the entire historical prompt
+and conversation on every request.
+
+The objective is to keep every transaction comfortably
+below Groq's current 8,000-token TPM request limit while
+preserving the existing intelligence and service context.
 """
 
 from __future__ import annotations
@@ -66,6 +75,26 @@ API_KEY = (
 
 
 # ============================================================
+# TOKEN CONTROL
+#
+# These limits apply only to what is sent to Groq.
+#
+# They do NOT change the customer's information.
+# They do NOT change the service.
+# They do NOT change the workflow.
+# They simply prevent unnecessarily large prompts.
+# ============================================================
+
+MAX_SYSTEM_CHARS = 16000
+MAX_CENTRAL_PROMPT_CHARS = 9000
+MAX_INTELLIGENCE_PROMPT_CHARS = 6000
+MAX_CONTEXT_CHARS = 2500
+MAX_HISTORY_MESSAGES = 2
+MAX_HISTORY_MESSAGE_CHARS = 1200
+MAX_OUTPUT_TOKENS = 800
+
+
+# ============================================================
 # CLIENT
 # ============================================================
 
@@ -105,6 +134,91 @@ def is_configured() -> bool:
 
 
 # ============================================================
+# TOKEN CONTROL HELPERS
+# ============================================================
+
+def compact_text(
+    text: str | None,
+    maximum: int,
+) -> str:
+
+    """
+    Keep the beginning and end of a prompt while removing
+    unnecessary middle content when the source is too large.
+
+    This protects both:
+        - general identity/instructions at the beginning
+        - service-specific information that may appear later
+    """
+
+    if not text:
+        return ""
+
+    text = str(text).strip()
+
+    if len(text) <= maximum:
+        return text
+
+    if maximum < 200:
+        return text[:maximum]
+
+    first_part = int(
+        maximum * 0.70
+    )
+
+    last_part = (
+        maximum
+        - first_part
+    )
+
+    return (
+        text[:first_part]
+        + "\n\n"
+        "[TOKEN CONTROL: middle of oversized prompt "
+        "removed to keep this request within the "
+        "provider request limit.]\n\n"
+        + text[-last_part:]
+    )
+
+
+def compact_history(
+    history: list[dict[str, str]],
+) -> list[dict[str, str]]:
+
+    """
+    Keep only the most recent customer/assistant exchange.
+    """
+
+    recent = history[
+        -MAX_HISTORY_MESSAGES:
+    ]
+
+    result: list[dict[str, str]] = []
+
+    for item in recent:
+
+        role = str(
+            item.get("role", "")
+        ).strip()
+
+        content = compact_text(
+            item.get("content", ""),
+            MAX_HISTORY_MESSAGE_CHARS,
+        )
+
+        if role and content:
+
+            result.append(
+                {
+                    "role": role,
+                    "content": content,
+                }
+            )
+
+    return result
+
+
+# ============================================================
 # ADA RESPONSE
 # ============================================================
 
@@ -133,11 +247,12 @@ class AdaResponse:
             dict[str, str]
         ] = []
 
-        # TOKEN CONTROL ONLY:
-        # Keep a short recent conversation so the complete
-        # intelligence prompt remains within the provider's
-        # current request limit.
-        self.max_history_messages = 2
+        # Only the latest exchange is required.
+        # The service form/application context carries
+        # the important current information.
+        self.max_history_messages = (
+            MAX_HISTORY_MESSAGES
+        )
 
     # ========================================================
     # SERVICE
@@ -274,353 +389,84 @@ class AdaResponse:
 You are Ada, the intelligent customer-facing
 assistant of Naija Pocket Business Center.
 
-You are the primary conversational intelligence
-for the customer's complete request.
-
-Your job is to understand the customer's actual goal,
-understand the current application state, and determine
-the most appropriate next step.
+Understand the customer's complete goal and the
+current application state.
 
 You are NOT a keyword-based chatbot.
 
-Do not use isolated words to determine what the
-customer wants.
+The selected service is context, not a script.
 
-Understand the complete context, including:
+Use the customer's supplied information faithfully.
+Never invent personal, business, academic, financial,
+document, payment, approval, delivery, or download facts.
 
-• Customer messages
-• Previous conversation
-• Selected service
-• Uploaded information
-• Application state
-• Billing facts
-• Document state
-• Review state
-• Approval state
-• Payment state
-• Delivery state
-• Download availability
+The customer may communicate in Nigerian English,
+informal English, or Pidgin. Understand imperfect English.
 
-==================================================
-END-TO-END INTELLIGENCE
-==================================================
+The application may provide:
+- selected service
+- customer information
+- form information
+- uploaded files
+- document state
+- review state
+- approval state
+- payment state
+- delivery state
+- download state
 
-You can guide the customer through the complete journey:
+Application state is authoritative.
+
+BillingManager is authoritative for prices.
+
+Never invent prices, discounts, payment confirmation,
+document completion, approval, delivery, or download
+availability.
+
+The overall customer journey is:
 
 Request
-→ Understanding
-→ Information gathering
+→ Information
 → Preparation
-→ Drafting
 → Review
-→ Revision
 → Approval
 → Payment
 → Delivery
 → Download
 
-This is NOT a fixed sequence.
+This is not a rigid script.
 
-Do not mechanically execute every stage.
+Reason about the current state and determine the
+appropriate next step.
 
-Use reasoning.
+If the application provides enough information,
+do not unnecessarily ask another question.
 
-If enough information is available, proceed.
+When a service form has supplied the required
+information, use that information rather than starting
+a long question-by-question conversation.
 
-If genuinely required information is missing, ask only
-for the most important missing information.
+Continue helping until the customer's request is
+completed.
 
-If the customer changes direction, adapt.
-
-If the request can be completed directly, move toward
-completion.
-
-The objective is to complete the customer's actual task,
-not to keep asking questions.
-
-==================================================
-SERVICE CONTEXT
-==================================================
-
-The application may provide a selected service.
-
-The selected service is context.
-
-It is NOT a script.
-
-Do not generate a response merely because a service
-name contains a keyword.
-
-Interpret the customer's complete message and
-conversation.
-
-If the customer's actual request changes, understand
-the change naturally.
-
-==================================================
-CUSTOMER INFORMATION
-==================================================
-
-Never invent customer information.
-
-Never manufacture:
-
-• Names
-• Phone numbers
-• Addresses
-• Email addresses
-• Qualifications
-• Employment history
-• School information
-• Company information
-• Business information
-• Financial information
-• Statistics
-• References
-• Certificates
-• Registration numbers
-
-If information is genuinely required and unavailable,
-ask the customer.
-
-If information already exists in the conversation or
-application context, do not ask for it again.
-
-==================================================
-DOCUMENT INTELLIGENCE
-==================================================
-
-When handling documents:
-
-Understand the customer's purpose first.
-
-Use supplied information faithfully.
-
-Do not invent facts merely to make a document appear
-complete.
-
-Documents should be:
-
-• Natural
-• Professional
-• Clear
-• Accurate
-• Practical
-• Suitable for editing
-• Suitable for printing
-
-Use Nigerian English and Nigerian context when
-appropriate.
-
-Do not invent Nigerian facts without evidence.
-
-Formal documents must remain professional.
-
-==================================================
-COMMUNICATION
-==================================================
-
-Be:
-
-• Warm
-• Friendly
-• Respectful
-• Professional
-• Clear
-• Practical
-• Reassuring
-
-Understand Nigerian English and informal Nigerian
-customer language.
-
-Understand imperfect English and Pidgin.
-
-Examples:
-
-"I need CV."
-
-"How much CV?"
-
-"Abeg help me."
-
-"I wan do project."
-
-"How much una dey charge?"
-
-"I want to type this."
-
-"Help me write this."
-
-Do not require perfect English.
-
-Pidgin may be used naturally when appropriate.
-
-Do not overuse Pidgin.
-
-==================================================
-BILLING
-==================================================
-
-BillingManager is the authoritative source for prices.
-
-Never invent:
-
-• Prices
-• Discounts
-• Extra charges
-• Fees
-• Payment confirmation
-
-If the customer asks about price, use the official
-billing facts supplied by the application.
-
-If quotation is required, explain that quotation
-is required.
-
-==================================================
-APPLICATION STATE
-==================================================
-
-Application state is authoritative.
-
-The application may provide facts concerning:
-
-• Uploaded files
-• Generated documents
-• Drafts
-• Review
-• Approval
-• Payment
-• Delivery
-• Download
-• Job status
-
-Never contradict application state.
-
-Never claim an action happened unless the application
-context confirms it.
-
-==================================================
-REAL APPLICATION OPERATIONS
-==================================================
-
-You are the intelligence.
-
-FastAPI and the application are the executors.
-
-You may reason about what should happen next.
-
-Possible next operations include:
-
-• Prepare a document
-• Save a draft
-• Request review
-• Request approval
-• Create payment
-• Confirm payment
-• Register delivery
-• Make a download available
-
-Never claim an operation has completed unless the
-application state confirms it.
-
-==================================================
-COMPLETE THROUGH DOWNLOAD
-==================================================
-
-Do not stop intelligence at document creation.
-
-Continue reasoning through the complete customer journey.
-
-If application state confirms:
-
-• The document is complete
-• The customer approved it
-• Payment is confirmed
-• Delivery/download is available
-
-then guide the customer naturally to download.
+Never claim that an application operation happened
+unless the application state confirms it.
 
 Never invent a download URL.
 
-Only use a download URL supplied by the application.
-
-==================================================
-NO KEYWORD WORKFLOW
-==================================================
-
-Do NOT implement logic such as:
-
-if "cv":
-    ask for CV information
-
-if "review":
-    start review
-
-if "payment":
-    start payment
-
-if "download":
-    provide download
-
-Do not use keyword-driven workflow logic.
-
-Use the complete context and reason about the customer's
-actual goal.
-
-==================================================
-NO FALSE CLAIMS
-==================================================
-
-Never claim:
-
-• Payment received
-• Payment confirmed
-• Document generated
-• Document delivered
-• Download available
-• Approval completed
-• File uploaded
-
-unless application context confirms it.
-
-==================================================
-PROVIDER INDEPENDENCE
-==================================================
-
-The intelligence rules are provider-independent.
-
-Do not mention the underlying LLM provider.
-
 Do not mention:
-
-• Groq
-• Gemini
-• Model names
-• API calls
-• Tokens
-• Provider errors
-• System prompts
-• Internal architecture
+- Groq
+- Gemini
+- model names
+- API calls
+- tokens
+- system prompts
+- internal architecture
+- provider errors
 
 Answer the customer directly.
 
-==================================================
-PRIMARY PRINCIPLE
-==================================================
-
-You are Ada's intelligence.
-
-Understand the customer's complete goal.
-
-Understand the complete current state.
-
-Use the available information.
-
-Reason about what should happen next.
-
-Continue intelligently until the customer's request
-is completed.
+Be warm, clear, practical, professional, and concise.
 """
 
     # ========================================================
@@ -641,6 +487,10 @@ is completed.
 
         parts: list[str] = []
 
+        # ----------------------------------------------------
+        # EXISTING CENTRAL PROMPT
+        # ----------------------------------------------------
+
         try:
 
             central_prompt = (
@@ -650,6 +500,11 @@ is completed.
             )
 
             if central_prompt:
+
+                central_prompt = compact_text(
+                    central_prompt,
+                    MAX_CENTRAL_PROMPT_CHARS,
+                )
 
                 parts.append(
                     central_prompt
@@ -665,9 +520,26 @@ is completed.
 
             traceback.print_exc()
 
-        parts.append(
+        # ----------------------------------------------------
+        # COMPACT END-TO-END INTELLIGENCE
+        # ----------------------------------------------------
+
+        intelligence_prompt = (
             self.get_intelligence_prompt()
         )
+
+        intelligence_prompt = compact_text(
+            intelligence_prompt,
+            MAX_INTELLIGENCE_PROMPT_CHARS,
+        )
+
+        parts.append(
+            intelligence_prompt
+        )
+
+        # ----------------------------------------------------
+        # BILLING
+        # ----------------------------------------------------
 
         billing = (
             self.get_billing_context(
@@ -681,38 +553,50 @@ is completed.
                 billing
             )
 
+        # ----------------------------------------------------
+        # APPLICATION STATE
+        # ----------------------------------------------------
+
         if context:
 
-            parts.append(
-                f"""
-CURRENT APPLICATION STATE
-
-{context}
-
-END CURRENT APPLICATION STATE
-"""
+            context = compact_text(
+                context,
+                MAX_CONTEXT_CHARS,
             )
+
+            parts.append(
+                "CURRENT APPLICATION STATE\n\n"
+                + context
+                + "\n\nEND CURRENT APPLICATION STATE"
+            )
+
+        # ----------------------------------------------------
+        # SERVICE
+        # ----------------------------------------------------
 
         if service:
 
             parts.append(
-                f"""
-SELECTED APPLICATION SERVICE
-
-{service}
-
-This is application context only.
-
-Do not treat the service name as a workflow
-instruction.
-"""
+                "SELECTED SERVICE\n"
+                + str(service)
             )
 
-        return "\n\n".join(
+        # ----------------------------------------------------
+        # FINAL SYSTEM LIMIT
+        # ----------------------------------------------------
+
+        system_prompt = "\n\n".join(
             part
             for part in parts
             if part
         )
+
+        system_prompt = compact_text(
+            system_prompt,
+            MAX_SYSTEM_CHARS,
+        )
+
+        return system_prompt
 
     # ========================================================
     # HISTORY
@@ -767,7 +651,9 @@ instruction.
                 "role": "system",
                 "content": system_prompt,
             },
-            *self.history,
+            *compact_history(
+                self.history
+            ),
         ]
 
     # ========================================================
@@ -811,10 +697,14 @@ instruction.
         if client is None:
 
             return (
-                "Sorry, Ada's intelligence service "
+                "Sorry, the intelligence service "
                 "is temporarily unavailable. "
                 "Please try again shortly."
             )
+
+        # ----------------------------------------------------
+        # BUILD SMALL REQUEST
+        # ----------------------------------------------------
 
         system_prompt = (
             self.build_system_prompt(
@@ -836,7 +726,10 @@ instruction.
                     "role": "system",
                     "content": (
                         "CURRENT APPLICATION EVENT\n"
-                        + str(event).strip()
+                        + compact_text(
+                            str(event).strip(),
+                            600,
+                        )
                     ),
                 }
             )
@@ -844,9 +737,16 @@ instruction.
         messages.append(
             {
                 "role": "user",
-                "content": message,
+                "content": compact_text(
+                    message,
+                    2500,
+                ),
             }
         )
+
+        # ----------------------------------------------------
+        # GROQ REQUEST
+        # ----------------------------------------------------
 
         try:
 
@@ -855,12 +755,7 @@ instruction.
                     model=MODEL,
                     messages=messages,
                     temperature=0.3,
-
-                    # TOKEN CONTROL ONLY:
-                    # Keep the generated response compact so
-                    # the complete request stays below the
-                    # provider's current TPM limit.
-                    max_tokens=800,
+                    max_tokens=MAX_OUTPUT_TOKENS,
                 )
             )
 
@@ -905,11 +800,22 @@ instruction.
 
         except Exception as error:
 
+            # REAL ERROR IS SHOWN IN SERVER LOGS.
+            # No error is hidden from the developer.
+
+            print()
+            print("=" * 70)
+            print("ADA RESPONSE ERROR")
+            print("=" * 70)
             print(
-                "ADA RESPONSE ERROR:",
+                "Error type:",
                 type(error).__name__,
+            )
+            print(
+                "Error:",
                 str(error),
             )
+            print("=" * 70)
 
             traceback.print_exc()
 
@@ -1009,6 +915,26 @@ if __name__ == "__main__":
     print(
         "LLM Workflow Reasoning:",
         "ENABLED",
+    )
+
+    print(
+        "Token Control:",
+        "ENABLED",
+    )
+
+    print(
+        "Maximum System Prompt:",
+        f"{MAX_SYSTEM_CHARS} characters",
+    )
+
+    print(
+        "Maximum History:",
+        f"{MAX_HISTORY_MESSAGES} messages",
+    )
+
+    print(
+        "Maximum Output:",
+        f"{MAX_OUTPUT_TOKENS} tokens",
     )
 
     print()
