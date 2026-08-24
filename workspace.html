@@ -76,28 +76,17 @@
             background: #000;
         }
 
-        /* =====================================================
-           HEADER
-        ===================================================== */
-
         .header {
             flex: 0 0 auto;
-
             min-height: 70px;
             width: 100%;
-
             padding: 10px 14px;
-
             display: flex;
             align-items: center;
             justify-content: space-between;
-
             gap: 12px;
-
             background: #050505;
-
             border-bottom: 1px solid var(--border);
-
             position: relative;
             z-index: 20;
         }
@@ -108,68 +97,45 @@
 
         .brand-title {
             margin: 0;
-
             color: var(--gold);
-
             font-family:
                 Montserrat,
                 Inter,
                 Arial,
                 sans-serif;
-
             font-size: clamp(18px, 4vw, 25px);
             font-weight: 800;
-
             line-height: 1.1;
         }
 
         .brand-subtitle {
             margin-top: 4px;
-
             color: #d0d0d0;
-
             font-size: 11px;
         }
 
         .service-badge {
             flex: 0 0 auto;
-
             max-width: 48%;
-
             padding: 8px 11px;
-
             background: #171717;
-
             border: 1px solid rgba(212, 175, 55, 0.55);
-
             border-radius: 999px;
-
             color: var(--gold-light);
-
             font-size: 11px;
             font-weight: 800;
-
             text-align: center;
-
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* =====================================================
-           MAIN AREA
-        ===================================================== */
-
         .main {
             flex: 1 1 auto;
-
             min-height: 0;
-
             width: 100%;
-
             overflow-y: auto;
             overflow-x: hidden;
-
             background:
                 radial-gradient(
                     circle at top,
@@ -182,15 +148,9 @@
         .main-inner {
             width: 100%;
             max-width: 900px;
-
             margin: 0 auto;
-
             padding: 18px 12px 30px;
         }
-
-        /* =====================================================
-           FORM VIEW
-        ===================================================== */
 
         .form-view {
             width: 100%;
@@ -198,91 +158,66 @@
 
         .intro-card {
             margin-bottom: 14px;
-
             padding: 17px;
-
             background:
                 linear-gradient(
                     145deg,
                     #191919,
                     #0d0d0d
                 );
-
             border: 1px solid var(--border);
-
             border-radius: 17px;
-
             box-shadow:
                 0 10px 30px rgba(0, 0, 0, 0.35);
         }
 
         .intro-title {
             margin: 0 0 7px;
-
             color: var(--gold-light);
-
             font-size: 20px;
             font-weight: 850;
         }
 
         .intro-text {
             margin: 0;
-
             color: #dedede;
-
             font-size: 14px;
-
-            line-height: 1.55;
+            line-height: 1.6;
+            white-space: pre-wrap;
         }
 
         .price {
             display: inline-block;
-
             margin-top: 11px;
-
             padding: 7px 10px;
-
             background: rgba(212, 175, 55, 0.09);
-
             border: 1px solid rgba(212, 175, 55, 0.30);
-
             border-radius: 8px;
-
             color: var(--gold-light);
-
             font-size: 13px;
             font-weight: 800;
         }
 
         .form-card {
             background: #101010;
-
             border: 1px solid rgba(255, 255, 255, 0.09);
-
             border-radius: 17px;
-
             padding: 16px;
-
             box-shadow:
                 0 12px 32px rgba(0, 0, 0, 0.35);
         }
 
         .form-heading {
             margin: 0;
-
             color: #fff;
-
             font-size: 18px;
             font-weight: 850;
         }
 
         .form-description {
             margin: 6px 0 16px;
-
             color: #a9a9a9;
-
             font-size: 12px;
-
             line-height: 1.5;
         }
 
@@ -298,11 +233,8 @@
 
         .field label {
             display: block;
-
             margin-bottom: 6px;
-
             color: #e8e8e8;
-
             font-size: 12px;
             font-weight: 800;
         }
@@ -315,19 +247,12 @@
         .field textarea,
         .field select {
             width: 100%;
-
             border: 1px solid rgba(255, 255, 255, 0.14);
-
             border-radius: 10px;
-
             background: #181818;
-
             color: #fff;
-
             outline: none;
-
             padding: 12px;
-
             font-size: 14px;
         }
 
@@ -354,40 +279,25 @@
 
         .form-note {
             margin-top: 14px;
-
             padding: 11px;
-
             background: #151515;
-
             border-left: 3px solid var(--gold);
-
             border-radius: 7px;
-
             color: #bdbdbd;
-
             font-size: 11px;
-
             line-height: 1.5;
         }
 
         .form-submit {
             width: 100%;
-
             min-height: 52px;
-
             margin-top: 17px;
-
             border: none;
-
             border-radius: 11px;
-
             background: var(--gold);
-
             color: #000;
-
             font-size: 14px;
             font-weight: 900;
-
             transition:
                 background 0.15s ease,
                 transform 0.15s ease;
@@ -406,10 +316,6 @@
             cursor: not-allowed;
         }
 
-        /* =====================================================
-           WORK / REVIEW VIEW
-        ===================================================== */
-
         .review-view {
             display: none;
         }
@@ -420,129 +326,92 @@
 
         .review-header {
             padding: 17px;
-
             margin-bottom: 12px;
-
             background:
                 linear-gradient(
                     145deg,
                     #191919,
                     #0d0d0d
                 );
-
             border:
                 1px solid
                 rgba(212, 175, 55, 0.38);
-
             border-radius: 17px;
         }
 
         .review-title {
             margin: 0;
-
             color: var(--gold-light);
-
             font-size: 21px;
             font-weight: 900;
         }
 
         .review-subtitle {
             margin: 6px 0 0;
-
             color: #bdbdbd;
-
             font-size: 12px;
-
             line-height: 1.5;
         }
 
         .work-card {
             background: #f7f7f7;
-
             color: #111;
-
             border-radius: 12px;
-
             min-height: 350px;
-
             padding: 25px 20px;
-
             box-shadow:
                 0 15px 40px rgba(0, 0, 0, 0.45);
-
             overflow-wrap: anywhere;
         }
 
         .work-content {
             white-space: pre-wrap;
-
             line-height: 1.7;
-
             font-size: 15px;
         }
 
         .work-placeholder {
             color: #777;
-
             text-align: center;
-
             padding: 70px 15px;
         }
 
         .correction-card {
             margin-top: 13px;
-
             padding: 15px;
-
             background: #111;
-
             border:
                 1px solid
                 rgba(255, 255, 255, 0.10);
-
             border-radius: 14px;
         }
 
         .correction-title {
             margin: 0 0 5px;
-
             color: #fff;
-
             font-size: 15px;
             font-weight: 850;
         }
 
         .correction-help {
             margin: 0 0 10px;
-
             color: #999;
-
             font-size: 11px;
-
             line-height: 1.45;
         }
 
         .correction-input {
             width: 100%;
-
             min-height: 105px;
-
             resize: vertical;
-
             padding: 12px;
-
             background: #191919;
-
             color: #fff;
-
             border:
                 1px solid
                 rgba(255, 255, 255, 0.15);
-
             border-radius: 10px;
-
             outline: none;
-
             line-height: 1.5;
         }
 
@@ -553,29 +422,22 @@
 
         .review-actions {
             display: grid;
-
             grid-template-columns:
                 repeat(2, minmax(0, 1fr));
-
             gap: 8px;
-
             margin-top: 12px;
         }
 
         .review-button {
             min-height: 45px;
-
             border-radius: 9px;
-
             font-size: 12px;
             font-weight: 850;
         }
 
         .apply-button {
             background: #252525;
-
             color: #fff;
-
             border:
                 1px solid
                 rgba(255, 255, 255, 0.14);
@@ -583,68 +445,47 @@
 
         .approve-button {
             background: var(--gold);
-
             color: #000;
-
             border: none;
         }
 
         .download-button {
             width: 100%;
-
             min-height: 48px;
-
             margin-top: 8px;
-
             border-radius: 9px;
-
             background: #242424;
-
             color: #777;
-
             border:
                 1px solid
                 rgba(255, 255, 255, 0.10);
-
             font-size: 12px;
             font-weight: 850;
-
             cursor: not-allowed;
         }
 
         .download-button.active {
             background: var(--green);
-
             color: #fff;
-
             border-color: var(--green);
-
             cursor: pointer;
         }
 
         .payment-message {
             margin-top: 9px;
-
             color: #858585;
-
             font-size: 10px;
-
             text-align: center;
         }
 
         .payment-panel {
             display: none;
-
             margin-top: 12px;
-
             padding: 14px;
-
             background: #121212;
-
             border:
                 1px solid
                 rgba(212, 175, 55, 0.38);
-
             border-radius: 13px;
         }
 
@@ -654,117 +495,83 @@
 
         .payment-title {
             color: var(--gold-light);
-
             font-size: 14px;
             font-weight: 900;
-
             margin-bottom: 7px;
         }
 
         .payment-details {
             color: #ddd;
-
             white-space: pre-wrap;
-
             font-size: 12px;
-
             line-height: 1.5;
         }
 
         .payment-buttons {
             display: grid;
-
             grid-template-columns:
                 repeat(2, minmax(0, 1fr));
-
             gap: 7px;
-
             margin-top: 10px;
         }
 
         .payment-buttons button {
             min-height: 42px;
-
             border-radius: 8px;
-
             font-size: 11px;
             font-weight: 850;
         }
 
         .payment-report {
             background: var(--gold);
-
             color: #000;
-
             border: none;
         }
 
         .payment-check {
             background: #282828;
-
             color: #fff;
-
             border:
                 1px solid
                 rgba(255, 255, 255, 0.13);
         }
 
-        /* =====================================================
-           BOTTOM BAR
-        ===================================================== */
-
         .bottom {
             flex: 0 0 auto;
-
             width: 100%;
-
             padding:
                 8px
                 10px
                 calc(8px + env(safe-area-inset-bottom));
-
             background: #080808;
-
             border-top: 1px solid var(--border);
-
             position: relative;
-
             z-index: 20;
         }
 
         .bottom-inner {
             width: 100%;
             max-width: 900px;
-
             margin: 0 auto;
         }
 
         .tools {
             display: grid;
-
             grid-template-columns:
                 repeat(3, minmax(0, 1fr));
-
             gap: 7px;
-
             margin-bottom: 8px;
         }
 
         .tool-button {
             min-height: 39px;
-
             padding: 7px 4px;
-
             border-radius: 8px;
-
             background: #181818;
-
             color: #fff;
-
             border:
                 1px solid
                 rgba(255, 255, 255, 0.13);
-
             font-size: 11px;
             font-weight: 800;
         }
@@ -776,55 +583,40 @@
 
         .tool-button.gold {
             color: var(--gold-light);
-
             border-color:
                 rgba(212, 175, 55, 0.35);
         }
 
         .tool-button.red {
             background: var(--red);
-
             border-color: var(--red);
         }
 
         .tool-button:disabled {
             opacity: 0.4;
-
             cursor: not-allowed;
         }
 
         .composer {
             display: flex;
-
             align-items: flex-end;
-
             gap: 7px;
         }
 
         .message-input {
             flex: 1 1 auto;
-
             min-width: 0;
-
             min-height: 46px;
             max-height: 105px;
-
             resize: none;
-
             padding: 12px;
-
             background: #171717;
-
             color: #fff;
-
             border:
                 1px solid
                 rgba(255, 255, 255, 0.16);
-
             border-radius: 10px;
-
             outline: none;
-
             line-height: 1.4;
         }
 
@@ -839,26 +631,18 @@
 
         .send-button {
             flex: 0 0 auto;
-
             width: 68px;
-
             min-height: 46px;
-
             border: none;
-
             border-radius: 10px;
-
             background: var(--gold);
-
             color: #000;
-
             font-size: 12px;
             font-weight: 900;
         }
 
         .send-button:disabled {
             opacity: 0.45;
-
             cursor: not-allowed;
         }
 
@@ -868,23 +652,15 @@
 
         .voice-recording {
             display: none;
-
             margin-bottom: 7px;
-
             padding: 8px;
-
             background: #190707;
-
             border:
                 1px solid
                 rgba(179, 0, 0, 0.55);
-
             border-radius: 8px;
-
             color: #ff8c8c;
-
             font-size: 11px;
-
             text-align: center;
         }
 
@@ -894,13 +670,9 @@
 
         .status {
             min-height: 15px;
-
             margin-top: 4px;
-
             color: #777;
-
             font-size: 10px;
-
             text-align: center;
         }
 
@@ -916,9 +688,7 @@
 
             .header {
                 min-height: 65px;
-
-                padding:
-                    9px 10px;
+                padding: 9px 10px;
             }
 
             .brand-title {
@@ -931,11 +701,8 @@
 
             .service-badge {
                 max-width: 43%;
-
                 font-size: 10px;
-
-                padding:
-                    7px 8px;
+                padding: 7px 8px;
             }
 
             .main-inner {
@@ -965,7 +732,6 @@
             .tools {
                 grid-template-columns:
                     repeat(3, minmax(0, 1fr));
-
                 gap: 5px;
             }
 
@@ -1003,10 +769,6 @@
 
 <div class="app">
 
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
-
     <header class="header">
 
         <div class="brand">
@@ -1031,17 +793,9 @@
     </header>
 
 
-    <!-- =====================================================
-         MAIN
-    ====================================================== -->
-
     <main class="main">
 
         <div class="main-inner">
-
-            <!-- =================================================
-                 FORM VIEW
-            ================================================== -->
 
             <section
                 id="formView"
@@ -1061,9 +815,8 @@
                         id="introText"
                         class="intro-text"
                     >
-                        Please provide the information needed
-                        for this service. Only information that
-                        is relevant to your request is required.
+                        Please wait while we prepare useful
+                        information for this service.
                     </p>
 
                     <div
@@ -1121,10 +874,6 @@
 
             </section>
 
-
-            <!-- =================================================
-                 REVIEW / WORK VIEW
-            ================================================== -->
 
             <section
                 id="reviewView"
@@ -1261,10 +1010,6 @@
     </main>
 
 
-    <!-- =====================================================
-         BOTTOM CONTROLS
-    ====================================================== -->
-
     <section class="bottom">
 
         <div class="bottom-inner">
@@ -1284,7 +1029,7 @@
                     class="tool-button"
                     type="button"
                 >
-                    📄 Documents
+                    📄 Upload Documents You Want To Give Us
                 </button>
 
                 <button
@@ -1305,11 +1050,6 @@
 
             </div>
 
-
-            <!-- Normal phone file picker.
-                 No Quick Share.
-                 No photo/picture wording.
-            -->
 
             <input
                 id="fileInput"
@@ -1353,6 +1093,7 @@
 
 <script>
 "use strict";
+
 
 /* ============================================================
    CURRENT FASTAPI APPLICATION
@@ -1680,30 +1421,8 @@ function setBusy(value) {
 }
 
 
-function scrollTop() {
-
-    main.scrollTop = 0;
-}
-
-
-function scrollBottom() {
-
-    main.scrollTop =
-        main.scrollHeight;
-}
-
-
 /* ============================================================
    SERVICE FORM DEFINITIONS
-   ============================================================
-
-   These fields are for collecting service requirements.
-
-   They are NOT a generic personal-information form.
-
-   The intelligence still receives the complete information
-   and remains responsible for understanding the customer's
-   actual request.
 ============================================================ */
 
 const serviceForms = {
@@ -1937,10 +1656,6 @@ const serviceForms = {
 };
 
 
-/* ============================================================
-   GENERIC FORM
-============================================================ */
-
 const genericFields = [
 
     {
@@ -1973,10 +1688,6 @@ const genericFields = [
 ];
 
 
-/* ============================================================
-   FIND SERVICE FORM
-============================================================ */
-
 function getFormDefinition() {
 
     const serviceName =
@@ -1999,10 +1710,6 @@ function getFormDefinition() {
     return genericFields;
 }
 
-
-/* ============================================================
-   RENDER SERVICE FORM
-============================================================ */
 
 function renderForm() {
 
@@ -2106,39 +1813,16 @@ function renderForm() {
 }
 
 
-/* ============================================================
-   ESCAPE HTML
-============================================================ */
-
 function escapeHtml(value) {
 
     return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
-
-/* ============================================================
-   COLLECT FORM DATA
-============================================================ */
 
 function collectFormData() {
 
@@ -2171,6 +1855,316 @@ function collectFormData() {
 
 
     return data;
+}
+
+
+/* ============================================================
+   SERVICE INTRODUCTION — INTELLIGENCE
+============================================================
+
+   IMPORTANT:
+
+   This request happens when the service page opens.
+
+   It does NOT create the customer's work.
+
+   Its only purpose is to give the customer useful service
+   guidance before the form is completed.
+
+   The response should contain:
+   1. What the service is for.
+   2. The amount to pay, when the service has a fixed price.
+   3. Useful information the customer should prepare.
+   4. Practical tips that make the form easier to complete.
+   5. Any documents that may be useful to upload.
+
+   No internal system names are requested or exposed.
+============================================================ */
+
+async function loadServiceGuidance() {
+
+    setStatus(
+        "Preparing useful information for this service..."
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_BASE +
+                "/api/chat",
+                {
+
+                    method:
+                        "POST",
+
+                    headers:
+                        {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                    body:
+                        JSON.stringify({
+
+                            message:
+                                buildServiceGuidanceInstruction(),
+
+                            service:
+                                service,
+
+                            event:
+                                "service_selected_guidance",
+
+                            customer_id:
+                                customerId,
+
+                            job_id:
+                                jobId,
+
+                            client_request_id:
+                                clientRequestId,
+
+                            activate_intelligence:
+                                true,
+
+                            guidance_only:
+                                true,
+
+                            create_work:
+                                false
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json()
+                .catch(
+                    () => ({})
+                );
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.reply ||
+                data.message ||
+                data.error ||
+                "Service information could not be prepared."
+            );
+
+        }
+
+
+        const guidance =
+            clean(
+                data.reply
+            );
+
+
+        if (!guidance) {
+
+            throw new Error(
+                "No service guidance was returned."
+            );
+        }
+
+
+        displayServiceGuidance(
+            guidance,
+            data
+        );
+
+
+        setStatus(
+            "Review the information below, then complete the form.",
+            "success"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "SERVICE GUIDANCE ERROR:",
+            error
+        );
+
+
+        /*
+            The form remains available even if the guidance
+            request fails. The customer's actual work is never
+            blocked simply because the introductory guidance
+            could not be loaded.
+        */
+
+        introText.textContent =
+            "Please provide the information requested in the form. " +
+            "If you are unsure what to provide, you can type your " +
+            "question in the message box below.";
+
+        priceElement.textContent =
+            "Service: " +
+            service;
+
+
+        setStatus(
+            "You can still complete the form or ask a question below.",
+            "error"
+        );
+
+    }
+}
+
+
+function buildServiceGuidanceInstruction() {
+
+    return (
+        "The customer has just selected the following service: " +
+        service +
+        ".\n\n" +
+
+        "Prepare a short, clear customer-facing introduction " +
+        "for this service before the customer fills the form.\n\n" +
+
+        "The introduction must explain:\n" +
+
+        "1. What this service does and what the customer can " +
+        "expect to receive.\n" +
+
+        "2. The correct amount to be paid for this service, " +
+        "using the current service pricing available to the " +
+        "system. If the service requires a quotation, clearly " +
+        "say that a quotation is required instead of inventing " +
+        "a price.\n" +
+
+        "3. Useful information the customer should prepare " +
+        "before filling the form.\n" +
+
+        "4. Practical tips about the type of information that " +
+        "will make the requested work more accurate and easier " +
+        "to complete.\n" +
+
+        "5. If existing documents are useful, explain what " +
+        "documents the customer may upload to give us. Do not " +
+        "describe this as downloading documents.\n\n" +
+
+        "The customer may not know what information is required. " +
+        "Therefore, give genuinely useful examples relevant to " +
+        "this particular service instead of generic advice.\n\n" +
+
+        "Do not create the customer's actual work yet. " +
+        "Do not ask the customer to pay yet. " +
+        "Do not ask for an email address unless it is genuinely " +
+        "required for this particular service. " +
+        "Do not mention internal software, models, APIs, providers, " +
+        "technical systems, or internal names.\n\n" +
+
+        "Write the guidance directly for the customer in clear, " +
+        "friendly Nigerian English. Keep it concise enough to fit " +
+        "inside the first information block, but include useful " +
+        "tips that can save the customer time."
+    );
+}
+
+
+function displayServiceGuidance(
+    guidance,
+    data
+) {
+
+    introTitle.textContent =
+        service;
+
+
+    introText.textContent =
+        guidance;
+
+
+    /*
+        If the backend supplies a structured amount, use it.
+        Otherwise try to find a Nigerian Naira amount in the
+        returned customer-facing guidance.
+    */
+
+    let amount =
+        data.amount ||
+        data.price ||
+        data.service_amount ||
+        null;
+
+
+    if (
+        amount !== null &&
+        amount !== undefined &&
+        amount !== ""
+    ) {
+
+        const numericAmount =
+            Number(
+                String(amount)
+                    .replace(
+                        /[^0-9.]/g,
+                        ""
+                    )
+            );
+
+
+        if (
+            numericAmount > 0
+        ) {
+
+            priceElement.textContent =
+                "Service fee: ₦" +
+                numericAmount.toLocaleString();
+
+            return;
+        }
+    }
+
+
+    const amountMatch =
+        guidance.match(
+            /₦\s?[\d,]+(?:\.\d{1,2})?/i
+        );
+
+
+    if (amountMatch) {
+
+        priceElement.textContent =
+            "Service fee: " +
+            amountMatch[0];
+
+        return;
+    }
+
+
+    const quotationWords =
+        /quotation|quote|required.*quotation|quotation.*required/i;
+
+
+    if (
+        quotationWords.test(
+            guidance
+        )
+    ) {
+
+        priceElement.textContent =
+            "Service fee: Quotation required";
+
+        return;
+    }
+
+
+    priceElement.textContent =
+        "Service: " +
+        service;
 }
 
 
@@ -2215,7 +2209,7 @@ serviceForm.addEventListener(
 
 
 /* ============================================================
-   CREATE WORK
+   CREATE ACTUAL WORK
 ============================================================ */
 
 async function createWorkFromForm(
@@ -2228,16 +2222,6 @@ async function createWorkFromForm(
         "Preparing your work..."
     );
 
-
-    /*
-        The form information is converted into one clear
-        customer instruction. This is sent to the current
-        intelligence endpoint.
-
-        No keyword-only decision is made here.
-        The intelligence receives the actual service,
-        structured form information and instruction.
-    */
 
     const instruction =
         buildCreationInstruction(
@@ -2287,6 +2271,12 @@ async function createWorkFromForm(
                                 formData,
 
                             activate_intelligence:
+                                true,
+
+                            guidance_only:
+                                false,
+
+                            create_work:
                                 true
 
                         })
@@ -2373,10 +2363,6 @@ async function createWorkFromForm(
 }
 
 
-/* ============================================================
-   BUILD CREATION INSTRUCTION
-============================================================ */
-
 function buildCreationInstruction(
     formData
 ) {
@@ -2443,7 +2429,7 @@ function formatFieldName(
 
 
 /* ============================================================
-   REVIEW VIEW
+   REVIEW
 ============================================================ */
 
 function showReview(
@@ -2500,7 +2486,7 @@ function showReview(
 
 
 /* ============================================================
-   APPLY CORRECTIONS
+   CORRECTIONS
 ============================================================ */
 
 applyCorrectionsButton.addEventListener(
@@ -2583,6 +2569,9 @@ applyCorrectionsButton.addEventListener(
                                     correction,
 
                                 activate_intelligence:
+                                    true,
+
+                                create_work:
                                     true
 
                             })
@@ -3157,7 +3146,7 @@ async function downloadWork() {
 
 
 /* ============================================================
-   NORMAL DOCUMENT UPLOAD
+   DOCUMENTS CUSTOMER WANTS TO GIVE US
 ============================================================ */
 
 uploadButton.addEventListener(
@@ -3167,12 +3156,6 @@ uploadButton.addEventListener(
         if (busy) {
             return;
         }
-
-        /*
-            This opens the normal phone file/document picker.
-            No Quick Share.
-            No photo-only interface.
-        */
 
         fileInput.click();
 
@@ -3240,7 +3223,7 @@ async function uploadDocument(
 
 
     setStatus(
-        "Sending your document..."
+        "Uploading the document you want to give us..."
     );
 
 
@@ -3283,15 +3266,16 @@ async function uploadDocument(
 
 
         setStatus(
-            "Document received successfully.",
+            "Your document has been received successfully.",
             "success"
         );
 
 
         /*
-            The upload itself does not replace intelligence.
-            We notify the intelligence that the document is
-            now part of the active job.
+            The uploaded document remains part of the active
+            job context. Intelligence is notified so it can
+            use the document when continuing the customer's
+            request.
         */
 
         const response2 =
@@ -3334,6 +3318,9 @@ async function uploadDocument(
                                 file.name,
 
                             activate_intelligence:
+                                true,
+
+                            create_work:
                                 true
 
                         })
@@ -3354,14 +3341,6 @@ async function uploadDocument(
             intelligenceData.success &&
             intelligenceData.reply
         ) {
-
-            /*
-                If the customer is already on the review page,
-                update the work there.
-
-                If still on the form, the returned response
-                remains part of the active intelligence context.
-            */
 
             if (
                 reviewView.classList.contains(
@@ -3697,10 +3676,6 @@ async function sendVoice() {
         );
 
 
-        /*
-            Keep intelligence connected after voice upload.
-        */
-
         await sendIntelligenceMessage(
             "A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.",
             "voice_uploaded"
@@ -3868,6 +3843,9 @@ async function sendIntelligenceMessage(
                                 currentWork,
 
                             activate_intelligence:
+                                true,
+
+                            create_work:
                                 true
 
                         })
@@ -3917,15 +3895,6 @@ async function sendIntelligenceMessage(
         if (
             data.reply
         ) {
-
-            /*
-                If the review page is already active, messages
-                from the intelligence can update the prepared
-                work directly.
-
-                Otherwise the message simply remains part of
-                the active job conversation.
-            */
 
             if (
                 reviewView.classList.contains(
@@ -4091,7 +4060,7 @@ customerServiceButton.addEventListener(
    INITIALIZATION
 ============================================================ */
 
-function initializeWorkspace() {
+async function initializeWorkspace() {
 
     serviceBadge.textContent =
         service;
@@ -4102,36 +4071,29 @@ function initializeWorkspace() {
 
 
     introText.textContent =
-        "Tell us what you need for this service. " +
-        "Only the information relevant to your request " +
-        "is required. When you tap SEND, your prepared " +
-        "work will open immediately for review.";
+        "Preparing useful information about this service...";
 
 
     priceElement.textContent =
-        "Service: " +
-        service;
+        "Checking service information...";
 
 
     renderForm();
 
 
     /*
+        The service selection now triggers intelligence.
+
         IMPORTANT:
+        This is guidance only.
 
-        There is NO automatic "start assistant" request here.
+        It does NOT create the customer's work.
 
-        The customer's completed form is the actual trigger
-        that starts the intelligence workflow.
-
-        This prevents an unnecessary preliminary intelligence
-        response before the customer has provided the service
-        requirements.
+        The customer's completed form remains the trigger
+        for actual work creation.
     */
 
-    setStatus(
-        "Complete the form and tap SEND."
-    );
+    await loadServiceGuidance();
 
 }
 
