@@ -353,6 +353,13 @@
             line-height: 1.5;
         }
 
+        /*
+         * REVIEW WORK PROTECTION
+         *
+         * The prepared work is visible and scrollable,
+         * but normal text selection is disabled.
+         * The correction box below remains editable.
+         */
         .work-card {
             background: #f7f7f7;
             color: #111;
@@ -362,18 +369,37 @@
             box-shadow:
                 0 15px 40px rgba(0, 0, 0, 0.45);
             overflow-wrap: anywhere;
+
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+
+            -webkit-touch-callout: none;
         }
 
         .work-content {
             white-space: pre-wrap;
             line-height: 1.7;
             font-size: 15px;
+
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+
+            -webkit-touch-callout: none;
         }
 
         .work-placeholder {
             color: #777;
             text-align: center;
             padding: 70px 15px;
+
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         .correction-card {
@@ -597,11 +623,6 @@
             cursor: not-allowed;
         }
 
-        /*
-         * CHOOSE ANOTHER SERVICE
-         * This is the only new workspace control.
-         * Black background with white lettering.
-         */
         .choose-service-button {
             width: 100%;
             min-height: 42px;
@@ -935,7 +956,10 @@
                 </div>
 
 
-                <div class="work-card">
+                <div
+                    id="workCard"
+                    class="work-card"
+                >
 
                     <div
                         id="workContent"
@@ -1178,6 +1202,9 @@ const priceElement =
 
 const workContent =
     document.getElementById("workContent");
+
+const workCard =
+    document.getElementById("workCard");
 
 const correctionInput =
     document.getElementById("correctionInput");
@@ -2465,6 +2492,102 @@ function showReview(
 }
 
 
+/*
+ * REVIEW WORK READ-ONLY PROTECTION
+ *
+ * These handlers are intentionally attached only to
+ * the prepared-work area.
+ *
+ * The correction textarea, message box, forms,
+ * buttons and payment controls remain normal.
+ */
+
+workCard.addEventListener(
+    "contextmenu",
+    function(event) {
+
+        event.preventDefault();
+
+    }
+);
+
+
+workCard.addEventListener(
+    "copy",
+    function(event) {
+
+        event.preventDefault();
+
+        if (event.clipboardData) {
+            event.clipboardData.setData(
+                "text/plain",
+                ""
+            );
+        }
+
+    }
+);
+
+
+workCard.addEventListener(
+    "cut",
+    function(event) {
+
+        event.preventDefault();
+
+    }
+);
+
+
+workCard.addEventListener(
+    "selectstart",
+    function(event) {
+
+        event.preventDefault();
+
+    }
+);
+
+
+workCard.addEventListener(
+    "dragstart",
+    function(event) {
+
+        event.preventDefault();
+
+    }
+);
+
+
+workCard.addEventListener(
+    "mousedown",
+    function(event) {
+
+        if (
+            event.detail > 1
+        ) {
+
+            event.preventDefault();
+
+        }
+
+    }
+);
+
+
+workCard.addEventListener(
+    "touchstart",
+    function(event) {
+
+        event.stopPropagation();
+
+    },
+    {
+        passive: true
+    }
+);
+
+
 applyCorrectionsButton.addEventListener(
     "click",
     async function() {
@@ -3005,7 +3128,8 @@ async function checkPaymentStatus() {
 
 
         if (
-            status === "paid"
+            status ===
+            "paid"
         ) {
 
             paymentConfirmed =
@@ -3047,6 +3171,7 @@ async function checkPaymentStatus() {
             "Could not check payment status.",
             "error"
         );
+
 
     }
 }
@@ -3471,9 +3596,7 @@ async function startRecording() {
 
         voiceRecording
             .classList
-            .add(
-                "show"
-            );
+            .add("show");
 
 
         voiceButton.textContent =
@@ -3989,15 +4112,6 @@ customerServiceButton.addEventListener(
 );
 
 
-/*
- * CHOOSE ANOTHER SERVICE
- *
- * This sends the customer directly back to the
- * service-selection page instead of the welcome page.
- *
- * A fresh service selection will then open a new
- * workspace URL with the newly selected service.
- */
 chooseServiceButton.addEventListener(
     "click",
     function() {
