@@ -27,66 +27,74 @@
         font-family: Arial, sans-serif;
     }
 
+    /* =========================================
+       ENTIRE PHONE SCREEN
+       ========================================= */
+
     .page {
         width: 100%;
         height: 100vh;
         height: 100dvh;
 
         padding:
-            max(8px, env(safe-area-inset-top))
-            10px
-            max(8px, env(safe-area-inset-bottom))
-            10px;
+            max(6px, env(safe-area-inset-top))
+            7px
+            max(6px, env(safe-area-inset-bottom))
+            7px;
+
+        display: flex;
+        flex-direction: column;
+
+        overflow: hidden;
+    }
+
+    /* =========================================
+       TOP HALF — ORIGINAL WELCOME PAGE
+       ========================================= */
+
+    .welcome-half {
+        width: 100%;
+        height: 50%;
+
+        flex-shrink: 0;
 
         display: flex;
         align-items: center;
         justify-content: center;
 
         overflow: hidden;
+
+        text-align: center;
+
+        border-bottom: 2px solid #D4AF37;
+        padding: 3px 4px 6px;
     }
 
-    .main-container {
+    .welcome-content {
         width: 100%;
-        max-width: 1150px;
-        height: 100%;
-        max-height: 100%;
-
-        display: flex;
-        flex-direction: column;
-
-        justify-content: center;
+        max-width: 1100px;
 
         overflow: hidden;
     }
 
-    /* =========================================
-       WELCOME PAGE CONTENT
-       ========================================= */
-
-    .welcome-content {
-        width: 100%;
-        flex-shrink: 0;
-        text-align: center;
-    }
-
     .brand-name {
-        margin: 0 0 6px;
+        margin: 0 0 5px;
 
         color: #D4AF37;
 
-        font-size: clamp(27px, 5vw, 46px);
+        font-size: clamp(25px, 6vw, 46px);
         font-weight: 800;
-        line-height: 1.03;
+        line-height: 1.02;
 
         letter-spacing: -0.5px;
     }
 
     .identity {
-        margin-bottom: 7px;
+        margin-bottom: 6px;
 
         color: #FFFFFF;
 
-        font-size: clamp(15px, 2.5vw, 22px);
+        font-size: clamp(14px, 3vw, 22px);
         font-weight: 700;
         line-height: 1.2;
     }
@@ -96,35 +104,41 @@
 
         color: #FFFFFF;
 
-        font-size: clamp(13px, 2vw, 17px);
+        font-size: clamp(11px, 2.3vw, 17px);
         font-weight: 600;
-        line-height: 1.3;
+        line-height: 1.25;
     }
 
     .services-title {
-        margin: 8px 0 3px;
+        margin: 7px 0 3px;
 
         color: #FFFFFF;
 
-        font-size: clamp(14px, 2.2vw, 19px);
+        font-size: clamp(12px, 2.5vw, 19px);
         font-weight: 800;
         line-height: 1.2;
     }
 
+    /* =========================================
+       DOCUMENT PEOPLE MOVING TEXT
+       ========================================= */
+
     .document-people-window {
         width: 100%;
+
         overflow: hidden;
 
-        margin: 1px 0 5px;
+        margin: 2px 0 4px;
     }
 
     .document-people-track {
         display: inline-block;
+
         white-space: nowrap;
 
         color: #D4AF37;
 
-        font-size: clamp(13px, 2vw, 17px);
+        font-size: clamp(11px, 2.3vw, 17px);
         font-weight: 900;
 
         letter-spacing: 0.5px;
@@ -151,75 +165,88 @@
     }
 
     /* =========================================
-       TOP SERVICE INSTRUCTION
+       STATEMENT ABOVE SERVICE BUTTONS
        ========================================= */
 
     .service-instruction {
         width: 100%;
 
-        margin: 4px 0 6px;
-        padding: 7px 8px;
-
-        background: #0B0B0B;
-
-        border: 1px solid #666666;
-        border-bottom: 2px solid #D4AF37;
-
-        border-radius: 6px;
+        margin: 3px 0 4px;
 
         color: #FFFFFF;
 
-        text-align: center;
-
-        font-size: clamp(12px, 2vw, 17px);
+        font-size: clamp(11px, 2.4vw, 17px);
         font-weight: 800;
-        line-height: 1.2;
+        line-height: 1.15;
+
+        text-align: center;
 
         flex-shrink: 0;
     }
 
     /* =========================================
-       THREE COLUMNS
-       28 SERVICES
+       BOTTOM HALF — SERVICE AREA
+       ========================================= */
+
+    .services-half {
+        width: 100%;
+        height: 50%;
+
+        flex-shrink: 0;
+
+        display: flex;
+        flex-direction: column;
+
+        overflow: hidden;
+    }
+
+    /* =========================================
+       EXACTLY THREE COLUMNS
        ========================================= */
 
     .services {
         width: 100%;
+
+        flex: 1;
+        min-height: 0;
 
         display: grid;
 
         grid-template-columns:
             repeat(3, minmax(0, 1fr));
 
-        grid-auto-rows: minmax(0, 1fr);
+        grid-template-rows:
+            repeat(10, minmax(0, 1fr));
 
-        gap: 5px;
-
-        flex: 1;
-        min-height: 0;
+        gap: 4px;
 
         overflow: hidden;
     }
+
+    /* =========================================
+       SERVICE BUTTON
+       ========================================= */
 
     .service-button {
         width: 100%;
         min-width: 0;
         min-height: 0;
 
-        padding: 4px 6px;
+        padding: 2px 4px;
 
         background: #000000;
 
         color: #FFFFFF;
 
-        border: 1px solid #666666;
-        border-radius: 6px;
+        border: 1px solid #777777;
+        border-radius: 5px;
 
         font-family: Arial, sans-serif;
 
-        font-size: clamp(10px, 1.6vw, 15px);
+        font-size: clamp(10px, 2.1vw, 15px);
         font-weight: 700;
-        line-height: 1.1;
+
+        line-height: 1.05;
 
         text-align: center;
 
@@ -228,6 +255,7 @@
         justify-content: center;
 
         white-space: normal;
+
         overflow: hidden;
 
         cursor: pointer;
@@ -242,92 +270,27 @@
 
     .service-button:hover {
         background: #000000;
-        border-color: #D4AF37;
         color: #FFFFFF;
+        border-color: #D4AF37;
     }
 
     .service-button:active {
         background: #D4AF37;
-        border-color: #D4AF37;
         color: #000000;
+        border-color: #D4AF37;
 
-        transform: scale(0.97);
+        transform: scale(0.96);
     }
 
     .service-button.working {
         background: #D4AF37;
-        border-color: #D4AF37;
         color: #000000;
+        border-color: #D4AF37;
     }
 
     .service-button:disabled {
         cursor: wait;
         opacity: 0.45;
-    }
-
-    /* =========================================
-       MOBILE PHONE
-       ========================================= */
-
-    @media (max-width: 600px) {
-
-        .page {
-            padding-left: 6px;
-            padding-right: 6px;
-        }
-
-        .brand-name {
-            font-size: 24px;
-            margin-bottom: 3px;
-        }
-
-        .identity {
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-
-        .value {
-            font-size: 9px;
-            line-height: 1.15;
-            margin: 2px 0;
-        }
-
-        .services-title {
-            font-size: 10px;
-            margin-top: 5px;
-            margin-bottom: 2px;
-        }
-
-        .document-people-window {
-            margin: 1px 0 3px;
-        }
-
-        .document-people-track {
-            font-size: 9px;
-        }
-
-        .service-instruction {
-            margin: 3px 0 5px;
-            padding: 5px 4px;
-
-            font-size: 10px;
-        }
-
-        .services {
-            gap: 4px;
-        }
-
-        .service-button {
-            padding: 3px 5px;
-
-            font-size: 8.5px;
-            line-height: 1.05;
-
-            border: 1px solid #666666;
-            border-radius: 5px;
-
-            color: #FFFFFF;
-        }
     }
 
     /* =========================================
@@ -341,20 +304,34 @@
             padding-right: 5px;
         }
 
+        .welcome-half {
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+
         .brand-name {
-            font-size: 21px;
+            font-size: 22px;
+            margin-bottom: 4px;
         }
 
         .identity {
-            font-size: 10px;
+            font-size: 11px;
+            margin-bottom: 5px;
         }
 
         .value {
-            font-size: 8px;
+            font-size: 8.5px;
+            margin: 2px 0;
+            line-height: 1.2;
         }
 
         .services-title {
             font-size: 9px;
+            margin-top: 5px;
+        }
+
+        .document-people-window {
+            margin: 1px 0 3px;
         }
 
         .document-people-track {
@@ -362,8 +339,8 @@
         }
 
         .service-instruction {
+            margin: 2px 0 3px;
             font-size: 9px;
-            padding: 4px 3px;
         }
 
         .services {
@@ -371,8 +348,13 @@
         }
 
         .service-button {
-            padding: 3px 4px;
-            font-size: 7.5px;
+            padding: 2px 3px;
+
+            font-size: 8px;
+            font-weight: 700;
+
+            border-radius: 4px;
+            border-width: 1px;
 
             color: #FFFFFF;
         }
@@ -385,8 +367,8 @@
     @media (max-width: 360px) {
 
         .page {
-            padding-left: 4px;
-            padding-right: 4px;
+            padding-left: 3px;
+            padding-right: 3px;
         }
 
         .brand-name {
@@ -411,7 +393,6 @@
 
         .service-instruction {
             font-size: 8px;
-            padding: 4px 2px;
         }
 
         .services {
@@ -419,19 +400,38 @@
         }
 
         .service-button {
-            padding: 2px 3px;
-            font-size: 6.8px;
+            padding: 1px 2px;
+
+            font-size: 7px;
 
             color: #FFFFFF;
         }
     }
+
+    /* =========================================
+       LARGER PHONES / TABLETS
+       ========================================= */
+
+    @media (min-width: 600px) {
+
+        .service-button {
+            font-size: 12px;
+        }
+
+        .services {
+            gap: 5px;
+        }
+    }
 </style>
 
-</head><body><main class="page"><div class="main-container">
+</head><body><div class="page"><!-- =========================================
+     TOP HALF
+     ORIGINAL WELCOME PAGE CONTENT
+     ========================================= -->
 
-    <!-- ORIGINAL WELCOME CONTENT -->
+<section class="welcome-half">
 
-    <section class="welcome-content">
+    <div class="welcome-content">
 
         <h1 class="brand-name">
             NAIJA POCKET<br>
@@ -475,20 +475,25 @@
 
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- REQUIRED INSTRUCTION -->
+<!-- =========================================
+     BOTTOM HALF
+     SERVICE BUTTONS
+     ========================================= -->
+
+<section class="services-half">
 
     <div class="service-instruction">
         Tap any service you need and get your work done in minutes.
     </div>
 
-
-    <!-- THREE COLUMNS / 28 SERVICES -->
-
     <div class="services">
 
+        <!-- 01 -->
         <button
             type="button"
             class="service-button"
@@ -497,6 +502,7 @@
             Document Typing
         </button>
 
+        <!-- 02 -->
         <button
             type="button"
             class="service-button"
@@ -505,6 +511,7 @@
             Document Formatting
         </button>
 
+        <!-- 03 -->
         <button
             type="button"
             class="service-button"
@@ -513,6 +520,7 @@
             Document Editing
         </button>
 
+        <!-- 04 -->
         <button
             type="button"
             class="service-button"
@@ -521,6 +529,7 @@
             Grammar Correction
         </button>
 
+        <!-- 05 -->
         <button
             type="button"
             class="service-button"
@@ -529,6 +538,7 @@
             Assignments
         </button>
 
+        <!-- 06 -->
         <button
             type="button"
             class="service-button"
@@ -537,6 +547,7 @@
             Projects
         </button>
 
+        <!-- 07 -->
         <button
             type="button"
             class="service-button"
@@ -545,6 +556,7 @@
             Research Assistance
         </button>
 
+        <!-- 08 -->
         <button
             type="button"
             class="service-button"
@@ -553,6 +565,7 @@
             Seminar Papers
         </button>
 
+        <!-- 09 -->
         <button
             type="button"
             class="service-button"
@@ -561,6 +574,7 @@
             CVs &amp; Résumés
         </button>
 
+        <!-- 10 -->
         <button
             type="button"
             class="service-button"
@@ -569,6 +583,7 @@
             Cover Letters
         </button>
 
+        <!-- 11 -->
         <button
             type="button"
             class="service-button"
@@ -577,6 +592,7 @@
             Business Proposals
         </button>
 
+        <!-- 12 -->
         <button
             type="button"
             class="service-button"
@@ -585,6 +601,7 @@
             Company Profiles
         </button>
 
+        <!-- 13 -->
         <button
             type="button"
             class="service-button"
@@ -593,6 +610,7 @@
             Business Letters &amp; Letterhead
         </button>
 
+        <!-- 14 -->
         <button
             type="button"
             class="service-button"
@@ -601,6 +619,7 @@
             Invoices
         </button>
 
+        <!-- 15 -->
         <button
             type="button"
             class="service-button"
@@ -609,6 +628,7 @@
             Quotations
         </button>
 
+        <!-- 16 -->
         <button
             type="button"
             class="service-button"
@@ -617,6 +637,7 @@
             Meeting Minutes
         </button>
 
+        <!-- 17 -->
         <button
             type="button"
             class="service-button"
@@ -625,6 +646,7 @@
             AI Writing Assistance
         </button>
 
+        <!-- 18 -->
         <button
             type="button"
             class="service-button"
@@ -633,6 +655,7 @@
             Document Rewriting
         </button>
 
+        <!-- 19 -->
         <button
             type="button"
             class="service-button"
@@ -641,6 +664,7 @@
             Translation
         </button>
 
+        <!-- 20 -->
         <button
             type="button"
             class="service-button"
@@ -649,6 +673,7 @@
             Document Summarization
         </button>
 
+        <!-- 21 -->
         <button
             type="button"
             class="service-button"
@@ -657,6 +682,7 @@
             PDF Conversion
         </button>
 
+        <!-- 22 -->
         <button
             type="button"
             class="service-button"
@@ -665,6 +691,7 @@
             Voice To Text
         </button>
 
+        <!-- 23 -->
         <button
             type="button"
             class="service-button"
@@ -673,6 +700,7 @@
             Topic Explanations
         </button>
 
+        <!-- 24 -->
         <button
             type="button"
             class="service-button"
@@ -681,6 +709,7 @@
             Printing Preparation
         </button>
 
+        <!-- 25 -->
         <button
             type="button"
             class="service-button"
@@ -689,6 +718,7 @@
             Excel Spreadsheets
         </button>
 
+        <!-- 26 -->
         <button
             type="button"
             class="service-button"
@@ -697,6 +727,7 @@
             Data Entry
         </button>
 
+        <!-- 27 -->
         <button
             type="button"
             class="service-button"
@@ -705,6 +736,7 @@
             Data Analysis
         </button>
 
+        <!-- 28 -->
         <button
             type="button"
             class="service-button"
@@ -715,13 +747,16 @@
 
     </div>
 
-</div>
+</section>
 
-</main><script>
+</div><script>
 "use strict";
 
+
 const serviceButtons =
-    document.querySelectorAll(".service-button");
+    document.querySelectorAll(
+        ".service-button"
+    );
 
 let requestInProgress = false;
 
@@ -744,7 +779,10 @@ function cryptoRandomId() {
 }
 
 
-function openWorkspace(service, button) {
+function openWorkspace(
+    service,
+    button
+) {
 
     if (
         requestInProgress ||
@@ -755,15 +793,23 @@ function openWorkspace(service, button) {
 
     requestInProgress = true;
 
-    button.classList.add("working");
+    button.classList.add(
+        "working"
+    );
 
-    serviceButtons.forEach(function(otherButton) {
 
-        if (otherButton !== button) {
-            otherButton.disabled = true;
+    serviceButtons.forEach(
+        function(otherButton) {
+
+            if (
+                otherButton !== button
+            ) {
+                otherButton.disabled =
+                    true;
+            }
+
         }
-
-    });
+    );
 
 
     let customerId =
@@ -793,9 +839,13 @@ function openWorkspace(service, button) {
 
     const workspaceUrl =
         "workspace.html?service=" +
-        encodeURIComponent(service) +
+        encodeURIComponent(
+            service
+        ) +
         "&customer_id=" +
-        encodeURIComponent(customerId);
+        encodeURIComponent(
+            customerId
+        );
 
 
     window.location.assign(
@@ -804,25 +854,27 @@ function openWorkspace(service, button) {
 }
 
 
-serviceButtons.forEach(function(button) {
+serviceButtons.forEach(
+    function(button) {
 
-    button.addEventListener(
-        "click",
-        function() {
+        button.addEventListener(
+            "click",
+            function() {
 
-            const service =
-                button.getAttribute(
-                    "data-service"
+                const service =
+                    button.getAttribute(
+                        "data-service"
+                    );
+
+                openWorkspace(
+                    service,
+                    button
                 );
 
-            openWorkspace(
-                service,
-                button
-            );
+            }
+        );
 
-        }
-    );
-
-});
+    }
+);
 </script></body>
 </html>
