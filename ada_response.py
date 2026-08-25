@@ -398,7 +398,8 @@ The selected service is context, not a script.
 
 Use the customer's supplied information faithfully.
 Never invent personal, business, academic, financial,
-document, payment, approval, delivery, or download facts.
+document, payment, approval, delivery, or download
+facts.
 
 The customer may communicate in Nigerian English,
 informal English, or Pidgin. Understand imperfect English.
@@ -697,9 +698,8 @@ Be warm, clear, practical, professional, and concise.
         if client is None:
 
             return (
-                "Sorry, the intelligence service "
-                "is temporarily unavailable. "
-                "Please try again shortly."
+                "The network connection is slow or unavailable. "
+                "Please go back to the service buttons and try again."
             )
 
         # ----------------------------------------------------
@@ -781,9 +781,8 @@ Be warm, clear, practical, professional, and concise.
             if not reply:
 
                 reply = (
-                    "I am ready to help. "
-                    "Please tell me what you "
-                    "would like to do next."
+                    "The network connection is slow or unavailable. "
+                    "Please go back to the service buttons and try again."
                 )
 
             self.add_history(
@@ -820,8 +819,8 @@ Be warm, clear, practical, professional, and concise.
             traceback.print_exc()
 
             return (
-                "Sorry, I could not process your request "
-                "right now. Please try again in a moment."
+                "The network connection is slow or unavailable. "
+                "Please go back to the service buttons and try again."
             )
 
 
