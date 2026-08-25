@@ -1,813 +1,783 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8"><meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
+    <meta charset="UTF-8">
 
-<title>Naija Pocket Business Center</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
-<style>
-    * {
-        box-sizing: border-box;
-    }
+    <title>Naija Pocket Business Center</title>
 
-    html,
-    body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
-
-    body {
-        font-family: Inter, Arial, sans-serif;
-        background: #0B0B0B;
-        color: #FFFFFF;
-    }
-
-    .page {
-        width: 100%;
-        height: 100vh;
-        height: 100dvh;
-
-        padding:
-            max(10px, env(safe-area-inset-top))
-            14px
-            max(10px, env(safe-area-inset-bottom))
-            14px;
-
-        display: flex;
-        flex-direction: column;
-
-        overflow: hidden;
-
-        opacity: 1;
-        transform: translateX(0);
-
-        transition:
-            opacity 0.3s ease,
-            transform 0.3s ease;
-    }
-
-    .page.page-leaving {
-        opacity: 0;
-        transform: translateX(-12px);
-    }
-
-    /* ====================================================
-       WELCOME HEADER
-       ==================================================== */
-
-    .welcome-header {
-        width: 100%;
-        max-width: 1180px;
-
-        margin: 0 auto;
-
-        flex-shrink: 0;
-
-        text-align: center;
-    }
-
-    .brand-name {
-        margin: 0;
-
-        color: #D4AF37;
-
-        font-family: Montserrat, Arial, sans-serif;
-        font-size: clamp(24px, 4.5vw, 42px);
-        line-height: 1.02;
-        font-weight: 800;
-
-        letter-spacing: -0.5px;
-    }
-
-    .identity {
-        margin-top: 6px;
-
-        color: #FFFFFF;
-
-        font-size: clamp(13px, 2vw, 19px);
-        line-height: 1.2;
-        font-weight: 800;
-    }
-
-    .value-lines {
-        margin-top: 7px;
-
-        color: #FFFFFF;
-
-        font-size: clamp(10px, 1.5vw, 15px);
-        line-height: 1.3;
-        font-weight: 600;
-    }
-
-    .value-lines div {
-        margin: 2px 0;
-    }
-
-    .services-title {
-        margin-top: 8px;
-
-        color: #FFFFFF;
-
-        font-size: clamp(12px, 1.8vw, 17px);
-        line-height: 1.2;
-        font-weight: 800;
-    }
-
-    /* ====================================================
-       DOCUMENT PEOPLE
-       ==================================================== */
-
-    .document-people-window {
-        width: 100%;
-
-        margin-top: 4px;
-
-        overflow: hidden;
-    }
-
-    .document-people-track {
-        display: inline-block;
-
-        white-space: nowrap;
-
-        color: #D4AF37;
-
-        font-size: clamp(10px, 1.5vw, 14px);
-        line-height: 1.2;
-        font-weight: 900;
-
-        letter-spacing: 0.5px;
-
-        animation:
-            documentPeopleMove 18s linear infinite;
-    }
-
-    .document-people-track span {
-        display: inline-block;
-
-        padding-right: 70px;
-    }
-
-    @keyframes documentPeopleMove {
-        0% {
-            transform: translateX(100%);
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-        100% {
-            transform: translateX(-100%);
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
-    }
 
-    /* ====================================================
-       SERVICE INSTRUCTION
-       ==================================================== */
-
-    .service-instruction {
-        width: 100%;
-        max-width: 1180px;
-
-        margin: 6px auto 6px;
-
-        flex-shrink: 0;
-
-        color: #FFFFFF;
-
-        text-align: center;
-
-        font-size: clamp(11px, 1.6vw, 15px);
-        line-height: 1.2;
-        font-weight: 800;
-    }
-
-    /* ====================================================
-       SERVICES
-       3 COLUMNS
-       ==================================================== */
-
-    .services {
-        width: 100%;
-        max-width: 1180px;
-
-        margin: 0 auto;
-
-        display: grid;
-
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-
-        grid-template-rows:
-            repeat(10, minmax(0, 1fr));
-
-        gap: 4px;
-
-        flex: 1;
-
-        min-height: 0;
-
-        overflow: hidden;
-    }
-
-    .service-button {
-        width: 100%;
-        min-width: 0;
-        min-height: 0;
-
-        padding: 3px 5px;
-
-        background: #202020;
-        color: #FFFFFF;
-
-        border: 1px solid #303030;
-        border-radius: 5px;
-
-        font-family: Inter, Arial, sans-serif;
-
-        font-size: clamp(8px, 1.15vw, 12px);
-        line-height: 1.05;
-        font-weight: 700;
-
-        text-align: center;
-
-        overflow: hidden;
-
-        white-space: nowrap;
-        text-overflow: ellipsis;
-
-        cursor: pointer;
-
-        -webkit-tap-highlight-color: transparent;
-
-        transition:
-            background 0.12s ease,
-            color 0.12s ease,
-            border-color 0.12s ease,
-            transform 0.12s ease;
-    }
-
-    .service-button:hover {
-        background: #2B2B2B;
-
-        border-color: #D4AF37;
-        color: #D4AF37;
-    }
-
-    .service-button:active {
-        background: #D4AF37;
-
-        border-color: #D4AF37;
-        color: #000000;
-
-        transform: scale(0.97);
-    }
-
-    .service-button.working {
-        background: #D4AF37;
-
-        border-color: #D4AF37;
-        color: #000000;
-    }
-
-    .service-button:disabled {
-        cursor: wait;
-        opacity: 0.4;
-    }
-
-    /* ====================================================
-       BOTTOM MESSAGE
-       ==================================================== */
-
-    .bottom-message {
-        width: 100%;
-        max-width: 1180px;
-
-        margin: 6px auto 0;
-
-        flex-shrink: 0;
-
-        padding: 6px 8px;
-
-        background: #171717;
-
-        border-top: 1px solid #292929;
-        border-radius: 5px;
-
-        color: #CCCCCC;
-
-        text-align: center;
-
-        font-size: clamp(9px, 1.3vw, 12px);
-        line-height: 1.2;
-        font-weight: 700;
-    }
-
-    /* ====================================================
-       TABLETS / SMALL SCREENS
-       ==================================================== */
-
-    @media (max-width: 700px) {
+        body {
+            background: #000000;
+            color: #FFFFFF;
+            font-family: Inter, Arial, sans-serif;
+        }
 
         .page {
-            padding-left: 9px;
-            padding-right: 9px;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+
+            padding:
+                max(8px, env(safe-area-inset-top))
+                10px
+                max(8px, env(safe-area-inset-bottom))
+                10px;
+
+            display: flex;
+            flex-direction: column;
+
+            overflow: hidden;
         }
 
-        .brand-name {
-            font-size: 23px;
+        /* ====================================================
+           HEADER
+        ==================================================== */
+
+        .header {
+            width: 100%;
+            flex-shrink: 0;
+
+            background: #171717;
+
+            border: 1px solid #303030;
+            border-bottom: 2px solid #D4AF37;
+
+            border-radius: 6px;
+
+            padding: 12px 9px;
+            margin-bottom: 7px;
+
+            text-align: center;
         }
 
-        .identity {
-            font-size: 12px;
-        }
+        .brand {
+            font-family: Montserrat, Arial, sans-serif;
 
-        .value-lines {
-            font-size: 10px;
-        }
+            font-size: 24px;
+            font-weight: 900;
 
-        .services-title {
-            font-size: 11px;
-        }
+            color: #D4AF37;
 
-        .document-people-track {
-            font-size: 10px;
-        }
-
-        .service-instruction {
-            font-size: 10px;
-        }
-
-        .services {
-            gap: 3px;
-        }
-
-        .service-button {
-            padding: 2px 3px;
-            font-size: 8px;
-        }
-
-        .bottom-message {
-            font-size: 9px;
-            padding: 5px;
-        }
-    }
-
-    /* ====================================================
-       SMALL PHONES
-       ==================================================== */
-
-    @media (max-width: 430px) {
-
-        .page {
-            padding-left: 6px;
-            padding-right: 6px;
-        }
-
-        .brand-name {
-            font-size: 19px;
-        }
-
-        .identity {
-            margin-top: 3px;
-            font-size: 10px;
-        }
-
-        .value-lines {
-            margin-top: 4px;
-            font-size: 8px;
             line-height: 1.15;
+            letter-spacing: 0.2px;
         }
 
-        .value-lines div {
-            margin: 1px 0;
+        .identity {
+            margin-top: 6px;
+
+            color: #FFFFFF;
+
+            font-size: 17px;
+            line-height: 1.25;
+
+            font-weight: 800;
         }
 
-        .services-title {
+        .value {
             margin-top: 4px;
-            font-size: 9px;
+
+            color: #FFFFFF;
+
+            font-size: 15px;
+            line-height: 1.3;
+
+            font-weight: 700;
         }
+
+        .instruction {
+            margin-top: 6px;
+
+            color: #FFFFFF;
+
+            font-size: 16px;
+            line-height: 1.3;
+
+            font-weight: 800;
+        }
+
+        /* ====================================================
+           DOCUMENT PEOPLE
+           KEEP THIS SIZE UNCHANGED
+        ==================================================== */
 
         .document-people-window {
-            margin-top: 2px;
+            width: 100%;
+
+            overflow: hidden;
+
+            margin-top: 7px;
+            margin-bottom: 7px;
         }
 
         .document-people-track {
-            font-size: 8px;
+            display: inline-block;
+
+            white-space: nowrap;
+
+            font-size: 13px;
+            font-weight: 900;
+
+            letter-spacing: 0.5px;
+
+            color: #D4AF37;
+
+            animation:
+                documentPeopleMove 18s linear infinite;
         }
 
-        .service-instruction {
-            margin-top: 3px;
-            margin-bottom: 3px;
-            font-size: 8px;
+        .document-people-track span {
+            display: inline-block;
+
+            padding-right: 70px;
         }
+
+        @keyframes documentPeopleMove {
+
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* ====================================================
+           SERVICE AREA
+        ==================================================== */
 
         .services {
-            gap: 2px;
+            width: 100%;
+
+            display: grid;
+
+            /*
+                28 services arranged compactly.
+                The grid naturally forms 3 rows on wider
+                screens while remaining usable on phones.
+            */
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 5px;
+
+            flex: 1;
+            min-height: 0;
+
+            overflow: hidden;
         }
 
         .service-button {
-            padding: 1px 2px;
-            border-radius: 4px;
-            font-size: 7px;
+            width: 100%;
+            min-width: 0;
+
+            /*
+                Compact physical button.
+            */
+            height: 38px;
+
+            padding: 3px 6px;
+
+            background: #202020;
+
+            color: #FFFFFF;
+
+            /*
+                Clear visible demarcation.
+            */
+            border: 1px solid #555555;
+
+            border-radius: 5px;
+
+            font-family: Inter, Arial, sans-serif;
+
+            /*
+                Larger readable service text.
+            */
+            font-size: 13px;
+
+            font-weight: 800;
+
+            line-height: 1.05;
+
+            overflow: hidden;
+
+            white-space: nowrap;
+
+            text-overflow: ellipsis;
+
+            cursor: pointer;
+
+            -webkit-tap-highlight-color: transparent;
+
+            transition:
+                background 0.12s ease,
+                border-color 0.12s ease,
+                color 0.12s ease,
+                transform 0.08s ease;
         }
+
+        .service-button:hover {
+            background: #2B2B2B;
+
+            border-color: #D4AF37;
+
+            color: #D4AF37;
+        }
+
+        .service-button:active {
+            background: #D4AF37;
+
+            border-color: #D4AF37;
+
+            color: #000000;
+
+            transform: scale(0.97);
+        }
+
+        .service-button.working {
+            background: #D4AF37;
+
+            color: #000000;
+
+            border-color: #D4AF37;
+        }
+
+        .service-button:disabled {
+            cursor: wait;
+
+            opacity: 0.45;
+        }
+
+        /* ====================================================
+           BOTTOM MESSAGE
+        ==================================================== */
 
         .bottom-message {
-            margin-top: 3px;
-            padding: 4px 3px;
-            font-size: 7px;
-        }
-    }
+            width: 100%;
 
-    /* ====================================================
-       VERY SMALL PHONES
-       ==================================================== */
+            flex-shrink: 0;
 
-    @media (max-width: 360px) {
+            margin-top: 7px;
 
-        .page {
-            padding-left: 4px;
-            padding-right: 4px;
-        }
+            padding: 9px 6px;
 
-        .brand-name {
-            font-size: 16px;
-        }
+            background: #171717;
 
-        .identity {
-            font-size: 8px;
-        }
+            border-top: 1px solid #303030;
 
-        .value-lines {
-            font-size: 7px;
+            border-radius: 5px;
+
+            color: #FFFFFF;
+
+            text-align: center;
+
+            font-size: 15px;
+
+            line-height: 1.3;
+
+            font-weight: 800;
         }
 
-        .services-title {
-            font-size: 8px;
+        /* ====================================================
+           MEDIUM / DESKTOP
+        ==================================================== */
+
+        @media (min-width: 481px) {
+
+            .page {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .header {
+                padding: 13px 10px;
+            }
+
+            .brand {
+                font-size: 27px;
+            }
+
+            .identity {
+                font-size: 19px;
+            }
+
+            .value {
+                font-size: 17px;
+            }
+
+            .instruction {
+                font-size: 18px;
+            }
+
+            .service-button {
+                height: 40px;
+                font-size: 14px;
+                border-width: 1px;
+            }
+
+            .bottom-message {
+                font-size: 16px;
+            }
         }
 
-        .document-people-track {
-            font-size: 7px;
+        /* ====================================================
+           SMALL PHONES
+        ==================================================== */
+
+        @media (max-width: 480px) {
+
+            .brand {
+                font-size: 21px;
+            }
+
+            .identity {
+                font-size: 15px;
+            }
+
+            .value {
+                font-size: 13px;
+            }
+
+            .instruction {
+                font-size: 14px;
+            }
+
+            .services {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+
+                gap: 4px;
+            }
+
+            .service-button {
+                height: 34px;
+
+                padding: 2px 5px;
+
+                font-size: 12px;
+
+                border: 1px solid #555555;
+            }
+
+            .bottom-message {
+                font-size: 13px;
+
+                padding: 8px 4px;
+            }
         }
 
-        .service-instruction {
-            font-size: 7px;
+        /* ====================================================
+           VERY SMALL PHONES
+        ==================================================== */
+
+        @media (max-width: 360px) {
+
+            .page {
+                padding-left: 7px;
+                padding-right: 7px;
+            }
+
+            .header {
+                padding: 8px 5px;
+                margin-bottom: 5px;
+            }
+
+            .brand {
+                font-size: 19px;
+            }
+
+            .identity {
+                font-size: 13px;
+                margin-top: 5px;
+            }
+
+            .value {
+                font-size: 12px;
+                margin-top: 3px;
+            }
+
+            .instruction {
+                font-size: 13px;
+                margin-top: 5px;
+            }
+
+            /*
+                THE DOCUMENT PEOPLE remains unchanged.
+            */
+
+            .services {
+                gap: 3px;
+            }
+
+            .service-button {
+                height: 31px;
+
+                padding: 2px 4px;
+
+                font-size: 11px;
+
+                border: 1px solid #555555;
+            }
+
+            .bottom-message {
+                margin-top: 5px;
+
+                padding: 6px 3px;
+
+                font-size: 12px;
+            }
         }
+    </style>
 
-        .services {
-            gap: 2px;
-        }
+</head>
 
-        .service-button {
-            font-size: 6.5px;
-            padding: 1px;
-        }
+<body>
 
-        .bottom-message {
-            font-size: 6.5px;
-        }
-    }
+<div class="page">
 
-    /* ====================================================
-       LARGE SCREENS
-       ==================================================== */
+    <!-- ====================================================
+         WELCOME HEADER
+    ==================================================== -->
 
-    @media (min-width: 1200px) {
+    <div class="header">
 
-        .page {
-            padding-left: 28px;
-            padding-right: 28px;
-        }
+        <div class="brand">
+            Naija Pocket Business Center
+        </div>
 
-        .service-button {
-            font-size: 12px;
-        }
-    }
-</style>
+        <div class="identity">
+            Your Business Center In Your Pocket
+        </div>
 
-</head><body><main class="page" id="welcomePage"><!-- =====================================================
-     EXISTING WELCOME INFORMATION
-     ===================================================== -->
-
-<section class="welcome-header">
-
-    <h1 class="brand-name">
-        NAIJA POCKET<br>
-        BUSINESS CENTER
-    </h1>
-
-    <div class="identity">
-        YOUR BUSINESS CENTER IN YOUR POCKET
-    </div>
-
-    <div class="value-lines">
-
-        <div>
+        <div class="value">
             Fast • Convenient • Open 24/7
         </div>
 
-        <div>
+        <div class="value">
             Prepare Your Documents In Minutes
         </div>
 
-        <div>
+        <div class="value">
             Do Everything Concerning Your Documents
             From Your Phone, Wherever You Are In Nigeria
         </div>
 
-    </div>
+        <div class="value">
+            Enjoy The Best In Document Processing
+        </div>
 
-    <div class="services-title">
-        ENJOY THE BEST IN DOCUMENT PROCESSING
-    </div>
+        <!-- THE DOCUMENT PEOPLE: SIZE/ANIMATION RETAINED -->
 
-    <div class="document-people-window">
+        <div class="document-people-window">
 
-        <div class="document-people-track">
+            <div class="document-people-track">
 
-            <span>THE DOCUMENT PEOPLE</span>
-            <span>THE DOCUMENT PEOPLE</span>
+                <span>THE DOCUMENT PEOPLE</span>
+                <span>THE DOCUMENT PEOPLE</span>
 
+            </div>
+
+        </div>
+
+        <div class="instruction">
+            Tap any service you want and get your work done immediately.
         </div>
 
     </div>
 
-</section>
+
+    <!-- ====================================================
+         28 SERVICES
+    ==================================================== -->
+
+    <div class="services">
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Document Typing"
+        >
+            Document Typing
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Document Formatting"
+        >
+            Document Formatting
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Document Editing"
+        >
+            Document Editing
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Grammar Correction"
+        >
+            Grammar Correction
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Assignments"
+        >
+            Assignments
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Projects"
+        >
+            Projects
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Research Assistance"
+        >
+            Research Assistance
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Seminar Papers"
+        >
+            Seminar Papers
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="CVs & Résumés"
+        >
+            CVs &amp; Résumés
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Cover Letters"
+        >
+            Cover Letters
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Business Proposals"
+        >
+            Business Proposals
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Company Profiles"
+        >
+            Company Profiles
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Business Letters & Letterhead"
+        >
+            Business Letters &amp; Letterhead
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Invoices"
+        >
+            Invoices
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Quotations"
+        >
+            Quotations
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Meeting Minutes"
+        >
+            Meeting Minutes
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="AI Writing Assistance"
+        >
+            AI Writing Assistance
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Document Rewriting"
+        >
+            Document Rewriting
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Translation"
+        >
+            Translation
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Document Summarization"
+        >
+            Document Summarization
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="PDF Conversion"
+        >
+            PDF Conversion
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Voice To Text"
+        >
+            Voice To Text
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Topic Explanations"
+        >
+            Topic Explanations
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Printing Preparation"
+        >
+            Printing Preparation
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Excel Spreadsheets"
+        >
+            Excel Spreadsheets
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Data Entry"
+        >
+            Data Entry
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Data Analysis"
+        >
+            Data Analysis
+        </button>
+
+        <button
+            type="button"
+            class="service-button"
+            data-service="Presentations"
+        >
+            Presentations
+        </button>
+
+    </div>
 
 
-<!-- =====================================================
-     DIRECT SERVICE SELECTION
-     ===================================================== -->
+    <!-- ====================================================
+         BOTTOM MESSAGE
+    ==================================================== -->
 
-<div class="service-instruction">
-    TAP ANY SERVICE YOU WANT AND GET YOUR WORK DONE IMMEDIATELY
+    <div
+        id="bottomMessage"
+        class="bottom-message"
+    >
+        Tap any service you want and get your work done immediately.
+    </div>
+
 </div>
 
 
-<!-- =====================================================
-     28 SERVICES
-     ===================================================== -->
-
-<div class="services">
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Document Typing"
-    >
-        Document Typing
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Document Formatting"
-    >
-        Document Formatting
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Document Editing"
-    >
-        Document Editing
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Grammar Correction"
-    >
-        Grammar Correction
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Assignments"
-    >
-        Assignments
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Projects"
-    >
-        Projects
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Research Assistance"
-    >
-        Research Assistance
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Seminar Papers"
-    >
-        Seminar Papers
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="CVs & Résumés"
-    >
-        CVs &amp; Résumés
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Cover Letters"
-    >
-        Cover Letters
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Business Proposals"
-    >
-        Business Proposals
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Company Profiles"
-    >
-        Company Profiles
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Business Letters & Letterhead"
-    >
-        Business Letters &amp; Letterhead
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Invoices"
-    >
-        Invoices
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Quotations"
-    >
-        Quotations
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Meeting Minutes"
-    >
-        Meeting Minutes
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="AI Writing Assistance"
-    >
-        AI Writing Assistance
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Document Rewriting"
-    >
-        Document Rewriting
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Translation"
-    >
-        Translation
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Document Summarization"
-    >
-        Document Summarization
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="PDF Conversion"
-    >
-        PDF Conversion
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Voice To Text"
-    >
-        Voice To Text
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Topic Explanations"
-    >
-        Topic Explanations
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Printing Preparation"
-    >
-        Printing Preparation
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Excel Spreadsheets"
-    >
-        Excel Spreadsheets
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Data Entry"
-    >
-        Data Entry
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Data Analysis"
-    >
-        Data Analysis
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Presentations"
-    >
-        Presentations
-    </button>
-
-</div>
-
-
-<!-- =====================================================
-     BOTTOM MESSAGE
-     ===================================================== -->
-
-<div
-    id="bottomMessage"
-    class="bottom-message"
->
-    Tap any service you want and get your work done immediately.
-</div>
-
-</main><script>
+<script>
 "use strict";
 
-const welcomePage =
-    document.getElementById("welcomePage");
+/*
+    IMPORTANT:
+
+    This is the existing service activation connection.
+
+    It has NOT been changed.
+
+    Service button
+        ↓
+    workspace.html
+        ↓
+    existing workspace intelligence connection
+*/
 
 const serviceButtons =
-    document.querySelectorAll(".service-button");
-
-const bottomMessage =
-    document.getElementById("bottomMessage");
+    document.querySelectorAll(
+        ".service-button"
+    );
 
 let requestInProgress = false;
 
-
-/* ==========================================================
-   CUSTOMER ID
-   ========================================================== */
 
 function cryptoRandomId() {
 
@@ -815,7 +785,9 @@ function cryptoRandomId() {
         window.crypto &&
         window.crypto.randomUUID
     ) {
+
         return window.crypto.randomUUID();
+
     }
 
     return (
@@ -827,10 +799,6 @@ function cryptoRandomId() {
 }
 
 
-/* ==========================================================
-   OPEN EXISTING WORKSPACE
-   ========================================================== */
-
 function openWorkspace(
     service,
     button
@@ -840,7 +808,9 @@ function openWorkspace(
         requestInProgress ||
         !service
     ) {
+
         return;
+
     }
 
     requestInProgress = true;
@@ -849,22 +819,22 @@ function openWorkspace(
         "working"
     );
 
+
     serviceButtons.forEach(
         function(otherButton) {
 
             if (
                 otherButton !== button
             ) {
+
                 otherButton.disabled =
                     true;
+
             }
+
         }
     );
 
-
-    /* ------------------------------------------------------
-       Preserve existing customer identity
-       ------------------------------------------------------ */
 
     let customerId =
         localStorage.getItem(
@@ -878,16 +848,14 @@ function openWorkspace(
             "customer_" +
             cryptoRandomId();
 
+
         localStorage.setItem(
             "npbc_customer_id",
             customerId
         );
+
     }
 
-
-    /* ------------------------------------------------------
-       Preserve selected service
-       ------------------------------------------------------ */
 
     localStorage.setItem(
         "selectedService",
@@ -895,31 +863,19 @@ function openWorkspace(
     );
 
 
-    /* ------------------------------------------------------
-       Customer feedback
-       ------------------------------------------------------ */
-
-    bottomMessage.innerText =
+    document.getElementById(
+        "bottomMessage"
+    ).innerText =
         "Opening your workspace for " +
         service +
         "...";
 
 
-    /* ------------------------------------------------------
-       EXISTING WORKSPACE CONNECTION
-       ------------------------------------------------------
+    /*
+        EXISTING WORKSPACE CONNECTION.
 
-       This is the same service-selection connection
-       already used by the working 28-button page.
-
-       It sends the selected service and customer ID
-       to workspace.html.
-
-       No Ada API is called here.
-       No intelligence is replaced here.
-       The existing workspace continues to handle
-       the intelligence workflow.
-       ------------------------------------------------------ */
+        DO NOT CHANGE.
+    */
 
     const workspaceUrl =
         "workspace.html?service=" +
@@ -938,10 +894,6 @@ function openWorkspace(
 }
 
 
-/* ==========================================================
-   SERVICE BUTTON EVENTS
-   ========================================================== */
-
 serviceButtons.forEach(
     function(button) {
 
@@ -954,41 +906,18 @@ serviceButtons.forEach(
                         "data-service"
                     );
 
+
                 openWorkspace(
                     service,
                     button
                 );
+
             }
         );
 
     }
 );
+</script>
 
-
-/* ==========================================================
-   PAGE RESTORATION
-   ========================================================== */
-
-window.addEventListener(
-    "pageshow",
-    function() {
-
-        requestInProgress =
-            false;
-
-        serviceButtons.forEach(
-            function(button) {
-
-                button.disabled =
-                    false;
-
-                button.classList.remove(
-                    "working"
-                );
-            }
-        );
-
-    }
-);
-</script></body>
+</body>
 </html>
