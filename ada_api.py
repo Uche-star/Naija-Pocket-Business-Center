@@ -14,6 +14,13 @@ CURRENT INTELLIGENCE
         ↓
     Groq
 
+PERSISTENCE
+    /api/chat
+        ↓
+    jobs table
+        ↓
+    Saved customer work
+
 CURRENT ARCHITECTURE ONLY
 NO FLASK
 NO phone_bridge.py
@@ -21,20 +28,32 @@ NO AdaController
 NO AdaAIEngine
 NO RETIRED INTELLIGENCE CHAIN
 
-DEBUG MODE
-------------
-Real application errors are returned by the API so that
-the actual failure can be seen during troubleshooting.
+IMPORTANT
+---------
+The customer workspace is NOT changed by this file.
 
-Sensitive configuration values such as API keys are NEVER
-returned.
+This API keeps the existing /api/chat response contract while
+also saving the customer's request and Ada's generated work
+against the active job in the existing database.
+
+Database:
+    app/database/naija_pocket.db
+
+Existing Version 1 tables:
+    jobs
+    payments
+
+No database schema migration is performed here.
 """
 
 from __future__ import annotations
 
 import os
+import sqlite3
 import traceback
+from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -92,6 +111,508 @@ def find_file(
             return path
 
     return None
+
+
+# ============================================================
+# DATABASE
+# ============================================================
+
+def find_database() -> Path:
+
+    candidates = [
+        BASE_DIR / "app" / "database" / "naija_pocket.db",
+        BASE_DIR / "database" / "naija_pocket.db",
+        BASE_DIR / "naija_pocket.db",
+        BASE_DIR / "data" / "naija_pocket.db",
+    ]
+
+    for path in candidates:
+
+        if path.is_file():
+            return path
+
+    # Preferred project location.
+    preferred = (
+        BASE_DIR
+        / "app"
+        / "database"
+        / "naija_pocket.db"
+    )
+
+    preferred.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    return preferred
+
+
+DATABASE_PATH = find_database()
+
+
+def get_database_connection() -> sqlite3.Connection:
+
+    conn = sqlite3.connect(
+        str(DATABASE_PATH),
+        check_same_thread=False,
+    )
+
+    conn.row_factory = sqlite3.Row
+
+    return conn
+
+
+def database_exists() -> bool:
+
+    return DATABASE_PATH.is_file()
+
+
+# ============================================================
+# DATABASE HELPERS
+# ============================================================
+
+def now_utc() -> str:
+
+    return datetime.now(
+        timezone.utc
+    ).isoformat()
+
+
+def normalise_job_id(
+    job_id: str | None,
+) -> str | None:
+
+    if job_id is None:
+        return None
+
+    value = str(job_id).strip()
+
+    return value or None
+
+
+def job_exists(
+    conn: sqlite3.Connection,
+    job_id: str,
+) -> bool:
+
+    row = conn.execute(
+        """
+        SELECT id
+        FROM jobs
+        WHERE id = ?
+        LIMIT 1
+        """,
+        (job_id,),
+    ).fetchone()
+
+    return row is not None
+
+
+def get_job(
+    conn: sqlite3.Connection,
+    job_id: str,
+):
+
+    return conn.execute(
+        """
+        SELECT *
+        FROM jobs
+        WHERE id = ?
+        LIMIT 1
+        """,
+        (job_id,),
+    ).fetchone()
+
+
+def create_job_if_missing(
+    *,
+    job_id: str,
+    service: str | None,
+    description: str,
+) -> None:
+
+    """
+    Creates a job only when the workspace supplied a job_id
+    that does not yet exist.
+
+    This does not alter the existing jobs table schema.
+    """
+
+    conn = get_database_connection()
+
+    try:
+
+        if job_exists(
+            conn,
+            job_id,
+        ):
+            return
+
+        service_value = (
+            str(
+                service
+                or "Business Center Service"
+            ).strip()
+        )
+
+        # Existing Version 1 schema:
+        #
+        # jobs(
+        #   id,
+        #   service,
+        #   description,
+        #   quantity,
+        #   unit_price,
+        #   total_amount,
+        #   status,
+        #   created_at
+        # )
+
+        conn.execute(
+            """
+            INSERT INTO jobs (
+                id,
+                service,
+                description,
+                quantity,
+                unit_price,
+                total_amount,
+                status,
+                created_at
+            )
+            VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+            """,
+            (
+                job_id,
+                service_value,
+                description,
+                1,
+                0,
+                0,
+                "processing",
+                now_utc(),
+            ),
+        )
+
+        conn.commit()
+
+        print(
+            "DATABASE: Created job:",
+            job_id,
+        )
+
+    finally:
+
+        conn.close()
+
+
+def save_customer_request(
+    *,
+    job_id: str,
+    service: str | None,
+    message: str,
+    form_data: dict[str, Any] | None = None,
+) -> None:
+
+    """
+    Saves the customer's request into the existing jobs.description
+    field.
+
+    We deliberately do not modify the existing database schema.
+    """
+
+    service_value = (
+        str(
+            service
+            or "Business Center Service"
+        ).strip()
+    )
+
+    parts: list[str] = []
+
+    parts.append(
+        "CUSTOMER REQUEST"
+    )
+
+    parts.append(
+        message.strip()
+    )
+
+    if form_data:
+
+        parts.append(
+            ""
+        )
+
+        parts.append(
+            "CUSTOMER FORM INFORMATION"
+        )
+
+        for key, value in form_data.items():
+
+            if value is None:
+                continue
+
+            text = str(value).strip()
+
+            if not text:
+                continue
+
+            parts.append(
+                f"{key}:"
+            )
+
+            parts.append(
+                text
+            )
+
+    description = "\n".join(
+        parts
+    )
+
+    conn = get_database_connection()
+
+    try:
+
+        if not job_exists(
+            conn,
+            job_id,
+        ):
+
+            conn.execute(
+                """
+                INSERT INTO jobs (
+                    id,
+                    service,
+                    description,
+                    quantity,
+                    unit_price,
+                    total_amount,
+                    status,
+                    created_at
+                )
+                VALUES (
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?
+                )
+                """,
+                (
+                    job_id,
+                    service_value,
+                    description,
+                    1,
+                    0,
+                    0,
+                    "processing",
+                    now_utc(),
+                ),
+            )
+
+        else:
+
+            conn.execute(
+                """
+                UPDATE jobs
+                SET
+                    service = ?,
+                    description = ?,
+                    status = ?
+                WHERE id = ?
+                """,
+                (
+                    service_value,
+                    description,
+                    "processing",
+                    job_id,
+                ),
+            )
+
+        conn.commit()
+
+        print(
+            "DATABASE: Customer request saved:",
+            job_id,
+        )
+
+    finally:
+
+        conn.close()
+
+
+def save_generated_work(
+    *,
+    job_id: str,
+    service: str | None,
+    work: str,
+) -> None:
+
+    """
+    Saves Ada's completed/revised work into the existing
+    jobs.description field.
+
+    The original customer request is retained above the
+    generated work.
+    """
+
+    service_value = (
+        str(
+            service
+            or "Business Center Service"
+        ).strip()
+    )
+
+    generated = work.strip()
+
+    if not generated:
+        return
+
+    conn = get_database_connection()
+
+    try:
+
+        existing = get_job(
+            conn,
+            job_id,
+        )
+
+        if existing is not None:
+
+            old_description = str(
+                existing["description"]
+                or ""
+            ).strip()
+
+            # Preserve the customer's request where possible.
+            if (
+                old_description
+                and "GENERATED WORK" not in old_description
+            ):
+
+                final_description = (
+                    old_description
+                    + "\n\n"
+                    + "GENERATED WORK"
+                    + "\n"
+                    + generated
+                )
+
+            else:
+
+                # For corrections/revisions, replace the
+                # previous generated-work section.
+                marker = (
+                    "GENERATED WORK"
+                )
+
+                if marker in old_description:
+
+                    request_part = (
+                        old_description.split(
+                            marker,
+                            1,
+                        )[0].rstrip()
+                    )
+
+                    final_description = (
+                        request_part
+                        + "\n\n"
+                        + marker
+                        + "\n"
+                        + generated
+                    )
+
+                else:
+
+                    final_description = (
+                        marker
+                        + "\n"
+                        + generated
+                    )
+
+            conn.execute(
+                """
+                UPDATE jobs
+                SET
+                    service = ?,
+                    description = ?,
+                    status = ?
+                WHERE id = ?
+                """,
+                (
+                    service_value,
+                    final_description,
+                    "work_ready",
+                    job_id,
+                ),
+            )
+
+        else:
+
+            final_description = (
+                "GENERATED WORK\n"
+                + generated
+            )
+
+            conn.execute(
+                """
+                INSERT INTO jobs (
+                    id,
+                    service,
+                    description,
+                    quantity,
+                    unit_price,
+                    total_amount,
+                    status,
+                    created_at
+                )
+                VALUES (
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?
+                )
+                """,
+                (
+                    job_id,
+                    service_value,
+                    final_description,
+                    1,
+                    0,
+                    0,
+                    "work_ready",
+                    now_utc(),
+                ),
+            )
+
+        conn.commit()
+
+        print(
+            "DATABASE: Generated work saved:",
+            job_id,
+        )
+
+    finally:
+
+        conn.close()
 
 
 # ============================================================
@@ -257,6 +778,20 @@ class ChatRequest(BaseModel):
 
     context: str | None = None
 
+    # --------------------------------------------------------
+    # Existing workspace fields
+    # --------------------------------------------------------
+
+    form_data: dict[str, Any] | None = None
+
+    current_work: str | None = None
+
+    correction: str | None = None
+
+    create_work: bool = False
+
+    guidance_only: bool = False
+
 
 # ============================================================
 # CUSTOMER WEBSITE
@@ -357,6 +892,8 @@ async def health():
         "intelligence": "AdaResponse",
         "model": get_ada_model(),
         "configured": is_configured(),
+        "database": str(DATABASE_PATH),
+        "database_exists": database_exists(),
         "debug_errors": DEBUG_ERRORS,
     }
 
@@ -370,6 +907,8 @@ async def api_status():
         "intelligence": "AdaResponse",
         "model": get_ada_model(),
         "configured": is_configured(),
+        "database": str(DATABASE_PATH),
+        "database_exists": database_exists(),
         "active_sessions": len(
             _sessions
         ),
@@ -421,6 +960,16 @@ async def chat(
         request.activate_intelligence,
     )
 
+    print(
+        "Create work:",
+        request.create_work,
+    )
+
+    print(
+        "Guidance only:",
+        request.guidance_only,
+    )
+
     print("-" * 70)
 
 
@@ -445,6 +994,15 @@ async def chat(
             status_code=400,
             error_code="EMPTY_MESSAGE",
         )
+
+
+    # --------------------------------------------------------
+    # JOB ID
+    # --------------------------------------------------------
+
+    job_id = normalise_job_id(
+        request.job_id
+    )
 
 
     # --------------------------------------------------------
@@ -493,7 +1051,7 @@ async def chat(
 
         ada = get_session(
             customer_id=request.customer_id,
-            job_id=request.job_id,
+            job_id=job_id,
             service=request.service,
         )
 
@@ -533,12 +1091,12 @@ async def chat(
         )
 
 
-    if request.job_id:
+    if job_id:
 
         context_parts.append(
             "ACTIVE JOB ID\n"
             + str(
-                request.job_id
+                job_id
             )
         )
 
@@ -563,6 +1121,38 @@ async def chat(
         )
 
 
+    if request.form_data:
+
+        context_parts.append(
+            "CUSTOMER FORM INFORMATION\n"
+            + "\n".join(
+                f"{key}: {value}"
+                for key, value
+                in request.form_data.items()
+            )
+        )
+
+
+    if request.current_work:
+
+        context_parts.append(
+            "CURRENT PREPARED WORK\n"
+            + str(
+                request.current_work
+            )
+        )
+
+
+    if request.correction:
+
+        context_parts.append(
+            "CUSTOMER CORRECTION\n"
+            + str(
+                request.correction
+            )
+        )
+
+
     application_context = (
         "\n\n".join(
             part
@@ -582,6 +1172,36 @@ async def chat(
         ).strip()
         or None
     )
+
+
+    # --------------------------------------------------------
+    # SAVE CUSTOMER REQUEST
+    #
+    # Save before intelligence so the request exists even
+    # when the intelligence provider subsequently fails.
+    # --------------------------------------------------------
+
+    if job_id:
+
+        try:
+
+            save_customer_request(
+                job_id=job_id,
+                service=request.service,
+                message=message,
+                form_data=request.form_data,
+            )
+
+        except Exception as error:
+
+            return error_response(
+                stage="DATABASE_SAVE_REQUEST",
+                error=error,
+                status_code=500,
+                error_code=(
+                    "DATABASE_REQUEST_SAVE_ERROR"
+                ),
+            )
 
 
     # --------------------------------------------------------
@@ -658,6 +1278,55 @@ async def chat(
         )
 
 
+    # --------------------------------------------------------
+    # SAVE GENERATED WORK
+    #
+    # Only save actual work responses.
+    #
+    # Guidance requests are intentionally NOT stored as
+    # completed work.
+    # --------------------------------------------------------
+
+    should_save_work = (
+        bool(job_id)
+        and not request.guidance_only
+        and (
+            request.create_work
+            or request.current_work
+            or request.correction
+            or event in {
+                "form_submitted_create_work",
+                "review_correction",
+                "customer_message",
+                "document_uploaded",
+                "voice_uploaded",
+            }
+        )
+    )
+
+
+    if should_save_work:
+
+        try:
+
+            save_generated_work(
+                job_id=job_id,
+                service=request.service,
+                work=reply,
+            )
+
+        except Exception as error:
+
+            return error_response(
+                stage="DATABASE_SAVE_WORK",
+                error=error,
+                status_code=500,
+                error_code=(
+                    "DATABASE_WORK_SAVE_ERROR"
+                ),
+            )
+
+
     print()
     print(
         "AdaResponse returned successfully."
@@ -666,6 +1335,13 @@ async def chat(
     print(
         "Reply:",
         reply,
+    )
+
+    print()
+
+    print(
+        "Work saved:",
+        should_save_work,
     )
 
     print()
@@ -682,7 +1358,7 @@ async def chat(
             request.customer_id
         ),
         "job_id": (
-            request.job_id
+            job_id
         ),
         "client_request_id": (
             request.client_request_id
@@ -810,6 +1486,16 @@ async def startup():
     print(
         "Configured:",
         is_configured(),
+    )
+
+    print(
+        "Database:",
+        DATABASE_PATH,
+    )
+
+    print(
+        "Database exists:",
+        database_exists(),
     )
 
     print(
