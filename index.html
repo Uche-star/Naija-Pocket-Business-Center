@@ -17,87 +17,95 @@
         margin: 0;
         padding: 0;
         width: 100%;
-        min-height: 100%;
-        background: #000000;
-        color: #ffffff;
+        height: 100%;
+        overflow: hidden;
     }
 
     body {
+        background: #000000;
+        color: #FFFFFF;
         font-family: Inter, Arial, sans-serif;
-        overflow-x: hidden;
     }
 
     .page {
         width: 100%;
-        min-height: 100vh;
-        min-height: 100dvh;
-        padding:
-            max(16px, env(safe-area-inset-top))
-            16px
-            max(16px, env(safe-area-inset-bottom))
-            16px;
+        height: 100vh;
+        height: 100dvh;
 
-        background: #000000;
+        padding:
+            max(5px, env(safe-area-inset-top))
+            7px
+            max(5px, env(safe-area-inset-bottom))
+            7px;
+
+        overflow: hidden;
     }
 
     .main-container {
         width: 100%;
-        max-width: 1250px;
+        height: 100%;
+        max-width: 1200px;
         margin: 0 auto;
+
+        display: flex;
+        flex-direction: column;
+
+        overflow: hidden;
     }
 
-    /* =========================
-       ORIGINAL WELCOME CONTENT
-       ========================= */
+    /* =========================================
+       ORIGINAL WELCOME PAGE CONTENT
+       ========================================= */
 
     .welcome-content {
         width: 100%;
+        flex-shrink: 0;
         text-align: center;
     }
 
     .brand-name {
-        margin: 0 0 12px;
+        margin: 0 0 3px;
 
         font-family: Montserrat, Arial, sans-serif;
-        font-size: clamp(30px, 5vw, 48px);
-        line-height: 1.05;
+        font-size: clamp(22px, 5vw, 40px);
+        line-height: 1;
         font-weight: 800;
-        letter-spacing: -0.5px;
+        letter-spacing: -0.4px;
 
         color: #D4AF37;
     }
 
     .identity {
-        margin-bottom: 18px;
+        margin-bottom: 4px;
 
-        color: #ffffff;
-        font-size: clamp(17px, 2.5vw, 24px);
-        line-height: 1.3;
+        color: #FFFFFF;
+        font-size: clamp(12px, 2.5vw, 19px);
+        line-height: 1.1;
         font-weight: 700;
     }
 
     .value {
-        margin: 7px 0;
+        margin: 2px 0;
 
-        color: #ffffff;
-        font-size: clamp(15px, 2vw, 19px);
-        line-height: 1.45;
+        color: #FFFFFF;
+        font-size: clamp(10px, 2vw, 15px);
+        line-height: 1.15;
         font-weight: 600;
     }
 
-    .services-title {
-        margin: 24px 0 12px;
+    .processing-title {
+        margin: 6px 0 2px;
 
-        color: #ffffff;
-        font-size: clamp(16px, 2.2vw, 21px);
-        line-height: 1.3;
+        color: #FFFFFF;
+        font-size: clamp(11px, 2.2vw, 17px);
+        line-height: 1.1;
         font-weight: 800;
     }
 
     .document-people-window {
         width: 100%;
         overflow: hidden;
-        margin: 4px 0 14px;
+        margin: 1px 0 3px;
     }
 
     .document-people-track {
@@ -105,16 +113,16 @@
         white-space: nowrap;
 
         color: #D4AF37;
-        font-size: 14px;
+        font-size: 10px;
         font-weight: 900;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
 
         animation: documentPeopleMove 18s linear infinite;
     }
 
     .document-people-track span {
         display: inline-block;
-        padding-right: 70px;
+        padding-right: 55px;
     }
 
     @keyframes documentPeopleMove {
@@ -127,120 +135,138 @@
         }
     }
 
-    .original-services {
-        margin: 0 auto;
-
-        color: #ffffff;
-        font-size: clamp(14px, 2vw, 18px);
-        line-height: 1.55;
-        font-weight: 600;
-    }
-
-    .original-services strong {
-        font-weight: 800;
-    }
-
-    /* =========================
-       SERVICE BUTTON AREA
-       ========================= */
+    /* =========================================
+       SERVICE AREA
+       ========================================= */
 
     .service-area {
         width: 100%;
-        margin-top: 24px;
+        flex: 1;
+        min-height: 0;
+
+        margin-top: 5px;
+
+        display: flex;
+        flex-direction: column;
+
+        overflow: hidden;
     }
 
     .service-instruction {
         width: 100%;
-        margin-bottom: 12px;
-        padding: 10px 12px;
+        flex-shrink: 0;
+
+        margin-bottom: 4px;
+        padding: 5px;
 
         background: #171717;
+
         border: 1px solid #3A3A3A;
         border-bottom: 2px solid #D4AF37;
-        border-radius: 6px;
+        border-radius: 5px;
 
-        color: #ffffff;
+        color: #FFFFFF;
         text-align: center;
 
-        font-size: clamp(14px, 2vw, 18px);
-        line-height: 1.35;
+        font-size: clamp(10px, 2vw, 16px);
+        line-height: 1.15;
         font-weight: 800;
     }
 
     /*
      * 28 SERVICES
      *
-     * Three rows:
+     * THREE ROWS:
+     *
      * Row 1 = 10 buttons
      * Row 2 = 10 buttons
      * Row 3 = 8 buttons
+     *
+     * All buttons remain inside the phone viewport.
      */
+
     .services-grid {
         width: 100%;
+        flex: 1;
+        min-height: 0;
 
         display: grid;
-        grid-template-columns: repeat(10, minmax(0, 1fr));
-        gap: 7px;
 
-        align-items: stretch;
+        grid-template-columns:
+            repeat(10, minmax(0, 1fr));
+
+        grid-template-rows:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 4px;
+
+        overflow: hidden;
     }
 
     .service-button {
         width: 100%;
         min-width: 0;
-        min-height: 48px;
+        min-height: 0;
 
-        padding: 7px 5px;
+        padding: 2px 3px;
 
         background: #000000;
-        color: #ffffff;
 
-        /*
-         * Clear demarcation between every button.
-         */
-        border: 2px solid #3A3A3A;
-        border-radius: 6px;
+        /* PURE WHITE TEXT */
+        color: #FFFFFF;
+
+        /* Clear demarcation */
+        border: 1px solid #555555;
+        border-radius: 4px;
 
         font-family: Inter, Arial, sans-serif;
-        font-size: 11px;
-        line-height: 1.15;
+        font-size: clamp(7px, 1.75vw, 11px);
+        line-height: 1.05;
         font-weight: 700;
 
         text-align: center;
-
-        cursor: pointer;
-        overflow: hidden;
 
         display: flex;
         align-items: center;
         justify-content: center;
 
+        overflow: hidden;
+
+        cursor: pointer;
+
         -webkit-tap-highlight-color: transparent;
 
         transition:
-            background 0.15s ease,
-            border-color 0.15s ease,
-            color 0.15s ease,
-            transform 0.15s ease;
+            background 0.12s ease,
+            border-color 0.12s ease,
+            color 0.12s ease,
+            transform 0.12s ease;
     }
+
+    /* NORMAL BUTTON TEXT STAYS PURE WHITE */
 
     .service-button:hover {
         background: #000000;
-        color: #D4AF37;
         border-color: #D4AF37;
+
+        /* PURE WHITE */
+        color: #FFFFFF;
     }
 
     .service-button:active {
         background: #D4AF37;
-        color: #000000;
         border-color: #D4AF37;
+
+        color: #000000;
+
         transform: scale(0.97);
     }
 
     .service-button.working {
         background: #D4AF37;
-        color: #000000;
         border-color: #D4AF37;
+
+        color: #000000;
     }
 
     .service-button:disabled {
@@ -248,184 +274,157 @@
         opacity: 0.45;
     }
 
-    /* =========================
-       TABLET
-       ========================= */
+    /*
+     * Third row contains the final 8 buttons.
+     * They occupy the first 8 columns so the
+     * entire row remains balanced and visible.
+     */
 
-    @media (max-width: 1050px) {
-
-        .services-grid {
-            grid-template-columns: repeat(7, minmax(0, 1fr));
-        }
-
-        .service-button {
-            min-height: 46px;
-            font-size: 10px;
-        }
+    .service-button:nth-child(21) {
+        grid-column: 1;
+        grid-row: 3;
     }
 
-    /* =========================
-       MOBILE
-       ========================= */
+    .service-button:nth-child(22) {
+        grid-column: 2;
+        grid-row: 3;
+    }
 
-    @media (max-width: 700px) {
+    .service-button:nth-child(23) {
+        grid-column: 3;
+        grid-row: 3;
+    }
+
+    .service-button:nth-child(24) {
+        grid-column: 4;
+        grid-row: 3;
+    }
+
+    .service-button:nth-child(25) {
+        grid-column: 5;
+        grid-row: 3;
+    }
+
+    .service-button:nth-child(26) {
+        grid-column: 6;
+        grid-row: 3;
+    }
+
+    .service-button:nth-child(27) {
+        grid-column: 7;
+        grid-row: 3;
+    }
+
+    .service-button:nth-child(28) {
+        grid-column: 8;
+        grid-row: 3;
+    }
+
+    /* =========================================
+       VERY SMALL PHONES
+       ========================================= */
+
+    @media (max-width: 360px) {
 
         .page {
-            padding-left: 10px;
-            padding-right: 10px;
+            padding-left: 4px;
+            padding-right: 4px;
         }
 
         .brand-name {
-            font-size: 28px;
+            font-size: 20px;
         }
 
         .identity {
-            font-size: 16px;
+            font-size: 10px;
         }
 
         .value {
-            font-size: 14px;
+            font-size: 8px;
         }
 
-        .services-title {
-            font-size: 16px;
-            margin-top: 18px;
+        .processing-title {
+            font-size: 9px;
         }
 
-        .original-services {
-            font-size: 13px;
-            line-height: 1.45;
+        .document-people-track {
+            font-size: 8px;
         }
 
         .service-area {
-            margin-top: 20px;
+            margin-top: 3px;
         }
 
-        /*
-         * On narrow screens the buttons remain readable.
-         * The desktop/tablet version uses three rows;
-         * the mobile version adapts to available width
-         * instead of making the labels unreadably tiny.
-         */
+        .service-instruction {
+            font-size: 8px;
+            padding: 4px 3px;
+            margin-bottom: 3px;
+        }
+
         .services-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 5px;
+            gap: 3px;
         }
 
         .service-button {
-            min-height: 43px;
-            padding: 5px 3px;
-            font-size: 10px;
-            border-width: 2px;
+            font-size: 6.5px;
+            padding: 1px;
+
+            border-width: 1px;
+            border-radius: 3px;
+
+            color: #FFFFFF;
         }
     }
 
-    @media (max-width: 430px) {
+    /* =========================================
+       LARGER PHONES / TABLETS
+       ========================================= */
+
+    @media (min-width: 600px) {
 
         .page {
-            padding-left: 8px;
-            padding-right: 8px;
+            padding-left: 16px;
+            padding-right: 16px;
         }
 
         .brand-name {
-            font-size: 25px;
+            font-size: 34px;
         }
 
         .identity {
-            font-size: 14px;
-            margin-bottom: 12px;
+            font-size: 17px;
         }
 
         .value {
-            font-size: 12px;
-            line-height: 1.35;
-            margin: 5px 0;
-        }
-
-        .services-title {
             font-size: 14px;
-            margin-top: 14px;
-            margin-bottom: 8px;
         }
 
-        .document-people-window {
-            margin-bottom: 8px;
+        .processing-title {
+            font-size: 16px;
         }
 
         .document-people-track {
             font-size: 12px;
         }
 
-        .original-services {
-            font-size: 11px;
-            line-height: 1.35;
-        }
-
-        .service-area {
-            margin-top: 16px;
-        }
-
         .service-instruction {
-            padding: 8px 6px;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-
-        .services-grid {
-            gap: 4px;
+            font-size: 14px;
         }
 
         .service-button {
-            min-height: 40px;
-            padding: 4px 2px;
-            font-size: 9px;
-            border-radius: 5px;
-        }
-    }
-
-    @media (max-width: 360px) {
-
-        .page {
-            padding-left: 6px;
-            padding-right: 6px;
-        }
-
-        .brand-name {
-            font-size: 22px;
-        }
-
-        .identity {
-            font-size: 12px;
-        }
-
-        .value {
             font-size: 10px;
-        }
+            border-width: 2px;
 
-        .services-title {
-            font-size: 12px;
-        }
-
-        .original-services {
-            font-size: 9px;
-        }
-
-        .service-instruction {
-            font-size: 11px;
-        }
-
-        .service-button {
-            min-height: 37px;
-            font-size: 8px;
+            color: #FFFFFF;
         }
     }
 </style>
 
 </head><body><main class="page"><div class="main-container">
 
-    <!-- =========================================
-         ORIGINAL WELCOME PAGE CONTENT
-         ========================================= -->
+    <!-- =====================================
+         ORIGINAL WELCOME INFORMATION
+         ===================================== -->
 
     <section class="welcome-content">
 
@@ -451,43 +450,32 @@
             From Your Phone, Wherever You Are In Nigeria
         </div>
 
-        <div class="services-title">
+        <div class="processing-title">
             ENJOY THE BEST IN DOCUMENT PROCESSING
         </div>
 
         <div class="document-people-window">
+
             <div class="document-people-track">
-                <span>THE DOCUMENT PEOPLE</span>
-                <span>THE DOCUMENT PEOPLE</span>
+
+                <span>
+                    THE DOCUMENT PEOPLE
+                </span>
+
+                <span>
+                    THE DOCUMENT PEOPLE
+                </span>
+
             </div>
-        </div>
-
-        <div class="original-services">
-
-            <strong>SERVICES</strong>
-
-            <br><br>
-
-            ✓ CVs &amp; Résumés<br>
-            ✓ Handwritten Note Typing<br>
-            ✓ Assignments &amp; Projects<br>
-            ✓ Business Documents<br>
-            ✓ Letters &amp; Proposals<br>
-            ✓ Editing &amp; Formatting<br>
-            ✓ PDF Services<br>
-            ✓ Document Conversion<br>
-            ✓ Translation<br>
-            ✓ Printing Preparation<br>
-            ✓ And Much More
 
         </div>
 
     </section>
 
 
-    <!-- =========================================
-         28 SERVICE BUTTONS
-         ========================================= -->
+    <!-- =====================================
+         SERVICE BUTTONS
+         ===================================== -->
 
     <section class="service-area">
 
