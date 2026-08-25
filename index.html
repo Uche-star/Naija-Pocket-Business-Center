@@ -1,10 +1,11 @@
 <!DOCTYPE html><html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    ><title>Naija Pocket Business Center</title>
+    <meta charset="UTF-8"><meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
+<title>Naija Pocket Business Center</title>
 
 <style>
     * {
@@ -16,125 +17,224 @@
         margin: 0;
         padding: 0;
         width: 100%;
-        height: 100%;
-        overflow: hidden;
+        min-height: 100%;
+        background: #000000;
+        color: #ffffff;
     }
 
     body {
-        background: #000000;
-        color: #ffffff;
         font-family: Inter, Arial, sans-serif;
+        overflow-x: hidden;
     }
 
     .page {
         width: 100%;
-        height: 100vh;
-        height: 100dvh;
-
+        min-height: 100vh;
+        min-height: 100dvh;
         padding:
-            max(8px, env(safe-area-inset-top))
-            10px
-            max(8px, env(safe-area-inset-bottom))
-            10px;
+            max(16px, env(safe-area-inset-top))
+            16px
+            max(16px, env(safe-area-inset-bottom))
+            16px;
 
-        display: flex;
-        flex-direction: column;
-
-        overflow: hidden;
+        background: #000000;
     }
 
-    .header {
+    .main-container {
         width: 100%;
-        flex-shrink: 0;
+        max-width: 1250px;
+        margin: 0 auto;
+    }
 
-        background: #171717;
-        border: 1px solid #292929;
-        border-bottom: 2px solid #D4AF37;
-        border-radius: 6px;
+    /* =========================
+       ORIGINAL WELCOME CONTENT
+       ========================= */
 
-        padding: 12px 8px;
-        margin-bottom: 7px;
-
+    .welcome-content {
+        width: 100%;
         text-align: center;
     }
 
-    .brand {
+    .brand-name {
+        margin: 0 0 12px;
+
         font-family: Montserrat, Arial, sans-serif;
-        font-size: 23px;
+        font-size: clamp(30px, 5vw, 48px);
+        line-height: 1.05;
         font-weight: 800;
+        letter-spacing: -0.5px;
+
         color: #D4AF37;
-        line-height: 1.2;
     }
 
-    .instruction {
-        margin-top: 6px;
+    .identity {
+        margin-bottom: 18px;
 
         color: #ffffff;
-        font-size: 15px;
-        line-height: 1.35;
+        font-size: clamp(17px, 2.5vw, 24px);
+        line-height: 1.3;
         font-weight: 700;
     }
 
-    .services {
+    .value {
+        margin: 7px 0;
+
+        color: #ffffff;
+        font-size: clamp(15px, 2vw, 19px);
+        line-height: 1.45;
+        font-weight: 600;
+    }
+
+    .services-title {
+        margin: 24px 0 12px;
+
+        color: #ffffff;
+        font-size: clamp(16px, 2.2vw, 21px);
+        line-height: 1.3;
+        font-weight: 800;
+    }
+
+    .document-people-window {
+        width: 100%;
+        overflow: hidden;
+        margin: 4px 0 14px;
+    }
+
+    .document-people-track {
+        display: inline-block;
+        white-space: nowrap;
+
+        color: #D4AF37;
+        font-size: 14px;
+        font-weight: 900;
+        letter-spacing: 0.5px;
+
+        animation: documentPeopleMove 18s linear infinite;
+    }
+
+    .document-people-track span {
+        display: inline-block;
+        padding-right: 70px;
+    }
+
+    @keyframes documentPeopleMove {
+        0% {
+            transform: translateX(100%);
+        }
+
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+    .original-services {
+        margin: 0 auto;
+
+        color: #ffffff;
+        font-size: clamp(14px, 2vw, 18px);
+        line-height: 1.55;
+        font-weight: 600;
+    }
+
+    .original-services strong {
+        font-weight: 800;
+    }
+
+    /* =========================
+       SERVICE BUTTON AREA
+       ========================= */
+
+    .service-area {
+        width: 100%;
+        margin-top: 24px;
+    }
+
+    .service-instruction {
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 10px 12px;
+
+        background: #171717;
+        border: 1px solid #3A3A3A;
+        border-bottom: 2px solid #D4AF37;
+        border-radius: 6px;
+
+        color: #ffffff;
+        text-align: center;
+
+        font-size: clamp(14px, 2vw, 18px);
+        line-height: 1.35;
+        font-weight: 800;
+    }
+
+    /*
+     * 28 SERVICES
+     *
+     * Three rows:
+     * Row 1 = 10 buttons
+     * Row 2 = 10 buttons
+     * Row 3 = 8 buttons
+     */
+    .services-grid {
         width: 100%;
 
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(10, minmax(0, 1fr));
+        gap: 7px;
 
-        gap: 4px;
-
-        flex: 1;
-        min-height: 0;
-
-        overflow: hidden;
+        align-items: stretch;
     }
 
     .service-button {
         width: 100%;
         min-width: 0;
+        min-height: 48px;
 
-        height: 29px;
+        padding: 7px 5px;
 
-        padding: 2px 5px;
-
-        background: #202020;
+        background: #000000;
         color: #ffffff;
 
-        border: 1px solid #555555;
-        border-radius: 5px;
+        /*
+         * Clear demarcation between every button.
+         */
+        border: 2px solid #3A3A3A;
+        border-radius: 6px;
 
         font-family: Inter, Arial, sans-serif;
-        font-size: 13px;
+        font-size: 11px;
+        line-height: 1.15;
         font-weight: 700;
-        line-height: 1;
 
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        text-align: center;
 
         cursor: pointer;
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         -webkit-tap-highlight-color: transparent;
 
         transition:
-            background 0.12s ease,
-            border-color 0.12s ease,
-            color 0.12s ease,
-            transform 0.08s ease;
+            background 0.15s ease,
+            border-color 0.15s ease,
+            color 0.15s ease,
+            transform 0.15s ease;
     }
 
     .service-button:hover {
-        background: #2b2b2b;
-        border-color: #D4AF37;
+        background: #000000;
         color: #D4AF37;
+        border-color: #D4AF37;
     }
 
     .service-button:active {
         background: #D4AF37;
-        border-color: #D4AF37;
         color: #000000;
-
-        transform: scale(0.98);
+        border-color: #D4AF37;
+        transform: scale(0.97);
     }
 
     .service-button.working {
@@ -148,28 +248,75 @@
         opacity: 0.45;
     }
 
-    @media (min-width: 481px) {
+    /* =========================
+       TABLET
+       ========================= */
 
-        .page {
-            padding-left: 20px;
-            padding-right: 20px;
-        }
+    @media (max-width: 1050px) {
 
-        .header {
-            padding: 13px 10px;
-        }
-
-        .brand {
-            font-size: 25px;
-        }
-
-        .instruction {
-            font-size: 16px;
+        .services-grid {
+            grid-template-columns: repeat(7, minmax(0, 1fr));
         }
 
         .service-button {
-            height: 32px;
+            min-height: 46px;
+            font-size: 10px;
+        }
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 700px) {
+
+        .page {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .brand-name {
+            font-size: 28px;
+        }
+
+        .identity {
+            font-size: 16px;
+        }
+
+        .value {
             font-size: 14px;
+        }
+
+        .services-title {
+            font-size: 16px;
+            margin-top: 18px;
+        }
+
+        .original-services {
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .service-area {
+            margin-top: 20px;
+        }
+
+        /*
+         * On narrow screens the buttons remain readable.
+         * The desktop/tablet version uses three rows;
+         * the mobile version adapts to available width
+         * instead of making the labels unreadably tiny.
+         */
+        .services-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 5px;
+        }
+
+        .service-button {
+            min-height: 43px;
+            padding: 5px 3px;
+            font-size: 10px;
+            border-width: 2px;
         }
     }
 
@@ -180,29 +327,59 @@
             padding-right: 8px;
         }
 
-        .header {
-            padding: 10px 5px;
-            margin-bottom: 6px;
+        .brand-name {
+            font-size: 25px;
         }
 
-        .brand {
-            font-size: 21px;
-        }
-
-        .instruction {
+        .identity {
             font-size: 14px;
-            margin-top: 5px;
+            margin-bottom: 12px;
         }
 
-        .services {
-            gap: 3px;
+        .value {
+            font-size: 12px;
+            line-height: 1.35;
+            margin: 5px 0;
+        }
+
+        .services-title {
+            font-size: 14px;
+            margin-top: 14px;
+            margin-bottom: 8px;
+        }
+
+        .document-people-window {
+            margin-bottom: 8px;
+        }
+
+        .document-people-track {
+            font-size: 12px;
+        }
+
+        .original-services {
+            font-size: 11px;
+            line-height: 1.35;
+        }
+
+        .service-area {
+            margin-top: 16px;
+        }
+
+        .service-instruction {
+            padding: 8px 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .services-grid {
+            gap: 4px;
         }
 
         .service-button {
-            height: 27px;
-            padding: 2px 4px;
-            font-size: 12px;
-            border-width: 1px;
+            min-height: 40px;
+            padding: 4px 2px;
+            font-size: 9px;
+            border-radius: 5px;
         }
     }
 
@@ -213,280 +390,348 @@
             padding-right: 6px;
         }
 
-        .header {
-            padding: 8px 4px;
-            margin-bottom: 5px;
+        .brand-name {
+            font-size: 22px;
         }
 
-        .brand {
-            font-size: 19px;
-        }
-
-        .instruction {
+        .identity {
             font-size: 12px;
-            margin-top: 4px;
         }
 
-        .services {
-            gap: 3px;
+        .value {
+            font-size: 10px;
+        }
+
+        .services-title {
+            font-size: 12px;
+        }
+
+        .original-services {
+            font-size: 9px;
+        }
+
+        .service-instruction {
+            font-size: 11px;
         }
 
         .service-button {
-            height: 25px;
-            padding: 1px 3px;
-            font-size: 11px;
+            min-height: 37px;
+            font-size: 8px;
         }
     }
 </style>
 
-</head><body><div class="page"><div class="header">
+</head><body><main class="page"><div class="main-container">
 
-    <div class="brand">
-        Naija Pocket Business Center
-    </div>
+    <!-- =========================================
+         ORIGINAL WELCOME PAGE CONTENT
+         ========================================= -->
 
-    <div class="instruction">
-        Choose the service you need and we’ll take it from there.
-    </div>
+    <section class="welcome-content">
+
+        <h1 class="brand-name">
+            NAIJA POCKET<br>
+            BUSINESS CENTER
+        </h1>
+
+        <div class="identity">
+            YOUR BUSINESS CENTER IN YOUR POCKET
+        </div>
+
+        <div class="value">
+            Fast • Convenient • Open 24/7
+        </div>
+
+        <div class="value">
+            Prepare Your Documents In Minutes
+        </div>
+
+        <div class="value">
+            Do Everything Concerning Your Documents
+            From Your Phone, Wherever You Are In Nigeria
+        </div>
+
+        <div class="services-title">
+            ENJOY THE BEST IN DOCUMENT PROCESSING
+        </div>
+
+        <div class="document-people-window">
+            <div class="document-people-track">
+                <span>THE DOCUMENT PEOPLE</span>
+                <span>THE DOCUMENT PEOPLE</span>
+            </div>
+        </div>
+
+        <div class="original-services">
+
+            <strong>SERVICES</strong>
+
+            <br><br>
+
+            ✓ CVs &amp; Résumés<br>
+            ✓ Handwritten Note Typing<br>
+            ✓ Assignments &amp; Projects<br>
+            ✓ Business Documents<br>
+            ✓ Letters &amp; Proposals<br>
+            ✓ Editing &amp; Formatting<br>
+            ✓ PDF Services<br>
+            ✓ Document Conversion<br>
+            ✓ Translation<br>
+            ✓ Printing Preparation<br>
+            ✓ And Much More
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         28 SERVICE BUTTONS
+         ========================================= -->
+
+    <section class="service-area">
+
+        <div class="service-instruction">
+            Tap any service you need and get your work done in minutes.
+        </div>
+
+        <div class="services-grid">
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Document Typing"
+            >
+                Document Typing
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Document Formatting"
+            >
+                Document Formatting
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Document Editing"
+            >
+                Document Editing
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Grammar Correction"
+            >
+                Grammar Correction
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Assignments"
+            >
+                Assignments
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Projects"
+            >
+                Projects
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Research Assistance"
+            >
+                Research Assistance
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Seminar Papers"
+            >
+                Seminar Papers
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="CVs & Résumés"
+            >
+                CVs &amp; Résumés
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Cover Letters"
+            >
+                Cover Letters
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Business Proposals"
+            >
+                Business Proposals
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Company Profiles"
+            >
+                Company Profiles
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Business Letters & Letterhead"
+            >
+                Business Letters &amp; Letterhead
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Invoices"
+            >
+                Invoices
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Quotations"
+            >
+                Quotations
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Meeting Minutes"
+            >
+                Meeting Minutes
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="AI Writing Assistance"
+            >
+                AI Writing Assistance
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Document Rewriting"
+            >
+                Document Rewriting
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Translation"
+            >
+                Translation
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Document Summarization"
+            >
+                Document Summarization
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="PDF Conversion"
+            >
+                PDF Conversion
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Voice To Text"
+            >
+                Voice To Text
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Topic Explanations"
+            >
+                Topic Explanations
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Printing Preparation"
+            >
+                Printing Preparation
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Excel Spreadsheets"
+            >
+                Excel Spreadsheets
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Data Entry"
+            >
+                Data Entry
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Data Analysis"
+            >
+                Data Analysis
+            </button>
+
+            <button
+                type="button"
+                class="service-button"
+                data-service="Presentations"
+            >
+                Presentations
+            </button>
+
+        </div>
+
+    </section>
 
 </div>
 
-
-<div class="services">
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Document Typing"
-    >
-        Document Typing
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Document Formatting"
-    >
-        Document Formatting
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Document Editing"
-    >
-        Document Editing
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Grammar Correction"
-    >
-        Grammar Correction
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Assignments"
-    >
-        Assignments
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Projects"
-    >
-        Projects
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Research Assistance"
-    >
-        Research Assistance
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Seminar Papers"
-    >
-        Seminar Papers
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="CVs & Résumés"
-    >
-        CVs &amp; Résumés
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Cover Letters"
-    >
-        Cover Letters
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Business Proposals"
-    >
-        Business Proposals
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Company Profiles"
-    >
-        Company Profiles
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Business Letters & Letterhead"
-    >
-        Business Letters &amp; Letterhead
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Invoices"
-    >
-        Invoices
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Quotations"
-    >
-        Quotations
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Meeting Minutes"
-    >
-        Meeting Minutes
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="AI Writing Assistance"
-    >
-        AI Writing Assistance
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Document Rewriting"
-    >
-        Document Rewriting
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Translation"
-    >
-        Translation
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Document Summarization"
-    >
-        Document Summarization
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="PDF Conversion"
-    >
-        PDF Conversion
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Voice To Text"
-    >
-        Voice To Text
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Topic Explanations"
-    >
-        Topic Explanations
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Printing Preparation"
-    >
-        Printing Preparation
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Excel Spreadsheets"
-    >
-        Excel Spreadsheets
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Data Entry"
-    >
-        Data Entry
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Data Analysis"
-    >
-        Data Analysis
-    </button>
-
-    <button
-        type="button"
-        class="service-button"
-        data-service="Presentations"
-    >
-        Presentations
-    </button>
-
-</div>
-
-</div><script>
+</main><script>
 "use strict";
 
 const serviceButtons =
-    document.querySelectorAll(
-        ".service-button"
-    );
+    document.querySelectorAll(".service-button");
 
 let requestInProgress = false;
 
@@ -502,17 +747,12 @@ function cryptoRandomId() {
 
     return (
         Date.now().toString(36) +
-        Math.random()
-            .toString(36)
-            .substring(2)
+        Math.random().toString(36).substring(2)
     );
 }
 
 
-function openWorkspace(
-    service,
-    button
-) {
+function openWorkspace(service, button) {
 
     if (
         requestInProgress ||
@@ -523,21 +763,15 @@ function openWorkspace(
 
     requestInProgress = true;
 
-    button.classList.add(
-        "working"
-    );
+    button.classList.add("working");
 
-    serviceButtons.forEach(
-        function(otherButton) {
+    serviceButtons.forEach(function(otherButton) {
 
-            if (
-                otherButton !== button
-            ) {
-                otherButton.disabled = true;
-            }
-
+        if (otherButton !== button) {
+            otherButton.disabled = true;
         }
-    );
+
+    });
 
 
     let customerId =
@@ -578,27 +812,25 @@ function openWorkspace(
 }
 
 
-serviceButtons.forEach(
-    function(button) {
+serviceButtons.forEach(function(button) {
 
-        button.addEventListener(
-            "click",
-            function() {
+    button.addEventListener(
+        "click",
+        function() {
 
-                const service =
-                    button.getAttribute(
-                        "data-service"
-                    );
-
-                openWorkspace(
-                    service,
-                    button
+            const service =
+                button.getAttribute(
+                    "data-service"
                 );
 
-            }
-        );
+            openWorkspace(
+                service,
+                button
+            );
 
-    }
-);
+        }
+    );
+
+});
 </script></body>
 </html>
