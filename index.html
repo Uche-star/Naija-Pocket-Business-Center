@@ -31,6 +31,7 @@
             font-family: Arial, sans-serif;
         }
 
+
         /* =====================================================
            COMPLETE PHONE PAGE
            ===================================================== */
@@ -56,8 +57,8 @@
 
 
         /* =====================================================
-           UPPER 50% — LUXURY BRAND PRESENTATION
-           CONTENT SCALED TO FILL THE AVAILABLE HALF
+           UPPER 50%
+           LUXURY BRAND ADVERTISEMENT PANEL
            ===================================================== */
 
         .welcome-half {
@@ -69,15 +70,15 @@
             flex: 0 0 50%;
 
             display: flex;
-            align-items: center;
+            align-items: stretch;
             justify-content: center;
 
             overflow: hidden;
 
             padding:
-                10px
-                16px
-                10px;
+                8px
+                14px
+                9px;
 
             text-align: center;
 
@@ -139,6 +140,11 @@
         }
 
 
+        /* =====================================================
+           UPPER CONTENT
+           DISTRIBUTED THROUGH ENTIRE 50%
+           ===================================================== */
+
         .welcome-content {
             position: relative;
 
@@ -153,9 +159,13 @@
             flex-direction: column;
 
             align-items: center;
-            justify-content: center;
+            justify-content: space-evenly;
 
             overflow: hidden;
+
+            padding:
+                4px
+                0;
         }
 
 
@@ -164,10 +174,9 @@
            ===================================================== */
 
         .brand-name {
-            margin:
-                0
-                0
-                11px;
+            width: 100%;
+
+            margin: 0;
 
             color: #D4AF37;
 
@@ -177,19 +186,21 @@
                 serif;
 
             font-size:
-                clamp(34px, 8.2vw, 66px);
+                clamp(34px, 9vw, 68px);
 
             font-weight: 700;
 
             line-height: 0.98;
 
-            letter-spacing: 1.8px;
+            letter-spacing: 2px;
 
             text-transform: uppercase;
 
             text-shadow:
                 0 2px 16px
                 rgba(212, 175, 55, 0.22);
+
+            flex: 0 0 auto;
         }
 
 
@@ -198,17 +209,16 @@
            ===================================================== */
 
         .gold-divider {
-            width: 120px;
+            width: 125px;
             height: 2px;
 
-            margin:
-                0
-                auto
-                12px;
+            margin: 0;
 
             background: #D4AF37;
 
             position: relative;
+
+            flex: 0 0 auto;
         }
 
 
@@ -248,25 +258,26 @@
            ===================================================== */
 
         .identity {
-            margin:
-                0
-                0
-                11px;
+            width: 100%;
+
+            margin: 0;
 
             color: #FFFFFF;
 
             font-family: Arial, sans-serif;
 
             font-size:
-                clamp(19px, 4.2vw, 31px);
+                clamp(19px, 4.7vw, 32px);
 
             font-weight: 800;
 
-            line-height: 1.15;
+            line-height: 1.1;
 
-            letter-spacing: 1.2px;
+            letter-spacing: 1.4px;
 
             text-transform: uppercase;
+
+            flex: 0 0 auto;
         }
 
 
@@ -275,18 +286,22 @@
            ===================================================== */
 
         .value {
-            margin: 4px 0;
+            width: 100%;
+
+            margin: 0;
 
             color: #FFFFFF;
 
             font-size:
-                clamp(15px, 3.2vw, 23px);
+                clamp(15px, 3.5vw, 24px);
 
             font-weight: 600;
 
-            line-height: 1.28;
+            line-height: 1.25;
 
-            letter-spacing: 0.25px;
+            letter-spacing: 0.3px;
+
+            flex: 0 0 auto;
         }
 
 
@@ -298,27 +313,28 @@
 
 
         /* =====================================================
-           ORIGINAL DOCUMENT PROCESSING STATEMENT
+           DOCUMENT PROCESSING STATEMENT
            ===================================================== */
 
         .services-title {
-            margin:
-                10px
-                0
-                4px;
+            width: 100%;
+
+            margin: 0;
 
             color: #FFFFFF;
 
             font-size:
-                clamp(16px, 3.3vw, 24px);
+                clamp(16px, 3.7vw, 25px);
 
             font-weight: 800;
 
-            line-height: 1.2;
+            line-height: 1.15;
 
-            letter-spacing: 0.8px;
+            letter-spacing: 0.9px;
 
             text-transform: uppercase;
+
+            flex: 0 0 auto;
         }
 
 
@@ -331,14 +347,13 @@
 
             overflow: hidden;
 
-            margin:
-                2px
-                0
-                0;
+            margin: 0;
 
             padding:
                 3px
                 0;
+
+            flex: 0 0 auto;
         }
 
 
@@ -355,11 +370,11 @@
                 serif;
 
             font-size:
-                clamp(17px, 3.6vw, 25px);
+                clamp(18px, 4vw, 27px);
 
             font-weight: 700;
 
-            letter-spacing: 2.2px;
+            letter-spacing: 2.4px;
 
             animation:
                 documentPeopleMove
@@ -450,10 +465,6 @@
 
         /* =====================================================
            LUXURY 3-COLUMN SERVICE KEYBOARD
-
-           28 SERVICES
-           3 COLUMNS
-           NO PAGE SCROLLING
            ===================================================== */
 
         .services {
@@ -484,9 +495,6 @@
 
         /* =====================================================
            LUXURY SERVICE BUTTON
-           BLACK BODY
-           PURE WHITE TEXT
-           GOLD CORNER ACCENTS
            ===================================================== */
 
         .service-button {
@@ -516,7 +524,7 @@
                 sans-serif;
 
             font-size:
-                clamp(11px, 2.6vw, 17px);
+                clamp(11px, 2.7vw, 17px);
 
             font-weight: 800;
 
@@ -598,8 +606,7 @@
 
 
         /* =====================================================
-           TWO LONGEST SERVICES
-           LAST ROW — OUTER EDGES
+           FINAL ROW OUTER EDGE STYLE
            ===================================================== */
 
         .service-button.long-left {
@@ -676,9 +683,9 @@
 
             .welcome-half {
                 padding:
-                    7px
+                    6px
                     8px
-                    8px;
+                    7px;
             }
 
 
@@ -690,22 +697,23 @@
             }
 
 
+            .welcome-content {
+                padding:
+                    3px
+                    0;
+            }
+
+
             .brand-name {
                 font-size: 29px;
 
                 letter-spacing:
-                    1.1px;
-
-                margin-bottom:
-                    8px;
+                    1.2px;
             }
 
 
             .gold-divider {
-                width: 88px;
-
-                margin-bottom:
-                    8px;
+                width: 90px;
             }
 
 
@@ -714,9 +722,6 @@
 
                 letter-spacing:
                     0.8px;
-
-                margin-bottom:
-                    8px;
             }
 
 
@@ -725,21 +730,14 @@
 
                 line-height:
                     1.22;
-
-                margin:
-                    3px
-                    0;
             }
 
 
             .services-title {
                 font-size: 13px;
 
-                margin-top:
-                    8px;
-
-                margin-bottom:
-                    3px;
+                line-height:
+                    1.15;
             }
 
 
@@ -804,41 +802,52 @@
 
         @media (max-width: 360px) {
 
+            .welcome-half {
+                padding:
+                    5px
+                    6px
+                    6px;
+            }
+
+
             .brand-name {
-                font-size: 25px;
+                font-size: 24px;
+
+                letter-spacing:
+                    0.9px;
             }
 
 
             .gold-divider {
-                width: 76px;
+                width: 72px;
             }
 
 
             .identity {
-                font-size: 12.5px;
+                font-size: 12px;
             }
 
 
             .value {
-                font-size: 10px;
+                font-size: 9.5px;
 
                 line-height:
-                    1.18;
+                    1.16;
             }
 
 
             .services-title {
-                font-size: 11px;
+                font-size: 10.5px;
             }
 
 
             .document-people-track {
-                font-size: 11px;
+                font-size: 10.5px;
             }
 
 
             .service-instruction {
-                font-size: 10.5px;
+                font-size: 10px;
             }
 
 
@@ -867,10 +876,41 @@
 
         @media (min-width: 700px) {
 
+            .brand-name {
+                font-size:
+                    clamp(42px, 6vw, 68px);
+            }
+
+
+            .identity {
+                font-size:
+                    clamp(23px, 3vw, 32px);
+            }
+
+
+            .value {
+                font-size:
+                    clamp(17px, 2.5vw, 24px);
+            }
+
+
+            .services-title {
+                font-size:
+                    clamp(18px, 2.6vw, 25px);
+            }
+
+
+            .document-people-track {
+                font-size:
+                    clamp(20px, 3vw, 27px);
+            }
+
+
             .service-button {
                 font-size:
                     15px;
             }
+
 
             .services {
                 gap: 5px;
@@ -885,7 +925,7 @@
 <div class="page">
 
     <!-- =====================================================
-         UPPER 50% — ORIGINAL WELCOME CONTENT
+         UPPER 50% — LUXURY WELCOME CONTENT
          ===================================================== -->
 
     <section class="welcome-half">
