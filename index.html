@@ -1,974 +1,1178 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8"><meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
+    <meta charset="UTF-8">
 
-<title>Naija Pocket Business Center</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
-<style>
-    * {
-        box-sizing: border-box;
-    }
+    <title>Naija Pocket Business Center</title>
 
-    html,
-    body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
-
-    body {
-        background: #000000;
-        color: #FFFFFF;
-        font-family: Arial, sans-serif;
-    }
-
-    /* =====================================================
-       COMPLETE PHONE PAGE
-       ===================================================== */
-
-    .page {
-        width: 100%;
-        height: 100vh;
-        height: 100dvh;
-
-        padding:
-            max(7px, env(safe-area-inset-top))
-            7px
-            max(7px, env(safe-area-inset-bottom))
-            7px;
-
-        display: flex;
-        flex-direction: column;
-
-        background: #000000;
-
-        overflow: hidden;
-    }
-
-    /* =====================================================
-       UPPER 50% — LUXURY WELCOME COVER
-       ===================================================== */
-
-    .welcome-half {
-        position: relative;
-
-        width: 100%;
-        height: 50%;
-
-        flex: 0 0 50%;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        overflow: hidden;
-
-        padding: 8px 14px 10px;
-
-        text-align: center;
-
-        background:
-            radial-gradient(
-                ellipse at center,
-                #171717 0%,
-                #0A0A0A 55%,
-                #000000 100%
-            );
-
-        border: 1px solid #282828;
-
-        border-bottom:
-            2px solid #D4AF37;
-
-        border-radius: 8px;
-    }
-
-    /*
-     * Subtle luxury frame
-     */
-
-    .welcome-half::before {
-        content: "";
-
-        position: absolute;
-
-        top: 9px;
-        left: 9px;
-        right: 9px;
-        bottom: 9px;
-
-        border: 1px solid
-            rgba(212, 175, 55, 0.32);
-
-        border-radius: 6px;
-
-        pointer-events: none;
-    }
-
-    /*
-     * Fine gold accent at top
-     */
-
-    .welcome-half::after {
-        content: "";
-
-        position: absolute;
-
-        top: 0;
-        left: 20%;
-        right: 20%;
-
-        height: 2px;
-
-        background: #D4AF37;
-
-        opacity: 0.85;
-    }
-
-    .welcome-content {
-        position: relative;
-        z-index: 2;
-
-        width: 100%;
-        max-width: 1100px;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        overflow: hidden;
-    }
-
-    /* =====================================================
-       LUXURY BRAND NAME
-       ===================================================== */
-
-    .brand-name {
-        margin: 0 0 10px;
-
-        color: #D4AF37;
-
-        font-family:
-            Georgia,
-            "Times New Roman",
-            serif;
-
-        font-size:
-            clamp(31px, 7vw, 58px);
-
-        font-weight: 700;
-
-        line-height: 0.98;
-
-        letter-spacing: 1.5px;
-
-        text-transform: uppercase;
-
-        text-shadow:
-            0 2px 14px
-            rgba(212, 175, 55, 0.20);
-    }
-
-    /*
-     * Small luxury divider
-     */
-
-    .gold-divider {
-        width: 105px;
-        height: 2px;
-
-        margin: 0 auto 10px;
-
-        background: #D4AF37;
-
-        position: relative;
-    }
-
-    .gold-divider::before,
-    .gold-divider::after {
-        content: "";
-
-        position: absolute;
-
-        top: 50%;
-
-        width: 6px;
-        height: 6px;
-
-        border: 1px solid #D4AF37;
-
-        transform:
-            translateY(-50%)
-            rotate(45deg);
-    }
-
-    .gold-divider::before {
-        left: -4px;
-    }
-
-    .gold-divider::after {
-        right: -4px;
-    }
-
-    /* =====================================================
-       ORIGINAL IDENTITY
-       ===================================================== */
-
-    .identity {
-        margin: 0 0 9px;
-
-        color: #FFFFFF;
-
-        font-family: Arial, sans-serif;
-
-        font-size:
-            clamp(17px, 3.5vw, 27px);
-
-        font-weight: 800;
-
-        line-height: 1.15;
-
-        letter-spacing: 1.1px;
-
-        text-transform: uppercase;
-    }
-
-    /* =====================================================
-       ORIGINAL WELCOME STATEMENTS
-       ===================================================== */
-
-    .value {
-        margin: 4px 0;
-
-        color: #FFFFFF;
-
-        font-size:
-            clamp(13px, 2.7vw, 20px);
-
-        font-weight: 600;
-
-        line-height: 1.3;
-
-        letter-spacing: 0.2px;
-    }
-
-    .value:first-of-type {
-        color: #D4AF37;
-
-        font-weight: 800;
-    }
-
-    /* =====================================================
-       DOCUMENT PROCESSING STATEMENT
-       ===================================================== */
-
-    .services-title {
-        margin: 10px 0 4px;
-
-        color: #FFFFFF;
-
-        font-size:
-            clamp(14px, 2.8vw, 21px);
-
-        font-weight: 800;
-
-        line-height: 1.2;
-
-        letter-spacing: 0.7px;
-
-        text-transform: uppercase;
-    }
-
-    /* =====================================================
-       THE DOCUMENT PEOPLE
-       ===================================================== */
-
-    .document-people-window {
-        width: 100%;
-
-        overflow: hidden;
-
-        margin: 2px 0 0;
-
-        padding: 3px 0;
-    }
-
-    .document-people-track {
-        display: inline-block;
-
-        white-space: nowrap;
-
-        color: #D4AF37;
-
-        font-family:
-            Georgia,
-            "Times New Roman",
-            serif;
-
-        font-size:
-            clamp(15px, 3vw, 22px);
-
-        font-weight: 700;
-
-        letter-spacing: 2px;
-
-        animation:
-            documentPeopleMove
-            18s linear infinite;
-    }
-
-    .document-people-track span {
-        display: inline-block;
-
-        padding-right: 90px;
-    }
-
-    @keyframes documentPeopleMove {
-
-        0% {
-            transform:
-                translateX(100%);
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-        100% {
-            transform:
-                translateX(-100%);
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
-    }
 
-    /* =====================================================
-       LOWER 50% — SERVICE AREA
-       ===================================================== */
+        body {
+            background: #000000;
+            color: #FFFFFF;
+            font-family: Arial, sans-serif;
+        }
 
-    .services-half {
-        width: 100%;
-        height: 50%;
-
-        flex: 0 0 50%;
-
-        display: flex;
-        flex-direction: column;
-
-        overflow: hidden;
-
-        padding-top: 5px;
-    }
-
-    /* =====================================================
-       SERVICE INSTRUCTION
-       ===================================================== */
-
-    .service-instruction {
-        width: 100%;
-
-        flex: 0 0 auto;
-
-        margin: 0 0 5px;
-
-        padding: 5px 6px;
-
-        color: #FFFFFF;
-
-        font-size:
-            clamp(12px, 2.5vw, 17px);
-
-        font-weight: 800;
-
-        line-height: 1.15;
-
-        text-align: center;
-
-        letter-spacing: 0.2px;
-    }
-
-    .service-instruction span {
-        color: #D4AF37;
-    }
-
-    /* =====================================================
-       3-COLUMN SERVICE GRID
-       ===================================================== */
-
-    .services {
-        width: 100%;
-
-        flex: 1 1 auto;
-
-        min-height: 0;
-
-        display: grid;
-
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-
-        grid-template-rows:
-            repeat(10, minmax(0, 1fr));
-
-        gap: 4px;
-
-        overflow: hidden;
-    }
-
-    /* =====================================================
-       SERVICE BUTTONS
-       ===================================================== */
-
-    .service-button {
-        width: 100%;
-        min-width: 0;
-        min-height: 0;
-
-        padding: 3px 5px;
-
-        background: #000000;
-
-        color: #FFFFFF;
-
-        border:
-            1px solid #777777;
-
-        border-radius: 5px;
-
-        font-family: Arial, sans-serif;
-
-        font-size:
-            clamp(10px, 2.15vw, 15px);
-
-        font-weight: 700;
-
-        line-height: 1.05;
-
-        text-align: center;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        white-space: normal;
-
-        overflow: hidden;
-
-        cursor: pointer;
-
-        -webkit-tap-highlight-color:
-            transparent;
-
-        transition:
-            background 0.15s ease,
-            border-color 0.15s ease,
-            color 0.15s ease,
-            transform 0.15s ease;
-    }
-
-    .service-button:hover {
-        background: #000000;
-
-        color: #FFFFFF;
-
-        border-color: #D4AF37;
-    }
-
-    .service-button:active {
-        background: #D4AF37;
-
-        color: #000000;
-
-        border-color: #D4AF37;
-
-        transform:
-            scale(0.96);
-    }
-
-    .service-button.working {
-        background: #D4AF37;
-
-        color: #000000;
-
-        border-color: #D4AF37;
-    }
-
-    .service-button:disabled {
-        cursor: wait;
-
-        opacity: 0.45;
-    }
-
-    /* =====================================================
-       PHONE OPTIMIZATION
-       ===================================================== */
-
-    @media (max-width: 430px) {
+        /* =====================================================
+           COMPLETE PHONE PAGE
+           ===================================================== */
 
         .page {
-            padding-left: 4px;
-            padding-right: 4px;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+
+            padding:
+                max(5px, env(safe-area-inset-top))
+                5px
+                max(5px, env(safe-area-inset-bottom))
+                5px;
+
+            display: flex;
+            flex-direction: column;
+
+            background: #000000;
+
+            overflow: hidden;
         }
+
+
+        /* =====================================================
+           UPPER 50% — ORIGINAL WELCOME PAGE
+           LUXURY BRAND PRESENTATION
+           ===================================================== */
 
         .welcome-half {
+            position: relative;
+
+            width: 100%;
+            height: 50%;
+
+            flex: 0 0 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+
             padding:
-                6px
                 7px
-                7px;
+                14px
+                8px;
+
+            text-align: center;
+
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    #1A1A1A 0%,
+                    #0B0B0B 55%,
+                    #000000 100%
+                );
+
+            border: 1px solid #292929;
+
+            border-bottom:
+                2px solid #D4AF37;
+
+            border-radius: 8px;
         }
+
+
+        /* Luxury inner frame */
 
         .welcome-half::before {
-            top: 6px;
-            left: 6px;
-            right: 6px;
-            bottom: 6px;
+            content: "";
+
+            position: absolute;
+
+            top: 7px;
+            left: 7px;
+            right: 7px;
+            bottom: 7px;
+
+            border:
+                1px solid
+                rgba(212, 175, 55, 0.30);
+
+            border-radius: 6px;
+
+            pointer-events: none;
         }
+
+
+        /* Gold top accent */
+
+        .welcome-half::after {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 18%;
+            right: 18%;
+
+            height: 2px;
+
+            background: #D4AF37;
+
+            opacity: 0.9;
+        }
+
+
+        .welcome-content {
+            position: relative;
+
+            z-index: 2;
+
+            width: 100%;
+
+            max-width: 1100px;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+        }
+
+
+        /* =====================================================
+           BRAND NAME
+           ===================================================== */
 
         .brand-name {
-            font-size: 23px;
+            margin:
+                0
+                0
+                8px;
 
-            letter-spacing:
-                1px;
+            color: #D4AF37;
 
-            margin-bottom: 7px;
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:
+                clamp(30px, 7vw, 58px);
+
+            font-weight: 700;
+
+            line-height: 0.98;
+
+            letter-spacing: 1.5px;
+
+            text-transform: uppercase;
+
+            text-shadow:
+                0 2px 16px
+                rgba(212, 175, 55, 0.22);
         }
+
+
+        /* =====================================================
+           GOLD DIVIDER
+           ===================================================== */
 
         .gold-divider {
-            width: 75px;
+            width: 105px;
+            height: 2px;
 
-            margin-bottom: 7px;
+            margin:
+                0
+                auto
+                9px;
+
+            background: #D4AF37;
+
+            position: relative;
         }
+
+
+        .gold-divider::before,
+        .gold-divider::after {
+            content: "";
+
+            position: absolute;
+
+            top: 50%;
+
+            width: 6px;
+            height: 6px;
+
+            border:
+                1px solid
+                #D4AF37;
+
+            transform:
+                translateY(-50%)
+                rotate(45deg);
+        }
+
+
+        .gold-divider::before {
+            left: -4px;
+        }
+
+
+        .gold-divider::after {
+            right: -4px;
+        }
+
+
+        /* =====================================================
+           ORIGINAL IDENTITY
+           ===================================================== */
 
         .identity {
-            font-size: 12px;
+            margin:
+                0
+                0
+                8px;
 
-            letter-spacing:
-                0.7px;
+            color: #FFFFFF;
 
-            margin-bottom: 7px;
+            font-family: Arial, sans-serif;
+
+            font-size:
+                clamp(17px, 3.6vw, 27px);
+
+            font-weight: 800;
+
+            line-height: 1.15;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
         }
+
+
+        /* =====================================================
+           ORIGINAL WELCOME STATEMENTS
+           ===================================================== */
 
         .value {
-            font-size: 9px;
-
-            line-height: 1.22;
-
             margin: 3px 0;
+
+            color: #FFFFFF;
+
+            font-size:
+                clamp(13px, 2.7vw, 20px);
+
+            font-weight: 600;
+
+            line-height: 1.28;
+
+            letter-spacing: 0.2px;
         }
+
+
+        .value:first-of-type {
+            color: #D4AF37;
+
+            font-weight: 800;
+        }
+
+
+        /* =====================================================
+           ORIGINAL DOCUMENT PROCESSING STATEMENT
+           ===================================================== */
 
         .services-title {
-            font-size: 10px;
+            margin:
+                8px
+                0
+                3px;
 
-            margin-top: 7px;
-            margin-bottom: 2px;
+            color: #FFFFFF;
+
+            font-size:
+                clamp(14px, 2.8vw, 21px);
+
+            font-weight: 800;
+
+            line-height: 1.2;
+
+            letter-spacing: 0.7px;
+
+            text-transform: uppercase;
         }
+
+
+        /* =====================================================
+           THE DOCUMENT PEOPLE
+           ===================================================== */
 
         .document-people-window {
-            margin-top: 1px;
+            width: 100%;
+
+            overflow: hidden;
+
+            margin:
+                1px
+                0
+                0;
+
+            padding:
+                2px
+                0;
         }
+
 
         .document-people-track {
-            font-size: 10px;
+            display: inline-block;
 
-            letter-spacing: 1.3px;
+            white-space: nowrap;
+
+            color: #D4AF37;
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size:
+                clamp(15px, 3vw, 22px);
+
+            font-weight: 700;
+
+            letter-spacing: 2px;
+
+            animation:
+                documentPeopleMove
+                18s linear infinite;
         }
+
+
+        .document-people-track span {
+            display: inline-block;
+
+            padding-right: 90px;
+        }
+
+
+        @keyframes documentPeopleMove {
+
+            0% {
+                transform:
+                    translateX(100%);
+            }
+
+            100% {
+                transform:
+                    translateX(-100%);
+            }
+        }
+
+
+        /* =====================================================
+           LOWER 50% — LUXURY PHONE KEYBOARD
+           ===================================================== */
+
+        .services-half {
+            width: 100%;
+
+            height: 50%;
+
+            flex: 0 0 50%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            overflow: hidden;
+
+            padding-top: 5px;
+        }
+
+
+        /* =====================================================
+           SERVICE STATEMENT
+           ===================================================== */
 
         .service-instruction {
-            font-size: 9px;
+            width: 100%;
+
+            flex: 0 0 auto;
+
+            margin:
+                0
+                0
+                4px;
 
             padding:
-                4px 3px;
-
-            margin-bottom: 3px;
-        }
-
-        .services {
-            gap: 3px;
-        }
-
-        .service-button {
-            padding:
-                2px 3px;
-
-            font-size: 8px;
-
-            border-radius: 4px;
+                2px
+                4px
+                4px;
 
             color: #FFFFFF;
-        }
-    }
 
-    /* =====================================================
-       VERY SMALL PHONES
-       ===================================================== */
+            font-size:
+                clamp(13px, 2.8vw, 18px);
 
-    @media (max-width: 360px) {
+            font-weight: 800;
 
-        .brand-name {
-            font-size: 20px;
-        }
+            line-height: 1.15;
 
-        .gold-divider {
-            width: 65px;
+            text-align: center;
+
+            letter-spacing: 0.2px;
         }
 
-        .identity {
-            font-size: 10px;
+
+        .service-instruction span {
+            color: #D4AF37;
         }
 
-        .value {
-            font-size: 7.5px;
-        }
 
-        .services-title {
-            font-size: 8px;
-        }
+        /* =====================================================
+           LUXURY 3-COLUMN SERVICE KEYBOARD
 
-        .document-people-track {
-            font-size: 8px;
-        }
-
-        .service-instruction {
-            font-size: 8px;
-        }
+           28 SERVICES
+           3 COLUMNS
+           NO PAGE SCROLLING
+           ===================================================== */
 
         .services {
-            gap: 2px;
+            width: 100%;
+
+            flex: 1 1 auto;
+
+            min-height: 0;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            grid-template-rows:
+                repeat(10, minmax(0, 1fr));
+
+            gap: 4px;
+
+            overflow: hidden;
+
+            padding:
+                1px
+                1px
+                0;
         }
 
-        .service-button {
-            padding:
-                2px;
 
-            font-size: 7px;
+        /* =====================================================
+           LUXURY SERVICE BUTTON
+           BLACK BODY
+           PURE WHITE TEXT
+           GOLD CORNER ACCENTS
+           ===================================================== */
+
+        .service-button {
+            position: relative;
+
+            width: 100%;
+
+            min-width: 0;
+            min-height: 0;
+
+            padding:
+                3px
+                5px;
+
+            background: #000000;
 
             color: #FFFFFF;
+
+            border:
+                1px solid
+                #454545;
+
+            border-radius: 7px;
+
+            font-family:
+                Arial,
+                sans-serif;
+
+            font-size:
+                clamp(10px, 2.25vw, 15px);
+
+            font-weight: 800;
+
+            line-height: 1.05;
+
+            letter-spacing: 0.15px;
+
+            text-align: center;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            white-space: normal;
+
+            overflow: hidden;
+
+            cursor: pointer;
+
+            -webkit-tap-highlight-color:
+                transparent;
+
+            transition:
+                transform 0.15s ease,
+                border-color 0.15s ease,
+                background 0.15s ease,
+                color 0.15s ease;
         }
-    }
 
-    /* =====================================================
-       LARGER SCREENS
-       ===================================================== */
 
-    @media (min-width: 700px) {
+        /* =====================================================
+           GOLD CORNER MARKS
+           ===================================================== */
 
-        .service-button {
-            font-size: 13px;
+        .service-button::before,
+        .service-button::after {
+            content: "";
+
+            position: absolute;
+
+            width: 9px;
+            height: 9px;
+
+            pointer-events: none;
         }
 
-        .services {
-            gap: 5px;
+
+        .service-button::before {
+            top: -1px;
+            left: -1px;
+
+            border-top:
+                2px solid
+                #D4AF37;
+
+            border-left:
+                2px solid
+                #D4AF37;
+
+            border-top-left-radius: 7px;
         }
-    }
-</style>
 
-</head><body><div class="page"><!-- =====================================================
-     UPPER 50% — LUXURY WELCOME COVER
-     ===================================================== -->
 
-<section class="welcome-half">
+        .service-button::after {
+            right: -1px;
+            bottom: -1px;
 
-    <div class="welcome-content">
+            border-right:
+                2px solid
+                #D4AF37;
 
-        <h1 class="brand-name">
-            NAIJA POCKET<br>
-            BUSINESS CENTER
-        </h1>
+            border-bottom:
+                2px solid
+                #D4AF37;
 
-        <div class="gold-divider"></div>
+            border-bottom-right-radius: 7px;
+        }
 
-        <div class="identity">
-            YOUR BUSINESS CENTER IN YOUR POCKET
-        </div>
 
-        <div class="value">
-            Fast • Convenient • Open 24/7
-        </div>
+        /* =====================================================
+           TWO LONGEST SERVICES
+           LAST ROW — OUTER EDGES
+           ===================================================== */
 
-        <div class="value">
-            Prepare Your Documents In Minutes
-        </div>
+        .service-button.long-left {
+            grid-column: 1;
+            grid-row: 10;
 
-        <div class="value">
-            Do Everything Concerning Your Documents
-            From Your Phone, Wherever You Are In Nigeria
-        </div>
+            color: #D4AF37;
+        }
 
-        <div class="services-title">
-            ENJOY THE BEST IN DOCUMENT PROCESSING
-        </div>
 
-        <div class="document-people-window">
+        .service-button.long-right {
+            grid-column: 3;
+            grid-row: 10;
 
-            <div class="document-people-track">
+            color: #D4AF37;
+        }
 
-                <span>
-                    THE DOCUMENT PEOPLE
-                </span>
 
-                <span>
-                    THE DOCUMENT PEOPLE
-                </span>
+        /* =====================================================
+           NORMAL INTERACTION
+           ===================================================== */
+
+        .service-button:hover {
+            background: #050505;
+
+            color: #FFFFFF;
+
+            border-color:
+                #666666;
+        }
+
+
+        .service-button:active {
+            background: #D4AF37;
+
+            color: #000000;
+
+            border-color:
+                #D4AF37;
+
+            transform:
+                scale(0.96);
+        }
+
+
+        .service-button.working {
+            background: #D4AF37;
+
+            color: #000000;
+
+            border-color:
+                #D4AF37;
+        }
+
+
+        .service-button:disabled {
+            cursor: wait;
+
+            opacity: 0.45;
+        }
+
+
+        /* =====================================================
+           PHONE OPTIMIZATION
+           ===================================================== */
+
+        @media (max-width: 430px) {
+
+            .page {
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+
+
+            .welcome-half {
+                padding:
+                    6px
+                    7px
+                    7px;
+            }
+
+
+            .welcome-half::before {
+                top: 6px;
+                left: 6px;
+                right: 6px;
+                bottom: 6px;
+            }
+
+
+            .brand-name {
+                font-size: 25px;
+
+                letter-spacing:
+                    1px;
+
+                margin-bottom:
+                    6px;
+            }
+
+
+            .gold-divider {
+                width: 78px;
+
+                margin-bottom:
+                    6px;
+            }
+
+
+            .identity {
+                font-size: 13px;
+
+                letter-spacing:
+                    0.7px;
+
+                margin-bottom:
+                    6px;
+            }
+
+
+            .value {
+                font-size: 10.5px;
+
+                line-height:
+                    1.2;
+
+                margin:
+                    2px
+                    0;
+            }
+
+
+            .services-title {
+                font-size: 11px;
+
+                margin-top:
+                    6px;
+
+                margin-bottom:
+                    2px;
+            }
+
+
+            .document-people-track {
+                font-size: 11px;
+
+                letter-spacing:
+                    1.3px;
+            }
+
+
+            .service-instruction {
+                font-size: 11px;
+
+                padding:
+                    2px
+                    3px
+                    4px;
+
+                margin-bottom:
+                    3px;
+            }
+
+
+            .services {
+                gap: 3px;
+
+                padding:
+                    1px
+                    1px
+                    0;
+            }
+
+
+            .service-button {
+                padding:
+                    2px
+                    3px;
+
+                font-size:
+                    10px;
+
+                line-height:
+                    1.05;
+
+                border-radius:
+                    6px;
+            }
+
+
+            .service-button::before,
+            .service-button::after {
+                width: 8px;
+                height: 8px;
+            }
+        }
+
+
+        /* =====================================================
+           VERY SMALL PHONES
+           ===================================================== */
+
+        @media (max-width: 360px) {
+
+            .brand-name {
+                font-size: 22px;
+            }
+
+
+            .gold-divider {
+                width: 68px;
+            }
+
+
+            .identity {
+                font-size: 11px;
+            }
+
+
+            .value {
+                font-size: 9px;
+
+                line-height:
+                    1.18;
+            }
+
+
+            .services-title {
+                font-size: 9.5px;
+            }
+
+
+            .document-people-track {
+                font-size: 9.5px;
+            }
+
+
+            .service-instruction {
+                font-size: 9.5px;
+            }
+
+
+            .services {
+                gap: 2px;
+            }
+
+
+            .service-button {
+                padding:
+                    1px
+                    2px;
+
+                font-size:
+                    8.5px;
+
+                border-radius:
+                    5px;
+            }
+        }
+
+
+        /* =====================================================
+           LARGER SCREENS
+           ===================================================== */
+
+        @media (min-width: 700px) {
+
+            .service-button {
+                font-size:
+                    13px;
+            }
+
+            .services {
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="page">
+
+    <!-- =====================================================
+         UPPER 50% — ORIGINAL WELCOME CONTENT
+         ===================================================== -->
+
+    <section class="welcome-half">
+
+        <div class="welcome-content">
+
+            <h1 class="brand-name">
+                NAIJA POCKET<br>
+                BUSINESS CENTER
+            </h1>
+
+            <div class="gold-divider"></div>
+
+            <div class="identity">
+                YOUR BUSINESS CENTER IN YOUR POCKET
+            </div>
+
+            <div class="value">
+                Fast • Convenient • Open 24/7
+            </div>
+
+            <div class="value">
+                Prepare Your Documents In Minutes
+            </div>
+
+            <div class="value">
+                Do Everything Concerning Your Documents
+                From Your Phone, Wherever You Are In Nigeria
+            </div>
+
+            <div class="services-title">
+                ENJOY THE BEST IN DOCUMENT PROCESSING
+            </div>
+
+            <div class="document-people-window">
+
+                <div class="document-people-track">
+
+                    <span>
+                        THE DOCUMENT PEOPLE
+                    </span>
+
+                    <span>
+                        THE DOCUMENT PEOPLE
+                    </span>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
-
-</section>
+    </section>
 
 
-<!-- =====================================================
-     LOWER 50% — SERVICES
-     ===================================================== -->
+    <!-- =====================================================
+         LOWER 50% — SERVICE KEYBOARD
+         ===================================================== -->
 
-<section class="services-half">
+    <section class="services-half">
 
-    <div class="service-instruction">
-        Tap any service you need and get your work done in minutes.
-    </div>
+        <div class="service-instruction">
+            Tap any service you need and get your work done in minutes.
+        </div>
 
-    <div class="services">
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Document Typing"
-        >
-            Document Typing
-        </button>
+        <div class="services">
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Document Formatting"
-        >
-            Document Formatting
-        </button>
+            <!-- ROW 1 -->
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Document Editing"
-        >
-            Document Editing
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Document Typing">
+                Document Typing
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Grammar Correction"
-        >
-            Grammar Correction
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Document Formatting">
+                Document Formatting
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Assignments"
-        >
-            Assignments
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Document Editing">
+                Document Editing
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Projects"
-        >
-            Projects
-        </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Research Assistance"
-        >
-            Research Assistance
-        </button>
+            <!-- ROW 2 -->
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Seminar Papers"
-        >
-            Seminar Papers
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Grammar Correction">
+                Grammar Correction
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="CVs & Résumés"
-        >
-            CVs &amp; Résumés
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Assignments">
+                Assignments
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Cover Letters"
-        >
-            Cover Letters
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Projects">
+                Projects
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Business Proposals"
-        >
-            Business Proposals
-        </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Company Profiles"
-        >
-            Company Profiles
-        </button>
+            <!-- ROW 3 -->
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Business Letters & Letterhead"
-        >
-            Business Letters &amp; Letterhead
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Research Assistance">
+                Research Assistance
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Invoices"
-        >
-            Invoices
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Seminar Papers">
+                Seminar Papers
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Quotations"
-        >
-            Quotations
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="CVs & Résumés">
+                CVs &amp; Résumés
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Meeting Minutes"
-        >
-            Meeting Minutes
-        </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="AI Writing Assistance"
-        >
-            AI Writing Assistance
-        </button>
+            <!-- ROW 4 -->
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Document Rewriting"
-        >
-            Document Rewriting
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Cover Letters">
+                Cover Letters
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Translation"
-        >
-            Translation
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Business Proposals">
+                Business Proposals
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Document Summarization"
-        >
-            Document Summarization
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Company Profiles">
+                Company Profiles
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="PDF Conversion"
-        >
-            PDF Conversion
-        </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Voice To Text"
-        >
-            Voice To Text
-        </button>
+            <!-- ROW 5 -->
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Topic Explanations"
-        >
-            Topic Explanations
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Invoices">
+                Invoices
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Printing Preparation"
-        >
-            Printing Preparation
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Quotations">
+                Quotations
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Excel Spreadsheets"
-        >
-            Excel Spreadsheets
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="Meeting Minutes">
+                Meeting Minutes
+            </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Data Entry"
-        >
-            Data Entry
-        </button>
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Data Analysis"
-        >
-            Data Analysis
-        </button>
+            <!-- ROW 6 -->
 
-        <button
-            type="button"
-            class="service-button"
-            data-service="Presentations"
-        >
-            Presentations
-        </button>
+            <button type="button"
+                class="service-button"
+                data-service="AI Writing Assistance">
+                AI Writing Assistance
+            </button>
 
-    </div>
+            <button type="button"
+                class="service-button"
+                data-service="Document Rewriting">
+                Document Rewriting
+            </button>
 
-</section>
+            <button type="button"
+                class="service-button"
+                data-service="Translation">
+                Translation
+            </button>
 
-</div><script>
+
+            <!-- ROW 7 -->
+
+            <button type="button"
+                class="service-button"
+                data-service="PDF Conversion">
+                PDF Conversion
+            </button>
+
+            <button type="button"
+                class="service-button"
+                data-service="Voice To Text">
+                Voice To Text
+            </button>
+
+            <button type="button"
+                class="service-button"
+                data-service="Topic Explanations">
+                Topic Explanations
+            </button>
+
+
+            <!-- ROW 8 -->
+
+            <button type="button"
+                class="service-button"
+                data-service="Printing Preparation">
+                Printing Preparation
+            </button>
+
+            <button type="button"
+                class="service-button"
+                data-service="Excel Spreadsheets">
+                Excel Spreadsheets
+            </button>
+
+            <button type="button"
+                class="service-button"
+                data-service="Data Entry">
+                Data Entry
+            </button>
+
+
+            <!-- ROW 9 -->
+
+            <button type="button"
+                class="service-button"
+                data-service="Data Analysis">
+                Data Analysis
+            </button>
+
+            <button type="button"
+                class="service-button"
+                data-service="Presentations">
+                Presentations
+            </button>
+
+            <button type="button"
+                class="service-button"
+                data-service="Document Summarization">
+                Document Summarization
+            </button>
+
+
+            <!-- ROW 10 OUTER EDGES -->
+
+            <button type="button"
+                class="service-button long-left"
+                data-service="Business Letters & Letterhead">
+                Business Letters &amp; Letterhead
+            </button>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
 "use strict";
+
 
 const serviceButtons =
     document.querySelectorAll(
         ".service-button"
     );
 
+
 let requestInProgress = false;
 
+
+/* =====================================================
+   CUSTOMER ID
+   ===================================================== */
 
 function cryptoRandomId() {
 
@@ -988,6 +1192,10 @@ function cryptoRandomId() {
 }
 
 
+/* =====================================================
+   OPEN WORKSPACE
+   ===================================================== */
+
 function openWorkspace(
     service,
     button
@@ -1000,7 +1208,9 @@ function openWorkspace(
         return;
     }
 
+
     requestInProgress = true;
+
 
     button.classList.add(
         "working"
@@ -1063,6 +1273,10 @@ function openWorkspace(
 }
 
 
+/* =====================================================
+   SERVICE BUTTON ACTIVATION
+   ===================================================== */
+
 serviceButtons.forEach(
     function(button) {
 
@@ -1075,6 +1289,7 @@ serviceButtons.forEach(
                         "data-service"
                     );
 
+
                 openWorkspace(
                     service,
                     button
@@ -1085,5 +1300,7 @@ serviceButtons.forEach(
 
     }
 );
-</script></body>
+</script>
+
+</body>
 </html>
