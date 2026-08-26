@@ -41,8 +41,18 @@ button{
 :root{
     --gold:#d4af37;
     --gold2:#f3d66b;
+
+    /*
+     * Luxury brand green.
+     * Used consistently for the brand name and
+     * completed/active customer actions.
+     */
+    --brand-green:#168047;
+
+    --brand-green-dark:#0f5d34;
+    --brand-green-light:#2aa566;
+
     --red:#b30000;
-    --green:#168047;
     --border:rgba(212,175,55,.28)
 }
 
@@ -52,6 +62,11 @@ button{
     flex-direction:column;
     background:#000
 }
+
+
+/* =====================================================
+   HEADER
+   ===================================================== */
 
 .header{
     flex:0 0 auto;
@@ -72,7 +87,13 @@ button{
 
 .brand-title{
     margin:0;
-    color:var(--gold);
+
+    /*
+     * Brand is green on this page so the
+     * customer sees the same luxury brand treatment.
+     */
+    color:var(--brand-green);
+
     font-size:clamp(18px,4vw,25px);
     font-weight:800
 }
@@ -87,9 +108,9 @@ button{
     max-width:46%;
     padding:7px 10px;
     background:#171717;
-    border:1px solid rgba(212,175,55,.55);
+    border:1px solid rgba(22,128,71,.65);
     border-radius:999px;
-    color:var(--gold2);
+    color:#55c98a;
     font-size:10px;
     font-weight:800;
     white-space:nowrap;
@@ -97,11 +118,17 @@ button{
     text-overflow:ellipsis
 }
 
+
+/* =====================================================
+   MAIN
+   ===================================================== */
+
 .main{
     flex:1;
     min-height:0;
     overflow-y:auto;
     overflow-x:hidden;
+
     background:
         radial-gradient(
             circle at top,
@@ -123,6 +150,7 @@ button{
 .correction-card{
     border-radius:15px
 }
+
 
 /* =====================================================
    INTELLIGENCE GUIDANCE
@@ -150,7 +178,7 @@ button{
     margin:7px 0 0;
     color:#dedede;
     font-size:13px;
-    line-height:1.6;
+    line-height:1.55;
     white-space:pre-wrap
 }
 
@@ -180,6 +208,7 @@ button{
     font-size:12px;
     font-weight:800
 }
+
 
 /* =====================================================
    FORM
@@ -273,14 +302,14 @@ button{
 .field input:focus,
 .field textarea:focus,
 .field select:focus{
-    border-color:rgba(212,175,55,.65)
+    border-color:rgba(22,128,71,.8)
 }
 
 .form-note{
     margin-top:12px;
     padding:10px;
     background:#151515;
-    border-left:3px solid var(--gold);
+    border-left:3px solid var(--brand-green);
     border-radius:7px;
     color:#bdbdbd;
     font-size:10px;
@@ -302,6 +331,7 @@ button{
 .form-submit:disabled{
     opacity:.45
 }
+
 
 /* =====================================================
    REVIEW
@@ -439,9 +469,9 @@ button{
 }
 
 .download-button.active{
-    background:var(--green);
+    background:var(--brand-green);
     color:#fff;
-    border-color:var(--green);
+    border-color:var(--brand-green);
     cursor:pointer
 }
 
@@ -484,6 +514,7 @@ button{
     color:#fff;
     border:1px solid rgba(255,255,255,.13)
 }
+
 
 /* =====================================================
    BOTTOM
@@ -607,6 +638,7 @@ button:disabled{
     cursor:not-allowed
 }
 
+
 /* =====================================================
    READ-ONLY INTELLIGENCE GUIDANCE
    ===================================================== */
@@ -629,6 +661,7 @@ button:disabled{
 <header class="header">
 
     <div class="brand">
+
         <h1 class="brand-title">
             Naija Pocket Business Center
         </h1>
@@ -636,6 +669,7 @@ button:disabled{
         <div class="brand-subtitle">
             Your Business Center
         </div>
+
     </div>
 
     <div id="serviceBadge" class="service-badge">
@@ -652,7 +686,7 @@ button:disabled{
 <section id="formView">
 
     <!-- =================================================
-         SERVICE-SPECIFIC INTELLIGENCE
+         CUSTOMER-FRIENDLY INTELLIGENCE GUIDANCE
          ================================================= -->
 
     <div class="intro-card" id="introCard">
@@ -672,7 +706,8 @@ button:disabled{
             id="introText"
             class="intro-text"
         >
-            Please wait while we prepare useful information for this service.
+            Please provide the information you have.
+            You can explain what you need in your own words.
         </p>
 
         <div id="price" class="price">
@@ -696,9 +731,10 @@ button:disabled{
             id="formDescription"
             class="form-description"
         >
-            Use the service tips above to provide the information you have.
-            If you are unsure about a technical requirement, you can choose
-            the standard option or simply explain what you need in your own words.
+            Give us the information you know.
+            If you are unsure about a technical requirement,
+            choose the standard option or explain what you need
+            in your own words.
         </p>
 
         <form id="serviceForm">
@@ -706,12 +742,11 @@ button:disabled{
             <div id="fields" class="fields"></div>
 
             <div class="form-note">
-                You do not need to know technical document terms to use this service.
-                Give us the information you know, choose a standard option where
-                available, and explain anything else in your own words.
-                When you tap <strong>SEND</strong>, your information will be sent
-                for processing and your prepared work will open immediately in
-                the review area.
+                You do not need to know technical document terms.
+                Give us the information you have, upload any useful
+                instructions or documents, and explain anything else
+                in your own words. When you tap <strong>SEND</strong>,
+                your request goes straight into processing.
             </div>
 
             <button
@@ -742,8 +777,9 @@ button:disabled{
         </h2>
 
         <p class="review-subtitle">
-            Read through your prepared work carefully.
-            You can request corrections before approving it.
+            Read through your prepared work.
+            If anything needs changing, tell us what to correct
+            before you approve it.
         </p>
 
     </div>
@@ -1154,38 +1190,133 @@ function busyState(value){
 
 
 /* =====================================================
+   RELEASE SERVICE SELECTION
+   ===================================================== */
+
+/*
+ * The previous service must not remain locked when the
+ * customer returns to the service-selection page.
+ *
+ * The customer ID is intentionally preserved because it
+ * identifies the same customer.
+ *
+ * The active job/request and service-selection flags are
+ * released so the next service can start cleanly.
+ */
+
+function releaseCurrentService(){
+
+    const localKeys = [
+
+        "npbc_selected_service",
+        "npbc_active_service",
+        "npbc_service",
+        "npbc_current_service",
+        "npbc_selected_service_locked",
+        "npbc_service_locked",
+        "npbc_active_service_locked",
+
+        "selectedService",
+        "activeService",
+        "currentService",
+        "service",
+        "serviceLocked",
+
+        "npbc_job_id",
+        "npbc_client_request_id"
+    ];
+
+
+    const sessionKeys = [...localKeys];
+
+
+    localKeys.forEach(
+        key => {
+
+            try{
+                localStorage.removeItem(key);
+            }catch(e){}
+
+        }
+    );
+
+
+    sessionKeys.forEach(
+        key => {
+
+            try{
+                sessionStorage.removeItem(key);
+            }catch(e){}
+
+        }
+    );
+
+
+    /*
+     * Generate fresh identifiers for the next service.
+     * Customer identity remains unchanged.
+     */
+
+    jobId =
+        id("job_");
+
+    requestId =
+        id("request_");
+
+
+    put(
+        "npbc_job_id",
+        jobId
+    );
+
+    put(
+        "npbc_client_request_id",
+        requestId
+    );
+}
+
+
+/* =====================================================
    STANDARD CUSTOMER-FRIENDLY OPTIONS
    ===================================================== */
 
 const standardFormattingOptions = [
+
     {
         value:"",
         label:"Select a formatting option"
     },
+
     {
         value:"Standard Professional Formatting",
         label:"Standard Professional Formatting — recommended if you are unsure"
     },
+
     {
         value:"APA",
         label:"APA"
     },
+
     {
         value:"MLA",
         label:"MLA"
     },
+
     {
         value:"Harvard",
         label:"Harvard"
     },
+
     {
         value:"Business Standard",
         label:"Business Standard"
     },
+
     {
         value:"Customer Specified",
         label:"I have my own formatting instructions"
     }
+
 ];
 
 
@@ -1259,7 +1390,7 @@ const forms = {
             required:true,
             type:"select",
             options:standardFormattingOptions,
-            tip:"If you don't know APA, MLA or Harvard, choose Standard Professional Formatting. We will use a clean, professional format appropriate for the document."
+            tip:"If you don't know APA, MLA or Harvard, choose Standard Professional Formatting."
         },
 
         {
@@ -1267,7 +1398,7 @@ const forms = {
             label:"Specific formatting instructions",
             type:"textarea",
             placeholder:"Tell us any special font, spacing, margin, heading or layout requirement you know.",
-            tip:"You do not need to know technical terms. You can simply describe how you want the document to look."
+            tip:"You can simply describe how you want the document to look."
         }
 
     ],
@@ -1502,10 +1633,6 @@ function renderForm(){
             wrapper.appendChild(label);
 
 
-            /* -----------------------------------------
-               SERVICE-SPECIFIC FIELD TIP
-               ----------------------------------------- */
-
             if(field.tip){
 
                 const tip =
@@ -1524,10 +1651,6 @@ function renderForm(){
 
             let input;
 
-
-            /* -----------------------------------------
-               SELECT FIELD
-               ----------------------------------------- */
 
             if(field.type === "select"){
 
@@ -1552,22 +1675,12 @@ function renderForm(){
 
             }
 
-
-            /* -----------------------------------------
-               TEXTAREA
-               ----------------------------------------- */
-
             else if(field.type === "textarea"){
 
                 input =
                     document.createElement("textarea");
 
             }
-
-
-            /* -----------------------------------------
-               NORMAL INPUT
-               ----------------------------------------- */
 
             else{
 
@@ -1636,59 +1749,53 @@ function collect(){
 
 
 /* =====================================================
-   INTELLIGENCE GUIDANCE PROMPT
+   SHORT CUSTOMER-SERVICE GUIDANCE PROMPT
    ===================================================== */
 
 function guidancePrompt(){
 
     return `
 
-The customer has just selected this service:
+The customer has selected this service:
 
 ${service}
 
-You are the customer-facing business-center intelligence.
+Give a SHORT, friendly customer-service introduction for this service.
 
-Your job at this stage is NOT to create the actual work.
+The purpose is to help the customer complete the request correctly.
 
-Instead, give the customer useful, practical, service-specific guidance that helps them successfully complete the form.
+Briefly cover ALL of these points:
 
-Explain:
+1. What this service helps the customer do.
+2. What information the customer should provide.
+3. What useful documents or instructions they can upload.
+4. One or two important service-specific tips.
+5. What the customer should check before submitting.
+6. The current fee if known, or say that a quotation is required.
 
-1. What this service is.
-2. What we can prepare for the customer.
-3. Exactly what information the customer should provide.
-4. What documents or files would be useful to upload.
-5. Important practical tips specific to this service.
-6. Any information the customer should check before submitting.
-7. The current service fee if known, or clearly state that a quotation is required.
+CUSTOMER-FRIENDLY RULES:
 
-IMPORTANT CUSTOMER PROTECTION RULE:
+- Keep the guidance brief and easy to scan.
+- Do not overwhelm the customer with explanations.
+- Do not use unnecessary technical language.
+- If a technical requirement matters, explain it simply.
+- Tell customers they can choose a standard professional option when they do not know a technical requirement.
+- Tell them they can upload instructions from their school, lecturer, employer, client or organisation.
+- Make the customer feel assisted, not tested.
+- Use clear Nigerian English.
+- Be warm, professional and practical.
 
-Many customers do not understand technical terms.
+IMPORTANT:
 
-Never assume the customer knows terms such as APA, MLA, Harvard, margins, line spacing, typography, formatting rules, spreadsheet formulas, presentation standards, academic conventions, or other technical terminology.
+Do NOT give a timeline.
+Do NOT give an estimated completion time.
+Do NOT tell the customer to wait.
+Do NOT discuss how long the work will take.
+Do NOT ask for payment at this stage.
+Do NOT create the actual finished work.
+Do NOT mention AI, models, APIs, software, programming, databases, providers or system architecture.
 
-When a technical requirement may be relevant:
-
-- Explain it in simple language.
-- Tell the customer that they can simply choose a standard professional option if they do not know the technical requirement.
-- Do not make the customer feel they must understand technical terminology.
-- If they have instructions from a school, lecturer, employer, company or another person, tell them they can upload those instructions.
-
-For example, if formatting is relevant, explain that if the customer does not know whether to use APA, MLA or Harvard, they can simply choose Standard Professional Formatting or upload the instructions they were given.
-
-The guidance must be friendly, concise and practical.
-
-Do not create the actual finished document.
-
-Do not ask for payment at this stage.
-
-Do not mention internal software, models, APIs, providers, programming, databases or system architecture.
-
-Use clear Nigerian English that ordinary customers can understand.
-
-Return only customer-facing guidance.
+Return ONLY the short customer-facing guidance.
 `;
 }
 
@@ -1749,7 +1856,7 @@ async function apiChat(body){
 async function loadGuidance(){
 
     setStatus(
-        "Preparing useful information for this service..."
+        "Getting your service information..."
     );
 
 
@@ -1792,7 +1899,7 @@ async function loadGuidance(){
 
         introText.textContent =
             clean(data.reply) ||
-            "Please provide the information requested below. If you are unsure what to provide, simply explain what you need in your own words.";
+            "Tell us what you need, provide the information you have, and upload any useful instructions or documents.";
 
 
         intelligenceLabel.classList.add(
@@ -1871,7 +1978,7 @@ async function loadGuidance(){
 
 
         introText.textContent =
-            "Here are the simple steps: provide the information you know, choose a standard option whenever you are unsure about a technical requirement, and upload any instructions or documents that can help us understand your request. You can also type your question below if you need help.";
+            "Tell us what you need, provide the information you have, and upload any useful instructions or documents. If you are unsure about a technical requirement, choose the standard option or explain what you need in your own words.";
 
 
         price.textContent =
@@ -1880,7 +1987,7 @@ async function loadGuidance(){
 
 
         setStatus(
-            "You can still complete the form or ask a question below.",
+            "You can complete the form or ask us a question below.",
             "error"
         );
     }
@@ -1897,7 +2004,7 @@ function creationPrompt(data){
 
 The customer has completed the service information form.
 
-Now create the actual requested work.
+Create the actual requested work.
 
 SERVICE:
 ${service}
@@ -1919,8 +2026,6 @@ Create the complete finished work.
 Use the customer's information carefully.
 
 If the customer selected a standard option because they did not know a technical requirement, use that standard professionally appropriate option.
-
-Do not force the customer to understand technical terminology.
 
 If the customer uploaded instructions or documents, use them as part of the job context.
 
@@ -2278,7 +2383,7 @@ Return the complete revised work for review.`,
 
 
             setStatus(
-                "Your corrections have been applied. Please review the updated work.",
+                "Your corrections have been applied.",
                 "success"
             );
 
@@ -2328,7 +2433,7 @@ approveBtn.addEventListener(
         busyState(true);
 
         setStatus(
-            "Preparing your payment step..."
+            "Opening your payment step..."
         );
 
 
@@ -2732,7 +2837,7 @@ fileInput.addEventListener(
 
 
         setStatus(
-            "Uploading the document you want to give us..."
+            "Receiving your document..."
         );
 
 
@@ -2770,7 +2875,7 @@ fileInput.addEventListener(
 
 
             setStatus(
-                "Your document has been received successfully.",
+                "Your document has been received.",
                 "success"
             );
 
@@ -3092,11 +3197,28 @@ chooseBtn.addEventListener(
     "click",
     () => {
 
-        if(!busy){
+        if(busy){
 
-            location.href =
-                "conversation.html";
+            return;
         }
+
+
+        /*
+         * IMPORTANT:
+         * Release the existing service before returning
+         * to the service-selection page.
+         */
+        releaseCurrentService();
+
+
+        /*
+         * Return without the previous service query.
+         * conversation.html can therefore display the
+         * service choices normally.
+         */
+        location.replace(
+            "conversation.html"
+        );
 
     }
 );
