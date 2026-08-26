@@ -50,6 +50,7 @@ button{
     --border:rgba(212,175,55,.28);
 }
 
+
 /* =====================================================
    APP
    ===================================================== */
@@ -420,8 +421,24 @@ button{
    FINAL DOCUMENT PREVIEW
    ===================================================== */
 
+/*
+   The work card is the document window.
+
+   The document itself scrolls inside this area instead
+   of forcing the entire workspace to become unusable.
+*/
+
 .work-card{
-    min-height:350px;
+    width:100%;
+
+    height:
+        min(
+            62dvh,
+            720px
+        );
+
+    min-height:300px;
+
     padding:0;
 
     background:#fff;
@@ -430,16 +447,23 @@ button{
     border-radius:11px;
 
     overflow:hidden;
+
     overflow-wrap:anywhere;
 
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    overscroll-behavior:contain;
 }
 
 .work-content{
     width:100%;
-    min-height:350px;
+    height:100%;
+
+    min-height:100%;
 
     padding:28px 24px;
 
@@ -449,18 +473,28 @@ button{
     line-height:1.7;
     font-size:14px;
 
+    overflow-y:auto;
+    overflow-x:hidden;
+
     overflow-wrap:anywhere;
+
+    -webkit-overflow-scrolling:touch;
+
+    overscroll-behavior:contain;
 
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
+
+    scrollbar-width:auto;
 }
 
 
 /*
-   The generated document is allowed to keep normal
-   document formatting instead of being flattened into
-   plain text.
+   Generated document formatting.
+
+   These rules intentionally stay inside the document
+   preview and do not change the surrounding workspace.
 */
 
 .work-content h1,
@@ -521,6 +555,8 @@ button{
     border-collapse:collapse;
     margin:1em 0;
     font-size:inherit;
+
+    table-layout:auto;
 }
 
 .work-content th,
@@ -529,6 +565,9 @@ button{
     padding:7px 9px;
     vertical-align:top;
     text-align:left;
+
+    overflow-wrap:anywhere;
+    word-break:normal;
 }
 
 .work-content th{
@@ -555,17 +594,36 @@ button{
 }
 
 .work-content img{
+    display:block;
+
     max-width:100%;
     height:auto;
+
+    margin-left:auto;
+    margin-right:auto;
 }
 
 .work-content pre{
     white-space:pre-wrap;
     overflow-wrap:anywhere;
+
+    max-width:100%;
 }
 
 .work-content code{
     white-space:pre-wrap;
+    overflow-wrap:anywhere;
+}
+
+.work-content section,
+.work-content article,
+.work-content div{
+    max-width:100%;
+}
+
+.work-content .document-page,
+.work-content .page{
+    max-width:100%;
 }
 
 .work-placeholder{
@@ -985,6 +1043,17 @@ button:disabled{
         width:59px;
     }
 
+
+    /*
+       On smaller phones the document gets a little more
+       vertical room while remaining independently scrollable.
+    */
+
+    .work-card{
+        height:55dvh;
+        min-height:280px;
+    }
+
     .work-content{
         padding:20px 14px;
         font-size:13px;
@@ -1009,6 +1078,47 @@ button:disabled{
     .work-content th,
     .work-content td{
         padding:5px 6px;
+    }
+}
+
+
+/* =====================================================
+   VERY SMALL PHONES
+   ===================================================== */
+
+@media(max-height:700px) and (max-width:430px){
+
+    .header{
+        min-height:58px;
+    }
+
+    .bottom{
+        padding-top:6px;
+    }
+
+    .work-card{
+        height:48dvh;
+        min-height:245px;
+    }
+
+    .review-header{
+        padding:12px;
+    }
+
+    .review-title{
+        font-size:18px;
+    }
+
+    .review-subtitle{
+        font-size:10px;
+    }
+
+    .correction-card{
+        padding:11px;
+    }
+
+    .correction-input{
+        min-height:80px;
     }
 }
 </style>
@@ -1576,11 +1686,11 @@ let paymentConfirmed = false;
 
 
 /*
-   currentWork contains the actual work representation
-   sent to/from the intelligence.
+   currentWork contains the actual formatted work.
 
-   currentWorkText is the readable text version used
-   when the intelligence needs the existing document.
+   currentWorkText contains the readable text version
+   used when the intelligence needs the existing work
+   during corrections.
 */
 
 let currentWork = "";
@@ -2430,45 +2540,409 @@ async function apiChat(body){
 
 
 /* =====================================================
+   JSON STRING EXTRACTION
+   ===================================================== */
+
+/*
+   Some API responses may return the actual structured
+   response directly:
+
+       {
+           "work_html": "<html>...</html>"
+       }
+
+   Other responses may wrap that object inside reply:
+
+       {
+           "reply": "{\"work_html\":\"<html>...</html>\"}"
+       }
+
+   This function safely unwraps those cases.
+*/
+
+function parsePossibleJSON(value){
+
+    if(
+        typeof value !== "string"
+    ){
+
+        return null;
+    }
+
+
+    const text =
+        value.trim();
+
+
+    if(!text){
+
+        return null;
+    }
+
+
+    /*
+       Remove an optional Markdown JSON code fence.
+    */
+
+    let candidate =
+        text
+            .replace(
+                /^```(?:json)?\s*/i,
+                ""
+            )
+            .replace(
+                /\s*```$/i,
+                ""
+            )
+            .trim();
+
+
+    if(
+        !(
+            candidate.startsWith("{") &&
+            candidate.endsWith("}")
+        )
+    ){
+
+        return null;
+    }
+
+
+    try{
+
+        const parsed =
+            JSON.parse(
+                candidate
+            );
+
+
+        if(
+            parsed &&
+            typeof parsed === "object"
+        ){
+
+            return parsed;
+        }
+
+    }
+    catch(error){}
+
+
+    return null;
+}
+
+
+/* =====================================================
+   FIND NESTED DOCUMENT DATA
+   ===================================================== */
+
+function findDocumentObject(data){
+
+    if(
+        !data ||
+        typeof data !== "object"
+    ){
+
+        return null;
+    }
+
+
+    /*
+       First check the object itself.
+    */
+
+    if(
+        typeof data.work_html === "string" &&
+        data.work_html.trim()
+    ){
+
+        return data;
+    }
+
+
+    if(
+        typeof data.document_html === "string" &&
+        data.document_html.trim()
+    ){
+
+        return data;
+    }
+
+
+    if(
+        typeof data.formatted_work === "string" &&
+        data.formatted_work.trim()
+    ){
+
+        return data;
+    }
+
+
+    if(
+        typeof data.html === "string" &&
+        data.html.trim()
+    ){
+
+        return data;
+    }
+
+
+    /*
+       Then check common nested containers.
+    */
+
+    const nestedCandidates = [
+
+        data.data,
+
+        data.result,
+
+        data.document,
+
+        data.work,
+
+        data.response
+
+    ];
+
+
+    for(
+        const nested of nestedCandidates
+    ){
+
+        if(
+            nested &&
+            typeof nested === "object"
+        ){
+
+            const found =
+                findDocumentObject(
+                    nested
+                );
+
+
+            if(found){
+
+                return found;
+            }
+        }
+
+    }
+
+
+    /*
+       Finally check strings that may contain a JSON
+       object carrying work_html.
+    */
+
+    const stringCandidates = [
+
+        data.reply,
+
+        data.message,
+
+        data.content,
+
+        data.output,
+
+        data.result
+
+    ];
+
+
+    for(
+        const candidate of stringCandidates
+    ){
+
+        if(
+            typeof candidate !== "string"
+        ){
+
+            continue;
+        }
+
+
+        const parsed =
+            parsePossibleJSON(
+                candidate
+            );
+
+
+        if(parsed){
+
+            const found =
+                findDocumentObject(
+                    parsed
+                );
+
+
+            if(found){
+
+                return found;
+            }
+        }
+
+    }
+
+
+    return null;
+}
+
+
+/* =====================================================
    FORMATTED WORK EXTRACTION
    ===================================================== */
 
 function getFormattedWork(data){
 
     if(!data){
+
         return null;
     }
 
 
     /*
-       These names allow the workspace to work with
-       different response field names while keeping the
-       actual document formatting.
+       Direct or nested structured response.
     */
+
+    const documentObject =
+        findDocumentObject(
+            data
+        );
+
+
+    if(documentObject){
+
+        const candidates = [
+
+            documentObject.work_html,
+
+            documentObject.document_html,
+
+            documentObject.formatted_work,
+
+            documentObject.html,
+
+            documentObject.reply_html,
+
+            documentObject.document?.html,
+
+            documentObject.work?.html,
+
+            documentObject.result?.html,
+
+            documentObject.result?.document_html,
+
+            documentObject.data?.work_html,
+
+            documentObject.data?.document_html
+
+        ];
+
+
+        for(
+            const candidate of candidates
+        ){
+
+            if(
+                typeof candidate === "string" &&
+                candidate.trim()
+            ){
+
+                return candidate.trim();
+            }
+        }
+
+    }
+
+
+    /*
+       Directly inspect possible JSON strings.
+    */
+
+    const stringCandidates = [
+
+        data.reply,
+
+        data.message,
+
+        data.content,
+
+        data.output
+
+    ];
+
+
+    for(
+        const candidate of stringCandidates
+    ){
+
+        if(
+            typeof candidate !== "string"
+        ){
+
+            continue;
+        }
+
+
+        const parsed =
+            parsePossibleJSON(
+                candidate
+            );
+
+
+        if(parsed){
+
+            const nested =
+                getFormattedWork(
+                    parsed
+                );
+
+
+            if(nested){
+
+                return nested;
+            }
+        }
+
+    }
+
+
+    return null;
+}
+
+
+/* =====================================================
+   PLAIN TEXT EXTRACTION
+   ===================================================== */
+
+function getWorkPlainText(data){
+
+    if(!data){
+
+        return "";
+    }
+
 
     const candidates = [
 
-        data.work_html,
+        data.work_text,
 
-        data.document_html,
+        data.document_text,
 
-        data.formatted_work,
+        data.text,
 
-        data.html,
+        data.reply_text,
 
-        data.reply_html,
+        data.document?.text,
 
-        data.document?.html,
+        data.work?.text,
 
-        data.work?.html,
+        data.result?.text,
 
-        data.result?.html,
+        data.data?.work_text,
 
-        data.result?.document_html,
-
-        data.data?.work_html,
-
-        data.data?.document_html
+        data.data?.document_text
 
     ];
 
@@ -2487,7 +2961,60 @@ function getFormattedWork(data){
     }
 
 
-    return null;
+    /*
+       If the structured response is hidden inside
+       reply/message, inspect that object too.
+    */
+
+    const stringCandidates = [
+
+        data.reply,
+
+        data.message,
+
+        data.content,
+
+        data.output
+
+    ];
+
+
+    for(
+        const candidate of stringCandidates
+    ){
+
+        if(
+            typeof candidate !== "string"
+        ){
+
+            continue;
+        }
+
+
+        const parsed =
+            parsePossibleJSON(
+                candidate
+            );
+
+
+        if(parsed){
+
+            const nestedText =
+                getWorkPlainText(
+                    parsed
+                );
+
+
+            if(nestedText){
+
+                return nestedText;
+            }
+        }
+
+    }
+
+
+    return "";
 }
 
 
@@ -2520,8 +3047,8 @@ function sanitizeDocumentHTML(
 
 
     /*
-       Remove elements that must never be allowed
-       inside the customer document preview.
+       Remove elements that must not execute or alter
+       the surrounding application.
     */
 
     documentObject
@@ -2535,8 +3062,7 @@ function sanitizeDocumentHTML(
 
 
     /*
-       Remove event-handler attributes and dangerous
-       URL attributes.
+       Remove event handlers and dangerous URL schemes.
     */
 
     documentObject
@@ -2614,9 +3140,11 @@ function sanitizeDocumentHTML(
 
 
     /*
-       If the intelligence returned a complete HTML
-       document, display its body contents rather than
-       nesting a complete document inside the work card.
+       A complete returned HTML document is reduced only
+       to its body contents.
+
+       The actual document markup inside the body is
+       preserved. It is not converted into plain text.
     */
 
     const body =
@@ -2636,7 +3164,30 @@ function sanitizeDocumentHTML(
 
 
 /* =====================================================
-   PLAIN TEXT / HTML DISPLAY
+   DOCUMENT DETECTION
+   ===================================================== */
+
+function looksLikeHTML(
+    value
+){
+
+    if(
+        typeof value !== "string"
+    ){
+
+        return false;
+    }
+
+
+    return /<\s*(html|head|body|div|main|section|article|p|h1|h2|h3|h4|h5|h6|table|ul|ol|li|strong|b|em|i|blockquote|hr|br)\b/i
+        .test(
+            value
+        );
+}
+
+
+/* =====================================================
+   DISPLAY WORK
    ===================================================== */
 
 function displayWork(
@@ -2650,32 +3201,64 @@ function displayWork(
         "";
 
 
+    /*
+       Direct HTML string.
+    */
+
     if(
         typeof dataOrWork === "string"
     ){
 
-        plainText =
-            dataOrWork;
+        const direct =
+            dataOrWork.trim();
+
 
         /*
-           If a raw HTML document/fragment was passed,
-           preserve its formatting.
+           The string may itself be JSON.
         */
 
-        if(
-            /<\s*(html|body|div|p|h1|h2|h3|h4|table|ul|ol|section|article|strong|b)\b/i
-                .test(
-                    dataOrWork
-                )
+        const parsed =
+            parsePossibleJSON(
+                direct
+            );
+
+
+        if(parsed){
+
+            html =
+                getFormattedWork(
+                    parsed
+                );
+
+            plainText =
+                getWorkPlainText(
+                    parsed
+                );
+
+        }
+        else if(
+            looksLikeHTML(
+                direct
+            )
         ){
 
             html =
-                sanitizeDocumentHTML(
-                    dataOrWork
-                );
+                direct;
+
+        }
+        else{
+
+            plainText =
+                direct;
         }
 
     }
+
+
+    /*
+       Structured API response.
+    */
+
     else if(dataOrWork){
 
         html =
@@ -2685,44 +3268,105 @@ function displayWork(
 
 
         plainText =
-            clean(
-                dataOrWork.reply
-            ) ||
-            clean(
-                dataOrWork.message
-            ) ||
-            "";
-    }
+            getWorkPlainText(
+                dataOrWork
+            );
 
 
-    if(html){
+        /*
+           Only use reply/message as plain text when
+           it is genuinely plain text rather than a
+           JSON document container.
+        */
 
-        workContent.innerHTML =
-            html;
+        if(!plainText){
 
-        currentWork =
-            html;
+            const reply =
+                clean(
+                    dataOrWork.reply
+                );
+
+            const message =
+                clean(
+                    dataOrWork.message
+                );
 
 
-        currentWorkText =
-            workContent
-                .textContent
-                .trim();
+            if(
+                reply &&
+                !parsePossibleJSON(reply)
+            ){
 
+                plainText =
+                    reply;
 
-        return;
+            }
+            else if(
+                message &&
+                !parsePossibleJSON(message)
+            ){
+
+                plainText =
+                    message;
+            }
+
+        }
+
     }
 
 
     /*
-       If no formatted HTML was returned, keep the
-       generated work readable rather than losing it.
+       Render the actual document HTML.
+    */
+
+    if(html){
+
+        const safeHTML =
+            sanitizeDocumentHTML(
+                html
+            );
+
+
+        if(safeHTML){
+
+            workContent.innerHTML =
+                safeHTML;
+
+
+            currentWork =
+                safeHTML;
+
+
+            currentWorkText =
+                (
+                    workContent.textContent ||
+                    ""
+                ).trim();
+
+
+            /*
+               Always start the document preview at its
+               beginning when a new work version is shown.
+            */
+
+            workContent.scrollTop =
+                0;
+
+
+            return;
+        }
+
+    }
+
+
+    /*
+       If the API provided work_text but no HTML, display
+       the text safely without treating it as markup.
     */
 
     currentWork =
         plainText ||
         "";
-
 
     currentWorkText =
         plainText ||
@@ -2732,6 +3376,9 @@ function displayWork(
     workContent.textContent =
         plainText ||
         "Your prepared work will appear here.";
+
+    workContent.scrollTop =
+        0;
 }
 
 
@@ -3203,15 +3850,6 @@ serviceForm.addEventListener(
             };
 
 
-        /*
-           This is the main SEND action.
-
-           The customer's original selected service,
-           all form information and any service-specific
-           instructions are sent together to create the
-           actual finished work.
-        */
-
         createWork(
             data
         );
@@ -3225,8 +3863,7 @@ serviceForm.addEventListener(
    ===================================================== */
 
 [
-    introCard,
-    workCard
+    introCard
 ].forEach(
     element => {
 
@@ -3288,6 +3925,77 @@ serviceForm.addEventListener(
 
             }
         );
+
+    }
+);
+
+
+/*
+   The document preview remains readable and scrollable.
+
+   We prevent copying from the document without attaching
+   the old blanket protection to the scrolling container
+   itself in a way that interferes with touch scrolling.
+*/
+
+workCard.addEventListener(
+    "copy",
+    event => {
+
+        event.preventDefault();
+
+    }
+);
+
+workCard.addEventListener(
+    "cut",
+    event => {
+
+        event.preventDefault();
+
+    }
+);
+
+workCard.addEventListener(
+    "contextmenu",
+    event => {
+
+        event.preventDefault();
+
+    }
+);
+
+workCard.addEventListener(
+    "dragstart",
+    event => {
+
+        event.preventDefault();
+
+    }
+);
+
+workCard.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            (
+                event.ctrlKey ||
+                event.metaKey
+            ) &&
+            [
+                "a",
+                "c",
+                "x",
+                "s",
+                "u"
+            ].includes(
+                event.key.toLowerCase()
+            )
+        ){
+
+            event.preventDefault();
+        }
 
     }
 );
@@ -4160,9 +4868,7 @@ async function sendMessage(
 
         /*
            Preserve everything already entered in the
-           service form. A bottom SEND must not lose the
-           original service or the customer's earlier
-           requirements.
+           service form.
         */
 
         const combinedData = {
@@ -4250,9 +4956,8 @@ Do not return only a conversational acknowledgement.
 
 
         /*
-           A SEND response is always treated as the
-           requested service output when the intelligence
-           provides a document.
+           A SEND response is treated as the requested
+           service output when a document is provided.
         */
 
         if(
