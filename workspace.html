@@ -10,7 +10,7 @@
 
 <style>
 *{
-    box-sizing:border-box
+    box-sizing:border-box;
 }
 
 html,
@@ -18,49 +18,48 @@ body{
     width:100%;
     height:100%;
     margin:0;
-    overflow:hidden
+    overflow:hidden;
 }
 
 body{
     background:#000;
     color:#fff;
-    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
 
 button,
 input,
 textarea,
 select{
-    font:inherit
+    font:inherit;
 }
 
 button{
-    cursor:pointer
+    cursor:pointer;
 }
 
 :root{
     --gold:#d4af37;
     --gold2:#f3d66b;
 
-    /*
-     * Luxury brand green.
-     * Used consistently for the brand name and
-     * completed/active customer actions.
-     */
     --brand-green:#168047;
-
     --brand-green-dark:#0f5d34;
     --brand-green-light:#2aa566;
 
     --red:#b30000;
-    --border:rgba(212,175,55,.28)
+    --border:rgba(212,175,55,.28);
 }
 
+/* =====================================================
+   APP
+   ===================================================== */
+
 .app{
+    width:100%;
     height:100dvh;
     display:flex;
     flex-direction:column;
-    background:#000
+    background:#000;
 }
 
 
@@ -72,50 +71,51 @@ button{
     flex:0 0 auto;
     min-height:65px;
     padding:9px 12px;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:10px;
+
     background:#050505;
     border-bottom:1px solid var(--border);
-    z-index:20
+
+    z-index:20;
 }
 
 .brand{
-    min-width:0
+    min-width:0;
 }
 
 .brand-title{
     margin:0;
-
-    /*
-     * Brand is green on this page so the
-     * customer sees the same luxury brand treatment.
-     */
     color:var(--brand-green);
-
     font-size:clamp(18px,4vw,25px);
-    font-weight:800
+    font-weight:800;
+    line-height:1.15;
 }
 
 .brand-subtitle{
     margin-top:3px;
     color:#ccc;
-    font-size:10px
+    font-size:10px;
 }
 
 .service-badge{
     max-width:46%;
     padding:7px 10px;
+
     background:#171717;
     border:1px solid rgba(22,128,71,.65);
     border-radius:999px;
+
     color:#55c98a;
     font-size:10px;
     font-weight:800;
+
     white-space:nowrap;
     overflow:hidden;
-    text-overflow:ellipsis
+    text-overflow:ellipsis;
 }
 
 
@@ -126,6 +126,7 @@ button{
 .main{
     flex:1;
     min-height:0;
+
     overflow-y:auto;
     overflow-x:hidden;
 
@@ -135,78 +136,103 @@ button{
             #181818 0,
             #080808 35%,
             #000 100%
-        )
+        );
 }
 
 .main-inner{
+    width:100%;
     max-width:900px;
     margin:auto;
-    padding:14px 10px 25px
+    padding:14px 10px 25px;
 }
 
 .intro-card,
 .form-card,
 .review-header,
 .correction-card{
-    border-radius:15px
+    border-radius:15px;
 }
 
 
 /* =====================================================
-   INTELLIGENCE GUIDANCE
+   INTRODUCTION
    ===================================================== */
 
 .intro-card{
     margin-bottom:12px;
     padding:16px;
-    background:linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid var(--border)
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #0d0d0d
+        );
+
+    border:1px solid var(--border);
+
+    user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    -webkit-touch-callout:none;
 }
 
 .intro-title,
 .review-title{
     margin:0;
     color:var(--gold2);
-    font-weight:900
+    font-weight:900;
 }
 
 .intro-title{
-    font-size:19px
+    font-size:19px;
 }
 
 .intro-text{
     margin:7px 0 0;
+
     color:#dedede;
+
     font-size:13px;
     line-height:1.55;
-    white-space:pre-wrap
+
+    white-space:pre-wrap;
 }
 
 .intelligence-label{
     display:none;
+
     margin-top:12px;
     margin-bottom:5px;
+
     color:var(--gold2);
+
     font-size:11px;
     font-weight:900;
+
     text-transform:uppercase;
-    letter-spacing:.4px
+    letter-spacing:.4px;
 }
 
 .intelligence-label.show{
-    display:block
+    display:block;
 }
 
 .price{
     display:inline-block;
+
     margin-top:10px;
     padding:7px 10px;
+
     background:rgba(212,175,55,.09);
     border:1px solid rgba(212,175,55,.3);
     border-radius:8px;
+
     color:var(--gold2);
+
     font-size:12px;
-    font-weight:800
+    font-weight:800;
 }
 
 
@@ -215,121 +241,138 @@ button{
    ===================================================== */
 
 .form-card{
+    padding:15px;
+
     background:#101010;
     border:1px solid rgba(255,255,255,.09);
-    padding:15px
 }
 
 .form-heading{
     margin:0;
-    font-size:17px
+    font-size:17px;
 }
 
 .form-description{
     margin:5px 0 14px;
+
     color:#a9a9a9;
+
     font-size:11px;
-    line-height:1.5
+    line-height:1.5;
 }
 
 .fields{
     display:flex;
     flex-direction:column;
-    gap:12px
+    gap:12px;
 }
 
 .field{
-    width:100%
+    width:100%;
 }
 
 .field label{
     display:block;
+
     margin-bottom:5px;
+
     color:#e8e8e8;
+
     font-size:11px;
-    font-weight:800
+    font-weight:800;
 }
 
 .required{
-    color:#ff8585
+    color:#ff8585;
 }
 
 .optional{
     color:#777;
-    font-weight:500
+    font-weight:500;
 }
 
 .field-tip{
-    margin:
-        -1px
-        0
-        5px;
+    margin:-1px 0 5px;
 
     color:#999;
 
     font-size:10px;
-
-    line-height:1.45
+    line-height:1.45;
 }
 
 .field-tip strong{
-    color:#d4af37
+    color:var(--gold);
 }
 
 .field input,
 .field textarea,
 .field select{
     width:100%;
-    border:1px solid rgba(255,255,255,.14);
-    border-radius:9px;
+
+    padding:11px;
+
     background:#181818;
     color:#fff;
+
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:9px;
+
     outline:0;
-    padding:11px;
-    font-size:13px
+
+    font-size:13px;
 }
 
 .field select{
     min-height:43px;
-    appearance:auto
+    appearance:auto;
 }
 
 .field textarea{
     min-height:85px;
-    resize:vertical
+    resize:vertical;
 }
 
 .field input:focus,
 .field textarea:focus,
 .field select:focus{
-    border-color:rgba(22,128,71,.8)
+    border-color:rgba(22,128,71,.8);
 }
 
 .form-note{
     margin-top:12px;
     padding:10px;
+
     background:#151515;
     border-left:3px solid var(--brand-green);
     border-radius:7px;
+
     color:#bdbdbd;
+
     font-size:10px;
-    line-height:1.5
+    line-height:1.5;
+}
+
+.form-note strong{
+    color:#fff;
 }
 
 .form-submit{
     width:100%;
     min-height:50px;
     margin-top:15px;
+
     border:0;
     border-radius:10px;
+
     background:var(--gold);
     color:#000;
+
     font-size:13px;
-    font-weight:900
+    font-weight:900;
 }
 
 .form-submit:disabled{
-    opacity:.45
+    opacity:.45;
 }
 
 
@@ -338,92 +381,124 @@ button{
    ===================================================== */
 
 .review-view{
-    display:none
+    display:none;
 }
 
 .review-view.show{
-    display:block
+    display:block;
 }
 
 .review-header{
-    padding:16px;
     margin-bottom:11px;
-    background:linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid rgba(212,175,55,.38)
+    padding:16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #0d0d0d
+        );
+
+    border:1px solid rgba(212,175,55,.38);
 }
 
 .review-title{
-    font-size:20px
+    font-size:20px;
 }
 
 .review-subtitle{
     margin:5px 0 0;
+
     color:#bdbdbd;
+
     font-size:11px;
-    line-height:1.5
+    line-height:1.5;
 }
 
+
+/* =====================================================
+   WORK
+   ===================================================== */
+
 .work-card{
-    background:#f7f7f7;
-    color:#111;
-    border-radius:11px;
     min-height:350px;
     padding:22px 17px;
+
+    background:#f7f7f7;
+    color:#111;
+
+    border-radius:11px;
+
     overflow-wrap:anywhere;
 
     user-select:none;
     -webkit-user-select:none;
-    -webkit-touch-callout:none
+    -webkit-touch-callout:none;
 }
 
 .work-content{
     white-space:pre-wrap;
+
     line-height:1.7;
     font-size:14px;
 
     user-select:none;
     -webkit-user-select:none;
-    -webkit-touch-callout:none
+    -webkit-touch-callout:none;
 }
 
 .work-placeholder{
-    color:#777;
-    text-align:center;
     padding:70px 10px;
 
+    color:#777;
+    text-align:center;
+
     user-select:none;
-    -webkit-user-select:none
+    -webkit-user-select:none;
 }
+
+
+/* =====================================================
+   CORRECTIONS
+   ===================================================== */
 
 .correction-card{
     margin-top:12px;
     padding:14px;
+
     background:#111;
-    border:1px solid rgba(255,255,255,.1)
+    border:1px solid rgba(255,255,255,.1);
 }
 
 .correction-title{
     margin:0 0 4px;
-    font-size:14px
+    font-size:14px;
 }
 
 .correction-help{
     margin:0 0 9px;
+
     color:#999;
+
     font-size:10px;
-    line-height:1.45
+    line-height:1.45;
 }
 
 .correction-input{
     width:100%;
     min-height:100px;
+
     resize:vertical;
+
     padding:11px;
+
     background:#191919;
     color:#fff;
+
     border:1px solid rgba(255,255,255,.15);
     border-radius:9px;
-    outline:0
+
+    outline:0;
 }
 
 .review-actions,
@@ -431,225 +506,371 @@ button{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:7px;
-    margin-top:10px
+
+    margin-top:10px;
 }
 
 .review-button,
 .payment-buttons button{
     min-height:43px;
+
     border-radius:8px;
+
     font-size:11px;
-    font-weight:850
+    font-weight:850;
 }
 
 .apply-button{
     background:#252525;
     color:#fff;
-    border:1px solid rgba(255,255,255,.14)
+
+    border:1px solid rgba(255,255,255,.14);
 }
 
 .approve-button,
 .payment-report{
     background:var(--gold);
     color:#000;
-    border:0
+
+    border:0;
 }
+
+
+/* =====================================================
+   DOWNLOAD
+   ===================================================== */
 
 .download-button{
     width:100%;
     min-height:47px;
+
     margin-top:8px;
+
     border-radius:8px;
+
     background:#242424;
     color:#777;
+
     border:1px solid rgba(255,255,255,.1);
+
     font-size:11px;
     font-weight:850;
-    cursor:not-allowed
+
+    cursor:not-allowed;
 }
 
 .download-button.active{
     background:var(--brand-green);
     color:#fff;
+
     border-color:var(--brand-green);
-    cursor:pointer
+
+    cursor:pointer;
 }
 
 .payment-message{
     margin-top:8px;
+
     color:#858585;
+
     font-size:9px;
-    text-align:center
+    text-align:center;
 }
+
+
+/* =====================================================
+   PAYMENT
+   ===================================================== */
 
 .payment-panel{
     display:none;
+
     margin-top:11px;
     padding:13px;
+
     background:#121212;
+
     border:1px solid rgba(212,175,55,.38);
-    border-radius:12px
+    border-radius:12px;
 }
 
 .payment-panel.show{
-    display:block
+    display:block;
 }
 
 .payment-title{
+    margin-bottom:6px;
+
     color:var(--gold2);
+
     font-size:13px;
     font-weight:900;
-    margin-bottom:6px
 }
 
 .payment-details{
     color:#ddd;
+
     white-space:pre-wrap;
+
     font-size:11px;
-    line-height:1.5
+    line-height:1.5;
 }
 
 .payment-check{
     background:#282828;
     color:#fff;
-    border:1px solid rgba(255,255,255,.13)
+
+    border:1px solid rgba(255,255,255,.13);
 }
 
 
 /* =====================================================
-   BOTTOM
+   BOTTOM CONTROLS
    ===================================================== */
 
 .bottom{
     flex:0 0 auto;
+
     padding:
         8px
         9px
         calc(8px + env(safe-area-inset-bottom));
 
     background:#080808;
+
     border-top:1px solid var(--border);
-    z-index:20
+
+    z-index:20;
 }
 
 .bottom-inner{
     max-width:900px;
-    margin:auto
+    margin:auto;
 }
 
 .tools{
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
+
     gap:6px;
-    margin-bottom:7px
+
+    margin-bottom:7px;
 }
 
 .tool-button,
 .choose-service-button{
     min-height:39px;
+
     border-radius:8px;
+
     background:#181818;
     color:#fff;
+
     border:1px solid rgba(255,255,255,.13);
+
     font-size:10px;
-    font-weight:800
+    font-weight:800;
 }
 
 .tool-button.gold{
     color:var(--gold2);
-    border-color:rgba(212,175,55,.35)
+    border-color:rgba(212,175,55,.35);
 }
 
 .choose-service-button{
     width:100%;
     margin-bottom:7px;
-    background:#000
+
+    background:#000;
 }
+
+
+/* =====================================================
+   COMPOSER
+   ===================================================== */
 
 .composer{
     display:flex;
     align-items:flex-end;
-    gap:6px
+    gap:6px;
 }
 
 .message-input{
     flex:1;
     min-width:0;
+
     min-height:45px;
     max-height:105px;
+
     resize:none;
+
     padding:11px;
+
     background:#171717;
     color:#fff;
+
     border:1px solid rgba(255,255,255,.16);
     border-radius:9px;
-    outline:0
+
+    outline:0;
 }
 
 .send-button{
     width:64px;
     min-height:45px;
+
     border:0;
     border-radius:9px;
+
     background:var(--gold);
     color:#000;
+
     font-size:11px;
-    font-weight:900
-}
-
-.voice-recording{
-    display:none;
-    margin-bottom:6px;
-    padding:7px;
-    background:#190707;
-    border:1px solid rgba(179,0,0,.55);
-    border-radius:8px;
-    color:#ff8c8c;
-    font-size:10px;
-    text-align:center
-}
-
-.voice-recording.show{
-    display:block
-}
-
-.status{
-    min-height:14px;
-    margin-top:3px;
-    color:#777;
-    font-size:9px;
-    text-align:center
-}
-
-.status.error{
-    color:#ff7777
-}
-
-.status.success{
-    color:#7bd99a
-}
-
-#fileInput{
-    display:none
-}
-
-button:disabled{
-    opacity:.45;
-    cursor:not-allowed
+    font-weight:900;
 }
 
 
 /* =====================================================
-   READ-ONLY INTELLIGENCE GUIDANCE
+   VOICE
    ===================================================== */
 
-#introText,
-.intro-card{
-    user-select:none;
-    -webkit-user-select:none;
-    -moz-user-select:none;
-    -ms-user-select:none;
-    -webkit-touch-callout:none
+.voice-recording{
+    display:none;
+
+    margin-bottom:6px;
+    padding:7px;
+
+    background:#190707;
+
+    border:1px solid rgba(179,0,0,.55);
+    border-radius:8px;
+
+    color:#ff8c8c;
+
+    font-size:10px;
+    text-align:center;
+}
+
+.voice-recording.show{
+    display:block;
+}
+
+
+/* =====================================================
+   STATUS
+   ===================================================== */
+
+.status{
+    min-height:14px;
+    margin-top:3px;
+
+    color:#777;
+
+    font-size:9px;
+    text-align:center;
+}
+
+.status.error{
+    color:#ff7777;
+}
+
+.status.success{
+    color:#7bd99a;
+}
+
+
+/* =====================================================
+   FILE INPUT / DISABLED
+   ===================================================== */
+
+#fileInput{
+    display:none;
+}
+
+button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media(max-width:430px){
+
+    .header{
+        min-height:62px;
+        padding:8px 10px;
+    }
+
+    .brand-title{
+        font-size:18px;
+    }
+
+    .brand-subtitle{
+        font-size:9px;
+    }
+
+    .service-badge{
+        max-width:42%;
+        font-size:9px;
+    }
+
+    .main-inner{
+        padding:11px 8px 20px;
+    }
+
+    .intro-card{
+        padding:13px;
+    }
+
+    .intro-title{
+        font-size:17px;
+    }
+
+    .intro-text{
+        font-size:12px;
+    }
+
+    .form-card{
+        padding:13px;
+    }
+
+    .form-heading{
+        font-size:16px;
+    }
+
+    .tools{
+        gap:5px;
+    }
+
+    .tool-button{
+        min-height:38px;
+        padding:4px;
+        font-size:9px;
+    }
+
+    .choose-service-button{
+        min-height:38px;
+        font-size:9px;
+    }
+
+    .message-input{
+        font-size:12px;
+    }
+
+    .send-button{
+        width:59px;
+    }
+
+    .work-card{
+        padding:18px 14px;
+    }
+
+    .work-content{
+        font-size:13px;
+    }
 }
 </style>
 </head>
@@ -672,7 +893,10 @@ button:disabled{
 
     </div>
 
-    <div id="serviceBadge" class="service-badge">
+    <div
+        id="serviceBadge"
+        class="service-badge"
+    >
         Service
     </div>
 
@@ -685,13 +909,15 @@ button:disabled{
 
 <section id="formView">
 
-    <!-- =================================================
-         CUSTOMER-FRIENDLY INTELLIGENCE GUIDANCE
-         ================================================= -->
+    <div
+        id="introCard"
+        class="intro-card"
+    >
 
-    <div class="intro-card" id="introCard">
-
-        <h2 id="introTitle" class="intro-title">
+        <h2
+            id="introTitle"
+            class="intro-title"
+        >
             Let's get started
         </h2>
 
@@ -710,16 +936,15 @@ button:disabled{
             You can explain what you need in your own words.
         </p>
 
-        <div id="price" class="price">
+        <div
+            id="price"
+            class="price"
+        >
             Service
         </div>
 
     </div>
 
-
-    <!-- =================================================
-         SERVICE FORM
-         ================================================= -->
 
     <div class="form-card">
 
@@ -739,7 +964,10 @@ button:disabled{
 
         <form id="serviceForm">
 
-            <div id="fields" class="fields"></div>
+            <div
+                id="fields"
+                class="fields"
+            ></div>
 
             <div class="form-note">
                 You do not need to know technical document terms.
@@ -764,11 +992,10 @@ button:disabled{
 </section>
 
 
-<!-- =====================================================
-     REVIEW
-     ===================================================== -->
-
-<section id="reviewView" class="review-view">
+<section
+    id="reviewView"
+    class="review-view"
+>
 
     <div class="review-header">
 
@@ -785,9 +1012,15 @@ button:disabled{
     </div>
 
 
-    <div id="workCard" class="work-card">
+    <div
+        id="workCard"
+        class="work-card"
+    >
 
-        <div id="workContent" class="work-content">
+        <div
+            id="workContent"
+            class="work-content"
+        >
 
             <div class="work-placeholder">
                 Your prepared work will appear here.
@@ -894,10 +1127,6 @@ button:disabled{
 </main>
 
 
-<!-- =====================================================
-     BOTTOM CONTROLS
-     ===================================================== -->
-
 <section class="bottom">
 
 <div class="bottom-inner">
@@ -1003,51 +1232,101 @@ const API_BASE = "";
    DOM
    ===================================================== */
 
-const $ = id => document.getElementById(id);
+const $ = id =>
+    document.getElementById(id);
 
-const formView = $("formView");
-const reviewView = $("reviewView");
-const serviceForm = $("serviceForm");
-const fields = $("fields");
-const formSubmit = $("formSubmit");
+const formView =
+    $("formView");
 
-const serviceBadge = $("serviceBadge");
+const reviewView =
+    $("reviewView");
 
-const introTitle = $("introTitle");
-const introText = $("introText");
-const intelligenceLabel = $("intelligenceLabel");
-const formDescription = $("formDescription");
-const price = $("price");
-const introCard = $("introCard");
+const serviceForm =
+    $("serviceForm");
 
-const workCard = $("workCard");
-const workContent = $("workContent");
+const fields =
+    $("fields");
 
-const correctionInput = $("correctionInput");
-const applyBtn = $("applyCorrectionsButton");
-const approveBtn = $("approveButton");
+const formSubmit =
+    $("formSubmit");
 
-const downloadBtn = $("downloadButton");
+const serviceBadge =
+    $("serviceBadge");
 
-const uploadBtn = $("uploadButton");
-const voiceBtn = $("voiceButton");
-const customerBtn = $("customerServiceButton");
-const chooseBtn = $("chooseServiceButton");
+const introTitle =
+    $("introTitle");
 
-const fileInput = $("fileInput");
+const introText =
+    $("introText");
 
-const messageInput = $("messageInput");
-const sendBtn = $("sendButton");
+const intelligenceLabel =
+    $("intelligenceLabel");
 
-const status = $("status");
+const formDescription =
+    $("formDescription");
 
-const voiceRecording = $("voiceRecording");
+const price =
+    $("price");
 
-const paymentPanel = $("paymentPanel");
-const paymentDetails = $("paymentDetails");
+const introCard =
+    $("introCard");
 
-const paymentReport = $("paymentReportButton");
-const paymentCheck = $("paymentCheckButton");
+const workCard =
+    $("workCard");
+
+const workContent =
+    $("workContent");
+
+const correctionInput =
+    $("correctionInput");
+
+const applyBtn =
+    $("applyCorrectionsButton");
+
+const approveBtn =
+    $("approveButton");
+
+const downloadBtn =
+    $("downloadButton");
+
+const uploadBtn =
+    $("uploadButton");
+
+const voiceBtn =
+    $("voiceButton");
+
+const customerBtn =
+    $("customerServiceButton");
+
+const chooseBtn =
+    $("chooseServiceButton");
+
+const fileInput =
+    $("fileInput");
+
+const messageInput =
+    $("messageInput");
+
+const sendBtn =
+    $("sendButton");
+
+const status =
+    $("status");
+
+const voiceRecording =
+    $("voiceRecording");
+
+const paymentPanel =
+    $("paymentPanel");
+
+const paymentDetails =
+    $("paymentDetails");
+
+const paymentReport =
+    $("paymentReportButton");
+
+const paymentCheck =
+    $("paymentCheckButton");
 
 
 /* =====================================================
@@ -1055,7 +1334,9 @@ const paymentCheck = $("paymentCheckButton");
    ===================================================== */
 
 const params =
-    new URLSearchParams(location.search);
+    new URLSearchParams(
+        location.search
+    );
 
 const service =
     (
@@ -1065,41 +1346,54 @@ const service =
 
 
 /* =====================================================
-   STORAGE / IDS
+   STORAGE / IDENTIFIERS
    ===================================================== */
 
 function id(prefix){
 
+    if(
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+    ){
+
+        return prefix +
+            crypto.randomUUID();
+    }
+
     return prefix +
-        (
-            crypto.randomUUID
-                ? crypto.randomUUID()
-                : Date.now() +
-                  "_" +
-                  Math.random()
-                      .toString(36)
-                      .slice(2)
-        );
+        Date.now() +
+        "_" +
+        Math.random()
+            .toString(36)
+            .slice(2);
 }
 
 
 function get(key){
 
     try{
-        return localStorage.getItem(key);
-    }catch(e){
+
+        return localStorage.getItem(
+            key
+        );
+
+    }catch(error){
+
         return null;
     }
-
 }
 
 
 function put(key,value){
 
     try{
-        localStorage.setItem(key,value);
-    }catch(e){}
 
+        localStorage.setItem(
+            key,
+            value
+        );
+
+    }catch(error){}
 }
 
 
@@ -1135,12 +1429,17 @@ put(
 
 
 let busy = false;
+
 let approved = false;
+
 let paymentConfirmed = false;
+
 let currentWork = "";
 
 let mediaRecorder = null;
+
 let recordedChunks = [];
+
 let recordingStream = null;
 
 
@@ -1158,7 +1457,10 @@ function clean(value){
 }
 
 
-function setStatus(message,type=""){
+function setStatus(
+    message,
+    type = ""
+){
 
     status.textContent =
         message || "";
@@ -1180,29 +1482,26 @@ function busyState(value){
         customerBtn,
         chooseBtn,
         applyBtn,
-        approveBtn
+        approveBtn,
+        paymentReport,
+        paymentCheck
     ].forEach(
         button => {
-            button.disabled = value;
+
+            if(button){
+
+                button.disabled =
+                    value;
+            }
+
         }
     );
 }
 
 
 /* =====================================================
-   RELEASE SERVICE SELECTION
+   RELEASE SERVICE
    ===================================================== */
-
-/*
- * The previous service must not remain locked when the
- * customer returns to the service-selection page.
- *
- * The customer ID is intentionally preserved because it
- * identifies the same customer.
- *
- * The active job/request and service-selection flags are
- * released so the next service can start cleanly.
- */
 
 function releaseCurrentService(){
 
@@ -1227,35 +1526,28 @@ function releaseCurrentService(){
     ];
 
 
-    const sessionKeys = [...localKeys];
-
-
     localKeys.forEach(
         key => {
 
             try{
-                localStorage.removeItem(key);
-            }catch(e){}
 
-        }
-    );
+                localStorage.removeItem(
+                    key
+                );
 
-
-    sessionKeys.forEach(
-        key => {
+            }catch(error){}
 
             try{
-                sessionStorage.removeItem(key);
-            }catch(e){}
+
+                sessionStorage.removeItem(
+                    key
+                );
+
+            }catch(error){}
 
         }
     );
 
-
-    /*
-     * Generate fresh identifiers for the next service.
-     * Customer identity remains unchanged.
-     */
 
     jobId =
         id("job_");
@@ -1277,7 +1569,7 @@ function releaseCurrentService(){
 
 
 /* =====================================================
-   STANDARD CUSTOMER-FRIENDLY OPTIONS
+   FORM OPTIONS
    ===================================================== */
 
 const standardFormattingOptions = [
@@ -1389,7 +1681,8 @@ const forms = {
             label:"Formatting style",
             required:true,
             type:"select",
-            options:standardFormattingOptions,
+            options:
+                standardFormattingOptions,
             tip:"If you don't know APA, MLA or Harvard, choose Standard Professional Formatting."
         },
 
@@ -1466,7 +1759,8 @@ const forms = {
             name:"formatting_style",
             label:"Formatting style",
             type:"select",
-            options:standardFormattingOptions,
+            options:
+                standardFormattingOptions,
             tip:"If you were not given a required style, choose Standard Professional Formatting."
         },
 
@@ -1578,7 +1872,7 @@ const forms = {
 
 
 /* =====================================================
-   FIND FORM
+   FORM SELECTION
    ===================================================== */
 
 function definition(){
@@ -1588,7 +1882,8 @@ function definition(){
 
     const match =
         Object.keys(forms).find(
-            key => s.includes(key)
+            key =>
+                s.includes(key)
         );
 
     return match
@@ -1609,43 +1904,98 @@ function renderForm(){
         field => {
 
             const wrapper =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             wrapper.className =
                 "field";
 
 
             const label =
-                document.createElement("label");
+                document.createElement(
+                    "label"
+                );
 
             label.htmlFor =
                 field.name;
 
-            label.innerHTML =
-                field.label +
-                (
-                    field.required
-                        ? ' <span class="required">*</span>'
-                        : ' <span class="optional">(optional)</span>'
+            label.textContent =
+                field.label;
+
+            if(field.required){
+
+                const required =
+                    document.createElement(
+                        "span"
+                    );
+
+                required.className =
+                    "required";
+
+                required.textContent =
+                    " *";
+
+                label.appendChild(
+                    required
                 );
 
+            }
+            else{
 
-            wrapper.appendChild(label);
+                const optional =
+                    document.createElement(
+                        "span"
+                    );
+
+                optional.className =
+                    "optional";
+
+                optional.textContent =
+                    " (optional)";
+
+                label.appendChild(
+                    optional
+                );
+            }
+
+
+            wrapper.appendChild(
+                label
+            );
 
 
             if(field.tip){
 
                 const tip =
-                    document.createElement("div");
+                    document.createElement(
+                        "div"
+                    );
 
                 tip.className =
                     "field-tip";
 
-                tip.innerHTML =
-                    "<strong>Tip:</strong> " +
-                    field.tip;
+                const strong =
+                    document.createElement(
+                        "strong"
+                    );
 
-                wrapper.appendChild(tip);
+                strong.textContent =
+                    "Tip:";
+
+                tip.appendChild(
+                    strong
+                );
+
+                tip.appendChild(
+                    document.createTextNode(
+                        " " + field.tip
+                    )
+                );
+
+                wrapper.appendChild(
+                    tip
+                );
             }
 
 
@@ -1655,13 +2005,19 @@ function renderForm(){
             if(field.type === "select"){
 
                 input =
-                    document.createElement("select");
+                    document.createElement(
+                        "select"
+                    );
 
-                (field.options || []).forEach(
+                (
+                    field.options || []
+                ).forEach(
                     optionData => {
 
                         const option =
-                            document.createElement("option");
+                            document.createElement(
+                                "option"
+                            );
 
                         option.value =
                             optionData.value;
@@ -1669,7 +2025,10 @@ function renderForm(){
                         option.textContent =
                             optionData.label;
 
-                        input.appendChild(option);
+                        input.appendChild(
+                            option
+                        );
+
                     }
                 );
 
@@ -1678,14 +2037,18 @@ function renderForm(){
             else if(field.type === "textarea"){
 
                 input =
-                    document.createElement("textarea");
+                    document.createElement(
+                        "textarea"
+                    );
 
             }
 
             else{
 
                 input =
-                    document.createElement("input");
+                    document.createElement(
+                        "input"
+                    );
 
                 input.type =
                     field.type || "text";
@@ -1701,16 +2064,20 @@ function renderForm(){
             input.placeholder =
                 field.placeholder || "";
 
-
             if(field.required){
 
-                input.required = true;
+                input.required =
+                    true;
             }
 
 
-            wrapper.appendChild(input);
+            wrapper.appendChild(
+                input
+            );
 
-            fields.appendChild(wrapper);
+            fields.appendChild(
+                wrapper
+            );
 
         }
     );
@@ -1733,12 +2100,15 @@ function collect(){
             element => {
 
                 const value =
-                    clean(element.value);
+                    clean(
+                        element.value
+                    );
 
                 if(value){
 
-                    data[element.name] =
-                        value;
+                    data[
+                        element.name
+                    ] = value;
                 }
 
             }
@@ -1749,7 +2119,7 @@ function collect(){
 
 
 /* =====================================================
-   SHORT CUSTOMER-SERVICE GUIDANCE PROMPT
+   CUSTOMER GUIDANCE
    ===================================================== */
 
 function guidancePrompt(){
@@ -1806,41 +2176,89 @@ Return ONLY the short customer-facing guidance.
 
 async function apiChat(body){
 
-    const response =
-        await fetch(
-            API_BASE + "/api/chat",
-            {
-                method:"POST",
+    let response;
 
-                headers:{
-                    "Content-Type":
-                        "application/json"
-                },
+    try{
 
-                body:
-                    JSON.stringify(body)
-            }
-        );
+        response =
+            await fetch(
+                API_BASE +
+                "/api/chat",
+                {
+                    method:"POST",
 
+                    headers:{
+                        "Content-Type":
+                            "application/json",
+                        "Accept":
+                            "application/json"
+                    },
 
-    const data =
-        await response
-            .json()
-            .catch(
-                () => ({})
+                    body:
+                        JSON.stringify(
+                            body
+                        )
+                }
             );
+
+    }
+    catch(error){
+
+        throw new Error(
+            "Unable to connect to the Business Center service."
+        );
+    }
+
+
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
+
+
+    let data = {};
+
+
+    if(
+        contentType.includes(
+            "application/json"
+        )
+    ){
+
+        data =
+            await response
+                .json()
+                .catch(
+                    () => ({})
+                );
+
+    }
+    else{
+
+        const text =
+            await response
+                .text()
+                .catch(
+                    () => ""
+                );
+
+        data = {
+            message:
+                text
+        };
+    }
 
 
     if(
         !response.ok ||
-        !data.success
+        data.success === false
     ){
 
         throw new Error(
             data.reply ||
             data.message ||
             data.error ||
-            "Request failed."
+            `Request failed (${response.status}).`
         );
     }
 
@@ -1850,7 +2268,7 @@ async function apiChat(body){
 
 
 /* =====================================================
-   LOAD INTELLIGENCE GUIDANCE
+   GUIDANCE
    ===================================================== */
 
 async function loadGuidance(){
@@ -1898,7 +2316,9 @@ async function loadGuidance(){
 
 
         introText.textContent =
-            clean(data.reply) ||
+            clean(
+                data.reply
+            ) ||
             "Tell us what you need, provide the information you have, and upload any useful instructions or documents.";
 
 
@@ -1925,9 +2345,22 @@ async function loadGuidance(){
                 );
 
 
-            price.textContent =
-                "Service fee: ₦" +
-                number.toLocaleString();
+            if(
+                Number.isFinite(number) &&
+                number > 0
+            ){
+
+                price.textContent =
+                    "Service fee: ₦" +
+                    number.toLocaleString();
+
+            }
+            else{
+
+                price.textContent =
+                    "Service: " +
+                    service;
+            }
 
         }
 
@@ -1987,7 +2420,7 @@ async function loadGuidance(){
 
 
         setStatus(
-            "You can complete the form or ask us a question below.",
+            "You can complete the form or ask a question below.",
             "error"
         );
     }
@@ -2017,7 +2450,6 @@ ${Object.entries(data)
             `${key}:\n${value}`
     )
     .join("\n\n")}
-
 
 IMPORTANT:
 
@@ -2168,17 +2600,22 @@ function showReview(work){
         "active"
     );
 
-
     downloadBtn.textContent =
         "🔒 Download Your Work";
 
+    downloadBtn.onclick =
+        null;
+
 
     const main =
-        document.querySelector(".main");
+        document.querySelector(
+            ".main"
+        );
 
     if(main){
 
-        main.scrollTop = 0;
+        main.scrollTop =
+            0;
     }
 }
 
@@ -2192,6 +2629,15 @@ serviceForm.addEventListener(
     event => {
 
         event.preventDefault();
+
+
+        if(
+            busy &&
+            serviceForm.reportValidity()
+        ){
+
+            return;
+        }
 
 
         if(
@@ -2209,7 +2655,7 @@ serviceForm.addEventListener(
 
 
 /* =====================================================
-   HARD READ-ONLY PROTECTION
+   READ-ONLY PROTECTION
    ===================================================== */
 
 [
@@ -2277,25 +2723,12 @@ serviceForm.addEventListener(
             }
         );
 
-
-        element.addEventListener(
-            "mousedown",
-            event => {
-
-                if(event.detail > 1){
-
-                    event.preventDefault();
-                }
-
-            }
-        );
-
     }
 );
 
 
 /* =====================================================
-   APPLY CORRECTIONS
+   CORRECTIONS
    ===================================================== */
 
 applyBtn.addEventListener(
@@ -2310,10 +2743,12 @@ applyBtn.addEventListener(
 
         if(!correction){
 
-            return setStatus(
+            setStatus(
                 "Please write the correction or change you want.",
                 "error"
             );
+
+            return;
         }
 
 
@@ -2382,6 +2817,30 @@ Return the complete revised work for review.`,
                 "";
 
 
+            approved = false;
+
+            paymentConfirmed = false;
+
+
+            paymentPanel.classList.remove(
+                "show"
+            );
+
+
+            downloadBtn.disabled =
+                true;
+
+            downloadBtn.classList.remove(
+                "active"
+            );
+
+            downloadBtn.textContent =
+                "🔒 Download Your Work";
+
+            downloadBtn.onclick =
+                null;
+
+
             setStatus(
                 "Your corrections have been applied.",
                 "success"
@@ -2389,11 +2848,14 @@ Return the complete revised work for review.`,
 
 
             const main =
-                document.querySelector(".main");
+                document.querySelector(
+                    ".main"
+                );
 
             if(main){
 
-                main.scrollTop = 0;
+                main.scrollTop =
+                    0;
             }
 
         }
@@ -2417,7 +2879,7 @@ Return the complete revised work for review.`,
 
 
 /* =====================================================
-   APPROVE
+   APPROVAL
    ===================================================== */
 
 approveBtn.addEventListener(
@@ -2459,28 +2921,50 @@ approveBtn.addEventListener(
                 await fetch(
                     API_BASE +
                     "/api/approve?" +
-                    query,
+                    query.toString(),
                     {
-                        method:"POST"
+                        method:"POST",
+                        headers:{
+                            "Accept":
+                                "application/json"
+                        }
                     }
                 );
 
 
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
+            const contentType =
+                response.headers.get(
+                    "content-type"
+                ) || "";
+
+
+            let data = {};
+
+
+            if(
+                contentType.includes(
+                    "application/json"
+                )
+            ){
+
+                data =
+                    await response
+                        .json()
+                        .catch(
+                            () => ({})
+                        );
+
+            }
 
 
             if(
                 !response.ok ||
-                !data.success
+                data.success === false
             ){
 
                 throw new Error(
                     data.message ||
+                    data.reply ||
                     "Approval could not be completed."
                 );
             }
@@ -2494,14 +2978,21 @@ approveBtn.addEventListener(
             );
 
 
+            const numericAmount =
+                Number(
+                    data.amount || 0
+                );
+
+
             paymentDetails.textContent =
-                `Service: ${data.service || service}
+                `Service: ${
+                    data.service ||
+                    service
+                }
 Amount: ${
-    Number(data.amount || 0) > 0
+    numericAmount > 0
         ? "₦" +
-          Number(
-              data.amount
-          ).toLocaleString()
+          numericAmount.toLocaleString()
         : "Quotation required"
 }
 Order: ${
@@ -2551,10 +3042,12 @@ paymentReport.addEventListener(
 
         if(!approved){
 
-            return setStatus(
+            setStatus(
                 "Approve the work first.",
                 "error"
             );
+
+            return;
         }
 
 
@@ -2578,11 +3071,22 @@ paymentReport.addEventListener(
 
         if(amount <= 0){
 
-            return setStatus(
+            setStatus(
                 "This service requires a quotation before payment.",
                 "error"
             );
+
+            return;
         }
+
+
+        paymentReport.disabled =
+            true;
+
+
+        setStatus(
+            "Recording your payment report..."
+        );
 
 
         try{
@@ -2596,6 +3100,9 @@ paymentReport.addEventListener(
 
                         headers:{
                             "Content-Type":
+                                "application/json",
+
+                            "Accept":
                                 "application/json"
                         },
 
@@ -2608,6 +3115,9 @@ paymentReport.addEventListener(
                                 customer_id:
                                     customerId,
 
+                                client_request_id:
+                                    requestId,
+
                                 service,
 
                                 amount,
@@ -2619,17 +3129,33 @@ paymentReport.addEventListener(
                 );
 
 
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
+            const contentType =
+                response.headers.get(
+                    "content-type"
+                ) || "";
+
+
+            let data = {};
+
+
+            if(
+                contentType.includes(
+                    "application/json"
+                )
+            ){
+
+                data =
+                    await response
+                        .json()
+                        .catch(
+                            () => ({})
+                        );
+            }
 
 
             if(
                 !response.ok ||
-                !data.success
+                data.success === false
             ){
 
                 throw new Error(
@@ -2640,7 +3166,10 @@ paymentReport.addEventListener(
 
 
             paymentDetails.textContent +=
-                `\nPayment ID: ${data.payment_id}
+                `\nPayment ID: ${
+                    data.payment_id ||
+                    "Recorded"
+                }
 Status: Pending`;
 
 
@@ -2657,6 +3186,13 @@ Status: Pending`;
                 error.message,
                 "error"
             );
+
+        }
+
+        finally{
+
+            paymentReport.disabled =
+                false;
         }
 
     }
@@ -2671,6 +3207,21 @@ paymentCheck.addEventListener(
     "click",
     async () => {
 
+        if(busy){
+
+            return;
+        }
+
+
+        paymentCheck.disabled =
+            true;
+
+
+        setStatus(
+            "Checking payment status..."
+        );
+
+
         try{
 
             const response =
@@ -2679,21 +3230,43 @@ paymentCheck.addEventListener(
                     "/api/payment/status?job_id=" +
                     encodeURIComponent(
                         jobId
-                    )
+                    ),
+                    {
+                        headers:{
+                            "Accept":
+                                "application/json"
+                        }
+                    }
                 );
 
 
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
+            const contentType =
+                response.headers.get(
+                    "content-type"
+                ) || "";
+
+
+            let data = {};
+
+
+            if(
+                contentType.includes(
+                    "application/json"
+                )
+            ){
+
+                data =
+                    await response
+                        .json()
+                        .catch(
+                            () => ({})
+                        );
+            }
 
 
             if(
                 !response.ok ||
-                !data.success
+                data.success === false
             ){
 
                 throw new Error(
@@ -2703,11 +3276,14 @@ paymentCheck.addEventListener(
             }
 
 
-            if(
+            const paymentStatus =
                 String(
                     data.status || ""
-                ).toLowerCase() ===
-                "paid"
+                ).toLowerCase();
+
+
+            if(
+                paymentStatus === "paid"
             ){
 
                 paymentConfirmed =
@@ -2717,11 +3293,9 @@ paymentCheck.addEventListener(
                 downloadBtn.disabled =
                     false;
 
-
                 downloadBtn.classList.add(
                     "active"
                 );
-
 
                 downloadBtn.textContent =
                     "⬇ Download Your Work";
@@ -2769,6 +3343,13 @@ paymentCheck.addEventListener(
                 error.message,
                 "error"
             );
+
+        }
+
+        finally{
+
+            paymentCheck.disabled =
+                false;
         }
 
     }
@@ -2806,6 +3387,14 @@ fileInput.addEventListener(
         }
 
 
+        if(busy){
+
+            fileInput.value = "";
+
+            return;
+        }
+
+
         const formData =
             new FormData();
 
@@ -2836,6 +3425,10 @@ fileInput.addEventListener(
         );
 
 
+        uploadBtn.disabled =
+            true;
+
+
         setStatus(
             "Receiving your document..."
         );
@@ -2854,21 +3447,38 @@ fileInput.addEventListener(
                 );
 
 
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
+            const contentType =
+                response.headers.get(
+                    "content-type"
+                ) || "";
+
+
+            let data = {};
+
+
+            if(
+                contentType.includes(
+                    "application/json"
+                )
+            ){
+
+                data =
+                    await response
+                        .json()
+                        .catch(
+                            () => ({})
+                        );
+            }
 
 
             if(
                 !response.ok ||
-                !data.success
+                data.success === false
             ){
 
                 throw new Error(
                     data.message ||
+                    data.error ||
                     "Document upload failed."
                 );
             }
@@ -2881,7 +3491,7 @@ fileInput.addEventListener(
 
 
             await sendMessage(
-                "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.",
+                "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the customer's request. Do not ask the customer to email the document.",
                 "document_uploaded"
             );
 
@@ -2899,6 +3509,12 @@ fileInput.addEventListener(
         finally{
 
             fileInput.value = "";
+
+            if(!busy){
+
+                uploadBtn.disabled =
+                    false;
+            }
         }
 
     }
@@ -2920,6 +3536,16 @@ async function sendMessage(
     }
 
 
+    const cleanMessage =
+        clean(message);
+
+
+    if(!cleanMessage){
+
+        return null;
+    }
+
+
     busyState(true);
 
     setStatus(
@@ -2932,7 +3558,8 @@ async function sendMessage(
         const data =
             await apiChat({
 
-                message,
+                message:
+                    cleanMessage,
 
                 service,
 
@@ -3014,7 +3641,7 @@ async function sendMessage(
 
 
 /* =====================================================
-   MESSAGE BUTTON
+   SEND BUTTON
    ===================================================== */
 
 sendBtn.addEventListener(
@@ -3029,10 +3656,12 @@ sendBtn.addEventListener(
 
         if(!text){
 
-            return setStatus(
+            setStatus(
                 "Please type your message first.",
                 "error"
             );
+
+            return;
         }
 
 
@@ -3075,7 +3704,7 @@ messageInput.addEventListener(
 
 
 /* =====================================================
-   AUTO RESIZE MESSAGE
+   MESSAGE AUTO RESIZE
    ===================================================== */
 
 messageInput.addEventListener(
@@ -3090,7 +3719,6 @@ messageInput.addEventListener(
                 messageInput.scrollHeight,
                 105
             ) + "px";
-
     }
 );
 
@@ -3135,24 +3763,44 @@ customerBtn.addEventListener(
                 await fetch(
                     API_BASE +
                     "/api/customer-service?" +
-                    query,
+                    query.toString(),
                     {
-                        method:"POST"
+                        method:"POST",
+                        headers:{
+                            "Accept":
+                                "application/json"
+                        }
                     }
                 );
 
 
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
+            const contentType =
+                response.headers.get(
+                    "content-type"
+                ) || "";
+
+
+            let data = {};
+
+
+            if(
+                contentType.includes(
+                    "application/json"
+                )
+            ){
+
+                data =
+                    await response
+                        .json()
+                        .catch(
+                            () => ({})
+                        );
+            }
 
 
             if(
                 !response.ok ||
-                !data.success
+                data.success === false
             ){
 
                 throw new Error(
@@ -3203,19 +3851,9 @@ chooseBtn.addEventListener(
         }
 
 
-        /*
-         * IMPORTANT:
-         * Release the existing service before returning
-         * to the service-selection page.
-         */
         releaseCurrentService();
 
 
-        /*
-         * Return without the previous service query.
-         * conversation.html can therefore display the
-         * service choices normally.
-         */
         location.replace(
             "conversation.html"
         );
@@ -3233,7 +3871,8 @@ voiceBtn.addEventListener(
     async () => {
 
         if(
-            mediaRecorder?.state ===
+            mediaRecorder &&
+            mediaRecorder.state ===
             "recording"
         ){
 
@@ -3248,10 +3887,18 @@ voiceBtn.addEventListener(
             !navigator.mediaDevices.getUserMedia
         ){
 
-            return setStatus(
+            setStatus(
                 "Voice recording is not supported on this device.",
                 "error"
             );
+
+            return;
+        }
+
+
+        if(busy){
+
+            return;
         }
 
 
@@ -3285,7 +3932,6 @@ voiceBtn.addEventListener(
                             event.data
                         );
                     }
-
                 };
 
 
@@ -3317,11 +3963,23 @@ voiceBtn.addEventListener(
                         !recordedChunks.length
                     ){
 
-                        return setStatus(
+                        setStatus(
                             "No voice recording was captured.",
                             "error"
                         );
+
+                        return;
                     }
+
+
+                    const audioBlob =
+                        new Blob(
+                            recordedChunks,
+                            {
+                                type:
+                                    "audio/webm"
+                            }
+                        );
 
 
                     const formData =
@@ -3330,38 +3988,37 @@ voiceBtn.addEventListener(
 
                     formData.append(
                         "file",
-                        new Blob(
-                            recordedChunks,
-                            {
-                                type:
-                                    "audio/webm"
-                            }
-                        ),
+                        audioBlob,
                         "voice_message.webm"
                     );
-
 
                     formData.append(
                         "customer_id",
                         customerId
                     );
 
-
                     formData.append(
                         "job_id",
                         jobId
                     );
-
 
                     formData.append(
                         "client_request_id",
                         requestId
                     );
 
-
                     formData.append(
                         "service",
                         service
+                    );
+
+
+                    voiceBtn.disabled =
+                        true;
+
+
+                    setStatus(
+                        "Sending your voice message..."
                     );
 
 
@@ -3378,21 +4035,38 @@ voiceBtn.addEventListener(
                             );
 
 
-                        const data =
-                            await response
-                                .json()
-                                .catch(
-                                    () => ({})
-                                );
+                        const contentType =
+                            response.headers.get(
+                                "content-type"
+                            ) || "";
+
+
+                        let data = {};
+
+
+                        if(
+                            contentType.includes(
+                                "application/json"
+                            )
+                        ){
+
+                            data =
+                                await response
+                                    .json()
+                                    .catch(
+                                        () => ({})
+                                    );
+                        }
 
 
                         if(
                             !response.ok ||
-                            !data.success
+                            data.success === false
                         ){
 
                             throw new Error(
                                 data.message ||
+                                data.error ||
                                 "Voice recording failed."
                             );
                         }
@@ -3411,6 +4085,13 @@ voiceBtn.addEventListener(
                             error.message,
                             "error"
                         );
+
+                    }
+
+                    finally{
+
+                        voiceBtn.disabled =
+                            false;
                     }
 
                 };
@@ -3447,7 +4128,7 @@ voiceBtn.addEventListener(
 
 
 /* =====================================================
-   INITIALISE WORKSPACE
+   INITIALISE
    ===================================================== */
 
 async function init(){
@@ -3465,7 +4146,6 @@ async function init(){
 
 
 init();
-
 </script>
 
 </body>
