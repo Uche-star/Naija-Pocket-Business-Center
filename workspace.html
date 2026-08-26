@@ -417,18 +417,19 @@ button{
 
 
 /* =====================================================
-   WORK
+   FINAL DOCUMENT PREVIEW
    ===================================================== */
 
 .work-card{
     min-height:350px;
-    padding:22px 17px;
+    padding:0;
 
-    background:#f7f7f7;
+    background:#fff;
     color:#111;
 
     border-radius:11px;
 
+    overflow:hidden;
     overflow-wrap:anywhere;
 
     user-select:none;
@@ -437,14 +438,134 @@ button{
 }
 
 .work-content{
-    white-space:pre-wrap;
+    width:100%;
+    min-height:350px;
+
+    padding:28px 24px;
+
+    background:#fff;
+    color:#111;
 
     line-height:1.7;
     font-size:14px;
 
+    overflow-wrap:anywhere;
+
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
+}
+
+
+/*
+   The generated document is allowed to keep normal
+   document formatting instead of being flattened into
+   plain text.
+*/
+
+.work-content h1,
+.work-content h2,
+.work-content h3,
+.work-content h4,
+.work-content h5,
+.work-content h6{
+    color:#111;
+    line-height:1.25;
+    margin-top:1em;
+    margin-bottom:.5em;
+}
+
+.work-content h1{
+    font-size:26px;
+}
+
+.work-content h2{
+    font-size:22px;
+}
+
+.work-content h3{
+    font-size:19px;
+}
+
+.work-content h4{
+    font-size:17px;
+}
+
+.work-content p{
+    margin:.65em 0;
+}
+
+.work-content strong,
+.work-content b{
+    font-weight:800;
+}
+
+.work-content em,
+.work-content i{
+    font-style:italic;
+}
+
+.work-content ul,
+.work-content ol{
+    margin:.7em 0;
+    padding-left:1.8em;
+}
+
+.work-content li{
+    margin:.3em 0;
+}
+
+.work-content table{
+    width:100%;
+    max-width:100%;
+    border-collapse:collapse;
+    margin:1em 0;
+    font-size:inherit;
+}
+
+.work-content th,
+.work-content td{
+    border:1px solid #777;
+    padding:7px 9px;
+    vertical-align:top;
+    text-align:left;
+}
+
+.work-content th{
+    font-weight:800;
+    background:#eee;
+}
+
+.work-content blockquote{
+    margin:1em 0;
+    padding:10px 14px;
+    border-left:4px solid #777;
+    background:#f3f3f3;
+}
+
+.work-content hr{
+    border:0;
+    border-top:1px solid #aaa;
+    margin:1.2em 0;
+}
+
+.work-content a{
+    color:#111;
+    text-decoration:underline;
+}
+
+.work-content img{
+    max-width:100%;
+    height:auto;
+}
+
+.work-content pre{
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+}
+
+.work-content code{
+    white-space:pre-wrap;
 }
 
 .work-placeholder{
@@ -864,12 +985,30 @@ button:disabled{
         width:59px;
     }
 
-    .work-card{
-        padding:18px 14px;
+    .work-content{
+        padding:20px 14px;
+        font-size:13px;
     }
 
-    .work-content{
-        font-size:13px;
+    .work-content h1{
+        font-size:22px;
+    }
+
+    .work-content h2{
+        font-size:19px;
+    }
+
+    .work-content h3{
+        font-size:17px;
+    }
+
+    .work-content table{
+        font-size:12px;
+    }
+
+    .work-content th,
+    .work-content td{
+        padding:5px 6px;
     }
 }
 </style>
@@ -957,7 +1096,7 @@ button:disabled{
             class="form-description"
         >
             Give us the information you know.
-            If you are unsure about a technical requirement,
+            If you are unsure about a requirement,
             choose the standard option or explain what you need
             in your own words.
         </p>
@@ -974,7 +1113,8 @@ button:disabled{
                 Give us the information you have, upload any useful
                 instructions or documents, and explain anything else
                 in your own words. When you tap <strong>SEND</strong>,
-                your request goes straight into processing.
+                your prepared document or requested work will be created
+                immediately for you to see and review.
             </div>
 
             <button
@@ -1004,9 +1144,9 @@ button:disabled{
         </h2>
 
         <p class="review-subtitle">
-            Read through your prepared work.
-            If anything needs changing, tell us what to correct
-            before you approve it.
+            Your requested work is shown below in its prepared format.
+            Check that it contains what you requested before approving it.
+            If anything needs changing, tell us exactly what to correct.
         </p>
 
     </div>
@@ -1434,7 +1574,20 @@ let approved = false;
 
 let paymentConfirmed = false;
 
+
+/*
+   currentWork contains the actual work representation
+   sent to/from the intelligence.
+
+   currentWorkText is the readable text version used
+   when the intelligence needs the existing document.
+*/
+
 let currentWork = "";
+
+let currentWorkText = "";
+
+let latestFormData = {};
 
 let mediaRecorder = null;
 
@@ -1500,7 +1653,7 @@ function busyState(value){
 
 
 /* =====================================================
-   RELEASE SERVICE
+   SERVICE RELEASE
    ===================================================== */
 
 function releaseCurrentService(){
@@ -1752,7 +1905,7 @@ const forms = {
             required:true,
             type:"text",
             placeholder:"e.g. 3 pages, 2,000 words",
-            tip:"If you were not given a specific length, tell us what level or purpose the paper is for."
+            tip:"Tell us the required length if one was provided."
         },
 
         {
@@ -1792,7 +1945,7 @@ const forms = {
             required:true,
             type:"text",
             placeholder:"e.g. 1,000 words, 3 pages",
-            tip:"If you were not given a length, explain what the essay is for."
+            tip:"Enter the required length if one was provided."
         },
 
         {
@@ -2126,44 +2279,53 @@ function guidancePrompt(){
 
     return `
 
-The customer has selected this service:
+The customer selected this service:
 
 ${service}
 
 Give a SHORT, friendly customer-service introduction for this service.
 
-The purpose is to help the customer complete the request correctly.
-
-Briefly cover ALL of these points:
+The introduction must briefly explain:
 
 1. What this service helps the customer do.
 2. What information the customer should provide.
-3. What useful documents or instructions they can upload.
+3. What useful documents or instructions the customer can upload.
 4. One or two important service-specific tips.
-5. What the customer should check before submitting.
+5. What the customer should check before pressing SEND.
 6. The current fee if known, or say that a quotation is required.
 
-CUSTOMER-FRIENDLY RULES:
+CUSTOMER-FACING RULES:
 
-- Keep the guidance brief and easy to scan.
-- Do not overwhelm the customer with explanations.
-- Do not use unnecessary technical language.
-- If a technical requirement matters, explain it simply.
-- Tell customers they can choose a standard professional option when they do not know a technical requirement.
-- Tell them they can upload instructions from their school, lecturer, employer, client or organisation.
-- Make the customer feel assisted, not tested.
+- Keep it brief and easy to scan.
+- Keep the exact useful information needed by the customer.
+- Do not remove important service-specific information just to make it shorter.
+- Do not use unnecessary technical terms.
+- If a technical requirement matters, explain it in simple everyday language.
+- Tell customers they can choose a standard professional option when they do not know a formatting requirement.
+- Tell customers they can upload instructions from their school, lecturer, employer, client or organisation.
 - Use clear Nigerian English.
 - Be warm, professional and practical.
+- Do not make the customer feel tested.
 
-IMPORTANT:
+STRICTLY DO NOT:
 
-Do NOT give a timeline.
-Do NOT give an estimated completion time.
-Do NOT tell the customer to wait.
-Do NOT discuss how long the work will take.
-Do NOT ask for payment at this stage.
-Do NOT create the actual finished work.
-Do NOT mention AI, models, APIs, software, programming, databases, providers or system architecture.
+- Do NOT mention any deadline.
+- Do NOT mention a completion time.
+- Do NOT mention an estimated time.
+- Do NOT mention how long the work will take.
+- Do NOT tell the customer to wait.
+- Do NOT give a timeline.
+- Do NOT use time-related promises about the work.
+- Do NOT ask for payment at this stage.
+- Do NOT create the actual finished work in this guidance response.
+- Do NOT mention AI.
+- Do NOT mention models.
+- Do NOT mention APIs.
+- Do NOT mention software.
+- Do NOT mention programming.
+- Do NOT mention databases.
+- Do NOT mention providers.
+- Do NOT mention system architecture.
 
 Return ONLY the short customer-facing guidance.
 `;
@@ -2264,6 +2426,312 @@ async function apiChat(body){
 
 
     return data;
+}
+
+
+/* =====================================================
+   FORMATTED WORK EXTRACTION
+   ===================================================== */
+
+function getFormattedWork(data){
+
+    if(!data){
+        return null;
+    }
+
+
+    /*
+       These names allow the workspace to work with
+       different response field names while keeping the
+       actual document formatting.
+    */
+
+    const candidates = [
+
+        data.work_html,
+
+        data.document_html,
+
+        data.formatted_work,
+
+        data.html,
+
+        data.reply_html,
+
+        data.document?.html,
+
+        data.work?.html,
+
+        data.result?.html,
+
+        data.result?.document_html,
+
+        data.data?.work_html,
+
+        data.data?.document_html
+
+    ];
+
+
+    for(
+        const candidate of candidates
+    ){
+
+        if(
+            typeof candidate === "string" &&
+            candidate.trim()
+        ){
+
+            return candidate.trim();
+        }
+    }
+
+
+    return null;
+}
+
+
+/* =====================================================
+   SANITIZE DOCUMENT HTML
+   ===================================================== */
+
+function sanitizeDocumentHTML(
+    html
+){
+
+    if(
+        typeof html !== "string" ||
+        !html.trim()
+    ){
+
+        return "";
+    }
+
+
+    const parser =
+        new DOMParser();
+
+
+    const documentObject =
+        parser.parseFromString(
+            html,
+            "text/html"
+        );
+
+
+    /*
+       Remove elements that must never be allowed
+       inside the customer document preview.
+    */
+
+    documentObject
+        .querySelectorAll(
+            "script,iframe,object,embed,frame,frameset,base,meta,link,form"
+        )
+        .forEach(
+            element =>
+                element.remove()
+        );
+
+
+    /*
+       Remove event-handler attributes and dangerous
+       URL attributes.
+    */
+
+    documentObject
+        .querySelectorAll("*")
+        .forEach(
+            element => {
+
+                [
+                    ...element.attributes
+                ].forEach(
+                    attribute => {
+
+                        const name =
+                            attribute.name.toLowerCase();
+
+                        const value =
+                            attribute.value || "";
+
+
+                        if(
+                            name.startsWith(
+                                "on"
+                            )
+                        ){
+
+                            element.removeAttribute(
+                                attribute.name
+                            );
+
+                            return;
+                        }
+
+
+                        if(
+                            [
+                                "href",
+                                "src",
+                                "action",
+                                "formaction",
+                                "poster"
+                            ].includes(
+                                name
+                            )
+                        ){
+
+                            const lower =
+                                value
+                                    .trim()
+                                    .toLowerCase();
+
+
+                            if(
+                                lower.startsWith(
+                                    "javascript:"
+                                ) ||
+                                lower.startsWith(
+                                    "vbscript:"
+                                ) ||
+                                lower.startsWith(
+                                    "data:text/html"
+                                )
+                            ){
+
+                                element.removeAttribute(
+                                    attribute.name
+                                );
+                            }
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    /*
+       If the intelligence returned a complete HTML
+       document, display its body contents rather than
+       nesting a complete document inside the work card.
+    */
+
+    const body =
+        documentObject.body;
+
+
+    if(body){
+
+        return body.innerHTML.trim();
+    }
+
+
+    return documentObject.documentElement
+        ? documentObject.documentElement.innerHTML.trim()
+        : "";
+}
+
+
+/* =====================================================
+   PLAIN TEXT / HTML DISPLAY
+   ===================================================== */
+
+function displayWork(
+    dataOrWork
+){
+
+    let html =
+        null;
+
+    let plainText =
+        "";
+
+
+    if(
+        typeof dataOrWork === "string"
+    ){
+
+        plainText =
+            dataOrWork;
+
+        /*
+           If a raw HTML document/fragment was passed,
+           preserve its formatting.
+        */
+
+        if(
+            /<\s*(html|body|div|p|h1|h2|h3|h4|table|ul|ol|section|article|strong|b)\b/i
+                .test(
+                    dataOrWork
+                )
+        ){
+
+            html =
+                sanitizeDocumentHTML(
+                    dataOrWork
+                );
+        }
+
+    }
+    else if(dataOrWork){
+
+        html =
+            getFormattedWork(
+                dataOrWork
+            );
+
+
+        plainText =
+            clean(
+                dataOrWork.reply
+            ) ||
+            clean(
+                dataOrWork.message
+            ) ||
+            "";
+    }
+
+
+    if(html){
+
+        workContent.innerHTML =
+            html;
+
+        currentWork =
+            html;
+
+
+        currentWorkText =
+            workContent
+                .textContent
+                .trim();
+
+
+        return;
+    }
+
+
+    /*
+       If no formatted HTML was returned, keep the
+       generated work readable rather than losing it.
+    */
+
+    currentWork =
+        plainText ||
+        "";
+
+
+    currentWorkText =
+        plainText ||
+        "";
+
+
+    workContent.textContent =
+        plainText ||
+        "Your prepared work will appear here.";
 }
 
 
@@ -2411,7 +2879,7 @@ async function loadGuidance(){
 
 
         introText.textContent =
-            "Tell us what you need, provide the information you have, and upload any useful instructions or documents. If you are unsure about a technical requirement, choose the standard option or explain what you need in your own words.";
+            "Tell us what you need, provide the information you have, and upload any useful instructions or documents. If you are unsure about a requirement, choose the standard option or explain what you need in your own words.";
 
 
         price.textContent =
@@ -2431,41 +2899,105 @@ async function loadGuidance(){
    CREATION PROMPT
    ===================================================== */
 
-function creationPrompt(data){
+function creationPrompt(
+    data,
+    additionalInstruction = ""
+){
 
     return `
 
-The customer has completed the service information form.
+The customer selected this service:
 
-Create the actual requested work.
-
-SERVICE:
 ${service}
 
-CUSTOMER FORM INFORMATION:
+The customer has supplied the following service information:
 
-${Object.entries(data)
+${Object.entries(data || {})
     .map(
         ([key,value]) =>
             `${key}:\n${value}`
     )
     .join("\n\n")}
 
-IMPORTANT:
+${additionalInstruction || ""}
 
-Create the complete finished work.
+YOUR JOB:
 
-Use the customer's information carefully.
+Create the actual complete finished work requested by the customer.
 
-If the customer selected a standard option because they did not know a technical requirement, use that standard professionally appropriate option.
+The customer's selected service is the primary service to perform.
 
-If the customer uploaded instructions or documents, use them as part of the job context.
+Use ALL relevant customer information.
 
-Return the complete prepared work for customer review.
+Do not leave out requested content, instructions, formatting requirements,
+names, dates, sections, headings, page requirements, style requirements,
+or other details supplied by the customer.
 
-Do not ask the customer to email anything unless genuinely required.
+If the customer selected a standard formatting option because they did
+not know a specific requirement, use an appropriate professional format.
 
-Do not mention internal software, models, APIs, providers or system architecture.
+If the customer supplied uploaded documents or instructions, treat them
+as part of the customer's job information and use them where relevant.
+
+MOST IMPORTANT OUTPUT REQUIREMENT:
+
+The customer must be able to see the actual prepared service output
+immediately after pressing SEND.
+
+Return the COMPLETE finished work, not a summary of the work.
+
+Return the document in HTML formatting suitable for direct display inside
+a document preview.
+
+The HTML may use appropriate document elements such as:
+
+- h1
+- h2
+- h3
+- h4
+- p
+- strong
+- em
+- ul
+- ol
+- li
+- table
+- thead
+- tbody
+- tr
+- th
+- td
+- blockquote
+- hr
+
+Preserve the requested formatting through the HTML.
+
+Do not return a short explanation instead of the finished work.
+
+Do not say that the work will be prepared later.
+
+Do not tell the customer to wait.
+
+Do not give a timeline.
+
+Do not give a deadline unless the customer specifically supplied a
+deadline as part of the document content itself.
+
+Do not discuss internal software, models, APIs, providers,
+programming, databases or system architecture.
+
+The final document itself is the response the customer needs to review.
+
+Prefer returning the formatted document in the API field:
+
+work_html
+
+If the API response structure allows multiple fields, also provide:
+
+work_text
+
+where work_text is the plain-text version of the same completed work.
+
 `;
 }
 
@@ -2474,22 +3006,34 @@ Do not mention internal software, models, APIs, providers or system architecture
    CREATE WORK
    ===================================================== */
 
-async function createWork(data){
+async function createWork(
+    data,
+    additionalInstruction = ""
+){
 
     busyState(true);
 
     setStatus(
-        "Preparing your work..."
+        "Creating your prepared work..."
     );
 
 
     try{
 
+        latestFormData = {
+            ...(latestFormData || {}),
+            ...(data || {})
+        };
+
+
         const response =
             await apiChat({
 
                 message:
-                    creationPrompt(data),
+                    creationPrompt(
+                        latestFormData,
+                        additionalInstruction
+                    ),
 
                 service,
 
@@ -2506,13 +3050,19 @@ async function createWork(data){
                     requestId,
 
                 form_data:
-                    data,
+                    latestFormData,
 
                 activate_intelligence:
                     true,
 
                 create_work:
-                    true
+                    true,
+
+                return_formatted_document:
+                    true,
+
+                response_format:
+                    "html_document"
             });
 
 
@@ -2529,13 +3079,12 @@ async function createWork(data){
 
 
         showReview(
-            response.reply ||
-            "Your work has been prepared."
+            response
         );
 
 
         setStatus(
-            "Your work is ready for review.",
+            "Your requested work is ready for review.",
             "success"
         );
 
@@ -2561,7 +3110,9 @@ async function createWork(data){
    SHOW REVIEW
    ===================================================== */
 
-function showReview(work){
+function showReview(
+    response
+){
 
     formView.style.display =
         "none";
@@ -2571,12 +3122,9 @@ function showReview(work){
     );
 
 
-    currentWork =
-        work || "";
-
-
-    workContent.textContent =
-        currentWork;
+    displayWork(
+        response
+    );
 
 
     correctionInput.value =
@@ -2631,24 +3179,42 @@ serviceForm.addEventListener(
         event.preventDefault();
 
 
-        if(
-            busy &&
-            serviceForm.reportValidity()
-        ){
+        if(busy){
 
             return;
         }
 
 
         if(
-            !busy &&
-            serviceForm.reportValidity()
+            !serviceForm.reportValidity()
         ){
 
-            createWork(
-                collect()
-            );
+            return;
         }
+
+
+        const data =
+            collect();
+
+
+        latestFormData =
+            {
+                ...data
+            };
+
+
+        /*
+           This is the main SEND action.
+
+           The customer's original selected service,
+           all form information and any service-specific
+           instructions are sent together to create the
+           actual finished work.
+        */
+
+        createWork(
+            data
+        );
 
     }
 );
@@ -2771,11 +3337,28 @@ applyBtn.addEventListener(
                 await apiChat({
 
                     message:
-                        `Please revise the prepared work using these customer corrections:
+                        creationPrompt(
+                            latestFormData,
+                            `
+
+The customer has already reviewed the prepared
+document and now wants these corrections:
 
 ${correction}
 
-Return the complete revised work for review.`,
+Revise the COMPLETE original service output.
+
+Keep everything that was already correct.
+
+Apply the customer's requested corrections.
+
+Return the COMPLETE revised document in formatted HTML.
+
+Do not return only the changed section.
+Do not return an explanation.
+Return the full revised document for the customer to review.
+`
+                        ),
 
                     service,
 
@@ -2794,23 +3377,31 @@ Return the complete revised work for review.`,
                     current_work:
                         currentWork,
 
+                    current_work_text:
+                        currentWorkText,
+
+                    form_data:
+                        latestFormData,
+
                     correction,
 
                     activate_intelligence:
                         true,
 
                     create_work:
-                        true
+                        true,
+
+                    return_formatted_document:
+                        true,
+
+                    response_format:
+                        "html_document"
                 });
 
 
-            currentWork =
-                response.reply ||
-                currentWork;
-
-
-            workContent.textContent =
-                currentWork;
+            displayWork(
+                response
+            );
 
 
             correctionInput.value =
@@ -2841,8 +3432,20 @@ Return the complete revised work for review.`,
                 null;
 
 
+            if(response.job_id){
+
+                jobId =
+                    response.job_id;
+
+                put(
+                    "npbc_job_id",
+                    jobId
+                );
+            }
+
+
             setStatus(
-                "Your corrections have been applied.",
+                "Your complete revised work is ready for review.",
                 "success"
             );
 
@@ -3491,7 +4094,7 @@ fileInput.addEventListener(
 
 
             await sendMessage(
-                "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the customer's request. Do not ask the customer to email the document.",
+                "A document has been uploaded for this active service. Use the uploaded document together with the customer's original service, form information and current job context. Continue the customer's actual request. If the request is ready to produce the finished work, return the complete finished service output in formatted HTML for the customer to review.",
                 "document_uploaded"
             );
 
@@ -3549,17 +4152,50 @@ async function sendMessage(
     busyState(true);
 
     setStatus(
-        "Processing your message..."
+        "Creating your requested work..."
     );
 
 
     try{
 
+        /*
+           Preserve everything already entered in the
+           service form. A bottom SEND must not lose the
+           original service or the customer's earlier
+           requirements.
+        */
+
+        const combinedData = {
+
+            ...(latestFormData || {}),
+
+            customer_message:
+                cleanMessage
+        };
+
+
         const data =
             await apiChat({
 
                 message:
-                    cleanMessage,
+                    creationPrompt(
+                        combinedData,
+                        `
+
+The customer has now sent this additional instruction:
+
+${cleanMessage}
+
+Use this instruction together with the original service
+and all previously supplied customer information.
+
+If this instruction changes or completes the customer's
+request, apply it to the complete service output.
+
+Return the COMPLETE requested service output in formatted HTML.
+Do not return only a conversational acknowledgement.
+`
+                    ),
 
                 service,
 
@@ -3574,15 +4210,31 @@ async function sendMessage(
                 client_request_id:
                     requestId,
 
+                form_data:
+                    combinedData,
+
                 current_work:
                     currentWork,
+
+                current_work_text:
+                    currentWorkText,
 
                 activate_intelligence:
                     true,
 
                 create_work:
-                    true
+                    true,
+
+                return_formatted_document:
+                    true,
+
+                response_format:
+                    "html_document"
             });
+
+
+        latestFormData =
+            combinedData;
 
 
         if(data.job_id){
@@ -3597,23 +4249,57 @@ async function sendMessage(
         }
 
 
+        /*
+           A SEND response is always treated as the
+           requested service output when the intelligence
+           provides a document.
+        */
+
         if(
-            data.reply &&
-            reviewView.classList.contains(
-                "show"
-            )
+            data.reply ||
+            getFormattedWork(data)
         ){
 
-            currentWork =
-                data.reply;
+            formView.style.display =
+                "none";
 
-            workContent.textContent =
-                currentWork;
+            reviewView.classList.add(
+                "show"
+            );
+
+
+            displayWork(
+                data
+            );
+
+
+            paymentPanel.classList.remove(
+                "show"
+            );
+
+
+            approved = false;
+
+            paymentConfirmed = false;
+
+
+            downloadBtn.disabled =
+                true;
+
+            downloadBtn.classList.remove(
+                "active"
+            );
+
+            downloadBtn.textContent =
+                "🔒 Download Your Work";
+
+            downloadBtn.onclick =
+                null;
         }
 
 
         setStatus(
-            "Ready for your next instruction.",
+            "Your requested work is ready for review.",
             "success"
         );
 
@@ -4073,7 +4759,7 @@ voiceBtn.addEventListener(
 
 
                         await sendMessage(
-                            "A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.",
+                            "A voice recording has been received for this active service. Use the customer's voice instruction together with the original service and all existing customer information. Return the complete requested service output in formatted HTML when the request is ready for review.",
                             "voice_uploaded"
                         );
 
