@@ -366,7 +366,7 @@
 
         /* =====================================================
            THE DOCUMENT PEOPLE
-           LUXURY WINE / BURGUNDY RED
+           WHITE
            ===================================================== */
 
         .document-people-window {
@@ -389,7 +389,7 @@
 
             white-space: nowrap;
 
-            color: #A51C30;
+            color: #FFFFFF;
 
             font-family:
                 Georgia,
@@ -405,7 +405,7 @@
 
             text-shadow:
                 0 1px 10px
-                rgba(165, 28, 48, 0.25);
+                rgba(255, 255, 255, 0.12);
 
             animation:
                 documentPeopleMove
@@ -535,7 +535,7 @@
         /* =====================================================
            SERVICE NAME
            NO BUTTON
-           GOLD UNDERLINE
+           ONLY THE ORIGINAL LUXURY GOLD UNDERLINE
            ===================================================== */
 
         .service-item {
@@ -555,10 +555,6 @@
             color: #FFFFFF;
 
             border: none;
-
-            border-bottom:
-                1px solid
-                rgba(212, 175, 55, 0.85);
 
             border-radius: 0;
 
@@ -595,14 +591,13 @@
 
             transition:
                 color 0.15s ease,
-                border-color 0.15s ease,
                 transform 0.15s ease,
                 background 0.15s ease;
         }
 
 
         /* =====================================================
-           SUBTLE GOLD LUXURY LINE
+           ORIGINAL SINGLE GOLD UNDERLINE
            ===================================================== */
 
         .service-item::after {
@@ -613,7 +608,7 @@
             left: 16%;
             right: 16%;
 
-            bottom: -1px;
+            bottom: 0;
 
             height: 2px;
 
@@ -1335,6 +1330,9 @@ function releaseSelectedService() {
             item.classList.remove(
                 "working"
             );
+
+            item.style.pointerEvents =
+                "auto";
 
         }
     );
