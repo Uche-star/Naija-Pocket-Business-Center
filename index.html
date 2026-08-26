@@ -99,7 +99,9 @@
         }
 
 
-        /* Luxury inner frame */
+        /* =====================================================
+           LUXURY INNER FRAME
+           ===================================================== */
 
         .welcome-half::before {
             content: "";
@@ -121,7 +123,9 @@
         }
 
 
-        /* Gold top accent */
+        /* =====================================================
+           GOLD TOP ACCENT
+           ===================================================== */
 
         .welcome-half::after {
             content: "";
@@ -142,7 +146,6 @@
 
         /* =====================================================
            UPPER CONTENT
-           DISTRIBUTED THROUGH ENTIRE 50%
            ===================================================== */
 
         .welcome-content {
@@ -156,9 +159,11 @@
             max-width: 1100px;
 
             display: flex;
+
             flex-direction: column;
 
             align-items: center;
+
             justify-content: space-evenly;
 
             overflow: hidden;
@@ -254,7 +259,7 @@
 
 
         /* =====================================================
-           ORIGINAL IDENTITY
+           IDENTITY
            ===================================================== */
 
         .identity {
@@ -264,7 +269,9 @@
 
             color: #FFFFFF;
 
-            font-family: Arial, sans-serif;
+            font-family:
+                Arial,
+                sans-serif;
 
             font-size:
                 clamp(19px, 4.7vw, 32px);
@@ -282,7 +289,7 @@
 
 
         /* =====================================================
-           ORIGINAL WELCOME STATEMENTS
+           WELCOME STATEMENTS
            ===================================================== */
 
         .value {
@@ -404,10 +411,13 @@
 
 
         /* =====================================================
-           LOWER 50% — LUXURY PHONE KEYBOARD
+           LOWER 50%
+           LUXURY SERVICE DIRECTORY
            ===================================================== */
 
         .services-half {
+            position: relative;
+
             width: 100%;
 
             height: 50%;
@@ -420,15 +430,63 @@
 
             overflow: hidden;
 
-            padding-top: 5px;
+            padding:
+                6px
+                5px
+                3px;
+
+            background:
+                radial-gradient(
+                    ellipse at center top,
+                    #171717 0%,
+                    #090909 48%,
+                    #000000 100%
+                );
+
+            border:
+                1px solid #202020;
+
+            border-top:
+                1px solid
+                rgba(212, 175, 55, 0.25);
+
+            border-radius: 8px;
         }
 
 
         /* =====================================================
-           SERVICE STATEMENT
+           LUXURY INNER FRAME
+           ===================================================== */
+
+        .services-half::before {
+            content: "";
+
+            position: absolute;
+
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+
+            border:
+                1px solid
+                rgba(212, 175, 55, 0.16);
+
+            border-radius: 6px;
+
+            pointer-events: none;
+        }
+
+
+        /* =====================================================
+           SERVICE INSTRUCTION
            ===================================================== */
 
         .service-instruction {
+            position: relative;
+
+            z-index: 2;
+
             width: 100%;
 
             flex: 0 0 auto;
@@ -439,9 +497,9 @@
                 4px;
 
             padding:
-                2px
+                3px
                 4px
-                4px;
+                5px;
 
             color: #FFFFFF;
 
@@ -454,7 +512,33 @@
 
             text-align: center;
 
-            letter-spacing: 0.2px;
+            letter-spacing: 0.25px;
+
+            text-transform: uppercase;
+        }
+
+
+        .service-instruction::after {
+            content: "";
+
+            display: block;
+
+            width: 70px;
+
+            height: 1px;
+
+            margin:
+                5px
+                auto
+                0;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    #D4AF37,
+                    transparent
+                );
         }
 
 
@@ -464,10 +548,14 @@
 
 
         /* =====================================================
-           LUXURY 3-COLUMN SERVICE KEYBOARD
+           LUXURY SERVICE DIRECTORY
            ===================================================== */
 
         .services {
+            position: relative;
+
+            z-index: 2;
+
             width: 100%;
 
             flex: 1 1 auto;
@@ -482,22 +570,25 @@
             grid-template-rows:
                 repeat(10, minmax(0, 1fr));
 
-            gap: 4px;
+            column-gap: 15px;
+
+            row-gap: 2px;
 
             overflow: hidden;
 
             padding:
                 1px
-                1px
+                7px
                 0;
         }
 
 
         /* =====================================================
-           LUXURY SERVICE BUTTON
+           SERVICE NAME
+           NO BUTTON — LUXURY CLICKABLE TEXT
            ===================================================== */
 
-        .service-button {
+        .service-link {
             position: relative;
 
             width: 100%;
@@ -505,19 +596,26 @@
             min-width: 0;
             min-height: 0;
 
-            padding:
-                3px
-                5px;
+            display: flex;
 
-            background: #000000;
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding:
+                2px
+                3px;
+
+            background:
+                transparent;
 
             color: #FFFFFF;
 
-            border:
-                1px solid
-                #454545;
+            border: 0;
 
-            border-radius: 7px;
+            border-radius: 0;
 
             font-family:
                 Arial,
@@ -534,10 +632,7 @@
 
             text-align: center;
 
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
+            text-decoration: none;
 
             white-space: normal;
 
@@ -549,123 +644,139 @@
                 transparent;
 
             transition:
-                transform 0.15s ease,
-                border-color 0.15s ease,
-                background 0.15s ease,
-                color 0.15s ease;
+                color 0.18s ease,
+                transform 0.18s ease,
+                opacity 0.18s ease;
         }
 
 
         /* =====================================================
-           GOLD CORNER MARKS
+           GOLD UNDERLINE
            ===================================================== */
 
-        .service-button::before,
-        .service-button::after {
+        .service-link::after {
+            content: "";
+
+            display: block;
+
+            width: 52px;
+
+            max-width: 72%;
+
+            height: 1px;
+
+            margin-top: 5px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    #D4AF37 18%,
+                    #D4AF37 82%,
+                    transparent
+                );
+
+            box-shadow:
+                0 0 5px
+                rgba(212, 175, 55, 0.20);
+
+            transition:
+                width 0.18s ease,
+                opacity 0.18s ease;
+        }
+
+
+        /* =====================================================
+           SUBTLE LUXURY COLUMN DIVIDERS
+           ===================================================== */
+
+        .service-link:nth-child(3n + 2)::before,
+        .service-link:nth-child(3n + 3)::before {
             content: "";
 
             position: absolute;
 
-            width: 9px;
-            height: 9px;
+            left: -8px;
 
-            pointer-events: none;
-        }
+            top: 18%;
 
+            width: 1px;
 
-        .service-button::before {
-            top: -1px;
-            left: -1px;
+            height: 64%;
 
-            border-top:
-                2px solid
-                #D4AF37;
-
-            border-left:
-                2px solid
-                #D4AF37;
-
-            border-top-left-radius: 7px;
-        }
-
-
-        .service-button::after {
-            right: -1px;
-            bottom: -1px;
-
-            border-right:
-                2px solid
-                #D4AF37;
-
-            border-bottom:
-                2px solid
-                #D4AF37;
-
-            border-bottom-right-radius: 7px;
+            background:
+                linear-gradient(
+                    to bottom,
+                    transparent,
+                    rgba(212, 175, 55, 0.16),
+                    transparent
+                );
         }
 
 
         /* =====================================================
-           FINAL ROW OUTER EDGE STYLE
+           HOVER
            ===================================================== */
 
-        .service-button.long-left {
-            grid-column: 1;
-            grid-row: 10;
-
+        .service-link:hover {
             color: #D4AF37;
+
+            transform:
+                translateY(-1px);
         }
 
 
-        .service-button.long-right {
-            grid-column: 3;
-            grid-row: 10;
-
-            color: #D4AF37;
+        .service-link:hover::after {
+            width: 68%;
         }
 
 
         /* =====================================================
-           NORMAL INTERACTION
+           TOUCH / ACTIVE
            ===================================================== */
 
-        .service-button:hover {
-            background: #050505;
-
-            color: #FFFFFF;
-
-            border-color:
-                #666666;
-        }
-
-
-        .service-button:active {
-            background: #D4AF37;
-
-            color: #000000;
-
-            border-color:
-                #D4AF37;
+        .service-link:active {
+            color: #D4AF37;
 
             transform:
                 scale(0.96);
         }
 
 
-        .service-button.working {
-            background: #D4AF37;
+        .service-link:active::after {
+            width: 75%;
+        }
 
-            color: #000000;
 
-            border-color:
+        /* =====================================================
+           SELECTED / WORKING STATE
+           ===================================================== */
+
+        .service-link.working {
+            color: #D4AF37;
+
+            transform:
+                scale(0.97);
+        }
+
+
+        .service-link.working::after {
+            width: 70%;
+
+            background:
                 #D4AF37;
         }
 
 
-        .service-button:disabled {
-            cursor: wait;
+        /* =====================================================
+           FINAL SERVICE POSITION
+           28TH SERVICE
+           ===================================================== */
 
-            opacity: 0.45;
+        .service-link.final-service {
+            grid-column: 2;
+
+            grid-row: 10;
         }
 
 
@@ -705,7 +816,8 @@
 
 
             .brand-name {
-                font-size: 29px;
+                font-size:
+                    29px;
 
                 letter-spacing:
                     1.2px;
@@ -713,12 +825,14 @@
 
 
             .gold-divider {
-                width: 90px;
+                width:
+                    90px;
             }
 
 
             .identity {
-                font-size: 15px;
+                font-size:
+                    15px;
 
                 letter-spacing:
                     0.8px;
@@ -726,7 +840,8 @@
 
 
             .value {
-                font-size: 12px;
+                font-size:
+                    12px;
 
                 line-height:
                     1.22;
@@ -734,7 +849,8 @@
 
 
             .services-title {
-                font-size: 13px;
+                font-size:
+                    13px;
 
                 line-height:
                     1.15;
@@ -742,15 +858,25 @@
 
 
             .document-people-track {
-                font-size: 13px;
+                font-size:
+                    13px;
 
                 letter-spacing:
                     1.5px;
             }
 
 
+            .services-half {
+                padding:
+                    5px
+                    3px
+                    2px;
+            }
+
+
             .service-instruction {
-                font-size: 12.5px;
+                font-size:
+                    12.5px;
 
                 padding:
                     2px
@@ -762,36 +888,55 @@
             }
 
 
+            .service-instruction::after {
+                width:
+                    55px;
+
+                margin-top:
+                    4px;
+            }
+
+
             .services {
-                gap: 3px;
+                column-gap:
+                    8px;
+
+                row-gap:
+                    1px;
 
                 padding:
                     1px
-                    1px
+                    3px
                     0;
             }
 
 
-            .service-button {
+            .service-link {
                 padding:
                     2px
-                    3px;
+                    2px;
 
                 font-size:
                     11px;
 
                 line-height:
                     1.05;
-
-                border-radius:
-                    6px;
             }
 
 
-            .service-button::before,
-            .service-button::after {
-                width: 8px;
-                height: 8px;
+            .service-link::after {
+                width:
+                    42px;
+
+                margin-top:
+                    4px;
+            }
+
+
+            .service-link:nth-child(3n + 2)::before,
+            .service-link:nth-child(3n + 3)::before {
+                left:
+                    -4px;
             }
         }
 
@@ -811,7 +956,8 @@
 
 
             .brand-name {
-                font-size: 24px;
+                font-size:
+                    24px;
 
                 letter-spacing:
                     0.9px;
@@ -819,17 +965,20 @@
 
 
             .gold-divider {
-                width: 72px;
+                width:
+                    72px;
             }
 
 
             .identity {
-                font-size: 12px;
+                font-size:
+                    12px;
             }
 
 
             .value {
-                font-size: 9.5px;
+                font-size:
+                    9.5px;
 
                 line-height:
                     1.16;
@@ -837,35 +986,80 @@
 
 
             .services-title {
-                font-size: 10.5px;
+                font-size:
+                    10.5px;
             }
 
 
             .document-people-track {
-                font-size: 10.5px;
+                font-size:
+                    10.5px;
+            }
+
+
+            .services-half {
+                padding:
+                    4px
+                    2px
+                    2px;
             }
 
 
             .service-instruction {
-                font-size: 10px;
+                font-size:
+                    10px;
+
+                padding:
+                    2px
+                    2px
+                    3px;
+            }
+
+
+            .service-instruction::after {
+                width:
+                    45px;
+
+                margin-top:
+                    3px;
             }
 
 
             .services {
-                gap: 2px;
+                column-gap:
+                    5px;
+
+                row-gap:
+                    0;
             }
 
 
-            .service-button {
+            .service-link {
                 padding:
                     1px
-                    2px;
+                    1px;
 
                 font-size:
                     9.5px;
 
-                border-radius:
-                    5px;
+                line-height:
+                    1.04;
+            }
+
+
+            .service-link::after {
+                width:
+                    34px;
+
+                margin-top:
+                    3px;
+            }
+
+
+            .service-link:nth-child(3n + 2)::before,
+            .service-link:nth-child(3n + 3)::before {
+                left:
+                    -3px;
             }
         }
 
@@ -906,14 +1100,30 @@
             }
 
 
-            .service-button {
+            .service-instruction {
                 font-size:
                     15px;
             }
 
 
             .services {
-                gap: 5px;
+                column-gap:
+                    24px;
+
+                row-gap:
+                    3px;
+            }
+
+
+            .service-link {
+                font-size:
+                    15px;
+            }
+
+
+            .service-link::after {
+                width:
+                    60px;
             }
         }
     </style>
@@ -924,8 +1134,10 @@
 
 <div class="page">
 
+
     <!-- =====================================================
-         UPPER 50% — LUXURY WELCOME CONTENT
+         UPPER 50%
+         LUXURY WELCOME CONTENT
          ===================================================== -->
 
     <section class="welcome-half">
@@ -937,28 +1149,35 @@
                 BUSINESS CENTER
             </h1>
 
+
             <div class="gold-divider"></div>
+
 
             <div class="identity">
                 YOUR BUSINESS CENTER IN YOUR POCKET
             </div>
 
+
             <div class="value">
                 Fast • Convenient • Open 24/7
             </div>
 
+
             <div class="value">
                 Prepare Your Documents In Minutes
             </div>
+
 
             <div class="value">
                 Do Everything Concerning Your Documents
                 From Your Phone, Wherever You Are In Nigeria
             </div>
 
+
             <div class="services-title">
                 ENJOY THE BEST IN DOCUMENT PROCESSING
             </div>
+
 
             <div class="document-people-window">
 
@@ -982,214 +1201,312 @@
 
 
     <!-- =====================================================
-         LOWER 50% — SERVICE KEYBOARD
+         LOWER 50%
+         LUXURY SERVICE DIRECTORY
          ===================================================== -->
 
     <section class="services-half">
 
+
         <div class="service-instruction">
-            Tap any service you need and get your work done in minutes.
+            Tap any service you need and get your documents processed in minutes.
         </div>
 
 
         <div class="services">
 
-            <!-- ROW 1 -->
 
-            <button type="button"
-                class="service-button"
-                data-service="Document Typing">
+            <!-- =================================================
+                 ROW 1
+                 ================================================= -->
+
+            <a
+                href="workspace.html?service=Document%20Typing"
+                class="service-link"
+                data-service="Document Typing"
+            >
                 Document Typing
-            </button>
+            </a>
 
-            <button type="button"
-                class="service-button"
-                data-service="Document Formatting">
+
+            <a
+                href="workspace.html?service=Document%20Formatting"
+                class="service-link"
+                data-service="Document Formatting"
+            >
                 Document Formatting
-            </button>
+            </a>
 
-            <button type="button"
-                class="service-button"
-                data-service="Document Editing">
+
+            <a
+                href="workspace.html?service=Document%20Editing"
+                class="service-link"
+                data-service="Document Editing"
+            >
                 Document Editing
-            </button>
+            </a>
 
 
-            <!-- ROW 2 -->
+            <!-- =================================================
+                 ROW 2
+                 ================================================= -->
 
-            <button type="button"
-                class="service-button"
-                data-service="Grammar Correction">
+            <a
+                href="workspace.html?service=Grammar%20Correction"
+                class="service-link"
+                data-service="Grammar Correction"
+            >
                 Grammar Correction
-            </button>
+            </a>
 
-            <button type="button"
-                class="service-button"
-                data-service="Assignments">
+
+            <a
+                href="workspace.html?service=Assignments"
+                class="service-link"
+                data-service="Assignments"
+            >
                 Assignments
-            </button>
+            </a>
 
-            <button type="button"
-                class="service-button"
-                data-service="Projects">
+
+            <a
+                href="workspace.html?service=Projects"
+                class="service-link"
+                data-service="Projects"
+            >
                 Projects
-            </button>
+            </a>
 
 
-            <!-- ROW 3 -->
+            <!-- =================================================
+                 ROW 3
+                 ================================================= -->
 
-            <button type="button"
-                class="service-button"
-                data-service="Research Assistance">
+            <a
+                href="workspace.html?service=Research%20Assistance"
+                class="service-link"
+                data-service="Research Assistance"
+            >
                 Research Assistance
-            </button>
+            </a>
 
-            <button type="button"
-                class="service-button"
-                data-service="Seminar Papers">
+
+            <a
+                href="workspace.html?service=Seminar%20Papers"
+                class="service-link"
+                data-service="Seminar Papers"
+            >
                 Seminar Papers
-            </button>
+            </a>
 
-            <button type="button"
-                class="service-button"
-                data-service="CVs & Résumés">
+
+            <a
+                href="workspace.html?service=CVs%20%26%20R%C3%A9sum%C3%A9s"
+                class="service-link"
+                data-service="CVs & Résumés"
+            >
                 CVs &amp; Résumés
-            </button>
+            </a>
 
 
-            <!-- ROW 4 -->
+            <!-- =================================================
+                 ROW 4
+                 ================================================= -->
 
-            <button type="button"
-                class="service-button"
-                data-service="Cover Letters">
+            <a
+                href="workspace.html?service=Cover%20Letters"
+                class="service-link"
+                data-service="Cover Letters"
+            >
                 Cover Letters
-            </button>
+            </a>
 
-            <button type="button"
-                class="service-button"
-                data-service="Business Proposals">
+
+            <a
+                href="workspace.html?service=Business%20Proposals"
+                class="service-link"
+                data-service="Business Proposals"
+            >
                 Business Proposals
-            </button>
+            </a>
 
-            <button type="button"
-                class="service-button"
-                data-service="Company Profiles">
+
+            <a
+                href="workspace.html?service=Company%20Profiles"
+                class="service-link"
+                data-service="Company Profiles"
+            >
                 Company Profiles
-            </button>
+            </a>
 
 
-            <!-- ROW 5 -->
+            <!-- =================================================
+                 ROW 5
+                 ================================================= -->
 
-            <button type="button"
-                class="service-button"
-                data-service="Invoices">
-                Invoices
-            </button>
-
-            <button type="button"
-                class="service-button"
-                data-service="Quotations">
-                Quotations
-            </button>
-
-            <button type="button"
-                class="service-button"
-                data-service="Meeting Minutes">
-                Meeting Minutes
-            </button>
-
-
-            <!-- ROW 6 -->
-
-            <button type="button"
-                class="service-button"
-                data-service="AI Writing Assistance">
-                AI Writing Assistance
-            </button>
-
-            <button type="button"
-                class="service-button"
-                data-service="Document Rewriting">
-                Document Rewriting
-            </button>
-
-            <button type="button"
-                class="service-button"
-                data-service="Translation">
-                Translation
-            </button>
-
-
-            <!-- ROW 7 -->
-
-            <button type="button"
-                class="service-button"
-                data-service="PDF Conversion">
-                PDF Conversion
-            </button>
-
-            <button type="button"
-                class="service-button"
-                data-service="Voice To Text">
-                Voice To Text
-            </button>
-
-            <button type="button"
-                class="service-button"
-                data-service="Topic Explanations">
-                Topic Explanations
-            </button>
-
-
-            <!-- ROW 8 -->
-
-            <button type="button"
-                class="service-button"
-                data-service="Printing Preparation">
-                Printing Preparation
-            </button>
-
-            <button type="button"
-                class="service-button"
-                data-service="Excel Spreadsheets">
-                Excel Spreadsheets
-            </button>
-
-            <button type="button"
-                class="service-button"
-                data-service="Data Entry">
-                Data Entry
-            </button>
-
-
-            <!-- ROW 9 -->
-
-            <button type="button"
-                class="service-button"
-                data-service="Data Analysis">
-                Data Analysis
-            </button>
-
-            <button type="button"
-                class="service-button"
-                data-service="Presentations">
-                Presentations
-            </button>
-
-            <button type="button"
-                class="service-button"
-                data-service="Document Summarization">
-                Document Summarization
-            </button>
-
-
-            <!-- ROW 10 -->
-
-            <button type="button"
-                class="service-button long-left"
-                data-service="Business Letters & Letterhead">
+            <a
+                href="workspace.html?service=Business%20Letters%20%26%20Letterhead"
+                class="service-link"
+                data-service="Business Letters & Letterhead"
+            >
                 Business Letters &amp; Letterhead
-            </button>
+            </a>
+
+
+            <a
+                href="workspace.html?service=Invoices"
+                class="service-link"
+                data-service="Invoices"
+            >
+                Invoices
+            </a>
+
+
+            <a
+                href="workspace.html?service=Quotations"
+                class="service-link"
+                data-service="Quotations"
+            >
+                Quotations
+            </a>
+
+
+            <!-- =================================================
+                 ROW 6
+                 ================================================= -->
+
+            <a
+                href="workspace.html?service=Meeting%20Minutes"
+                class="service-link"
+                data-service="Meeting Minutes"
+            >
+                Meeting Minutes
+            </a>
+
+
+            <a
+                href="workspace.html?service=AI%20Writing%20Assistance"
+                class="service-link"
+                data-service="AI Writing Assistance"
+            >
+                AI Writing Assistance
+            </a>
+
+
+            <a
+                href="workspace.html?service=Document%20Rewriting"
+                class="service-link"
+                data-service="Document Rewriting"
+            >
+                Document Rewriting
+            </a>
+
+
+            <!-- =================================================
+                 ROW 7
+                 ================================================= -->
+
+            <a
+                href="workspace.html?service=Translation"
+                class="service-link"
+                data-service="Translation"
+            >
+                Translation
+            </a>
+
+
+            <a
+                href="workspace.html?service=Document%20Summarization"
+                class="service-link"
+                data-service="Document Summarization"
+            >
+                Document Summarization
+            </a>
+
+
+            <a
+                href="workspace.html?service=PDF%20Conversion"
+                class="service-link"
+                data-service="PDF Conversion"
+            >
+                PDF Conversion
+            </a>
+
+
+            <!-- =================================================
+                 ROW 8
+                 ================================================= -->
+
+            <a
+                href="workspace.html?service=Voice%20To%20Text"
+                class="service-link"
+                data-service="Voice To Text"
+            >
+                Voice To Text
+            </a>
+
+
+            <a
+                href="workspace.html?service=Topic%20Explanations"
+                class="service-link"
+                data-service="Topic Explanations"
+            >
+                Topic Explanations
+            </a>
+
+
+            <a
+                href="workspace.html?service=Printing%20Preparation"
+                class="service-link"
+                data-service="Printing Preparation"
+            >
+                Printing Preparation
+            </a>
+
+
+            <!-- =================================================
+                 ROW 9
+                 ================================================= -->
+
+            <a
+                href="workspace.html?service=Excel%20Spreadsheets"
+                class="service-link"
+                data-service="Excel Spreadsheets"
+            >
+                Excel Spreadsheets
+            </a>
+
+
+            <a
+                href="workspace.html?service=Data%20Entry"
+                class="service-link"
+                data-service="Data Entry"
+            >
+                Data Entry
+            </a>
+
+
+            <a
+                href="workspace.html?service=Data%20Analysis"
+                class="service-link"
+                data-service="Data Analysis"
+            >
+                Data Analysis
+            </a>
+
+
+            <!-- =================================================
+                 ROW 10
+                 ================================================= -->
+
+            <a
+                href="workspace.html?service=Presentations"
+                class="service-link final-service"
+                data-service="Presentations"
+            >
+                Presentations
+            </a>
+
 
         </div>
 
@@ -1202,18 +1519,22 @@
 "use strict";
 
 
-const serviceButtons =
+/* =========================================================
+   SERVICE DIRECTORY
+   ========================================================= */
+
+const serviceLinks =
     document.querySelectorAll(
-        ".service-button"
+        ".service-link"
     );
 
 
 let requestInProgress = false;
 
 
-/* =====================================================
+/* =========================================================
    CUSTOMER ID
-   ===================================================== */
+   ========================================================= */
 
 function cryptoRandomId() {
 
@@ -1224,6 +1545,7 @@ function cryptoRandomId() {
         return window.crypto.randomUUID();
     }
 
+
     return (
         Date.now().toString(36) +
         Math.random()
@@ -1233,13 +1555,13 @@ function cryptoRandomId() {
 }
 
 
-/* =====================================================
+/* =========================================================
    OPEN WORKSPACE
-   ===================================================== */
+   ========================================================= */
 
 function openWorkspace(
     service,
-    button
+    link
 ) {
 
     if (
@@ -1253,19 +1575,22 @@ function openWorkspace(
     requestInProgress = true;
 
 
-    button.classList.add(
+    link.classList.add(
         "working"
     );
 
 
-    serviceButtons.forEach(
-        function(otherButton) {
+    serviceLinks.forEach(
+        function(otherLink) {
 
             if (
-                otherButton !== button
+                otherLink !== link
             ) {
-                otherButton.disabled =
-                    true;
+                otherLink.style.pointerEvents =
+                    "none";
+
+                otherLink.style.opacity =
+                    "0.38";
             }
 
         }
@@ -1314,26 +1639,29 @@ function openWorkspace(
 }
 
 
-/* =====================================================
-   SERVICE BUTTON ACTIVATION
-   ===================================================== */
+/* =========================================================
+   SERVICE ACTIVATION
+   ========================================================= */
 
-serviceButtons.forEach(
-    function(button) {
+serviceLinks.forEach(
+    function(link) {
 
-        button.addEventListener(
+        link.addEventListener(
             "click",
-            function() {
+            function(event) {
+
+                event.preventDefault();
+
 
                 const service =
-                    button.getAttribute(
+                    link.getAttribute(
                         "data-service"
                     );
 
 
                 openWorkspace(
                     service,
-                    button
+                    link
                 );
 
             }
