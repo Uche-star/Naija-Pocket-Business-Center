@@ -99,8 +99,6 @@
         }
 
 
-        /* Luxury inner frame */
-
         .welcome-half::before {
             content: "";
 
@@ -1121,6 +1119,32 @@ let requestInProgress = false;
 
 
 /* =====================================================
+   RELEASE ALL SERVICE BUTTONS
+   This runs whenever the welcome page becomes active.
+   It prevents a previous selection from remaining locked.
+   ===================================================== */
+
+function releaseServiceButtons() {
+
+    requestInProgress = false;
+
+
+    serviceButtons.forEach(
+        function(button) {
+
+            button.disabled = false;
+
+            button.classList.remove(
+                "working"
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
    CUSTOMER ID
    ===================================================== */
 
@@ -1247,6 +1271,51 @@ serviceButtons.forEach(
 
             }
         );
+
+    }
+);
+
+
+/* =====================================================
+   IMPORTANT:
+   RELEASE BUTTONS WHEN WELCOME PAGE LOADS
+   ===================================================== */
+
+releaseServiceButtons();
+
+
+/* =====================================================
+   IMPORTANT:
+   RELEASE BUTTONS WHEN CUSTOMER RETURNS USING
+   THE PHONE/BROWSER BACK BUTTON
+   ===================================================== */
+
+window.addEventListener(
+    "pageshow",
+    function() {
+
+        releaseServiceButtons();
+
+    }
+);
+
+
+/* =====================================================
+   ALSO RELEASE WHEN PAGE BECOMES VISIBLE AGAIN
+   ===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    function() {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            releaseServiceButtons();
+
+        }
 
     }
 );
