@@ -39,8 +39,11 @@ button{
 :root{
     --gold:#d4af37;
     --gold2:#f3d66b;
-    --red:#b30000;
+
+    /* Luxury brand green */
     --green:#168047;
+    --green2:#1b9a59;
+
     --border:rgba(212,175,55,.28);
 }
 
@@ -70,7 +73,7 @@ button{
 
 .brand-title{
     margin:0;
-    color:var(--gold);
+    color:var(--green);
     font-size:clamp(18px,4vw,25px);
     font-weight:800;
 }
@@ -85,9 +88,9 @@ button{
     max-width:46%;
     padding:7px 10px;
     background:#171717;
-    border:1px solid rgba(212,175,55,.55);
+    border:1px solid rgba(22,128,71,.65);
     border-radius:999px;
-    color:var(--gold2);
+    color:#54c985;
     font-size:10px;
     font-weight:800;
     white-space:nowrap;
@@ -125,13 +128,13 @@ button{
     margin-bottom:12px;
     padding:16px;
     background:linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid var(--border);
+    border:1px solid rgba(22,128,71,.45);
 }
 
 .intro-title,
 .review-title{
     margin:0;
-    color:var(--gold2);
+    color:var(--green2);
     font-weight:900;
 }
 
@@ -151,10 +154,10 @@ button{
     display:inline-block;
     margin-top:10px;
     padding:7px 10px;
-    background:rgba(212,175,55,.09);
-    border:1px solid rgba(212,175,55,.3);
+    background:rgba(22,128,71,.10);
+    border:1px solid rgba(22,128,71,.38);
     border-radius:8px;
-    color:var(--gold2);
+    color:#54c985;
     font-size:12px;
     font-weight:800;
 }
@@ -219,15 +222,16 @@ button{
 }
 
 .field input:focus,
-.field textarea:focus{
-    border-color:rgba(212,175,55,.65);
+.field textarea:focus,
+.field select:focus{
+    border-color:rgba(22,128,71,.75);
 }
 
 .form-note{
     margin-top:12px;
     padding:10px;
     background:#151515;
-    border-left:3px solid var(--gold);
+    border-left:3px solid var(--green);
     border-radius:7px;
     color:#bdbdbd;
     font-size:10px;
@@ -240,8 +244,8 @@ button{
     margin-top:15px;
     border:0;
     border-radius:10px;
-    background:var(--gold);
-    color:#000;
+    background:var(--green);
+    color:#fff;
     font-size:13px;
     font-weight:900;
 }
@@ -262,7 +266,7 @@ button{
     padding:16px;
     margin-bottom:11px;
     background:linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid rgba(212,175,55,.38);
+    border:1px solid rgba(22,128,71,.55);
 }
 
 .review-title{
@@ -302,17 +306,10 @@ button{
     overflow-wrap:anywhere;
 }
 
-/*
-    The generated document is rendered here as an actual document,
-    not as raw HTML source.
-*/
-
 .work-content.document-html{
     background:#fff;
     color:#111;
 }
-
-/* Document headings */
 
 .work-content h1{
     margin:0 0 18px;
@@ -347,8 +344,6 @@ button{
     font-weight:800;
 }
 
-/* Document paragraphs */
-
 .work-content p{
     margin:0 0 12px;
     color:#111;
@@ -370,8 +365,6 @@ button{
     text-decoration:underline;
 }
 
-/* Document lists */
-
 .work-content ul,
 .work-content ol{
     margin:8px 0 15px 25px;
@@ -383,15 +376,11 @@ button{
     line-height:1.65;
 }
 
-/* Document divider */
-
 .work-content hr{
     border:0;
     border-top:1px solid #999;
     margin:20px 0;
 }
-
-/* Tables */
 
 .work-content table{
     width:100%;
@@ -414,16 +403,12 @@ button{
     background:#eee;
 }
 
-/* Quotes */
-
 .work-content blockquote{
     margin:15px 0;
     padding:10px 14px;
     border-left:4px solid #777;
     background:#f0f0f0;
 }
-
-/* Code-like content */
 
 .work-content pre{
     white-space:pre-wrap;
@@ -440,14 +425,10 @@ button{
     font-family:monospace;
 }
 
-/* Links */
-
 .work-content a{
     color:#111;
     text-decoration:underline;
 }
-
-/* Images if the generated document ever contains them */
 
 .work-content img{
     max-width:100%;
@@ -455,8 +436,6 @@ button{
     display:block;
     margin:12px auto;
 }
-
-/* Preserve intentional line breaks */
 
 .work-content .document-spacer{
     height:10px;
@@ -470,7 +449,9 @@ button{
     -webkit-user-select:none;
 }
 
-/* ========================================================= */
+/* =========================================================
+   REVIEW CORRECTIONS
+   ========================================================= */
 
 .correction-card{
     margin-top:12px;
@@ -503,6 +484,10 @@ button{
     outline:0;
 }
 
+.correction-input:focus{
+    border-color:rgba(22,128,71,.75);
+}
+
 .review-actions,
 .payment-buttons{
     display:grid;
@@ -525,10 +510,9 @@ button{
     border:1px solid rgba(255,255,255,.14);
 }
 
-.approve-button,
-.payment-report{
-    background:var(--gold);
-    color:#000;
+.approve-button{
+    background:var(--green);
+    color:#fff;
     border:0;
 }
 
@@ -564,7 +548,7 @@ button{
     margin-top:11px;
     padding:13px;
     background:#121212;
-    border:1px solid rgba(212,175,55,.38);
+    border:1px solid rgba(22,128,71,.55);
     border-radius:12px;
 }
 
@@ -573,7 +557,7 @@ button{
 }
 
 .payment-title{
-    color:var(--gold2);
+    color:#54c985;
     font-size:13px;
     font-weight:900;
     margin-bottom:6px;
@@ -586,11 +570,21 @@ button{
     line-height:1.5;
 }
 
+.payment-report{
+    background:var(--green);
+    color:#fff;
+    border:0;
+}
+
 .payment-check{
     background:#282828;
     color:#fff;
     border:1px solid rgba(255,255,255,.13);
 }
+
+/* =========================================================
+   BOTTOM CONTROLS
+   ========================================================= */
 
 .bottom{
     flex:0 0 auto;
@@ -624,8 +618,8 @@ button{
 }
 
 .tool-button.gold{
-    color:var(--gold2);
-    border-color:rgba(212,175,55,.35);
+    color:#54c985;
+    border-color:rgba(22,128,71,.45);
 }
 
 .choose-service-button{
@@ -654,13 +648,17 @@ button{
     outline:0;
 }
 
+.message-input:focus{
+    border-color:rgba(22,128,71,.75);
+}
+
 .send-button{
     width:64px;
     min-height:45px;
     border:0;
     border-radius:9px;
-    background:var(--gold);
-    color:#000;
+    background:var(--green);
+    color:#fff;
     font-size:11px;
     font-weight:900;
 }
@@ -706,10 +704,11 @@ button:disabled{
     cursor:not-allowed;
 }
 
-/* READ-ONLY: SERVICE GUIDANCE + PREPARED WORK */
+/* READ-ONLY CUSTOMER CONTENT */
 
 #introText,
-.intro-card{
+.intro-card,
+.work-card{
     user-select:none;
     -webkit-user-select:none;
     -moz-user-select:none;
@@ -751,22 +750,34 @@ button:disabled{
 <div class="app">
 
 <header class="header">
+
     <div class="brand">
-        <h1 class="brand-title">Naija Pocket Business Center</h1>
-        <div class="brand-subtitle">Your Business Center</div>
+
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
+
+        <div class="brand-subtitle">
+            Your Business Center
+        </div>
+
     </div>
 
     <div id="serviceBadge" class="service-badge">
         Service
     </div>
+
 </header>
 
+
 <main class="main">
+
 <div class="main-inner">
 
 <section id="formView">
 
     <div class="intro-card" id="introCard">
+
         <h2 id="introTitle" class="intro-title">
             Let's get started
         </h2>
@@ -778,7 +789,9 @@ button:disabled{
         <div id="price" class="price">
             Service
         </div>
+
     </div>
+
 
     <div class="form-card">
 
@@ -790,13 +803,16 @@ button:disabled{
             Fill in the information relevant to your request. Optional fields can be left blank.
         </p>
 
+
         <form id="serviceForm">
 
             <div id="fields" class="fields"></div>
 
+
             <div class="form-note">
                 When you tap <strong>SEND</strong>, your information will be sent for processing and your prepared work will open immediately in the review area.
             </div>
+
 
             <button
                 id="formSubmit"
@@ -822,7 +838,7 @@ button:disabled{
         </h2>
 
         <p class="review-subtitle">
-            Read through your prepared work carefully. You can request corrections before approving it.
+            Review the prepared work and request any changes you need before approval.
         </p>
 
     </div>
@@ -857,6 +873,7 @@ button:disabled{
             placeholder="Write your corrections or changes here..."
         ></textarea>
 
+
         <div class="review-actions">
 
             <button
@@ -866,6 +883,7 @@ button:disabled{
             >
                 Apply My Corrections
             </button>
+
 
             <button
                 id="approveButton"
@@ -889,8 +907,9 @@ button:disabled{
         🔒 Download Your Work
     </button>
 
+
     <div class="payment-message">
-        Payment must be confirmed before the download button becomes active.
+        Payment must be confirmed before download.
     </div>
 
 
@@ -900,7 +919,9 @@ button:disabled{
             Payment
         </div>
 
+
         <div id="paymentDetails" class="payment-details"></div>
+
 
         <div class="payment-buttons">
 
@@ -911,6 +932,7 @@ button:disabled{
             >
                 Report Payment
             </button>
+
 
             <button
                 id="paymentCheckButton"
@@ -927,6 +949,7 @@ button:disabled{
 </section>
 
 </div>
+
 </main>
 
 
@@ -941,6 +964,7 @@ button:disabled{
         🔴 Recording... tap Voice again to stop.
     </div>
 
+
     <div class="tools">
 
         <button
@@ -951,6 +975,7 @@ button:disabled{
             📄 Upload Documents You Want To Give Us
         </button>
 
+
         <button
             id="voiceButton"
             class="tool-button gold"
@@ -958,6 +983,7 @@ button:disabled{
         >
             🎤 Voice
         </button>
+
 
         <button
             id="customerServiceButton"
@@ -996,6 +1022,7 @@ button:disabled{
             autocomplete="off"
         ></textarea>
 
+
         <button
             id="sendButton"
             class="send-button"
@@ -1019,9 +1046,36 @@ button:disabled{
 <script>
 "use strict";
 
+
+/*
+=========================================================
+CURRENT INTELLIGENCE CONNECTION
+=========================================================
+
+This workspace continues to use the existing API architecture.
+
+No replacement intelligence system is introduced here.
+
+The existing /api/chat connection remains the intelligence
+gateway for:
+
+1. Service guidance
+2. Initial work creation
+3. Customer corrections
+4. Customer messages
+5. Uploaded-document context
+6. Voice-message context
+
+The existing approval, payment and download endpoints remain
+unchanged.
+=========================================================
+*/
+
+
 const API_BASE="";
 
 const $=id=>document.getElementById(id);
+
 
 const formView=$("formView");
 const reviewView=$("reviewView");
@@ -1053,7 +1107,9 @@ const paymentDetails=$("paymentDetails");
 const paymentReport=$("paymentReportButton");
 const paymentCheck=$("paymentCheckButton");
 
+
 const params=new URLSearchParams(location.search);
+
 
 const service=(
     params.get("service") ||
@@ -1069,6 +1125,7 @@ function id(prefix){
                 ? crypto.randomUUID()
                 : Date.now()+"_"+Math.random().toString(36).slice(2)
         );
+
 }
 
 
@@ -1096,7 +1153,10 @@ let customerId=
     get("npbc_customer_id") ||
     id("customer_");
 
-put("npbc_customer_id",customerId);
+put(
+    "npbc_customer_id",
+    customerId
+);
 
 
 let jobId=
@@ -1104,14 +1164,20 @@ let jobId=
     get("npbc_job_id") ||
     id("job_");
 
-put("npbc_job_id",jobId);
+put(
+    "npbc_job_id",
+    jobId
+);
 
 
 let requestId=
     get("npbc_client_request_id") ||
     id("request_");
 
-put("npbc_client_request_id",requestId);
+put(
+    "npbc_client_request_id",
+    requestId
+);
 
 
 let busy=false;
@@ -1122,6 +1188,10 @@ let mediaRecorder=null;
 let recordedChunks=[];
 let recordingStream=null;
 
+
+/* =========================================================
+   BASIC HELPERS
+   ========================================================= */
 
 function clean(v){
 
@@ -1155,7 +1225,13 @@ function busyState(v){
         chooseBtn,
         applyBtn,
         approveBtn
-    ].forEach(x=>x.disabled=v);
+    ].forEach(x=>{
+
+        if(x){
+            x.disabled=v;
+        }
+
+    });
 
 }
 
@@ -1164,36 +1240,22 @@ function busyState(v){
    DOCUMENT HTML RENDERER
    ========================================================= */
 
-/*
-    The intelligence can return actual HTML such as:
-
-    <h1>Document Title</h1>
-    <p><strong>Author:</strong> John Doe</p>
-    <h2>Introduction</h2>
-    <p>...</p>
-    <hr>
-
-    Previously textContent() was used, which displayed those
-    tags literally.
-
-    This renderer safely converts approved document HTML into
-    visible formatted document content.
-*/
-
-
 function removeHtmlCodeFences(value){
 
     let html=String(value||"").trim();
+
 
     html=html.replace(
         /^```(?:html|HTML)?\s*/i,
         ""
     );
 
+
     html=html.replace(
         /\s*```$/i,
         ""
     );
+
 
     return html.trim();
 
@@ -1204,17 +1266,11 @@ function looksLikeHtml(value){
 
     const text=String(value||"").trim();
 
+
     return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tr|th|td|blockquote|pre|code|br)\b[^>]*>/i.test(text);
 
 }
 
-
-/*
-    Only document-formatting elements are allowed.
-
-    Script, iframe, object, form and other executable/
-    interactive elements are deliberately removed.
-*/
 
 function sanitizeDocumentHtml(html){
 
@@ -1227,27 +1283,36 @@ function sanitizeDocumentHtml(html){
         "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
     );
 
-    blocked.forEach(el=>el.remove());
+
+    blocked.forEach(
+        el=>el.remove()
+    );
 
 
     const allowedTags=new Set([
+
         "H1",
         "H2",
         "H3",
         "H4",
         "H5",
         "H6",
+
         "P",
+
         "STRONG",
         "B",
         "EM",
         "I",
         "U",
+
         "UL",
         "OL",
         "LI",
+
         "HR",
         "BR",
+
         "TABLE",
         "THEAD",
         "TBODY",
@@ -1255,25 +1320,38 @@ function sanitizeDocumentHtml(html){
         "TR",
         "TH",
         "TD",
+
         "BLOCKQUOTE",
+
         "PRE",
         "CODE",
+
         "DIV",
         "SPAN",
+
         "A",
         "IMG"
+
     ]);
 
 
     function cleanNode(node){
 
-        if(node.nodeType===Node.TEXT_NODE){
+        if(
+            node.nodeType===
+            Node.TEXT_NODE
+        ){
             return;
         }
 
 
-        if(node.nodeType!==Node.ELEMENT_NODE){
+        if(
+            node.nodeType!==
+            Node.ELEMENT_NODE
+        ){
+
             node.remove();
+
             return;
         }
 
@@ -1282,33 +1360,44 @@ function sanitizeDocumentHtml(html){
 
 
         if(!allowedTags.has(tag)){
+
             const parent=node.parentNode;
+
 
             if(parent){
 
                 while(node.firstChild){
+
                     parent.insertBefore(
                         node.firstChild,
                         node
                     );
+
                 }
+
 
                 node.remove();
 
             }
 
+
             return;
+
         }
 
 
         /*
-            Remove all attributes except the small set needed
-            for normal document presentation.
+        Keep only safe presentation-related
+        attributes.
         */
 
-        [...node.attributes].forEach(attr=>{
+        [
+            ...node.attributes
+        ].forEach(attr=>{
 
-            const name=attr.name.toLowerCase();
+            const name=
+                attr.name.toLowerCase();
+
 
             const keep=
                 name==="href" ||
@@ -1316,8 +1405,13 @@ function sanitizeDocumentHtml(html){
                 name==="alt" ||
                 name==="title";
 
+
             if(!keep){
-                node.removeAttribute(attr.name);
+
+                node.removeAttribute(
+                    attr.name
+                );
+
             }
 
         });
@@ -1325,19 +1419,26 @@ function sanitizeDocumentHtml(html){
 
         if(tag==="A"){
 
-            const href=node.getAttribute("href")||"";
+            const href=
+                node.getAttribute("href")||"";
+
 
             if(
                 !/^https?:\/\//i.test(href) &&
                 !/^mailto:/i.test(href)
             ){
-                node.removeAttribute("href");
+
+                node.removeAttribute(
+                    "href"
+                );
+
             }else{
 
                 node.setAttribute(
                     "target",
                     "_blank"
                 );
+
 
                 node.setAttribute(
                     "rel",
@@ -1351,25 +1452,35 @@ function sanitizeDocumentHtml(html){
 
         if(tag==="IMG"){
 
-            const src=node.getAttribute("src")||"";
+            const src=
+                node.getAttribute("src")||"";
+
 
             if(
                 !/^https?:\/\//i.test(src) &&
                 !/^data:image\//i.test(src)
             ){
+
                 node.remove();
+
                 return;
+
             }
 
         }
 
 
-        [...node.childNodes].forEach(cleanNode);
+        [
+            ...node.childNodes
+        ].forEach(cleanNode);
 
     }
 
 
-    [...source.childNodes].forEach(cleanNode);
+    [
+        ...source.childNodes
+    ].forEach(cleanNode);
+
 
     return source.innerHTML;
 
@@ -1378,9 +1489,12 @@ function sanitizeDocumentHtml(html){
 
 function renderDocument(work){
 
-    const raw=clean(work)||"";
+    const raw=
+        clean(work)||"";
+
 
     workContent.innerHTML="";
+
 
     workContent.classList.remove(
         "document-html"
@@ -1392,15 +1506,19 @@ function renderDocument(work){
         const placeholder=
             document.createElement("div");
 
+
         placeholder.className=
             "work-placeholder";
+
 
         placeholder.textContent=
             "Your prepared work will appear here.";
 
+
         workContent.appendChild(
             placeholder
         );
+
 
         return;
 
@@ -1411,25 +1529,33 @@ function renderDocument(work){
         removeHtmlCodeFences(raw);
 
 
-    if(looksLikeHtml(cleaned)){
+    if(
+        looksLikeHtml(cleaned)
+    ){
 
         const safeHtml=
-            sanitizeDocumentHtml(cleaned);
+            sanitizeDocumentHtml(
+                cleaned
+            );
+
 
         workContent.classList.add(
             "document-html"
         );
 
-        workContent.innerHTML=safeHtml;
+
+        workContent.innerHTML=
+            safeHtml;
 
     }else{
 
         /*
-            If the intelligence returns normal text rather
-            than HTML, preserve it as text.
+        Normal intelligence text remains text.
+        Actual document HTML is rendered as HTML.
         */
 
-        workContent.textContent=cleaned;
+        workContent.textContent=
+            cleaned;
 
     }
 
@@ -1441,6 +1567,7 @@ function renderDocument(work){
    ========================================================= */
 
 const generic=[
+
     {
         name:"request",
         label:"What do you need?",
@@ -1448,18 +1575,21 @@ const generic=[
         type:"textarea",
         placeholder:"Tell us exactly what you want done"
     },
+
     {
         name:"important_details",
         label:"Important details",
         type:"textarea",
         placeholder:"Add the information that matters to your request"
     },
+
     {
         name:"other_instructions",
         label:"Other instructions",
         type:"textarea",
         placeholder:"Anything else you want considered"
     }
+
 ];
 
 
@@ -1664,12 +1794,15 @@ const forms={
 
 function definition(){
 
-    const s=service.toLowerCase();
+    const s=
+        service.toLowerCase();
+
 
     const key=
         Object.keys(forms).find(
             k=>s.includes(k)
         );
+
 
     return key
         ? forms[key]
@@ -1682,13 +1815,20 @@ function renderForm(){
 
     fields.innerHTML="";
 
+
     definition().forEach(f=>{
 
         const wrapper=
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         const label=
-            document.createElement("label");
+            document.createElement(
+                "label"
+            );
+
 
         const input=
             document.createElement(
@@ -1700,7 +1840,10 @@ function renderForm(){
 
         wrapper.className="field";
 
-        label.htmlFor=f.name;
+
+        label.htmlFor=
+            f.name;
+
 
         label.innerHTML=
             f.label+
@@ -1711,9 +1854,13 @@ function renderForm(){
             );
 
 
-        input.id=f.name;
+        input.id=
+            f.name;
 
-        input.name=f.name;
+
+        input.name=
+            f.name;
+
 
         input.placeholder=
             f.placeholder||"";
@@ -1724,8 +1871,11 @@ function renderForm(){
         }
 
 
-        if(f.type!=="textarea"){
-            input.type=f.type||"text";
+        if(
+            f.type!=="textarea"
+        ){
+            input.type=
+                f.type||"text";
         }
 
 
@@ -1733,6 +1883,7 @@ function renderForm(){
             label,
             input
         );
+
 
         fields.appendChild(
             wrapper
@@ -1747,19 +1898,23 @@ function collect(){
 
     const d={};
 
+
     serviceForm
         .querySelectorAll(
             "input,textarea,select"
         )
         .forEach(e=>{
 
-            const v=clean(e.value);
+            const v=
+                clean(e.value);
+
 
             if(v){
                 d[e.name]=v;
             }
 
         });
+
 
     return d;
 
@@ -1784,11 +1939,14 @@ async function apiChat(body){
             API_BASE+"/api/chat",
             {
                 method:"POST",
+
                 headers:{
                     "Content-Type":
                         "application/json"
                 },
-                body:JSON.stringify(body)
+
+                body:
+                    JSON.stringify(body)
             }
         );
 
@@ -1803,12 +1961,14 @@ async function apiChat(body){
         !r.ok ||
         !d.success
     ){
+
         throw new Error(
             d.reply ||
             d.message ||
             d.error ||
             "Request failed."
         );
+
     }
 
 
@@ -1883,7 +2043,10 @@ async function loadGuidance(){
                 "Service fee: ₦"+
                 Number(
                     String(a)
-                        .replace(/[^0-9.]/g,"")
+                        .replace(
+                            /[^0-9.]/g,
+                            ""
+                        )
                 ).toLocaleString();
 
         }else if(
@@ -1924,8 +2087,10 @@ async function loadGuidance(){
         introText.textContent=
             "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
 
+
         price.textContent=
             "Service: "+service;
+
 
         setStatus(
             "You can still complete the form or ask a question below.",
@@ -1963,7 +2128,9 @@ SERVICE: ${service}
 CUSTOMER FORM INFORMATION:
 
 ${Object.entries(data)
-    .map(([k,v])=>`${k}:\n${v}`)
+    .map(
+        ([k,v])=>`${k}:\n${v}`
+    )
     .join("\n\n")}`;
 
 }
@@ -1972,6 +2139,7 @@ ${Object.entries(data)
 async function createWork(data){
 
     busyState(true);
+
 
     setStatus(
         "Preparing your work..."
@@ -2014,7 +2182,9 @@ async function createWork(data){
 
         if(d.job_id){
 
-            jobId=d.job_id;
+            jobId=
+                d.job_id;
+
 
             put(
                 "npbc_job_id",
@@ -2034,6 +2204,7 @@ async function createWork(data){
             "Your work is ready for review.",
             "success"
         );
+
 
     }catch(e){
 
@@ -2057,17 +2228,23 @@ async function createWork(data){
 
 function showReview(work){
 
-    formView.style.display="none";
+    formView.style.display=
+        "none";
 
-    reviewView.classList.add("show");
+
+    reviewView.classList.add(
+        "show"
+    );
+
 
     currentWork=
         work||"";
 
+
     /*
-        FIX:
-        Never use textContent for generated document HTML.
-        Render it through the document renderer.
+    Important:
+    The intelligence response is preserved exactly as
+    received. Only the presentation layer changes here.
     */
 
     renderDocument(
@@ -2077,22 +2254,32 @@ function showReview(work){
 
     correctionInput.value="";
 
+
     paymentPanel.classList.remove(
         "show"
     );
 
+
     approved=false;
+
 
     paymentConfirmed=false;
 
+
     downloadBtn.disabled=true;
+
 
     downloadBtn.classList.remove(
         "active"
     );
 
+
     downloadBtn.textContent=
         "🔒 Download Your Work";
+
+
+    downloadBtn.onclick=null;
+
 
     mainScrollTop();
 
@@ -2102,10 +2289,15 @@ function showReview(work){
 function mainScrollTop(){
 
     const main=
-        document.querySelector(".main");
+        document.querySelector(
+            ".main"
+        );
+
 
     if(main){
+
         main.scrollTop=0;
+
     }
 
 }
@@ -2117,13 +2309,16 @@ serviceForm.addEventListener(
 
         e.preventDefault();
 
+
         if(
             !busy &&
             serviceForm.reportValidity()
         ){
+
             createWork(
                 collect()
             );
+
         }
 
     }
@@ -2131,10 +2326,13 @@ serviceForm.addEventListener(
 
 
 /* =========================================================
-   READ-ONLY PROTECTION
+   READ-ONLY CUSTOMER CONTENT
    ========================================================= */
 
-[introCard,workCard]
+[
+    introCard,
+    workCard
+]
 .forEach(el=>{
 
     [
@@ -2150,6 +2348,7 @@ serviceForm.addEventListener(
             e=>{
 
                 e.preventDefault();
+
 
                 if(e.clipboardData){
 
@@ -2182,7 +2381,9 @@ serviceForm.addEventListener(
                     e.key.toLowerCase()
                 )
             ){
+
                 e.preventDefault();
+
             }
 
         }
@@ -2194,7 +2395,9 @@ serviceForm.addEventListener(
         e=>{
 
             if(e.detail>1){
+
                 e.preventDefault();
+
             }
 
         }
@@ -2233,6 +2436,7 @@ applyBtn.addEventListener(
 
 
         busyState(true);
+
 
         setStatus(
             "Applying your corrections..."
@@ -2283,15 +2487,15 @@ If the prepared work is a document, return the complete revised document as prop
                 });
 
 
+            /*
+            Preserve the intelligence response as the
+            new current work.
+            */
+
             currentWork=
                 d.reply ||
                 currentWork;
 
-
-            /*
-                FIX:
-                Render revised HTML too.
-            */
 
             renderDocument(
                 currentWork
@@ -2299,6 +2503,32 @@ If the prepared work is a document, return the complete revised document as prop
 
 
             correctionInput.value="";
+
+
+            /*
+            A correction produces a new version of the
+            work, so approval must be made against the
+            newly reviewed version.
+            */
+
+            approved=false;
+
+            paymentConfirmed=false;
+
+            paymentPanel.classList.remove(
+                "show"
+            );
+
+            downloadBtn.disabled=true;
+
+            downloadBtn.classList.remove(
+                "active"
+            );
+
+            downloadBtn.textContent=
+                "🔒 Download Your Work";
+
+            downloadBtn.onclick=null;
 
 
             setStatus(
@@ -2341,6 +2571,7 @@ approveBtn.addEventListener(
 
 
         busyState(true);
+
 
         setStatus(
             "Preparing your payment step..."
@@ -2397,6 +2628,7 @@ approveBtn.addEventListener(
 
 
             approved=true;
+
 
             paymentPanel.classList.add(
                 "show"
@@ -2469,11 +2701,10 @@ paymentReport.addEventListener(
         const amount=
             m
                 ? Number(
-                    m[1]
-                        .replace(
-                            /[^0-9.]/g,
-                            ""
-                        )
+                    m[1].replace(
+                        /[^0-9.]/g,
+                        ""
+                    )
                 )
                 : 0;
 
@@ -2580,7 +2811,9 @@ paymentCheck.addEventListener(
                 await fetch(
                     API_BASE+
                     "/api/payment/status?job_id="+
-                    encodeURIComponent(jobId)
+                    encodeURIComponent(
+                        jobId
+                    )
                 );
 
 
@@ -2611,11 +2844,14 @@ paymentCheck.addEventListener(
 
                 paymentConfirmed=true;
 
+
                 downloadBtn.disabled=false;
+
 
                 downloadBtn.classList.add(
                     "active"
                 );
+
 
                 downloadBtn.textContent=
                     "⬇ Download Your Work";
@@ -2678,7 +2914,9 @@ uploadBtn.addEventListener(
     ()=>{
 
         if(!busy){
+
             fileInput.click();
+
         }
 
     }
@@ -2707,20 +2945,24 @@ fileInput.addEventListener(
             f
         );
 
+
         fd.append(
             "customer_id",
             customerId
         );
+
 
         fd.append(
             "job_id",
             jobId
         );
 
+
         fd.append(
             "client_request_id",
             requestId
         );
+
 
         fd.append(
             "service",
@@ -2771,6 +3013,10 @@ fileInput.addEventListener(
             );
 
 
+            /*
+            Existing intelligence connection is preserved.
+            */
+
             await sendMessage(
                 "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.",
                 "document_uploaded"
@@ -2809,6 +3055,7 @@ async function sendMessage(
 
 
     busyState(true);
+
 
     setStatus(
         "Processing your message..."
@@ -2849,7 +3096,9 @@ async function sendMessage(
 
         if(d.job_id){
 
-            jobId=d.job_id;
+            jobId=
+                d.job_id;
+
 
             put(
                 "npbc_job_id",
@@ -2869,15 +3118,35 @@ async function sendMessage(
             currentWork=
                 d.reply;
 
-            /*
-                FIX:
-                Customer messages that return revised
-                document work are also rendered properly.
-            */
 
             renderDocument(
                 currentWork
             );
+
+
+            /*
+            New intelligence output means the customer
+            must review the latest version again.
+            */
+
+            approved=false;
+
+            paymentConfirmed=false;
+
+            paymentPanel.classList.remove(
+                "show"
+            );
+
+            downloadBtn.disabled=true;
+
+            downloadBtn.classList.remove(
+                "active"
+            );
+
+            downloadBtn.textContent=
+                "🔒 Download Your Work";
+
+            downloadBtn.onclick=null;
 
         }
 
@@ -2897,6 +3166,7 @@ async function sendMessage(
             e.message,
             "error"
         );
+
 
         return null;
 
@@ -2932,6 +3202,7 @@ sendBtn.addEventListener(
 
         messageInput.value="";
 
+
         messageInput.style.height=
             "auto";
 
@@ -2956,6 +3227,7 @@ messageInput.addEventListener(
 
             e.preventDefault();
 
+
             sendBtn.click();
 
         }
@@ -2970,6 +3242,7 @@ messageInput.addEventListener(
 
         messageInput.style.height=
             "auto";
+
 
         messageInput.style.height=
             Math.min(
@@ -2995,6 +3268,7 @@ customerBtn.addEventListener(
 
 
         busyState(true);
+
 
         setStatus(
             "Connecting you to Customer Service..."
@@ -3212,15 +3486,18 @@ voiceBtn.addEventListener(
                         customerId
                     );
 
+
                     fd.append(
                         "job_id",
                         jobId
                     );
 
+
                     fd.append(
                         "client_request_id",
                         requestId
                     );
+
 
                     fd.append(
                         "service",
@@ -3260,6 +3537,11 @@ voiceBtn.addEventListener(
                         }
 
 
+                        /*
+                        Preserve existing intelligence flow
+                        after voice upload.
+                        */
+
                         await sendMessage(
                             "A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.",
                             "voice_uploaded"
@@ -3280,12 +3562,15 @@ voiceBtn.addEventListener(
 
             mediaRecorder.start();
 
+
             voiceRecording.classList.add(
                 "show"
             );
 
+
             voiceBtn.textContent=
                 "⏹ Stop Voice";
+
 
             setStatus(
                 "Recording your voice..."
@@ -3314,10 +3599,13 @@ async function init(){
     serviceBadge.textContent=
         service;
 
+
     introTitle.textContent=
         service;
 
+
     renderForm();
+
 
     await loadGuidance();
 
