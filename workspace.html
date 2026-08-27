@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
 <title>Naija Pocket Business Center</title>
 
 <style>
@@ -16,6 +18,7 @@ body{
     width:100%;
     height:100%;
     margin:0;
+    padding:0;
     overflow:hidden;
 }
 
@@ -39,20 +42,23 @@ button{
 :root{
     --gold:#d4af37;
     --gold2:#f3d66b;
-
-    /* Luxury brand green */
+    --red:#b30000;
     --green:#168047;
-    --green2:#1b9a59;
-
     --border:rgba(212,175,55,.28);
 }
 
 .app{
+    width:100%;
     height:100dvh;
+    min-height:0;
     display:flex;
     flex-direction:column;
     background:#000;
 }
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .header{
     flex:0 0 auto;
@@ -76,6 +82,7 @@ button{
     color:var(--green);
     font-size:clamp(18px,4vw,25px);
     font-weight:800;
+    line-height:1.2;
 }
 
 .brand-subtitle{
@@ -88,9 +95,9 @@ button{
     max-width:46%;
     padding:7px 10px;
     background:#171717;
-    border:1px solid rgba(22,128,71,.65);
+    border:1px solid rgba(212,175,55,.55);
     border-radius:999px;
-    color:#54c985;
+    color:var(--gold2);
     font-size:10px;
     font-weight:800;
     white-space:nowrap;
@@ -98,11 +105,18 @@ button{
     text-overflow:ellipsis;
 }
 
+/* =========================================================
+   MAIN
+   ========================================================= */
+
 .main{
-    flex:1;
+    flex:1 1 auto;
     min-height:0;
-    overflow-y:auto;
+    width:100%;
     overflow-x:hidden;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
     background:radial-gradient(
         circle at top,
         #181818 0,
@@ -112,10 +126,15 @@ button{
 }
 
 .main-inner{
+    width:100%;
     max-width:900px;
-    margin:auto;
-    padding:14px 10px 25px;
+    margin:0 auto;
+    padding:14px 10px 35px;
 }
+
+/* =========================================================
+   SERVICE FORM
+   ========================================================= */
 
 .intro-card,
 .form-card,
@@ -128,13 +147,13 @@ button{
     margin-bottom:12px;
     padding:16px;
     background:linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid rgba(22,128,71,.45);
+    border:1px solid var(--border);
 }
 
 .intro-title,
 .review-title{
     margin:0;
-    color:var(--green2);
+    color:var(--gold2);
     font-weight:900;
 }
 
@@ -154,10 +173,10 @@ button{
     display:inline-block;
     margin-top:10px;
     padding:7px 10px;
-    background:rgba(22,128,71,.10);
-    border:1px solid rgba(22,128,71,.38);
+    background:rgba(212,175,55,.09);
+    border:1px solid rgba(212,175,55,.3);
     border-radius:8px;
-    color:#54c985;
+    color:var(--gold2);
     font-size:12px;
     font-weight:800;
 }
@@ -224,14 +243,14 @@ button{
 .field input:focus,
 .field textarea:focus,
 .field select:focus{
-    border-color:rgba(22,128,71,.75);
+    border-color:rgba(212,175,55,.65);
 }
 
 .form-note{
     margin-top:12px;
     padding:10px;
     background:#151515;
-    border-left:3px solid var(--green);
+    border-left:3px solid var(--gold);
     border-radius:7px;
     color:#bdbdbd;
     font-size:10px;
@@ -244,8 +263,8 @@ button{
     margin-top:15px;
     border:0;
     border-radius:10px;
-    background:var(--green);
-    color:#fff;
+    background:var(--gold);
+    color:#000;
     font-size:13px;
     font-weight:900;
 }
@@ -254,8 +273,13 @@ button{
     opacity:.45;
 }
 
+/* =========================================================
+   REVIEW
+   ========================================================= */
+
 .review-view{
     display:none;
+    width:100%;
 }
 
 .review-view.show{
@@ -266,7 +290,7 @@ button{
     padding:16px;
     margin-bottom:11px;
     background:linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid rgba(22,128,71,.55);
+    border:1px solid rgba(212,175,55,.38);
 }
 
 .review-title{
@@ -281,35 +305,62 @@ button{
 }
 
 /* =========================================================
-   CUSTOMER DOCUMENT / YOUR WORK
+   COMPLETE CUSTOMER DOCUMENT
+
+   IMPORTANT:
+   No fixed height.
+   No max-height.
+   No internal vertical clipping.
+   The complete document remains part of normal page flow.
    ========================================================= */
 
 .work-card{
+    width:100%;
+    min-height:350px;
+    height:auto;
+    overflow:visible;
     background:#f7f7f7;
     color:#111;
     border-radius:11px;
-    min-height:350px;
     padding:22px 17px;
     overflow-wrap:anywhere;
+    word-wrap:break-word;
+    word-break:normal;
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
 }
 
 .work-content{
+    width:100%;
+    height:auto;
+    min-height:0;
+    max-width:100%;
     color:#111;
     font-size:14px;
     line-height:1.7;
+    overflow:visible;
+    overflow-wrap:anywhere;
+    word-wrap:break-word;
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
-    overflow-wrap:anywhere;
 }
 
 .work-content.document-html{
+    display:block;
+    width:100%;
+    height:auto;
+    min-height:0;
+    max-width:100%;
     background:#fff;
     color:#111;
+    overflow:visible;
 }
+
+/* =========================================================
+   DOCUMENT HEADINGS
+   ========================================================= */
 
 .work-content h1{
     margin:0 0 18px;
@@ -318,6 +369,7 @@ button{
     line-height:1.25;
     font-weight:800;
     text-align:left;
+    page-break-after:avoid;
 }
 
 .work-content h2{
@@ -326,6 +378,7 @@ button{
     font-size:21px;
     line-height:1.3;
     font-weight:800;
+    page-break-after:avoid;
 }
 
 .work-content h3{
@@ -334,6 +387,7 @@ button{
     font-size:17px;
     line-height:1.35;
     font-weight:800;
+    page-break-after:avoid;
 }
 
 .work-content h4,
@@ -342,13 +396,19 @@ button{
     margin:16px 0 7px;
     color:#111;
     font-weight:800;
+    page-break-after:avoid;
 }
+
+/* =========================================================
+   DOCUMENT TEXT
+   ========================================================= */
 
 .work-content p{
     margin:0 0 12px;
     color:#111;
     font-size:14px;
     line-height:1.75;
+    overflow:visible;
 }
 
 .work-content strong,
@@ -365,6 +425,10 @@ button{
     text-decoration:underline;
 }
 
+/* =========================================================
+   LISTS
+   ========================================================= */
+
 .work-content ul,
 .work-content ol{
     margin:8px 0 15px 25px;
@@ -376,18 +440,28 @@ button{
     line-height:1.65;
 }
 
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
 .work-content hr{
     border:0;
     border-top:1px solid #999;
     margin:20px 0;
 }
 
+/* =========================================================
+   TABLES
+   ========================================================= */
+
 .work-content table{
     width:100%;
+    max-width:100%;
     border-collapse:collapse;
     margin:15px 0;
     color:#111;
     font-size:13px;
+    table-layout:auto;
 }
 
 .work-content th,
@@ -396,12 +470,18 @@ button{
     padding:8px;
     text-align:left;
     vertical-align:top;
+    overflow-wrap:anywhere;
+    word-break:normal;
 }
 
 .work-content th{
     font-weight:800;
     background:#eee;
 }
+
+/* =========================================================
+   QUOTES
+   ========================================================= */
 
 .work-content blockquote{
     margin:15px 0;
@@ -410,9 +490,14 @@ button{
     background:#f0f0f0;
 }
 
+/* =========================================================
+   CODE
+   ========================================================= */
+
 .work-content pre{
     white-space:pre-wrap;
     word-break:break-word;
+    overflow-wrap:anywhere;
     margin:12px 0;
     padding:12px;
     background:#eee;
@@ -423,12 +508,22 @@ button{
 
 .work-content code{
     font-family:monospace;
+    overflow-wrap:anywhere;
 }
+
+/* =========================================================
+   LINKS
+   ========================================================= */
 
 .work-content a{
     color:#111;
     text-decoration:underline;
+    overflow-wrap:anywhere;
 }
+
+/* =========================================================
+   IMAGES
+   ========================================================= */
 
 .work-content img{
     max-width:100%;
@@ -436,6 +531,10 @@ button{
     display:block;
     margin:12px auto;
 }
+
+/* =========================================================
+   SPACING
+   ========================================================= */
 
 .work-content .document-spacer{
     height:10px;
@@ -450,7 +549,7 @@ button{
 }
 
 /* =========================================================
-   REVIEW CORRECTIONS
+   CORRECTIONS
    ========================================================= */
 
 .correction-card{
@@ -484,10 +583,6 @@ button{
     outline:0;
 }
 
-.correction-input:focus{
-    border-color:rgba(22,128,71,.75);
-}
-
 .review-actions,
 .payment-buttons{
     display:grid;
@@ -510,9 +605,10 @@ button{
     border:1px solid rgba(255,255,255,.14);
 }
 
-.approve-button{
-    background:var(--green);
-    color:#fff;
+.approve-button,
+.payment-report{
+    background:var(--gold);
+    color:#000;
     border:0;
 }
 
@@ -548,7 +644,7 @@ button{
     margin-top:11px;
     padding:13px;
     background:#121212;
-    border:1px solid rgba(22,128,71,.55);
+    border:1px solid rgba(212,175,55,.38);
     border-radius:12px;
 }
 
@@ -557,7 +653,7 @@ button{
 }
 
 .payment-title{
-    color:#54c985;
+    color:var(--gold2);
     font-size:13px;
     font-weight:900;
     margin-bottom:6px;
@@ -568,12 +664,6 @@ button{
     white-space:pre-wrap;
     font-size:11px;
     line-height:1.5;
-}
-
-.payment-report{
-    background:var(--green);
-    color:#fff;
-    border:0;
 }
 
 .payment-check{
@@ -588,6 +678,7 @@ button{
 
 .bottom{
     flex:0 0 auto;
+    width:100%;
     padding:8px 9px calc(8px + env(safe-area-inset-bottom));
     background:#080808;
     border-top:1px solid var(--border);
@@ -618,8 +709,8 @@ button{
 }
 
 .tool-button.gold{
-    color:#54c985;
-    border-color:rgba(22,128,71,.45);
+    color:var(--gold2);
+    border-color:rgba(212,175,55,.35);
 }
 
 .choose-service-button{
@@ -648,17 +739,13 @@ button{
     outline:0;
 }
 
-.message-input:focus{
-    border-color:rgba(22,128,71,.75);
-}
-
 .send-button{
     width:64px;
     min-height:45px;
     border:0;
     border-radius:9px;
-    background:var(--green);
-    color:#fff;
+    background:var(--gold);
+    color:#000;
     font-size:11px;
     font-weight:900;
 }
@@ -704,7 +791,9 @@ button:disabled{
     cursor:not-allowed;
 }
 
-/* READ-ONLY CUSTOMER CONTENT */
+/* =========================================================
+   READ-ONLY AREAS
+   ========================================================= */
 
 #introText,
 .intro-card,
@@ -716,7 +805,15 @@ button:disabled{
     -webkit-touch-callout:none;
 }
 
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media(max-width:600px){
+
+    .main-inner{
+        padding:12px 9px 30px;
+    }
 
     .work-card{
         padding:18px 14px;
@@ -741,6 +838,11 @@ button:disabled{
     .work-content table{
         font-size:12px;
     }
+
+    .work-content th,
+    .work-content td{
+        padding:7px;
+    }
 }
 </style>
 </head>
@@ -752,7 +854,6 @@ button:disabled{
 <header class="header">
 
     <div class="brand">
-
         <h1 class="brand-title">
             Naija Pocket Business Center
         </h1>
@@ -760,15 +861,16 @@ button:disabled{
         <div class="brand-subtitle">
             Your Business Center
         </div>
-
     </div>
 
-    <div id="serviceBadge" class="service-badge">
+    <div
+        id="serviceBadge"
+        class="service-badge"
+    >
         Service
     </div>
 
 </header>
-
 
 <main class="main">
 
@@ -776,22 +878,33 @@ button:disabled{
 
 <section id="formView">
 
-    <div class="intro-card" id="introCard">
+    <div
+        class="intro-card"
+        id="introCard"
+    >
 
-        <h2 id="introTitle" class="intro-title">
+        <h2
+            id="introTitle"
+            class="intro-title"
+        >
             Let's get started
         </h2>
 
-        <p id="introText" class="intro-text">
+        <p
+            id="introText"
+            class="intro-text"
+        >
             Please wait while we prepare useful information for this service.
         </p>
 
-        <div id="price" class="price">
+        <div
+            id="price"
+            class="price"
+        >
             Service
         </div>
 
     </div>
-
 
     <div class="form-card">
 
@@ -803,16 +916,16 @@ button:disabled{
             Fill in the information relevant to your request. Optional fields can be left blank.
         </p>
 
-
         <form id="serviceForm">
 
-            <div id="fields" class="fields"></div>
-
+            <div
+                id="fields"
+                class="fields"
+            ></div>
 
             <div class="form-note">
                 When you tap <strong>SEND</strong>, your information will be sent for processing and your prepared work will open immediately in the review area.
             </div>
-
 
             <button
                 id="formSubmit"
@@ -828,8 +941,10 @@ button:disabled{
 
 </section>
 
-
-<section id="reviewView" class="review-view">
+<section
+    id="reviewView"
+    class="review-view"
+>
 
     <div class="review-header">
 
@@ -838,15 +953,20 @@ button:disabled{
         </h2>
 
         <p class="review-subtitle">
-            Review the prepared work and request any changes you need before approval.
+            Read through your prepared work carefully. You can request corrections before approving it.
         </p>
 
     </div>
 
+    <div
+        id="workCard"
+        class="work-card"
+    >
 
-    <div id="workCard" class="work-card">
-
-        <div id="workContent" class="work-content">
+        <div
+            id="workContent"
+            class="work-content"
+        >
 
             <div class="work-placeholder">
                 Your prepared work will appear here.
@@ -855,7 +975,6 @@ button:disabled{
         </div>
 
     </div>
-
 
     <div class="correction-card">
 
@@ -873,7 +992,6 @@ button:disabled{
             placeholder="Write your corrections or changes here..."
         ></textarea>
 
-
         <div class="review-actions">
 
             <button
@@ -883,7 +1001,6 @@ button:disabled{
             >
                 Apply My Corrections
             </button>
-
 
             <button
                 id="approveButton"
@@ -897,7 +1014,6 @@ button:disabled{
 
     </div>
 
-
     <button
         id="downloadButton"
         class="download-button"
@@ -907,21 +1023,23 @@ button:disabled{
         🔒 Download Your Work
     </button>
 
-
     <div class="payment-message">
-        Payment must be confirmed before download.
+        Payment must be confirmed before the download button becomes active.
     </div>
 
-
-    <div id="paymentPanel" class="payment-panel">
+    <div
+        id="paymentPanel"
+        class="payment-panel"
+    >
 
         <div class="payment-title">
             Payment
         </div>
 
-
-        <div id="paymentDetails" class="payment-details"></div>
-
+        <div
+            id="paymentDetails"
+            class="payment-details"
+        ></div>
 
         <div class="payment-buttons">
 
@@ -932,7 +1050,6 @@ button:disabled{
             >
                 Report Payment
             </button>
-
 
             <button
                 id="paymentCheckButton"
@@ -952,7 +1069,6 @@ button:disabled{
 
 </main>
 
-
 <section class="bottom">
 
 <div class="bottom-inner">
@@ -964,7 +1080,6 @@ button:disabled{
         🔴 Recording... tap Voice again to stop.
     </div>
 
-
     <div class="tools">
 
         <button
@@ -975,7 +1090,6 @@ button:disabled{
             📄 Upload Documents You Want To Give Us
         </button>
 
-
         <button
             id="voiceButton"
             class="tool-button gold"
@@ -983,7 +1097,6 @@ button:disabled{
         >
             🎤 Voice
         </button>
-
 
         <button
             id="customerServiceButton"
@@ -995,7 +1108,6 @@ button:disabled{
 
     </div>
 
-
     <button
         id="chooseServiceButton"
         class="choose-service-button"
@@ -1004,13 +1116,11 @@ button:disabled{
         Choose Another Service
     </button>
 
-
     <input
         id="fileInput"
         type="file"
         accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
     >
-
 
     <div class="composer">
 
@@ -1022,7 +1132,6 @@ button:disabled{
             autocomplete="off"
         ></textarea>
 
-
         <button
             id="sendButton"
             class="send-button"
@@ -1033,8 +1142,10 @@ button:disabled{
 
     </div>
 
-
-    <div id="status" class="status"></div>
+    <div
+        id="status"
+        class="status"
+    ></div>
 
 </div>
 
@@ -1042,179 +1153,154 @@ button:disabled{
 
 </div>
 
-
 <script>
 "use strict";
 
+/* =========================================================
+   API CONNECTION
+   ========================================================= */
 
-/*
-=========================================================
-CURRENT INTELLIGENCE CONNECTION
-=========================================================
+const API_BASE = "";
 
-This workspace continues to use the existing API architecture.
+const $ = id => document.getElementById(id);
 
-No replacement intelligence system is introduced here.
+const formView = $("formView");
+const reviewView = $("reviewView");
+const serviceForm = $("serviceForm");
+const fields = $("fields");
+const formSubmit = $("formSubmit");
+const serviceBadge = $("serviceBadge");
+const introTitle = $("introTitle");
+const introText = $("introText");
+const price = $("price");
+const introCard = $("introCard");
+const workCard = $("workCard");
+const workContent = $("workContent");
+const correctionInput = $("correctionInput");
+const applyBtn = $("applyCorrectionsButton");
+const approveBtn = $("approveButton");
+const downloadBtn = $("downloadButton");
+const uploadBtn = $("uploadButton");
+const voiceBtn = $("voiceButton");
+const customerBtn = $("customerServiceButton");
+const chooseBtn = $("chooseServiceButton");
+const fileInput = $("fileInput");
+const messageInput = $("messageInput");
+const sendBtn = $("sendButton");
+const status = $("status");
+const voiceRecording = $("voiceRecording");
+const paymentPanel = $("paymentPanel");
+const paymentDetails = $("paymentDetails");
+const paymentReport = $("paymentReportButton");
+const paymentCheck = $("paymentCheckButton");
 
-The existing /api/chat connection remains the intelligence
-gateway for:
+const params = new URLSearchParams(location.search);
 
-1. Service guidance
-2. Initial work creation
-3. Customer corrections
-4. Customer messages
-5. Uploaded-document context
-6. Voice-message context
-
-The existing approval, payment and download endpoints remain
-unchanged.
-=========================================================
-*/
-
-
-const API_BASE="";
-
-const $=id=>document.getElementById(id);
-
-
-const formView=$("formView");
-const reviewView=$("reviewView");
-const serviceForm=$("serviceForm");
-const fields=$("fields");
-const formSubmit=$("formSubmit");
-const serviceBadge=$("serviceBadge");
-const introTitle=$("introTitle");
-const introText=$("introText");
-const price=$("price");
-const introCard=$("introCard");
-const workCard=$("workCard");
-const workContent=$("workContent");
-const correctionInput=$("correctionInput");
-const applyBtn=$("applyCorrectionsButton");
-const approveBtn=$("approveButton");
-const downloadBtn=$("downloadButton");
-const uploadBtn=$("uploadButton");
-const voiceBtn=$("voiceButton");
-const customerBtn=$("customerServiceButton");
-const chooseBtn=$("chooseServiceButton");
-const fileInput=$("fileInput");
-const messageInput=$("messageInput");
-const sendBtn=$("sendButton");
-const status=$("status");
-const voiceRecording=$("voiceRecording");
-const paymentPanel=$("paymentPanel");
-const paymentDetails=$("paymentDetails");
-const paymentReport=$("paymentReportButton");
-const paymentCheck=$("paymentCheckButton");
-
-
-const params=new URLSearchParams(location.search);
-
-
-const service=(
+const service = (
     params.get("service") ||
     "Business Center Service"
 ).trim();
 
+/* =========================================================
+   IDENTIFIERS
+   ========================================================= */
 
-function id(prefix){
+function makeId(prefix){
 
-    return prefix+
-        (
-            crypto.randomUUID
-                ? crypto.randomUUID()
-                : Date.now()+"_"+Math.random().toString(36).slice(2)
-        );
+    if(
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+    ){
+        return prefix + crypto.randomUUID();
+    }
 
+    return (
+        prefix +
+        Date.now() +
+        "_" +
+        Math.random().toString(36).slice(2)
+    );
 }
 
-
-function get(k){
+function get(key){
 
     try{
-        return localStorage.getItem(k);
+        return localStorage.getItem(key);
     }catch(e){
         return null;
     }
-
 }
 
-
-function put(k,v){
+function put(key,value){
 
     try{
-        localStorage.setItem(k,v);
+        localStorage.setItem(key,value);
     }catch(e){}
-
 }
 
-
-let customerId=
+let customerId =
     get("npbc_customer_id") ||
-    id("customer_");
+    makeId("customer_");
 
 put(
     "npbc_customer_id",
     customerId
 );
 
-
-let jobId=
+let jobId =
     params.get("job_id") ||
     get("npbc_job_id") ||
-    id("job_");
+    makeId("job_");
 
 put(
     "npbc_job_id",
     jobId
 );
 
-
-let requestId=
+let requestId =
     get("npbc_client_request_id") ||
-    id("request_");
+    makeId("request_");
 
 put(
     "npbc_client_request_id",
     requestId
 );
 
-
-let busy=false;
-let approved=false;
-let paymentConfirmed=false;
-let currentWork="";
-let mediaRecorder=null;
-let recordedChunks=[];
-let recordingStream=null;
-
-
 /* =========================================================
-   BASIC HELPERS
+   STATE
    ========================================================= */
 
-function clean(v){
+let busy = false;
+let approved = false;
+let paymentConfirmed = false;
+let currentWork = "";
 
-    if(v==null){
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordingStream = null;
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function clean(value){
+
+    if(value == null){
         return null;
     }
 
-    return String(v).trim() || null;
-
+    return String(value).trim() || null;
 }
 
+function setStatus(message,type=""){
 
-function setStatus(m,t=""){
-
-    status.textContent=m||"";
-    status.className="status "+t;
-
+    status.textContent = message || "";
+    status.className = "status " + type;
 }
 
+function busyState(value){
 
-function busyState(v){
-
-    busy=v;
+    busy = value;
 
     [
         formSubmit,
@@ -1225,94 +1311,78 @@ function busyState(v){
         chooseBtn,
         applyBtn,
         approveBtn
-    ].forEach(x=>{
+    ].forEach(button => {
 
-        if(x){
-            x.disabled=v;
-        }
+        button.disabled = value;
 
     });
-
 }
 
-
 /* =========================================================
-   DOCUMENT HTML RENDERER
+   DOCUMENT RENDERER
    ========================================================= */
 
 function removeHtmlCodeFences(value){
 
-    let html=String(value||"").trim();
+    let html = String(value || "").trim();
 
-
-    html=html.replace(
+    html = html.replace(
         /^```(?:html|HTML)?\s*/i,
         ""
     );
 
-
-    html=html.replace(
+    html = html.replace(
         /\s*```$/i,
         ""
     );
 
-
     return html.trim();
-
 }
-
 
 function looksLikeHtml(value){
 
-    const text=String(value||"").trim();
+    const text = String(value || "").trim();
 
-
-    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tr|th|td|blockquote|pre|code|br)\b[^>]*>/i.test(text);
-
+    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i.test(text);
 }
 
+/*
+    Sanitize returned document HTML without destroying
+    the actual document text or structure.
+*/
 
 function sanitizeDocumentHtml(html){
 
-    const source=document.createElement("div");
+    const source = document.createElement("div");
 
-    source.innerHTML=html;
+    source.innerHTML = html;
 
-
-    const blocked=source.querySelectorAll(
+    const blocked = source.querySelectorAll(
         "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
     );
 
+    blocked.forEach(element => {
+        element.remove();
+    });
 
-    blocked.forEach(
-        el=>el.remove()
-    );
-
-
-    const allowedTags=new Set([
-
+    const allowedTags = new Set([
         "H1",
         "H2",
         "H3",
         "H4",
         "H5",
         "H6",
-
         "P",
-
         "STRONG",
         "B",
         "EM",
         "I",
         "U",
-
         "UL",
         "OL",
         "LI",
-
         "HR",
         "BR",
-
         "TABLE",
         "THEAD",
         "TBODY",
@@ -1320,49 +1390,32 @@ function sanitizeDocumentHtml(html){
         "TR",
         "TH",
         "TD",
-
         "BLOCKQUOTE",
-
         "PRE",
         "CODE",
-
         "DIV",
         "SPAN",
-
         "A",
         "IMG"
-
     ]);
-
 
     function cleanNode(node){
 
-        if(
-            node.nodeType===
-            Node.TEXT_NODE
-        ){
+        if(node.nodeType === Node.TEXT_NODE){
             return;
         }
 
-
-        if(
-            node.nodeType!==
-            Node.ELEMENT_NODE
-        ){
+        if(node.nodeType !== Node.ELEMENT_NODE){
 
             node.remove();
-
             return;
         }
 
-
-        const tag=node.tagName;
-
+        const tag = node.tagName;
 
         if(!allowedTags.has(tag)){
 
-            const parent=node.parentNode;
-
+            const parent = node.parentNode;
 
             if(parent){
 
@@ -1372,65 +1425,47 @@ function sanitizeDocumentHtml(html){
                         node.firstChild,
                         node
                     );
-
                 }
 
-
                 node.remove();
-
             }
 
-
             return;
-
         }
 
-
         /*
-        Keep only safe presentation-related
-        attributes.
+            Only retain safe document attributes.
         */
 
-        [
-            ...node.attributes
-        ].forEach(attr=>{
+        [...node.attributes].forEach(attr => {
 
-            const name=
-                attr.name.toLowerCase();
+            const name = attr.name.toLowerCase();
 
-
-            const keep=
-                name==="href" ||
-                name==="src" ||
-                name==="alt" ||
-                name==="title";
-
+            const keep =
+                name === "href" ||
+                name === "src" ||
+                name === "alt" ||
+                name === "title";
 
             if(!keep){
 
                 node.removeAttribute(
                     attr.name
                 );
-
             }
-
         });
 
+        if(tag === "A"){
 
-        if(tag==="A"){
-
-            const href=
-                node.getAttribute("href")||"";
-
+            const href =
+                node.getAttribute("href") || "";
 
             if(
                 !/^https?:\/\//i.test(href) &&
                 !/^mailto:/i.test(href)
             ){
 
-                node.removeAttribute(
-                    "href"
-                );
+                node.removeAttribute("href");
 
             }else{
 
@@ -1439,22 +1474,17 @@ function sanitizeDocumentHtml(html){
                     "_blank"
                 );
 
-
                 node.setAttribute(
                     "rel",
                     "noopener noreferrer"
                 );
-
             }
-
         }
 
+        if(tag === "IMG"){
 
-        if(tag==="IMG"){
-
-            const src=
-                node.getAttribute("src")||"";
-
+            const src =
+                node.getAttribute("src") || "";
 
             if(
                 !/^https?:\/\//i.test(src) &&
@@ -1464,109 +1494,91 @@ function sanitizeDocumentHtml(html){
                 node.remove();
 
                 return;
-
             }
-
         }
 
-
-        [
-            ...node.childNodes
-        ].forEach(cleanNode);
-
+        [...node.childNodes].forEach(
+            cleanNode
+        );
     }
 
-
-    [
-        ...source.childNodes
-    ].forEach(cleanNode);
-
+    [...source.childNodes].forEach(
+        cleanNode
+    );
 
     return source.innerHTML;
-
 }
 
+/*
+    IMPORTANT:
+    No height measurement.
+    No truncation.
+    No max-height.
+    No clipping.
+*/
 
 function renderDocument(work){
 
-    const raw=
-        clean(work)||"";
+    const raw = clean(work) || "";
 
-
-    workContent.innerHTML="";
-
+    workContent.innerHTML = "";
 
     workContent.classList.remove(
         "document-html"
     );
 
-
     if(!raw){
 
-        const placeholder=
+        const placeholder =
             document.createElement("div");
 
-
-        placeholder.className=
+        placeholder.className =
             "work-placeholder";
 
-
-        placeholder.textContent=
+        placeholder.textContent =
             "Your prepared work will appear here.";
-
 
         workContent.appendChild(
             placeholder
         );
 
-
         return;
-
     }
 
-
-    const cleaned=
+    const cleaned =
         removeHtmlCodeFences(raw);
 
+    if(looksLikeHtml(cleaned)){
 
-    if(
-        looksLikeHtml(cleaned)
-    ){
-
-        const safeHtml=
+        const safeHtml =
             sanitizeDocumentHtml(
                 cleaned
             );
-
 
         workContent.classList.add(
             "document-html"
         );
 
-
-        workContent.innerHTML=
+        workContent.innerHTML =
             safeHtml;
 
     }else{
 
         /*
-        Normal intelligence text remains text.
-        Actual document HTML is rendered as HTML.
+            textContent deliberately preserves the
+            complete response as plain text.
         */
 
-        workContent.textContent=
+        workContent.textContent =
             cleaned;
-
     }
-
 }
-
 
 /* =========================================================
    SERVICE FORMS
    ========================================================= */
 
-const generic=[
+const generic = [
 
     {
         name:"request",
@@ -1592,8 +1604,7 @@ const generic=[
 
 ];
 
-
-const forms={
+const forms = {
 
     "document formatting":[
 
@@ -1636,7 +1647,6 @@ const forms={
 
     ],
 
-
     "research assistance":[
 
         {
@@ -1669,7 +1679,6 @@ const forms={
         }
 
     ],
-
 
     "seminar papers":[
 
@@ -1705,7 +1714,6 @@ const forms={
 
     ],
 
-
     "essay writing":[
 
         {
@@ -1739,7 +1747,6 @@ const forms={
         }
 
     ],
-
 
     "cv writing":[
 
@@ -1791,152 +1798,115 @@ const forms={
 
 };
 
-
 function definition(){
 
-    const s=
+    const s =
         service.toLowerCase();
 
-
-    const key=
+    const key =
         Object.keys(forms).find(
-            k=>s.includes(k)
+            k => s.includes(k)
         );
-
 
     return key
         ? forms[key]
         : generic;
-
 }
-
 
 function renderForm(){
 
-    fields.innerHTML="";
+    fields.innerHTML = "";
 
+    definition().forEach(f => {
 
-    definition().forEach(f=>{
+        const wrapper =
+            document.createElement("div");
 
-        const wrapper=
+        const label =
+            document.createElement("label");
+
+        const input =
             document.createElement(
-                "div"
-            );
-
-
-        const label=
-            document.createElement(
-                "label"
-            );
-
-
-        const input=
-            document.createElement(
-                f.type==="textarea"
+                f.type === "textarea"
                     ? "textarea"
                     : "input"
             );
 
+        wrapper.className = "field";
 
-        wrapper.className="field";
+        label.htmlFor = f.name;
 
-
-        label.htmlFor=
-            f.name;
-
-
-        label.innerHTML=
-            f.label+
+        label.innerHTML =
+            f.label +
             (
                 f.required
                     ? ' <span class="required">*</span>'
                     : ' <span class="optional">(optional)</span>'
             );
 
+        input.id = f.name;
 
-        input.id=
-            f.name;
+        input.name = f.name;
 
-
-        input.name=
-            f.name;
-
-
-        input.placeholder=
-            f.placeholder||"";
-
+        input.placeholder =
+            f.placeholder || "";
 
         if(f.required){
-            input.required=true;
+
+            input.required = true;
         }
 
+        if(f.type !== "textarea"){
 
-        if(
-            f.type!=="textarea"
-        ){
-            input.type=
-                f.type||"text";
+            input.type =
+                f.type || "text";
         }
-
 
         wrapper.append(
             label,
             input
         );
 
-
         fields.appendChild(
             wrapper
         );
 
     });
-
 }
-
 
 function collect(){
 
-    const d={};
-
+    const data = {};
 
     serviceForm
         .querySelectorAll(
             "input,textarea,select"
         )
-        .forEach(e=>{
+        .forEach(element => {
 
-            const v=
-                clean(e.value);
+            const value =
+                clean(element.value);
 
+            if(value){
 
-            if(v){
-                d[e.name]=v;
+                data[element.name] =
+                    value;
             }
 
         });
 
-
-    return d;
-
+    return data;
 }
-
 
 /* =========================================================
    API
    ========================================================= */
 
-function guidancePrompt(){
-
-    return `The customer has just selected this service: ${service}. Prepare a short, clear customer-facing introduction explaining what the service does, what the customer will receive, the current fee or that quotation is required, useful information to prepare, practical tips specific to the service, and useful documents they may upload. Do not create the actual work yet. Do not ask for payment yet. Do not mention internal software, models, APIs or providers. Write concise, friendly Nigerian English.`;
-
-}
-
-
 async function apiChat(body){
 
-    const r=
+    const response =
         await fetch(
-            API_BASE+"/api/chat",
+            API_BASE + "/api/chat",
             {
                 method:"POST",
 
@@ -1950,36 +1920,46 @@ async function apiChat(body){
             }
         );
 
-
-    const d=
-        await r.json().catch(
-            ()=>({})
-        );
-
+    const data =
+        await response
+            .json()
+            .catch(
+                () => ({})
+            );
 
     if(
-        !r.ok ||
-        !d.success
+        !response.ok ||
+        !data.success
     ){
 
         throw new Error(
-            d.reply ||
-            d.message ||
-            d.error ||
+            data.reply ||
+            data.message ||
+            data.error ||
             "Request failed."
         );
-
     }
 
-
-    return d;
-
+    return data;
 }
-
 
 /* =========================================================
    GUIDANCE
    ========================================================= */
+
+function guidancePrompt(){
+
+    return `
+The customer has just selected this service: ${service}.
+
+Prepare a short, clear customer-facing introduction explaining what the service does, what the customer will receive, the current fee or that quotation is required, useful information to prepare, practical tips specific to the service, and useful documents they may upload.
+
+Do not create the actual work yet.
+Do not ask for payment yet.
+Do not mention internal software, models, APIs or providers.
+Write concise, friendly Nigerian English.
+`;
+}
 
 async function loadGuidance(){
 
@@ -1987,10 +1967,9 @@ async function loadGuidance(){
         "Preparing useful information for this service..."
     );
 
-
     try{
 
-        const d=
+        const data =
             await apiChat({
 
                 message:
@@ -2021,86 +2000,78 @@ async function loadGuidance(){
 
             });
 
-
-        introTitle.textContent=
+        introTitle.textContent =
             service;
 
-
-        introText.textContent=
-            clean(d.reply) ||
+        introText.textContent =
+            clean(data.reply) ||
             "Please provide the information requested below.";
 
+        const amount =
+            data.amount ||
+            data.price ||
+            data.service_amount;
 
-        const a=
-            d.amount ||
-            d.price ||
-            d.service_amount;
+        if(amount){
 
-
-        if(a){
-
-            price.textContent=
-                "Service fee: ₦"+
+            const numericAmount =
                 Number(
-                    String(a)
+                    String(amount)
                         .replace(
                             /[^0-9.]/g,
                             ""
                         )
-                ).toLocaleString();
+                );
+
+            price.textContent =
+                "Service fee: ₦" +
+                numericAmount.toLocaleString();
 
         }else if(
             /₦\s?[\d,]+/.test(
-                d.reply||""
+                data.reply || ""
             )
         ){
 
-            price.textContent=
-                "Service fee: "+
+            price.textContent =
+                "Service fee: " +
                 (
-                    d.reply.match(
+                    data.reply.match(
                         /₦\s?[\d,]+/
-                    )||[""]
+                    ) || [""]
                 )[0];
 
         }else if(
             /quotation/i.test(
-                d.reply||""
+                data.reply || ""
             )
         ){
 
-            price.textContent=
+            price.textContent =
                 "Service fee: Quotation required";
 
         }else{
 
-            price.textContent=
-                "Service: "+service;
-
+            price.textContent =
+                "Service: " + service;
         }
-
 
         setStatus("");
 
-    }catch(e){
+    }catch(error){
 
-        introText.textContent=
+        introText.textContent =
             "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
 
-
-        price.textContent=
-            "Service: "+service;
-
+        price.textContent =
+            "Service: " + service;
 
         setStatus(
             "You can still complete the form or ask a question below.",
             "error"
         );
-
     }
-
 }
-
 
 /* =========================================================
    WORK CREATION
@@ -2108,12 +2079,26 @@ async function loadGuidance(){
 
 function creationPrompt(data){
 
-    return `The customer has completed the service information form. Create the actual requested work now.
+    return `
+The customer has completed the service information form.
 
-Return the complete work so it can be reviewed here.
+Create the actual requested work now.
+
+Return the COMPLETE requested work so it can be reviewed here.
 
 IMPORTANT DOCUMENT OUTPUT RULE:
-When the requested work is a document, return it as properly structured HTML using normal document elements such as <h1>, <h2>, <h3>, <p>, <strong>, <em>, <ul>, <ol>, <li>, <hr>, <table>, <tr>, <th>, and <td> where appropriate.
+
+When the requested work is a document, return the complete document as properly structured HTML using normal document elements such as <h1>, <h2>, <h3>, <p>, <strong>, <em>, <ul>, <ol>, <li>, <hr>, <table>, <tr>, <th>, and <td> where appropriate.
+
+The requested length must be respected.
+
+If the customer requests a specific number of pages, produce enough complete content to reasonably fill that requested length.
+
+Do not deliberately shorten the work.
+
+For academic papers, include all necessary sections and finish the complete paper, including the conclusion and references where appropriate.
+
+Do not stop after an introduction or a few sections.
 
 Do not wrap the HTML in markdown code fences.
 
@@ -2123,32 +2108,31 @@ The HTML itself is the document that should be displayed to the customer for rev
 
 Do not ask for an email address or send the customer elsewhere unless genuinely required.
 
-SERVICE: ${service}
+SERVICE:
+${service}
 
 CUSTOMER FORM INFORMATION:
 
 ${Object.entries(data)
     .map(
-        ([k,v])=>`${k}:\n${v}`
+        ([key,value]) =>
+            `${key}:\n${value}`
     )
-    .join("\n\n")}`;
-
+    .join("\n\n")}
+`;
 }
-
 
 async function createWork(data){
 
     busyState(true);
 
-
     setStatus(
         "Preparing your work..."
     );
 
-
     try{
 
-        const d=
+        const result =
             await apiChat({
 
                 message:
@@ -2176,51 +2160,44 @@ async function createWork(data){
 
                 create_work:
                     true
-
             });
 
+        if(result.job_id){
 
-        if(d.job_id){
-
-            jobId=
-                d.job_id;
-
+            jobId =
+                result.job_id;
 
             put(
                 "npbc_job_id",
                 jobId
             );
-
         }
 
+        currentWork =
+            result.reply ||
+            "Your work has been prepared.";
 
         showReview(
-            d.reply ||
-            "Your work has been prepared."
+            currentWork
         );
-
 
         setStatus(
             "Your work is ready for review.",
             "success"
         );
 
-
-    }catch(e){
+    }catch(error){
 
         setStatus(
-            e.message,
+            error.message,
             "error"
         );
 
     }finally{
 
         busyState(false);
-
     }
-
 }
-
 
 /* =========================================================
    REVIEW
@@ -2228,87 +2205,71 @@ async function createWork(data){
 
 function showReview(work){
 
-    formView.style.display=
+    formView.style.display =
         "none";
-
 
     reviewView.classList.add(
         "show"
     );
 
-
-    currentWork=
-        work||"";
-
-
-    /*
-    Important:
-    The intelligence response is preserved exactly as
-    received. Only the presentation layer changes here.
-    */
+    currentWork =
+        work || "";
 
     renderDocument(
         currentWork
     );
 
-
-    correctionInput.value="";
-
+    correctionInput.value = "";
 
     paymentPanel.classList.remove(
         "show"
     );
 
+    approved = false;
+    paymentConfirmed = false;
 
-    approved=false;
-
-
-    paymentConfirmed=false;
-
-
-    downloadBtn.disabled=true;
-
+    downloadBtn.disabled = true;
 
     downloadBtn.classList.remove(
         "active"
     );
 
-
-    downloadBtn.textContent=
+    downloadBtn.textContent =
         "🔒 Download Your Work";
 
+    requestAnimationFrame(() => {
 
-    downloadBtn.onclick=null;
+        requestAnimationFrame(() => {
 
+            mainScrollTop();
 
-    mainScrollTop();
+        });
 
+    });
 }
-
 
 function mainScrollTop(){
 
-    const main=
+    const main =
         document.querySelector(
             ".main"
         );
 
-
     if(main){
 
-        main.scrollTop=0;
-
+        main.scrollTop = 0;
     }
-
 }
 
+/* =========================================================
+   FORM SUBMISSION
+   ========================================================= */
 
 serviceForm.addEventListener(
     "submit",
-    e=>{
+    event => {
 
-        e.preventDefault();
-
+        event.preventDefault();
 
         if(
             !busy &&
@@ -2318,22 +2279,18 @@ serviceForm.addEventListener(
             createWork(
                 collect()
             );
-
         }
-
     }
 );
 
-
 /* =========================================================
-   READ-ONLY CUSTOMER CONTENT
+   READ-ONLY PROTECTION
    ========================================================= */
 
 [
     introCard,
     workCard
-]
-.forEach(el=>{
+].forEach(element => {
 
     [
         "copy",
@@ -2341,36 +2298,31 @@ serviceForm.addEventListener(
         "contextmenu",
         "selectstart",
         "dragstart"
-    ].forEach(ev=>{
+    ].forEach(eventName => {
 
-        el.addEventListener(
-            ev,
-            e=>{
+        element.addEventListener(
+            eventName,
+            event => {
 
-                e.preventDefault();
+                event.preventDefault();
 
+                if(event.clipboardData){
 
-                if(e.clipboardData){
-
-                    e.clipboardData.setData(
+                    event.clipboardData.setData(
                         "text/plain",
                         ""
                     );
-
                 }
-
             }
         );
-
     });
 
-
-    el.addEventListener(
+    element.addEventListener(
         "keydown",
-        e=>{
+        event => {
 
             if(
-                (e.ctrlKey||e.metaKey) &&
+                (event.ctrlKey || event.metaKey) &&
                 [
                     "a",
                     "c",
@@ -2378,33 +2330,26 @@ serviceForm.addEventListener(
                     "s",
                     "u"
                 ].includes(
-                    e.key.toLowerCase()
+                    event.key.toLowerCase()
                 )
             ){
 
-                e.preventDefault();
-
+                event.preventDefault();
             }
-
         }
     );
 
-
-    el.addEventListener(
+    element.addEventListener(
         "mousedown",
-        e=>{
+        event => {
 
-            if(e.detail>1){
+            if(event.detail > 1){
 
-                e.preventDefault();
-
+                event.preventDefault();
             }
-
         }
     );
-
 });
-
 
 /* =========================================================
    CORRECTIONS
@@ -2412,51 +2357,63 @@ serviceForm.addEventListener(
 
 applyBtn.addEventListener(
     "click",
-    async()=>{
+    async () => {
 
-        const c=
+        const correction =
             clean(
                 correctionInput.value
             );
 
+        if(!correction){
 
-        if(!c){
-
-            return setStatus(
+            setStatus(
                 "Please write the correction or change you want.",
                 "error"
             );
 
-        }
-
-
-        if(busy){
             return;
         }
 
+        if(busy){
+
+            return;
+        }
 
         busyState(true);
-
 
         setStatus(
             "Applying your corrections..."
         );
 
-
         try{
 
-            const d=
+            const result =
                 await apiChat({
 
                     message:
-                        `Please revise the prepared work using these customer corrections:
+                        `
+Please revise the prepared work using these customer corrections:
 
-${c}
+${correction}
 
-Return the complete revised work for review.
+Return the COMPLETE revised work for review.
 
 IMPORTANT:
-If the prepared work is a document, return the complete revised document as properly structured HTML. Do not wrap the HTML in markdown code fences. Do not return the HTML source as an explanation.`,
+
+If the prepared work is a document, return the complete revised document as properly structured HTML.
+
+Preserve the full document.
+
+Do not shorten it merely to save space.
+
+Do not remove sections that were not requested to be changed.
+
+Do not stop before the conclusion or final section.
+
+Do not wrap the HTML in markdown code fences.
+
+Do not return the HTML source as an explanation.
+`,
 
                     service,
 
@@ -2475,87 +2432,49 @@ If the prepared work is a document, return the complete revised document as prop
                     current_work:
                         currentWork,
 
-                    correction:
-                        c,
+                    correction,
 
                     activate_intelligence:
                         true,
 
                     create_work:
                         true
-
                 });
 
-
-            /*
-            Preserve the intelligence response as the
-            new current work.
-            */
-
-            currentWork=
-                d.reply ||
+            currentWork =
+                result.reply ||
                 currentWork;
-
 
             renderDocument(
                 currentWork
             );
 
-
-            correctionInput.value="";
-
-
-            /*
-            A correction produces a new version of the
-            work, so approval must be made against the
-            newly reviewed version.
-            */
-
-            approved=false;
-
-            paymentConfirmed=false;
-
-            paymentPanel.classList.remove(
-                "show"
-            );
-
-            downloadBtn.disabled=true;
-
-            downloadBtn.classList.remove(
-                "active"
-            );
-
-            downloadBtn.textContent=
-                "🔒 Download Your Work";
-
-            downloadBtn.onclick=null;
-
+            correctionInput.value = "";
 
             setStatus(
                 "Your corrections have been applied. Please review the updated work.",
                 "success"
             );
 
+            requestAnimationFrame(() => {
 
-            mainScrollTop();
+                mainScrollTop();
 
+            });
 
-        }catch(e){
+        }catch(error){
 
             setStatus(
-                e.message,
+                error.message,
                 "error"
             );
 
         }finally{
 
             busyState(false);
-
         }
-
     }
 );
-
 
 /* =========================================================
    APPROVAL
@@ -2563,26 +2482,23 @@ If the prepared work is a document, return the complete revised document as prop
 
 approveBtn.addEventListener(
     "click",
-    async()=>{
+    async () => {
 
         if(busy){
+
             return;
         }
 
-
         busyState(true);
-
 
         setStatus(
             "Preparing your payment step..."
         );
 
-
         try{
 
-            const q=
+            const query =
                 new URLSearchParams({
-
                     customer_id:
                         customerId,
 
@@ -2593,86 +2509,77 @@ approveBtn.addEventListener(
                         requestId,
 
                     service
-
                 });
 
-
-            const r=
+            const response =
                 await fetch(
-                    API_BASE+
-                    "/api/approve?"+
-                    q,
+                    API_BASE +
+                    "/api/approve?" +
+                    query.toString(),
                     {
                         method:"POST"
                     }
                 );
 
-
-            const d=
-                await r.json().catch(
-                    ()=>({})
-                );
-
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
 
             if(
-                !r.ok ||
-                !d.success
+                !response.ok ||
+                !data.success
             ){
 
                 throw new Error(
-                    d.message ||
+                    data.message ||
                     "Approval could not be completed."
                 );
-
             }
 
-
-            approved=true;
-
+            approved = true;
 
             paymentPanel.classList.add(
                 "show"
             );
 
+            const amount =
+                Number(data.amount || 0);
 
-            paymentDetails.textContent=
-                `Service: ${d.service||service}
+            paymentDetails.textContent =
+                `Service: ${data.service || service}
 Amount: ${
-    Number(d.amount||0)>0
-        ? "₦"+Number(d.amount).toLocaleString()
+    amount > 0
+        ? "₦" + amount.toLocaleString()
         : "Quotation required"
 }
-Order: ${d.order_number||"Pending"}`;
-
+Order: ${data.order_number || "Pending"}`;
 
             setStatus(
                 "Your work is approved. Payment is ready.",
                 "success"
             );
 
-
             paymentPanel.scrollIntoView({
                 behavior:"smooth",
                 block:"center"
             });
 
-
-        }catch(e){
+        }catch(error){
 
             setStatus(
-                e.message,
+                error.message,
                 "error"
             );
 
         }finally{
 
             busyState(false);
-
         }
-
     }
 );
-
 
 /* =========================================================
    PAYMENT
@@ -2680,50 +2587,49 @@ Order: ${d.order_number||"Pending"}`;
 
 paymentReport.addEventListener(
     "click",
-    async()=>{
+    async () => {
 
         if(!approved){
 
-            return setStatus(
+            setStatus(
                 "Approve the work first.",
                 "error"
             );
 
+            return;
         }
 
-
-        const m=
+        const amountMatch =
             paymentDetails.textContent.match(
                 /Amount:\s*([^\n]+)/
             );
 
-
-        const amount=
-            m
+        const amount =
+            amountMatch
                 ? Number(
-                    m[1].replace(
-                        /[^0-9.]/g,
-                        ""
-                    )
+                    amountMatch[1]
+                        .replace(
+                            /[^0-9.]/g,
+                            ""
+                        )
                 )
                 : 0;
 
+        if(amount <= 0){
 
-        if(amount<=0){
-
-            return setStatus(
+            setStatus(
                 "This service requires a quotation before payment.",
                 "error"
             );
 
+            return;
         }
-
 
         try{
 
-            const r=
+            const response =
                 await fetch(
-                    API_BASE+
+                    API_BASE +
                     "/api/payment/create",
                     {
                         method:"POST",
@@ -2733,69 +2639,61 @@ paymentReport.addEventListener(
                                 "application/json"
                         },
 
-                        body:JSON.stringify({
+                        body:
+                            JSON.stringify({
 
-                            job_id:
-                                jobId,
+                                job_id:
+                                    jobId,
 
-                            customer_id:
-                                customerId,
+                                customer_id:
+                                    customerId,
 
-                            service,
+                                service,
 
-                            amount,
+                                amount,
 
-                            payment_method:
-                                "bank_transfer"
-
-                        })
-
+                                payment_method:
+                                    "bank_transfer"
+                            })
                     }
                 );
 
-
-            const d=
-                await r.json().catch(
-                    ()=>({})
-                );
-
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
 
             if(
-                !r.ok ||
-                !d.success
+                !response.ok ||
+                !data.success
             ){
 
                 throw new Error(
-                    d.message ||
+                    data.message ||
                     "Payment record could not be created."
                 );
-
             }
 
-
-            paymentDetails.textContent+=
-                `\nPayment ID: ${d.payment_id}
+            paymentDetails.textContent +=
+                `\nPayment ID: ${data.payment_id}
 Status: Pending`;
-
 
             setStatus(
                 "Payment reported. Verification is pending.",
                 "success"
             );
 
-
-        }catch(e){
+        }catch(error){
 
             setStatus(
-                e.message,
+                error.message,
                 "error"
             );
-
         }
-
     }
 );
-
 
 /* =========================================================
    PAYMENT STATUS / DOWNLOAD
@@ -2803,107 +2701,93 @@ Status: Pending`;
 
 paymentCheck.addEventListener(
     "click",
-    async()=>{
+    async () => {
 
         try{
 
-            const r=
+            const response =
                 await fetch(
-                    API_BASE+
-                    "/api/payment/status?job_id="+
+                    API_BASE +
+                    "/api/payment/status?job_id=" +
                     encodeURIComponent(
                         jobId
                     )
                 );
 
-
-            const d=
-                await r.json().catch(
-                    ()=>({})
-                );
-
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
 
             if(
-                !r.ok ||
-                !d.success
+                !response.ok ||
+                !data.success
             ){
 
                 throw new Error(
-                    d.message ||
+                    data.message ||
                     "Payment status could not be checked."
                 );
-
             }
-
 
             if(
                 String(
-                    d.status||""
-                ).toLowerCase()==="paid"
+                    data.status || ""
+                ).toLowerCase() === "paid"
             ){
 
-                paymentConfirmed=true;
+                paymentConfirmed = true;
 
-
-                downloadBtn.disabled=false;
-
+                downloadBtn.disabled =
+                    false;
 
                 downloadBtn.classList.add(
                     "active"
                 );
 
-
-                downloadBtn.textContent=
+                downloadBtn.textContent =
                     "⬇ Download Your Work";
 
+                downloadBtn.onclick = () => {
 
-                downloadBtn.onclick=()=>{
-
-                    location.href=
-                        API_BASE+
-                        "/api/download?job_id="+
+                    location.href =
+                        API_BASE +
+                        "/api/download?job_id=" +
                         encodeURIComponent(
                             jobId
-                        )+
-                        "&customer_id="+
+                        ) +
+                        "&customer_id=" +
                         encodeURIComponent(
                             customerId
                         );
-
                 };
 
-
-                paymentDetails.textContent+=
+                paymentDetails.textContent +=
                     "\nStatus: Paid";
-
 
                 setStatus(
                     "Payment confirmed. Your download is now available.",
                     "success"
                 );
 
-
             }else{
 
                 setStatus(
                     "Payment is still pending."
                 );
-
             }
 
-
-        }catch(e){
+        }catch(error){
 
             setStatus(
-                e.message,
+                error.message,
                 "error"
             );
-
         }
-
     }
 );
-
 
 /* =========================================================
    UPLOAD
@@ -2911,134 +2795,112 @@ paymentCheck.addEventListener(
 
 uploadBtn.addEventListener(
     "click",
-    ()=>{
+    () => {
 
         if(!busy){
 
             fileInput.click();
-
         }
-
     }
 );
 
-
 fileInput.addEventListener(
     "change",
-    async()=>{
+    async () => {
 
-        const f=
+        const file =
             fileInput.files?.[0];
 
+        if(!file){
 
-        if(!f){
             return;
         }
 
-
-        const fd=
+        const formData =
             new FormData();
 
-
-        fd.append(
+        formData.append(
             "file",
-            f
+            file
         );
 
-
-        fd.append(
+        formData.append(
             "customer_id",
             customerId
         );
 
-
-        fd.append(
+        formData.append(
             "job_id",
             jobId
         );
 
-
-        fd.append(
+        formData.append(
             "client_request_id",
             requestId
         );
 
-
-        fd.append(
+        formData.append(
             "service",
             service
         );
-
 
         setStatus(
             "Uploading the document you want to give us..."
         );
 
-
         try{
 
-            const r=
+            const response =
                 await fetch(
-                    API_BASE+
+                    API_BASE +
                     "/api/upload",
                     {
                         method:"POST",
-                        body:fd
+                        body:formData
                     }
                 );
 
-
-            const d=
-                await r.json().catch(
-                    ()=>({})
-                );
-
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
 
             if(
-                !r.ok ||
-                !d.success
+                !response.ok ||
+                !data.success
             ){
 
                 throw new Error(
-                    d.message ||
+                    data.message ||
                     "Document upload failed."
                 );
-
             }
-
 
             setStatus(
                 "Your document has been received successfully.",
                 "success"
             );
 
-
-            /*
-            Existing intelligence connection is preserved.
-            */
-
             await sendMessage(
                 "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.",
                 "document_uploaded"
             );
 
-
-        }catch(e){
+        }catch(error){
 
             setStatus(
-                e.message,
+                error.message,
                 "error"
             );
 
         }finally{
 
-            fileInput.value="";
-
+            fileInput.value = "";
         }
-
     }
 );
-
 
 /* =========================================================
    CUSTOMER MESSAGES
@@ -3050,21 +2912,19 @@ async function sendMessage(
 ){
 
     if(busy){
+
         return null;
     }
 
-
     busyState(true);
-
 
     setStatus(
         "Processing your message..."
     );
 
-
     try{
 
-        const d=
+        const data =
             await apiChat({
 
                 message,
@@ -3090,169 +2950,117 @@ async function sendMessage(
 
                 create_work:
                     true
-
             });
 
+        if(data.job_id){
 
-        if(d.job_id){
-
-            jobId=
-                d.job_id;
-
+            jobId =
+                data.job_id;
 
             put(
                 "npbc_job_id",
                 jobId
             );
-
         }
 
-
         if(
-            d.reply &&
+            data.reply &&
             reviewView.classList.contains(
                 "show"
             )
         ){
 
-            currentWork=
-                d.reply;
-
+            currentWork =
+                data.reply;
 
             renderDocument(
                 currentWork
             );
-
-
-            /*
-            New intelligence output means the customer
-            must review the latest version again.
-            */
-
-            approved=false;
-
-            paymentConfirmed=false;
-
-            paymentPanel.classList.remove(
-                "show"
-            );
-
-            downloadBtn.disabled=true;
-
-            downloadBtn.classList.remove(
-                "active"
-            );
-
-            downloadBtn.textContent=
-                "🔒 Download Your Work";
-
-            downloadBtn.onclick=null;
-
         }
-
 
         setStatus(
             "Ready for your next instruction.",
             "success"
         );
 
+        return data;
 
-        return d;
-
-
-    }catch(e){
+    }catch(error){
 
         setStatus(
-            e.message,
+            error.message,
             "error"
         );
 
-
         return null;
-
 
     }finally{
 
         busyState(false);
-
     }
-
 }
-
 
 sendBtn.addEventListener(
     "click",
-    ()=>{
+    () => {
 
-        const t=
+        const text =
             clean(
                 messageInput.value
             );
 
+        if(!text){
 
-        if(!t){
-
-            return setStatus(
+            setStatus(
                 "Please type your message first.",
                 "error"
             );
 
+            return;
         }
 
+        messageInput.value = "";
 
-        messageInput.value="";
-
-
-        messageInput.style.height=
+        messageInput.style.height =
             "auto";
 
-
         sendMessage(
-            t,
+            text,
             "customer_message"
         );
-
     }
 );
-
 
 messageInput.addEventListener(
     "keydown",
-    e=>{
+    event => {
 
         if(
-            e.key==="Enter" &&
-            !e.shiftKey
+            event.key === "Enter" &&
+            !event.shiftKey
         ){
 
-            e.preventDefault();
-
+            event.preventDefault();
 
             sendBtn.click();
-
         }
-
     }
 );
-
 
 messageInput.addEventListener(
     "input",
-    ()=>{
+    () => {
 
-        messageInput.style.height=
+        messageInput.style.height =
             "auto";
 
-
-        messageInput.style.height=
+        messageInput.style.height =
             Math.min(
                 messageInput.scrollHeight,
                 105
-            )+"px";
-
+            ) + "px";
     }
 );
-
 
 /* =========================================================
    CUSTOMER SERVICE
@@ -3260,26 +3068,23 @@ messageInput.addEventListener(
 
 customerBtn.addEventListener(
     "click",
-    async()=>{
+    async () => {
 
         if(busy){
+
             return;
         }
 
-
         busyState(true);
-
 
         setStatus(
             "Connecting you to Customer Service..."
         );
 
-
         try{
 
-            const q=
+            const query =
                 new URLSearchParams({
-
                     customer_id:
                         customerId,
 
@@ -3287,64 +3092,56 @@ customerBtn.addEventListener(
                         jobId,
 
                     service
-
                 });
 
-
-            const r=
+            const response =
                 await fetch(
-                    API_BASE+
-                    "/api/customer-service?"+
-                    q,
+                    API_BASE +
+                    "/api/customer-service?" +
+                    query.toString(),
                     {
                         method:"POST"
                     }
                 );
 
-
-            const d=
-                await r.json().catch(
-                    ()=>({})
-                );
-
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
 
             if(
-                !r.ok ||
-                !d.success
+                !response.ok ||
+                !data.success
             ){
 
                 throw new Error(
-                    d.reply ||
-                    d.message ||
+                    data.reply ||
+                    data.message ||
                     "Customer Service is unavailable."
                 );
-
             }
 
-
             setStatus(
-                d.reply ||
+                data.reply ||
                 "Customer Service is available to help.",
                 "success"
             );
 
-
-        }catch(e){
+        }catch(error){
 
             setStatus(
-                e.message,
+                error.message,
                 "error"
             );
 
         }finally{
 
             busyState(false);
-
         }
-
     }
 );
-
 
 /* =========================================================
    CHOOSE ANOTHER SERVICE
@@ -3352,18 +3149,15 @@ customerBtn.addEventListener(
 
 chooseBtn.addEventListener(
     "click",
-    ()=>{
+    () => {
 
         if(!busy){
 
-            location.href=
+            location.href =
                 "conversation.html";
-
         }
-
     }
 );
-
 
 /* =========================================================
    VOICE
@@ -3371,104 +3165,92 @@ chooseBtn.addEventListener(
 
 voiceBtn.addEventListener(
     "click",
-    async()=>{
+    async () => {
 
         if(
-            mediaRecorder?.state===
+            mediaRecorder?.state ===
             "recording"
         ){
 
             mediaRecorder.stop();
 
             return;
-
         }
-
 
         if(
             !navigator.mediaDevices?.getUserMedia
         ){
 
-            return setStatus(
+            setStatus(
                 "Voice recording is not supported on this device.",
                 "error"
             );
 
+            return;
         }
-
 
         try{
 
-            recordingStream=
+            recordingStream =
                 await navigator.mediaDevices.getUserMedia({
                     audio:true
                 });
 
+            recordedChunks = [];
 
-            recordedChunks=[];
-
-
-            mediaRecorder=
+            mediaRecorder =
                 new MediaRecorder(
                     recordingStream
                 );
 
-
-            mediaRecorder.ondataavailable=
-                e=>{
+            mediaRecorder.ondataavailable =
+                event => {
 
                     if(
-                        e.data?.size
+                        event.data?.size
                     ){
 
                         recordedChunks.push(
-                            e.data
+                            event.data
                         );
-
                     }
-
                 };
 
-
-            mediaRecorder.onstop=
-                async()=>{
+            mediaRecorder.onstop =
+                async () => {
 
                     recordingStream
                         ?.getTracks()
                         .forEach(
-                            t=>t.stop()
+                            track =>
+                                track.stop()
                         );
 
-
-                    recordingStream=null;
-
+                    recordingStream = null;
 
                     voiceRecording.classList.remove(
                         "show"
                     );
 
-
-                    voiceBtn.textContent=
+                    voiceBtn.textContent =
                         "🎤 Voice";
-
 
                     if(
                         !recordedChunks.length
                     ){
 
-                        return setStatus(
+                        setStatus(
                             "No voice recording was captured.",
                             "error"
                         );
 
+                        return;
                     }
 
-
-                    const fd=
+                    const formData =
                         new FormData();
 
-
-                    fd.append(
+                    formData.append(
                         "file",
                         new Blob(
                             recordedChunks,
@@ -3480,115 +3262,92 @@ voiceBtn.addEventListener(
                         "voice_message.webm"
                     );
 
-
-                    fd.append(
+                    formData.append(
                         "customer_id",
                         customerId
                     );
 
-
-                    fd.append(
+                    formData.append(
                         "job_id",
                         jobId
                     );
 
-
-                    fd.append(
+                    formData.append(
                         "client_request_id",
                         requestId
                     );
 
-
-                    fd.append(
+                    formData.append(
                         "service",
                         service
                     );
 
-
                     try{
 
-                        const r=
+                        const response =
                             await fetch(
-                                API_BASE+
+                                API_BASE +
                                 "/api/voice",
                                 {
                                     method:"POST",
-                                    body:fd
+                                    body:formData
                                 }
                             );
 
-
-                        const d=
-                            await r.json().catch(
-                                ()=>({})
-                            );
-
+                        const data =
+                            await response
+                                .json()
+                                .catch(
+                                    () => ({})
+                                );
 
                         if(
-                            !r.ok ||
-                            !d.success
+                            !response.ok ||
+                            !data.success
                         ){
 
                             throw new Error(
-                                d.message ||
+                                data.message ||
                                 "Voice recording failed."
                             );
-
                         }
-
-
-                        /*
-                        Preserve existing intelligence flow
-                        after voice upload.
-                        */
 
                         await sendMessage(
                             "A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.",
                             "voice_uploaded"
                         );
 
-
-                    }catch(e){
+                    }catch(error){
 
                         setStatus(
-                            e.message,
+                            error.message,
                             "error"
                         );
-
                     }
-
                 };
 
-
             mediaRecorder.start();
-
 
             voiceRecording.classList.add(
                 "show"
             );
 
-
-            voiceBtn.textContent=
+            voiceBtn.textContent =
                 "⏹ Stop Voice";
-
 
             setStatus(
                 "Recording your voice..."
             );
 
-
-        }catch(e){
+        }catch(error){
 
             setStatus(
                 "Could not access your microphone.",
                 "error"
             );
-
         }
-
     }
 );
-
 
 /* =========================================================
    INITIALISE
@@ -3596,25 +3355,19 @@ voiceBtn.addEventListener(
 
 async function init(){
 
-    serviceBadge.textContent=
+    serviceBadge.textContent =
         service;
 
-
-    introTitle.textContent=
+    introTitle.textContent =
         service;
-
 
     renderForm();
 
-
     await loadGuidance();
-
 }
 
-
 init();
-
 </script>
 
 </body>
-</html> 
+</html>
