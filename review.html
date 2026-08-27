@@ -6,12 +6,18 @@
     name="viewport"
     content="width=device-width,initial-scale=1,viewport-fit=cover"
 >
-<title>Review — Naija Pocket Business Center</title>
+
+<title>
+    Review — Naija Pocket Business Center
+</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
 
-html,body{
+html,
+body{
     width:100%;
     height:100%;
     margin:0;
@@ -25,8 +31,14 @@ body{
     font-family:Inter,Arial,sans-serif;
 }
 
-button,textarea{font:inherit}
-button{cursor:pointer}
+button,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
 
 .app{
     width:100%;
@@ -38,191 +50,189 @@ button{cursor:pointer}
 }
 
 /* =========================================================
-   FIXED HEADER
-   ========================================================= */
+   HEADER
+========================================================= */
 
 .header{
     flex:0 0 auto;
-    min-height:62px;
+    min-height:64px;
     padding:9px 12px;
     background:#050505;
-    border-bottom:1px solid rgba(212,175,55,.3);
-    z-index:20;
+    border-bottom:1px solid rgba(0,128,0,.45);
+    z-index:30;
 }
 
-.header-title{
-    margin:0;
-    color:#f3d66b;
-    font-size:19px;
+.header-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.brand{
+    color:#008000;
+    font-size:clamp(18px,4vw,24px);
     font-weight:900;
+    line-height:1.15;
 }
 
-.header-text{
-    margin:4px 0 0;
-    color:#aaa;
-    font-size:10px;
+.review-title{
+    margin-top:4px;
+    color:#fff;
+    font-size:13px;
+    font-weight:800;
+}
+
+.service{
+    max-width:45%;
+    padding:6px 9px;
+    background:#111;
+    border:1px solid rgba(0,128,0,.5);
+    border-radius:20px;
+    color:#69c28e;
+    font-size:9px;
+    font-weight:900;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 /* =========================================================
-   DOCUMENT REGION
-   ========================================================= */
+   DOCUMENT AREA
+========================================================= */
 
 .document-region{
     flex:1 1 0;
     min-height:0;
-    padding:7px 7px 0;
+    padding:7px;
     overflow:hidden;
 }
 
-.document-card{
+.document-shell{
     width:100%;
     height:100%;
     display:flex;
     flex-direction:column;
     overflow:hidden;
     background:#fff;
-    color:#111;
-    border-radius:10px 10px 0 0;
+    border-radius:10px;
 }
 
-.document-bar{
+/*
+    Fixed toolbar.
+*/
+
+.document-toolbar{
     flex:0 0 auto;
-    min-height:31px;
+    min-height:35px;
     padding:0 10px;
     display:flex;
     align-items:center;
     justify-content:space-between;
+    gap:8px;
     background:#e8e8e8;
     border-bottom:1px solid #ccc;
     color:#555;
     font-size:9px;
-    font-weight:800;
+    font-weight:900;
 }
 
 /*
-    THIS is the document viewport.
+    ONLY THIS ELEMENT SCROLLS.
 
-    It has:
-      flex:1
-      min-height:0
-      overflow-y:auto
-
-    Therefore a long generated document cannot push
-    the fixed controls away or become clipped by them.
+    Therefore:
+      header stays visible
+      review controls stay visible
+      payment stays usable
+      complete document can be read
 */
+
 .document{
     flex:1 1 0;
     min-height:0;
     overflow-y:auto;
     overflow-x:hidden;
-    -webkit-overflow-scrolling:touch;
-    overscroll-behavior:contain;
 
-    padding:22px 17px 50px;
+    padding:24px 18px 60px;
 
-    color:#111;
     background:#fff;
+    color:#111;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
 
     font-size:14px;
-    line-height:1.72;
+    line-height:1.8;
 
     white-space:pre-wrap;
     overflow-wrap:anywhere;
     word-break:break-word;
 
-    user-select:none;
-    -webkit-user-select:none;
-    -webkit-touch-callout:none;
+    user-select:text;
+    -webkit-user-select:text;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
 }
 
-.document h1,
-.document h2,
-.document h3,
-.document h4,
-.document h5,
-.document h6{
-    color:#111;
+.document:focus{
+    outline:none;
 }
 
-.document p{
-    margin:0 0 13px;
-}
-
-.document ul,
-.document ol{
-    margin:8px 0 16px 25px;
-}
-
-.document li{
-    margin:5px 0;
-}
-
-.document table{
-    width:100%;
-    border-collapse:collapse;
-    margin:14px 0;
-    font-size:13px;
-}
-
-.document th,
-.document td{
-    padding:7px;
-    border:1px solid #999;
-    vertical-align:top;
-    text-align:left;
-    overflow-wrap:anywhere;
-}
-
-.document th{
-    background:#eee;
-}
-
-.placeholder{
+.empty{
     padding:70px 15px;
     color:#777;
     text-align:center;
+    font-family:Inter,Arial,sans-serif;
+    font-size:13px;
+    line-height:1.6;
 }
 
 /* =========================================================
-   FIXED REVIEW CONTROLS
-   ========================================================= */
+   REVIEW PANEL
+========================================================= */
 
 .controls{
     flex:0 0 auto;
-    max-height:40%;
-    padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+    max-height:42%;
+    padding:8px 8px calc(8px + env(safe-area-inset-bottom));
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
     background:#080808;
-    border-top:1px solid rgba(212,175,55,.3);
+    border-top:1px solid rgba(0,128,0,.4);
 }
 
-.control-title{
-    margin:0 0 4px;
+.heading{
+    margin:0 0 3px;
     color:#fff;
     font-size:13px;
     font-weight:900;
 }
 
 .help{
-    margin:0 0 6px;
+    margin:0 0 7px;
     color:#999;
     font-size:9px;
-    line-height:1.4;
+    line-height:1.45;
 }
 
 .correction{
     width:100%;
     min-height:60px;
-    max-height:115px;
-    resize:vertical;
+    max-height:120px;
     padding:9px;
+    resize:vertical;
     background:#181818;
     color:#fff;
     border:1px solid rgba(255,255,255,.14);
     border-radius:8px;
     outline:none;
     font-size:11px;
+}
+
+.correction:focus{
+    border-color:rgba(0,128,0,.7);
 }
 
 .actions{
@@ -233,7 +243,7 @@ button{cursor:pointer}
 }
 
 .action{
-    min-height:40px;
+    min-height:41px;
     border-radius:8px;
     font-size:10px;
     font-weight:900;
@@ -246,18 +256,22 @@ button{cursor:pointer}
 }
 
 .approve{
-    background:#d4af37;
-    color:#000;
+    background:#008000;
+    color:#fff;
     border:0;
 }
 
+/* =========================================================
+   PAYMENT
+========================================================= */
+
 .payment{
     display:none;
-    margin-top:6px;
-    padding:9px;
+    margin-top:7px;
+    padding:10px;
     background:#121212;
-    border:1px solid rgba(212,175,55,.35);
-    border-radius:8px;
+    border:1px solid rgba(0,128,0,.45);
+    border-radius:9px;
 }
 
 .payment.show{
@@ -265,16 +279,16 @@ button{cursor:pointer}
 }
 
 .payment-title{
-    color:#f3d66b;
-    font-size:11px;
+    color:#69c28e;
+    font-size:12px;
     font-weight:900;
 }
 
-.payment-info{
+.payment-text{
     margin-top:4px;
     color:#ddd;
     font-size:10px;
-    line-height:1.5;
+    line-height:1.55;
     white-space:pre-wrap;
 }
 
@@ -282,7 +296,7 @@ button{cursor:pointer}
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:6px;
-    margin-top:6px;
+    margin-top:7px;
 }
 
 .payment-button{
@@ -294,8 +308,8 @@ button{cursor:pointer}
 
 .report{
     border:0;
-    background:#d4af37;
-    color:#000;
+    background:#008000;
+    color:#fff;
 }
 
 .check{
@@ -304,10 +318,14 @@ button{cursor:pointer}
     color:#fff;
 }
 
+/* =========================================================
+   DOWNLOAD
+========================================================= */
+
 .download{
     width:100%;
-    min-height:40px;
-    margin-top:6px;
+    min-height:42px;
+    margin-top:7px;
     border:1px solid rgba(255,255,255,.1);
     border-radius:8px;
     background:#242424;
@@ -317,62 +335,58 @@ button{cursor:pointer}
 }
 
 .download.ready{
-    background:#168047;
-    border-color:#168047;
+    background:#008000;
+    border-color:#008000;
     color:#fff;
 }
 
+.download:disabled{
+    cursor:not-allowed;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
 .status{
-    min-height:13px;
+    min-height:14px;
     margin-top:4px;
     color:#777;
     font-size:9px;
     text-align:center;
 }
 
-.status.error{color:#ff7777}
-.status.success{color:#7bd99a}
+.status.error{
+    color:#ff7777;
+}
+
+.status.success{
+    color:#69c28e;
+}
 
 @media(max-height:700px){
 
     .header{
-        min-height:54px;
-        padding:7px 10px;
+        min-height:55px;
     }
 
-    .header-text{
+    .review-title{
         display:none;
     }
 
     .document{
-        padding:16px 12px 35px;
+        padding:16px 12px 45px;
         font-size:13px;
     }
 
     .controls{
-        max-height:37%;
-    }
-
-    .correction{
-        min-height:50px;
+        max-height:39%;
     }
 
     .action,
     .payment-button,
     .download{
         min-height:36px;
-    }
-}
-
-@media(max-width:480px){
-
-    .document-region{
-        padding:5px 5px 0;
-    }
-
-    .document{
-        padding:15px 11px 35px;
-        font-size:13px;
     }
 }
 </style>
@@ -384,26 +398,39 @@ button{cursor:pointer}
 
 <header class="header">
 
-    <h1 id="headerTitle" class="header-title">
-        Review Your Work
-    </h1>
+    <div class="header-row">
 
-    <p class="header-text">
-        Read the complete document. Scroll inside the document area
-        to see everything before approving it.
-    </p>
+        <div>
+
+            <div class="brand">
+                Naija Pocket Business Center
+            </div>
+
+            <div class="review-title">
+                Review Your Work
+            </div>
+
+        </div>
+
+        <div
+            id="service"
+            class="service"
+        >
+            Service
+        </div>
+
+    </div>
 
 </header>
 
-
 <main class="document-region">
 
-    <section class="document-card">
+    <section class="document-shell">
 
-        <div class="document-bar">
+        <div class="document-toolbar">
 
             <span>
-                PREPARED WORK
+                YOUR COMPLETE DOCUMENT
             </span>
 
             <span>
@@ -415,36 +442,32 @@ button{cursor:pointer}
         <article
             id="document"
             class="document"
+            tabindex="0"
         >
-
-            <div class="placeholder">
-                Your generated work will appear here.
+            <div class="empty">
+                Your completed work will appear here.
             </div>
-
         </article>
 
     </section>
 
 </main>
 
-
 <section class="controls">
 
-    <h2 class="control-title">
-        Need a correction?
+    <h2 class="heading">
+        Review Your Document
     </h2>
 
     <p class="help">
-        Tell Ada what you want changed. The document itself
-        is not resent with every correction.
+        Read the complete document above. If something needs to change, describe the correction below.
     </p>
 
     <textarea
         id="correction"
         class="correction"
-        placeholder="Write your correction here..."
+        placeholder="Describe the correction you want..."
     ></textarea>
-
 
     <div class="actions">
 
@@ -461,11 +484,10 @@ button{cursor:pointer}
             class="action approve"
             type="button"
         >
-            APPROVE
+            APPROVE DOCUMENT
         </button>
 
     </div>
-
 
     <div
         id="payment"
@@ -473,15 +495,13 @@ button{cursor:pointer}
     >
 
         <div class="payment-title">
-            Payment
+            PAYMENT
         </div>
 
         <div
-            id="paymentInfo"
-            class="payment-info"
-        >
-            Your approved work is ready for the payment step.
-        </div>
+            id="paymentText"
+            class="payment-text"
+        ></div>
 
         <div class="payment-actions">
 
@@ -490,7 +510,7 @@ button{cursor:pointer}
                 class="payment-button report"
                 type="button"
             >
-                REPORT PAYMENT
+                I HAVE MADE PAYMENT
             </button>
 
             <button
@@ -505,16 +525,14 @@ button{cursor:pointer}
 
     </div>
 
-
     <button
         id="downloadButton"
         class="download"
         type="button"
         disabled
     >
-        🔒 DOWNLOAD YOUR WORK
+        🔒 DOWNLOAD DOCUMENT
     </button>
-
 
     <div
         id="status"
@@ -525,96 +543,151 @@ button{cursor:pointer}
 
 </div>
 
-
 <script>
 "use strict";
 
 /*
-    REVIEW RESPONSIBILITY
+============================================================
+REVIEW PAGE
+============================================================
 
-    This file owns only:
-      - displaying the complete generated document
-      - document scrolling
-      - correction UI
-      - approval UI
-      - payment UI
-      - download UI
+This page is responsible for:
 
-    It does NOT call Groq.
-    It does NOT contain Ada prompts.
-    It does NOT contain keyword matching.
-    It does NOT duplicate Ada intelligence.
+    COMPLETE DOCUMENT
+          ↓
+       REVIEW
+          ↓
+     CORRECTION
+          ↓
+       APPROVE
+          ↓
+       PAYMENT
+          ↓
+      DOWNLOAD
 
-    It communicates with workspace.html using postMessage.
+It does NOT contain:
+- Groq
+- prompts
+- keyword matching
+- AI reasoning
+- duplicated intelligence
+
+Only correction requests go back to /api/chat.
+The complete document is NEVER resent merely for display.
+============================================================
 */
 
-
 const params =
-    new URLSearchParams(location.search);
+    new URLSearchParams(
+        location.search
+    );
 
 const service =
-    params.get("service") ||
-    "Business Center Service";
+    (
+        params.get("service") ||
+        "Business Center Service"
+    ).trim();
 
-let customerId =
+const customerId =
     params.get("customer_id") ||
+    localStorage.getItem(
+        "npbc_customer_id"
+    ) ||
     "";
 
 let jobId =
     params.get("job_id") ||
+    localStorage.getItem(
+        "npbc_job_id"
+    ) ||
     "";
 
-const headerTitle =
-    document.getElementById("headerTitle");
+const clientRequestId =
+    params.get("client_request_id") ||
+    localStorage.getItem(
+        "npbc_client_request_id"
+    ) ||
+    "";
+
+const serviceElement =
+    document.getElementById(
+        "service"
+    );
 
 const documentElement =
-    document.getElementById("document");
+    document.getElementById(
+        "document"
+    );
 
 const correction =
-    document.getElementById("correction");
+    document.getElementById(
+        "correction"
+    );
 
 const correctButton =
-    document.getElementById("correctButton");
+    document.getElementById(
+        "correctButton"
+    );
 
 const approveButton =
-    document.getElementById("approveButton");
+    document.getElementById(
+        "approveButton"
+    );
 
 const payment =
-    document.getElementById("payment");
+    document.getElementById(
+        "payment"
+    );
 
-const paymentInfo =
-    document.getElementById("paymentInfo");
+const paymentText =
+    document.getElementById(
+        "paymentText"
+    );
 
 const reportButton =
-    document.getElementById("reportButton");
+    document.getElementById(
+        "reportButton"
+    );
 
 const checkButton =
-    document.getElementById("checkButton");
+    document.getElementById(
+        "checkButton"
+    );
 
 const downloadButton =
-    document.getElementById("downloadButton");
+    document.getElementById(
+        "downloadButton"
+    );
 
 const status =
-    document.getElementById("status");
+    document.getElementById(
+        "status"
+    );
 
+let currentWork =
+    "";
 
-let busy = false;
+let approved =
+    false;
 
-let paymentReady = false;
+let busy =
+    false;
 
-let paymentConfirmed = false;
+let paymentConfirmed =
+    false;
 
-let currentWork = "";
+/*
+============================================================
+DISPLAY
+============================================================
+*/
 
-
-headerTitle.textContent =
-    "Review Your Work — " +
+serviceElement.textContent =
     service;
-
 
 function setStatus(
     text,
-    type = ""
+    type=""
 ){
 
     status.textContent =
@@ -625,36 +698,182 @@ function setStatus(
         type;
 }
 
+function setBusy(
+    value
+){
 
-function setBusy(value){
+    busy =
+        value;
 
-    busy = value;
+    correctButton.disabled =
+        value;
 
-    [
-        correctButton,
-        approveButton,
-        reportButton,
-        checkButton
-    ].forEach(button => {
+    approveButton.disabled =
+        value;
 
-        button.disabled =
-            value;
+    reportButton.disabled =
+        value;
 
-    });
+    checkButton.disabled =
+        value;
+
+    if(
+        !paymentConfirmed
+    ){
+
+        downloadButton.disabled =
+            true;
+    }
 }
 
-
 /*
-    Use textContent rather than innerHTML.
-
-    This guarantees the entire returned document is
-    displayed as document text without treating returned
-    content as executable HTML.
+============================================================
+DOCUMENT STORAGE
+============================================================
 */
-function showWork(work){
+
+function storageKey(){
+
+    return (
+        "npbc_review_" +
+        (
+            jobId ||
+            clientRequestId
+        )
+    );
+}
+
+function readDocument(){
+
+    let packet =
+        null;
+
+    try{
+
+        const raw =
+            localStorage.getItem(
+                storageKey()
+            );
+
+        if(raw){
+
+            packet =
+                JSON.parse(
+                    raw
+                );
+        }
+
+    }catch(error){
+
+        packet =
+            null;
+    }
+
+    if(!packet){
+
+        try{
+
+            const fallback =
+                sessionStorage.getItem(
+                    "npbc_review_fallback"
+                );
+
+            if(fallback){
+
+                packet =
+                    JSON.parse(
+                        fallback
+                    );
+            }
+
+        }catch(error){
+
+            packet =
+                null;
+        }
+    }
+
+    return packet;
+}
+
+function saveDocument(
+    work
+){
 
     currentWork =
-        String(work || "");
+        String(
+            work || ""
+        );
+
+    const packet = {
+
+        service,
+
+        customer_id:
+            customerId,
+
+        job_id:
+            jobId,
+
+        client_request_id:
+            clientRequestId,
+
+        work:
+            currentWork,
+
+        saved_at:
+            Date.now()
+    };
+
+    try{
+
+        localStorage.setItem(
+            storageKey(),
+            JSON.stringify(
+                packet
+            )
+        );
+
+    }catch(error){
+
+        try{
+
+            sessionStorage.setItem(
+                "npbc_review_fallback",
+                JSON.stringify(
+                    packet
+                )
+            );
+
+        }catch(storageError){}
+    }
+}
+
+function showDocument(
+    work
+){
+
+    currentWork =
+        String(
+            work || ""
+        );
+
+    if(!currentWork){
+
+        documentElement.innerHTML =
+            '<div class="empty">' +
+            'No completed document was received.' +
+            '</div>';
+
+        return;
+    }
+
+    /*
+        textContent is intentional.
+
+        The generated document is displayed as document
+        content, not interpreted as executable HTML.
+    */
 
     documentElement.textContent =
         currentWork;
@@ -663,128 +882,370 @@ function showWork(work){
         0;
 }
 
+/*
+============================================================
+EXISTING API
+============================================================
+
+Only the correction itself is sent.
+
+The current complete document remains inside the existing
+AdaResponse conversation/session on the backend.
+============================================================
+*/
+
+async function sendCorrection(
+    correctionText
+){
+
+    const payload = {
+
+        message:
+            correctionText,
+
+        service,
+
+        event:
+            "review_correction",
+
+        customer_id:
+            customerId,
+
+        job_id:
+            jobId || null,
+
+        client_request_id:
+            clientRequestId,
+
+        activate_intelligence:
+            true,
+
+        context:
+            null
+    };
+
+    const response =
+        await fetch(
+            "/api/chat",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(
+                        payload
+                    )
+            }
+        );
+
+    const data =
+        await response
+            .json()
+            .catch(
+                () => ({})
+            );
+
+    if(!response.ok){
+
+        throw new Error(
+            data.error_message ||
+            data.message ||
+            data.error ||
+            "The correction could not be processed."
+        );
+    }
+
+    if(data.job_id){
+
+        jobId =
+            data.job_id;
+
+        localStorage.setItem(
+            "npbc_job_id",
+            jobId
+        );
+    }
+
+    return data;
+}
 
 /*
-    Correction request.
-
-    Only the correction is sent.
-
-    currentWork is NOT included in the message.
+============================================================
+CORRECTION
+============================================================
 */
+
 correctButton.addEventListener(
     "click",
-    function(){
+    async () => {
 
-        const text =
+        const request =
             correction.value.trim();
 
-        if(!text){
+        if(
+            !request ||
+            busy
+        ){
+
+            if(!request){
+
+                setStatus(
+                    "Write the correction you want first.",
+                    "error"
+                );
+            }
+
+            return;
+        }
+
+        setBusy(true);
+
+        setStatus(
+            "Applying your correction..."
+        );
+
+        try{
+
+            const data =
+                await sendCorrection(
+                    request
+                );
+
+            if(!data.reply){
+
+                throw new Error(
+                    "No revised document was returned."
+                );
+            }
+
+            showDocument(
+                data.reply
+            );
+
+            saveDocument(
+                data.reply
+            );
+
+            correction.value =
+                "";
+
+            approved =
+                false;
+
+            paymentConfirmed =
+                false;
+
+            payment.classList.remove(
+                "show"
+            );
+
+            downloadButton.disabled =
+                true;
+
+            downloadButton.classList.remove(
+                "ready"
+            );
+
+            downloadButton.textContent =
+                "🔒 DOWNLOAD DOCUMENT";
 
             setStatus(
-                "Write the correction you want first.",
+                "Correction applied. Please review the updated document.",
+                "success"
+            );
+
+        }catch(error){
+
+            setStatus(
+                error.message,
                 "error"
             );
 
-            return;
+        }finally{
+
+            setBusy(false);
         }
-
-        if(busy){
-            return;
-        }
-
-        setBusy(true);
-
-        setStatus(
-            "Sending your correction to Ada..."
-        );
-
-        window.parent.postMessage(
-            {
-                type:
-                    "NPBC_REVIEW_CORRECTION",
-
-                correction:
-                    text,
-
-                service,
-
-                customer_id:
-                    customerId,
-
-                job_id:
-                    jobId
-            },
-            location.origin
-        );
     }
 );
 
-
 /*
-    Approval is sent to the existing workspace/API chain.
+============================================================
+APPROVAL
+============================================================
+
+Approval is sent through the same existing /api/chat route.
+No new intelligence endpoint is invented.
+============================================================
 */
+
 approveButton.addEventListener(
     "click",
-    function(){
+    async () => {
 
-        if(busy){
+        if(
+            busy ||
+            !currentWork
+        ){
             return;
         }
 
         setBusy(true);
 
         setStatus(
-            "Processing approval..."
+            "Recording your approval..."
         );
 
-        window.parent.postMessage(
-            {
-                type:
-                    "NPBC_REVIEW_APPROVE",
+        try{
 
-                service,
+            /*
+                Only the approval event is sent.
+                The complete document is NOT sent again.
+            */
 
-                customer_id:
-                    customerId,
+            const response =
+                await fetch(
+                    "/api/chat",
+                    {
+                        method:"POST",
 
-                job_id:
-                    jobId
-            },
-            location.origin
-        );
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                message:
+                                    "The customer has approved the completed document and wants to proceed to payment.",
+
+                                service,
+
+                                event:
+                                    "review_approved",
+
+                                customer_id:
+                                    customerId,
+
+                                job_id:
+                                    jobId || null,
+
+                                client_request_id:
+                                    clientRequestId,
+
+                                activate_intelligence:
+                                    true,
+
+                                context:
+                                    null
+                            })
+                    }
+                );
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+            if(!response.ok){
+
+                throw new Error(
+                    data.error_message ||
+                    data.message ||
+                    data.error ||
+                    "Approval could not be recorded."
+                );
+            }
+
+            approved =
+                true;
+
+            payment.classList.add(
+                "show"
+            );
+
+            /*
+                If the existing application returns billing data,
+                display it. Otherwise retain the service price
+                already established in the workspace.
+            */
+
+            let amount =
+                data.amount ||
+                data.price ||
+                "";
+
+            if(amount){
+
+                paymentText.textContent =
+                    "Service: " +
+                    service +
+                    "\nAmount: ₦" +
+                    Number(
+                        amount
+                    ).toLocaleString(
+                        "en-NG"
+                    );
+
+            }else{
+
+                paymentText.textContent =
+                    "Your document has been approved.\n\n" +
+                    "Proceed to payment to make the document available for delivery.";
+            }
+
+            setStatus(
+                "Your document has been approved.",
+                "success"
+            );
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            setBusy(false);
+        }
     }
 );
-
 
 /*
-    Payment action remains in the review application,
-    but the actual backend operation goes through the
-    existing workspace/API chain.
+============================================================
+PAYMENT
+============================================================
+
+The repository already contains a payment page/workflow.
+The review page therefore does not create a second payment
+system.
+
+If the existing payment endpoint is available, use it.
+Otherwise the customer is taken to the existing payment page.
+============================================================
 */
+
 reportButton.addEventListener(
     "click",
-    function(){
+    () => {
 
-        if(busy){
+        if(
+            !approved ||
+            busy
+        ){
             return;
         }
 
-        setBusy(true);
-
-        setStatus(
-            "Processing payment information..."
-        );
-
-        window.parent.postMessage(
-            {
-                type:
-                    "NPBC_REVIEW_PAYMENT",
-
-                action:
-                    "report_payment",
-
-                message:
-                    "Customer is reporting payment for the approved work.",
+        const query =
+            new URLSearchParams({
 
                 service,
 
@@ -792,19 +1253,41 @@ reportButton.addEventListener(
                     customerId,
 
                 job_id:
-                    jobId
-            },
-            location.origin
-        );
+                    jobId || "",
+
+                order:
+                    jobId || ""
+            });
+
+        location.href =
+            "payment.html?" +
+            query.toString();
     }
 );
 
+/*
+============================================================
+CHECK PAYMENT
+============================================================
+*/
 
 checkButton.addEventListener(
     "click",
-    function(){
+    async () => {
 
-        if(busy){
+        if(
+            busy ||
+            !jobId
+        ){
+
+            if(!jobId){
+
+                setStatus(
+                    "Your job information is not available yet.",
+                    "error"
+                );
+            }
+
             return;
         }
 
@@ -814,220 +1297,43 @@ checkButton.addEventListener(
             "Checking payment..."
         );
 
-        window.parent.postMessage(
-            {
-                type:
-                    "NPBC_REVIEW_PAYMENT",
+        try{
 
-                action:
-                    "check_payment",
+            const query =
+                new URLSearchParams({
 
-                message:
-                    "Customer wants to check the payment status.",
+                    job_id:
+                        jobId
+                });
 
-                service,
-
-                customer_id:
-                    customerId,
-
-                job_id:
-                    jobId
-            },
-            location.origin
-        );
-    }
-);
-
-
-downloadButton.addEventListener(
-    "click",
-    function(){
-
-        if(
-            !paymentConfirmed ||
-            busy
-        ){
-            return;
-        }
-
-        setBusy(true);
-
-        setStatus(
-            "Preparing your download..."
-        );
-
-        window.parent.postMessage(
-            {
-                type:
-                    "NPBC_REVIEW_DOWNLOAD",
-
-                service,
-
-                customer_id:
-                    customerId,
-
-                job_id:
-                    jobId
-            },
-            location.origin
-        );
-    }
-);
-
-
-/*
-    Messages from workspace.html.
-*/
-window.addEventListener(
-    "message",
-    function(event){
-
-        if(
-            event.origin !==
-            location.origin
-        ){
-            return;
-        }
-
-        const data =
-            event.data;
-
-        if(
-            !data ||
-            typeof data !== "object"
-        ){
-            return;
-        }
-
-
-        if(data.customer_id){
-            customerId =
-                data.customer_id;
-        }
-
-        if(data.job_id){
-            jobId =
-                data.job_id;
-        }
-
-
-        /*
-            Initial generated document.
-        */
-        if(
-            data.type ===
-            "NPBC_REVIEW_LOAD"
-        ){
-
-            showWork(
-                data.work || ""
-            );
-
-            setStatus(
-                "Your work is ready for review.",
-                "success"
-            );
-        }
-
-
-        /*
-            Updated document after correction.
-        */
-        if(
-            data.type ===
-            "NPBC_REVIEW_WORK_UPDATED"
-        ){
-
-            showWork(
-                data.work || ""
-            );
-
-            correction.value =
-                "";
-
-            setBusy(false);
-
-            setStatus(
-                "Your correction has been applied. Review the updated document.",
-                "success"
-            );
-        }
-
-
-        /*
-            Approval result.
-        */
-        if(
-            data.type ===
-            "NPBC_REVIEW_APPROVAL_RESULT"
-        ){
-
-            setBusy(false);
-
-            paymentReady =
-                true;
-
-            payment.classList.add(
-                "show"
-            );
-
-            paymentInfo.textContent =
-                data.result?.reply ||
-                data.result?.message ||
-                "Your work has been approved. Continue with payment.";
-
-            setStatus(
-                "Your work has been approved.",
-                "success"
-            );
-
-            payment.scrollIntoView({
-                behavior:"smooth",
-                block:"nearest"
-            });
-        }
-
-
-        /*
-            Payment result.
-
-            The existing backend response decides whether
-            payment is actually confirmed.
-        */
-        if(
-            data.type ===
-            "NPBC_REVIEW_PAYMENT_RESULT"
-        ){
-
-            setBusy(false);
-
-            const result =
-                data.result || {};
-
-            paymentInfo.textContent =
-                result.reply ||
-                result.message ||
-                JSON.stringify(
-                    result
+            const response =
+                await fetch(
+                    "/api/payment/status?" +
+                    query.toString(),
+                    {
+                        method:"GET",
+                        headers:{
+                            "Accept":
+                                "application/json"
+                        }
+                    }
                 );
 
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
 
-            const text =
-                JSON.stringify(
-                    result
-                ).toLowerCase();
-
-
-            /*
-                We do not invent a payment status.
-                Only an explicit successful/paid response
-                enables download.
-            */
             if(
-                result.payment_confirmed === true ||
-                result.paid === true ||
-                result.status === "paid" ||
-                result.status === "confirmed"
+                response.ok &&
+                data &&
+                String(
+                    data.status ||
+                    ""
+                ).toLowerCase() ===
+                "paid"
             ){
 
                 paymentConfirmed =
@@ -1041,114 +1347,100 @@ window.addEventListener(
                 );
 
                 downloadButton.textContent =
-                    "⬇ DOWNLOAD YOUR WORK";
+                    "⬇ DOWNLOAD DOCUMENT";
 
                 setStatus(
-                    "Payment confirmed. Your work is ready to download.",
+                    "Payment confirmed. Your document is ready for download.",
                     "success"
                 );
 
             }else{
 
                 setStatus(
-                    result.reply ||
-                    result.message ||
-                    "Payment status received."
+                    "Payment is still pending."
                 );
             }
-        }
 
-
-        /*
-            Download result.
-
-            If the existing backend supplies a real URL,
-            use it. Otherwise display its response rather
-            than inventing a destination.
-        */
-        if(
-            data.type ===
-            "NPBC_REVIEW_DOWNLOAD_RESULT"
-        ){
-
-            setBusy(false);
-
-            const result =
-                data.result || {};
-
-            const url =
-                result.download_url ||
-                result.url ||
-                result.file_url;
-
-            if(url){
-
-                window.open(
-                    url,
-                    "_blank"
-                );
-
-                setStatus(
-                    "Your download is ready.",
-                    "success"
-                );
-
-            }else{
-
-                setStatus(
-                    result.reply ||
-                    result.message ||
-                    "The download response was received.",
-                    "success"
-                );
-            }
-        }
-
-
-        /*
-            Central error message from workspace.
-        */
-        if(
-            data.type ===
-            "NPBC_REVIEW_ERROR"
-        ){
-
-            setBusy(false);
+        }catch(error){
 
             setStatus(
-                data.message ||
-                "Something went wrong.",
+                "Payment status could not be checked yet.",
                 "error"
             );
-        }
 
+        }finally{
+
+            setBusy(false);
+        }
     }
 );
-
 
 /*
-    Prevent the document viewport from accidentally
-    selecting/copying the prepared work.
+============================================================
+DOWNLOAD
+============================================================
 */
-[
-    "copy",
-    "cut",
-    "contextmenu",
-    "dragstart"
-].forEach(
-    eventName => {
 
-        documentElement.addEventListener(
-            eventName,
-            event => {
+downloadButton.addEventListener(
+    "click",
+    () => {
 
-                event.preventDefault();
+        if(
+            !paymentConfirmed ||
+            !jobId
+        ){
+            return;
+        }
 
-            }
-        );
+        const query =
+            new URLSearchParams({
 
+                job_id:
+                    jobId,
+
+                customer_id:
+                    customerId
+            });
+
+        location.href =
+            "/api/download?" +
+            query.toString();
     }
 );
+
+/*
+============================================================
+INITIALISE
+============================================================
+*/
+
+const packet =
+    readDocument();
+
+if(packet){
+
+    if(packet.job_id){
+
+        jobId =
+            packet.job_id;
+
+        localStorage.setItem(
+            "npbc_job_id",
+            jobId
+        );
+    }
+
+    showDocument(
+        packet.work
+    );
+
+}else{
+
+    setStatus(
+        "The completed document could not be loaded. Please return to the workspace and submit the request again.",
+        "error"
+    );
+}
 
 </script>
 
