@@ -859,6 +859,10 @@ button{
 
 .review-document{
     display:none;
+
+    width:100%;
+
+    min-width:0;
 }
 
 .review-document.show{
@@ -948,10 +952,19 @@ button{
     font-weight:800;
 }
 
+/*
+   IMPORTANT:
+   This is the actual document page viewport.
+   It is allowed to grow and scroll internally.
+   Nothing here truncates Ada's returned content.
+*/
+
 .review-page-content{
     width:100%;
 
     min-height:360px;
+
+    max-height:65vh;
 
     padding:
         22px
@@ -965,6 +978,12 @@ button{
     font-size:14px;
 
     line-height:1.7;
+
+    overflow-x:hidden;
+
+    overflow-y:auto;
+
+    overscroll-behavior:contain;
 
     overflow-wrap:anywhere;
 
@@ -1644,6 +1663,10 @@ button:disabled{
     }
 
     .review-page-content{
+        min-height:360px;
+
+        max-height:58vh;
+
         padding:
             18px
             14px
@@ -1844,10 +1867,6 @@ button:disabled{
     </div>
 
 
-    <!-- =====================================================
-         CUSTOMER-VISIBLE MIGRATION
-         ===================================================== -->
-
     <section
         id="migrationScreen"
         class="migration-screen"
@@ -1881,7 +1900,6 @@ button:disabled{
         <div class="migration-file">
 
             <span
-                id="migrationFileIcon"
                 class="migration-file-icon"
             >
                 📑
@@ -1921,10 +1939,6 @@ button:disabled{
 
     </section>
 
-
-    <!-- =====================================================
-         PAGINATED REVIEW DOCUMENT
-         ===================================================== -->
 
     <section
         id="reviewDocument"
@@ -1970,8 +1984,7 @@ button:disabled{
             <div
                 id="reviewPageContent"
                 class="review-page-content"
-            >
-            </div>
+            ></div>
 
         </div>
 
@@ -2000,10 +2013,6 @@ button:disabled{
     </section>
 
 
-
-    <!-- =====================================================
-         CORRECTIONS
-         ===================================================== -->
 
     <div class="correction-card">
 
@@ -2231,7 +2240,6 @@ const API_BASE = "";
 const $ = id =>
     document.getElementById(id);
 
-
 const formView =
     $("formView");
 
@@ -2402,7 +2410,6 @@ function makeId(prefix){
 
 }
 
-
 function get(key){
 
     try{
@@ -2418,7 +2425,6 @@ function get(key){
     }
 
 }
-
 
 function put(key,value){
 
@@ -2438,7 +2444,6 @@ let customerId =
     get("npbc_customer_id") ||
     makeId("customer_");
 
-
 put(
     "npbc_customer_id",
     customerId
@@ -2450,7 +2455,6 @@ let jobId =
     get("npbc_job_id") ||
     makeId("job_");
 
-
 put(
     "npbc_job_id",
     jobId
@@ -2460,7 +2464,6 @@ put(
 let requestId =
     get("npbc_client_request_id") ||
     makeId("request_");
-
 
 put(
     "npbc_client_request_id",
@@ -2480,6 +2483,23 @@ let paymentConfirmed = false;
 
 let currentWork = "";
 
+/*
+   IMPORTANT:
+   reviewPages is the authoritative client-side
+   review-page collection.
+
+   Each element is an independent object.
+
+   {
+       index: 0,
+       batchNumber: 1,
+       content: "COMPLETE API RESPONSE"
+   }
+
+   Nothing is truncated.
+   Nothing is reconstructed from character slices.
+*/
+
 let reviewPages = [];
 
 let currentPageIndex = 0;
@@ -2492,15 +2512,12 @@ let recordingStream = null;
 
 
 /*
-   This is the deliberate processing ceiling.
+   Groq safety target.
 
-   We ask the intelligence endpoint to keep each
-   returned migration batch comfortably below the
-   800-token target rather than attempting to make
-   one enormous response.
-
-   The visible review page is NOT the token container.
-   Each batch is its own page.
+   This value is sent to the intelligence layer as
+   a generation target. It is NEVER used to cut,
+   slice, substring, or otherwise truncate returned
+   intelligence in the browser.
 */
 
 const BATCH_OUTPUT_TARGET =
@@ -2514,7 +2531,9 @@ const BATCH_OUTPUT_TARGET =
 function clean(value){
 
     if(value == null){
+
         return null;
+
     }
 
     return (
@@ -2754,6 +2773,66 @@ async function apiChat(body){
     throw new Error(
         "The service returned an empty response."
     );
+
+}
+
+
+/* =========================================================
+   EXTRACT COMPLETE WORK CONTENT
+   ========================================================= */
+
+/*
+   The backend may return the generated work in
+   different response fields.
+
+   We deliberately select the first non-empty field.
+
+   IMPORTANT:
+   We do NOT slice the result.
+   We do NOT impose a character limit.
+   We do NOT trim the middle of the response.
+
+   trim() only removes insignificant whitespace at
+   the outer boundary.
+*/
+
+function extractCompleteWork(
+    result
+){
+
+    const candidates = [
+
+        result?.work,
+
+        result?.content,
+
+        result?.document,
+
+        result?.output,
+
+        result?.reply
+
+    ];
+
+    for(
+        const candidate of candidates
+    ){
+
+        if(
+            candidate !== null &&
+            candidate !== undefined &&
+            String(candidate).trim()
+        ){
+
+            return String(
+                candidate
+            ).trim();
+
+        }
+
+    }
+
+    return "";
 
 }
 
@@ -3453,10 +3532,6 @@ Use concise, friendly Nigerian English.
 }
 
 
-/* =========================================================
-   GUIDANCE
-   ========================================================= */
-
 async function loadGuidance(){
 
     setStatus(
@@ -3609,7 +3684,7 @@ function prepareMigrationUI(
 
     migrationMessage.textContent =
         mode === "correction"
-            ? "Your corrections are being applied page by page. Each updated part is being moved into the review pages."
+            ? "Your corrections are being applied page by page. Each updated part is being moved into its review page."
             : "Your work is being prepared in controlled batches and moved into separate review pages.";
 
     migrationProgress.style.width =
@@ -3637,7 +3712,7 @@ function prepareMigrationUI(
             (i + 1);
 
         item.dataset.index =
-            i;
+            String(i);
 
         migrationBatches.appendChild(
             item
@@ -3798,14 +3873,6 @@ function determineBatchCount(
 
     }
 
-    /*
-       A small starting batch count is used
-       where the customer did not specify pages.
-
-       More pages can be added by the intelligence
-       layer if required.
-    */
-
     return 1;
 
 }
@@ -3842,7 +3909,7 @@ ${batchIndex + 1} of ${totalBatches}
 
 IMPORTANT:
 
-Return ONLY the content belonging to this batch.
+Return ONLY the complete content belonging to this batch.
 
 This is not a summary.
 
@@ -3863,8 +3930,15 @@ If the requested work is a document, use clean structured HTML such as:
 
 Do not use markdown code fences.
 
-Keep this response comfortably below the 800-token processing target.
+IMPORTANT TOKEN CONTROL:
+
+Keep this individual batch comfortably below the Groq output-token limit.
+
 Target approximately ${BATCH_OUTPUT_TARGET} output tokens or less.
+
+Do not continue beyond the natural end of this batch merely to fill space.
+
+The browser will preserve the complete response exactly as returned.
 
 Maintain continuity with the customer's requested document.
 
@@ -3941,20 +4015,12 @@ async function createBatch(
 
     }
 
-    const work =
-        result.reply ??
-        result.work ??
-        result.content ??
-        result.document ??
-        result.output ??
-        "";
+    const completeWork =
+        extractCompleteWork(
+            result
+        );
 
-    const cleanWork =
-        String(
-            work
-        ).trim();
-
-    if(!cleanWork){
+    if(!completeWork){
 
         throw new Error(
             "Migration batch " +
@@ -3964,7 +4030,26 @@ async function createBatch(
 
     }
 
-    return cleanWork;
+    /*
+       Return a complete independent page object.
+
+       This is the central repair.
+
+       The page is captured immediately after its
+       API call and is never reconstructed later
+       from the other pages.
+    */
+
+    return {
+        index:
+            batchIndex,
+
+        batchNumber:
+            batchIndex + 1,
+
+        content:
+            completeWork
+    };
 
 }
 
@@ -3977,19 +4062,61 @@ function buildReviewPages(
     batches
 ){
 
+    /*
+       Do NOT map/rebuild content through one giant
+       string and then attempt to split it.
+
+       Each batch is already one complete review page.
+    */
+
     reviewPages =
-        batches.map(
-            (content,index) => ({
-                index,
-                content:
+        batches
+            .filter(
+                page =>
+                    page &&
                     String(
-                        content || ""
+                        page.content || ""
                     ).trim()
-            })
-        ).filter(
-            page =>
-                page.content
-        );
+            )
+            .map(
+                (page,index) => ({
+
+                    index,
+
+                    batchNumber:
+                        page.batchNumber ||
+                        index + 1,
+
+                    content:
+                        String(
+                            page.content
+                        ).trim()
+
+                })
+            );
+
+    currentPageIndex =
+        0;
+
+    updateCurrentWork();
+
+}
+
+
+/* =========================================================
+   CURRENT WORK
+   ========================================================= */
+
+function updateCurrentWork(){
+
+    /*
+       currentWork is supplied as context to Ada.
+
+       It is deliberately assembled from the COMPLETE
+       stored pages.
+
+       Nothing is sliced or shortened here.
+    */
 
     currentWork =
         reviewPages
@@ -3998,11 +4125,8 @@ function buildReviewPages(
                     page.content
             )
             .join(
-                "\n"
+                "\n\n"
             );
-
-    currentPageIndex =
-        0;
 
 }
 
@@ -4022,31 +4146,59 @@ function renderPage(
         reviewPageContent.textContent =
             "No review page is available.";
 
+        pageCounterTitle.textContent =
+            "Review Page";
+
+        pageCounterInfo.textContent =
+            "No pages";
+
+        pageLabel.textContent =
+            "PAGE —";
+
+        previousPageButton.disabled =
+            true;
+
+        nextPageButton.disabled =
+            true;
+
         return;
 
     }
 
-    currentPageIndex =
+    const safeIndex =
         Math.max(
             0,
             Math.min(
-                index,
+                Number(index) || 0,
                 reviewPages.length - 1
             )
         );
+
+    currentPageIndex =
+        safeIndex;
+
+    /*
+       Fetch the exact page object.
+
+       There is no concatenation,
+       splitting,
+       token trimming,
+       character slicing,
+       or regeneration here.
+    */
 
     const page =
         reviewPages[
             currentPageIndex
         ];
 
+    const raw =
+        String(
+            page?.content || ""
+        );
+
     reviewPageContent.innerHTML =
         "";
-
-    const raw =
-        removeHtmlCodeFences(
-            page.content
-        );
 
     if(
         looksLikeHtml(
@@ -4058,12 +4210,14 @@ function renderPage(
 
             const safe =
                 parseSafeDocumentHtml(
-                    raw
+                    removeHtmlCodeFences(
+                        raw
+                    )
                 );
 
             reviewPageContent.innerHTML =
                 safe ||
-                raw;
+                "";
 
         }catch(error){
 
@@ -4114,17 +4268,13 @@ function renderPage(
             ? "Last Page"
             : "Next Page →";
 
-    const main =
-        document.querySelector(
-            ".main"
-        );
+    /*
+       Reset only the INNER document viewport.
+       This does not destroy page content.
+    */
 
-    if(main){
-
-        main.scrollTop =
-            0;
-
-    }
+    reviewPageContent.scrollTop =
+        0;
 
 }
 
@@ -4144,7 +4294,7 @@ function openReview(){
     );
 
     renderPage(
-        0
+        currentPageIndex
     );
 
 }
@@ -4159,7 +4309,9 @@ async function createWork(
 ){
 
     if(busy){
+
         return;
+
     }
 
     busyState(true);
@@ -4175,6 +4327,17 @@ async function createWork(
         determineBatchCount(
             data
         );
+
+    /*
+       Start with a completely fresh page collection
+       for this generation.
+    */
+
+    reviewPages = [];
+
+    currentWork = "";
+
+    currentPageIndex = 0;
 
     prepareMigrationUI(
         batchCount,
@@ -4203,15 +4366,23 @@ async function createWork(
                 batchCount
             );
 
-            const batch =
+            const page =
                 await createBatch(
                     data,
                     i,
                     batchCount
                 );
 
+            /*
+               IMPORTANT:
+               Store the returned page immediately.
+
+               Page 2 is therefore impossible to overwrite
+               Page 1 because they are separate objects.
+            */
+
             batches.push(
-                batch
+                page
             );
 
             const completed =
@@ -4266,8 +4437,19 @@ async function createWork(
             batches
         );
 
-        finishMigration(
+        if(
+            reviewPages.length !==
             batches.length
+        ){
+
+            throw new Error(
+                "One or more review pages could not be stored."
+            );
+
+        }
+
+        finishMigration(
+            reviewPages.length
         );
 
         await new Promise(
@@ -4294,9 +4476,6 @@ async function createWork(
             error?.message ||
             "A migration batch could not be prepared.";
 
-        migrationProgress.style.width =
-            "0%";
-
         setStatus(
             error?.message ||
             "We could not prepare your work. Please try again.",
@@ -4313,6 +4492,24 @@ async function createWork(
     }finally{
 
         busyState(false);
+
+        /*
+           Re-render the current page after busyState(false)
+           so the navigation buttons receive the correct
+           enabled/disabled state.
+        */
+
+        if(
+            reviewDocument.classList.contains(
+                "show"
+            )
+        ){
+
+            renderPage(
+                currentPageIndex
+            );
+
+        }
 
     }
 
@@ -4363,7 +4560,9 @@ previousPageButton.addEventListener(
     () => {
 
         if(busy){
+
             return;
+
         }
 
         if(
@@ -4385,7 +4584,9 @@ nextPageButton.addEventListener(
     () => {
 
         if(busy){
+
             return;
+
         }
 
         if(
@@ -4529,8 +4730,13 @@ If this page contains structured document content, return clean HTML.
 
 Do not use markdown code fences.
 
-Keep this response comfortably below the 800-token processing target.
+Keep this individual page comfortably below the Groq output-token limit.
+
 Target approximately ${BATCH_OUTPUT_TARGET} output tokens or less.
+
+Do not truncate the response in the browser.
+
+The browser will preserve the complete response exactly as returned.
 
 This page is part of a complete document, so preserve its role and continuity.
 `;
@@ -4609,19 +4815,11 @@ async function correctPage(
     }
 
     const revised =
-        result.reply ??
-        result.work ??
-        result.content ??
-        result.document ??
-        result.output ??
-        "";
+        extractCompleteWork(
+            result
+        );
 
-    const text =
-        String(
-            revised
-        ).trim();
-
-    if(!text){
+    if(!revised){
 
         throw new Error(
             "The correction for page " +
@@ -4631,7 +4829,24 @@ async function correctPage(
 
     }
 
-    return text;
+    /*
+       Return a completely independent revised page.
+
+       No merging with another page occurs here.
+    */
+
+    return {
+
+        index,
+
+        batchNumber:
+            page.batchNumber ||
+            index + 1,
+
+        content:
+            revised
+
+    };
 
 }
 
@@ -4684,8 +4899,32 @@ applyBtn.addEventListener(
         const originalPage =
             currentPageIndex;
 
+        /*
+           Snapshot the page collection before starting.
+
+           This prevents the correction loop from
+           accidentally changing the collection while
+           it is still being iterated.
+        */
+
+        const pagesToCorrect =
+            reviewPages.map(
+                page => ({
+
+                    index:
+                        page.index,
+
+                    batchNumber:
+                        page.batchNumber,
+
+                    content:
+                        page.content
+
+                })
+            );
+
         prepareMigrationUI(
-            reviewPages.length,
+            pagesToCorrect.length,
             "correction"
         );
 
@@ -4699,31 +4938,30 @@ applyBtn.addEventListener(
 
             for(
                 let i = 0;
-                i < reviewPages.length;
+                i < pagesToCorrect.length;
                 i++
             ){
 
                 updateMigration(
                     i,
-                    reviewPages.length,
+                    pagesToCorrect.length,
                     "Updating review page " +
                     (i + 1) +
                     " of " +
-                    reviewPages.length
+                    pagesToCorrect.length
                 );
 
                 const revised =
                     await correctPage(
-                        reviewPages[i],
+                        pagesToCorrect[i],
                         i,
-                        reviewPages.length,
+                        pagesToCorrect.length,
                         correction
                     );
 
-                revisedPages.push({
-                    index:i,
-                    content:revised
-                });
+                revisedPages.push(
+                    revised
+                );
 
                 const item =
                     migrationBatches
@@ -4749,7 +4987,7 @@ applyBtn.addEventListener(
                             (
                                 i + 1
                             ) /
-                            reviewPages.length
+                            pagesToCorrect.length
                         ) *
                         100
                     ) +
@@ -4759,22 +4997,53 @@ applyBtn.addEventListener(
                     "Updated review page " +
                     (i + 1) +
                     " of " +
-                    reviewPages.length;
+                    pagesToCorrect.length;
 
             }
 
-            reviewPages =
-                revisedPages;
+            /*
+               Replace the collection only after ALL
+               revised pages have successfully returned.
 
-            currentWork =
-                reviewPages
+               This means a failed correction cannot leave
+               half the document silently replaced.
+            */
+
+            reviewPages =
+                revisedPages
                     .map(
+                        (page,index) => ({
+
+                            index,
+
+                            batchNumber:
+                                page.batchNumber ||
+                                index + 1,
+
+                            content:
+                                String(
+                                    page.content || ""
+                                ).trim()
+
+                        })
+                    )
+                    .filter(
                         page =>
                             page.content
-                    )
-                    .join(
-                        "\n"
                     );
+
+            if(
+                reviewPages.length !==
+                pagesToCorrect.length
+            ){
+
+                throw new Error(
+                    "One or more corrected review pages returned no content."
+                );
+
+            }
+
+            updateCurrentWork();
 
             finishMigration(
                 reviewPages.length
@@ -4819,6 +5088,29 @@ applyBtn.addEventListener(
                 "error"
             );
 
+            /*
+               Restore the original pages if the correction
+               process failed.
+            */
+
+            reviewPages =
+                pagesToCorrect.map(
+                    page => ({
+
+                        index:
+                            page.index,
+
+                        batchNumber:
+                            page.batchNumber,
+
+                        content:
+                            page.content
+
+                    })
+                );
+
+            updateCurrentWork();
+
             migrationScreen.classList.remove(
                 "show"
             );
@@ -4834,6 +5126,10 @@ applyBtn.addEventListener(
         }finally{
 
             busyState(false);
+
+            renderPage(
+                currentPageIndex
+            );
 
         }
 
@@ -5395,6 +5691,14 @@ async function sendMessage(
                 current_work:
                     currentWork,
 
+                /*
+                   The backend remains responsible for
+                   deciding what the instruction means.
+
+                   The frontend only receives and displays
+                   the returned intelligence/work.
+                */
+
                 activate_intelligence:
                     true,
 
@@ -5415,57 +5719,74 @@ async function sendMessage(
 
         }
 
+        const responseWork =
+            extractCompleteWork(
+                data
+            );
+
+        /*
+           If the customer sends a new instruction while
+           reviewing work, the returned complete response
+           becomes ONE NEW controlled review page.
+
+           It is never inserted into the existing page.
+        */
+
         if(
-            data.reply &&
+            responseWork &&
             reviewDocument.classList.contains(
                 "show"
             )
         ){
 
-            /*
-               A normal customer message is treated
-               as a new instruction. It is displayed
-               as a new controlled review page rather
-               than being injected into one huge card.
-            */
+            reviewPages.push({
 
-            const newPage =
-                String(
-                    data.reply
-                ).trim();
+                index:
+                    reviewPages.length,
 
-            if(newPage){
+                batchNumber:
+                    reviewPages.length + 1,
 
-                reviewPages.push({
-                    index:
-                        reviewPages.length,
+                content:
+                    responseWork
 
-                    content:
-                        newPage
-                });
+            });
 
-                currentWork =
-                    reviewPages
-                        .map(
-                            page =>
-                                page.content
-                        )
-                        .join(
-                            "\n"
-                        );
+            updateCurrentWork();
 
-                renderPage(
-                    reviewPages.length - 1
-                );
-
-            }
+            renderPage(
+                reviewPages.length - 1
+            );
 
         }
 
-        setStatus(
-            "Ready for your next instruction.",
-            "success"
-        );
+        /*
+           If the backend returns a conversational reply
+           without work, it remains a status response and
+           is not incorrectly converted into a review page.
+        */
+
+        if(
+            data.reply &&
+            !responseWork
+        ){
+
+            setStatus(
+                String(
+                    data.reply
+                ).trim() ||
+                "Ready for your next instruction.",
+                "success"
+            );
+
+        }else{
+
+            setStatus(
+                "Ready for your next instruction.",
+                "success"
+            );
+
+        }
 
         return data;
 
@@ -5482,6 +5803,18 @@ async function sendMessage(
     }finally{
 
         busyState(false);
+
+        if(
+            reviewDocument.classList.contains(
+                "show"
+            )
+        ){
+
+            renderPage(
+                currentPageIndex
+            );
+
+        }
 
     }
 
