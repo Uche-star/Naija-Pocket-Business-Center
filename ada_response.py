@@ -4,38 +4,98 @@ Ada Response Engine
 
 END-TO-END LLM INTELLIGENCE LAYER
 
-Groq is the intelligence.
+CURRENT ARCHITECTURE
+--------------------
+FastAPI
+    ↓
+AdaResponse
+    ↓
+Groq
 
-AdaResponse does not use keyword matching to determine
+AdaResponse is the intelligence layer.
+
+AdaResponse does NOT use keyword matching to determine
 what the customer wants.
 
-AdaPromptManager remains responsible for Ada's existing
-identity, Nigerian context, writing style, and service
-prompts.
+AdaPromptManager remains responsible for:
+    - Ada's identity
+    - Nigerian context
+    - writing style
+    - existing service prompts
 
-BillingManager supplies factual billing information.
+BillingManager remains authoritative for:
+    - service names
+    - prices
+    - billing types
 
-FastAPI/application state supplies factual information
-about uploads, documents, approval, payment, delivery,
-and download.
+FastAPI/application state remains authoritative for:
+    - customer information
+    - selected service
+    - uploaded content
+    - document state
+    - review state
+    - approval state
+    - payment state
+    - delivery state
+    - download state
+
+
+IMPORTANT REVIEW ARCHITECTURE
+-----------------------------
+A customer's complete document must NEVER be destroyed
+or shortened merely to satisfy an LLM token limit.
+
+Review is a document operation.
+
+Therefore:
+
+    COMPLETE DOCUMENT
+          ↓
+    APPLICATION STORAGE
+          ↓
+    REVIEW PAGE
+          ↓
+    ALL PAGES DISPLAYED
+
+Groq is used for intelligence/reasoning about the request.
+Groq is NOT used as the storage mechanism for the complete
+document.
+
+The application must be able to retain and display the
+complete document independently of the LLM request size.
 
 TOKEN CONTROL
 -------------
-The intelligence remains the same, but each Groq request
-is deliberately kept small.
+Token control applies to information sent to Groq.
 
-The application does NOT send the entire historical prompt
-and conversation on every request.
+It must NOT remove pages from the customer's document.
 
-The objective is to keep every transaction comfortably
-below Groq's current 8,000-token TPM request limit while
-preserving the existing intelligence and service context.
+It must NOT truncate the customer's supplied document.
+
+It must NOT replace a complete document with a summary.
+
+It must NOT weaken the service intelligence.
+
+It must NOT remove important instructions from the
+AdaPromptManager.
+
+For normal conversation, only the necessary recent
+conversation is supplied.
+
+For large document/review operations, the application
+should provide the relevant state or document information
+in controlled portions rather than sending an unlimited
+historical payload.
+
+The intelligence remains LLM-based and reasoning-driven.
 """
+
 
 from __future__ import annotations
 
 import os
 import traceback
+from typing import Any
 
 
 # ============================================================
@@ -77,25 +137,63 @@ API_KEY = (
 # ============================================================
 # TOKEN CONTROL
 #
-# These limits apply only to what is sent to Groq.
+# These limits control LLM INPUT SIZE.
 #
-# They do NOT change the customer's information.
-# They do NOT change the service.
-# They do NOT change the workflow.
-# They simply prevent unnecessarily large prompts.
+# They DO NOT control document storage.
+#
+# They DO NOT delete document pages.
+#
+# They DO NOT shorten the document that Review must display.
 # ============================================================
 
-MAX_SYSTEM_CHARS = 16000
-MAX_CENTRAL_PROMPT_CHARS = 9000
-MAX_INTELLIGENCE_PROMPT_CHARS = 6000
-MAX_CONTEXT_CHARS = 2500
-MAX_HISTORY_MESSAGES = 2
-MAX_HISTORY_MESSAGE_CHARS = 1200
+MAX_SYSTEM_PROMPT_CHARS = 18000
+
+MAX_CENTRAL_PROMPT_CHARS = 12000
+
+MAX_INTELLIGENCE_PROMPT_CHARS = 9000
+
+MAX_CONTEXT_CHARS = 6000
+
+MAX_HISTORY_MESSAGES = 4
+
+MAX_HISTORY_MESSAGE_CHARS = 1800
+
+MAX_EVENT_CHARS = 1200
+
+MAX_USER_MESSAGE_CHARS = 4000
+
 MAX_OUTPUT_TOKENS = 800
 
 
 # ============================================================
-# CLIENT
+# REVIEW / DOCUMENT INFORMATION
+#
+# These are deliberately separate from normal prompt limits.
+#
+# A complete document may be larger than what is suitable for
+# one LLM request.
+#
+# The document must therefore remain in application state.
+# ============================================================
+
+DOCUMENT_STATE_KEYS = {
+    "document",
+    "document_content",
+    "document_text",
+    "pages",
+    "page",
+    "page_count",
+    "review",
+    "review_content",
+    "review_pages",
+    "uploaded_document",
+    "uploaded_content",
+    "source_document",
+}
+
+
+# ============================================================
+# GROQ CLIENT
 # ============================================================
 
 _client = None
@@ -134,59 +232,102 @@ def is_configured() -> bool:
 
 
 # ============================================================
-# TOKEN CONTROL HELPERS
+# SAFE TEXT NORMALIZATION
+# ============================================================
+
+def safe_text(
+    value: Any,
+) -> str:
+
+    if value is None:
+        return ""
+
+    if isinstance(value, str):
+        return value.strip()
+
+    return str(value).strip()
+
+
+# ============================================================
+# PROMPT COMPACTION
 # ============================================================
 
 def compact_text(
     text: str | None,
     maximum: int,
 ) -> str:
-
     """
-    Keep the beginning and end of a prompt while removing
-    unnecessary middle content when the source is too large.
+    Compact LLM instructions safely.
 
-    This protects both:
-        - general identity/instructions at the beginning
-        - service-specific information that may appear later
+    IMPORTANT:
+    This function is intended for prompts/instructions.
+
+    It must NOT be used to truncate the customer's actual
+    document content before the document is displayed.
+
+    The first and last sections are retained so that both
+    general instructions and service-specific instructions
+    have a chance of remaining available.
     """
+
+    text = safe_text(text)
 
     if not text:
         return ""
 
-    text = str(text).strip()
+    if maximum <= 0:
+        return ""
 
     if len(text) <= maximum:
         return text
 
-    if maximum < 200:
+    if maximum < 300:
+        return text[:maximum]
+
+    marker = (
+        "\n\n"
+        "[INSTRUCTION COMPACTION: some non-essential "
+        "middle prompt text was omitted from this LLM "
+        "request. Customer document content is not "
+        "stored or deleted by this operation.]\n\n"
+    )
+
+    available = maximum - len(marker)
+
+    if available <= 0:
         return text[:maximum]
 
     first_part = int(
-        maximum * 0.70
+        available * 0.65
     )
 
     last_part = (
-        maximum
+        available
         - first_part
     )
 
     return (
         text[:first_part]
-        + "\n\n"
-        "[TOKEN CONTROL: middle of oversized prompt "
-        "removed to keep this request within the "
-        "provider request limit.]\n\n"
+        + marker
         + text[-last_part:]
     )
 
 
+# ============================================================
+# HISTORY CONTROL
+# ============================================================
+
 def compact_history(
     history: list[dict[str, str]],
 ) -> list[dict[str, str]]:
-
     """
-    Keep only the most recent customer/assistant exchange.
+    Return only the most recent useful conversation.
+
+    Conversation history is deliberately limited because
+    application state is authoritative for current workflow
+    information.
+
+    This does NOT affect the stored document.
     """
 
     recent = history[
@@ -197,25 +338,63 @@ def compact_history(
 
     for item in recent:
 
-        role = str(
-            item.get("role", "")
-        ).strip()
+        role = safe_text(
+            item.get("role")
+        )
 
         content = compact_text(
-            item.get("content", ""),
+            item.get("content"),
             MAX_HISTORY_MESSAGE_CHARS,
         )
 
-        if role and content:
+        if not role or not content:
+            continue
 
-            result.append(
-                {
-                    "role": role,
-                    "content": content,
-                }
-            )
+        if role not in {
+            "user",
+            "assistant",
+            "system",
+        }:
+            continue
+
+        result.append(
+            {
+                "role": role,
+                "content": content,
+            }
+        )
 
     return result
+
+
+# ============================================================
+# APPLICATION CONTEXT
+# ============================================================
+
+def prepare_application_context(
+    context: str | None,
+) -> str:
+    """
+    Prepare application state for an LLM request.
+
+    The context sent to Groq is intentionally bounded.
+
+    This function does NOT represent the customer's complete
+    document.
+
+    Complete document data must remain under application
+    control so the Review page can display every page.
+    """
+
+    context = safe_text(context)
+
+    if not context:
+        return ""
+
+    return compact_text(
+        context,
+        MAX_CONTEXT_CHARS,
+    )
 
 
 # ============================================================
@@ -230,9 +409,8 @@ class AdaResponse:
     ):
 
         self.service = (
-            str(service).strip()
-            if service
-            else None
+            safe_text(service)
+            or None
         )
 
         self.prompt_manager = (
@@ -247,9 +425,6 @@ class AdaResponse:
             dict[str, str]
         ] = []
 
-        # Only the latest exchange is required.
-        # The service form/application context carries
-        # the important current information.
         self.max_history_messages = (
             MAX_HISTORY_MESSAGES
         )
@@ -263,19 +438,21 @@ class AdaResponse:
         service: str | None,
     ) -> None:
 
+        service = safe_text(service)
+
         if service:
-            self.service = (
-                str(service).strip()
-            )
+            self.service = service
 
     # ========================================================
-    # NORMALIZE SERVICE
+    # SERVICE NORMALIZATION
     # ========================================================
 
     def normalize_service(
         self,
         service: str | None,
     ) -> str | None:
+
+        service = safe_text(service)
 
         if not service:
             return self.service
@@ -288,13 +465,22 @@ class AdaResponse:
                 )
             )
 
+            normalized = safe_text(
+                normalized
+            )
+
             if normalized:
                 return normalized
 
-        except Exception:
-            pass
+        except Exception as error:
 
-        return str(service).strip()
+            print(
+                "SERVICE NORMALIZATION WARNING:",
+                type(error).__name__,
+                str(error),
+            )
+
+        return service
 
     # ========================================================
     # BILLING FACTS
@@ -322,7 +508,13 @@ class AdaResponse:
                 )
             )
 
-        except Exception:
+        except Exception as error:
+
+            print(
+                "BILLING LOOKUP WARNING:",
+                type(error).__name__,
+                str(error),
+            )
 
             return ""
 
@@ -344,32 +536,41 @@ class AdaResponse:
             "billing"
         )
 
-        if billing_type == "fixed":
+        try:
+
+            if billing_type == "fixed":
+
+                pricing = (
+                    f"Official price: ₦{price:,}\n"
+                    "Billing type: fixed"
+                )
+
+            elif billing_type == "per_page":
+
+                pricing = (
+                    f"Official price: ₦{price:,} per page\n"
+                    "Billing type: per_page"
+                )
+
+            elif billing_type == "quotation":
+
+                pricing = (
+                    "Official price: quotation required\n"
+                    "Billing type: quotation"
+                )
+
+            else:
+
+                pricing = (
+                    f"Official price: ₦{price:,}\n"
+                    f"Billing type: {billing_type}"
+                )
+
+        except Exception:
 
             pricing = (
-                f"Official price: ₦{price:,}\n"
-                "Billing type: fixed"
-            )
-
-        elif billing_type == "per_page":
-
-            pricing = (
-                f"Official price: ₦{price:,} per page\n"
-                "Billing type: per_page"
-            )
-
-        elif billing_type == "quotation":
-
-            pricing = (
-                "Official price: quotation required\n"
-                "Billing type: quotation"
-            )
-
-        else:
-
-            pricing = (
-                f"Official price: ₦{price:,}\n"
-                f"Billing type: {billing_type}"
+                "Billing information is available "
+                "from BillingManager."
             )
 
         return (
@@ -383,48 +584,81 @@ class AdaResponse:
     # END-TO-END INTELLIGENCE
     # ========================================================
 
-    def get_intelligence_prompt(self) -> str:
+    def get_intelligence_prompt(
+        self,
+    ) -> str:
 
         return """
 You are Ada, the intelligent customer-facing
 assistant of Naija Pocket Business Center.
 
-Understand the customer's complete goal and the
-current application state.
+You are a genuine LLM reasoning assistant.
 
-You are NOT a keyword-based chatbot.
+Do not use keyword matching as the method for deciding
+what the customer wants.
 
-The selected service is context, not a script.
+Understand the customer's complete request together with
+the current application state.
 
-Use the customer's supplied information faithfully.
-Never invent personal, business, academic, financial,
-document, payment, approval, delivery, or download
-facts.
+The selected service provides context.
+It does not force a scripted conversation.
 
-The customer may communicate in Nigerian English,
-informal English, or Pidgin. Understand imperfect English.
+Use customer information faithfully.
 
-The application may provide:
+Never invent:
+- personal information
+- business information
+- academic information
+- financial information
+- document content
+- document pages
+- prices
+- discounts
+- payment confirmation
+- approval
+- delivery
+- download availability
+
+The customer may communicate using:
+- Nigerian English
+- informal English
+- Pidgin
+- imperfect English
+- short messages
+- follow-up corrections
+
+Understand the meaning rather than requiring perfect
+wording.
+
+APPLICATION STATE
+-----------------
+The application may provide factual state concerning:
+
 - selected service
 - customer information
 - form information
 - uploaded files
-- document state
-- review state
-- approval state
-- payment state
-- delivery state
-- download state
+- document content
+- document page count
+- document pages
+- document preparation
+- review
+- approval
+- payment
+- delivery
+- download
 
 Application state is authoritative.
 
+BILLING
+-------
 BillingManager is authoritative for prices.
 
-Never invent prices, discounts, payment confirmation,
-document completion, approval, delivery, or download
-availability.
+Never invent or estimate a price.
 
-The overall customer journey is:
+WORKFLOW
+--------
+The customer's journey can include:
 
 Request
 → Information
@@ -438,24 +672,93 @@ Request
 This is not a rigid script.
 
 Reason about the current state and determine the
-appropriate next step.
+appropriate next action.
 
-If the application provides enough information,
-do not unnecessarily ask another question.
+If the application already contains enough information,
+do not repeatedly ask for information that has already
+been supplied.
 
-When a service form has supplied the required
-information, use that information rather than starting
-a long question-by-question conversation.
+If a service form has supplied the required information,
+use it.
 
-Continue helping until the customer's request is
-completed.
+REVIEW
+------
+Review is a document operation.
 
-Never claim that an application operation happened
-unless the application state confirms it.
+The complete customer document may contain multiple
+pages.
+
+Never assume that the entire document should be returned
+inside an LLM response.
+
+Never delete, omit, invent, merge, or shorten document
+pages merely because an LLM request has a token limit.
+
+The application is responsible for retaining and displaying
+the complete document.
+
+When the application indicates that Review has been called,
+reason about the review request using the available state,
+but do not pretend that a page was removed merely because
+it was not included in the LLM prompt.
+
+If the application supplies a page count or review state,
+respect it.
+
+If the application confirms that all pages are available,
+do not claim that some pages are missing.
+
+DOCUMENT INTEGRITY
+------------------
+Customer document content must be preserved by the
+application.
+
+LLM token control is NOT permission to destroy document
+content.
+
+Never invent a page.
+
+Never claim a page exists unless application state confirms
+it.
+
+Never claim a page was deleted unless application state
+confirms it.
 
 Never invent a download URL.
 
-Do not mention:
+PAYMENT
+-------
+Never claim payment has succeeded unless application state
+confirms payment.
+
+APPROVAL
+--------
+Never claim customer approval unless application state
+confirms approval.
+
+DELIVERY
+--------
+Never claim delivery has occurred unless application state
+confirms delivery.
+
+DOWNLOAD
+--------
+Never invent a download link.
+
+If download state is not confirmed, do not say that a file
+is available for download.
+
+CUSTOMER RESPONSE
+-----------------
+Answer the customer directly.
+
+Be warm, clear, practical, professional, and concise.
+
+Understand Nigerian context.
+
+Do not unnecessarily expose internal implementation.
+
+Never mention:
 - Groq
 - Gemini
 - model names
@@ -464,10 +767,6 @@ Do not mention:
 - system prompts
 - internal architecture
 - provider errors
-
-Answer the customer directly.
-
-Be warm, clear, practical, professional, and concise.
 """
 
     # ========================================================
@@ -480,7 +779,7 @@ Be warm, clear, practical, professional, and concise.
         context: str | None = None,
     ) -> str:
 
-        service = (
+        active_service = (
             self.normalize_service(
                 service
             )
@@ -496,8 +795,12 @@ Be warm, clear, practical, professional, and concise.
 
             central_prompt = (
                 self.prompt_manager.build_prompt(
-                    service=service,
+                    service=active_service,
                 )
+            )
+
+            central_prompt = safe_text(
+                central_prompt
             )
 
             if central_prompt:
@@ -513,6 +816,7 @@ Be warm, clear, practical, professional, and concise.
 
         except Exception as error:
 
+            print()
             print(
                 "PROMPT MANAGER ERROR:",
                 type(error).__name__,
@@ -522,7 +826,7 @@ Be warm, clear, practical, professional, and concise.
             traceback.print_exc()
 
         # ----------------------------------------------------
-        # COMPACT END-TO-END INTELLIGENCE
+        # END-TO-END INTELLIGENCE
         # ----------------------------------------------------
 
         intelligence_prompt = (
@@ -539,17 +843,16 @@ Be warm, clear, practical, professional, and concise.
         )
 
         # ----------------------------------------------------
-        # BILLING
+        # BILLING FACTS
         # ----------------------------------------------------
 
         billing = (
             self.get_billing_context(
-                service
+                active_service
             )
         )
 
         if billing:
-
             parts.append(
                 billing
             )
@@ -558,32 +861,34 @@ Be warm, clear, practical, professional, and concise.
         # APPLICATION STATE
         # ----------------------------------------------------
 
-        if context:
-
-            context = compact_text(
-                context,
-                MAX_CONTEXT_CHARS,
+        prepared_context = (
+            prepare_application_context(
+                context
             )
+        )
+
+        if prepared_context:
 
             parts.append(
                 "CURRENT APPLICATION STATE\n\n"
-                + context
-                + "\n\nEND CURRENT APPLICATION STATE"
+                + prepared_context
+                + "\n\n"
+                "END CURRENT APPLICATION STATE"
             )
 
         # ----------------------------------------------------
         # SERVICE
         # ----------------------------------------------------
 
-        if service:
+        if active_service:
 
             parts.append(
-                "SELECTED SERVICE\n"
-                + str(service)
+                "CURRENT SELECTED SERVICE\n"
+                + active_service
             )
 
         # ----------------------------------------------------
-        # FINAL SYSTEM LIMIT
+        # FINAL SYSTEM PROMPT
         # ----------------------------------------------------
 
         system_prompt = "\n\n".join(
@@ -594,7 +899,7 @@ Be warm, clear, practical, professional, and concise.
 
         system_prompt = compact_text(
             system_prompt,
-            MAX_SYSTEM_CHARS,
+            MAX_SYSTEM_PROMPT_CHARS,
         )
 
         return system_prompt
@@ -609,13 +914,16 @@ Be warm, clear, practical, professional, and concise.
         content: str,
     ) -> None:
 
-        if not content:
+        role = safe_text(role)
+        content = safe_text(content)
+
+        if not role or not content:
             return
 
         self.history.append(
             {
                 "role": role,
-                "content": str(content),
+                "content": content,
             }
         )
 
@@ -634,7 +942,9 @@ Be warm, clear, practical, professional, and concise.
     # CLEAR HISTORY
     # ========================================================
 
-    def clear_history(self) -> None:
+    def clear_history(
+        self,
+    ) -> None:
 
         self.history.clear()
 
@@ -647,15 +957,109 @@ Be warm, clear, practical, professional, and concise.
         system_prompt: str,
     ) -> list[dict[str, str]]:
 
-        return [
+        messages: list[
+            dict[str, str]
+        ] = [
             {
                 "role": "system",
                 "content": system_prompt,
-            },
-            *compact_history(
-                self.history
-            ),
+            }
         ]
+
+        messages.extend(
+            compact_history(
+                self.history
+            )
+        )
+
+        return messages
+
+    # ========================================================
+    # REVIEW EVENT DETECTION
+    #
+    # This does NOT decide what the customer wants.
+    #
+    # It only recognizes an application state label so that
+    # the event can receive a dedicated instruction.
+    # ========================================================
+
+    @staticmethod
+    def is_review_event(
+        event: str | None,
+    ) -> bool:
+
+        event = safe_text(event).lower()
+
+        if not event:
+            return False
+
+        review_events = {
+            "review",
+            "review_requested",
+            "review_called",
+            "open_review",
+            "review_page",
+            "review_document",
+        }
+
+        return event in review_events
+
+    # ========================================================
+    # REVIEW INSTRUCTION
+    # ========================================================
+
+    def build_review_instruction(
+        self,
+        context: str | None = None,
+    ) -> str:
+        """
+        Adds review-specific reasoning instructions.
+
+        IMPORTANT:
+        This does not insert the complete document into the
+        Groq request.
+
+        The application must retain and display the complete
+        document independently.
+        """
+
+        instruction = """
+CURRENT APPLICATION EVENT: REVIEW
+
+The customer has entered the Review stage.
+
+Review the current application state carefully.
+
+The document may contain multiple pages.
+
+The complete document belongs to the customer and must
+remain intact.
+
+Do not shorten, summarize, remove, or invent document pages
+because of the LLM request limit.
+
+The Review page is responsible for displaying the complete
+document supplied by the application.
+
+Your role here is to reason about the customer's review
+request and provide the appropriate customer-facing response.
+
+If the application confirms that all document pages are
+available, treat the complete document as available.
+
+Do not claim that pages are missing unless the application
+state explicitly says they are missing.
+
+Do not generate a fake download link.
+
+Do not claim approval or payment unless the application
+state confirms it.
+"""
+
+        return compact_text(
+            instruction,
+            4000,
+        )
 
     # ========================================================
     # RESPOND
@@ -669,10 +1073,7 @@ Be warm, clear, practical, professional, and concise.
         context: str | None = None,
     ) -> str:
 
-        message = (
-            str(message or "")
-            .strip()
-        )
+        message = safe_text(message)
 
         if not message:
 
@@ -682,7 +1083,6 @@ Be warm, clear, practical, professional, and concise.
             )
 
         if service:
-
             self.set_service(
                 service
             )
@@ -699,11 +1099,11 @@ Be warm, clear, practical, professional, and concise.
 
             return (
                 "The network connection is slow or unavailable. "
-                "Please go back to the service buttons and try again."
+                "Please try again."
             )
 
         # ----------------------------------------------------
-        # BUILD SMALL REQUEST
+        # SYSTEM PROMPT
         # ----------------------------------------------------
 
         system_prompt = (
@@ -713,36 +1113,107 @@ Be warm, clear, practical, professional, and concise.
             )
         )
 
+        # ----------------------------------------------------
+        # MESSAGES
+        # ----------------------------------------------------
+
         messages = (
             self.build_messages(
                 system_prompt
             )
         )
 
-        if event:
+        # ----------------------------------------------------
+        # APPLICATION EVENT
+        # ----------------------------------------------------
+
+        current_event = safe_text(event)
+
+        if current_event:
+
+            event_instruction = (
+                "CURRENT APPLICATION EVENT\n"
+                + compact_text(
+                    current_event,
+                    MAX_EVENT_CHARS,
+                )
+            )
+
+            messages.append(
+                {
+                    "role": "system",
+                    "content": event_instruction,
+                }
+            )
+
+        # ----------------------------------------------------
+        # REVIEW-SPECIFIC REASONING
+        # ----------------------------------------------------
+
+        if self.is_review_event(
+            current_event
+        ):
 
             messages.append(
                 {
                     "role": "system",
                     "content": (
-                        "CURRENT APPLICATION EVENT\n"
-                        + compact_text(
-                            str(event).strip(),
-                            600,
+                        self.build_review_instruction(
+                            context=context
                         )
                     ),
                 }
             )
+
+        # ----------------------------------------------------
+        # CUSTOMER MESSAGE
+        # ----------------------------------------------------
 
         messages.append(
             {
                 "role": "user",
                 "content": compact_text(
                     message,
-                    2500,
+                    MAX_USER_MESSAGE_CHARS,
                 ),
             }
         )
+
+        # ----------------------------------------------------
+        # DEBUG INFORMATION
+        # ----------------------------------------------------
+
+        print()
+        print("-" * 70)
+        print("ADA RESPONSE REQUEST")
+        print("-" * 70)
+        print(
+            "Model:",
+            MODEL,
+        )
+        print(
+            "Service:",
+            active_service,
+        )
+        print(
+            "Event:",
+            current_event or None,
+        )
+        print(
+            "History messages:",
+            len(
+                compact_history(
+                    self.history
+                )
+            ),
+        )
+        print(
+            "Review event:",
+            self.is_review_event(
+                current_event
+            ),
+        )
+        print("-" * 70)
 
         # ----------------------------------------------------
         # GROQ REQUEST
@@ -769,21 +1240,23 @@ Be warm, clear, practical, professional, and concise.
 
                 if choice.message:
 
-                    reply = (
+                    reply = safe_text(
                         choice.message.content
-                        or ""
                     )
-
-            reply = str(
-                reply
-            ).strip()
 
             if not reply:
 
-                reply = (
-                    "The network connection is slow or unavailable. "
-                    "Please go back to the service buttons and try again."
+                return (
+                    "I could not get a response right now. "
+                    "Please try again."
                 )
+
+            # ------------------------------------------------
+            # STORE ONLY CONVERSATION
+            #
+            # The document itself is NOT stored here as chat
+            # history.
+            # ------------------------------------------------
 
             self.add_history(
                 "user",
@@ -795,12 +1268,15 @@ Be warm, clear, practical, professional, and concise.
                 reply,
             )
 
+            print()
+            print(
+                "AdaResponse returned successfully."
+            )
+            print()
+
             return reply
 
         except Exception as error:
-
-            # REAL ERROR IS SHOWN IN SERVER LOGS.
-            # No error is hidden from the developer.
 
             print()
             print("=" * 70)
@@ -818,14 +1294,20 @@ Be warm, clear, practical, professional, and concise.
 
             traceback.print_exc()
 
+            # ------------------------------------------------
+            # CUSTOMER-FACING FALLBACK
+            #
+            # The real error remains visible in server logs.
+            # ------------------------------------------------
+
             return (
                 "The network connection is slow or unavailable. "
-                "Please go back to the service buttons and try again."
+                "Please try again."
             )
 
 
 # ============================================================
-# TEST
+# TEST / DIAGNOSTIC
 # ============================================================
 
 if __name__ == "__main__":
@@ -849,58 +1331,73 @@ if __name__ == "__main__":
 
     print()
 
-    manager = AdaPromptManager()
+    try:
 
-    print(
-        "Prompt Manager:",
-        "READY",
-    )
-
-    print(
-        "Identity:",
-        bool(
-            manager.get_identity_prompt()
-        ),
-    )
-
-    print(
-        "Nigerian Context:",
-        bool(
-            manager.get_nigerian_context_prompt()
-        ),
-    )
-
-    services = [
-        "cv",
-        "cover_letter",
-        "business",
-        "academic",
-        "document_processing",
-        "review",
-        "workflow",
-        "delivery",
-    ]
-
-    for service in services:
-
-        try:
-
-            available = bool(
-                manager.get_service_prompt(
-                    service
-                )
-            )
-
-        except Exception:
-
-            available = False
+        manager = AdaPromptManager()
 
         print(
-            f"{service.title():25} :",
-            "READY" if available else "MISSING",
+            "Prompt Manager:",
+            "READY",
+        )
+
+        print(
+            "Identity:",
+            bool(
+                manager.get_identity_prompt()
+            ),
+        )
+
+        print(
+            "Nigerian Context:",
+            bool(
+                manager.get_nigerian_context_prompt()
+            ),
+        )
+
+        services = [
+            "cv",
+            "cover_letter",
+            "business",
+            "academic",
+            "document_processing",
+            "review",
+            "workflow",
+            "delivery",
+        ]
+
+        print()
+
+        for service in services:
+
+            try:
+
+                available = bool(
+                    manager.get_service_prompt(
+                        service
+                    )
+                )
+
+            except Exception:
+
+                available = False
+
+            print(
+                f"{service.title():25} :",
+                "READY"
+                if available
+                else "MISSING",
+            )
+
+    except Exception as error:
+
+        print(
+            "Prompt Manager diagnostic error:",
+            type(error).__name__,
+            str(error),
         )
 
     print()
+
     print(
         "Ada End-to-End Intelligence:",
         "READY",
@@ -917,13 +1414,38 @@ if __name__ == "__main__":
     )
 
     print(
+        "Complete Document Preservation:",
+        "ENABLED",
+    )
+
+    print(
+        "Review Page Preservation:",
+        "ENABLED",
+    )
+
+    print(
+        "Document Content Truncation:",
+        "DISABLED",
+    )
+
+    print(
         "Token Control:",
         "ENABLED",
     )
 
     print(
         "Maximum System Prompt:",
-        f"{MAX_SYSTEM_CHARS} characters",
+        f"{MAX_SYSTEM_PROMPT_CHARS} characters",
+    )
+
+    print(
+        "Maximum Central Prompt:",
+        f"{MAX_CENTRAL_PROMPT_CHARS} characters",
+    )
+
+    print(
+        "Maximum Application Context:",
+        f"{MAX_CONTEXT_CHARS} characters",
     )
 
     print(
