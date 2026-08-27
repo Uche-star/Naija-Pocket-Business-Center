@@ -94,7 +94,7 @@ button{
 
     border-bottom:1px solid var(--border);
 
-    z-index:20;
+    z-index:30;
 }
 
 .brand{
@@ -166,18 +166,6 @@ button{
 
     width:100%;
 
-    /*
-       IMPORTANT:
-       The main area is now the SINGLE vertical
-       scroll container for both the form and
-       the complete review document.
-
-       The previous version also made .work-card
-       a separate fixed-height scroll container.
-       That could make long documents appear
-       cut off on smaller screens.
-    */
-
     overflow-x:hidden;
 
     overflow-y:auto;
@@ -207,7 +195,7 @@ button{
 
 
 /* =========================================================
-   SERVICE FORM
+   FORM
    ========================================================= */
 
 .intro-card,
@@ -264,13 +252,12 @@ button{
 
     padding:7px 10px;
 
-    background:
-        rgba(
-            212,
-            175,
-            55,
-            .09
-        );
+    background:rgba(
+        212,
+        175,
+        55,
+        .09
+    );
 
     border:1px solid
         rgba(
@@ -446,17 +433,6 @@ button{
     width:100%;
 
     min-width:0;
-
-    /*
-       IMPORTANT:
-       Do not give this section a fixed height.
-       Its complete document and payment content
-       must be allowed to determine its full height.
-    */
-
-    height:auto;
-
-    overflow:visible;
 }
 
 .review-view.show{
@@ -500,131 +476,508 @@ button{
 
 
 /* =========================================================
-   REVIEW DOCUMENT
+   MIGRATION SCREEN
    ========================================================= */
 
-/*
-   CRITICAL REVIEW FIX
+.migration-screen{
+    display:none;
 
-   The old version used:
-
-       height:clamp(...)
-       min-height:...
-       overflow-y:auto
-
-   That created a second scroll container with a
-   restricted viewport.
-
-   This replacement deliberately removes the fixed
-   document height and nested vertical scrolling.
-
-   The document now expands to its FULL natural height.
-   The .main element is responsible for scrolling the
-   entire review page.
-
-   Therefore a long 5-page, 8-page, 20-page or longer
-   response remains present in the DOM and can be
-   reached by normal page scrolling.
-*/
-
-.work-card{
     width:100%;
 
-    min-width:0;
+    min-height:410px;
 
-    height:auto;
+    padding:24px 17px;
 
-    min-height:360px;
+    background:
+        radial-gradient(
+            circle at 50% 15%,
+            rgba(212,175,55,.13),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            #171717,
+            #080808
+        );
 
-    background:#f7f7f7;
+    border:1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .32
+        );
+
+    border-radius:16px;
+
+    text-align:center;
+}
+
+.migration-screen.show{
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+}
+
+.migration-icon{
+    position:relative;
+
+    width:82px;
+
+    height:82px;
+
+    margin-bottom:17px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #252525,
+            #0d0d0d
+        );
+
+    border:1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .5
+        );
+
+    box-shadow:
+        0 0 35px
+        rgba(
+            212,
+            175,
+            55,
+            .12
+        );
+
+    overflow:hidden;
+}
+
+.migration-icon::before{
+    content:"";
+
+    position:absolute;
+
+    width:130px;
+
+    height:130px;
+
+    border:2px solid
+        rgba(
+            212,
+            175,
+            55,
+            .15
+        );
+
+    border-radius:50%;
+
+    animation:
+        migrationPulse
+        2s infinite;
+}
+
+.migration-icon-symbol{
+    position:relative;
+
+    z-index:2;
+
+    font-size:35px;
+
+    animation:
+        documentFloat
+        1.7s ease-in-out infinite;
+}
+
+@keyframes documentFloat{
+
+    0%,
+    100%{
+        transform:
+            translateY(0);
+    }
+
+    50%{
+        transform:
+            translateY(-6px);
+    }
+
+}
+
+@keyframes migrationPulse{
+
+    0%{
+        transform:scale(.75);
+
+        opacity:.1;
+    }
+
+    70%{
+        transform:scale(1.25);
+
+        opacity:.7;
+    }
+
+    100%{
+        transform:scale(1.4);
+
+        opacity:0;
+    }
+
+}
+
+.migration-title{
+    margin:0;
+
+    color:var(--gold2);
+
+    font-size:20px;
+
+    font-weight:900;
+}
+
+.migration-message{
+    max-width:620px;
+
+    margin:7px auto 0;
+
+    color:#c7c7c7;
+
+    font-size:12px;
+
+    line-height:1.6;
+}
+
+.migration-file{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    margin-top:17px;
+
+    color:#fff;
+
+    font-size:11px;
+
+    font-weight:800;
+}
+
+.migration-file-icon{
+    font-size:18px;
+}
+
+.migration-track{
+    width:100%;
+
+    max-width:600px;
+
+    height:9px;
+
+    margin-top:16px;
+
+    background:#242424;
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .08
+        );
+
+    border-radius:999px;
+
+    overflow:hidden;
+}
+
+.migration-progress{
+    width:0%;
+
+    height:100%;
+
+    border-radius:999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #9e7d16,
+            var(--gold2),
+            #fff0a5,
+            var(--gold)
+        );
+
+    box-shadow:
+        0 0 13px
+        rgba(
+            243,
+            214,
+            107,
+            .4
+        );
+
+    transition:
+        width .35s ease;
+}
+
+.migration-count{
+    margin-top:9px;
+
+    color:#999;
+
+    font-size:10px;
+}
+
+.migration-batches{
+    width:100%;
+
+    max-width:600px;
+
+    margin-top:17px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(
+                70px,
+                1fr
+            )
+        );
+
+    gap:5px;
+}
+
+.migration-batch{
+    min-height:30px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:6px;
+
+    background:#151515;
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .08
+        );
+
+    color:#666;
+
+    font-size:9px;
+
+    font-weight:800;
+}
+
+.migration-batch.active{
+    color:var(--gold2);
+
+    border-color:
+        rgba(
+            212,
+            175,
+            55,
+            .5
+        );
+
+    background:#211d0e;
+
+    animation:
+        batchGlow
+        1s infinite alternate;
+}
+
+.migration-batch.done{
+    color:#7bd99a;
+
+    border-color:
+        rgba(
+            22,
+            128,
+            71,
+            .45
+        );
+
+    background:#0d2117;
+}
+
+@keyframes batchGlow{
+
+    from{
+        box-shadow:
+            0 0 4px
+            rgba(
+                212,
+                175,
+                55,
+                .12
+            );
+    }
+
+    to{
+        box-shadow:
+            0 0 16px
+            rgba(
+                212,
+                175,
+                55,
+                .25
+            );
+    }
+
+}
+
+
+/* =========================================================
+   REVIEW PAGER
+   ========================================================= */
+
+.review-document{
+    display:none;
+}
+
+.review-document.show{
+    display:block;
+}
+
+.page-counter{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:8px;
+
+    margin-bottom:8px;
+
+    padding:9px 11px;
+
+    background:#111;
+
+    border:1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .22
+        );
+
+    border-radius:9px;
+}
+
+.page-counter-title{
+    color:var(--gold2);
+
+    font-size:11px;
+
+    font-weight:900;
+}
+
+.page-counter-info{
+    color:#888;
+
+    font-size:9px;
+}
+
+.review-page{
+    width:100%;
+
+    background:#fff;
 
     color:#111;
 
     border-radius:11px;
 
-    padding:0;
+    overflow:hidden;
 
-    /*
-       NO fixed height.
-       NO nested vertical scrolling.
-    */
-
-    overflow:visible;
-
-    overflow-wrap:anywhere;
-
-    word-wrap:break-word;
-
-    user-select:none;
-
-    -webkit-user-select:none;
-
-    -webkit-touch-callout:none;
+    box-shadow:
+        0 12px 35px
+        rgba(
+            0,
+            0,
+            0,
+            .4
+        );
 }
 
-.work-content{
-    display:block;
+.review-page-label{
+    min-height:32px;
 
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 12px;
+
+    background:#e7e7e7;
+
+    border-bottom:1px solid #cfcfcf;
+
+    color:#555;
+
+    font-size:9px;
+
+    font-weight:800;
+}
+
+.review-page-content{
     width:100%;
-
-    min-width:0;
 
     min-height:360px;
 
-    padding:22px 17px;
-
-    color:#111;
-
-    background:#f7f7f7;
-
-    font-size:14px;
-
-    line-height:1.7;
-
-    /*
-       The content itself must be allowed
-       to grow to its complete natural height.
-    */
-
-    height:auto;
-
-    overflow:visible;
-
-    overflow-wrap:anywhere;
-
-    word-wrap:break-word;
-
-    user-select:none;
-
-    -webkit-user-select:none;
-
-    -webkit-touch-callout:none;
-}
-
-.work-content.document-html{
-    display:block;
-
-    width:100%;
-
-    min-width:0;
-
-    min-height:360px;
-
-    height:auto;
+    padding:
+        22px
+        17px
+        30px;
 
     color:#111;
 
     background:#fff;
 
-    overflow:visible;
+    font-size:14px;
+
+    line-height:1.7;
+
+    overflow-wrap:anywhere;
+
+    word-wrap:break-word;
+
+    user-select:none;
+
+    -webkit-user-select:none;
+
+    -webkit-touch-callout:none;
 }
 
-
-/* =========================================================
-   DOCUMENT HEADINGS
-   ========================================================= */
-
-.work-content h1{
+.review-page-content h1{
     margin:0 0 18px;
 
     color:#111;
@@ -634,11 +987,9 @@ button{
     line-height:1.25;
 
     font-weight:800;
-
-    text-align:left;
 }
 
-.work-content h2{
+.review-page-content h2{
     margin:24px 0 10px;
 
     color:#111;
@@ -650,7 +1001,7 @@ button{
     font-weight:800;
 }
 
-.work-content h3{
+.review-page-content h3{
     margin:20px 0 8px;
 
     color:#111;
@@ -662,9 +1013,9 @@ button{
     font-weight:800;
 }
 
-.work-content h4,
-.work-content h5,
-.work-content h6{
+.review-page-content h4,
+.review-page-content h5,
+.review-page-content h6{
     margin:16px 0 7px;
 
     color:#111;
@@ -672,12 +1023,7 @@ button{
     font-weight:800;
 }
 
-
-/* =========================================================
-   DOCUMENT TEXT
-   ========================================================= */
-
-.work-content p{
+.review-page-content p{
     margin:0 0 12px;
 
     color:#111;
@@ -687,44 +1033,34 @@ button{
     line-height:1.75;
 }
 
-.work-content strong,
-.work-content b{
+.review-page-content strong,
+.review-page-content b{
     font-weight:800;
 }
 
-.work-content em,
-.work-content i{
+.review-page-content em,
+.review-page-content i{
     font-style:italic;
 }
 
-.work-content u{
+.review-page-content u{
     text-decoration:underline;
 }
 
-
-/* =========================================================
-   LISTS
-   ========================================================= */
-
-.work-content ul,
-.work-content ol{
+.review-page-content ul,
+.review-page-content ol{
     margin:8px 0 15px 25px;
 
     padding:0;
 }
 
-.work-content li{
+.review-page-content li{
     margin:5px 0;
 
     line-height:1.65;
 }
 
-
-/* =========================================================
-   DIVIDER
-   ========================================================= */
-
-.work-content hr{
+.review-page-content hr{
     border:0;
 
     border-top:1px solid #999;
@@ -732,12 +1068,7 @@ button{
     margin:20px 0;
 }
 
-
-/* =========================================================
-   TABLES
-   ========================================================= */
-
-.work-content table{
+.review-page-content table{
     width:100%;
 
     max-width:100%;
@@ -749,12 +1080,10 @@ button{
     color:#111;
 
     font-size:13px;
-
-    table-layout:auto;
 }
 
-.work-content th,
-.work-content td{
+.review-page-content th,
+.review-page-content td{
     border:1px solid #999;
 
     padding:8px;
@@ -764,22 +1093,15 @@ button{
     vertical-align:top;
 
     overflow-wrap:anywhere;
-
-    word-break:normal;
 }
 
-.work-content th{
+.review-page-content th{
     font-weight:800;
 
     background:#eee;
 }
 
-
-/* =========================================================
-   QUOTES
-   ========================================================= */
-
-.work-content blockquote{
+.review-page-content blockquote{
     margin:15px 0;
 
     padding:10px 14px;
@@ -789,12 +1111,7 @@ button{
     background:#f0f0f0;
 }
 
-
-/* =========================================================
-   CODE
-   ========================================================= */
-
-.work-content pre{
+.review-page-content pre{
     white-space:pre-wrap;
 
     word-break:break-word;
@@ -814,18 +1131,13 @@ button{
     font-size:12px;
 }
 
-.work-content code{
+.review-page-content code{
     font-family:monospace;
 
     overflow-wrap:anywhere;
 }
 
-
-/* =========================================================
-   LINKS
-   ========================================================= */
-
-.work-content a{
+.review-page-content a{
     color:#111;
 
     text-decoration:underline;
@@ -833,12 +1145,7 @@ button{
     overflow-wrap:anywhere;
 }
 
-
-/* =========================================================
-   IMAGES
-   ========================================================= */
-
-.work-content img{
+.review-page-content img{
     max-width:100%;
 
     height:auto;
@@ -848,63 +1155,54 @@ button{
     margin:12px auto;
 }
 
+.page-navigation{
+    display:grid;
 
-/* =========================================================
-   SPACING
-   ========================================================= */
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
 
-.work-content .document-spacer{
-    height:10px;
+    gap:7px;
+
+    margin-top:8px;
 }
 
-.work-placeholder{
-    color:#777;
-
-    text-align:center;
-
-    padding:70px 10px;
-
-    user-select:none;
-
-    -webkit-user-select:none;
-}
-
-
-/* =========================================================
-   REVIEW ERROR
-   ========================================================= */
-
-.review-error{
-    margin:18px;
-
-    padding:16px;
-
-    background:#fff4f4;
-
-    border:1px solid #d77;
+.page-nav-button{
+    min-height:43px;
 
     border-radius:8px;
 
-    color:#8b0000;
+    background:#191919;
 
-    font-family:
-        Inter,
-        Arial,
-        sans-serif;
+    color:#fff;
 
-    font-size:13px;
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .13
+        );
 
-    line-height:1.6;
+    font-size:11px;
 
-    text-align:left;
+    font-weight:850;
 }
 
-.review-error strong{
-    display:block;
+.page-nav-button.primary{
+    background:var(--gold);
 
-    margin-bottom:7px;
+    color:#000;
 
-    font-size:15px;
+    border:0;
+}
+
+.page-nav-button:disabled{
+    opacity:.28;
+
+    cursor:not-allowed;
 }
 
 
@@ -1127,7 +1425,7 @@ button{
 
 
 /* =========================================================
-   BOTTOM CONTROLS
+   BOTTOM
    ========================================================= */
 
 .bottom{
@@ -1149,7 +1447,7 @@ button{
 
     border-top:1px solid var(--border);
 
-    z-index:20;
+    z-index:30;
 }
 
 .bottom-inner{
@@ -1333,25 +1631,6 @@ button:disabled{
 
 
 /* =========================================================
-   READ ONLY
-   ========================================================= */
-
-#introText,
-.intro-card,
-.work-card{
-    user-select:none;
-
-    -webkit-user-select:none;
-
-    -moz-user-select:none;
-
-    -ms-user-select:none;
-
-    -webkit-touch-callout:none;
-}
-
-
-/* =========================================================
    MOBILE
    ========================================================= */
 
@@ -1364,67 +1643,42 @@ button:disabled{
             45px;
     }
 
-    /*
-       IMPORTANT:
-       No fixed review height on mobile.
-       The complete document determines the
-       height and .main scrolls through it.
-    */
-
-    .work-card{
-        height:auto;
-
-        min-height:300px;
-
-        border-radius:10px;
-
-        overflow:visible;
-    }
-
-    .work-content{
-        height:auto;
-
-        min-height:300px;
-
+    .review-page-content{
         padding:
             18px
             14px
             28px;
 
-        overflow:visible;
-    }
-
-    .work-content.document-html{
-        height:auto;
-
-        min-height:300px;
-
-        overflow:visible;
-    }
-
-    .work-content h1{
-        font-size:24px;
-    }
-
-    .work-content h2{
-        font-size:19px;
-    }
-
-    .work-content h3{
-        font-size:16px;
-    }
-
-    .work-content p{
         font-size:14px;
     }
 
-    .work-content table{
+    .review-page-content h1{
+        font-size:24px;
+    }
+
+    .review-page-content h2{
+        font-size:19px;
+    }
+
+    .review-page-content h3{
+        font-size:16px;
+    }
+
+    .review-page-content table{
         font-size:12px;
     }
 
-    .work-content th,
-    .work-content td{
+    .review-page-content th,
+    .review-page-content td{
         padding:7px;
+    }
+
+    .migration-screen{
+        min-height:390px;
+
+        padding:
+            22px
+            12px;
     }
 
 }
@@ -1444,25 +1698,8 @@ button:disabled{
             );
     }
 
-    /*
-       Do NOT reduce the document height
-       on very small phones.
-    */
-
-    .work-card{
-        height:auto;
-
-        min-height:300px;
-
-        overflow:visible;
-    }
-
-    .work-content{
-        height:auto;
-
-        min-height:300px;
-
-        overflow:visible;
+    .review-actions{
+        grid-template-columns:1fr;
     }
 
 }
@@ -1566,7 +1803,7 @@ button:disabled{
 
                 When you tap
                 <strong>SEND</strong>,
-                your information will be sent for processing and your prepared work will open immediately in the review area.
+                your information will be processed in controlled batches and moved into the review pages as each part is prepared.
 
             </div>
 
@@ -1601,32 +1838,172 @@ button:disabled{
 
 
         <p class="review-subtitle">
-            Read through your prepared work carefully. You can request corrections before approving it.
+            Your prepared work is being assembled page by page. You can review each page and request corrections before approving it.
         </p>
 
     </div>
 
 
+    <!-- =====================================================
+         CUSTOMER-VISIBLE MIGRATION
+         ===================================================== -->
 
-    <div
-        id="workCard"
-        class="work-card"
+    <section
+        id="migrationScreen"
+        class="migration-screen"
     >
 
-        <div
-            id="workContent"
-            class="work-content"
-        >
+        <div class="migration-icon">
 
-            <div class="work-placeholder">
-                Your prepared work will appear here.
+            <div class="migration-icon-symbol">
+                📄
             </div>
 
         </div>
 
-    </div>
+
+        <h2
+            id="migrationTitle"
+            class="migration-title"
+        >
+            Preparing Your Work
+        </h2>
 
 
+        <p
+            id="migrationMessage"
+            class="migration-message"
+        >
+            Your work is being carefully prepared and moved into your review pages.
+        </p>
+
+
+        <div class="migration-file">
+
+            <span
+                id="migrationFileIcon"
+                class="migration-file-icon"
+            >
+                📑
+            </span>
+
+            <span
+                id="migrationFileName"
+            >
+                Preparing document
+            </span>
+
+        </div>
+
+
+        <div class="migration-track">
+
+            <div
+                id="migrationProgress"
+                class="migration-progress"
+            ></div>
+
+        </div>
+
+
+        <div
+            id="migrationCount"
+            class="migration-count"
+        >
+            Preparing batches...
+        </div>
+
+
+        <div
+            id="migrationBatches"
+            class="migration-batches"
+        ></div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PAGINATED REVIEW DOCUMENT
+         ===================================================== -->
+
+    <section
+        id="reviewDocument"
+        class="review-document"
+    >
+
+        <div class="page-counter">
+
+            <div
+                id="pageCounterTitle"
+                class="page-counter-title"
+            >
+                Review Page 1
+            </div>
+
+            <div
+                id="pageCounterInfo"
+                class="page-counter-info"
+            >
+                Page 1 of 1
+            </div>
+
+        </div>
+
+
+        <div class="review-page">
+
+            <div class="review-page-label">
+
+                <span>
+                    REVIEW DOCUMENT
+                </span>
+
+                <span
+                    id="pageLabel"
+                >
+                    PAGE 1
+                </span>
+
+            </div>
+
+
+            <div
+                id="reviewPageContent"
+                class="review-page-content"
+            >
+            </div>
+
+        </div>
+
+
+        <div class="page-navigation">
+
+            <button
+                id="previousPageButton"
+                class="page-nav-button"
+                type="button"
+            >
+                ← Previous Page
+            </button>
+
+
+            <button
+                id="nextPageButton"
+                class="page-nav-button primary"
+                type="button"
+            >
+                Next Page →
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CORRECTIONS
+         ===================================================== -->
 
     <div class="correction-card">
 
@@ -1841,7 +2218,7 @@ button:disabled{
 
 
 /* =========================================================
-   API CONNECTION
+   API
    ========================================================= */
 
 const API_BASE = "";
@@ -1870,7 +2247,6 @@ const fields =
 const formSubmit =
     $("formSubmit");
 
-
 const serviceBadge =
     $("serviceBadge");
 
@@ -1886,13 +2262,47 @@ const price =
 const introCard =
     $("introCard");
 
+const migrationScreen =
+    $("migrationScreen");
 
-const workCard =
-    $("workCard");
+const migrationTitle =
+    $("migrationTitle");
 
-const workContent =
-    $("workContent");
+const migrationMessage =
+    $("migrationMessage");
 
+const migrationFileName =
+    $("migrationFileName");
+
+const migrationProgress =
+    $("migrationProgress");
+
+const migrationCount =
+    $("migrationCount");
+
+const migrationBatches =
+    $("migrationBatches");
+
+const reviewDocument =
+    $("reviewDocument");
+
+const reviewPageContent =
+    $("reviewPageContent");
+
+const pageCounterTitle =
+    $("pageCounterTitle");
+
+const pageCounterInfo =
+    $("pageCounterInfo");
+
+const pageLabel =
+    $("pageLabel");
+
+const previousPageButton =
+    $("previousPageButton");
+
+const nextPageButton =
+    $("nextPageButton");
 
 const correctionInput =
     $("correctionInput");
@@ -1903,10 +2313,8 @@ const applyBtn =
 const approveBtn =
     $("approveButton");
 
-
 const downloadBtn =
     $("downloadButton");
-
 
 const uploadBtn =
     $("uploadButton");
@@ -1920,10 +2328,8 @@ const customerBtn =
 const chooseBtn =
     $("chooseServiceButton");
 
-
 const fileInput =
     $("fileInput");
-
 
 const messageInput =
     $("messageInput");
@@ -1931,14 +2337,11 @@ const messageInput =
 const sendBtn =
     $("sendButton");
 
-
 const status =
     $("status");
 
-
 const voiceRecording =
     $("voiceRecording");
-
 
 const paymentPanel =
     $("paymentPanel");
@@ -1961,7 +2364,6 @@ const params =
     new URLSearchParams(
         location.search
     );
-
 
 const service =
     (
@@ -1986,8 +2388,8 @@ function makeId(prefix){
             prefix +
             crypto.randomUUID()
         );
-    }
 
+    }
 
     return (
         prefix +
@@ -2078,11 +2480,31 @@ let paymentConfirmed = false;
 
 let currentWork = "";
 
+let reviewPages = [];
+
+let currentPageIndex = 0;
+
 let mediaRecorder = null;
 
 let recordedChunks = [];
 
 let recordingStream = null;
+
+
+/*
+   This is the deliberate processing ceiling.
+
+   We ask the intelligence endpoint to keep each
+   returned migration batch comfortably below the
+   800-token target rather than attempting to make
+   one enormous response.
+
+   The visible review page is NOT the token container.
+   Each batch is its own page.
+*/
+
+const BATCH_OUTPUT_TARGET =
+    650;
 
 
 /* =========================================================
@@ -2094,7 +2516,6 @@ function clean(value){
     if(value == null){
         return null;
     }
-
 
     return (
         String(value)
@@ -2113,7 +2534,6 @@ function setStatus(
     status.textContent =
         message || "";
 
-
     status.className =
         "status " +
         type;
@@ -2125,7 +2545,6 @@ function busyState(value){
 
     busy = value;
 
-
     [
         formSubmit,
         sendBtn,
@@ -2134,7 +2553,9 @@ function busyState(value){
         customerBtn,
         chooseBtn,
         applyBtn,
-        approveBtn
+        approveBtn,
+        previousPageButton,
+        nextPageButton
     ].forEach(button => {
 
         if(button){
@@ -2150,7 +2571,7 @@ function busyState(value){
 
 
 /* =========================================================
-   API RESPONSE ERROR EXTRACTION
+   API RESPONSE
    ========================================================= */
 
 async function readApiResponse(
@@ -2164,11 +2585,9 @@ async function readApiResponse(
             ) || ""
         ).toLowerCase();
 
-
     let data = null;
 
     let rawText = "";
-
 
     if(
         contentType.includes(
@@ -2200,7 +2619,6 @@ async function readApiResponse(
 
         }
 
-
         if(rawText){
 
             try{
@@ -2220,20 +2638,6 @@ async function readApiResponse(
 
     }
 
-
-    if(
-        !data &&
-        !rawText
-    ){
-
-        return {
-            data:null,
-            rawText:""
-        };
-
-    }
-
-
     return {
         data,
         rawText
@@ -2243,13 +2647,12 @@ async function readApiResponse(
 
 
 /* =========================================================
-   API
+   API CHAT
    ========================================================= */
 
 async function apiChat(body){
 
     let response;
-
 
     try{
 
@@ -2281,16 +2684,13 @@ async function apiChat(body){
 
     }
 
-
     const parsed =
         await readApiResponse(
             response
         );
 
-
     const data =
         parsed.data;
-
 
     if(!response.ok){
 
@@ -2305,7 +2705,6 @@ async function apiChat(body){
                 "."
             );
 
-
         if(
             /<!doctype|<html[\s>]/i.test(
                 message
@@ -2317,13 +2716,11 @@ async function apiChat(body){
 
         }
 
-
         throw new Error(
             String(message).trim()
         );
 
     }
-
 
     if(data){
 
@@ -2340,11 +2737,9 @@ async function apiChat(body){
 
         }
 
-
         return data;
 
     }
-
 
     if(parsed.rawText){
 
@@ -2356,7 +2751,6 @@ async function apiChat(body){
 
     }
 
-
     throw new Error(
         "The service returned an empty response."
     );
@@ -2365,7 +2759,7 @@ async function apiChat(body){
 
 
 /* =========================================================
-   DOCUMENT CLEANING
+   HTML CLEANING
    ========================================================= */
 
 function removeHtmlCodeFences(
@@ -2377,13 +2771,11 @@ function removeHtmlCodeFences(
             value || ""
         ).trim();
 
-
     html =
         html.replace(
             /^```(?:html|HTML)?\s*/i,
             ""
         );
-
 
     html =
         html.replace(
@@ -2391,15 +2783,10 @@ function removeHtmlCodeFences(
             ""
         );
 
-
     return html.trim();
 
 }
 
-
-/* =========================================================
-   HTML DETECTION
-   ========================================================= */
 
 function looksLikeHtml(
     value
@@ -2410,7 +2797,6 @@ function looksLikeHtml(
             value || ""
         ).trim();
 
-
     return (
         /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i
             .test(text)
@@ -2420,7 +2806,7 @@ function looksLikeHtml(
 
 
 /* =========================================================
-   SAFE DOCUMENT PARSER
+   SAFE HTML
    ========================================================= */
 
 function parseSafeDocumentHtml(
@@ -2430,13 +2816,11 @@ function parseSafeDocumentHtml(
     const parser =
         new DOMParser();
 
-
     const parsed =
         parser.parseFromString(
             html,
             "text/html"
         );
-
 
     const allowedTags =
         new Set([
@@ -2473,7 +2857,6 @@ function parseSafeDocumentHtml(
             "IMG"
         ]);
 
-
     parsed
         .querySelectorAll(
             "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base,svg,video,audio"
@@ -2483,10 +2866,7 @@ function parseSafeDocumentHtml(
                 element.remove()
         );
 
-
-    function cleanNode(
-        node
-    ){
+    function cleanNode(node){
 
         if(
             node.nodeType ===
@@ -2496,7 +2876,6 @@ function parseSafeDocumentHtml(
             return;
 
         }
-
 
         if(
             node.nodeType !==
@@ -2509,10 +2888,8 @@ function parseSafeDocumentHtml(
 
         }
 
-
         const tag =
             node.tagName;
-
 
         if(
             !allowedTags.has(tag)
@@ -2520,7 +2897,6 @@ function parseSafeDocumentHtml(
 
             const parent =
                 node.parentNode;
-
 
             if(parent){
 
@@ -2535,16 +2911,13 @@ function parseSafeDocumentHtml(
 
                 }
 
-
                 node.remove();
 
             }
 
-
             return;
 
         }
-
 
         Array.from(
             node.attributes
@@ -2555,13 +2928,11 @@ function parseSafeDocumentHtml(
                     attribute.name
                         .toLowerCase();
 
-
                 const keep =
                     name === "href" ||
                     name === "src" ||
                     name === "alt" ||
                     name === "title";
-
 
                 if(!keep){
 
@@ -2574,14 +2945,12 @@ function parseSafeDocumentHtml(
             }
         );
 
-
         if(tag === "A"){
 
             const href =
                 node.getAttribute(
                     "href"
                 ) || "";
-
 
             if(
                 !/^https?:\/\//i.test(
@@ -2603,7 +2972,6 @@ function parseSafeDocumentHtml(
                     "_blank"
                 );
 
-
                 node.setAttribute(
                     "rel",
                     "noopener noreferrer"
@@ -2613,14 +2981,12 @@ function parseSafeDocumentHtml(
 
         }
 
-
         if(tag === "IMG"){
 
             const src =
                 node.getAttribute(
                     "src"
                 ) || "";
-
 
             if(
                 !/^https?:\/\//i.test(
@@ -2639,7 +3005,6 @@ function parseSafeDocumentHtml(
 
         }
 
-
         Array.from(
             node.childNodes
         ).forEach(
@@ -2648,204 +3013,13 @@ function parseSafeDocumentHtml(
 
     }
 
-
     Array.from(
         parsed.body.childNodes
     ).forEach(
         cleanNode
     );
 
-
     return parsed.body.innerHTML;
-
-}
-
-
-/* =========================================================
-   DOCUMENT RENDERER
-   ========================================================= */
-
-function renderDocument(
-    work
-){
-
-    const raw =
-        clean(work) || "";
-
-
-    workContent.innerHTML = "";
-
-    workContent.classList.remove(
-        "document-html"
-    );
-
-
-    if(!raw){
-
-        const placeholder =
-            document.createElement(
-                "div"
-            );
-
-
-        placeholder.className =
-            "work-placeholder";
-
-
-        placeholder.textContent =
-            "The service returned no prepared work.";
-
-
-        workContent.appendChild(
-            placeholder
-        );
-
-
-        return false;
-
-    }
-
-
-    const cleaned =
-        removeHtmlCodeFences(
-            raw
-        );
-
-
-    try{
-
-        if(
-            looksLikeHtml(
-                cleaned
-            )
-        ){
-
-            const safeHtml =
-                parseSafeDocumentHtml(
-                    cleaned
-                );
-
-
-            if(
-                !safeHtml.trim()
-            ){
-
-                workContent.textContent =
-                    cleaned;
-
-                workContent.classList.remove(
-                    "document-html"
-                );
-
-            }else{
-
-                workContent.classList.add(
-                    "document-html"
-                );
-
-
-                workContent.innerHTML =
-                    safeHtml;
-
-            }
-
-        }else{
-
-            workContent.textContent =
-                cleaned;
-
-        }
-
-
-        /*
-           IMPORTANT:
-
-           There is no longer a workCard.scrollTop
-           operation because workCard is no longer
-           a separate scrolling container.
-
-           The main page owns the scroll position.
-        */
-
-        return true;
-
-    }catch(error){
-
-        workContent.classList.remove(
-            "document-html"
-        );
-
-
-        workContent.innerHTML = "";
-
-
-        const errorBox =
-            document.createElement(
-                "div"
-            );
-
-
-        errorBox.className =
-            "review-error";
-
-
-        const heading =
-            document.createElement(
-                "strong"
-            );
-
-
-        heading.textContent =
-            "Your work was received, but it could not be displayed as formatted content.";
-
-
-        const message =
-            document.createElement(
-                "div"
-            );
-
-
-        message.textContent =
-            "The complete response is shown below in plain text.";
-
-
-        const fallback =
-            document.createElement(
-                "div"
-            );
-
-
-        fallback.style.marginTop =
-            "12px";
-
-
-        fallback.style.whiteSpace =
-            "pre-wrap";
-
-
-        fallback.style.color =
-            "#111";
-
-
-        fallback.textContent =
-            cleaned;
-
-
-        errorBox.append(
-            heading,
-            message,
-            fallback
-        );
-
-
-        workContent.appendChild(
-            errorBox
-        );
-
-
-        return true;
-
-    }
 
 }
 
@@ -2885,7 +3059,6 @@ const generic = [
 
 
 const forms = {
-
 
     "document formatting":[
 
@@ -2934,7 +3107,6 @@ const forms = {
 
     ],
 
-
     "research assistance":[
 
         {
@@ -2975,7 +3147,6 @@ const forms = {
 
     ],
 
-
     "seminar papers":[
 
         {
@@ -3013,7 +3184,6 @@ const forms = {
         }
 
     ],
-
 
     "essay writing":[
 
@@ -3054,7 +3224,6 @@ const forms = {
         }
 
     ],
-
 
     "cv writing":[
 
@@ -3125,13 +3294,11 @@ function definition(){
     const s =
         service.toLowerCase();
 
-
     const key =
         Object.keys(forms).find(
             k =>
                 s.includes(k)
         );
-
 
     return key
         ? forms[key]
@@ -3141,13 +3308,12 @@ function definition(){
 
 
 /* =========================================================
-   RENDER FORM
+   FORM RENDER
    ========================================================= */
 
 function renderForm(){
 
     fields.innerHTML = "";
-
 
     definition().forEach(
         field => {
@@ -3157,12 +3323,10 @@ function renderForm(){
                     "div"
                 );
 
-
             const label =
                 document.createElement(
                     "label"
                 );
-
 
             const input =
                 document.createElement(
@@ -3172,14 +3336,11 @@ function renderForm(){
                         : "input"
                 );
 
-
             wrapper.className =
                 "field";
 
-
             label.htmlFor =
                 field.name;
-
 
             label.innerHTML =
                 field.label +
@@ -3189,19 +3350,15 @@ function renderForm(){
                         : ' <span class="optional">(optional)</span>'
                 );
 
-
             input.id =
                 field.name;
-
 
             input.name =
                 field.name;
 
-
             input.placeholder =
                 field.placeholder ||
                 "";
-
 
             if(field.required){
 
@@ -3209,7 +3366,6 @@ function renderForm(){
                     true;
 
             }
-
 
             if(
                 field.type !==
@@ -3222,12 +3378,10 @@ function renderForm(){
 
             }
 
-
             wrapper.append(
                 label,
                 input
             );
-
 
             fields.appendChild(
                 wrapper
@@ -3240,13 +3394,12 @@ function renderForm(){
 
 
 /* =========================================================
-   COLLECT FORM
+   COLLECT
    ========================================================= */
 
 function collect(){
 
     const data = {};
-
 
     serviceForm
         .querySelectorAll(
@@ -3260,7 +3413,6 @@ function collect(){
                         element.value
                     );
 
-
                 if(value){
 
                     data[
@@ -3273,35 +3425,36 @@ function collect(){
             }
         );
 
-
     return data;
 
 }
 
 
 /* =========================================================
-   GUIDANCE PROMPT
+   GUIDANCE
    ========================================================= */
 
 function guidancePrompt(){
 
     return `
-The customer has just selected this service: ${service}.
+The customer has selected this service:
 
-Prepare a short, clear customer-facing introduction explaining what the service does, what the customer will receive, the current fee or that quotation is required, useful information to prepare, practical tips specific to the service, and useful documents they may upload.
+${service}
+
+Prepare a short customer-facing introduction explaining what this service does, what the customer will receive, the current fee or whether quotation is required, useful information to prepare, practical tips specific to the service, and useful documents they may upload.
 
 Do not create the actual work yet.
-Do not ask for payment yet.
+Do not ask for payment.
 Do not mention internal software, models, APIs or providers.
 
-Write concise, friendly Nigerian English.
+Use concise, friendly Nigerian English.
 `;
 
 }
 
 
 /* =========================================================
-   LOAD GUIDANCE
+   GUIDANCE
    ========================================================= */
 
 async function loadGuidance(){
@@ -3309,7 +3462,6 @@ async function loadGuidance(){
     setStatus(
         "Preparing useful information for this service..."
     );
-
 
     try{
 
@@ -3344,10 +3496,8 @@ async function loadGuidance(){
 
             });
 
-
         introTitle.textContent =
             service;
-
 
         introText.textContent =
             clean(
@@ -3355,12 +3505,10 @@ async function loadGuidance(){
             ) ||
             "Please provide the information requested below.";
 
-
         const amount =
             data.amount ||
             data.price ||
             data.service_amount;
-
 
         if(amount){
 
@@ -3373,7 +3521,6 @@ async function loadGuidance(){
                         )
                 );
 
-
             if(
                 Number.isFinite(
                     numericAmount
@@ -3383,12 +3530,6 @@ async function loadGuidance(){
                 price.textContent =
                     "Service fee: ₦" +
                     numericAmount.toLocaleString();
-
-            }else{
-
-                price.textContent =
-                    "Service: " +
-                    service;
 
             }
 
@@ -3423,7 +3564,6 @@ async function loadGuidance(){
 
         }
 
-
         setStatus("");
 
     }catch(error){
@@ -3431,11 +3571,9 @@ async function loadGuidance(){
         introText.textContent =
             "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
 
-
         price.textContent =
             "Service: " +
             service;
-
 
         setStatus(
             "You can still complete the form or ask a question below.",
@@ -3448,89 +3586,572 @@ async function loadGuidance(){
 
 
 /* =========================================================
-   CREATION PROMPT
+   MIGRATION UI
    ========================================================= */
 
-function creationPrompt(
+function prepareMigrationUI(
+    count,
+    mode="new"
+){
+
+    migrationScreen.classList.add(
+        "show"
+    );
+
+    reviewDocument.classList.remove(
+        "show"
+    );
+
+    migrationTitle.textContent =
+        mode === "correction"
+            ? "Updating Your Work"
+            : "Preparing Your Work";
+
+    migrationMessage.textContent =
+        mode === "correction"
+            ? "Your corrections are being applied page by page. Each updated part is being moved into the review pages."
+            : "Your work is being prepared in controlled batches and moved into separate review pages.";
+
+    migrationProgress.style.width =
+        "0%";
+
+    migrationBatches.innerHTML =
+        "";
+
+    for(
+        let i = 0;
+        i < count;
+        i++
+    ){
+
+        const item =
+            document.createElement(
+                "div"
+            );
+
+        item.className =
+            "migration-batch";
+
+        item.textContent =
+            "Page " +
+            (i + 1);
+
+        item.dataset.index =
+            i;
+
+        migrationBatches.appendChild(
+            item
+        );
+
+    }
+
+    migrationCount.textContent =
+        "Preparing " +
+        count +
+        " migration batch" +
+        (
+            count === 1
+                ? ""
+                : "es"
+        ) +
+        "...";
+
+}
+
+
+function updateMigration(
+    index,
+    total,
+    message
+){
+
+    const items =
+        migrationBatches
+            .querySelectorAll(
+                ".migration-batch"
+            );
+
+    items.forEach(
+        (item,i) => {
+
+            item.classList.remove(
+                "active",
+                "done"
+            );
+
+            if(i < index){
+
+                item.classList.add(
+                    "done"
+                );
+
+            }else if(i === index){
+
+                item.classList.add(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+    const percentage =
+        total > 0
+            ? Math.round(
+                (
+                    index /
+                    total
+                ) *
+                100
+            )
+            : 0;
+
+    migrationProgress.style.width =
+        percentage +
+        "%";
+
+    migrationCount.textContent =
+        message ||
+        (
+            "Preparing page " +
+            (index + 1) +
+            " of " +
+            total
+        );
+
+}
+
+
+function finishMigration(
+    total
+){
+
+    const items =
+        migrationBatches
+            .querySelectorAll(
+                ".migration-batch"
+            );
+
+    items.forEach(
+        item =>
+            item.classList.add(
+                "done"
+            )
+    );
+
+    migrationProgress.style.width =
+        "100%";
+
+    migrationCount.textContent =
+        "All " +
+        total +
+        " review pages are ready.";
+
+}
+
+
+/* =========================================================
+   BATCH COUNT
+   ========================================================= */
+
+function determineBatchCount(
     data
 ){
 
+    const requested =
+        String(
+            data.page_count ||
+            data.length ||
+            data.desired_length ||
+            ""
+        ).toLowerCase();
+
+    const match =
+        requested.match(
+            /(\d+)\s*pages?/
+        );
+
+    if(match){
+
+        const pages =
+            Number(
+                match[1]
+            );
+
+        if(
+            Number.isFinite(
+                pages
+            ) &&
+            pages > 0
+        ){
+
+            return Math.min(
+                Math.max(
+                    pages,
+                    1
+                ),
+                50
+            );
+
+        }
+
+    }
+
+    /*
+       A small starting batch count is used
+       where the customer did not specify pages.
+
+       More pages can be added by the intelligence
+       layer if required.
+    */
+
+    return 1;
+
+}
+
+
+/* =========================================================
+   CREATION INSTRUCTIONS
+   ========================================================= */
+
+function creationBatchPrompt(
+    data,
+    batchIndex,
+    totalBatches
+){
+
     return `
-The customer has completed the service information form.
+The customer selected this service:
 
-Create the actual requested work now.
-
-RETURN THE COMPLETE REQUESTED WORK.
-
-IMPORTANT DOCUMENT OUTPUT RULE:
-
-When the requested work is a document, return the COMPLETE document as properly structured HTML using normal document elements such as:
-
-<h1>
-<h2>
-<h3>
-<p>
-<strong>
-<em>
-<ul>
-<ol>
-<li>
-<hr>
-<table>
-<tr>
-<th>
-<td>
-
-where appropriate.
-
-The requested length must be respected.
-
-If the customer requests a specific number of pages, produce enough complete content to reasonably fill the requested number of pages.
-
-DO NOT deliberately shorten the work.
-
-For an 8-page request, the response must contain the complete body required for the requested document and must NOT stop after the introduction.
-
-Continue through every necessary section.
-
-For academic papers, include all necessary sections and finish the complete paper, including the conclusion and references where appropriate.
-
-Do not stop after an introduction.
-
-Do not stop after a few sections.
-
-Do not return an outline instead of the requested document.
-
-Do not summarize the requested document.
-
-Do not say that the remaining sections can be added later.
-
-Do not return HTML inside markdown code fences.
-
-Do not return HTML source as an explanation.
-
-The HTML itself is the document that should be displayed to the customer for review.
-
-Do not ask for an email address or send the customer elsewhere unless genuinely required.
-
-SERVICE:
 ${service}
 
-CUSTOMER FORM INFORMATION:
+CUSTOMER INFORMATION:
 
 ${Object.entries(data)
     .map(
         ([key,value]) =>
-            `${key}:\n${value}`
+            `${key}: ${value}`
     )
     .join("\n\n")}
+
+You are preparing ONE controlled review batch of the customer's requested work.
+
+CURRENT BATCH:
+${batchIndex + 1} of ${totalBatches}
+
+IMPORTANT:
+
+Return ONLY the content belonging to this batch.
+
+This is not a summary.
+
+Do not discuss the task.
+
+Do not explain what you are doing.
+
+Do not say that another part will be added.
+
+Do not repeat earlier content.
+
+Do not invent a conclusion if this is not the final batch.
+
+If this is the final batch, complete the document properly, including the conclusion and references where appropriate.
+
+If the requested work is a document, use clean structured HTML such as:
+<h1>, <h2>, <h3>, <p>, <strong>, <em>, <ul>, <ol>, <li>, <hr>, <table>, <tr>, <th>, <td>.
+
+Do not use markdown code fences.
+
+Keep this response comfortably below the 800-token processing target.
+Target approximately ${BATCH_OUTPUT_TARGET} output tokens or less.
+
+Maintain continuity with the customer's requested document.
+
+BATCH POSITION:
+${batchIndex + 1} / ${totalBatches}
 `;
 
 }
 
 
 /* =========================================================
-   CREATE WORK
+   CREATE ONE BATCH
+   ========================================================= */
+
+async function createBatch(
+    data,
+    batchIndex,
+    totalBatches
+){
+
+    const result =
+        await apiChat({
+
+            message:
+                creationBatchPrompt(
+                    data,
+                    batchIndex,
+                    totalBatches
+                ),
+
+            service,
+
+            event:
+                "review_migration_batch",
+
+            customer_id:
+                customerId,
+
+            job_id:
+                jobId,
+
+            client_request_id:
+                requestId,
+
+            form_data:
+                data,
+
+            migration_batch:
+                batchIndex + 1,
+
+            migration_total:
+                totalBatches,
+
+            migration_target_tokens:
+                BATCH_OUTPUT_TARGET,
+
+            activate_intelligence:
+                true,
+
+            create_work:
+                true
+
+        });
+
+    if(result.job_id){
+
+        jobId =
+            result.job_id;
+
+        put(
+            "npbc_job_id",
+            jobId
+        );
+
+    }
+
+    const work =
+        result.reply ??
+        result.work ??
+        result.content ??
+        result.document ??
+        result.output ??
+        "";
+
+    const cleanWork =
+        String(
+            work
+        ).trim();
+
+    if(!cleanWork){
+
+        throw new Error(
+            "Migration batch " +
+            (batchIndex + 1) +
+            " returned no content."
+        );
+
+    }
+
+    return cleanWork;
+
+}
+
+
+/* =========================================================
+   BUILD REVIEW PAGES
+   ========================================================= */
+
+function buildReviewPages(
+    batches
+){
+
+    reviewPages =
+        batches.map(
+            (content,index) => ({
+                index,
+                content:
+                    String(
+                        content || ""
+                    ).trim()
+            })
+        ).filter(
+            page =>
+                page.content
+        );
+
+    currentWork =
+        reviewPages
+            .map(
+                page =>
+                    page.content
+            )
+            .join(
+                "\n"
+            );
+
+    currentPageIndex =
+        0;
+
+}
+
+
+/* =========================================================
+   RENDER ONE PAGE
+   ========================================================= */
+
+function renderPage(
+    index
+){
+
+    if(
+        !reviewPages.length
+    ){
+
+        reviewPageContent.textContent =
+            "No review page is available.";
+
+        return;
+
+    }
+
+    currentPageIndex =
+        Math.max(
+            0,
+            Math.min(
+                index,
+                reviewPages.length - 1
+            )
+        );
+
+    const page =
+        reviewPages[
+            currentPageIndex
+        ];
+
+    reviewPageContent.innerHTML =
+        "";
+
+    const raw =
+        removeHtmlCodeFences(
+            page.content
+        );
+
+    if(
+        looksLikeHtml(
+            raw
+        )
+    ){
+
+        try{
+
+            const safe =
+                parseSafeDocumentHtml(
+                    raw
+                );
+
+            reviewPageContent.innerHTML =
+                safe ||
+                raw;
+
+        }catch(error){
+
+            reviewPageContent.textContent =
+                raw;
+
+        }
+
+    }else{
+
+        reviewPageContent.textContent =
+            raw;
+
+    }
+
+    const pageNumber =
+        currentPageIndex + 1;
+
+    const total =
+        reviewPages.length;
+
+    pageCounterTitle.textContent =
+        "Review Page " +
+        pageNumber;
+
+    pageCounterInfo.textContent =
+        "Page " +
+        pageNumber +
+        " of " +
+        total;
+
+    pageLabel.textContent =
+        "PAGE " +
+        pageNumber;
+
+    previousPageButton.disabled =
+        currentPageIndex === 0 ||
+        busy;
+
+    nextPageButton.disabled =
+        currentPageIndex >=
+            total - 1 ||
+        busy;
+
+    nextPageButton.textContent =
+        currentPageIndex >=
+            total - 1
+            ? "Last Page"
+            : "Next Page →";
+
+    const main =
+        document.querySelector(
+            ".main"
+        );
+
+    if(main){
+
+        main.scrollTop =
+            0;
+
+    }
+
+}
+
+
+/* =========================================================
+   OPEN REVIEW
+   ========================================================= */
+
+function openReview(){
+
+    migrationScreen.classList.remove(
+        "show"
+    );
+
+    reviewDocument.classList.add(
+        "show"
+    );
+
+    renderPage(
+        0
+    );
+
+}
+
+
+/* =========================================================
+   CREATE COMPLETE WORK THROUGH BATCHES
    ========================================================= */
 
 async function createWork(
@@ -3541,146 +4162,140 @@ async function createWork(
         return;
     }
 
-
     busyState(true);
 
+    formView.style.display =
+        "none";
 
-    setStatus(
-        "Preparing your work..."
+    reviewView.classList.add(
+        "show"
     );
 
+    const batchCount =
+        determineBatchCount(
+            data
+        );
+
+    prepareMigrationUI(
+        batchCount,
+        "new"
+    );
+
+    migrationFileName.textContent =
+        service;
+
+    const batches = [];
 
     try{
 
-        const result =
-            await apiChat({
+        for(
+            let i = 0;
+            i < batchCount;
+            i++
+        ){
 
-                message:
-                    creationPrompt(
-                        data
-                    ),
+            updateMigration(
+                i,
+                batchCount,
+                "Preparing review page " +
+                (i + 1) +
+                " of " +
+                batchCount
+            );
 
-                service,
-
-                event:
-                    "form_submitted_create_work",
-
-                customer_id:
-                    customerId,
-
-                job_id:
-                    jobId,
-
-                client_request_id:
-                    requestId,
-
-                form_data:
+            const batch =
+                await createBatch(
                     data,
+                    i,
+                    batchCount
+                );
 
-                activate_intelligence:
-                    true,
-
-                create_work:
-                    true
-
-            });
-
-
-        if(result.job_id){
-
-            jobId =
-                result.job_id;
-
-
-            put(
-                "npbc_job_id",
-                jobId
+            batches.push(
+                batch
             );
 
-        }
+            const completed =
+                i + 1;
 
+            migrationProgress.style.width =
+                Math.round(
+                    (
+                        completed /
+                        batchCount
+                    ) *
+                    100
+                ) +
+                "%";
 
-        const returnedWork =
-            result.reply ??
-            result.work ??
-            result.content ??
-            result.document ??
-            result.output ??
-            "";
+            migrationCount.textContent =
+                "Review page " +
+                completed +
+                " of " +
+                batchCount +
+                " migrated.";
 
-
-        currentWork =
-            String(
-                returnedWork
-            ).trim();
-
-
-        if(!currentWork){
-
-            throw new Error(
-                "The service returned an empty work response. The review page was not opened."
-            );
-
-        }
-
-
-        const rendered =
-            renderDocument(
-                currentWork
-            );
-
-
-        if(!rendered){
-
-            throw new Error(
-                "The prepared work could not be displayed."
-            );
-
-        }
-
-
-        formView.style.display =
-            "none";
-
-
-        reviewView.classList.add(
-            "show"
-        );
-
-
-        /*
-           Scroll the SINGLE main container
-           to the beginning of the review.
-
-           workCard is no longer a scroll container.
-        */
-
-        requestAnimationFrame(
-            () => {
-
-                const mainTop =
-                    document.querySelector(
-                        ".main"
+            const item =
+                migrationBatches
+                    .querySelector(
+                        `[data-index="${i}"]`
                     );
 
+            if(item){
 
-                if(mainTop){
+                item.classList.remove(
+                    "active"
+                );
 
-                    mainTop.scrollTop =
-                        0;
-
-                }
+                item.classList.add(
+                    "done"
+                );
 
             }
+
+        }
+
+        if(!batches.length){
+
+            throw new Error(
+                "No review pages were prepared."
+            );
+
+        }
+
+        buildReviewPages(
+            batches
         );
 
+        finishMigration(
+            batches.length
+        );
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    450
+                )
+        );
+
+        openReview();
 
         setStatus(
-            "Your work is ready for review.",
+            "Your work is ready. Review each page before approving it.",
             "success"
         );
 
     }catch(error){
+
+        migrationTitle.textContent =
+            "We Could Not Finish Preparing Your Work";
+
+        migrationMessage.textContent =
+            error?.message ||
+            "A migration batch could not be prepared.";
+
+        migrationProgress.style.width =
+            "0%";
 
         setStatus(
             error?.message ||
@@ -3688,115 +4303,18 @@ async function createWork(
             "error"
         );
 
+        formView.style.display =
+            "block";
+
+        reviewView.classList.remove(
+            "show"
+        );
+
     }finally{
 
         busyState(false);
 
     }
-
-}
-
-
-/* =========================================================
-   SHOW REVIEW
-   ========================================================= */
-
-function showReview(
-    work
-){
-
-    currentWork =
-        String(
-            work || ""
-        );
-
-
-    if(!currentWork){
-
-        setStatus(
-            "No prepared work was returned.",
-            "error"
-        );
-
-        return false;
-
-    }
-
-
-    const rendered =
-        renderDocument(
-            currentWork
-        );
-
-
-    if(!rendered){
-
-        setStatus(
-            "The prepared work could not be displayed.",
-            "error"
-        );
-
-        return false;
-
-    }
-
-
-    formView.style.display =
-        "none";
-
-
-    reviewView.classList.add(
-        "show"
-    );
-
-
-    correctionInput.value = "";
-
-
-    paymentPanel.classList.remove(
-        "show"
-    );
-
-
-    approved = false;
-
-    paymentConfirmed = false;
-
-
-    downloadBtn.disabled =
-        true;
-
-
-    downloadBtn.classList.remove(
-        "active"
-    );
-
-
-    downloadBtn.textContent =
-        "🔒 Download Your Work";
-
-
-    requestAnimationFrame(
-        () => {
-
-            const mainTop =
-                document.querySelector(
-                    ".main"
-                );
-
-
-            if(mainTop){
-
-                mainTop.scrollTop =
-                    0;
-
-            }
-
-        }
-    );
-
-
-    return true;
 
 }
 
@@ -3811,15 +4329,11 @@ serviceForm.addEventListener(
 
         event.preventDefault();
 
-
-        if(
-            busy
-        ){
+        if(busy){
 
             return;
 
         }
-
 
         if(
             !serviceForm.reportValidity()
@@ -3829,14 +4343,61 @@ serviceForm.addEventListener(
 
         }
 
-
         const data =
             collect();
-
 
         createWork(
             data
         );
+
+    }
+);
+
+
+/* =========================================================
+   PAGE NAVIGATION
+   ========================================================= */
+
+previousPageButton.addEventListener(
+    "click",
+    () => {
+
+        if(busy){
+            return;
+        }
+
+        if(
+            currentPageIndex > 0
+        ){
+
+            renderPage(
+                currentPageIndex - 1
+            );
+
+        }
+
+    }
+);
+
+
+nextPageButton.addEventListener(
+    "click",
+    () => {
+
+        if(busy){
+            return;
+        }
+
+        if(
+            currentPageIndex <
+            reviewPages.length - 1
+        ){
+
+            renderPage(
+                currentPageIndex + 1
+            );
+
+        }
 
     }
 );
@@ -3848,7 +4409,7 @@ serviceForm.addEventListener(
 
 [
     introCard,
-    workCard
+    reviewDocument
 ].forEach(
     element => {
 
@@ -3867,7 +4428,6 @@ serviceForm.addEventListener(
 
                         event.preventDefault();
 
-
                         if(
                             event.clipboardData
                         ){
@@ -3884,7 +4444,6 @@ serviceForm.addEventListener(
 
             }
         );
-
 
         element.addEventListener(
             "keydown",
@@ -3918,7 +4477,167 @@ serviceForm.addEventListener(
 
 
 /* =========================================================
-   CORRECTIONS
+   CORRECTION BATCH
+   ========================================================= */
+
+function correctionBatchPrompt(
+    pageContent,
+    pageIndex,
+    totalPages,
+    correction
+){
+
+    return `
+The customer is reviewing a prepared document for this service:
+
+${service}
+
+The customer has requested this correction:
+
+${correction}
+
+You are revising ONE review page.
+
+CURRENT PAGE:
+${pageIndex + 1} of ${totalPages}
+
+CURRENT PAGE CONTENT:
+
+${pageContent}
+
+IMPORTANT:
+
+Apply the customer's correction to this page where it is relevant.
+
+Return the COMPLETE revised content for this page.
+
+Do not return only the changed sentence.
+
+Do not return only the changed paragraph.
+
+Do not summarize.
+
+Do not discuss the correction.
+
+Do not mention this batching process.
+
+Do not remove correct content unnecessarily.
+
+Preserve the document's structure and continuity.
+
+If this page contains structured document content, return clean HTML.
+
+Do not use markdown code fences.
+
+Keep this response comfortably below the 800-token processing target.
+Target approximately ${BATCH_OUTPUT_TARGET} output tokens or less.
+
+This page is part of a complete document, so preserve its role and continuity.
+`;
+
+}
+
+
+/* =========================================================
+   CORRECT ONE PAGE
+   ========================================================= */
+
+async function correctPage(
+    page,
+    index,
+    total,
+    correction
+){
+
+    const result =
+        await apiChat({
+
+            message:
+                correctionBatchPrompt(
+                    page.content,
+                    index,
+                    total,
+                    correction
+                ),
+
+            service,
+
+            event:
+                "review_correction_migration_batch",
+
+            customer_id:
+                customerId,
+
+            job_id:
+                jobId,
+
+            client_request_id:
+                requestId,
+
+            current_work:
+                page.content,
+
+            correction,
+
+            correction_page:
+                index + 1,
+
+            correction_total_pages:
+                total,
+
+            migration_target_tokens:
+                BATCH_OUTPUT_TARGET,
+
+            activate_intelligence:
+                true,
+
+            create_work:
+                true
+
+        });
+
+    if(result.job_id){
+
+        jobId =
+            result.job_id;
+
+        put(
+            "npbc_job_id",
+            jobId
+        );
+
+    }
+
+    const revised =
+        result.reply ??
+        result.work ??
+        result.content ??
+        result.document ??
+        result.output ??
+        "";
+
+    const text =
+        String(
+            revised
+        ).trim();
+
+    if(!text){
+
+        throw new Error(
+            "The correction for page " +
+            (index + 1) +
+            " returned no revised content."
+        );
+
+    }
+
+    return text;
+
+}
+
+
+/* =========================================================
+   APPLY CORRECTIONS
    ========================================================= */
 
 applyBtn.addEventListener(
@@ -3929,7 +4648,6 @@ applyBtn.addEventListener(
             clean(
                 correctionInput.value
             );
-
 
         if(!correction){
 
@@ -3942,18 +4660,18 @@ applyBtn.addEventListener(
 
         }
 
-
-        if(!currentWork){
+        if(
+            !reviewPages.length
+        ){
 
             setStatus(
-                "There is no prepared work available to correct.",
+                "There are no review pages available to correct.",
                 "error"
             );
 
             return;
 
         }
-
 
         if(busy){
 
@@ -3961,142 +4679,156 @@ applyBtn.addEventListener(
 
         }
 
-
         busyState(true);
 
+        const originalPage =
+            currentPageIndex;
 
-        setStatus(
-            "Applying your corrections..."
+        prepareMigrationUI(
+            reviewPages.length,
+            "correction"
         );
 
+        migrationFileName.textContent =
+            "Correcting " +
+            service;
 
         try{
 
-            const result =
-                await apiChat({
+            const revisedPages = [];
 
-                    message:
-`
-Please revise the prepared work using these customer corrections:
+            for(
+                let i = 0;
+                i < reviewPages.length;
+                i++
+            ){
 
-${correction}
+                updateMigration(
+                    i,
+                    reviewPages.length,
+                    "Updating review page " +
+                    (i + 1) +
+                    " of " +
+                    reviewPages.length
+                );
 
-RETURN THE COMPLETE REVISED WORK FOR REVIEW.
+                const revised =
+                    await correctPage(
+                        reviewPages[i],
+                        i,
+                        reviewPages.length,
+                        correction
+                    );
 
-IMPORTANT:
-
-If the prepared work is a document, return the COMPLETE revised document as properly structured HTML.
-
-Preserve the full document.
-
-Do not shorten it merely to save space.
-
-Do not remove sections that were not requested to be changed.
-
-Do not return only the changed section.
-
-Do not return an introduction only.
-
-Do not stop before the conclusion or final section.
-
-If the original document was intended to be 8 pages, preserve the requested full length while applying the correction.
-
-Do not summarize the document.
-
-Do not replace the complete document with an outline.
-
-Do not wrap the HTML in markdown code fences.
-
-Do not return the HTML source as an explanation.
-
-The returned document itself must be complete.
-`,
-
-                    service,
-
-                    event:
-                        "review_correction",
-
-                    customer_id:
-                        customerId,
-
-                    job_id:
-                        jobId,
-
-                    client_request_id:
-                        requestId,
-
-                    current_work:
-                        currentWork,
-
-                    correction,
-
-                    activate_intelligence:
-                        true,
-
-                    create_work:
-                        true
-
+                revisedPages.push({
+                    index:i,
+                    content:revised
                 });
 
+                const item =
+                    migrationBatches
+                        .querySelector(
+                            `[data-index="${i}"]`
+                        );
 
-            const revisedWork =
-                result.reply ??
-                result.work ??
-                result.content ??
-                result.document ??
-                result.output ??
-                "";
+                if(item){
 
+                    item.classList.remove(
+                        "active"
+                    );
 
-            if(
-                !String(
-                    revisedWork
-                ).trim()
-            ){
+                    item.classList.add(
+                        "done"
+                    );
 
-                throw new Error(
-                    "The correction request returned no revised work."
-                );
+                }
+
+                migrationProgress.style.width =
+                    Math.round(
+                        (
+                            (
+                                i + 1
+                            ) /
+                            reviewPages.length
+                        ) *
+                        100
+                    ) +
+                    "%";
+
+                migrationCount.textContent =
+                    "Updated review page " +
+                    (i + 1) +
+                    " of " +
+                    reviewPages.length;
 
             }
 
+            reviewPages =
+                revisedPages;
 
             currentWork =
-                String(
-                    revisedWork
-                ).trim();
+                reviewPages
+                    .map(
+                        page =>
+                            page.content
+                    )
+                    .join(
+                        "\n"
+                    );
 
-
-            if(
-                !renderDocument(
-                    currentWork
-                )
-            ){
-
-                throw new Error(
-                    "The revised work could not be displayed."
-                );
-
-            }
-
+            finishMigration(
+                reviewPages.length
+            );
 
             correctionInput.value =
                 "";
 
-
-            setStatus(
-                "Your corrections have been applied. Please review the updated work.",
-                "success"
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        450
+                    )
             );
 
+            migrationScreen.classList.remove(
+                "show"
+            );
+
+            reviewDocument.classList.add(
+                "show"
+            );
+
+            renderPage(
+                Math.min(
+                    originalPage,
+                    reviewPages.length - 1
+                )
+            );
+
+            setStatus(
+                "Your corrections have been applied across the review pages.",
+                "success"
+            );
 
         }catch(error){
 
             setStatus(
                 error?.message ||
-                "The correction could not be applied.",
+                "The correction could not be completed.",
                 "error"
+            );
+
+            migrationScreen.classList.remove(
+                "show"
+            );
+
+            reviewDocument.classList.add(
+                "show"
+            );
+
+            renderPage(
+                originalPage
             );
 
         }finally{
@@ -4123,8 +4855,9 @@ approveBtn.addEventListener(
 
         }
 
-
-        if(!currentWork){
+        if(
+            !reviewPages.length
+        ){
 
             setStatus(
                 "There is no prepared work to approve.",
@@ -4135,14 +4868,11 @@ approveBtn.addEventListener(
 
         }
 
-
         busyState(true);
-
 
         setStatus(
             "Preparing your payment step..."
         );
-
 
         try{
 
@@ -4162,7 +4892,6 @@ approveBtn.addEventListener(
 
                 });
 
-
             const response =
                 await fetch(
                     API_BASE +
@@ -4178,16 +4907,13 @@ approveBtn.addEventListener(
                     }
                 );
 
-
             const parsed =
                 await readApiResponse(
                     response
                 );
 
-
             const data =
                 parsed.data;
-
 
             if(
                 !response.ok ||
@@ -4203,20 +4929,16 @@ approveBtn.addEventListener(
 
             }
 
-
             approved = true;
-
 
             paymentPanel.classList.add(
                 "show"
             );
 
-
             const amount =
                 Number(
                     data.amount || 0
                 );
-
 
             paymentDetails.textContent =
 `Service: ${data.service || service}
@@ -4231,12 +4953,10 @@ Order: ${
     "Pending"
 }`;
 
-
             setStatus(
                 "Your work is approved. Payment is ready.",
                 "success"
             );
-
 
             requestAnimationFrame(
                 () => {
@@ -4248,7 +4968,6 @@ Order: ${
 
                 }
             );
-
 
         }catch(error){
 
@@ -4287,12 +5006,10 @@ paymentReport.addEventListener(
 
         }
 
-
         const amountMatch =
             paymentDetails.textContent.match(
                 /Amount:\s*([^\n]+)/
             );
-
 
         const amount =
             amountMatch
@@ -4305,7 +5022,6 @@ paymentReport.addEventListener(
                 )
                 : 0;
 
-
         if(amount <= 0){
 
             setStatus(
@@ -4316,7 +5032,6 @@ paymentReport.addEventListener(
             return;
 
         }
-
 
         try{
 
@@ -4357,16 +5072,13 @@ paymentReport.addEventListener(
                     }
                 );
 
-
             const parsed =
                 await readApiResponse(
                     response
                 );
 
-
             const data =
                 parsed.data;
-
 
             if(
                 !response.ok ||
@@ -4381,16 +5093,13 @@ paymentReport.addEventListener(
 
             }
 
-
             paymentDetails.textContent +=
                 `\nPayment ID: ${data.payment_id || "Pending"}\nStatus: Pending`;
-
 
             setStatus(
                 "Payment reported. Verification is pending.",
                 "success"
             );
-
 
         }catch(error){
 
@@ -4431,16 +5140,13 @@ paymentCheck.addEventListener(
                     }
                 );
 
-
             const parsed =
                 await readApiResponse(
                     response
                 );
 
-
             const data =
                 parsed.data;
-
 
             if(
                 !response.ok ||
@@ -4455,7 +5161,6 @@ paymentCheck.addEventListener(
 
             }
 
-
             if(
                 String(
                     data.status || ""
@@ -4466,19 +5171,15 @@ paymentCheck.addEventListener(
                 paymentConfirmed =
                     true;
 
-
                 downloadBtn.disabled =
                     false;
-
 
                 downloadBtn.classList.add(
                     "active"
                 );
 
-
                 downloadBtn.textContent =
                     "⬇ Download Your Work";
-
 
                 downloadBtn.onclick =
                     () => {
@@ -4496,16 +5197,13 @@ paymentCheck.addEventListener(
 
                     };
 
-
                 paymentDetails.textContent +=
                     "\nStatus: Paid";
-
 
                 setStatus(
                     "Payment confirmed. Your download is now available.",
                     "success"
                 );
-
 
             }else{
 
@@ -4514,7 +5212,6 @@ paymentCheck.addEventListener(
                 );
 
             }
-
 
         }catch(error){
 
@@ -4555,52 +5252,43 @@ fileInput.addEventListener(
         const file =
             fileInput.files?.[0];
 
-
         if(!file){
 
             return;
 
         }
 
-
         const formData =
             new FormData();
-
 
         formData.append(
             "file",
             file
         );
 
-
         formData.append(
             "customer_id",
             customerId
         );
-
 
         formData.append(
             "job_id",
             jobId
         );
 
-
         formData.append(
             "client_request_id",
             requestId
         );
-
 
         formData.append(
             "service",
             service
         );
 
-
         setStatus(
             "Uploading the document you want to give us..."
         );
-
 
         try{
 
@@ -4614,16 +5302,13 @@ fileInput.addEventListener(
                     }
                 );
 
-
             const parsed =
                 await readApiResponse(
                     response
                 );
 
-
             const data =
                 parsed.data;
-
 
             if(
                 !response.ok ||
@@ -4638,18 +5323,15 @@ fileInput.addEventListener(
 
             }
 
-
             setStatus(
                 "Your document has been received successfully.",
                 "success"
             );
 
-
             await sendMessage(
                 "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.",
                 "document_uploaded"
             );
-
 
         }catch(error){
 
@@ -4670,7 +5352,7 @@ fileInput.addEventListener(
 
 
 /* =========================================================
-   CUSTOMER MESSAGES
+   CUSTOMER MESSAGE
    ========================================================= */
 
 async function sendMessage(
@@ -4684,14 +5366,11 @@ async function sendMessage(
 
     }
 
-
     busyState(true);
-
 
     setStatus(
         "Processing your message..."
     );
-
 
     try{
 
@@ -4724,12 +5403,10 @@ async function sendMessage(
 
             });
 
-
         if(data.job_id){
 
             jobId =
                 data.job_id;
-
 
             put(
                 "npbc_job_id",
@@ -4738,35 +5415,59 @@ async function sendMessage(
 
         }
 
-
         if(
             data.reply &&
-            reviewView.classList.contains(
+            reviewDocument.classList.contains(
                 "show"
             )
         ){
 
-            currentWork =
+            /*
+               A normal customer message is treated
+               as a new instruction. It is displayed
+               as a new controlled review page rather
+               than being injected into one huge card.
+            */
+
+            const newPage =
                 String(
                     data.reply
+                ).trim();
+
+            if(newPage){
+
+                reviewPages.push({
+                    index:
+                        reviewPages.length,
+
+                    content:
+                        newPage
+                });
+
+                currentWork =
+                    reviewPages
+                        .map(
+                            page =>
+                                page.content
+                        )
+                        .join(
+                            "\n"
+                        );
+
+                renderPage(
+                    reviewPages.length - 1
                 );
 
-
-            renderDocument(
-                currentWork
-            );
+            }
 
         }
-
 
         setStatus(
             "Ready for your next instruction.",
             "success"
         );
 
-
         return data;
-
 
     }catch(error){
 
@@ -4775,7 +5476,6 @@ async function sendMessage(
             "Your message could not be processed.",
             "error"
         );
-
 
         return null;
 
@@ -4801,7 +5501,6 @@ sendBtn.addEventListener(
                 messageInput.value
             );
 
-
         if(!text){
 
             setStatus(
@@ -4813,21 +5512,17 @@ sendBtn.addEventListener(
 
         }
 
-
         if(busy){
 
             return;
 
         }
 
-
         messageInput.value =
             "";
 
-
         messageInput.style.height =
             "auto";
-
 
         sendMessage(
             text,
@@ -4872,12 +5567,12 @@ messageInput.addEventListener(
         messageInput.style.height =
             "auto";
 
-
         messageInput.style.height =
             Math.min(
                 messageInput.scrollHeight,
                 105
-            ) + "px";
+            ) +
+            "px";
 
     }
 );
@@ -4897,14 +5592,11 @@ customerBtn.addEventListener(
 
         }
 
-
         busyState(true);
-
 
         setStatus(
             "Connecting you to Customer Service..."
         );
-
 
         try{
 
@@ -4921,7 +5613,6 @@ customerBtn.addEventListener(
 
                 });
 
-
             const response =
                 await fetch(
                     API_BASE +
@@ -4937,16 +5628,13 @@ customerBtn.addEventListener(
                     }
                 );
 
-
             const parsed =
                 await readApiResponse(
                     response
                 );
 
-
             const data =
                 parsed.data;
-
 
             if(
                 !response.ok ||
@@ -4962,13 +5650,11 @@ customerBtn.addEventListener(
 
             }
 
-
             setStatus(
                 data.reply ||
                 "Customer Service is available to help.",
                 "success"
             );
-
 
         }catch(error){
 
@@ -4989,7 +5675,7 @@ customerBtn.addEventListener(
 
 
 /* =========================================================
-   CHOOSE ANOTHER SERVICE
+   CHOOSE SERVICE
    ========================================================= */
 
 chooseBtn.addEventListener(
@@ -5026,7 +5712,6 @@ voiceBtn.addEventListener(
 
         }
 
-
         if(
             !navigator.mediaDevices?.getUserMedia
         ){
@@ -5040,7 +5725,6 @@ voiceBtn.addEventListener(
 
         }
 
-
         try{
 
             recordingStream =
@@ -5048,15 +5732,12 @@ voiceBtn.addEventListener(
                     audio:true
                 });
 
-
             recordedChunks = [];
-
 
             mediaRecorder =
                 new MediaRecorder(
                     recordingStream
                 );
-
 
             mediaRecorder.ondataavailable =
                 event => {
@@ -5073,7 +5754,6 @@ voiceBtn.addEventListener(
 
                 };
 
-
             mediaRecorder.onstop =
                 async () => {
 
@@ -5084,19 +5764,15 @@ voiceBtn.addEventListener(
                                 track.stop()
                         );
 
-
                     recordingStream =
                         null;
-
 
                     voiceRecording.classList.remove(
                         "show"
                     );
 
-
                     voiceBtn.textContent =
                         "🎤 Voice";
-
 
                     if(
                         !recordedChunks.length
@@ -5111,10 +5787,8 @@ voiceBtn.addEventListener(
 
                     }
 
-
                     const formData =
                         new FormData();
-
 
                     formData.append(
                         "file",
@@ -5128,30 +5802,25 @@ voiceBtn.addEventListener(
                         "voice_message.webm"
                     );
 
-
                     formData.append(
                         "customer_id",
                         customerId
                     );
-
 
                     formData.append(
                         "job_id",
                         jobId
                     );
 
-
                     formData.append(
                         "client_request_id",
                         requestId
                     );
 
-
                     formData.append(
                         "service",
                         service
                     );
-
 
                     try{
 
@@ -5165,16 +5834,13 @@ voiceBtn.addEventListener(
                                 }
                             );
 
-
                         const parsed =
                             await readApiResponse(
                                 response
                             );
 
-
                         const data =
                             parsed.data;
-
 
                         if(
                             !response.ok ||
@@ -5189,12 +5855,10 @@ voiceBtn.addEventListener(
 
                         }
 
-
                         await sendMessage(
                             "A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.",
                             "voice_uploaded"
                         );
-
 
                     }catch(error){
 
@@ -5208,23 +5872,18 @@ voiceBtn.addEventListener(
 
                 };
 
-
             mediaRecorder.start();
-
 
             voiceRecording.classList.add(
                 "show"
             );
 
-
             voiceBtn.textContent =
                 "⏹ Stop Voice";
-
 
             setStatus(
                 "Recording your voice..."
             );
-
 
         }catch(error){
 
@@ -5248,13 +5907,10 @@ async function init(){
     serviceBadge.textContent =
         service;
 
-
     introTitle.textContent =
         service;
 
-
     renderForm();
-
 
     await loadGuidance();
 
