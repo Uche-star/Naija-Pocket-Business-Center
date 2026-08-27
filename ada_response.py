@@ -63,10 +63,32 @@ A large document is generated in controlled sections.
           ↓
     REVIEW PAGE
 
-The individual Groq responses are temporary generation
-steps.
 
-The assembled document is the customer-facing result.
+DIAGNOSTIC ARCHITECTURE
+-----------------------
+Every important failure point is explicitly identified.
+
+The application distinguishes:
+
+    CONFIGURATION
+    CLIENT INITIALIZATION
+    PROMPT MANAGER
+    BILLING
+    APPLICATION CONTEXT
+    GROQ REQUEST
+    GROQ RATE LIMIT
+    GROQ AUTHENTICATION
+    GROQ BAD REQUEST
+    GROQ SERVER ERROR
+    DOCUMENT GENERATION
+    DOCUMENT ASSEMBLY
+    NORMAL RESPONSE
+
+The real exception is written to the server logs.
+
+The API key itself is NEVER printed.
+
+Document content is NEVER printed as part of diagnostics.
 
 TOKEN CONTROL
 -------------
@@ -149,6 +171,31 @@ API_KEY = (
 
 
 # ============================================================
+# DIAGNOSTIC CONFIGURATION
+# ============================================================
+
+# This controls whether technical errors are included in the
+# returned response while debugging.
+#
+# IMPORTANT:
+# Keep this FALSE in normal customer-facing production use.
+#
+# The server logs ALWAYS contain the detailed diagnostic
+# information regardless of this setting.
+EXPOSE_ERRORS_TO_CLIENT = (
+    os.getenv(
+        "ADA_EXPOSE_ERRORS"
+    )
+    or "false"
+).strip().lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
+
+
+# ============================================================
 # NORMAL REQUEST LIMITS
 # ============================================================
 
@@ -173,12 +220,6 @@ MAX_OUTPUT_TOKENS = 800
 
 # ============================================================
 # DOCUMENT GENERATION LIMITS
-#
-# These are NOT document-length limits.
-#
-# They control the size of EACH individual Groq generation.
-#
-# The final assembled document may be much larger.
 # ============================================================
 
 DOCUMENT_SECTION_OUTPUT_TOKENS = 700
@@ -217,6 +258,35 @@ DOCUMENT_EVENTS = (
 
 
 # ============================================================
+# CUSTOM DIAGNOSTIC ERROR
+# ============================================================
+
+class AdaResponseError(Exception):
+    """
+    Internal diagnostic exception.
+
+    This identifies WHERE the failure happened instead of
+    allowing every failure to become a generic network message.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        stage: str,
+        category: str = "APPLICATION",
+        status_code: int | None = None,
+        original: Exception | None = None,
+    ):
+        super().__init__(message)
+
+        self.stage = stage
+        self.category = category
+        self.status_code = status_code
+        self.original = original
+
+
+# ============================================================
 # GROQ CLIENT
 # ============================================================
 
@@ -224,6 +294,11 @@ _client = None
 
 
 def get_client():
+    """
+    Initialize the Groq client.
+
+    Any initialization problem is explicitly diagnosed.
+    """
 
     global _client
 
@@ -231,14 +306,35 @@ def get_client():
         return _client
 
     if Groq is None:
-        return None
+
+        raise AdaResponseError(
+            "The 'groq' Python package is not installed.",
+            stage="CLIENT_INITIALIZATION",
+            category="CONFIGURATION",
+        )
 
     if not API_KEY:
-        return None
 
-    _client = Groq(
-        api_key=API_KEY
-    )
+        raise AdaResponseError(
+            "GROQ_API_KEY is missing from the environment.",
+            stage="CLIENT_INITIALIZATION",
+            category="CONFIGURATION",
+        )
+
+    try:
+
+        _client = Groq(
+            api_key=API_KEY
+        )
+
+    except Exception as error:
+
+        raise AdaResponseError(
+            "Groq client initialization failed.",
+            stage="CLIENT_INITIALIZATION",
+            category="GROQ_CLIENT",
+            original=error,
+        ) from error
 
     return _client
 
@@ -252,7 +348,34 @@ def get_ada_model() -> str:
 
 
 def is_configured() -> bool:
-    return get_client() is not None
+
+    if Groq is None:
+        return False
+
+    return bool(API_KEY)
+
+
+# ============================================================
+# SAFE DIAGNOSTIC VALUE
+# ============================================================
+
+def diagnostic_value(
+    value: Any,
+    maximum: int = 2000,
+) -> str:
+
+    text = safe_text(value)
+
+    if not text:
+        return ""
+
+    if len(text) <= maximum:
+        return text
+
+    return (
+        text[:maximum]
+        + "\n...[diagnostic value truncated]"
+    )
 
 
 # ============================================================
@@ -394,6 +517,314 @@ def prepare_application_context(
 
 
 # ============================================================
+# ERROR EXTRACTION
+# ============================================================
+
+def get_error_status_code(
+    error: Exception,
+) -> int | None:
+
+    value = getattr(
+        error,
+        "status_code",
+        None,
+    )
+
+    if value is None:
+        return None
+
+    try:
+        return int(value)
+    except Exception:
+        return None
+
+
+def get_error_body(
+    error: Exception,
+) -> str:
+
+    candidates = [
+        getattr(error, "body", None),
+        getattr(error, "response", None),
+    ]
+
+    for candidate in candidates:
+
+        if candidate is None:
+            continue
+
+        if isinstance(candidate, str):
+            return diagnostic_value(
+                candidate
+            )
+
+        try:
+
+            return diagnostic_value(
+                repr(candidate)
+            )
+
+        except Exception:
+
+            pass
+
+    return ""
+
+
+def get_error_code(
+    error: Exception,
+) -> str:
+
+    code = getattr(
+        error,
+        "code",
+        None,
+    )
+
+    if code is None:
+        return ""
+
+    return safe_text(
+        code
+    )
+
+
+def get_error_type(
+    error: Exception,
+) -> str:
+
+    return type(
+        error
+    ).__name__
+
+
+def classify_groq_error(
+    error: Exception,
+) -> str:
+
+    status = get_error_status_code(
+        error
+    )
+
+    name = get_error_type(
+        error
+    ).lower()
+
+    message = safe_text(
+        error
+    ).lower()
+
+    if status == 429:
+        return "GROQ_RATE_LIMIT"
+
+    if (
+        "rate" in name
+        or "ratelimit" in name
+        or "rate limit" in message
+    ):
+        return "GROQ_RATE_LIMIT"
+
+    if status == 401:
+        return "GROQ_AUTHENTICATION"
+
+    if "authentication" in name:
+        return "GROQ_AUTHENTICATION"
+
+    if status == 403:
+        return "GROQ_PERMISSION"
+
+    if status == 404:
+        return "GROQ_NOT_FOUND"
+
+    if status == 400:
+        return "GROQ_BAD_REQUEST"
+
+    if status == 413:
+        return "GROQ_REQUEST_TOO_LARGE"
+
+    if status == 422:
+        return "GROQ_UNPROCESSABLE_REQUEST"
+
+    if status is not None and status >= 500:
+        return "GROQ_SERVER_ERROR"
+
+    if (
+        "connection" in name
+        or "timeout" in name
+        or "network" in name
+    ):
+        return "NETWORK"
+
+    return "GROQ_REQUEST_ERROR"
+
+
+# ============================================================
+# ERROR LOGGING
+# ============================================================
+
+def log_error(
+    title: str,
+    error: Exception,
+    *,
+    stage: str,
+    category: str | None = None,
+    section_number: int | None = None,
+    event: str | None = None,
+) -> None:
+
+    status_code = (
+        get_error_status_code(
+            error
+        )
+    )
+
+    error_category = (
+        category
+        or classify_groq_error(error)
+    )
+
+    print()
+    print("=" * 78)
+    print(
+        f"ADA DIAGNOSTIC ERROR: {title}"
+    )
+    print("=" * 78)
+
+    print(
+        "Stage:",
+        stage,
+    )
+
+    print(
+        "Category:",
+        error_category,
+    )
+
+    print(
+        "Exception type:",
+        get_error_type(error),
+    )
+
+    if status_code is not None:
+
+        print(
+            "HTTP status:",
+            status_code,
+        )
+
+    error_code = get_error_code(
+        error
+    )
+
+    if error_code:
+
+        print(
+            "Provider error code:",
+            error_code,
+        )
+
+    if section_number is not None:
+
+        print(
+            "Document section:",
+            section_number,
+        )
+
+    if event:
+
+        print(
+            "Event:",
+            event,
+        )
+
+    print(
+        "Model:",
+        MODEL,
+    )
+
+    print(
+        "API key configured:",
+        bool(API_KEY),
+    )
+
+    print(
+        "Error message:",
+        diagnostic_value(
+            str(error)
+        ),
+    )
+
+    body = get_error_body(
+        error
+    )
+
+    if body:
+
+        print(
+            "Provider response/body:",
+            body,
+        )
+
+    print("=" * 78)
+
+    traceback.print_exc()
+
+    print("=" * 78)
+    print()
+
+
+# ============================================================
+# CLIENT ERROR RESPONSE
+# ============================================================
+
+def client_error_message(
+    error: Exception,
+) -> str:
+    """
+    Return a useful diagnostic response when debugging is
+    explicitly enabled.
+
+    The server logs always contain the full diagnostic.
+    """
+
+    if not EXPOSE_ERRORS_TO_CLIENT:
+
+        return (
+            "I could not process your request right now. "
+            "Please try again."
+        )
+
+    status = get_error_status_code(
+        error
+    )
+
+    category = classify_groq_error(
+        error
+    )
+
+    message = diagnostic_value(
+        str(error),
+        maximum=1200,
+    )
+
+    if status is not None:
+
+        return (
+            f"Technical error detected.\n\n"
+            f"Category: {category}\n"
+            f"HTTP status: {status}\n"
+            f"Model: {MODEL}\n"
+            f"Error: {message}"
+        )
+
+    return (
+        f"Technical error detected.\n\n"
+        f"Category: {category}\n"
+        f"Error: {message}"
+    )
+
+
+# ============================================================
 # ADA RESPONSE
 # ============================================================
 
@@ -409,13 +840,39 @@ class AdaResponse:
             or None
         )
 
-        self.prompt_manager = (
-            AdaPromptManager()
-        )
+        try:
 
-        self.billing = (
-            BillingManager()
-        )
+            self.prompt_manager = (
+                AdaPromptManager()
+            )
+
+        except Exception as error:
+
+            log_error(
+                "PROMPT MANAGER INITIALIZATION FAILED",
+                error,
+                stage="PROMPT_MANAGER_INITIALIZATION",
+                category="PROMPT_MANAGER",
+            )
+
+            raise
+
+        try:
+
+            self.billing = (
+                BillingManager()
+            )
+
+        except Exception as error:
+
+            log_error(
+                "BILLING MANAGER INITIALIZATION FAILED",
+                error,
+                stage="BILLING_INITIALIZATION",
+                category="BILLING",
+            )
+
+            raise
 
         self.history: list[
             dict[str, str]
@@ -437,6 +894,7 @@ class AdaResponse:
         service = safe_text(service)
 
         if service:
+
             self.service = service
 
     # ========================================================
@@ -470,11 +928,19 @@ class AdaResponse:
 
         except Exception as error:
 
-            print(
-                "SERVICE NORMALIZATION WARNING:",
-                type(error).__name__,
-                str(error),
+            log_error(
+                "SERVICE NORMALIZATION FAILED",
+                error,
+                stage="SERVICE_NORMALIZATION",
+                category="BILLING",
             )
+
+            raise AdaResponseError(
+                "BillingManager service normalization failed.",
+                stage="SERVICE_NORMALIZATION",
+                category="BILLING",
+                original=error,
+            ) from error
 
         return service
 
@@ -506,13 +972,19 @@ class AdaResponse:
 
         except Exception as error:
 
-            print(
-                "BILLING LOOKUP WARNING:",
-                type(error).__name__,
-                str(error),
+            log_error(
+                "BILLING LOOKUP FAILED",
+                error,
+                stage="BILLING_LOOKUP",
+                category="BILLING",
             )
 
-            return ""
+            raise AdaResponseError(
+                "BillingManager lookup failed.",
+                stage="BILLING_LOOKUP",
+                category="BILLING",
+                original=error,
+            ) from error
 
         if not item:
 
@@ -562,7 +1034,14 @@ class AdaResponse:
                     f"Billing type: {billing_type}"
                 )
 
-        except Exception:
+        except Exception as error:
+
+            log_error(
+                "BILLING FORMAT FAILED",
+                error,
+                stage="BILLING_FORMAT",
+                category="BILLING",
+            )
 
             pricing = (
                 "Billing information is available "
@@ -786,14 +1265,19 @@ Never mention:
 
         except Exception as error:
 
-            print()
-            print(
-                "PROMPT MANAGER ERROR:",
-                type(error).__name__,
-                str(error),
+            log_error(
+                "PROMPT MANAGER BUILD FAILED",
+                error,
+                stage="PROMPT_MANAGER_BUILD",
+                category="PROMPT_MANAGER",
             )
 
-            traceback.print_exc()
+            raise AdaResponseError(
+                "AdaPromptManager failed while building the prompt.",
+                stage="PROMPT_MANAGER_BUILD",
+                category="PROMPT_MANAGER",
+                original=error,
+            ) from error
 
         # ----------------------------------------------------
         # ADA INTELLIGENCE
@@ -1002,14 +1486,6 @@ Never mention:
     def extract_page_count(
         text: str,
     ) -> int | None:
-        """
-        Look for an explicitly requested page count.
-
-        This does not decide what the customer wants.
-
-        It only retrieves a structural value that the
-        customer/application already supplied.
-        """
 
         text = safe_text(text)
 
@@ -1066,14 +1542,6 @@ Never mention:
         previous_tail: str,
         correction: bool = False,
     ) -> str:
-        """
-        Build a small controlled request for one section.
-
-        The COMPLETE generated document is deliberately NOT
-        placed into this request.
-
-        Only the recent tail is supplied to preserve continuity.
-        """
 
         if total_sections:
 
@@ -1181,38 +1649,244 @@ IMPORTANT:
         *,
         messages: list[dict[str, str]],
         output_tokens: int,
+        stage: str = "GROQ_REQUEST",
+        section_number: int | None = None,
+        event: str | None = None,
     ) -> str:
 
-        client = get_client()
+        try:
 
-        if client is None:
+            client = get_client()
 
-            raise RuntimeError(
-                "Groq client is not configured."
+        except AdaResponseError as error:
+
+            log_error(
+                "GROQ CLIENT UNAVAILABLE",
+                error,
+                stage=error.stage,
+                category=error.category,
+                section_number=section_number,
+                event=event,
             )
 
-        response = (
-            client.chat.completions.create(
-                model=MODEL,
-                messages=messages,
-                temperature=0.3,
-                max_tokens=output_tokens,
+            raise
+
+        except Exception as error:
+
+            log_error(
+                "GROQ CLIENT INITIALIZATION FAILED",
+                error,
+                stage="CLIENT_INITIALIZATION",
+                category="GROQ_CLIENT",
+                section_number=section_number,
+                event=event,
             )
+
+            raise AdaResponseError(
+                "Groq client initialization failed.",
+                stage="CLIENT_INITIALIZATION",
+                category="GROQ_CLIENT",
+                original=error,
+            ) from error
+
+        print()
+        print(
+            "ADA GROQ REQUEST"
         )
+        print(
+            "Stage:",
+            stage,
+        )
+        print(
+            "Model:",
+            MODEL,
+        )
+        print(
+            "Messages:",
+            len(messages),
+        )
+        print(
+            "Requested output tokens:",
+            output_tokens,
+        )
+        print(
+            "API key configured:",
+            bool(API_KEY),
+        )
+
+        try:
+
+            response = (
+                client.chat.completions.create(
+                    model=MODEL,
+                    messages=messages,
+                    temperature=0.3,
+                    max_tokens=output_tokens,
+                )
+            )
+
+        except Exception as error:
+
+            category = classify_groq_error(
+                error
+            )
+
+            log_error(
+                "GROQ API REQUEST FAILED",
+                error,
+                stage=stage,
+                category=category,
+                section_number=section_number,
+                event=event,
+            )
+
+            raise AdaResponseError(
+                str(error),
+                stage=stage,
+                category=category,
+                status_code=get_error_status_code(
+                    error
+                ),
+                original=error,
+            ) from error
+
+        if response is None:
+
+            error = AdaResponseError(
+                "Groq returned no response object.",
+                stage=stage,
+                category="GROQ_EMPTY_RESPONSE",
+            )
+
+            log_error(
+                "EMPTY GROQ RESPONSE",
+                error,
+                stage=stage,
+                category="GROQ_EMPTY_RESPONSE",
+                section_number=section_number,
+                event=event,
+            )
+
+            raise error
 
         if not response.choices:
 
-            return ""
+            error = AdaResponseError(
+                "Groq returned no choices.",
+                stage=stage,
+                category="GROQ_EMPTY_RESPONSE",
+            )
+
+            log_error(
+                "GROQ RETURNED NO CHOICES",
+                error,
+                stage=stage,
+                category="GROQ_EMPTY_RESPONSE",
+                section_number=section_number,
+                event=event,
+            )
+
+            raise error
 
         choice = response.choices[0]
 
         if not choice.message:
 
-            return ""
+            error = AdaResponseError(
+                "Groq returned an empty message object.",
+                stage=stage,
+                category="GROQ_EMPTY_RESPONSE",
+            )
 
-        return safe_text(
+            log_error(
+                "GROQ RETURNED EMPTY MESSAGE",
+                error,
+                stage=stage,
+                category="GROQ_EMPTY_RESPONSE",
+                section_number=section_number,
+                event=event,
+            )
+
+            raise error
+
+        content = safe_text(
             choice.message.content
         )
+
+        if not content:
+
+            error = AdaResponseError(
+                "Groq returned an empty message.",
+                stage=stage,
+                category="GROQ_EMPTY_RESPONSE",
+            )
+
+            log_error(
+                "GROQ RETURNED EMPTY CONTENT",
+                error,
+                stage=stage,
+                category="GROQ_EMPTY_RESPONSE",
+                section_number=section_number,
+                event=event,
+            )
+
+            raise error
+
+        # ----------------------------------------------------
+        # USAGE DIAGNOSTICS
+        #
+        # This is extremely useful when investigating token
+        # usage without printing the actual document.
+        # ----------------------------------------------------
+
+        usage = getattr(
+            response,
+            "usage",
+            None,
+        )
+
+        if usage is not None:
+
+            prompt_tokens = getattr(
+                usage,
+                "prompt_tokens",
+                None,
+            )
+
+            completion_tokens = getattr(
+                usage,
+                "completion_tokens",
+                None,
+            )
+
+            total_tokens = getattr(
+                usage,
+                "total_tokens",
+                None,
+            )
+
+            print(
+                "Groq prompt tokens:",
+                prompt_tokens,
+            )
+
+            print(
+                "Groq completion tokens:",
+                completion_tokens,
+            )
+
+            print(
+                "Groq total tokens:",
+                total_tokens,
+            )
+
+        print(
+            "Groq response received successfully."
+        )
+
+        print()
+
+        return content
 
     # ========================================================
     # GENERATE ONE DOCUMENT SECTION
@@ -1228,18 +1902,39 @@ IMPORTANT:
         total_sections: int | None,
         previous_tail: str,
         correction: bool = False,
+        event: str | None = None,
     ) -> str:
 
-        section_instruction = (
-            self.build_document_section_instruction(
-                original_request=original_request,
-                service=service,
-                section_number=section_number,
-                total_sections=total_sections,
-                previous_tail=previous_tail,
-                correction=correction,
+        try:
+
+            section_instruction = (
+                self.build_document_section_instruction(
+                    original_request=original_request,
+                    service=service,
+                    section_number=section_number,
+                    total_sections=total_sections,
+                    previous_tail=previous_tail,
+                    correction=correction,
+                )
             )
-        )
+
+        except Exception as error:
+
+            log_error(
+                "DOCUMENT SECTION INSTRUCTION FAILED",
+                error,
+                stage="DOCUMENT_SECTION_INSTRUCTION",
+                category="DOCUMENT_GENERATION",
+                section_number=section_number,
+                event=event,
+            )
+
+            raise AdaResponseError(
+                "Failed to build document section instruction.",
+                stage="DOCUMENT_SECTION_INSTRUCTION",
+                category="DOCUMENT_GENERATION",
+                original=error,
+            ) from error
 
         messages = [
             {
@@ -1275,6 +1970,9 @@ IMPORTANT:
         return self.call_groq(
             messages=messages,
             output_tokens=DOCUMENT_SECTION_OUTPUT_TOKENS,
+            stage="DOCUMENT_GROQ_REQUEST",
+            section_number=section_number,
+            event=event,
         )
 
     # ========================================================
@@ -1288,15 +1986,6 @@ IMPORTANT:
         total_sections: int | None,
         section_number: int,
     ) -> bool:
-        """
-        Decide whether another generation section is needed.
-
-        For an explicitly requested number of pages/sections,
-        the requested count controls completion.
-
-        For open-ended documents, a conservative continuation
-        check is used.
-        """
 
         if not section:
             return True
@@ -1322,8 +2011,6 @@ IMPORTANT:
         ):
             return True
 
-        # A response that is extremely short may indicate that
-        # the model stopped early.
         if len(section) < DOCUMENT_MIN_SECTION_CHARS:
 
             return True
@@ -1346,7 +2033,6 @@ IMPORTANT:
         if not section:
             return ""
 
-        # Remove accidental continuation control markers.
         section = re.sub(
             r"\[\s*continue\s*\]",
             "",
@@ -1371,13 +2057,6 @@ IMPORTANT:
     def assemble_document(
         sections: list[str],
     ) -> str:
-        """
-        IMPORTANT:
-
-        There is deliberately NO compact_text() here.
-
-        The complete document must remain intact.
-        """
 
         complete_sections: list[str] = []
 
@@ -1410,17 +2089,8 @@ IMPORTANT:
         context: str | None,
         correction: bool = False,
         existing_work: str | None = None,
+        event: str | None = None,
     ) -> str:
-        """
-        Generate a complete document through multiple controlled
-        LLM requests.
-
-        CRITICAL:
-
-        The final document is assembled in Python.
-
-        No final-document compacting is performed.
-        """
 
         original_request = safe_text(
             original_request
@@ -1436,12 +2106,38 @@ IMPORTANT:
         # BASE INTELLIGENCE
         # ----------------------------------------------------
 
-        system_prompt = (
-            self.build_system_prompt(
-                service=active_service,
-                context=context,
+        try:
+
+            system_prompt = (
+                self.build_system_prompt(
+                    service=active_service,
+                    context=context,
+                )
             )
-        )
+
+        except Exception as error:
+
+            if isinstance(
+                error,
+                AdaResponseError,
+            ):
+
+                raise
+
+            log_error(
+                "DOCUMENT SYSTEM PROMPT FAILED",
+                error,
+                stage="DOCUMENT_SYSTEM_PROMPT",
+                category="DOCUMENT_GENERATION",
+                event=event,
+            )
+
+            raise AdaResponseError(
+                "Document system prompt construction failed.",
+                stage="DOCUMENT_SYSTEM_PROMPT",
+                category="DOCUMENT_GENERATION",
+                original=error,
+            ) from error
 
         # ----------------------------------------------------
         # DETERMINE EXPLICIT SECTION COUNT
@@ -1453,13 +2149,39 @@ IMPORTANT:
             )
         )
 
+        print()
+        print("=" * 78)
+        print(
+            "DOCUMENT GENERATION STARTED"
+        )
+        print("=" * 78)
+        print(
+            "Service:",
+            active_service,
+        )
+        print(
+            "Event:",
+            event,
+        )
+        print(
+            "Correction:",
+            correction,
+        )
+        print(
+            "Requested sections:",
+            total_sections
+            if total_sections
+            else "not explicitly specified",
+        )
+        print(
+            "Maximum sections:",
+            DOCUMENT_MAX_SECTIONS,
+        )
+        print("=" * 78)
+        print()
+
         # ----------------------------------------------------
         # EXISTING WORK FOR CORRECTIONS
-        #
-        # Only a controlled tail is sent to each request.
-        #
-        # The full existing document remains in application
-        # memory and is assembled from the generated sections.
         # ----------------------------------------------------
 
         previous_tail = ""
@@ -1475,13 +2197,6 @@ IMPORTANT:
         sections: list[str] = []
 
         section_number = 1
-
-        # ----------------------------------------------------
-        # SAFETY STOP
-        #
-        # This is a generation-call safety ceiling, not a
-        # customer document-size ceiling.
-        # ----------------------------------------------------
 
         maximum_sections = (
             total_sections
@@ -1505,32 +2220,27 @@ IMPORTANT:
                         total_sections=total_sections,
                         previous_tail=previous_tail,
                         correction=correction,
+                        event=event,
                     )
                 )
 
             except Exception as error:
 
-                print()
-                print("=" * 70)
-                print(
-                    "DOCUMENT SECTION ERROR"
+                log_error(
+                    "DOCUMENT SECTION GENERATION FAILED",
+                    error,
+                    stage="DOCUMENT_SECTION_GENERATION",
+                    category=(
+                        error.category
+                        if isinstance(
+                            error,
+                            AdaResponseError,
+                        )
+                        else "DOCUMENT_GENERATION"
+                    ),
+                    section_number=section_number,
+                    event=event,
                 )
-                print("=" * 70)
-                print(
-                    "Section:",
-                    section_number,
-                )
-                print(
-                    "Error type:",
-                    type(error).__name__,
-                )
-                print(
-                    "Error:",
-                    str(error),
-                )
-                print("=" * 70)
-
-                traceback.print_exc()
 
                 raise
 
@@ -1542,23 +2252,26 @@ IMPORTANT:
 
             if not section:
 
-                print(
-                    "EMPTY DOCUMENT SECTION:",
-                    section_number,
+                error = AdaResponseError(
+                    "Document section returned no content.",
+                    stage="DOCUMENT_SECTION_EMPTY",
+                    category="DOCUMENT_GENERATION",
                 )
 
-                break
+                log_error(
+                    "EMPTY DOCUMENT SECTION",
+                    error,
+                    stage="DOCUMENT_SECTION_EMPTY",
+                    category="DOCUMENT_GENERATION",
+                    section_number=section_number,
+                    event=event,
+                )
+
+                raise error
 
             sections.append(
                 section
             )
-
-            # ------------------------------------------------
-            # ONLY THE TAIL IS USED FOR THE NEXT LLM REQUEST.
-            #
-            # The complete assembled document remains untouched
-            # in `sections`.
-            # ------------------------------------------------
 
             previous_tail = section[
                 -DOCUMENT_RECENT_CONTEXT_CHARS:
@@ -1574,10 +2287,6 @@ IMPORTANT:
                 len(sections),
             )
 
-            # ------------------------------------------------
-            # EXPLICIT PAGE/SECTION COUNT
-            # ------------------------------------------------
-
             if total_sections is not None:
 
                 if section_number >= total_sections:
@@ -1585,14 +2294,6 @@ IMPORTANT:
                     break
 
             else:
-
-                # ------------------------------------------------
-                # OPEN-ENDED DOCUMENT
-                #
-                # If the model appears complete, stop.
-                #
-                # Otherwise continue.
-                # ------------------------------------------------
 
                 if not self.section_needs_continuation(
                     section,
@@ -1604,24 +2305,59 @@ IMPORTANT:
 
             section_number += 1
 
-        complete_document = (
-            self.assemble_document(
-                sections
+        # ----------------------------------------------------
+        # ASSEMBLY
+        # ----------------------------------------------------
+
+        try:
+
+            complete_document = (
+                self.assemble_document(
+                    sections
+                )
             )
-        )
+
+        except Exception as error:
+
+            log_error(
+                "DOCUMENT ASSEMBLY FAILED",
+                error,
+                stage="DOCUMENT_ASSEMBLY",
+                category="DOCUMENT_ASSEMBLY",
+                event=event,
+            )
+
+            raise AdaResponseError(
+                "Document assembly failed.",
+                stage="DOCUMENT_ASSEMBLY",
+                category="DOCUMENT_ASSEMBLY",
+                original=error,
+            ) from error
 
         if not complete_document:
 
-            raise RuntimeError(
-                "Document generation returned no document content."
+            error = AdaResponseError(
+                "Document generation returned no document content.",
+                stage="DOCUMENT_ASSEMBLY",
+                category="DOCUMENT_ASSEMBLY",
             )
 
+            log_error(
+                "COMPLETE DOCUMENT IS EMPTY",
+                error,
+                stage="DOCUMENT_ASSEMBLY",
+                category="DOCUMENT_ASSEMBLY",
+                event=event,
+            )
+
+            raise error
+
         print()
-        print("=" * 70)
+        print("=" * 78)
         print(
             "COMPLETE DOCUMENT ASSEMBLED"
         )
-        print("=" * 70)
+        print("=" * 78)
         print(
             "Sections:",
             len(sections),
@@ -1636,17 +2372,11 @@ IMPORTANT:
             "Complete document characters:",
             len(complete_document),
         )
-        print("=" * 70)
+        print("=" * 78)
         print()
 
         # ----------------------------------------------------
-        # IMPORTANT:
-        #
-        # NO compact_text()
-        # NO MAX_SYSTEM_PROMPT_CHARS
-        # NO MAX_USER_MESSAGE_CHARS
-        #
-        # The complete document must be returned intact.
+        # NO COMPACTION HERE
         # ----------------------------------------------------
 
         return complete_document
@@ -1682,6 +2412,7 @@ IMPORTANT:
                 context=context,
                 correction=correction,
                 existing_work=None,
+                event=event_normalized,
             )
         )
 
@@ -1704,12 +2435,33 @@ IMPORTANT:
             )
         )
 
-        system_prompt = (
-            self.build_system_prompt(
-                service=active_service,
-                context=context,
+        try:
+
+            system_prompt = (
+                self.build_system_prompt(
+                    service=active_service,
+                    context=context,
+                )
             )
-        )
+
+        except Exception as error:
+
+            log_error(
+                "NORMAL SYSTEM PROMPT FAILED",
+                error,
+                stage="NORMAL_SYSTEM_PROMPT",
+                category=(
+                    error.category
+                    if isinstance(
+                        error,
+                        AdaResponseError,
+                    )
+                    else "PROMPT_MANAGER"
+                ),
+                event=event,
+            )
+
+            raise
 
         messages = (
             self.build_messages(
@@ -1749,14 +2501,9 @@ IMPORTANT:
         response = self.call_groq(
             messages=messages,
             output_tokens=MAX_OUTPUT_TOKENS,
+            stage="NORMAL_GROQ_REQUEST",
+            event=event,
         )
-
-        if not response:
-
-            return (
-                "I could not get a response right now. "
-                "Please try again."
-            )
 
         self.add_history(
             "user",
@@ -1793,23 +2540,108 @@ IMPORTANT:
                 "like me to help you with."
             )
 
+        print()
+        print("=" * 78)
+        print(
+            "ADA RESPONSE START"
+        )
+        print("=" * 78)
+        print(
+            "Service supplied:",
+            service,
+        )
+        print(
+            "Event:",
+            event,
+        )
+        print(
+            "Message characters:",
+            len(message),
+        )
+        print(
+            "Model:",
+            MODEL,
+        )
+        print(
+            "Groq package available:",
+            Groq is not None,
+        )
+        print(
+            "API key configured:",
+            bool(API_KEY),
+        )
+        print("=" * 78)
+        print()
+
         if service:
 
             self.set_service(
                 service
             )
 
-        active_service = (
-            self.normalize_service(
-                self.service
+        try:
+
+            active_service = (
+                self.normalize_service(
+                    self.service
+                )
             )
-        )
 
-        if get_client() is None:
+        except Exception as error:
 
-            return (
-                "The network connection is slow or unavailable. "
-                "Please try again."
+            log_error(
+                "SERVICE SETUP FAILED",
+                error,
+                stage="SERVICE_SETUP",
+                category=(
+                    error.category
+                    if isinstance(
+                        error,
+                        AdaResponseError,
+                    )
+                    else "SERVICE"
+                ),
+                event=event,
+            )
+
+            return client_error_message(
+                error
+            )
+
+        # ----------------------------------------------------
+        # CLIENT CONFIGURATION CHECK
+        # ----------------------------------------------------
+
+        try:
+
+            get_client()
+
+        except Exception as error:
+
+            log_error(
+                "GROQ CONFIGURATION CHECK FAILED",
+                error,
+                stage=(
+                    error.stage
+                    if isinstance(
+                        error,
+                        AdaResponseError,
+                    )
+                    else "CLIENT_CONFIGURATION"
+                ),
+                category=(
+                    error.category
+                    if isinstance(
+                        error,
+                        AdaResponseError,
+                    )
+                    else "CONFIGURATION"
+                ),
+                event=event,
+            )
+
+            return client_error_message(
+                error
             )
 
         event_normalized = (
@@ -1820,15 +2652,6 @@ IMPORTANT:
 
         # ====================================================
         # DOCUMENT GENERATION PATH
-        # ====================================================
-        #
-        # This is the critical change.
-        #
-        # A large requested document does NOT go through the
-        # ordinary single-response path.
-        #
-        # It is generated section by section and assembled
-        # before being returned.
         # ====================================================
 
         if event_normalized in DOCUMENT_EVENTS:
@@ -1846,10 +2669,6 @@ IMPORTANT:
 
                 if complete_document:
 
-                    # Store only a compact conversation record.
-                    #
-                    # The complete document itself is NOT passed
-                    # back into the normal conversation history.
                     self.add_history(
                         "user",
                         message,
@@ -1865,34 +2684,50 @@ IMPORTANT:
 
                     return complete_document
 
-                return (
-                    "I could not prepare the requested work "
-                    "right now. Please try again."
+                error = AdaResponseError(
+                    "Document generation returned no document.",
+                    stage="DOCUMENT_GENERATION",
+                    category="DOCUMENT_GENERATION",
+                )
+
+                log_error(
+                    "DOCUMENT GENERATION RETURNED EMPTY RESULT",
+                    error,
+                    stage="DOCUMENT_GENERATION",
+                    category="DOCUMENT_GENERATION",
+                    event=event_normalized,
+                )
+
+                return client_error_message(
+                    error
                 )
 
             except Exception as error:
 
-                print()
-                print("=" * 70)
-                print(
-                    "ADA DOCUMENT GENERATION ERROR"
+                log_error(
+                    "ADA DOCUMENT GENERATION FAILED",
+                    error,
+                    stage=(
+                        error.stage
+                        if isinstance(
+                            error,
+                            AdaResponseError,
+                        )
+                        else "DOCUMENT_GENERATION"
+                    ),
+                    category=(
+                        error.category
+                        if isinstance(
+                            error,
+                            AdaResponseError,
+                        )
+                        else "DOCUMENT_GENERATION"
+                    ),
+                    event=event_normalized,
                 )
-                print("=" * 70)
-                print(
-                    "Error type:",
-                    type(error).__name__,
-                )
-                print(
-                    "Error:",
-                    str(error),
-                )
-                print("=" * 70)
 
-                traceback.print_exc()
-
-                return (
-                    "I could not prepare the requested work "
-                    "right now. Please try again."
+                return client_error_message(
+                    error
                 )
 
         # ====================================================
@@ -1910,27 +2745,30 @@ IMPORTANT:
 
         except Exception as error:
 
-            print()
-            print("=" * 70)
-            print(
-                "ADA RESPONSE ERROR"
+            log_error(
+                "ADA NORMAL RESPONSE FAILED",
+                error,
+                stage=(
+                    error.stage
+                    if isinstance(
+                        error,
+                        AdaResponseError,
+                    )
+                    else "NORMAL_RESPONSE"
+                ),
+                category=(
+                    error.category
+                    if isinstance(
+                        error,
+                        AdaResponseError,
+                    )
+                    else "NORMAL_RESPONSE"
+                ),
+                event=event,
             )
-            print("=" * 70)
-            print(
-                "Error type:",
-                type(error).__name__,
-            )
-            print(
-                "Error:",
-                str(error),
-            )
-            print("=" * 70)
 
-            traceback.print_exc()
-
-            return (
-                "The network connection is slow or unavailable. "
-                "Please try again."
+            return client_error_message(
+                error
             )
 
 
@@ -1941,14 +2779,17 @@ IMPORTANT:
 if __name__ == "__main__":
 
     print()
-    print("=" * 70)
+    print("=" * 78)
     print(
         "NAIJA POCKET BUSINESS CENTER"
     )
     print(
         "ADA END-TO-END RESPONSE ENGINE"
     )
-    print("=" * 70)
+    print(
+        "DIAGNOSTIC MODE"
+    )
+    print("=" * 78)
     print()
 
     print(
@@ -1957,11 +2798,25 @@ if __name__ == "__main__":
     )
 
     print(
-        "Groq configured:",
-        is_configured(),
+        "Groq package available:",
+        Groq is not None,
+    )
+
+    print(
+        "Groq API key configured:",
+        bool(API_KEY),
+    )
+
+    print(
+        "Client error exposure:",
+        EXPOSE_ERRORS_TO_CLIENT,
     )
 
     print()
+
+    # --------------------------------------------------------
+    # PROMPT MANAGER DIAGNOSTIC
+    # --------------------------------------------------------
 
     try:
 
@@ -1972,19 +2827,45 @@ if __name__ == "__main__":
             "READY",
         )
 
-        print(
-            "Identity:",
-            bool(
-                manager.get_identity_prompt()
-            ),
-        )
+        try:
 
-        print(
-            "Nigerian Context:",
-            bool(
+            identity = (
+                manager.get_identity_prompt()
+            )
+
+            print(
+                "Identity:",
+                bool(identity),
+            )
+
+        except Exception as error:
+
+            log_error(
+                "IDENTITY PROMPT DIAGNOSTIC FAILED",
+                error,
+                stage="PROMPT_MANAGER_IDENTITY",
+                category="PROMPT_MANAGER",
+            )
+
+        try:
+
+            context_prompt = (
                 manager.get_nigerian_context_prompt()
-            ),
-        )
+            )
+
+            print(
+                "Nigerian Context:",
+                bool(context_prompt),
+            )
+
+        except Exception as error:
+
+            log_error(
+                "NIGERIAN CONTEXT DIAGNOSTIC FAILED",
+                error,
+                stage="PROMPT_MANAGER_CONTEXT",
+                category="PROMPT_MANAGER",
+            )
 
         services = [
             "cv",
@@ -2009,9 +2890,16 @@ if __name__ == "__main__":
                     )
                 )
 
-            except Exception:
+            except Exception as error:
 
                 available = False
+
+                log_error(
+                    f"SERVICE PROMPT FAILED: {service}",
+                    error,
+                    stage="PROMPT_MANAGER_SERVICE",
+                    category="PROMPT_MANAGER",
+                )
 
             print(
                 f"{service.title():25} :",
@@ -2022,13 +2910,120 @@ if __name__ == "__main__":
 
     except Exception as error:
 
-        print(
-            "Prompt Manager diagnostic error:",
-            type(error).__name__,
-            str(error),
+        log_error(
+            "PROMPT MANAGER DIAGNOSTIC FAILED",
+            error,
+            stage="PROMPT_MANAGER_DIAGNOSTIC",
+            category="PROMPT_MANAGER",
         )
 
     print()
+
+    # --------------------------------------------------------
+    # BILLING DIAGNOSTIC
+    # --------------------------------------------------------
+
+    try:
+
+        billing = BillingManager()
+
+        print(
+            "Billing Manager:",
+            "READY",
+        )
+
+        print()
+
+        for service in [
+            "cv",
+            "cover_letter",
+            "business",
+            "academic",
+        ]:
+
+            try:
+
+                item = (
+                    billing.get_service(
+                        service
+                    )
+                )
+
+                print(
+                    f"Billing {service:18}:",
+                    "FOUND"
+                    if item
+                    else "MISSING",
+                )
+
+            except Exception as error:
+
+                print(
+                    f"Billing {service:18}:",
+                    "ERROR",
+                )
+
+                log_error(
+                    f"BILLING DIAGNOSTIC FAILED: {service}",
+                    error,
+                    stage="BILLING_DIAGNOSTIC",
+                    category="BILLING",
+                )
+
+    except Exception as error:
+
+        log_error(
+            "BILLING MANAGER DIAGNOSTIC FAILED",
+            error,
+            stage="BILLING_INITIALIZATION",
+            category="BILLING",
+        )
+
+    print()
+
+    # --------------------------------------------------------
+    # GROQ CLIENT DIAGNOSTIC
+    # --------------------------------------------------------
+
+    try:
+
+        client = get_client()
+
+        print(
+            "Groq Client:",
+            "READY"
+            if client is not None
+            else "NOT READY",
+        )
+
+    except Exception as error:
+
+        log_error(
+            "GROQ CLIENT DIAGNOSTIC FAILED",
+            error,
+            stage=(
+                error.stage
+                if isinstance(
+                    error,
+                    AdaResponseError,
+                )
+                else "CLIENT_DIAGNOSTIC"
+            ),
+            category=(
+                error.category
+                if isinstance(
+                    error,
+                    AdaResponseError,
+                )
+                else "GROQ_CLIENT"
+            ),
+        )
+
+    print()
+
+    # --------------------------------------------------------
+    # FINAL STATUS
+    # --------------------------------------------------------
 
     print(
         "Ada End-to-End Intelligence:",
@@ -2071,6 +3066,21 @@ if __name__ == "__main__":
     )
 
     print(
+        "Detailed Server Diagnostics:",
+        "ENABLED",
+    )
+
+    print(
+        "Groq Rate-Limit Diagnostics:",
+        "ENABLED",
+    )
+
+    print(
+        "Provider Error Diagnostics:",
+        "ENABLED",
+    )
+
+    print(
         "Normal Maximum System Prompt:",
         f"{MAX_SYSTEM_PROMPT_CHARS} characters",
     )
@@ -2096,4 +3106,8 @@ if __name__ == "__main__":
     )
 
     print()
-    print("=" * 70)
+    print("=" * 78)
+    print(
+        "DIAGNOSTIC INITIALIZATION COMPLETE"
+    )
+    print("=" * 78)
