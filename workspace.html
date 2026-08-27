@@ -166,6 +166,18 @@ button{
 
     width:100%;
 
+    /*
+       IMPORTANT:
+       The main area is now the SINGLE vertical
+       scroll container for both the form and
+       the complete review document.
+
+       The previous version also made .work-card
+       a separate fixed-height scroll container.
+       That could make long documents appear
+       cut off on smaller screens.
+    */
+
     overflow-x:hidden;
 
     overflow-y:auto;
@@ -190,7 +202,7 @@ button{
 
     margin:0 auto;
 
-    padding:14px 10px 35px;
+    padding:14px 10px 45px;
 }
 
 
@@ -434,6 +446,17 @@ button{
     width:100%;
 
     min-width:0;
+
+    /*
+       IMPORTANT:
+       Do not give this section a fixed height.
+       Its complete document and payment content
+       must be allowed to determine its full height.
+    */
+
+    height:auto;
+
+    overflow:visible;
 }
 
 .review-view.show{
@@ -480,16 +503,36 @@ button{
    REVIEW DOCUMENT
    ========================================================= */
 
+/*
+   CRITICAL REVIEW FIX
+
+   The old version used:
+
+       height:clamp(...)
+       min-height:...
+       overflow-y:auto
+
+   That created a second scroll container with a
+   restricted viewport.
+
+   This replacement deliberately removes the fixed
+   document height and nested vertical scrolling.
+
+   The document now expands to its FULL natural height.
+   The .main element is responsible for scrolling the
+   entire review page.
+
+   Therefore a long 5-page, 8-page, 20-page or longer
+   response remains present in the DOM and can be
+   reached by normal page scrolling.
+*/
+
 .work-card{
     width:100%;
 
     min-width:0;
 
-    height:clamp(
-        360px,
-        calc(100dvh - 285px),
-        900px
-    );
+    height:auto;
 
     min-height:360px;
 
@@ -501,15 +544,12 @@ button{
 
     padding:0;
 
-    overflow-y:auto;
+    /*
+       NO fixed height.
+       NO nested vertical scrolling.
+    */
 
-    overflow-x:hidden;
-
-    -webkit-overflow-scrolling:touch;
-
-    overscroll-behavior:contain;
-
-    scrollbar-width:auto;
+    overflow:visible;
 
     overflow-wrap:anywhere;
 
@@ -529,7 +569,7 @@ button{
 
     min-width:0;
 
-    min-height:100%;
+    min-height:360px;
 
     padding:22px 17px;
 
@@ -540,6 +580,13 @@ button{
     font-size:14px;
 
     line-height:1.7;
+
+    /*
+       The content itself must be allowed
+       to grow to its complete natural height.
+    */
+
+    height:auto;
 
     overflow:visible;
 
@@ -561,7 +608,9 @@ button{
 
     min-width:0;
 
-    min-height:100%;
+    min-height:360px;
+
+    height:auto;
 
     color:#111;
 
@@ -1312,25 +1361,45 @@ button:disabled{
         padding:
             12px
             9px
-            30px;
+            45px;
     }
 
+    /*
+       IMPORTANT:
+       No fixed review height on mobile.
+       The complete document determines the
+       height and .main scrolls through it.
+    */
+
     .work-card{
-        height:
-            calc(
-                100dvh - 315px
-            );
+        height:auto;
 
         min-height:300px;
 
         border-radius:10px;
+
+        overflow:visible;
     }
 
     .work-content{
+        height:auto;
+
+        min-height:300px;
+
         padding:
             18px
             14px
             28px;
+
+        overflow:visible;
+    }
+
+    .work-content.document-html{
+        height:auto;
+
+        min-height:300px;
+
+        overflow:visible;
     }
 
     .work-content h1{
@@ -1375,11 +1444,25 @@ button:disabled{
             );
     }
 
+    /*
+       Do NOT reduce the document height
+       on very small phones.
+    */
+
     .work-card{
-        height:
-            calc(
-                100dvh - 345px
-            );
+        height:auto;
+
+        min-height:300px;
+
+        overflow:visible;
+    }
+
+    .work-content{
+        height:auto;
+
+        min-height:300px;
+
+        overflow:visible;
     }
 
 }
@@ -1914,6 +1997,7 @@ function makeId(prefix){
             .toString(36)
             .slice(2)
     );
+
 }
 
 
@@ -2017,6 +2101,7 @@ function clean(value){
             .trim() ||
         null
     );
+
 }
 
 
@@ -2032,6 +2117,7 @@ function setStatus(
     status.className =
         "status " +
         type;
+
 }
 
 
@@ -2084,11 +2170,6 @@ async function readApiResponse(
     let rawText = "";
 
 
-    /*
-       First try JSON when the server
-       declares JSON.
-    */
-
     if(
         contentType.includes(
             "application/json"
@@ -2107,12 +2188,6 @@ async function readApiResponse(
         }
 
     }else{
-
-        /*
-           Some servers/proxies do not
-           correctly send the JSON content
-           type. Read the response as text.
-        */
 
         try{
 
@@ -2217,12 +2292,6 @@ async function apiChat(body){
         parsed.data;
 
 
-    /*
-       A server-side error must NEVER
-       be allowed to continue into the
-       review renderer.
-    */
-
     if(!response.ok){
 
         let message =
@@ -2236,11 +2305,6 @@ async function apiChat(body){
                 "."
             );
 
-
-        /*
-           Avoid dumping a complete HTML
-           error page into the customer UI.
-        */
 
         if(
             /<!doctype|<html[\s>]/i.test(
@@ -2260,11 +2324,6 @@ async function apiChat(body){
 
     }
 
-
-    /*
-       If the backend returned JSON,
-       require a successful response.
-    */
 
     if(data){
 
@@ -2286,12 +2345,6 @@ async function apiChat(body){
 
     }
 
-
-    /*
-       Successful non-JSON responses
-       are converted into a usable reply
-       instead of causing a blank review.
-    */
 
     if(parsed.rawText){
 
@@ -2374,16 +2427,6 @@ function parseSafeDocumentHtml(
     html
 ){
 
-    /*
-       Parse the returned HTML inside an
-       isolated document first.
-
-       This keeps malformed or unwanted
-       document markup away from the live
-       application DOM until it has been
-       cleaned.
-    */
-
     const parser =
         new DOMParser();
 
@@ -2431,12 +2474,6 @@ function parseSafeDocumentHtml(
         ]);
 
 
-    /*
-       Remove executable / page-level
-       elements before traversing the
-       document.
-    */
-
     parsed
         .querySelectorAll(
             "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base,svg,video,audio"
@@ -2476,12 +2513,6 @@ function parseSafeDocumentHtml(
         const tag =
             node.tagName;
 
-
-        /*
-           Remove unwanted tags while
-           retaining their text/content
-           where possible.
-        */
 
         if(
             !allowedTags.has(tag)
@@ -2642,11 +2673,6 @@ function renderDocument(
         clean(work) || "";
 
 
-    /*
-       Always clear the old document
-       first.
-    */
-
     workContent.innerHTML = "";
 
     workContent.classList.remove(
@@ -2700,13 +2726,6 @@ function renderDocument(
                 );
 
 
-            /*
-               If sanitisation unexpectedly
-               produced no visible content,
-               fall back to the original
-               response as plain text.
-            */
-
             if(
                 !safeHtml.trim()
             ){
@@ -2732,12 +2751,6 @@ function renderDocument(
 
         }else{
 
-            /*
-               Plain text is inserted with
-               textContent so the COMPLETE
-               response remains visible.
-            */
-
             workContent.textContent =
                 cleaned;
 
@@ -2745,21 +2758,18 @@ function renderDocument(
 
 
         /*
-           The review card itself is the
-           document scroll container.
+           IMPORTANT:
+
+           There is no longer a workCard.scrollTop
+           operation because workCard is no longer
+           a separate scrolling container.
+
+           The main page owns the scroll position.
         */
-
-        workCard.scrollTop = 0;
-
 
         return true;
 
     }catch(error){
-
-        /*
-           Rendering failure must never leave
-           a blank white review page.
-        */
 
         workContent.classList.remove(
             "document-html"
@@ -2831,9 +2841,6 @@ function renderDocument(
         workContent.appendChild(
             errorBox
         );
-
-
-        workCard.scrollTop = 0;
 
 
         return true;
@@ -3421,11 +3428,6 @@ async function loadGuidance(){
 
     }catch(error){
 
-        /*
-           Guidance failure does NOT prevent
-           the customer from using the form.
-        */
-
         introText.textContent =
             "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
 
@@ -3598,11 +3600,6 @@ async function createWork(
         }
 
 
-        /*
-           Accept all normal backend response
-           names without truncating the work.
-        */
-
         const returnedWork =
             result.reply ??
             result.work ??
@@ -3617,12 +3614,6 @@ async function createWork(
                 returnedWork
             ).trim();
 
-
-        /*
-           CRITICAL:
-           Do not open the review screen
-           when the API returned nothing.
-        */
 
         if(!currentWork){
 
@@ -3648,12 +3639,6 @@ async function createWork(
         }
 
 
-        /*
-           Only AFTER the work exists and
-           has been rendered do we switch
-           from the form to review.
-        */
-
         formView.style.display =
             "none";
 
@@ -3663,20 +3648,15 @@ async function createWork(
         );
 
 
+        /*
+           Scroll the SINGLE main container
+           to the beginning of the review.
+
+           workCard is no longer a scroll container.
+        */
+
         requestAnimationFrame(
             () => {
-
-                workCard.scrollTop =
-                    0;
-
-
-                /*
-                   Move the main page to the
-                   beginning of the review
-                   section without moving
-                   the entire page to the
-                   bottom.
-                */
 
                 const mainTop =
                     document.querySelector(
@@ -3799,8 +3779,18 @@ function showReview(
     requestAnimationFrame(
         () => {
 
-            workCard.scrollTop =
-                0;
+            const mainTop =
+                document.querySelector(
+                    ".main"
+                );
+
+
+            if(mainTop){
+
+                mainTop.scrollTop =
+                    0;
+
+            }
 
         }
     );
