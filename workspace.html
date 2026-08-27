@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
 
 <title>Naija Pocket Business Center</title>
 
@@ -16,6 +19,7 @@ body{
     width:100%;
     height:100%;
     margin:0;
+    padding:0;
     overflow:hidden;
 }
 
@@ -41,16 +45,21 @@ button{
     --gold2:#f3d66b;
     --red:#b30000;
     --green:#168047;
-    --luxury-green:#168047;
     --border:rgba(212,175,55,.28);
 }
 
 .app{
+    width:100%;
     height:100dvh;
+    min-height:0;
     display:flex;
     flex-direction:column;
     background:#000;
 }
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .header{
     flex:0 0 auto;
@@ -71,9 +80,10 @@ button{
 
 .brand-title{
     margin:0;
-    color:var(--luxury-green);
+    color:var(--green);
     font-size:clamp(18px,4vw,25px);
     font-weight:800;
+    line-height:1.2;
 }
 
 .brand-subtitle{
@@ -96,26 +106,36 @@ button{
     text-overflow:ellipsis;
 }
 
+/* =========================================================
+   MAIN SCROLL AREA
+   ========================================================= */
+
 .main{
-    flex:1;
+    flex:1 1 auto;
     min-height:0;
-    overflow-y:auto;
+    width:100%;
     overflow-x:hidden;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
     background:radial-gradient(
         circle at top,
         #181818 0,
         #080808 35%,
         #000 100%
     );
-    -webkit-overflow-scrolling:touch;
 }
 
 .main-inner{
     width:100%;
     max-width:900px;
-    margin:auto;
-    padding:14px 10px 25px;
+    margin:0 auto;
+    padding:14px 10px 35px;
 }
+
+/* =========================================================
+   SERVICE FORM
+   ========================================================= */
 
 .intro-card,
 .form-card,
@@ -253,17 +273,18 @@ button{
     opacity:.45;
 }
 
+/* =========================================================
+   REVIEW
+   ========================================================= */
+
 .review-view{
     display:none;
+    width:100%;
 }
 
 .review-view.show{
     display:block;
 }
-
-/* =========================================================
-   REVIEW HEADER
-   ========================================================= */
 
 .review-header{
     padding:16px;
@@ -287,24 +308,28 @@ button{
    COMPLETE CUSTOMER DOCUMENT
    ========================================================= */
 
-/*
-   IMPORTANT:
-   There is intentionally NO fixed height, max-height,
-   line clamp, hidden overflow, or content truncation here.
-
-   The document is allowed to grow to its COMPLETE returned
-   length. The .main container above is responsible for
-   scrolling through the full review.
-*/
-
 .work-card{
     width:100%;
+    height:auto;
+    min-height:350px;
+
+    /*
+        IMPORTANT:
+        The document is intentionally NOT given a fixed height,
+        max-height, or internal vertical clipping.
+    */
+
+    overflow:visible;
+
     background:#f7f7f7;
     color:#111;
     border-radius:11px;
     padding:22px 17px;
-    overflow:visible;
+
     overflow-wrap:anywhere;
+    word-wrap:break-word;
+    word-break:normal;
+
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
@@ -312,20 +337,39 @@ button{
 
 .work-content{
     width:100%;
+    height:auto;
+    min-height:0;
+    max-width:100%;
+
     color:#111;
     font-size:14px;
     line-height:1.7;
+
+    overflow:visible;
+    overflow-wrap:anywhere;
+    word-wrap:break-word;
+
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
-    overflow:visible;
-    overflow-wrap:anywhere;
-    word-break:normal;
 }
 
+/*
+    This class is used only when actual document HTML
+    has been returned by the intelligence.
+*/
+
 .work-content.document-html{
+    display:block;
+    width:100%;
+    height:auto;
+    min-height:0;
+    max-width:100%;
+
     background:#fff;
     color:#111;
+
+    overflow:visible;
 }
 
 /* =========================================================
@@ -339,6 +383,7 @@ button{
     line-height:1.25;
     font-weight:800;
     text-align:left;
+    page-break-after:avoid;
 }
 
 .work-content h2{
@@ -347,6 +392,7 @@ button{
     font-size:21px;
     line-height:1.3;
     font-weight:800;
+    page-break-after:avoid;
 }
 
 .work-content h3{
@@ -355,6 +401,7 @@ button{
     font-size:17px;
     line-height:1.35;
     font-weight:800;
+    page-break-after:avoid;
 }
 
 .work-content h4,
@@ -363,10 +410,11 @@ button{
     margin:16px 0 7px;
     color:#111;
     font-weight:800;
+    page-break-after:avoid;
 }
 
 /* =========================================================
-   DOCUMENT PARAGRAPHS
+   DOCUMENT TEXT
    ========================================================= */
 
 .work-content p{
@@ -374,6 +422,7 @@ button{
     color:#111;
     font-size:14px;
     line-height:1.75;
+    overflow:visible;
 }
 
 .work-content strong,
@@ -406,7 +455,7 @@ button{
 }
 
 /* =========================================================
-   DOCUMENT DIVIDER
+   DIVIDER
    ========================================================= */
 
 .work-content hr{
@@ -421,10 +470,12 @@ button{
 
 .work-content table{
     width:100%;
+    max-width:100%;
     border-collapse:collapse;
     margin:15px 0;
     color:#111;
     font-size:13px;
+    table-layout:auto;
 }
 
 .work-content th,
@@ -433,6 +484,8 @@ button{
     padding:8px;
     text-align:left;
     vertical-align:top;
+    overflow-wrap:anywhere;
+    word-break:normal;
 }
 
 .work-content th{
@@ -458,6 +511,7 @@ button{
 .work-content pre{
     white-space:pre-wrap;
     word-break:break-word;
+    overflow-wrap:anywhere;
     margin:12px 0;
     padding:12px;
     background:#eee;
@@ -468,6 +522,7 @@ button{
 
 .work-content code{
     font-family:monospace;
+    overflow-wrap:anywhere;
 }
 
 /* =========================================================
@@ -477,6 +532,7 @@ button{
 .work-content a{
     color:#111;
     text-decoration:underline;
+    overflow-wrap:anywhere;
 }
 
 /* =========================================================
@@ -491,7 +547,7 @@ button{
 }
 
 /* =========================================================
-   INTENTIONAL SPACING
+   SPACING
    ========================================================= */
 
 .work-content .document-spacer{
@@ -636,6 +692,7 @@ button{
 
 .bottom{
     flex:0 0 auto;
+    width:100%;
     padding:8px 9px calc(8px + env(safe-area-inset-bottom));
     background:#080808;
     border-top:1px solid var(--border);
@@ -749,11 +806,12 @@ button:disabled{
 }
 
 /* =========================================================
-   READ-ONLY CUSTOMER CONTENT
+   READ-ONLY AREAS
    ========================================================= */
 
 #introText,
-.intro-card{
+.intro-card,
+.work-card{
     user-select:none;
     -webkit-user-select:none;
     -moz-user-select:none;
@@ -761,7 +819,15 @@ button:disabled{
     -webkit-touch-callout:none;
 }
 
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media(max-width:600px){
+
+    .main-inner{
+        padding:12px 9px 30px;
+    }
 
     .work-card{
         padding:18px 14px;
@@ -786,6 +852,11 @@ button:disabled{
     .work-content table{
         font-size:12px;
     }
+
+    .work-content th,
+    .work-content td{
+        padding:7px;
+    }
 }
 </style>
 </head>
@@ -795,34 +866,63 @@ button:disabled{
 <div class="app">
 
 <header class="header">
+
     <div class="brand">
-        <h1 class="brand-title">Naija Pocket Business Center</h1>
-        <div class="brand-subtitle">Your Business Center</div>
+
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
+
+        <div class="brand-subtitle">
+            Your Business Center
+        </div>
+
     </div>
 
-    <div id="serviceBadge" class="service-badge">
+    <div
+        id="serviceBadge"
+        class="service-badge"
+    >
         Service
     </div>
+
 </header>
 
+
 <main class="main">
+
 <div class="main-inner">
 
 <section id="formView">
 
-    <div class="intro-card" id="introCard">
-        <h2 id="introTitle" class="intro-title">
+    <div
+        class="intro-card"
+        id="introCard"
+    >
+
+        <h2
+            id="introTitle"
+            class="intro-title"
+        >
             Let's get started
         </h2>
 
-        <p id="introText" class="intro-text">
+        <p
+            id="introText"
+            class="intro-text"
+        >
             Please wait while we prepare useful information for this service.
         </p>
 
-        <div id="price" class="price">
+        <div
+            id="price"
+            class="price"
+        >
             Service
         </div>
+
     </div>
+
 
     <div class="form-card">
 
@@ -836,7 +936,10 @@ button:disabled{
 
         <form id="serviceForm">
 
-            <div id="fields" class="fields"></div>
+            <div
+                id="fields"
+                class="fields"
+            ></div>
 
             <div class="form-note">
                 When you tap <strong>SEND</strong>, your information will be sent for processing and your prepared work will open immediately in the review area.
@@ -857,7 +960,10 @@ button:disabled{
 </section>
 
 
-<section id="reviewView" class="review-view">
+<section
+    id="reviewView"
+    class="review-view"
+>
 
     <div class="review-header">
 
@@ -872,9 +978,15 @@ button:disabled{
     </div>
 
 
-    <div id="workCard" class="work-card">
+    <div
+        id="workCard"
+        class="work-card"
+    >
 
-        <div id="workContent" class="work-content">
+        <div
+            id="workContent"
+            class="work-content"
+        >
 
             <div class="work-placeholder">
                 Your prepared work will appear here.
@@ -938,13 +1050,19 @@ button:disabled{
     </div>
 
 
-    <div id="paymentPanel" class="payment-panel">
+    <div
+        id="paymentPanel"
+        class="payment-panel"
+    >
 
         <div class="payment-title">
             Payment
         </div>
 
-        <div id="paymentDetails" class="payment-details"></div>
+        <div
+            id="paymentDetails"
+            class="payment-details"
+        ></div>
 
         <div class="payment-buttons">
 
@@ -971,6 +1089,7 @@ button:disabled{
 </section>
 
 </div>
+
 </main>
 
 
@@ -984,6 +1103,7 @@ button:disabled{
     >
         🔴 Recording... tap Voice again to stop.
     </div>
+
 
     <div class="tools">
 
@@ -1051,7 +1171,10 @@ button:disabled{
     </div>
 
 
-    <div id="status" class="status"></div>
+    <div
+        id="status"
+        class="status"
+    ></div>
 
 </div>
 
@@ -1113,6 +1236,7 @@ function id(prefix){
                 ? crypto.randomUUID()
                 : Date.now()+"_"+Math.random().toString(36).slice(2)
         );
+
 }
 
 
@@ -1140,7 +1264,10 @@ let customerId=
     get("npbc_customer_id") ||
     id("customer_");
 
-put("npbc_customer_id",customerId);
+put(
+    "npbc_customer_id",
+    customerId
+);
 
 
 let jobId=
@@ -1148,14 +1275,20 @@ let jobId=
     get("npbc_job_id") ||
     id("job_");
 
-put("npbc_job_id",jobId);
+put(
+    "npbc_job_id",
+    jobId
+);
 
 
 let requestId=
     get("npbc_client_request_id") ||
     id("request_");
 
-put("npbc_client_request_id",requestId);
+put(
+    "npbc_client_request_id",
+    requestId
+);
 
 
 let busy=false;
@@ -1199,13 +1332,15 @@ function busyState(v){
         chooseBtn,
         applyBtn,
         approveBtn
-    ].forEach(x=>x.disabled=v);
+    ].forEach(x=>{
+        x.disabled=v;
+    });
 
 }
 
 
 /* =========================================================
-   DOCUMENT HTML RENDERER
+   DOCUMENT RENDERER
    ========================================================= */
 
 function removeHtmlCodeFences(value){
@@ -1231,10 +1366,15 @@ function looksLikeHtml(value){
 
     const text=String(value||"").trim();
 
-    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tr|th|td|blockquote|pre|code|br)\b[^>]*>/i.test(text);
+    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i.test(text);
 
 }
 
+
+/*
+    Keep document HTML safe while preserving the complete
+    document structure.
+*/
 
 function sanitizeDocumentHtml(html){
 
@@ -1247,7 +1387,9 @@ function sanitizeDocumentHtml(html){
         "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
     );
 
-    blocked.forEach(el=>el.remove());
+    blocked.forEach(el=>{
+        el.remove();
+    });
 
 
     const allowedTags=new Set([
@@ -1293,7 +1435,9 @@ function sanitizeDocumentHtml(html){
 
 
         if(node.nodeType!==Node.ELEMENT_NODE){
+
             node.remove();
+
             return;
         }
 
@@ -1321,13 +1465,20 @@ function sanitizeDocumentHtml(html){
             }
 
             return;
-
         }
 
 
+        /*
+            Remove presentation/event attributes that could
+            interfere with the review page.
+
+            The document text and structure remain intact.
+        */
+
         [...node.attributes].forEach(attr=>{
 
-            const name=attr.name.toLowerCase();
+            const name=
+                attr.name.toLowerCase();
 
             const keep=
                 name==="href" ||
@@ -1336,7 +1487,11 @@ function sanitizeDocumentHtml(html){
                 name==="title";
 
             if(!keep){
-                node.removeAttribute(attr.name);
+
+                node.removeAttribute(
+                    attr.name
+                );
+
             }
 
         });
@@ -1344,14 +1499,18 @@ function sanitizeDocumentHtml(html){
 
         if(tag==="A"){
 
-            const href=node.getAttribute("href")||"";
+            const href=
+                node.getAttribute("href")||"";
+
 
             if(
                 !/^https?:\/\//i.test(href) &&
                 !/^mailto:/i.test(href)
             ){
 
-                node.removeAttribute("href");
+                node.removeAttribute(
+                    "href"
+                );
 
             }else{
 
@@ -1372,7 +1531,9 @@ function sanitizeDocumentHtml(html){
 
         if(tag==="IMG"){
 
-            const src=node.getAttribute("src")||"";
+            const src=
+                node.getAttribute("src")||"";
+
 
             if(
                 !/^https?:\/\//i.test(src) &&
@@ -1388,21 +1549,37 @@ function sanitizeDocumentHtml(html){
         }
 
 
-        [...node.childNodes].forEach(cleanNode);
+        [...node.childNodes].forEach(
+            cleanNode
+        );
 
     }
 
 
-    [...source.childNodes].forEach(cleanNode);
+    [...source.childNodes].forEach(
+        cleanNode
+    );
+
 
     return source.innerHTML;
 
 }
 
 
+/*
+    The critical review fix.
+
+    There is deliberately no height calculation here.
+    The complete returned work is inserted into a normal
+    document-flow element so the main page can scroll through
+    every paragraph, heading, section and conclusion.
+*/
+
 function renderDocument(work){
 
-    const raw=clean(work)||"";
+    const raw=
+        clean(work)||"";
+
 
     workContent.innerHTML="";
 
@@ -1438,16 +1615,29 @@ function renderDocument(work){
     if(looksLikeHtml(cleaned)){
 
         const safeHtml=
-            sanitizeDocumentHtml(cleaned);
+            sanitizeDocumentHtml(
+                cleaned
+            );
+
 
         workContent.classList.add(
             "document-html"
         );
 
+
+        /*
+            innerHTML is used only after sanitization.
+            No max-height or clipping is applied.
+        */
+
         workContent.innerHTML=
             safeHtml;
 
     }else{
+
+        /*
+            Normal text is preserved completely.
+        */
 
         workContent.textContent=
             cleaned;
@@ -1685,12 +1875,15 @@ const forms={
 
 function definition(){
 
-    const s=service.toLowerCase();
+    const s=
+        service.toLowerCase();
+
 
     const key=
         Object.keys(forms).find(
             k=>s.includes(k)
         );
+
 
     return key
         ? forms[key]
@@ -1702,6 +1895,7 @@ function definition(){
 function renderForm(){
 
     fields.innerHTML="";
+
 
     definition().forEach(f=>{
 
@@ -1721,7 +1915,10 @@ function renderForm(){
 
         wrapper.className="field";
 
-        label.htmlFor=f.name;
+
+        label.htmlFor=
+            f.name;
+
 
         label.innerHTML=
             f.label+
@@ -1732,9 +1929,11 @@ function renderForm(){
             );
 
 
-        input.id=f.name;
+        input.id=
+            f.name;
 
-        input.name=f.name;
+        input.name=
+            f.name;
 
         input.placeholder=
             f.placeholder||"";
@@ -1746,7 +1945,8 @@ function renderForm(){
 
 
         if(f.type!=="textarea"){
-            input.type=f.type||"text";
+            input.type=
+                f.type||"text";
         }
 
 
@@ -1754,6 +1954,7 @@ function renderForm(){
             label,
             input
         );
+
 
         fields.appendChild(
             wrapper
@@ -1768,19 +1969,23 @@ function collect(){
 
     const d={};
 
+
     serviceForm
         .querySelectorAll(
             "input,textarea,select"
         )
         .forEach(e=>{
 
-            const v=clean(e.value);
+            const v=
+                clean(e.value);
+
 
             if(v){
                 d[e.name]=v;
             }
 
         });
+
 
     return d;
 
@@ -1805,11 +2010,14 @@ async function apiChat(body){
             API_BASE+"/api/chat",
             {
                 method:"POST",
+
                 headers:{
                     "Content-Type":
                         "application/json"
                 },
-                body:JSON.stringify(body)
+
+                body:
+                    JSON.stringify(body)
             }
         );
 
@@ -1906,7 +2114,10 @@ async function loadGuidance(){
                 "Service fee: ₦"+
                 Number(
                     String(a)
-                        .replace(/[^0-9.]/g,"")
+                        .replace(
+                            /[^0-9.]/g,
+                            ""
+                        )
                 ).toLocaleString();
 
         }else if(
@@ -1968,21 +2179,22 @@ function creationPrompt(data){
 
     return `The customer has completed the service information form. Create the actual requested work now.
 
-Return the COMPLETE work so it can be reviewed here.
-
-IMPORTANT:
-Do not shorten the work because of screen size or because it is being displayed in a review page.
-
-If the customer requested a specific number of pages, produce the complete requested amount of substantive content. Include all appropriate sections through the conclusion where applicable.
+Return the COMPLETE requested work so it can be reviewed here.
 
 IMPORTANT DOCUMENT OUTPUT RULE:
-When the requested work is a document, return it as properly structured HTML using normal document elements such as <h1>, <h2>, <h3>, <p>, <strong>, <em>, <ul>, <ol>, <li>, <hr>, <table>, <tr>, <th>, and <td> where appropriate.
+When the requested work is a document, return the complete document as properly structured HTML using normal document elements such as <h1>, <h2>, <h3>, <p>, <strong>, <em>, <ul>, <ol>, <li>, <hr>, <table>, <tr>, <th>, and <td> where appropriate.
+
+The requested length must be respected. If the customer requests a specific number of pages, produce enough complete content to reasonably fill that requested length. Do not deliberately shorten the work.
+
+For academic papers, include all necessary sections and finish the complete paper, including the conclusion and references where appropriate.
+
+Do not stop after an introduction or a few sections.
 
 Do not wrap the HTML in markdown code fences.
 
 Do not return HTML source as an explanation.
 
-The HTML itself is the complete document that should be displayed to the customer for review.
+The HTML itself is the document that should be displayed to the customer for review.
 
 Do not ask for an email address or send the customer elsewhere unless genuinely required.
 
@@ -2042,7 +2254,8 @@ async function createWork(data){
 
         if(d.job_id){
 
-            jobId=d.job_id;
+            jobId=
+                d.job_id;
 
             put(
                 "npbc_job_id",
@@ -2052,9 +2265,18 @@ async function createWork(data){
         }
 
 
-        showReview(
+        /*
+            Preserve exactly what the API returned.
+            Nothing is shortened on the frontend.
+        */
+
+        currentWork=
             d.reply ||
-            "Your work has been prepared."
+            "Your work has been prepared.";
+
+
+        showReview(
+            currentWork
         );
 
 
@@ -2085,13 +2307,22 @@ async function createWork(data){
 
 function showReview(work){
 
-    formView.style.display="none";
+    formView.style.display=
+        "none";
 
-    reviewView.classList.add("show");
+
+    reviewView.classList.add(
+        "show"
+    );
+
 
     currentWork=
         work||"";
 
+
+    /*
+        Render the COMPLETE returned response.
+    */
 
     renderDocument(
         currentWork
@@ -2100,13 +2331,16 @@ function showReview(work){
 
     correctionInput.value="";
 
+
     paymentPanel.classList.remove(
         "show"
     );
 
+
     approved=false;
 
     paymentConfirmed=false;
+
 
     downloadBtn.disabled=true;
 
@@ -2119,13 +2353,16 @@ function showReview(work){
 
 
     /*
-       Start at the beginning of the complete document.
-       The document itself is not given an internal scroll
-       box, so the customer's normal main-page scroll can
-       reach every section, including the conclusion.
+        Wait for the browser to finish laying out the
+        complete document before moving the main scroll
+        position.
     */
 
-    mainScrollTop();
+    requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
+            mainScrollTop();
+        });
+    });
 
 }
 
@@ -2133,17 +2370,14 @@ function showReview(work){
 function mainScrollTop(){
 
     const main=
-        document.querySelector(".main");
+        document.querySelector(
+            ".main"
+        );
+
 
     if(main){
 
         main.scrollTop=0;
-
-        requestAnimationFrame(
-            ()=>{
-                main.scrollTop=0;
-            }
-        );
 
     }
 
@@ -2155,6 +2389,7 @@ serviceForm.addEventListener(
     e=>{
 
         e.preventDefault();
+
 
         if(
             !busy &&
@@ -2175,7 +2410,10 @@ serviceForm.addEventListener(
    READ-ONLY PROTECTION
    ========================================================= */
 
-[introCard,workCard]
+[
+    introCard,
+    workCard
+]
 .forEach(el=>{
 
     [
@@ -2191,6 +2429,7 @@ serviceForm.addEventListener(
             e=>{
 
                 e.preventDefault();
+
 
                 if(e.clipboardData){
 
@@ -2237,7 +2476,9 @@ serviceForm.addEventListener(
         e=>{
 
             if(e.detail>1){
+
                 e.preventDefault();
+
             }
 
         }
@@ -2294,9 +2535,18 @@ ${c}
 
 Return the COMPLETE revised work for review.
 
-Do not shorten, summarize, truncate or omit sections from the existing work.
+IMPORTANT:
+If the prepared work is a document, return the complete revised document as properly structured HTML.
 
-If the prepared work is a document, return the complete revised document as properly structured HTML. Preserve all necessary sections and include the complete conclusion where applicable. Do not wrap the HTML in markdown code fences. Do not return the HTML source as an explanation.`,
+Preserve the full document. Do not shorten it merely to save space.
+
+Do not remove sections that were not requested to be changed.
+
+Do not stop before the conclusion or final section.
+
+Do not wrap the HTML in markdown code fences.
+
+Do not return the HTML source as an explanation.`,
 
                     service,
 
@@ -2346,7 +2596,9 @@ If the prepared work is a document, return the complete revised document as prop
             );
 
 
-            mainScrollTop();
+            requestAnimationFrame(()=>{
+                mainScrollTop();
+            });
 
 
         }catch(e){
@@ -2436,6 +2688,7 @@ approveBtn.addEventListener(
 
 
             approved=true;
+
 
             paymentPanel.classList.add(
                 "show"
@@ -2619,7 +2872,9 @@ paymentCheck.addEventListener(
                 await fetch(
                     API_BASE+
                     "/api/payment/status?job_id="+
-                    encodeURIComponent(jobId)
+                    encodeURIComponent(
+                        jobId
+                    )
                 );
 
 
@@ -2650,11 +2905,15 @@ paymentCheck.addEventListener(
 
                 paymentConfirmed=true;
 
-                downloadBtn.disabled=false;
+
+                downloadBtn.disabled=
+                    false;
+
 
                 downloadBtn.classList.add(
                     "active"
                 );
+
 
                 downloadBtn.textContent=
                     "⬇ Download Your Work";
@@ -2717,7 +2976,9 @@ uploadBtn.addEventListener(
     ()=>{
 
         if(!busy){
+
             fileInput.click();
+
         }
 
     }
@@ -2888,7 +3149,8 @@ async function sendMessage(
 
         if(d.job_id){
 
-            jobId=d.job_id;
+            jobId=
+                d.job_id;
 
             put(
                 "npbc_job_id",
@@ -2931,6 +3193,7 @@ async function sendMessage(
             e.message,
             "error"
         );
+
 
         return null;
 
@@ -3004,6 +3267,7 @@ messageInput.addEventListener(
 
         messageInput.style.height=
             "auto";
+
 
         messageInput.style.height=
             Math.min(
@@ -3314,12 +3578,15 @@ voiceBtn.addEventListener(
 
             mediaRecorder.start();
 
+
             voiceRecording.classList.add(
                 "show"
             );
 
+
             voiceBtn.textContent=
                 "⏹ Stop Voice";
+
 
             setStatus(
                 "Recording your voice..."
@@ -3348,10 +3615,13 @@ async function init(){
     serviceBadge.textContent=
         service;
 
+
     introTitle.textContent=
         service;
 
+
     renderForm();
+
 
     await loadGuidance();
 
