@@ -47,6 +47,10 @@ button{
     --border:rgba(212,175,55,.28);
 }
 
+/* =========================================================
+   APP
+   ========================================================= */
+
 .app{
     width:100%;
     height:100dvh;
@@ -106,7 +110,7 @@ button{
 }
 
 /* =========================================================
-   MAIN SCROLL AREA
+   MAIN
    ========================================================= */
 
 .main{
@@ -274,12 +278,13 @@ button{
 }
 
 /* =========================================================
-   REVIEW
+   REVIEW VIEW
    ========================================================= */
 
 .review-view{
     display:none;
     width:100%;
+    min-width:0;
 }
 
 .review-view.show{
@@ -305,44 +310,81 @@ button{
 }
 
 /* =========================================================
-   COMPLETE CUSTOMER DOCUMENT
+   REVIEW DOCUMENT CONTAINER
 
-   IMPORTANT:
-   - No fixed height
-   - No max-height
-   - No internal scrolling
-   - No clipping
-   - Complete document remains in normal page flow
+   THIS IS THE IMPORTANT FIX.
+
+   The document itself is now the scrollable area.
+
+   There is NO fixed document height.
+   There is NO document-content max-height.
+   The generated document is allowed to contain
+   as many pages/sections as the API returns.
+
+   The card gets a viewport-sized maximum so a long
+   document can be scrolled inside the card without
+   pushing the fixed bottom controls away.
    ========================================================= */
 
 .work-card{
     width:100%;
-    height:auto;
-    min-height:350px;
-    overflow:visible;
+    min-width:0;
+
+    /*
+       The card is given the available screen area,
+       but the document inside it is allowed to be
+       unlimited in length.
+    */
+    height:clamp(
+        360px,
+        calc(100dvh - 285px),
+        900px
+    );
+
+    min-height:360px;
 
     background:#f7f7f7;
     color:#111;
 
     border-radius:11px;
-    padding:22px 17px;
+
+    padding:0;
+
+    /*
+       THIS CARD SCROLLS.
+    */
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+
+    scrollbar-width:auto;
 
     overflow-wrap:anywhere;
     word-wrap:break-word;
-    word-break:normal;
 
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
 }
 
+/*
+   The document itself has NO height restriction.
+*/
+
 .work-content{
+    display:block;
     width:100%;
-    height:auto;
-    min-height:0;
-    max-width:100%;
+    min-width:0;
+
+    min-height:100%;
+
+    padding:22px 17px;
 
     color:#111;
+    background:#f7f7f7;
+
     font-size:14px;
     line-height:1.7;
 
@@ -356,20 +398,14 @@ button{
     -webkit-touch-callout:none;
 }
 
-/*
-    Returned document HTML is displayed as ordinary document
-    content. It is NOT placed inside a fixed-height box.
-*/
-
 .work-content.document-html{
     display:block;
     width:100%;
-    height:auto;
-    min-height:0;
-    max-width:100%;
+    min-width:0;
+    min-height:100%;
 
-    background:#fff;
     color:#111;
+    background:#fff;
 
     overflow:visible;
 }
@@ -385,7 +421,6 @@ button{
     line-height:1.25;
     font-weight:800;
     text-align:left;
-    page-break-after:avoid;
 }
 
 .work-content h2{
@@ -394,7 +429,6 @@ button{
     font-size:21px;
     line-height:1.3;
     font-weight:800;
-    page-break-after:avoid;
 }
 
 .work-content h3{
@@ -403,7 +437,6 @@ button{
     font-size:17px;
     line-height:1.35;
     font-weight:800;
-    page-break-after:avoid;
 }
 
 .work-content h4,
@@ -412,7 +445,6 @@ button{
     margin:16px 0 7px;
     color:#111;
     font-weight:800;
-    page-break-after:avoid;
 }
 
 /* =========================================================
@@ -424,7 +456,6 @@ button{
     color:#111;
     font-size:14px;
     line-height:1.75;
-    overflow:visible;
 }
 
 .work-content strong,
@@ -442,7 +473,7 @@ button{
 }
 
 /* =========================================================
-   DOCUMENT LISTS
+   LISTS
    ========================================================= */
 
 .work-content ul,
@@ -560,7 +591,6 @@ button{
     color:#777;
     text-align:center;
     padding:70px 10px;
-
     user-select:none;
     -webkit-user-select:none;
 }
@@ -809,7 +839,7 @@ button:disabled{
 }
 
 /* =========================================================
-   READ-ONLY AREAS
+   READ ONLY
    ========================================================= */
 
 #introText,
@@ -832,8 +862,20 @@ button:disabled{
         padding:12px 9px 30px;
     }
 
+    /*
+       On a phone the review card gets most of the
+       available middle area and becomes independently
+       scrollable.
+    */
+
     .work-card{
-        padding:18px 14px;
+        height:calc(100dvh - 315px);
+        min-height:300px;
+        border-radius:10px;
+    }
+
+    .work-content{
+        padding:18px 14px 28px;
     }
 
     .work-content h1{
@@ -981,6 +1023,12 @@ button:disabled{
     </div>
 
 
+    <!--
+        IMPORTANT:
+        The card itself is the scroll container.
+        The document inside it has no height limit.
+    -->
+
     <div
         id="workCard"
         class="work-card"
@@ -1092,7 +1140,6 @@ button:disabled{
 </section>
 
 </div>
-
 </main>
 
 
@@ -1190,14 +1237,14 @@ button:disabled{
 "use strict";
 
 /* =========================================================
-   API CONFIGURATION
+   API CONNECTION
    ========================================================= */
 
 const API_BASE = "";
 
 
 /* =========================================================
-   ELEMENT HELPERS
+   ELEMENTS
    ========================================================= */
 
 const $ = id => document.getElementById(id);
@@ -1234,6 +1281,7 @@ const messageInput = $("messageInput");
 const sendBtn = $("sendButton");
 
 const status = $("status");
+
 const voiceRecording = $("voiceRecording");
 
 const paymentPanel = $("paymentPanel");
@@ -1243,7 +1291,7 @@ const paymentCheck = $("paymentCheckButton");
 
 
 /* =========================================================
-   SERVICE / IDENTIFIERS
+   SERVICE
    ========================================================= */
 
 const params = new URLSearchParams(location.search);
@@ -1254,26 +1302,24 @@ const service = (
 ).trim();
 
 
+/* =========================================================
+   IDENTIFIERS
+   ========================================================= */
+
 function makeId(prefix){
 
-    try{
-
-        if(
-            crypto &&
-            typeof crypto.randomUUID === "function"
-        ){
-            return prefix + crypto.randomUUID();
-        }
-
-    }catch(e){}
+    if(
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+    ){
+        return prefix + crypto.randomUUID();
+    }
 
     return (
         prefix +
         Date.now() +
         "_" +
-        Math.random()
-            .toString(36)
-            .slice(2)
+        Math.random().toString(36).slice(2)
     );
 }
 
@@ -1327,9 +1373,14 @@ put(
 );
 
 
+/* =========================================================
+   STATE
+   ========================================================= */
+
 let busy = false;
 let approved = false;
 let paymentConfirmed = false;
+
 let currentWork = "";
 
 let mediaRecorder = null;
@@ -1338,7 +1389,7 @@ let recordingStream = null;
 
 
 /* =========================================================
-   GENERAL HELPERS
+   HELPERS
    ========================================================= */
 
 function clean(value){
@@ -1347,19 +1398,14 @@ function clean(value){
         return null;
     }
 
-    const result = String(value).trim();
-
-    return result || null;
+    return String(value).trim() || null;
 }
 
 
 function setStatus(message,type=""){
 
     status.textContent = message || "";
-
-    status.className =
-        "status " +
-        (type || "");
+    status.className = "status " + type;
 }
 
 
@@ -1378,22 +1424,15 @@ function busyState(value){
         approveBtn
     ].forEach(button => {
 
-        if(button){
-            button.disabled = value;
-        }
+        button.disabled = value;
 
     });
 }
 
 
 /* =========================================================
-   DOCUMENT RENDERER
+   DOCUMENT CLEANING
    ========================================================= */
-
-/*
-    Removes markdown fences if the intelligence accidentally
-    surrounds the returned document with ```html ... ```.
-*/
 
 function removeHtmlCodeFences(value){
 
@@ -1413,91 +1452,68 @@ function removeHtmlCodeFences(value){
 }
 
 
-/*
-    Detects whether the returned response contains actual
-    document HTML.
-*/
-
 function looksLikeHtml(value){
 
-    const text =
-        String(value || "").trim();
+    const text = String(value || "").trim();
 
-    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i
-        .test(text);
+    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i.test(text);
 }
 
 
 /*
-    Safe document sanitizer.
+   IMPORTANT:
 
-    IMPORTANT:
-    This function DOES NOT truncate the document.
+   This function does NOT limit document length.
 
-    It removes unsafe executable elements and attributes,
-    while retaining all normal document content.
+   It only removes dangerous executable elements.
 */
 
 function sanitizeDocumentHtml(html){
 
-    const source =
-        document.createElement("div");
+    const source = document.createElement("div");
 
     source.innerHTML = html;
 
 
-    const blocked =
-        source.querySelectorAll(
-            "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
-        );
+    source.querySelectorAll(
+        "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
+    ).forEach(element => {
 
-    blocked.forEach(element => {
         element.remove();
+
     });
 
 
     const allowedTags = new Set([
-
         "H1",
         "H2",
         "H3",
         "H4",
         "H5",
         "H6",
-
         "P",
-
         "STRONG",
         "B",
-
         "EM",
         "I",
         "U",
-
         "UL",
         "OL",
         "LI",
-
         "HR",
         "BR",
-
         "TABLE",
         "THEAD",
         "TBODY",
         "TFOOT",
-
         "TR",
         "TH",
         "TD",
-
         "BLOCKQUOTE",
-
         "PRE",
         "CODE",
-
         "DIV",
         "SPAN",
-
         "A",
         "IMG"
     ]);
@@ -1509,11 +1525,8 @@ function sanitizeDocumentHtml(html){
             return;
         }
 
-
         if(node.nodeType !== Node.ELEMENT_NODE){
-
             node.remove();
-
             return;
         }
 
@@ -1523,8 +1536,7 @@ function sanitizeDocumentHtml(html){
 
         if(!allowedTags.has(tag)){
 
-            const parent =
-                node.parentNode;
+            const parent = node.parentNode;
 
             if(parent){
 
@@ -1538,22 +1550,16 @@ function sanitizeDocumentHtml(html){
                 }
 
                 node.remove();
+
             }
 
             return;
         }
 
 
-        /*
-            Only safe document attributes survive.
-        */
+        Array.from(node.attributes).forEach(attr => {
 
-        [
-            ...node.attributes
-        ].forEach(attribute => {
-
-            const name =
-                attribute.name.toLowerCase();
+            const name = attr.name.toLowerCase();
 
             const keep =
                 name === "href" ||
@@ -1564,18 +1570,13 @@ function sanitizeDocumentHtml(html){
             if(!keep){
 
                 node.removeAttribute(
-                    attribute.name
+                    attr.name
                 );
 
             }
 
         });
 
-
-        /*
-            Links are retained only when they point to
-            http/https or mailto destinations.
-        */
 
         if(tag === "A"){
 
@@ -1600,14 +1601,10 @@ function sanitizeDocumentHtml(html){
                     "rel",
                     "noopener noreferrer"
                 );
+
             }
         }
 
-
-        /*
-            Images are retained only when their source is
-            an http/https URL or an image data URL.
-        */
 
         if(tag === "IMG"){
 
@@ -1626,43 +1623,32 @@ function sanitizeDocumentHtml(html){
         }
 
 
-        [
-            ...node.childNodes
-        ].forEach(cleanNode);
+        Array.from(node.childNodes).forEach(
+            cleanNode
+        );
     }
 
 
-    [
-        ...source.childNodes
-    ].forEach(cleanNode);
+    Array.from(source.childNodes).forEach(
+        cleanNode
+    );
 
 
     return source.innerHTML;
 }
 
 
-/*
-    COMPLETE DOCUMENT RENDERER.
+/* =========================================================
+   COMPLETE DOCUMENT RENDERER
 
-    There is intentionally:
-      - no fixed document height
-      - no max-height
-      - no scrollable document card
-      - no clipping
-      - no substring()
-      - no slice()
-      - no character limit
-      - no page-count calculation that can hide content
-
-    The browser receives the complete API reply and places it
-    into normal document flow. The .main element handles
-    scrolling.
-*/
+   Nothing here measures document height.
+   Nothing here truncates document content.
+   Nothing here takes only the first section.
+   ========================================================= */
 
 function renderDocument(work){
 
-    const raw =
-        clean(work) || "";
+    const raw = clean(work) || "";
 
     workContent.innerHTML = "";
 
@@ -1705,26 +1691,30 @@ function renderDocument(work){
             "document-html"
         );
 
-
-        /*
-            IMPORTANT:
-            The COMPLETE sanitized HTML is inserted.
-            Nothing is shortened.
-        */
-
         workContent.innerHTML =
             safeHtml;
 
     }else{
 
         /*
-            textContent preserves the complete returned
-            response without interpreting it as HTML.
+           textContent preserves the ENTIRE
+           returned response.
         */
 
         workContent.textContent =
             cleaned;
     }
+
+
+    /*
+       Always start the review card at the
+       beginning of the document.
+
+       The customer can then scroll the CARD
+       itself from page 1 through the final page.
+    */
+
+    workCard.scrollTop = 0;
 }
 
 
@@ -1960,13 +1950,12 @@ const forms = {
 
 function definition(){
 
-    const serviceText =
+    const s =
         service.toLowerCase();
 
     const key =
         Object.keys(forms).find(
-            key =>
-                serviceText.includes(key)
+            k => s.includes(k)
         );
 
     return key
@@ -1979,71 +1968,53 @@ function renderForm(){
 
     fields.innerHTML = "";
 
-
-    definition().forEach(field => {
+    definition().forEach(f => {
 
         const wrapper =
             document.createElement("div");
 
-        wrapper.className =
-            "field";
-
-
         const label =
             document.createElement("label");
 
-
         const input =
             document.createElement(
-                field.type === "textarea"
+                f.type === "textarea"
                     ? "textarea"
                     : "input"
             );
 
+        wrapper.className = "field";
 
-        label.htmlFor =
-            field.name;
-
+        label.htmlFor = f.name;
 
         label.innerHTML =
-            field.label +
+            f.label +
             (
-                field.required
+                f.required
                     ? ' <span class="required">*</span>'
                     : ' <span class="optional">(optional)</span>'
             );
 
+        input.id = f.name;
 
-        input.id =
-            field.name;
-
-        input.name =
-            field.name;
+        input.name = f.name;
 
         input.placeholder =
-            field.placeholder || "";
+            f.placeholder || "";
 
-
-        if(field.required){
-
+        if(f.required){
             input.required = true;
-
         }
 
-
-        if(field.type !== "textarea"){
-
+        if(f.type !== "textarea"){
             input.type =
-                field.type || "text";
-
+                f.type || "text";
         }
-
 
         wrapper.append(
             label,
             input
         );
-
 
         fields.appendChild(
             wrapper
@@ -2056,7 +2027,6 @@ function renderForm(){
 function collect(){
 
     const data = {};
-
 
     serviceForm
         .querySelectorAll(
@@ -2075,7 +2045,6 @@ function collect(){
             }
 
         });
-
 
     return data;
 }
@@ -2114,18 +2083,15 @@ async function apiChat(body){
 
     if(
         !response.ok ||
-        data.success === false
+        !data.success
     ){
 
         throw new Error(
-
             data.reply ||
             data.message ||
             data.error ||
             "Request failed."
-
         );
-
     }
 
 
@@ -2142,14 +2108,7 @@ function guidancePrompt(){
     return `
 The customer has just selected this service: ${service}.
 
-Prepare a short, clear customer-facing introduction explaining:
-
-- what the service does
-- what the customer will receive
-- the current fee or that quotation is required
-- useful information to prepare
-- practical tips specific to the service
-- useful documents they may upload
+Prepare a short, clear customer-facing introduction explaining what the service does, what the customer will receive, the current fee or that quotation is required, useful information to prepare, practical tips specific to the service, and useful documents they may upload.
 
 Do not create the actual work yet.
 Do not ask for payment yet.
@@ -2204,7 +2163,6 @@ async function loadGuidance(){
         introTitle.textContent =
             service;
 
-
         introText.textContent =
             clean(data.reply) ||
             "Please provide the information requested below.";
@@ -2227,24 +2185,9 @@ async function loadGuidance(){
                         )
                 );
 
-
-            if(
-                Number.isFinite(
-                    numericAmount
-                )
-            ){
-
-                price.textContent =
-                    "Service fee: ₦" +
-                    numericAmount.toLocaleString();
-
-            }else{
-
-                price.textContent =
-                    "Service fee: " +
-                    String(amount);
-
-            }
+            price.textContent =
+                "Service fee: ₦" +
+                numericAmount.toLocaleString();
 
         }else if(
             /₦\s?[\d,]+/.test(
@@ -2272,8 +2215,7 @@ async function loadGuidance(){
         }else{
 
             price.textContent =
-                "Service: " +
-                service;
+                "Service: " + service;
 
         }
 
@@ -2283,17 +2225,15 @@ async function loadGuidance(){
     }catch(error){
 
         /*
-            A guidance failure must NOT break the page.
-            The customer can still use the form.
+           Keep the working page usable even
+           if guidance cannot be loaded.
         */
 
         introText.textContent =
             "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
 
         price.textContent =
-            "Service: " +
-            service;
-
+            "Service: " + service;
 
         setStatus(
             "You can still complete the form or ask a question below.",
@@ -2315,11 +2255,11 @@ The customer has completed the service information form.
 
 Create the actual requested work now.
 
-Return the COMPLETE requested work so it can be reviewed here.
+RETURN THE COMPLETE REQUESTED WORK.
 
 IMPORTANT DOCUMENT OUTPUT RULE:
 
-When the requested work is a document, return the complete document as properly structured HTML using normal document elements such as:
+When the requested work is a document, return the COMPLETE document as properly structured HTML using normal document elements such as:
 
 <h1>
 <h2>
@@ -2340,17 +2280,25 @@ where appropriate.
 
 The requested length must be respected.
 
-If the customer requests a specific number of pages, produce enough complete content to reasonably fill that requested length.
+If the customer requests a specific number of pages, produce enough complete content to reasonably fill the requested number of pages.
 
-Do not deliberately shorten the work.
+DO NOT deliberately shorten the work.
+
+For an 8-page request, the response must contain the complete body required for the requested document and must NOT stop after the introduction.
+
+Continue through every necessary section.
 
 For academic papers, include all necessary sections and finish the complete paper, including the conclusion and references where appropriate.
 
-Do not stop after an introduction or a few sections.
+Do not stop after an introduction.
 
-Do not return only an introduction.
+Do not stop after a few sections.
 
-Do not return a summary instead of the requested document.
+Do not return an outline instead of the requested document.
+
+Do not summarize the requested document.
+
+Do not say that the remaining sections can be added later.
 
 Do not wrap the HTML in markdown code fences.
 
@@ -2386,7 +2334,7 @@ async function createWork(data){
 
     try{
 
-        const response =
+        const result =
             await apiChat({
 
                 message:
@@ -2418,10 +2366,10 @@ async function createWork(data){
             });
 
 
-        if(response.job_id){
+        if(result.job_id){
 
             jobId =
-                response.job_id;
+                result.job_id;
 
             put(
                 "npbc_job_id",
@@ -2432,15 +2380,15 @@ async function createWork(data){
 
 
         /*
-            IMPORTANT:
-            Keep the COMPLETE API reply.
-
-            There is no substring(), slice(),
-            character limit or page limit here.
+           Do NOT slice.
+           Do NOT substring.
+           Do NOT truncate.
         */
 
         currentWork =
-            response.reply ||
+            result.reply ||
+            result.work ||
+            result.content ||
             "Your work has been prepared.";
 
 
@@ -2453,7 +2401,6 @@ async function createWork(data){
             "Your work is ready for review.",
             "success"
         );
-
 
     }catch(error){
 
@@ -2479,7 +2426,6 @@ function showReview(work){
     formView.style.display =
         "none";
 
-
     reviewView.classList.add(
         "show"
     );
@@ -2488,10 +2434,6 @@ function showReview(work){
     currentWork =
         work || "";
 
-
-    /*
-        Complete response goes directly to renderer.
-    */
 
     renderDocument(
         currentWork
@@ -2504,9 +2446,11 @@ function showReview(work){
         "show"
     );
 
+
     approved = false;
 
     paymentConfirmed = false;
+
 
     downloadBtn.disabled = true;
 
@@ -2514,41 +2458,21 @@ function showReview(work){
         "active"
     );
 
+
     downloadBtn.textContent =
         "🔒 Download Your Work";
 
 
     /*
-        Start at the top of the review document.
-        The customer can then scroll through the COMPLETE
-        document using the main page.
+       Do NOT scroll the entire page.
+       The review CARD is the document viewport.
     */
 
     requestAnimationFrame(() => {
 
-        requestAnimationFrame(() => {
-
-            mainScrollTop();
-
-        });
+        workCard.scrollTop = 0;
 
     });
-}
-
-
-function mainScrollTop(){
-
-    const main =
-        document.querySelector(
-            ".main"
-        );
-
-
-    if(main){
-
-        main.scrollTop = 0;
-
-    }
 }
 
 
@@ -2561,7 +2485,6 @@ serviceForm.addEventListener(
     event => {
 
         event.preventDefault();
-
 
         if(
             !busy &&
@@ -2579,7 +2502,7 @@ serviceForm.addEventListener(
 
 
 /* =========================================================
-   READ-ONLY PROTECTION
+   READ ONLY PROTECTION
    ========================================================= */
 
 [
@@ -2600,7 +2523,6 @@ serviceForm.addEventListener(
             event => {
 
                 event.preventDefault();
-
 
                 if(event.clipboardData){
 
@@ -2641,20 +2563,6 @@ serviceForm.addEventListener(
         }
     );
 
-
-    element.addEventListener(
-        "mousedown",
-        event => {
-
-            if(event.detail > 1){
-
-                event.preventDefault();
-
-            }
-
-        }
-    );
-
 });
 
 
@@ -2684,14 +2592,11 @@ applyBtn.addEventListener(
 
 
         if(busy){
-
             return;
-
         }
 
 
         busyState(true);
-
 
         setStatus(
             "Applying your corrections..."
@@ -2700,20 +2605,20 @@ applyBtn.addEventListener(
 
         try{
 
-            const response =
+            const result =
                 await apiChat({
 
                     message:
-                        `
+`
 Please revise the prepared work using these customer corrections:
 
 ${correction}
 
-Return the COMPLETE revised work for review.
+RETURN THE COMPLETE REVISED WORK FOR REVIEW.
 
 IMPORTANT:
 
-If the prepared work is a document, return the complete revised document as properly structured HTML.
+If the prepared work is a document, return the COMPLETE revised document as properly structured HTML.
 
 Preserve the full document.
 
@@ -2721,13 +2626,23 @@ Do not shorten it merely to save space.
 
 Do not remove sections that were not requested to be changed.
 
+Do not return only the changed section.
+
+Do not return an introduction only.
+
 Do not stop before the conclusion or final section.
 
-Do not return only the changed section.
+If the original document was intended to be 8 pages, preserve the requested full length while applying the correction.
+
+Do not summarize the document.
+
+Do not replace the complete document with an outline.
 
 Do not wrap the HTML in markdown code fences.
 
 Do not return the HTML source as an explanation.
+
+The returned document itself must be complete.
 `,
 
                     service,
@@ -2759,7 +2674,9 @@ Do not return the HTML source as an explanation.
 
 
             currentWork =
-                response.reply ||
+                result.reply ||
+                result.work ||
+                result.content ||
                 currentWork;
 
 
@@ -2775,13 +2692,6 @@ Do not return the HTML source as an explanation.
                 "Your corrections have been applied. Please review the updated work.",
                 "success"
             );
-
-
-            requestAnimationFrame(() => {
-
-                mainScrollTop();
-
-            });
 
 
         }catch(error){
@@ -2810,14 +2720,11 @@ approveBtn.addEventListener(
     async () => {
 
         if(busy){
-
             return;
-
         }
 
 
         busyState(true);
-
 
         setStatus(
             "Preparing your payment step..."
@@ -2864,12 +2771,11 @@ approveBtn.addEventListener(
 
             if(
                 !response.ok ||
-                data.success === false
+                !data.success
             ){
 
                 throw new Error(
                     data.message ||
-                    data.reply ||
                     "Approval could not be completed."
                 );
 
@@ -2885,13 +2791,11 @@ approveBtn.addEventListener(
 
 
             const amount =
-                Number(
-                    data.amount || 0
-                );
+                Number(data.amount || 0);
 
 
             paymentDetails.textContent =
-                `Service: ${data.service || service}
+`Service: ${data.service || service}
 Amount: ${
     amount > 0
         ? "₦" + amount.toLocaleString()
@@ -3024,7 +2928,7 @@ paymentReport.addEventListener(
 
             if(
                 !response.ok ||
-                data.success === false
+                !data.success
             ){
 
                 throw new Error(
@@ -3036,8 +2940,7 @@ paymentReport.addEventListener(
 
 
             paymentDetails.textContent +=
-                `\nPayment ID: ${data.payment_id}
-Status: Pending`;
+                `\nPayment ID: ${data.payment_id}\nStatus: Pending`;
 
 
             setStatus(
@@ -3089,7 +2992,7 @@ paymentCheck.addEventListener(
 
             if(
                 !response.ok ||
-                data.success === false
+                !data.success
             ){
 
                 throw new Error(
@@ -3111,7 +3014,6 @@ paymentCheck.addEventListener(
 
                 downloadBtn.disabled =
                     false;
-
 
                 downloadBtn.classList.add(
                     "active"
@@ -3193,14 +3095,11 @@ fileInput.addEventListener(
     async () => {
 
         const file =
-            fileInput.files &&
-            fileInput.files[0];
+            fileInput.files?.[0];
 
 
         if(!file){
-
             return;
-
         }
 
 
@@ -3266,12 +3165,11 @@ fileInput.addEventListener(
 
             if(
                 !response.ok ||
-                data.success === false
+                !data.success
             ){
 
                 throw new Error(
                     data.message ||
-                    data.error ||
                     "Document upload failed."
                 );
 
@@ -3317,9 +3215,7 @@ async function sendMessage(
 ){
 
     if(busy){
-
         return null;
-
     }
 
 
@@ -3333,7 +3229,7 @@ async function sendMessage(
 
     try{
 
-        const response =
+        const data =
             await apiChat({
 
                 message,
@@ -3363,10 +3259,10 @@ async function sendMessage(
             });
 
 
-        if(response.job_id){
+        if(data.job_id){
 
             jobId =
-                response.job_id;
+                data.job_id;
 
             put(
                 "npbc_job_id",
@@ -3377,15 +3273,14 @@ async function sendMessage(
 
 
         if(
-            response.reply &&
+            data.reply &&
             reviewView.classList.contains(
                 "show"
             )
         ){
 
             currentWork =
-                response.reply;
-
+                data.reply;
 
             renderDocument(
                 currentWork
@@ -3400,7 +3295,7 @@ async function sendMessage(
         );
 
 
-        return response;
+        return data;
 
 
     }catch(error){
@@ -3409,7 +3304,6 @@ async function sendMessage(
             error.message,
             "error"
         );
-
 
         return null;
 
@@ -3440,7 +3334,6 @@ sendBtn.addEventListener(
             );
 
             return;
-
         }
 
 
@@ -3485,7 +3378,6 @@ messageInput.addEventListener(
         messageInput.style.height =
             "auto";
 
-
         messageInput.style.height =
             Math.min(
                 messageInput.scrollHeight,
@@ -3505,9 +3397,7 @@ customerBtn.addEventListener(
     async () => {
 
         if(busy){
-
             return;
-
         }
 
 
@@ -3556,7 +3446,7 @@ customerBtn.addEventListener(
 
             if(
                 !response.ok ||
-                data.success === false
+                !data.success
             ){
 
                 throw new Error(
@@ -3620,20 +3510,18 @@ voiceBtn.addEventListener(
     async () => {
 
         if(
-            mediaRecorder &&
-            mediaRecorder.state === "recording"
+            mediaRecorder?.state ===
+            "recording"
         ){
 
             mediaRecorder.stop();
 
             return;
-
         }
 
 
         if(
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia
+            !navigator.mediaDevices?.getUserMedia
         ){
 
             setStatus(
@@ -3642,7 +3530,6 @@ voiceBtn.addEventListener(
             );
 
             return;
-
         }
 
 
@@ -3667,8 +3554,7 @@ voiceBtn.addEventListener(
                 event => {
 
                     if(
-                        event.data &&
-                        event.data.size
+                        event.data?.size
                     ){
 
                         recordedChunks.push(
@@ -3683,16 +3569,12 @@ voiceBtn.addEventListener(
             mediaRecorder.onstop =
                 async () => {
 
-                    if(recordingStream){
-
-                        recordingStream
-                            .getTracks()
-                            .forEach(
-                                track =>
-                                    track.stop()
-                            );
-
-                    }
+                    recordingStream
+                        ?.getTracks()
+                        .forEach(
+                            track =>
+                                track.stop()
+                        );
 
 
                     recordingStream = null;
@@ -3717,7 +3599,6 @@ voiceBtn.addEventListener(
                         );
 
                         return;
-
                     }
 
 
@@ -3785,7 +3666,7 @@ voiceBtn.addEventListener(
 
                         if(
                             !response.ok ||
-                            data.success === false
+                            !data.success
                         ){
 
                             throw new Error(
@@ -3853,13 +3734,10 @@ async function init(){
     serviceBadge.textContent =
         service;
 
-
     introTitle.textContent =
         service;
 
-
     renderForm();
-
 
     await loadGuidance();
 
