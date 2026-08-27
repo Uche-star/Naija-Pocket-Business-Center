@@ -1,25 +1,37 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Review — Naija Pocket Business Center</title><style>
-*{box-sizing:border-box}
 
-html,body{
+<title>Naija Pocket Business Center — Review</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
     width:100%;
-    height:100%;
+    min-height:100%;
     margin:0;
     padding:0;
-    overflow:hidden;
+}
+
+html{
+    overflow-y:auto;
+    background:#000;
 }
 
 body{
     background:#000;
     color:#fff;
-    font-family:Inter,Arial,sans-serif;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
 
-button,textarea{
+button,
+textarea{
     font:inherit;
 }
 
@@ -27,273 +39,490 @@ button{
     cursor:pointer;
 }
 
-button:disabled{
-    opacity:.5;
-    cursor:not-allowed;
+:root{
+    --gold:#d4af37;
+    --gold2:#f3d66b;
+    --green:#168047;
+    --red:#b30000;
+    --border:rgba(212,175,55,.28);
 }
+
+/* =========================================================
+   PAGE
+   ========================================================= */
 
 .app{
     width:100%;
-    height:100dvh;
-    display:flex;
-    flex-direction:column;
+    min-height:100vh;
     background:#000;
 }
 
-/* HEADER */
+/* =========================================================
+   FIXED HEADER
+   ========================================================= */
 
 .header{
-    flex:0 0 auto;
-    min-height:64px;
-    padding:10px 12px;
+    position:sticky;
+    top:0;
+    z-index:100;
+
+    min-height:65px;
+    padding:9px 12px;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:10px;
+
     background:#050505;
-    border-bottom:1px solid rgba(0,128,0,.45);
-    z-index:20;
+    border-bottom:1px solid var(--border);
+}
+
+.brand{
+    min-width:0;
 }
 
 .brand-title{
-    color:#008000;
-    font-size:clamp(18px,4vw,24px);
-    font-weight:900;
+    margin:0;
+    color:var(--green);
+    font-size:clamp(18px,4vw,25px);
+    font-weight:800;
+    line-height:1.2;
 }
 
 .brand-subtitle{
     margin-top:3px;
-    color:#aaa;
+    color:#ccc;
     font-size:10px;
 }
 
 .service-badge{
     max-width:45%;
     padding:7px 10px;
-    border:1px solid rgba(0,128,0,.5);
-    border-radius:20px;
-    background:#111;
-    color:#69c28e;
+
+    background:#171717;
+    border:1px solid rgba(212,175,55,.55);
+    border-radius:999px;
+
+    color:var(--gold2);
     font-size:10px;
     font-weight:800;
+
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
 }
 
-/* REVIEW AREA */
+/* =========================================================
+   MAIN
+   ========================================================= */
 
-.review-main{
-    flex:1 1 0;
-    min-height:0;
-    padding:8px;
-    overflow:hidden;
-}
-
-.review-layout{
+.main{
     width:100%;
-    height:100%;
-    max-width:1000px;
-    margin:auto;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
+    min-height:calc(100vh - 65px);
+
+    background:
+        radial-gradient(
+            circle at top,
+            #181818 0,
+            #080808 35%,
+            #000 100%
+        );
 }
 
-/*
-    THIS IS THE IMPORTANT PART.
-
-    The document itself owns the scrolling.
-    The page/header/actions do not scroll away.
-*/
-
-.document-panel{
-    flex:1 1 0;
-    min-height:0;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-    background:#fff;
-    border-radius:12px;
+.main-inner{
+    width:100%;
+    max-width:950px;
+    margin:0 auto;
+    padding:16px 10px 40px;
 }
 
-.document-header{
-    flex:0 0 auto;
-    min-height:38px;
-    padding:0 11px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    background:#e7e7e7;
-    color:#555;
-    font-size:9px;
-    font-weight:900;
-}
+/* =========================================================
+   REVIEW INTRO
+   ========================================================= */
 
-.document{
-    flex:1 1 0;
-    min-height:0;
-    overflow-y:auto;
-    overflow-x:hidden;
-    padding:28px 20px 80px;
-    color:#111;
-    background:#fff;
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:14px;
-    line-height:1.85;
-    white-space:pre-wrap;
-    overflow-wrap:anywhere;
-    word-break:break-word;
-    -webkit-overflow-scrolling:touch;
-    user-select:text;
-}
+.review-header{
+    padding:16px;
+    margin-bottom:12px;
 
-/* REVIEW CONTROLS */
+    background:linear-gradient(
+        145deg,
+        #191919,
+        #0d0d0d
+    );
 
-.controls{
-    flex:0 0 auto;
-    max-height:42%;
-    margin-top:7px;
-    padding:9px;
-    overflow-y:auto;
-    background:#090909;
-    border:1px solid rgba(0,128,0,.25);
-    border-radius:10px;
+    border:1px solid rgba(212,175,55,.38);
+    border-radius:15px;
 }
 
 .review-title{
     margin:0;
-    color:#fff;
-    font-size:13px;
+    color:var(--gold2);
+    font-size:21px;
     font-weight:900;
 }
 
-.review-help{
-    margin:4px 0 7px;
-    color:#999;
-    font-size:9px;
-    line-height:1.45;
-}
-
-.correction{
-    width:100%;
-    min-height:58px;
-    max-height:115px;
-    padding:9px;
-    resize:vertical;
-    background:#171717;
-    color:#fff;
-    border:1px solid rgba(255,255,255,.14);
-    border-radius:8px;
-    outline:none;
+.review-subtitle{
+    margin:6px 0 0;
+    color:#bdbdbd;
     font-size:11px;
+    line-height:1.55;
 }
 
-.actions{
+/* =========================================================
+   DOCUMENT
+   ========================================================= */
+
+.document-shell{
+    width:100%;
+    background:#fff;
+    color:#111;
+
+    border-radius:12px;
+
+    /*
+     * IMPORTANT:
+     * No fixed height.
+     * No max-height.
+     * No overflow:hidden.
+     *
+     * The document is allowed to determine its
+     * complete natural height.
+     */
+    overflow:visible;
+
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.45);
+}
+
+.document{
+    width:100%;
+    min-height:500px;
+
+    padding:28px 24px;
+
+    color:#111;
+    background:#fff;
+
+    overflow:visible;
+    overflow-wrap:anywhere;
+    word-wrap:break-word;
+}
+
+.document h1{
+    margin:0 0 20px;
+    color:#111;
+    font-size:28px;
+    line-height:1.3;
+    font-weight:800;
+}
+
+.document h2{
+    margin:28px 0 12px;
+    color:#111;
+    font-size:21px;
+    line-height:1.35;
+    font-weight:800;
+}
+
+.document h3{
+    margin:22px 0 9px;
+    color:#111;
+    font-size:17px;
+    line-height:1.4;
+    font-weight:800;
+}
+
+.document h4,
+.document h5,
+.document h6{
+    margin:18px 0 8px;
+    color:#111;
+    font-weight:800;
+}
+
+.document p{
+    margin:0 0 13px;
+    color:#111;
+    font-size:14px;
+    line-height:1.8;
+}
+
+.document strong,
+.document b{
+    font-weight:800;
+}
+
+.document em,
+.document i{
+    font-style:italic;
+}
+
+.document u{
+    text-decoration:underline;
+}
+
+.document ul,
+.document ol{
+    margin:9px 0 16px 27px;
+    padding:0;
+}
+
+.document li{
+    margin:6px 0;
+    line-height:1.7;
+}
+
+.document hr{
+    border:0;
+    border-top:1px solid #999;
+    margin:22px 0;
+}
+
+.document blockquote{
+    margin:16px 0;
+    padding:11px 15px;
+    border-left:4px solid #777;
+    background:#f0f0f0;
+}
+
+.document table{
+    width:100%;
+    max-width:100%;
+    border-collapse:collapse;
+    margin:16px 0;
+    color:#111;
+    font-size:13px;
+}
+
+.document th,
+.document td{
+    border:1px solid #999;
+    padding:8px;
+    text-align:left;
+    vertical-align:top;
+    overflow-wrap:anywhere;
+}
+
+.document th{
+    background:#eee;
+    font-weight:800;
+}
+
+.document pre{
+    margin:13px 0;
+    padding:12px;
+    background:#eee;
+    border-radius:6px;
+
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+
+    font-family:monospace;
+    font-size:12px;
+}
+
+.document code{
+    font-family:monospace;
+    overflow-wrap:anywhere;
+}
+
+.document a{
+    color:#111;
+    text-decoration:underline;
+    overflow-wrap:anywhere;
+}
+
+.document img{
+    max-width:100%;
+    height:auto;
+    display:block;
+    margin:13px auto;
+}
+
+.document-placeholder{
+    padding:80px 15px;
+    color:#777;
+    text-align:center;
+    font-size:14px;
+}
+
+/* =========================================================
+   CORRECTIONS
+   ========================================================= */
+
+.correction-card{
+    margin-top:12px;
+    padding:15px;
+
+    background:#101010;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;
+}
+
+.correction-title{
+    margin:0 0 5px;
+    font-size:15px;
+}
+
+.correction-help{
+    margin:0 0 10px;
+    color:#999;
+    font-size:10px;
+    line-height:1.5;
+}
+
+.correction-input{
+    width:100%;
+    min-height:110px;
+    resize:vertical;
+
+    padding:11px;
+
+    background:#191919;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:9px;
+
+    outline:0;
+}
+
+.correction-input:focus{
+    border-color:rgba(212,175,55,.65);
+}
+
+.review-actions{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:6px;
-    margin-top:6px;
+    gap:8px;
+    margin-top:10px;
 }
 
-.action{
-    min-height:41px;
+.review-button{
+    min-height:46px;
     border-radius:8px;
-    font-size:9px;
-    font-weight:900;
+    font-size:11px;
+    font-weight:850;
 }
 
-.correct{
-    background:#242424;
+.apply-button{
+    background:#252525;
     color:#fff;
-    border:1px solid rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.14);
 }
 
-.approve{
-    background:#008000;
-    color:#fff;
+.approve-button{
+    background:var(--gold);
+    color:#000;
     border:0;
 }
 
-/* PAYMENT */
+/* =========================================================
+   PAYMENT
+   ========================================================= */
 
-.payment{
+.payment-panel{
     display:none;
-    margin-top:7px;
-    padding:9px;
+
+    margin-top:12px;
+    padding:14px;
+
     background:#121212;
-    border:1px solid rgba(0,128,0,.4);
-    border-radius:8px;
+    border:1px solid rgba(212,175,55,.38);
+    border-radius:12px;
 }
 
-.payment.show{
+.payment-panel.show{
     display:block;
 }
 
 .payment-title{
-    color:#69c28e;
-    font-size:11px;
+    color:var(--gold2);
+    font-size:14px;
     font-weight:900;
+    margin-bottom:7px;
 }
 
-.payment-text{
-    margin-top:4px;
+.payment-details{
     color:#ddd;
-    font-size:10px;
-    line-height:1.5;
     white-space:pre-wrap;
+    font-size:11px;
+    line-height:1.6;
 }
 
-.payment-actions{
+.payment-buttons{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:6px;
-    margin-top:7px;
+    gap:8px;
+    margin-top:10px;
 }
 
-.payment-button{
-    min-height:38px;
+.payment-buttons button{
+    min-height:44px;
     border-radius:8px;
-    font-size:9px;
-    font-weight:900;
+    font-size:11px;
+    font-weight:850;
 }
 
-.make-payment{
-    background:#008000;
-    color:#fff;
+.payment-report{
+    background:var(--gold);
+    color:#000;
     border:0;
 }
 
-.check-payment{
-    background:#242424;
+.payment-check{
+    background:#282828;
     color:#fff;
-    border:1px solid rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.13);
 }
 
-.download{
+/* =========================================================
+   DOWNLOAD
+   ========================================================= */
+
+.download-button{
     width:100%;
-    min-height:40px;
-    margin-top:7px;
-    border:1px solid rgba(255,255,255,.1);
+    min-height:48px;
+    margin-top:10px;
+
     border-radius:8px;
-    background:#222;
+
+    background:#242424;
     color:#777;
-    font-size:9px;
-    font-weight:900;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    font-size:11px;
+    font-weight:850;
+
+    cursor:not-allowed;
 }
 
-.download.ready{
-    background:#008000;
+.download-button.active{
+    background:var(--green);
     color:#fff;
-    border-color:#008000;
+    border-color:var(--green);
+    cursor:pointer;
 }
+
+.payment-message{
+    margin-top:8px;
+    color:#858585;
+    font-size:9px;
+    text-align:center;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
 
 .status{
-    min-height:13px;
-    margin-top:4px;
+    min-height:18px;
+    margin-top:10px;
+
     color:#777;
-    font-size:9px;
+    font-size:10px;
     text-align:center;
 }
 
@@ -302,164 +531,238 @@ button:disabled{
 }
 
 .status.success{
-    color:#69c28e;
+    color:#7bd99a;
 }
 
-@media(max-height:700px){
+button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
 
-    .controls{
-        max-height:39%;
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:600px){
+
+    .main-inner{
+        padding:12px 9px 30px;
     }
 
     .document{
-        padding:18px 13px 55px;
-        font-size:13px;
+        padding:20px 15px;
     }
+
+    .document h1{
+        font-size:24px;
+    }
+
+    .document h2{
+        font-size:19px;
+    }
+
+    .document h3{
+        font-size:16px;
+    }
+
+    .document p{
+        font-size:14px;
+    }
+
+    .document table{
+        font-size:12px;
+    }
+
+    .document th,
+    .document td{
+        padding:7px;
+    }
+
 }
-</style></head><body><div class="app"><header class="header"><div>
-    <div class="brand-title">
-        Naija Pocket Business Center
-    </div>
 
-    <div class="brand-subtitle">
-        Review Your Work
-    </div>
-</div>
+@media(max-width:430px){
 
-<div
-    id="serviceBadge"
-    class="service-badge"
-></div>
+    .review-actions,
+    .payment-buttons{
+        grid-template-columns:1fr;
+    }
 
-</header><main class="review-main"><section class="review-layout"><div class="document-panel">
+}
+</style>
+</head>
 
-    <div class="document-header">
-        <span>YOUR COMPLETE DOCUMENT</span>
-        <span>SCROLL TO READ ALL</span>
-    </div>
+<body>
 
-    <article
-        id="document"
-        class="document"
-        tabindex="0"
-    ></article>
+<div class="app">
 
-</div>
+<header class="header">
 
-<section class="controls">
+    <div class="brand">
 
-    <h2 class="review-title">
-        Review Your Document
-    </h2>
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
 
-    <p class="review-help">
-        Read the complete document above. If anything needs to change,
-        describe the correction below. Only your requested correction
-        will be sent back for revision.
-    </p>
-
-    <textarea
-        id="correction"
-        class="correction"
-        placeholder="Describe the correction you want..."
-    ></textarea>
-
-    <div class="actions">
-
-        <button
-            id="correctButton"
-            class="action correct"
-            type="button"
-        >
-            APPLY CORRECTION
-        </button>
-
-        <button
-            id="approveButton"
-            class="action approve"
-            type="button"
-        >
-            APPROVE DOCUMENT
-        </button>
+        <div class="brand-subtitle">
+            Your Business Center
+        </div>
 
     </div>
 
     <div
-        id="payment"
-        class="payment"
+        id="serviceBadge"
+        class="service-badge"
+    >
+        Service
+    </div>
+
+</header>
+
+<main class="main">
+
+<div class="main-inner">
+
+    <section class="review-header">
+
+        <h2 class="review-title">
+            Review Your Work
+        </h2>
+
+        <p class="review-subtitle">
+            Your completed work is shown below.
+            Read through it carefully. If anything needs
+            to be changed, tell us what to correct before
+            approving the work.
+        </p>
+
+    </section>
+
+    <section class="document-shell">
+
+        <article
+            id="document"
+            class="document"
+        >
+
+            <div class="document-placeholder">
+                Your completed work will appear here.
+            </div>
+
+        </article>
+
+    </section>
+
+    <section class="correction-card">
+
+        <h3 class="correction-title">
+            Need a correction?
+        </h3>
+
+        <p class="correction-help">
+            Tell us exactly what you want changed,
+            added or corrected.
+        </p>
+
+        <textarea
+            id="correctionInput"
+            class="correction-input"
+            placeholder="Write your corrections or changes here..."
+        ></textarea>
+
+        <div class="review-actions">
+
+            <button
+                id="applyCorrectionsButton"
+                class="review-button apply-button"
+                type="button"
+            >
+                Apply My Corrections
+            </button>
+
+            <button
+                id="approveButton"
+                class="review-button approve-button"
+                type="button"
+            >
+                Approve &amp; Pay
+            </button>
+
+        </div>
+
+    </section>
+
+    <section
+        id="paymentPanel"
+        class="payment-panel"
     >
 
         <div class="payment-title">
-            PAYMENT
+            Payment
         </div>
 
         <div
-            id="paymentText"
-            class="payment-text"
-        >
-            Your document has been approved.
-            Proceed to payment.
-        </div>
+            id="paymentDetails"
+            class="payment-details"
+        ></div>
 
-        <div class="payment-actions">
+        <div class="payment-buttons">
 
             <button
-                id="makePaymentButton"
-                class="payment-button make-payment"
+                id="paymentReportButton"
+                class="payment-report"
                 type="button"
             >
-                MAKE PAYMENT
+                Report Payment
             </button>
 
             <button
-                id="checkPaymentButton"
-                class="payment-button check-payment"
+                id="paymentCheckButton"
+                class="payment-check"
                 type="button"
             >
-                CHECK PAYMENT
+                Check Status
             </button>
 
         </div>
 
-    </div>
+    </section>
 
     <button
         id="downloadButton"
-        class="download"
+        class="download-button"
         type="button"
         disabled
     >
-        🔒 DOWNLOAD DOCUMENT
+        🔒 Download Your Work
     </button>
 
-    <div
-        id="status"
-        class="status"
-    ></div>
+    <div class="payment-message">
+        Payment must be confirmed before your download becomes available.
+    </div>
 
-</section>
+    <div id="status" class="status"></div>
 
-</section></main></div><script>
+</div>
+
+</main>
+
+</div>
+
+<script>
 "use strict";
 
-/*
-    REVIEW CLIENT
+/* =========================================================
+   API
+   ========================================================= */
 
-    The review page does not contain document-generation intelligence.
+const API_BASE = "";
 
-    The existing backend already has review intelligence in
-    review_prompt.py and the existing Ada response architecture.
+const $ = id =>
+    document.getElementById(id);
 
-    This page therefore:
-        - displays the complete returned document
-        - sends only customer corrections
-        - records approval
-        - requests payment
-        - checks payment
-        - downloads the approved work
-
-    The complete document is NOT sent with every correction.
-*/
+/* =========================================================
+   CONTEXT
+   ========================================================= */
 
 const params =
     new URLSearchParams(location.search);
@@ -467,314 +770,402 @@ const params =
 const service =
     (
         params.get("service") ||
+        sessionStorage.getItem(
+            "npbc_review_service"
+        ) ||
         "Business Center Service"
     ).trim();
 
 const customerId =
-    params.get("customer_id") ||
+    sessionStorage.getItem(
+        "npbc_review_customer_id"
+    ) ||
     localStorage.getItem(
         "npbc_customer_id"
     ) ||
     "";
 
-const jobId =
+let jobId =
     params.get("job_id") ||
+    sessionStorage.getItem(
+        "npbc_review_job_id"
+    ) ||
     localStorage.getItem(
         "npbc_job_id"
     ) ||
     "";
 
-const clientRequestId =
-    params.get("client_request_id") ||
+const requestId =
+    sessionStorage.getItem(
+        "npbc_review_request_id"
+    ) ||
     localStorage.getItem(
         "npbc_client_request_id"
     ) ||
     "";
 
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
 const serviceBadge =
-    document.getElementById(
-        "serviceBadge"
-    );
+    $("serviceBadge");
 
 const documentElement =
-    document.getElementById(
-        "document"
-    );
+    $("document");
 
-const correction =
-    document.getElementById(
-        "correction"
-    );
+const correctionInput =
+    $("correctionInput");
 
-const correctButton =
-    document.getElementById(
-        "correctButton"
-    );
+const applyBtn =
+    $("applyCorrectionsButton");
 
-const approveButton =
-    document.getElementById(
-        "approveButton"
-    );
+const approveBtn =
+    $("approveButton");
 
-const payment =
-    document.getElementById(
-        "payment"
-    );
+const paymentPanel =
+    $("paymentPanel");
 
-const paymentText =
-    document.getElementById(
-        "paymentText"
-    );
+const paymentDetails =
+    $("paymentDetails");
 
-const makePaymentButton =
-    document.getElementById(
-        "makePaymentButton"
-    );
+const paymentReport =
+    $("paymentReportButton");
 
-const checkPaymentButton =
-    document.getElementById(
-        "checkPaymentButton"
-    );
+const paymentCheck =
+    $("paymentCheckButton");
 
-const downloadButton =
-    document.getElementById(
-        "downloadButton"
-    );
+const downloadBtn =
+    $("downloadButton");
 
 const status =
-    document.getElementById(
-        "status"
-    );
+    $("status");
 
-let work = "";
+/* =========================================================
+   STATE
+   ========================================================= */
 
-let approved =
-    false;
+let busy = false;
+let approved = false;
+let paymentConfirmed = false;
+let currentWork = "";
 
-let paymentConfirmed =
-    false;
+/* =========================================================
+   HELPERS
+   ========================================================= */
 
-let busy =
-    false;
+function clean(value){
 
-serviceBadge.textContent =
-    service;
+    if(value == null){
+        return null;
+    }
 
-/*
-    Find the exact review packet created by workspace.html.
-*/
-
-function reviewKey(){
-
-    return (
-        "npbc_review_" +
-        (
-            jobId ||
-            clientRequestId
-        )
-    );
+    return String(value).trim() || null;
 }
 
-/*
-    Load the complete document once.
-
-    This is local display only.
-    No API call is made to display the document.
-*/
-
-function loadReview(){
-
-    let packet = null;
-
-    try{
-
-        const raw =
-            localStorage.getItem(
-                reviewKey()
-            );
-
-        if(raw){
-
-            packet =
-                JSON.parse(raw);
-        }
-
-    }catch(error){
-
-        packet = null;
-    }
-
-    /*
-        Compatibility fallback for the active review key.
-    */
-
-    if(!packet){
-
-        try{
-
-            const activeKey =
-                localStorage.getItem(
-                    "npbc_active_review_key"
-                );
-
-            if(activeKey){
-
-                const raw =
-                    localStorage.getItem(
-                        activeKey
-                    );
-
-                if(raw){
-
-                    packet =
-                        JSON.parse(raw);
-                }
-            }
-
-        }catch(error){
-
-            packet = null;
-        }
-    }
-
-    if(
-        packet &&
-        packet.work
-    ){
-
-        work =
-            String(
-                packet.work
-            );
-
-        documentElement.textContent =
-            work;
-
-        documentElement.scrollTop =
-            0;
-
-        return true;
-    }
-
-    return false;
-}
-
-function saveReview(){
-
-    const packet = {
-
-        service,
-
-        customer_id:
-            customerId,
-
-        job_id:
-            jobId,
-
-        client_request_id:
-            clientRequestId,
-
-        work,
-
-        saved_at:
-            Date.now()
-    };
-
-    try{
-
-        localStorage.setItem(
-            reviewKey(),
-            JSON.stringify(packet)
-        );
-
-        localStorage.setItem(
-            "npbc_active_review_key",
-            reviewKey()
-        );
-
-    }catch(error){
-
-        setStatus(
-            "The revised document could not be saved on this device.",
-            "error"
-        );
-    }
-}
-
-function setStatus(
-    text,
-    type=""
-){
+function setStatus(message,type=""){
 
     status.textContent =
-        text || "";
+        message || "";
 
     status.className =
         "status " + type;
 }
 
-function setBusy(value){
+function busyState(value){
 
-    busy =
-        value;
+    busy = value;
 
     [
-        correctButton,
-        approveButton,
-        makePaymentButton,
-        checkPaymentButton
-    ].forEach(
-        button =>
-            button.disabled =
-                value
-    );
-
-    if(!paymentConfirmed){
-
-        downloadButton.disabled =
-            true;
-    }
+        applyBtn,
+        approveBtn,
+        paymentReport,
+        paymentCheck
+    ].forEach(button=>{
+        button.disabled = value;
+    });
 }
 
-/*
-    EXISTING INTELLIGENCE GATEWAY
+/* =========================================================
+   DOCUMENT CLEANING
+   ========================================================= */
 
-    The review page uses the same /api/chat architecture.
-    No Groq call is made here.
-*/
+function removeHtmlCodeFences(value){
 
-async function sendToExistingAPI(
-    message,
-    event
-){
+    let html =
+        String(value || "").trim();
 
-    const payload = {
+    html =
+        html.replace(
+            /^```(?:html|HTML)?\s*/i,
+            ""
+        );
 
-        message:
-            String(
-                message || ""
-            ).trim(),
+    html =
+        html.replace(
+            /\s*```$/i,
+            ""
+        );
 
-        service,
+    return html.trim();
+}
 
-        event,
+function looksLikeHtml(value){
 
-        customer_id:
-            customerId,
+    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i
+        .test(
+            String(value || "")
+        );
+}
 
-        job_id:
-            jobId || null,
+/* =========================================================
+   SAFE DOCUMENT RENDERER
+   ========================================================= */
 
-        client_request_id:
-            clientRequestId,
+function sanitizeDocumentHtml(html){
 
-        activate_intelligence:
-            true
-    };
+    const source =
+        document.createElement("div");
+
+    source.innerHTML = html;
+
+    source
+        .querySelectorAll(
+            "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
+        )
+        .forEach(
+            element =>
+                element.remove()
+        );
+
+    const allowedTags =
+        new Set([
+
+            "H1","H2","H3","H4","H5","H6",
+
+            "P",
+
+            "STRONG","B","EM","I","U",
+
+            "UL","OL","LI",
+
+            "HR","BR",
+
+            "TABLE","THEAD","TBODY","TFOOT",
+            "TR","TH","TD",
+
+            "BLOCKQUOTE",
+
+            "PRE","CODE",
+
+            "DIV","SPAN",
+
+            "A","IMG"
+
+        ]);
+
+    function cleanNode(node){
+
+        if(
+            node.nodeType ===
+            Node.TEXT_NODE
+        ){
+            return;
+        }
+
+        if(
+            node.nodeType !==
+            Node.ELEMENT_NODE
+        ){
+
+            node.remove();
+            return;
+
+        }
+
+        const tag =
+            node.tagName;
+
+        if(!allowedTags.has(tag)){
+
+            const parent =
+                node.parentNode;
+
+            if(parent){
+
+                while(node.firstChild){
+
+                    parent.insertBefore(
+                        node.firstChild,
+                        node
+                    );
+
+                }
+
+                node.remove();
+
+            }
+
+            return;
+        }
+
+        [
+            ...node.attributes
+        ].forEach(attr=>{
+
+            const name =
+                attr.name.toLowerCase();
+
+            const keep =
+                name === "href" ||
+                name === "src" ||
+                name === "alt" ||
+                name === "title";
+
+            if(!keep){
+
+                node.removeAttribute(
+                    attr.name
+                );
+
+            }
+
+        });
+
+        if(tag === "A"){
+
+            const href =
+                node.getAttribute(
+                    "href"
+                ) || "";
+
+            if(
+                !/^https?:\/\//i.test(href) &&
+                !/^mailto:/i.test(href)
+            ){
+
+                node.removeAttribute(
+                    "href"
+                );
+
+            }else{
+
+                node.setAttribute(
+                    "target",
+                    "_blank"
+                );
+
+                node.setAttribute(
+                    "rel",
+                    "noopener noreferrer"
+                );
+
+            }
+
+        }
+
+        if(tag === "IMG"){
+
+            const src =
+                node.getAttribute(
+                    "src"
+                ) || "";
+
+            if(
+                !/^https?:\/\//i.test(src) &&
+                !/^data:image\//i.test(src)
+            ){
+
+                node.remove();
+
+                return;
+
+            }
+
+        }
+
+        [
+            ...node.childNodes
+        ].forEach(
+            cleanNode
+        );
+
+    }
+
+    [
+        ...source.childNodes
+    ].forEach(
+        cleanNode
+    );
+
+    return source.innerHTML;
+}
+
+/* =========================================================
+   COMPLETE DOCUMENT DISPLAY
+   ========================================================= */
+
+function renderDocument(work){
+
+    const raw =
+        clean(work) || "";
+
+    documentElement.innerHTML = "";
+
+    if(!raw){
+
+        const placeholder =
+            document.createElement("div");
+
+        placeholder.className =
+            "document-placeholder";
+
+        placeholder.textContent =
+            "Your completed work will appear here.";
+
+        documentElement.appendChild(
+            placeholder
+        );
+
+        return;
+    }
+
+    const cleaned =
+        removeHtmlCodeFences(raw);
+
+    if(looksLikeHtml(cleaned)){
+
+        const safeHtml =
+            sanitizeDocumentHtml(
+                cleaned
+            );
+
+        documentElement.innerHTML =
+            safeHtml;
+
+    }else{
+
+        /*
+         * textContent deliberately keeps
+         * the COMPLETE response.
+         */
+
+        documentElement.textContent =
+            cleaned;
+
+    }
+
+}
+
+/* =========================================================
+   EXISTING API
+   ========================================================= */
+
+async function apiChat(body){
 
     const response =
         await fetch(
-            "/api/chat",
+            API_BASE + "/api/chat",
             {
                 method:"POST",
 
@@ -784,9 +1175,7 @@ async function sendToExistingAPI(
                 },
 
                 body:
-                    JSON.stringify(
-                        payload
-                    )
+                    JSON.stringify(body)
             }
         );
 
@@ -794,361 +1183,194 @@ async function sendToExistingAPI(
         await response
             .json()
             .catch(
-                () => ({})
+                ()=>({})
             );
 
-    if(!response.ok){
+    if(
+        !response.ok ||
+        !data.success
+    ){
 
         throw new Error(
-            data.error_message ||
+            data.reply ||
             data.message ||
             data.error ||
-            "Your request could not be processed."
+            "Request failed."
         );
+
     }
 
     return data;
 }
 
-/*
-    APPLY CUSTOMER CORRECTION
-*/
+/* =========================================================
+   LOAD WORK
+   ========================================================= */
 
-correctButton.addEventListener(
-    "click",
-    async () => {
+function loadWork(){
 
-        const request =
-            correction.value.trim();
+    serviceBadge.textContent =
+        service;
 
-        if(
-            !request ||
-            busy
-        ){
+    let work = "";
 
-            if(!request){
+    try{
 
-                setStatus(
-                    "Describe the correction first.",
-                    "error"
-                );
-            }
+        work =
+            sessionStorage.getItem(
+                "npbc_review_work_" +
+                jobId
+            ) || "";
 
-            return;
-        }
+    }catch(e){}
 
-        setBusy(true);
+    /*
+     * The generated document is already the response
+     * received from the existing API. No new AI call
+     * is made merely to display it.
+     */
+
+    currentWork =
+        work;
+
+    renderDocument(
+        currentWork
+    );
+
+    if(!currentWork){
 
         setStatus(
-            "Applying your correction..."
+            "The completed work could not be loaded on this page. Please return to the workspace and try again.",
+            "error"
         );
 
-        try{
+    }else{
 
-            /*
-                IMPORTANT:
+        setStatus(
+            "Your work is ready for review.",
+            "success"
+        );
 
-                Only the correction is transmitted.
+    }
 
-                The full document remains locally displayed and
-                is not unnecessarily sent again.
-            */
+}
 
-            const data =
-                await sendToExistingAPI(
-                    request,
-                    "review_correction"
-                );
+/* =========================================================
+   CORRECTIONS
+   ========================================================= */
 
-            if(!data.reply){
+applyBtn.addEventListener(
+    "click",
+    async ()=>{
 
-                throw new Error(
-                    "No revised document was returned."
-                );
-            }
-
-            work =
-                String(
-                    data.reply
-                );
-
-            saveReview();
-
-            documentElement.textContent =
-                work;
-
-            documentElement.scrollTop =
-                0;
-
-            correction.value =
-                "";
-
-            approved =
-                false;
-
-            paymentConfirmed =
-                false;
-
-            payment.classList.remove(
-                "show"
+        const correction =
+            clean(
+                correctionInput.value
             );
 
-            downloadButton.disabled =
-                true;
-
-            downloadButton.classList.remove(
-                "ready"
-            );
-
-            downloadButton.textContent =
-                "🔒 DOWNLOAD DOCUMENT";
+        if(!correction){
 
             setStatus(
-                "Correction applied. Review the updated document.",
-                "success"
-            );
-
-        }catch(error){
-
-            setStatus(
-                error.message,
+                "Please write the correction or change you want.",
                 "error"
             );
 
-        }finally{
-
-            setBusy(false);
-        }
-    }
-);
-
-/*
-    APPROVE
-*/
-
-approveButton.addEventListener(
-    "click",
-    async () => {
-
-        if(
-            busy ||
-            !work
-        ){
             return;
         }
-
-        setBusy(true);
-
-        setStatus(
-            "Recording your approval..."
-        );
-
-        try{
-
-            const data =
-                await sendToExistingAPI(
-                    "The customer has reviewed the document and approves it. Continue to the payment stage.",
-                    "review_approved"
-                );
-
-            approved =
-                true;
-
-            payment.classList.add(
-                "show"
-            );
-
-            paymentText.textContent =
-                data.reply ||
-                "Your document has been approved. Proceed to payment.";
-
-            setStatus(
-                "Document approved.",
-                "success"
-            );
-
-        }catch(error){
-
-            setStatus(
-                error.message,
-                "error"
-            );
-
-        }finally{
-
-            setBusy(false);
-        }
-    }
-);
-
-/*
-    PAYMENT
-
-    The actual payment implementation remains on the existing
-    backend/payment workflow. This page does not invent a new
-    payment system.
-*/
-
-makePaymentButton.addEventListener(
-    "click",
-    async () => {
-
-        if(
-            !approved ||
-            busy
-        ){
-            return;
-        }
-
-        setBusy(true);
-
-        setStatus(
-            "Preparing payment..."
-        );
-
-        try{
-
-            const data =
-                await sendToExistingAPI(
-                    "The customer wants to proceed with payment for the approved document.",
-                    "payment_action"
-                );
-
-            const paymentUrl =
-                data.payment_url ||
-                data.checkout_url ||
-                data.payment_link;
-
-            if(paymentUrl){
-
-                location.href =
-                    paymentUrl;
-
-                return;
-            }
-
-            /*
-                If the existing backend supplies payment instructions
-                instead of a URL, display them without creating another
-                payment implementation.
-            */
-
-            if(data.reply){
-
-                paymentText.textContent =
-                    data.reply;
-            }
-
-            setStatus(
-                "Payment instructions received.",
-                "success"
-            );
-
-        }catch(error){
-
-            setStatus(
-                error.message,
-                "error"
-            );
-
-        }finally{
-
-            setBusy(false);
-        }
-    }
-);
-
-/*
-    CHECK PAYMENT
-*/
-
-checkPaymentButton.addEventListener(
-    "click",
-    async () => {
 
         if(busy){
             return;
         }
 
-        setBusy(true);
+        busyState(true);
 
         setStatus(
-            "Checking payment..."
+            "Applying your corrections..."
         );
 
         try{
 
-            const data =
-                await sendToExistingAPI(
-                    "Check the payment status for the customer's approved document.",
-                    "payment_check"
+            /*
+             * The browser sends the correction and job
+             * context. It does not put a huge document
+             * into the URL or create another AI system.
+             *
+             * The existing backend/controller remains
+             * responsible for conversation/job context.
+             */
+
+            const result =
+                await apiChat({
+
+                    message:
+                        `Please apply the customer's correction to the current work for this job.
+
+Customer correction:
+${correction}
+
+Return the complete revised work.`,
+
+                    service,
+
+                    event:"review_correction",
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId,
+
+                    client_request_id:
+                        requestId,
+
+                    correction,
+
+                    activate_intelligence:true,
+
+                    create_work:true
+
+                });
+
+            if(result.job_id){
+
+                jobId =
+                    result.job_id;
+
+                localStorage.setItem(
+                    "npbc_job_id",
+                    jobId
                 );
 
-            if(
-                data.paid === true ||
-                data.payment_confirmed === true
-            ){
-
-                paymentConfirmed =
-                    true;
-
-            }else{
-
-                const reply =
-                    String(
-                        data.reply ||
-                        ""
-                    ).toLowerCase();
-
-                if(
-                    reply.includes(
-                        "payment confirmed"
-                    ) ||
-                    reply.includes(
-                        "payment successful"
-                    ) ||
-                    reply.includes(
-                        "payment received"
-                    ) ||
-                    reply.includes(
-                        "paid"
-                    )
-                ){
-
-                    paymentConfirmed =
-                        true;
-                }
             }
 
-            if(paymentConfirmed){
+            if(result.reply){
 
-                downloadButton.disabled =
-                    false;
+                currentWork =
+                    result.reply;
 
-                downloadButton.classList.add(
-                    "ready"
+                sessionStorage.setItem(
+                    "npbc_review_work_" +
+                    jobId,
+                    currentWork
                 );
 
-                downloadButton.textContent =
-                    "⬇ DOWNLOAD DOCUMENT";
-
-                setStatus(
-                    "Payment confirmed. Your document is ready.",
-                    "success"
+                renderDocument(
+                    currentWork
                 );
 
-            }else{
-
-                if(data.reply){
-
-                    paymentText.textContent =
-                        data.reply;
-                }
-
-                setStatus(
-                    "Payment is still pending."
-                );
             }
+
+            correctionInput.value = "";
+
+            setStatus(
+                "Your corrections have been applied. Please review the updated work.",
+                "success"
+            );
+
+            window.scrollTo({
+                top:0,
+                behavior:"smooth"
+            });
 
         }catch(error){
 
@@ -1159,117 +1381,236 @@ checkPaymentButton.addEventListener(
 
         }finally{
 
-            setBusy(false);
+            busyState(false);
+
         }
+
     }
 );
 
-/*
-    DOWNLOAD
+/* =========================================================
+   APPROVAL
+   ========================================================= */
 
-    First ask the existing backend whether it has a generated
-    file/download URL.
-
-    If the backend supplies one, use that.
-
-    If it does not, the already-approved document displayed on
-    screen can be downloaded locally without another Groq request.
-*/
-
-downloadButton.addEventListener(
+approveBtn.addEventListener(
     "click",
-    async () => {
+    async ()=>{
 
-        if(
-            !paymentConfirmed ||
-            busy
-        ){
+        if(busy){
             return;
         }
 
-        setBusy(true);
+        busyState(true);
 
         setStatus(
-            "Preparing your document..."
+            "Preparing your payment step..."
         );
 
         try{
 
-            const data =
-                await sendToExistingAPI(
-                    "The customer wants to download the approved and paid document.",
-                    "download_request"
-                );
+            const query =
+                new URLSearchParams({
 
-            const fileUrl =
-                data.download_url ||
-                data.file_url ||
-                data.url;
+                    customer_id:
+                        customerId,
 
-            if(fileUrl){
+                    job_id:
+                        jobId,
 
-                location.href =
-                    fileUrl;
+                    client_request_id:
+                        requestId,
 
-                return;
-            }
+                    service
 
-            /*
-                No second document-generation request.
-                Download the approved document already in memory.
-            */
+                });
 
-            const blob =
-                new Blob(
-                    [work],
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/approve?" +
+                    query.toString(),
                     {
-                        type:
-                            "text/plain;charset=utf-8"
+                        method:"POST"
                     }
                 );
 
-            const objectUrl =
-                URL.createObjectURL(
-                    blob
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        ()=>({})
+                    );
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Approval could not be completed."
                 );
 
-            const link =
-                document.createElement(
-                    "a"
+            }
+
+            approved = true;
+
+            paymentPanel
+                .classList
+                .add("show");
+
+            const amount =
+                Number(
+                    data.amount || 0
                 );
 
-            link.href =
-                objectUrl;
-
-            link.download =
-                (
-                    service
-                        .replace(
-                            /[^a-z0-9]+/gi,
-                            "_"
-                        )
-                        .replace(
-                            /^_+|_+$/g,
-                            ""
-                        ) ||
-                    "document"
-                ) +
-                ".txt";
-
-            document.body.appendChild(
-                link
-            );
-
-            link.click();
-
-            link.remove();
-
-            URL.revokeObjectURL(
-                objectUrl
-            );
+            paymentDetails.textContent =
+                `Service: ${
+                    data.service || service
+                }
+Amount: ${
+                    amount > 0
+                        ? "₦" +
+                          amount.toLocaleString()
+                        : "Quotation required"
+                }
+Order: ${
+                    data.order_number ||
+                    "Pending"
+                }`;
 
             setStatus(
-                "Document prepared for download.",
+                "Your work is approved. Payment is ready.",
+                "success"
+            );
+
+            paymentPanel.scrollIntoView({
+                behavior:"smooth",
+                block:"center"
+            });
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            busyState(false);
+
+        }
+
+    }
+);
+
+/* =========================================================
+   REPORT PAYMENT
+   ========================================================= */
+
+paymentReport.addEventListener(
+    "click",
+    async ()=>{
+
+        if(!approved){
+
+            setStatus(
+                "Approve the work first.",
+                "error"
+            );
+
+            return;
+        }
+
+        const amountMatch =
+            paymentDetails.textContent.match(
+                /Amount:\s*([^\n]+)/
+            );
+
+        const amount =
+            amountMatch
+                ? Number(
+                    amountMatch[1]
+                        .replace(
+                            /[^0-9.]/g,
+                            ""
+                        )
+                )
+                : 0;
+
+        if(amount <= 0){
+
+            setStatus(
+                "This service requires a quotation before payment.",
+                "error"
+            );
+
+            return;
+        }
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/payment/create",
+                    {
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                job_id:
+                                    jobId,
+
+                                customer_id:
+                                    customerId,
+
+                                service,
+
+                                amount,
+
+                                payment_method:
+                                    "bank_transfer"
+
+                            })
+                    }
+                );
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        ()=>({})
+                    );
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Payment record could not be created."
+                );
+
+            }
+
+            paymentDetails.textContent +=
+                `\nPayment ID: ${
+                    data.payment_id ||
+                    "Pending"
+                }
+Status: Pending`;
+
+            setStatus(
+                "Payment reported. Verification is pending.",
                 "success"
             );
 
@@ -1280,30 +1621,123 @@ downloadButton.addEventListener(
                 "error"
             );
 
-        }finally{
-
-            setBusy(false);
         }
+
     }
 );
 
-/*
-    LOAD THE COMPLETE DOCUMENT.
+/* =========================================================
+   PAYMENT STATUS
+   ========================================================= */
 
-    Nothing is truncated.
-    Nothing is sliced.
-    Nothing is limited to a fixed character count.
-*/
+paymentCheck.addEventListener(
+    "click",
+    async ()=>{
 
-if(!loadReview()){
+        try{
 
-    documentElement.textContent =
-        "Your completed document could not be loaded. Return to the workspace and continue your request.";
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/payment/status?job_id=" +
+                    encodeURIComponent(jobId)
+                );
 
-    setStatus(
-        "No review document was found.",
-        "error"
-    );
-}
-</script></body>
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        ()=>({})
+                    );
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Payment status could not be checked."
+                );
+
+            }
+
+            if(
+                String(
+                    data.status || ""
+                ).toLowerCase() ===
+                "paid"
+            ){
+
+                paymentConfirmed = true;
+
+                downloadBtn.disabled =
+                    false;
+
+                downloadBtn.classList.add(
+                    "active"
+                );
+
+                downloadBtn.textContent =
+                    "⬇ Download Your Work";
+
+                setStatus(
+                    "Payment confirmed. Your download is now available.",
+                    "success"
+                );
+
+                paymentDetails.textContent +=
+                    "\nStatus: Paid";
+
+            }else{
+
+                setStatus(
+                    "Payment is still pending."
+                );
+
+            }
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+);
+
+/* =========================================================
+   DOWNLOAD
+   ========================================================= */
+
+downloadBtn.addEventListener(
+    "click",
+    ()=>{
+
+        if(!paymentConfirmed){
+            return;
+        }
+
+        location.href =
+            API_BASE +
+            "/api/download?job_id=" +
+            encodeURIComponent(jobId) +
+            "&customer_id=" +
+            encodeURIComponent(customerId);
+
+    }
+);
+
+/* =========================================================
+   INITIALISE
+   ========================================================= */
+
+loadWork();
+
+</script>
+
+</body>
 </html>
