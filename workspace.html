@@ -39,12 +39,9 @@ button{
 :root{
     --gold:#d4af37;
     --gold2:#f3d66b;
-
-    /* Luxury green is ONLY for the brand name */
-    --brand-green:#168047;
-
     --red:#b30000;
     --green:#168047;
+    --luxury-green:#168047;
     --border:rgba(212,175,55,.28);
 }
 
@@ -72,13 +69,9 @@ button{
     min-width:0;
 }
 
-/*
-    ONLY the Naija Pocket Business Center brand name
-    uses the luxury green.
-*/
 .brand-title{
     margin:0;
-    color:var(--brand-green);
+    color:var(--luxury-green);
     font-size:clamp(18px,4vw,25px);
     font-weight:800;
 }
@@ -118,6 +111,7 @@ button{
 }
 
 .main-inner{
+    width:100%;
     max-width:900px;
     margin:auto;
     padding:14px 10px 25px;
@@ -267,6 +261,10 @@ button{
     display:block;
 }
 
+/* =========================================================
+   REVIEW HEADER
+   ========================================================= */
+
 .review-header{
     padding:16px;
     margin-bottom:11px;
@@ -286,22 +284,21 @@ button{
 }
 
 /* =========================================================
-   CUSTOMER DOCUMENT / YOUR WORK
+   COMPLETE CUSTOMER DOCUMENT
    ========================================================= */
 
 /*
    IMPORTANT:
-   The document is NOT given a fixed height.
+   There is intentionally NO fixed height, max-height,
+   line clamp, hidden overflow, or content truncation here.
 
-   The review area must be able to contain one page,
-   six pages, or substantially more without clipping.
+   The document is allowed to grow to its COMPLETE returned
+   length. The .main container above is responsible for
+   scrolling through the full review.
 */
 
 .work-card{
     width:100%;
-    height:auto;
-    min-height:350px;
-    max-height:none;
     background:#f7f7f7;
     color:#111;
     border-radius:11px;
@@ -315,29 +312,25 @@ button{
 
 .work-content{
     width:100%;
-    height:auto;
-    min-height:0;
-    max-height:none;
-    overflow:visible;
     color:#111;
     font-size:14px;
     line-height:1.7;
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
+    overflow:visible;
     overflow-wrap:anywhere;
+    word-break:normal;
 }
 
 .work-content.document-html{
     background:#fff;
     color:#111;
-    height:auto;
-    min-height:0;
-    max-height:none;
-    overflow:visible;
 }
 
-/* Document headings */
+/* =========================================================
+   DOCUMENT HEADINGS
+   ========================================================= */
 
 .work-content h1{
     margin:0 0 18px;
@@ -372,7 +365,9 @@ button{
     font-weight:800;
 }
 
-/* Document paragraphs */
+/* =========================================================
+   DOCUMENT PARAGRAPHS
+   ========================================================= */
 
 .work-content p{
     margin:0 0 12px;
@@ -395,7 +390,9 @@ button{
     text-decoration:underline;
 }
 
-/* Document lists */
+/* =========================================================
+   DOCUMENT LISTS
+   ========================================================= */
 
 .work-content ul,
 .work-content ol{
@@ -408,7 +405,9 @@ button{
     line-height:1.65;
 }
 
-/* Document divider */
+/* =========================================================
+   DOCUMENT DIVIDER
+   ========================================================= */
 
 .work-content hr{
     border:0;
@@ -416,7 +415,9 @@ button{
     margin:20px 0;
 }
 
-/* Tables */
+/* =========================================================
+   TABLES
+   ========================================================= */
 
 .work-content table{
     width:100%;
@@ -439,7 +440,9 @@ button{
     background:#eee;
 }
 
-/* Quotes */
+/* =========================================================
+   QUOTES
+   ========================================================= */
 
 .work-content blockquote{
     margin:15px 0;
@@ -448,7 +451,9 @@ button{
     background:#f0f0f0;
 }
 
-/* Code-like content */
+/* =========================================================
+   CODE
+   ========================================================= */
 
 .work-content pre{
     white-space:pre-wrap;
@@ -465,14 +470,18 @@ button{
     font-family:monospace;
 }
 
-/* Links */
+/* =========================================================
+   LINKS
+   ========================================================= */
 
 .work-content a{
     color:#111;
     text-decoration:underline;
 }
 
-/* Images */
+/* =========================================================
+   IMAGES
+   ========================================================= */
 
 .work-content img{
     max-width:100%;
@@ -481,7 +490,9 @@ button{
     margin:12px auto;
 }
 
-/* Preserve intentional line breaks */
+/* =========================================================
+   INTENTIONAL SPACING
+   ========================================================= */
 
 .work-content .document-spacer{
     height:10px;
@@ -495,7 +506,9 @@ button{
     -webkit-user-select:none;
 }
 
-/* ========================================================= */
+/* =========================================================
+   CORRECTIONS
+   ========================================================= */
 
 .correction-card{
     margin-top:12px;
@@ -617,6 +630,10 @@ button{
     border:1px solid rgba(255,255,255,.13);
 }
 
+/* =========================================================
+   BOTTOM CONTROLS
+   ========================================================= */
+
 .bottom{
     flex:0 0 auto;
     padding:8px 9px calc(8px + env(safe-area-inset-bottom));
@@ -731,7 +748,9 @@ button:disabled{
     cursor:not-allowed;
 }
 
-/* READ-ONLY */
+/* =========================================================
+   READ-ONLY CUSTOMER CONTENT
+   ========================================================= */
 
 #introText,
 .intro-card{
@@ -1283,15 +1302,18 @@ function sanitizeDocumentHtml(html){
 
 
         if(!allowedTags.has(tag)){
+
             const parent=node.parentNode;
 
             if(parent){
 
                 while(node.firstChild){
+
                     parent.insertBefore(
                         node.firstChild,
                         node
                     );
+
                 }
 
                 node.remove();
@@ -1299,6 +1321,7 @@ function sanitizeDocumentHtml(html){
             }
 
             return;
+
         }
 
 
@@ -1327,7 +1350,9 @@ function sanitizeDocumentHtml(html){
                 !/^https?:\/\//i.test(href) &&
                 !/^mailto:/i.test(href)
             ){
+
                 node.removeAttribute("href");
+
             }else{
 
                 node.setAttribute(
@@ -1353,8 +1378,11 @@ function sanitizeDocumentHtml(html){
                 !/^https?:\/\//i.test(src) &&
                 !/^data:image\//i.test(src)
             ){
+
                 node.remove();
+
                 return;
+
             }
 
         }
@@ -1416,11 +1444,13 @@ function renderDocument(work){
             "document-html"
         );
 
-        workContent.innerHTML=safeHtml;
+        workContent.innerHTML=
+            safeHtml;
 
     }else{
 
-        workContent.textContent=cleaned;
+        workContent.textContent=
+            cleaned;
 
     }
 
@@ -1794,12 +1824,14 @@ async function apiChat(body){
         !r.ok ||
         !d.success
     ){
+
         throw new Error(
             d.reply ||
             d.message ||
             d.error ||
             "Request failed."
         );
+
     }
 
 
@@ -1936,12 +1968,12 @@ function creationPrompt(data){
 
     return `The customer has completed the service information form. Create the actual requested work now.
 
-Return the complete work so it can be reviewed here.
+Return the COMPLETE work so it can be reviewed here.
 
-IMPORTANT LENGTH REQUIREMENT:
-If the customer has requested a specific number of pages, words, or other document length, produce enough complete substantive content to satisfy that requested length. Do not unnecessarily shorten, summarize, compress, or reduce a requested multi-page document to one short page.
+IMPORTANT:
+Do not shorten the work because of screen size or because it is being displayed in a review page.
 
-If the customer requests 6 pages, the prepared work must contain enough substantive content for approximately 6 pages under normal document formatting. Preserve the requested scope and level of detail throughout the document.
+If the customer requested a specific number of pages, produce the complete requested amount of substantive content. Include all appropriate sections through the conclusion where applicable.
 
 IMPORTANT DOCUMENT OUTPUT RULE:
 When the requested work is a document, return it as properly structured HTML using normal document elements such as <h1>, <h2>, <h3>, <p>, <strong>, <em>, <ul>, <ol>, <li>, <hr>, <table>, <tr>, <th>, and <td> where appropriate.
@@ -1950,7 +1982,7 @@ Do not wrap the HTML in markdown code fences.
 
 Do not return HTML source as an explanation.
 
-The HTML itself is the document that should be displayed to the customer for review.
+The HTML itself is the complete document that should be displayed to the customer for review.
 
 Do not ask for an email address or send the customer elsewhere unless genuinely required.
 
@@ -2060,6 +2092,7 @@ function showReview(work){
     currentWork=
         work||"";
 
+
     renderDocument(
         currentWork
     );
@@ -2084,6 +2117,14 @@ function showReview(work){
     downloadBtn.textContent=
         "🔒 Download Your Work";
 
+
+    /*
+       Start at the beginning of the complete document.
+       The document itself is not given an internal scroll
+       box, so the customer's normal main-page scroll can
+       reach every section, including the conclusion.
+    */
+
     mainScrollTop();
 
 }
@@ -2095,7 +2136,15 @@ function mainScrollTop(){
         document.querySelector(".main");
 
     if(main){
+
         main.scrollTop=0;
+
+        requestAnimationFrame(
+            ()=>{
+                main.scrollTop=0;
+            }
+        );
+
     }
 
 }
@@ -2111,9 +2160,11 @@ serviceForm.addEventListener(
             !busy &&
             serviceForm.reportValidity()
         ){
+
             createWork(
                 collect()
             );
+
         }
 
     }
@@ -2172,7 +2223,9 @@ serviceForm.addEventListener(
                     e.key.toLowerCase()
                 )
             ){
+
                 e.preventDefault();
+
             }
 
         }
@@ -2239,14 +2292,11 @@ applyBtn.addEventListener(
 
 ${c}
 
-Return the complete revised work for review.
+Return the COMPLETE revised work for review.
 
-IMPORTANT:
-If the prepared work is a document, preserve the requested document length and all important existing content unless the customer's correction specifically changes it.
+Do not shorten, summarize, truncate or omit sections from the existing work.
 
-If the customer originally requested a specific number of pages, do not shorten the revised document below the requested length.
-
-Return the complete revised document as properly structured HTML. Do not wrap the HTML in markdown code fences. Do not return the HTML source as an explanation.`,
+If the prepared work is a document, return the complete revised document as properly structured HTML. Preserve all necessary sections and include the complete conclusion where applicable. Do not wrap the HTML in markdown code fences. Do not return the HTML source as an explanation.`,
 
                     service,
 
@@ -2857,6 +2907,7 @@ async function sendMessage(
 
             currentWork=
                 d.reply;
+
 
             renderDocument(
                 currentWork
