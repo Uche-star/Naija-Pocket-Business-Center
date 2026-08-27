@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Naija Pocket Business Center</title>
-
-<style>
+<title>Naija Pocket Business Center</title><style>
 *{box-sizing:border-box}
 
 html,body{
@@ -28,6 +25,11 @@ button,input,textarea{
 
 button{
     cursor:pointer;
+}
+
+button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
 }
 
 .app{
@@ -68,7 +70,7 @@ button{
 }
 
 .service-badge{
-    max-width:46%;
+    max-width:45%;
     padding:7px 10px;
     border:1px solid rgba(0,128,0,.5);
     border-radius:20px;
@@ -94,104 +96,110 @@ button{
     height:100%;
     max-width:900px;
     margin:auto;
-    padding:10px;
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    padding:8px;
 }
 
-.card{
-    margin-bottom:10px;
-    padding:15px;
+/* SERVICE INFORMATION */
+
+.service-card{
+    flex:0 0 auto;
+    padding:12px;
+    margin-bottom:7px;
     background:#111;
-    border:1px solid rgba(255,255,255,.09);
-    border-radius:14px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:13px;
 }
 
-.title{
+.service-title{
     margin:0;
     color:#fff;
-    font-size:19px;
+    font-size:18px;
     font-weight:900;
 }
 
-.text{
-    margin:7px 0 0;
-    color:#ccc;
-    font-size:13px;
-    line-height:1.6;
+.service-description{
+    margin:5px 0 0;
+    color:#bbb;
+    font-size:11px;
+    line-height:1.5;
 }
 
 .price{
     display:inline-block;
-    margin-top:10px;
-    padding:8px 11px;
+    margin-top:7px;
+    padding:6px 9px;
     border:1px solid rgba(0,128,0,.45);
     border-radius:8px;
     color:#69c28e;
-    font-size:11px;
-    font-weight:900;
-}
-
-.field{
-    margin-bottom:12px;
-}
-
-.field label{
-    display:block;
-    margin-bottom:5px;
-    color:#ddd;
-    font-size:11px;
-    font-weight:800;
-}
-
-.field input,
-.field textarea{
-    width:100%;
-    padding:11px;
-    background:#191919;
-    color:#fff;
-    border:1px solid rgba(255,255,255,.13);
-    border-radius:9px;
-    outline:none;
-    font-size:13px;
-}
-
-.field textarea{
-    min-height:86px;
-    resize:vertical;
-}
-
-.field input:focus,
-.field textarea:focus{
-    border-color:rgba(0,128,0,.7);
-}
-
-.form-note{
-    margin:8px 0 12px;
-    padding:10px;
-    background:#151515;
-    border-left:3px solid #008000;
-    border-radius:7px;
-    color:#999;
     font-size:10px;
-    line-height:1.5;
+    font-weight:900;
 }
 
-.submit{
-    width:100%;
-    min-height:48px;
-    border:0;
-    border-radius:9px;
-    background:#008000;
+/* CONVERSATION */
+
+.chat{
+    flex:1 1 0;
+    min-height:0;
+    overflow-y:auto;
+    padding:7px 3px 10px;
+    -webkit-overflow-scrolling:touch;
+}
+
+.message-row{
+    display:flex;
+    margin-bottom:8px;
+}
+
+.message-row.customer{
+    justify-content:flex-end;
+}
+
+.message-row.business{
+    justify-content:flex-start;
+}
+
+.message-bubble{
+    max-width:88%;
+    padding:10px 12px;
+    border-radius:13px;
+    font-size:12px;
+    line-height:1.55;
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+}
+
+.business .message-bubble{
+    background:#171717;
+    color:#ddd;
+    border:1px solid rgba(255,255,255,.07);
+}
+
+.customer .message-bubble{
+    background:#075c2b;
     color:#fff;
-    font-weight:900;
+}
+
+.working{
+    display:none;
+    flex:0 0 auto;
+    padding:4px 0;
+    color:#69c28e;
+    font-size:9px;
+    text-align:center;
+}
+
+.working.show{
+    display:block;
 }
 
 /* BOTTOM */
 
 .bottom{
     flex:0 0 auto;
-    padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom));
     background:#080808;
     border-top:1px solid rgba(0,128,0,.35);
     z-index:20;
@@ -203,35 +211,34 @@ button{
     margin:auto;
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:6px;
+    gap:5px;
 }
 
 .tool{
-    min-height:39px;
-    border:1px solid rgba(255,255,255,.13);
+    min-height:38px;
+    border:1px solid rgba(255,255,255,.12);
     border-radius:8px;
     background:#181818;
     color:#fff;
-    font-size:10px;
+    font-size:9px;
     font-weight:800;
 }
 
 .tool.voice{
     color:#69c28e;
-    border-color:rgba(0,128,0,.4);
 }
 
 .choose{
     width:100%;
     max-width:900px;
-    min-height:37px;
-    margin:6px auto;
+    min-height:36px;
+    margin:5px auto;
     display:block;
     border:1px solid rgba(255,255,255,.12);
     border-radius:8px;
     background:#000;
     color:#fff;
-    font-size:10px;
+    font-size:9px;
     font-weight:800;
 }
 
@@ -244,10 +251,10 @@ button{
     align-items:flex-end;
 }
 
-.message{
+.message-input{
     flex:1;
     min-width:0;
-    min-height:44px;
+    min-height:43px;
     max-height:110px;
     resize:none;
     padding:10px;
@@ -261,7 +268,7 @@ button{
 
 .send{
     width:62px;
-    min-height:44px;
+    min-height:43px;
     border:0;
     border-radius:9px;
     background:#008000;
@@ -271,17 +278,20 @@ button{
 }
 
 .status{
-    width:100%;
-    max-width:900px;
-    min-height:14px;
+    min-height:13px;
     margin:3px auto 0;
     color:#777;
     font-size:9px;
     text-align:center;
 }
 
-.status.error{color:#ff7777}
-.status.success{color:#69c28e}
+.status.error{
+    color:#ff7777;
+}
+
+.status.success{
+    color:#69c28e;
+}
 
 #fileInput{
     display:none;
@@ -290,192 +300,119 @@ button{
 @media(max-width:480px){
     .workspace{padding:7px}
     .tools{gap:4px}
-    .tool{font-size:9px}
+    .tool{font-size:8px}
 }
-</style>
-</head>
-
-<body>
-
-<div class="app">
-
-<header class="header">
-
+</style></head><body><div class="app"><header class="header">
     <div>
-        <h1 class="brand-title">
-            Naija Pocket Business Center
-        </h1>
+        <h1 class="brand-title">Naija Pocket Business Center</h1>
+        <div class="brand-subtitle">Your Business Center</div>
+    </div><div id="serviceBadge" class="service-badge"></div>
 
-        <div class="brand-subtitle">
-            Your Business Center
-        </div>
-    </div>
+</header><main class="main"><section class="workspace"><div class="service-card">
 
-    <div
-        id="serviceBadge"
-        class="service-badge"
-    >
-        Service
-    </div>
+    <h2 id="serviceTitle" class="service-title"></h2>
 
-</header>
+    <p id="serviceDescription" class="service-description">
+        Tell us what you need and provide any useful information for your request.
+    </p>
 
-<main class="main">
-
-<section class="workspace">
-
-    <div class="card">
-
-        <h2
-            id="serviceTitle"
-            class="title"
-        >
-            Your Service
-        </h2>
-
-        <p
-            id="serviceText"
-            class="text"
-        >
-            Provide the information needed for your request.
-        </p>
-
-        <div
-            id="price"
-            class="price"
-        >
-            Service
-        </div>
-
-    </div>
-
-    <div class="card">
-
-        <form id="serviceForm">
-
-            <div id="fields"></div>
-
-            <div class="form-note">
-                Provide as much useful information as possible so your request can be completed correctly.
-            </div>
-
-            <button
-                id="submitButton"
-                class="submit"
-                type="submit"
-            >
-                SEND REQUEST
-            </button>
-
-        </form>
-
-    </div>
-
-</section>
-
-</main>
-
-<footer class="bottom">
-
-    <div class="tools">
-
-        <button
-            id="uploadButton"
-            class="tool"
-            type="button"
-        >
-            📄 Upload
-        </button>
-
-        <button
-            id="voiceButton"
-            class="tool voice"
-            type="button"
-        >
-            🎤 Voice
-        </button>
-
-        <button
-            id="customerButton"
-            class="tool"
-            type="button"
-        >
-            Customer Service
-        </button>
-
-    </div>
-
-    <button
-        id="chooseButton"
-        class="choose"
-        type="button"
-    >
-        Choose Another Service
-    </button>
-
-    <input
-        id="fileInput"
-        type="file"
-        accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
-    >
-
-    <div class="composer">
-
-        <textarea
-            id="messageInput"
-            class="message"
-            rows="1"
-            placeholder="Type your message..."
-            autocomplete="off"
-        ></textarea>
-
-        <button
-            id="sendButton"
-            class="send"
-            type="button"
-        >
-            SEND
-        </button>
-
-    </div>
-
-    <div
-        id="status"
-        class="status"
-    ></div>
-
-</footer>
+    <div id="price" class="price"></div>
 
 </div>
 
-<script>
+<div id="chat" class="chat" aria-live="polite"></div>
+
+<div id="working" class="working">
+    Processing your request…
+</div>
+
+</section></main><footer class="bottom"><div class="tools">
+
+    <button
+        id="uploadButton"
+        class="tool"
+        type="button"
+    >
+        📄 Upload
+    </button>
+
+    <button
+        id="voiceButton"
+        class="tool voice"
+        type="button"
+    >
+        🎤 Voice
+    </button>
+
+    <button
+        id="customerButton"
+        class="tool"
+        type="button"
+    >
+        Customer Service
+    </button>
+
+</div>
+
+<button
+    id="chooseButton"
+    class="choose"
+    type="button"
+>
+    Choose Another Service
+</button>
+
+<input
+    id="fileInput"
+    type="file"
+    accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+>
+
+<div class="composer">
+
+    <textarea
+        id="messageInput"
+        class="message-input"
+        rows="1"
+        placeholder="Type your message..."
+        autocomplete="off"
+    ></textarea>
+
+    <button
+        id="sendButton"
+        class="send"
+        type="button"
+    >
+        SEND
+    </button>
+
+</div>
+
+<div id="status" class="status"></div>
+
+</footer></div><script>
 "use strict";
 
 /*
-============================================================
-CUSTOMER WORKSPACE
-============================================================
+    CUSTOMER WORKSPACE
 
-This page is deliberately a thin client.
+    This page contains NO Groq implementation.
+    It contains NO prompts.
+    It contains NO keyword AI.
+    It contains NO duplicate intelligence.
 
-It does NOT:
-- call Groq
-- contain prompts
-- contain AI reasoning
-- contain keyword matching
-- duplicate AdaResponse
-- generate documents
-- perform review intelligence
+    The existing /api/chat endpoint remains the intelligence
+    gateway already used by this project.
 
-It only sends customer information to the existing
-/api/chat endpoint and opens review.html when work is returned.
-============================================================
+    The workspace only:
+        1. accepts customer input
+        2. sends it to the existing API
+        3. stores returned work for review
+        4. opens review.html
 */
 
 const params =
-    new URLSearchParams(
-        location.search
-    );
+    new URLSearchParams(location.search);
 
 const service =
     (
@@ -484,79 +421,46 @@ const service =
     ).trim();
 
 const serviceBadge =
-    document.getElementById(
-        "serviceBadge"
-    );
+    document.getElementById("serviceBadge");
 
 const serviceTitle =
-    document.getElementById(
-        "serviceTitle"
-    );
+    document.getElementById("serviceTitle");
 
-const serviceText =
-    document.getElementById(
-        "serviceText"
-    );
+const serviceDescription =
+    document.getElementById("serviceDescription");
 
 const price =
-    document.getElementById(
-        "price"
-    );
+    document.getElementById("price");
 
-const fields =
-    document.getElementById(
-        "fields"
-    );
+const chat =
+    document.getElementById("chat");
 
-const serviceForm =
-    document.getElementById(
-        "serviceForm"
-    );
-
-const submitButton =
-    document.getElementById(
-        "submitButton"
-    );
+const working =
+    document.getElementById("working");
 
 const messageInput =
-    document.getElementById(
-        "messageInput"
-    );
+    document.getElementById("messageInput");
 
 const sendButton =
-    document.getElementById(
-        "sendButton"
-    );
+    document.getElementById("sendButton");
 
 const uploadButton =
-    document.getElementById(
-        "uploadButton"
-    );
+    document.getElementById("uploadButton");
 
 const voiceButton =
-    document.getElementById(
-        "voiceButton"
-    );
+    document.getElementById("voiceButton");
 
 const customerButton =
-    document.getElementById(
-        "customerButton"
-    );
+    document.getElementById("customerButton");
 
 const chooseButton =
-    document.getElementById(
-        "chooseButton"
-    );
+    document.getElementById("chooseButton");
 
 const fileInput =
-    document.getElementById(
-        "fileInput"
-    );
+    document.getElementById("fileInput");
 
 const status =
-    document.getElementById(
-        "status"
-    );
+    document.getElementById("status");
 
 let busy = false;
 
@@ -610,145 +514,63 @@ if(!clientRequestId){
 }
 
 /*
-============================================================
-PRICES
-============================================================
-
-These are the customer-facing prices already defined by
-BillingManager. They are displayed here without making a
-second Groq request merely to show a price.
+    Existing customer-facing prices.
+    These are display values only.
+    They do not replace BillingManager.
 */
 
 const prices = {
 
-    "Document Typing":
-        "₦200 per page",
+    "Document Typing":"₦200 per page",
+    "Document Formatting":"₦1,500",
+    "Document Editing":"₦250 per page",
+    "Grammar Correction":"₦200 per page",
 
-    "Document Formatting":
-        "₦1,500",
+    "Assignments":"₦2,500",
+    "Assignment":"₦2,500",
 
-    "Document Editing":
-        "₦250 per page",
+    "Projects":"₦250 per page",
+    "Project":"₦250 per page",
 
-    "Grammar Correction":
-        "₦200 per page",
+    "Research Assistance":"₦3,500",
 
-    "Assignments":
-        "₦2,500",
+    "Seminar Papers":"₦3,500",
+    "Seminar Paper":"₦3,500",
 
-    "Assignment":
-        "₦2,500",
+    "CV":"₦2,500",
+    "CVs & Résumés":"₦2,500",
+    "CVs & Resumes":"₦2,500",
 
-    "Projects":
-        "₦250 per page",
+    "Cover Letter":"₦1,500",
+    "Cover Letters":"₦1,500",
 
-    "Project":
-        "₦250 per page",
+    "CV + Cover Letter":"₦3,500",
 
-    "Research Assistance":
-        "₦3,500",
+    "Business Proposals":"₦7,500",
+    "Company Profiles":"₦5,000",
 
-    "Seminar Papers":
-        "₦3,500",
+    "Business Letters & Letterhead":"₦2,000",
+    "Invoices":"₦2,000",
+    "Quotations":"₦2,000",
+    "Meeting Minutes":"₦2,500",
 
-    "Seminar Paper":
-        "₦3,500",
+    "Document Rewriting":"₦2,500",
+    "Document Summarization":"₦2,500",
 
-    "CVs & Résumés":
-        "₦2,500",
+    "PDF Conversion":"₦1,000",
+    "Voice To Text":"₦250 per page",
 
-    "CVs & Resumes":
-        "₦2,500",
+    "Topic Explanations":"₦2,000",
+    "Printing Preparation":"₦1,000",
 
-    "CV":
-        "₦2,500",
+    "Excel Spreadsheets":"₦3,000",
+    "Data Entry":"₦2,000",
+    "Data Analysis":"₦5,000",
+    "Presentations":"₦5,000",
 
-    "Résumé":
-        "₦2,500",
-
-    "Resume":
-        "₦2,500",
-
-    "Cover Letters":
-        "₦1,500",
-
-    "Cover Letter":
-        "₦1,500",
-
-    "Business Proposals":
-        "₦7,500",
-
-    "Company Profiles":
-        "₦5,000",
-
-    "Business Letters & Letterhead":
-        "₦2,000",
-
-    "Invoices":
-        "₦2,000",
-
-    "Quotations":
-        "₦2,000",
-
-    "Meeting Minutes":
-        "₦2,500",
-
-    "AI Writing Assistance":
-        "₦2,500",
-
-    "Document Rewriting":
-        "₦2,500",
-
-    "Translation":
-        "Quotation",
-
-    "Document Summarization":
-        "₦2,500",
-
-    "PDF Conversion":
-        "₦1,000",
-
-    "Voice To Text":
-        "₦250 per page",
-
-    "Topic Explanations":
-        "₦2,000",
-
-    "Printing Preparation":
-        "₦1,000",
-
-    "Excel Spreadsheets":
-        "₦3,000",
-
-    "Data Entry":
-        "₦2,000",
-
-    "Data Analysis":
-        "₦5,000",
-
-    "Presentations":
-        "₦5,000",
-
-    "CV + Cover Letter":
-        "₦3,500",
-
-    "Term Paper":
-        "₦3,500",
-
-    "Research Proposal":
-        "₦6,000",
-
-    "Handwritten Typing":
-        "₦250 per page",
-
-    "Thesis Typing":
-        "₦250 per page",
-
-    "Dissertation Typing":
-        "₦350 per page",
-
-    "Business Plan":
-        "₦15,000"
+    "Translation":"Quotation",
+    "Business Plan":"₦15,000",
+    "Research Proposal":"₦6,000"
 };
 
 function getPrice(name){
@@ -762,442 +584,99 @@ function getPrice(name){
             .trim()
             .toLowerCase();
 
-    const found =
+    const match =
         Object.keys(prices)
             .find(
                 item =>
                     item.toLowerCase() === key
             );
 
-    return found
-        ? prices[found]
+    return match
+        ? prices[match]
         : "Quotation";
 }
 
-/*
-============================================================
-FIELDS
-============================================================
-*/
-
-const formDefinitions = {
-
-    "Seminar Papers":[
-        [
-            "topic",
-            "Topic / Title",
-            "Enter the seminar paper topic",
-            "textarea",
-            true
-        ],
-        [
-            "length",
-            "Desired Length",
-            "e.g. 3 pages or 2,000 words",
-            "text",
-            true
-        ],
-        [
-            "formatting_style",
-            "Formatting Style",
-            "e.g. APA, MLA, Harvard",
-            "text",
-            false
-        ],
-        [
-            "special_instructions",
-            "Special Instructions",
-            "Points to cover or other instructions",
-            "textarea",
-            false
-        ]
-    ],
-
-    "Seminar Paper":[
-        [
-            "topic",
-            "Topic / Title",
-            "Enter the seminar paper topic",
-            "textarea",
-            true
-        ],
-        [
-            "length",
-            "Desired Length",
-            "e.g. 3 pages or 2,000 words",
-            "text",
-            true
-        ],
-        [
-            "formatting_style",
-            "Formatting Style",
-            "e.g. APA, MLA, Harvard",
-            "text",
-            false
-        ],
-        [
-            "special_instructions",
-            "Special Instructions",
-            "Points to cover or other instructions",
-            "textarea",
-            false
-        ]
-    ],
-
-    "CV":[
-        [
-            "full_name",
-            "Full Name",
-            "Enter your full name",
-            "text",
-            true
-        ],
-        [
-            "career_target",
-            "Career Target",
-            "Job or position you are targeting",
-            "text",
-            true
-        ],
-        [
-            "experience",
-            "Work Experience",
-            "Enter your work history",
-            "textarea",
-            false
-        ],
-        [
-            "education",
-            "Education",
-            "Schools, qualifications and dates",
-            "textarea",
-            false
-        ],
-        [
-            "skills",
-            "Skills and Achievements",
-            "List your important skills",
-            "textarea",
-            false
-        ]
-    ],
-
-    "CVs & Résumés":[
-        [
-            "full_name",
-            "Full Name",
-            "Enter your full name",
-            "text",
-            true
-        ],
-        [
-            "career_target",
-            "Career Target",
-            "Job or position you are targeting",
-            "text",
-            true
-        ],
-        [
-            "experience",
-            "Work Experience",
-            "Enter your work history",
-            "textarea",
-            false
-        ],
-        [
-            "education",
-            "Education",
-            "Schools, qualifications and dates",
-            "textarea",
-            false
-        ],
-        [
-            "skills",
-            "Skills and Achievements",
-            "List your important skills",
-            "textarea",
-            false
-        ]
-    ],
-
-    "Cover Letter":[
-        [
-            "full_name",
-            "Full Name",
-            "Enter your full name",
-            "text",
-            true
-        ],
-        [
-            "job_title",
-            "Job Title",
-            "Position you are applying for",
-            "text",
-            true
-        ],
-        [
-            "company",
-            "Company",
-            "Company name",
-            "text",
-            false
-        ],
-        [
-            "experience",
-            "Relevant Experience",
-            "Your relevant experience",
-            "textarea",
-            false
-        ]
-    ],
-
-    "Cover Letters":[
-        [
-            "full_name",
-            "Full Name",
-            "Enter your full name",
-            "text",
-            true
-        ],
-        [
-            "job_title",
-            "Job Title",
-            "Position you are applying for",
-            "text",
-            true
-        ],
-        [
-            "company",
-            "Company",
-            "Company name",
-            "text",
-            false
-        ],
-        [
-            "experience",
-            "Relevant Experience",
-            "Your relevant experience",
-            "textarea",
-            false
-        ]
-    ]
-};
-
-const genericFields = [
-    [
-        "request",
-        "What do you need?",
-        "Tell us exactly what you want done.",
-        "textarea",
-        true
-    ],
-    [
-        "details",
-        "Important details",
-        "Add information that matters.",
-        "textarea",
-        false
-    ],
-    [
-        "instructions",
-        "Additional instructions",
-        "Anything else you want included.",
-        "textarea",
-        false
-    ]
-];
-
-function getDefinitions(){
-
-    if(formDefinitions[service]){
-        return formDefinitions[service];
-    }
-
-    return genericFields;
-}
-
-function makeField(definition){
-
-    const [
-        name,
-        label,
-        placeholder,
-        type,
-        required
-    ] = definition;
-
-    const wrapper =
-        document.createElement(
-            "div"
-        );
-
-    wrapper.className =
-        "field";
-
-    const labelElement =
-        document.createElement(
-            "label"
-        );
-
-    labelElement.htmlFor =
-        name;
-
-    labelElement.textContent =
-        label +
-        (
-            required
-                ? " *"
-                : ""
-        );
-
-    const input =
-        document.createElement(
-            type === "textarea"
-                ? "textarea"
-                : "input"
-        );
-
-    input.id =
-        name;
-
-    input.name =
-        name;
-
-    input.placeholder =
-        placeholder;
-
-    input.required =
-        !!required;
-
-    if(type !== "textarea"){
-        input.type =
-            type;
-    }
-
-    wrapper.append(
-        labelElement,
-        input
-    );
-
-    return wrapper;
-}
-
-function buildFields(){
-
-    fields.innerHTML =
-        "";
-
-    getDefinitions()
-        .forEach(
-            definition =>
-                fields.append(
-                    makeField(
-                        definition
-                    )
-                )
-        );
-}
-
-function collectForm(){
-
-    const data = {};
-
-    fields
-        .querySelectorAll(
-            "input,textarea"
-        )
-        .forEach(
-            element => {
-
-                const value =
-                    String(
-                        element.value ||
-                        ""
-                    ).trim();
-
-                if(value){
-                    data[
-                        element.name
-                    ] =
-                        value;
-                }
-            }
-        );
-
-    return data;
-}
-
-/*
-============================================================
-STATUS
-============================================================
-*/
-
-function setStatus(
-    text,
-    type=""
-){
+function setStatus(text,type=""){
 
     status.textContent =
         text || "";
 
     status.className =
-        "status " +
-        type;
+        "status " + type;
 }
 
-function setBusy(
-    value
-){
+function setBusy(value){
 
-    busy =
-        value;
+    busy = value;
 
     [
-        submitButton,
         sendButton,
         uploadButton,
         voiceButton,
         customerButton,
         chooseButton
-    ]
-    .forEach(
+    ].forEach(
         button =>
-            button.disabled =
-                value
+            button.disabled = value
+    );
+
+    working.classList.toggle(
+        "show",
+        value
     );
 }
 
+function addMessage(text,type){
+
+    if(!text){
+        return;
+    }
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+    row.className =
+        "message-row " + type;
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+    bubble.className =
+        "message-bubble";
+
+    bubble.textContent =
+        String(text);
+
+    row.appendChild(
+        bubble
+    );
+
+    chat.appendChild(
+        row
+    );
+
+    chat.scrollTop =
+        chat.scrollHeight;
+}
+
 /*
-============================================================
-EXISTING API
-============================================================
-
-This is the only intelligence connection in the page.
-
-The existing FastAPI application accepts:
-message
-service
-event
-customer_id
-job_id
-client_request_id
-activate_intelligence
-context
-
-Those are the fields this page uses.
+    One API gateway.
+    Nothing intelligent is implemented here.
 */
 
 async function sendToExistingAPI(
     message,
     event,
-    context=""
+    context = null
 ){
 
     const payload = {
 
         message:
-
             String(
                 message || ""
             ).trim(),
@@ -1272,21 +751,13 @@ async function sendToExistingAPI(
 }
 
 /*
-============================================================
-REVIEW HANDOFF
-============================================================
-
-The document is written once.
-
-The review page reads it once.
-
-The complete document is NOT sent back to the API merely
-because the customer wants to read it.
-
-Corrections contain only the correction request.
+    The complete generated document is stored once.
+    Review reads this local copy.
+    The document is NOT resent just because the customer
+    wants to scroll through it.
 */
 
-function reviewStorageKey(){
+function reviewKey(){
 
     return (
         "npbc_review_" +
@@ -1297,9 +768,7 @@ function reviewStorageKey(){
     );
 }
 
-function saveReview(
-    work
-){
+function saveReview(work){
 
     const packet = {
 
@@ -1315,60 +784,26 @@ function saveReview(
             clientRequestId,
 
         work:
-            String(
-                work || ""
-            ),
+            String(work || ""),
 
         saved_at:
             Date.now()
     };
 
-    try{
+    localStorage.setItem(
+        reviewKey(),
+        JSON.stringify(packet)
+    );
 
-        localStorage.setItem(
-            reviewStorageKey(),
-            JSON.stringify(
-                packet
-            )
-        );
-
-        localStorage.setItem(
-            "npbc_active_review_key",
-            reviewStorageKey()
-        );
-
-    }catch(error){
-
-        /*
-            sessionStorage is only a fallback if localStorage
-            cannot accept the document.
-        */
-
-        try{
-
-            sessionStorage.setItem(
-                "npbc_review_fallback",
-                JSON.stringify(
-                    packet
-                )
-            );
-
-        }catch(storageError){
-
-            throw new Error(
-                "The document could not be prepared for review on this device."
-            );
-        }
-    }
+    localStorage.setItem(
+        "npbc_active_review_key",
+        reviewKey()
+    );
 }
 
-function openReview(
-    work
-){
+function openReview(work){
 
-    saveReview(
-        work
-    );
+    saveReview(work);
 
     const query =
         new URLSearchParams({
@@ -1391,158 +826,104 @@ function openReview(
 }
 
 /*
-============================================================
-FORM SUBMISSION
-============================================================
+    Initial service display.
 */
 
-serviceForm.addEventListener(
-    "submit",
-    async event => {
+serviceBadge.textContent =
+    service;
 
-        event.preventDefault();
+serviceTitle.textContent =
+    service;
 
-        if(
-            busy ||
-            !serviceForm.reportValidity()
-        ){
-            return;
-        }
+price.textContent =
+    "Service fee: " +
+    getPrice(service);
 
-        const formData =
-            collectForm();
+/*
+    The initial page message is UI guidance only.
+    It does not pretend to be intelligence.
+*/
 
-        const message =
-            Object.values(
-                formData
-            )
-            .filter(Boolean)
-            .join(
-                "\n\n"
+addMessage(
+    "Welcome. Tell us what you need for your " +
+    service +
+    " request. You can also upload a document if you already have one.",
+    "business"
+);
+
+/*
+    MESSAGE
+*/
+
+async function sendMessage(){
+
+    const message =
+        messageInput.value.trim();
+
+    if(!message || busy){
+        return;
+    }
+
+    messageInput.value =
+        "";
+
+    messageInput.style.height =
+        "auto";
+
+    addMessage(
+        message,
+        "customer"
+    );
+
+    setBusy(true);
+
+    setStatus(
+        "Processing your request..."
+    );
+
+    try{
+
+        const data =
+            await sendToExistingAPI(
+                message,
+                "customer_message"
             );
 
-        const context =
-            Object.entries(
-                formData
-            )
-            .map(
-                ([key,value]) =>
-                    key.toUpperCase() +
-                    ":\n" +
-                    value
-            )
-            .join(
-                "\n\n"
-            );
+        if(data.reply){
 
-        setBusy(true);
-
-        setStatus(
-            "Your request is being processed..."
-        );
-
-        try{
-
-            const data =
-                await sendToExistingAPI(
-                    message,
-                    "customer_request",
-                    context
-                );
-
-            if(!data.reply){
-
-                throw new Error(
-                    "Your request was received, but no work was returned."
-                );
-            }
+            /*
+                The API response is the authoritative result.
+                It is handed to review exactly as returned.
+            */
 
             openReview(
                 data.reply
             );
 
-        }catch(error){
-
-            setStatus(
-                error.message,
-                "error"
-            );
-
-        }finally{
-
-            setBusy(false);
-        }
-    }
-);
-
-/*
-============================================================
-MESSAGE
-============================================================
-*/
-
-sendButton.addEventListener(
-    "click",
-    async () => {
-
-        const message =
-            messageInput.value.trim();
-
-        if(
-            !message ||
-            busy
-        ){
             return;
         }
 
-        messageInput.value =
-            "";
-
-        messageInput.style.height =
-            "auto";
-
-        setBusy(true);
-
         setStatus(
-            "Your message is being processed..."
+            "Your message was received.",
+            "success"
         );
 
-        try{
+    }catch(error){
 
-            const data =
-                await sendToExistingAPI(
-                    message,
-                    "customer_message"
-                );
+        setStatus(
+            error.message,
+            "error"
+        );
 
-            if(
-                data.reply
-            ){
+    }finally{
 
-                openReview(
-                    data.reply
-                );
-
-            }else{
-
-                setStatus(
-                    "Your message was received.",
-                    "success"
-                );
-            }
-
-        }catch(error){
-
-            setStatus(
-                error.message,
-                "error"
-            );
-
-        }finally{
-
-            setBusy(false);
-        }
+        setBusy(false);
     }
+}
+
+sendButton.addEventListener(
+    "click",
+    sendMessage
 );
 
 messageInput.addEventListener(
@@ -1556,7 +937,7 @@ messageInput.addEventListener(
 
             event.preventDefault();
 
-            sendButton.click();
+            sendMessage();
         }
     }
 );
@@ -1572,15 +953,12 @@ messageInput.addEventListener(
             Math.min(
                 this.scrollHeight,
                 110
-            ) +
-            "px";
+            ) + "px";
     }
 );
 
 /*
-============================================================
-UPLOAD
-============================================================
+    UPLOAD
 */
 
 uploadButton.addEventListener(
@@ -1675,6 +1053,11 @@ fileInput.addEventListener(
                 );
             }
 
+            addMessage(
+                "Your document has been received. Continue with your instructions.",
+                "business"
+            );
+
             setStatus(
                 "Document received.",
                 "success"
@@ -1698,9 +1081,10 @@ fileInput.addEventListener(
 );
 
 /*
-============================================================
-CUSTOMER SERVICE
-============================================================
+    CUSTOMER SERVICE
+
+    This remains a customer action.
+    It does not create a second intelligence system.
 */
 
 customerButton.addEventListener(
@@ -1721,9 +1105,24 @@ customerButton.addEventListener(
 );
 
 /*
-============================================================
-ANOTHER SERVICE
-============================================================
+    VOICE
+
+    Keep the existing button and do not invent
+    another transcription/AI implementation here.
+*/
+
+voiceButton.addEventListener(
+    "click",
+    () => {
+
+        setStatus(
+            "Voice is available through the existing voice workflow."
+        );
+    }
+);
+
+/*
+    SERVICE SELECTION
 */
 
 chooseButton.addEventListener(
@@ -1737,128 +1136,5 @@ chooseButton.addEventListener(
         }
     }
 );
-
-/*
-============================================================
-VOICE
-============================================================
-
-The button remains part of the existing workspace UI.
-No new AI or transcription engine is introduced here.
-*/
-
-let recorder =
-    null;
-
-let voiceStream =
-    null;
-
-voiceButton.addEventListener(
-    "click",
-    async () => {
-
-        if(busy){
-            return;
-        }
-
-        if(
-            recorder &&
-            recorder.state ===
-            "recording"
-        ){
-
-            recorder.stop();
-
-            return;
-        }
-
-        if(
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia ||
-            !window.MediaRecorder
-        ){
-
-            setStatus(
-                "Voice recording is not available on this device.",
-                "error"
-            );
-
-            return;
-        }
-
-        try{
-
-            voiceStream =
-                await navigator
-                    .mediaDevices
-                    .getUserMedia({
-                        audio:true
-                    });
-
-            recorder =
-                new MediaRecorder(
-                    voiceStream
-                );
-
-            recorder.onstop =
-                () => {
-
-                    if(
-                        voiceStream
-                    ){
-
-                        voiceStream
-                            .getTracks()
-                            .forEach(
-                                track =>
-                                    track.stop()
-                            );
-                    }
-
-                    voiceStream =
-                        null;
-
-                    setStatus(
-                        "Voice recording captured.",
-                        "success"
-                    );
-                };
-
-            recorder.start();
-
-            setStatus(
-                "Recording..."
-            );
-
-        }catch(error){
-
-            setStatus(
-                "Microphone access was not available.",
-                "error"
-            );
-        }
-    }
-);
-
-/*
-============================================================
-INITIALISE
-============================================================
-*/
-
-serviceBadge.textContent =
-    service;
-
-serviceTitle.textContent =
-    service;
-
-price.textContent =
-    "Service fee: " +
-    getPrice(service);
-
-buildFields();
-
-</script>
-
-</body>
+</script></body>
 </html>
