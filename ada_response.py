@@ -40,60 +40,74 @@ FastAPI/application state remains authoritative for:
     - download state
 
 
-IMPORTANT REVIEW ARCHITECTURE
------------------------------
-A customer's complete document must NEVER be destroyed
-or shortened merely to satisfy an LLM token limit.
+IMPORTANT DOCUMENT / REVIEW ARCHITECTURE
+-----------------------------------------
+A complete customer document must NEVER be forced into
+one LLM response.
 
-Review is a document operation.
+A large document is generated in controlled sections.
 
-Therefore:
-
-    COMPLETE DOCUMENT
+    CUSTOMER REQUEST
           ↓
-    APPLICATION STORAGE
+    ADA INTELLIGENCE
+          ↓
+    DOCUMENT SECTION 1
+          ↓
+    DOCUMENT SECTION 2
+          ↓
+    DOCUMENT SECTION 3
+          ↓
+          ...
+          ↓
+    COMPLETE ASSEMBLED DOCUMENT
           ↓
     REVIEW PAGE
-          ↓
-    ALL PAGES DISPLAYED
 
-Groq is used for intelligence/reasoning about the request.
-Groq is NOT used as the storage mechanism for the complete
-document.
+The individual Groq responses are temporary generation
+steps.
 
-The application must be able to retain and display the
-complete document independently of the LLM request size.
+The assembled document is the customer-facing result.
 
 TOKEN CONTROL
 -------------
-Token control applies to information sent to Groq.
+Token control applies to each individual LLM request.
 
-It must NOT remove pages from the customer's document.
+It MUST NOT:
+    - delete document pages
+    - shorten completed pages
+    - summarize requested work
+    - replace the document with an explanation
+    - weaken Ada's intelligence
+    - remove important service instructions
 
-It must NOT truncate the customer's supplied document.
+The complete generated document is assembled by the
+application before it is returned to the Review page.
 
-It must NOT replace a complete document with a summary.
+NORMAL CONVERSATION
+-------------------
+Normal conversation continues to use a controlled
+recent history.
 
-It must NOT weaken the service intelligence.
+DOCUMENT GENERATION
+-------------------
+Document-generation events use sequential generation.
 
-It must NOT remove important instructions from the
-AdaPromptManager.
+Each generation step produces a controlled section.
 
-For normal conversation, only the necessary recent
-conversation is supplied.
+The next generation step is then asked to continue from
+the exact point reached by the previous section.
 
-For large document/review operations, the application
-should provide the relevant state or document information
-in controlled portions rather than sending an unlimited
-historical payload.
+The final result is assembled in application memory.
 
-The intelligence remains LLM-based and reasoning-driven.
+This prevents a long document from being cut off by the
+output limit of a single Groq request.
 """
 
 
 from __future__ import annotations
 
 import os
+import re
 import traceback
 from typing import Any
 
@@ -135,15 +149,7 @@ API_KEY = (
 
 
 # ============================================================
-# TOKEN CONTROL
-#
-# These limits control LLM INPUT SIZE.
-#
-# They DO NOT control document storage.
-#
-# They DO NOT delete document pages.
-#
-# They DO NOT shorten the document that Review must display.
+# NORMAL REQUEST LIMITS
 # ============================================================
 
 MAX_SYSTEM_PROMPT_CHARS = 18000
@@ -166,30 +172,48 @@ MAX_OUTPUT_TOKENS = 800
 
 
 # ============================================================
-# REVIEW / DOCUMENT INFORMATION
+# DOCUMENT GENERATION LIMITS
 #
-# These are deliberately separate from normal prompt limits.
+# These are NOT document-length limits.
 #
-# A complete document may be larger than what is suitable for
-# one LLM request.
+# They control the size of EACH individual Groq generation.
 #
-# The document must therefore remain in application state.
+# The final assembled document may be much larger.
 # ============================================================
 
-DOCUMENT_STATE_KEYS = {
-    "document",
-    "document_content",
-    "document_text",
-    "pages",
-    "page",
-    "page_count",
-    "review",
-    "review_content",
-    "review_pages",
-    "uploaded_document",
-    "uploaded_content",
-    "source_document",
+DOCUMENT_SECTION_OUTPUT_TOKENS = 700
+
+DOCUMENT_SECTION_INSTRUCTION_CHARS = 4500
+
+DOCUMENT_RECENT_CONTEXT_CHARS = 2200
+
+DOCUMENT_MAX_SECTIONS = 30
+
+DOCUMENT_MIN_SECTION_CHARS = 250
+
+
+# ============================================================
+# DOCUMENT EVENTS
+# ============================================================
+
+DOCUMENT_CREATION_EVENTS = {
+    "form_submitted_create_work",
+    "create_work",
+    "document_create",
+    "document_generation",
+    "generate_document",
 }
+
+DOCUMENT_CORRECTION_EVENTS = {
+    "review_correction",
+    "document_correction",
+    "revise_work",
+}
+
+DOCUMENT_EVENTS = (
+    DOCUMENT_CREATION_EVENTS
+    | DOCUMENT_CORRECTION_EVENTS
+)
 
 
 # ============================================================
@@ -232,7 +256,7 @@ def is_configured() -> bool:
 
 
 # ============================================================
-# SAFE TEXT NORMALIZATION
+# TEXT HELPERS
 # ============================================================
 
 def safe_text(
@@ -248,26 +272,20 @@ def safe_text(
     return str(value).strip()
 
 
-# ============================================================
-# PROMPT COMPACTION
-# ============================================================
-
 def compact_text(
     text: str | None,
     maximum: int,
 ) -> str:
     """
-    Compact LLM instructions safely.
+    Compact instructions/context destined for Groq.
 
     IMPORTANT:
-    This function is intended for prompts/instructions.
 
-    It must NOT be used to truncate the customer's actual
-    document content before the document is displayed.
+    This function is NEVER used on the assembled customer
+    document.
 
-    The first and last sections are retained so that both
-    general instructions and service-specific instructions
-    have a chance of remaining available.
+    It is only used on LLM instructions, context, history,
+    and other request metadata.
     """
 
     text = safe_text(text)
@@ -286,10 +304,8 @@ def compact_text(
 
     marker = (
         "\n\n"
-        "[INSTRUCTION COMPACTION: some non-essential "
-        "middle prompt text was omitted from this LLM "
-        "request. Customer document content is not "
-        "stored or deleted by this operation.]\n\n"
+        "[REQUEST COMPACTION: non-essential middle "
+        "instruction/context omitted from this LLM request.]\n\n"
     )
 
     available = maximum - len(marker)
@@ -314,21 +330,12 @@ def compact_text(
 
 
 # ============================================================
-# HISTORY CONTROL
+# HISTORY
 # ============================================================
 
 def compact_history(
     history: list[dict[str, str]],
 ) -> list[dict[str, str]]:
-    """
-    Return only the most recent useful conversation.
-
-    Conversation history is deliberately limited because
-    application state is authoritative for current workflow
-    information.
-
-    This does NOT affect the stored document.
-    """
 
     recent = history[
         -MAX_HISTORY_MESSAGES:
@@ -374,17 +381,6 @@ def compact_history(
 def prepare_application_context(
     context: str | None,
 ) -> str:
-    """
-    Prepare application state for an LLM request.
-
-    The context sent to Groq is intentionally bounded.
-
-    This function does NOT represent the customer's complete
-    document.
-
-    Complete document data must remain under application
-    control so the Review page can display every page.
-    """
 
     context = safe_text(context)
 
@@ -483,7 +479,7 @@ class AdaResponse:
         return service
 
     # ========================================================
-    # BILLING FACTS
+    # BILLING
     # ========================================================
 
     def get_billing_context(
@@ -581,7 +577,7 @@ class AdaResponse:
         )
 
     # ========================================================
-    # END-TO-END INTELLIGENCE
+    # INTELLIGENCE
     # ========================================================
 
     def get_intelligence_prompt(
@@ -619,16 +615,11 @@ Never invent:
 - delivery
 - download availability
 
-The customer may communicate using:
-- Nigerian English
-- informal English
-- Pidgin
-- imperfect English
-- short messages
-- follow-up corrections
+The customer may communicate using Nigerian English,
+informal English, Pidgin, imperfect English, short
+messages, and follow-up corrections.
 
-Understand the meaning rather than requiring perfect
-wording.
+Understand meaning rather than requiring perfect wording.
 
 APPLICATION STATE
 -----------------
@@ -674,89 +665,67 @@ This is not a rigid script.
 Reason about the current state and determine the
 appropriate next action.
 
-If the application already contains enough information,
-do not repeatedly ask for information that has already
-been supplied.
-
-If a service form has supplied the required information,
-use it.
+If enough information has already been supplied,
+do not repeatedly ask for it.
 
 REVIEW
 ------
 Review is a document operation.
 
 The complete customer document may contain multiple
-pages.
+pages or sections.
 
-Never assume that the entire document should be returned
-inside an LLM response.
+A document may be larger than one LLM response.
 
-Never delete, omit, invent, merge, or shorten document
-pages merely because an LLM request has a token limit.
+The application may therefore generate the document
+in controlled sequential sections.
 
-The application is responsible for retaining and displaying
-the complete document.
+Every generated section is part of the SAME customer
+document.
 
-When the application indicates that Review has been called,
-reason about the review request using the available state,
-but do not pretend that a page was removed merely because
-it was not included in the LLM prompt.
+Do not summarize a document merely because it is long.
 
-If the application supplies a page count or review state,
-respect it.
+Do not intentionally shorten requested work.
 
-If the application confirms that all pages are available,
-do not claim that some pages are missing.
+Do not replace requested work with an explanation.
+
+Preserve the customer's requested structure,
+requirements, tone, facts, and instructions.
 
 DOCUMENT INTEGRITY
 ------------------
-Customer document content must be preserved by the
-application.
+Never invent customer facts.
 
-LLM token control is NOT permission to destroy document
-content.
+Never invent a page that the customer did not request.
 
-Never invent a page.
+Never remove requested content merely because a single
+LLM response has a size limit.
 
-Never claim a page exists unless application state confirms
-it.
-
-Never claim a page was deleted unless application state
-confirms it.
-
-Never invent a download URL.
+Never claim that the application deleted content.
 
 PAYMENT
 -------
-Never claim payment has succeeded unless application state
-confirms payment.
+Never claim payment succeeded unless application state
+confirms it.
 
 APPROVAL
 --------
-Never claim customer approval unless application state
-confirms approval.
+Never claim approval unless application state confirms it.
 
 DELIVERY
 --------
-Never claim delivery has occurred unless application state
-confirms delivery.
+Never claim delivery occurred unless application state
+confirms it.
 
 DOWNLOAD
 --------
-Never invent a download link.
-
-If download state is not confirmed, do not say that a file
-is available for download.
+Never invent a download URL.
 
 CUSTOMER RESPONSE
 -----------------
-Answer the customer directly.
+Answer directly.
 
 Be warm, clear, practical, professional, and concise.
-
-Understand Nigerian context.
-
-Do not unnecessarily expose internal implementation.
 
 Never mention:
 - Groq
@@ -769,8 +738,9 @@ Never mention:
 - provider errors
 """
 
+
     # ========================================================
-    # BUILD SYSTEM PROMPT
+    # SYSTEM PROMPT
     # ========================================================
 
     def build_system_prompt(
@@ -788,7 +758,7 @@ Never mention:
         parts: list[str] = []
 
         # ----------------------------------------------------
-        # EXISTING CENTRAL PROMPT
+        # EXISTING PROMPT MANAGER
         # ----------------------------------------------------
 
         try:
@@ -826,7 +796,7 @@ Never mention:
             traceback.print_exc()
 
         # ----------------------------------------------------
-        # END-TO-END INTELLIGENCE
+        # ADA INTELLIGENCE
         # ----------------------------------------------------
 
         intelligence_prompt = (
@@ -843,7 +813,7 @@ Never mention:
         )
 
         # ----------------------------------------------------
-        # BILLING FACTS
+        # BILLING
         # ----------------------------------------------------
 
         billing = (
@@ -853,6 +823,7 @@ Never mention:
         )
 
         if billing:
+
             parts.append(
                 billing
             )
@@ -872,8 +843,7 @@ Never mention:
             parts.append(
                 "CURRENT APPLICATION STATE\n\n"
                 + prepared_context
-                + "\n\n"
-                "END CURRENT APPLICATION STATE"
+                + "\n\nEND CURRENT APPLICATION STATE"
             )
 
         # ----------------------------------------------------
@@ -888,7 +858,7 @@ Never mention:
             )
 
         # ----------------------------------------------------
-        # FINAL SYSTEM PROMPT
+        # FINAL PROMPT LIMIT
         # ----------------------------------------------------
 
         system_prompt = "\n\n".join(
@@ -897,12 +867,10 @@ Never mention:
             if part
         )
 
-        system_prompt = compact_text(
+        return compact_text(
             system_prompt,
             MAX_SYSTEM_PROMPT_CHARS,
         )
-
-        return system_prompt
 
     # ========================================================
     # HISTORY
@@ -975,12 +943,36 @@ Never mention:
         return messages
 
     # ========================================================
-    # REVIEW EVENT DETECTION
-    #
-    # This does NOT decide what the customer wants.
-    #
-    # It only recognizes an application state label so that
-    # the event can receive a dedicated instruction.
+    # EVENT NORMALIZATION
+    # ========================================================
+
+    @staticmethod
+    def normalize_event(
+        event: str | None,
+    ) -> str:
+
+        return safe_text(
+            event
+        ).lower()
+
+    # ========================================================
+    # DOCUMENT EVENT
+    # ========================================================
+
+    @classmethod
+    def is_document_event(
+        cls,
+        event: str | None,
+    ) -> bool:
+
+        event = cls.normalize_event(
+            event
+        )
+
+        return event in DOCUMENT_EVENTS
+
+    # ========================================================
+    # REVIEW EVENT
     # ========================================================
 
     @staticmethod
@@ -988,122 +980,460 @@ Never mention:
         event: str | None,
     ) -> bool:
 
-        event = safe_text(event).lower()
+        event = safe_text(
+            event
+        ).lower()
 
-        if not event:
-            return False
-
-        review_events = {
+        return event in {
             "review",
             "review_requested",
             "review_called",
             "open_review",
             "review_page",
             "review_document",
+            "review_correction",
         }
 
-        return event in review_events
-
     # ========================================================
-    # REVIEW INSTRUCTION
+    # EXTRACT PAGE COUNT
     # ========================================================
 
-    def build_review_instruction(
+    @staticmethod
+    def extract_page_count(
+        text: str,
+    ) -> int | None:
+        """
+        Look for an explicitly requested page count.
+
+        This does not decide what the customer wants.
+
+        It only retrieves a structural value that the
+        customer/application already supplied.
+        """
+
+        text = safe_text(text)
+
+        if not text:
+            return None
+
+        patterns = [
+            r"(?:number\s+of\s+pages|page\s+count|pages)"
+            r"\s*(?:is|=|:|-)?\s*(\d+)",
+
+            r"(\d+)\s*pages?\b",
+        ]
+
+        for pattern in patterns:
+
+            matches = re.findall(
+                pattern,
+                text,
+                flags=re.IGNORECASE,
+            )
+
+            if not matches:
+                continue
+
+            for match in matches:
+
+                try:
+
+                    value = int(
+                        match
+                    )
+
+                except Exception:
+
+                    continue
+
+                if 1 <= value <= DOCUMENT_MAX_SECTIONS:
+
+                    return value
+
+        return None
+
+    # ========================================================
+    # DOCUMENT SECTION INSTRUCTION
+    # ========================================================
+
+    def build_document_section_instruction(
         self,
-        context: str | None = None,
+        *,
+        original_request: str,
+        service: str | None,
+        section_number: int,
+        total_sections: int | None,
+        previous_tail: str,
+        correction: bool = False,
     ) -> str:
         """
-        Adds review-specific reasoning instructions.
+        Build a small controlled request for one section.
 
-        IMPORTANT:
-        This does not insert the complete document into the
-        Groq request.
+        The COMPLETE generated document is deliberately NOT
+        placed into this request.
 
-        The application must retain and display the complete
-        document independently.
+        Only the recent tail is supplied to preserve continuity.
         """
 
-        instruction = """
-CURRENT APPLICATION EVENT: REVIEW
+        if total_sections:
 
-The customer has entered the Review stage.
+            section_label = (
+                f"SECTION {section_number} OF "
+                f"{total_sections}"
+            )
 
-Review the current application state carefully.
+        else:
 
-The document may contain multiple pages.
+            section_label = (
+                f"SECTION {section_number}"
+            )
 
-The complete document belongs to the customer and must
-remain intact.
+        if correction:
 
-Do not shorten, summarize, remove, or invent document pages
-because of the LLM request limit.
+            opening = """
+You are revising an existing customer document.
 
-The Review page is responsible for displaying the complete
-document supplied by the application.
+Apply the customer's requested corrections while
+preserving all other important content.
 
-Your role here is to reason about the customer's review
-request and provide the appropriate customer-facing response.
+Generate the requested document sequentially.
 
-If the application confirms that all document pages are
-available, treat the complete document as available.
-
-Do not claim that pages are missing unless the application
-state explicitly says they are missing.
-
-Do not generate a fake download link.
-
-Do not claim approval or payment unless the application
-state confirms it.
+This request is one controlled generation section.
+Do not summarize the complete document.
 """
+
+        else:
+
+            opening = """
+You are preparing the customer's requested document.
+
+Generate the document sequentially.
+
+This request is one controlled generation section.
+Do not summarize the complete document.
+"""
+
+        instruction = f"""
+{opening}
+
+{section_label}
+
+SERVICE:
+{safe_text(service) or "Not specified"}
+
+CUSTOMER'S ORIGINAL REQUEST:
+{compact_text(original_request, 3500)}
+
+IMPORTANT:
+- Preserve customer-supplied facts.
+- Do not invent facts.
+- Follow the service-specific instructions.
+- Follow the existing document-quality instructions.
+- Continue naturally from the preceding section.
+- Do not repeat completed material unnecessarily.
+- Do not add commentary about the generation process.
+- Do not say that the response is incomplete.
+- Return document content only.
+"""
+
+        if previous_tail:
+
+            instruction += (
+                "\n\nEND OF PREVIOUS SECTION "
+                "FOR CONTINUITY ONLY:\n"
+                + compact_text(
+                    previous_tail,
+                    DOCUMENT_RECENT_CONTEXT_CHARS,
+                )
+                + "\n\n"
+                "Continue from this point."
+            )
+
+        if total_sections:
+
+            instruction += (
+                "\n\nThe requested document contains "
+                f"{total_sections} section(s). "
+                f"You are currently generating section "
+                f"{section_number}."
+            )
+
+        else:
+
+            instruction += (
+                "\n\nContinue generating the document "
+                "until this section is complete. "
+                "The application will request additional "
+                "sections when necessary."
+            )
 
         return compact_text(
             instruction,
-            4000,
+            DOCUMENT_SECTION_INSTRUCTION_CHARS,
         )
 
     # ========================================================
-    # RESPOND
+    # CALL GROQ
     # ========================================================
 
-    def respond(
+    def call_groq(
         self,
-        message: str,
-        service: str | None = None,
-        event: str | None = None,
-        context: str | None = None,
+        *,
+        messages: list[dict[str, str]],
+        output_tokens: int,
     ) -> str:
-
-        message = safe_text(message)
-
-        if not message:
-
-            return (
-                "Please tell me what you would "
-                "like me to help you with."
-            )
-
-        if service:
-            self.set_service(
-                service
-            )
-
-        active_service = (
-            self.normalize_service(
-                self.service
-            )
-        )
 
         client = get_client()
 
         if client is None:
 
-            return (
-                "The network connection is slow or unavailable. "
-                "Please try again."
+            raise RuntimeError(
+                "Groq client is not configured."
             )
 
+        response = (
+            client.chat.completions.create(
+                model=MODEL,
+                messages=messages,
+                temperature=0.3,
+                max_tokens=output_tokens,
+            )
+        )
+
+        if not response.choices:
+
+            return ""
+
+        choice = response.choices[0]
+
+        if not choice.message:
+
+            return ""
+
+        return safe_text(
+            choice.message.content
+        )
+
+    # ========================================================
+    # GENERATE ONE DOCUMENT SECTION
+    # ========================================================
+
+    def generate_document_section(
+        self,
+        *,
+        system_prompt: str,
+        original_request: str,
+        service: str | None,
+        section_number: int,
+        total_sections: int | None,
+        previous_tail: str,
+        correction: bool = False,
+    ) -> str:
+
+        section_instruction = (
+            self.build_document_section_instruction(
+                original_request=original_request,
+                service=service,
+                section_number=section_number,
+                total_sections=total_sections,
+                previous_tail=previous_tail,
+                correction=correction,
+            )
+        )
+
+        messages = [
+            {
+                "role": "system",
+                "content": system_prompt,
+            },
+            {
+                "role": "user",
+                "content": section_instruction,
+            },
+        ]
+
+        print()
+        print(
+            "DOCUMENT SECTION REQUEST"
+        )
+        print(
+            "Section:",
+            section_number,
+        )
+        print(
+            "Total sections:",
+            total_sections
+            if total_sections
+            else "open-ended",
+        )
+        print(
+            "Correction:",
+            correction,
+        )
+        print()
+
+        return self.call_groq(
+            messages=messages,
+            output_tokens=DOCUMENT_SECTION_OUTPUT_TOKENS,
+        )
+
+    # ========================================================
+    # DOCUMENT CONTINUATION CHECK
+    # ========================================================
+
+    @staticmethod
+    def section_needs_continuation(
+        section: str,
+        *,
+        total_sections: int | None,
+        section_number: int,
+    ) -> bool:
+        """
+        Decide whether another generation section is needed.
+
+        For an explicitly requested number of pages/sections,
+        the requested count controls completion.
+
+        For open-ended documents, a conservative continuation
+        check is used.
+        """
+
+        if not section:
+            return True
+
+        if total_sections is not None:
+
+            return (
+                section_number
+                < total_sections
+            )
+
+        tail = section[-1200:].lower()
+
+        continuation_markers = (
+            "[continue]",
+            "to be continued",
+            "continued",
+        )
+
+        if any(
+            marker in tail
+            for marker in continuation_markers
+        ):
+            return True
+
+        # A response that is extremely short may indicate that
+        # the model stopped early.
+        if len(section) < DOCUMENT_MIN_SECTION_CHARS:
+
+            return True
+
+        return False
+
+    # ========================================================
+    # CLEAN SECTION
+    # ========================================================
+
+    @staticmethod
+    def clean_document_section(
+        section: str,
+    ) -> str:
+
+        section = safe_text(
+            section
+        )
+
+        if not section:
+            return ""
+
+        # Remove accidental continuation control markers.
+        section = re.sub(
+            r"\[\s*continue\s*\]",
+            "",
+            section,
+            flags=re.IGNORECASE,
+        )
+
+        section = re.sub(
+            r"\bto be continued\b",
+            "",
+            section,
+            flags=re.IGNORECASE,
+        )
+
+        return section.strip()
+
+    # ========================================================
+    # ASSEMBLE DOCUMENT
+    # ========================================================
+
+    @staticmethod
+    def assemble_document(
+        sections: list[str],
+    ) -> str:
+        """
+        IMPORTANT:
+
+        There is deliberately NO compact_text() here.
+
+        The complete document must remain intact.
+        """
+
+        complete_sections: list[str] = []
+
+        for section in sections:
+
+            section = safe_text(
+                section
+            )
+
+            if not section:
+                continue
+
+            complete_sections.append(
+                section
+            )
+
+        return "\n\n".join(
+            complete_sections
+        ).strip()
+
+    # ========================================================
+    # DOCUMENT GENERATION
+    # ========================================================
+
+    def generate_complete_document(
+        self,
+        *,
+        original_request: str,
+        service: str | None,
+        context: str | None,
+        correction: bool = False,
+        existing_work: str | None = None,
+    ) -> str:
+        """
+        Generate a complete document through multiple controlled
+        LLM requests.
+
+        CRITICAL:
+
+        The final document is assembled in Python.
+
+        No final-document compacting is performed.
+        """
+
+        original_request = safe_text(
+            original_request
+        )
+
+        active_service = (
+            self.normalize_service(
+                service
+            )
+        )
+
         # ----------------------------------------------------
-        # SYSTEM PROMPT
+        # BASE INTELLIGENCE
         # ----------------------------------------------------
 
         system_prompt = (
@@ -1114,8 +1444,272 @@ state confirms it.
         )
 
         # ----------------------------------------------------
-        # MESSAGES
+        # DETERMINE EXPLICIT SECTION COUNT
         # ----------------------------------------------------
+
+        total_sections = (
+            self.extract_page_count(
+                original_request
+            )
+        )
+
+        # ----------------------------------------------------
+        # EXISTING WORK FOR CORRECTIONS
+        #
+        # Only a controlled tail is sent to each request.
+        #
+        # The full existing document remains in application
+        # memory and is assembled from the generated sections.
+        # ----------------------------------------------------
+
+        previous_tail = ""
+
+        if existing_work:
+
+            previous_tail = safe_text(
+                existing_work
+            )[
+                -DOCUMENT_RECENT_CONTEXT_CHARS:
+            ]
+
+        sections: list[str] = []
+
+        section_number = 1
+
+        # ----------------------------------------------------
+        # SAFETY STOP
+        #
+        # This is a generation-call safety ceiling, not a
+        # customer document-size ceiling.
+        # ----------------------------------------------------
+
+        maximum_sections = (
+            total_sections
+            if total_sections is not None
+            else DOCUMENT_MAX_SECTIONS
+        )
+
+        while (
+            section_number
+            <= maximum_sections
+        ):
+
+            try:
+
+                section = (
+                    self.generate_document_section(
+                        system_prompt=system_prompt,
+                        original_request=original_request,
+                        service=active_service,
+                        section_number=section_number,
+                        total_sections=total_sections,
+                        previous_tail=previous_tail,
+                        correction=correction,
+                    )
+                )
+
+            except Exception as error:
+
+                print()
+                print("=" * 70)
+                print(
+                    "DOCUMENT SECTION ERROR"
+                )
+                print("=" * 70)
+                print(
+                    "Section:",
+                    section_number,
+                )
+                print(
+                    "Error type:",
+                    type(error).__name__,
+                )
+                print(
+                    "Error:",
+                    str(error),
+                )
+                print("=" * 70)
+
+                traceback.print_exc()
+
+                raise
+
+            section = (
+                self.clean_document_section(
+                    section
+                )
+            )
+
+            if not section:
+
+                print(
+                    "EMPTY DOCUMENT SECTION:",
+                    section_number,
+                )
+
+                break
+
+            sections.append(
+                section
+            )
+
+            # ------------------------------------------------
+            # ONLY THE TAIL IS USED FOR THE NEXT LLM REQUEST.
+            #
+            # The complete assembled document remains untouched
+            # in `sections`.
+            # ------------------------------------------------
+
+            previous_tail = section[
+                -DOCUMENT_RECENT_CONTEXT_CHARS:
+            ]
+
+            print(
+                "Generated section characters:",
+                len(section),
+            )
+
+            print(
+                "Total assembled sections:",
+                len(sections),
+            )
+
+            # ------------------------------------------------
+            # EXPLICIT PAGE/SECTION COUNT
+            # ------------------------------------------------
+
+            if total_sections is not None:
+
+                if section_number >= total_sections:
+
+                    break
+
+            else:
+
+                # ------------------------------------------------
+                # OPEN-ENDED DOCUMENT
+                #
+                # If the model appears complete, stop.
+                #
+                # Otherwise continue.
+                # ------------------------------------------------
+
+                if not self.section_needs_continuation(
+                    section,
+                    total_sections=None,
+                    section_number=section_number,
+                ):
+
+                    break
+
+            section_number += 1
+
+        complete_document = (
+            self.assemble_document(
+                sections
+            )
+        )
+
+        if not complete_document:
+
+            raise RuntimeError(
+                "Document generation returned no document content."
+            )
+
+        print()
+        print("=" * 70)
+        print(
+            "COMPLETE DOCUMENT ASSEMBLED"
+        )
+        print("=" * 70)
+        print(
+            "Sections:",
+            len(sections),
+        )
+        print(
+            "Requested sections:",
+            total_sections
+            if total_sections
+            else "not explicitly specified",
+        )
+        print(
+            "Complete document characters:",
+            len(complete_document),
+        )
+        print("=" * 70)
+        print()
+
+        # ----------------------------------------------------
+        # IMPORTANT:
+        #
+        # NO compact_text()
+        # NO MAX_SYSTEM_PROMPT_CHARS
+        # NO MAX_USER_MESSAGE_CHARS
+        #
+        # The complete document must be returned intact.
+        # ----------------------------------------------------
+
+        return complete_document
+
+    # ========================================================
+    # DOCUMENT RESPONSE
+    # ========================================================
+
+    def respond_with_document(
+        self,
+        *,
+        message: str,
+        service: str | None,
+        event: str | None,
+        context: str | None,
+    ) -> str:
+
+        event_normalized = (
+            self.normalize_event(
+                event
+            )
+        )
+
+        correction = (
+            event_normalized
+            in DOCUMENT_CORRECTION_EVENTS
+        )
+
+        return (
+            self.generate_complete_document(
+                original_request=message,
+                service=service,
+                context=context,
+                correction=correction,
+                existing_work=None,
+            )
+        )
+
+    # ========================================================
+    # NORMAL RESPONSE
+    # ========================================================
+
+    def respond_normal(
+        self,
+        *,
+        message: str,
+        service: str | None,
+        event: str | None,
+        context: str | None,
+    ) -> str:
+
+        active_service = (
+            self.normalize_service(
+                service
+            )
+        )
+
+        system_prompt = (
+            self.build_system_prompt(
+                service=active_service,
+                context=context,
+            )
+        )
 
         messages = (
             self.build_messages(
@@ -1123,51 +1717,24 @@ state confirms it.
             )
         )
 
-        # ----------------------------------------------------
-        # APPLICATION EVENT
-        # ----------------------------------------------------
-
-        current_event = safe_text(event)
+        current_event = safe_text(
+            event
+        )
 
         if current_event:
-
-            event_instruction = (
-                "CURRENT APPLICATION EVENT\n"
-                + compact_text(
-                    current_event,
-                    MAX_EVENT_CHARS,
-                )
-            )
-
-            messages.append(
-                {
-                    "role": "system",
-                    "content": event_instruction,
-                }
-            )
-
-        # ----------------------------------------------------
-        # REVIEW-SPECIFIC REASONING
-        # ----------------------------------------------------
-
-        if self.is_review_event(
-            current_event
-        ):
 
             messages.append(
                 {
                     "role": "system",
                     "content": (
-                        self.build_review_instruction(
-                            context=context
+                        "CURRENT APPLICATION EVENT\n"
+                        + compact_text(
+                            current_event,
+                            MAX_EVENT_CHARS,
                         )
                     ),
                 }
             )
-
-        # ----------------------------------------------------
-        # CUSTOMER MESSAGE
-        # ----------------------------------------------------
 
         messages.append(
             {
@@ -1179,108 +1746,175 @@ state confirms it.
             }
         )
 
-        # ----------------------------------------------------
-        # DEBUG INFORMATION
-        # ----------------------------------------------------
+        response = self.call_groq(
+            messages=messages,
+            output_tokens=MAX_OUTPUT_TOKENS,
+        )
 
-        print()
-        print("-" * 70)
-        print("ADA RESPONSE REQUEST")
-        print("-" * 70)
-        print(
-            "Model:",
-            MODEL,
+        if not response:
+
+            return (
+                "I could not get a response right now. "
+                "Please try again."
+            )
+
+        self.add_history(
+            "user",
+            message,
         )
-        print(
-            "Service:",
-            active_service,
+
+        self.add_history(
+            "assistant",
+            response,
         )
-        print(
-            "Event:",
-            current_event or None,
+
+        return response
+
+    # ========================================================
+    # MAIN RESPOND
+    # ========================================================
+
+    def respond(
+        self,
+        message: str,
+        service: str | None = None,
+        event: str | None = None,
+        context: str | None = None,
+    ) -> str:
+
+        message = safe_text(
+            message
         )
-        print(
-            "History messages:",
-            len(
-                compact_history(
-                    self.history
+
+        if not message:
+
+            return (
+                "Please tell me what you would "
+                "like me to help you with."
+            )
+
+        if service:
+
+            self.set_service(
+                service
+            )
+
+        active_service = (
+            self.normalize_service(
+                self.service
+            )
+        )
+
+        if get_client() is None:
+
+            return (
+                "The network connection is slow or unavailable. "
+                "Please try again."
+            )
+
+        event_normalized = (
+            self.normalize_event(
+                event
+            )
+        )
+
+        # ====================================================
+        # DOCUMENT GENERATION PATH
+        # ====================================================
+        #
+        # This is the critical change.
+        #
+        # A large requested document does NOT go through the
+        # ordinary single-response path.
+        #
+        # It is generated section by section and assembled
+        # before being returned.
+        # ====================================================
+
+        if event_normalized in DOCUMENT_EVENTS:
+
+            try:
+
+                complete_document = (
+                    self.respond_with_document(
+                        message=message,
+                        service=active_service,
+                        event=event_normalized,
+                        context=context,
+                    )
                 )
-            ),
-        )
-        print(
-            "Review event:",
-            self.is_review_event(
-                current_event
-            ),
-        )
-        print("-" * 70)
 
-        # ----------------------------------------------------
-        # GROQ REQUEST
-        # ----------------------------------------------------
+                if complete_document:
+
+                    # Store only a compact conversation record.
+                    #
+                    # The complete document itself is NOT passed
+                    # back into the normal conversation history.
+                    self.add_history(
+                        "user",
+                        message,
+                    )
+
+                    self.add_history(
+                        "assistant",
+                        (
+                            "[Complete customer document "
+                            "prepared and assembled.]"
+                        ),
+                    )
+
+                    return complete_document
+
+                return (
+                    "I could not prepare the requested work "
+                    "right now. Please try again."
+                )
+
+            except Exception as error:
+
+                print()
+                print("=" * 70)
+                print(
+                    "ADA DOCUMENT GENERATION ERROR"
+                )
+                print("=" * 70)
+                print(
+                    "Error type:",
+                    type(error).__name__,
+                )
+                print(
+                    "Error:",
+                    str(error),
+                )
+                print("=" * 70)
+
+                traceback.print_exc()
+
+                return (
+                    "I could not prepare the requested work "
+                    "right now. Please try again."
+                )
+
+        # ====================================================
+        # NORMAL LLM RESPONSE
+        # ====================================================
 
         try:
 
-            response = (
-                client.chat.completions.create(
-                    model=MODEL,
-                    messages=messages,
-                    temperature=0.3,
-                    max_tokens=MAX_OUTPUT_TOKENS,
-                )
+            return self.respond_normal(
+                message=message,
+                service=active_service,
+                event=event,
+                context=context,
             )
-
-            reply = ""
-
-            if response.choices:
-
-                choice = (
-                    response.choices[0]
-                )
-
-                if choice.message:
-
-                    reply = safe_text(
-                        choice.message.content
-                    )
-
-            if not reply:
-
-                return (
-                    "I could not get a response right now. "
-                    "Please try again."
-                )
-
-            # ------------------------------------------------
-            # STORE ONLY CONVERSATION
-            #
-            # The document itself is NOT stored here as chat
-            # history.
-            # ------------------------------------------------
-
-            self.add_history(
-                "user",
-                message,
-            )
-
-            self.add_history(
-                "assistant",
-                reply,
-            )
-
-            print()
-            print(
-                "AdaResponse returned successfully."
-            )
-            print()
-
-            return reply
 
         except Exception as error:
 
             print()
             print("=" * 70)
-            print("ADA RESPONSE ERROR")
+            print(
+                "ADA RESPONSE ERROR"
+            )
             print("=" * 70)
             print(
                 "Error type:",
@@ -1293,12 +1927,6 @@ state confirms it.
             print("=" * 70)
 
             traceback.print_exc()
-
-            # ------------------------------------------------
-            # CUSTOMER-FACING FALLBACK
-            #
-            # The real error remains visible in server logs.
-            # ------------------------------------------------
 
             return (
                 "The network connection is slow or unavailable. "
@@ -1314,8 +1942,12 @@ if __name__ == "__main__":
 
     print()
     print("=" * 70)
-    print("NAIJA POCKET BUSINESS CENTER")
-    print("ADA END-TO-END RESPONSE ENGINE")
+    print(
+        "NAIJA POCKET BUSINESS CENTER"
+    )
+    print(
+        "ADA END-TO-END RESPONSE ENGINE"
+    )
     print("=" * 70)
     print()
 
@@ -1414,48 +2046,53 @@ if __name__ == "__main__":
     )
 
     print(
-        "Complete Document Preservation:",
+        "Sequential Document Generation:",
         "ENABLED",
     )
 
     print(
-        "Review Page Preservation:",
+        "Complete Document Assembly:",
         "ENABLED",
     )
 
     print(
-        "Document Content Truncation:",
+        "Review Document Truncation:",
         "DISABLED",
     )
 
     print(
-        "Token Control:",
+        "Document Content Compaction:",
+        "DISABLED",
+    )
+
+    print(
+        "Normal Token Control:",
         "ENABLED",
     )
 
     print(
-        "Maximum System Prompt:",
+        "Normal Maximum System Prompt:",
         f"{MAX_SYSTEM_PROMPT_CHARS} characters",
     )
 
     print(
-        "Maximum Central Prompt:",
-        f"{MAX_CENTRAL_PROMPT_CHARS} characters",
-    )
-
-    print(
-        "Maximum Application Context:",
-        f"{MAX_CONTEXT_CHARS} characters",
-    )
-
-    print(
-        "Maximum History:",
+        "Normal Maximum History:",
         f"{MAX_HISTORY_MESSAGES} messages",
     )
 
     print(
-        "Maximum Output:",
+        "Normal Maximum Output:",
         f"{MAX_OUTPUT_TOKENS} tokens",
+    )
+
+    print(
+        "Document Section Output:",
+        f"{DOCUMENT_SECTION_OUTPUT_TOKENS} tokens",
+    )
+
+    print(
+        "Maximum Document Sections:",
+        DOCUMENT_MAX_SECTIONS,
     )
 
     print()
