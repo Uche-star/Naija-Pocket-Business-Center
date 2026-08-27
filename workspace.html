@@ -2,163 +2,4262 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
+
 <title>Naija Pocket Business Center</title>
-<style>
-*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{background:#000;color:#fff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}:root{--gold:#d4af37;--gold2:#f3d66b;--red:#b30000;--green:#168047;--border:rgba(212,175,55,.28)}.app{height:100dvh;display:flex;flex-direction:column;background:#000}.header{flex:0 0 auto;min-height:65px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#050505;border-bottom:1px solid var(--border);z-index:20}.brand{min-width:0}.brand-title{margin:0;color:var(--gold);font-size:clamp(18px,4vw,25px);font-weight:800}.brand-subtitle{margin-top:3px;color:#ccc;font-size:10px}.service-badge{max-width:46%;padding:7px 10px;background:#171717;border:1px solid rgba(212,175,55,.55);border-radius:999px;color:var(--gold2);font-size:10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.main{flex:1 1 auto;min-height:0;overflow:hidden;overflow-x:hidden;background:radial-gradient(circle at top,#181818 0,#080808 35%,#000 100%)}.main-inner{width:100%;height:100%;min-height:0;max-width:900px;margin:auto;padding:14px 10px 25px;overflow:hidden}.intro-card,.form-card,.review-header,.correction-card{border-radius:15px}.intro-card{margin-bottom:12px;padding:16px;background:linear-gradient(145deg,#191919,#0d0d0d);border:1px solid var(--border)}.intro-title,.review-title{margin:0;color:var(--gold2);font-weight:900}.intro-title{font-size:19px}.intro-text{margin:7px 0 0;color:#dedede;font-size:13px;line-height:1.6;white-space:pre-wrap}.price{display:inline-block;margin-top:10px;padding:7px 10px;background:rgba(212,175,55,.09);border:1px solid rgba(212,175,55,.3);border-radius:8px;color:var(--gold2);font-size:12px;font-weight:800}.form-card{background:#101010;border:1px solid rgba(255,255,255,.09);padding:15px}.form-heading{margin:0;font-size:17px}.form-description{margin:5px 0 14px;color:#a9a9a9;font-size:11px;line-height:1.5}.fields{display:flex;flex-direction:column;gap:12px}.field label{display:block;margin-bottom:5px;color:#e8e8e8;font-size:11px;font-weight:800}.required{color:#ff8585}.optional{color:#777;font-weight:500}.field input,.field textarea,.field select{width:100%;border:1px solid rgba(255,255,255,.14);border-radius:9px;background:#181818;color:#fff;outline:0;padding:11px;font-size:13px}.field textarea{min-height:85px;resize:vertical}.field input:focus,.field textarea:focus{border-color:rgba(212,175,55,.65)}.form-note{margin-top:12px;padding:10px;background:#151515;border-left:3px solid var(--gold);border-radius:7px;color:#bdbdbd;font-size:10px;line-height:1.5}.form-submit{width:100%;min-height:50px;margin-top:15px;border:0;border-radius:10px;background:var(--gold);color:#000;font-size:13px;font-weight:900}.form-submit:disabled{opacity:.45}.review-view{display:none}.review-view.show{display:block}.review-header{padding:16px;margin-bottom:11px;background:linear-gradient(145deg,#191919,#0d0d0d);border:1px solid rgba(212,175,55,.38)}.review-title{font-size:20px}.review-subtitle{margin:5px 0 0;color:#bdbdbd;font-size:11px;line-height:1.5}.work-card{background:#f7f7f7;color:#111;border-radius:11px;min-height:350px;padding:22px 17px;overflow-wrap:anywhere;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.work-content{white-space:pre-wrap;line-height:1.7;font-size:14px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.work-placeholder{color:#777;text-align:center;padding:70px 10px;user-select:none;-webkit-user-select:none}.correction-card{margin-top:12px;padding:14px;background:#111;border:1px solid rgba(255,255,255,.1)}.correction-title{margin:0 0 4px;font-size:14px}.correction-help{margin:0 0 9px;color:#999;font-size:10px;line-height:1.45}.correction-input{width:100%;min-height:100px;resize:vertical;padding:11px;background:#191919;color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:9px;outline:0}.review-actions,.payment-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}.review-button,.payment-buttons button{min-height:43px;border-radius:8px;font-size:11px;font-weight:850}.apply-button{background:#252525;color:#fff;border:1px solid rgba(255,255,255,.14)}.approve-button,.payment-report{background:var(--gold);color:#000;border:0}.download-button{width:100%;min-height:47px;margin-top:8px;border-radius:8px;background:#242424;color:#777;border:1px solid rgba(255,255,255,.1);font-size:11px;font-weight:850;cursor:not-allowed}.download-button.active{background:var(--green);color:#fff;border-color:var(--green);cursor:pointer}.payment-message{margin-top:8px;color:#858585;font-size:9px;text-align:center}.payment-panel{display:none;margin-top:11px;padding:13px;background:#121212;border:1px solid rgba(212,175,55,.38);border-radius:12px}.payment-panel.show{display:block}.payment-title{color:var(--gold2);font-size:13px;font-weight:900;margin-bottom:6px}.payment-details{color:#ddd;white-space:pre-wrap;font-size:11px;line-height:1.5}.payment-check{background:#282828;color:#fff;border:1px solid rgba(255,255,255,.13)}.bottom{flex:0 0 auto;padding:8px 9px calc(8px + env(safe-area-inset-bottom));background:#080808;border-top:1px solid var(--border);z-index:20}.bottom-inner{max-width:900px;margin:auto}.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:7px}.tool-button,.choose-service-button{min-height:39px;border-radius:8px;background:#181818;color:#fff;border:1px solid rgba(255,255,255,.13);font-size:10px;font-weight:800}.tool-button.gold{color:var(--gold2);border-color:rgba(212,175,55,.35)}.choose-service-button{width:100%;margin-bottom:7px;background:#000}.composer{display:flex;align-items:flex-end;gap:6px}.message-input{flex:1;min-width:0;min-height:45px;max-height:105px;resize:none;padding:11px;background:#171717;color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:9px;outline:0}.send-button{width:64px;min-height:45px;border:0;border-radius:9px;background:var(--gold);color:#000;font-size:11px;font-weight:900}.voice-recording{display:none;margin-bottom:6px;padding:7px;background:#190707;border:1px solid rgba(179,0,0,.55);border-radius:8px;color:#ff8c8c;font-size:10px;text-align:center}.voice-recording.show{display:block}.status{min-height:14px;margin-top:3px;color:#777;font-size:9px;text-align:center}.status.error{color:#ff7777}.status.success{color:#7bd99a}#fileInput{display:none}button:disabled{opacity:.45;cursor:not-allowed}
-/* READ-ONLY: ADA TIPS */
-#introText,.intro-card{user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-webkit-touch-callout:none}
 
 <style>
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+}
+
+body{
+    background:#000;
+    color:#fff;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+button,
+input,
+textarea,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+:root{
+    --gold:#d4af37;
+    --gold2:#f3d66b;
+    --green:#168047;
+    --red:#b30000;
+    --border:rgba(212,175,55,.28);
+}
+
 /* =========================================================
-   COMPLETE VIEWPORT / REVIEW FIX
-   The page itself never scrolls. Only the active work area
-   or form area may scroll. Bottom controls stay reachable.
+   APPLICATION SHELL
    ========================================================= */
+
+.app{
+    width:100%;
+    height:100dvh;
+    min-height:0;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+
+    background:#000;
+}
+
+/* =========================================================
+   FIXED HEADER
+   ========================================================= */
+
+.header{
+    flex:0 0 auto;
+
+    min-height:65px;
+
+    padding:
+        9px
+        12px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:10px;
+
+    background:#050505;
+
+    border-bottom:
+        1px solid
+        var(--border);
+
+    z-index:20;
+}
+
+.brand{
+    min-width:0;
+}
+
+.brand-title{
+    margin:0;
+
+    color:var(--gold);
+
+    font-size:
+        clamp(
+            18px,
+            4vw,
+            25px
+        );
+
+    font-weight:800;
+
+    line-height:1.2;
+}
+
+.brand-subtitle{
+    margin-top:3px;
+
+    color:#ccc;
+
+    font-size:10px;
+}
+
+.service-badge{
+    max-width:46%;
+
+    padding:
+        7px
+        10px;
+
+    background:#171717;
+
+    border:
+        1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .55
+        );
+
+    border-radius:999px;
+
+    color:var(--gold2);
+
+    font-size:10px;
+    font-weight:800;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+/* =========================================================
+   MAIN VIEWPORT
+   ========================================================= */
+
 .main{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    overflow:hidden !important;
-    overscroll-behavior:none !important;
+    flex:1 1 auto;
+
+    min-height:0;
+
+    width:100%;
+
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #181818 0,
+            #080808 35%,
+            #000 100%
+        );
 }
 
 .main-inner{
-    width:100% !important;
-    height:100% !important;
-    min-height:0 !important;
-    overflow:hidden !important;
-    display:flex !important;
-    flex-direction:column !important;
+    width:100%;
+    height:100%;
+
+    min-height:0;
+
+    max-width:900px;
+
+    margin:0 auto;
+
+    padding:
+        10px
+        10px
+        10px;
+
+    overflow:hidden;
+
+    display:flex;
+    flex-direction:column;
 }
+
+/* =========================================================
+   FORM VIEW
+   ========================================================= */
 
 #formView{
     flex:1 1 auto;
+
     min-height:0;
+
     overflow-y:auto;
     overflow-x:hidden;
+
     -webkit-overflow-scrolling:touch;
+
     overscroll-behavior:contain;
-    padding-bottom:12px;
+
+    padding-bottom:10px;
 }
+
+.intro-card,
+.form-card,
+.review-header,
+.correction-card{
+    border-radius:15px;
+}
+
+.intro-card{
+    margin-bottom:10px;
+
+    padding:15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #0d0d0d
+        );
+
+    border:
+        1px solid
+        var(--border);
+}
+
+.intro-title{
+    margin:0;
+
+    color:var(--gold2);
+
+    font-size:19px;
+
+    font-weight:900;
+
+    line-height:1.25;
+}
+
+.intro-text{
+    margin:7px 0 0;
+
+    color:#dedede;
+
+    font-size:13px;
+
+    line-height:1.6;
+
+    white-space:pre-wrap;
+
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+}
+
+.price{
+    display:inline-block;
+
+    margin-top:10px;
+
+    padding:
+        7px
+        10px;
+
+    background:
+        rgba(
+            212,
+            175,
+            55,
+            .09
+        );
+
+    border:
+        1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .3
+        );
+
+    border-radius:8px;
+
+    color:var(--gold2);
+
+    font-size:12px;
+
+    font-weight:800;
+}
+
+.form-card{
+    padding:15px;
+
+    background:#101010;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .09
+        );
+}
+
+.form-heading{
+    margin:0;
+
+    font-size:17px;
+
+    line-height:1.3;
+}
+
+.form-description{
+    margin:
+        5px
+        0
+        14px;
+
+    color:#a9a9a9;
+
+    font-size:11px;
+
+    line-height:1.5;
+}
+
+.fields{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+}
+
+.field label{
+    display:block;
+
+    margin-bottom:5px;
+
+    color:#e8e8e8;
+
+    font-size:11px;
+
+    font-weight:800;
+}
+
+.required{
+    color:#ff8585;
+}
+
+.optional{
+    color:#777;
+
+    font-weight:500;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .14
+        );
+
+    border-radius:9px;
+
+    background:#181818;
+
+    color:#fff;
+
+    outline:0;
+
+    padding:11px;
+
+    font-size:13px;
+}
+
+.field textarea{
+    min-height:85px;
+
+    resize:vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+    border-color:
+        rgba(
+            212,
+            175,
+            55,
+            .65
+        );
+}
+
+.form-note{
+    margin-top:12px;
+
+    padding:10px;
+
+    background:#151515;
+
+    border-left:
+        3px solid
+        var(--gold);
+
+    border-radius:7px;
+
+    color:#bdbdbd;
+
+    font-size:10px;
+
+    line-height:1.5;
+}
+
+.form-submit{
+    width:100%;
+
+    min-height:50px;
+
+    margin-top:15px;
+
+    border:0;
+
+    border-radius:10px;
+
+    background:var(--gold);
+
+    color:#000;
+
+    font-size:13px;
+
+    font-weight:900;
+}
+
+/* =========================================================
+   REVIEW VIEW
+
+   IMPORTANT:
+   The review view itself never becomes the page scroll.
+
+   The document area receives all available middle space.
+   The generated document can therefore be any length and
+   is independently scrollable from top to bottom.
+
+   Header and bottom controls remain usable.
+   ========================================================= */
 
 .review-view{
     flex:1 1 auto;
+
     min-height:0;
+
     height:100%;
-    overflow:hidden;
+
     display:none;
+
     flex-direction:column;
+
+    overflow:hidden;
 }
 
 .review-view.show{
     display:flex;
 }
 
+/* =========================================================
+   REVIEW HEADER
+   ========================================================= */
+
 .review-header{
     flex:0 0 auto;
+
+    margin-bottom:8px;
+
+    padding:
+        11px
+        14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #0d0d0d
+        );
+
+    border:
+        1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .38
+        );
 }
+
+.review-title{
+    margin:0;
+
+    color:var(--gold2);
+
+    font-size:20px;
+
+    font-weight:900;
+
+    line-height:1.2;
+}
+
+.review-subtitle{
+    margin:
+        5px
+        0
+        0;
+
+    color:#bdbdbd;
+
+    font-size:11px;
+
+    line-height:1.45;
+}
+
+/* =========================================================
+   DOCUMENT CONTAINER
+
+   This is the critical fix.
+
+   The card is a flex child with min-height:0.
+   The content inside it owns the vertical scroll.
+
+   No max-height based on the document itself.
+   No fixed document height.
+   No clipping of the generated response.
+   ========================================================= */
 
 .work-card{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    display:flex !important;
-    flex-direction:column !important;
-    overflow:hidden !important;
+    flex:
+        1 1
+        0;
+
+    min-height:0;
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow:hidden;
+
+    background:#fff;
+
+    color:#111;
+
+    border-radius:11px;
+
+    box-shadow:
+        0
+        10px
+        30px
+        rgba(
+            0,
+            0,
+            0,
+            .35
+        );
 }
+
+.work-card-header{
+    flex:0 0 auto;
+
+    min-height:32px;
+
+    padding:
+        0
+        12px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:8px;
+
+    background:#e7e7e7;
+
+    border-bottom:
+        1px solid
+        #cfcfcf;
+
+    color:#555;
+
+    font-size:9px;
+
+    font-weight:800;
+}
+
+.work-card-header span:last-child{
+    color:#888;
+
+    font-weight:600;
+}
+
+/*
+   ONLY THIS AREA SCROLLS.
+
+   A 100-page document remains available from the
+   first line to the final line.
+*/
 
 .work-content{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    max-height:none !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
+    flex:
+        1 1
+        0;
+
+    min-height:0;
+
+    width:100%;
+
+    padding:
+        22px
+        17px
+        40px;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
     -webkit-overflow-scrolling:touch;
+
     overscroll-behavior:contain;
+
+    background:#fff;
+
+    color:#111;
+
+    font-size:14px;
+
+    line-height:1.7;
+
+    white-space:pre-wrap;
+
     overflow-wrap:anywhere;
+
     word-break:break-word;
+
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
 }
 
+.work-content h1,
+.work-content h2,
+.work-content h3,
+.work-content h4,
+.work-content h5,
+.work-content h6{
+    color:#111;
+}
+
+.work-content p{
+    margin:
+        0
+        0
+        12px;
+}
+
+.work-content ul,
+.work-content ol{
+    margin:
+        8px
+        0
+        15px
+        25px;
+
+    padding:0;
+}
+
+.work-content li{
+    margin:
+        5px
+        0;
+}
+
+.work-content table{
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin:
+        14px
+        0;
+
+    font-size:13px;
+}
+
+.work-content th,
+.work-content td{
+    border:
+        1px solid
+        #999;
+
+    padding:8px;
+
+    text-align:left;
+
+    vertical-align:top;
+
+    overflow-wrap:anywhere;
+}
+
+.work-content th{
+    background:#eee;
+
+    font-weight:800;
+}
+
+.work-content blockquote{
+    margin:
+        14px
+        0;
+
+    padding:
+        10px
+        14px;
+
+    border-left:
+        4px solid
+        #777;
+
+    background:#f0f0f0;
+}
+
+.work-content pre{
+    margin:
+        12px
+        0;
+
+    padding:12px;
+
+    white-space:pre-wrap;
+
+    overflow-wrap:anywhere;
+
+    word-break:break-word;
+
+    background:#eee;
+
+    border-radius:6px;
+
+    font-family:monospace;
+
+    font-size:12px;
+}
+
+.work-placeholder{
+    padding:
+        70px
+        10px;
+
+    color:#777;
+
+    text-align:center;
+}
+
+/* =========================================================
+   CORRECTION AREA
+   ========================================================= */
+
 .correction-card{
-    flex:0 0 auto;
-    max-height:35%;
+    flex:
+        0 1
+        auto;
+
+    min-height:0;
+
+    max-height:31%;
+
+    margin-top:8px;
+
+    padding:12px;
+
     overflow-y:auto;
+    overflow-x:hidden;
+
     -webkit-overflow-scrolling:touch;
+
+    background:#111;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .10
+        );
+}
+
+.correction-title{
+    margin:
+        0
+        0
+        4px;
+
+    font-size:14px;
+}
+
+.correction-help{
+    margin:
+        0
+        0
+        8px;
+
+    color:#999;
+
+    font-size:10px;
+
+    line-height:1.45;
+}
+
+.correction-input{
+    width:100%;
+
+    min-height:76px;
+
+    max-height:140px;
+
+    resize:vertical;
+
+    padding:11px;
+
+    background:#191919;
+
+    color:#fff;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .15
+        );
+
+    border-radius:9px;
+
+    outline:0;
+}
+
+.review-actions{
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:7px;
+
+    margin-top:8px;
+}
+
+.review-button{
+    min-height:43px;
+
+    border-radius:8px;
+
+    font-size:11px;
+
+    font-weight:850;
+}
+
+.apply-button{
+    background:#252525;
+
+    color:#fff;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .14
+        );
+}
+
+.approve-button{
+    background:var(--gold);
+
+    color:#000;
+
+    border:0;
+}
+
+/* =========================================================
+   PAYMENT / DOWNLOAD
+   ========================================================= */
+
+.download-button{
+    flex:0 0 auto;
+
+    width:100%;
+
+    min-height:45px;
+
+    margin-top:7px;
+
+    border-radius:8px;
+
+    background:#242424;
+
+    color:#777;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .1
+        );
+
+    font-size:11px;
+
+    font-weight:850;
+
+    cursor:not-allowed;
+}
+
+.download-button.active{
+    background:var(--green);
+
+    color:#fff;
+
+    border-color:var(--green);
+
+    cursor:pointer;
+}
+
+.payment-message{
+    flex:0 0 auto;
+
+    margin-top:5px;
+
+    color:#858585;
+
+    font-size:9px;
+
+    text-align:center;
 }
 
 .payment-panel{
-    flex:0 0 auto;
-    max-height:30%;
+    flex:
+        0 1
+        auto;
+
+    min-height:0;
+
+    max-height:25%;
+
+    display:none;
+
+    margin-top:8px;
+
+    padding:12px;
+
     overflow-y:auto;
+
     -webkit-overflow-scrolling:touch;
+
+    background:#121212;
+
+    border:
+        1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .38
+        );
+
+    border-radius:12px;
 }
 
-@media (max-height:700px){
-    .header{min-height:58px;padding:7px 10px}
-    .bottom{padding-top:6px}
-    .tool-button,.choose-service-button{min-height:35px}
-    .message-input,.send-button{min-height:42px}
-    .review-header{padding:10px}
-    .review-subtitle{display:none}
-    .correction-card{max-height:30%}
+.payment-panel.show{
+    display:block;
 }
+
+.payment-title{
+    margin-bottom:6px;
+
+    color:var(--gold2);
+
+    font-size:13px;
+
+    font-weight:900;
+}
+
+.payment-details{
+    color:#ddd;
+
+    white-space:pre-wrap;
+
+    font-size:11px;
+
+    line-height:1.5;
+}
+
+.payment-buttons{
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:7px;
+
+    margin-top:8px;
+}
+
+.payment-buttons button{
+    min-height:40px;
+
+    border-radius:8px;
+
+    font-size:10px;
+
+    font-weight:850;
+}
+
+.payment-report{
+    background:var(--gold);
+
+    color:#000;
+
+    border:0;
+}
+
+.payment-check{
+    background:#282828;
+
+    color:#fff;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .13
+        );
+}
+
+/* =========================================================
+   FIXED BOTTOM CONTROLS
+   ========================================================= */
+
+.bottom{
+    flex:0 0 auto;
+
+    padding:
+        7px
+        9px
+        calc(
+            7px
+            +
+            env(
+                safe-area-inset-bottom
+            )
+        );
+
+    background:#080808;
+
+    border-top:
+        1px solid
+        var(--border);
+
+    z-index:20;
+}
+
+.bottom-inner{
+    width:100%;
+
+    max-width:900px;
+
+    margin:0 auto;
+}
+
+.tools{
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:6px;
+
+    margin-bottom:6px;
+}
+
+.tool-button,
+.choose-service-button{
+    min-height:38px;
+
+    border-radius:8px;
+
+    background:#181818;
+
+    color:#fff;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .13
+        );
+
+    font-size:10px;
+
+    font-weight:800;
+}
+
+.tool-button.gold{
+    color:var(--gold2);
+
+    border-color:
+        rgba(
+            212,
+            175,
+            55,
+            .35
+        );
+}
+
+.choose-service-button{
+    width:100%;
+
+    margin-bottom:6px;
+
+    background:#000;
+}
+
+.composer{
+    display:flex;
+
+    align-items:flex-end;
+
+    gap:6px;
+}
+
+.message-input{
+    flex:1 1 auto;
+
+    min-width:0;
+
+    min-height:43px;
+
+    max-height:105px;
+
+    resize:none;
+
+    padding:10px;
+
+    background:#171717;
+
+    color:#fff;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .16
+        );
+
+    border-radius:9px;
+
+    outline:0;
+
+    line-height:1.35;
+}
+
+.send-button{
+    flex:0 0 64px;
+
+    min-height:43px;
+
+    border:0;
+
+    border-radius:9px;
+
+    background:var(--gold);
+
+    color:#000;
+
+    font-size:11px;
+
+    font-weight:900;
+}
+
+.voice-recording{
+    display:none;
+
+    margin-bottom:6px;
+
+    padding:7px;
+
+    background:#190707;
+
+    border:
+        1px solid
+        rgba(
+            179,
+            0,
+            0,
+            .55
+        );
+
+    border-radius:8px;
+
+    color:#ff8c8c;
+
+    font-size:10px;
+
+    text-align:center;
+}
+
+.voice-recording.show{
+    display:block;
+}
+
+.status{
+    min-height:13px;
+
+    margin-top:3px;
+
+    color:#777;
+
+    font-size:9px;
+
+    text-align:center;
+}
+
+.status.error{
+    color:#ff7777;
+}
+
+.status.success{
+    color:#7bd99a;
+}
+
+#fileInput{
+    display:none;
+}
+
+/* =========================================================
+   SHORT SCREENS
+   ========================================================= */
+
+@media (max-height:720px){
+
+    .header{
+        min-height:57px;
+
+        padding:
+            6px
+            10px;
+    }
+
+    .brand-title{
+        font-size:18px;
+    }
+
+    .brand-subtitle{
+        display:none;
+    }
+
+    .main-inner{
+        padding:
+            7px
+            7px
+            7px;
+    }
+
+    .review-header{
+        padding:
+            8px
+            11px;
+    }
+
+    .review-subtitle{
+        display:none;
+    }
+
+    .correction-card{
+        max-height:28%;
+    }
+
+    .correction-input{
+        min-height:58px;
+    }
+
+    .download-button{
+        min-height:40px;
+    }
+
+    .tool-button,
+    .choose-service-button{
+        min-height:34px;
+    }
+
+    .message-input,
+    .send-button{
+        min-height:40px;
+    }
+
+    .bottom{
+        padding-top:5px;
+    }
+}
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
 
 @media (max-width:480px){
-    .main-inner{padding:9px 7px 9px}
-    .correction-card{max-height:32%}
-    .payment-panel{max-height:28%}
+
+    .header{
+        padding:
+            7px
+            8px;
+    }
+
+    .service-badge{
+        max-width:42%;
+
+        padding:
+            6px
+            8px;
+
+        font-size:9px;
+    }
+
+    .main-inner{
+        padding:
+            6px
+            6px
+            6px;
+    }
+
+    .review-header{
+        margin-bottom:6px;
+
+        padding:
+            8px
+            10px;
+    }
+
+    .review-title{
+        font-size:17px;
+    }
+
+    .work-content{
+        padding:
+            17px
+            13px
+            30px;
+
+        font-size:13px;
+
+        line-height:1.65;
+    }
+
+    .correction-card{
+        margin-top:6px;
+
+        padding:9px;
+
+        max-height:27%;
+    }
+
+    .correction-help{
+        display:none;
+    }
+
+    .review-actions{
+        gap:5px;
+    }
+
+    .review-button{
+        min-height:39px;
+
+        font-size:10px;
+    }
+
+    .payment-panel{
+        max-height:23%;
+    }
+
+    .tools{
+        gap:4px;
+    }
+
+    .tool-button,
+    .choose-service-button{
+        font-size:9px;
+    }
+
+    .send-button{
+        flex-basis:58px;
+    }
+}
+
+/* =========================================================
+   READ-ONLY CUSTOMER DISPLAY
+   ========================================================= */
+
+#introCard,
+#introText,
+#workCard,
+#workContent{
+    user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    -webkit-touch-callout:none;
 }
 </style>
-</style>
 </head>
+
 <body>
+
 <div class="app">
-<header class="header"><div class="brand"><h1 class="brand-title">Naija Pocket Business Center</h1><div class="brand-subtitle">Your Business Center</div></div><div id="serviceBadge" class="service-badge">Service</div></header>
-<main class="main"><div class="main-inner">
-<section id="formView"><div class="intro-card" id="introCard"><h2 id="introTitle" class="intro-title">Let's get started</h2><p id="introText" class="intro-text">Please wait while we prepare useful information for this service.</p><div id="price" class="price">Service</div></div>
-<div class="form-card"><h3 class="form-heading">Your Service Information</h3><p class="form-description">Fill in the information relevant to your request. Optional fields can be left blank.</p><form id="serviceForm"><div id="fields" class="fields"></div><div class="form-note">When you tap <strong>SEND</strong>, your information will be sent for processing and your prepared work will open immediately in the review area.</div><button id="formSubmit" class="form-submit" type="submit">SEND</button></form></div></section>
-<section id="reviewView" class="review-view"><div class="review-header"><h2 class="review-title">Your Work</h2><p class="review-subtitle">Read through your prepared work carefully. You can request corrections before approving it.</p></div>
-<div id="workCard" class="work-card"><div id="workContent" class="work-content"><div class="work-placeholder">Your prepared work will appear here.</div></div></div>
-<div class="correction-card"><h3 class="correction-title">Need any corrections?</h3><p class="correction-help">Tell us exactly what you want changed, added or corrected.</p><textarea id="correctionInput" class="correction-input" placeholder="Write your corrections or changes here..."></textarea><div class="review-actions"><button id="applyCorrectionsButton" class="review-button apply-button" type="button">Apply My Corrections</button><button id="approveButton" class="review-button approve-button" type="button">Approve &amp; Pay</button></div></div>
-<button id="downloadButton" class="download-button" type="button" disabled>🔒 Download Your Work</button><div class="payment-message">Payment must be confirmed before the download button becomes active.</div>
-<div id="paymentPanel" class="payment-panel"><div class="payment-title">Payment</div><div id="paymentDetails" class="payment-details"></div><div class="payment-buttons"><button id="paymentReportButton" class="payment-report" type="button">Report Payment</button><button id="paymentCheckButton" class="payment-check" type="button">Check Status</button></div></div></section>
-</div></main>
-<section class="bottom"><div class="bottom-inner"><div id="voiceRecording" class="voice-recording">🔴 Recording... tap Voice again to stop.</div><div class="tools"><button id="uploadButton" class="tool-button" type="button">📄 Upload Documents You Want To Give Us</button><button id="voiceButton" class="tool-button gold" type="button">🎤 Voice</button><button id="customerServiceButton" class="tool-button" type="button">Customer Service</button></div><button id="chooseServiceButton" class="choose-service-button" type="button">Choose Another Service</button><input id="fileInput" type="file" accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"><div class="composer"><textarea id="messageInput" class="message-input" rows="1" placeholder="Type your message..." autocomplete="off"></textarea><button id="sendButton" class="send-button" type="button">SEND</button></div><div id="status" class="status"></div></div></section>
+
+    <!-- =====================================================
+         FIXED HEADER
+         ===================================================== -->
+
+    <header class="header">
+
+        <div class="brand">
+
+            <h1 class="brand-title">
+                Naija Pocket Business Center
+            </h1>
+
+            <div class="brand-subtitle">
+                Your Business Center
+            </div>
+
+        </div>
+
+        <div
+            id="serviceBadge"
+            class="service-badge"
+        >
+            Service
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <main class="main">
+
+        <div class="main-inner">
+
+            <!-- =================================================
+                 FORM VIEW
+                 ================================================= -->
+
+            <section id="formView">
+
+                <div
+                    id="introCard"
+                    class="intro-card"
+                >
+
+                    <h2
+                        id="introTitle"
+                        class="intro-title"
+                    >
+                        Let's get started
+                    </h2>
+
+                    <p
+                        id="introText"
+                        class="intro-text"
+                    >
+                        Please wait while we prepare useful
+                        information for this service.
+                    </p>
+
+                    <div
+                        id="price"
+                        class="price"
+                    >
+                        Service
+                    </div>
+
+                </div>
+
+
+                <div class="form-card">
+
+                    <h3 class="form-heading">
+                        Your Service Information
+                    </h3>
+
+                    <p class="form-description">
+                        Fill in the information relevant to
+                        your request. Optional fields can be
+                        left blank.
+                    </p>
+
+                    <form id="serviceForm">
+
+                        <div id="fields" class="fields"></div>
+
+                        <div class="form-note">
+                            When you tap
+                            <strong>SEND</strong>,
+                            your information will be sent
+                            through the existing Business
+                            Center service workflow and your
+                            prepared work will open in the
+                            review area.
+                        </div>
+
+                        <button
+                            id="formSubmit"
+                            class="form-submit"
+                            type="submit"
+                        >
+                            SEND
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 REVIEW VIEW
+                 ================================================= -->
+
+            <section
+                id="reviewView"
+                class="review-view"
+            >
+
+                <div class="review-header">
+
+                    <h2 class="review-title">
+                        Your Work
+                    </h2>
+
+                    <p class="review-subtitle">
+                        Read through your prepared work
+                        carefully. You can request corrections
+                        before approving it.
+                    </p>
+
+                </div>
+
+
+                <!-- =============================================
+                     COMPLETE DOCUMENT VIEWPORT
+                     ============================================= -->
+
+                <div
+                    id="workCard"
+                    class="work-card"
+                >
+
+                    <div class="work-card-header">
+
+                        <span>
+                            Prepared Work
+                        </span>
+
+                        <span>
+                            Scroll to read the complete document
+                        </span>
+
+                    </div>
+
+                    <div
+                        id="workContent"
+                        class="work-content"
+                    >
+
+                        <div class="work-placeholder">
+                            Your prepared work will appear here.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     CORRECTIONS
+                     ============================================= -->
+
+                <div class="correction-card">
+
+                    <h3 class="correction-title">
+                        Need any corrections?
+                    </h3>
+
+                    <p class="correction-help">
+                        Tell us exactly what you want changed,
+                        added or corrected.
+                    </p>
+
+                    <textarea
+                        id="correctionInput"
+                        class="correction-input"
+                        placeholder="Write your corrections or changes here..."
+                    ></textarea>
+
+                    <div class="review-actions">
+
+                        <button
+                            id="applyCorrectionsButton"
+                            class="review-button apply-button"
+                            type="button"
+                        >
+                            Apply My Corrections
+                        </button>
+
+                        <button
+                            id="approveButton"
+                            class="review-button approve-button"
+                            type="button"
+                        >
+                            Approve &amp; Pay
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     DOWNLOAD
+                     ============================================= -->
+
+                <button
+                    id="downloadButton"
+                    class="download-button"
+                    type="button"
+                    disabled
+                >
+                    🔒 Download Your Work
+                </button>
+
+                <div class="payment-message">
+                    Payment must be confirmed before the
+                    download button becomes active.
+                </div>
+
+
+                <!-- =============================================
+                     PAYMENT
+                     ============================================= -->
+
+                <div
+                    id="paymentPanel"
+                    class="payment-panel"
+                >
+
+                    <div class="payment-title">
+                        Payment
+                    </div>
+
+                    <div
+                        id="paymentDetails"
+                        class="payment-details"
+                    ></div>
+
+                    <div class="payment-buttons">
+
+                        <button
+                            id="paymentReportButton"
+                            class="payment-report"
+                            type="button"
+                        >
+                            Report Payment
+                        </button>
+
+                        <button
+                            id="paymentCheckButton"
+                            class="payment-check"
+                            type="button"
+                        >
+                            Check Status
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FIXED BOTTOM CONTROLS
+         ===================================================== -->
+
+    <section class="bottom">
+
+        <div class="bottom-inner">
+
+            <div
+                id="voiceRecording"
+                class="voice-recording"
+            >
+                🔴 Recording...
+                tap Voice again to stop.
+            </div>
+
+
+            <div class="tools">
+
+                <button
+                    id="uploadButton"
+                    class="tool-button"
+                    type="button"
+                >
+                    📄 Upload Documents You Want To Give Us
+                </button>
+
+                <button
+                    id="voiceButton"
+                    class="tool-button gold"
+                    type="button"
+                >
+                    🎤 Voice
+                </button>
+
+                <button
+                    id="customerServiceButton"
+                    class="tool-button"
+                    type="button"
+                >
+                    Customer Service
+                </button>
+
+            </div>
+
+
+            <button
+                id="chooseServiceButton"
+                class="choose-service-button"
+                type="button"
+            >
+                Choose Another Service
+            </button>
+
+
+            <input
+                id="fileInput"
+                type="file"
+                accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+            >
+
+
+            <div class="composer">
+
+                <textarea
+                    id="messageInput"
+                    class="message-input"
+                    rows="1"
+                    placeholder="Type your message..."
+                    autocomplete="off"
+                ></textarea>
+
+                <button
+                    id="sendButton"
+                    class="send-button"
+                    type="button"
+                >
+                    SEND
+                </button>
+
+            </div>
+
+
+            <div
+                id="status"
+                class="status"
+            ></div>
+
+        </div>
+
+    </section>
+
 </div>
+
+
 <script>
 "use strict";
-const API_BASE="";
-const main=document.querySelector(".main");
-const $=id=>document.getElementById(id);
-const formView=$("formView"),reviewView=$("reviewView"),serviceForm=$("serviceForm"),fields=$("fields"),formSubmit=$("formSubmit"),serviceBadge=$("serviceBadge"),introTitle=$("introTitle"),introText=$("introText"),price=$("price"),introCard=$("introCard"),workCard=$("workCard"),workContent=$("workContent"),correctionInput=$("correctionInput"),applyBtn=$("applyCorrectionsButton"),approveBtn=$("approveButton"),downloadBtn=$("downloadButton"),uploadBtn=$("uploadButton"),voiceBtn=$("voiceButton"),customerBtn=$("customerServiceButton"),chooseBtn=$("chooseServiceButton"),fileInput=$("fileInput"),messageInput=$("messageInput"),sendBtn=$("sendButton"),status=$("status"),voiceRecording=$("voiceRecording"),paymentPanel=$("paymentPanel"),paymentDetails=$("paymentDetails"),paymentReport=$("paymentReportButton"),paymentCheck=$("paymentCheckButton");
-const params=new URLSearchParams(location.search),service=(params.get("service")||"Business Center Service").trim();
-function id(prefix){return prefix+(crypto.randomUUID?crypto.randomUUID():Date.now()+"_"+Math.random().toString(36).slice(2))}function get(k){try{return localStorage.getItem(k)}catch(e){return null}}function put(k,v){try{localStorage.setItem(k,v)}catch(e){}}
-let customerId=get("npbc_customer_id")||id("customer_");put("npbc_customer_id",customerId);let jobId=params.get("job_id")||get("npbc_job_id")||id("job_");put("npbc_job_id",jobId);let requestId=get("npbc_client_request_id")||id("request_");put("npbc_client_request_id",requestId);let busy=false,approved=false,paymentConfirmed=false,currentWork="",mediaRecorder=null,recordedChunks=[],recordingStream=null;
-function clean(v){return v==null?null:String(v).trim()||null}function setStatus(m,t=""){status.textContent=m||"";status.className="status "+t}function busyState(v){busy=v;[formSubmit,sendBtn,uploadBtn,voiceBtn,customerBtn,chooseBtn,applyBtn,approveBtn].forEach(x=>x.disabled=v)}
-const generic=[{name:"request",label:"What do you need?",required:true,type:"textarea",placeholder:"Tell us exactly what you want done"},{name:"important_details",label:"Important details",type:"textarea",placeholder:"Add the information that matters to your request"},{name:"other_instructions",label:"Other instructions",type:"textarea",placeholder:"Anything else you want considered"}];
-const forms={"document formatting":[{name:"document_title",label:"Document title",required:true,type:"text",placeholder:"Enter the document title"},{name:"document_type",label:"Document type",required:true,type:"text",placeholder:"e.g. report, essay, thesis, business document"},{name:"page_count",label:"Number of pages",type:"text",placeholder:"Enter the number of pages if known"},{name:"formatting_style",label:"Formatting style",type:"text",placeholder:"e.g. APA, MLA, Harvard, business standard"},{name:"special_instructions",label:"Specific formatting instructions",type:"textarea",placeholder:"Font, spacing, margins, headings, layout, or anything else"}],"research assistance":[{name:"research_topic",label:"Research topic or question",required:true,type:"textarea",placeholder:"What do you want to research?"},{name:"desired_length",label:"Desired length",type:"text",placeholder:"e.g. 3 pages, 1,500 words"},{name:"research_purpose",label:"Purpose of the research",type:"textarea",placeholder:"Tell us what the research is for"},{name:"special_instructions",label:"Additional instructions",type:"textarea",placeholder:"Anything specific you want covered"}],"seminar papers":[{name:"topic",label:"Topic / Title",required:true,type:"textarea",placeholder:"Enter the seminar paper topic"},{name:"length",label:"Desired length",required:true,type:"text",placeholder:"e.g. 3 pages, 2,000 words"},{name:"formatting_style",label:"Formatting style",type:"text",placeholder:"Leave blank for standard formatting"},{name:"special_instructions",label:"Special instructions",type:"textarea",placeholder:"Points to cover, tone, structure, or other instructions"}],"essay writing":[{name:"topic",label:"Essay topic",required:true,type:"textarea",placeholder:"Enter the essay topic or question"},{name:"length",label:"Desired length",required:true,type:"text",placeholder:"e.g. 1,000 words, 3 pages"},{name:"academic_level",label:"Academic level",type:"text",placeholder:"e.g. secondary school, undergraduate, postgraduate"},{name:"special_instructions",label:"Additional instructions",type:"textarea",placeholder:"Anything specific you want included"}],"cv writing":[{name:"full_name",label:"Full name",required:true,type:"text",placeholder:"Enter your full name"},{name:"career_target",label:"Job / career you are targeting",required:true,type:"text",placeholder:"e.g. Accountant, Software Developer"},{name:"experience",label:"Work experience",type:"textarea",placeholder:"Enter your work history and responsibilities"},{name:"education",label:"Education",type:"textarea",placeholder:"Schools, qualifications and dates"},{name:"skills",label:"Skills and achievements",type:"textarea",placeholder:"List important skills, achievements or certifications"},{name:"additional_information",label:"Additional information",type:"textarea",placeholder:"Anything else that should appear in your CV"}]};
-function definition(){const s=service.toLowerCase();return Object.keys(forms).find(k=>s.includes(k))?forms[Object.keys(forms).find(k=>s.includes(k))]:generic}
-function renderForm(){fields.innerHTML="";definition().forEach(f=>{const w=document.createElement("div"),l=document.createElement("label"),i=document.createElement(f.type==="textarea"?"textarea":"input");w.className="field";l.htmlFor=f.name;l.textContent=f.label+(f.required?" *":" (optional)");l.innerHTML=f.label+(f.required?' <span class="required">*</span>':' <span class="optional">(optional)</span>');i.id=f.name;i.name=f.name;i.placeholder=f.placeholder||"";if(f.required)i.required=true;if(f.type!=="textarea")i.type=f.type||"text";w.append(l,i);fields.append(w)})}
-function collect(){const d={};serviceForm.querySelectorAll("input,textarea,select").forEach(e=>{const v=clean(e.value);if(v)d[e.name]=v});return d}
-function guidancePrompt(){return `The customer has just selected this service: ${service}. Prepare a short, clear customer-facing introduction explaining what the service does, what the customer will receive, the current fee or that quotation is required, useful information to prepare, practical tips specific to the service, and useful documents they may upload. Do not create the actual work yet. Do not ask for payment yet. Do not mention internal software, models, APIs or providers. Write concise, friendly Nigerian English.`}
-async function apiChat(body){const r=await fetch(API_BASE+"/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw new Error(d.reply||d.message||d.error||"Request failed.");return d}
-async function loadGuidance(){setStatus("Preparing useful information for this service...");try{const d=await apiChat({message:guidancePrompt(),service,event:"service_selected_guidance",customer_id:customerId,job_id:jobId,client_request_id:requestId,activate_intelligence:true,guidance_only:true,create_work:false});introTitle.textContent=service;introText.textContent=clean(d.reply)||"Please provide the information requested below.";const a=d.amount||d.price||d.service_amount;price.textContent=a?"Service fee: ₦"+Number(String(a).replace(/[^0-9.]/g,"")).toLocaleString():/₦\s?[\d,]+/.test(d.reply||"")?"Service fee: "+(d.reply.match(/₦\s?[\d,]+/)||[""])[0]:/quotation/i.test(d.reply||"")?"Service fee: Quotation required":"Service: "+service;setStatus("")}catch(e){introText.textContent="Please provide the information requested in the form. If you are unsure what to provide, type your question below.";price.textContent="Service: "+service;setStatus("You can still complete the form or ask a question below.","error")}}
-function creationPrompt(data){return `The customer has completed the service information form. Create the actual requested work now. Return the complete work so it can be reviewed here. Do not ask for an email address or send the customer elsewhere unless genuinely required. SERVICE: ${service}\n\nCUSTOMER FORM INFORMATION:\n${Object.entries(data).map(([k,v])=>`${k}:\n${v}`).join("\n\n")}`}
-async function createWork(data){busyState(true);setStatus("Preparing your work...");try{const d=await apiChat({message:creationPrompt(data),service,event:"form_submitted_create_work",customer_id:customerId,job_id:jobId,client_request_id:requestId,form_data:data,activate_intelligence:true,create_work:true});if(d.job_id){jobId=d.job_id;put("npbc_job_id",jobId)}showReview(d.reply||"Your work has been prepared.");setStatus("Your work is ready for review.","success")}catch(e){setStatus(e.message,"error")}finally{busyState(false)}}
-function showReview(work){formView.style.display="none";reviewView.classList.add("show");currentWork=work||"";workContent.textContent=currentWork;correctionInput.value="";paymentPanel.classList.remove("show");approved=false;paymentConfirmed=false;downloadBtn.disabled=true;downloadBtn.classList.remove("active");downloadBtn.textContent="🔒 Download Your Work";main.scrollTop=0}
-serviceForm.addEventListener("submit",e=>{e.preventDefault();if(!busy&&serviceForm.reportValidity())createWork(collect())});
-/* HARD READ-ONLY PROTECTION FOR ADA TIPS AND PREPARED WORK */
-[introCard,workCard].forEach(el=>{["copy","cut","contextmenu","selectstart","dragstart"].forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();if(e.clipboardData)e.clipboardData.setData("text/plain","")}));el.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&["a","c","x","s","u"].includes(e.key.toLowerCase()))e.preventDefault()});el.addEventListener("mousedown",e=>{if(e.detail>1)e.preventDefault()})});
-applyBtn.addEventListener("click",async()=>{const c=clean(correctionInput.value);if(!c)return setStatus("Please write the correction or change you want.","error");if(busy)return;busyState(true);setStatus("Applying your corrections...");try{const d=await apiChat({message:`Please revise the prepared work using these customer corrections:\n\n${c}\n\nReturn the complete revised work for review.`,service,event:"review_correction",customer_id:customerId,job_id:jobId,client_request_id:requestId,current_work:currentWork,correction:c,activate_intelligence:true,create_work:true});currentWork=d.reply||currentWork;workContent.textContent=currentWork;correctionInput.value="";setStatus("Your corrections have been applied. Please review the updated work.","success");main.scrollTop=0}catch(e){setStatus(e.message,"error")}finally{busyState(false)}});
-approveBtn.addEventListener("click",async()=>{if(busy)return;busyState(true);setStatus("Preparing your payment step...");try{const q=new URLSearchParams({customer_id:customerId,job_id:jobId,client_request_id:requestId,service});const r=await fetch(API_BASE+"/api/approve?"+q,{method:"POST"});const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw new Error(d.message||"Approval could not be completed.");approved=true;paymentPanel.classList.add("show");paymentDetails.textContent=`Service: ${d.service||service}\nAmount: ${Number(d.amount||0)>0?"₦"+Number(d.amount).toLocaleString():"Quotation required"}\nOrder: ${d.order_number||"Pending"}`;setStatus("Your work is approved. Payment is ready.","success");paymentPanel.scrollIntoView({behavior:"smooth",block:"center"})}catch(e){setStatus(e.message,"error")}finally{busyState(false)}});
-paymentReport.addEventListener("click",async()=>{if(!approved)return setStatus("Approve the work first.","error");const m=paymentDetails.textContent.match(/Amount:\s*([^\n]+)/),amount=m?Number(m[1].replace(/[^0-9.]/g,"")):0;if(amount<=0)return setStatus("This service requires a quotation before payment.","error");try{const r=await fetch(API_BASE+"/api/payment/create",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({job_id:jobId,customer_id:customerId,service,amount,payment_method:"bank_transfer"})});const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw new Error(d.message||"Payment record could not be created.");paymentDetails.textContent+=`\nPayment ID: ${d.payment_id}\nStatus: Pending`;setStatus("Payment reported. Verification is pending.","success")}catch(e){setStatus(e.message,"error")}});
-paymentCheck.addEventListener("click",async()=>{try{const r=await fetch(API_BASE+"/api/payment/status?job_id="+encodeURIComponent(jobId));const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw new Error(d.message||"Payment status could not be checked.");if(String(d.status||"").toLowerCase()==="paid"){paymentConfirmed=true;downloadBtn.disabled=false;downloadBtn.classList.add("active");downloadBtn.textContent="⬇ Download Your Work";downloadBtn.onclick=()=>location.href=API_BASE+"/api/download?job_id="+encodeURIComponent(jobId)+"&customer_id="+encodeURIComponent(customerId);paymentDetails.textContent+="\nStatus: Paid";setStatus("Payment confirmed. Your download is now available.","success")}else setStatus("Payment is still pending.")}catch(e){setStatus(e.message,"error")}});
-uploadBtn.addEventListener("click",()=>{if(!busy)fileInput.click()});fileInput.addEventListener("change",async()=>{const f=fileInput.files?.[0];if(!f)return;const fd=new FormData();fd.append("file",f);fd.append("customer_id",customerId);fd.append("job_id",jobId);fd.append("client_request_id",requestId);fd.append("service",service);setStatus("Uploading the document you want to give us...");try{const r=await fetch(API_BASE+"/api/upload",{method:"POST",body:fd});const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw new Error(d.message||"Document upload failed.");setStatus("Your document has been received successfully.","success");await sendMessage(`A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.` ,"document_uploaded")}catch(e){setStatus(e.message,"error")}finally{fileInput.value=""}});
-async function sendMessage(message,event){if(busy)return null;busyState(true);setStatus("Processing your message...");try{const d=await apiChat({message,service,event,customer_id:customerId,job_id:jobId,client_request_id:requestId,current_work:currentWork,activate_intelligence:true,create_work:true});if(d.job_id){jobId=d.job_id;put("npbc_job_id",jobId)}if(d.reply&&reviewView.classList.contains("show")){currentWork=d.reply;workContent.textContent=currentWork}setStatus("Ready for your next instruction.","success");return d}catch(e){setStatus(e.message,"error");return null}finally{busyState(false)}}
-sendBtn.addEventListener("click",()=>{const t=clean(messageInput.value);if(!t)return setStatus("Please type your message first.","error");messageInput.value="";messageInput.style.height="auto";sendMessage(t,"customer_message")});messageInput.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendBtn.click()}});messageInput.addEventListener("input",()=>{messageInput.style.height="auto";messageInput.style.height=Math.min(messageInput.scrollHeight,105)+"px"});
-customerBtn.addEventListener("click",async()=>{if(busy)return;busyState(true);setStatus("Connecting you to Customer Service...");try{const q=new URLSearchParams({customer_id:customerId,job_id:jobId,service});const r=await fetch(API_BASE+"/api/customer-service?"+q,{method:"POST"});const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw new Error(d.reply||d.message||"Customer Service is unavailable.");setStatus(d.reply||"Customer Service is available to help.","success")}catch(e){setStatus(e.message,"error")}finally{busyState(false)}});chooseBtn.addEventListener("click",()=>{if(!busy)location.href="conversation.html"});
-voiceBtn.addEventListener("click",async()=>{if(mediaRecorder?.state==="recording"){mediaRecorder.stop();return}if(!navigator.mediaDevices?.getUserMedia)return setStatus("Voice recording is not supported on this device.","error");try{recordingStream=await navigator.mediaDevices.getUserMedia({audio:true});recordedChunks=[];mediaRecorder=new MediaRecorder(recordingStream);mediaRecorder.ondataavailable=e=>{if(e.data?.size)recordedChunks.push(e.data)};mediaRecorder.onstop=async()=>{recordingStream?.getTracks().forEach(t=>t.stop());recordingStream=null;voiceRecording.classList.remove("show");voiceBtn.textContent="🎤 Voice";if(!recordedChunks.length)return setStatus("No voice recording was captured.","error");const fd=new FormData();fd.append("file",new Blob(recordedChunks,{type:"audio/webm"}),"voice_message.webm");fd.append("customer_id",customerId);fd.append("job_id",jobId);fd.append("client_request_id",requestId);fd.append("service",service);try{const r=await fetch(API_BASE+"/api/voice",{method:"POST",body:fd});const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw new Error(d.message||"Voice recording failed.");await sendMessage("A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.","voice_uploaded")}catch(e){setStatus(e.message,"error")}};mediaRecorder.start();voiceRecording.classList.add("show");voiceBtn.textContent="⏹ Stop Voice";setStatus("Recording your voice...")}catch(e){setStatus("Could not access your microphone.","error")}});
-async function init(){serviceBadge.textContent=service;introTitle.textContent=service;renderForm();await loadGuidance()}init();
+
+/* =========================================================
+   EXISTING API
+   ========================================================= */
+
+const API_BASE = "";
+
+
+/* =========================================================
+   DOM
+   ========================================================= */
+
+const $ = id => document.getElementById(id);
+
+const formView =
+    $("formView");
+
+const reviewView =
+    $("reviewView");
+
+const serviceForm =
+    $("serviceForm");
+
+const fields =
+    $("fields");
+
+const formSubmit =
+    $("formSubmit");
+
+const serviceBadge =
+    $("serviceBadge");
+
+const introTitle =
+    $("introTitle");
+
+const introText =
+    $("introText");
+
+const price =
+    $("price");
+
+const introCard =
+    $("introCard");
+
+const workCard =
+    $("workCard");
+
+const workContent =
+    $("workContent");
+
+const correctionInput =
+    $("correctionInput");
+
+const applyBtn =
+    $("applyCorrectionsButton");
+
+const approveBtn =
+    $("approveButton");
+
+const downloadBtn =
+    $("downloadButton");
+
+const uploadBtn =
+    $("uploadButton");
+
+const voiceBtn =
+    $("voiceButton");
+
+const customerBtn =
+    $("customerServiceButton");
+
+const chooseBtn =
+    $("chooseServiceButton");
+
+const fileInput =
+    $("fileInput");
+
+const messageInput =
+    $("messageInput");
+
+const sendBtn =
+    $("sendButton");
+
+const status =
+    $("status");
+
+const voiceRecording =
+    $("voiceRecording");
+
+const paymentPanel =
+    $("paymentPanel");
+
+const paymentDetails =
+    $("paymentDetails");
+
+const paymentReport =
+    $("paymentReportButton");
+
+const paymentCheck =
+    $("paymentCheckButton");
+
+
+/* =========================================================
+   SESSION / JOB IDENTIFIERS
+   ========================================================= */
+
+const params =
+    new URLSearchParams(
+        location.search
+    );
+
+const service =
+    (
+        params.get("service") ||
+        "Business Center Service"
+    ).trim();
+
+
+function makeId(prefix){
+
+    if(
+        typeof crypto !== "undefined" &&
+        crypto.randomUUID
+    ){
+        return prefix + crypto.randomUUID();
+    }
+
+    return (
+        prefix +
+        Date.now() +
+        "_" +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
+}
+
+
+function getStorage(key){
+
+    try{
+        return localStorage.getItem(key);
+    }catch(error){
+        return null;
+    }
+
+}
+
+
+function setStorage(key,value){
+
+    try{
+        localStorage.setItem(
+            key,
+            value
+        );
+    }catch(error){}
+
+}
+
+
+let customerId =
+    getStorage(
+        "npbc_customer_id"
+    ) ||
+    makeId("customer_");
+
+
+setStorage(
+    "npbc_customer_id",
+    customerId
+);
+
+
+let jobId =
+    params.get("job_id") ||
+    getStorage("npbc_job_id") ||
+    makeId("job_");
+
+
+setStorage(
+    "npbc_job_id",
+    jobId
+);
+
+
+let requestId =
+    getStorage(
+        "npbc_client_request_id"
+    ) ||
+    makeId("request_");
+
+
+setStorage(
+    "npbc_client_request_id",
+    requestId
+);
+
+
+/* =========================================================
+   STATE
+
+   currentWork is kept locally only so the browser can display
+   what the API just returned.
+
+   IMPORTANT:
+   currentWork is NOT sent back to the API on every request.
+   The existing backend receives customer_id/job_id and can
+   maintain the actual workflow context.
+   ========================================================= */
+
+let busy = false;
+
+let approved = false;
+
+let paymentConfirmed = false;
+
+let currentWork = "";
+
+let mediaRecorder = null;
+
+let recordedChunks = [];
+
+let recordingStream = null;
+
+
+/* =========================================================
+   BASIC UI HELPERS
+   ========================================================= */
+
+function clean(value){
+
+    if(value == null){
+        return null;
+    }
+
+    const result =
+        String(value).trim();
+
+    return result || null;
+}
+
+
+function setStatus(
+    message,
+    type = ""
+){
+
+    status.textContent =
+        message || "";
+
+    status.className =
+        "status " +
+        type;
+}
+
+
+function busyState(value){
+
+    busy = value;
+
+    [
+        formSubmit,
+        sendBtn,
+        uploadBtn,
+        voiceBtn,
+        customerBtn,
+        chooseBtn,
+        applyBtn,
+        approveBtn
+    ].forEach(
+        button => {
+            if(button){
+                button.disabled =
+                    value;
+            }
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SERVICE FORMS
+   ========================================================= */
+
+const genericFields = [
+
+    {
+        name:"request",
+        label:"What do you need?",
+        required:true,
+        type:"textarea",
+        placeholder:
+            "Tell us exactly what you want done"
+    },
+
+    {
+        name:"important_details",
+        label:"Important details",
+        type:"textarea",
+        placeholder:
+            "Add the information that matters to your request"
+    },
+
+    {
+        name:"other_instructions",
+        label:"Other instructions",
+        type:"textarea",
+        placeholder:
+            "Anything else you want considered"
+    }
+
+];
+
+
+const serviceForms = {
+
+    "document formatting":[
+
+        {
+            name:"document_title",
+            label:"Document title",
+            required:true,
+            type:"text",
+            placeholder:
+                "Enter the document title"
+        },
+
+        {
+            name:"document_type",
+            label:"Document type",
+            required:true,
+            type:"text",
+            placeholder:
+                "e.g. report, essay, thesis, business document"
+        },
+
+        {
+            name:"page_count",
+            label:"Number of pages",
+            type:"text",
+            placeholder:
+                "Enter the number of pages if known"
+        },
+
+        {
+            name:"formatting_style",
+            label:"Formatting style",
+            type:"text",
+            placeholder:
+                "e.g. APA, MLA, Harvard, business standard"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Specific formatting instructions",
+            type:"textarea",
+            placeholder:
+                "Font, spacing, margins, headings, layout, or anything else"
+        }
+
+    ],
+
+
+    "research assistance":[
+
+        {
+            name:"research_topic",
+            label:"Research topic or question",
+            required:true,
+            type:"textarea",
+            placeholder:
+                "What do you want to research?"
+        },
+
+        {
+            name:"desired_length",
+            label:"Desired length",
+            type:"text",
+            placeholder:
+                "e.g. 3 pages, 1,500 words"
+        },
+
+        {
+            name:"research_purpose",
+            label:"Purpose of the research",
+            type:"textarea",
+            placeholder:
+                "Tell us what the research is for"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Additional instructions",
+            type:"textarea",
+            placeholder:
+                "Anything specific you want covered"
+        }
+
+    ],
+
+
+    "seminar papers":[
+
+        {
+            name:"topic",
+            label:"Topic / Title",
+            required:true,
+            type:"textarea",
+            placeholder:
+                "Enter the seminar paper topic"
+        },
+
+        {
+            name:"length",
+            label:"Desired length",
+            required:true,
+            type:"text",
+            placeholder:
+                "e.g. 3 pages, 2,000 words"
+        },
+
+        {
+            name:"formatting_style",
+            label:"Formatting style",
+            type:"text",
+            placeholder:
+                "Leave blank for standard formatting"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Special instructions",
+            type:"textarea",
+            placeholder:
+                "Points to cover, tone, structure, or other instructions"
+        }
+
+    ],
+
+
+    "essay writing":[
+
+        {
+            name:"topic",
+            label:"Essay topic",
+            required:true,
+            type:"textarea",
+            placeholder:
+                "Enter the essay topic or question"
+        },
+
+        {
+            name:"length",
+            label:"Desired length",
+            required:true,
+            type:"text",
+            placeholder:
+                "e.g. 1,000 words, 3 pages"
+        },
+
+        {
+            name:"academic_level",
+            label:"Academic level",
+            type:"text",
+            placeholder:
+                "e.g. secondary school, undergraduate, postgraduate"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Additional instructions",
+            type:"textarea",
+            placeholder:
+                "Anything specific you want included"
+        }
+
+    ],
+
+
+    "cv writing":[
+
+        {
+            name:"full_name",
+            label:"Full name",
+            required:true,
+            type:"text",
+            placeholder:
+                "Enter your full name"
+        },
+
+        {
+            name:"career_target",
+            label:"Job / career you are targeting",
+            required:true,
+            type:"text",
+            placeholder:
+                "e.g. Accountant, Software Developer"
+        },
+
+        {
+            name:"experience",
+            label:"Work experience",
+            type:"textarea",
+            placeholder:
+                "Enter your work history and responsibilities"
+        },
+
+        {
+            name:"education",
+            label:"Education",
+            type:"textarea",
+            placeholder:
+                "Schools, qualifications and dates"
+        },
+
+        {
+            name:"skills",
+            label:"Skills and achievements",
+            type:"textarea",
+            placeholder:
+                "List important skills, achievements or certifications"
+        },
+
+        {
+            name:"additional_information",
+            label:"Additional information",
+            type:"textarea",
+            placeholder:
+                "Anything else that should appear in your CV"
+        }
+
+    ]
+
+};
+
+
+/* =========================================================
+   FORM SELECTION
+   ========================================================= */
+
+function getFormDefinition(){
+
+    const normalized =
+        service.toLowerCase();
+
+    const matchingKey =
+        Object.keys(
+            serviceForms
+        ).find(
+            key =>
+                normalized.includes(key)
+        );
+
+    if(matchingKey){
+        return serviceForms[
+            matchingKey
+        ];
+    }
+
+    return genericFields;
+}
+
+
+/* =========================================================
+   FORM RENDERING
+   ========================================================= */
+
+function renderForm(){
+
+    fields.innerHTML = "";
+
+    const definition =
+        getFormDefinition();
+
+    definition.forEach(
+        field => {
+
+            const wrapper =
+                document.createElement(
+                    "div"
+                );
+
+            wrapper.className =
+                "field";
+
+
+            const label =
+                document.createElement(
+                    "label"
+                );
+
+            label.htmlFor =
+                field.name;
+
+
+            label.innerHTML =
+                field.label +
+                (
+                    field.required
+                    ? ' <span class="required">*</span>'
+                    : ' <span class="optional">(optional)</span>'
+                );
+
+
+            let input;
+
+            if(
+                field.type ===
+                "textarea"
+            ){
+
+                input =
+                    document.createElement(
+                        "textarea"
+                    );
+
+            }else{
+
+                input =
+                    document.createElement(
+                        "input"
+                    );
+
+                input.type =
+                    field.type ||
+                    "text";
+            }
+
+
+            input.id =
+                field.name;
+
+            input.name =
+                field.name;
+
+            input.placeholder =
+                field.placeholder ||
+                "";
+
+
+            if(field.required){
+                input.required = true;
+            }
+
+
+            wrapper.append(
+                label,
+                input
+            );
+
+            fields.append(
+                wrapper
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   COLLECT FORM DATA
+   ========================================================= */
+
+function collectFormData(){
+
+    const data = {};
+
+    serviceForm
+        .querySelectorAll(
+            "input, textarea, select"
+        )
+        .forEach(
+            element => {
+
+                const value =
+                    clean(
+                        element.value
+                    );
+
+                if(value){
+                    data[
+                        element.name
+                    ] = value;
+                }
+
+            }
+        );
+
+    return data;
+}
+
+
+/* =========================================================
+   EXISTING ADA API CLIENT
+
+   This is deliberately only an HTTP client.
+
+   There is:
+   - no Groq call
+   - no model call
+   - no prompt engine
+   - no keyword matching
+   - no duplicated intelligence
+   ========================================================= */
+
+async function apiChat(payload){
+
+    const response =
+        await fetch(
+            API_BASE +
+            "/api/chat",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(
+                        payload
+                    )
+            }
+        );
+
+
+    const data =
+        await response
+            .json()
+            .catch(
+                () => ({})
+            );
+
+
+    if(
+        !response.ok ||
+        !data.success
+    ){
+
+        throw new Error(
+            data.reply ||
+            data.message ||
+            data.error ||
+            "Request failed."
+        );
+
+    }
+
+
+    return data;
+}
+
+
+/* =========================================================
+   SERVICE SELECTION
+
+   The UI sends only a small event to the existing API.
+   Ada remains responsible for the actual response.
+   ========================================================= */
+
+async function loadService(){
+
+    introTitle.textContent =
+        service;
+
+    serviceBadge.textContent =
+        service;
+
+    setStatus(
+        "Preparing your service..."
+    );
+
+
+    try{
+
+        const data =
+            await apiChat({
+
+                message:
+                    "Customer selected this service.",
+
+                service,
+
+                event:
+                    "service_selected_guidance",
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId,
+
+                client_request_id:
+                    requestId,
+
+                activate_intelligence:
+                    true,
+
+                guidance_only:
+                    true,
+
+                create_work:
+                    false
+
+            });
+
+
+        introText.textContent =
+            clean(
+                data.reply
+            ) ||
+            "Please provide the information requested below.";
+
+
+        const amount =
+            data.amount ||
+            data.price ||
+            data.service_amount;
+
+
+        if(amount){
+
+            const numericAmount =
+                Number(
+                    String(amount)
+                        .replace(
+                            /[^0-9.]/g,
+                            ""
+                        )
+                );
+
+
+            if(
+                Number.isFinite(
+                    numericAmount
+                )
+            ){
+
+                price.textContent =
+                    "Service fee: ₦" +
+                    numericAmount.toLocaleString();
+
+            }else{
+
+                price.textContent =
+                    "Service: " +
+                    service;
+
+            }
+
+        }else if(
+            /quotation/i.test(
+                data.reply || ""
+            )
+        ){
+
+            price.textContent =
+                "Service fee: Quotation required";
+
+        }else{
+
+            const match =
+                String(
+                    data.reply || ""
+                ).match(
+                    /₦\s?[\d,]+/
+                );
+
+
+            price.textContent =
+                match
+                ? "Service fee: " + match[0]
+                : "Service: " + service;
+
+        }
+
+
+        setStatus("");
+
+    }catch(error){
+
+        introText.textContent =
+            "Please provide the information requested in the form. " +
+            "If you are unsure what to provide, type your question below.";
+
+        price.textContent =
+            "Service: " +
+            service;
+
+        setStatus(
+            "You can still complete the form or ask a question below.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CREATE WORK
+
+   The form data is sent once.
+
+   The generated document returned by the existing API is
+   displayed locally.
+
+   currentWork is NOT sent back unnecessarily.
+   ========================================================= */
+
+async function createWork(data){
+
+    if(busy){
+        return;
+    }
+
+
+    busyState(true);
+
+    setStatus(
+        "Preparing your work..."
+    );
+
+
+    try{
+
+        const response =
+            await apiChat({
+
+                message:
+                    "Customer submitted the service information.",
+
+                service,
+
+                event:
+                    "form_submitted_create_work",
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId,
+
+                client_request_id:
+                    requestId,
+
+                form_data:
+                    data,
+
+                activate_intelligence:
+                    true,
+
+                create_work:
+                    true
+
+            });
+
+
+        if(response.job_id){
+
+            jobId =
+                response.job_id;
+
+            setStorage(
+                "npbc_job_id",
+                jobId
+            );
+
+        }
+
+
+        showReview(
+            response.reply ||
+            "Your work has been prepared."
+        );
+
+
+        setStatus(
+            "Your work is ready for review.",
+            "success"
+        );
+
+    }catch(error){
+
+        setStatus(
+            error.message,
+            "error"
+        );
+
+    }finally{
+
+        busyState(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   SHOW REVIEW
+   ========================================================= */
+
+function showReview(work){
+
+    currentWork =
+        work || "";
+
+
+    workContent.textContent =
+        currentWork;
+
+
+    formView.style.display =
+        "none";
+
+
+    reviewView.classList.add(
+        "show"
+    );
+
+
+    correctionInput.value =
+        "";
+
+
+    paymentPanel.classList.remove(
+        "show"
+    );
+
+
+    approved =
+        false;
+
+    paymentConfirmed =
+        false;
+
+
+    downloadBtn.disabled =
+        true;
+
+    downloadBtn.classList.remove(
+        "active"
+    );
+
+    downloadBtn.textContent =
+        "🔒 Download Your Work";
+
+
+    /*
+       Start the document viewport
+       at the beginning.
+
+       The document itself is now
+       independently scrollable.
+    */
+
+    workContent.scrollTop =
+        0;
+
+}
+
+
+/* =========================================================
+   FORM SUBMIT
+   ========================================================= */
+
+serviceForm.addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+        if(
+            busy ||
+            !serviceForm.reportValidity()
+        ){
+            return;
+        }
+
+
+        createWork(
+            collectFormData()
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CORRECTIONS
+
+   Only the correction itself is transmitted.
+
+   The large generated document is NOT repeatedly copied
+   into the request body.
+   ========================================================= */
+
+applyBtn.addEventListener(
+    "click",
+    async () => {
+
+        const correction =
+            clean(
+                correctionInput.value
+            );
+
+
+        if(!correction){
+
+            setStatus(
+                "Please write the correction or change you want.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if(busy){
+            return;
+        }
+
+
+        busyState(true);
+
+        setStatus(
+            "Applying your corrections..."
+        );
+
+
+        try{
+
+            const response =
+                await apiChat({
+
+                    message:
+                        correction,
+
+                    service,
+
+                    event:
+                        "review_correction",
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId,
+
+                    client_request_id:
+                        requestId,
+
+                    correction,
+
+                    activate_intelligence:
+                        true,
+
+                    create_work:
+                        true
+
+                });
+
+
+            if(response.job_id){
+
+                jobId =
+                    response.job_id;
+
+                setStorage(
+                    "npbc_job_id",
+                    jobId
+                );
+
+            }
+
+
+            if(
+                response.reply
+            ){
+
+                currentWork =
+                    response.reply;
+
+                workContent.textContent =
+                    currentWork;
+
+                workContent.scrollTop =
+                    0;
+
+            }
+
+
+            correctionInput.value =
+                "";
+
+
+            setStatus(
+                "Your corrections have been applied. Please review the updated work.",
+                "success"
+            );
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            busyState(false);
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   APPROVAL
+   ========================================================= */
+
+approveBtn.addEventListener(
+    "click",
+    async () => {
+
+        if(busy){
+            return;
+        }
+
+
+        busyState(true);
+
+        setStatus(
+            "Preparing your payment step..."
+        );
+
+
+        try{
+
+            const query =
+                new URLSearchParams({
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId,
+
+                    client_request_id:
+                        requestId,
+
+                    service
+
+                });
+
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/approve?" +
+                    query.toString(),
+                    {
+                        method:"POST"
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Approval could not be completed."
+                );
+
+            }
+
+
+            approved =
+                true;
+
+
+            paymentPanel.classList.add(
+                "show"
+            );
+
+
+            const amount =
+                Number(
+                    data.amount || 0
+                );
+
+
+            paymentDetails.textContent =
+                "Service: " +
+                (
+                    data.service ||
+                    service
+                ) +
+                "\n" +
+                "Amount: " +
+                (
+                    amount > 0
+                    ? "₦" +
+                      amount.toLocaleString()
+                    : "Quotation required"
+                ) +
+                "\n" +
+                "Order: " +
+                (
+                    data.order_number ||
+                    "Pending"
+                );
+
+
+            setStatus(
+                "Your work is approved. Payment is ready.",
+                "success"
+            );
+
+
+            paymentPanel.scrollIntoView({
+                behavior:"smooth",
+                block:"nearest"
+            });
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            busyState(false);
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PAYMENT REPORT
+   ========================================================= */
+
+paymentReport.addEventListener(
+    "click",
+    async () => {
+
+        if(!approved){
+
+            setStatus(
+                "Approve the work first.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const amountMatch =
+            paymentDetails.textContent.match(
+                /Amount:\s*([^\n]+)/
+            );
+
+
+        const amount =
+            amountMatch
+            ? Number(
+                amountMatch[1]
+                    .replace(
+                        /[^0-9.]/g,
+                        ""
+                    )
+            )
+            : 0;
+
+
+        if(amount <= 0){
+
+            setStatus(
+                "This service requires a quotation before payment.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/payment/create",
+                    {
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                job_id:
+                                    jobId,
+
+                                customer_id:
+                                    customerId,
+
+                                service,
+
+                                amount,
+
+                                payment_method:
+                                    "bank_transfer"
+
+                            })
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Payment record could not be created."
+                );
+
+            }
+
+
+            paymentDetails.textContent +=
+                "\nPayment ID: " +
+                (
+                    data.payment_id ||
+                    "Pending"
+                ) +
+                "\nStatus: Pending";
+
+
+            setStatus(
+                "Payment reported. Verification is pending.",
+                "success"
+            );
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PAYMENT STATUS
+   ========================================================= */
+
+paymentCheck.addEventListener(
+    "click",
+    async () => {
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/payment/status?job_id=" +
+                    encodeURIComponent(
+                        jobId
+                    )
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Payment status could not be checked."
+                );
+
+            }
+
+
+            if(
+                String(
+                    data.status || ""
+                ).toLowerCase() ===
+                "paid"
+            ){
+
+                paymentConfirmed =
+                    true;
+
+
+                downloadBtn.disabled =
+                    false;
+
+
+                downloadBtn.classList.add(
+                    "active"
+                );
+
+
+                downloadBtn.textContent =
+                    "⬇ Download Your Work";
+
+
+                downloadBtn.onclick =
+                    () => {
+
+                        location.href =
+                            API_BASE +
+                            "/api/download?job_id=" +
+                            encodeURIComponent(
+                                jobId
+                            ) +
+                            "&customer_id=" +
+                            encodeURIComponent(
+                                customerId
+                            );
+
+                    };
+
+
+                paymentDetails.textContent +=
+                    "\nStatus: Paid";
+
+
+                setStatus(
+                    "Payment confirmed. Your download is now available.",
+                    "success"
+                );
+
+            }else{
+
+                setStatus(
+                    "Payment is still pending."
+                );
+
+            }
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   UPLOAD
+
+   The actual file is uploaded through the existing API.
+
+   After upload, only a short event message is sent to Ada.
+   The file itself is not duplicated into the chat payload.
+   ========================================================= */
+
+uploadBtn.addEventListener(
+    "click",
+    () => {
+
+        if(!busy){
+            fileInput.click();
+        }
+
+    }
+);
+
+
+fileInput.addEventListener(
+    "change",
+    async () => {
+
+        const file =
+            fileInput.files &&
+            fileInput.files[0];
+
+
+        if(!file){
+            return;
+        }
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "file",
+            file
+        );
+
+        formData.append(
+            "customer_id",
+            customerId
+        );
+
+        formData.append(
+            "job_id",
+            jobId
+        );
+
+        formData.append(
+            "client_request_id",
+            requestId
+        );
+
+        formData.append(
+            "service",
+            service
+        );
+
+
+        setStatus(
+            "Uploading the document you want to give us..."
+        );
+
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/upload",
+                    {
+                        method:"POST",
+                        body:formData
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Document upload failed."
+                );
+
+            }
+
+
+            setStatus(
+                "Your document has been received successfully.",
+                "success"
+            );
+
+
+            await sendMessage(
+                "Document uploaded.",
+                "document_uploaded"
+            );
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            fileInput.value =
+                "";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   MESSAGE TO EXISTING ADA API
+
+   IMPORTANT:
+   No current_work is attached here.
+
+   The job/customer identifiers identify the existing
+   conversation/workflow. This prevents the same large
+   generated document from being transmitted repeatedly.
+   ========================================================= */
+
+async function sendMessage(
+    message,
+    event
+){
+
+    if(busy){
+        return null;
+    }
+
+
+    const cleanMessage =
+        clean(message);
+
+
+    if(!cleanMessage){
+        return null;
+    }
+
+
+    busyState(true);
+
+    setStatus(
+        "Processing your message..."
+    );
+
+
+    try{
+
+        const response =
+            await apiChat({
+
+                message:
+                    cleanMessage,
+
+                service,
+
+                event,
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId,
+
+                client_request_id:
+                    requestId,
+
+                activate_intelligence:
+                    true,
+
+                create_work:
+                    true
+
+            });
+
+
+        if(response.job_id){
+
+            jobId =
+                response.job_id;
+
+            setStorage(
+                "npbc_job_id",
+                jobId
+            );
+
+        }
+
+
+        if(
+            response.reply &&
+            reviewView.classList.contains(
+                "show"
+            )
+        ){
+
+            currentWork =
+                response.reply;
+
+            workContent.textContent =
+                currentWork;
+
+            workContent.scrollTop =
+                0;
+
+        }
+
+
+        setStatus(
+            "Ready for your next instruction.",
+            "success"
+        );
+
+
+        return response;
+
+    }catch(error){
+
+        setStatus(
+            error.message,
+            "error"
+        );
+
+        return null;
+
+    }finally{
+
+        busyState(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   CUSTOMER MESSAGE
+   ========================================================= */
+
+sendBtn.addEventListener(
+    "click",
+    () => {
+
+        const message =
+            clean(
+                messageInput.value
+            );
+
+
+        if(!message){
+
+            setStatus(
+                "Please type your message first.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        messageInput.value =
+            "";
+
+        messageInput.style.height =
+            "auto";
+
+
+        sendMessage(
+            message,
+            "customer_message"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   MESSAGE INPUT
+   ========================================================= */
+
+messageInput.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key === "Enter" &&
+            !event.shiftKey
+        ){
+
+            event.preventDefault();
+
+            sendBtn.click();
+
+        }
+
+    }
+);
+
+
+messageInput.addEventListener(
+    "input",
+    () => {
+
+        messageInput.style.height =
+            "auto";
+
+
+        messageInput.style.height =
+            Math.min(
+                messageInput.scrollHeight,
+                105
+            ) +
+            "px";
+
+    }
+);
+
+
+/* =========================================================
+   CUSTOMER SERVICE
+   ========================================================= */
+
+customerBtn.addEventListener(
+    "click",
+    async () => {
+
+        if(busy){
+            return;
+        }
+
+
+        busyState(true);
+
+        setStatus(
+            "Connecting you to Customer Service..."
+        );
+
+
+        try{
+
+            const query =
+                new URLSearchParams({
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId,
+
+                    service
+
+                });
+
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/customer-service?" +
+                    query.toString(),
+                    {
+                        method:"POST"
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.reply ||
+                    data.message ||
+                    "Customer Service is unavailable."
+                );
+
+            }
+
+
+            setStatus(
+                data.reply ||
+                "Customer Service is available to help.",
+                "success"
+            );
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            busyState(false);
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CHOOSE ANOTHER SERVICE
+   ========================================================= */
+
+chooseBtn.addEventListener(
+    "click",
+    () => {
+
+        if(!busy){
+
+            location.href =
+                "conversation.html";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   VOICE
+   ========================================================= */
+
+voiceBtn.addEventListener(
+    "click",
+    async () => {
+
+        if(
+            mediaRecorder &&
+            mediaRecorder.state ===
+            "recording"
+        ){
+
+            mediaRecorder.stop();
+
+            return;
+        }
+
+
+        if(
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia
+        ){
+
+            setStatus(
+                "Voice recording is not supported on this device.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        try{
+
+            recordingStream =
+                await navigator.mediaDevices
+                    .getUserMedia({
+                        audio:true
+                    });
+
+
+            recordedChunks =
+                [];
+
+
+            mediaRecorder =
+                new MediaRecorder(
+                    recordingStream
+                );
+
+
+            mediaRecorder.ondataavailable =
+                event => {
+
+                    if(
+                        event.data &&
+                        event.data.size
+                    ){
+
+                        recordedChunks.push(
+                            event.data
+                        );
+
+                    }
+
+                };
+
+
+            mediaRecorder.onstop =
+                async () => {
+
+                    recordingStream
+                        ?.getTracks()
+                        .forEach(
+                            track =>
+                                track.stop()
+                        );
+
+
+                    recordingStream =
+                        null;
+
+
+                    voiceRecording.classList.remove(
+                        "show"
+                    );
+
+
+                    voiceBtn.textContent =
+                        "🎤 Voice";
+
+
+                    if(
+                        !recordedChunks.length
+                    ){
+
+                        setStatus(
+                            "No voice recording was captured.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+
+                    const formData =
+                        new FormData();
+
+
+                    formData.append(
+                        "file",
+                        new Blob(
+                            recordedChunks,
+                            {
+                                type:
+                                    "audio/webm"
+                            }
+                        ),
+                        "voice_message.webm"
+                    );
+
+
+                    formData.append(
+                        "customer_id",
+                        customerId
+                    );
+
+                    formData.append(
+                        "job_id",
+                        jobId
+                    );
+
+                    formData.append(
+                        "client_request_id",
+                        requestId
+                    );
+
+                    formData.append(
+                        "service",
+                        service
+                    );
+
+
+                    try{
+
+                        setStatus(
+                            "Sending your voice message..."
+                        );
+
+
+                        const response =
+                            await fetch(
+                                API_BASE +
+                                "/api/voice",
+                                {
+                                    method:"POST",
+                                    body:formData
+                                }
+                            );
+
+
+                        const data =
+                            await response
+                                .json()
+                                .catch(
+                                    () => ({})
+                                );
+
+
+                        if(
+                            !response.ok ||
+                            !data.success
+                        ){
+
+                            throw new Error(
+                                data.message ||
+                                "Voice recording failed."
+                            );
+
+                        }
+
+
+                        await sendMessage(
+                            "Voice message received.",
+                            "voice_uploaded"
+                        );
+
+                    }catch(error){
+
+                        setStatus(
+                            error.message,
+                            "error"
+                        );
+
+                    }
+
+                };
+
+
+            mediaRecorder.start();
+
+            voiceRecording.classList.add(
+                "show"
+            );
+
+            voiceBtn.textContent =
+                "⏹ Stop Voice";
+
+
+            setStatus(
+                "Recording your voice..."
+            );
+
+        }catch(error){
+
+            setStatus(
+                "Could not access your microphone.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   HARD READ-ONLY PROTECTION
+   ========================================================= */
+
+[
+    introCard,
+    workCard
+].forEach(
+    element => {
+
+        if(!element){
+            return;
+        }
+
+
+        [
+            "copy",
+            "cut",
+            "contextmenu",
+            "selectstart",
+            "dragstart"
+        ].forEach(
+            eventName => {
+
+                element.addEventListener(
+                    eventName,
+                    event => {
+
+                        event.preventDefault();
+
+                        if(
+                            event.clipboardData
+                        ){
+
+                            event.clipboardData
+                                .setData(
+                                    "text/plain",
+                                    ""
+                                );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+        element.addEventListener(
+            "keydown",
+            event => {
+
+                if(
+                    (
+                        event.ctrlKey ||
+                        event.metaKey
+                    ) &&
+                    [
+                        "a",
+                        "c",
+                        "x",
+                        "s",
+                        "u"
+                    ].includes(
+                        event.key.toLowerCase()
+                    )
+                ){
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+
+        element.addEventListener(
+            "mousedown",
+            event => {
+
+                if(event.detail > 1){
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   INITIALISE
+   ========================================================= */
+
+function init(){
+
+    serviceBadge.textContent =
+        service;
+
+    introTitle.textContent =
+        service;
+
+    renderForm();
+
+    loadService();
+
+}
+
+
+init();
+
 </script>
+
 </body>
 </html>
