@@ -1,4 +1,3 @@
-
 """
 Naija Pocket Business Center
 CURRENT FastAPI APPLICATION
@@ -22,10 +21,40 @@ NO AdaController
 NO AdaAIEngine
 NO RETIRED INTELLIGENCE CHAIN
 
-DEBUG MODE
+IMPORTANT
+---------
+This file is the FastAPI application/connection layer.
+
+It does NOT contain the intelligence itself.
+
+AdaResponse remains the intelligence engine.
+
+This file must preserve:
+    - customer message
+    - selected service
+    - application context
+    - current event
+    - customer ID
+    - job ID
+    - client request ID
+    - conversation session
+    - AdaResponse reasoning
+    - billing/service context supplied to AdaResponse
+
+TOKEN SAFETY
 ------------
-Real application errors are returned by the API so that
-the actual failure can be seen during troubleshooting.
+This file does NOT truncate the customer's message,
+application context, service information, or AdaResponse
+prompt.
+
+Token control belongs inside ada_response.py, where the
+intelligence layer can control the provider request without
+the API connection layer cutting off customer information.
+
+DEBUG MODE
+----------
+Real application errors are returned by the API while
+ADA_DEBUG_ERRORS is enabled.
 
 Sensitive configuration values such as API keys are NEVER
 returned.
@@ -79,6 +108,10 @@ BASE_DIR = Path(__file__).resolve().parent
 def find_file(
     filename: str,
 ) -> Path | None:
+    """
+    Locate customer-facing HTML files without changing the
+    existing project structure.
+    """
 
     candidates = [
         BASE_DIR / filename,
@@ -88,7 +121,6 @@ def find_file(
     ]
 
     for path in candidates:
-
         if path.is_file():
             return path
 
@@ -129,6 +161,13 @@ def session_key(
     customer_id: str | None,
     job_id: str | None,
 ) -> str:
+    """
+    Every customer/job receives its own AdaResponse session.
+
+    This prevents unrelated jobs from sharing conversation
+    history while allowing the same job to continue its
+    conversation.
+    """
 
     customer = (
         str(
@@ -150,6 +189,17 @@ def get_session(
     job_id: str | None,
     service: str | None = None,
 ) -> AdaResponse:
+    """
+    Get or create the AdaResponse intelligence session.
+
+    The intelligence object itself remains responsible for:
+        - prompts
+        - reasoning
+        - service context
+        - billing context
+        - conversation history
+        - Groq communication
+    """
 
     key = session_key(
         customer_id,
@@ -182,6 +232,12 @@ def error_response(
     status_code: int = 500,
     error_code: str | None = None,
 ):
+    """
+    Central application error response.
+
+    API keys and other sensitive configuration values are not
+    deliberately included in the response.
+    """
 
     error_type = (
         type(error).__name__
@@ -213,18 +269,14 @@ def error_response(
 
     if DEBUG_ERRORS:
 
-        content[
-            "debug"
-        ] = (
+        content["debug"] = (
             "Real exception exposed because "
             "ADA_DEBUG_ERRORS is enabled."
         )
 
     else:
 
-        content[
-            "error_message"
-        ] = (
+        content["error_message"] = (
             "An internal application error occurred."
         )
 
@@ -239,6 +291,11 @@ def error_response(
 # ============================================================
 
 class ChatRequest(BaseModel):
+    """
+    JSON request received from the customer-facing pages.
+
+    All existing application fields are preserved.
+    """
 
     message: str = Field(
         default=""
@@ -351,13 +408,23 @@ async def customer_workspace():
 @app.get("/health")
 async def health():
 
+    try:
+        configured = is_configured()
+    except Exception as error:
+        return error_response(
+            stage="HEALTH_CONFIGURATION_CHECK",
+            error=error,
+            status_code=500,
+            error_code="HEALTH_CONFIGURATION_ERROR",
+        )
+
     return {
         "success": True,
         "status": "ok",
         "api": "FastAPI",
         "intelligence": "AdaResponse",
         "model": get_ada_model(),
-        "configured": is_configured(),
+        "configured": configured,
         "debug_errors": DEBUG_ERRORS,
     }
 
@@ -365,15 +432,23 @@ async def health():
 @app.get("/api/status")
 async def api_status():
 
+    try:
+        configured = is_configured()
+    except Exception as error:
+        return error_response(
+            stage="API_STATUS_CONFIGURATION_CHECK",
+            error=error,
+            status_code=500,
+            error_code="API_STATUS_CONFIGURATION_ERROR",
+        )
+
     return {
         "success": True,
         "api": "FastAPI",
         "intelligence": "AdaResponse",
         "model": get_ada_model(),
-        "configured": is_configured(),
-        "active_sessions": len(
-            _sessions
-        ),
+        "configured": configured,
+        "active_sessions": len(_sessions),
         "debug_errors": DEBUG_ERRORS,
     }
 
@@ -386,6 +461,28 @@ async def api_status():
 async def chat(
     request: ChatRequest,
 ):
+    """
+    Main customer intelligence route.
+
+    IMPORTANT:
+    Nothing in this function replaces AdaResponse reasoning.
+
+    The flow is:
+
+        customer request
+              ↓
+        FastAPI validation
+              ↓
+        session selection
+              ↓
+        application context
+              ↓
+        AdaResponse.respond(...)
+              ↓
+        Groq
+              ↓
+        customer reply
+    """
 
     print()
     print("-" * 70)
@@ -435,7 +532,6 @@ async def chat(
         ).strip()
     )
 
-
     if not message:
 
         return error_response(
@@ -445,6 +541,33 @@ async def chat(
             ),
             status_code=400,
             error_code="EMPTY_MESSAGE",
+        )
+
+
+    # --------------------------------------------------------
+    # INTELLIGENCE ACTIVATION
+    # --------------------------------------------------------
+    #
+    # The field is retained for frontend compatibility.
+    #
+    # The normal customer chat route must always use the
+    # intelligence layer. There is deliberately no fallback
+    # keyword engine and no alternative chatbot.
+    #
+    # A false value is treated as a client/application state
+    # problem rather than silently bypassing AdaResponse.
+    # --------------------------------------------------------
+
+    if not request.activate_intelligence:
+
+        return error_response(
+            stage="INTELLIGENCE_ACTIVATION",
+            error=(
+                "Intelligence activation is disabled "
+                "for this request."
+            ),
+            status_code=400,
+            error_code="INTELLIGENCE_NOT_ACTIVATED",
         )
 
 
@@ -476,8 +599,7 @@ async def chat(
             stage="INTELLIGENCE_CONFIGURATION",
             error=(
                 "AdaResponse is not configured. "
-                "Check GROQ_API_KEY and the Groq "
-                "client configuration."
+                "Check the Groq configuration."
             ),
             status_code=503,
             error_code=(
@@ -511,17 +633,32 @@ async def chat(
     # --------------------------------------------------------
     # APPLICATION CONTEXT
     # --------------------------------------------------------
+    #
+    # IMPORTANT:
+    # The API does not truncate this information.
+    #
+    # AdaResponse is responsible for provider-side token
+    # control.
+    #
+    # This preserves the complete information supplied by
+    # the customer-facing application.
+    # --------------------------------------------------------
 
     context_parts: list[str] = []
 
-
     if request.context:
 
-        context_parts.append(
+        supplied_context = (
             str(
                 request.context
             ).strip()
         )
+
+        if supplied_context:
+
+            context_parts.append(
+                supplied_context
+            )
 
 
     if request.customer_id:
@@ -607,6 +744,16 @@ async def chat(
     print(
         "Event:",
         event,
+    )
+
+    print(
+        "Context supplied:",
+        bool(application_context),
+    )
+
+    print(
+        "Message characters:",
+        len(message),
     )
 
     print()
@@ -764,9 +911,33 @@ async def customer_service(
             ),
         )
 
+        reply = str(
+            reply or ""
+        ).strip()
+
+        if not reply:
+
+            return error_response(
+                stage="CUSTOMER_SERVICE_RESPONSE",
+                error=(
+                    "AdaResponse returned an empty "
+                    "customer service response."
+                ),
+                status_code=500,
+                error_code=(
+                    "EMPTY_CUSTOMER_SERVICE_RESPONSE"
+                ),
+            )
+
         return {
             "success": True,
             "reply": reply,
+            "service": (
+                service
+                or ada.service
+            ),
+            "customer_id": customer_id,
+            "job_id": job_id,
         }
 
     except Exception as error:
@@ -808,9 +979,24 @@ async def startup():
         get_ada_model(),
     )
 
+    try:
+
+        configured = (
+            is_configured()
+        )
+
+    except Exception as error:
+
+        configured = False
+
+        print(
+            "Configuration check error:",
+            type(error).__name__,
+        )
+
     print(
         "Configured:",
-        is_configured(),
+        configured,
     )
 
     print(
@@ -821,6 +1007,11 @@ async def startup():
     print(
         "Website:",
         "FastAPI FileResponse",
+    )
+
+    print(
+        "Intelligence route:",
+        "/api/chat",
     )
 
     print(
@@ -848,6 +1039,16 @@ async def startup():
         "NOT USED",
     )
 
+    print(
+        "AdaResponse:",
+        "ACTIVE",
+    )
+
+    print(
+        "Provider-side token control:",
+        "HANDLED BY ada_response.py",
+    )
+
     print("=" * 70)
     print()
 
@@ -872,4 +1073,4 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=port,
         reload=False,
-    ) 
+    )
