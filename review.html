@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
+<title>Review — Naija Pocket Business Center</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+}
+
+body{
+    background:#000;
+    color:#fff;
+    font-family:Inter,Arial,sans-serif;
+}
+
+button,textarea{font:inherit}
+button{cursor:pointer}
+
+.app{
+    width:100%;
+    height:100dvh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    background:#000;
+}
+
+/* =========================================================
+   FIXED HEADER
+   ========================================================= */
+
+.header{
+    flex:0 0 auto;
+    min-height:62px;
+    padding:9px 12px;
+    background:#050505;
+    border-bottom:1px solid rgba(212,175,55,.3);
+    z-index:20;
+}
+
+.header-title{
+    margin:0;
+    color:#f3d66b;
+    font-size:19px;
+    font-weight:900;
+}
+
+.header-text{
+    margin:4px 0 0;
+    color:#aaa;
+    font-size:10px;
+}
+
+/* =========================================================
+   DOCUMENT REGION
+   ========================================================= */
+
+.document-region{
+    flex:1 1 0;
+    min-height:0;
+    padding:7px 7px 0;
+    overflow:hidden;
+}
+
+.document-card{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    background:#fff;
+    color:#111;
+    border-radius:10px 10px 0 0;
+}
+
+.document-bar{
+    flex:0 0 auto;
+    min-height:31px;
+    padding:0 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#e8e8e8;
+    border-bottom:1px solid #ccc;
+    color:#555;
+    font-size:9px;
+    font-weight:800;
+}
+
+/*
+    THIS is the document viewport.
+
+    It has:
+      flex:1
+      min-height:0
+      overflow-y:auto
+
+    Therefore a long generated document cannot push
+    the fixed controls away or become clipped by them.
+*/
+.document{
+    flex:1 1 0;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+
+    padding:22px 17px 50px;
+
+    color:#111;
+    background:#fff;
+
+    font-size:14px;
+    line-height:1.72;
+
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+}
+
+.document h1,
+.document h2,
+.document h3,
+.document h4,
+.document h5,
+.document h6{
+    color:#111;
+}
+
+.document p{
+    margin:0 0 13px;
+}
+
+.document ul,
+.document ol{
+    margin:8px 0 16px 25px;
+}
+
+.document li{
+    margin:5px 0;
+}
+
+.document table{
+    width:100%;
+    border-collapse:collapse;
+    margin:14px 0;
+    font-size:13px;
+}
+
+.document th,
+.document td{
+    padding:7px;
+    border:1px solid #999;
+    vertical-align:top;
+    text-align:left;
+    overflow-wrap:anywhere;
+}
+
+.document th{
+    background:#eee;
+}
+
+.placeholder{
+    padding:70px 15px;
+    color:#777;
+    text-align:center;
+}
+
+/* =========================================================
+   FIXED REVIEW CONTROLS
+   ========================================================= */
+
+.controls{
+    flex:0 0 auto;
+    max-height:40%;
+    padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    background:#080808;
+    border-top:1px solid rgba(212,175,55,.3);
+}
+
+.control-title{
+    margin:0 0 4px;
+    color:#fff;
+    font-size:13px;
+    font-weight:900;
+}
+
+.help{
+    margin:0 0 6px;
+    color:#999;
+    font-size:9px;
+    line-height:1.4;
+}
+
+.correction{
+    width:100%;
+    min-height:60px;
+    max-height:115px;
+    resize:vertical;
+    padding:9px;
+    background:#181818;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:8px;
+    outline:none;
+    font-size:11px;
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-top:6px;
+}
+
+.action{
+    min-height:40px;
+    border-radius:8px;
+    font-size:10px;
+    font-weight:900;
+}
+
+.correct{
+    background:#242424;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.13);
+}
+
+.approve{
+    background:#d4af37;
+    color:#000;
+    border:0;
+}
+
+.payment{
+    display:none;
+    margin-top:6px;
+    padding:9px;
+    background:#121212;
+    border:1px solid rgba(212,175,55,.35);
+    border-radius:8px;
+}
+
+.payment.show{
+    display:block;
+}
+
+.payment-title{
+    color:#f3d66b;
+    font-size:11px;
+    font-weight:900;
+}
+
+.payment-info{
+    margin-top:4px;
+    color:#ddd;
+    font-size:10px;
+    line-height:1.5;
+    white-space:pre-wrap;
+}
+
+.payment-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-top:6px;
+}
+
+.payment-button{
+    min-height:38px;
+    border-radius:8px;
+    font-size:10px;
+    font-weight:900;
+}
+
+.report{
+    border:0;
+    background:#d4af37;
+    color:#000;
+}
+
+.check{
+    border:1px solid rgba(255,255,255,.13);
+    background:#242424;
+    color:#fff;
+}
+
+.download{
+    width:100%;
+    min-height:40px;
+    margin-top:6px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:8px;
+    background:#242424;
+    color:#777;
+    font-size:10px;
+    font-weight:900;
+}
+
+.download.ready{
+    background:#168047;
+    border-color:#168047;
+    color:#fff;
+}
+
+.status{
+    min-height:13px;
+    margin-top:4px;
+    color:#777;
+    font-size:9px;
+    text-align:center;
+}
+
+.status.error{color:#ff7777}
+.status.success{color:#7bd99a}
+
+@media(max-height:700px){
+
+    .header{
+        min-height:54px;
+        padding:7px 10px;
+    }
+
+    .header-text{
+        display:none;
+    }
+
+    .document{
+        padding:16px 12px 35px;
+        font-size:13px;
+    }
+
+    .controls{
+        max-height:37%;
+    }
+
+    .correction{
+        min-height:50px;
+    }
+
+    .action,
+    .payment-button,
+    .download{
+        min-height:36px;
+    }
+}
+
+@media(max-width:480px){
+
+    .document-region{
+        padding:5px 5px 0;
+    }
+
+    .document{
+        padding:15px 11px 35px;
+        font-size:13px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="header">
+
+    <h1 id="headerTitle" class="header-title">
+        Review Your Work
+    </h1>
+
+    <p class="header-text">
+        Read the complete document. Scroll inside the document area
+        to see everything before approving it.
+    </p>
+
+</header>
+
+
+<main class="document-region">
+
+    <section class="document-card">
+
+        <div class="document-bar">
+
+            <span>
+                PREPARED WORK
+            </span>
+
+            <span>
+                SCROLL TO READ ALL
+            </span>
+
+        </div>
+
+        <article
+            id="document"
+            class="document"
+        >
+
+            <div class="placeholder">
+                Your generated work will appear here.
+            </div>
+
+        </article>
+
+    </section>
+
+</main>
+
+
+<section class="controls">
+
+    <h2 class="control-title">
+        Need a correction?
+    </h2>
+
+    <p class="help">
+        Tell Ada what you want changed. The document itself
+        is not resent with every correction.
+    </p>
+
+    <textarea
+        id="correction"
+        class="correction"
+        placeholder="Write your correction here..."
+    ></textarea>
+
+
+    <div class="actions">
+
+        <button
+            id="correctButton"
+            class="action correct"
+            type="button"
+        >
+            APPLY CORRECTION
+        </button>
+
+        <button
+            id="approveButton"
+            class="action approve"
+            type="button"
+        >
+            APPROVE
+        </button>
+
+    </div>
+
+
+    <div
+        id="payment"
+        class="payment"
+    >
+
+        <div class="payment-title">
+            Payment
+        </div>
+
+        <div
+            id="paymentInfo"
+            class="payment-info"
+        >
+            Your approved work is ready for the payment step.
+        </div>
+
+        <div class="payment-actions">
+
+            <button
+                id="reportButton"
+                class="payment-button report"
+                type="button"
+            >
+                REPORT PAYMENT
+            </button>
+
+            <button
+                id="checkButton"
+                class="payment-button check"
+                type="button"
+            >
+                CHECK PAYMENT
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <button
+        id="downloadButton"
+        class="download"
+        type="button"
+        disabled
+    >
+        🔒 DOWNLOAD YOUR WORK
+    </button>
+
+
+    <div
+        id="status"
+        class="status"
+    ></div>
+
+</section>
+
+</div>
+
+
+<script>
+"use strict";
+
+/*
+    REVIEW RESPONSIBILITY
+
+    This file owns only:
+      - displaying the complete generated document
+      - document scrolling
+      - correction UI
+      - approval UI
+      - payment UI
+      - download UI
+
+    It does NOT call Groq.
+    It does NOT contain Ada prompts.
+    It does NOT contain keyword matching.
+    It does NOT duplicate Ada intelligence.
+
+    It communicates with workspace.html using postMessage.
+*/
+
+
+const params =
+    new URLSearchParams(location.search);
+
+const service =
+    params.get("service") ||
+    "Business Center Service";
+
+let customerId =
+    params.get("customer_id") ||
+    "";
+
+let jobId =
+    params.get("job_id") ||
+    "";
+
+const headerTitle =
+    document.getElementById("headerTitle");
+
+const documentElement =
+    document.getElementById("document");
+
+const correction =
+    document.getElementById("correction");
+
+const correctButton =
+    document.getElementById("correctButton");
+
+const approveButton =
+    document.getElementById("approveButton");
+
+const payment =
+    document.getElementById("payment");
+
+const paymentInfo =
+    document.getElementById("paymentInfo");
+
+const reportButton =
+    document.getElementById("reportButton");
+
+const checkButton =
+    document.getElementById("checkButton");
+
+const downloadButton =
+    document.getElementById("downloadButton");
+
+const status =
+    document.getElementById("status");
+
+
+let busy = false;
+
+let paymentReady = false;
+
+let paymentConfirmed = false;
+
+let currentWork = "";
+
+
+headerTitle.textContent =
+    "Review Your Work — " +
+    service;
+
+
+function setStatus(
+    text,
+    type = ""
+){
+
+    status.textContent =
+        text || "";
+
+    status.className =
+        "status " +
+        type;
+}
+
+
+function setBusy(value){
+
+    busy = value;
+
+    [
+        correctButton,
+        approveButton,
+        reportButton,
+        checkButton
+    ].forEach(button => {
+
+        button.disabled =
+            value;
+
+    });
+}
+
+
+/*
+    Use textContent rather than innerHTML.
+
+    This guarantees the entire returned document is
+    displayed as document text without treating returned
+    content as executable HTML.
+*/
+function showWork(work){
+
+    currentWork =
+        String(work || "");
+
+    documentElement.textContent =
+        currentWork;
+
+    documentElement.scrollTop =
+        0;
+}
+
+
+/*
+    Correction request.
+
+    Only the correction is sent.
+
+    currentWork is NOT included in the message.
+*/
+correctButton.addEventListener(
+    "click",
+    function(){
+
+        const text =
+            correction.value.trim();
+
+        if(!text){
+
+            setStatus(
+                "Write the correction you want first.",
+                "error"
+            );
+
+            return;
+        }
+
+        if(busy){
+            return;
+        }
+
+        setBusy(true);
+
+        setStatus(
+            "Sending your correction to Ada..."
+        );
+
+        window.parent.postMessage(
+            {
+                type:
+                    "NPBC_REVIEW_CORRECTION",
+
+                correction:
+                    text,
+
+                service,
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId
+            },
+            location.origin
+        );
+    }
+);
+
+
+/*
+    Approval is sent to the existing workspace/API chain.
+*/
+approveButton.addEventListener(
+    "click",
+    function(){
+
+        if(busy){
+            return;
+        }
+
+        setBusy(true);
+
+        setStatus(
+            "Processing approval..."
+        );
+
+        window.parent.postMessage(
+            {
+                type:
+                    "NPBC_REVIEW_APPROVE",
+
+                service,
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId
+            },
+            location.origin
+        );
+    }
+);
+
+
+/*
+    Payment action remains in the review application,
+    but the actual backend operation goes through the
+    existing workspace/API chain.
+*/
+reportButton.addEventListener(
+    "click",
+    function(){
+
+        if(busy){
+            return;
+        }
+
+        setBusy(true);
+
+        setStatus(
+            "Processing payment information..."
+        );
+
+        window.parent.postMessage(
+            {
+                type:
+                    "NPBC_REVIEW_PAYMENT",
+
+                action:
+                    "report_payment",
+
+                message:
+                    "Customer is reporting payment for the approved work.",
+
+                service,
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId
+            },
+            location.origin
+        );
+    }
+);
+
+
+checkButton.addEventListener(
+    "click",
+    function(){
+
+        if(busy){
+            return;
+        }
+
+        setBusy(true);
+
+        setStatus(
+            "Checking payment..."
+        );
+
+        window.parent.postMessage(
+            {
+                type:
+                    "NPBC_REVIEW_PAYMENT",
+
+                action:
+                    "check_payment",
+
+                message:
+                    "Customer wants to check the payment status.",
+
+                service,
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId
+            },
+            location.origin
+        );
+    }
+);
+
+
+downloadButton.addEventListener(
+    "click",
+    function(){
+
+        if(
+            !paymentConfirmed ||
+            busy
+        ){
+            return;
+        }
+
+        setBusy(true);
+
+        setStatus(
+            "Preparing your download..."
+        );
+
+        window.parent.postMessage(
+            {
+                type:
+                    "NPBC_REVIEW_DOWNLOAD",
+
+                service,
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId
+            },
+            location.origin
+        );
+    }
+);
+
+
+/*
+    Messages from workspace.html.
+*/
+window.addEventListener(
+    "message",
+    function(event){
+
+        if(
+            event.origin !==
+            location.origin
+        ){
+            return;
+        }
+
+        const data =
+            event.data;
+
+        if(
+            !data ||
+            typeof data !== "object"
+        ){
+            return;
+        }
+
+
+        if(data.customer_id){
+            customerId =
+                data.customer_id;
+        }
+
+        if(data.job_id){
+            jobId =
+                data.job_id;
+        }
+
+
+        /*
+            Initial generated document.
+        */
+        if(
+            data.type ===
+            "NPBC_REVIEW_LOAD"
+        ){
+
+            showWork(
+                data.work || ""
+            );
+
+            setStatus(
+                "Your work is ready for review.",
+                "success"
+            );
+        }
+
+
+        /*
+            Updated document after correction.
+        */
+        if(
+            data.type ===
+            "NPBC_REVIEW_WORK_UPDATED"
+        ){
+
+            showWork(
+                data.work || ""
+            );
+
+            correction.value =
+                "";
+
+            setBusy(false);
+
+            setStatus(
+                "Your correction has been applied. Review the updated document.",
+                "success"
+            );
+        }
+
+
+        /*
+            Approval result.
+        */
+        if(
+            data.type ===
+            "NPBC_REVIEW_APPROVAL_RESULT"
+        ){
+
+            setBusy(false);
+
+            paymentReady =
+                true;
+
+            payment.classList.add(
+                "show"
+            );
+
+            paymentInfo.textContent =
+                data.result?.reply ||
+                data.result?.message ||
+                "Your work has been approved. Continue with payment.";
+
+            setStatus(
+                "Your work has been approved.",
+                "success"
+            );
+
+            payment.scrollIntoView({
+                behavior:"smooth",
+                block:"nearest"
+            });
+        }
+
+
+        /*
+            Payment result.
+
+            The existing backend response decides whether
+            payment is actually confirmed.
+        */
+        if(
+            data.type ===
+            "NPBC_REVIEW_PAYMENT_RESULT"
+        ){
+
+            setBusy(false);
+
+            const result =
+                data.result || {};
+
+            paymentInfo.textContent =
+                result.reply ||
+                result.message ||
+                JSON.stringify(
+                    result
+                );
+
+
+            const text =
+                JSON.stringify(
+                    result
+                ).toLowerCase();
+
+
+            /*
+                We do not invent a payment status.
+                Only an explicit successful/paid response
+                enables download.
+            */
+            if(
+                result.payment_confirmed === true ||
+                result.paid === true ||
+                result.status === "paid" ||
+                result.status === "confirmed"
+            ){
+
+                paymentConfirmed =
+                    true;
+
+                downloadButton.disabled =
+                    false;
+
+                downloadButton.classList.add(
+                    "ready"
+                );
+
+                downloadButton.textContent =
+                    "⬇ DOWNLOAD YOUR WORK";
+
+                setStatus(
+                    "Payment confirmed. Your work is ready to download.",
+                    "success"
+                );
+
+            }else{
+
+                setStatus(
+                    result.reply ||
+                    result.message ||
+                    "Payment status received."
+                );
+            }
+        }
+
+
+        /*
+            Download result.
+
+            If the existing backend supplies a real URL,
+            use it. Otherwise display its response rather
+            than inventing a destination.
+        */
+        if(
+            data.type ===
+            "NPBC_REVIEW_DOWNLOAD_RESULT"
+        ){
+
+            setBusy(false);
+
+            const result =
+                data.result || {};
+
+            const url =
+                result.download_url ||
+                result.url ||
+                result.file_url;
+
+            if(url){
+
+                window.open(
+                    url,
+                    "_blank"
+                );
+
+                setStatus(
+                    "Your download is ready.",
+                    "success"
+                );
+
+            }else{
+
+                setStatus(
+                    result.reply ||
+                    result.message ||
+                    "The download response was received.",
+                    "success"
+                );
+            }
+        }
+
+
+        /*
+            Central error message from workspace.
+        */
+        if(
+            data.type ===
+            "NPBC_REVIEW_ERROR"
+        ){
+
+            setBusy(false);
+
+            setStatus(
+                data.message ||
+                "Something went wrong.",
+                "error"
+            );
+        }
+
+    }
+);
+
+
+/*
+    Prevent the document viewport from accidentally
+    selecting/copying the prepared work.
+*/
+[
+    "copy",
+    "cut",
+    "contextmenu",
+    "dragstart"
+].forEach(
+    eventName => {
+
+        documentElement.addEventListener(
+            eventName,
+            event => {
+
+                event.preventDefault();
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+</body>
+</html>
