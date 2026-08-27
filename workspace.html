@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
 <meta
     name="viewport"
     content="width=device-width,initial-scale=1,viewport-fit=cover"
 >
+
 <title>Naija Pocket Business Center</title>
 
 <style>
+
 *{
     box-sizing:border-box;
 }
@@ -25,7 +28,13 @@ body{
 body{
     background:#000;
     color:#fff;
-    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
 }
 
 button,
@@ -47,6 +56,7 @@ button{
     --border:rgba(212,175,55,.28);
 }
 
+
 /* =========================================================
    APP
    ========================================================= */
@@ -55,10 +65,13 @@ button{
     width:100%;
     height:100dvh;
     min-height:0;
+
     display:flex;
     flex-direction:column;
+
     background:#000;
 }
+
 
 /* =========================================================
    HEADER
@@ -66,14 +79,21 @@ button{
 
 .header{
     flex:0 0 auto;
+
     min-height:65px;
+
     padding:9px 12px;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
+
     gap:10px;
+
     background:#050505;
+
     border-bottom:1px solid var(--border);
+
     z-index:20;
 }
 
@@ -83,31 +103,57 @@ button{
 
 .brand-title{
     margin:0;
+
     color:var(--green);
-    font-size:clamp(18px,4vw,25px);
+
+    font-size:clamp(
+        18px,
+        4vw,
+        25px
+    );
+
     font-weight:800;
+
     line-height:1.2;
 }
 
 .brand-subtitle{
     margin-top:3px;
+
     color:#ccc;
+
     font-size:10px;
 }
 
 .service-badge{
     max-width:46%;
+
     padding:7px 10px;
+
     background:#171717;
-    border:1px solid rgba(212,175,55,.55);
+
+    border:1px solid rgba(
+        212,
+        175,
+        55,
+        .55
+    );
+
     border-radius:999px;
+
     color:var(--gold2);
+
     font-size:10px;
+
     font-weight:800;
+
     white-space:nowrap;
+
     overflow:hidden;
+
     text-overflow:ellipsis;
 }
+
 
 /* =========================================================
    MAIN
@@ -115,26 +161,38 @@ button{
 
 .main{
     flex:1 1 auto;
+
     min-height:0;
+
     width:100%;
+
     overflow-x:hidden;
+
     overflow-y:auto;
+
     -webkit-overflow-scrolling:touch;
+
     overscroll-behavior:contain;
-    background:radial-gradient(
-        circle at top,
-        #181818 0,
-        #080808 35%,
-        #000 100%
-    );
+
+    background:
+        radial-gradient(
+            circle at top,
+            #181818 0,
+            #080808 35%,
+            #000 100%
+        );
 }
 
 .main-inner{
     width:100%;
+
     max-width:900px;
+
     margin:0 auto;
+
     padding:14px 10px 35px;
 }
+
 
 /* =========================================================
    SERVICE FORM
@@ -149,15 +207,25 @@ button{
 
 .intro-card{
     margin-bottom:12px;
+
     padding:16px;
-    background:linear-gradient(145deg,#191919,#0d0d0d);
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #0d0d0d
+        );
+
     border:1px solid var(--border);
 }
 
 .intro-title,
 .review-title{
     margin:0;
+
     color:var(--gold2);
+
     font-weight:900;
 }
 
@@ -167,53 +235,95 @@ button{
 
 .intro-text{
     margin:7px 0 0;
+
     color:#dedede;
+
     font-size:13px;
+
     line-height:1.6;
+
     white-space:pre-wrap;
 }
 
 .price{
     display:inline-block;
+
     margin-top:10px;
+
     padding:7px 10px;
-    background:rgba(212,175,55,.09);
-    border:1px solid rgba(212,175,55,.3);
+
+    background:
+        rgba(
+            212,
+            175,
+            55,
+            .09
+        );
+
+    border:1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .3
+        );
+
     border-radius:8px;
+
     color:var(--gold2);
+
     font-size:12px;
+
     font-weight:800;
 }
 
 .form-card{
     background:#101010;
-    border:1px solid rgba(255,255,255,.09);
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .09
+        );
+
     padding:15px;
 }
 
 .form-heading{
     margin:0;
+
     font-size:17px;
 }
 
 .form-description{
     margin:5px 0 14px;
+
     color:#a9a9a9;
+
     font-size:11px;
+
     line-height:1.5;
 }
 
 .fields{
     display:flex;
+
     flex-direction:column;
+
     gap:12px;
 }
 
 .field label{
     display:block;
+
     margin-bottom:5px;
+
     color:#e8e8e8;
+
     font-size:11px;
+
     font-weight:800;
 }
 
@@ -223,6 +333,7 @@ button{
 
 .optional{
     color:#777;
+
     font-weight:500;
 }
 
@@ -230,46 +341,81 @@ button{
 .field textarea,
 .field select{
     width:100%;
-    border:1px solid rgba(255,255,255,.14);
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .14
+        );
+
     border-radius:9px;
+
     background:#181818;
+
     color:#fff;
+
     outline:0;
+
     padding:11px;
+
     font-size:13px;
 }
 
 .field textarea{
     min-height:85px;
+
     resize:vertical;
 }
 
 .field input:focus,
 .field textarea:focus,
 .field select:focus{
-    border-color:rgba(212,175,55,.65);
+    border-color:
+        rgba(
+            212,
+            175,
+            55,
+            .65
+        );
 }
 
 .form-note{
     margin-top:12px;
+
     padding:10px;
+
     background:#151515;
+
     border-left:3px solid var(--gold);
+
     border-radius:7px;
+
     color:#bdbdbd;
+
     font-size:10px;
+
     line-height:1.5;
 }
 
 .form-submit{
     width:100%;
+
     min-height:50px;
+
     margin-top:15px;
+
     border:0;
+
     border-radius:10px;
+
     background:var(--gold);
+
     color:#000;
+
     font-size:13px;
+
     font-weight:900;
 }
 
@@ -277,13 +423,16 @@ button{
     opacity:.45;
 }
 
+
 /* =========================================================
    REVIEW VIEW
    ========================================================= */
 
 .review-view{
     display:none;
+
     width:100%;
+
     min-width:0;
 }
 
@@ -293,9 +442,23 @@ button{
 
 .review-header{
     padding:16px;
+
     margin-bottom:11px;
-    background:linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid rgba(212,175,55,.38);
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #0d0d0d
+        );
+
+    border:1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .38
+        );
 }
 
 .review-title{
@@ -304,37 +467,24 @@ button{
 
 .review-subtitle{
     margin:5px 0 0;
+
     color:#bdbdbd;
+
     font-size:11px;
+
     line-height:1.5;
 }
 
+
 /* =========================================================
-   REVIEW DOCUMENT CONTAINER
-
-   THIS IS THE IMPORTANT FIX.
-
-   The document itself is now the scrollable area.
-
-   There is NO fixed document height.
-   There is NO document-content max-height.
-   The generated document is allowed to contain
-   as many pages/sections as the API returns.
-
-   The card gets a viewport-sized maximum so a long
-   document can be scrolled inside the card without
-   pushing the fixed bottom controls away.
+   REVIEW DOCUMENT
    ========================================================= */
 
 .work-card{
     width:100%;
+
     min-width:0;
 
-    /*
-       The card is given the available screen area,
-       but the document inside it is allowed to be
-       unlimited in length.
-    */
     height:clamp(
         360px,
         calc(100dvh - 285px),
@@ -344,38 +494,39 @@ button{
     min-height:360px;
 
     background:#f7f7f7;
+
     color:#111;
 
     border-radius:11px;
 
     padding:0;
 
-    /*
-       THIS CARD SCROLLS.
-    */
     overflow-y:auto;
+
     overflow-x:hidden;
 
     -webkit-overflow-scrolling:touch;
+
     overscroll-behavior:contain;
 
     scrollbar-width:auto;
 
     overflow-wrap:anywhere;
+
     word-wrap:break-word;
 
     user-select:none;
+
     -webkit-user-select:none;
+
     -webkit-touch-callout:none;
 }
 
-/*
-   The document itself has NO height restriction.
-*/
-
 .work-content{
     display:block;
+
     width:100%;
+
     min-width:0;
 
     min-height:100%;
@@ -383,32 +534,42 @@ button{
     padding:22px 17px;
 
     color:#111;
+
     background:#f7f7f7;
 
     font-size:14px;
+
     line-height:1.7;
 
     overflow:visible;
 
     overflow-wrap:anywhere;
+
     word-wrap:break-word;
 
     user-select:none;
+
     -webkit-user-select:none;
+
     -webkit-touch-callout:none;
 }
 
 .work-content.document-html{
     display:block;
+
     width:100%;
+
     min-width:0;
+
     min-height:100%;
 
     color:#111;
+
     background:#fff;
 
     overflow:visible;
 }
+
 
 /* =========================================================
    DOCUMENT HEADINGS
@@ -416,26 +577,39 @@ button{
 
 .work-content h1{
     margin:0 0 18px;
+
     color:#111;
+
     font-size:28px;
+
     line-height:1.25;
+
     font-weight:800;
+
     text-align:left;
 }
 
 .work-content h2{
     margin:24px 0 10px;
+
     color:#111;
+
     font-size:21px;
+
     line-height:1.3;
+
     font-weight:800;
 }
 
 .work-content h3{
     margin:20px 0 8px;
+
     color:#111;
+
     font-size:17px;
+
     line-height:1.35;
+
     font-weight:800;
 }
 
@@ -443,9 +617,12 @@ button{
 .work-content h5,
 .work-content h6{
     margin:16px 0 7px;
+
     color:#111;
+
     font-weight:800;
 }
+
 
 /* =========================================================
    DOCUMENT TEXT
@@ -453,8 +630,11 @@ button{
 
 .work-content p{
     margin:0 0 12px;
+
     color:#111;
+
     font-size:14px;
+
     line-height:1.75;
 }
 
@@ -472,6 +652,7 @@ button{
     text-decoration:underline;
 }
 
+
 /* =========================================================
    LISTS
    ========================================================= */
@@ -479,13 +660,16 @@ button{
 .work-content ul,
 .work-content ol{
     margin:8px 0 15px 25px;
+
     padding:0;
 }
 
 .work-content li{
     margin:5px 0;
+
     line-height:1.65;
 }
+
 
 /* =========================================================
    DIVIDER
@@ -493,9 +677,12 @@ button{
 
 .work-content hr{
     border:0;
+
     border-top:1px solid #999;
+
     margin:20px 0;
 }
+
 
 /* =========================================================
    TABLES
@@ -503,28 +690,41 @@ button{
 
 .work-content table{
     width:100%;
+
     max-width:100%;
+
     border-collapse:collapse;
+
     margin:15px 0;
+
     color:#111;
+
     font-size:13px;
+
     table-layout:auto;
 }
 
 .work-content th,
 .work-content td{
     border:1px solid #999;
+
     padding:8px;
+
     text-align:left;
+
     vertical-align:top;
+
     overflow-wrap:anywhere;
+
     word-break:normal;
 }
 
 .work-content th{
     font-weight:800;
+
     background:#eee;
 }
+
 
 /* =========================================================
    QUOTES
@@ -532,10 +732,14 @@ button{
 
 .work-content blockquote{
     margin:15px 0;
+
     padding:10px 14px;
+
     border-left:4px solid #777;
+
     background:#f0f0f0;
 }
+
 
 /* =========================================================
    CODE
@@ -543,20 +747,30 @@ button{
 
 .work-content pre{
     white-space:pre-wrap;
+
     word-break:break-word;
+
     overflow-wrap:anywhere;
+
     margin:12px 0;
+
     padding:12px;
+
     background:#eee;
+
     border-radius:6px;
+
     font-family:monospace;
+
     font-size:12px;
 }
 
 .work-content code{
     font-family:monospace;
+
     overflow-wrap:anywhere;
 }
+
 
 /* =========================================================
    LINKS
@@ -564,9 +778,12 @@ button{
 
 .work-content a{
     color:#111;
+
     text-decoration:underline;
+
     overflow-wrap:anywhere;
 }
+
 
 /* =========================================================
    IMAGES
@@ -574,10 +791,14 @@ button{
 
 .work-content img{
     max-width:100%;
+
     height:auto;
+
     display:block;
+
     margin:12px auto;
 }
+
 
 /* =========================================================
    SPACING
@@ -589,11 +810,54 @@ button{
 
 .work-placeholder{
     color:#777;
+
     text-align:center;
+
     padding:70px 10px;
+
     user-select:none;
+
     -webkit-user-select:none;
 }
+
+
+/* =========================================================
+   REVIEW ERROR
+   ========================================================= */
+
+.review-error{
+    margin:18px;
+
+    padding:16px;
+
+    background:#fff4f4;
+
+    border:1px solid #d77;
+
+    border-radius:8px;
+
+    color:#8b0000;
+
+    font-family:
+        Inter,
+        Arial,
+        sans-serif;
+
+    font-size:13px;
+
+    line-height:1.6;
+
+    text-align:left;
+}
+
+.review-error strong{
+    display:block;
+
+    margin-bottom:7px;
+
+    font-size:15px;
+}
+
 
 /* =========================================================
    CORRECTIONS
@@ -601,97 +865,176 @@ button{
 
 .correction-card{
     margin-top:12px;
+
     padding:14px;
+
     background:#111;
-    border:1px solid rgba(255,255,255,.1);
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .1
+        );
 }
 
 .correction-title{
     margin:0 0 4px;
+
     font-size:14px;
 }
 
 .correction-help{
     margin:0 0 9px;
+
     color:#999;
+
     font-size:10px;
+
     line-height:1.45;
 }
 
 .correction-input{
     width:100%;
+
     min-height:100px;
+
     resize:vertical;
+
     padding:11px;
+
     background:#191919;
+
     color:#fff;
-    border:1px solid rgba(255,255,255,.15);
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .15
+        );
+
     border-radius:9px;
+
     outline:0;
 }
 
 .review-actions,
 .payment-buttons{
     display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+
     gap:7px;
+
     margin-top:10px;
 }
 
 .review-button,
 .payment-buttons button{
     min-height:43px;
+
     border-radius:8px;
+
     font-size:11px;
+
     font-weight:850;
 }
 
 .apply-button{
     background:#252525;
+
     color:#fff;
-    border:1px solid rgba(255,255,255,.14);
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .14
+        );
 }
 
 .approve-button,
 .payment-report{
     background:var(--gold);
+
     color:#000;
+
     border:0;
 }
 
 .download-button{
     width:100%;
+
     min-height:47px;
+
     margin-top:8px;
+
     border-radius:8px;
+
     background:#242424;
+
     color:#777;
-    border:1px solid rgba(255,255,255,.1);
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .1
+        );
+
     font-size:11px;
+
     font-weight:850;
+
     cursor:not-allowed;
 }
 
 .download-button.active{
     background:var(--green);
+
     color:#fff;
+
     border-color:var(--green);
+
     cursor:pointer;
 }
 
 .payment-message{
     margin-top:8px;
+
     color:#858585;
+
     font-size:9px;
+
     text-align:center;
 }
 
 .payment-panel{
     display:none;
+
     margin-top:11px;
+
     padding:13px;
+
     background:#121212;
-    border:1px solid rgba(212,175,55,.38);
+
+    border:1px solid
+        rgba(
+            212,
+            175,
+            55,
+            .38
+        );
+
     border-radius:12px;
 }
 
@@ -701,23 +1044,38 @@ button{
 
 .payment-title{
     color:var(--gold2);
+
     font-size:13px;
+
     font-weight:900;
+
     margin-bottom:6px;
 }
 
 .payment-details{
     color:#ddd;
+
     white-space:pre-wrap;
+
     font-size:11px;
+
     line-height:1.5;
 }
 
 .payment-check{
     background:#282828;
+
     color:#fff;
-    border:1px solid rgba(255,255,255,.13);
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .13
+        );
 }
+
 
 /* =========================================================
    BOTTOM CONTROLS
@@ -725,87 +1083,168 @@ button{
 
 .bottom{
     flex:0 0 auto;
+
     width:100%;
-    padding:8px 9px calc(8px + env(safe-area-inset-bottom));
+
+    padding:
+        8px
+        9px
+        calc(
+            8px +
+            env(
+                safe-area-inset-bottom
+            )
+        );
+
     background:#080808;
+
     border-top:1px solid var(--border);
+
     z-index:20;
 }
 
 .bottom-inner{
     max-width:900px;
+
     margin:auto;
 }
 
 .tools{
     display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
+
     gap:6px;
+
     margin-bottom:7px;
 }
 
 .tool-button,
 .choose-service-button{
     min-height:39px;
+
     border-radius:8px;
+
     background:#181818;
+
     color:#fff;
-    border:1px solid rgba(255,255,255,.13);
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .13
+        );
+
     font-size:10px;
+
     font-weight:800;
 }
 
 .tool-button.gold{
     color:var(--gold2);
-    border-color:rgba(212,175,55,.35);
+
+    border-color:
+        rgba(
+            212,
+            175,
+            55,
+            .35
+        );
 }
 
 .choose-service-button{
     width:100%;
+
     margin-bottom:7px;
+
     background:#000;
 }
 
 .composer{
     display:flex;
+
     align-items:flex-end;
+
     gap:6px;
 }
 
 .message-input{
     flex:1;
+
     min-width:0;
+
     min-height:45px;
+
     max-height:105px;
+
     resize:none;
+
     padding:11px;
+
     background:#171717;
+
     color:#fff;
-    border:1px solid rgba(255,255,255,.16);
+
+    border:1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .16
+        );
+
     border-radius:9px;
+
     outline:0;
 }
 
 .send-button{
     width:64px;
+
     min-height:45px;
+
     border:0;
+
     border-radius:9px;
+
     background:var(--gold);
+
     color:#000;
+
     font-size:11px;
+
     font-weight:900;
 }
 
 .voice-recording{
     display:none;
+
     margin-bottom:6px;
+
     padding:7px;
+
     background:#190707;
-    border:1px solid rgba(179,0,0,.55);
+
+    border:1px solid
+        rgba(
+            179,
+            0,
+            0,
+            .55
+        );
+
     border-radius:8px;
+
     color:#ff8c8c;
+
     font-size:10px;
+
     text-align:center;
 }
 
@@ -815,9 +1254,13 @@ button{
 
 .status{
     min-height:14px;
+
     margin-top:3px;
+
     color:#777;
+
     font-size:9px;
+
     text-align:center;
 }
 
@@ -835,8 +1278,10 @@ button{
 
 button:disabled{
     opacity:.45;
+
     cursor:not-allowed;
 }
+
 
 /* =========================================================
    READ ONLY
@@ -846,11 +1291,16 @@ button:disabled{
 .intro-card,
 .work-card{
     user-select:none;
+
     -webkit-user-select:none;
+
     -moz-user-select:none;
+
     -ms-user-select:none;
+
     -webkit-touch-callout:none;
 }
+
 
 /* =========================================================
    MOBILE
@@ -859,23 +1309,28 @@ button:disabled{
 @media(max-width:600px){
 
     .main-inner{
-        padding:12px 9px 30px;
+        padding:
+            12px
+            9px
+            30px;
     }
 
-    /*
-       On a phone the review card gets most of the
-       available middle area and becomes independently
-       scrollable.
-    */
-
     .work-card{
-        height:calc(100dvh - 315px);
+        height:
+            calc(
+                100dvh - 315px
+            );
+
         min-height:300px;
+
         border-radius:10px;
     }
 
     .work-content{
-        padding:18px 14px 28px;
+        padding:
+            18px
+            14px
+            28px;
     }
 
     .work-content h1{
@@ -902,13 +1357,41 @@ button:disabled{
     .work-content td{
         padding:7px;
     }
+
 }
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media(max-width:380px){
+
+    .tools{
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0,1fr)
+            );
+    }
+
+    .work-card{
+        height:
+            calc(
+                100dvh - 345px
+            );
+    }
+
+}
+
 </style>
 </head>
+
 
 <body>
 
 <div class="app">
+
 
 <header class="header">
 
@@ -924,6 +1407,7 @@ button:disabled{
 
     </div>
 
+
     <div
         id="serviceBadge"
         class="service-badge"
@@ -934,11 +1418,14 @@ button:disabled{
 </header>
 
 
+
 <main class="main">
 
 <div class="main-inner">
 
+
 <section id="formView">
+
 
     <div
         class="intro-card"
@@ -952,12 +1439,14 @@ button:disabled{
             Let's get started
         </h2>
 
+
         <p
             id="introText"
             class="intro-text"
         >
             Please wait while we prepare useful information for this service.
         </p>
+
 
         <div
             id="price"
@@ -969,15 +1458,18 @@ button:disabled{
     </div>
 
 
+
     <div class="form-card">
 
         <h3 class="form-heading">
             Your Service Information
         </h3>
 
+
         <p class="form-description">
             Fill in the information relevant to your request. Optional fields can be left blank.
         </p>
+
 
         <form id="serviceForm">
 
@@ -986,9 +1478,15 @@ button:disabled{
                 class="fields"
             ></div>
 
+
             <div class="form-note">
-                When you tap <strong>SEND</strong>, your information will be sent for processing and your prepared work will open immediately in the review area.
+
+                When you tap
+                <strong>SEND</strong>,
+                your information will be sent for processing and your prepared work will open immediately in the review area.
+
             </div>
+
 
             <button
                 id="formSubmit"
@@ -1005,16 +1503,19 @@ button:disabled{
 </section>
 
 
+
 <section
     id="reviewView"
     class="review-view"
 >
+
 
     <div class="review-header">
 
         <h2 class="review-title">
             Your Work
         </h2>
+
 
         <p class="review-subtitle">
             Read through your prepared work carefully. You can request corrections before approving it.
@@ -1023,11 +1524,6 @@ button:disabled{
     </div>
 
 
-    <!--
-        IMPORTANT:
-        The card itself is the scroll container.
-        The document inside it has no height limit.
-    -->
 
     <div
         id="workCard"
@@ -1048,21 +1544,25 @@ button:disabled{
     </div>
 
 
+
     <div class="correction-card">
 
         <h3 class="correction-title">
             Need any corrections?
         </h3>
 
+
         <p class="correction-help">
             Tell us exactly what you want changed, added or corrected.
         </p>
+
 
         <textarea
             id="correctionInput"
             class="correction-input"
             placeholder="Write your corrections or changes here..."
         ></textarea>
+
 
         <div class="review-actions">
 
@@ -1073,6 +1573,7 @@ button:disabled{
             >
                 Apply My Corrections
             </button>
+
 
             <button
                 id="approveButton"
@@ -1087,6 +1588,7 @@ button:disabled{
     </div>
 
 
+
     <button
         id="downloadButton"
         class="download-button"
@@ -1096,9 +1598,11 @@ button:disabled{
         🔒 Download Your Work
     </button>
 
+
     <div class="payment-message">
         Payment must be confirmed before the download button becomes active.
     </div>
+
 
 
     <div
@@ -1110,10 +1614,12 @@ button:disabled{
             Payment
         </div>
 
+
         <div
             id="paymentDetails"
             class="payment-details"
         ></div>
+
 
         <div class="payment-buttons">
 
@@ -1124,6 +1630,7 @@ button:disabled{
             >
                 Report Payment
             </button>
+
 
             <button
                 id="paymentCheckButton"
@@ -1140,12 +1647,15 @@ button:disabled{
 </section>
 
 </div>
+
 </main>
+
 
 
 <section class="bottom">
 
 <div class="bottom-inner">
+
 
     <div
         id="voiceRecording"
@@ -1153,6 +1663,7 @@ button:disabled{
     >
         🔴 Recording... tap Voice again to stop.
     </div>
+
 
 
     <div class="tools">
@@ -1165,6 +1676,7 @@ button:disabled{
             📄 Upload Documents You Want To Give Us
         </button>
 
+
         <button
             id="voiceButton"
             class="tool-button gold"
@@ -1172,6 +1684,7 @@ button:disabled{
         >
             🎤 Voice
         </button>
+
 
         <button
             id="customerServiceButton"
@@ -1184,6 +1697,7 @@ button:disabled{
     </div>
 
 
+
     <button
         id="chooseServiceButton"
         class="choose-service-button"
@@ -1193,11 +1707,13 @@ button:disabled{
     </button>
 
 
+
     <input
         id="fileInput"
         type="file"
         accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
     >
+
 
 
     <div class="composer">
@@ -1210,6 +1726,7 @@ button:disabled{
             autocomplete="off"
         ></textarea>
 
+
         <button
             id="sendButton"
             class="send-button"
@@ -1219,6 +1736,7 @@ button:disabled{
         </button>
 
     </div>
+
 
 
     <div
@@ -1233,8 +1751,11 @@ button:disabled{
 </div>
 
 
+
 <script>
+
 "use strict";
+
 
 /* =========================================================
    API CONNECTION
@@ -1247,59 +1768,123 @@ const API_BASE = "";
    ELEMENTS
    ========================================================= */
 
-const $ = id => document.getElementById(id);
+const $ = id =>
+    document.getElementById(id);
 
-const formView = $("formView");
-const reviewView = $("reviewView");
-const serviceForm = $("serviceForm");
-const fields = $("fields");
-const formSubmit = $("formSubmit");
 
-const serviceBadge = $("serviceBadge");
-const introTitle = $("introTitle");
-const introText = $("introText");
-const price = $("price");
-const introCard = $("introCard");
+const formView =
+    $("formView");
 
-const workCard = $("workCard");
-const workContent = $("workContent");
+const reviewView =
+    $("reviewView");
 
-const correctionInput = $("correctionInput");
-const applyBtn = $("applyCorrectionsButton");
-const approveBtn = $("approveButton");
+const serviceForm =
+    $("serviceForm");
 
-const downloadBtn = $("downloadButton");
+const fields =
+    $("fields");
 
-const uploadBtn = $("uploadButton");
-const voiceBtn = $("voiceButton");
-const customerBtn = $("customerServiceButton");
-const chooseBtn = $("chooseServiceButton");
+const formSubmit =
+    $("formSubmit");
 
-const fileInput = $("fileInput");
 
-const messageInput = $("messageInput");
-const sendBtn = $("sendButton");
+const serviceBadge =
+    $("serviceBadge");
 
-const status = $("status");
+const introTitle =
+    $("introTitle");
 
-const voiceRecording = $("voiceRecording");
+const introText =
+    $("introText");
 
-const paymentPanel = $("paymentPanel");
-const paymentDetails = $("paymentDetails");
-const paymentReport = $("paymentReportButton");
-const paymentCheck = $("paymentCheckButton");
+const price =
+    $("price");
+
+const introCard =
+    $("introCard");
+
+
+const workCard =
+    $("workCard");
+
+const workContent =
+    $("workContent");
+
+
+const correctionInput =
+    $("correctionInput");
+
+const applyBtn =
+    $("applyCorrectionsButton");
+
+const approveBtn =
+    $("approveButton");
+
+
+const downloadBtn =
+    $("downloadButton");
+
+
+const uploadBtn =
+    $("uploadButton");
+
+const voiceBtn =
+    $("voiceButton");
+
+const customerBtn =
+    $("customerServiceButton");
+
+const chooseBtn =
+    $("chooseServiceButton");
+
+
+const fileInput =
+    $("fileInput");
+
+
+const messageInput =
+    $("messageInput");
+
+const sendBtn =
+    $("sendButton");
+
+
+const status =
+    $("status");
+
+
+const voiceRecording =
+    $("voiceRecording");
+
+
+const paymentPanel =
+    $("paymentPanel");
+
+const paymentDetails =
+    $("paymentDetails");
+
+const paymentReport =
+    $("paymentReportButton");
+
+const paymentCheck =
+    $("paymentCheckButton");
 
 
 /* =========================================================
    SERVICE
    ========================================================= */
 
-const params = new URLSearchParams(location.search);
+const params =
+    new URLSearchParams(
+        location.search
+    );
 
-const service = (
-    params.get("service") ||
-    "Business Center Service"
-).trim();
+
+const service =
+    (
+        params.get("service") ||
+        "Business Center Service"
+    ).trim();
 
 
 /* =========================================================
@@ -1310,16 +1895,24 @@ function makeId(prefix){
 
     if(
         typeof crypto !== "undefined" &&
-        typeof crypto.randomUUID === "function"
+        typeof crypto.randomUUID ===
+            "function"
     ){
-        return prefix + crypto.randomUUID();
+
+        return (
+            prefix +
+            crypto.randomUUID()
+        );
     }
+
 
     return (
         prefix +
         Date.now() +
         "_" +
-        Math.random().toString(36).slice(2)
+        Math.random()
+            .toString(36)
+            .slice(2)
     );
 }
 
@@ -1327,24 +1920,38 @@ function makeId(prefix){
 function get(key){
 
     try{
-        return localStorage.getItem(key);
-    }catch(e){
+
+        return localStorage.getItem(
+            key
+        );
+
+    }catch(error){
+
         return null;
+
     }
+
 }
 
 
 function put(key,value){
 
     try{
-        localStorage.setItem(key,value);
-    }catch(e){}
+
+        localStorage.setItem(
+            key,
+            value
+        );
+
+    }catch(error){}
+
 }
 
 
 let customerId =
     get("npbc_customer_id") ||
     makeId("customer_");
+
 
 put(
     "npbc_customer_id",
@@ -1357,6 +1964,7 @@ let jobId =
     get("npbc_job_id") ||
     makeId("job_");
 
+
 put(
     "npbc_job_id",
     jobId
@@ -1366,6 +1974,7 @@ put(
 let requestId =
     get("npbc_client_request_id") ||
     makeId("request_");
+
 
 put(
     "npbc_client_request_id",
@@ -1378,13 +1987,17 @@ put(
    ========================================================= */
 
 let busy = false;
+
 let approved = false;
+
 let paymentConfirmed = false;
 
 let currentWork = "";
 
 let mediaRecorder = null;
+
 let recordedChunks = [];
+
 let recordingStream = null;
 
 
@@ -1398,20 +2011,34 @@ function clean(value){
         return null;
     }
 
-    return String(value).trim() || null;
+
+    return (
+        String(value)
+            .trim() ||
+        null
+    );
 }
 
 
-function setStatus(message,type=""){
+function setStatus(
+    message,
+    type=""
+){
 
-    status.textContent = message || "";
-    status.className = "status " + type;
+    status.textContent =
+        message || "";
+
+
+    status.className =
+        "status " +
+        type;
 }
 
 
 function busyState(value){
 
     busy = value;
+
 
     [
         formSubmit,
@@ -1424,9 +2051,263 @@ function busyState(value){
         approveBtn
     ].forEach(button => {
 
-        button.disabled = value;
+        if(button){
+
+            button.disabled =
+                value;
+
+        }
 
     });
+
+}
+
+
+/* =========================================================
+   API RESPONSE ERROR EXTRACTION
+   ========================================================= */
+
+async function readApiResponse(
+    response
+){
+
+    const contentType =
+        (
+            response.headers.get(
+                "content-type"
+            ) || ""
+        ).toLowerCase();
+
+
+    let data = null;
+
+    let rawText = "";
+
+
+    /*
+       First try JSON when the server
+       declares JSON.
+    */
+
+    if(
+        contentType.includes(
+            "application/json"
+        )
+    ){
+
+        try{
+
+            data =
+                await response.json();
+
+        }catch(error){
+
+            data = null;
+
+        }
+
+    }else{
+
+        /*
+           Some servers/proxies do not
+           correctly send the JSON content
+           type. Read the response as text.
+        */
+
+        try{
+
+            rawText =
+                await response.text();
+
+        }catch(error){
+
+            rawText = "";
+
+        }
+
+
+        if(rawText){
+
+            try{
+
+                data =
+                    JSON.parse(
+                        rawText
+                    );
+
+            }catch(error){
+
+                data = null;
+
+            }
+
+        }
+
+    }
+
+
+    if(
+        !data &&
+        !rawText
+    ){
+
+        return {
+            data:null,
+            rawText:""
+        };
+
+    }
+
+
+    return {
+        data,
+        rawText
+    };
+
+}
+
+
+/* =========================================================
+   API
+   ========================================================= */
+
+async function apiChat(body){
+
+    let response;
+
+
+    try{
+
+        response =
+            await fetch(
+                API_BASE +
+                "/api/chat",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(body)
+                }
+            );
+
+    }catch(error){
+
+        throw new Error(
+            "Unable to connect to the service. Please check the connection and try again."
+        );
+
+    }
+
+
+    const parsed =
+        await readApiResponse(
+            response
+        );
+
+
+    const data =
+        parsed.data;
+
+
+    /*
+       A server-side error must NEVER
+       be allowed to continue into the
+       review renderer.
+    */
+
+    if(!response.ok){
+
+        let message =
+            data?.reply ||
+            data?.message ||
+            data?.error ||
+            parsed.rawText ||
+            (
+                "Request failed. Server returned HTTP " +
+                response.status +
+                "."
+            );
+
+
+        /*
+           Avoid dumping a complete HTML
+           error page into the customer UI.
+        */
+
+        if(
+            /<!doctype|<html[\s>]/i.test(
+                message
+            )
+        ){
+
+            message =
+                "The service server returned an unexpected response. Please try again.";
+
+        }
+
+
+        throw new Error(
+            String(message).trim()
+        );
+
+    }
+
+
+    /*
+       If the backend returned JSON,
+       require a successful response.
+    */
+
+    if(data){
+
+        if(
+            data.success === false
+        ){
+
+            throw new Error(
+                data.reply ||
+                data.message ||
+                data.error ||
+                "The request could not be completed."
+            );
+
+        }
+
+
+        return data;
+
+    }
+
+
+    /*
+       Successful non-JSON responses
+       are converted into a usable reply
+       instead of causing a blank review.
+    */
+
+    if(parsed.rawText){
+
+        return {
+            success:true,
+            reply:
+                parsed.rawText
+        };
+
+    }
+
+
+    throw new Error(
+        "The service returned an empty response."
+    );
+
 }
 
 
@@ -1434,113 +2315,187 @@ function busyState(value){
    DOCUMENT CLEANING
    ========================================================= */
 
-function removeHtmlCodeFences(value){
+function removeHtmlCodeFences(
+    value
+){
 
-    let html = String(value || "").trim();
+    let html =
+        String(
+            value || ""
+        ).trim();
 
-    html = html.replace(
-        /^```(?:html|HTML)?\s*/i,
-        ""
-    );
 
-    html = html.replace(
-        /\s*```$/i,
-        ""
-    );
+    html =
+        html.replace(
+            /^```(?:html|HTML)?\s*/i,
+            ""
+        );
+
+
+    html =
+        html.replace(
+            /\s*```$/i,
+            ""
+        );
+
 
     return html.trim();
+
 }
 
 
-function looksLikeHtml(value){
+/* =========================================================
+   HTML DETECTION
+   ========================================================= */
 
-    const text = String(value || "").trim();
+function looksLikeHtml(
+    value
+){
 
-    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i.test(text);
+    const text =
+        String(
+            value || ""
+        ).trim();
+
+
+    return (
+        /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i
+            .test(text)
+    );
+
 }
 
 
-/*
-   IMPORTANT:
+/* =========================================================
+   SAFE DOCUMENT PARSER
+   ========================================================= */
 
-   This function does NOT limit document length.
+function parseSafeDocumentHtml(
+    html
+){
 
-   It only removes dangerous executable elements.
-*/
+    /*
+       Parse the returned HTML inside an
+       isolated document first.
 
-function sanitizeDocumentHtml(html){
+       This keeps malformed or unwanted
+       document markup away from the live
+       application DOM until it has been
+       cleaned.
+    */
 
-    const source = document.createElement("div");
-
-    source.innerHTML = html;
-
-
-    source.querySelectorAll(
-        "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
-    ).forEach(element => {
-
-        element.remove();
-
-    });
+    const parser =
+        new DOMParser();
 
 
-    const allowedTags = new Set([
-        "H1",
-        "H2",
-        "H3",
-        "H4",
-        "H5",
-        "H6",
-        "P",
-        "STRONG",
-        "B",
-        "EM",
-        "I",
-        "U",
-        "UL",
-        "OL",
-        "LI",
-        "HR",
-        "BR",
-        "TABLE",
-        "THEAD",
-        "TBODY",
-        "TFOOT",
-        "TR",
-        "TH",
-        "TD",
-        "BLOCKQUOTE",
-        "PRE",
-        "CODE",
-        "DIV",
-        "SPAN",
-        "A",
-        "IMG"
-    ]);
+    const parsed =
+        parser.parseFromString(
+            html,
+            "text/html"
+        );
 
 
-    function cleanNode(node){
+    const allowedTags =
+        new Set([
+            "H1",
+            "H2",
+            "H3",
+            "H4",
+            "H5",
+            "H6",
+            "P",
+            "STRONG",
+            "B",
+            "EM",
+            "I",
+            "U",
+            "UL",
+            "OL",
+            "LI",
+            "HR",
+            "BR",
+            "TABLE",
+            "THEAD",
+            "TBODY",
+            "TFOOT",
+            "TR",
+            "TH",
+            "TD",
+            "BLOCKQUOTE",
+            "PRE",
+            "CODE",
+            "DIV",
+            "SPAN",
+            "A",
+            "IMG"
+        ]);
 
-        if(node.nodeType === Node.TEXT_NODE){
+
+    /*
+       Remove executable / page-level
+       elements before traversing the
+       document.
+    */
+
+    parsed
+        .querySelectorAll(
+            "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base,svg,video,audio"
+        )
+        .forEach(
+            element =>
+                element.remove()
+        );
+
+
+    function cleanNode(
+        node
+    ){
+
+        if(
+            node.nodeType ===
+            Node.TEXT_NODE
+        ){
+
             return;
+
         }
 
-        if(node.nodeType !== Node.ELEMENT_NODE){
+
+        if(
+            node.nodeType !==
+            Node.ELEMENT_NODE
+        ){
+
             node.remove();
+
             return;
+
         }
 
 
-        const tag = node.tagName;
+        const tag =
+            node.tagName;
 
 
-        if(!allowedTags.has(tag)){
+        /*
+           Remove unwanted tags while
+           retaining their text/content
+           where possible.
+        */
 
-            const parent = node.parentNode;
+        if(
+            !allowedTags.has(tag)
+        ){
+
+            const parent =
+                node.parentNode;
+
 
             if(parent){
 
-                while(node.firstChild){
+                while(
+                    node.firstChild
+                ){
 
                     parent.insertBefore(
                         node.firstChild,
@@ -1549,46 +2504,66 @@ function sanitizeDocumentHtml(html){
 
                 }
 
+
                 node.remove();
 
             }
 
+
             return;
+
         }
 
 
-        Array.from(node.attributes).forEach(attr => {
+        Array.from(
+            node.attributes
+        ).forEach(
+            attribute => {
 
-            const name = attr.name.toLowerCase();
+                const name =
+                    attribute.name
+                        .toLowerCase();
 
-            const keep =
-                name === "href" ||
-                name === "src" ||
-                name === "alt" ||
-                name === "title";
 
-            if(!keep){
+                const keep =
+                    name === "href" ||
+                    name === "src" ||
+                    name === "alt" ||
+                    name === "title";
 
-                node.removeAttribute(
-                    attr.name
-                );
+
+                if(!keep){
+
+                    node.removeAttribute(
+                        attribute.name
+                    );
+
+                }
 
             }
-
-        });
+        );
 
 
         if(tag === "A"){
 
             const href =
-                node.getAttribute("href") || "";
+                node.getAttribute(
+                    "href"
+                ) || "";
+
 
             if(
-                !/^https?:\/\//i.test(href) &&
-                !/^mailto:/i.test(href)
+                !/^https?:\/\//i.test(
+                    href
+                ) &&
+                !/^mailto:/i.test(
+                    href
+                )
             ){
 
-                node.removeAttribute("href");
+                node.removeAttribute(
+                    "href"
+                );
 
             }else{
 
@@ -1597,58 +2572,80 @@ function sanitizeDocumentHtml(html){
                     "_blank"
                 );
 
+
                 node.setAttribute(
                     "rel",
                     "noopener noreferrer"
                 );
 
             }
+
         }
 
 
         if(tag === "IMG"){
 
             const src =
-                node.getAttribute("src") || "";
+                node.getAttribute(
+                    "src"
+                ) || "";
+
 
             if(
-                !/^https?:\/\//i.test(src) &&
-                !/^data:image\//i.test(src)
+                !/^https?:\/\//i.test(
+                    src
+                ) &&
+                !/^data:image\//i.test(
+                    src
+                )
             ){
 
                 node.remove();
 
                 return;
+
             }
+
         }
 
 
-        Array.from(node.childNodes).forEach(
+        Array.from(
+            node.childNodes
+        ).forEach(
             cleanNode
         );
+
     }
 
 
-    Array.from(source.childNodes).forEach(
+    Array.from(
+        parsed.body.childNodes
+    ).forEach(
         cleanNode
     );
 
 
-    return source.innerHTML;
+    return parsed.body.innerHTML;
+
 }
 
 
 /* =========================================================
-   COMPLETE DOCUMENT RENDERER
-
-   Nothing here measures document height.
-   Nothing here truncates document content.
-   Nothing here takes only the first section.
+   DOCUMENT RENDERER
    ========================================================= */
 
-function renderDocument(work){
+function renderDocument(
+    work
+){
 
-    const raw = clean(work) || "";
+    const raw =
+        clean(work) || "";
+
+
+    /*
+       Always clear the old document
+       first.
+    */
 
     workContent.innerHTML = "";
 
@@ -1660,61 +2657,189 @@ function renderDocument(work){
     if(!raw){
 
         const placeholder =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         placeholder.className =
             "work-placeholder";
 
+
         placeholder.textContent =
-            "Your prepared work will appear here.";
+            "The service returned no prepared work.";
+
 
         workContent.appendChild(
             placeholder
         );
 
-        return;
+
+        return false;
+
     }
 
 
     const cleaned =
-        removeHtmlCodeFences(raw);
+        removeHtmlCodeFences(
+            raw
+        );
 
 
-    if(looksLikeHtml(cleaned)){
+    try{
 
-        const safeHtml =
-            sanitizeDocumentHtml(
+        if(
+            looksLikeHtml(
                 cleaned
-            );
+            )
+        ){
 
-        workContent.classList.add(
+            const safeHtml =
+                parseSafeDocumentHtml(
+                    cleaned
+                );
+
+
+            /*
+               If sanitisation unexpectedly
+               produced no visible content,
+               fall back to the original
+               response as plain text.
+            */
+
+            if(
+                !safeHtml.trim()
+            ){
+
+                workContent.textContent =
+                    cleaned;
+
+                workContent.classList.remove(
+                    "document-html"
+                );
+
+            }else{
+
+                workContent.classList.add(
+                    "document-html"
+                );
+
+
+                workContent.innerHTML =
+                    safeHtml;
+
+            }
+
+        }else{
+
+            /*
+               Plain text is inserted with
+               textContent so the COMPLETE
+               response remains visible.
+            */
+
+            workContent.textContent =
+                cleaned;
+
+        }
+
+
+        /*
+           The review card itself is the
+           document scroll container.
+        */
+
+        workCard.scrollTop = 0;
+
+
+        return true;
+
+    }catch(error){
+
+        /*
+           Rendering failure must never leave
+           a blank white review page.
+        */
+
+        workContent.classList.remove(
             "document-html"
         );
 
-        workContent.innerHTML =
-            safeHtml;
 
-    }else{
+        workContent.innerHTML = "";
 
-        /*
-           textContent preserves the ENTIRE
-           returned response.
-        */
 
-        workContent.textContent =
+        const errorBox =
+            document.createElement(
+                "div"
+            );
+
+
+        errorBox.className =
+            "review-error";
+
+
+        const heading =
+            document.createElement(
+                "strong"
+            );
+
+
+        heading.textContent =
+            "Your work was received, but it could not be displayed as formatted content.";
+
+
+        const message =
+            document.createElement(
+                "div"
+            );
+
+
+        message.textContent =
+            "The complete response is shown below in plain text.";
+
+
+        const fallback =
+            document.createElement(
+                "div"
+            );
+
+
+        fallback.style.marginTop =
+            "12px";
+
+
+        fallback.style.whiteSpace =
+            "pre-wrap";
+
+
+        fallback.style.color =
+            "#111";
+
+
+        fallback.textContent =
             cleaned;
+
+
+        errorBox.append(
+            heading,
+            message,
+            fallback
+        );
+
+
+        workContent.appendChild(
+            errorBox
+        );
+
+
+        workCard.scrollTop = 0;
+
+
+        return true;
+
     }
 
-
-    /*
-       Always start the review card at the
-       beginning of the document.
-
-       The customer can then scroll the CARD
-       itself from page 1 through the final page.
-    */
-
-    workCard.scrollTop = 0;
 }
 
 
@@ -1729,27 +2854,31 @@ const generic = [
         label:"What do you need?",
         required:true,
         type:"textarea",
-        placeholder:"Tell us exactly what you want done"
+        placeholder:
+            "Tell us exactly what you want done"
     },
 
     {
         name:"important_details",
         label:"Important details",
         type:"textarea",
-        placeholder:"Add the information that matters to your request"
+        placeholder:
+            "Add the information that matters to your request"
     },
 
     {
         name:"other_instructions",
         label:"Other instructions",
         type:"textarea",
-        placeholder:"Anything else you want considered"
+        placeholder:
+            "Anything else you want considered"
     }
 
 ];
 
 
 const forms = {
+
 
     "document formatting":[
 
@@ -1758,7 +2887,8 @@ const forms = {
             label:"Document title",
             required:true,
             type:"text",
-            placeholder:"Enter the document title"
+            placeholder:
+                "Enter the document title"
         },
 
         {
@@ -1766,28 +2896,33 @@ const forms = {
             label:"Document type",
             required:true,
             type:"text",
-            placeholder:"e.g. report, essay, thesis, business document"
+            placeholder:
+                "e.g. report, essay, thesis, business document"
         },
 
         {
             name:"page_count",
             label:"Number of pages",
             type:"text",
-            placeholder:"Enter the number of pages if known"
+            placeholder:
+                "Enter the number of pages if known"
         },
 
         {
             name:"formatting_style",
             label:"Formatting style",
             type:"text",
-            placeholder:"e.g. APA, MLA, Harvard, business standard"
+            placeholder:
+                "e.g. APA, MLA, Harvard, business standard"
         },
 
         {
             name:"special_instructions",
-            label:"Specific formatting instructions",
+            label:
+                "Specific formatting instructions",
             type:"textarea",
-            placeholder:"Font, spacing, margins, headings, layout, or anything else"
+            placeholder:
+                "Font, spacing, margins, headings, layout, or anything else"
         }
 
     ],
@@ -1797,31 +2932,38 @@ const forms = {
 
         {
             name:"research_topic",
-            label:"Research topic or question",
+            label:
+                "Research topic or question",
             required:true,
             type:"textarea",
-            placeholder:"What do you want to research?"
+            placeholder:
+                "What do you want to research?"
         },
 
         {
             name:"desired_length",
             label:"Desired length",
             type:"text",
-            placeholder:"e.g. 3 pages, 1,500 words"
+            placeholder:
+                "e.g. 3 pages, 1,500 words"
         },
 
         {
             name:"research_purpose",
-            label:"Purpose of the research",
+            label:
+                "Purpose of the research",
             type:"textarea",
-            placeholder:"Tell us what the research is for"
+            placeholder:
+                "Tell us what the research is for"
         },
 
         {
             name:"special_instructions",
-            label:"Additional instructions",
+            label:
+                "Additional instructions",
             type:"textarea",
-            placeholder:"Anything specific you want covered"
+            placeholder:
+                "Anything specific you want covered"
         }
 
     ],
@@ -1834,7 +2976,8 @@ const forms = {
             label:"Topic / Title",
             required:true,
             type:"textarea",
-            placeholder:"Enter the seminar paper topic"
+            placeholder:
+                "Enter the seminar paper topic"
         },
 
         {
@@ -1842,21 +2985,24 @@ const forms = {
             label:"Desired length",
             required:true,
             type:"text",
-            placeholder:"e.g. 3 pages, 2,000 words"
+            placeholder:
+                "e.g. 3 pages, 2,000 words"
         },
 
         {
             name:"formatting_style",
             label:"Formatting style",
             type:"text",
-            placeholder:"Leave blank for standard formatting"
+            placeholder:
+                "Leave blank for standard formatting"
         },
 
         {
             name:"special_instructions",
             label:"Special instructions",
             type:"textarea",
-            placeholder:"Points to cover, tone, structure, or other instructions"
+            placeholder:
+                "Points to cover, tone, structure, or other instructions"
         }
 
     ],
@@ -1866,10 +3012,12 @@ const forms = {
 
         {
             name:"topic",
-            label:"Essay topic or question",
+            label:
+                "Essay topic or question",
             required:true,
             type:"textarea",
-            placeholder:"Enter the essay topic or question"
+            placeholder:
+                "Enter the essay topic or question"
         },
 
         {
@@ -1877,21 +3025,25 @@ const forms = {
             label:"Desired length",
             required:true,
             type:"text",
-            placeholder:"e.g. 1,000 words, 3 pages"
+            placeholder:
+                "e.g. 1,000 words, 3 pages"
         },
 
         {
             name:"academic_level",
             label:"Academic level",
             type:"text",
-            placeholder:"e.g. secondary school, undergraduate, postgraduate"
+            placeholder:
+                "e.g. secondary school, undergraduate, postgraduate"
         },
 
         {
             name:"special_instructions",
-            label:"Additional instructions",
+            label:
+                "Additional instructions",
             type:"textarea",
-            placeholder:"Anything specific you want included"
+            placeholder:
+                "Anything specific you want included"
         }
 
     ],
@@ -1904,43 +3056,52 @@ const forms = {
             label:"Full name",
             required:true,
             type:"text",
-            placeholder:"Enter your full name"
+            placeholder:
+                "Enter your full name"
         },
 
         {
             name:"career_target",
-            label:"Job / career you are targeting",
+            label:
+                "Job / career you are targeting",
             required:true,
             type:"text",
-            placeholder:"e.g. Accountant, Software Developer"
+            placeholder:
+                "e.g. Accountant, Software Developer"
         },
 
         {
             name:"experience",
             label:"Work experience",
             type:"textarea",
-            placeholder:"Enter your work history and responsibilities"
+            placeholder:
+                "Enter your work history and responsibilities"
         },
 
         {
             name:"education",
             label:"Education",
             type:"textarea",
-            placeholder:"Schools, qualifications and dates"
+            placeholder:
+                "Schools, qualifications and dates"
         },
 
         {
             name:"skills",
-            label:"Skills and achievements",
+            label:
+                "Skills and achievements",
             type:"textarea",
-            placeholder:"List important skills, achievements or certifications"
+            placeholder:
+                "List important skills, achievements or certifications"
         },
 
         {
             name:"additional_information",
-            label:"Additional information",
+            label:
+                "Additional information",
             type:"textarea",
-            placeholder:"Anything else that should appear in your CV"
+            placeholder:
+                "Anything else that should appear in your CV"
         }
 
     ]
@@ -1948,159 +3109,171 @@ const forms = {
 };
 
 
+/* =========================================================
+   FORM DEFINITION
+   ========================================================= */
+
 function definition(){
 
     const s =
         service.toLowerCase();
 
+
     const key =
         Object.keys(forms).find(
-            k => s.includes(k)
+            k =>
+                s.includes(k)
         );
+
 
     return key
         ? forms[key]
         : generic;
+
 }
 
+
+/* =========================================================
+   RENDER FORM
+   ========================================================= */
 
 function renderForm(){
 
     fields.innerHTML = "";
 
-    definition().forEach(f => {
 
-        const wrapper =
-            document.createElement("div");
+    definition().forEach(
+        field => {
 
-        const label =
-            document.createElement("label");
+            const wrapper =
+                document.createElement(
+                    "div"
+                );
 
-        const input =
-            document.createElement(
-                f.type === "textarea"
-                    ? "textarea"
-                    : "input"
+
+            const label =
+                document.createElement(
+                    "label"
+                );
+
+
+            const input =
+                document.createElement(
+                    field.type ===
+                    "textarea"
+                        ? "textarea"
+                        : "input"
+                );
+
+
+            wrapper.className =
+                "field";
+
+
+            label.htmlFor =
+                field.name;
+
+
+            label.innerHTML =
+                field.label +
+                (
+                    field.required
+                        ? ' <span class="required">*</span>'
+                        : ' <span class="optional">(optional)</span>'
+                );
+
+
+            input.id =
+                field.name;
+
+
+            input.name =
+                field.name;
+
+
+            input.placeholder =
+                field.placeholder ||
+                "";
+
+
+            if(field.required){
+
+                input.required =
+                    true;
+
+            }
+
+
+            if(
+                field.type !==
+                "textarea"
+            ){
+
+                input.type =
+                    field.type ||
+                    "text";
+
+            }
+
+
+            wrapper.append(
+                label,
+                input
             );
 
-        wrapper.className = "field";
 
-        label.htmlFor = f.name;
-
-        label.innerHTML =
-            f.label +
-            (
-                f.required
-                    ? ' <span class="required">*</span>'
-                    : ' <span class="optional">(optional)</span>'
+            fields.appendChild(
+                wrapper
             );
 
-        input.id = f.name;
-
-        input.name = f.name;
-
-        input.placeholder =
-            f.placeholder || "";
-
-        if(f.required){
-            input.required = true;
         }
+    );
 
-        if(f.type !== "textarea"){
-            input.type =
-                f.type || "text";
-        }
-
-        wrapper.append(
-            label,
-            input
-        );
-
-        fields.appendChild(
-            wrapper
-        );
-
-    });
 }
 
+
+/* =========================================================
+   COLLECT FORM
+   ========================================================= */
 
 function collect(){
 
     const data = {};
 
+
     serviceForm
         .querySelectorAll(
             "input,textarea,select"
         )
-        .forEach(element => {
+        .forEach(
+            element => {
 
-            const value =
-                clean(element.value);
-
-            if(value){
-
-                data[element.name] =
-                    value;
-
-            }
-
-        });
-
-    return data;
-}
+                const value =
+                    clean(
+                        element.value
+                    );
 
 
-/* =========================================================
-   API
-   ========================================================= */
+                if(value){
 
-async function apiChat(body){
+                    data[
+                        element.name
+                    ] =
+                        value;
 
-    const response =
-        await fetch(
-            API_BASE + "/api/chat",
-            {
-                method:"POST",
+                }
 
-                headers:{
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body:
-                    JSON.stringify(body)
             }
         );
 
 
-    const data =
-        await response
-            .json()
-            .catch(
-                () => ({})
-            );
-
-
-    if(
-        !response.ok ||
-        !data.success
-    ){
-
-        throw new Error(
-            data.reply ||
-            data.message ||
-            data.error ||
-            "Request failed."
-        );
-    }
-
-
     return data;
+
 }
 
 
 /* =========================================================
-   GUIDANCE
+   GUIDANCE PROMPT
    ========================================================= */
 
 function guidancePrompt(){
@@ -2116,8 +3289,13 @@ Do not mention internal software, models, APIs or providers.
 
 Write concise, friendly Nigerian English.
 `;
+
 }
 
+
+/* =========================================================
+   LOAD GUIDANCE
+   ========================================================= */
 
 async function loadGuidance(){
 
@@ -2163,8 +3341,11 @@ async function loadGuidance(){
         introTitle.textContent =
             service;
 
+
         introText.textContent =
-            clean(data.reply) ||
+            clean(
+                data.reply
+            ) ||
             "Please provide the information requested below.";
 
 
@@ -2185,9 +3366,24 @@ async function loadGuidance(){
                         )
                 );
 
-            price.textContent =
-                "Service fee: ₦" +
-                numericAmount.toLocaleString();
+
+            if(
+                Number.isFinite(
+                    numericAmount
+                )
+            ){
+
+                price.textContent =
+                    "Service fee: ₦" +
+                    numericAmount.toLocaleString();
+
+            }else{
+
+                price.textContent =
+                    "Service: " +
+                    service;
+
+            }
 
         }else if(
             /₦\s?[\d,]+/.test(
@@ -2215,7 +3411,8 @@ async function loadGuidance(){
         }else{
 
             price.textContent =
-                "Service: " + service;
+                "Service: " +
+                service;
 
         }
 
@@ -2225,15 +3422,18 @@ async function loadGuidance(){
     }catch(error){
 
         /*
-           Keep the working page usable even
-           if guidance cannot be loaded.
+           Guidance failure does NOT prevent
+           the customer from using the form.
         */
 
         introText.textContent =
             "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
 
+
         price.textContent =
-            "Service: " + service;
+            "Service: " +
+            service;
+
 
         setStatus(
             "You can still complete the form or ask a question below.",
@@ -2241,14 +3441,17 @@ async function loadGuidance(){
         );
 
     }
+
 }
 
 
 /* =========================================================
-   WORK CREATION
+   CREATION PROMPT
    ========================================================= */
 
-function creationPrompt(data){
+function creationPrompt(
+    data
+){
 
     return `
 The customer has completed the service information form.
@@ -2300,7 +3503,7 @@ Do not summarize the requested document.
 
 Do not say that the remaining sections can be added later.
 
-Do not wrap the HTML in markdown code fences.
+Do not return HTML inside markdown code fences.
 
 Do not return HTML source as an explanation.
 
@@ -2320,12 +3523,25 @@ ${Object.entries(data)
     )
     .join("\n\n")}
 `;
+
 }
 
 
-async function createWork(data){
+/* =========================================================
+   CREATE WORK
+   ========================================================= */
+
+async function createWork(
+    data
+){
+
+    if(busy){
+        return;
+    }
+
 
     busyState(true);
+
 
     setStatus(
         "Preparing your work..."
@@ -2338,7 +3554,9 @@ async function createWork(data){
             await apiChat({
 
                 message:
-                    creationPrompt(data),
+                    creationPrompt(
+                        data
+                    ),
 
                 service,
 
@@ -2371,6 +3589,7 @@ async function createWork(data){
             jobId =
                 result.job_id;
 
+
             put(
                 "npbc_job_id",
                 jobId
@@ -2380,20 +3599,99 @@ async function createWork(data){
 
 
         /*
-           Do NOT slice.
-           Do NOT substring.
-           Do NOT truncate.
+           Accept all normal backend response
+           names without truncating the work.
         */
 
+        const returnedWork =
+            result.reply ??
+            result.work ??
+            result.content ??
+            result.document ??
+            result.output ??
+            "";
+
+
         currentWork =
-            result.reply ||
-            result.work ||
-            result.content ||
-            "Your work has been prepared.";
+            String(
+                returnedWork
+            ).trim();
 
 
-        showReview(
-            currentWork
+        /*
+           CRITICAL:
+           Do not open the review screen
+           when the API returned nothing.
+        */
+
+        if(!currentWork){
+
+            throw new Error(
+                "The service returned an empty work response. The review page was not opened."
+            );
+
+        }
+
+
+        const rendered =
+            renderDocument(
+                currentWork
+            );
+
+
+        if(!rendered){
+
+            throw new Error(
+                "The prepared work could not be displayed."
+            );
+
+        }
+
+
+        /*
+           Only AFTER the work exists and
+           has been rendered do we switch
+           from the form to review.
+        */
+
+        formView.style.display =
+            "none";
+
+
+        reviewView.classList.add(
+            "show"
+        );
+
+
+        requestAnimationFrame(
+            () => {
+
+                workCard.scrollTop =
+                    0;
+
+
+                /*
+                   Move the main page to the
+                   beginning of the review
+                   section without moving
+                   the entire page to the
+                   bottom.
+                */
+
+                const mainTop =
+                    document.querySelector(
+                        ".main"
+                    );
+
+
+                if(mainTop){
+
+                    mainTop.scrollTop =
+                        0;
+
+                }
+
+            }
         );
 
 
@@ -2405,7 +3703,8 @@ async function createWork(data){
     }catch(error){
 
         setStatus(
-            error.message,
+            error?.message ||
+            "We could not prepare your work. Please try again.",
             "error"
         );
 
@@ -2414,33 +3713,65 @@ async function createWork(data){
         busyState(false);
 
     }
+
 }
 
 
 /* =========================================================
-   REVIEW
+   SHOW REVIEW
    ========================================================= */
 
-function showReview(work){
+function showReview(
+    work
+){
+
+    currentWork =
+        String(
+            work || ""
+        );
+
+
+    if(!currentWork){
+
+        setStatus(
+            "No prepared work was returned.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    const rendered =
+        renderDocument(
+            currentWork
+        );
+
+
+    if(!rendered){
+
+        setStatus(
+            "The prepared work could not be displayed.",
+            "error"
+        );
+
+        return false;
+
+    }
+
 
     formView.style.display =
         "none";
+
 
     reviewView.classList.add(
         "show"
     );
 
 
-    currentWork =
-        work || "";
-
-
-    renderDocument(
-        currentWork
-    );
-
-
     correctionInput.value = "";
+
 
     paymentPanel.classList.remove(
         "show"
@@ -2452,7 +3783,9 @@ function showReview(work){
     paymentConfirmed = false;
 
 
-    downloadBtn.disabled = true;
+    downloadBtn.disabled =
+        true;
+
 
     downloadBtn.classList.remove(
         "active"
@@ -2463,16 +3796,18 @@ function showReview(work){
         "🔒 Download Your Work";
 
 
-    /*
-       Do NOT scroll the entire page.
-       The review CARD is the document viewport.
-    */
+    requestAnimationFrame(
+        () => {
 
-    requestAnimationFrame(() => {
+            workCard.scrollTop =
+                0;
 
-        workCard.scrollTop = 0;
+        }
+    );
 
-    });
+
+    return true;
+
 }
 
 
@@ -2486,16 +3821,32 @@ serviceForm.addEventListener(
 
         event.preventDefault();
 
+
         if(
-            !busy &&
-            serviceForm.reportValidity()
+            busy
         ){
 
-            createWork(
-                collect()
-            );
+            return;
 
         }
+
+
+        if(
+            !serviceForm.reportValidity()
+        ){
+
+            return;
+
+        }
+
+
+        const data =
+            collect();
+
+
+        createWork(
+            data
+        );
 
     }
 );
@@ -2508,62 +3859,72 @@ serviceForm.addEventListener(
 [
     introCard,
     workCard
-].forEach(element => {
+].forEach(
+    element => {
 
-    [
-        "copy",
-        "cut",
-        "contextmenu",
-        "selectstart",
-        "dragstart"
-    ].forEach(eventName => {
+        [
+            "copy",
+            "cut",
+            "contextmenu",
+            "selectstart",
+            "dragstart"
+        ].forEach(
+            eventName => {
+
+                element.addEventListener(
+                    eventName,
+                    event => {
+
+                        event.preventDefault();
+
+
+                        if(
+                            event.clipboardData
+                        ){
+
+                            event.clipboardData.setData(
+                                "text/plain",
+                                ""
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
 
         element.addEventListener(
-            eventName,
+            "keydown",
             event => {
 
-                event.preventDefault();
+                if(
+                    (
+                        event.ctrlKey ||
+                        event.metaKey
+                    ) &&
+                    [
+                        "a",
+                        "c",
+                        "x",
+                        "s",
+                        "u"
+                    ].includes(
+                        event.key.toLowerCase()
+                    )
+                ){
 
-                if(event.clipboardData){
-
-                    event.clipboardData.setData(
-                        "text/plain",
-                        ""
-                    );
+                    event.preventDefault();
 
                 }
 
             }
         );
 
-    });
-
-
-    element.addEventListener(
-        "keydown",
-        event => {
-
-            if(
-                (event.ctrlKey || event.metaKey) &&
-                [
-                    "a",
-                    "c",
-                    "x",
-                    "s",
-                    "u"
-                ].includes(
-                    event.key.toLowerCase()
-                )
-            ){
-
-                event.preventDefault();
-
-            }
-
-        }
-    );
-
-});
+    }
+);
 
 
 /* =========================================================
@@ -2588,15 +3949,31 @@ applyBtn.addEventListener(
             );
 
             return;
+
+        }
+
+
+        if(!currentWork){
+
+            setStatus(
+                "There is no prepared work available to correct.",
+                "error"
+            );
+
+            return;
+
         }
 
 
         if(busy){
+
             return;
+
         }
 
 
         busyState(true);
+
 
         setStatus(
             "Applying your corrections..."
@@ -2673,19 +4050,49 @@ The returned document itself must be complete.
                 });
 
 
+            const revisedWork =
+                result.reply ??
+                result.work ??
+                result.content ??
+                result.document ??
+                result.output ??
+                "";
+
+
+            if(
+                !String(
+                    revisedWork
+                ).trim()
+            ){
+
+                throw new Error(
+                    "The correction request returned no revised work."
+                );
+
+            }
+
+
             currentWork =
-                result.reply ||
-                result.work ||
-                result.content ||
-                currentWork;
+                String(
+                    revisedWork
+                ).trim();
 
 
-            renderDocument(
-                currentWork
-            );
+            if(
+                !renderDocument(
+                    currentWork
+                )
+            ){
+
+                throw new Error(
+                    "The revised work could not be displayed."
+                );
+
+            }
 
 
-            correctionInput.value = "";
+            correctionInput.value =
+                "";
 
 
             setStatus(
@@ -2697,7 +4104,8 @@ The returned document itself must be complete.
         }catch(error){
 
             setStatus(
-                error.message,
+                error?.message ||
+                "The correction could not be applied.",
                 "error"
             );
 
@@ -2720,11 +4128,26 @@ approveBtn.addEventListener(
     async () => {
 
         if(busy){
+
             return;
+
+        }
+
+
+        if(!currentWork){
+
+            setStatus(
+                "There is no prepared work to approve.",
+                "error"
+            );
+
+            return;
+
         }
 
 
         busyState(true);
+
 
         setStatus(
             "Preparing your payment step..."
@@ -2756,26 +4179,35 @@ approveBtn.addEventListener(
                     "/api/approve?" +
                     query.toString(),
                     {
-                        method:"POST"
+                        method:"POST",
+
+                        headers:{
+                            "Accept":
+                                "application/json"
+                        }
                     }
                 );
 
 
+            const parsed =
+                await readApiResponse(
+                    response
+                );
+
+
             const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
+                parsed.data;
 
 
             if(
                 !response.ok ||
-                !data.success
+                !data?.success
             ){
 
                 throw new Error(
-                    data.message ||
+                    data?.message ||
+                    data?.reply ||
+                    data?.error ||
                     "Approval could not be completed."
                 );
 
@@ -2791,17 +4223,23 @@ approveBtn.addEventListener(
 
 
             const amount =
-                Number(data.amount || 0);
+                Number(
+                    data.amount || 0
+                );
 
 
             paymentDetails.textContent =
 `Service: ${data.service || service}
 Amount: ${
     amount > 0
-        ? "₦" + amount.toLocaleString()
+        ? "₦" +
+            amount.toLocaleString()
         : "Quotation required"
 }
-Order: ${data.order_number || "Pending"}`;
+Order: ${
+    data.order_number ||
+    "Pending"
+}`;
 
 
             setStatus(
@@ -2810,16 +4248,23 @@ Order: ${data.order_number || "Pending"}`;
             );
 
 
-            paymentPanel.scrollIntoView({
-                behavior:"smooth",
-                block:"center"
-            });
+            requestAnimationFrame(
+                () => {
+
+                    paymentPanel.scrollIntoView({
+                        behavior:"smooth",
+                        block:"center"
+                    });
+
+                }
+            );
 
 
         }catch(error){
 
             setStatus(
-                error.message,
+                error?.message ||
+                "Approval could not be completed.",
                 "error"
             );
 
@@ -2834,7 +4279,7 @@ Order: ${data.order_number || "Pending"}`;
 
 
 /* =========================================================
-   PAYMENT
+   PAYMENT REPORT
    ========================================================= */
 
 paymentReport.addEventListener(
@@ -2849,6 +4294,7 @@ paymentReport.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -2878,6 +4324,7 @@ paymentReport.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -2893,6 +4340,9 @@ paymentReport.addEventListener(
 
                         headers:{
                             "Content-Type":
+                                "application/json",
+
+                            "Accept":
                                 "application/json"
                         },
 
@@ -2918,21 +4368,24 @@ paymentReport.addEventListener(
                 );
 
 
+            const parsed =
+                await readApiResponse(
+                    response
+                );
+
+
             const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
+                parsed.data;
 
 
             if(
                 !response.ok ||
-                !data.success
+                !data?.success
             ){
 
                 throw new Error(
-                    data.message ||
+                    data?.message ||
+                    data?.error ||
                     "Payment record could not be created."
                 );
 
@@ -2940,7 +4393,7 @@ paymentReport.addEventListener(
 
 
             paymentDetails.textContent +=
-                `\nPayment ID: ${data.payment_id}\nStatus: Pending`;
+                `\nPayment ID: ${data.payment_id || "Pending"}\nStatus: Pending`;
 
 
             setStatus(
@@ -2952,7 +4405,8 @@ paymentReport.addEventListener(
         }catch(error){
 
             setStatus(
-                error.message,
+                error?.message ||
+                "Payment could not be reported.",
                 "error"
             );
 
@@ -2963,7 +4417,7 @@ paymentReport.addEventListener(
 
 
 /* =========================================================
-   PAYMENT STATUS / DOWNLOAD
+   PAYMENT STATUS
    ========================================================= */
 
 paymentCheck.addEventListener(
@@ -2978,25 +4432,34 @@ paymentCheck.addEventListener(
                     "/api/payment/status?job_id=" +
                     encodeURIComponent(
                         jobId
-                    )
+                    ),
+                    {
+                        headers:{
+                            "Accept":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            const parsed =
+                await readApiResponse(
+                    response
                 );
 
 
             const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
+                parsed.data;
 
 
             if(
                 !response.ok ||
-                !data.success
+                !data?.success
             ){
 
                 throw new Error(
-                    data.message ||
+                    data?.message ||
+                    data?.error ||
                     "Payment status could not be checked."
                 );
 
@@ -3006,14 +4469,17 @@ paymentCheck.addEventListener(
             if(
                 String(
                     data.status || ""
-                ).toLowerCase() === "paid"
+                ).toLowerCase() ===
+                "paid"
             ){
 
-                paymentConfirmed = true;
+                paymentConfirmed =
+                    true;
 
 
                 downloadBtn.disabled =
                     false;
+
 
                 downloadBtn.classList.add(
                     "active"
@@ -3024,20 +4490,21 @@ paymentCheck.addEventListener(
                     "⬇ Download Your Work";
 
 
-                downloadBtn.onclick = () => {
+                downloadBtn.onclick =
+                    () => {
 
-                    location.href =
-                        API_BASE +
-                        "/api/download?job_id=" +
-                        encodeURIComponent(
-                            jobId
-                        ) +
-                        "&customer_id=" +
-                        encodeURIComponent(
-                            customerId
-                        );
+                        location.href =
+                            API_BASE +
+                            "/api/download?job_id=" +
+                            encodeURIComponent(
+                                jobId
+                            ) +
+                            "&customer_id=" +
+                            encodeURIComponent(
+                                customerId
+                            );
 
-                };
+                    };
 
 
                 paymentDetails.textContent +=
@@ -3062,7 +4529,8 @@ paymentCheck.addEventListener(
         }catch(error){
 
             setStatus(
-                error.message,
+                error?.message ||
+                "Payment status could not be checked.",
                 "error"
             );
 
@@ -3099,7 +4567,9 @@ fileInput.addEventListener(
 
 
         if(!file){
+
             return;
+
         }
 
 
@@ -3155,21 +4625,24 @@ fileInput.addEventListener(
                 );
 
 
+            const parsed =
+                await readApiResponse(
+                    response
+                );
+
+
             const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
+                parsed.data;
 
 
             if(
                 !response.ok ||
-                !data.success
+                !data?.success
             ){
 
                 throw new Error(
-                    data.message ||
+                    data?.message ||
+                    data?.error ||
                     "Document upload failed."
                 );
 
@@ -3191,7 +4664,8 @@ fileInput.addEventListener(
         }catch(error){
 
             setStatus(
-                error.message,
+                error?.message ||
+                "Document upload failed.",
                 "error"
             );
 
@@ -3215,7 +4689,9 @@ async function sendMessage(
 ){
 
     if(busy){
+
         return null;
+
     }
 
 
@@ -3264,6 +4740,7 @@ async function sendMessage(
             jobId =
                 data.job_id;
 
+
             put(
                 "npbc_job_id",
                 jobId
@@ -3280,7 +4757,10 @@ async function sendMessage(
         ){
 
             currentWork =
-                data.reply;
+                String(
+                    data.reply
+                );
+
 
             renderDocument(
                 currentWork
@@ -3301,20 +4781,26 @@ async function sendMessage(
     }catch(error){
 
         setStatus(
-            error.message,
+            error?.message ||
+            "Your message could not be processed.",
             "error"
         );
 
-        return null;
 
+        return null;
 
     }finally{
 
         busyState(false);
 
     }
+
 }
 
+
+/* =========================================================
+   SEND MESSAGE
+   ========================================================= */
 
 sendBtn.addEventListener(
     "click",
@@ -3334,10 +4820,20 @@ sendBtn.addEventListener(
             );
 
             return;
+
         }
 
 
-        messageInput.value = "";
+        if(busy){
+
+            return;
+
+        }
+
+
+        messageInput.value =
+            "";
+
 
         messageInput.style.height =
             "auto";
@@ -3351,6 +4847,10 @@ sendBtn.addEventListener(
     }
 );
 
+
+/* =========================================================
+   MESSAGE ENTER
+   ========================================================= */
 
 messageInput.addEventListener(
     "keydown",
@@ -3371,12 +4871,17 @@ messageInput.addEventListener(
 );
 
 
+/* =========================================================
+   MESSAGE RESIZE
+   ========================================================= */
+
 messageInput.addEventListener(
     "input",
     () => {
 
         messageInput.style.height =
             "auto";
+
 
         messageInput.style.height =
             Math.min(
@@ -3397,7 +4902,9 @@ customerBtn.addEventListener(
     async () => {
 
         if(busy){
+
             return;
+
         }
 
 
@@ -3431,27 +4938,35 @@ customerBtn.addEventListener(
                     "/api/customer-service?" +
                     query.toString(),
                     {
-                        method:"POST"
+                        method:"POST",
+
+                        headers:{
+                            "Accept":
+                                "application/json"
+                        }
                     }
                 );
 
 
+            const parsed =
+                await readApiResponse(
+                    response
+                );
+
+
             const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
+                parsed.data;
 
 
             if(
                 !response.ok ||
-                !data.success
+                !data?.success
             ){
 
                 throw new Error(
-                    data.reply ||
-                    data.message ||
+                    data?.reply ||
+                    data?.message ||
+                    data?.error ||
                     "Customer Service is unavailable."
                 );
 
@@ -3468,7 +4983,8 @@ customerBtn.addEventListener(
         }catch(error){
 
             setStatus(
-                error.message,
+                error?.message ||
+                "Customer Service is unavailable.",
                 "error"
             );
 
@@ -3517,6 +5033,7 @@ voiceBtn.addEventListener(
             mediaRecorder.stop();
 
             return;
+
         }
 
 
@@ -3530,6 +5047,7 @@ voiceBtn.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -3577,7 +5095,8 @@ voiceBtn.addEventListener(
                         );
 
 
-                    recordingStream = null;
+                    recordingStream =
+                        null;
 
 
                     voiceRecording.classList.remove(
@@ -3599,6 +5118,7 @@ voiceBtn.addEventListener(
                         );
 
                         return;
+
                     }
 
 
@@ -3656,21 +5176,24 @@ voiceBtn.addEventListener(
                             );
 
 
+                        const parsed =
+                            await readApiResponse(
+                                response
+                            );
+
+
                         const data =
-                            await response
-                                .json()
-                                .catch(
-                                    () => ({})
-                                );
+                            parsed.data;
 
 
                         if(
                             !response.ok ||
-                            !data.success
+                            !data?.success
                         ){
 
                             throw new Error(
-                                data.message ||
+                                data?.message ||
+                                data?.error ||
                                 "Voice recording failed."
                             );
 
@@ -3686,7 +5209,8 @@ voiceBtn.addEventListener(
                     }catch(error){
 
                         setStatus(
-                            error.message,
+                            error?.message ||
+                            "Voice recording failed.",
                             "error"
                         );
 
@@ -3734,15 +5258,22 @@ async function init(){
     serviceBadge.textContent =
         service;
 
+
     introTitle.textContent =
         service;
 
+
     renderForm();
+
 
     await loadGuidance();
 
 }
 
+
+/* =========================================================
+   START
+   ========================================================= */
 
 init();
 
