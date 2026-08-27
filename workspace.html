@@ -106,7 +106,7 @@ button{
 }
 
 /* =========================================================
-   MAIN
+   MAIN SCROLL AREA
    ========================================================= */
 
 .main{
@@ -308,24 +308,29 @@ button{
    COMPLETE CUSTOMER DOCUMENT
 
    IMPORTANT:
-   No fixed height.
-   No max-height.
-   No internal vertical clipping.
-   The complete document remains part of normal page flow.
+   - No fixed height
+   - No max-height
+   - No internal scrolling
+   - No clipping
+   - Complete document remains in normal page flow
    ========================================================= */
 
 .work-card{
     width:100%;
-    min-height:350px;
     height:auto;
+    min-height:350px;
     overflow:visible;
+
     background:#f7f7f7;
     color:#111;
+
     border-radius:11px;
     padding:22px 17px;
+
     overflow-wrap:anywhere;
     word-wrap:break-word;
     word-break:normal;
+
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
@@ -336,16 +341,25 @@ button{
     height:auto;
     min-height:0;
     max-width:100%;
+
     color:#111;
     font-size:14px;
     line-height:1.7;
+
     overflow:visible;
+
     overflow-wrap:anywhere;
     word-wrap:break-word;
+
     user-select:none;
     -webkit-user-select:none;
     -webkit-touch-callout:none;
 }
+
+/*
+    Returned document HTML is displayed as ordinary document
+    content. It is NOT placed inside a fixed-height box.
+*/
 
 .work-content.document-html{
     display:block;
@@ -353,8 +367,10 @@ button{
     height:auto;
     min-height:0;
     max-width:100%;
+
     background:#fff;
     color:#111;
+
     overflow:visible;
 }
 
@@ -426,7 +442,7 @@ button{
 }
 
 /* =========================================================
-   LISTS
+   DOCUMENT LISTS
    ========================================================= */
 
 .work-content ul,
@@ -544,6 +560,7 @@ button{
     color:#777;
     text-align:center;
     padding:70px 10px;
+
     user-select:none;
     -webkit-user-select:none;
 }
@@ -854,6 +871,7 @@ button:disabled{
 <header class="header">
 
     <div class="brand">
+
         <h1 class="brand-title">
             Naija Pocket Business Center
         </h1>
@@ -861,6 +879,7 @@ button:disabled{
         <div class="brand-subtitle">
             Your Business Center
         </div>
+
     </div>
 
     <div
@@ -871,6 +890,7 @@ button:disabled{
     </div>
 
 </header>
+
 
 <main class="main">
 
@@ -905,6 +925,7 @@ button:disabled{
         </div>
 
     </div>
+
 
     <div class="form-card">
 
@@ -941,6 +962,7 @@ button:disabled{
 
 </section>
 
+
 <section
     id="reviewView"
     class="review-view"
@@ -957,6 +979,7 @@ button:disabled{
         </p>
 
     </div>
+
 
     <div
         id="workCard"
@@ -975,6 +998,7 @@ button:disabled{
         </div>
 
     </div>
+
 
     <div class="correction-card">
 
@@ -1014,6 +1038,7 @@ button:disabled{
 
     </div>
 
+
     <button
         id="downloadButton"
         class="download-button"
@@ -1026,6 +1051,7 @@ button:disabled{
     <div class="payment-message">
         Payment must be confirmed before the download button becomes active.
     </div>
+
 
     <div
         id="paymentPanel"
@@ -1069,6 +1095,7 @@ button:disabled{
 
 </main>
 
+
 <section class="bottom">
 
 <div class="bottom-inner">
@@ -1079,6 +1106,7 @@ button:disabled{
     >
         🔴 Recording... tap Voice again to stop.
     </div>
+
 
     <div class="tools">
 
@@ -1108,6 +1136,7 @@ button:disabled{
 
     </div>
 
+
     <button
         id="chooseServiceButton"
         class="choose-service-button"
@@ -1116,11 +1145,13 @@ button:disabled{
         Choose Another Service
     </button>
 
+
     <input
         id="fileInput"
         type="file"
         accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
     >
+
 
     <div class="composer">
 
@@ -1142,6 +1173,7 @@ button:disabled{
 
     </div>
 
+
     <div
         id="status"
         class="status"
@@ -1153,14 +1185,20 @@ button:disabled{
 
 </div>
 
+
 <script>
 "use strict";
 
 /* =========================================================
-   API CONNECTION
+   API CONFIGURATION
    ========================================================= */
 
 const API_BASE = "";
+
+
+/* =========================================================
+   ELEMENT HELPERS
+   ========================================================= */
 
 const $ = id => document.getElementById(id);
 
@@ -1169,30 +1207,44 @@ const reviewView = $("reviewView");
 const serviceForm = $("serviceForm");
 const fields = $("fields");
 const formSubmit = $("formSubmit");
+
 const serviceBadge = $("serviceBadge");
 const introTitle = $("introTitle");
 const introText = $("introText");
 const price = $("price");
 const introCard = $("introCard");
+
 const workCard = $("workCard");
 const workContent = $("workContent");
+
 const correctionInput = $("correctionInput");
 const applyBtn = $("applyCorrectionsButton");
 const approveBtn = $("approveButton");
+
 const downloadBtn = $("downloadButton");
+
 const uploadBtn = $("uploadButton");
 const voiceBtn = $("voiceButton");
 const customerBtn = $("customerServiceButton");
 const chooseBtn = $("chooseServiceButton");
+
 const fileInput = $("fileInput");
+
 const messageInput = $("messageInput");
 const sendBtn = $("sendButton");
+
 const status = $("status");
 const voiceRecording = $("voiceRecording");
+
 const paymentPanel = $("paymentPanel");
 const paymentDetails = $("paymentDetails");
 const paymentReport = $("paymentReportButton");
 const paymentCheck = $("paymentCheckButton");
+
+
+/* =========================================================
+   SERVICE / IDENTIFIERS
+   ========================================================= */
 
 const params = new URLSearchParams(location.search);
 
@@ -1201,26 +1253,30 @@ const service = (
     "Business Center Service"
 ).trim();
 
-/* =========================================================
-   IDENTIFIERS
-   ========================================================= */
 
 function makeId(prefix){
 
-    if(
-        typeof crypto !== "undefined" &&
-        typeof crypto.randomUUID === "function"
-    ){
-        return prefix + crypto.randomUUID();
-    }
+    try{
+
+        if(
+            crypto &&
+            typeof crypto.randomUUID === "function"
+        ){
+            return prefix + crypto.randomUUID();
+        }
+
+    }catch(e){}
 
     return (
         prefix +
         Date.now() +
         "_" +
-        Math.random().toString(36).slice(2)
+        Math.random()
+            .toString(36)
+            .slice(2)
     );
 }
+
 
 function get(key){
 
@@ -1231,12 +1287,14 @@ function get(key){
     }
 }
 
+
 function put(key,value){
 
     try{
         localStorage.setItem(key,value);
     }catch(e){}
 }
+
 
 let customerId =
     get("npbc_customer_id") ||
@@ -1246,6 +1304,7 @@ put(
     "npbc_customer_id",
     customerId
 );
+
 
 let jobId =
     params.get("job_id") ||
@@ -1257,6 +1316,7 @@ put(
     jobId
 );
 
+
 let requestId =
     get("npbc_client_request_id") ||
     makeId("request_");
@@ -1266,9 +1326,6 @@ put(
     requestId
 );
 
-/* =========================================================
-   STATE
-   ========================================================= */
 
 let busy = false;
 let approved = false;
@@ -1279,8 +1336,9 @@ let mediaRecorder = null;
 let recordedChunks = [];
 let recordingStream = null;
 
+
 /* =========================================================
-   HELPERS
+   GENERAL HELPERS
    ========================================================= */
 
 function clean(value){
@@ -1289,14 +1347,21 @@ function clean(value){
         return null;
     }
 
-    return String(value).trim() || null;
+    const result = String(value).trim();
+
+    return result || null;
 }
+
 
 function setStatus(message,type=""){
 
     status.textContent = message || "";
-    status.className = "status " + type;
+
+    status.className =
+        "status " +
+        (type || "");
 }
+
 
 function busyState(value){
 
@@ -1313,14 +1378,22 @@ function busyState(value){
         approveBtn
     ].forEach(button => {
 
-        button.disabled = value;
+        if(button){
+            button.disabled = value;
+        }
 
     });
 }
 
+
 /* =========================================================
    DOCUMENT RENDERER
    ========================================================= */
+
+/*
+    Removes markdown fences if the intelligence accidentally
+    surrounds the returned document with ```html ... ```.
+*/
 
 function removeHtmlCodeFences(value){
 
@@ -1339,65 +1412,96 @@ function removeHtmlCodeFences(value){
     return html.trim();
 }
 
-function looksLikeHtml(value){
-
-    const text = String(value || "").trim();
-
-    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i.test(text);
-}
 
 /*
-    Sanitize returned document HTML without destroying
-    the actual document text or structure.
+    Detects whether the returned response contains actual
+    document HTML.
+*/
+
+function looksLikeHtml(value){
+
+    const text =
+        String(value || "").trim();
+
+    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i
+        .test(text);
+}
+
+
+/*
+    Safe document sanitizer.
+
+    IMPORTANT:
+    This function DOES NOT truncate the document.
+
+    It removes unsafe executable elements and attributes,
+    while retaining all normal document content.
 */
 
 function sanitizeDocumentHtml(html){
 
-    const source = document.createElement("div");
+    const source =
+        document.createElement("div");
 
     source.innerHTML = html;
 
-    const blocked = source.querySelectorAll(
-        "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
-    );
+
+    const blocked =
+        source.querySelectorAll(
+            "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
+        );
 
     blocked.forEach(element => {
         element.remove();
     });
 
+
     const allowedTags = new Set([
+
         "H1",
         "H2",
         "H3",
         "H4",
         "H5",
         "H6",
+
         "P",
+
         "STRONG",
         "B",
+
         "EM",
         "I",
         "U",
+
         "UL",
         "OL",
         "LI",
+
         "HR",
         "BR",
+
         "TABLE",
         "THEAD",
         "TBODY",
         "TFOOT",
+
         "TR",
         "TH",
         "TD",
+
         "BLOCKQUOTE",
+
         "PRE",
         "CODE",
+
         "DIV",
         "SPAN",
+
         "A",
         "IMG"
     ]);
+
 
     function cleanNode(node){
 
@@ -1405,17 +1509,22 @@ function sanitizeDocumentHtml(html){
             return;
         }
 
+
         if(node.nodeType !== Node.ELEMENT_NODE){
 
             node.remove();
+
             return;
         }
 
+
         const tag = node.tagName;
+
 
         if(!allowedTags.has(tag)){
 
-            const parent = node.parentNode;
+            const parent =
+                node.parentNode;
 
             if(parent){
 
@@ -1425,6 +1534,7 @@ function sanitizeDocumentHtml(html){
                         node.firstChild,
                         node
                     );
+
                 }
 
                 node.remove();
@@ -1433,13 +1543,17 @@ function sanitizeDocumentHtml(html){
             return;
         }
 
+
         /*
-            Only retain safe document attributes.
+            Only safe document attributes survive.
         */
 
-        [...node.attributes].forEach(attr => {
+        [
+            ...node.attributes
+        ].forEach(attribute => {
 
-            const name = attr.name.toLowerCase();
+            const name =
+                attribute.name.toLowerCase();
 
             const keep =
                 name === "href" ||
@@ -1450,10 +1564,18 @@ function sanitizeDocumentHtml(html){
             if(!keep){
 
                 node.removeAttribute(
-                    attr.name
+                    attribute.name
                 );
+
             }
+
         });
+
+
+        /*
+            Links are retained only when they point to
+            http/https or mailto destinations.
+        */
 
         if(tag === "A"){
 
@@ -1481,6 +1603,12 @@ function sanitizeDocumentHtml(html){
             }
         }
 
+
+        /*
+            Images are retained only when their source is
+            an http/https URL or an image data URL.
+        */
+
         if(tag === "IMG"){
 
             const src =
@@ -1497,35 +1625,51 @@ function sanitizeDocumentHtml(html){
             }
         }
 
-        [...node.childNodes].forEach(
-            cleanNode
-        );
+
+        [
+            ...node.childNodes
+        ].forEach(cleanNode);
     }
 
-    [...source.childNodes].forEach(
-        cleanNode
-    );
+
+    [
+        ...source.childNodes
+    ].forEach(cleanNode);
+
 
     return source.innerHTML;
 }
 
+
 /*
-    IMPORTANT:
-    No height measurement.
-    No truncation.
-    No max-height.
-    No clipping.
+    COMPLETE DOCUMENT RENDERER.
+
+    There is intentionally:
+      - no fixed document height
+      - no max-height
+      - no scrollable document card
+      - no clipping
+      - no substring()
+      - no slice()
+      - no character limit
+      - no page-count calculation that can hide content
+
+    The browser receives the complete API reply and places it
+    into normal document flow. The .main element handles
+    scrolling.
 */
 
 function renderDocument(work){
 
-    const raw = clean(work) || "";
+    const raw =
+        clean(work) || "";
 
     workContent.innerHTML = "";
 
     workContent.classList.remove(
         "document-html"
     );
+
 
     if(!raw){
 
@@ -1545,8 +1689,10 @@ function renderDocument(work){
         return;
     }
 
+
     const cleaned =
         removeHtmlCodeFences(raw);
+
 
     if(looksLikeHtml(cleaned)){
 
@@ -1559,20 +1705,28 @@ function renderDocument(work){
             "document-html"
         );
 
+
+        /*
+            IMPORTANT:
+            The COMPLETE sanitized HTML is inserted.
+            Nothing is shortened.
+        */
+
         workContent.innerHTML =
             safeHtml;
 
     }else{
 
         /*
-            textContent deliberately preserves the
-            complete response as plain text.
+            textContent preserves the complete returned
+            response without interpreting it as HTML.
         */
 
         workContent.textContent =
             cleaned;
     }
 }
+
 
 /* =========================================================
    SERVICE FORMS
@@ -1603,6 +1757,7 @@ const generic = [
     }
 
 ];
+
 
 const forms = {
 
@@ -1647,6 +1802,7 @@ const forms = {
 
     ],
 
+
     "research assistance":[
 
         {
@@ -1679,6 +1835,7 @@ const forms = {
         }
 
     ],
+
 
     "seminar papers":[
 
@@ -1714,6 +1871,7 @@ const forms = {
 
     ],
 
+
     "essay writing":[
 
         {
@@ -1747,6 +1905,7 @@ const forms = {
         }
 
     ],
+
 
     "cv writing":[
 
@@ -1798,14 +1957,16 @@ const forms = {
 
 };
 
+
 function definition(){
 
-    const s =
+    const serviceText =
         service.toLowerCase();
 
     const key =
         Object.keys(forms).find(
-            k => s.includes(k)
+            key =>
+                serviceText.includes(key)
         );
 
     return key
@@ -1813,59 +1974,76 @@ function definition(){
         : generic;
 }
 
+
 function renderForm(){
 
     fields.innerHTML = "";
 
-    definition().forEach(f => {
+
+    definition().forEach(field => {
 
         const wrapper =
             document.createElement("div");
 
+        wrapper.className =
+            "field";
+
+
         const label =
             document.createElement("label");
 
+
         const input =
             document.createElement(
-                f.type === "textarea"
+                field.type === "textarea"
                     ? "textarea"
                     : "input"
             );
 
-        wrapper.className = "field";
 
-        label.htmlFor = f.name;
+        label.htmlFor =
+            field.name;
+
 
         label.innerHTML =
-            f.label +
+            field.label +
             (
-                f.required
+                field.required
                     ? ' <span class="required">*</span>'
                     : ' <span class="optional">(optional)</span>'
             );
 
-        input.id = f.name;
 
-        input.name = f.name;
+        input.id =
+            field.name;
+
+        input.name =
+            field.name;
 
         input.placeholder =
-            f.placeholder || "";
+            field.placeholder || "";
 
-        if(f.required){
+
+        if(field.required){
 
             input.required = true;
+
         }
 
-        if(f.type !== "textarea"){
+
+        if(field.type !== "textarea"){
 
             input.type =
-                f.type || "text";
+                field.type || "text";
+
         }
+
 
         wrapper.append(
             label,
             input
         );
+
 
         fields.appendChild(
             wrapper
@@ -1874,9 +2052,11 @@ function renderForm(){
     });
 }
 
+
 function collect(){
 
     const data = {};
+
 
     serviceForm
         .querySelectorAll(
@@ -1891,12 +2071,15 @@ function collect(){
 
                 data[element.name] =
                     value;
+
             }
 
         });
 
+
     return data;
 }
+
 
 /* =========================================================
    API
@@ -1920,6 +2103,7 @@ async function apiChat(body){
             }
         );
 
+
     const data =
         await response
             .json()
@@ -1927,21 +2111,27 @@ async function apiChat(body){
                 () => ({})
             );
 
+
     if(
         !response.ok ||
-        !data.success
+        data.success === false
     ){
 
         throw new Error(
+
             data.reply ||
             data.message ||
             data.error ||
             "Request failed."
+
         );
+
     }
+
 
     return data;
 }
+
 
 /* =========================================================
    GUIDANCE
@@ -1952,20 +2142,30 @@ function guidancePrompt(){
     return `
 The customer has just selected this service: ${service}.
 
-Prepare a short, clear customer-facing introduction explaining what the service does, what the customer will receive, the current fee or that quotation is required, useful information to prepare, practical tips specific to the service, and useful documents they may upload.
+Prepare a short, clear customer-facing introduction explaining:
+
+- what the service does
+- what the customer will receive
+- the current fee or that quotation is required
+- useful information to prepare
+- practical tips specific to the service
+- useful documents they may upload
 
 Do not create the actual work yet.
 Do not ask for payment yet.
 Do not mention internal software, models, APIs or providers.
+
 Write concise, friendly Nigerian English.
 `;
 }
+
 
 async function loadGuidance(){
 
     setStatus(
         "Preparing useful information for this service..."
     );
+
 
     try{
 
@@ -2000,17 +2200,21 @@ async function loadGuidance(){
 
             });
 
+
         introTitle.textContent =
             service;
+
 
         introText.textContent =
             clean(data.reply) ||
             "Please provide the information requested below.";
 
+
         const amount =
             data.amount ||
             data.price ||
             data.service_amount;
+
 
         if(amount){
 
@@ -2023,9 +2227,24 @@ async function loadGuidance(){
                         )
                 );
 
-            price.textContent =
-                "Service fee: ₦" +
-                numericAmount.toLocaleString();
+
+            if(
+                Number.isFinite(
+                    numericAmount
+                )
+            ){
+
+                price.textContent =
+                    "Service fee: ₦" +
+                    numericAmount.toLocaleString();
+
+            }else{
+
+                price.textContent =
+                    "Service fee: " +
+                    String(amount);
+
+            }
 
         }else if(
             /₦\s?[\d,]+/.test(
@@ -2053,25 +2272,37 @@ async function loadGuidance(){
         }else{
 
             price.textContent =
-                "Service: " + service;
+                "Service: " +
+                service;
+
         }
+
 
         setStatus("");
 
     }catch(error){
 
+        /*
+            A guidance failure must NOT break the page.
+            The customer can still use the form.
+        */
+
         introText.textContent =
             "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
 
         price.textContent =
-            "Service: " + service;
+            "Service: " +
+            service;
+
 
         setStatus(
             "You can still complete the form or ask a question below.",
             "error"
         );
+
     }
 }
+
 
 /* =========================================================
    WORK CREATION
@@ -2088,7 +2319,24 @@ Return the COMPLETE requested work so it can be reviewed here.
 
 IMPORTANT DOCUMENT OUTPUT RULE:
 
-When the requested work is a document, return the complete document as properly structured HTML using normal document elements such as <h1>, <h2>, <h3>, <p>, <strong>, <em>, <ul>, <ol>, <li>, <hr>, <table>, <tr>, <th>, and <td> where appropriate.
+When the requested work is a document, return the complete document as properly structured HTML using normal document elements such as:
+
+<h1>
+<h2>
+<h3>
+<p>
+<strong>
+<em>
+<ul>
+<ol>
+<li>
+<hr>
+<table>
+<tr>
+<th>
+<td>
+
+where appropriate.
 
 The requested length must be respected.
 
@@ -2099,6 +2347,10 @@ Do not deliberately shorten the work.
 For academic papers, include all necessary sections and finish the complete paper, including the conclusion and references where appropriate.
 
 Do not stop after an introduction or a few sections.
+
+Do not return only an introduction.
+
+Do not return a summary instead of the requested document.
 
 Do not wrap the HTML in markdown code fences.
 
@@ -2122,6 +2374,7 @@ ${Object.entries(data)
 `;
 }
 
+
 async function createWork(data){
 
     busyState(true);
@@ -2130,9 +2383,10 @@ async function createWork(data){
         "Preparing your work..."
     );
 
+
     try{
 
-        const result =
+        const response =
             await apiChat({
 
                 message:
@@ -2160,31 +2414,46 @@ async function createWork(data){
 
                 create_work:
                     true
+
             });
 
-        if(result.job_id){
+
+        if(response.job_id){
 
             jobId =
-                result.job_id;
+                response.job_id;
 
             put(
                 "npbc_job_id",
                 jobId
             );
+
         }
 
+
+        /*
+            IMPORTANT:
+            Keep the COMPLETE API reply.
+
+            There is no substring(), slice(),
+            character limit or page limit here.
+        */
+
         currentWork =
-            result.reply ||
+            response.reply ||
             "Your work has been prepared.";
+
 
         showReview(
             currentWork
         );
 
+
         setStatus(
             "Your work is ready for review.",
             "success"
         );
+
 
     }catch(error){
 
@@ -2196,8 +2465,10 @@ async function createWork(data){
     }finally{
 
         busyState(false);
+
     }
 }
+
 
 /* =========================================================
    REVIEW
@@ -2208,16 +2479,24 @@ function showReview(work){
     formView.style.display =
         "none";
 
+
     reviewView.classList.add(
         "show"
     );
 
+
     currentWork =
         work || "";
+
+
+    /*
+        Complete response goes directly to renderer.
+    */
 
     renderDocument(
         currentWork
     );
+
 
     correctionInput.value = "";
 
@@ -2226,6 +2505,7 @@ function showReview(work){
     );
 
     approved = false;
+
     paymentConfirmed = false;
 
     downloadBtn.disabled = true;
@@ -2236,6 +2516,13 @@ function showReview(work){
 
     downloadBtn.textContent =
         "🔒 Download Your Work";
+
+
+    /*
+        Start at the top of the review document.
+        The customer can then scroll through the COMPLETE
+        document using the main page.
+    */
 
     requestAnimationFrame(() => {
 
@@ -2248,6 +2535,7 @@ function showReview(work){
     });
 }
 
+
 function mainScrollTop(){
 
     const main =
@@ -2255,11 +2543,14 @@ function mainScrollTop(){
             ".main"
         );
 
+
     if(main){
 
         main.scrollTop = 0;
+
     }
 }
+
 
 /* =========================================================
    FORM SUBMISSION
@@ -2271,6 +2562,7 @@ serviceForm.addEventListener(
 
         event.preventDefault();
 
+
         if(
             !busy &&
             serviceForm.reportValidity()
@@ -2279,9 +2571,12 @@ serviceForm.addEventListener(
             createWork(
                 collect()
             );
+
         }
+
     }
 );
+
 
 /* =========================================================
    READ-ONLY PROTECTION
@@ -2306,16 +2601,21 @@ serviceForm.addEventListener(
 
                 event.preventDefault();
 
+
                 if(event.clipboardData){
 
                     event.clipboardData.setData(
                         "text/plain",
                         ""
                     );
+
                 }
+
             }
         );
+
     });
+
 
     element.addEventListener(
         "keydown",
@@ -2335,9 +2635,12 @@ serviceForm.addEventListener(
             ){
 
                 event.preventDefault();
+
             }
+
         }
     );
+
 
     element.addEventListener(
         "mousedown",
@@ -2346,10 +2649,14 @@ serviceForm.addEventListener(
             if(event.detail > 1){
 
                 event.preventDefault();
+
             }
+
         }
     );
+
 });
+
 
 /* =========================================================
    CORRECTIONS
@@ -2364,6 +2671,7 @@ applyBtn.addEventListener(
                 correctionInput.value
             );
 
+
         if(!correction){
 
             setStatus(
@@ -2374,20 +2682,25 @@ applyBtn.addEventListener(
             return;
         }
 
+
         if(busy){
 
             return;
+
         }
 
+
         busyState(true);
+
 
         setStatus(
             "Applying your corrections..."
         );
 
+
         try{
 
-            const result =
+            const response =
                 await apiChat({
 
                     message:
@@ -2409,6 +2722,8 @@ Do not shorten it merely to save space.
 Do not remove sections that were not requested to be changed.
 
 Do not stop before the conclusion or final section.
+
+Do not return only the changed section.
 
 Do not wrap the HTML in markdown code fences.
 
@@ -2439,28 +2754,35 @@ Do not return the HTML source as an explanation.
 
                     create_work:
                         true
+
                 });
 
+
             currentWork =
-                result.reply ||
+                response.reply ||
                 currentWork;
+
 
             renderDocument(
                 currentWork
             );
 
+
             correctionInput.value = "";
+
 
             setStatus(
                 "Your corrections have been applied. Please review the updated work.",
                 "success"
             );
 
+
             requestAnimationFrame(() => {
 
                 mainScrollTop();
 
             });
+
 
         }catch(error){
 
@@ -2472,9 +2794,12 @@ Do not return the HTML source as an explanation.
         }finally{
 
             busyState(false);
+
         }
+
     }
 );
+
 
 /* =========================================================
    APPROVAL
@@ -2487,18 +2812,23 @@ approveBtn.addEventListener(
         if(busy){
 
             return;
+
         }
 
+
         busyState(true);
+
 
         setStatus(
             "Preparing your payment step..."
         );
 
+
         try{
 
             const query =
                 new URLSearchParams({
+
                     customer_id:
                         customerId,
 
@@ -2509,7 +2839,9 @@ approveBtn.addEventListener(
                         requestId,
 
                     service
+
                 });
+
 
             const response =
                 await fetch(
@@ -2521,6 +2853,7 @@ approveBtn.addEventListener(
                     }
                 );
 
+
             const data =
                 await response
                     .json()
@@ -2528,25 +2861,34 @@ approveBtn.addEventListener(
                         () => ({})
                     );
 
+
             if(
                 !response.ok ||
-                !data.success
+                data.success === false
             ){
 
                 throw new Error(
                     data.message ||
+                    data.reply ||
                     "Approval could not be completed."
                 );
+
             }
 
+
             approved = true;
+
 
             paymentPanel.classList.add(
                 "show"
             );
 
+
             const amount =
-                Number(data.amount || 0);
+                Number(
+                    data.amount || 0
+                );
+
 
             paymentDetails.textContent =
                 `Service: ${data.service || service}
@@ -2557,15 +2899,18 @@ Amount: ${
 }
 Order: ${data.order_number || "Pending"}`;
 
+
             setStatus(
                 "Your work is approved. Payment is ready.",
                 "success"
             );
 
+
             paymentPanel.scrollIntoView({
                 behavior:"smooth",
                 block:"center"
             });
+
 
         }catch(error){
 
@@ -2577,9 +2922,12 @@ Order: ${data.order_number || "Pending"}`;
         }finally{
 
             busyState(false);
+
         }
+
     }
 );
+
 
 /* =========================================================
    PAYMENT
@@ -2599,10 +2947,12 @@ paymentReport.addEventListener(
             return;
         }
 
+
         const amountMatch =
             paymentDetails.textContent.match(
                 /Amount:\s*([^\n]+)/
             );
+
 
         const amount =
             amountMatch
@@ -2615,6 +2965,7 @@ paymentReport.addEventListener(
                 )
                 : 0;
 
+
         if(amount <= 0){
 
             setStatus(
@@ -2625,6 +2976,7 @@ paymentReport.addEventListener(
             return;
         }
 
+
         try{
 
             const response =
@@ -2632,6 +2984,7 @@ paymentReport.addEventListener(
                     API_BASE +
                     "/api/payment/create",
                     {
+
                         method:"POST",
 
                         headers:{
@@ -2654,9 +3007,12 @@ paymentReport.addEventListener(
 
                                 payment_method:
                                     "bank_transfer"
+
                             })
+
                     }
                 );
+
 
             const data =
                 await response
@@ -2665,25 +3021,30 @@ paymentReport.addEventListener(
                         () => ({})
                     );
 
+
             if(
                 !response.ok ||
-                !data.success
+                data.success === false
             ){
 
                 throw new Error(
                     data.message ||
                     "Payment record could not be created."
                 );
+
             }
+
 
             paymentDetails.textContent +=
                 `\nPayment ID: ${data.payment_id}
 Status: Pending`;
 
+
             setStatus(
                 "Payment reported. Verification is pending.",
                 "success"
             );
+
 
         }catch(error){
 
@@ -2691,9 +3052,12 @@ Status: Pending`;
                 error.message,
                 "error"
             );
+
         }
+
     }
 );
+
 
 /* =========================================================
    PAYMENT STATUS / DOWNLOAD
@@ -2714,6 +3078,7 @@ paymentCheck.addEventListener(
                     )
                 );
 
+
             const data =
                 await response
                     .json()
@@ -2721,16 +3086,19 @@ paymentCheck.addEventListener(
                         () => ({})
                     );
 
+
             if(
                 !response.ok ||
-                !data.success
+                data.success === false
             ){
 
                 throw new Error(
                     data.message ||
                     "Payment status could not be checked."
                 );
+
             }
+
 
             if(
                 String(
@@ -2740,15 +3108,19 @@ paymentCheck.addEventListener(
 
                 paymentConfirmed = true;
 
+
                 downloadBtn.disabled =
                     false;
+
 
                 downloadBtn.classList.add(
                     "active"
                 );
 
+
                 downloadBtn.textContent =
                     "⬇ Download Your Work";
+
 
                 downloadBtn.onclick = () => {
 
@@ -2762,22 +3134,28 @@ paymentCheck.addEventListener(
                         encodeURIComponent(
                             customerId
                         );
+
                 };
+
 
                 paymentDetails.textContent +=
                     "\nStatus: Paid";
+
 
                 setStatus(
                     "Payment confirmed. Your download is now available.",
                     "success"
                 );
 
+
             }else{
 
                 setStatus(
                     "Payment is still pending."
                 );
+
             }
+
 
         }catch(error){
 
@@ -2785,9 +3163,12 @@ paymentCheck.addEventListener(
                 error.message,
                 "error"
             );
+
         }
+
     }
 );
+
 
 /* =========================================================
    UPLOAD
@@ -2800,53 +3181,67 @@ uploadBtn.addEventListener(
         if(!busy){
 
             fileInput.click();
+
         }
+
     }
 );
+
 
 fileInput.addEventListener(
     "change",
     async () => {
 
         const file =
-            fileInput.files?.[0];
+            fileInput.files &&
+            fileInput.files[0];
+
 
         if(!file){
 
             return;
+
         }
+
 
         const formData =
             new FormData();
+
 
         formData.append(
             "file",
             file
         );
 
+
         formData.append(
             "customer_id",
             customerId
         );
+
 
         formData.append(
             "job_id",
             jobId
         );
 
+
         formData.append(
             "client_request_id",
             requestId
         );
+
 
         formData.append(
             "service",
             service
         );
 
+
         setStatus(
             "Uploading the document you want to give us..."
         );
+
 
         try{
 
@@ -2860,6 +3255,7 @@ fileInput.addEventListener(
                     }
                 );
 
+
             const data =
                 await response
                     .json()
@@ -2867,26 +3263,32 @@ fileInput.addEventListener(
                         () => ({})
                     );
 
+
             if(
                 !response.ok ||
-                !data.success
+                data.success === false
             ){
 
                 throw new Error(
                     data.message ||
+                    data.error ||
                     "Document upload failed."
                 );
+
             }
+
 
             setStatus(
                 "Your document has been received successfully.",
                 "success"
             );
 
+
             await sendMessage(
                 "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.",
                 "document_uploaded"
             );
+
 
         }catch(error){
 
@@ -2898,9 +3300,12 @@ fileInput.addEventListener(
         }finally{
 
             fileInput.value = "";
+
         }
+
     }
 );
+
 
 /* =========================================================
    CUSTOMER MESSAGES
@@ -2914,17 +3319,21 @@ async function sendMessage(
     if(busy){
 
         return null;
+
     }
 
+
     busyState(true);
+
 
     setStatus(
         "Processing your message..."
     );
 
+
     try{
 
-        const data =
+        const response =
             await apiChat({
 
                 message,
@@ -2950,40 +3359,49 @@ async function sendMessage(
 
                 create_work:
                     true
+
             });
 
-        if(data.job_id){
+
+        if(response.job_id){
 
             jobId =
-                data.job_id;
+                response.job_id;
 
             put(
                 "npbc_job_id",
                 jobId
             );
+
         }
 
+
         if(
-            data.reply &&
+            response.reply &&
             reviewView.classList.contains(
                 "show"
             )
         ){
 
             currentWork =
-                data.reply;
+                response.reply;
+
 
             renderDocument(
                 currentWork
             );
+
         }
+
 
         setStatus(
             "Ready for your next instruction.",
             "success"
         );
 
-        return data;
+
+        return response;
+
 
     }catch(error){
 
@@ -2992,13 +3410,17 @@ async function sendMessage(
             "error"
         );
 
+
         return null;
+
 
     }finally{
 
         busyState(false);
+
     }
 }
+
 
 sendBtn.addEventListener(
     "click",
@@ -3009,6 +3431,7 @@ sendBtn.addEventListener(
                 messageInput.value
             );
 
+
         if(!text){
 
             setStatus(
@@ -3017,19 +3440,24 @@ sendBtn.addEventListener(
             );
 
             return;
+
         }
+
 
         messageInput.value = "";
 
         messageInput.style.height =
             "auto";
 
+
         sendMessage(
             text,
             "customer_message"
         );
+
     }
 );
+
 
 messageInput.addEventListener(
     "keydown",
@@ -3043,9 +3471,12 @@ messageInput.addEventListener(
             event.preventDefault();
 
             sendBtn.click();
+
         }
+
     }
 );
+
 
 messageInput.addEventListener(
     "input",
@@ -3054,13 +3485,16 @@ messageInput.addEventListener(
         messageInput.style.height =
             "auto";
 
+
         messageInput.style.height =
             Math.min(
                 messageInput.scrollHeight,
                 105
             ) + "px";
+
     }
 );
+
 
 /* =========================================================
    CUSTOMER SERVICE
@@ -3073,18 +3507,23 @@ customerBtn.addEventListener(
         if(busy){
 
             return;
+
         }
 
+
         busyState(true);
+
 
         setStatus(
             "Connecting you to Customer Service..."
         );
 
+
         try{
 
             const query =
                 new URLSearchParams({
+
                     customer_id:
                         customerId,
 
@@ -3092,7 +3531,9 @@ customerBtn.addEventListener(
                         jobId,
 
                     service
+
                 });
+
 
             const response =
                 await fetch(
@@ -3104,6 +3545,7 @@ customerBtn.addEventListener(
                     }
                 );
 
+
             const data =
                 await response
                     .json()
@@ -3111,9 +3553,10 @@ customerBtn.addEventListener(
                         () => ({})
                     );
 
+
             if(
                 !response.ok ||
-                !data.success
+                data.success === false
             ){
 
                 throw new Error(
@@ -3121,13 +3564,16 @@ customerBtn.addEventListener(
                     data.message ||
                     "Customer Service is unavailable."
                 );
+
             }
+
 
             setStatus(
                 data.reply ||
                 "Customer Service is available to help.",
                 "success"
             );
+
 
         }catch(error){
 
@@ -3139,9 +3585,12 @@ customerBtn.addEventListener(
         }finally{
 
             busyState(false);
+
         }
+
     }
 );
+
 
 /* =========================================================
    CHOOSE ANOTHER SERVICE
@@ -3155,9 +3604,12 @@ chooseBtn.addEventListener(
 
             location.href =
                 "conversation.html";
+
         }
+
     }
 );
+
 
 /* =========================================================
    VOICE
@@ -3168,17 +3620,20 @@ voiceBtn.addEventListener(
     async () => {
 
         if(
-            mediaRecorder?.state ===
-            "recording"
+            mediaRecorder &&
+            mediaRecorder.state === "recording"
         ){
 
             mediaRecorder.stop();
 
             return;
+
         }
 
+
         if(
-            !navigator.mediaDevices?.getUserMedia
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia
         ){
 
             setStatus(
@@ -3187,7 +3642,9 @@ voiceBtn.addEventListener(
             );
 
             return;
+
         }
+
 
         try{
 
@@ -3196,44 +3653,59 @@ voiceBtn.addEventListener(
                     audio:true
                 });
 
+
             recordedChunks = [];
+
 
             mediaRecorder =
                 new MediaRecorder(
                     recordingStream
                 );
 
+
             mediaRecorder.ondataavailable =
                 event => {
 
                     if(
-                        event.data?.size
+                        event.data &&
+                        event.data.size
                     ){
 
                         recordedChunks.push(
                             event.data
                         );
+
                     }
+
                 };
+
 
             mediaRecorder.onstop =
                 async () => {
 
-                    recordingStream
-                        ?.getTracks()
-                        .forEach(
-                            track =>
-                                track.stop()
-                        );
+                    if(recordingStream){
+
+                        recordingStream
+                            .getTracks()
+                            .forEach(
+                                track =>
+                                    track.stop()
+                            );
+
+                    }
+
 
                     recordingStream = null;
+
 
                     voiceRecording.classList.remove(
                         "show"
                     );
 
+
                     voiceBtn.textContent =
                         "🎤 Voice";
+
 
                     if(
                         !recordedChunks.length
@@ -3245,10 +3717,13 @@ voiceBtn.addEventListener(
                         );
 
                         return;
+
                     }
+
 
                     const formData =
                         new FormData();
+
 
                     formData.append(
                         "file",
@@ -3262,25 +3737,30 @@ voiceBtn.addEventListener(
                         "voice_message.webm"
                     );
 
+
                     formData.append(
                         "customer_id",
                         customerId
                     );
+
 
                     formData.append(
                         "job_id",
                         jobId
                     );
 
+
                     formData.append(
                         "client_request_id",
                         requestId
                     );
 
+
                     formData.append(
                         "service",
                         service
                     );
+
 
                     try{
 
@@ -3294,6 +3774,7 @@ voiceBtn.addEventListener(
                                 }
                             );
 
+
                         const data =
                             await response
                                 .json()
@@ -3301,21 +3782,25 @@ voiceBtn.addEventListener(
                                     () => ({})
                                 );
 
+
                         if(
                             !response.ok ||
-                            !data.success
+                            data.success === false
                         ){
 
                             throw new Error(
                                 data.message ||
                                 "Voice recording failed."
                             );
+
                         }
+
 
                         await sendMessage(
                             "A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.",
                             "voice_uploaded"
                         );
+
 
                     }catch(error){
 
@@ -3323,21 +3808,28 @@ voiceBtn.addEventListener(
                             error.message,
                             "error"
                         );
+
                     }
+
                 };
 
+
             mediaRecorder.start();
+
 
             voiceRecording.classList.add(
                 "show"
             );
 
+
             voiceBtn.textContent =
                 "⏹ Stop Voice";
+
 
             setStatus(
                 "Recording your voice..."
             );
+
 
         }catch(error){
 
@@ -3345,9 +3837,12 @@ voiceBtn.addEventListener(
                 "Could not access your microphone.",
                 "error"
             );
+
         }
+
     }
 );
+
 
 /* =========================================================
    INITIALISE
@@ -3358,15 +3853,21 @@ async function init(){
     serviceBadge.textContent =
         service;
 
+
     introTitle.textContent =
         service;
 
+
     renderForm();
 
+
     await loadGuidance();
+
 }
 
+
 init();
+
 </script>
 
 </body>
