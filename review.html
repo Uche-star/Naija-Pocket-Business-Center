@@ -8,7 +8,7 @@
     content="width=device-width,initial-scale=1,viewport-fit=cover"
 >
 
-<title>Review Your Service | Naija Pocket Business Center</title>
+<title>Review Your Work | Naija Pocket Business Center</title>
 
 <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap"
@@ -46,17 +46,7 @@ button{
 }
 
 :root{
-    /*
-        BRAND GREEN
-        Used ONLY for the Naija Pocket Business Center identity.
-    */
     --brand-green:#22c55e;
-    --brand-green-light:#5ee58b;
-
-    /*
-        GOLD/YELLOW
-        Kept for creation, premium and progress accents.
-    */
     --gold:#e0bd55;
     --gold-light:#f5dc88;
 
@@ -79,8 +69,6 @@ button{
 
 .app{
     min-height:100vh;
-    display:flex;
-    flex-direction:column;
 }
 
 
@@ -99,6 +87,8 @@ button{
     align-items:center;
     justify-content:space-between;
 
+    gap:12px;
+
     padding:11px 16px;
 
     background:#050505;
@@ -109,11 +99,6 @@ button{
 .brand-title{
     margin:0;
 
-    /*
-        IMPORTANT:
-        This is the Naija Pocket Business Center brand.
-        It is GREEN, not gold.
-    */
     color:var(--brand-green);
 
     font-family:Montserrat,Arial,sans-serif;
@@ -144,6 +129,7 @@ button{
     color:#aaa;
 
     font-size:10px;
+    white-space:nowrap;
 }
 
 .job-dot{
@@ -152,9 +138,6 @@ button{
 
     border-radius:50%;
 
-    /*
-        Status indicator remains GOLD.
-    */
     background:var(--gold);
 
     box-shadow:
@@ -201,7 +184,7 @@ button{
 }
 
 .hero p{
-    max-width:650px;
+    max-width:700px;
 
     margin:9px auto 0;
 
@@ -213,13 +196,51 @@ button{
 
 
 /* =========================================================
-   MAGIC CREATION STAGE
+   CONNECTION / LOADING
+========================================================= */
+
+.connection{
+    display:none;
+
+    margin-bottom:15px;
+
+    padding:11px 13px;
+
+    border:1px solid #292929;
+    border-radius:12px;
+
+    background:#0b0b0b;
+
+    color:#999;
+
+    font-size:10px;
+
+    line-height:1.5;
+}
+
+.connection.show{
+    display:block;
+}
+
+.connection.error{
+    color:#ff9a9a;
+    border-color:rgba(217,71,71,.4);
+}
+
+.connection.success{
+    color:#83e5ad;
+    border-color:rgba(72,212,138,.35);
+}
+
+
+/* =========================================================
+   MAGIC
 ========================================================= */
 
 .magic{
     position:relative;
 
-    min-height:390px;
+    min-height:310px;
 
     overflow:hidden;
 
@@ -247,11 +268,6 @@ button{
     box-shadow:
         0 20px 80px rgba(0,0,0,.5);
 }
-
-
-/* =========================================================
-   MOVING LIGHT
-========================================================= */
 
 .magic::before{
     content:"";
@@ -290,16 +306,11 @@ button{
 
 }
 
-
-/* =========================================================
-   MAGIC HEADER
-========================================================= */
-
 .magic-head{
     position:relative;
     z-index:10;
 
-    padding:17px 17px 12px;
+    padding:19px 17px 12px;
 
     text-align:center;
 }
@@ -327,21 +338,16 @@ button{
 
 
 /* =========================================================
-   FLIGHT AREA
+   CENTRAL CORE
 ========================================================= */
 
 .flight-area{
     position:relative;
 
-    height:245px;
+    height:170px;
 
     overflow:hidden;
 }
-
-
-/* =========================================================
-   CENTRAL ASSEMBLY
-========================================================= */
 
 .assembly-core{
     position:absolute;
@@ -421,184 +427,6 @@ button{
 
 
 /* =========================================================
-   FLYING DOCUMENTS
-========================================================= */
-
-.fly{
-    position:absolute;
-
-    left:-150px;
-
-    width:135px;
-    min-height:52px;
-
-    padding:9px 11px;
-
-    display:flex;
-    align-items:center;
-    gap:9px;
-
-    border:1px solid rgba(255,255,255,.15);
-
-    border-radius:12px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.09),
-            rgba(255,255,255,.025)
-        );
-
-    box-shadow:
-        0 9px 28px rgba(0,0,0,.35);
-
-    opacity:0;
-
-    z-index:7;
-
-    pointer-events:none;
-}
-
-.fly.visible{
-    opacity:1;
-}
-
-.fly-icon{
-    width:31px;
-    height:35px;
-
-    flex:0 0 auto;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    border-radius:7px;
-
-    background:rgba(255,255,255,.08);
-
-    font-size:16px;
-}
-
-.fly-text{
-    min-width:0;
-}
-
-.fly-title{
-    overflow:hidden;
-
-    color:#fff;
-
-    font-size:10px;
-    font-weight:700;
-
-    white-space:nowrap;
-    text-overflow:ellipsis;
-}
-
-.fly-status{
-    margin-top:3px;
-
-    color:#929292;
-
-    font-size:8px;
-}
-
-.fly.left{
-    animation:
-        flyLeft 2.5s cubic-bezier(.18,.7,.22,1) forwards;
-}
-
-.fly.right{
-    left:auto;
-    right:-150px;
-
-    animation:
-        flyRight 2.5s cubic-bezier(.18,.7,.22,1) forwards;
-}
-
-@keyframes flyLeft{
-
-    0%{
-        left:-150px;
-        top:var(--top);
-
-        transform:
-            scale(.72)
-            rotate(-4deg);
-
-        opacity:0;
-    }
-
-    12%{
-        opacity:1;
-    }
-
-    50%{
-        transform:
-            scale(1)
-            rotate(1deg);
-    }
-
-    88%{
-        opacity:1;
-    }
-
-    100%{
-        left:calc(50% - 67px);
-        top:calc(50% - 26px);
-
-        transform:
-            scale(.72)
-            rotate(0deg);
-
-        opacity:0;
-    }
-
-}
-
-@keyframes flyRight{
-
-    0%{
-        right:-150px;
-        top:var(--top);
-
-        transform:
-            scale(.72)
-            rotate(4deg);
-
-        opacity:0;
-    }
-
-    12%{
-        opacity:1;
-    }
-
-    50%{
-        transform:
-            scale(1)
-            rotate(-1deg);
-    }
-
-    88%{
-        opacity:1;
-    }
-
-    100%{
-        right:calc(50% - 67px);
-        top:calc(50% - 26px);
-
-        transform:
-            scale(.72)
-            rotate(0deg);
-
-        opacity:0;
-    }
-
-}
-
-
-/* =========================================================
    PROGRESS
 ========================================================= */
 
@@ -606,28 +434,22 @@ button{
     position:relative;
     z-index:10;
 
-    padding:0 18px 17px;
+    padding:0 18px 18px;
 }
 
 .progress-top{
     display:flex;
     align-items:center;
-    justify-content:space-between;
+    justify-content:center;
 
-    margin-bottom:7px;
+    margin-bottom:8px;
 }
 
 .progress-label{
     color:#aaa;
 
     font-size:10px;
-}
-
-.progress-number{
-    color:var(--gold-light);
-
-    font-size:10px;
-    font-weight:700;
+    text-align:center;
 }
 
 .progress-track{
@@ -663,158 +485,7 @@ button{
 
 
 /* =========================================================
-   SECTIONS
-========================================================= */
-
-.sections{
-    margin-top:17px;
-
-    border:1px solid var(--border);
-
-    border-radius:18px;
-
-    overflow:hidden;
-
-    background:#0b0b0b;
-}
-
-.sections-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:13px 15px;
-
-    border-bottom:1px solid #242424;
-}
-
-.sections-head strong{
-    font-family:Montserrat,Arial,sans-serif;
-
-    font-size:13px;
-}
-
-.sections-head span{
-    color:#777;
-
-    font-size:10px;
-}
-
-.section-list{
-    display:flex;
-    flex-direction:column;
-}
-
-.section-row{
-    min-height:51px;
-
-    display:flex;
-    align-items:center;
-    gap:11px;
-
-    padding:9px 14px;
-
-    border-bottom:1px solid #1d1d1d;
-
-    transition:
-        background .3s ease,
-        transform .3s ease;
-}
-
-.section-row:last-child{
-    border-bottom:0;
-}
-
-.section-row.done{
-    background:rgba(72,212,138,.025);
-}
-
-.section-row.active{
-    background:rgba(224,189,85,.045);
-}
-
-.section-number{
-    width:28px;
-    height:28px;
-
-    flex:0 0 auto;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    border:1px solid #303030;
-
-    border-radius:8px;
-
-    color:#777;
-
-    font-size:9px;
-    font-weight:700;
-}
-
-.section-row.done .section-number{
-    border-color:rgba(72,212,138,.4);
-
-    color:var(--green);
-}
-
-.section-row.active .section-number{
-    border-color:rgba(224,189,85,.45);
-
-    color:var(--gold-light);
-}
-
-.section-info{
-    flex:1;
-    min-width:0;
-}
-
-.section-title{
-    overflow:hidden;
-
-    color:#ddd;
-
-    font-size:11px;
-    font-weight:600;
-
-    white-space:nowrap;
-    text-overflow:ellipsis;
-}
-
-.section-state{
-    margin-top:3px;
-
-    color:#6f6f6f;
-
-    font-size:9px;
-}
-
-.section-row.done .section-state{
-    color:var(--green);
-}
-
-.section-row.active .section-state{
-    color:var(--gold);
-}
-
-.section-mark{
-    width:24px;
-
-    text-align:center;
-
-    color:#555;
-
-    font-size:14px;
-}
-
-.section-row.done .section-mark{
-    color:var(--green);
-}
-
-
-/* =========================================================
-   COMPLETE DOCUMENT
+   DOCUMENT PANEL
 ========================================================= */
 
 .document-panel{
@@ -859,6 +530,8 @@ button{
     color:#888;
 
     font-size:9px;
+
+    white-space:nowrap;
 }
 
 .document-status.ready{
@@ -868,6 +541,8 @@ button{
 }
 
 .document{
+    min-height:170px;
+
     padding:22px 18px;
 
     color:#ddd;
@@ -876,6 +551,18 @@ button{
     line-height:1.75;
 
     overflow-wrap:anywhere;
+}
+
+.document.empty{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#666;
+
+    font-size:12px;
+
+    text-align:center;
 }
 
 .document h1,
@@ -887,28 +574,64 @@ button{
     font-family:Montserrat,Arial,sans-serif;
 }
 
+.document h1{
+    font-size:23px;
+}
+
 .document h2{
     margin-top:28px;
+
+    font-size:18px;
+}
+
+.document h3{
+    margin-top:23px;
+
+    font-size:15px;
 }
 
 .document p{
     margin:0 0 14px;
 }
 
-.document:empty{
-    min-height:130px;
+.document ul,
+.document ol{
+    margin:0 0 16px;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    padding-left:25px;
+}
+
+.document li{
+    margin-bottom:7px;
+}
+
+
+/* =========================================================
+   SOURCE / RECOVERY INFORMATION
+========================================================= */
+
+.data-source{
+    display:none;
+
+    margin:12px 18px 18px;
+
+    padding:9px 11px;
+
+    border:1px solid #222;
+
+    border-radius:10px;
+
+    background:#080808;
 
     color:#666;
 
-    font-size:12px;
+    font-size:9px;
+
+    line-height:1.5;
 }
 
-.document:empty::after{
-    content:"Your completed document will appear here.";
+.data-source.show{
+    display:block;
 }
 
 
@@ -1030,10 +753,6 @@ textarea::placeholder{
     color:#080808;
 }
 
-.action.gold:hover{
-    background:#d0aa4a;
-}
-
 .action.green{
     border-color:rgba(72,212,138,.35);
 
@@ -1060,7 +779,7 @@ textarea::placeholder{
 
 
 /* =========================================================
-   MESSAGE
+   NOTICE
 ========================================================= */
 
 .notice{
@@ -1127,27 +846,17 @@ textarea::placeholder{
     }
 
     .magic{
-        min-height:375px;
-
         border-radius:19px;
-    }
-
-    .flight-area{
-        height:235px;
-    }
-
-    .fly{
-        width:125px;
-    }
-
-    .actions{
-        grid-template-columns:1fr;
     }
 
     .document{
         padding:18px 13px;
 
         font-size:13px;
+    }
+
+    .actions{
+        grid-template-columns:1fr;
     }
 
 }
@@ -1158,11 +867,7 @@ textarea::placeholder{
     *::before,
     *::after{
         animation-duration:.001ms !important;
-
         animation-iteration-count:1 !important;
-
-        scroll-behavior:auto !important;
-
         transition:none !important;
     }
 
@@ -1175,298 +880,241 @@ textarea::placeholder{
 
 <div class="app">
 
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
+<header class="header">
 
-    <header class="header">
+    <div>
 
-        <div>
+        <div class="brand-title">
+            Naija Pocket Business Center
+        </div>
 
-            <div class="brand-title">
-                Naija Pocket Business Center
-            </div>
+        <div class="brand-subtitle">
+            Your completed work
+        </div>
 
-            <div class="brand-subtitle">
-                Your service is being carefully prepared
+    </div>
+
+    <div class="job-pill">
+
+        <span class="job-dot"></span>
+
+        <span id="jobState">
+            CONNECTING
+        </span>
+
+    </div>
+
+</header>
+
+
+<main class="main">
+
+
+<section class="hero">
+
+    <h1>
+        <span>Your Work</span> Is Ready
+    </h1>
+
+    <p id="heroMessage">
+        We are bringing your completed work into this review page.
+    </p>
+
+</section>
+
+
+<div
+    class="connection"
+    id="connection"
+></div>
+
+
+<section class="magic">
+
+    <div class="magic-head">
+
+        <h2
+            class="magic-title"
+            id="magicTitle"
+        >
+            ✨ Bringing Your Work Together ✨
+        </h2>
+
+        <p
+            class="magic-message"
+            id="magicMessage"
+        >
+            Retrieving the actual work created for this job.
+        </p>
+
+    </div>
+
+
+    <div class="flight-area">
+
+        <div class="assembly-core">
+
+            <div class="core-ring"></div>
+
+            <div class="core-content">
+
+                <div class="core-icon">
+                    ✨
+                </div>
+
+                <div class="core-label">
+                    Review
+                </div>
+
             </div>
 
         </div>
 
-        <!--
-            IMPORTANT:
-            Do NOT show 0/1, 1/1, 2/7 etc. here.
-            This is a customer-facing status indicator.
-        -->
+    </div>
 
-        <div class="job-pill">
 
-            <span class="job-dot"></span>
+    <div class="progress-area">
 
-            <span id="jobState">
-                CREATING
+        <div class="progress-top">
+
+            <span
+                class="progress-label"
+                id="progressLabel"
+            >
+                Retrieving your work...
             </span>
 
         </div>
 
-    </header>
-
-
-    <!-- =====================================================
-         MAIN
-    ====================================================== -->
-
-    <main class="main">
-
-
-        <!-- =================================================
-             HERO
-        ================================================== -->
-
-        <section class="hero">
-
-            <h1>
-                Watch the <span>Magic of Creation</span>
-            </h1>
-
-            <p id="heroMessage">
-                Your service is being created one section at a time.
-                Each completed part is brought together into your
-                finished document.
-            </p>
-
-        </section>
-
-
-        <!-- =================================================
-             MAGIC CREATION
-        ================================================== -->
-
-        <section
-            class="magic"
-            id="magic"
-        >
-
-            <div class="magic-head">
-
-                <h2
-                    class="magic-title"
-                    id="magicTitle"
-                >
-                    ✨ Creating Your Service ✨
-                </h2>
-
-                <p
-                    class="magic-message"
-                    id="magicMessage"
-                >
-                    Please give us a moment while your document
-                    comes to life.
-                </p>
-
-            </div>
-
+        <div class="progress-track">
 
             <div
-                class="flight-area"
-                id="flightArea"
-            >
-
-                <div class="assembly-core">
-
-                    <div class="core-ring"></div>
-
-                    <div class="core-content">
-
-                        <div class="core-icon">
-                            ✨
-                        </div>
-
-                        <div class="core-label">
-                            Assembly
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="progress-area">
-
-                <div class="progress-top">
-
-                    <span
-                        class="progress-label"
-                        id="progressLabel"
-                    >
-                        Preparing your document...
-                    </span>
-
-                    <span
-                        class="progress-number"
-                        id="progressNumber"
-                    >
-                        0%
-                    </span>
-
-                </div>
-
-                <div class="progress-track">
-
-                    <div
-                        class="progress-bar"
-                        id="progressBar"
-                    ></div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             SECTIONS
-        ================================================== -->
-
-        <section class="sections">
-
-            <div class="sections-head">
-
-                <strong>
-                    Creation Progress
-                </strong>
-
-                <span id="sectionCount">
-                    Preparing...
-                </span>
-
-            </div>
-
-            <div
-                class="section-list"
-                id="sectionList"
+                class="progress-bar"
+                id="progressBar"
             ></div>
-
-        </section>
-
-
-        <!-- =================================================
-             COMPLETE DOCUMENT
-        ================================================== -->
-
-        <section class="document-panel">
-
-            <div class="document-head">
-
-                <h2>
-                    Your Complete Document
-                </h2>
-
-                <div
-                    class="document-status"
-                    id="documentStatus"
-                >
-                    BUILDING
-                </div>
-
-            </div>
-
-            <article
-                class="document"
-                id="document"
-            ></article>
-
-        </section>
-
-
-        <!-- =================================================
-             CORRECTIONS
-        ================================================== -->
-
-        <section class="correction">
-
-            <h3>
-                Want anything changed?
-            </h3>
-
-            <p>
-                Tell us what you want improved. Only the affected
-                part of your document needs to be worked on again.
-            </p>
-
-            <textarea
-                id="correctionText"
-                placeholder="Example: Expand the methodology section and make the recommendations more detailed..."
-            ></textarea>
-
-            <div class="actions">
-
-                <button
-                    class="action"
-                    id="correctionButton"
-                    onclick="requestCorrection()"
-                    disabled
-                >
-                    Request Correction
-                </button>
-
-                <button
-                    class="action green"
-                    id="approveButton"
-                    onclick="approveDocument()"
-                    disabled
-                >
-                    Approve Document
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             ACTIONS
-        ================================================== -->
-
-        <div class="actions">
-
-            <button
-                class="action"
-                onclick="goBack()"
-            >
-                ← Back
-            </button>
-
-            <button
-                class="action gold"
-                id="paymentButton"
-                onclick="continueToPayment()"
-                disabled
-            >
-                Payment
-            </button>
-
-            <button
-                class="action gold"
-                id="downloadButton"
-                onclick="downloadDocument()"
-                disabled
-            >
-                Download
-            </button>
 
         </div>
 
+    </div>
+
+</section>
+
+
+<section class="document-panel">
+
+    <div class="document-head">
+
+        <h2>
+            Your Complete Document
+        </h2>
 
         <div
-            class="notice"
-            id="notice"
-        ></div>
+            class="document-status"
+            id="documentStatus"
+        >
+            RETRIEVING
+        </div>
 
-    </main>
+    </div>
+
+
+    <article
+        class="document empty"
+        id="document"
+    >
+        Bringing your actual completed work here...
+    </article>
+
+
+    <div
+        class="data-source"
+        id="dataSource"
+    ></div>
+
+</section>
+
+
+<section class="correction">
+
+    <h3>
+        Want anything changed?
+    </h3>
+
+    <p>
+        Tell us exactly what you want changed in your completed work.
+    </p>
+
+    <textarea
+        id="correctionText"
+        placeholder="Tell us what you want changed..."
+    ></textarea>
+
+
+    <div class="actions">
+
+        <button
+            class="action"
+            id="correctionButton"
+            onclick="requestCorrection()"
+            disabled
+        >
+            Request Correction
+        </button>
+
+
+        <button
+            class="action green"
+            id="approveButton"
+            onclick="approveDocument()"
+            disabled
+        >
+            Approve Document
+        </button>
+
+    </div>
+
+</section>
+
+
+<div class="actions">
+
+    <button
+        class="action"
+        onclick="goBack()"
+    >
+        ← Back
+    </button>
+
+
+    <button
+        class="action gold"
+        id="paymentButton"
+        onclick="continueToPayment()"
+        disabled
+    >
+        Payment
+    </button>
+
+
+    <button
+        class="action gold"
+        id="downloadButton"
+        onclick="downloadDocument()"
+        disabled
+    >
+        Download
+    </button>
+
+</div>
+
+
+<div
+    class="notice"
+    id="notice"
+></div>
+
+
+</main>
 
 </div>
 
@@ -1477,7 +1125,7 @@ textarea::placeholder{
 
 
 /* ============================================================
-   STATE
+   JOB ID
 ============================================================ */
 
 const params =
@@ -1485,107 +1133,243 @@ const params =
         window.location.search
     );
 
+
+function firstValue(
+    values
+){
+
+    for(
+        const value of values
+    ){
+
+        if(
+            value !== null &&
+            value !== undefined &&
+            String(value).trim() !== ""
+        ){
+
+            return String(value);
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
 const jobId =
-    params.get("job_id") ||
-    params.get("id") ||
-    localStorage.getItem("job_id");
+    firstValue([
 
-let latestData = null;
+        params.get("job_id"),
 
-let previousCompleted = 0;
+        params.get("id"),
 
-let polling = false;
+        params.get("job"),
 
-let pollTimer = null;
+        localStorage.getItem("job_id"),
 
-let animationCounter = 0;
+        sessionStorage.getItem("job_id"),
+
+        localStorage.getItem("current_job_id"),
+
+        sessionStorage.getItem("current_job_id")
+
+    ]);
 
 
 /* ============================================================
    DOM
 ============================================================ */
 
-const flightArea =
-    document.getElementById("flightArea");
-
-const sectionList =
-    document.getElementById("sectionList");
-
-const documentBox =
-    document.getElementById("document");
-
-const progressBar =
-    document.getElementById("progressBar");
-
-const progressNumber =
-    document.getElementById("progressNumber");
-
-const progressLabel =
-    document.getElementById("progressLabel");
-
-const sectionCount =
-    document.getElementById("sectionCount");
-
-const documentStatus =
-    document.getElementById("documentStatus");
-
 const jobState =
-    document.getElementById("jobState");
-
-const magicTitle =
-    document.getElementById("magicTitle");
-
-const magicMessage =
-    document.getElementById("magicMessage");
+    document.getElementById(
+        "jobState"
+    );
 
 const heroMessage =
-    document.getElementById("heroMessage");
+    document.getElementById(
+        "heroMessage"
+    );
+
+const magicTitle =
+    document.getElementById(
+        "magicTitle"
+    );
+
+const magicMessage =
+    document.getElementById(
+        "magicMessage"
+    );
+
+const progressLabel =
+    document.getElementById(
+        "progressLabel"
+    );
+
+const progressBar =
+    document.getElementById(
+        "progressBar"
+    );
+
+const documentBox =
+    document.getElementById(
+        "document"
+    );
+
+const documentStatus =
+    document.getElementById(
+        "documentStatus"
+    );
+
+const dataSource =
+    document.getElementById(
+        "dataSource"
+    );
 
 const correctionText =
-    document.getElementById("correctionText");
+    document.getElementById(
+        "correctionText"
+    );
 
 const correctionButton =
-    document.getElementById("correctionButton");
+    document.getElementById(
+        "correctionButton"
+    );
 
 const approveButton =
-    document.getElementById("approveButton");
+    document.getElementById(
+        "approveButton"
+    );
 
 const paymentButton =
-    document.getElementById("paymentButton");
+    document.getElementById(
+        "paymentButton"
+    );
 
 const downloadButton =
-    document.getElementById("downloadButton");
+    document.getElementById(
+        "downloadButton"
+    );
 
 const notice =
-    document.getElementById("notice");
+    document.getElementById(
+        "notice"
+    );
+
+const connection =
+    document.getElementById(
+        "connection"
+    );
 
 
 /* ============================================================
-   INITIAL CHECK
+   STATE
+============================================================ */
+
+let latestData = null;
+
+let pollTimer = null;
+
+let polling = false;
+
+let successfulBackendRead = false;
+
+let documentFound = false;
+
+
+/* ============================================================
+   START
 ============================================================ */
 
 if(!jobId){
 
-    showNotice(
-        "No document job was supplied. Please return to your workspace and start the service again.",
-        "error"
-    );
-
     jobState.textContent =
         "NO JOB";
 
+    showConnection(
+        "This review page did not receive a job ID. The completed work cannot be matched to a customer job.",
+        "error"
+    );
+
 }else{
 
-    startPolling();
+    /*
+        Preserve the same job identity so every page
+        continues working with the same piece of work.
+    */
+
+    localStorage.setItem(
+        "job_id",
+        jobId
+    );
+
+    sessionStorage.setItem(
+        "job_id",
+        jobId
+    );
+
+    loadReview();
 
 }
 
 
 /* ============================================================
-   POLLING
+   MAIN REVIEW LOADER
 ============================================================ */
 
-function startPolling(){
+async function loadReview(){
+
+    /*
+        First recover anything the preceding page may
+        have left locally.
+
+        This is NOT treated as the authoritative copy.
+        It is only a bridge while the backend response
+        is being obtained.
+    */
+
+    const localData =
+        recoverLocalJobData();
+
+    if(localData){
+
+        latestData =
+            mergeData(
+                latestData,
+                localData
+            );
+
+        renderReview(
+            latestData,
+            "Recovered work from the current browser session."
+        );
+
+    }
+
+
+    /*
+        Then ALWAYS ask the backend.
+
+        The backend copy is authoritative because the
+        document must survive navigation between pages.
+    */
+
+    await fetchBackendReview();
+
+}
+
+
+/* ============================================================
+   BACKEND
+============================================================ */
+
+async function fetchBackendReview(){
+
+    if(!jobId){
+        return;
+    }
 
     if(polling){
         return;
@@ -1593,23 +1377,16 @@ function startPolling(){
 
     polling = true;
 
-    fetchReview();
-
-}
-
-
-async function fetchReview(){
-
-    if(!jobId){
-        return;
-    }
-
     try{
 
         const response =
             await fetch(
                 "/api/review?job_id=" +
-                encodeURIComponent(jobId),
+                encodeURIComponent(
+                    jobId
+                ) +
+                "&_=" +
+                Date.now(),
                 {
                     method:"GET",
 
@@ -1622,57 +1399,93 @@ async function fetchReview(){
                 }
             );
 
+
         if(!response.ok){
 
             throw new Error(
-                "Review request failed: " +
+                "Review endpoint returned HTTP " +
                 response.status
             );
 
         }
 
+
         const data =
             await response.json();
 
+
+        successfulBackendRead =
+            true;
+
+
         latestData =
-            data;
+            mergeData(
+                latestData,
+                data
+            );
+
+
+        /*
+            Save the server response locally as well.
+
+            This makes navigation/reload safer, but does
+            NOT replace the backend as the source of truth.
+        */
+
+        saveLocalJobData(
+            latestData
+        );
+
 
         renderReview(
-            data
+            latestData,
+            "Your work has been retrieved from the job."
         );
+
+
+        if(
+            !isFinished(
+                latestData
+            )
+        ){
+
+            schedulePoll();
+
+        }else{
+
+            polling = false;
+
+        }
+
 
     }catch(error){
 
         console.error(
+            "Review retrieval error:",
             error
         );
 
-        showNotice(
-            "We are reconnecting to your document. Your work remains safe.",
-            "error"
-        );
 
-    }
+        /*
+            If we already have a usable document from
+            the current browser session, do not destroy it.
+        */
 
-    clearTimeout(
-        pollTimer
-    );
+        if(
+            !documentFound
+        ){
 
-    if(
-        !isFinished(
-            latestData
-        )
-    ){
-
-        pollTimer =
-            setTimeout(
-                fetchReview,
-                1800
+            showConnection(
+                "We could not retrieve the completed work from the server yet. We will keep trying.",
+                "error"
             );
 
-    }else{
+        }
+
 
         polling = false;
+
+        schedulePoll();
 
     }
 
@@ -1680,14 +1493,488 @@ async function fetchReview(){
 
 
 /* ============================================================
-   NORMALIZE BACKEND DATA
+   POLLING
 ============================================================ */
 
-function getSections(data){
+function schedulePoll(){
+
+    clearTimeout(
+        pollTimer
+    );
+
+    pollTimer =
+        setTimeout(
+            () => {
+
+                polling = false;
+
+                fetchBackendReview();
+
+            },
+            1800
+        );
+
+}
+
+
+/* ============================================================
+   LOCAL DATA RECOVERY
+============================================================ */
+
+function recoverLocalJobData(){
+
+    const keys = [
+
+        "review_data_" + jobId,
+
+        "job_data_" + jobId,
+
+        "document_data_" + jobId,
+
+        "workspace_data_" + jobId,
+
+        "current_job_data",
+
+        "review_data",
+
+        "job_data",
+
+        "document_data"
+
+    ];
+
+
+    for(
+        const key of keys
+    ){
+
+        const raw =
+            safeStorageGet(
+                localStorage,
+                key
+            ) ||
+            safeStorageGet(
+                sessionStorage,
+                key
+            );
+
+
+        if(!raw){
+            continue;
+        }
+
+
+        try{
+
+            const parsed =
+                JSON.parse(
+                    raw
+                );
+
+
+            if(
+                parsed &&
+                typeof parsed === "object"
+            ){
+
+                return parsed;
+
+            }
+
+        }catch(error){
+
+            /*
+                Ignore malformed storage.
+                The backend remains authoritative.
+            */
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+function saveLocalJobData(
+    data
+){
+
+    if(
+        !data ||
+        typeof data !== "object"
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        localStorage.setItem(
+            "review_data_" + jobId,
+            JSON.stringify(
+                data
+            )
+        );
+
+        sessionStorage.setItem(
+            "review_data_" + jobId,
+            JSON.stringify(
+                data
+            )
+        );
+
+    }catch(error){
+
+        console.warn(
+            "Could not save review state locally:",
+            error
+        );
+
+    }
+
+}
+
+
+function safeStorageGet(
+    storage,
+    key
+){
+
+    try{
+
+        return storage.getItem(
+            key
+        );
+
+    }catch(error){
+
+        return null;
+
+    }
+
+}
+
+
+/* ============================================================
+   DATA MERGING
+============================================================ */
+
+function mergeData(
+    oldData,
+    newData
+){
+
+    if(
+        !oldData &&
+        !newData
+    ){
+
+        return null;
+
+    }
+
+    if(
+        !oldData
+    ){
+
+        return newData;
+
+    }
+
+    if(
+        !newData
+    ){
+
+        return oldData;
+
+    }
+
+
+    if(
+        typeof oldData !== "object" ||
+        typeof newData !== "object"
+    ){
+
+        return newData;
+
+    }
+
+
+    return {
+
+        ...oldData,
+
+        ...newData,
+
+        progress:
+            (
+                oldData.progress ||
+                newData.progress
+            ) &&
+            {
+                ...(oldData.progress || {}),
+                ...(newData.progress || {})
+            },
+
+        job:
+            (
+                oldData.job ||
+                newData.job
+            ) &&
+            {
+                ...(oldData.job || {}),
+                ...(newData.job || {})
+            },
+
+        version:
+            (
+                oldData.version ||
+                newData.version
+            ) &&
+            {
+                ...(oldData.version || {}),
+                ...(newData.version || {})
+            }
+
+    };
+
+}
+
+
+/* ============================================================
+   DOCUMENT EXTRACTION
+============================================================ */
+
+function extractDocument(
+    data
+){
+
+    if(!data){
+        return "";
+    }
+
+
+    /*
+        Most direct backend form.
+    */
+
+    const directKeys = [
+
+        "document_html",
+
+        "document",
+
+        "content",
+
+        "output",
+
+        "result",
+
+        "html",
+
+        "text",
+
+        "generated_document",
+
+        "completed_document",
+
+        "final_document"
+
+    ];
+
+
+    for(
+        const key of directKeys
+    ){
+
+        const value =
+            data[key];
+
+
+        if(
+            typeof value === "string" &&
+            value.trim()
+        ){
+
+            return value;
+
+        }
+
+    }
+
+
+    /*
+        Nested job.
+    */
+
+    if(
+        data.job &&
+        typeof data.job === "object"
+    ){
+
+        const nested =
+            extractDocument(
+                data.job
+            );
+
+
+        if(nested){
+            return nested;
+        }
+
+    }
+
+
+    /*
+        Nested version.
+    */
+
+    if(
+        data.version &&
+        typeof data.version === "object"
+    ){
+
+        const nested =
+            extractDocument(
+                data.version
+            );
+
+
+        if(nested){
+            return nested;
+        }
+
+    }
+
+
+    /*
+        Some backends put the generated result
+        inside result.data or result.document.
+    */
+
+    if(
+        data.result &&
+        typeof data.result === "object"
+    ){
+
+        const nested =
+            extractDocument(
+                data.result
+            );
+
+
+        if(nested){
+            return nested;
+        }
+
+    }
+
+
+    /*
+        Some implementations return a single
+        response/message field.
+    */
+
+    const responseKeys = [
+
+        "response",
+
+        "message",
+
+        "assistant_message",
+
+        "generated_text"
+
+    ];
+
+
+    for(
+        const key of responseKeys
+    ){
+
+        const value =
+            data[key];
+
+
+        if(
+            typeof value === "string" &&
+            value.trim()
+        ){
+
+            /*
+                Do not mistake an ordinary conversation
+                reply for a completed document unless the
+                response explicitly identifies it as such.
+            */
+
+            if(
+                data.document_ready === true ||
+                data.ready === true ||
+                data.completed === true ||
+                data.status === "complete" ||
+                data.status === "completed" ||
+                data.status === "ready"
+            ){
+
+                return value;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+        Finally, assemble section content if the backend
+        has supplied sections but not document_html.
+    */
+
+    const sections =
+        extractSections(
+            data
+        );
+
+
+    if(
+        sections.length
+    ){
+
+        const assembled =
+            assembleSections(
+                sections
+            );
+
+
+        if(assembled){
+            return assembled;
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+/* ============================================================
+   SECTION EXTRACTION
+============================================================ */
+
+function extractSections(
+    data
+){
 
     if(!data){
         return [];
     }
+
 
     if(
         Array.isArray(
@@ -1699,16 +1986,6 @@ function getSections(data){
 
     }
 
-    if(
-        data.version &&
-        Array.isArray(
-            data.version.sections
-        )
-    ){
-
-        return data.version.sections;
-
-    }
 
     if(
         data.job &&
@@ -1721,230 +1998,389 @@ function getSections(data){
 
     }
 
+
+    if(
+        data.version &&
+        Array.isArray(
+            data.version.sections
+        )
+    ){
+
+        return data.version.sections;
+
+    }
+
+
+    if(
+        data.result &&
+        typeof data.result === "object" &&
+        Array.isArray(
+            data.result.sections
+        )
+    ){
+
+        return data.result.sections;
+
+    }
+
+
     return [];
 
 }
 
 
-function getCompletedCount(
-    data,
+/* ============================================================
+   SECTION ASSEMBLY
+============================================================ */
+
+function assembleSections(
     sections
 ){
 
-    if(
-        data &&
-        data.progress &&
-        Number.isFinite(
-            Number(
-                data.progress.completed
-            )
-        )
-    ){
-
-        return Number(
-            data.progress.completed
-        );
-
-    }
-
-    return sections.filter(
-        section =>
-            isDoneStatus(
-                section.status
-            )
-    ).length;
-
-}
-
-
-function getTotalCount(
-    data,
-    sections
-){
-
-    if(
-        data &&
-        data.progress &&
-        Number.isFinite(
-            Number(
-                data.progress.total
-            )
-        )
-    ){
-
-        return Number(
-            data.progress.total
-        );
-
-    }
-
-    return sections.length;
-
-}
-
-
-function getDocumentHTML(data){
-
-    if(!data){
+    if(!sections.length){
         return "";
     }
 
-    if(
-        typeof data.document_html ===
-        "string"
-    ){
 
-        return data.document_html;
-
-    }
-
-    if(
-        data.version &&
-        typeof data.version.document_html ===
-        "string"
-    ){
-
-        return data.version.document_html;
-
-    }
-
-    if(
-        data.job &&
-        typeof data.job.document_html ===
-        "string"
-    ){
-
-        return data.job.document_html;
-
-    }
-
-    return "";
-
-}
+    const ordered =
+        [...sections].sort(
+            (
+                a,
+                b
+            ) =>
+                Number(
+                    a.section_order ??
+                    a.order ??
+                    a.position ??
+                    0
+                ) -
+                Number(
+                    b.section_order ??
+                    b.order ??
+                    b.position ??
+                    0
+                )
+        );
 
 
-function getStatus(data){
+    let html = "";
 
-    if(!data){
-        return "";
-    }
 
-    return String(
-        data.status ||
-        data.job_status ||
+    ordered.forEach(
         (
-            data.job &&
-            data.job.status
-        ) ||
-        ""
-    ).toLowerCase();
+            section,
+            index
+        ) => {
+
+            const title =
+                section.title ||
+                section.name ||
+                (
+                    "Section " +
+                    (index + 1)
+                );
+
+
+            const content =
+                section.content_html ||
+                section.document_html ||
+                section.content ||
+                section.text ||
+                section.output ||
+                "";
+
+
+            if(!content){
+                return;
+            }
+
+
+            html +=
+                "<section>" +
+                "<h2>" +
+                escapeHTML(
+                    title
+                ) +
+                "</h2>" +
+                normalizeContent(
+                    content
+                ) +
+                "</section>";
+
+        }
+    );
+
+
+    return html;
 
 }
 
 
 /* ============================================================
-   STATUS HELPERS
+   CONTENT NORMALIZATION
 ============================================================ */
 
-function isDoneStatus(
-    status
+function normalizeContent(
+    value
 ){
 
-    const value =
-        String(
-            status || ""
-        ).toLowerCase();
+    if(
+        typeof value !== "string"
+    ){
 
-    return [
-        "done",
-        "complete",
-        "completed",
-        "ready",
-        "assembled",
-        "approved"
-    ].includes(
-        value
-    );
+        return "";
+
+    }
+
+
+    /*
+        If it already looks like HTML, preserve it.
+    */
+
+    if(
+        /<([a-z][\s\S]*?)>/i.test(
+            value
+        )
+    ){
+
+        return value;
+
+    }
+
+
+    /*
+        Otherwise turn plain text into readable paragraphs.
+    */
+
+    return value
+        .split(
+            /\n\s*\n/
+        )
+        .map(
+            paragraph =>
+                "<p>" +
+                escapeHTML(
+                    paragraph
+                )
+                .replace(
+                    /\n/g,
+                    "<br>"
+                ) +
+                "</p>"
+        )
+        .join("");
 
 }
 
 
-function isActiveStatus(
-    status
+/* ============================================================
+   STATUS
+============================================================ */
+
+function getStatus(
+    data
 ){
 
-    const value =
-        String(
-            status || ""
-        ).toLowerCase();
+    if(!data){
+        return "";
+    }
 
-    return [
-        "generating",
-        "processing",
-        "active",
-        "running",
-        "in_progress",
-        "in-progress",
-        "queued",
-        "pending"
-    ].includes(
-        value
-    );
+
+    return String(
+
+        data.status ||
+
+        data.job_status ||
+
+        data.state ||
+
+        (
+            data.job &&
+            (
+                data.job.status ||
+                data.job.state
+            )
+        ) ||
+
+        ""
+
+    ).toLowerCase();
 
 }
 
 
-function isFinished(data){
+function getProgress(
+    data
+){
+
+    if(!data){
+        return 0;
+    }
+
+
+    if(
+        data.progress &&
+        Number.isFinite(
+            Number(
+                data.progress.percent
+            )
+        )
+    ){
+
+        return Number(
+            data.progress.percent
+        );
+
+    }
+
+
+    if(
+        data.progress &&
+        Number.isFinite(
+            Number(
+                data.progress.percentage
+            )
+        )
+    ){
+
+        return Number(
+            data.progress.percentage
+        );
+
+    }
+
+
+    const sections =
+        extractSections(
+            data
+        );
+
+
+    if(sections.length){
+
+        const done =
+            sections.filter(
+                section =>
+                    isDone(
+                        section.status
+                    )
+            ).length;
+
+
+        return Math.round(
+            (
+                done /
+                sections.length
+            ) * 100
+        );
+
+    }
+
+
+    if(
+        isFinished(
+            data
+        )
+    ){
+
+        return 100;
+
+    }
+
+
+    return 0;
+
+}
+
+
+/* ============================================================
+   FINISHED
+============================================================ */
+
+function isFinished(
+    data
+){
 
     if(!data){
         return false;
     }
+
 
     const status =
         getStatus(
             data
         );
 
-    if([
-        "complete",
-        "completed",
-        "ready",
-        "assembled",
-        "approved",
-        "finished"
-    ].includes(
-        status
-    )){
+
+    if(
+        [
+            "complete",
+            "completed",
+            "ready",
+            "assembled",
+            "finished",
+            "approved"
+        ].includes(
+            status
+        )
+    ){
+
+        return Boolean(
+            extractDocument(
+                data
+            )
+        );
+
+    }
+
+
+    if(
+        data.document_ready === true &&
+        Boolean(
+            extractDocument(
+                data
+            )
+        )
+    ){
 
         return true;
 
     }
 
-    const sections =
-        getSections(
-            data
-        );
 
-    const total =
-        getTotalCount(
-            data,
-            sections
-        );
-
-    const completed =
-        getCompletedCount(
-            data,
-            sections
-        );
-
-    return (
-        total > 0 &&
-        completed >= total &&
+    if(
+        data.ready === true &&
         Boolean(
-            getDocumentHTML(
+            extractDocument(
                 data
             )
         )
+    ){
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+function isDone(
+    status
+){
+
+    return [
+        "done",
+        "complete",
+        "completed",
+        "ready",
+        "assembled"
+    ].includes(
+        String(
+            status || ""
+        ).toLowerCase()
     );
 
 }
@@ -1955,400 +2391,103 @@ function isFinished(data){
 ============================================================ */
 
 function renderReview(
-    data
+    data,
+    sourceMessage
 ){
 
-    const sections =
-        getSections(
-            data
-        );
-
-    const completed =
-        getCompletedCount(
-            data,
-            sections
-        );
-
-    const total =
-        getTotalCount(
-            data,
-            sections
-        );
-
-    renderProgress(
-        completed,
-        total,
-        data
-    );
-
-    renderSections(
-        sections
-    );
-
-    renderDocument(
-        data
-    );
-
-    updateMagic(
-        completed,
-        total,
-        data
-    );
-
-    updateActions(
-        data,
-        completed,
-        total
-    );
-
-    animateNewlyCompletedSections(
-        sections
-    );
-
-}
-
-
-/* ============================================================
-   PROGRESS
-============================================================ */
-
-function renderProgress(
-    completed,
-    total,
-    data
-){
-
-    let percent = 0;
-
-    if(total > 0){
-
-        percent =
-            Math.round(
-                (
-                    completed /
-                    total
-                ) * 100
-            );
-
-    }
-
-    if(
-        isFinished(
-            data
-        )
-    ){
-
-        percent = 100;
-
-    }
-
-    percent =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                percent
-            )
-        );
-
-    progressBar.style.width =
-        percent + "%";
-
-    progressNumber.textContent =
-        percent + "%";
-
-
-    /*
-        Customer-facing wording.
-        We keep the useful count out of the
-        header and avoid awkward "0/1" presentation.
-    */
-
-    if(
-        isFinished(
-            data
-        )
-    ){
-
-        sectionCount.textContent =
-            "Creation complete";
-
-    }else if(
-        completed > 0
-    ){
-
-        sectionCount.textContent =
-            "Creating your service";
-
-    }else{
-
-        sectionCount.textContent =
-            "Getting started";
-
-    }
-
-
-    if(
-        isFinished(
-            data
-        )
-    ){
-
-        progressLabel.textContent =
-            "Your document is complete.";
-
-    }else if(
-        completed > 0
-    ){
-
-        progressLabel.textContent =
-            "Creating your document...";
-
-    }else{
-
-        progressLabel.textContent =
-            "Preparing your document...";
-
-    }
-
-}
-
-
-/* ============================================================
-   SECTION LIST
-============================================================ */
-
-function renderSections(
-    sections
-){
-
-    sectionList.innerHTML = "";
-
-    if(!sections.length){
-
-        const row =
-            document.createElement(
-                "div"
-            );
-
-        row.className =
-            "section-row active";
-
-        row.innerHTML = `
-            <div class="section-number">•</div>
-
-            <div class="section-info">
-
-                <div class="section-title">
-                    Preparing the creation plan...
-                </div>
-
-                <div class="section-state">
-                    Your service is being organized.
-                </div>
-
-            </div>
-
-            <div class="section-mark">
-                ✦
-            </div>
-        `;
-
-        sectionList.appendChild(
-            row
-        );
-
+    if(!data){
         return;
     }
 
 
-    const sorted =
-        [...sections].sort(
-            (a,b) =>
-                Number(
-                    a.section_order ??
-                    a.order ??
-                    0
-                ) -
-                Number(
-                    b.section_order ??
-                    b.order ??
-                    0
-                )
-        );
-
-
-    sorted.forEach(
-        (
-            section,
-            index
-        ) => {
-
-            const status =
-                String(
-                    section.status ||
-                    ""
-                ).toLowerCase();
-
-            const done =
-                isDoneStatus(
-                    status
-                );
-
-            const active =
-                isActiveStatus(
-                    status
-                );
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-            row.className =
-                "section-row" +
-                (
-                    done
-                    ? " done"
-                    : active
-                    ? " active"
-                    : ""
-                );
-
-
-            const number =
-                Number(
-                    section.section_order ??
-                    section.order ??
-                    index + 1
-                );
-
-
-            const title =
-                escapeHTML(
-                    section.title ||
-                    section.name ||
-                    "Document Section " +
-                    number
-                );
-
-
-            let stateText =
-                "Waiting";
-
-
-            if(done){
-
-                stateText =
-                    "Completed ✓";
-
-            }else if(active){
-
-                stateText =
-                    "Creating now...";
-
-            }else if(
-                status === "failed" ||
-                status === "error"
-            ){
-
-                stateText =
-                    "Needs attention";
-
-            }else{
-
-                stateText =
-                    "Waiting";
-
-            }
-
-
-            row.innerHTML = `
-
-                <div class="section-number">
-                    ${number}
-                </div>
-
-                <div class="section-info">
-
-                    <div class="section-title">
-                        ${title}
-                    </div>
-
-                    <div class="section-state">
-                        ${stateText}
-                    </div>
-
-                </div>
-
-                <div class="section-mark">
-
-                    ${
-                        done
-                        ? "✓"
-                        : active
-                        ? "✦"
-                        : "•"
-                    }
-
-                </div>
-            `;
-
-
-            sectionList.appendChild(
-                row
-            );
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   DOCUMENT
-============================================================ */
-
-function renderDocument(
-    data
-){
-
     const html =
-        getDocumentHTML(
+        extractDocument(
             data
         );
 
 
-    if(
-        html &&
-        typeof html === "string"
-    ){
-
-        documentBox.innerHTML =
-            html;
-
-    }
-
-
-    const ready =
+    const finished =
         isFinished(
             data
         );
 
 
-    if(ready){
+    const progress =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                getProgress(
+                    data
+                )
+            )
+        );
+
+
+    progressBar.style.width =
+        progress + "%";
+
+
+    if(
+        html
+    ){
+
+        /*
+            THIS IS THE CRITICAL HANDOFF.
+
+            The actual document returned by the backend
+            is placed inside the review page here.
+        */
+
+        documentBox.classList.remove(
+            "empty"
+        );
+
+        documentBox.innerHTML =
+            normalizeContent(
+                html
+            );
+
+        documentFound =
+            true;
+
 
         documentStatus.textContent =
-            "READY FOR REVIEW";
+            finished
+            ? "READY FOR REVIEW"
+            : "WORK RECEIVED";
 
-        documentStatus.classList.add(
-            "ready"
+
+        documentStatus.classList.toggle(
+            "ready",
+            finished
         );
+
+
+        progressBar.style.width =
+            finished
+            ? "100%"
+            : progress + "%";
+
+
+        progressLabel.textContent =
+            finished
+            ? "Your completed work is ready."
+            : "Your work has been received.";
 
     }else{
 
+        documentBox.classList.add(
+            "empty"
+        );
+
+        documentBox.textContent =
+            finished
+            ? "The job is marked complete, but the document content has not been returned yet. We are retrieving it..."
+            : "Your completed work is still being assembled...";
+
         documentStatus.textContent =
-            "BUILDING";
+            "RETRIEVING";
 
         documentStatus.classList.remove(
             "ready"
@@ -2356,237 +2495,109 @@ function renderDocument(
 
     }
 
+
+    updatePageState(
+        data,
+        finished
+    );
+
+
+    updateActions(
+        data,
+        finished
+    );
+
+
+    if(
+        sourceMessage
+    ){
+
+        showConnection(
+            sourceMessage,
+            "success"
+        );
+
+    }
+
+
+    /*
+        Store the successfully rendered state.
+    */
+
+    saveLocalJobData(
+        data
+    );
+
 }
 
 
 /* ============================================================
-   MAGIC MESSAGES
+   PAGE STATE
 ============================================================ */
 
-function updateMagic(
-    completed,
-    total,
-    data
+function updatePageState(
+    data,
+    finished
 ){
 
-    if(
-        isFinished(
-            data
-        )
-    ){
-
-        magicTitle.textContent =
-            "✨ Your Service Has Come to Life ✨";
-
-        magicMessage.textContent =
-            "Every section has been created and assembled into your document.";
-
-        heroMessage.textContent =
-            "The creation is complete. Your finished service is now ready for you to review.";
+    if(finished){
 
         jobState.textContent =
             "READY";
 
+        magicTitle.textContent =
+            "✨ Your Work Has Arrived ✨";
+
+        magicMessage.textContent =
+            "Your actual completed work has been brought into this review page.";
+
+        heroMessage.textContent =
+            "Your complete work is now displayed below. Read it carefully, request any corrections, or approve it to continue.";
+
+        progressLabel.textContent =
+            "Your completed work is ready.";
+
         return;
+
     }
 
+
+    const html =
+        extractDocument(
+            data
+        );
+
+
+    if(html){
+
+        jobState.textContent =
+            "RECEIVED";
+
+        magicTitle.textContent =
+            "✨ Work Received ✨";
+
+        magicMessage.textContent =
+            "The work has arrived and is being prepared for final review.";
+
+        heroMessage.textContent =
+            "Your work has been brought into this page.";
+
+        return;
+
+    }
+
+
+    jobState.textContent =
+        "RETRIEVING";
 
     magicTitle.textContent =
-        "✨ The Magic of Creation ✨";
+        "✨ Bringing Your Work Together ✨";
 
+    magicMessage.textContent =
+        "We are retrieving the actual work belonging to this job.";
 
-    if(total > 0){
-
-        magicMessage.textContent =
-            "We are creating your service one carefully prepared section at a time.";
-
-        heroMessage.textContent =
-            "Watch as each part of your service is created and brought together.";
-
-        /*
-            IMPORTANT:
-            Do not display completed/total such as 0/1.
-            Keep the header human and customer-facing.
-        */
-        jobState.textContent =
-            "CREATING";
-
-    }else{
-
-        magicMessage.textContent =
-            "Your service is being prepared...";
-
-        heroMessage.textContent =
-            "We are getting everything ready before the creation begins.";
-
-        jobState.textContent =
-            "PREPARING";
-
-    }
-
-}
-
-
-/* ============================================================
-   FLYING FILES
-============================================================ */
-
-let knownDoneIds =
-    new Set();
-
-
-function animateNewlyCompletedSections(
-    sections
-){
-
-    sections.forEach(
-        (
-            section,
-            index
-        ) => {
-
-            const id =
-                String(
-                    section.section_id ??
-                    section.id ??
-                    (
-                        section.section_order ??
-                        index + 1
-                    )
-                );
-
-
-            if(
-                isDoneStatus(
-                    section.status
-                ) &&
-                !knownDoneIds.has(
-                    id
-                )
-            ){
-
-                knownDoneIds.add(
-                    id
-                );
-
-                createFlyingFile(
-                    section,
-                    index
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-function createFlyingFile(
-    section,
-    index
-){
-
-    const card =
-        document.createElement(
-            "div"
-        );
-
-
-    const direction =
-        animationCounter % 2 === 0
-        ? "left"
-        : "right";
-
-
-    animationCounter++;
-
-
-    card.className =
-        "fly " +
-        direction +
-        " visible";
-
-
-    const title =
-        escapeHTML(
-            section.title ||
-            section.name ||
-            "Document Section"
-        );
-
-
-    const icons = [
-        "📄",
-        "📑",
-        "📝",
-        "📋",
-        "✨",
-        "📚"
-    ];
-
-
-    const icon =
-        icons[
-            index %
-            icons.length
-        ];
-
-
-    card.innerHTML = `
-
-        <div class="fly-icon">
-            ${icon}
-        </div>
-
-        <div class="fly-text">
-
-            <div class="fly-title">
-                ${title}
-            </div>
-
-            <div class="fly-status">
-                Created • assembling
-            </div>
-
-        </div>
-
-    `;
-
-
-    const positions = [
-        "15%",
-        "28%",
-        "42%",
-        "56%",
-        "68%",
-        "31%"
-    ];
-
-
-    card.style.setProperty(
-        "--top",
-        positions[
-            index %
-            positions.length
-        ]
-    );
-
-
-    flightArea.appendChild(
-        card
-    );
-
-
-    setTimeout(
-        () => {
-
-            card.remove();
-
-        },
-        2800
-    );
-
+    heroMessage.textContent =
+        "Your review page is connected to your job and is retrieving the completed work.";
 }
 
 
@@ -2596,58 +2607,68 @@ function createFlyingFile(
 
 function updateActions(
     data,
-    completed,
-    total
+    finished
 ){
 
-    const ready =
-        isFinished(
-            data
-        );
-
-
     correctionButton.disabled =
-        !ready;
+        !finished;
 
     approveButton.disabled =
-        !ready;
+        !finished;
 
 
     const approved =
         Boolean(
+
             data &&
             (
-                data.approved ||
-                data.is_approved ||
+
+                data.approved === true ||
+
+                data.is_approved === true ||
+
+                data.approval_status === "approved" ||
+
                 (
                     data.version &&
-                    data.version.is_approved
+                    (
+                        data.version.approved === true ||
+                        data.version.is_approved === true
+                    )
                 )
+
             )
+
         );
 
 
     const paid =
         Boolean(
+
             data &&
             (
-                data.paid ||
+
+                data.paid === true ||
+
                 data.payment_status === "paid" ||
+
                 (
                     data.payment &&
                     data.payment.status === "paid"
                 )
+
             )
+
         );
 
 
     paymentButton.disabled =
-        !ready ||
+        !finished ||
         !approved;
 
 
     downloadButton.disabled =
-        !ready ||
+        !finished ||
         !approved ||
         !paid;
 
@@ -2667,24 +2688,19 @@ async function requestCorrection(){
     if(!instruction){
 
         showNotice(
-            "Please tell us what you would like changed.",
+            "Please tell us what you want changed.",
             "error"
         );
 
         correctionText.focus();
 
         return;
+
     }
 
 
     correctionButton.disabled =
         true;
-
-
-    showNotice(
-        "Your correction is being prepared. Only the affected part of the document will be regenerated.",
-        "success"
-    );
 
 
     try{
@@ -2730,12 +2746,38 @@ async function requestCorrection(){
 
 
         showNotice(
-            "Correction submitted. Watch the affected section return to the creation flow.",
+            "Your correction has been sent. We are updating the affected work.",
             "success"
         );
 
 
-        startPolling();
+        latestData = {
+
+            ...(latestData || {}),
+
+            status:
+                "processing",
+
+            approved:
+                false
+
+        };
+
+
+        updateActions(
+            latestData,
+            false
+        );
+
+
+        clearTimeout(
+            pollTimer
+        );
+
+
+        polling = false;
+
+        fetchBackendReview();
 
 
     }catch(error){
@@ -2745,14 +2787,14 @@ async function requestCorrection(){
         );
 
 
-        showNotice(
-            "We could not submit that correction right now. Your current document has not been changed.",
-            "error"
-        );
-
-
         correctionButton.disabled =
             false;
+
+
+        showNotice(
+            "The correction could not be submitted right now.",
+            "error"
+        );
 
     }
 
@@ -2771,34 +2813,60 @@ async function approveDocument(){
 
 
     const versionId =
-        latestData.version_id ||
-        (
-            latestData.version &&
-            latestData.version.version_id
-        ) ||
-        latestData.current_version ||
-        (
-            latestData.job &&
-            latestData.job.current_version
-        );
+        firstValue([
+
+            latestData.version_id,
+
+            latestData.current_version_id,
+
+            latestData.current_version,
+
+            (
+                latestData.version &&
+                (
+                    latestData.version.version_id ||
+                    latestData.version.id
+                )
+            ),
+
+            (
+                latestData.job &&
+                (
+                    latestData.job.version_id ||
+                    latestData.job.current_version_id ||
+                    latestData.job.current_version
+                )
+            )
+
+        ]);
 
 
-    if(!versionId){
-
-        showNotice(
-            "The document version could not be identified. Please wait a moment and try again.",
-            "error"
-        );
-
-        return;
-    }
-
+    /*
+        If the backend does not require version_id,
+        still send the job_id.
+    */
 
     approveButton.disabled =
         true;
 
 
     try{
+
+        const body = {
+
+            job_id:
+                jobId
+
+        };
+
+
+        if(versionId){
+
+            body.version_id =
+                versionId;
+
+        }
+
 
         const response =
             await fetch(
@@ -2814,15 +2882,9 @@ async function approveDocument(){
                             "application/json"
                     },
 
-                    body:JSON.stringify({
-
-                        job_id:
-                            jobId,
-
-                        version_id:
-                            versionId
-
-                    })
+                    body:JSON.stringify(
+                        body
+                    )
                 }
             );
 
@@ -2842,7 +2904,9 @@ async function approveDocument(){
         );
 
 
-        await fetchReview();
+        polling = false;
+
+        await fetchBackendReview();
 
 
     }catch(error){
@@ -2852,14 +2916,14 @@ async function approveDocument(){
         );
 
 
+        approveButton.disabled =
+            false;
+
+
         showNotice(
             "Approval could not be completed. Your document remains unchanged.",
             "error"
         );
-
-
-        approveButton.disabled =
-            false;
 
     }
 
@@ -2898,37 +2962,47 @@ function downloadDocument(){
 
 
     const versionId =
-        latestData &&
-        (
-            latestData.version_id ||
-            latestData.current_version ||
+        firstValue([
+
+            latestData &&
+            latestData.version_id,
+
+            latestData &&
+            latestData.current_version_id,
+
+            latestData &&
+            latestData.current_version,
+
+            latestData &&
+            latestData.version &&
             (
-                latestData.version &&
-                latestData.version.version_id
+                latestData.version.version_id ||
+                latestData.version.id
             )
+
+        ]);
+
+
+    let url =
+        "/api/download?job_id=" +
+        encodeURIComponent(
+            jobId
         );
 
 
-    if(!versionId){
+    if(versionId){
 
-        showNotice(
-            "The approved document version is not available yet.",
-            "error"
-        );
+        url +=
+            "&version_id=" +
+            encodeURIComponent(
+                versionId
+            );
 
-        return;
     }
 
 
     window.location.href =
-        "/api/download?job_id=" +
-        encodeURIComponent(
-            jobId
-        ) +
-        "&version_id=" +
-        encodeURIComponent(
-            versionId
-        );
+        url;
 
 }
 
@@ -2953,7 +3027,31 @@ function goBack(){
 
 
     window.location.href =
-        "workspace.html";
+        "workspace.html?job_id=" +
+        encodeURIComponent(
+            jobId || ""
+        );
+
+}
+
+
+/* ============================================================
+   CONNECTION MESSAGE
+============================================================ */
+
+function showConnection(
+    message,
+    type
+){
+
+    connection.textContent =
+        message;
+
+    connection.className =
+        "connection show " +
+        (
+            type || ""
+        );
 
 }
 
@@ -2973,8 +3071,7 @@ function showNotice(
     notice.className =
         "notice show " +
         (
-            type ||
-            ""
+            type || ""
         );
 
 }
