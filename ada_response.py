@@ -1,27 +1,59 @@
 """
 Naija Pocket Business Center
-Ada Response Engine
+ADA RESPONSE ENGINE
 
-END-TO-END LLM INTELLIGENCE LAYER
+END-TO-END REVIEW INTELLIGENCE
 
-AdaResponse is the intelligence layer between the application
-and the LLM provider.
+IMPORTANT ARCHITECTURE
+----------------------
 
-The selected service provides context.
+Workspace
+    ↓
+FastAPI
+    ↓
+AdaResponse
+    ↓
+Groq
+    ↓
+FastAPI Review State
+    ↓
+Review Page
 
-It does NOT create a scripted keyword conversation.
+AdaResponse is the intelligence layer.
 
-The application owns application state.
-Ada reasons about that state.
+The application owns the complete customer document.
 
-Large documents are processed in controlled batches.
-The application keeps the complete document.
-No customer document is silently discarded, shortened,
-or replaced by a summary.
+AdaResponse does NOT own or discard the document.
 
-BillingManager remains authoritative for service pricing.
-AdaPromptManager remains authoritative for Ada's identity,
-style, Nigerian context and service instructions.
+For review:
+
+    complete document
+        ↓
+    page 1
+        ↓
+    Groq
+        ↓
+    review result
+        ↓
+    page 2
+        ↓
+    Groq
+        ↓
+    review result
+        ↓
+    ...
+        ↓
+    assembled review
+
+The Groq request is limited.
+
+The customer's document is NOT limited.
+
+No page is silently discarded.
+
+No page is replaced by a summary.
+
+No keyword decision workflow is used.
 """
 
 from __future__ import annotations
@@ -29,22 +61,12 @@ from __future__ import annotations
 import os
 import re
 import traceback
-from typing import Any
-
-
-# ============================================================
-# GROQ
-# ============================================================
+from typing import Any, Callable
 
 try:
     from groq import Groq
 except ImportError:
     Groq = None
-
-
-# ============================================================
-# APPLICATION COMPONENTS
-# ============================================================
 
 from ada_prompt_manager import AdaPromptManager
 from billing_manager import BillingManager
@@ -68,79 +90,49 @@ API_KEY = (
 ).strip()
 
 EXPOSE_ERRORS_TO_CLIENT = (
-    os.getenv("ADA_EXPOSE_ERRORS")
-    or "false"
-).strip().lower() in {
-    "1",
-    "true",
-    "yes",
-    "on",
-}
+    os.getenv("ADA_EXPOSE_ERRORS", "false")
+    .strip()
+    .lower()
+    in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+)
 
 
 # ============================================================
-# NORMAL RESPONSE LIMITS
+# INTELLIGENCE LIMITS
 # ============================================================
 
-MAX_SYSTEM_PROMPT_CHARS = 18000
-MAX_CENTRAL_PROMPT_CHARS = 12000
-MAX_INTELLIGENCE_PROMPT_CHARS = 10000
-MAX_CONTEXT_CHARS = 12000
+MAX_SYSTEM_PROMPT_CHARS = 16000
+MAX_HISTORY_MESSAGES = 8
+MAX_HISTORY_MESSAGE_CHARS = 2000
 
-MAX_HISTORY_MESSAGES = 6
-MAX_HISTORY_MESSAGE_CHARS = 2200
-
-MAX_EVENT_CHARS = 1500
 MAX_USER_MESSAGE_CHARS = 5000
+MAX_CONTEXT_CHARS = 6000
 
-MAX_OUTPUT_TOKENS = 900
+# The actual document is handled separately.
+# This limit controls ONE Groq review request.
+REVIEW_PAGE_INPUT_CHARS = 8000
 
+# Previous review information carried into the next page.
+REVIEW_CONTINUITY_CHARS = 2500
 
-# ============================================================
-# REVIEW LIMITS
-# ============================================================
+REVIEW_OUTPUT_TOKENS = 700
 
-REVIEW_BATCH_OUTPUT_TOKENS = 900
+# Maximum number of real document pages accepted.
+MAX_DOCUMENT_PAGES = 1000
 
-REVIEW_BATCH_INPUT_CHARS = 10000
-
-REVIEW_BATCH_CONTEXT_CHARS = 3000
-
-REVIEW_MAX_BATCHES = 100
-
-
-# ============================================================
-# DOCUMENT GENERATION
-# ============================================================
-
-DOCUMENT_SECTION_OUTPUT_TOKENS = 700
-
-DOCUMENT_SECTION_INSTRUCTION_CHARS = 5000
-
-DOCUMENT_RECENT_CONTEXT_CHARS = 2500
-
-DOCUMENT_MAX_SECTIONS = 30
-
-DOCUMENT_MIN_SECTION_CHARS = 250
+# Generated/corrected page output.
+CORRECTION_OUTPUT_TOKENS = 900
+CORRECTION_INPUT_CHARS = 8000
 
 
 # ============================================================
 # EVENTS
 # ============================================================
-
-DOCUMENT_CREATION_EVENTS = {
-    "form_submitted_create_work",
-    "create_work",
-    "document_create",
-    "document_generation",
-    "generate_document",
-}
-
-DOCUMENT_CORRECTION_EVENTS = {
-    "review_correction",
-    "document_correction",
-    "revise_work",
-}
 
 REVIEW_EVENTS = {
     "review",
@@ -149,17 +141,16 @@ REVIEW_EVENTS = {
     "open_review",
     "review_page",
     "review_document",
+    "send_for_review",
+    "send_review",
 }
 
-DOCUMENT_EVENTS = (
-    DOCUMENT_CREATION_EVENTS
-    | DOCUMENT_CORRECTION_EVENTS
-)
-
-ALL_REVIEW_EVENTS = (
-    REVIEW_EVENTS
-    | {"review_correction"}
-)
+CORRECTION_EVENTS = {
+    "review_correction",
+    "document_correction",
+    "revise_work",
+    "correction",
+}
 
 
 # ============================================================
@@ -167,7 +158,6 @@ ALL_REVIEW_EVENTS = (
 # ============================================================
 
 class AdaResponseError(Exception):
-    """Controlled application error raised by AdaResponse."""
 
     def __init__(
         self,
@@ -194,12 +184,6 @@ _client = None
 
 
 def get_client():
-    """
-    Return the shared Groq client.
-
-    The client is created lazily so importing ada_response.py
-    does not immediately make a network request.
-    """
 
     global _client
 
@@ -208,7 +192,7 @@ def get_client():
 
     if Groq is None:
         raise AdaResponseError(
-            "The groq Python package is not installed.",
+            "The groq package is not installed.",
             stage="CLIENT_INITIALIZATION",
             category="CONFIGURATION",
         )
@@ -221,10 +205,15 @@ def get_client():
         )
 
     try:
-        _client = Groq(api_key=API_KEY)
+
+        _client = Groq(
+            api_key=API_KEY
+        )
+
         return _client
 
     except Exception as error:
+
         raise AdaResponseError(
             "Groq client initialization failed.",
             stage="CLIENT_INITIALIZATION",
@@ -234,7 +223,7 @@ def get_client():
 
 
 # ============================================================
-# PUBLIC HELPERS
+# PUBLIC
 # ============================================================
 
 def get_ada_model() -> str:
@@ -242,6 +231,7 @@ def get_ada_model() -> str:
 
 
 def is_configured() -> bool:
+
     return (
         Groq is not None
         and bool(API_KEY)
@@ -249,10 +239,11 @@ def is_configured() -> bool:
 
 
 # ============================================================
-# TEXT HELPERS
+# TEXT
 # ============================================================
 
 def safe_text(value: Any) -> str:
+
     if value is None:
         return ""
 
@@ -263,18 +254,9 @@ def safe_text(value: Any) -> str:
 
 
 def compact_text(
-    text: str | None,
+    text: Any,
     maximum: int,
 ) -> str:
-    """
-    Compact internal prompt/context text.
-
-    IMPORTANT:
-    This is NOT used to destroy the customer's document.
-
-    It is only used for auxiliary context such as history,
-    diagnostics and previous review context.
-    """
 
     text = safe_text(text)
 
@@ -284,7 +266,7 @@ def compact_text(
     if len(text) <= maximum:
         return text
 
-    if maximum < 300:
+    if maximum < 100:
         return text[:maximum]
 
     marker = (
@@ -297,8 +279,13 @@ def compact_text(
     if available <= 0:
         return text[:maximum]
 
-    first = int(available * 0.65)
-    last = available - first
+    first = int(
+        available * 0.65
+    )
+
+    last = (
+        available - first
+    )
 
     return (
         text[:first]
@@ -307,75 +294,14 @@ def compact_text(
     )
 
 
-def diagnostic_value(
-    value: Any,
-    maximum: int = 1500,
-) -> str:
-    return compact_text(
-        safe_text(value),
-        maximum,
-    )
-
-
 # ============================================================
-# HISTORY
-# ============================================================
-
-def compact_history(
-    history: list[dict[str, str]],
-) -> list[dict[str, str]]:
-    result = []
-
-    for item in history[-MAX_HISTORY_MESSAGES:]:
-        role = safe_text(
-            item.get("role")
-        )
-
-        content = compact_text(
-            item.get("content"),
-            MAX_HISTORY_MESSAGE_CHARS,
-        )
-
-        if role not in {
-            "system",
-            "user",
-            "assistant",
-        }:
-            continue
-
-        if not content:
-            continue
-
-        result.append(
-            {
-                "role": role,
-                "content": content,
-            }
-        )
-
-    return result
-
-
-# ============================================================
-# APPLICATION CONTEXT
-# ============================================================
-
-def prepare_application_context(
-    context: str | None,
-) -> str:
-    return compact_text(
-        safe_text(context),
-        MAX_CONTEXT_CHARS,
-    )
-
-
-# ============================================================
-# ERROR HELPERS
+# ERROR CLASSIFICATION
 # ============================================================
 
 def get_error_status_code(
     error: Exception,
 ) -> int | None:
+
     value = getattr(
         error,
         "status_code",
@@ -394,18 +320,26 @@ def get_error_status_code(
 def classify_groq_error(
     error: Exception,
 ) -> str:
-    status = get_error_status_code(error)
 
-    name = type(error).__name__.lower()
+    status = get_error_status_code(
+        error
+    )
 
-    message = safe_text(error).lower()
+    message = safe_text(
+        error
+    ).lower()
+
+    name = (
+        type(error)
+        .__name__
+        .lower()
+    )
 
     if status == 429:
         return "GROQ_RATE_LIMIT"
 
     if (
         "rate" in name
-        or "ratelimit" in name
         or "rate limit" in message
     ):
         return "GROQ_RATE_LIMIT"
@@ -444,39 +378,27 @@ def log_error(
     *,
     stage: str,
     category: str | None = None,
-    batch_number: int | None = None,
+    page_number: int | None = None,
     event: str | None = None,
-) -> None:
+):
 
     print()
     print("=" * 78)
-    print(f"ADA DIAGNOSTIC ERROR: {title}")
+    print("ADA ERROR:", title)
     print("=" * 78)
 
     print("Stage:", stage)
 
     print(
         "Category:",
-        category or classify_groq_error(error),
+        category
+        or classify_groq_error(error),
     )
 
-    print(
-        "Exception:",
-        type(error).__name__,
-    )
-
-    status = get_error_status_code(error)
-
-    if status is not None:
+    if page_number is not None:
         print(
-            "HTTP status:",
-            status,
-        )
-
-    if batch_number is not None:
-        print(
-            "Review batch:",
-            batch_number,
+            "Page:",
+            page_number,
         )
 
     if event:
@@ -497,10 +419,11 @@ def log_error(
 
     print(
         "Error:",
-        diagnostic_value(error),
+        compact_text(
+            error,
+            1500,
+        ),
     )
-
-    print("=" * 78)
 
     traceback.print_exc()
 
@@ -518,35 +441,196 @@ def client_error_message(
             "Please try again."
         )
 
-    status = get_error_status_code(error)
-
-    if isinstance(
+    category = getattr(
         error,
-        AdaResponseError,
-    ):
-        category = error.category
-    else:
-        category = classify_groq_error(error)
-
-    text = diagnostic_value(
-        error,
-        1200,
+        "category",
+        None,
     )
 
-    if status is not None:
-        return (
-            "Technical error detected.\n\n"
-            f"Category: {category}\n"
-            f"HTTP status: {status}\n"
-            f"Model: {MODEL}\n"
-            f"Error: {text}"
+    if not category:
+        category = classify_groq_error(
+            error
         )
 
     return (
         "Technical error detected.\n\n"
         f"Category: {category}\n"
-        f"Error: {text}"
+        f"Error: {compact_text(error, 1200)}"
     )
+
+
+# ============================================================
+# PAGE NORMALIZATION
+# ============================================================
+
+def normalize_document_pages(
+    pages: Any,
+) -> list[dict[str, Any]]:
+
+    if pages is None:
+        return []
+
+    if not isinstance(
+        pages,
+        list,
+    ):
+        pages = [pages]
+
+    result = []
+
+    for index, item in enumerate(
+        pages,
+        start=1,
+    ):
+
+        if isinstance(
+            item,
+            str,
+        ):
+
+            content = item.strip()
+
+            if not content:
+                continue
+
+            result.append(
+                {
+                    "page_number": index,
+                    "content": content,
+                }
+            )
+
+            continue
+
+        if isinstance(
+            item,
+            dict,
+        ):
+
+            page_number = (
+                item.get(
+                    "page_number"
+                )
+                or item.get(
+                    "page"
+                )
+                or index
+            )
+
+            content = (
+                item.get("content")
+                or item.get("text")
+                or item.get("page_content")
+                or item.get("document_text")
+                or ""
+            )
+
+            content = safe_text(
+                content
+            )
+
+            if not content:
+                continue
+
+            result.append(
+                {
+                    "page_number": int(
+                        page_number
+                    ),
+                    "content": content,
+                    "title": safe_text(
+                        item.get(
+                            "title"
+                        )
+                    ),
+                }
+            )
+
+    if len(result) > MAX_DOCUMENT_PAGES:
+        result = result[
+            :MAX_DOCUMENT_PAGES
+        ]
+
+    return result
+
+
+# ============================================================
+# FALLBACK DOCUMENT SPLITTER
+# ============================================================
+
+def document_text_to_pages(
+    document: str,
+) -> list[dict[str, Any]]:
+
+    document = safe_text(
+        document
+    )
+
+    if not document:
+        return []
+
+    # First respect explicit page markers.
+    marker_pattern = re.compile(
+        r"(?:^|\n)"
+        r"(?:={2,}\s*)?"
+        r"(?:PAGE|Page)"
+        r"\s*(\d+)"
+        r"(?:\s*={2,})?"
+        r"\s*(?:\n|$)",
+        re.IGNORECASE,
+    )
+
+    matches = list(
+        marker_pattern.finditer(
+            document
+        )
+    )
+
+    if matches:
+
+        pages = []
+
+        for index, match in enumerate(
+            matches
+        ):
+
+            start = match.end()
+
+            if index + 1 < len(matches):
+                end = matches[
+                    index + 1
+                ].start()
+            else:
+                end = len(document)
+
+            content = document[
+                start:end
+            ].strip()
+
+            if content:
+
+                pages.append(
+                    {
+                        "page_number":
+                            int(
+                                match.group(1)
+                            ),
+                        "content":
+                            content,
+                    }
+                )
+
+        if pages:
+            return pages
+
+    # If there are no page markers, preserve the complete
+    # document as one logical page.
+    return [
+        {
+            "page_number": 1,
+            "content": document,
+        }
+    ]
 
 
 # ============================================================
@@ -565,9 +649,13 @@ class AdaResponse:
             or None
         )
 
-        self.prompt_manager = AdaPromptManager()
+        self.prompt_manager = (
+            AdaPromptManager()
+        )
 
-        self.billing = BillingManager()
+        self.billing = (
+            BillingManager()
+        )
 
         self.history: list[
             dict[str, str]
@@ -580,9 +668,11 @@ class AdaResponse:
     def set_service(
         self,
         service: str | None,
-    ) -> None:
+    ):
 
-        service = safe_text(service)
+        service = safe_text(
+            service
+        )
 
         if service:
             self.service = service
@@ -592,19 +682,28 @@ class AdaResponse:
         service: str | None,
     ) -> str | None:
 
-        service = safe_text(service)
+        service = safe_text(
+            service
+        )
 
         if not service:
             return self.service
 
         try:
-            result = self.billing.normalize_service(
-                service
+
+            normalized = (
+                self.billing
+                .normalize_service(
+                    service
+                )
             )
 
-            result = safe_text(result)
-
-            return result or service
+            return (
+                safe_text(
+                    normalized
+                )
+                or service
+            )
 
         except Exception as error:
 
@@ -615,12 +714,7 @@ class AdaResponse:
                 category="BILLING",
             )
 
-            raise AdaResponseError(
-                "BillingManager service normalization failed.",
-                stage="SERVICE_NORMALIZATION",
-                category="BILLING",
-                original=error,
-            ) from error
+            return service
 
     # ========================================================
     # BILLING
@@ -631,13 +725,21 @@ class AdaResponse:
         service: str | None,
     ) -> str:
 
-        service = self.normalize_service(service)
+        service = self.normalize_service(
+            service
+        )
 
         if not service:
             return ""
 
         try:
-            item = self.billing.get_service(service)
+
+            item = (
+                self.billing
+                .get_service(
+                    service
+                )
+            )
 
         except Exception as error:
 
@@ -648,23 +750,28 @@ class AdaResponse:
                 category="BILLING",
             )
 
-            raise AdaResponseError(
-                "BillingManager lookup failed.",
-                stage="BILLING_LOOKUP",
-                category="BILLING",
-                original=error,
-            ) from error
-
-        if not item:
             return (
                 "OFFICIAL BILLING FACTS\n"
-                "No billing record was found.\n"
+                "Billing information unavailable.\n"
                 "Do not invent a price."
             )
 
-        price = item.get("price", 0)
+        if not item:
 
-        billing_type = item.get("billing")
+            return (
+                "OFFICIAL BILLING FACTS\n"
+                "No billing record found.\n"
+                "Do not invent a price."
+            )
+
+        price = item.get(
+            "price",
+            0,
+        )
+
+        billing_type = item.get(
+            "billing"
+        )
 
         if billing_type == "fixed":
 
@@ -702,107 +809,92 @@ class AdaResponse:
         )
 
     # ========================================================
-    # CORE ADA INTELLIGENCE
+    # CORE INTELLIGENCE
     # ========================================================
 
-    def get_intelligence_prompt(self) -> str:
+    def get_intelligence_prompt(
+        self,
+    ) -> str:
+
         return (
-            "You are Ada, the intelligent customer-facing "
-            "assistant of Naija Pocket Business Center.\n\n"
+            "You are Ada, the intelligent "
+            "customer-facing assistant of "
+            "Naija Pocket Business Center.\n\n"
 
-            "You are an LLM reasoning system.\n\n"
+            "You are responsible for intelligent "
+            "reasoning about the customer's request.\n\n"
 
-            "Do NOT use keyword matching to decide what the "
-            "customer wants.\n\n"
+            "Do NOT use keyword matching to determine "
+            "what the customer means.\n\n"
 
-            "Understand the customer's message, selected "
-            "service, conversation, application state, "
-            "document state and current workflow action.\n\n"
+            "Understand the customer's actual request, "
+            "selected service, supplied document, "
+            "application state and workflow action.\n\n"
 
-            "APPLICATION STATE IS AUTHORITATIVE\n"
-            "-----------------------------------\n"
-            "The application may provide customer information, "
-            "selected service, uploaded content, document "
-            "content, document pages, review state, approval "
-            "state, payment state, delivery state and download "
-            "state.\n\n"
+            "REVIEW MODE\n"
+            "===========\n"
+            "When the application sends document pages "
+            "for review, every page belongs to ONE "
+            "customer document.\n\n"
 
-            "Do not invent any of those facts.\n\n"
+            "Review the supplied page intelligently.\n\n"
 
-            "BILLING\n"
-            "-------\n"
-            "BillingManager is authoritative for prices and "
-            "billing.\n"
-            "Never invent prices.\n\n"
+            "Check:\n"
+            "- correctness\n"
+            "- completeness\n"
+            "- relevance\n"
+            "- grammar\n"
+            "- clarity\n"
+            "- consistency\n"
+            "- contradictions\n"
+            "- structure\n"
+            "- formatting problems visible in supplied text\n"
+            "- compliance with the customer's request\n\n"
 
-            "DOCUMENTS\n"
-            "---------\n"
-            "A document can be much larger than one LLM request.\n"
-            "The application may therefore divide one document "
-            "into controlled batches.\n\n"
+            "Maintain continuity with earlier pages.\n\n"
 
-            "Those batches remain parts of the SAME document.\n\n"
+            "Do not invent facts.\n\n"
 
-            "Never interpret an LLM request limit as a document "
-            "limit.\n\n"
+            "Do not rewrite the customer's entire document "
+            "during review unless specifically asked.\n\n"
 
-            "Never delete pages.\n"
-            "Never invent pages.\n"
-            "Never silently remove customer content.\n"
-            "Never replace requested work with a summary.\n"
-            "Never claim missing content is complete.\n\n"
+            "Do not treat a page as a separate customer job.\n\n"
 
-            "REVIEW\n"
-            "------\n"
-            "When the customer asks for review, treat the entire "
-            "document as one review job.\n\n"
+            "Do not say that a page is missing unless the "
+            "application actually reports that page missing.\n\n"
 
-            "The document may arrive in multiple controlled "
-            "batches.\n\n"
-
-            "Review each supplied batch while maintaining "
-            "continuity with preceding material.\n\n"
-
-            "Do not restart the review from scratch for every "
-            "batch.\n\n"
-
-            "Do not treat every batch as a separate customer "
+            "DOCUMENT PRESERVATION\n"
+            "=====================\n"
+            "The application owns the complete customer "
             "document.\n\n"
 
-            "Review for correctness, completeness, relevance, "
-            "structure, clarity, grammar, consistency, "
-            "contradictions and visible formatting problems.\n\n"
+            "Never delete document content.\n"
+            "Never silently summarize the document.\n"
+            "Never replace pages with a summary.\n"
+            "Never invent pages.\n\n"
 
-            "Never invent information.\n\n"
+            "The request limit is an LLM request limit, "
+            "NOT a customer-document limit.\n\n"
 
-            "If the supplied content is satisfactory, say so.\n\n"
+            "CORRECTION MODE\n"
+            "===============\n"
+            "When the customer asks for a correction, "
+            "reason from the current document version "
+            "and the customer's correction instruction.\n\n"
 
-            "If corrections are required, identify what needs "
-            "correction.\n\n"
+            "Do not revert to an earlier version.\n\n"
 
-            "APPROVAL\n"
-            "--------\n"
-            "Never claim approval unless application state "
-            "confirms it.\n\n"
-
-            "PAYMENT\n"
-            "-------\n"
-            "Never claim payment succeeded unless application "
-            "state confirms it.\n\n"
-
-            "DOWNLOAD\n"
-            "--------\n"
-            "Never invent a download URL.\n\n"
+            "BILLING\n"
+            "=======\n"
+            "BillingManager is authoritative for pricing.\n"
+            "Never invent prices.\n\n"
 
             "CUSTOMER COMMUNICATION\n"
-            "----------------------\n"
-            "Speak naturally, warmly, clearly and practically.\n\n"
+            "=======================\n"
+            "Speak naturally, warmly and practically.\n\n"
 
-            "Never expose Groq, Gemini, model names, API "
-            "requests, token limits, system prompts or internal "
-            "architecture.\n\n"
-
-            "Internal batching is an implementation detail."
+            "Never mention Groq, API calls, token limits, "
+            "system prompts or internal architecture."
         )
 
     # ========================================================
@@ -811,74 +903,75 @@ class AdaResponse:
 
     def build_system_prompt(
         self,
+        *,
         service: str | None = None,
         context: str | None = None,
     ) -> str:
 
-        active_service = self.normalize_service(service)
+        active_service = (
+            self.normalize_service(
+                service
+            )
+        )
 
-        parts: list[str] = []
+        parts = []
 
         try:
 
-            central = self.prompt_manager.build_prompt(
-                service=active_service,
-            )
-
-            central = compact_text(
-                central,
-                MAX_CENTRAL_PROMPT_CHARS,
+            central = (
+                self.prompt_manager
+                .build_prompt(
+                    service=active_service
+                )
             )
 
             if central:
-                parts.append(central)
+
+                parts.append(
+                    compact_text(
+                        central,
+                        10000,
+                    )
+                )
 
         except Exception as error:
 
             log_error(
-                "PROMPT MANAGER BUILD FAILED",
+                "PROMPT MANAGER FAILED",
                 error,
-                stage="PROMPT_MANAGER_BUILD",
+                stage="PROMPT_MANAGER",
                 category="PROMPT_MANAGER",
             )
-
-            raise AdaResponseError(
-                "AdaPromptManager failed.",
-                stage="PROMPT_MANAGER_BUILD",
-                category="PROMPT_MANAGER",
-                original=error,
-            ) from error
 
         parts.append(
-            compact_text(
-                self.get_intelligence_prompt(),
-                MAX_INTELLIGENCE_PROMPT_CHARS,
-            )
+            self.get_intelligence_prompt()
         )
 
-        billing = self.get_billing_context(
-            active_service
+        billing = (
+            self.get_billing_context(
+                active_service
+            )
         )
 
         if billing:
-            parts.append(billing)
+            parts.append(
+                billing
+            )
 
-        application_context = prepare_application_context(
-            context
-        )
-
-        if application_context:
+        if context:
 
             parts.append(
                 "CURRENT APPLICATION STATE\n"
-                + application_context
-                + "\nEND CURRENT APPLICATION STATE"
+                + compact_text(
+                    context,
+                    MAX_CONTEXT_CHARS,
+                )
             )
 
         if active_service:
 
             parts.append(
-                "CURRENT SELECTED SERVICE\n"
+                "SELECTED SERVICE\n"
                 + active_service
             )
 
@@ -895,11 +988,15 @@ class AdaResponse:
         self,
         role: str,
         content: str,
-    ) -> None:
+    ):
 
-        role = safe_text(role)
+        role = safe_text(
+            role
+        )
 
-        content = safe_text(content)
+        content = safe_text(
+            content
+        )
 
         if not role or not content:
             return
@@ -911,245 +1008,18 @@ class AdaResponse:
             }
         )
 
-        self.history = self.history[
-            -MAX_HISTORY_MESSAGES:
-        ]
+        self.history = (
+            self.history[
+                -MAX_HISTORY_MESSAGES:
+            ]
+        )
 
-    def clear_history(self) -> None:
+    def clear_history(self):
+
         self.history.clear()
 
     # ========================================================
-    # EVENT HELPERS
-    # ========================================================
-
-    @staticmethod
-    def normalize_event(
-        event: str | None,
-    ) -> str:
-        return safe_text(event).lower()
-
-    @classmethod
-    def is_document_event(
-        cls,
-        event: str | None,
-    ) -> bool:
-        return (
-            cls.normalize_event(event)
-            in DOCUMENT_EVENTS
-        )
-
-    @classmethod
-    def is_review_event(
-        cls,
-        event: str | None,
-    ) -> bool:
-        return (
-            cls.normalize_event(event)
-            in ALL_REVIEW_EVENTS
-        )
-
-    # ========================================================
-    # PAGE COUNT
-    # ========================================================
-
-    @staticmethod
-    def extract_page_count(
-        text: str,
-    ) -> int | None:
-
-        text = safe_text(text)
-
-        if not text:
-            return None
-
-        patterns = [
-            (
-                r"(?:number\s+of\s+pages|"
-                r"page\s+count|pages)"
-                r"\s*(?:is|=|:|-)?\s*(\d+)"
-            ),
-            r"(\d+)\s*pages?\b",
-        ]
-
-        for pattern in patterns:
-
-            matches = re.findall(
-                pattern,
-                text,
-                flags=re.IGNORECASE,
-            )
-
-            for match in matches:
-
-                try:
-                    value = int(match)
-                except Exception:
-                    continue
-
-                if 1 <= value <= 10000:
-                    return value
-
-        return None
-
-    # ========================================================
-    # REVIEW BATCHING
-    # ========================================================
-
-    @staticmethod
-    def split_review_batches(
-        document: str,
-        batch_chars: int = 10000,
-    ) -> list[str]:
-
-        document = safe_text(document)
-
-        if not document:
-            return []
-
-        if len(document) <= batch_chars:
-            return [document]
-
-        batches: list[str] = []
-
-        start = 0
-        length = len(document)
-
-        while start < length:
-
-            end = min(
-                start + batch_chars,
-                length,
-            )
-
-            if end < length:
-
-                paragraph_break = document.rfind(
-                    "\n\n",
-                    start,
-                    end,
-                )
-
-                sentence_break = document.rfind(
-                    ". ",
-                    start,
-                    end,
-                )
-
-                if paragraph_break > start:
-                    end = paragraph_break + 2
-
-                elif sentence_break > start:
-                    end = sentence_break + 2
-
-            chunk = document[
-                start:end
-            ].strip()
-
-            if chunk:
-                batches.append(chunk)
-
-            if end <= start:
-                break
-
-            start = end
-
-            if len(batches) >= REVIEW_MAX_BATCHES:
-                break
-
-        return batches
-
-    # ========================================================
-    # REVIEW PROMPT
-    # ========================================================
-
-    def build_review_prompt(
-        self,
-        *,
-        service: str | None,
-        batch_number: int,
-        total_batches: int,
-        document_batch: str,
-        previous_review: str = "",
-        customer_request: str = "",
-    ) -> str:
-
-        service_text = (
-            safe_text(service)
-            or "Not specified"
-        )
-
-        request_text = (
-            safe_text(customer_request)
-            or (
-                "Review the document carefully and identify "
-                "anything that needs attention."
-            )
-        )
-
-        previous_text = (
-            compact_text(
-                previous_review,
-                REVIEW_BATCH_CONTEXT_CHARS,
-            )
-            or "No previous review batch."
-        )
-
-        return (
-            "REVIEW THE CUSTOMER'S EXISTING DOCUMENT.\n\n"
-
-            "This is ONE document being reviewed in controlled "
-            "batches.\n\n"
-
-            f"SERVICE:\n{service_text}\n\n"
-
-            f"CUSTOMER'S REVIEW REQUEST:\n{request_text}\n\n"
-
-            f"CURRENT REVIEW BATCH:\n"
-            f"{batch_number} OF {total_batches}\n\n"
-
-            "DOCUMENT CONTENT FOR THIS BATCH:\n"
-            f"{document_batch}\n\n"
-
-            "PREVIOUS REVIEW CONTEXT:\n"
-            f"{previous_text}\n\n"
-
-            "REVIEW INSTRUCTIONS\n"
-            "-------------------\n\n"
-
-            "Review the supplied document content intelligently.\n\n"
-
-            "Check for:\n"
-            "1. correctness\n"
-            "2. completeness\n"
-            "3. relevance\n"
-            "4. structure\n"
-            "5. clarity\n"
-            "6. grammar\n"
-            "7. consistency\n"
-            "8. contradictions\n"
-            "9. visible formatting issues\n"
-            "10. compliance with the customer's request\n\n"
-
-            "Do not invent facts.\n\n"
-
-            "Do not rewrite the entire document unless the "
-            "customer specifically requested rewriting.\n\n"
-
-            "Do not treat this batch as a separate document.\n\n"
-
-            "Maintain continuity with previous review context.\n\n"
-
-            "If nothing requires attention in this batch, state "
-            "that the batch is satisfactory.\n\n"
-
-            "Return useful review findings only.\n\n"
-
-            "Do not mention Groq, tokens, model limits, API "
-            "calls, internal batching or system prompts."
-        )
-
-    # ========================================================
-    # GROQ REQUEST
+    # GROQ
     # ========================================================
 
     def call_groq(
@@ -1158,68 +1028,59 @@ class AdaResponse:
         messages: list[dict[str, str]],
         output_tokens: int,
         stage: str,
-        batch_number: int | None = None,
+        page_number: int | None = None,
         event: str | None = None,
     ) -> str:
 
-        try:
-            client = get_client()
-
-        except Exception as error:
-
-            log_error(
-                "GROQ CLIENT UNAVAILABLE",
-                error,
-                stage=(
-                    error.stage
-                    if isinstance(
-                        error,
-                        AdaResponseError,
-                    )
-                    else "CLIENT_INITIALIZATION"
-                ),
-                category=(
-                    error.category
-                    if isinstance(
-                        error,
-                        AdaResponseError,
-                    )
-                    else "GROQ_CLIENT"
-                ),
-                batch_number=batch_number,
-                event=event,
-            )
-
-            raise
+        client = get_client()
 
         print()
         print("=" * 78)
-        print("ADA GROQ REQUEST")
+        print("ADA INTELLIGENCE → GROQ")
         print("=" * 78)
         print("Stage:", stage)
         print("Model:", MODEL)
-        print("Messages:", len(messages))
-        print("Requested output tokens:", output_tokens)
+        print("Page:", page_number)
+        print(
+            "Messages:",
+            len(messages),
+        )
+        print(
+            "Output tokens:",
+            output_tokens,
+        )
+        print("=" * 78)
 
         try:
 
-            response = client.chat.completions.create(
-                model=MODEL,
-                messages=messages,
-                temperature=0.3,
-                max_tokens=output_tokens,
+            response = (
+                client
+                .chat
+                .completions
+                .create(
+                    model=MODEL,
+                    messages=messages,
+                    temperature=0.2,
+                    max_completion_tokens=(
+                        output_tokens
+                    ),
+                )
             )
 
         except Exception as error:
 
-            category = classify_groq_error(error)
+            category = (
+                classify_groq_error(
+                    error
+                )
+            )
 
             log_error(
                 "GROQ REQUEST FAILED",
                 error,
                 stage=stage,
                 category=category,
-                batch_number=batch_number,
+                page_number=page_number,
                 event=event,
             )
 
@@ -1227,8 +1088,10 @@ class AdaResponse:
                 str(error),
                 stage=stage,
                 category=category,
-                status_code=get_error_status_code(
-                    error
+                status_code=(
+                    get_error_status_code(
+                        error
+                    )
                 ),
                 original=error,
             ) from error
@@ -1248,7 +1111,10 @@ class AdaResponse:
             )
 
         content = safe_text(
-            response.choices[0].message.content
+            response
+            .choices[0]
+            .message
+            .content
         )
 
         if not content:
@@ -1264,7 +1130,7 @@ class AdaResponse:
             None,
         )
 
-        if usage is not None:
+        if usage:
 
             print(
                 "Prompt tokens:",
@@ -1293,439 +1159,696 @@ class AdaResponse:
                 ),
             )
 
-        print("Groq response received.")
-        print("=" * 78)
-        print()
+        print(
+            "Ada intelligence response received."
+        )
 
         return content
 
     # ========================================================
-    # DOCUMENT EXTRACTION FROM APPLICATION CONTEXT
+    # REVIEW PAGE PROMPT
     # ========================================================
 
-    @staticmethod
-    def extract_review_document(
-        context: str | None,
-    ) -> str:
-
-        context = safe_text(context)
-
-        if not context:
-            return ""
-
-        patterns = [
-            r"DOCUMENT_CONTENT\s*:\s*(.*)",
-            r"DOCUMENT_TEXT\s*:\s*(.*)",
-            r"FULL_DOCUMENT\s*:\s*(.*)",
-            r"REVIEW_DOCUMENT\s*:\s*(.*)",
-        ]
-
-        for pattern in patterns:
-
-            match = re.search(
-                pattern,
-                context,
-                flags=re.IGNORECASE | re.DOTALL,
-            )
-
-            if match:
-
-                document = safe_text(
-                    match.group(1)
-                )
-
-                if document:
-                    return document
-
-        return ""
-
-    # ========================================================
-    # DOCUMENT REVIEW
-    # ========================================================
-
-    def review_document(
+    def build_page_review_prompt(
         self,
         *,
-        document: str,
-        service: str | None = None,
-        context: str | None = None,
-        customer_request: str = "",
-        event: str | None = "review",
+        page_number: int,
+        total_pages: int,
+        page_content: str,
+        previous_review: str,
+        customer_request: str,
     ) -> str:
 
-        document = safe_text(document)
+        return (
+            "CUSTOMER DOCUMENT REVIEW\n\n"
 
-        if not document:
+            "This is ONE document.\n"
+            f"This is page {page_number} "
+            f"of {total_pages}.\n\n"
+
+            "CUSTOMER'S REVIEW REQUEST:\n"
+            f"{compact_text(customer_request, 3000)}\n\n"
+
+            "CURRENT DOCUMENT PAGE:\n"
+            f"{compact_text(page_content, REVIEW_PAGE_INPUT_CHARS)}\n\n"
+
+            "PREVIOUS REVIEW CONTINUITY:\n"
+            f"{compact_text(previous_review, REVIEW_CONTINUITY_CHARS)}\n\n"
+
+            "YOUR TASK\n"
+            "=========\n"
+
+            "Intelligently review this page as part of "
+            "the complete document.\n\n"
+
+            "Look for genuine issues only.\n\n"
+
+            "Check correctness, completeness, relevance, "
+            "grammar, clarity, consistency, contradictions, "
+            "structure, visible formatting problems and "
+            "compliance with the customer's request.\n\n"
+
+            "If this page is satisfactory, clearly state "
+            "that it is satisfactory.\n\n"
+
+            "If there are issues, identify them precisely.\n\n"
+
+            "Do not invent facts.\n"
+
+            "Do not rewrite the whole page unless the "
+            "customer explicitly requested rewriting.\n\n"
+
+            "Do not mention token limits, Groq, API calls "
+            "or internal processing."
+        )
+
+    # ========================================================
+    # REVIEW ONE PAGE
+    # ========================================================
+
+    def review_page(
+        self,
+        *,
+        page_number: int,
+        total_pages: int,
+        page_content: str,
+        service: str | None,
+        context: str | None,
+        customer_request: str,
+        previous_review: str = "",
+        event: str = "review",
+    ) -> str:
+
+        page_content = safe_text(
+            page_content
+        )
+
+        if not page_content:
+
             return (
-                "There is no document content available "
-                "for review yet."
+                "No text content was supplied "
+                "for this page."
             )
 
-        active_service = self.normalize_service(
-            service
-        )
-
-        system_prompt = self.build_system_prompt(
-            service=active_service,
-            context=context,
-        )
-
-        batches = self.split_review_batches(
-            document,
-            batch_chars=10000,
-        )
-
-        if not batches:
-            return (
-                "There is no document content available "
-                "for review yet."
+        system_prompt = (
+            self.build_system_prompt(
+                service=service,
+                context=context,
             )
+        )
 
-        print()
-        print("=" * 78)
-        print("ADA INTELLIGENCE REVIEW STARTED")
-        print("=" * 78)
-        print("Document characters:", len(document))
-        print("Review batches:", len(batches))
-        print("Service:", active_service)
-        print("=" * 78)
-        print()
-
-        review_results: list[str] = []
-
-        previous_review = ""
-
-        for index, batch in enumerate(
-            batches,
-            start=1,
-        ):
-
-            review_prompt = self.build_review_prompt(
-                service=active_service,
-                batch_number=index,
-                total_batches=len(batches),
-                document_batch=batch,
+        prompt = (
+            self.build_page_review_prompt(
+                page_number=page_number,
+                total_pages=total_pages,
+                page_content=page_content,
                 previous_review=previous_review,
                 customer_request=customer_request,
             )
+        )
 
-            messages = [
-                {
-                    "role": "system",
-                    "content": system_prompt,
-                },
-                {
-                    "role": "user",
-                    "content": review_prompt,
-                },
-            ]
+        messages = [
+            {
+                "role": "system",
+                "content": system_prompt,
+            },
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ]
+
+        return self.call_groq(
+            messages=messages,
+            output_tokens=REVIEW_OUTPUT_TOKENS,
+            stage="REVIEW_PAGE",
+            page_number=page_number,
+            event=event,
+        )
+
+    # ========================================================
+    # REVIEW COMPLETE DOCUMENT
+    # ========================================================
+
+    def review_document_pages(
+        self,
+        *,
+        pages: list[Any],
+        service: str | None = None,
+        context: str | None = None,
+        customer_request: str = "",
+        event: str = "review",
+        progress_callback: Callable[
+            [dict[str, Any]],
+            None
+        ] | None = None,
+    ) -> dict[str, Any]:
+
+        normalized_pages = (
+            normalize_document_pages(
+                pages
+            )
+        )
+
+        if not normalized_pages:
+
+            raise AdaResponseError(
+                "No document pages were supplied.",
+                stage="REVIEW_INTAKE",
+                category="EMPTY_DOCUMENT",
+            )
+
+        total_pages = len(
+            normalized_pages
+        )
+
+        page_results = []
+
+        previous_review = ""
+
+        for position, page in enumerate(
+            normalized_pages,
+            start=1,
+        ):
+
+            actual_page_number = int(
+                page.get(
+                    "page_number",
+                    position,
+                )
+            )
+
+            content = safe_text(
+                page.get(
+                    "content"
+                )
+            )
+
+            if progress_callback:
+
+                progress_callback(
+                    {
+                        "type": "page_started",
+                        "page_number":
+                            actual_page_number,
+                        "position":
+                            position,
+                        "total_pages":
+                            total_pages,
+                        "content":
+                            content,
+                    }
+                )
 
             try:
 
-                result = self.call_groq(
-                    messages=messages,
-                    output_tokens=REVIEW_BATCH_OUTPUT_TOKENS,
-                    stage="REVIEW_BATCH",
-                    batch_number=index,
+                review = self.review_page(
+                    page_number=(
+                        actual_page_number
+                    ),
+                    total_pages=total_pages,
+                    page_content=content,
+                    service=service,
+                    context=context,
+                    customer_request=(
+                        customer_request
+                    ),
+                    previous_review=(
+                        previous_review
+                    ),
                     event=event,
                 )
 
             except Exception as error:
 
-                log_error(
-                    "REVIEW BATCH FAILED",
-                    error,
-                    stage=(
-                        error.stage
-                        if isinstance(
-                            error,
-                            AdaResponseError,
-                        )
-                        else "REVIEW_BATCH"
-                    ),
-                    category=(
-                        error.category
-                        if isinstance(
-                            error,
-                            AdaResponseError,
-                        )
-                        else "DOCUMENT_REVIEW"
-                    ),
-                    batch_number=index,
-                    event=event,
-                )
+                if progress_callback:
+
+                    progress_callback(
+                        {
+                            "type":
+                                "page_error",
+                            "page_number":
+                                actual_page_number,
+                            "position":
+                                position,
+                            "total_pages":
+                                total_pages,
+                            "error":
+                                str(error),
+                        }
+                    )
 
                 raise
 
-            result = safe_text(result)
+            result = {
+                "page_number":
+                    actual_page_number,
 
-            if result:
+                "position":
+                    position,
 
-                review_results.append(
-                    (
-                        f"Review of document part "
-                        f"{index} of {len(batches)}:"
-                        "\n\n"
-                        f"{result}"
-                    )
-                )
+                "content":
+                    content,
 
-                previous_review = compact_text(
-                    result,
-                    REVIEW_BATCH_CONTEXT_CHARS,
-                )
+                "review":
+                    safe_text(review),
 
-        complete_review = "\n\n".join(
-            review_results
-        ).strip()
+                "status":
+                    "reviewed",
+            }
 
-        if not complete_review:
-            return (
-                "The document was received, but I could "
-                "not produce a review result."
+            page_results.append(
+                result
             )
 
-        print()
-        print("=" * 78)
-        print("ADA INTELLIGENCE REVIEW COMPLETE")
-        print("=" * 78)
-        print("Batches reviewed:", len(batches))
-        print("=" * 78)
-        print()
+            previous_review = compact_text(
+                review,
+                REVIEW_CONTINUITY_CHARS,
+            )
 
-        return complete_review
+            if progress_callback:
+
+                progress_callback(
+                    {
+                        "type":
+                            "page_completed",
+
+                        "page_number":
+                            actual_page_number,
+
+                        "position":
+                            position,
+
+                        "total_pages":
+                            total_pages,
+
+                        "content":
+                            content,
+
+                        "review":
+                            safe_text(review),
+
+                        "status":
+                            "reviewed",
+                    }
+                )
+
+        assembled_review = (
+            self.assemble_review(
+                page_results
+            )
+        )
+
+        if progress_callback:
+
+            progress_callback(
+                {
+                    "type":
+                        "review_completed",
+
+                    "total_pages":
+                        total_pages,
+
+                    "assembled_review":
+                        assembled_review,
+                }
+            )
+
+        return {
+            "pages":
+                page_results,
+
+            "total_pages":
+                total_pages,
+
+            "assembled_review":
+                assembled_review,
+        }
 
     # ========================================================
-    # DOCUMENT SECTION INSTRUCTION
+    # REVIEW ASSEMBLY
     # ========================================================
 
-    def build_document_section_instruction(
-        self,
-        *,
-        original_request: str,
-        service: str | None,
-        section_number: int,
-        total_sections: int | None,
-        previous_tail: str,
-        correction: bool = False,
+    @staticmethod
+    def assemble_review(
+        page_results: list[
+            dict[str, Any]
+        ],
     ) -> str:
 
-        if total_sections:
-            section_label = (
-                f"SECTION {section_number} "
-                f"OF {total_sections}"
-            )
-        else:
-            section_label = (
-                f"SECTION {section_number}"
+        parts = []
+
+        for item in page_results:
+
+            page_number = item.get(
+                "page_number"
             )
 
-        if correction:
-            action = (
-                "Revise the existing customer document."
+            review = safe_text(
+                item.get(
+                    "review"
+                )
             )
-        else:
-            action = (
-                "Prepare the customer's requested document."
+
+            if not review:
+                continue
+
+            parts.append(
+                "PAGE "
+                + str(page_number)
+                + "\n\n"
+                + review
+            )
+
+        if not parts:
+
+            return (
+                "The document was reviewed, "
+                "but no review findings were returned."
             )
 
         return (
-            f"{action}\n\n"
-            f"{section_label}\n\n"
-
-            "SERVICE:\n"
-            f"{safe_text(service) or 'Not specified'}\n\n"
-
-            "CUSTOMER REQUEST:\n"
-            f"{compact_text(original_request, 3500)}\n\n"
-
-            "Generate ONLY the document content for this "
-            "section.\n\n"
-
-            "Rules:\n"
-            "- preserve customer facts\n"
-            "- do not invent facts\n"
-            "- do not summarize\n"
-            "- do not explain the generation process\n"
-            "- do not mention internal limits\n"
-            "- continue naturally from previous material\n"
-            "- do not repeat completed material unnecessarily\n\n"
-
-            "PREVIOUS SECTION CONTEXT:\n"
-            f"{compact_text(previous_tail, DOCUMENT_RECENT_CONTEXT_CHARS)}"
+            "COMPLETE DOCUMENT REVIEW\n\n"
+            + "\n\n".join(parts)
         )
 
     # ========================================================
-    # DOCUMENT GENERATION
+    # CORRECTION
     # ========================================================
 
-    def generate_complete_document(
+    def correct_document(
         self,
         *,
-        original_request: str,
+        document_pages: list[Any],
+        correction: str,
         service: str | None,
         context: str | None,
-        correction: bool = False,
-        existing_work: str | None = None,
-        event: str | None = None,
-    ) -> str:
+        progress_callback: Callable[
+            [dict[str, Any]],
+            None
+        ] | None = None,
+    ) -> dict[str, Any]:
 
-        original_request = safe_text(
-            original_request
+        pages = normalize_document_pages(
+            document_pages
         )
 
-        active_service = self.normalize_service(
-            service
-        )
+        if not pages:
 
-        system_prompt = self.build_system_prompt(
-            service=active_service,
-            context=context,
-        )
-
-        requested_pages = self.extract_page_count(
-            original_request
-        )
-
-        if requested_pages is not None:
-            total_sections = min(
-                requested_pages,
-                DOCUMENT_MAX_SECTIONS,
+            raise AdaResponseError(
+                "There is no document to correct.",
+                stage="CORRECTION_INTAKE",
+                category="EMPTY_DOCUMENT",
             )
-        else:
-            total_sections = None
 
-        sections: list[str] = []
+        correction = safe_text(
+            correction
+        )
 
-        if existing_work:
-            previous_tail = safe_text(
-                existing_work
-            )[-DOCUMENT_RECENT_CONTEXT_CHARS:]
-        else:
-            previous_tail = ""
+        if not correction:
 
-        if total_sections is None:
-            maximum_sections = DOCUMENT_MAX_SECTIONS
-        else:
-            maximum_sections = total_sections
+            raise AdaResponseError(
+                "Correction instruction is empty.",
+                stage="CORRECTION_INTAKE",
+                category="EMPTY_CORRECTION",
+            )
 
-        for section_number in range(
-            1,
-            maximum_sections + 1,
+        corrected_pages = []
+
+        total_pages = len(
+            pages
+        )
+
+        for position, page in enumerate(
+            pages,
+            start=1,
         ):
 
-            instruction = (
-                self.build_document_section_instruction(
-                    original_request=original_request,
-                    service=active_service,
-                    section_number=section_number,
-                    total_sections=total_sections,
-                    previous_tail=previous_tail,
-                    correction=correction,
+            page_number = int(
+                page.get(
+                    "page_number",
+                    position,
                 )
+            )
+
+            content = safe_text(
+                page.get(
+                    "content"
+                )
+            )
+
+            if progress_callback:
+
+                progress_callback(
+                    {
+                        "type":
+                            "correction_page_started",
+                        "page_number":
+                            page_number,
+                        "position":
+                            position,
+                        "total_pages":
+                            total_pages,
+                    }
+                )
+
+            system_prompt = (
+                self.build_system_prompt(
+                    service=service,
+                    context=context,
+                )
+            )
+
+            prompt = (
+                "CORRECT THE CUSTOMER'S CURRENT "
+                "DOCUMENT VERSION.\n\n"
+
+                f"PAGE {page_number} OF "
+                f"{total_pages}\n\n"
+
+                "CUSTOMER CORRECTION:\n"
+                f"{compact_text(correction, 4000)}\n\n"
+
+                "CURRENT PAGE CONTENT:\n"
+                f"{compact_text(content, CORRECTION_INPUT_CHARS)}\n\n"
+
+                "INSTRUCTIONS:\n"
+                "- Preserve facts.\n"
+                "- Do not invent facts.\n"
+                "- Apply the customer's correction.\n"
+                "- Do not unnecessarily change unrelated content.\n"
+                "- Return the corrected page content.\n"
+                "- Do not discuss the correction process.\n"
+                "- Do not mention Groq or token limits."
             )
 
             messages = [
                 {
-                    "role": "system",
-                    "content": system_prompt,
+                    "role":
+                        "system",
+                    "content":
+                        system_prompt,
                 },
                 {
-                    "role": "user",
-                    "content": instruction,
+                    "role":
+                        "user",
+                    "content":
+                        prompt,
                 },
             ]
 
-            section = self.call_groq(
+            corrected = self.call_groq(
                 messages=messages,
-                output_tokens=DOCUMENT_SECTION_OUTPUT_TOKENS,
-                stage="DOCUMENT_SECTION",
-                batch_number=section_number,
-                event=event,
+                output_tokens=CORRECTION_OUTPUT_TOKENS,
+                stage="CORRECTION_PAGE",
+                page_number=page_number,
+                event="document_correction",
             )
 
-            section = safe_text(section)
+            corrected = safe_text(
+                corrected
+            )
 
-            if not section:
-                raise AdaResponseError(
-                    "Document section returned empty content.",
-                    stage="DOCUMENT_SECTION_EMPTY",
-                    category="DOCUMENT_GENERATION",
+            corrected_page = {
+                "page_number":
+                    page_number,
+
+                "content":
+                    corrected,
+
+                "status":
+                    "corrected",
+            }
+
+            corrected_pages.append(
+                corrected_page
+            )
+
+            if progress_callback:
+
+                progress_callback(
+                    {
+                        "type":
+                            "correction_page_completed",
+                        "page_number":
+                            page_number,
+                        "position":
+                            position,
+                        "total_pages":
+                            total_pages,
+                        "content":
+                            corrected,
+                    }
                 )
 
-            sections.append(section)
+        return {
+            "pages":
+                corrected_pages,
 
-            previous_tail = section[
-                -DOCUMENT_RECENT_CONTEXT_CHARS:
-            ]
+            "total_pages":
+                total_pages,
 
-            if total_sections is None:
-                if len(section) < DOCUMENT_MIN_SECTION_CHARS:
-                    break
-
-        return "\n\n".join(sections).strip()
+            "document_text":
+                self.assemble_document(
+                    corrected_pages
+                ),
+        }
 
     # ========================================================
-    # NORMAL INTELLIGENCE RESPONSE
+    # DOCUMENT ASSEMBLY
     # ========================================================
 
-    def respond_normal(
-        self,
-        *,
-        message: str,
-        service: str | None,
-        event: str | None,
-        context: str | None,
+    @staticmethod
+    def assemble_document(
+        pages: list[
+            dict[str, Any]
+        ],
     ) -> str:
 
-        active_service = self.normalize_service(
-            service
+        ordered = sorted(
+            pages,
+            key=lambda item: int(
+                item.get(
+                    "page_number",
+                    0,
+                )
+            ),
         )
 
-        system_prompt = self.build_system_prompt(
-            service=active_service,
-            context=context,
+        parts = []
+
+        for page in ordered:
+
+            content = safe_text(
+                page.get(
+                    "content"
+                )
+            )
+
+            if content:
+                parts.append(
+                    content
+                )
+
+        return "\n\n".join(
+            parts
+        ).strip()
+
+    # ========================================================
+    # NORMAL CHAT
+    # ========================================================
+
+    def respond(
+        self,
+        message: str,
+        service: str | None = None,
+        event: str | None = None,
+        context: str | None = None,
+    ) -> str:
+
+        message = safe_text(
+            message
         )
 
-        messages: list[dict[str, str]] = [
+        if not message:
+
+            return (
+                "Please tell me what you "
+                "would like me to help you with."
+            )
+
+        if service:
+            self.set_service(
+                service
+            )
+
+        active_service = (
+            self.normalize_service(
+                self.service
+            )
+        )
+
+        system_prompt = (
+            self.build_system_prompt(
+                service=active_service,
+                context=context,
+            )
+        )
+
+        messages = [
             {
-                "role": "system",
-                "content": system_prompt,
+                "role":
+                    "system",
+                "content":
+                    system_prompt,
             }
         ]
 
-        messages.extend(
-            compact_history(self.history)
-        )
+        for item in self.history[
+            -MAX_HISTORY_MESSAGES:
+        ]:
+
+            messages.append(
+                {
+                    "role":
+                        item["role"],
+                    "content":
+                        compact_text(
+                            item["content"],
+                            MAX_HISTORY_MESSAGE_CHARS,
+                        ),
+                }
+            )
 
         if event:
 
             messages.append(
                 {
-                    "role": "system",
-                    "content": (
+                    "role":
+                        "system",
+                    "content":
                         "CURRENT APPLICATION EVENT\n"
-                        + compact_text(
-                            event,
-                            MAX_EVENT_CHARS,
-                        )
-                    ),
+                        + safe_text(
+                            event
+                        ),
                 }
             )
 
         messages.append(
             {
-                "role": "user",
-                "content": compact_text(
-                    message,
-                    MAX_USER_MESSAGE_CHARS,
-                ),
+                "role":
+                    "user",
+                "content":
+                    compact_text(
+                        message,
+                        MAX_USER_MESSAGE_CHARS,
+                    ),
             }
         )
 
         response = self.call_groq(
             messages=messages,
-            output_tokens=MAX_OUTPUT_TOKENS,
+            output_tokens=700,
             stage="NORMAL_RESPONSE",
             event=event,
         )
@@ -1743,163 +1866,36 @@ class AdaResponse:
         return response
 
     # ========================================================
-    # MAIN RESPOND
+    # EVENT HELPERS
     # ========================================================
 
-    def respond(
-        self,
-        message: str,
-        service: str | None = None,
-        event: str | None = None,
-        context: str | None = None,
-    ) -> str:
+    @staticmethod
+    def is_review_event(
+        event: str | None,
+    ) -> bool:
 
-        message = safe_text(message)
-
-        if not message:
-            return (
-                "Please tell me what you would "
-                "like me to help you with."
-            )
-
-        if service:
-            self.set_service(service)
-
-        active_service = self.normalize_service(
-            self.service
+        return (
+            safe_text(
+                event
+            ).lower()
+            in REVIEW_EVENTS
         )
 
-        event_normalized = self.normalize_event(
-            event
+    @staticmethod
+    def is_correction_event(
+        event: str | None,
+    ) -> bool:
+
+        return (
+            safe_text(
+                event
+            ).lower()
+            in CORRECTION_EVENTS
         )
-
-        print()
-        print("=" * 78)
-        print("ADA RESPONSE")
-        print("=" * 78)
-        print("Service:", active_service)
-        print("Event:", event_normalized)
-        print("Message characters:", len(message))
-        print("Model:", MODEL)
-        print("=" * 78)
-        print()
-
-        try:
-
-            get_client()
-
-            # ------------------------------------------------
-            # REVIEW
-            # ------------------------------------------------
-
-            if self.is_review_event(
-                event_normalized
-            ):
-
-                review_document = (
-                    self.extract_review_document(
-                        context
-                    )
-                )
-
-                if review_document:
-
-                    result = self.review_document(
-                        document=review_document,
-                        service=active_service,
-                        context=context,
-                        customer_request=message,
-                        event=event_normalized,
-                    )
-
-                    self.add_history(
-                        "user",
-                        message,
-                    )
-
-                    self.add_history(
-                        "assistant",
-                        result,
-                    )
-
-                    return result
-
-                return self.respond_normal(
-                    message=message,
-                    service=active_service,
-                    event=event_normalized,
-                    context=context,
-                )
-
-            # ------------------------------------------------
-            # DOCUMENT CREATION / CORRECTION
-            # ------------------------------------------------
-
-            if event_normalized in DOCUMENT_EVENTS:
-
-                result = self.generate_complete_document(
-                    original_request=message,
-                    service=active_service,
-                    context=context,
-                    correction=(
-                        event_normalized
-                        in DOCUMENT_CORRECTION_EVENTS
-                    ),
-                    event=event_normalized,
-                )
-
-                self.add_history(
-                    "user",
-                    message,
-                )
-
-                self.add_history(
-                    "assistant",
-                    "[Complete document prepared.]",
-                )
-
-                return result
-
-            # ------------------------------------------------
-            # NORMAL LLM INTELLIGENCE
-            # ------------------------------------------------
-
-            return self.respond_normal(
-                message=message,
-                service=active_service,
-                event=event_normalized,
-                context=context,
-            )
-
-        except Exception as error:
-
-            log_error(
-                "ADA RESPONSE FAILED",
-                error,
-                stage=(
-                    error.stage
-                    if isinstance(
-                        error,
-                        AdaResponseError,
-                    )
-                    else "ADA_RESPONSE"
-                ),
-                category=(
-                    error.category
-                    if isinstance(
-                        error,
-                        AdaResponseError,
-                    )
-                    else "APPLICATION"
-                ),
-                event=event_normalized,
-            )
-
-            return client_error_message(error)
 
 
 # ============================================================
-# DIAGNOSTIC STARTUP
+# DIAGNOSTIC
 # ============================================================
 
 if __name__ == "__main__":
@@ -1907,76 +1903,51 @@ if __name__ == "__main__":
     print()
     print("=" * 78)
     print("NAIJA POCKET BUSINESS CENTER")
-    print("ADA END-TO-END INTELLIGENCE ENGINE")
+    print("ADA RESPONSE INTELLIGENCE ENGINE")
     print("=" * 78)
-    print()
 
     print(
         "Model:",
-        get_ada_model(),
+        MODEL,
     )
 
     print(
         "Groq package:",
-        "READY" if Groq is not None else "MISSING",
+        "READY"
+        if Groq is not None
+        else "MISSING",
     )
 
     print(
-        "Groq API key:",
-        "CONFIGURED" if API_KEY else "MISSING",
+        "API key:",
+        "CONFIGURED"
+        if API_KEY
+        else "MISSING",
     )
 
     print(
-        "Ada intelligence:",
+        "Page-by-page review:",
         "ENABLED",
     )
 
     print(
-        "Keyword decision workflow:",
+        "Progressive review state:",
+        "SUPPORTED",
+    )
+
+    print(
+        "Complete document preservation:",
+        "ENABLED",
+    )
+
+    print(
+        "Correction intelligence:",
+        "ENABLED",
+    )
+
+    print(
+        "Keyword intelligence:",
         "DISABLED",
     )
 
-    print(
-        "LLM review intelligence:",
-        "ENABLED",
-    )
-
-    print(
-        "Review batch coordination:",
-        "ENABLED",
-    )
-
-    print(
-        "Document sequential generation:",
-        "ENABLED",
-    )
-
-    print(
-        "Customer document truncation:",
-        "DISABLED",
-    )
-
-    print(
-        "Customer document deletion:",
-        "DISABLED",
-    )
-
-    print(
-        "Maximum review batches:",
-        REVIEW_MAX_BATCHES,
-    )
-
-    print(
-        "Review batch input:",
-        f"{10000} characters",
-    )
-
-    print(
-        "Review batch output:",
-        f"{REVIEW_BATCH_OUTPUT_TOKENS} tokens",
-    )
-
-    print()
-    print("=" * 78)
-    print("DIAGNOSTIC INITIALIZATION COMPLETE")
     print("=" * 78)
