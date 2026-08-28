@@ -1,70 +1,82 @@
 <!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8"><meta
+name="viewport"
+content="width=device-width,initial-scale=1,viewport-fit=cover"
+
+«»
+
 <meta
-    name="viewport"
-    content="width=device-width,initial-scale=1,viewport-fit=cover"
->
-<title>Naija Pocket Business Center</title><style>
+name="theme-color"
+content="#000000"
+
+«»
+
+<title>Document Review — Naija Pocket Business Center</title><style>
+
 *{
     box-sizing:border-box;
 }
 
-html,
-body{
+html{
     width:100%;
-    height:100%;
+    min-height:100%;
     margin:0;
     padding:0;
-    overflow:hidden;
+    background:#000;
 }
 
 body{
+    width:100%;
+    min-height:100vh;
+    margin:0;
+    padding:0;
     background:#000;
     color:#fff;
-    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    font-family:Inter,Arial,sans-serif;
+    overflow-x:hidden;
 }
 
-button,
-input,
-textarea,
-select{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-:root{
-    --gold:#d4af37;
-    --gold2:#f3d66b;
-    --green:#168047;
-    --red:#b30000;
-    --panel:#111;
-    --panel2:#181818;
-    --border:rgba(212,175,55,.28);
-}
+/* =========================================================
+   ROOT
+   ========================================================= */
 
 .app{
     width:100%;
-    height:100dvh;
-    display:flex;
-    flex-direction:column;
+    min-height:100vh;
     background:#000;
 }
 
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 .header{
-    flex:0 0 auto;
-    min-height:65px;
-    padding:9px 12px;
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    width:100%;
+
+    background:#000;
+    border-bottom:1px solid #292929;
+
+    padding:
+        calc(14px + env(safe-area-inset-top))
+        16px
+        14px
+        16px;
+}
+
+.header-inner{
+    width:100%;
+    max-width:1100px;
+    margin:0 auto;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:10px;
-    background:#050505;
-    border-bottom:1px solid var(--border);
-    z-index:10;
+    gap:14px;
 }
 
 .brand{
@@ -73,3565 +85,2484 @@ button{
 
 .brand-title{
     margin:0;
-    color:var(--gold);
-    font-size:clamp(18px,4vw,25px);
-    font-weight:900;
+
+    color:#d4af37;
+
+    font-family:Montserrat,Arial,sans-serif;
+    font-size:clamp(18px,5vw,27px);
+    font-weight:800;
     line-height:1.1;
 }
 
 .brand-subtitle{
-    margin-top:3px;
+    margin:5px 0 0;
+
     color:#aaa;
-    font-size:10px;
+
+    font-size:12px;
+    line-height:1.35;
 }
 
-.service-badge{
-    flex:0 1 auto;
-    max-width:48%;
-    padding:7px 10px;
-    border:1px solid rgba(212,175,55,.5);
+.header-status{
+    flex:0 0 auto;
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    padding:8px 11px;
+
+    border:1px solid #303030;
     border-radius:999px;
-    background:#171717;
-    color:var(--gold2);
-    font-size:10px;
-    font-weight:800;
+
+    color:#ddd;
+    background:#111;
+
+    font-size:11px;
+    font-weight:700;
     white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
 }
+
+.status-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#777;
+    flex:0 0 8px;
+}
+
+.status-dot.running{
+    background:#d4af37;
+}
+
+.status-dot.complete{
+    background:#fff;
+}
+
+.status-dot.error{
+    background:#ff4d4d;
+}
+
+/* =========================================================
+   MAIN
+   ========================================================= */
 
 .main{
-    flex:1;
-    min-height:0;
-    overflow-y:auto;
-    overflow-x:hidden;
-    background:
-        radial-gradient(
-            circle at top,
-            #181818 0,
-            #080808 36%,
-            #000 100%
-        );
-}
-
-.main-inner{
     width:100%;
-    max-width:900px;
-    margin:auto;
-    padding:14px 10px 25px;
+    max-width:1100px;
+    margin:0 auto;
+
+    padding:
+        18px
+        16px
+        calc(42px + env(safe-area-inset-bottom));
 }
 
-.card{
-    border-radius:15px;
-}
+/* =========================================================
+   INTRO
+   ========================================================= */
 
-.intro-card{
-    padding:16px;
-    margin-bottom:11px;
-    background:linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid var(--border);
-}
-
-.intro-title{
-    margin:0;
-    color:var(--gold2);
-    font-size:20px;
-    font-weight:900;
-}
-
-.intro-text{
-    margin:7px 0 0;
-    color:#dedede;
-    font-size:13px;
-    line-height:1.6;
-    white-space:pre-wrap;
-}
-
-.price{
-    display:inline-block;
-    margin-top:10px;
-    padding:7px 10px;
-    border-radius:8px;
-    background:rgba(212,175,55,.09);
-    border:1px solid rgba(212,175,55,.3);
-    color:var(--gold2);
-    font-size:12px;
-    font-weight:800;
-}
-
-.form-card{
-    padding:15px;
-    background:#101010;
-    border:1px solid rgba(255,255,255,.09);
-    border-radius:15px;
-}
-
-.form-heading{
-    margin:0;
-    font-size:17px;
-    font-weight:850;
-}
-
-.form-description{
-    margin:5px 0 14px;
-    color:#999;
-    font-size:11px;
-    line-height:1.5;
-}
-
-.fields{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
-.field label{
-    display:block;
-    margin-bottom:5px;
-    color:#e8e8e8;
-    font-size:11px;
-    font-weight:800;
-}
-
-.required{
-    color:#ff8585;
-}
-
-.optional{
-    color:#666;
-    font-weight:500;
-}
-
-.field input,
-.field textarea{
+.intro{
     width:100%;
-    padding:11px;
-    background:#181818;
+
+    padding:18px;
+
+    border:1px solid #292929;
+    border-radius:14px;
+
+    background:#0d0d0d;
+}
+
+.intro h1{
+    margin:0;
+
     color:#fff;
-    border:1px solid rgba(255,255,255,.14);
-    border-radius:9px;
-    outline:none;
-    font-size:13px;
+
+    font-family:Montserrat,Arial,sans-serif;
+    font-size:clamp(20px,6vw,30px);
+    font-weight:800;
+    line-height:1.2;
 }
 
-.field textarea{
-    min-height:90px;
-    resize:vertical;
-}
+.intro p{
+    margin:9px 0 0;
 
-.field input:focus,
-.field textarea:focus,
-.message-input:focus,
-.correction-input:focus{
-    border-color:rgba(212,175,55,.65);
-}
-
-.form-note{
-    margin-top:12px;
-    padding:10px;
-    border-left:3px solid var(--gold);
-    border-radius:7px;
-    background:#151515;
     color:#aaa;
-    font-size:10px;
-    line-height:1.5;
-}
 
-.form-submit{
-    width:100%;
-    min-height:50px;
-    margin-top:15px;
-    border:0;
-    border-radius:10px;
-    background:var(--gold);
-    color:#000;
-    font-size:13px;
-    font-weight:900;
-}
-
-.form-submit:disabled{
-    opacity:.45;
-}
-
-.chat-view{
-    display:none;
-}
-
-.chat-view.show{
-    display:block;
-}
-
-.chat-header{
-    padding:14px 15px;
-    margin-bottom:10px;
-    background:linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid var(--border);
-    border-radius:15px;
-}
-
-.chat-title{
-    margin:0;
-    color:var(--gold2);
-    font-size:19px;
-    font-weight:900;
-}
-
-.chat-subtitle{
-    margin:5px 0 0;
-    color:#aaa;
-    font-size:11px;
-    line-height:1.5;
-}
-
-.conversation{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    min-height:260px;
-}
-
-.message{
-    max-width:92%;
-    padding:10px 12px;
-    border-radius:12px;
-    white-space:pre-wrap;
-    overflow-wrap:anywhere;
-    line-height:1.55;
-    font-size:12px;
-}
-
-.message.assistant{
-    align-self:flex-start;
-    background:#171717;
-    border:1px solid rgba(255,255,255,.08);
-    color:#eee;
-}
-
-.message.customer{
-    align-self:flex-end;
-    background:#252525;
-    border:1px solid rgba(212,175,55,.2);
-    color:#fff;
-}
-
-.message.system{
-    align-self:center;
-    max-width:100%;
-    background:transparent;
-    color:#777;
-    font-size:10px;
-    text-align:center;
-}
-
-.workflow-card{
-    margin-top:11px;
-    padding:13px;
-    background:#111;
-    border:1px solid rgba(255,255,255,.09);
-    border-radius:12px;
-}
-
-.workflow-title{
-    margin:0 0 5px;
-    color:var(--gold2);
-    font-size:13px;
-    font-weight:900;
-}
-
-.workflow-status{
-    color:#bbb;
-    font-size:11px;
-    line-height:1.5;
-}
-
-.review-link{
-    display:none;
-    width:100%;
-    min-height:46px;
-    margin-top:10px;
-    border:0;
-    border-radius:9px;
-    background:var(--gold);
-    color:#000;
-    font-size:12px;
-    font-weight:900;
-}
-
-.review-link.show{
-    display:block;
-}
-
-.correction-card{
-    margin-top:11px;
-    padding:14px;
-    background:#111;
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:12px;
-}
-
-.correction-title{
-    margin:0 0 4px;
     font-size:14px;
+    line-height:1.6;
 }
 
-.correction-help{
-    margin:0 0 9px;
-    color:#999;
-    font-size:10px;
+.job-line{
+    margin-top:14px;
+
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.info-chip{
+    max-width:100%;
+
+    padding:7px 10px;
+
+    border:1px solid #303030;
+    border-radius:8px;
+
+    background:#151515;
+
+    color:#ccc;
+
+    font-size:11px;
+    line-height:1.35;
+
+    overflow-wrap:anywhere;
+}
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.progress-panel{
+    width:100%;
+
+    margin-top:14px;
+    padding:16px;
+
+    border:1px solid #292929;
+    border-radius:14px;
+
+    background:#0d0d0d;
+}
+
+.progress-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+
+    margin-bottom:10px;
+}
+
+.progress-label{
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+}
+
+.progress-count{
+    color:#aaa;
+    font-size:12px;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.progress-track{
+    width:100%;
+    height:8px;
+
+    overflow:hidden;
+
+    border-radius:999px;
+    background:#242424;
+}
+
+.progress-fill{
+    width:0;
+    height:100%;
+
+    border-radius:999px;
+
+    background:#d4af37;
+
+    transition:width .3s ease;
+}
+
+.progress-message{
+    margin-top:9px;
+
+    color:#888;
+
+    font-size:11px;
     line-height:1.45;
 }
 
-.correction-input{
-    width:100%;
-    min-height:100px;
-    padding:11px;
-    resize:vertical;
-    background:#191919;
+/* =========================================================
+   REVIEW AREA
+   ========================================================= */
+
+.review-heading{
+    margin:24px 0 12px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:12px;
+}
+
+.review-heading h2{
+    margin:0;
+
     color:#fff;
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:9px;
-    outline:none;
-}
 
-.correction-submit{
-    width:100%;
-    min-height:44px;
-    margin-top:8px;
-    border:0;
-    border-radius:8px;
-    background:#252525;
-    color:#fff;
-    font-size:11px;
-    font-weight:850;
-}
-
-.payment-card{
-    display:none;
-    margin-top:11px;
-    padding:14px;
-    background:#121212;
-    border:1px solid rgba(212,175,55,.38);
-    border-radius:12px;
-}
-
-.payment-card.show{
-    display:block;
-}
-
-.payment-title{
-    color:var(--gold2);
-    font-size:14px;
-    font-weight:900;
-}
-
-.payment-details{
-    margin-top:6px;
-    color:#ddd;
-    white-space:pre-wrap;
-    font-size:11px;
-    line-height:1.5;
-}
-
-.payment-actions{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:7px;
-    margin-top:10px;
-}
-
-.payment-actions button{
-    min-height:43px;
-    border-radius:8px;
-    font-size:11px;
-    font-weight:850;
-}
-
-.payment-report{
-    background:var(--gold);
-    color:#000;
-    border:0;
-}
-
-.payment-check{
-    background:#282828;
-    color:#fff;
-    border:1px solid rgba(255,255,255,.13);
-}
-
-.download-button{
-    display:none;
-    width:100%;
-    min-height:47px;
-    margin-top:8px;
-    border-radius:8px;
-    background:var(--green);
-    color:#fff;
-    border:1px solid var(--green);
-    font-size:11px;
-    font-weight:850;
-}
-
-.download-button.show{
-    display:block;
-}
-
-.bottom{
-    flex:0 0 auto;
-    padding:8px 9px calc(8px + env(safe-area-inset-bottom));
-    background:#080808;
-    border-top:1px solid var(--border);
-    z-index:10;
-}
-
-.bottom-inner{
-    width:100%;
-    max-width:900px;
-    margin:auto;
-}
-
-.tools{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:6px;
-    margin-bottom:7px;
-}
-
-.tool-button,
-.choose-service-button{
-    min-height:39px;
-    border-radius:8px;
-    background:#181818;
-    color:#fff;
-    border:1px solid rgba(255,255,255,.13);
-    font-size:10px;
+    font-family:Montserrat,Arial,sans-serif;
+    font-size:20px;
     font-weight:800;
 }
 
-.tool-button.gold{
-    color:var(--gold2);
-    border-color:rgba(212,175,55,.35);
+.review-heading span{
+    color:#777;
+    font-size:11px;
 }
 
-.choose-service-button{
+/*
+   IMPORTANT:
+   There is deliberately NO fixed-height review container.
+   The page itself is allowed to grow so every document page
+   can be rendered.
+*/
+
+.pages{
     width:100%;
-    margin-bottom:7px;
-    background:#000;
-}
 
-.composer{
     display:flex;
-    align-items:flex-end;
-    gap:6px;
+    flex-direction:column;
+    gap:18px;
 }
 
-.message-input{
-    flex:1;
+/* =========================================================
+   DOCUMENT PAGE
+   ========================================================= */
+
+.document-page{
+    width:100%;
+
+    border:1px solid #303030;
+    border-radius:16px;
+
+    background:#0c0c0c;
+
+    overflow:visible;
+}
+
+.page-header{
+    width:100%;
+
+    padding:14px 15px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+
+    border-bottom:1px solid #292929;
+
+    background:#111;
+
+    border-radius:16px 16px 0 0;
+}
+
+.page-title{
     min-width:0;
-    min-height:45px;
-    max-height:105px;
-    resize:none;
-    padding:11px;
+
+    color:#fff;
+
+    font-family:Montserrat,Arial,sans-serif;
+    font-size:16px;
+    font-weight:800;
+}
+
+.page-status{
+    flex:0 0 auto;
+
+    padding:6px 9px;
+
+    border:1px solid #333;
+    border-radius:999px;
+
+    background:#171717;
+
+    color:#aaa;
+
+    font-size:10px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+
+.page-status.reviewing{
+    color:#d4af37;
+    border-color:#5a4a18;
+}
+
+.page-status.reviewed{
+    color:#fff;
+}
+
+.page-status.error{
+    color:#ff6666;
+    border-color:#552222;
+}
+
+/* =========================================================
+   PAGE CONTENT
+   ========================================================= */
+
+.page-body{
+    width:100%;
+
+    padding:16px;
+}
+
+.section-label{
+    margin:0 0 8px;
+
+    color:#777;
+
+    font-size:10px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+}
+
+.document-content{
+    width:100%;
+
+    padding:15px;
+
+    border:1px solid #252525;
+    border-radius:10px;
+
+    background:#080808;
+
+    color:#eee;
+
+    font-family:Inter,Arial,sans-serif;
+    font-size:14px;
+    line-height:1.75;
+
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+.review-section{
+    width:100%;
+
+    margin-top:18px;
+}
+
+.review-content{
+    width:100%;
+
+    padding:15px;
+
+    border:1px solid #3a3219;
+    border-radius:10px;
+
+    background:#11100b;
+
+    color:#f1f1f1;
+
+    font-size:14px;
+    line-height:1.75;
+
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+.review-empty{
+    width:100%;
+
+    padding:15px;
+
+    border:1px dashed #303030;
+    border-radius:10px;
+
+    color:#777;
+
+    font-size:13px;
+    line-height:1.5;
+}
+
+.page-error{
+    width:100%;
+
+    margin-top:14px;
+    padding:12px;
+
+    border:1px solid #4a2222;
+    border-radius:9px;
+
+    background:#160b0b;
+
+    color:#ff8a8a;
+
+    font-size:12px;
+    line-height:1.5;
+
+    overflow-wrap:anywhere;
+}
+
+/* =========================================================
+   COMPLETE REVIEW
+   ========================================================= */
+
+.complete-review{
+    width:100%;
+
+    margin-top:18px;
+    padding:18px;
+
+    border:1px solid #303030;
+    border-radius:14px;
+
+    background:#0d0d0d;
+}
+
+.complete-review h3{
+    margin:0 0 10px;
+
+    color:#d4af37;
+
+    font-family:Montserrat,Arial,sans-serif;
+    font-size:17px;
+    font-weight:800;
+}
+
+.complete-review-content{
+    width:100%;
+
+    color:#eee;
+
+    font-size:14px;
+    line-height:1.75;
+
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+/* =========================================================
+   CORRECTION
+   ========================================================= */
+
+.correction-panel{
+    width:100%;
+
+    margin-top:24px;
+    padding:18px;
+
+    border:1px solid #292929;
+    border-radius:14px;
+
+    background:#0d0d0d;
+}
+
+.correction-panel h2{
+    margin:0;
+
+    color:#fff;
+
+    font-family:Montserrat,Arial,sans-serif;
+    font-size:19px;
+    font-weight:800;
+}
+
+.correction-panel p{
+    margin:8px 0 14px;
+
+    color:#888;
+
+    font-size:12px;
+    line-height:1.55;
+}
+
+textarea{
+    display:block;
+
+    width:100%;
+    min-height:130px;
+
+    resize:vertical;
+
+    padding:13px;
+
+    border:1px solid #353535;
+    border-radius:10px;
+
+    outline:none;
+
+    background:#080808;
+    color:#fff;
+
+    font-family:Inter,Arial,sans-serif;
+    font-size:14px;
+    line-height:1.6;
+}
+
+textarea:focus{
+    border-color:#666;
+}
+
+textarea:disabled{
+    opacity:.5;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.actions{
+    width:100%;
+
+    margin-top:12px;
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+button{
+    min-height:48px;
+
+    border:1px solid #383838;
+    border-radius:10px;
+
     background:#171717;
     color:#fff;
-    border:1px solid rgba(255,255,255,.16);
-    border-radius:9px;
-    outline:none;
+
+    font-family:Inter,Arial,sans-serif;
+    font-size:13px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease,
+        opacity .15s ease;
 }
 
-.send-button{
-    width:64px;
-    min-height:45px;
-    border:0;
-    border-radius:9px;
-    background:var(--gold);
-    color:#000;
-    font-size:11px;
-    font-weight:900;
+button:hover:not(:disabled){
+    background:#222;
+    border-color:#555;
 }
 
-.voice-recording{
-    display:none;
-    margin-bottom:6px;
-    padding:7px;
-    background:#190707;
-    border:1px solid rgba(179,0,0,.55);
-    border-radius:8px;
-    color:#ff8c8c;
-    font-size:10px;
-    text-align:center;
-}
-
-.voice-recording.show{
-    display:block;
-}
-
-.status{
-    min-height:14px;
-    margin-top:3px;
-    color:#777;
-    font-size:9px;
-    text-align:center;
-}
-
-.status.error{
-    color:#ff7777;
-}
-
-.status.success{
-    color:#7bd99a;
-}
-
-#fileInput{
-    display:none;
+button:active:not(:disabled){
+    transform:translateY(1px);
 }
 
 button:disabled{
-    opacity:.45;
+    opacity:.4;
     cursor:not-allowed;
 }
 
-@media(max-width:430px){
-
-    .tools{
-        grid-template-columns:repeat(3,minmax(0,1fr));
-    }
-
-    .tool-button{
-        font-size:9px;
-        padding:3px;
-    }
-
-    .message{
-        max-width:95%;
-    }
-
+.primary{
+    background:#fff;
+    color:#000;
+    border-color:#fff;
 }
-</style></head><body><div class="app"><header class="header"><div class="brand">
-    <h1 class="brand-title">
-        Naija Pocket Business Center
-    </h1>
 
-    <div class="brand-subtitle">
-        Your Business Center
-    </div>
-</div>
+.primary:hover:not(:disabled){
+    background:#e8e8e8;
+    border-color:#e8e8e8;
+}
 
-<div
-    id="serviceBadge"
-    class="service-badge"
->
-    Service
-</div>
+.danger{
+    background:#171717;
+    color:#fff;
+}
 
-</header><main
-    id="main"
-    class="main"
-><div class="main-inner"><!-- ========================================================
-     SERVICE INFORMATION
-========================================================= --><section id="formView"><div class="intro-card card">
+.full-button{
+    grid-column:1 / -1;
+}
 
-    <h2
-        id="introTitle"
-        class="intro-title"
-    >
-        Let's get started
-    </h2>
+/* =========================================================
+   APPROVAL
+   ========================================================= */
 
-    <p
-        id="introText"
-        class="intro-text"
-    >
-        Please wait while we prepare your service.
-    </p>
+.approval-panel{
+    width:100%;
 
-    <div
-        id="price"
-        class="price"
-    >
-        Service
-    </div>
+    margin-top:18px;
+    padding:18px;
 
-</div>
+    border:1px solid #292929;
+    border-radius:14px;
 
+    background:#0d0d0d;
+}
 
-<div class="form-card">
+.approval-panel h2{
+    margin:0;
 
-    <h3 class="form-heading">
-        Your Service Information
-    </h3>
+    color:#fff;
 
-    <p class="form-description">
-        Fill in the information relevant to your request.
-        Optional fields can be left blank.
-    </p>
+    font-family:Montserrat,Arial,sans-serif;
+    font-size:19px;
+    font-weight:800;
+}
 
-    <form id="serviceForm">
+.approval-panel p{
+    margin:8px 0 14px;
 
-        <div
-            id="fields"
-            class="fields"
-        ></div>
+    color:#888;
 
-        <div class="form-note">
-            When you tap <strong>SEND</strong>, your request
-            goes directly into the active service workflow.
-            You can continue communicating with us after sending it.
+    font-size:12px;
+    line-height:1.55;
+}
+
+.version{
+    margin-bottom:12px;
+
+    color:#777;
+
+    font-size:11px;
+
+    overflow-wrap:anywhere;
+}
+
+/* =========================================================
+   NOTICES
+   ========================================================= */
+
+.notice{
+    display:none;
+
+    width:100%;
+
+    margin-top:18px;
+    padding:14px;
+
+    border:1px solid #303030;
+    border-radius:10px;
+
+    background:#111;
+
+    color:#ddd;
+
+    font-size:13px;
+    line-height:1.55;
+}
+
+.notice.show{
+    display:block;
+}
+
+.notice.error{
+    border-color:#542323;
+    background:#160b0b;
+    color:#ff9b9b;
+}
+
+.notice.success{
+    border-color:#3d371c;
+    background:#11100a;
+    color:#eee;
+}
+
+/* =========================================================
+   EMPTY / LOADING
+   ========================================================= */
+
+.loading{
+    width:100%;
+
+    padding:40px 18px;
+
+    text-align:center;
+
+    border:1px solid #292929;
+    border-radius:14px;
+
+    background:#0d0d0d;
+
+    color:#888;
+
+    font-size:13px;
+    line-height:1.6;
+}
+
+.spinner{
+    width:24px;
+    height:24px;
+
+    margin:0 auto 12px;
+
+    border:3px solid #2b2b2b;
+    border-top-color:#d4af37;
+
+    border-radius:50%;
+
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+.hidden{
+    display:none !important;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:600px){
+
+    .header{
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .main{
+        padding-left:10px;
+        padding-right:10px;
+    }
+
+    .header-inner{
+        align-items:flex-start;
+    }
+
+    .header-status{
+        padding:7px 8px;
+        font-size:10px;
+    }
+
+    .brand-subtitle{
+        max-width:190px;
+    }
+
+    .intro,
+    .progress-panel,
+    .correction-panel,
+    .approval-panel{
+        padding:14px;
+    }
+
+    .page-body{
+        padding:12px;
+    }
+
+    .page-header{
+        padding:12px;
+    }
+
+    .document-content,
+    .review-content{
+        padding:12px;
+        font-size:13px;
+        line-height:1.7;
+    }
+
+    .actions{
+        grid-template-columns:1fr;
+    }
+
+    .full-button{
+        grid-column:auto;
+    }
+}
+
+@media(min-width:800px){
+
+    .pages{
+        gap:22px;
+    }
+
+    .page-body{
+        padding:20px;
+    }
+
+    .document-content,
+    .review-content{
+        font-size:15px;
+    }
+}
+
+</style></head><body><div class="app"><!-- =====================================================
+     HEADER
+     ===================================================== -->
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <div class="brand">
+
+            <h1 class="brand-title">
+                Naija Pocket Business Center
+            </h1>
+
+            <p class="brand-subtitle">
+                Document Review
+            </p>
+
         </div>
 
-        <button
-            id="formSubmit"
-            class="form-submit"
-            type="submit"
+        <div class="header-status">
+
+            <span
+                id="statusDot"
+                class="status-dot"
+            ></span>
+
+            <span id="statusText">
+                Loading
+            </span>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     MAIN
+     ===================================================== -->
+
+<main class="main">
+
+    <!-- INTRO -->
+
+    <section class="intro">
+
+        <h1>
+            Document Review
+        </h1>
+
+        <p id="introMessage">
+            Your document is being reviewed page by page.
+        </p>
+
+        <div class="job-line">
+
+            <div class="info-chip">
+                Job:
+                <span id="jobIdDisplay">—</span>
+            </div>
+
+            <div class="info-chip">
+                Version:
+                <span id="versionDisplay">—</span>
+            </div>
+
+            <div
+                class="info-chip"
+                id="serviceChip"
+            >
+                Service:
+                <span id="serviceDisplay">—</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PROGRESS -->
+
+    <section class="progress-panel">
+
+        <div class="progress-top">
+
+            <div class="progress-label">
+                Review progress
+            </div>
+
+            <div
+                class="progress-count"
+                id="progressCount"
+            >
+                0 / 0
+            </div>
+
+        </div>
+
+        <div class="progress-track">
+
+            <div
+                id="progressFill"
+                class="progress-fill"
+            ></div>
+
+        </div>
+
+        <div
+            id="progressMessage"
+            class="progress-message"
         >
-            SEND
-        </button>
+            Waiting for the review to begin.
+        </div>
 
-    </form>
+    </section>
 
-</div>
 
-</section><!-- ========================================================
-     CUSTOMER / INTELLIGENCE CONVERSATION
-========================================================= --><section
-    id="chatView"
-    class="chat-view"
-><div class="chat-header">
+    <!-- REVIEW HEADING -->
 
-    <h2
-        id="chatTitle"
-        class="chat-title"
+    <div class="review-heading">
+
+        <h2>
+            Pages
+        </h2>
+
+        <span id="pageSummary">
+            0 pages
+        </span>
+
+    </div>
+
+
+    <!-- PAGE LIST -->
+
+    <section
+        id="pages"
+        class="pages"
     >
-        Your Service
-    </h2>
 
-    <p class="chat-subtitle">
-        Your request is now active. Continue giving instructions,
-        supplying documents, asking questions or requesting changes.
-    </p>
+        <div
+            id="loading"
+            class="loading"
+        >
 
-</div>
+            <div class="spinner"></div>
 
+            Loading document review...
 
-<div
-    id="conversation"
-    class="conversation"
-></div>
+        </div>
+
+    </section>
 
 
-<div class="workflow-card">
+    <!-- COMPLETE REVIEW -->
 
-    <h3 class="workflow-title">
-        Work Status
-    </h3>
+    <section
+        id="completeReview"
+        class="complete-review hidden"
+    >
+
+        <h3>
+            Complete Document Review
+        </h3>
+
+        <div
+            id="completeReviewContent"
+            class="complete-review-content"
+        ></div>
+
+    </section>
+
+
+    <!-- CORRECTION -->
+
+    <section class="correction-panel">
+
+        <h2>
+            Request a Correction
+        </h2>
+
+        <p>
+            Tell the assistant exactly what you want changed.
+            The corrected document will be reviewed again before
+            approval becomes available.
+        </p>
+
+        <textarea
+            id="correctionInput"
+            placeholder="Describe the correction you want..."
+        ></textarea>
+
+        <div class="actions">
+
+            <button
+                id="correctionButton"
+                class="primary full-button"
+                type="button"
+                disabled
+            >
+                Request Correction
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- APPROVAL -->
+
+    <section class="approval-panel">
+
+        <h2>
+            Approval
+        </h2>
+
+        <p>
+            Approval becomes available only after the current
+            document version has completed its review.
+        </p>
+
+        <div class="version">
+            Current version:
+            <strong id="approvalVersion">
+                —
+            </strong>
+        </div>
+
+        <div class="actions">
+
+            <button
+                id="approveButton"
+                class="primary full-button"
+                type="button"
+                disabled
+            >
+                Approve Document
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- NOTICE -->
 
     <div
-        id="workflowStatus"
-        class="workflow-status"
-    >
-        Your request is being handled.
-    </div>
+        id="notice"
+        class="notice"
+    ></div>
 
-    <button
-        id="openReviewButton"
-        class="review-link"
-        type="button"
-    >
-        Open Your Review
-    </button>
+</main>
 
-</div>
-
-
-<div class="correction-card">
-
-    <h3 class="correction-title">
-        Request a Correction
-    </h3>
-
-    <p class="correction-help">
-        If your review is available and you want something changed,
-        describe the exact correction here.
-    </p>
-
-    <textarea
-        id="correctionInput"
-        class="correction-input"
-        placeholder="Write the correction or change you want..."
-    ></textarea>
-
-    <button
-        id="correctionSubmit"
-        class="correction-submit"
-        type="button"
-    >
-        SEND CORRECTION
-    </button>
-
-</div>
-
-
-<div
-    id="paymentCard"
-    class="payment-card"
->
-
-    <div class="payment-title">
-        Payment
-    </div>
-
-    <div
-        id="paymentDetails"
-        class="payment-details"
-    >
-        Your approved work is ready for payment.
-    </div>
-
-    <div class="payment-actions">
-
-        <button
-            id="paymentReportButton"
-            class="payment-report"
-            type="button"
-        >
-            Report Payment
-        </button>
-
-        <button
-            id="paymentCheckButton"
-            class="payment-check"
-            type="button"
-        >
-            Check Status
-        </button>
-
-    </div>
-
-    <button
-        id="downloadButton"
-        class="download-button"
-        type="button"
-    >
-        ⬇ Download Your Work
-    </button>
-
-</div>
-
-</section></div></main><!-- ========================================================
-     BOTTOM CUSTOMER CONTROLS
-========================================================= --><section class="bottom"><div class="bottom-inner"><div
-    id="voiceRecording"
-    class="voice-recording"
->
-    🔴 Recording... tap Voice again to stop.
-</div>
-
-
-<div class="tools">
-
-    <button
-        id="uploadButton"
-        class="tool-button"
-        type="button"
-    >
-        📄 Upload Documents
-    </button>
-
-    <button
-        id="voiceButton"
-        class="tool-button gold"
-        type="button"
-    >
-        🎤 Voice
-    </button>
-
-    <button
-        id="customerServiceButton"
-        class="tool-button"
-        type="button"
-    >
-        Customer Service
-    </button>
-
-</div>
-
-
-<button
-    id="chooseServiceButton"
-    class="choose-service-button"
-    type="button"
->
-    Choose Another Service
-</button>
-
-
-<input
-    id="fileInput"
-    type="file"
-    accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
->
-
-
-<div class="composer">
-
-    <textarea
-        id="messageInput"
-        class="message-input"
-        rows="1"
-        placeholder="Type your message..."
-        autocomplete="off"
-    ></textarea>
-
-    <button
-        id="sendButton"
-        class="send-button"
-        type="button"
-    >
-        SEND
-    </button>
-
-</div>
-
-
-<div
-    id="status"
-    class="status"
-></div>
-
-</div></section></div><script>
-"use strict";
-
-/*
-==============================================================
-NAIJA POCKET BUSINESS CENTER
-WORKSPACE — COMPLETE REPLACEMENT
-==============================================================
-
-PRINCIPLE
----------
-
-The browser is the CUSTOMER INTERFACE.
-
-The browser does NOT become the intelligence,
-document engine, billing engine or review engine.
-
-FLOW
-----
-
-CUSTOMER
-   ↓
-SERVICE SELECTION
-   ↓
-WORKSPACE
-   ↓
-/api/chat
-   ↓
-BACKEND INTELLIGENCE
-   ↓
-CUSTOMER CONVERSATION
-   ↓
-BACKEND DECIDES WHEN WORK IS READY
-   ↓
-REVIEW
-   ↓
-CORRECTION
-   ↓
-APPROVAL
-   ↓
-PAYMENT
-   ↓
-DOWNLOAD
-
-The browser never takes an intelligence reply and
-pretends that reply is a document-review payload.
-
-The browser never invents a payment amount.
-
-The browser never creates a fake document version.
-
-The browser never decides that a document is ready
-simply because /api/chat returned text.
-
-==============================================================
-*/
-
+</div><script>
 
 /* ============================================================
    CONFIGURATION
-============================================================ */
+   ============================================================ */
 
 const API_BASE = "";
 
-
-/* ============================================================
-   DOM
-============================================================ */
-
-const $ = id =>
-    document.getElementById(id);
-
-
-const formView =
-    $("formView");
-
-const chatView =
-    $("chatView");
-
-const serviceForm =
-    $("serviceForm");
-
-const fields =
-    $("fields");
-
-const formSubmit =
-    $("formSubmit");
-
-const serviceBadge =
-    $("serviceBadge");
-
-const introTitle =
-    $("introTitle");
-
-const introText =
-    $("introText");
-
-const price =
-    $("price");
-
-const chatTitle =
-    $("chatTitle");
-
-const conversation =
-    $("conversation");
-
-const workflowStatus =
-    $("workflowStatus");
-
-const openReviewButton =
-    $("openReviewButton");
-
-const correctionInput =
-    $("correctionInput");
-
-const correctionSubmit =
-    $("correctionSubmit");
-
-const paymentCard =
-    $("paymentCard");
-
-const paymentDetails =
-    $("paymentDetails");
-
-const paymentReportButton =
-    $("paymentReportButton");
-
-const paymentCheckButton =
-    $("paymentCheckButton");
-
-const downloadButton =
-    $("downloadButton");
-
-const uploadButton =
-    $("uploadButton");
-
-const voiceButton =
-    $("voiceButton");
-
-const customerServiceButton =
-    $("customerServiceButton");
-
-const chooseServiceButton =
-    $("chooseServiceButton");
-
-const fileInput =
-    $("fileInput");
-
-const messageInput =
-    $("messageInput");
-
-const sendButton =
-    $("sendButton");
-
-const status =
-    $("status");
-
-const voiceRecording =
-    $("voiceRecording");
-
-
-/* ============================================================
-   SESSION
-============================================================ */
-
-const params =
-    new URLSearchParams(
-        location.search
-    );
-
-
-const service =
-    (
-        params.get("service")
-        || "Business Center Service"
-    ).trim();
-
-
-function createId(prefix){
-
-    try{
-
-        if(
-            typeof crypto !== "undefined"
-            &&
-            typeof crypto.randomUUID === "function"
-        ){
-
-            return (
-                prefix
-                + crypto.randomUUID()
-            );
-
-        }
-
-    }catch(error){}
-
-
-    return (
-        prefix
-        + Date.now()
-        + "_"
-        + Math.random()
-            .toString(36)
-            .slice(2)
-    );
-}
-
-
-function storageGet(key){
-
-    try{
-        return localStorage.getItem(key);
-    }catch(error){
-        return null;
-    }
-
-}
-
-
-function storageSet(
-    key,
-    value
-){
-
-    try{
-        localStorage.setItem(
-            key,
-            value
-        );
-    }catch(error){}
-
-}
-
-
-let customerId =
-    storageGet(
-        "npbc_customer_id"
-    )
-    || createId(
-        "customer_"
-    );
-
-
-storageSet(
-    "npbc_customer_id",
-    customerId
-);
-
-
-let jobId =
-    params.get("job_id")
-    || storageGet("npbc_job_id")
-    || createId("job_");
-
-
-storageSet(
-    "npbc_job_id",
-    jobId
-);
-
-
-let requestId =
-    storageGet(
-        "npbc_client_request_id"
-    )
-    || createId(
-        "request_"
-    );
-
-
-storageSet(
-    "npbc_client_request_id",
-    requestId
-);
+/*
+ * The API and review page are served by the same FastAPI
+ * application, so relative API URLs are intentionally used.
+ */
+
+const POLL_INTERVAL = 1500;
 
 
 /* ============================================================
    STATE
-============================================================ */
+   ============================================================ */
 
-let busy = false;
-
-let serviceStarted = false;
-
-let reviewReady = false;
-
-let approved = false;
-
-let paymentReported = false;
-
-let paymentConfirmed = false;
+let jobId = "";
 
 let currentVersionId = "";
 
-let mediaRecorder = null;
+let currentStatus = "";
 
-let recordingStream = null;
+let pollingTimer = null;
 
-let recordedChunks = [];
+let correctionRunning = false;
+
+let approvalRunning = false;
 
 
 /* ============================================================
-   HELPERS
-============================================================ */
+   DOM
+   ============================================================ */
 
-function clean(value){
+const statusDot =
+    document.getElementById("statusDot");
 
-    if(value === null || value === undefined){
-        return null;
-    }
+const statusText =
+    document.getElementById("statusText");
+
+const introMessage =
+    document.getElementById("introMessage");
+
+const jobIdDisplay =
+    document.getElementById("jobIdDisplay");
+
+const versionDisplay =
+    document.getElementById("versionDisplay");
+
+const serviceDisplay =
+    document.getElementById("serviceDisplay");
+
+const progressCount =
+    document.getElementById("progressCount");
+
+const progressFill =
+    document.getElementById("progressFill");
+
+const progressMessage =
+    document.getElementById("progressMessage");
+
+const pageSummary =
+    document.getElementById("pageSummary");
+
+const pagesContainer =
+    document.getElementById("pages");
+
+const loading =
+    document.getElementById("loading");
+
+const completeReview =
+    document.getElementById("completeReview");
+
+const completeReviewContent =
+    document.getElementById("completeReviewContent");
+
+const correctionInput =
+    document.getElementById("correctionInput");
+
+const correctionButton =
+    document.getElementById("correctionButton");
+
+const approvalVersion =
+    document.getElementById("approvalVersion");
+
+const approveButton =
+    document.getElementById("approveButton");
+
+const notice =
+    document.getElementById("notice");
+
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+
+function escapeHtml(value){
 
     const text =
-        String(value).trim();
+        String(value ?? "");
 
-    return text || null;
+    return text
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 }
 
 
-function setStatus(
+function textOrDash(value){
+
+    const text =
+        String(value ?? "").trim();
+
+    return text || "—";
+}
+
+
+function showNotice(
     message,
     type = ""
 ){
 
-    status.textContent =
-        message || "";
+    notice.textContent =
+        String(message || "");
 
-    status.className =
-        "status"
-        + (
+    notice.className =
+        "notice show" +
+        (
             type
-                ? " " + type
-                : ""
+            ? " " + type
+            : ""
         );
-
 }
 
 
-function setWorkflow(
-    message
+function hideNotice(){
+
+    notice.className =
+        "notice";
+
+    notice.textContent =
+        "";
+}
+
+
+function setStatus(
+    status,
+    label
 ){
 
-    workflowStatus.textContent =
-        message || "";
+    statusDot.className =
+        "status-dot";
 
+    if(status === "running"){
+        statusDot.classList.add("running");
+    }
+
+    if(status === "complete"){
+        statusDot.classList.add("complete");
+    }
+
+    if(status === "error"){
+        statusDot.classList.add("error");
+    }
+
+    statusText.textContent =
+        label || "Loading";
 }
 
 
-function setBusy(
+function normalizeStatus(
     value
 ){
 
-    busy = Boolean(value);
-
-    [
-        formSubmit,
-        sendButton,
-        uploadButton,
-        voiceButton,
-        customerServiceButton,
-        chooseServiceButton,
-        correctionSubmit,
-        openReviewButton,
-        paymentReportButton,
-        paymentCheckButton
-    ].forEach(button => {
-
-        if(button){
-            button.disabled =
-                busy;
-        }
-
-    });
-
+    return String(
+        value ?? ""
+    )
+    .trim()
+    .toLowerCase();
 }
 
 
-function appendMessage(
-    role,
-    text
+/* ============================================================
+   JOB ID
+   ============================================================ */
+
+function getJobId(){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    return (
+        params.get("job_id")
+        || params.get("jobId")
+        || ""
+    ).trim();
+}
+
+
+/* ============================================================
+   STATUS DISPLAY
+   ============================================================ */
+
+function updateStatusDisplay(
+    job
+){
+
+    const status =
+        normalizeStatus(
+            job.status
+        );
+
+    currentStatus =
+        status;
+
+    if(status === "reviewing"){
+
+        setStatus(
+            "running",
+            "Reviewing"
+        );
+
+        introMessage.textContent =
+            "Your document is being reviewed page by page. " +
+            "Completed pages remain visible while the remaining pages are processed.";
+
+        progressMessage.textContent =
+            "The review is still running.";
+
+    }else if(status === "review_complete"){
+
+        setStatus(
+            "complete",
+            "Review complete"
+        );
+
+        introMessage.textContent =
+            "The complete document review is now available.";
+
+        progressMessage.textContent =
+            "Every document page has completed review.";
+
+    }else if(status === "correcting"){
+
+        setStatus(
+            "running",
+            "Correcting"
+        );
+
+        introMessage.textContent =
+            "Your requested correction is being applied.";
+
+        progressMessage.textContent =
+            "The corrected document will automatically return for review.";
+
+    }else if(status === "approved"){
+
+        setStatus(
+            "complete",
+            "Approved"
+        );
+
+        introMessage.textContent =
+            "This document version has been approved.";
+
+        progressMessage.textContent =
+            "The current version is approved.";
+
+    }else if(
+        status === "review_error"
+        || status === "correction_error"
+    ){
+
+        setStatus(
+            "error",
+            "Action failed"
+        );
+
+        introMessage.textContent =
+            "The document could not complete the current operation.";
+
+        progressMessage.textContent =
+            "Please review the error message below.";
+
+    }else{
+
+        setStatus(
+            "running",
+            status || "Processing"
+        );
+
+        progressMessage.textContent =
+            "The document is being processed.";
+    }
+}
+
+
+/* ============================================================
+   PROGRESS
+   ============================================================ */
+
+function updateProgress(
+    progress,
+    totalPages
+){
+
+    const completed =
+        Math.max(
+            0,
+            Number(
+                progress?.completed ?? 0
+            )
+        );
+
+    const total =
+        Math.max(
+            0,
+            Number(
+                progress?.total
+                ?? totalPages
+                ?? 0
+            )
+        );
+
+    progressCount.textContent =
+        `${completed} / ${total}`;
+
+    let percent = 0;
+
+    if(total > 0){
+
+        percent =
+            Math.min(
+                100,
+                Math.round(
+                    (completed / total) * 100
+                )
+            );
+    }
+
+    progressFill.style.width =
+        `${percent}%`;
+
+    pageSummary.textContent =
+        `${total} ${
+            total === 1
+            ? "page"
+            : "pages"
+        }`;
+}
+
+
+/* ============================================================
+   PAGE STATUS
+   ============================================================ */
+
+function pageStatusLabel(
+    status
 ){
 
     const value =
-        clean(text);
+        normalizeStatus(status);
 
-    if(!value){
-        return;
+    if(value === "reviewed"){
+        return "Reviewed";
     }
 
+    if(value === "reviewing"){
+        return "Reviewing";
+    }
 
-    const element =
-        document.createElement("div");
+    if(value === "error"){
+        return "Error";
+    }
 
+    if(value === "correcting"){
+        return "Correcting";
+    }
 
-    element.className =
-        "message "
-        + role;
+    if(value === "corrected"){
+        return "Corrected";
+    }
 
+    if(value === "queued"){
+        return "Waiting";
+    }
 
-    element.textContent =
-        value;
-
-
-    conversation.appendChild(
-        element
-    );
-
-
-    conversation.scrollTop =
-        conversation.scrollHeight;
-
-}
-
-
-function appendSystem(
-    text
-){
-
-    appendMessage(
-        "system",
-        text
-    );
-
-}
-
-
-function errorMessage(
-    data,
-    fallback
-){
-
-    return (
-        clean(data?.error_message)
-        || clean(data?.message)
-        || clean(data?.error)
-        || clean(data?.detail)
-        || clean(data?.reply)
-        || fallback
-    );
-
+    return value
+        ? value.replace(/_/g," ")
+        : "Waiting";
 }
 
 
 /* ============================================================
-   SERVICE FORMS
-============================================================ */
-
-const genericFields = [
-
-    {
-        name:"request",
-        label:"What do you need?",
-        required:true,
-        type:"textarea",
-        placeholder:
-            "Tell us what you want us to do."
-    },
-
-    {
-        name:"important_details",
-        label:"Important details",
-        required:false,
-        type:"textarea",
-        placeholder:
-            "Add any information that will help us understand your request."
-    },
-
-    {
-        name:"other_instructions",
-        label:"Other instructions",
-        required:false,
-        type:"textarea",
-        placeholder:
-            "Anything else you want us to consider?"
-    }
-
-];
-
-
-const serviceFields = {
-
-    "seminar papers":[
-
-        {
-            name:"topic",
-            label:"Topic / Title",
-            required:true,
-            type:"textarea",
-            placeholder:
-                "Enter the seminar paper topic."
-        },
-
-        {
-            name:"length",
-            label:"Desired length",
-            required:true,
-            type:"text",
-            placeholder:
-                "e.g. 3 pages or 2,000 words"
-        },
-
-        {
-            name:"formatting_style",
-            label:"Formatting style",
-            required:false,
-            type:"text",
-            placeholder:
-                "e.g. APA, MLA, Harvard"
-        },
-
-        {
-            name:"special_instructions",
-            label:"Special instructions",
-            required:false,
-            type:"textarea",
-            placeholder:
-                "Points to cover, structure, tone or other instructions."
-        }
-
-    ],
-
-
-    "essay writing":[
-
-        {
-            name:"topic",
-            label:"Essay topic",
-            required:true,
-            type:"textarea",
-            placeholder:
-                "Enter the essay topic or question."
-        },
-
-        {
-            name:"length",
-            label:"Desired length",
-            required:true,
-            type:"text",
-            placeholder:
-                "e.g. 1,000 words"
-        },
-
-        {
-            name:"academic_level",
-            label:"Academic level",
-            required:false,
-            type:"text",
-            placeholder:
-                "e.g. undergraduate"
-        },
-
-        {
-            name:"special_instructions",
-            label:"Additional instructions",
-            required:false,
-            type:"textarea",
-            placeholder:
-                "Anything specific you want included."
-        }
-
-    ],
-
-
-    "cv writing":[
-
-        {
-            name:"full_name",
-            label:"Full name",
-            required:true,
-            type:"text",
-            placeholder:
-                "Enter your full name."
-        },
-
-        {
-            name:"career_target",
-            label:"Job / career you are targeting",
-            required:true,
-            type:"text",
-            placeholder:
-                "e.g. Accountant"
-        },
-
-        {
-            name:"experience",
-            label:"Work experience",
-            required:false,
-            type:"textarea",
-            placeholder:
-                "Your work history and responsibilities."
-        },
-
-        {
-            name:"education",
-            label:"Education",
-            required:false,
-            type:"textarea",
-            placeholder:
-                "Schools, qualifications and dates."
-        },
-
-        {
-            name:"skills",
-            label:"Skills and achievements",
-            required:false,
-            type:"textarea",
-            placeholder:
-                "Important skills, achievements or certifications."
-        },
-
-        {
-            name:"additional_information",
-            label:"Additional information",
-            required:false,
-            type:"textarea",
-            placeholder:
-                "Anything else that should appear in your CV."
-        }
-
-    ],
-
-
-    "document formatting":[
-
-        {
-            name:"document_title",
-            label:"Document title",
-            required:true,
-            type:"text",
-            placeholder:
-                "Enter the document title."
-        },
-
-        {
-            name:"document_type",
-            label:"Document type",
-            required:true,
-            type:"text",
-            placeholder:
-                "e.g. report, essay, thesis"
-        },
-
-        {
-            name:"page_count",
-            label:"Number of pages",
-            required:false,
-            type:"text",
-            placeholder:
-                "Enter the number of pages if known."
-        },
-
-        {
-            name:"formatting_style",
-            label:"Formatting style",
-            required:false,
-            type:"text",
-            placeholder:
-                "e.g. APA, MLA, Harvard"
-        },
-
-        {
-            name:"special_instructions",
-            label:"Specific formatting instructions",
-            required:false,
-            type:"textarea",
-            placeholder:
-                "Font, spacing, margins, headings, layout, etc."
-        }
-
-    ],
-
-
-    "research assistance":[
-
-        {
-            name:"research_topic",
-            label:"Research topic or question",
-            required:true,
-            type:"textarea",
-            placeholder:
-                "What do you want to research?"
-        },
-
-        {
-            name:"desired_length",
-            label:"Desired length",
-            required:false,
-            type:"text",
-            placeholder:
-                "e.g. 3 pages or 1,500 words"
-        },
-
-        {
-            name:"research_purpose",
-            label:"Purpose of the research",
-            required:false,
-            type:"textarea",
-            placeholder:
-                "Tell us what the research is for."
-        },
-
-        {
-            name:"special_instructions",
-            label:"Additional instructions",
-            required:false,
-            type:"textarea",
-            placeholder:
-                "Anything specific you want covered."
-        }
-
-    ]
-
-};
-
-
-function getFields(){
-
-    const selected =
-        service.toLowerCase();
-
-
-    const match =
-        Object.keys(
-            serviceFields
-        ).find(
-            name =>
-                selected.includes(name)
-        );
-
-
-    return match
-        ? serviceFields[match]
-        : genericFields;
-
-}
-
-
-function renderFields(){
-
-    fields.innerHTML = "";
-
-
-    getFields().forEach(
-        definition => {
-
-            const wrapper =
-                document.createElement("div");
-
-
-            wrapper.className =
-                "field";
-
-
-            const label =
-                document.createElement("label");
-
-
-            label.htmlFor =
-                definition.name;
-
-
-            label.innerHTML =
-                definition.label
-                + (
-                    definition.required
-                        ? ' <span class="required">*</span>'
-                        : ' <span class="optional">(optional)</span>'
-                );
-
-
-            const control =
-                document.createElement(
-                    definition.type === "textarea"
-                        ? "textarea"
-                        : "input"
-                );
-
-
-            control.id =
-                definition.name;
-
-
-            control.name =
-                definition.name;
-
-
-            control.placeholder =
-                definition.placeholder
-                || "";
-
-
-            if(
-                definition.type !== "textarea"
-            ){
-
-                control.type =
-                    definition.type
-                    || "text";
-
-            }
-
-
-            if(
-                definition.required
-            ){
-
-                control.required =
-                    true;
-
-            }
-
-
-            wrapper.append(
-                label,
-                control
-            );
-
-
-            fields.append(
-                wrapper
-            );
-
-        }
-    );
-
-}
-
-
-function collectForm(){
-
-    const result = {};
-
-
-    serviceForm
-        .querySelectorAll(
-            "input,textarea"
-        )
-        .forEach(
-            element => {
-
-                const value =
-                    clean(
-                        element.value
-                    );
-
-
-                if(value){
-
-                    result[
-                        element.name
-                    ] = value;
-
-                }
-
-            }
-        );
-
-
-    return result;
-
-}
-
-
-/* ============================================================
-   API
-============================================================ */
-
-async function requestJSON(
-    url,
-    options = {}
+   RENDER ONE PAGE
+   ============================================================ */
+
+function renderPage(
+    page,
+    fallbackPosition
 ){
 
-    const response =
-        await fetch(
-            API_BASE + url,
-            options
+    const number =
+        page?.page_number
+        ?? fallbackPosition;
+
+    const position =
+        page?.position
+        ?? fallbackPosition;
+
+    const status =
+        normalizeStatus(
+            page?.status
         );
 
+    const content =
+        String(
+            page?.content
+            ?? ""
+        );
 
-    const data =
-        await response
-            .json()
-            .catch(
-                () => ({})
-            );
+    const review =
+        String(
+            page?.review
+            ?? ""
+        );
 
+    const error =
+        String(
+            page?.error
+            ?? ""
+        ).trim();
 
-    if(!response.ok){
-
-        throw new Error(
-            errorMessage(
-                data,
-                "The server could not complete the request."
+    const statusClass =
+        status === "reviewing"
+        ? "reviewing"
+        : (
+            status === "reviewed"
+            ? "reviewed"
+            : (
+                status === "error"
+                ? "error"
+                : ""
             )
         );
 
-    }
+    const reviewBlock =
+        review.trim()
+        ? `
+            <div class="review-section">
 
+                <div class="section-label">
+                    Review for Page ${escapeHtml(number)}
+                </div>
 
-    return data;
+                <div class="review-content">${escapeHtml(review)}</div>
 
+            </div>
+        `
+        : `
+            <div class="review-section">
+
+                <div class="section-label">
+                    Review
+                </div>
+
+                <div class="review-empty">
+                    ${
+                        status === "reviewing"
+                        ? "This page is currently being reviewed."
+                        : "Review for this page has not been returned yet."
+                    }
+                </div>
+
+            </div>
+        `;
+
+    const errorBlock =
+        error
+        ? `
+            <div class="page-error">
+                ${escapeHtml(error)}
+            </div>
+        `
+        : "";
+
+    return `
+        <article
+            class="document-page"
+            data-page-number="${escapeHtml(number)}"
+            data-position="${escapeHtml(position)}"
+        >
+
+            <div class="page-header">
+
+                <div class="page-title">
+                    Page ${escapeHtml(number)}
+                </div>
+
+                <div class="page-status ${statusClass}">
+                    ${escapeHtml(
+                        pageStatusLabel(status)
+                    )}
+                </div>
+
+            </div>
+
+            <div class="page-body">
+
+                <div class="section-label">
+                    Document Content
+                </div>
+
+                <div class="document-content">${
+                    content.trim()
+                    ? escapeHtml(content)
+                    : "No document content was returned for this page."
+                }</div>
+
+                ${reviewBlock}
+
+                ${errorBlock}
+
+            </div>
+
+        </article>
+    `;
 }
 
 
 /* ============================================================
-   START SERVICE
-============================================================ */
+   RENDER ALL PAGES
+   ============================================================ */
 
-/*
-This is deliberately ONE intelligence call.
-
-The frontend does not ask the intelligence layer for a
-"guidance response", then make another call to create work,
-then manufacture document_text.
-
-The service selection and customer's initial information
-are sent together as one customer action.
-
-The backend decides what happens next.
-*/
-
-async function startService(
-    formData
+function renderPages(
+    reviewPages,
+    documentPages
 ){
-
-    if(busy){
-        return;
-    }
-
-
-    setBusy(true);
-
-    setStatus(
-        "Sending your request..."
-    );
-
-
-    try{
-
-        const data =
-            await requestJSON(
-                "/api/chat",
-                {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-
-                        message:
-                            "The customer has selected this service and submitted the service information. Understand the request and continue the service workflow.",
-
-                        service,
-
-                        event:
-                            "service_request",
-
-                        customer_id:
-                            customerId,
-
-                        job_id:
-                            jobId,
-
-                        client_request_id:
-                            requestId,
-
-                        form_data:
-                            formData,
-
-                        activate_intelligence:
-                            true
-
-                    })
-                }
-            );
-
-
-        serviceStarted =
-            true;
-
-
-        if(data.job_id){
-
-            jobId =
-                data.job_id;
-
-            storageSet(
-                "npbc_job_id",
-                jobId
-            );
-
-        }
-
-
-        formView.style.display =
-            "none";
-
-
-        chatView.classList.add(
-            "show"
-        );
-
-
-        chatTitle.textContent =
-            service;
-
-
-        appendSystem(
-            "Your service request is now active."
-        );
-
-
-        if(data.reply){
-
-            appendMessage(
-                "assistant",
-                data.reply
-            );
-
-        }
-
-
-        updateWorkflowFromResponse(
-            data
-        );
-
-
-        setStatus(
-            "Your request is active.",
-            "success"
-        );
-
-
-    }
-    catch(error){
-
-        console.error(
-            "SERVICE START ERROR",
-            error
-        );
-
-
-        setStatus(
-            error.message
-            || "Your request could not be started.",
-            "error"
-        );
-
-    }
-    finally{
-
-        setBusy(false);
-
-    }
-
-}
-
-
-/* ============================================================
-   RESPONSE STATE
-============================================================ */
-
-function updateWorkflowFromResponse(
-    data
-){
-
-    if(!data){
-        return;
-    }
-
-
-    if(data.job_id){
-
-        jobId =
-            data.job_id;
-
-        storageSet(
-            "npbc_job_id",
-            jobId
-        );
-
-    }
-
-
-    if(data.version_id){
-
-        currentVersionId =
-            data.version_id;
-
-    }
-
 
     /*
-    Backend may explicitly tell the browser that the
-    review is ready.
+     * review_pages is the authoritative review structure.
+     *
+     * If it has not populated yet, document_pages is still
+     * rendered so the customer can see the entire document
+     * rather than a blank/cut-off review area.
+     */
 
-    We do NOT infer this merely from reply text.
-    */
-
-    const statusValue =
-        String(
-            data.status
-            || data.workflow_status
-            || ""
-        ).toLowerCase();
-
-
-    const reviewState =
-        String(
-            data.review_status
-            || ""
-        ).toLowerCase();
-
+    let pages =
+        Array.isArray(reviewPages)
+        ? reviewPages
+        : [];
 
     if(
-        data.review_ready === true
-        ||
-        statusValue === "review_ready"
-        ||
-        statusValue === "review_complete"
-        ||
-        reviewState === "review_ready"
-        ||
-        reviewState === "review_complete"
+        pages.length === 0
+        && Array.isArray(documentPages)
+        && documentPages.length > 0
     ){
 
-        reviewReady =
-            true;
+        pages =
+            documentPages.map(
+                (
+                    page,
+                    index
+                ) => ({
+                    page_number:
+                        page?.page_number
+                        ?? index + 1,
 
+                    position:
+                        index + 1,
 
-        setWorkflow(
-            "Your work is ready for review."
-        );
+                    status:
+                        "queued",
 
+                    content:
+                        page?.content
+                        ?? "",
 
-        openReviewButton.classList.add(
-            "show"
-        );
+                    review:
+                        "",
 
-
-        return;
-
-    }
-
-
-    if(
-        data.approved === true
-        ||
-        statusValue === "approved"
-    ){
-
-        approved =
-            true;
-
-
-        paymentCard.classList.add(
-            "show"
-        );
-
-
-        setWorkflow(
-            "Your work has been approved and is ready for payment."
-        );
-
-
-        return;
-
-    }
-
-
-    if(
-        data.payment_status
-    ){
-
-        const paymentStatus =
-            String(
-                data.payment_status
-            ).toLowerCase();
-
-
-        if(paymentStatus === "paid"){
-
-            paymentConfirmed =
-                true;
-
-
-            showDownload(
-                data.version_id
+                    error:
+                        null
+                })
             );
-
-        }
-
     }
 
+    if(pages.length === 0){
 
-    if(
-        data.status_message
-    ){
+        pagesContainer.innerHTML = `
+            <div class="loading">
+                No document pages have been returned yet.
+            </div>
+        `;
 
-        setWorkflow(
-            data.status_message
+        return;
+    }
+
+    /*
+     * Sort by document position/page number so pages are NEVER
+     * displayed in an arbitrary order.
+     */
+
+    pages =
+        [...pages].sort(
+            (a,b) => {
+
+                const aPosition =
+                    Number(
+                        a?.position
+                        ?? a?.page_number
+                        ?? 0
+                    );
+
+                const bPosition =
+                    Number(
+                        b?.position
+                        ?? b?.page_number
+                        ?? 0
+                    );
+
+                return (
+                    aPosition
+                    -
+                    bPosition
+                );
+            }
         );
 
-    }
+    /*
+     * Render EVERY page.
+     *
+     * There is intentionally no "first N pages" logic,
+     * no truncation and no assembled-review-only rendering.
+     */
 
+    pagesContainer.innerHTML =
+        pages
+            .map(
+                (
+                    page,
+                    index
+                ) =>
+                    renderPage(
+                        page,
+                        index + 1
+                    )
+            )
+            .join("");
+
+    loading.classList.add("hidden");
 }
 
 
 /* ============================================================
-   FORM
-============================================================ */
+   COMPLETE REVIEW
+   ============================================================ */
 
-serviceForm.addEventListener(
-    "submit",
-    event => {
+function renderCompleteReview(
+    assembled
+){
 
-        event.preventDefault();
+    const text =
+        String(
+            assembled ?? ""
+        ).trim();
 
+    if(!text){
 
-        if(busy){
-            return;
-        }
-
-
-        if(
-            !serviceForm.reportValidity()
-        ){
-
-            return;
-
-        }
-
-
-        startService(
-            collectForm()
+        completeReview.classList.add(
+            "hidden"
         );
 
+        completeReviewContent.textContent =
+            "";
+
+        return;
     }
-);
+
+    completeReviewContent.textContent =
+        text;
+
+    completeReview.classList.remove(
+        "hidden"
+    );
+}
 
 
 /* ============================================================
-   NORMAL CUSTOMER MESSAGE
-============================================================ */
+   BUTTON STATES
+   ============================================================ */
 
-async function sendMessage(
-    message
+function updateButtons(){
+
+    const complete =
+        currentStatus ===
+        "review_complete";
+
+    const approved =
+        currentStatus ===
+        "approved";
+
+    const activeReview =
+        currentStatus ===
+        "reviewing";
+
+    const activeCorrection =
+        currentStatus ===
+        "correcting";
+
+    const errorState =
+        currentStatus ===
+            "review_error"
+        ||
+        currentStatus ===
+            "correction_error";
+
+    const instruction =
+        correctionInput.value.trim();
+
+    correctionButton.disabled =
+        correctionRunning
+        ||
+        activeReview
+        ||
+        activeCorrection
+        ||
+        approved
+        ||
+        !instruction
+        ||
+        !jobId;
+
+    approveButton.disabled =
+        approvalRunning
+        ||
+        !complete
+        ||
+        !currentVersionId
+        ||
+        approved;
+
+    correctionInput.disabled =
+        correctionRunning
+        ||
+        activeReview
+        ||
+        activeCorrection
+        ||
+        approved;
+
+    if(
+        errorState
+        &&
+        !correctionRunning
+    ){
+
+        correctionInput.disabled =
+            false;
+    }
+}
+
+
+/* ============================================================
+   APPLY API STATE
+   ============================================================ */
+
+function applyJobState(
+    job
 ){
 
-    if(busy){
+    if(!job){
         return;
     }
 
+    if(job.job_id){
 
-    const text =
-        clean(message);
+        jobId =
+            String(
+                job.job_id
+            ).trim();
 
-
-    if(!text){
-        return;
+        jobIdDisplay.textContent =
+            textOrDash(jobId);
     }
 
+    if(job.version_id){
 
-    if(!serviceStarted){
+        currentVersionId =
+            String(
+                job.version_id
+            ).trim();
 
-        setStatus(
-            "Please send the service information first.",
+        versionDisplay.textContent =
+            textOrDash(
+                currentVersionId
+            );
+
+        approvalVersion.textContent =
+            textOrDash(
+                currentVersionId
+            );
+    }
+
+    if(job.service){
+
+        serviceDisplay.textContent =
+            textOrDash(
+                job.service
+            );
+    }
+
+    updateStatusDisplay(
+        job
+    );
+
+    updateProgress(
+        job.progress,
+        Array.isArray(
+            job.document_pages
+        )
+        ? job.document_pages.length
+        : 0
+    );
+
+    renderPages(
+        job.review_pages,
+        job.document_pages
+    );
+
+    renderCompleteReview(
+        job.assembled_review
+    );
+
+    updateButtons();
+
+    if(
+        job.error
+        &&
+        (
+            job.status === "review_error"
+            ||
+            job.status === "correction_error"
+        )
+    ){
+
+        const errorMessage =
+            typeof job.error === "object"
+            ? (
+                job.error.message
+                || "The operation failed."
+            )
+            : String(
+                job.error
+            );
+
+        showNotice(
+            errorMessage,
             "error"
         );
 
-        return;
+    }else if(
+        job.status ===
+        "review_complete"
+    ){
 
-    }
-
-
-    appendMessage(
-        "customer",
-        text
-    );
-
-
-    setBusy(true);
-
-    setStatus(
-        "Processing your message..."
-    );
-
-
-    try{
-
-        const data =
-            await requestJSON(
-                "/api/chat",
-                {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-
-                        message:text,
-
-                        service,
-
-                        event:
-                            "customer_message",
-
-                        customer_id:
-                            customerId,
-
-                        job_id:
-                            jobId,
-
-                        client_request_id:
-                            requestId,
-
-                        activate_intelligence:
-                            true
-
-                    })
-                }
-            );
-
-
-        if(data.reply){
-
-            appendMessage(
-                "assistant",
-                data.reply
-            );
-
-        }
-
-
-        updateWorkflowFromResponse(
-            data
-        );
-
-
-        setStatus(
-            "Ready.",
+        showNotice(
+            "Review complete. You can now request a correction or approve this document version.",
             "success"
         );
 
-    }
-    catch(error){
+    }else if(
+        job.status ===
+        "approved"
+    ){
 
-        console.error(
-            "MESSAGE ERROR",
-            error
+        showNotice(
+            "This document version has been approved.",
+            "success"
         );
 
+    }else{
 
-        appendSystem(
-            error.message
-            || "The message could not be processed."
-        );
-
-
-        setStatus(
-            error.message
-            || "The message could not be processed.",
-            "error"
-        );
-
+        hideNotice();
     }
-    finally{
-
-        setBusy(false);
-
-    }
-
 }
-
-
-sendButton.addEventListener(
-    "click",
-    () => {
-
-        const text =
-            clean(
-                messageInput.value
-            );
-
-
-        if(!text){
-
-            setStatus(
-                "Please type your message first.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        messageInput.value =
-            "";
-
-
-        messageInput.style.height =
-            "auto";
-
-
-        sendMessage(
-            text
-        );
-
-    }
-);
-
-
-messageInput.addEventListener(
-    "keydown",
-    event => {
-
-        if(
-            event.key === "Enter"
-            && !event.shiftKey
-        ){
-
-            event.preventDefault();
-
-            sendButton.click();
-
-        }
-
-    }
-);
-
-
-messageInput.addEventListener(
-    "input",
-    () => {
-
-        messageInput.style.height =
-            "auto";
-
-
-        messageInput.style.height =
-            Math.min(
-                messageInput.scrollHeight,
-                105
-            )
-            + "px";
-
-    }
-);
 
 
 /* ============================================================
-   REVIEW
-============================================================ */
+   FETCH REVIEW
+   ============================================================ */
 
-function openReview(){
+async function fetchReview(){
 
     if(!jobId){
+        return;
+    }
+
+    try{
+
+        const response =
+            await fetch(
+                `${API_BASE}/api/review?job_id=${encodeURIComponent(jobId)}`,
+                {
+                    method:"GET",
+                    cache:"no-store",
+                    headers:{
+                        "Accept":
+                            "application/json"
+                    }
+                }
+            );
+
+        let data = null;
+
+        try{
+            data =
+                await response.json();
+        }catch(error){
+            throw new Error(
+                "The review API returned an invalid response."
+            );
+        }
+
+        if(!response.ok){
+
+            throw new Error(
+                data?.error_message
+                ||
+                data?.error
+                ||
+                `Review request failed (${response.status}).`
+            );
+        }
+
+        if(!data.success){
+
+            throw new Error(
+                data?.error_message
+                ||
+                data?.error
+                ||
+                "The review request was unsuccessful."
+            );
+        }
+
+        applyJobState(
+            data
+        );
+
+        /*
+         * Keep polling while the backend is doing work.
+         *
+         * The API itself remains the source of truth.
+         */
+
+        if(
+            data.status === "reviewing"
+            ||
+            data.status === "correcting"
+        ){
+
+            schedulePolling();
+
+        }else{
+
+            stopPolling();
+        }
+
+    }catch(error){
+
+        console.error(
+            "Review polling error:",
+            error
+        );
 
         setStatus(
-            "There is no active review job.",
+            "error",
+            "Connection error"
+        );
+
+        showNotice(
+            error.message
+            ||
+            "Unable to load the current review.",
             "error"
         );
 
-        return;
+        /*
+         * A temporary network failure should not permanently
+         * stop the review page. Retry automatically.
+         */
 
+        schedulePolling();
     }
-
-
-    location.href =
-        "review.html?job_id="
-        + encodeURIComponent(
-            jobId
-        );
-
 }
 
 
-openReviewButton.addEventListener(
-    "click",
-    openReview
-);
+/* ============================================================
+   POLLING
+   ============================================================ */
+
+function schedulePolling(){
+
+    if(pollingTimer !== null){
+        return;
+    }
+
+    pollingTimer =
+        window.setTimeout(
+            () => {
+
+                pollingTimer =
+                    null;
+
+                fetchReview();
+
+            },
+            POLL_INTERVAL
+        );
+}
+
+
+function stopPolling(){
+
+    if(pollingTimer !== null){
+
+        window.clearTimeout(
+            pollingTimer
+        );
+
+        pollingTimer =
+            null;
+    }
+}
 
 
 /* ============================================================
    CORRECTION
-============================================================ */
+   ============================================================ */
 
-/*
-A correction is another customer instruction.
+async function requestCorrection(){
 
-The browser does NOT modify document text itself.
+    const instruction =
+        correctionInput.value.trim();
 
-The backend owns the correction and creates the new
-document version/review state.
-*/
-
-correctionSubmit.addEventListener(
-    "click",
-    async () => {
-
-        const instruction =
-            clean(
-                correctionInput.value
-            );
-
-
-        if(!instruction){
-
-            setStatus(
-                "Please write the correction you want.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        if(!jobId){
-
-            setStatus(
-                "There is no active job.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        setBusy(true);
-
-        setStatus(
-            "Sending your correction..."
-        );
-
-
-        try{
-
-            const data =
-                await requestJSON(
-                    "/api/correct",
-                    {
-                        method:"POST",
-                        headers:{
-                            "Content-Type":
-                                "application/json"
-                        },
-                        body:JSON.stringify({
-
-                            job_id:
-                                jobId,
-
-                            instruction
-
-                        })
-                    }
-                );
-
-
-            correctionInput.value =
-                "";
-
-
-            if(data.version_id){
-
-                currentVersionId =
-                    data.version_id;
-
-            }
-
-
-            updateWorkflowFromResponse(
-                data
-            );
-
-
-            setStatus(
-                "Your correction has been received and the new version is being prepared.",
-                "success"
-            );
-
-
-            /*
-            If the backend says a new review exists,
-            open the authoritative review page.
-
-            Otherwise stay here.
-            */
-
-            if(
-                data.review_ready === true
-                ||
-                data.review_status === "review_ready"
-                ||
-                data.status === "review_ready"
-            ){
-
-                openReview();
-
-            }
-
-        }
-        catch(error){
-
-            console.error(
-                "CORRECTION ERROR",
-                error
-            );
-
-
-            setStatus(
-                error.message
-                || "The correction could not be submitted.",
-                "error"
-            );
-
-        }
-        finally{
-
-            setBusy(false);
-
-        }
-
+    if(!instruction){
+        return;
     }
-);
-
-
-/* ============================================================
-   APPROVAL
-============================================================ */
-
-/*
-Approval is intentionally handled through the backend.
-
-The workspace does not assume that whatever version is in
-localStorage is approved.
-
-The backend remains authoritative.
-*/
-
-async function approveCurrentWork(){
 
     if(!jobId){
-
-        setStatus(
-            "There is no active job.",
+        showNotice(
+            "No review job is available.",
             "error"
         );
-
         return;
-
     }
 
+    correctionRunning =
+        true;
 
-    setBusy(true);
+    updateButtons();
 
-    setStatus(
-        "Checking your current work..."
+    showNotice(
+        "Your correction has been submitted. The corrected document will be reviewed again automatically.",
+        "success"
     );
-
 
     try{
 
-        const review =
-            await requestJSON(
-                "/api/review?job_id="
-                + encodeURIComponent(
-                    jobId
-                )
-            );
-
-
-        const reviewStatus =
-            String(
-                review.status
-                || review.review_status
-                || ""
-            ).toLowerCase();
-
-
-        if(
-            reviewStatus !== "review_complete"
-            &&
-            reviewStatus !== "review_ready"
-            &&
-            review.review_complete !== true
-        ){
-
-            throw new Error(
-                "Your review is not complete yet."
-            );
-
-        }
-
-
-        const versionId =
-            review.version_id
-            || currentVersionId;
-
-
-        if(!versionId){
-
-            throw new Error(
-                "The current document version is unavailable."
-            );
-
-        }
-
-
-        const approvedData =
-            await requestJSON(
-                "/api/approve",
+        const response =
+            await fetch(
+                `${API_BASE}/api/correct`,
                 {
                     method:"POST",
+
                     headers:{
                         "Content-Type":
+                            "application/json",
+
+                        "Accept":
                             "application/json"
                     },
-                    body:JSON.stringify({
 
+                    body:JSON.stringify({
                         job_id:
                             jobId,
 
-                        version_id:
-                            versionId
-
+                        instruction:
+                            instruction
                     })
                 }
             );
 
+        let data = null;
 
-        approved =
-            true;
+        try{
+            data =
+                await response.json();
+        }catch(error){
+            throw new Error(
+                "The correction API returned an invalid response."
+            );
+        }
 
+        if(!response.ok){
 
-        currentVersionId =
-            approvedData.version_id
-            || versionId;
+            throw new Error(
+                data?.error_message
+                ||
+                data?.error
+                ||
+                `Correction request failed (${response.status}).`
+            );
+        }
 
+        if(!data.success){
 
-        paymentCard.classList.add(
-            "show"
-        );
+            throw new Error(
+                data?.error_message
+                ||
+                data?.error
+                ||
+                "The correction request was unsuccessful."
+            );
+        }
 
+        /*
+         * The API increments the version immediately.
+         * We do not invent a version ourselves.
+         */
 
-        paymentDetails.textContent =
-            "Your work has been approved.\n"
-            + "Payment can now be completed.";
+        if(data.version_id){
 
+            currentVersionId =
+                String(
+                    data.version_id
+                ).trim();
 
-        setWorkflow(
-            "Your work has been approved. Payment is now available."
-        );
+            versionDisplay.textContent =
+                currentVersionId;
 
+            approvalVersion.textContent =
+                currentVersionId;
+        }
 
-        setStatus(
-            "Approved. Payment is ready.",
-            "success"
-        );
+        correctionInput.value =
+            "";
 
+        correctionRunning =
+            false;
 
-    }
-    catch(error){
+        /*
+         * Immediately fetch the new backend state.
+         */
 
-        console.error(
-            "APPROVAL ERROR",
-            error
-        );
+        await fetchReview();
 
+    }catch(error){
 
-        setStatus(
+        correctionRunning =
+            false;
+
+        showNotice(
             error.message
-            || "Approval could not be completed.",
+            ||
+            "Unable to submit the correction.",
             "error"
         );
 
+        updateButtons();
     }
-    finally{
-
-        setBusy(false);
-
-    }
-
 }
 
 
-/*
-The review page normally owns the actual approval button.
-
-This workspace keeps approval available if the backend
-explicitly exposes the corresponding workflow state.
-*/
-
-
 /* ============================================================
-   PAYMENT
-============================================================ */
+   APPROVAL
+   ============================================================ */
 
-/*
-IMPORTANT:
+async function approveDocument(){
 
-The browser never sends amount: 0.
+    if(
+        currentStatus !==
+        "review_complete"
+    ){
+        return;
+    }
 
-The browser does not calculate the service fee.
+    if(!jobId){
+        return;
+    }
 
-The backend must determine the authoritative amount.
-*/
+    if(!currentVersionId){
 
-paymentReportButton.addEventListener(
-    "click",
-    async () => {
-
-        if(!approved){
-
-            setStatus(
-                "Your work must be approved before payment.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        setBusy(true);
-
-        setStatus(
-            "Preparing your payment information..."
+        showNotice(
+            "The current document version is not available.",
+            "error"
         );
 
-
-        try{
-
-            const data =
-                await requestJSON(
-                    "/api/payment/create",
-                    {
-                        method:"POST",
-                        headers:{
-                            "Content-Type":
-                                "application/json"
-                        },
-                        body:JSON.stringify({
-
-                            job_id:
-                                jobId,
-
-                            customer_id:
-                                customerId,
-
-                            service
-
-                        })
-                    }
-                );
-
-
-            paymentReported =
-                true;
-
-
-            const amount =
-                data.amount
-                || data.total
-                || data.service_amount;
-
-
-            paymentDetails.textContent =
-                (
-                    amount
-                        ? "Amount: ₦"
-                            + Number(
-                                String(amount)
-                                    .replace(
-                                        /[^0-9.]/g,
-                                        ""
-                                    )
-                            ).toLocaleString()
-                        : "Payment information has been created."
-                )
-                + "\n\n"
-                + "Payment ID: "
-                + (
-                    data.payment_id
-                    || "Pending"
-                )
-                + "\nStatus: "
-                + (
-                    data.status
-                    || "Pending"
-                );
-
-
-            setStatus(
-                "Payment information is ready. Complete payment and then check the status.",
-                "success"
-            );
-
-        }
-        catch(error){
-
-            console.error(
-                "PAYMENT ERROR",
-                error
-            );
-
-
-            setStatus(
-                error.message
-                || "Payment could not be created.",
-                "error"
-            );
-
-        }
-        finally{
-
-            setBusy(false);
-
-        }
-
+        return;
     }
-);
 
+    approvalRunning =
+        true;
 
-/* ============================================================
-   PAYMENT STATUS
-============================================================ */
+    updateButtons();
 
-paymentCheckButton.addEventListener(
-    "click",
-    async () => {
-
-        if(!jobId){
-
-            setStatus(
-                "There is no active job.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        setBusy(true);
-
-        setStatus(
-            "Checking payment status..."
-        );
-
-
-        try{
-
-            const data =
-                await requestJSON(
-                    "/api/payment/status?job_id="
-                    + encodeURIComponent(
-                        jobId
-                    )
-                );
-
-
-            const paymentStatus =
-                String(
-                    data.status
-                    || data.payment_status
-                    || ""
-                ).toLowerCase();
-
-
-            if(
-                paymentStatus === "paid"
-                ||
-                paymentStatus === "confirmed"
-                ||
-                data.paid === true
-            ){
-
-                paymentConfirmed =
-                    true;
-
-
-                currentVersionId =
-                    data.version_id
-                    || currentVersionId;
-
-
-                showDownload(
-                    currentVersionId
-                );
-
-
-                paymentDetails.textContent +=
-                    "\nStatus: Paid";
-
-
-                setStatus(
-                    "Payment confirmed. Your work is ready for download.",
-                    "success"
-                );
-
-            }
-            else{
-
-                setStatus(
-                    "Payment is still pending."
-                );
-
-            }
-
-        }
-        catch(error){
-
-            console.error(
-                "PAYMENT STATUS ERROR",
-                error
-            );
-
-
-            setStatus(
-                error.message
-                || "Payment status could not be checked.",
-                "error"
-            );
-
-        }
-        finally{
-
-            setBusy(false);
-
-        }
-
-    }
-);
-
-
-/* ============================================================
-   DOWNLOAD
-============================================================ */
-
-function showDownload(
-    versionId
-){
-
-    downloadButton.classList.add(
-        "show"
+    showNotice(
+        "Submitting document approval...",
+        "success"
     );
 
-
-    downloadButton.onclick =
-        () => {
-
-            if(!jobId){
-
-                return;
-
-            }
-
-
-            let url =
-                API_BASE
-                + "/api/download?job_id="
-                + encodeURIComponent(
-                    jobId
-                );
-
-
-            const version =
-                versionId
-                || currentVersionId;
-
-
-            if(version){
-
-                url +=
-                    "&version_id="
-                    + encodeURIComponent(
-                        version
-                    );
-
-            }
-
-
-            location.href =
-                url;
-
-        };
-
-}
-
-
-downloadButton.addEventListener(
-    "click",
-    () => {
-
-        if(
-            paymentConfirmed
-            && jobId
-        ){
-
-            let url =
-                API_BASE
-                + "/api/download?job_id="
-                + encodeURIComponent(
-                    jobId
-                );
-
-
-            if(currentVersionId){
-
-                url +=
-                    "&version_id="
-                    + encodeURIComponent(
-                        currentVersionId
-                    );
-
-            }
-
-
-            location.href =
-                url;
-
-        }
-
-    }
-);
-
-
-/* ============================================================
-   DOCUMENT UPLOAD
-============================================================ */
-
-/*
-The upload endpoint receives the actual file.
-
-The workspace does not extract document text in JavaScript.
-
-The backend owns document extraction, OCR, storage and
-document processing.
-*/
-
-uploadButton.addEventListener(
-    "click",
-    () => {
-
-        if(!busy){
-
-            fileInput.click();
-
-        }
-
-    }
-);
-
-
-fileInput.addEventListener(
-    "change",
-    async () => {
-
-        const file =
-            fileInput.files?.[0];
-
-
-        if(!file){
-            return;
-        }
-
-
-        setBusy(true);
-
-        setStatus(
-            "Uploading your document..."
-        );
-
-
-        try{
-
-            const formData =
-                new FormData();
-
-
-            formData.append(
-                "file",
-                file
-            );
-
-
-            formData.append(
-                "customer_id",
-                customerId
-            );
-
-
-            formData.append(
-                "job_id",
-                jobId
-            );
-
-
-            formData.append(
-                "client_request_id",
-                requestId
-            );
-
-
-            formData.append(
-                "service",
-                service
-            );
-
-
-            const data =
-                await requestJSON(
-                    "/api/upload",
-                    {
-                        method:"POST",
-                        body:formData
-                    }
-                );
-
-
-            if(data.job_id){
-
-                jobId =
-                    data.job_id;
-
-                storageSet(
-                    "npbc_job_id",
-                    jobId
-                );
-
-            }
-
-
-            /*
-            The upload itself is now an event in the active
-            service. We do not manufacture document_text
-            from the upload response.
-            */
-
-            if(data.reply){
-
-                appendMessage(
-                    "assistant",
-                    data.reply
-                );
-
-            }
-            else{
-
-                appendSystem(
-                    "Your document has been received."
-                );
-
-            }
-
-
-            updateWorkflowFromResponse(
-                data
-            );
-
-
-            setStatus(
-                "Your document has been received.",
-                "success"
-            );
-
-        }
-        catch(error){
-
-            console.error(
-                "UPLOAD ERROR",
-                error
-            );
-
-
-            setStatus(
-                error.message
-                || "Document upload failed.",
-                "error"
-            );
-
-        }
-        finally{
-
-            fileInput.value =
-                "";
-
-            setBusy(false);
-
-        }
-
-    }
-);
-
-
-/* ============================================================
-   VOICE
-============================================================ */
-
-voiceButton.addEventListener(
-    "click",
-    async () => {
-
-        if(
-            mediaRecorder
-            &&
-            mediaRecorder.state === "recording"
-        ){
-
-            mediaRecorder.stop();
-
-            return;
-
-        }
-
-
-        if(
-            !navigator.mediaDevices
-            ||
-            !navigator.mediaDevices.getUserMedia
-        ){
-
-            setStatus(
-                "Voice recording is not supported on this device.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        try{
-
-            recordingStream =
-                await navigator.mediaDevices.getUserMedia({
-                    audio:true
-                });
-
-
-            recordedChunks =
-                [];
-
-
-            mediaRecorder =
-                new MediaRecorder(
-                    recordingStream
-                );
-
-
-            mediaRecorder.ondataavailable =
-                event => {
-
-                    if(
-                        event.data
-                        &&
-                        event.data.size
-                    ){
-
-                        recordedChunks.push(
-                            event.data
-                        );
-
-                    }
-
-                };
-
-
-            mediaRecorder.onstop =
-                async () => {
-
-                    if(recordingStream){
-
-                        recordingStream
-                            .getTracks()
-                            .forEach(
-                                track =>
-                                    track.stop()
-                            );
-
-                    }
-
-
-                    recordingStream =
-                        null;
-
-
-                    voiceRecording.classList.remove(
-                        "show"
-                    );
-
-
-                    voiceButton.textContent =
-                        "🎤 Voice";
-
-
-                    if(
-                        !recordedChunks.length
-                    ){
-
-                        setStatus(
-                            "No voice recording was captured.",
-                            "error"
-                        );
-
-                        return;
-
-                    }
-
-
-                    const audioBlob =
-                        new Blob(
-                            recordedChunks,
-                            {
-                                type:
-                                    "audio/webm"
-                            }
-                        );
-
-
-                    const formData =
-                        new FormData();
-
-
-                    formData.append(
-                        "file",
-                        audioBlob,
-                        "voice_message.webm"
-                    );
-
-
-                    formData.append(
-                        "customer_id",
-                        customerId
-                    );
-
-
-                    formData.append(
-                        "job_id",
-                        jobId
-                    );
-
-
-                    formData.append(
-                        "client_request_id",
-                        requestId
-                    );
-
-
-                    formData.append(
-                        "service",
-                        service
-                    );
-
-
-                    setBusy(true);
-
-                    setStatus(
-                        "Sending your voice message..."
-                    );
-
-
-                    try{
-
-                        const data =
-                            await requestJSON(
-                                "/api/voice",
-                                {
-                                    method:"POST",
-                                    body:formData
-                                }
-                            );
-
-
-                        /*
-                        If the backend returns the transcription,
-                        show it as the customer's actual message.
-
-                        If it returns a reply, show that too.
-
-                        The browser does not invent the transcription.
-                        */
-
-                        if(data.transcription){
-
-                            appendMessage(
-                                "customer",
-                                data.transcription
-                            );
-
-                        }
-                        else{
-
-                            appendSystem(
-                                "Your voice message has been received."
-                            );
-
-                        }
-
-
-                        if(data.reply){
-
-                            appendMessage(
-                                "assistant",
-                                data.reply
-                            );
-
-                        }
-
-
-                        updateWorkflowFromResponse(
-                            data
-                        );
-
-
-                        setStatus(
-                            "Voice message received.",
-                            "success"
-                        );
-
-                    }
-                    catch(error){
-
-                        console.error(
-                            "VOICE UPLOAD ERROR",
-                            error
-                        );
-
-
-                        setStatus(
-                            error.message
-                            || "Voice message failed.",
-                            "error"
-                        );
-
-                    }
-                    finally{
-
-                        setBusy(false);
-
-                    }
-
-                };
-
-
-            mediaRecorder.start();
-
-
-            voiceRecording.classList.add(
-                "show"
-            );
-
-
-            voiceButton.textContent =
-                "⏹ Stop Voice";
-
-
-            setStatus(
-                "Recording..."
-            );
-
-        }
-        catch(error){
-
-            console.error(
-                "MICROPHONE ERROR",
-                error
-            );
-
-
-            setStatus(
-                "Could not access your microphone.",
-                "error"
-            );
-
-        }
-
-    }
-);
-
-
-/* ============================================================
-   CUSTOMER SERVICE
-============================================================ */
-
-customerServiceButton.addEventListener(
-    "click",
-    async () => {
-
-        if(busy){
-            return;
-        }
-
-
-        setBusy(true);
-
-        setStatus(
-            "Connecting you to Customer Service..."
-        );
-
-
-        try{
-
-            const data =
-                await requestJSON(
-                    "/api/customer-service?"
-                    + new URLSearchParams({
-
-                        customer_id:
-                            customerId,
-
+    try{
+
+        const response =
+            await fetch(
+                `${API_BASE}/api/approve`,
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
                         job_id:
                             jobId,
 
-                        service
-
-                    }),
-                    {
-                        method:"POST"
-                    }
-                );
-
-
-            if(data.reply){
-
-                appendMessage(
-                    "assistant",
-                    data.reply
-                );
-
-            }
-
-
-            setStatus(
-                "Customer Service response received.",
-                "success"
+                        version_id:
+                            currentVersionId
+                    })
+                }
             );
 
-        }
-        catch(error){
+        let data = null;
 
-            console.error(
-                "CUSTOMER SERVICE ERROR",
-                error
+        try{
+            data =
+                await response.json();
+        }catch(error){
+            throw new Error(
+                "The approval API returned an invalid response."
             );
+        }
 
+        if(!response.ok){
 
-            setStatus(
-                error.message
-                || "Customer Service is unavailable.",
-                "error"
+            throw new Error(
+                data?.error_message
+                ||
+                data?.error
+                ||
+                `Approval failed (${response.status}).`
             );
-
-        }
-        finally{
-
-            setBusy(false);
-
         }
 
+        if(!data.success){
+
+            throw new Error(
+                data?.error_message
+                ||
+                data?.error
+                ||
+                "Approval was unsuccessful."
+            );
+        }
+
+        currentStatus =
+            "approved";
+
+        approvalRunning =
+            false;
+
+        setStatus(
+            "complete",
+            "Approved"
+        );
+
+        introMessage.textContent =
+            "This document version has been approved.";
+
+        progressMessage.textContent =
+            "The current document version is approved.";
+
+        showNotice(
+            "Document approved successfully.",
+            "success"
+        );
+
+        updateButtons();
+
+    }catch(error){
+
+        approvalRunning =
+            false;
+
+        showNotice(
+            error.message
+            ||
+            "Unable to approve the document.",
+            "error"
+        );
+
+        updateButtons();
     }
-);
+}
 
 
 /* ============================================================
-   CHOOSE ANOTHER SERVICE
-============================================================ */
+   EVENT HANDLERS
+   ============================================================ */
 
-chooseServiceButton.addEventListener(
+correctionButton.addEventListener(
     "click",
-    () => {
+    requestCorrection
+);
 
-        if(busy){
-            return;
-        }
+approveButton.addEventListener(
+    "click",
+    approveDocument
+);
 
-
-        location.href =
-            "conversation.html";
-
-    }
+correctionInput.addEventListener(
+    "input",
+    updateButtons
 );
 
 
 /* ============================================================
    INITIALIZATION
-============================================================ */
+   ============================================================ */
 
 function initialize(){
 
-    serviceBadge.textContent =
-        service;
+    jobId =
+        getJobId();
 
+    if(!jobId){
 
-    introTitle.textContent =
-        service;
+        loading.innerHTML = `
+            <strong style="color:#fff;">
+                Review job not found
+            </strong>
 
+            <div style="margin-top:8px;">
+                This page needs a job_id to load the document review.
+            </div>
+        `;
 
-    chatTitle.textContent =
-        service;
+        setStatus(
+            "error",
+            "No job"
+        );
 
+        correctionInput.disabled =
+            true;
 
-    introText.textContent =
-        "Tell us what you need for this service. "
-        + "Once you send your request, the service workflow becomes active.";
+        approveButton.disabled =
+            true;
 
+        return;
+    }
 
-    price.textContent =
-        "Service: " + service;
+    jobIdDisplay.textContent =
+        jobId;
 
+    setStatus(
+        "running",
+        "Loading"
+    );
 
-    renderFields();
-
-
-    /*
-    IMPORTANT:
-
-    We do NOT automatically call /api/chat here.
-
-    Selecting a service does not waste an intelligence request.
-
-    The first real intelligence call happens when the customer
-    submits the service information.
-
-    This also prevents unnecessary token consumption before the
-    customer has actually started the request.
-    */
-
+    fetchReview();
 }
 
+
+/* ============================================================
+   PAGE LIFECYCLE
+   ============================================================ */
+
+window.addEventListener(
+    "beforeunload",
+    stopPolling
+);
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if(
+            document.visibilityState ===
+            "visible"
+        ){
+
+            if(
+                currentStatus ===
+                    "reviewing"
+                ||
+                currentStatus ===
+                    "correcting"
+                ||
+                !currentStatus
+            ){
+
+                fetchReview();
+            }
+        }
+    }
+);
+
+
+/* ============================================================
+   START
+   ============================================================ */
 
 initialize();
 
