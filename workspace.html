@@ -1,49 +1,71 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="UTF-8"><meta
-name="viewport"
-content="width=device-width,initial-scale=1,viewport-fit=cover"
+<meta charset="UTF-8">
 
-«»
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover">
 
-<meta
-name="theme-color"
-content="#000000"
+<title>Naija Pocket Business Center</title>
 
-«»
-
-<title>Document Review — Naija Pocket Business Center</title><style>
+<style>
 
 *{
     box-sizing:border-box;
 }
 
-html{
+html,
+body{
     width:100%;
-    min-height:100%;
+    height:100%;
     margin:0;
     padding:0;
-    background:#000;
+    overflow:hidden;
 }
 
 body{
-    width:100%;
-    min-height:100vh;
-    margin:0;
-    padding:0;
     background:#000;
     color:#fff;
-    font-family:Inter,Arial,sans-serif;
-    overflow-x:hidden;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+button,
+input,
+textarea,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+:root{
+    --gold:#d4af37;
+    --gold2:#f3d66b;
+    --red:#b30000;
+    --green:#168047;
+    --border:rgba(212,175,55,.28);
 }
 
 /* =========================================================
-   ROOT
+   APP
    ========================================================= */
 
 .app{
     width:100%;
-    min-height:100vh;
+    height:100dvh;
+    min-height:0;
+
+    display:flex;
+    flex-direction:column;
+
     background:#000;
 }
 
@@ -52,31 +74,20 @@ body{
    ========================================================= */
 
 .header{
-    position:sticky;
-    top:0;
-    z-index:1000;
+    flex:0 0 auto;
+    min-height:65px;
 
-    width:100%;
-
-    background:#000;
-    border-bottom:1px solid #292929;
-
-    padding:
-        calc(14px + env(safe-area-inset-top))
-        16px
-        14px
-        16px;
-}
-
-.header-inner{
-    width:100%;
-    max-width:1100px;
-    margin:0 auto;
+    padding:9px 12px;
 
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:14px;
+    gap:10px;
+
+    background:#050505;
+    border-bottom:1px solid var(--border);
+
+    z-index:20;
 }
 
 .brand{
@@ -86,61 +97,39 @@ body{
 .brand-title{
     margin:0;
 
-    color:#d4af37;
+    color:var(--green);
 
-    font-family:Montserrat,Arial,sans-serif;
-    font-size:clamp(18px,5vw,27px);
+    font-size:clamp(18px,4vw,25px);
     font-weight:800;
-    line-height:1.1;
+    line-height:1.2;
 }
 
 .brand-subtitle{
-    margin:5px 0 0;
+    margin-top:3px;
 
-    color:#aaa;
+    color:#ccc;
 
-    font-size:12px;
-    line-height:1.35;
+    font-size:10px;
 }
 
-.header-status{
-    flex:0 0 auto;
+.service-badge{
+    max-width:46%;
 
-    display:flex;
-    align-items:center;
-    gap:8px;
+    padding:7px 10px;
 
-    padding:8px 11px;
+    background:#171717;
 
-    border:1px solid #303030;
+    border:1px solid rgba(212,175,55,.55);
     border-radius:999px;
 
-    color:#ddd;
-    background:#111;
+    color:var(--gold2);
 
-    font-size:11px;
-    font-weight:700;
+    font-size:10px;
+    font-weight:800;
+
     white-space:nowrap;
-}
-
-.status-dot{
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:#777;
-    flex:0 0 8px;
-}
-
-.status-dot.running{
-    background:#d4af37;
-}
-
-.status-dot.complete{
-    background:#fff;
-}
-
-.status-dot.error{
-    background:#ff4d4d;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 /* =========================================================
@@ -148,665 +137,926 @@ body{
    ========================================================= */
 
 .main{
+    flex:1 1 auto;
+    min-height:0;
     width:100%;
-    max-width:1100px;
+
+    overflow-x:hidden;
+    overflow-y:auto;
+
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #181818 0,
+            #080808 35%,
+            #000 100%
+        );
+}
+
+.main-inner{
+    width:100%;
+    max-width:900px;
+
     margin:0 auto;
 
-    padding:
-        18px
-        16px
-        calc(42px + env(safe-area-inset-bottom));
+    padding:14px 10px 35px;
 }
 
 /* =========================================================
-   INTRO
+   SERVICE FORM
    ========================================================= */
 
-.intro{
-    width:100%;
-
-    padding:18px;
-
-    border:1px solid #292929;
-    border-radius:14px;
-
-    background:#0d0d0d;
+.intro-card,
+.form-card,
+.review-header,
+.correction-card{
+    border-radius:15px;
 }
 
-.intro h1{
+.intro-card{
+    margin-bottom:12px;
+    padding:16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #0d0d0d
+        );
+
+    border:1px solid var(--border);
+}
+
+.intro-title,
+.review-title{
     margin:0;
 
-    color:#fff;
+    color:var(--gold2);
 
-    font-family:Montserrat,Arial,sans-serif;
-    font-size:clamp(20px,6vw,30px);
-    font-weight:800;
-    line-height:1.2;
+    font-weight:900;
 }
 
-.intro p{
-    margin:9px 0 0;
+.intro-title{
+    font-size:19px;
+}
 
-    color:#aaa;
+.intro-text{
+    margin:7px 0 0;
 
-    font-size:14px;
+    color:#dedede;
+
+    font-size:13px;
     line-height:1.6;
+
+    white-space:pre-wrap;
 }
 
-.job-line{
-    margin-top:14px;
+.price{
+    display:inline-block;
 
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-}
-
-.info-chip{
-    max-width:100%;
-
+    margin-top:10px;
     padding:7px 10px;
 
-    border:1px solid #303030;
+    background:rgba(212,175,55,.09);
+
+    border:1px solid rgba(212,175,55,.3);
     border-radius:8px;
+
+    color:var(--gold2);
+
+    font-size:12px;
+    font-weight:800;
+}
+
+.form-card{
+    background:#101010;
+
+    border:1px solid rgba(255,255,255,.09);
+
+    padding:15px;
+}
+
+.form-heading{
+    margin:0;
+
+    font-size:17px;
+}
+
+.form-description{
+    margin:5px 0 14px;
+
+    color:#a9a9a9;
+
+    font-size:11px;
+    line-height:1.5;
+}
+
+.fields{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.field label{
+    display:block;
+
+    margin-bottom:5px;
+
+    color:#e8e8e8;
+
+    font-size:11px;
+    font-weight:800;
+}
+
+.required{
+    color:#ff8585;
+}
+
+.optional{
+    color:#777;
+
+    font-weight:500;
+}
+
+.field input,
+.field textarea,
+.field select{
+    width:100%;
+
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:9px;
+
+    background:#181818;
+    color:#fff;
+
+    outline:0;
+
+    padding:11px;
+
+    font-size:13px;
+}
+
+.field textarea{
+    min-height:85px;
+
+    resize:vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+    border-color:rgba(212,175,55,.65);
+}
+
+.form-note{
+    margin-top:12px;
+
+    padding:10px;
 
     background:#151515;
 
-    color:#ccc;
+    border-left:3px solid var(--gold);
+    border-radius:7px;
 
-    font-size:11px;
-    line-height:1.35;
+    color:#bdbdbd;
 
-    overflow-wrap:anywhere;
+    font-size:10px;
+    line-height:1.5;
+}
+
+.form-submit{
+    width:100%;
+
+    min-height:50px;
+
+    margin-top:15px;
+
+    border:0;
+    border-radius:10px;
+
+    background:var(--gold);
+    color:#000;
+
+    font-size:13px;
+    font-weight:900;
+}
+
+.form-submit:disabled{
+    opacity:.45;
 }
 
 /* =========================================================
-   PROGRESS
+   REVIEW VIEW
    ========================================================= */
 
-.progress-panel{
-    width:100%;
+.review-view{
+    display:none;
 
-    margin-top:14px;
+    width:100%;
+    min-width:0;
+}
+
+.review-view.show{
+    display:block;
+}
+
+.review-header{
     padding:16px;
 
-    border:1px solid #292929;
-    border-radius:14px;
+    margin-bottom:11px;
 
-    background:#0d0d0d;
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #0d0d0d
+        );
+
+    border:1px solid rgba(212,175,55,.38);
 }
 
-.progress-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:12px;
-
-    margin-bottom:10px;
-}
-
-.progress-label{
-    color:#fff;
-    font-size:13px;
-    font-weight:700;
-}
-
-.progress-count{
-    color:#aaa;
-    font-size:12px;
-    font-weight:700;
-    white-space:nowrap;
-}
-
-.progress-track{
-    width:100%;
-    height:8px;
-
-    overflow:hidden;
-
-    border-radius:999px;
-    background:#242424;
-}
-
-.progress-fill{
-    width:0;
-    height:100%;
-
-    border-radius:999px;
-
-    background:#d4af37;
-
-    transition:width .3s ease;
-}
-
-.progress-message{
-    margin-top:9px;
-
-    color:#888;
-
-    font-size:11px;
-    line-height:1.45;
-}
-
-/* =========================================================
-   REVIEW AREA
-   ========================================================= */
-
-.review-heading{
-    margin:24px 0 12px;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    gap:12px;
-}
-
-.review-heading h2{
-    margin:0;
-
-    color:#fff;
-
-    font-family:Montserrat,Arial,sans-serif;
+.review-title{
     font-size:20px;
-    font-weight:800;
 }
 
-.review-heading span{
-    color:#777;
+.review-subtitle{
+    margin:5px 0 0;
+
+    color:#bdbdbd;
+
     font-size:11px;
-}
-
-/*
-   IMPORTANT:
-   There is deliberately NO fixed-height review container.
-   The page itself is allowed to grow so every document page
-   can be rendered.
-*/
-
-.pages{
-    width:100%;
-
-    display:flex;
-    flex-direction:column;
-    gap:18px;
+    line-height:1.5;
 }
 
 /* =========================================================
-   DOCUMENT PAGE
+   REVIEW DOCUMENT CONTAINER
+
+   IMPORTANT:
+   The CARD is the scrolling viewport.
+
+   The document itself has NO fixed height.
+   The document itself has NO max-height.
+   No content is sliced.
+   No content is shortened by CSS.
    ========================================================= */
 
-.document-page{
+.work-card{
     width:100%;
+    min-width:0;
 
-    border:1px solid #303030;
-    border-radius:16px;
+    height:clamp(
+        360px,
+        calc(100dvh - 285px),
+        900px
+    );
 
-    background:#0c0c0c;
+    min-height:360px;
+
+    background:#f7f7f7;
+    color:#111;
+
+    border-radius:11px;
+
+    padding:0;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    -webkit-overflow-scrolling:touch;
+
+    overscroll-behavior:contain;
+
+    scrollbar-width:auto;
+
+    overflow-wrap:anywhere;
+    word-wrap:break-word;
+
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+}
+
+/* =========================================================
+   DOCUMENT CONTENT
+
+   NO HEIGHT LIMIT.
+   NO MAX HEIGHT.
+   NO TRUNCATION.
+   ========================================================= */
+
+.work-content{
+    display:block;
+
+    width:100%;
+    min-width:0;
+
+    min-height:100%;
+
+    padding:22px 17px;
+
+    color:#111;
+    background:#f7f7f7;
+
+    font-size:14px;
+    line-height:1.7;
+
+    overflow:visible;
+
+    overflow-wrap:anywhere;
+    word-wrap:break-word;
+
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+}
+
+.work-content.document-html{
+    display:block;
+
+    width:100%;
+    min-width:0;
+
+    min-height:100%;
+
+    color:#111;
+    background:#fff;
 
     overflow:visible;
 }
 
-.page-header{
-    width:100%;
+/* =========================================================
+   DOCUMENT HEADINGS
+   ========================================================= */
 
-    padding:14px 15px;
+.work-content h1{
+    margin:0 0 18px;
 
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
+    color:#111;
 
-    border-bottom:1px solid #292929;
+    font-size:28px;
+    line-height:1.25;
 
-    background:#111;
+    font-weight:800;
 
-    border-radius:16px 16px 0 0;
+    text-align:left;
 }
 
-.page-title{
-    min-width:0;
+.work-content h2{
+    margin:24px 0 10px;
 
-    color:#fff;
+    color:#111;
 
-    font-family:Montserrat,Arial,sans-serif;
-    font-size:16px;
+    font-size:21px;
+    line-height:1.3;
+
     font-weight:800;
 }
 
-.page-status{
-    flex:0 0 auto;
+.work-content h3{
+    margin:20px 0 8px;
 
-    padding:6px 9px;
+    color:#111;
 
-    border:1px solid #333;
-    border-radius:999px;
+    font-size:17px;
+    line-height:1.35;
 
-    background:#171717;
-
-    color:#aaa;
-
-    font-size:10px;
     font-weight:800;
-    text-transform:uppercase;
-    letter-spacing:.04em;
 }
 
-.page-status.reviewing{
-    color:#d4af37;
-    border-color:#5a4a18;
-}
+.work-content h4,
+.work-content h5,
+.work-content h6{
+    margin:16px 0 7px;
 
-.page-status.reviewed{
-    color:#fff;
-}
+    color:#111;
 
-.page-status.error{
-    color:#ff6666;
-    border-color:#552222;
+    font-weight:800;
 }
 
 /* =========================================================
-   PAGE CONTENT
+   DOCUMENT TEXT
    ========================================================= */
 
-.page-body{
-    width:100%;
+.work-content p{
+    margin:0 0 12px;
 
-    padding:16px;
+    color:#111;
+
+    font-size:14px;
+    line-height:1.75;
 }
 
-.section-label{
-    margin:0 0 8px;
-
-    color:#777;
-
-    font-size:10px;
+.work-content strong,
+.work-content b{
     font-weight:800;
-    text-transform:uppercase;
-    letter-spacing:.08em;
 }
 
-.document-content{
-    width:100%;
-
-    padding:15px;
-
-    border:1px solid #252525;
-    border-radius:10px;
-
-    background:#080808;
-
-    color:#eee;
-
-    font-family:Inter,Arial,sans-serif;
-    font-size:14px;
-    line-height:1.75;
-
-    white-space:pre-wrap;
-    overflow-wrap:anywhere;
-    word-break:break-word;
+.work-content em,
+.work-content i{
+    font-style:italic;
 }
 
-.review-section{
-    width:100%;
-
-    margin-top:18px;
+.work-content u{
+    text-decoration:underline;
 }
 
-.review-content{
-    width:100%;
+/* =========================================================
+   LISTS
+   ========================================================= */
 
-    padding:15px;
-
-    border:1px solid #3a3219;
-    border-radius:10px;
-
-    background:#11100b;
-
-    color:#f1f1f1;
-
-    font-size:14px;
-    line-height:1.75;
-
-    white-space:pre-wrap;
-    overflow-wrap:anywhere;
-    word-break:break-word;
+.work-content ul,
+.work-content ol{
+    margin:8px 0 15px 25px;
+    padding:0;
 }
 
-.review-empty{
+.work-content li{
+    margin:5px 0;
+
+    line-height:1.65;
+}
+
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
+.work-content hr{
+    border:0;
+
+    border-top:1px solid #999;
+
+    margin:20px 0;
+}
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+.work-content table{
     width:100%;
+    max-width:100%;
 
-    padding:15px;
+    border-collapse:collapse;
 
-    border:1px dashed #303030;
-    border-radius:10px;
+    margin:15px 0;
 
-    color:#777;
+    color:#111;
 
     font-size:13px;
-    line-height:1.5;
+
+    table-layout:auto;
 }
 
-.page-error{
-    width:100%;
+.work-content th,
+.work-content td{
+    border:1px solid #999;
 
-    margin-top:14px;
+    padding:8px;
+
+    text-align:left;
+    vertical-align:top;
+
+    overflow-wrap:anywhere;
+    word-break:normal;
+}
+
+.work-content th{
+    font-weight:800;
+
+    background:#eee;
+}
+
+/* =========================================================
+   QUOTES
+   ========================================================= */
+
+.work-content blockquote{
+    margin:15px 0;
+
+    padding:10px 14px;
+
+    border-left:4px solid #777;
+
+    background:#f0f0f0;
+}
+
+/* =========================================================
+   CODE
+   ========================================================= */
+
+.work-content pre{
+    white-space:pre-wrap;
+
+    word-break:break-word;
+    overflow-wrap:anywhere;
+
+    margin:12px 0;
     padding:12px;
 
-    border:1px solid #4a2222;
-    border-radius:9px;
+    background:#eee;
 
-    background:#160b0b;
+    border-radius:6px;
 
-    color:#ff8a8a;
-
+    font-family:monospace;
     font-size:12px;
-    line-height:1.5;
+}
+
+.work-content code{
+    font-family:monospace;
 
     overflow-wrap:anywhere;
 }
 
 /* =========================================================
-   COMPLETE REVIEW
+   LINKS
    ========================================================= */
 
-.complete-review{
-    width:100%;
+.work-content a{
+    color:#111;
 
-    margin-top:18px;
-    padding:18px;
+    text-decoration:underline;
 
-    border:1px solid #303030;
-    border-radius:14px;
-
-    background:#0d0d0d;
-}
-
-.complete-review h3{
-    margin:0 0 10px;
-
-    color:#d4af37;
-
-    font-family:Montserrat,Arial,sans-serif;
-    font-size:17px;
-    font-weight:800;
-}
-
-.complete-review-content{
-    width:100%;
-
-    color:#eee;
-
-    font-size:14px;
-    line-height:1.75;
-
-    white-space:pre-wrap;
     overflow-wrap:anywhere;
-    word-break:break-word;
 }
 
 /* =========================================================
-   CORRECTION
+   IMAGES
    ========================================================= */
 
-.correction-panel{
-    width:100%;
+.work-content img{
+    max-width:100%;
+    height:auto;
 
-    margin-top:24px;
-    padding:18px;
-
-    border:1px solid #292929;
-    border-radius:14px;
-
-    background:#0d0d0d;
-}
-
-.correction-panel h2{
-    margin:0;
-
-    color:#fff;
-
-    font-family:Montserrat,Arial,sans-serif;
-    font-size:19px;
-    font-weight:800;
-}
-
-.correction-panel p{
-    margin:8px 0 14px;
-
-    color:#888;
-
-    font-size:12px;
-    line-height:1.55;
-}
-
-textarea{
     display:block;
 
-    width:100%;
-    min-height:130px;
-
-    resize:vertical;
-
-    padding:13px;
-
-    border:1px solid #353535;
-    border-radius:10px;
-
-    outline:none;
-
-    background:#080808;
-    color:#fff;
-
-    font-family:Inter,Arial,sans-serif;
-    font-size:14px;
-    line-height:1.6;
-}
-
-textarea:focus{
-    border-color:#666;
-}
-
-textarea:disabled{
-    opacity:.5;
+    margin:12px auto;
 }
 
 /* =========================================================
-   BUTTONS
+   SPACING
    ========================================================= */
 
-.actions{
-    width:100%;
-
-    margin-top:12px;
-
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+.work-content .document-spacer{
+    height:10px;
 }
 
-button{
-    min-height:48px;
-
-    border:1px solid #383838;
-    border-radius:10px;
-
-    background:#171717;
-    color:#fff;
-
-    font-family:Inter,Arial,sans-serif;
-    font-size:13px;
-    font-weight:700;
-
-    cursor:pointer;
-
-    transition:
-        background .15s ease,
-        border-color .15s ease,
-        opacity .15s ease;
-}
-
-button:hover:not(:disabled){
-    background:#222;
-    border-color:#555;
-}
-
-button:active:not(:disabled){
-    transform:translateY(1px);
-}
-
-button:disabled{
-    opacity:.4;
-    cursor:not-allowed;
-}
-
-.primary{
-    background:#fff;
-    color:#000;
-    border-color:#fff;
-}
-
-.primary:hover:not(:disabled){
-    background:#e8e8e8;
-    border-color:#e8e8e8;
-}
-
-.danger{
-    background:#171717;
-    color:#fff;
-}
-
-.full-button{
-    grid-column:1 / -1;
-}
-
-/* =========================================================
-   APPROVAL
-   ========================================================= */
-
-.approval-panel{
-    width:100%;
-
-    margin-top:18px;
-    padding:18px;
-
-    border:1px solid #292929;
-    border-radius:14px;
-
-    background:#0d0d0d;
-}
-
-.approval-panel h2{
-    margin:0;
-
-    color:#fff;
-
-    font-family:Montserrat,Arial,sans-serif;
-    font-size:19px;
-    font-weight:800;
-}
-
-.approval-panel p{
-    margin:8px 0 14px;
-
-    color:#888;
-
-    font-size:12px;
-    line-height:1.55;
-}
-
-.version{
-    margin-bottom:12px;
-
+.work-placeholder{
     color:#777;
-
-    font-size:11px;
-
-    overflow-wrap:anywhere;
-}
-
-/* =========================================================
-   NOTICES
-   ========================================================= */
-
-.notice{
-    display:none;
-
-    width:100%;
-
-    margin-top:18px;
-    padding:14px;
-
-    border:1px solid #303030;
-    border-radius:10px;
-
-    background:#111;
-
-    color:#ddd;
-
-    font-size:13px;
-    line-height:1.55;
-}
-
-.notice.show{
-    display:block;
-}
-
-.notice.error{
-    border-color:#542323;
-    background:#160b0b;
-    color:#ff9b9b;
-}
-
-.notice.success{
-    border-color:#3d371c;
-    background:#11100a;
-    color:#eee;
-}
-
-/* =========================================================
-   EMPTY / LOADING
-   ========================================================= */
-
-.loading{
-    width:100%;
-
-    padding:40px 18px;
 
     text-align:center;
 
-    border:1px solid #292929;
-    border-radius:14px;
+    padding:70px 10px;
 
-    background:#0d0d0d;
+    user-select:none;
+    -webkit-user-select:none;
+}
 
-    color:#888;
+/* =========================================================
+   CORRECTIONS
+   ========================================================= */
+
+.correction-card{
+    margin-top:12px;
+
+    padding:14px;
+
+    background:#111;
+
+    border:1px solid rgba(255,255,255,.1);
+}
+
+.correction-title{
+    margin:0 0 4px;
+
+    font-size:14px;
+}
+
+.correction-help{
+    margin:0 0 9px;
+
+    color:#999;
+
+    font-size:10px;
+    line-height:1.45;
+}
+
+.correction-input{
+    width:100%;
+
+    min-height:100px;
+
+    resize:vertical;
+
+    padding:11px;
+
+    background:#191919;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:9px;
+
+    outline:0;
+}
+
+.review-actions,
+.payment-buttons{
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:7px;
+
+    margin-top:10px;
+}
+
+.review-button,
+.payment-buttons button{
+    min-height:43px;
+
+    border-radius:8px;
+
+    font-size:11px;
+    font-weight:850;
+}
+
+.apply-button{
+    background:#252525;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.14);
+}
+
+.approve-button,
+.payment-report{
+    background:var(--gold);
+    color:#000;
+
+    border:0;
+}
+
+.download-button{
+    width:100%;
+
+    min-height:47px;
+
+    margin-top:8px;
+
+    border-radius:8px;
+
+    background:#242424;
+    color:#777;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    font-size:11px;
+    font-weight:850;
+
+    cursor:not-allowed;
+}
+
+.download-button.active{
+    background:var(--green);
+    color:#fff;
+
+    border-color:var(--green);
+
+    cursor:pointer;
+}
+
+.payment-message{
+    margin-top:8px;
+
+    color:#858585;
+
+    font-size:9px;
+
+    text-align:center;
+}
+
+.payment-panel{
+    display:none;
+
+    margin-top:11px;
+
+    padding:13px;
+
+    background:#121212;
+
+    border:1px solid rgba(212,175,55,.38);
+    border-radius:12px;
+}
+
+.payment-panel.show{
+    display:block;
+}
+
+.payment-title{
+    color:var(--gold2);
 
     font-size:13px;
-    line-height:1.6;
+    font-weight:900;
+
+    margin-bottom:6px;
 }
 
-.spinner{
-    width:24px;
-    height:24px;
+.payment-details{
+    color:#ddd;
 
-    margin:0 auto 12px;
+    white-space:pre-wrap;
 
-    border:3px solid #2b2b2b;
-    border-top-color:#d4af37;
-
-    border-radius:50%;
-
-    animation:spin .8s linear infinite;
+    font-size:11px;
+    line-height:1.5;
 }
 
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
+.payment-check{
+    background:#282828;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.13);
 }
 
-.hidden{
-    display:none !important;
+/* =========================================================
+   BOTTOM CONTROLS
+   ========================================================= */
+
+.bottom{
+    flex:0 0 auto;
+
+    width:100%;
+
+    padding:
+        8px
+        9px
+        calc(8px + env(safe-area-inset-bottom));
+
+    background:#080808;
+
+    border-top:1px solid var(--border);
+
+    z-index:20;
+}
+
+.bottom-inner{
+    max-width:900px;
+
+    margin:auto;
+}
+
+.tools{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:6px;
+
+    margin-bottom:7px;
+}
+
+.tool-button,
+.choose-service-button{
+    min-height:39px;
+
+    border-radius:8px;
+
+    background:#181818;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.13);
+
+    font-size:10px;
+    font-weight:800;
+}
+
+.tool-button.gold{
+    color:var(--gold2);
+
+    border-color:rgba(212,175,55,.35);
+}
+
+.choose-service-button{
+    width:100%;
+
+    margin-bottom:7px;
+
+    background:#000;
+}
+
+.composer{
+    display:flex;
+
+    align-items:flex-end;
+
+    gap:6px;
+}
+
+.message-input{
+    flex:1;
+
+    min-width:0;
+
+    min-height:45px;
+    max-height:105px;
+
+    resize:none;
+
+    padding:11px;
+
+    background:#171717;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:9px;
+
+    outline:0;
+}
+
+.send-button{
+    width:64px;
+
+    min-height:45px;
+
+    border:0;
+    border-radius:9px;
+
+    background:var(--gold);
+    color:#000;
+
+    font-size:11px;
+    font-weight:900;
+}
+
+.voice-recording{
+    display:none;
+
+    margin-bottom:6px;
+
+    padding:7px;
+
+    background:#190707;
+
+    border:1px solid rgba(179,0,0,.55);
+    border-radius:8px;
+
+    color:#ff8c8c;
+
+    font-size:10px;
+
+    text-align:center;
+}
+
+.voice-recording.show{
+    display:block;
+}
+
+.status{
+    min-height:14px;
+
+    margin-top:3px;
+
+    color:#777;
+
+    font-size:9px;
+
+    text-align:center;
+}
+
+.status.error{
+    color:#ff7777;
+}
+
+.status.success{
+    color:#7bd99a;
+}
+
+#fileInput{
+    display:none;
+}
+
+button:disabled{
+    opacity:.45;
+
+    cursor:not-allowed;
+}
+
+/* =========================================================
+   READ ONLY
+   ========================================================= */
+
+#introText,
+.intro-card,
+.work-card{
+    user-select:none;
+
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+
+    -webkit-touch-callout:none;
 }
 
 /* =========================================================
@@ -815,1756 +1065,3021 @@ button:disabled{
 
 @media(max-width:600px){
 
-    .header{
-        padding-left:12px;
-        padding-right:12px;
+    .main-inner{
+        padding:12px 9px 30px;
     }
 
-    .main{
-        padding-left:10px;
-        padding-right:10px;
+    .work-card{
+        height:calc(100dvh - 315px);
+
+        min-height:300px;
+
+        border-radius:10px;
     }
 
-    .header-inner{
-        align-items:flex-start;
+    .work-content{
+        padding:18px 14px 28px;
     }
 
-    .header-status{
-        padding:7px 8px;
-        font-size:10px;
+    .work-content h1{
+        font-size:24px;
     }
 
-    .brand-subtitle{
-        max-width:190px;
+    .work-content h2{
+        font-size:19px;
     }
 
-    .intro,
-    .progress-panel,
-    .correction-panel,
-    .approval-panel{
-        padding:14px;
+    .work-content h3{
+        font-size:16px;
     }
 
-    .page-body{
-        padding:12px;
+    .work-content p{
+        font-size:14px;
     }
 
-    .page-header{
-        padding:12px;
+    .work-content table{
+        font-size:12px;
     }
 
-    .document-content,
-    .review-content{
-        padding:12px;
-        font-size:13px;
-        line-height:1.7;
-    }
-
-    .actions{
-        grid-template-columns:1fr;
-    }
-
-    .full-button{
-        grid-column:auto;
+    .work-content th,
+    .work-content td{
+        padding:7px;
     }
 }
 
-@media(min-width:800px){
+</style>
+</head>
 
-    .pages{
-        gap:22px;
-    }
+<body>
 
-    .page-body{
-        padding:20px;
-    }
-
-    .document-content,
-    .review-content{
-        font-size:15px;
-    }
-}
-
-</style></head><body><div class="app"><!-- =====================================================
-     HEADER
-     ===================================================== -->
+<div class="app">
 
 <header class="header">
 
-    <div class="header-inner">
+    <div class="brand">
 
-        <div class="brand">
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
 
-            <h1 class="brand-title">
-                Naija Pocket Business Center
-            </h1>
-
-            <p class="brand-subtitle">
-                Document Review
-            </p>
-
+        <div class="brand-subtitle">
+            Your Business Center
         </div>
 
-        <div class="header-status">
+    </div>
 
-            <span
-                id="statusDot"
-                class="status-dot"
-            ></span>
-
-            <span id="statusText">
-                Loading
-            </span>
-
-        </div>
-
+    <div
+        id="serviceBadge"
+        class="service-badge"
+    >
+        Service
     </div>
 
 </header>
 
 
-<!-- =====================================================
-     MAIN
-     ===================================================== -->
-
 <main class="main">
 
-    <!-- INTRO -->
-
-    <section class="intro">
-
-        <h1>
-            Document Review
-        </h1>
-
-        <p id="introMessage">
-            Your document is being reviewed page by page.
-        </p>
-
-        <div class="job-line">
-
-            <div class="info-chip">
-                Job:
-                <span id="jobIdDisplay">—</span>
-            </div>
-
-            <div class="info-chip">
-                Version:
-                <span id="versionDisplay">—</span>
-            </div>
-
-            <div
-                class="info-chip"
-                id="serviceChip"
-            >
-                Service:
-                <span id="serviceDisplay">—</span>
-            </div>
-
-        </div>
-
-    </section>
+<div class="main-inner">
 
 
-    <!-- PROGRESS -->
+<section id="formView">
 
-    <section class="progress-panel">
+    <div
+        class="intro-card"
+        id="introCard"
+    >
 
-        <div class="progress-top">
-
-            <div class="progress-label">
-                Review progress
-            </div>
-
-            <div
-                class="progress-count"
-                id="progressCount"
-            >
-                0 / 0
-            </div>
-
-        </div>
-
-        <div class="progress-track">
-
-            <div
-                id="progressFill"
-                class="progress-fill"
-            ></div>
-
-        </div>
-
-        <div
-            id="progressMessage"
-            class="progress-message"
+        <h2
+            id="introTitle"
+            class="intro-title"
         >
-            Waiting for the review to begin.
-        </div>
-
-    </section>
-
-
-    <!-- REVIEW HEADING -->
-
-    <div class="review-heading">
-
-        <h2>
-            Pages
+            Let's get started
         </h2>
 
-        <span id="pageSummary">
-            0 pages
-        </span>
+        <p
+            id="introText"
+            class="intro-text"
+        >
+            Please wait while we prepare useful information for this service.
+        </p>
+
+        <div
+            id="price"
+            class="price"
+        >
+            Service
+        </div>
 
     </div>
 
 
-    <!-- PAGE LIST -->
+    <div class="form-card">
 
-    <section
-        id="pages"
-        class="pages"
+        <h3 class="form-heading">
+            Your Service Information
+        </h3>
+
+        <p class="form-description">
+            Fill in the information relevant to your request.
+            Optional fields can be left blank.
+        </p>
+
+        <form id="serviceForm">
+
+            <div
+                id="fields"
+                class="fields"
+            ></div>
+
+            <div class="form-note">
+                When you tap <strong>SEND</strong>, your information
+                will be sent for processing and your prepared work
+                will open immediately in the review area.
+            </div>
+
+            <button
+                id="formSubmit"
+                class="form-submit"
+                type="submit"
+            >
+                SEND
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<section
+    id="reviewView"
+    class="review-view"
+>
+
+    <div class="review-header">
+
+        <h2 class="review-title">
+            Your Work
+        </h2>
+
+        <p class="review-subtitle">
+            Read through your prepared work carefully.
+            You can request corrections before approving it.
+        </p>
+
+    </div>
+
+
+    <div
+        id="workCard"
+        class="work-card"
     >
 
         <div
-            id="loading"
-            class="loading"
+            id="workContent"
+            class="work-content"
         >
 
-            <div class="spinner"></div>
-
-            Loading document review...
+            <div class="work-placeholder">
+                Your prepared work will appear here.
+            </div>
 
         </div>
 
-    </section>
+    </div>
 
 
-    <!-- COMPLETE REVIEW -->
+    <div class="correction-card">
 
-    <section
-        id="completeReview"
-        class="complete-review hidden"
-    >
-
-        <h3>
-            Complete Document Review
+        <h3 class="correction-title">
+            Need any corrections?
         </h3>
 
-        <div
-            id="completeReviewContent"
-            class="complete-review-content"
-        ></div>
-
-    </section>
-
-
-    <!-- CORRECTION -->
-
-    <section class="correction-panel">
-
-        <h2>
-            Request a Correction
-        </h2>
-
-        <p>
-            Tell the assistant exactly what you want changed.
-            The corrected document will be reviewed again before
-            approval becomes available.
+        <p class="correction-help">
+            Tell us exactly what you want changed, added or corrected.
         </p>
 
         <textarea
             id="correctionInput"
-            placeholder="Describe the correction you want..."
+            class="correction-input"
+            placeholder="Write your corrections or changes here..."
         ></textarea>
 
-        <div class="actions">
+        <div class="review-actions">
 
             <button
-                id="correctionButton"
-                class="primary full-button"
+                id="applyCorrectionsButton"
+                class="review-button apply-button"
                 type="button"
-                disabled
             >
-                Request Correction
+                Apply My Corrections
             </button>
-
-        </div>
-
-    </section>
-
-
-    <!-- APPROVAL -->
-
-    <section class="approval-panel">
-
-        <h2>
-            Approval
-        </h2>
-
-        <p>
-            Approval becomes available only after the current
-            document version has completed its review.
-        </p>
-
-        <div class="version">
-            Current version:
-            <strong id="approvalVersion">
-                —
-            </strong>
-        </div>
-
-        <div class="actions">
 
             <button
                 id="approveButton"
-                class="primary full-button"
+                class="review-button approve-button"
                 type="button"
-                disabled
             >
-                Approve Document
+                Approve &amp; Pay
             </button>
 
         </div>
 
-    </section>
+    </div>
 
 
-    <!-- NOTICE -->
+    <button
+        id="downloadButton"
+        class="download-button"
+        type="button"
+        disabled
+    >
+        🔒 Download Your Work
+    </button>
+
+    <div class="payment-message">
+        Payment must be confirmed before the download button becomes active.
+    </div>
+
 
     <div
-        id="notice"
-        class="notice"
-    ></div>
+        id="paymentPanel"
+        class="payment-panel"
+    >
+
+        <div class="payment-title">
+            Payment
+        </div>
+
+        <div
+            id="paymentDetails"
+            class="payment-details"
+        ></div>
+
+        <div class="payment-buttons">
+
+            <button
+                id="paymentReportButton"
+                class="payment-report"
+                type="button"
+            >
+                Report Payment
+            </button>
+
+            <button
+                id="paymentCheckButton"
+                class="payment-check"
+                type="button"
+            >
+                Check Status
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</div>
 
 </main>
 
-</div><script>
 
-/* ============================================================
-   CONFIGURATION
-   ============================================================ */
+<section class="bottom">
+
+<div class="bottom-inner">
+
+    <div
+        id="voiceRecording"
+        class="voice-recording"
+    >
+        🔴 Recording... tap Voice again to stop.
+    </div>
+
+
+    <div class="tools">
+
+        <button
+            id="uploadButton"
+            class="tool-button"
+            type="button"
+        >
+            📄 Upload Documents You Want To Give Us
+        </button>
+
+        <button
+            id="voiceButton"
+            class="tool-button gold"
+            type="button"
+        >
+            🎤 Voice
+        </button>
+
+        <button
+            id="customerServiceButton"
+            class="tool-button"
+            type="button"
+        >
+            Customer Service
+        </button>
+
+    </div>
+
+
+    <button
+        id="chooseServiceButton"
+        class="choose-service-button"
+        type="button"
+    >
+        Choose Another Service
+    </button>
+
+
+    <input
+        id="fileInput"
+        type="file"
+        accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+    >
+
+
+    <div class="composer">
+
+        <textarea
+            id="messageInput"
+            class="message-input"
+            rows="1"
+            placeholder="Type your message..."
+            autocomplete="off"
+        ></textarea>
+
+        <button
+            id="sendButton"
+            class="send-button"
+            type="button"
+        >
+            SEND
+        </button>
+
+    </div>
+
+
+    <div
+        id="status"
+        class="status"
+    ></div>
+
+</div>
+
+</section>
+
+</div>
+
+
+<script>
+
+"use strict";
+
+/* =========================================================
+   API CONNECTION
+   ========================================================= */
 
 const API_BASE = "";
 
-/*
- * The API and review page are served by the same FastAPI
- * application, so relative API URLs are intentionally used.
- */
 
-const POLL_INTERVAL = 1500;
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
 
+const $ = id => document.getElementById(id);
 
-/* ============================================================
-   STATE
-   ============================================================ */
+const formView = $("formView");
+const reviewView = $("reviewView");
 
-let jobId = "";
+const serviceForm = $("serviceForm");
+const fields = $("fields");
+const formSubmit = $("formSubmit");
 
-let currentVersionId = "";
+const serviceBadge = $("serviceBadge");
 
-let currentStatus = "";
+const introTitle = $("introTitle");
+const introText = $("introText");
+const price = $("price");
+const introCard = $("introCard");
 
-let pollingTimer = null;
+const workCard = $("workCard");
+const workContent = $("workContent");
 
-let correctionRunning = false;
+const correctionInput = $("correctionInput");
 
-let approvalRunning = false;
+const applyBtn = $("applyCorrectionsButton");
+const approveBtn = $("approveButton");
 
+const downloadBtn = $("downloadButton");
 
-/* ============================================================
-   DOM
-   ============================================================ */
+const uploadBtn = $("uploadButton");
+const voiceBtn = $("voiceButton");
+const customerBtn = $("customerServiceButton");
+const chooseBtn = $("chooseServiceButton");
 
-const statusDot =
-    document.getElementById("statusDot");
+const fileInput = $("fileInput");
 
-const statusText =
-    document.getElementById("statusText");
+const messageInput = $("messageInput");
+const sendBtn = $("sendButton");
 
-const introMessage =
-    document.getElementById("introMessage");
+const status = $("status");
 
-const jobIdDisplay =
-    document.getElementById("jobIdDisplay");
+const voiceRecording = $("voiceRecording");
 
-const versionDisplay =
-    document.getElementById("versionDisplay");
+const paymentPanel = $("paymentPanel");
+const paymentDetails = $("paymentDetails");
 
-const serviceDisplay =
-    document.getElementById("serviceDisplay");
+const paymentReport = $("paymentReportButton");
+const paymentCheck = $("paymentCheckButton");
 
-const progressCount =
-    document.getElementById("progressCount");
 
-const progressFill =
-    document.getElementById("progressFill");
+/* =========================================================
+   SERVICE
+   ========================================================= */
 
-const progressMessage =
-    document.getElementById("progressMessage");
+const params = new URLSearchParams(location.search);
 
-const pageSummary =
-    document.getElementById("pageSummary");
+const service = (
+    params.get("service") ||
+    "Business Center Service"
+).trim();
 
-const pagesContainer =
-    document.getElementById("pages");
 
-const loading =
-    document.getElementById("loading");
+/* =========================================================
+   IDENTIFIERS
+   ========================================================= */
 
-const completeReview =
-    document.getElementById("completeReview");
-
-const completeReviewContent =
-    document.getElementById("completeReviewContent");
-
-const correctionInput =
-    document.getElementById("correctionInput");
-
-const correctionButton =
-    document.getElementById("correctionButton");
-
-const approvalVersion =
-    document.getElementById("approvalVersion");
-
-const approveButton =
-    document.getElementById("approveButton");
-
-const notice =
-    document.getElementById("notice");
-
-
-/* ============================================================
-   UTILITIES
-   ============================================================ */
-
-function escapeHtml(value){
-
-    const text =
-        String(value ?? "");
-
-    return text
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
-
-
-function textOrDash(value){
-
-    const text =
-        String(value ?? "").trim();
-
-    return text || "—";
-}
-
-
-function showNotice(
-    message,
-    type = ""
-){
-
-    notice.textContent =
-        String(message || "");
-
-    notice.className =
-        "notice show" +
-        (
-            type
-            ? " " + type
-            : ""
-        );
-}
-
-
-function hideNotice(){
-
-    notice.className =
-        "notice";
-
-    notice.textContent =
-        "";
-}
-
-
-function setStatus(
-    status,
-    label
-){
-
-    statusDot.className =
-        "status-dot";
-
-    if(status === "running"){
-        statusDot.classList.add("running");
-    }
-
-    if(status === "complete"){
-        statusDot.classList.add("complete");
-    }
-
-    if(status === "error"){
-        statusDot.classList.add("error");
-    }
-
-    statusText.textContent =
-        label || "Loading";
-}
-
-
-function normalizeStatus(
-    value
-){
-
-    return String(
-        value ?? ""
-    )
-    .trim()
-    .toLowerCase();
-}
-
-
-/* ============================================================
-   JOB ID
-   ============================================================ */
-
-function getJobId(){
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    return (
-        params.get("job_id")
-        || params.get("jobId")
-        || ""
-    ).trim();
-}
-
-
-/* ============================================================
-   STATUS DISPLAY
-   ============================================================ */
-
-function updateStatusDisplay(
-    job
-){
-
-    const status =
-        normalizeStatus(
-            job.status
-        );
-
-    currentStatus =
-        status;
-
-    if(status === "reviewing"){
-
-        setStatus(
-            "running",
-            "Reviewing"
-        );
-
-        introMessage.textContent =
-            "Your document is being reviewed page by page. " +
-            "Completed pages remain visible while the remaining pages are processed.";
-
-        progressMessage.textContent =
-            "The review is still running.";
-
-    }else if(status === "review_complete"){
-
-        setStatus(
-            "complete",
-            "Review complete"
-        );
-
-        introMessage.textContent =
-            "The complete document review is now available.";
-
-        progressMessage.textContent =
-            "Every document page has completed review.";
-
-    }else if(status === "correcting"){
-
-        setStatus(
-            "running",
-            "Correcting"
-        );
-
-        introMessage.textContent =
-            "Your requested correction is being applied.";
-
-        progressMessage.textContent =
-            "The corrected document will automatically return for review.";
-
-    }else if(status === "approved"){
-
-        setStatus(
-            "complete",
-            "Approved"
-        );
-
-        introMessage.textContent =
-            "This document version has been approved.";
-
-        progressMessage.textContent =
-            "The current version is approved.";
-
-    }else if(
-        status === "review_error"
-        || status === "correction_error"
-    ){
-
-        setStatus(
-            "error",
-            "Action failed"
-        );
-
-        introMessage.textContent =
-            "The document could not complete the current operation.";
-
-        progressMessage.textContent =
-            "Please review the error message below.";
-
-    }else{
-
-        setStatus(
-            "running",
-            status || "Processing"
-        );
-
-        progressMessage.textContent =
-            "The document is being processed.";
-    }
-}
-
-
-/* ============================================================
-   PROGRESS
-   ============================================================ */
-
-function updateProgress(
-    progress,
-    totalPages
-){
-
-    const completed =
-        Math.max(
-            0,
-            Number(
-                progress?.completed ?? 0
-            )
-        );
-
-    const total =
-        Math.max(
-            0,
-            Number(
-                progress?.total
-                ?? totalPages
-                ?? 0
-            )
-        );
-
-    progressCount.textContent =
-        `${completed} / ${total}`;
-
-    let percent = 0;
-
-    if(total > 0){
-
-        percent =
-            Math.min(
-                100,
-                Math.round(
-                    (completed / total) * 100
-                )
-            );
-    }
-
-    progressFill.style.width =
-        `${percent}%`;
-
-    pageSummary.textContent =
-        `${total} ${
-            total === 1
-            ? "page"
-            : "pages"
-        }`;
-}
-
-
-/* ============================================================
-   PAGE STATUS
-   ============================================================ */
-
-function pageStatusLabel(
-    status
-){
-
-    const value =
-        normalizeStatus(status);
-
-    if(value === "reviewed"){
-        return "Reviewed";
-    }
-
-    if(value === "reviewing"){
-        return "Reviewing";
-    }
-
-    if(value === "error"){
-        return "Error";
-    }
-
-    if(value === "correcting"){
-        return "Correcting";
-    }
-
-    if(value === "corrected"){
-        return "Corrected";
-    }
-
-    if(value === "queued"){
-        return "Waiting";
-    }
-
-    return value
-        ? value.replace(/_/g," ")
-        : "Waiting";
-}
-
-
-/* ============================================================
-   RENDER ONE PAGE
-   ============================================================ */
-
-function renderPage(
-    page,
-    fallbackPosition
-){
-
-    const number =
-        page?.page_number
-        ?? fallbackPosition;
-
-    const position =
-        page?.position
-        ?? fallbackPosition;
-
-    const status =
-        normalizeStatus(
-            page?.status
-        );
-
-    const content =
-        String(
-            page?.content
-            ?? ""
-        );
-
-    const review =
-        String(
-            page?.review
-            ?? ""
-        );
-
-    const error =
-        String(
-            page?.error
-            ?? ""
-        ).trim();
-
-    const statusClass =
-        status === "reviewing"
-        ? "reviewing"
-        : (
-            status === "reviewed"
-            ? "reviewed"
-            : (
-                status === "error"
-                ? "error"
-                : ""
-            )
-        );
-
-    const reviewBlock =
-        review.trim()
-        ? `
-            <div class="review-section">
-
-                <div class="section-label">
-                    Review for Page ${escapeHtml(number)}
-                </div>
-
-                <div class="review-content">${escapeHtml(review)}</div>
-
-            </div>
-        `
-        : `
-            <div class="review-section">
-
-                <div class="section-label">
-                    Review
-                </div>
-
-                <div class="review-empty">
-                    ${
-                        status === "reviewing"
-                        ? "This page is currently being reviewed."
-                        : "Review for this page has not been returned yet."
-                    }
-                </div>
-
-            </div>
-        `;
-
-    const errorBlock =
-        error
-        ? `
-            <div class="page-error">
-                ${escapeHtml(error)}
-            </div>
-        `
-        : "";
-
-    return `
-        <article
-            class="document-page"
-            data-page-number="${escapeHtml(number)}"
-            data-position="${escapeHtml(position)}"
-        >
-
-            <div class="page-header">
-
-                <div class="page-title">
-                    Page ${escapeHtml(number)}
-                </div>
-
-                <div class="page-status ${statusClass}">
-                    ${escapeHtml(
-                        pageStatusLabel(status)
-                    )}
-                </div>
-
-            </div>
-
-            <div class="page-body">
-
-                <div class="section-label">
-                    Document Content
-                </div>
-
-                <div class="document-content">${
-                    content.trim()
-                    ? escapeHtml(content)
-                    : "No document content was returned for this page."
-                }</div>
-
-                ${reviewBlock}
-
-                ${errorBlock}
-
-            </div>
-
-        </article>
-    `;
-}
-
-
-/* ============================================================
-   RENDER ALL PAGES
-   ============================================================ */
-
-function renderPages(
-    reviewPages,
-    documentPages
-){
-
-    /*
-     * review_pages is the authoritative review structure.
-     *
-     * If it has not populated yet, document_pages is still
-     * rendered so the customer can see the entire document
-     * rather than a blank/cut-off review area.
-     */
-
-    let pages =
-        Array.isArray(reviewPages)
-        ? reviewPages
-        : [];
+function makeId(prefix){
 
     if(
-        pages.length === 0
-        && Array.isArray(documentPages)
-        && documentPages.length > 0
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
     ){
-
-        pages =
-            documentPages.map(
-                (
-                    page,
-                    index
-                ) => ({
-                    page_number:
-                        page?.page_number
-                        ?? index + 1,
-
-                    position:
-                        index + 1,
-
-                    status:
-                        "queued",
-
-                    content:
-                        page?.content
-                        ?? "",
-
-                    review:
-                        "",
-
-                    error:
-                        null
-                })
-            );
+        return prefix + crypto.randomUUID();
     }
 
-    if(pages.length === 0){
+    return (
+        prefix +
+        Date.now() +
+        "_" +
+        Math.random().toString(36).slice(2)
+    );
+}
 
-        pagesContainer.innerHTML = `
-            <div class="loading">
-                No document pages have been returned yet.
-            </div>
-        `;
+
+function get(key){
+
+    try{
+        return localStorage.getItem(key);
+    }catch(e){
+        return null;
+    }
+
+}
+
+
+function put(key,value){
+
+    try{
+        localStorage.setItem(key,value);
+    }catch(e){}
+
+}
+
+
+let customerId =
+    get("npbc_customer_id") ||
+    makeId("customer_");
+
+put(
+    "npbc_customer_id",
+    customerId
+);
+
+
+let jobId =
+    params.get("job_id") ||
+    get("npbc_job_id") ||
+    makeId("job_");
+
+put(
+    "npbc_job_id",
+    jobId
+);
+
+
+let requestId =
+    get("npbc_client_request_id") ||
+    makeId("request_");
+
+put(
+    "npbc_client_request_id",
+    requestId
+);
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+let busy = false;
+
+let approved = false;
+let paymentConfirmed = false;
+
+let currentWork = "";
+
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordingStream = null;
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function clean(value){
+
+    if(value == null){
+        return null;
+    }
+
+    return String(value).trim() || null;
+}
+
+
+function setStatus(message,type=""){
+
+    status.textContent = message || "";
+
+    status.className =
+        "status " + type;
+}
+
+
+function busyState(value){
+
+    busy = value;
+
+    [
+        formSubmit,
+        sendBtn,
+        uploadBtn,
+        voiceBtn,
+        customerBtn,
+        chooseBtn,
+        applyBtn,
+        approveBtn
+    ].forEach(button => {
+
+        if(button){
+            button.disabled = value;
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   DOCUMENT CLEANING
+   ========================================================= */
+
+function removeHtmlCodeFences(value){
+
+    let html = String(value || "").trim();
+
+    html = html.replace(
+        /^```(?:html|HTML)?\s*/i,
+        ""
+    );
+
+    html = html.replace(
+        /\s*```$/i,
+        ""
+    );
+
+    return html.trim();
+}
+
+
+function looksLikeHtml(value){
+
+    const text =
+        String(value || "").trim();
+
+    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i.test(text);
+}
+
+
+/* =========================================================
+   SANITIZE DOCUMENT HTML
+
+   Removes executable elements but DOES NOT truncate
+   document content.
+   ========================================================= */
+
+function sanitizeDocumentHtml(html){
+
+    const source =
+        document.createElement("div");
+
+    source.innerHTML = html;
+
+
+    source.querySelectorAll(
+        "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
+    ).forEach(element => {
+
+        element.remove();
+
+    });
+
+
+    const allowedTags = new Set([
+
+        "H1",
+        "H2",
+        "H3",
+        "H4",
+        "H5",
+        "H6",
+
+        "P",
+
+        "STRONG",
+        "B",
+        "EM",
+        "I",
+        "U",
+
+        "UL",
+        "OL",
+        "LI",
+
+        "HR",
+        "BR",
+
+        "TABLE",
+        "THEAD",
+        "TBODY",
+        "TFOOT",
+        "TR",
+        "TH",
+        "TD",
+
+        "BLOCKQUOTE",
+
+        "PRE",
+        "CODE",
+
+        "DIV",
+        "SPAN",
+
+        "A",
+        "IMG"
+
+    ]);
+
+
+    function cleanNode(node){
+
+        if(node.nodeType === Node.TEXT_NODE){
+            return;
+        }
+
+
+        if(node.nodeType !== Node.ELEMENT_NODE){
+
+            node.remove();
+
+            return;
+        }
+
+
+        const tag =
+            node.tagName;
+
+
+        if(!allowedTags.has(tag)){
+
+            const parent =
+                node.parentNode;
+
+            if(parent){
+
+                while(node.firstChild){
+
+                    parent.insertBefore(
+                        node.firstChild,
+                        node
+                    );
+
+                }
+
+                node.remove();
+
+            }
+
+            return;
+        }
+
+
+        Array.from(
+            node.attributes
+        ).forEach(attr => {
+
+            const name =
+                attr.name.toLowerCase();
+
+            const keep =
+                name === "href" ||
+                name === "src" ||
+                name === "alt" ||
+                name === "title";
+
+            if(!keep){
+
+                node.removeAttribute(
+                    attr.name
+                );
+
+            }
+
+        });
+
+
+        if(tag === "A"){
+
+            const href =
+                node.getAttribute("href") || "";
+
+            if(
+                !/^https?:\/\//i.test(href) &&
+                !/^mailto:/i.test(href)
+            ){
+
+                node.removeAttribute(
+                    "href"
+                );
+
+            }else{
+
+                node.setAttribute(
+                    "target",
+                    "_blank"
+                );
+
+                node.setAttribute(
+                    "rel",
+                    "noopener noreferrer"
+                );
+
+            }
+
+        }
+
+
+        if(tag === "IMG"){
+
+            const src =
+                node.getAttribute("src") || "";
+
+            if(
+                !/^https?:\/\//i.test(src) &&
+                !/^data:image\//i.test(src)
+            ){
+
+                node.remove();
+
+                return;
+            }
+
+        }
+
+
+        Array.from(
+            node.childNodes
+        ).forEach(cleanNode);
+
+    }
+
+
+    Array.from(
+        source.childNodes
+    ).forEach(cleanNode);
+
+
+    return source.innerHTML;
+}
+
+
+/* =========================================================
+   COMPLETE DOCUMENT RENDERER
+
+   IMPORTANT:
+   We deliberately do not use:
+
+   slice()
+   substring()
+   substr()
+   first section only
+   page limit
+   character limit
+   height measurement
+
+   The entire returned response is rendered.
+   ========================================================= */
+
+function renderDocument(work){
+
+    const raw =
+        clean(work) || "";
+
+    workContent.innerHTML = "";
+
+    workContent.classList.remove(
+        "document-html"
+    );
+
+
+    if(!raw){
+
+        const placeholder =
+            document.createElement("div");
+
+        placeholder.className =
+            "work-placeholder";
+
+        placeholder.textContent =
+            "Your prepared work will appear here.";
+
+        workContent.appendChild(
+            placeholder
+        );
 
         return;
     }
 
+
+    const cleaned =
+        removeHtmlCodeFences(raw);
+
+
+    if(looksLikeHtml(cleaned)){
+
+        const safeHtml =
+            sanitizeDocumentHtml(
+                cleaned
+            );
+
+        workContent.classList.add(
+            "document-html"
+        );
+
+        workContent.innerHTML =
+            safeHtml;
+
+    }else{
+
+        /*
+         * textContent deliberately receives
+         * the COMPLETE returned response.
+         */
+        workContent.textContent =
+            cleaned;
+
+    }
+
+
     /*
-     * Sort by document position/page number so pages are NEVER
-     * displayed in an arbitrary order.
+     * The CARD is the scroll viewport.
+     *
+     * Start at page one.
      */
+    workCard.scrollTop = 0;
+}
 
-    pages =
-        [...pages].sort(
-            (a,b) => {
 
-                const aPosition =
-                    Number(
-                        a?.position
-                        ?? a?.page_number
-                        ?? 0
-                    );
+/* =========================================================
+   SERVICE FORMS
+   ========================================================= */
 
-                const bPosition =
-                    Number(
-                        b?.position
-                        ?? b?.page_number
-                        ?? 0
-                    );
+const generic = [
 
-                return (
-                    aPosition
-                    -
-                    bPosition
-                );
+    {
+        name:"request",
+        label:"What do you need?",
+        required:true,
+        type:"textarea",
+        placeholder:
+            "Tell us exactly what you want done"
+    },
+
+    {
+        name:"important_details",
+        label:"Important details",
+        type:"textarea",
+        placeholder:
+            "Add the information that matters to your request"
+    },
+
+    {
+        name:"other_instructions",
+        label:"Other instructions",
+        type:"textarea",
+        placeholder:
+            "Anything else you want considered"
+    }
+
+];
+
+
+const forms = {
+
+    "document formatting":[
+
+        {
+            name:"document_title",
+            label:"Document title",
+            required:true,
+            type:"text",
+            placeholder:
+                "Enter the document title"
+        },
+
+        {
+            name:"document_type",
+            label:"Document type",
+            required:true,
+            type:"text",
+            placeholder:
+                "e.g. report, essay, thesis, business document"
+        },
+
+        {
+            name:"page_count",
+            label:"Number of pages",
+            type:"text",
+            placeholder:
+                "Enter the number of pages if known"
+        },
+
+        {
+            name:"formatting_style",
+            label:"Formatting style",
+            type:"text",
+            placeholder:
+                "e.g. APA, MLA, Harvard, business standard"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Specific formatting instructions",
+            type:"textarea",
+            placeholder:
+                "Font, spacing, margins, headings, layout, or anything else"
+        }
+
+    ],
+
+
+    "research assistance":[
+
+        {
+            name:"research_topic",
+            label:"Research topic or question",
+            required:true,
+            type:"textarea",
+            placeholder:
+                "What do you want to research?"
+        },
+
+        {
+            name:"desired_length",
+            label:"Desired length",
+            type:"text",
+            placeholder:
+                "e.g. 3 pages, 1,500 words"
+        },
+
+        {
+            name:"research_purpose",
+            label:"Purpose of the research",
+            type:"textarea",
+            placeholder:
+                "Tell us what the research is for"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Additional instructions",
+            type:"textarea",
+            placeholder:
+                "Anything specific you want covered"
+        }
+
+    ],
+
+
+    "seminar papers":[
+
+        {
+            name:"topic",
+            label:"Topic / Title",
+            required:true,
+            type:"textarea",
+            placeholder:
+                "Enter the seminar paper topic"
+        },
+
+        {
+            name:"length",
+            label:"Desired length",
+            required:true,
+            type:"text",
+            placeholder:
+                "e.g. 3 pages, 2,000 words"
+        },
+
+        {
+            name:"formatting_style",
+            label:"Formatting style",
+            type:"text",
+            placeholder:
+                "Leave blank for standard formatting"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Special instructions",
+            type:"textarea",
+            placeholder:
+                "Points to cover, tone, structure, or other instructions"
+        }
+
+    ],
+
+
+    "essay writing":[
+
+        {
+            name:"topic",
+            label:"Essay topic or question",
+            required:true,
+            type:"textarea",
+            placeholder:
+                "Enter the essay topic or question"
+        },
+
+        {
+            name:"length",
+            label:"Desired length",
+            required:true,
+            type:"text",
+            placeholder:
+                "e.g. 1,000 words, 3 pages"
+        },
+
+        {
+            name:"academic_level",
+            label:"Academic level",
+            type:"text",
+            placeholder:
+                "e.g. secondary school, undergraduate, postgraduate"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Additional instructions",
+            type:"textarea",
+            placeholder:
+                "Anything specific you want included"
+        }
+
+    ],
+
+
+    "cv writing":[
+
+        {
+            name:"full_name",
+            label:"Full name",
+            required:true,
+            type:"text",
+            placeholder:
+                "Enter your full name"
+        },
+
+        {
+            name:"career_target",
+            label:"Job / career you are targeting",
+            required:true,
+            type:"text",
+            placeholder:
+                "e.g. Accountant, Software Developer"
+        },
+
+        {
+            name:"experience",
+            label:"Work experience",
+            type:"textarea",
+            placeholder:
+                "Enter your work history and responsibilities"
+        },
+
+        {
+            name:"education",
+            label:"Education",
+            type:"textarea",
+            placeholder:
+                "Schools, qualifications and dates"
+        },
+
+        {
+            name:"skills",
+            label:"Skills and achievements",
+            type:"textarea",
+            placeholder:
+                "List important skills, achievements or certifications"
+        },
+
+        {
+            name:"additional_information",
+            label:"Additional information",
+            type:"textarea",
+            placeholder:
+                "Anything else that should appear in your CV"
+        }
+
+    ]
+
+};
+
+
+function definition(){
+
+    const s =
+        service.toLowerCase();
+
+    const key =
+        Object.keys(forms).find(
+            k => s.includes(k)
+        );
+
+    return key
+        ? forms[key]
+        : generic;
+}
+
+
+function renderForm(){
+
+    fields.innerHTML = "";
+
+
+    definition().forEach(f => {
+
+        const wrapper =
+            document.createElement("div");
+
+        const label =
+            document.createElement("label");
+
+        const input =
+            document.createElement(
+                f.type === "textarea"
+                    ? "textarea"
+                    : "input"
+            );
+
+
+        wrapper.className =
+            "field";
+
+
+        label.htmlFor =
+            f.name;
+
+
+        label.innerHTML =
+            f.label +
+            (
+                f.required
+                    ? ' <span class="required">*</span>'
+                    : ' <span class="optional">(optional)</span>'
+            );
+
+
+        input.id =
+            f.name;
+
+        input.name =
+            f.name;
+
+        input.placeholder =
+            f.placeholder || "";
+
+
+        if(f.required){
+
+            input.required = true;
+
+        }
+
+
+        if(f.type !== "textarea"){
+
+            input.type =
+                f.type || "text";
+
+        }
+
+
+        wrapper.append(
+            label,
+            input
+        );
+
+
+        fields.appendChild(
+            wrapper
+        );
+
+    });
+
+}
+
+
+function collect(){
+
+    const data = {};
+
+
+    serviceForm
+        .querySelectorAll(
+            "input,textarea,select"
+        )
+        .forEach(element => {
+
+            const value =
+                clean(element.value);
+
+            if(value){
+
+                data[element.name] =
+                    value;
+
+            }
+
+        });
+
+
+    return data;
+}
+
+
+/* =========================================================
+   API
+   ========================================================= */
+
+async function apiChat(body){
+
+    const response =
+        await fetch(
+            API_BASE + "/api/chat",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(body)
             }
         );
 
-    /*
-     * Render EVERY page.
-     *
-     * There is intentionally no "first N pages" logic,
-     * no truncation and no assembled-review-only rendering.
-     */
 
-    pagesContainer.innerHTML =
-        pages
-            .map(
-                (
-                    page,
-                    index
-                ) =>
-                    renderPage(
-                        page,
-                        index + 1
-                    )
-            )
-            .join("");
+    const data =
+        await response
+            .json()
+            .catch(
+                () => ({})
+            );
 
-    loading.classList.add("hidden");
-}
-
-
-/* ============================================================
-   COMPLETE REVIEW
-   ============================================================ */
-
-function renderCompleteReview(
-    assembled
-){
-
-    const text =
-        String(
-            assembled ?? ""
-        ).trim();
-
-    if(!text){
-
-        completeReview.classList.add(
-            "hidden"
-        );
-
-        completeReviewContent.textContent =
-            "";
-
-        return;
-    }
-
-    completeReviewContent.textContent =
-        text;
-
-    completeReview.classList.remove(
-        "hidden"
-    );
-}
-
-
-/* ============================================================
-   BUTTON STATES
-   ============================================================ */
-
-function updateButtons(){
-
-    const complete =
-        currentStatus ===
-        "review_complete";
-
-    const approved =
-        currentStatus ===
-        "approved";
-
-    const activeReview =
-        currentStatus ===
-        "reviewing";
-
-    const activeCorrection =
-        currentStatus ===
-        "correcting";
-
-    const errorState =
-        currentStatus ===
-            "review_error"
-        ||
-        currentStatus ===
-            "correction_error";
-
-    const instruction =
-        correctionInput.value.trim();
-
-    correctionButton.disabled =
-        correctionRunning
-        ||
-        activeReview
-        ||
-        activeCorrection
-        ||
-        approved
-        ||
-        !instruction
-        ||
-        !jobId;
-
-    approveButton.disabled =
-        approvalRunning
-        ||
-        !complete
-        ||
-        !currentVersionId
-        ||
-        approved;
-
-    correctionInput.disabled =
-        correctionRunning
-        ||
-        activeReview
-        ||
-        activeCorrection
-        ||
-        approved;
 
     if(
-        errorState
-        &&
-        !correctionRunning
+        !response.ok ||
+        !data.success
     ){
 
-        correctionInput.disabled =
-            false;
+        throw new Error(
+            data.reply ||
+            data.message ||
+            data.error ||
+            "Request failed."
+        );
+
     }
+
+
+    return data;
 }
 
 
-/* ============================================================
-   APPLY API STATE
-   ============================================================ */
+/* =========================================================
+   GUIDANCE
+   ========================================================= */
 
-function applyJobState(
-    job
-){
+function guidancePrompt(){
 
-    if(!job){
-        return;
-    }
+    return `
+The customer has just selected this service: ${service}.
 
-    if(job.job_id){
+Prepare a short, clear customer-facing introduction explaining:
 
-        jobId =
-            String(
-                job.job_id
-            ).trim();
+- what the service does
+- what the customer will receive
+- the current fee or that quotation is required
+- useful information to prepare
+- practical tips specific to the service
+- useful documents they may upload
 
-        jobIdDisplay.textContent =
-            textOrDash(jobId);
-    }
+Do not create the actual work yet.
+Do not ask for payment yet.
+Do not mention internal software, models, APIs or providers.
 
-    if(job.version_id){
+Write concise, friendly Nigerian English.
+`;
 
-        currentVersionId =
-            String(
-                job.version_id
-            ).trim();
-
-        versionDisplay.textContent =
-            textOrDash(
-                currentVersionId
-            );
-
-        approvalVersion.textContent =
-            textOrDash(
-                currentVersionId
-            );
-    }
-
-    if(job.service){
-
-        serviceDisplay.textContent =
-            textOrDash(
-                job.service
-            );
-    }
-
-    updateStatusDisplay(
-        job
-    );
-
-    updateProgress(
-        job.progress,
-        Array.isArray(
-            job.document_pages
-        )
-        ? job.document_pages.length
-        : 0
-    );
-
-    renderPages(
-        job.review_pages,
-        job.document_pages
-    );
-
-    renderCompleteReview(
-        job.assembled_review
-    );
-
-    updateButtons();
-
-    if(
-        job.error
-        &&
-        (
-            job.status === "review_error"
-            ||
-            job.status === "correction_error"
-        )
-    ){
-
-        const errorMessage =
-            typeof job.error === "object"
-            ? (
-                job.error.message
-                || "The operation failed."
-            )
-            : String(
-                job.error
-            );
-
-        showNotice(
-            errorMessage,
-            "error"
-        );
-
-    }else if(
-        job.status ===
-        "review_complete"
-    ){
-
-        showNotice(
-            "Review complete. You can now request a correction or approve this document version.",
-            "success"
-        );
-
-    }else if(
-        job.status ===
-        "approved"
-    ){
-
-        showNotice(
-            "This document version has been approved.",
-            "success"
-        );
-
-    }else{
-
-        hideNotice();
-    }
 }
 
 
-/* ============================================================
-   FETCH REVIEW
-   ============================================================ */
+async function loadGuidance(){
 
-async function fetchReview(){
+    setStatus(
+        "Preparing useful information for this service..."
+    );
 
-    if(!jobId){
-        return;
-    }
 
     try{
 
-        const response =
-            await fetch(
-                `${API_BASE}/api/review?job_id=${encodeURIComponent(jobId)}`,
-                {
-                    method:"GET",
-                    cache:"no-store",
-                    headers:{
-                        "Accept":
-                            "application/json"
-                    }
-                }
-            );
+        const data =
+            await apiChat({
 
-        let data = null;
+                message:
+                    guidancePrompt(),
 
-        try{
-            data =
-                await response.json();
-        }catch(error){
-            throw new Error(
-                "The review API returned an invalid response."
-            );
-        }
+                service,
 
-        if(!response.ok){
+                event:
+                    "service_selected_guidance",
 
-            throw new Error(
-                data?.error_message
-                ||
-                data?.error
-                ||
-                `Review request failed (${response.status}).`
-            );
-        }
+                customer_id:
+                    customerId,
 
-        if(!data.success){
+                job_id:
+                    jobId,
 
-            throw new Error(
-                data?.error_message
-                ||
-                data?.error
-                ||
-                "The review request was unsuccessful."
-            );
-        }
+                client_request_id:
+                    requestId,
 
-        applyJobState(
-            data
-        );
+                activate_intelligence:
+                    true,
 
-        /*
-         * Keep polling while the backend is doing work.
-         *
-         * The API itself remains the source of truth.
-         */
+                guidance_only:
+                    true,
 
-        if(
-            data.status === "reviewing"
-            ||
-            data.status === "correcting"
+                create_work:
+                    false
+
+            });
+
+
+        introTitle.textContent =
+            service;
+
+
+        introText.textContent =
+            clean(data.reply) ||
+            "Please provide the information requested below.";
+
+
+        const amount =
+            data.amount ||
+            data.price ||
+            data.service_amount;
+
+
+        if(amount){
+
+            const numericAmount =
+                Number(
+                    String(amount)
+                        .replace(
+                            /[^0-9.]/g,
+                            ""
+                        )
+                );
+
+
+            price.textContent =
+                "Service fee: ₦" +
+                numericAmount.toLocaleString();
+
+        }else if(
+            /₦\s?[\d,]+/.test(
+                data.reply || ""
+            )
         ){
 
-            schedulePolling();
+            price.textContent =
+                "Service fee: " +
+                (
+                    data.reply.match(
+                        /₦\s?[\d,]+/
+                    ) || [""]
+                )[0];
+
+        }else if(
+            /quotation/i.test(
+                data.reply || ""
+            )
+        ){
+
+            price.textContent =
+                "Service fee: Quotation required";
 
         }else{
 
-            stopPolling();
+            price.textContent =
+                "Service: " + service;
+
         }
+
+
+        setStatus("");
 
     }catch(error){
 
-        console.error(
-            "Review polling error:",
-            error
-        );
+        introText.textContent =
+            "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
+
+        price.textContent =
+            "Service: " + service;
 
         setStatus(
-            "error",
-            "Connection error"
-        );
-
-        showNotice(
-            error.message
-            ||
-            "Unable to load the current review.",
+            "You can still complete the form or ask a question below.",
             "error"
         );
 
-        /*
-         * A temporary network failure should not permanently
-         * stop the review page. Retry automatically.
-         */
-
-        schedulePolling();
     }
+
 }
 
 
-/* ============================================================
-   POLLING
-   ============================================================ */
+/* =========================================================
+   WORK CREATION
+   ========================================================= */
 
-function schedulePolling(){
+function creationPrompt(data){
 
-    if(pollingTimer !== null){
-        return;
-    }
+    return `
+The customer has completed the service information form.
 
-    pollingTimer =
-        window.setTimeout(
-            () => {
+Create the actual requested work now.
 
-                pollingTimer =
-                    null;
+RETURN THE COMPLETE REQUESTED WORK.
 
-                fetchReview();
+IMPORTANT DOCUMENT OUTPUT RULE:
 
-            },
-            POLL_INTERVAL
-        );
+When the requested work is a document, return the COMPLETE document as properly structured HTML using normal document elements such as:
+
+<h1>
+<h2>
+<h3>
+<p>
+<strong>
+<em>
+<ul>
+<ol>
+<li>
+<hr>
+<table>
+<tr>
+<th>
+<td>
+
+where appropriate.
+
+The requested length must be respected.
+
+If the customer requests a specific number of pages, produce enough complete content to reasonably fill the requested number of pages.
+
+DO NOT deliberately shorten the work.
+
+For an 8-page request, the response must contain the complete body required for the requested document and must NOT stop after the introduction.
+
+Continue through every necessary section.
+
+For academic papers, include all necessary sections and finish the complete paper, including the conclusion and references where appropriate.
+
+Do not stop after an introduction.
+
+Do not stop after a few sections.
+
+Do not return an outline instead of the requested document.
+
+Do not summarize the requested document.
+
+Do not say that the remaining sections can be added later.
+
+Do not return only part of the document.
+
+Do not wrap the HTML in markdown code fences.
+
+Do not return HTML source as an explanation.
+
+The HTML itself is the document that should be displayed to the customer for review.
+
+Do not ask for an email address or send the customer elsewhere unless genuinely required.
+
+SERVICE:
+
+${service}
+
+CUSTOMER FORM INFORMATION:
+
+${Object.entries(data)
+    .map(
+        ([key,value]) =>
+            `${key}:\n${value}`
+    )
+    .join("\n\n")}
+`;
+
 }
 
 
-function stopPolling(){
+async function createWork(data){
 
-    if(pollingTimer !== null){
+    busyState(true);
 
-        window.clearTimeout(
-            pollingTimer
-        );
-
-        pollingTimer =
-            null;
-    }
-}
-
-
-/* ============================================================
-   CORRECTION
-   ============================================================ */
-
-async function requestCorrection(){
-
-    const instruction =
-        correctionInput.value.trim();
-
-    if(!instruction){
-        return;
-    }
-
-    if(!jobId){
-        showNotice(
-            "No review job is available.",
-            "error"
-        );
-        return;
-    }
-
-    correctionRunning =
-        true;
-
-    updateButtons();
-
-    showNotice(
-        "Your correction has been submitted. The corrected document will be reviewed again automatically.",
-        "success"
+    setStatus(
+        "Preparing your work..."
     );
+
 
     try{
 
-        const response =
-            await fetch(
-                `${API_BASE}/api/correct`,
-                {
-                    method:"POST",
+        const result =
+            await apiChat({
 
-                    headers:{
-                        "Content-Type":
-                            "application/json",
+                message:
+                    creationPrompt(data),
 
-                        "Accept":
-                            "application/json"
-                    },
+                service,
 
-                    body:JSON.stringify({
-                        job_id:
-                            jobId,
+                event:
+                    "form_submitted_create_work",
 
-                        instruction:
-                            instruction
-                    })
-                }
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId,
+
+                client_request_id:
+                    requestId,
+
+                form_data:
+                    data,
+
+                activate_intelligence:
+                    true,
+
+                create_work:
+                    true
+
+            });
+
+
+        if(result.job_id){
+
+            jobId =
+                result.job_id;
+
+            put(
+                "npbc_job_id",
+                jobId
             );
 
-        let data = null;
-
-        try{
-            data =
-                await response.json();
-        }catch(error){
-            throw new Error(
-                "The correction API returned an invalid response."
-            );
         }
 
-        if(!response.ok){
-
-            throw new Error(
-                data?.error_message
-                ||
-                data?.error
-                ||
-                `Correction request failed (${response.status}).`
-            );
-        }
-
-        if(!data.success){
-
-            throw new Error(
-                data?.error_message
-                ||
-                data?.error
-                ||
-                "The correction request was unsuccessful."
-            );
-        }
 
         /*
-         * The API increments the version immediately.
-         * We do not invent a version ourselves.
+         * IMPORTANT:
+         *
+         * Never slice the response.
+         * Never substring it.
+         * Never select only a first section.
+         *
+         * Prefer the API's explicit work/content field
+         * when supplied, otherwise use the complete reply.
          */
 
-        if(data.version_id){
+        currentWork =
+            clean(result.work) ||
+            clean(result.content) ||
+            clean(result.reply) ||
+            "Your work has been prepared.";
 
-            currentVersionId =
-                String(
-                    data.version_id
-                ).trim();
 
-            versionDisplay.textContent =
-                currentVersionId;
-
-            approvalVersion.textContent =
-                currentVersionId;
-        }
-
-        correctionInput.value =
-            "";
-
-        correctionRunning =
-            false;
-
-        /*
-         * Immediately fetch the new backend state.
-         */
-
-        await fetchReview();
-
-    }catch(error){
-
-        correctionRunning =
-            false;
-
-        showNotice(
-            error.message
-            ||
-            "Unable to submit the correction.",
-            "error"
+        showReview(
+            currentWork
         );
 
-        updateButtons();
-    }
-}
-
-
-/* ============================================================
-   APPROVAL
-   ============================================================ */
-
-async function approveDocument(){
-
-    if(
-        currentStatus !==
-        "review_complete"
-    ){
-        return;
-    }
-
-    if(!jobId){
-        return;
-    }
-
-    if(!currentVersionId){
-
-        showNotice(
-            "The current document version is not available.",
-            "error"
-        );
-
-        return;
-    }
-
-    approvalRunning =
-        true;
-
-    updateButtons();
-
-    showNotice(
-        "Submitting document approval...",
-        "success"
-    );
-
-    try{
-
-        const response =
-            await fetch(
-                `${API_BASE}/api/approve`,
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "application/json"
-                    },
-
-                    body:JSON.stringify({
-                        job_id:
-                            jobId,
-
-                        version_id:
-                            currentVersionId
-                    })
-                }
-            );
-
-        let data = null;
-
-        try{
-            data =
-                await response.json();
-        }catch(error){
-            throw new Error(
-                "The approval API returned an invalid response."
-            );
-        }
-
-        if(!response.ok){
-
-            throw new Error(
-                data?.error_message
-                ||
-                data?.error
-                ||
-                `Approval failed (${response.status}).`
-            );
-        }
-
-        if(!data.success){
-
-            throw new Error(
-                data?.error_message
-                ||
-                data?.error
-                ||
-                "Approval was unsuccessful."
-            );
-        }
-
-        currentStatus =
-            "approved";
-
-        approvalRunning =
-            false;
 
         setStatus(
-            "complete",
-            "Approved"
-        );
-
-        introMessage.textContent =
-            "This document version has been approved.";
-
-        progressMessage.textContent =
-            "The current document version is approved.";
-
-        showNotice(
-            "Document approved successfully.",
+            "Your work is ready for review.",
             "success"
         );
 
-        updateButtons();
 
     }catch(error){
 
-        approvalRunning =
-            false;
-
-        showNotice(
-            error.message
-            ||
-            "Unable to approve the document.",
+        setStatus(
+            error.message,
             "error"
         );
 
-        updateButtons();
+    }finally{
+
+        busyState(false);
+
     }
+
 }
 
 
-/* ============================================================
-   EVENT HANDLERS
-   ============================================================ */
+/* =========================================================
+   REVIEW
+   ========================================================= */
 
-correctionButton.addEventListener(
-    "click",
-    requestCorrection
-);
+function showReview(work){
 
-approveButton.addEventListener(
-    "click",
-    approveDocument
-);
+    formView.style.display =
+        "none";
 
-correctionInput.addEventListener(
-    "input",
-    updateButtons
-);
-
-
-/* ============================================================
-   INITIALIZATION
-   ============================================================ */
-
-function initialize(){
-
-    jobId =
-        getJobId();
-
-    if(!jobId){
-
-        loading.innerHTML = `
-            <strong style="color:#fff;">
-                Review job not found
-            </strong>
-
-            <div style="margin-top:8px;">
-                This page needs a job_id to load the document review.
-            </div>
-        `;
-
-        setStatus(
-            "error",
-            "No job"
-        );
-
-        correctionInput.disabled =
-            true;
-
-        approveButton.disabled =
-            true;
-
-        return;
-    }
-
-    jobIdDisplay.textContent =
-        jobId;
-
-    setStatus(
-        "running",
-        "Loading"
+    reviewView.classList.add(
+        "show"
     );
 
-    fetchReview();
+
+    currentWork =
+        work || "";
+
+
+    renderDocument(
+        currentWork
+    );
+
+
+    correctionInput.value = "";
+
+
+    paymentPanel.classList.remove(
+        "show"
+    );
+
+
+    approved = false;
+    paymentConfirmed = false;
+
+
+    downloadBtn.disabled =
+        true;
+
+    downloadBtn.classList.remove(
+        "active"
+    );
+
+    downloadBtn.textContent =
+        "🔒 Download Your Work";
+
+
+    requestAnimationFrame(() => {
+
+        workCard.scrollTop = 0;
+
+    });
+
 }
 
 
-/* ============================================================
-   PAGE LIFECYCLE
-   ============================================================ */
+/* =========================================================
+   FORM SUBMISSION
+   ========================================================= */
 
-window.addEventListener(
-    "beforeunload",
-    stopPolling
-);
+serviceForm.addEventListener(
+    "submit",
+    event => {
 
-document.addEventListener(
-    "visibilitychange",
-    () => {
+        event.preventDefault();
+
 
         if(
-            document.visibilityState ===
-            "visible"
+            !busy &&
+            serviceForm.reportValidity()
         ){
 
-            if(
-                currentStatus ===
-                    "reviewing"
-                ||
-                currentStatus ===
-                    "correcting"
-                ||
-                !currentStatus
-            ){
+            createWork(
+                collect()
+            );
 
-                fetchReview();
-            }
         }
+
     }
 );
 
 
-/* ============================================================
-   START
-   ============================================================ */
+/* =========================================================
+   READ ONLY PROTECTION
+   ========================================================= */
 
-initialize();
+[
+    introCard,
+    workCard
+].forEach(element => {
 
-</script></body>
+    [
+        "copy",
+        "cut",
+        "contextmenu",
+        "selectstart",
+        "dragstart"
+    ].forEach(eventName => {
+
+        element.addEventListener(
+            eventName,
+            event => {
+
+                event.preventDefault();
+
+                if(event.clipboardData){
+
+                    event.clipboardData.setData(
+                        "text/plain",
+                        ""
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+
+    element.addEventListener(
+        "keydown",
+        event => {
+
+            if(
+                (event.ctrlKey || event.metaKey) &&
+                [
+                    "a",
+                    "c",
+                    "x",
+                    "s",
+                    "u"
+                ].includes(
+                    event.key.toLowerCase()
+                )
+            ){
+
+                event.preventDefault();
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   CORRECTIONS
+   ========================================================= */
+
+applyBtn.addEventListener(
+    "click",
+    async () => {
+
+        const correction =
+            clean(
+                correctionInput.value
+            );
+
+
+        if(!correction){
+
+            setStatus(
+                "Please write the correction or change you want.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if(busy){
+
+            return;
+
+        }
+
+
+        busyState(true);
+
+        setStatus(
+            "Applying your corrections..."
+        );
+
+
+        try{
+
+            const result =
+                await apiChat({
+
+                    message:`
+
+Please revise the prepared work using these customer corrections:
+
+${correction}
+
+RETURN THE COMPLETE REVISED WORK FOR REVIEW.
+
+IMPORTANT:
+
+If the prepared work is a document, return the COMPLETE revised document as properly structured HTML.
+
+Preserve the full document.
+
+Do not shorten it merely to save space.
+
+Do not remove sections that were not requested to be changed.
+
+Do not return only the changed section.
+
+Do not return only the introduction.
+
+Do not stop before the conclusion or final section.
+
+If the original document was intended to be 8 pages, preserve the requested full length while applying the correction.
+
+Do not summarize the document.
+
+Do not replace the complete document with an outline.
+
+Do not wrap the HTML in markdown code fences.
+
+Do not return the HTML source as an explanation.
+
+The returned document itself must be complete.
+
+`,
+
+                    service,
+
+                    event:
+                        "review_correction",
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId,
+
+                    client_request_id:
+                        requestId,
+
+                    current_work:
+                        currentWork,
+
+                    correction,
+
+                    activate_intelligence:
+                        true,
+
+                    create_work:
+                        true
+
+                });
+
+
+            currentWork =
+                clean(result.work) ||
+                clean(result.content) ||
+                clean(result.reply) ||
+                currentWork;
+
+
+            renderDocument(
+                currentWork
+            );
+
+
+            correctionInput.value = "";
+
+
+            setStatus(
+                "Your corrections have been applied. Please review the updated work.",
+                "success"
+            );
+
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            busyState(false);
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   APPROVAL
+   ========================================================= */
+
+approveBtn.addEventListener(
+    "click",
+    async () => {
+
+        if(busy){
+
+            return;
+
+        }
+
+
+        busyState(true);
+
+        setStatus(
+            "Preparing your payment step..."
+        );
+
+
+        try{
+
+            const query =
+                new URLSearchParams({
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId,
+
+                    client_request_id:
+                        requestId,
+
+                    service
+
+                });
+
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/approve?" +
+                    query.toString(),
+                    {
+                        method:"POST"
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Approval could not be completed."
+                );
+
+            }
+
+
+            approved = true;
+
+
+            paymentPanel.classList.add(
+                "show"
+            );
+
+
+            const amount =
+                Number(
+                    data.amount || 0
+                );
+
+
+            paymentDetails.textContent =
+`Service: ${data.service || service}
+Amount: ${
+    amount > 0
+        ? "₦" + amount.toLocaleString()
+        : "Quotation required"
+}
+Order: ${data.order_number || "Pending"}`;
+
+
+            setStatus(
+                "Your work is approved. Payment is ready.",
+                "success"
+            );
+
+
+            paymentPanel.scrollIntoView({
+                behavior:"smooth",
+                block:"center"
+            });
+
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            busyState(false);
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PAYMENT
+   ========================================================= */
+
+paymentReport.addEventListener(
+    "click",
+    async () => {
+
+        if(!approved){
+
+            setStatus(
+                "Approve the work first.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const amountMatch =
+            paymentDetails.textContent.match(
+                /Amount:\s*([^\n]+)/
+            );
+
+
+        const amount =
+            amountMatch
+                ? Number(
+                    amountMatch[1]
+                        .replace(
+                            /[^0-9.]/g,
+                            ""
+                        )
+                )
+                : 0;
+
+
+        if(amount <= 0){
+
+            setStatus(
+                "This service requires a quotation before payment.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/payment/create",
+                    {
+
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                job_id:
+                                    jobId,
+
+                                customer_id:
+                                    customerId,
+
+                                service,
+
+                                amount,
+
+                                payment_method:
+                                    "bank_transfer"
+
+                            })
+
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Payment record could not be created."
+                );
+
+            }
+
+
+            paymentDetails.textContent +=
+                `\nPayment ID: ${data.payment_id}\nStatus: Pending`;
+
+
+            setStatus(
+                "Payment reported. Verification is pending.",
+                "success"
+            );
+
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PAYMENT STATUS / DOWNLOAD
+   ========================================================= */
+
+paymentCheck.addEventListener(
+    "click",
+    async () => {
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/payment/status?job_id=" +
+                    encodeURIComponent(
+                        jobId
+                    )
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Payment status could not be checked."
+                );
+
+            }
+
+
+            if(
+                String(
+                    data.status || ""
+                ).toLowerCase() === "paid"
+            ){
+
+                paymentConfirmed = true;
+
+
+                downloadBtn.disabled =
+                    false;
+
+                downloadBtn.classList.add(
+                    "active"
+                );
+
+                downloadBtn.textContent =
+                    "⬇ Download Your Work";
+
+
+                downloadBtn.onclick = () => {
+
+                    location.href =
+                        API_BASE +
+                        "/api/download?job_id=" +
+                        encodeURIComponent(
+                            jobId
+                        ) +
+                        "&customer_id=" +
+                        encodeURIComponent(
+                            customerId
+                        );
+
+                };
+
+
+                paymentDetails.textContent +=
+                    "\nStatus: Paid";
+
+
+                setStatus(
+                    "Payment confirmed. Your download is now available.",
+                    "success"
+                );
+
+
+            }else{
+
+                setStatus(
+                    "Payment is still pending."
+                );
+
+            }
+
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   UPLOAD
+   ========================================================= */
+
+uploadBtn.addEventListener(
+    "click",
+    () => {
+
+        if(!busy){
+
+            fileInput.click();
+
+        }
+
+    }
+);
+
+
+fileInput.addEventListener(
+    "change",
+    async () => {
+
+        const file =
+            fileInput.files?.[0];
+
+
+        if(!file){
+
+            return;
+
+        }
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "file",
+            file
+        );
+
+        formData.append(
+            "customer_id",
+            customerId
+        );
+
+        formData.append(
+            "job_id",
+            jobId
+        );
+
+        formData.append(
+            "client_request_id",
+            requestId
+        );
+
+        formData.append(
+            "service",
+            service
+        );
+
+
+        setStatus(
+            "Uploading the document you want to give us..."
+        );
+
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/upload",
+                    {
+                        method:"POST",
+                        body:formData
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Document upload failed."
+                );
+
+            }
+
+
+            setStatus(
+                "Your document has been received successfully.",
+                "success"
+            );
+
+
+            await sendMessage(
+                "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.",
+                "document_uploaded"
+            );
+
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            fileInput.value = "";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CUSTOMER MESSAGES
+   ========================================================= */
+
+async function sendMessage(
+    message,
+    event
+){
+
+    if(busy){
+
+        return null;
+
+    }
+
+
+    busyState(true);
+
+
+    setStatus(
+        "Processing your message..."
+    );
+
+
+    try{
+
+        const data =
+            await apiChat({
+
+                message,
+
+                service,
+
+                event,
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId,
+
+                client_request_id:
+                    requestId,
+
+                current_work:
+                    currentWork,
+
+                activate_intelligence:
+                    true,
+
+                create_work:
+                    true
+
+            });
+
+
+        if(data.job_id){
+
+            jobId =
+                data.job_id;
+
+            put(
+                "npbc_job_id",
+                jobId
+            );
+
+        }
+
+
+        /*
+         * Only replace the current document when
+         * the API actually returned new work.
+         *
+         * Prefer explicit work/content fields.
+         */
+
+        const returnedWork =
+            clean(data.work) ||
+            clean(data.content) ||
+            clean(data.reply);
+
+
+        if(
+            returnedWork &&
+            reviewView.classList.contains(
+                "show"
+            )
+        ){
+
+            currentWork =
+                returnedWork;
+
+            renderDocument(
+                currentWork
+            );
+
+        }
+
+
+        setStatus(
+            "Ready for your next instruction.",
+            "success"
+        );
+
+
+        return data;
+
+
+    }catch(error){
+
+        setStatus(
+            error.message,
+            "error"
+        );
+
+        return null;
+
+
+    }finally{
+
+        busyState(false);
+
+    }
+
+}
+
+
+sendBtn.addEventListener(
+    "click",
+    () => {
+
+        const text =
+            clean(
+                messageInput.value
+            );
+
+
+        if(!text){
+
+            setStatus(
+                "Please type your message first.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        messageInput.value = "";
+
+        messageInput.style.height =
+            "auto";
+
+
+        sendMessage(
+            text,
+            "customer_message"
+        );
+
+    }
+);
+
+
+messageInput.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key === "Enter" &&
+            !event.shiftKey
+        ){
+
+            event.preventDefault();
+
+            sendBtn.click();
+
+        }
+
+    }
+);
+
+
+messageInput.addEventListener(
+    "input",
+    () => {
+
+        messageInput.style.height =
+            "auto";
+
+        messageInput.style.height =
+            Math.min(
+                messageInput.scrollHeight,
+                105
+            ) + "px";
+
+    }
+);
+
+
+/* =========================================================
+   CUSTOMER SERVICE
+   ========================================================= */
+
+customerBtn.addEventListener(
+    "click",
+    async () => {
+
+        if(busy){
+
+            return;
+
+        }
+
+
+        busyState(true);
+
+
+        setStatus(
+            "Connecting you to Customer Service..."
+        );
+
+
+        try{
+
+            const query =
+                new URLSearchParams({
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId,
+
+                    service
+
+                });
+
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/customer-service?" +
+                    query.toString(),
+                    {
+                        method:"POST"
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.reply ||
+                    data.message ||
+                    "Customer Service is unavailable."
+                );
+
+            }
+
+
+            setStatus(
+                data.reply ||
+                "Customer Service is available to help.",
+                "success"
+            );
+
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            busyState(false);
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CHOOSE ANOTHER SERVICE
+   ========================================================= */
+
+chooseBtn.addEventListener(
+    "click",
+    () => {
+
+        if(!busy){
+
+            location.href =
+                "conversation.html";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   VOICE
+   ========================================================= */
+
+voiceBtn.addEventListener(
+    "click",
+    async () => {
+
+        if(
+            mediaRecorder?.state ===
+            "recording"
+        ){
+
+            mediaRecorder.stop();
+
+            return;
+
+        }
+
+
+        if(
+            !navigator.mediaDevices?.getUserMedia
+        ){
+
+            setStatus(
+                "Voice recording is not supported on this device.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        try{
+
+            recordingStream =
+                await navigator.mediaDevices.getUserMedia({
+                    audio:true
+                });
+
+
+            recordedChunks = [];
+
+
+            mediaRecorder =
+                new MediaRecorder(
+                    recordingStream
+                );
+
+
+            mediaRecorder.ondataavailable =
+                event => {
+
+                    if(
+                        event.data?.size
+                    ){
+
+                        recordedChunks.push(
+                            event.data
+                        );
+
+                    }
+
+                };
+
+
+            mediaRecorder.onstop =
+                async () => {
+
+                    recordingStream
+                        ?.getTracks()
+                        .forEach(
+                            track =>
+                                track.stop()
+                        );
+
+
+                    recordingStream = null;
+
+
+                    voiceRecording.classList.remove(
+                        "show"
+                    );
+
+
+                    voiceBtn.textContent =
+                        "🎤 Voice";
+
+
+                    if(
+                        !recordedChunks.length
+                    ){
+
+                        setStatus(
+                            "No voice recording was captured.",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    const formData =
+                        new FormData();
+
+
+                    formData.append(
+                        "file",
+                        new Blob(
+                            recordedChunks,
+                            {
+                                type:
+                                    "audio/webm"
+                            }
+                        ),
+                        "voice_message.webm"
+                    );
+
+
+                    formData.append(
+                        "customer_id",
+                        customerId
+                    );
+
+                    formData.append(
+                        "job_id",
+                        jobId
+                    );
+
+                    formData.append(
+                        "client_request_id",
+                        requestId
+                    );
+
+                    formData.append(
+                        "service",
+                        service
+                    );
+
+
+                    try{
+
+                        const response =
+                            await fetch(
+                                API_BASE +
+                                "/api/voice",
+                                {
+                                    method:"POST",
+                                    body:formData
+                                }
+                            );
+
+
+                        const data =
+                            await response
+                                .json()
+                                .catch(
+                                    () => ({})
+                                );
+
+
+                        if(
+                            !response.ok ||
+                            !data.success
+                        ){
+
+                            throw new Error(
+                                data.message ||
+                                "Voice recording failed."
+                            );
+
+                        }
+
+
+                        await sendMessage(
+                            "A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.",
+                            "voice_uploaded"
+                        );
+
+
+                    }catch(error){
+
+                        setStatus(
+                            error.message,
+                            "error"
+                        );
+
+                    }
+
+                };
+
+
+            mediaRecorder.start();
+
+
+            voiceRecording.classList.add(
+                "show"
+            );
+
+
+            voiceBtn.textContent =
+                "⏹ Stop Voice";
+
+
+            setStatus(
+                "Recording your voice..."
+            );
+
+
+        }catch(error){
+
+            setStatus(
+                "Could not access your microphone.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INITIALISE
+   ========================================================= */
+
+async function init(){
+
+    serviceBadge.textContent =
+        service;
+
+    introTitle.textContent =
+        service;
+
+    renderForm();
+
+    await loadGuidance();
+
+}
+
+
+init();
+
+</script>
+
+</body>
 </html>
