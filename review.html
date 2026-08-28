@@ -16,6 +16,7 @@
 >
 
 <style>
+
 *{
     box-sizing:border-box;
 }
@@ -45,16 +46,32 @@ button{
 }
 
 :root{
+    /*
+        BRAND GREEN
+        Used ONLY for the Naija Pocket Business Center identity.
+    */
+    --brand-green:#22c55e;
+    --brand-green-light:#5ee58b;
+
+    /*
+        GOLD/YELLOW
+        Kept for creation, premium and progress accents.
+    */
     --gold:#e0bd55;
     --gold-light:#f5dc88;
+
     --white:#fff;
     --muted:#929292;
+
     --panel:#0d0d0d;
     --panel2:#151515;
+
     --border:#292929;
+
     --green:#48d48a;
     --red:#d94747;
 }
+
 
 /* =========================================================
    APP
@@ -65,6 +82,7 @@ button{
     display:flex;
     flex-direction:column;
 }
+
 
 /* =========================================================
    HEADER
@@ -84,13 +102,19 @@ button{
     padding:11px 16px;
 
     background:#050505;
+
     border-bottom:1px solid var(--border);
 }
 
 .brand-title{
     margin:0;
 
-    color:var(--gold);
+    /*
+        IMPORTANT:
+        This is the Naija Pocket Business Center brand.
+        It is GREEN, not gold.
+    */
+    color:var(--brand-green);
 
     font-family:Montserrat,Arial,sans-serif;
     font-size:17px;
@@ -101,6 +125,7 @@ button{
     margin-top:3px;
 
     color:#777;
+
     font-size:10px;
 }
 
@@ -117,6 +142,7 @@ button{
     background:#0c0c0c;
 
     color:#aaa;
+
     font-size:10px;
 }
 
@@ -126,10 +152,15 @@ button{
 
     border-radius:50%;
 
+    /*
+        Status indicator remains GOLD.
+    */
     background:var(--gold);
 
-    box-shadow:0 0 12px rgba(224,189,85,.7);
+    box-shadow:
+        0 0 12px rgba(224,189,85,.7);
 }
+
 
 /* =========================================================
    MAIN
@@ -144,12 +175,14 @@ button{
     padding:20px 14px 50px;
 }
 
+
 /* =========================================================
    HERO
 ========================================================= */
 
 .hero{
     text-align:center;
+
     padding:5px 5px 18px;
 }
 
@@ -157,6 +190,7 @@ button{
     margin:0;
 
     font-family:Montserrat,Arial,sans-serif;
+
     font-size:27px;
     line-height:1.2;
     font-weight:800;
@@ -176,6 +210,7 @@ button{
     font-size:13px;
     line-height:1.55;
 }
+
 
 /* =========================================================
    MAGIC CREATION STAGE
@@ -213,11 +248,16 @@ button{
         0 20px 80px rgba(0,0,0,.5);
 }
 
-/* Moving light */
+
+/* =========================================================
+   MOVING LIGHT
+========================================================= */
+
 .magic::before{
     content:"";
 
     position:absolute;
+
     width:55%;
     height:200%;
 
@@ -239,6 +279,7 @@ button{
 }
 
 @keyframes lightSweep{
+
     from{
         left:-45%;
     }
@@ -246,7 +287,9 @@ button{
     to{
         left:110%;
     }
+
 }
+
 
 /* =========================================================
    MAGIC HEADER
@@ -267,6 +310,7 @@ button{
     color:var(--gold-light);
 
     font-family:Montserrat,Arial,sans-serif;
+
     font-size:16px;
     font-weight:800;
 
@@ -281,6 +325,7 @@ button{
     font-size:11px;
 }
 
+
 /* =========================================================
    FLIGHT AREA
 ========================================================= */
@@ -293,7 +338,10 @@ button{
     overflow:hidden;
 }
 
-/* Central assembly point */
+
+/* =========================================================
+   CENTRAL ASSEMBLY
+========================================================= */
 
 .assembly-core{
     position:absolute;
@@ -307,6 +355,7 @@ button{
     transform:translate(-50%,-50%);
 
     border:1px solid rgba(224,189,85,.35);
+
     border-radius:50%;
 
     background:
@@ -329,18 +378,22 @@ button{
 
 .core-ring{
     position:absolute;
+
     inset:9px;
 
     border:1px dashed rgba(224,189,85,.3);
+
     border-radius:50%;
 
     animation:spin 8s linear infinite;
 }
 
 @keyframes spin{
+
     to{
         transform:rotate(360deg);
     }
+
 }
 
 .core-content{
@@ -360,9 +413,12 @@ button{
     color:#c7c7c7;
 
     font-size:9px;
+
     text-transform:uppercase;
+
     letter-spacing:1.3px;
 }
+
 
 /* =========================================================
    FLYING DOCUMENTS
@@ -383,6 +439,7 @@ button{
     gap:9px;
 
     border:1px solid rgba(255,255,255,.15);
+
     border-radius:12px;
 
     background:
@@ -447,14 +504,10 @@ button{
     font-size:8px;
 }
 
-/* left to right */
-
 .fly.left{
     animation:
         flyLeft 2.5s cubic-bezier(.18,.7,.22,1) forwards;
 }
-
-/* right to left */
 
 .fly.right{
     left:auto;
@@ -469,7 +522,11 @@ button{
     0%{
         left:-150px;
         top:var(--top);
-        transform:scale(.72) rotate(-4deg);
+
+        transform:
+            scale(.72)
+            rotate(-4deg);
+
         opacity:0;
     }
 
@@ -478,7 +535,9 @@ button{
     }
 
     50%{
-        transform:scale(1) rotate(1deg);
+        transform:
+            scale(1)
+            rotate(1deg);
     }
 
     88%{
@@ -488,9 +547,14 @@ button{
     100%{
         left:calc(50% - 67px);
         top:calc(50% - 26px);
-        transform:scale(.72) rotate(0deg);
+
+        transform:
+            scale(.72)
+            rotate(0deg);
+
         opacity:0;
     }
+
 }
 
 @keyframes flyRight{
@@ -498,7 +562,11 @@ button{
     0%{
         right:-150px;
         top:var(--top);
-        transform:scale(.72) rotate(4deg);
+
+        transform:
+            scale(.72)
+            rotate(4deg);
+
         opacity:0;
     }
 
@@ -507,7 +575,9 @@ button{
     }
 
     50%{
-        transform:scale(1) rotate(-1deg);
+        transform:
+            scale(1)
+            rotate(-1deg);
     }
 
     88%{
@@ -517,10 +587,16 @@ button{
     100%{
         right:calc(50% - 67px);
         top:calc(50% - 26px);
-        transform:scale(.72) rotate(0deg);
+
+        transform:
+            scale(.72)
+            rotate(0deg);
+
         opacity:0;
     }
+
 }
+
 
 /* =========================================================
    PROGRESS
@@ -543,11 +619,13 @@ button{
 
 .progress-label{
     color:#aaa;
+
     font-size:10px;
 }
 
 .progress-number{
     color:var(--gold-light);
+
     font-size:10px;
     font-weight:700;
 }
@@ -579,17 +657,20 @@ button{
     box-shadow:
         0 0 12px rgba(224,189,85,.35);
 
-    transition:width .6s ease;
+    transition:
+        width .6s ease;
 }
 
+
 /* =========================================================
-   SECTION STATUS
+   SECTIONS
 ========================================================= */
 
 .sections{
     margin-top:17px;
 
     border:1px solid var(--border);
+
     border-radius:18px;
 
     overflow:hidden;
@@ -609,11 +690,13 @@ button{
 
 .sections-head strong{
     font-family:Montserrat,Arial,sans-serif;
+
     font-size:13px;
 }
 
 .sections-head span{
     color:#777;
+
     font-size:10px;
 }
 
@@ -661,6 +744,7 @@ button{
     justify-content:center;
 
     border:1px solid #303030;
+
     border-radius:8px;
 
     color:#777;
@@ -671,11 +755,13 @@ button{
 
 .section-row.done .section-number{
     border-color:rgba(72,212,138,.4);
+
     color:var(--green);
 }
 
 .section-row.active .section-number{
     border-color:rgba(224,189,85,.45);
+
     color:var(--gold-light);
 }
 
@@ -726,6 +812,7 @@ button{
     color:var(--green);
 }
 
+
 /* =========================================================
    COMPLETE DOCUMENT
 ========================================================= */
@@ -734,6 +821,7 @@ button{
     margin-top:18px;
 
     border:1px solid var(--border);
+
     border-radius:20px;
 
     background:#0b0b0b;
@@ -749,6 +837,7 @@ button{
     display:flex;
     align-items:center;
     justify-content:space-between;
+
     gap:10px;
 }
 
@@ -756,6 +845,7 @@ button{
     margin:0;
 
     font-family:Montserrat,Arial,sans-serif;
+
     font-size:15px;
 }
 
@@ -763,14 +853,17 @@ button{
     padding:5px 8px;
 
     border:1px solid #333;
+
     border-radius:15px;
 
     color:#888;
+
     font-size:9px;
 }
 
 .document-status.ready{
     color:var(--green);
+
     border-color:rgba(72,212,138,.35);
 }
 
@@ -818,6 +911,7 @@ button{
     content:"Your completed document will appear here.";
 }
 
+
 /* =========================================================
    CORRECTION
 ========================================================= */
@@ -828,6 +922,7 @@ button{
     padding:16px;
 
     border:1px solid var(--border);
+
     border-radius:20px;
 
     background:#0b0b0b;
@@ -837,6 +932,7 @@ button{
     margin:0;
 
     font-family:Montserrat,Arial,sans-serif;
+
     font-size:14px;
 }
 
@@ -846,6 +942,7 @@ button{
     color:#777;
 
     font-size:10px;
+
     line-height:1.5;
 }
 
@@ -858,14 +955,17 @@ textarea{
     padding:12px;
 
     border:1px solid #2c2c2c;
+
     border-radius:12px;
 
     outline:none;
 
     background:#080808;
+
     color:#eee;
 
     font-size:12px;
+
     line-height:1.5;
 }
 
@@ -877,13 +977,16 @@ textarea::placeholder{
     color:#555;
 }
 
+
 /* =========================================================
    ACTIONS
 ========================================================= */
 
 .actions{
     display:grid;
+
     grid-template-columns:repeat(2,1fr);
+
     gap:9px;
 
     margin-top:18px;
@@ -893,9 +996,11 @@ textarea::placeholder{
     min-height:46px;
 
     border:1px solid #303030;
+
     border-radius:12px;
 
     background:#151515;
+
     color:#fff;
 
     font-size:11px;
@@ -909,6 +1014,7 @@ textarea::placeholder{
 
 .action:hover{
     background:#1c1c1c;
+
     border-color:#464646;
 }
 
@@ -920,6 +1026,7 @@ textarea::placeholder{
     border-color:#8b722c;
 
     background:#b28c31;
+
     color:#080808;
 }
 
@@ -931,6 +1038,7 @@ textarea::placeholder{
     border-color:rgba(72,212,138,.35);
 
     background:#12301f;
+
     color:#83e5ad;
 }
 
@@ -938,14 +1046,18 @@ textarea::placeholder{
     border-color:rgba(217,71,71,.4);
 
     background:#341313;
+
     color:#ff9a9a;
 }
 
 .action:disabled{
     opacity:.4;
+
     cursor:not-allowed;
+
     transform:none;
 }
+
 
 /* =========================================================
    MESSAGE
@@ -967,6 +1079,7 @@ textarea::placeholder{
     color:#aaa;
 
     font-size:10px;
+
     line-height:1.5;
 }
 
@@ -976,13 +1089,16 @@ textarea::placeholder{
 
 .notice.error{
     border-color:rgba(217,71,71,.4);
+
     color:#ff9a9a;
 }
 
 .notice.success{
     border-color:rgba(72,212,138,.35);
+
     color:#83e5ad;
 }
+
 
 /* =========================================================
    RESPONSIVE
@@ -1012,6 +1128,7 @@ textarea::placeholder{
 
     .magic{
         min-height:375px;
+
         border-radius:19px;
     }
 
@@ -1029,8 +1146,10 @@ textarea::placeholder{
 
     .document{
         padding:18px 13px;
+
         font-size:13px;
     }
+
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -1039,11 +1158,16 @@ textarea::placeholder{
     *::before,
     *::after{
         animation-duration:.001ms !important;
+
         animation-iteration-count:1 !important;
+
         scroll-behavior:auto !important;
+
         transition:none !important;
     }
+
 }
+
 </style>
 </head>
 
@@ -1058,6 +1182,7 @@ textarea::placeholder{
     <header class="header">
 
         <div>
+
             <div class="brand-title">
                 Naija Pocket Business Center
             </div>
@@ -1065,11 +1190,23 @@ textarea::placeholder{
             <div class="brand-subtitle">
                 Your service is being carefully prepared
             </div>
+
         </div>
 
+        <!--
+            IMPORTANT:
+            Do NOT show 0/1, 1/1, 2/7 etc. here.
+            This is a customer-facing status indicator.
+        -->
+
         <div class="job-pill">
+
             <span class="job-dot"></span>
-            <span id="jobState">CREATING</span>
+
+            <span id="jobState">
+                CREATING
+            </span>
+
         </div>
 
     </header>
@@ -1080,6 +1217,11 @@ textarea::placeholder{
     ====================================================== -->
 
     <main class="main">
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
 
         <section class="hero">
 
@@ -1100,22 +1242,35 @@ textarea::placeholder{
              MAGIC CREATION
         ================================================== -->
 
-        <section class="magic" id="magic">
+        <section
+            class="magic"
+            id="magic"
+        >
 
             <div class="magic-head">
 
-                <h2 class="magic-title" id="magicTitle">
+                <h2
+                    class="magic-title"
+                    id="magicTitle"
+                >
                     ✨ Creating Your Service ✨
                 </h2>
 
-                <p class="magic-message" id="magicMessage">
-                    Please give us a moment while your document comes to life.
+                <p
+                    class="magic-message"
+                    id="magicMessage"
+                >
+                    Please give us a moment while your document
+                    comes to life.
                 </p>
 
             </div>
 
 
-            <div class="flight-area" id="flightArea">
+            <div
+                class="flight-area"
+                id="flightArea"
+            >
 
                 <div class="assembly-core">
 
@@ -1142,11 +1297,17 @@ textarea::placeholder{
 
                 <div class="progress-top">
 
-                    <span class="progress-label" id="progressLabel">
+                    <span
+                        class="progress-label"
+                        id="progressLabel"
+                    >
                         Preparing your document...
                     </span>
 
-                    <span class="progress-number" id="progressNumber">
+                    <span
+                        class="progress-number"
+                        id="progressNumber"
+                    >
                         0%
                     </span>
 
@@ -1311,65 +1472,18 @@ textarea::placeholder{
 
 
 <script>
+
 "use strict";
-
-/*
-    ============================================================
-    REVIEW CHRONICLE
-
-    This page does NOT generate document content itself.
-
-    The backend is the source of truth.
-
-    Expected endpoint:
-
-        GET /api/review?job_id=123
-
-    The endpoint may return a structure similar to:
-
-    {
-        "job_id": "123",
-        "status": "generating",
-        "current_version": 1,
-
-        "progress": {
-            "completed": 2,
-            "total": 7
-        },
-
-        "sections": [
-            {
-                "section_id": "1",
-                "section_order": 1,
-                "title": "Introduction",
-                "status": "done"
-            }
-        ],
-
-        "document_html": ""
-    }
-
-    When generation is complete:
-
-    {
-        "status": "complete",
-        "document_html": "<h2>...</h2>...",
-        "approved": false,
-        "paid": false
-    }
-
-    The code intentionally accepts several reasonable
-    field names so it can integrate with the existing API
-    without changing the visual design.
-    ============================================================
-*/
 
 
 /* ============================================================
    STATE
 ============================================================ */
 
-const params = new URLSearchParams(window.location.search);
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
 
 const jobId =
     params.get("job_id") ||
@@ -1457,7 +1571,8 @@ if(!jobId){
         "error"
     );
 
-    jobState.textContent = "NO JOB";
+    jobState.textContent =
+        "NO JOB";
 
 }else{
 
@@ -1497,9 +1612,12 @@ async function fetchReview(){
                 encodeURIComponent(jobId),
                 {
                     method:"GET",
+
                     headers:{
-                        "Accept":"application/json"
+                        "Accept":
+                            "application/json"
                     },
+
                     cache:"no-store"
                 }
             );
@@ -1516,13 +1634,18 @@ async function fetchReview(){
         const data =
             await response.json();
 
-        latestData = data;
+        latestData =
+            data;
 
-        renderReview(data);
+        renderReview(
+            data
+        );
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         showNotice(
             "We are reconnecting to your document. Your work remains safe.",
@@ -1531,10 +1654,14 @@ async function fetchReview(){
 
     }
 
-    clearTimeout(pollTimer);
+    clearTimeout(
+        pollTimer
+    );
 
     if(
-        !isFinished(latestData)
+        !isFinished(
+            latestData
+        )
     ){
 
         pollTimer =
@@ -1562,35 +1689,55 @@ function getSections(data){
         return [];
     }
 
-    if(Array.isArray(data.sections)){
+    if(
+        Array.isArray(
+            data.sections
+        )
+    ){
+
         return data.sections;
+
     }
 
     if(
         data.version &&
-        Array.isArray(data.version.sections)
+        Array.isArray(
+            data.version.sections
+        )
     ){
+
         return data.version.sections;
+
     }
 
     if(
         data.job &&
-        Array.isArray(data.job.sections)
+        Array.isArray(
+            data.job.sections
+        )
     ){
+
         return data.job.sections;
+
     }
 
     return [];
+
 }
 
 
-function getCompletedCount(data, sections){
+function getCompletedCount(
+    data,
+    sections
+){
 
     if(
         data &&
         data.progress &&
         Number.isFinite(
-            Number(data.progress.completed)
+            Number(
+                data.progress.completed
+            )
         )
     ){
 
@@ -1602,19 +1749,26 @@ function getCompletedCount(data, sections){
 
     return sections.filter(
         section =>
-            isDoneStatus(section.status)
+            isDoneStatus(
+                section.status
+            )
     ).length;
 
 }
 
 
-function getTotalCount(data, sections){
+function getTotalCount(
+    data,
+    sections
+){
 
     if(
         data &&
         data.progress &&
         Number.isFinite(
-            Number(data.progress.total)
+            Number(
+                data.progress.total
+            )
         )
     ){
 
@@ -1625,6 +1779,7 @@ function getTotalCount(data, sections){
     }
 
     return sections.length;
+
 }
 
 
@@ -1635,26 +1790,36 @@ function getDocumentHTML(data){
     }
 
     if(
-        typeof data.document_html === "string"
+        typeof data.document_html ===
+        "string"
     ){
+
         return data.document_html;
+
     }
 
     if(
         data.version &&
-        typeof data.version.document_html === "string"
+        typeof data.version.document_html ===
+        "string"
     ){
+
         return data.version.document_html;
+
     }
 
     if(
         data.job &&
-        typeof data.job.document_html === "string"
+        typeof data.job.document_html ===
+        "string"
     ){
+
         return data.job.document_html;
+
     }
 
     return "";
+
 }
 
 
@@ -1681,11 +1846,14 @@ function getStatus(data){
    STATUS HELPERS
 ============================================================ */
 
-function isDoneStatus(status){
+function isDoneStatus(
+    status
+){
 
     const value =
-        String(status || "")
-        .toLowerCase();
+        String(
+            status || ""
+        ).toLowerCase();
 
     return [
         "done",
@@ -1694,16 +1862,21 @@ function isDoneStatus(status){
         "ready",
         "assembled",
         "approved"
-    ].includes(value);
+    ].includes(
+        value
+    );
 
 }
 
 
-function isActiveStatus(status){
+function isActiveStatus(
+    status
+){
 
     const value =
-        String(status || "")
-        .toLowerCase();
+        String(
+            status || ""
+        ).toLowerCase();
 
     return [
         "generating",
@@ -1714,7 +1887,9 @@ function isActiveStatus(status){
         "in-progress",
         "queued",
         "pending"
-    ].includes(value);
+    ].includes(
+        value
+    );
 
 }
 
@@ -1726,7 +1901,9 @@ function isFinished(data){
     }
 
     const status =
-        getStatus(data);
+        getStatus(
+            data
+        );
 
     if([
         "complete",
@@ -1735,25 +1912,39 @@ function isFinished(data){
         "assembled",
         "approved",
         "finished"
-    ].includes(status)){
+    ].includes(
+        status
+    )){
 
         return true;
 
     }
 
     const sections =
-        getSections(data);
+        getSections(
+            data
+        );
 
     const total =
-        getTotalCount(data,sections);
+        getTotalCount(
+            data,
+            sections
+        );
 
     const completed =
-        getCompletedCount(data,sections);
+        getCompletedCount(
+            data,
+            sections
+        );
 
     return (
         total > 0 &&
         completed >= total &&
-        Boolean(getDocumentHTML(data))
+        Boolean(
+            getDocumentHTML(
+                data
+            )
+        )
     );
 
 }
@@ -1763,10 +1954,14 @@ function isFinished(data){
    RENDER
 ============================================================ */
 
-function renderReview(data){
+function renderReview(
+    data
+){
 
     const sections =
-        getSections(data);
+        getSections(
+            data
+        );
 
     const completed =
         getCompletedCount(
@@ -1837,8 +2032,14 @@ function renderProgress(
 
     }
 
-    if(isFinished(data)){
+    if(
+        isFinished(
+            data
+        )
+    ){
+
         percent = 100;
+
     }
 
     percent =
@@ -1856,27 +2057,49 @@ function renderProgress(
     progressNumber.textContent =
         percent + "%";
 
-    if(total > 0){
+
+    /*
+        Customer-facing wording.
+        We keep the useful count out of the
+        header and avoid awkward "0/1" presentation.
+    */
+
+    if(
+        isFinished(
+            data
+        )
+    ){
 
         sectionCount.textContent =
-            completed +
-            " of " +
-            total +
-            " sections";
+            "Creation complete";
+
+    }else if(
+        completed > 0
+    ){
+
+        sectionCount.textContent =
+            "Creating your service";
 
     }else{
 
         sectionCount.textContent =
-            "Preparing...";
+            "Getting started";
 
     }
 
-    if(isFinished(data)){
+
+    if(
+        isFinished(
+            data
+        )
+    ){
 
         progressLabel.textContent =
             "Your document is complete.";
 
-    }else if(completed > 0){
+    }else if(
+        completed > 0
+    ){
 
         progressLabel.textContent =
             "Creating your document...";
@@ -1895,35 +2118,49 @@ function renderProgress(
    SECTION LIST
 ============================================================ */
 
-function renderSections(sections){
+function renderSections(
+    sections
+){
 
     sectionList.innerHTML = "";
 
     if(!sections.length){
 
         const row =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         row.className =
             "section-row active";
 
         row.innerHTML = `
             <div class="section-number">•</div>
+
             <div class="section-info">
+
                 <div class="section-title">
                     Preparing the creation plan...
                 </div>
+
                 <div class="section-state">
                     Your service is being organized.
                 </div>
+
             </div>
-            <div class="section-mark">✦</div>
+
+            <div class="section-mark">
+                ✦
+            </div>
         `;
 
-        sectionList.appendChild(row);
+        sectionList.appendChild(
+            row
+        );
 
         return;
     }
+
 
     const sorted =
         [...sections].sort(
@@ -1940,22 +2177,33 @@ function renderSections(sections){
                 )
         );
 
+
     sorted.forEach(
-        (section,index) => {
+        (
+            section,
+            index
+        ) => {
 
             const status =
                 String(
-                    section.status || ""
+                    section.status ||
+                    ""
                 ).toLowerCase();
 
             const done =
-                isDoneStatus(status);
+                isDoneStatus(
+                    status
+                );
 
             const active =
-                isActiveStatus(status);
+                isActiveStatus(
+                    status
+                );
 
             const row =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             row.className =
                 "section-row" +
@@ -1967,12 +2215,14 @@ function renderSections(sections){
                     : ""
                 );
 
+
             const number =
                 Number(
                     section.section_order ??
                     section.order ??
                     index + 1
                 );
+
 
             const title =
                 escapeHTML(
@@ -1982,8 +2232,10 @@ function renderSections(sections){
                     number
                 );
 
+
             let stateText =
                 "Waiting";
+
 
             if(done){
 
@@ -2010,7 +2262,9 @@ function renderSections(sections){
 
             }
 
+
             row.innerHTML = `
+
                 <div class="section-number">
                     ${number}
                 </div>
@@ -2028,6 +2282,7 @@ function renderSections(sections){
                 </div>
 
                 <div class="section-mark">
+
                     ${
                         done
                         ? "✓"
@@ -2035,10 +2290,14 @@ function renderSections(sections){
                         ? "✦"
                         : "•"
                     }
+
                 </div>
             `;
 
-            sectionList.appendChild(row);
+
+            sectionList.appendChild(
+                row
+            );
 
         }
     );
@@ -2050,10 +2309,15 @@ function renderSections(sections){
    DOCUMENT
 ============================================================ */
 
-function renderDocument(data){
+function renderDocument(
+    data
+){
 
     const html =
-        getDocumentHTML(data);
+        getDocumentHTML(
+            data
+        );
+
 
     if(
         html &&
@@ -2065,8 +2329,12 @@ function renderDocument(data){
 
     }
 
+
     const ready =
-        isFinished(data);
+        isFinished(
+            data
+        );
+
 
     if(ready){
 
@@ -2101,7 +2369,11 @@ function updateMagic(
     data
 ){
 
-    if(isFinished(data)){
+    if(
+        isFinished(
+            data
+        )
+    ){
 
         magicTitle.textContent =
             "✨ Your Service Has Come to Life ✨";
@@ -2118,8 +2390,10 @@ function updateMagic(
         return;
     }
 
+
     magicTitle.textContent =
         "✨ The Magic of Creation ✨";
+
 
     if(total > 0){
 
@@ -2129,10 +2403,13 @@ function updateMagic(
         heroMessage.textContent =
             "Watch as each part of your service is created and brought together.";
 
+        /*
+            IMPORTANT:
+            Do not display completed/total such as 0/1.
+            Keep the header human and customer-facing.
+        */
         jobState.textContent =
-            completed +
-            "/" +
-            total;
+            "CREATING";
 
     }else{
 
@@ -2152,11 +2429,6 @@ function updateMagic(
 
 /* ============================================================
    FLYING FILES
-
-   A flying card is created only when a section changes
-   into a completed state.
-
-   This means the animation follows real backend progress.
 ============================================================ */
 
 let knownDoneIds =
@@ -2168,7 +2440,10 @@ function animateNewlyCompletedSections(
 ){
 
     sections.forEach(
-        (section,index) => {
+        (
+            section,
+            index
+        ) => {
 
             const id =
                 String(
@@ -2180,12 +2455,19 @@ function animateNewlyCompletedSections(
                     )
                 );
 
+
             if(
-                isDoneStatus(section.status) &&
-                !knownDoneIds.has(id)
+                isDoneStatus(
+                    section.status
+                ) &&
+                !knownDoneIds.has(
+                    id
+                )
             ){
 
-                knownDoneIds.add(id);
+                knownDoneIds.add(
+                    id
+                );
 
                 createFlyingFile(
                     section,
@@ -2206,19 +2488,25 @@ function createFlyingFile(
 ){
 
     const card =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     const direction =
         animationCounter % 2 === 0
         ? "left"
         : "right";
 
+
     animationCounter++;
+
 
     card.className =
         "fly " +
         direction +
         " visible";
+
 
     const title =
         escapeHTML(
@@ -2226,6 +2514,7 @@ function createFlyingFile(
             section.name ||
             "Document Section"
         );
+
 
     const icons = [
         "📄",
@@ -2236,13 +2525,16 @@ function createFlyingFile(
         "📚"
     ];
 
+
     const icon =
         icons[
             index %
             icons.length
         ];
 
+
     card.innerHTML = `
+
         <div class="fly-icon">
             ${icon}
         </div>
@@ -2258,7 +2550,9 @@ function createFlyingFile(
             </div>
 
         </div>
+
     `;
+
 
     const positions = [
         "15%",
@@ -2269,6 +2563,7 @@ function createFlyingFile(
         "31%"
     ];
 
+
     card.style.setProperty(
         "--top",
         positions[
@@ -2277,9 +2572,11 @@ function createFlyingFile(
         ]
     );
 
+
     flightArea.appendChild(
         card
     );
+
 
     setTimeout(
         () => {
@@ -2304,7 +2601,10 @@ function updateActions(
 ){
 
     const ready =
-        isFinished(data);
+        isFinished(
+            data
+        );
+
 
     correctionButton.disabled =
         !ready;
@@ -2312,10 +2612,6 @@ function updateActions(
     approveButton.disabled =
         !ready;
 
-    /*
-        Payment/download stay locked until the backend
-        confirms the correct approval/payment state.
-    */
 
     const approved =
         Boolean(
@@ -2330,6 +2626,7 @@ function updateActions(
             )
         );
 
+
     const paid =
         Boolean(
             data &&
@@ -2343,9 +2640,11 @@ function updateActions(
             )
         );
 
+
     paymentButton.disabled =
         !ready ||
         !approved;
+
 
     downloadButton.disabled =
         !ready ||
@@ -2364,6 +2663,7 @@ async function requestCorrection(){
     const instruction =
         correctionText.value.trim();
 
+
     if(!instruction){
 
         showNotice(
@@ -2376,13 +2676,16 @@ async function requestCorrection(){
         return;
     }
 
+
     correctionButton.disabled =
         true;
+
 
     showNotice(
         "Your correction is being prepared. Only the affected part of the document will be regenerated.",
         "success"
     );
+
 
     try{
 
@@ -2402,13 +2705,16 @@ async function requestCorrection(){
 
                     body:JSON.stringify({
 
-                        job_id:jobId,
+                        job_id:
+                            jobId,
 
-                        instruction:instruction
+                        instruction:
+                            instruction
 
                     })
                 }
             );
+
 
         if(!response.ok){
 
@@ -2418,23 +2724,32 @@ async function requestCorrection(){
 
         }
 
-        correctionText.value = "";
+
+        correctionText.value =
+            "";
+
 
         showNotice(
             "Correction submitted. Watch the affected section return to the creation flow.",
             "success"
         );
 
+
         startPolling();
+
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         showNotice(
             "We could not submit that correction right now. Your current document has not been changed.",
             "error"
         );
+
 
         correctionButton.disabled =
             false;
@@ -2454,6 +2769,7 @@ async function approveDocument(){
         return;
     }
 
+
     const versionId =
         latestData.version_id ||
         (
@@ -2466,6 +2782,7 @@ async function approveDocument(){
             latestData.job.current_version
         );
 
+
     if(!versionId){
 
         showNotice(
@@ -2476,8 +2793,10 @@ async function approveDocument(){
         return;
     }
 
+
     approveButton.disabled =
         true;
+
 
     try{
 
@@ -2497,13 +2816,16 @@ async function approveDocument(){
 
                     body:JSON.stringify({
 
-                        job_id:jobId,
+                        job_id:
+                            jobId,
 
-                        version_id:versionId
+                        version_id:
+                            versionId
 
                     })
                 }
             );
+
 
         if(!response.ok){
 
@@ -2513,21 +2835,28 @@ async function approveDocument(){
 
         }
 
+
         showNotice(
             "Your document has been approved successfully.",
             "success"
         );
 
+
         await fetchReview();
+
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         showNotice(
             "Approval could not be completed. Your document remains unchanged.",
             "error"
         );
+
 
         approveButton.disabled =
             false;
@@ -2547,9 +2876,12 @@ function continueToPayment(){
         return;
     }
 
+
     window.location.href =
         "payment.html?job_id=" +
-        encodeURIComponent(jobId);
+        encodeURIComponent(
+            jobId
+        );
 
 }
 
@@ -2564,6 +2896,7 @@ function downloadDocument(){
         return;
     }
 
+
     const versionId =
         latestData &&
         (
@@ -2575,6 +2908,7 @@ function downloadDocument(){
             )
         );
 
+
     if(!versionId){
 
         showNotice(
@@ -2585,11 +2919,16 @@ function downloadDocument(){
         return;
     }
 
+
     window.location.href =
         "/api/download?job_id=" +
-        encodeURIComponent(jobId) +
+        encodeURIComponent(
+            jobId
+        ) +
         "&version_id=" +
-        encodeURIComponent(versionId);
+        encodeURIComponent(
+            versionId
+        );
 
 }
 
@@ -2611,6 +2950,7 @@ function goBack(){
         return;
 
     }
+
 
     window.location.href =
         "workspace.html";
@@ -2642,22 +2982,35 @@ function showNotice(
 
 /* ============================================================
    HTML ESCAPING
-
-   Used for section titles because those values are displayed
-   inside the page UI.
-
-   The actual document_html is intentionally rendered as HTML
-   because it is supplied by the document-generation backend.
 ============================================================ */
 
-function escapeHTML(value){
+function escapeHTML(
+    value
+){
 
-    return String(value)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+    return String(
+        value
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
 
 }
 
