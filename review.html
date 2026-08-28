@@ -1,16 +1,19 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="UTF-8"><meta
-name="viewport"
-content="width=device-width,initial-scale=1,viewport-fit=cover"
+<meta charset="UTF-8">
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
+<title>Review Your Service | Naija Pocket Business Center</title>
 
-«»
-
-<title>Your Work Is Ready | Naija Pocket Business Center</title><link
+<link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap"
     rel="stylesheet"
-><style>
+>
 
+<style>
 *{
     box-sizing:border-box;
 }
@@ -40,19 +43,20 @@ button{
 }
 
 :root{
-    --green:#22c55e;
-    --green-light:#5ee58b;
+    --brand-green:#22c55e;
     --gold:#e0bd55;
     --gold-light:#f5dc88;
     --white:#fff;
-    --muted:#909090;
-    --panel:#0c0c0c;
-    --panel2:#141414;
+    --muted:#929292;
+    --panel:#0d0d0d;
+    --panel2:#151515;
     --border:#292929;
+    --green:#48d48a;
     --red:#d94747;
 }
 
 .app{
+    width:100%;
     min-height:100vh;
     display:flex;
     flex-direction:column;
@@ -62,27 +66,19 @@ button{
     position:sticky;
     top:0;
     z-index:100;
-
     min-height:68px;
-
     display:flex;
     align-items:center;
     justify-content:space-between;
-
     gap:12px;
-
     padding:11px 16px;
-
     background:#050505;
-
     border-bottom:1px solid var(--border);
 }
 
 .brand-title{
     margin:0;
-
-    color:var(--green);
-
+    color:var(--brand-green);
     font-family:Montserrat,Arial,sans-serif;
     font-size:17px;
     font-weight:800;
@@ -90,74 +86,48 @@ button{
 
 .brand-subtitle{
     margin-top:3px;
-
     color:#777;
-
     font-size:10px;
 }
 
-.status-pill{
+.job-pill{
     display:flex;
     align-items:center;
     gap:7px;
-
+    flex:0 0 auto;
     padding:7px 10px;
-
     border:1px solid #282828;
     border-radius:20px;
-
     background:#0c0c0c;
-
     color:#aaa;
-
-    font-size:9px;
-
-    white-space:nowrap;
+    font-size:10px;
 }
 
-.status-dot{
+.job-dot{
     width:7px;
     height:7px;
-
+    flex:0 0 auto;
     border-radius:50%;
-
     background:var(--gold);
-
-    box-shadow:
-        0 0 12px rgba(224,189,85,.65);
-}
-
-.status-pill.ready{
-    color:var(--green-light);
-}
-
-.status-pill.ready .status-dot{
-    background:var(--green);
-    box-shadow:
-        0 0 12px rgba(34,197,94,.65);
+    box-shadow:0 0 12px rgba(224,189,85,.7);
 }
 
 .main{
     width:100%;
     max-width:1050px;
-
     margin:0 auto;
-
-    padding:22px 14px 55px;
+    padding:20px 14px 50px;
 }
 
 .hero{
     text-align:center;
-
-    padding:4px 5px 20px;
+    padding:5px 5px 18px;
 }
 
 .hero h1{
     margin:0;
-
     font-family:Montserrat,Arial,sans-serif;
-
-    font-size:28px;
+    font-size:27px;
     line-height:1.2;
     font-weight:800;
 }
@@ -167,326 +137,658 @@ button{
 }
 
 .hero p{
-    max-width:690px;
-
+    max-width:700px;
     margin:9px auto 0;
-
     color:#999;
-
     font-size:13px;
-    line-height:1.6;
+    line-height:1.55;
 }
 
-.retrieval{
-    display:none;
+.magic{
+    position:relative;
+    min-height:390px;
+    overflow:hidden;
+    border:1px solid #282828;
+    border-radius:24px;
+    background:
+        radial-gradient(
+            circle at 50% 48%,
+            rgba(224,189,85,.10),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(70,130,255,.07),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(190,70,255,.06),
+            transparent 28%
+        ),
+        #080808;
+    box-shadow:0 20px 80px rgba(0,0,0,.5);
+}
 
-    margin:0 auto 18px;
+.magic::before{
+    content:"";
+    position:absolute;
+    width:55%;
+    height:200%;
+    top:-50%;
+    left:-30%;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.025),
+        transparent
+    );
+    transform:rotate(18deg);
+    animation:lightSweep 6s linear infinite;
+    pointer-events:none;
+}
 
-    padding:14px 15px;
+@keyframes lightSweep{
+    from{
+        left:-45%;
+    }
+    to{
+        left:110%;
+    }
+}
 
-    border:1px solid #292929;
-
-    border-radius:15px;
-
-    background:#0c0c0c;
-
-    color:#aaa;
-
-    font-size:11px;
-
-    line-height:1.55;
-
+.magic-head{
+    position:relative;
+    z-index:10;
+    padding:17px 17px 12px;
     text-align:center;
 }
 
-.retrieval.show{
-    display:block;
+.magic-title{
+    margin:0;
+    color:var(--gold-light);
+    font-family:Montserrat,Arial,sans-serif;
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:.4px;
 }
 
-.retrieval.success{
-    border-color:rgba(34,197,94,.28);
-    color:#91e5ae;
+.magic-message{
+    margin:6px 0 0;
+    color:#999;
+    font-size:11px;
 }
 
-.retrieval.error{
-    border-color:rgba(217,71,71,.4);
-    color:#ff9a9a;
-}
-
-.document-shell{
-    border:1px solid var(--border);
-
-    border-radius:20px;
-
+.flight-area{
+    position:relative;
+    height:245px;
     overflow:hidden;
-
-    background:#0a0a0a;
-
-    box-shadow:
-        0 20px 70px rgba(0,0,0,.35);
 }
 
-.document-header{
-    min-height:61px;
-
+.assembly-core{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:116px;
+    height:116px;
+    transform:translate(-50%,-50%);
+    border:1px solid rgba(224,189,85,.35);
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle,
+            rgba(224,189,85,.13),
+            rgba(0,0,0,.15) 65%
+        );
+    box-shadow:
+        0 0 35px rgba(224,189,85,.08),
+        inset 0 0 30px rgba(224,189,85,.05);
     display:flex;
     align-items:center;
-    justify-content:space-between;
-
-    gap:12px;
-
-    padding:14px 16px;
-
-    border-bottom:1px solid #242424;
+    justify-content:center;
+    z-index:4;
 }
 
-.document-heading{
+.core-ring{
+    position:absolute;
+    inset:9px;
+    border:1px dashed rgba(224,189,85,.3);
+    border-radius:50%;
+    animation:spin 8s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+.core-content{
+    position:relative;
+    z-index:2;
+    text-align:center;
+}
+
+.core-icon{
+    font-size:27px;
+}
+
+.core-label{
+    margin-top:3px;
+    color:#c7c7c7;
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:1.3px;
+}
+
+.fly{
+    position:absolute;
+    left:-150px;
+    width:135px;
+    min-height:52px;
+    padding:9px 11px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:12px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.09),
+            rgba(255,255,255,.025)
+        );
+    box-shadow:0 9px 28px rgba(0,0,0,.35);
+    opacity:0;
+    z-index:7;
+    pointer-events:none;
+}
+
+.fly.visible{
+    opacity:1;
+}
+
+.fly-icon{
+    width:31px;
+    height:35px;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:7px;
+    background:rgba(255,255,255,.08);
+    font-size:16px;
+}
+
+.fly-text{
     min-width:0;
 }
 
-.document-heading h2{
-    margin:0;
-
-    font-family:Montserrat,Arial,sans-serif;
-
-    font-size:15px;
-}
-
-.document-heading p{
-    margin:4px 0 0;
-
-    color:#707070;
-
-    font-size:9px;
-}
-
-.document-state{
-    flex:0 0 auto;
-
-    padding:5px 8px;
-
-    border:1px solid #333;
-
-    border-radius:15px;
-
-    color:#888;
-
-    font-size:9px;
-
-    white-space:nowrap;
-}
-
-.document-state.ready{
-    border-color:rgba(34,197,94,.35);
-    color:var(--green-light);
-}
-
-.document-state.error{
-    border-color:rgba(217,71,71,.4);
-    color:#ff9a9a;
-}
-
-.document-pages{
-    width:100%;
-}
-
-.document-page{
-    padding:35px 32px;
-
-    border-bottom:1px solid #202020;
-
-    background:#0b0b0b;
-}
-
-.document-page:last-child{
-    border-bottom:0;
-}
-
-.page-label{
-    margin-bottom:22px;
-
-    color:#555;
-
-    font-size:9px;
-
-    font-weight:700;
-
-    letter-spacing:1.1px;
-
-    text-transform:uppercase;
-}
-
-.page-content{
-    color:#ddd;
-
-    font-size:14px;
-
-    line-height:1.8;
-
-    overflow-wrap:anywhere;
-}
-
-.page-content h1,
-.page-content h2,
-.page-content h3,
-.page-content h4,
-.page-content h5{
+.fly-title{
+    overflow:hidden;
     color:#fff;
-
-    font-family:Montserrat,Arial,sans-serif;
-
-    line-height:1.35;
+    font-size:10px;
+    font-weight:700;
+    white-space:nowrap;
+    text-overflow:ellipsis;
 }
 
-.page-content h1{
-    font-size:23px;
-    margin:0 0 22px;
+.fly-status{
+    margin-top:3px;
+    color:#929292;
+    font-size:8px;
 }
 
-.page-content h2{
-    font-size:18px;
-    margin:28px 0 12px;
+.fly.left{
+    animation:flyLeft 2.5s cubic-bezier(.18,.7,.22,1) forwards;
 }
 
-.page-content h3{
-    font-size:15px;
-    margin:24px 0 10px;
+.fly.right{
+    left:auto;
+    right:-150px;
+    animation:flyRight 2.5s cubic-bezier(.18,.7,.22,1) forwards;
 }
 
-.page-content h4,
-.page-content h5{
-    font-size:13px;
-    margin:20px 0 8px;
+@keyframes flyLeft{
+    0%{
+        left:-150px;
+        top:var(--top);
+        transform:scale(.72) rotate(-4deg);
+        opacity:0;
+    }
+
+    12%{
+        opacity:1;
+    }
+
+    50%{
+        transform:scale(1) rotate(1deg);
+    }
+
+    88%{
+        opacity:1;
+    }
+
+    100%{
+        left:calc(50% - 67px);
+        top:calc(50% - 26px);
+        transform:scale(.72) rotate(0deg);
+        opacity:0;
+    }
 }
 
-.page-content p{
-    margin:0 0 15px;
+@keyframes flyRight{
+    0%{
+        right:-150px;
+        top:var(--top);
+        transform:scale(.72) rotate(4deg);
+        opacity:0;
+    }
+
+    12%{
+        opacity:1;
+    }
+
+    50%{
+        transform:scale(1) rotate(-1deg);
+    }
+
+    88%{
+        opacity:1;
+    }
+
+    100%{
+        right:calc(50% - 67px);
+        top:calc(50% - 26px);
+        transform:scale(.72) rotate(0deg);
+        opacity:0;
+    }
 }
 
-.page-content ul,
-.page-content ol{
-    margin:0 0 17px;
-
-    padding-left:24px;
+.progress-area{
+    position:relative;
+    z-index:10;
+    padding:0 18px 17px;
 }
 
-.page-content li{
+.progress-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
     margin-bottom:7px;
 }
 
-.page-content strong{
-    color:#fff;
+.progress-label{
+    color:#aaa;
+    font-size:10px;
 }
 
-.page-content table{
+.progress-number{
+    color:var(--gold-light);
+    font-size:10px;
+    font-weight:700;
+}
+
+.progress-track{
     width:100%;
+    height:5px;
+    overflow:hidden;
+    border-radius:10px;
+    background:#202020;
+}
 
-    margin:18px 0;
+.progress-bar{
+    width:0;
+    height:100%;
+    border-radius:10px;
+    background:linear-gradient(
+        90deg,
+        #9b7923,
+        #f5dc88,
+        #c49c35
+    );
+    box-shadow:0 0 12px rgba(224,189,85,.35);
+    transition:width .6s ease;
+}
 
-    border-collapse:collapse;
+.sections{
+    margin-top:17px;
+    border:1px solid var(--border);
+    border-radius:18px;
+    overflow:hidden;
+    background:#0b0b0b;
+}
 
+.sections-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:13px 15px;
+    border-bottom:1px solid #242424;
+}
+
+.sections-head strong{
+    font-family:Montserrat,Arial,sans-serif;
+    font-size:13px;
+}
+
+.sections-head span{
+    color:#777;
+    font-size:10px;
+}
+
+.section-list{
+    display:flex;
+    flex-direction:column;
+}
+
+.section-row{
+    min-height:51px;
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:9px 14px;
+    border-bottom:1px solid #1d1d1d;
+}
+
+.section-row:last-child{
+    border-bottom:0;
+}
+
+.section-row.done{
+    background:rgba(72,212,138,.025);
+}
+
+.section-row.active{
+    background:rgba(224,189,85,.045);
+}
+
+.section-number{
+    width:28px;
+    height:28px;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #303030;
+    border-radius:8px;
+    color:#777;
+    font-size:9px;
+    font-weight:700;
+}
+
+.section-row.done .section-number{
+    border-color:rgba(72,212,138,.4);
+    color:var(--green);
+}
+
+.section-row.active .section-number{
+    border-color:rgba(224,189,85,.45);
+    color:var(--gold-light);
+}
+
+.section-info{
+    flex:1;
+    min-width:0;
+}
+
+.section-title{
+    overflow:hidden;
+    color:#ddd;
+    font-size:11px;
+    font-weight:600;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+
+.section-state{
+    margin-top:3px;
+    color:#6f6f6f;
+    font-size:9px;
+}
+
+.section-row.done .section-state{
+    color:var(--green);
+}
+
+.section-row.active .section-state{
+    color:var(--gold);
+}
+
+.section-mark{
+    width:24px;
+    text-align:center;
+    color:#555;
+    font-size:14px;
+}
+
+.section-row.done .section-mark{
+    color:var(--green);
+}
+
+.document-panel{
+    margin-top:18px;
+    border:1px solid var(--border);
+    border-radius:20px;
+    background:#0b0b0b;
     overflow:hidden;
 }
 
-.page-content th,
-.page-content td{
-    padding:9px;
+.document-head{
+    padding:15px;
+    border-bottom:1px solid #242424;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
 
+.document-head h2{
+    margin:0;
+    font-family:Montserrat,Arial,sans-serif;
+    font-size:15px;
+}
+
+.document-status{
+    padding:5px 8px;
+    border:1px solid #333;
+    border-radius:15px;
+    color:#888;
+    font-size:9px;
+}
+
+.document-status.ready{
+    color:var(--green);
+    border-color:rgba(72,212,138,.35);
+}
+
+.document{
+    width:100%;
+    padding:24px 20px 30px;
+    color:#ddd;
+    font-size:14px;
+    line-height:1.75;
+    overflow:visible;
+    overflow-wrap:anywhere;
+    word-break:normal;
+}
+
+/*
+    IMPORTANT:
+
+    There is deliberately NO fixed height here.
+    The complete returned document is allowed to grow
+    to its full natural height.
+*/
+
+.document *{
+    max-width:100%;
+    overflow-wrap:anywhere;
+}
+
+.document img{
+    display:block;
+    max-width:100%;
+    height:auto;
+}
+
+.document h1,
+.document h2,
+.document h3,
+.document h4,
+.document h5,
+.document h6{
+    color:#fff;
+    font-family:Montserrat,Arial,sans-serif;
+    line-height:1.3;
+}
+
+.document h1{
+    margin:0 0 22px;
+    font-size:26px;
+}
+
+.document h2{
+    margin:30px 0 12px;
+    font-size:20px;
+}
+
+.document h3{
+    margin:24px 0 10px;
+    font-size:17px;
+}
+
+.document h4,
+.document h5,
+.document h6{
+    margin:20px 0 8px;
+    font-size:15px;
+}
+
+.document p{
+    margin:0 0 15px;
+}
+
+.document ul,
+.document ol{
+    margin:0 0 18px;
+    padding-left:25px;
+}
+
+.document li{
+    margin-bottom:7px;
+}
+
+.document table{
+    width:100%;
+    max-width:100%;
+    border-collapse:collapse;
+    margin:20px 0;
+    display:block;
+    overflow-x:auto;
+}
+
+.document th,
+.document td{
     border:1px solid #303030;
-
+    padding:9px 10px;
     text-align:left;
-
     vertical-align:top;
 }
 
-.page-content th{
+.document th{
     color:#fff;
     background:#151515;
 }
 
-.page-content td{
-    color:#ccc;
-}
-
-.page-content blockquote{
+.document blockquote{
     margin:18px 0;
-
     padding:12px 15px;
-
     border-left:3px solid var(--gold);
-
     background:#111;
-
-    color:#aaa;
+    color:#bbb;
 }
 
-.empty-document{
-    min-height:220px;
+.document pre{
+    max-width:100%;
+    overflow:auto;
+    padding:14px;
+    border-radius:10px;
+    background:#050505;
+}
 
+.document:empty{
+    min-height:130px;
     display:flex;
     align-items:center;
     justify-content:center;
-
-    padding:30px;
-
     color:#666;
-
     font-size:12px;
+}
 
-    text-align:center;
+.document:empty::after{
+    content:"Your completed document will appear here.";
+}
+
+.document-page{
+    width:100%;
+    margin:0 0 35px;
+    padding:28px 25px;
+    border:1px solid #242424;
+    border-radius:10px;
+    background:#101010;
+}
+
+.document-page:last-child{
+    margin-bottom:0;
+}
+
+.page-break{
+    display:block;
+    height:1px;
+    margin:30px 0;
+    border-top:1px dashed #333;
+}
+
+.document-text{
+    white-space:pre-wrap;
 }
 
 .correction{
     margin-top:18px;
-
-    padding:17px;
-
+    padding:16px;
     border:1px solid var(--border);
-
-    border-radius:19px;
-
+    border-radius:20px;
     background:#0b0b0b;
 }
 
 .correction h3{
     margin:0;
-
     font-family:Montserrat,Arial,sans-serif;
-
     font-size:14px;
 }
 
 .correction p{
-    margin:5px 0 12px;
-
+    margin:5px 0 11px;
     color:#777;
-
     font-size:10px;
-
-    line-height:1.55;
+    line-height:1.5;
 }
 
 textarea{
     width:100%;
-    min-height:100px;
-
+    min-height:90px;
     resize:vertical;
-
     padding:12px;
-
     border:1px solid #2c2c2c;
-
     border-radius:12px;
-
     outline:none;
-
     background:#080808;
-
     color:#eee;
-
     font-size:12px;
-
-    line-height:1.55;
+    line-height:1.5;
 }
 
 textarea:focus{
@@ -499,28 +801,19 @@ textarea::placeholder{
 
 .actions{
     display:grid;
-
     grid-template-columns:repeat(2,1fr);
-
     gap:9px;
-
     margin-top:18px;
 }
 
 .action{
     min-height:46px;
-
     border:1px solid #303030;
-
     border-radius:12px;
-
     background:#151515;
-
     color:#fff;
-
     font-size:11px;
     font-weight:700;
-
     transition:
         transform .2s ease,
         background .2s ease,
@@ -528,7 +821,7 @@ textarea::placeholder{
 }
 
 .action:hover{
-    background:#1d1d1d;
+    background:#1c1c1c;
     border-color:#464646;
 }
 
@@ -538,9 +831,7 @@ textarea::placeholder{
 
 .action.gold{
     border-color:#8b722c;
-
     background:#b28c31;
-
     color:#080808;
 }
 
@@ -549,46 +840,32 @@ textarea::placeholder{
 }
 
 .action.green{
-    border-color:rgba(34,197,94,.35);
-
+    border-color:rgba(72,212,138,.35);
     background:#12301f;
-
     color:#83e5ad;
 }
 
 .action.red{
     border-color:rgba(217,71,71,.4);
-
     background:#341313;
-
     color:#ff9a9a;
 }
 
 .action:disabled{
     opacity:.4;
-
     cursor:not-allowed;
-
     transform:none;
 }
 
 .notice{
     display:none;
-
     margin-top:14px;
-
     padding:11px 13px;
-
-    border:1px solid #2b2b2b;
-
     border-radius:11px;
-
     background:#111;
-
+    border:1px solid #2b2b2b;
     color:#aaa;
-
     font-size:10px;
-
     line-height:1.5;
 }
 
@@ -596,21 +873,21 @@ textarea::placeholder{
     display:block;
 }
 
-.notice.success{
-    border-color:rgba(34,197,94,.35);
-    color:#83e5ad;
-}
-
 .notice.error{
     border-color:rgba(217,71,71,.4);
     color:#ff9a9a;
 }
 
-.job-information{
-    display:none;
+.notice.success{
+    border-color:rgba(72,212,138,.35);
+    color:#83e5ad;
 }
 
 @media(max-width:600px){
+
+    .main{
+        padding:15px 10px 35px;
+    }
 
     .header{
         padding:10px 12px;
@@ -620,39 +897,51 @@ textarea::placeholder{
         font-size:15px;
     }
 
-    .status-pill{
-        font-size:8px;
-    }
-
-    .main{
-        padding:16px 10px 40px;
+    .job-pill{
+        font-size:9px;
     }
 
     .hero h1{
         font-size:23px;
     }
 
-    .hero p{
-        font-size:12px;
+    .magic{
+        min-height:375px;
+        border-radius:19px;
     }
 
-    .document-page{
-        padding:24px 15px;
+    .flight-area{
+        height:235px;
     }
 
-    .page-content{
-        font-size:13px;
-        line-height:1.75;
-    }
-
-    .document-header{
-        padding:13px;
+    .fly{
+        width:125px;
     }
 
     .actions{
         grid-template-columns:1fr;
     }
 
+    .document{
+        padding:18px 13px 25px;
+        font-size:13px;
+    }
+
+    .document-page{
+        padding:20px 15px;
+    }
+
+    .document h1{
+        font-size:22px;
+    }
+
+    .document h2{
+        font-size:18px;
+    }
+
+    .document h3{
+        font-size:16px;
+    }
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -662,159 +951,269 @@ textarea::placeholder{
     *::after{
         animation-duration:.001ms !important;
         animation-iteration-count:1 !important;
+        scroll-behavior:auto !important;
         transition:none !important;
     }
-
 }
+</style>
+</head>
 
-</style></head><body><div class="app"><header class="header"><div>
+<body>
 
-    <div class="brand-title">
-        Naija Pocket Business Center
+<div class="app">
+
+<header class="header">
+
+    <div>
+        <div class="brand-title">
+            Naija Pocket Business Center
+        </div>
+
+        <div class="brand-subtitle">
+            Your service is being carefully prepared
+        </div>
     </div>
 
-    <div class="brand-subtitle">
-        Your completed work
+    <div class="job-pill">
+        <span class="job-dot"></span>
+        <span id="jobState">CREATING</span>
     </div>
 
-</div>
+</header>
 
-<div
-    class="status-pill"
-    id="statusPill"
->
 
-    <span class="status-dot"></span>
+<main class="main">
 
-    <span id="statusText">
-        RETRIEVING
-    </span>
+<section class="hero">
 
-</div>
+    <h1>
+        Watch the <span>Magic of Creation</span>
+    </h1>
 
-</header><main class="main"><section class="hero"><h1>
-    Your Work <span>Is Ready</span>
-</h1>
+    <p id="heroMessage">
+        Your service is being created and assembled into your
+        complete document.
+    </p>
 
-<p id="heroText">
-    Your review page is connected to your job.
-    We are retrieving the actual completed work now.
-</p>
+</section>
 
-</section><div
-    class="retrieval show"
-    id="retrievalMessage"
->
-    Connecting your completed work to this review page...
-</div><section class="document-shell"><div class="document-header">
 
-    <div class="document-heading">
+<section class="magic" id="magic">
+
+    <div class="magic-head">
+
+        <h2
+            class="magic-title"
+            id="magicTitle"
+        >
+            ✨ Creating Your Service ✨
+        </h2>
+
+        <p
+            class="magic-message"
+            id="magicMessage"
+        >
+            Please give us a moment while your document
+            comes to life.
+        </p>
+
+    </div>
+
+
+    <div
+        class="flight-area"
+        id="flightArea"
+    >
+
+        <div class="assembly-core">
+
+            <div class="core-ring"></div>
+
+            <div class="core-content">
+
+                <div class="core-icon">
+                    ✨
+                </div>
+
+                <div class="core-label">
+                    Assembly
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="progress-area">
+
+        <div class="progress-top">
+
+            <span
+                class="progress-label"
+                id="progressLabel"
+            >
+                Preparing your document...
+            </span>
+
+            <span
+                class="progress-number"
+                id="progressNumber"
+            >
+                0%
+            </span>
+
+        </div>
+
+        <div class="progress-track">
+
+            <div
+                class="progress-bar"
+                id="progressBar"
+            ></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="sections">
+
+    <div class="sections-head">
+
+        <strong>
+            Creation Progress
+        </strong>
+
+        <span id="sectionCount">
+            Preparing...
+        </span>
+
+    </div>
+
+    <div
+        class="section-list"
+        id="sectionList"
+    ></div>
+
+</section>
+
+
+<section class="document-panel">
+
+    <div class="document-head">
 
         <h2>
             Your Complete Document
         </h2>
 
-        <p id="documentDescription">
-            Your complete work will appear here.
-        </p>
+        <div
+            class="document-status"
+            id="documentStatus"
+        >
+            BUILDING
+        </div>
 
     </div>
 
-    <div
-        class="document-state"
-        id="documentState"
-    >
-        RETRIEVING
+    <article
+        class="document"
+        id="document"
+    ></article>
+
+</section>
+
+
+<section class="correction">
+
+    <h3>
+        Want anything changed?
+    </h3>
+
+    <p>
+        Tell us what you want improved. Only the affected
+        part of your document needs to be worked on again.
+    </p>
+
+    <textarea
+        id="correctionText"
+        placeholder="Example: Expand the methodology section and make the recommendations more detailed..."
+    ></textarea>
+
+    <div class="actions">
+
+        <button
+            class="action"
+            id="correctionButton"
+            onclick="requestCorrection()"
+            disabled
+        >
+            Request Correction
+        </button>
+
+        <button
+            class="action green"
+            id="approveButton"
+            onclick="approveDocument()"
+            disabled
+        >
+            Approve Document
+        </button>
+
     </div>
 
-</div>
-
-
-<div
-    class="document-pages"
-    id="documentPages"
->
-
-    <div class="empty-document">
-        Retrieving your completed work...
-    </div>
-
-</div>
-
-</section><section class="correction"><h3>
-    Want anything changed?
-</h3>
-
-<p>
-    Tell us exactly what you want changed in your completed work.
-</p>
-
-<textarea
-    id="correctionText"
-    placeholder="Example: Make the introduction longer, correct the references, or expand the conclusion..."
-></textarea>
+</section>
 
 
 <div class="actions">
 
     <button
         class="action"
-        id="correctionButton"
-        onclick="requestCorrection()"
-        disabled
+        onclick="goBack()"
     >
-        Request Correction
+        ← Back
     </button>
 
-
     <button
-        class="action green"
-        id="approveButton"
-        onclick="approveDocument()"
+        class="action gold"
+        id="paymentButton"
+        onclick="continueToPayment()"
         disabled
     >
-        Approve Document
+        Payment
+    </button>
+
+    <button
+        class="action gold"
+        id="downloadButton"
+        onclick="downloadDocument()"
+        disabled
+    >
+        Download
     </button>
 
 </div>
 
-</section><div class="actions"><button
-    class="action"
-    onclick="goBack()"
->
-    ← Back
-</button>
 
-
-<button
-    class="action gold"
-    id="paymentButton"
-    onclick="continueToPayment()"
-    disabled
->
-    Payment
-</button>
-
-
-<button
-    class="action gold"
-    id="downloadButton"
-    onclick="downloadDocument()"
-    disabled
->
-    Download
-</button>
-
-</div><div
+<div
     class="notice"
     id="notice"
-></div></main></div><script>
+></div>
 
+</main>
+
+</div>
+
+
+<script>
 "use strict";
 
 
 /* ============================================================
-   JOB IDENTIFICATION
+   STATE
 ============================================================ */
 
 const params =
@@ -822,148 +1221,115 @@ const params =
         window.location.search
     );
 
-
 const jobId =
     params.get("job_id") ||
     params.get("id") ||
-    sessionStorage.getItem("job_id") ||
     localStorage.getItem("job_id");
-
 
 let latestData = null;
 
-let latestPages = [];
-
-let latestVersionId = null;
+let polling = false;
 
 let pollTimer = null;
 
-let retrieving = false;
+let animationCounter = 0;
 
-let successfulRetrieval = false;
+let knownDoneIds = new Set();
 
 
 /* ============================================================
    DOM
 ============================================================ */
 
-const statusPill =
-    document.getElementById(
-        "statusPill"
-    );
+const flightArea =
+    document.getElementById("flightArea");
 
-const statusText =
-    document.getElementById(
-        "statusText"
-    );
+const sectionList =
+    document.getElementById("sectionList");
 
-const heroText =
-    document.getElementById(
-        "heroText"
-    );
+const documentBox =
+    document.getElementById("document");
 
-const retrievalMessage =
-    document.getElementById(
-        "retrievalMessage"
-    );
+const progressBar =
+    document.getElementById("progressBar");
 
-const documentPages =
-    document.getElementById(
-        "documentPages"
-    );
+const progressNumber =
+    document.getElementById("progressNumber");
 
-const documentState =
-    document.getElementById(
-        "documentState"
-    );
+const progressLabel =
+    document.getElementById("progressLabel");
 
-const documentDescription =
-    document.getElementById(
-        "documentDescription"
-    );
+const sectionCount =
+    document.getElementById("sectionCount");
+
+const documentStatus =
+    document.getElementById("documentStatus");
+
+const jobState =
+    document.getElementById("jobState");
+
+const magicTitle =
+    document.getElementById("magicTitle");
+
+const magicMessage =
+    document.getElementById("magicMessage");
+
+const heroMessage =
+    document.getElementById("heroMessage");
 
 const correctionText =
-    document.getElementById(
-        "correctionText"
-    );
+    document.getElementById("correctionText");
 
 const correctionButton =
-    document.getElementById(
-        "correctionButton"
-    );
+    document.getElementById("correctionButton");
 
 const approveButton =
-    document.getElementById(
-        "approveButton"
-    );
+    document.getElementById("approveButton");
 
 const paymentButton =
-    document.getElementById(
-        "paymentButton"
-    );
+    document.getElementById("paymentButton");
 
 const downloadButton =
-    document.getElementById(
-        "downloadButton"
-    );
+    document.getElementById("downloadButton");
 
 const notice =
-    document.getElementById(
-        "notice"
-    );
+    document.getElementById("notice");
 
 
 /* ============================================================
-   INITIALIZE
+   INITIAL CHECK
 ============================================================ */
 
 if(!jobId){
 
-    setError(
-        "This review page did not receive a job ID. Please return to your workspace and open Review again."
+    showNotice(
+        "No document job was supplied. Please return to your workspace and start the service again.",
+        "error"
     );
+
+    jobState.textContent =
+        "NO JOB";
 
 }else{
 
-    try{
-
-        sessionStorage.setItem(
-            "job_id",
-            jobId
-        );
-
-        localStorage.setItem(
-            "job_id",
-            jobId
-        );
-
-    }catch(error){
-
-        console.warn(
-            "Storage unavailable",
-            error
-        );
-
-    }
-
-    retrieveWork();
+    startPolling();
 
 }
 
 
 /* ============================================================
-   MAIN RETRIEVAL LOOP
+   POLLING
 ============================================================ */
 
-async function retrieveWork(){
+function startPolling(){
 
-    if(retrieving){
+    if(polling){
         return;
     }
 
-    retrieving = true;
+    polling = true;
 
-    await fetchReview();
+    fetchReview();
 
 }
 
@@ -974,26 +1340,18 @@ async function fetchReview(){
         return;
     }
 
-
     try{
 
         const response =
             await fetch(
                 "/api/review?job_id=" +
-                encodeURIComponent(
-                    jobId
-                ) +
-                "&_=" +
-                Date.now(),
+                encodeURIComponent(jobId),
                 {
                     method:"GET",
 
                     headers:{
                         "Accept":
-                            "application/json",
-
-                        "Cache-Control":
-                            "no-cache"
+                            "application/json"
                     },
 
                     cache:"no-store"
@@ -1001,119 +1359,26 @@ async function fetchReview(){
             );
 
 
-        const rawText =
-            await response.text();
-
-
-        let data = null;
-
-
-        try{
-
-            data =
-                JSON.parse(
-                    rawText
-                );
-
-        }catch(error){
+        if(!response.ok){
 
             throw new Error(
-                "The review API did not return JSON."
+                "Review request failed: " +
+                response.status
             );
 
         }
 
 
-        if(
-            !response.ok
-        ){
-
-            throw new Error(
-                data.message ||
-                data.error ||
-                (
-                    "Review API returned HTTP " +
-                    response.status
-                )
-            );
-
-        }
+        const data =
+            await response.json();
 
 
         latestData =
             data;
 
 
-        /*
-            This is the critical handoff.
-
-            We do NOT assume that the backend uses
-            only one field called document_html.
-
-            normalizeDocument() searches the entire
-            returned job/version/result structure
-            for the actual generated pages/content.
-        */
-
-        const normalized =
-            normalizeDocument(
-                data
-            );
-
-
-        if(
-            normalized.pages.length
-        ){
-
-            latestPages =
-                normalized.pages;
-
-
-            latestVersionId =
-                findVersionId(
-                    data
-                );
-
-
-            renderActualDocument(
-                normalized.pages
-            );
-
-
-            setReadyState(
-                normalized.pages.length
-            );
-
-
-            updateActions(
-                data,
-                true
-            );
-
-
-            successfulRetrieval =
-                true;
-
-
-            clearTimeout(
-                pollTimer
-            );
-
-
-            return;
-
-        }
-
-
-        /*
-            The job exists but the document has not
-            reached the review payload yet.
-        */
-
-        setRetrievingState(
-            getHumanStatus(
-                data
-            )
+        renderReview(
+            data
         );
 
 
@@ -1122,31 +1387,34 @@ async function fetchReview(){
         );
 
 
-        pollTimer =
-            setTimeout(
-                fetchReview,
-                1800
-            );
+        if(
+            !isFinished(data)
+        ){
+
+            pollTimer =
+                setTimeout(
+                    fetchReview,
+                    1800
+                );
+
+        }else{
+
+            polling = false;
+
+        }
 
 
     }catch(error){
 
         console.error(
-            "Review retrieval error:",
+            "Review polling error:",
             error
         );
 
 
-        /*
-            Do not immediately tell the customer that
-            their work is lost.
-
-            Keep trying because the generation/review
-            handoff may still be completing.
-        */
-
-        setRetrievingState(
-            "Still connecting your completed work..."
+        showNotice(
+            "We are reconnecting to your document. Your work remains safe.",
+            "error"
         );
 
 
@@ -1158,7 +1426,7 @@ async function fetchReview(){
         pollTimer =
             setTimeout(
                 fetchReview,
-                2200
+                2500
             );
 
     }
@@ -1167,867 +1435,493 @@ async function fetchReview(){
 
 
 /* ============================================================
-   DOCUMENT NORMALIZATION
+   GENERIC OBJECT HELPERS
 ============================================================ */
 
-function normalizeDocument(
-    data
+function firstValue(
+    objects,
+    keys
 ){
 
-    const pages = [];
-
-
-    /*
-        1. Direct page arrays.
-    */
-
-    collectPageArray(
-        pages,
-        data &&
-        data.pages
-    );
-
-
-    collectPageArray(
-        pages,
-        data &&
-        data.document_pages
-    );
-
-
-    collectPageArray(
-        pages,
-        data &&
-        data.prepared_pages
-    );
-
-
-    collectPageArray(
-        pages,
-        data &&
-        data.content_pages
-    );
-
-
-    collectPageArray(
-        pages,
-        data &&
-        data.generated_pages
-    );
-
-
-    /*
-        2. Version-level pages.
-    */
-
-    if(
-        data &&
-        data.version
+    for(
+        const object of objects
     ){
 
-        collectPageArray(
-            pages,
-            data.version.pages
-        );
+        if(
+            !object ||
+            typeof object !== "object"
+        ){
+            continue;
+        }
 
-        collectPageArray(
-            pages,
-            data.version.document_pages
-        );
+        for(
+            const key of keys
+        ){
 
-        collectPageArray(
-            pages,
-            data.version.prepared_pages
-        );
+            if(
+                object[key] !== undefined &&
+                object[key] !== null
+            ){
 
-        collectPageArray(
-            pages,
-            data.version.content_pages
-        );
+                return object[key];
 
-        collectPageArray(
-            pages,
-            data.version.generated_pages
-        );
-
-    }
-
-
-    /*
-        3. Job-level pages.
-    */
-
-    if(
-        data &&
-        data.job
-    ){
-
-        collectPageArray(
-            pages,
-            data.job.pages
-        );
-
-        collectPageArray(
-            pages,
-            data.job.document_pages
-        );
-
-        collectPageArray(
-            pages,
-            data.job.prepared_pages
-        );
-
-        collectPageArray(
-            pages,
-            data.job.content_pages
-        );
-
-        collectPageArray(
-            pages,
-            data.job.generated_pages
-        );
-
-    }
-
-
-    /*
-        4. Result-level pages.
-    */
-
-    if(
-        data &&
-        data.result
-    ){
-
-        collectPageArray(
-            pages,
-            data.result.pages
-        );
-
-        collectPageArray(
-            pages,
-            data.result.document_pages
-        );
-
-        collectPageArray(
-            pages,
-            data.result.prepared_pages
-        );
-
-        collectPageArray(
-            pages,
-            data.result.content_pages
-        );
-
-    }
-
-
-    /*
-        Remove duplicate pages.
-    */
-
-    const unique =
-        uniquePages(
-            pages
-        );
-
-
-    /*
-        If no page array exists, recover a complete
-        HTML document from the known document fields.
-    */
-
-    if(
-        !unique.length
-    ){
-
-        const html =
-            findDocumentHTML(
-                data
-            );
-
-
-        if(html){
-
-            unique.push({
-
-                title:
-                    "Complete Document",
-
-                content:
-                    html,
-
-                html:true,
-
-                order:1
-
-            });
+            }
 
         }
 
     }
 
+    return null;
 
-    /*
-        Last recovery path:
-        generated text/content.
-    */
-
-    if(
-        !unique.length
-    ){
-
-        const text =
-            findDocumentText(
-                data
-            );
+}
 
 
-        if(text){
+function getCandidateObjects(data){
 
-            unique.push({
+    const objects = [];
 
-                title:
-                    "Complete Document",
+    if(data && typeof data === "object"){
 
-                content:
-                    text,
+        objects.push(data);
 
-                html:false,
-
-                order:1
-
-            });
-
+        if(
+            data.job &&
+            typeof data.job === "object"
+        ){
+            objects.push(data.job);
         }
 
+        if(
+            data.version &&
+            typeof data.version === "object"
+        ){
+            objects.push(data.version);
+        }
+
+        if(
+            data.document &&
+            typeof data.document === "object"
+        ){
+            objects.push(data.document);
+        }
+
+        if(
+            data.review &&
+            typeof data.review === "object"
+        ){
+            objects.push(data.review);
+        }
+
+        if(
+            data.result &&
+            typeof data.result === "object"
+        ){
+            objects.push(data.result);
+        }
+
+        if(
+            data.data &&
+            typeof data.data === "object"
+        ){
+            objects.push(data.data);
+        }
     }
 
-
-    unique.sort(
-        (
-            a,
-            b
-        ) =>
-            Number(
-                a.order || 0
-            ) -
-            Number(
-                b.order || 0
-            )
-    );
-
-
-    return {
-        pages:unique
-    };
+    return objects;
 
 }
 
 
 /* ============================================================
-   PAGE ARRAY COLLECTION
+   NORMALIZE SECTIONS
 ============================================================ */
 
-function collectPageArray(
-    target,
-    value
+function getSections(data){
+
+    if(!data){
+        return [];
+    }
+
+
+    const objects =
+        getCandidateObjects(data);
+
+
+    for(
+        const object of objects
+    ){
+
+        const candidates = [
+
+            object.sections,
+
+            object.document_sections,
+
+            object.generated_sections,
+
+            object.content_sections,
+
+            object.parts,
+
+            object.pages
+
+        ];
+
+
+        for(
+            const candidate of candidates
+        ){
+
+            if(
+                Array.isArray(candidate)
+            ){
+
+                return candidate;
+
+            }
+
+        }
+
+    }
+
+
+    return [];
+
+}
+
+
+/* ============================================================
+   PROGRESS
+============================================================ */
+
+function getCompletedCount(
+    data,
+    sections
 ){
 
+    const objects =
+        getCandidateObjects(data);
+
+
+    const progressObjects = [];
+
+
+    for(
+        const object of objects
+    ){
+
+        if(
+            object.progress &&
+            typeof object.progress === "object"
+        ){
+
+            progressObjects.push(
+                object.progress
+            );
+
+        }
+
+    }
+
+
+    const value =
+        firstValue(
+            progressObjects,
+            [
+                "completed",
+                "completed_sections",
+                "finished",
+                "done"
+            ]
+        );
+
+
     if(
-        !Array.isArray(
-            value
+        value !== null &&
+        Number.isFinite(
+            Number(value)
         )
     ){
 
-        return;
+        return Number(value);
 
     }
 
 
-    value.forEach(
-        (
-            page,
-            index
-        ) => {
-
-            const normalized =
-                normalizePage(
-                    page,
-                    index
-                );
-
-
-            if(
-                normalized &&
-                normalized.content
-            ){
-
-                target.push(
-                    normalized
-                );
-
-            }
-
-        }
-    );
+    return sections.filter(
+        section =>
+            isDoneStatus(
+                section &&
+                section.status
+            )
+    ).length;
 
 }
 
 
-/* ============================================================
-   PAGE NORMALIZATION
-============================================================ */
-
-function normalizePage(
-    page,
-    index
+function getTotalCount(
+    data,
+    sections
 ){
 
-    if(
-        page === null ||
-        page === undefined
-    ){
-
-        return null;
-
-    }
+    const objects =
+        getCandidateObjects(data);
 
 
-    if(
-        typeof page === "string"
-    ){
-
-        return {
-
-            title:
-                "Page " +
-                (index + 1),
-
-            content:
-                page,
-
-            html:
-                looksLikeHTML(
-                    page
-                ),
-
-            order:
-                index + 1
-
-        };
-
-    }
-
-
-    if(
-        typeof page !== "object"
-    ){
-
-        return null;
-
-    }
-
-
-    const content =
-        page.html ??
-        page.content_html ??
-        page.document_html ??
-        page.body_html ??
-        page.content ??
-        page.text ??
-        page.body ??
-        page.generated_content ??
-        page.generated_text ??
-        page.output ??
-        page.result ??
-        "";
-
-
-    if(
-        typeof content !== "string" ||
-        !content.trim()
-    ){
-
-        return null;
-
-    }
-
-
-    return {
-
-        title:
-            String(
-                page.title ??
-                page.name ??
-                page.heading ??
-                page.page_title ??
-                (
-                    "Page " +
-                    (index + 1)
-                )
-            ),
-
-        content:
-            content,
-
-        html:
-            Boolean(
-                page.html !== undefined
-                ? true
-                : looksLikeHTML(
-                    content
-                )
-            ),
-
-        order:
-            Number(
-                page.page_number ??
-                page.page_order ??
-                page.section_order ??
-                page.order ??
-                index + 1
-            ),
-
-        id:
-            page.page_id ??
-            page.id ??
-            null
-
-    };
-
-}
-
-
-/* ============================================================
-   COMPLETE HTML RECOVERY
-============================================================ */
-
-function findDocumentHTML(
-    data
-){
-
-    const candidates = [
-
-        data &&
-        data.document_html,
-
-        data &&
-        data.html,
-
-        data &&
-        data.completed_html,
-
-        data &&
-        data.complete_html,
-
-        data &&
-        data.review_html,
-
-        data &&
-        data.generated_html,
-
-        data &&
-        data.result &&
-        data.result.document_html,
-
-        data &&
-        data.result &&
-        data.result.html,
-
-        data &&
-        data.version &&
-        data.version.document_html,
-
-        data &&
-        data.version &&
-        data.version.html,
-
-        data &&
-        data.job &&
-        data.job.document_html,
-
-        data &&
-        data.job &&
-        data.job.html
-
-    ];
+    const progressObjects = [];
 
 
     for(
-        const value of candidates
+        const object of objects
     ){
 
         if(
-            typeof value === "string" &&
-            value.trim()
+            object.progress &&
+            typeof object.progress === "object"
         ){
 
-            return value;
+            progressObjects.push(
+                object.progress
+            );
 
         }
 
     }
 
 
-    return "";
-
-}
-
-
-/* ============================================================
-   COMPLETE TEXT RECOVERY
-============================================================ */
-
-function findDocumentText(
-    data
-){
-
-    const candidates = [
-
-        data &&
-        data.document_text,
-
-        data &&
-        data.completed_text,
-
-        data &&
-        data.generated_text,
-
-        data &&
-        data.content,
-
-        data &&
-        data.text,
-
-        data &&
-        data.result &&
-        data.result.text,
-
-        data &&
-        data.result &&
-        data.result.content,
-
-        data &&
-        data.version &&
-        data.version.text,
-
-        data &&
-        data.version &&
-        data.version.content,
-
-        data &&
-        data.job &&
-        data.job.text,
-
-        data &&
-        data.job &&
-        data.job.content
-
-    ];
+    const value =
+        firstValue(
+            progressObjects,
+            [
+                "total",
+                "total_sections",
+                "count"
+            ]
+        );
 
 
-    for(
-        const value of candidates
+    if(
+        value !== null &&
+        Number.isFinite(
+            Number(value)
+        )
     ){
 
-        if(
-            typeof value === "string" &&
-            value.trim()
-        ){
-
-            return value;
-
-        }
+        return Number(value);
 
     }
 
 
-    return "";
+    return sections.length;
 
 }
 
 
 /* ============================================================
-   DUPLICATE REMOVAL
+   STATUS
 ============================================================ */
 
-function uniquePages(
-    pages
-){
+function getStatus(data){
 
-    const seen =
-        new Set();
-
-    const output = [];
+    if(!data){
+        return "";
+    }
 
 
-    pages.forEach(
-        page => {
-
-            const key =
-                String(
-                    page.id ||
-                    (
-                        page.order +
-                        "|" +
-                        page.title +
-                        "|" +
-                        page.content.slice(
-                            0,
-                            250
-                        )
-                    )
-                );
+    const objects =
+        getCandidateObjects(data);
 
 
-            if(
-                seen.has(
-                    key
-                )
-            ){
-
-                return;
-
-            }
-
-
-            seen.add(
-                key
-            );
+    const value =
+        firstValue(
+            objects,
+            [
+                "status",
+                "job_status",
+                "review_status",
+                "document_status"
+            ]
+        );
 
 
-            output.push(
-                page
-            );
-
-        }
-    );
-
-
-    return output;
+    return String(
+        value || ""
+    ).toLowerCase();
 
 }
 
 
-/* ============================================================
-   RENDER ACTUAL DOCUMENT
-============================================================ */
+function isDoneStatus(status){
 
-function renderActualDocument(
-    pages
-){
-
-    documentPages.innerHTML = "";
-
-
-    pages.forEach(
-        (
-            page,
-            index
-        ) => {
-
-            const pageElement =
-                document.createElement(
-                    "article"
-                );
-
-
-            pageElement.className =
-                "document-page";
-
-
-            const label =
-                document.createElement(
-                    "div"
-                );
-
-
-            label.className =
-                "page-label";
-
-
-            label.textContent =
-                "Completed work";
-
-
-            if(
-                pages.length > 1
-            ){
-
-                label.textContent =
-                    "Completed work • Page " +
-                    (index + 1);
-
-            }
-
-
-            pageElement.appendChild(
-                label
-            );
-
-
-            const content =
-                document.createElement(
-                    "div"
-                );
-
-
-            content.className =
-                "page-content";
-
-
-            if(
-                page.html
-            ){
-
-                /*
-                    The HTML is generated by the application,
-                    not interpreted as a page URL.
-                */
-
-                content.innerHTML =
-                    page.content;
-
-            }else{
-
-                content.innerHTML =
-                    textToHTML(
-                        page.content
-                    );
-
-            }
-
-
-            pageElement.appendChild(
-                content
-            );
-
-
-            documentPages.appendChild(
-                pageElement
-            );
-
-        }
-    );
-
-
-    documentDescription.textContent =
-        pages.length === 1
-        ? "Your complete work is shown below."
-        : "Your complete work has been brought together below.";
-
-}
-
-
-/* ============================================================
-   TEXT TO HTML
-============================================================ */
-
-function textToHTML(
-    text
-){
-
-    return escapeHTML(
+    const value =
         String(
-            text
-        )
-    )
-    .replace(
-        /\n{2,}/g,
-        "</p><p>"
-    )
-    .replace(
-        /\n/g,
-        "<br>"
-    )
-    .replace(
-        /^/,
-        "<p>"
-    )
-    .replace(
-        /$/,
-        "</p>"
-    );
+            status || ""
+        ).toLowerCase();
+
+
+    return [
+
+        "done",
+        "complete",
+        "completed",
+        "ready",
+        "assembled",
+        "approved",
+        "finished"
+
+    ].includes(value);
+
+}
+
+
+function isActiveStatus(status){
+
+    const value =
+        String(
+            status || ""
+        ).toLowerCase();
+
+
+    return [
+
+        "generating",
+        "processing",
+        "active",
+        "running",
+        "in_progress",
+        "in-progress",
+        "queued",
+        "pending",
+        "creating"
+
+    ].includes(value);
 
 }
 
 
 /* ============================================================
-   HTML DETECTION
+   COMPLETE DOCUMENT EXTRACTION
 ============================================================ */
 
-function looksLikeHTML(
-    value
-){
+function getDocumentContent(data){
 
-    return (
-        /<\s*(p|div|h1|h2|h3|h4|h5|ul|ol|li|table|strong|em|br)\b/i
-        .test(
-            String(
-                value
-            )
-        )
-    );
-
-}
+    if(!data){
+        return null;
+    }
 
 
-/* ============================================================
-   VERSION
-============================================================ */
+    const objects =
+        getCandidateObjects(data);
 
-function findVersionId(
-    data
-){
 
-    const candidates = [
+    const keys = [
 
-        data &&
-        data.version_id,
+        "document_html",
 
-        data &&
-        data.current_version,
+        "html",
 
-        data &&
-        data.current_version_id,
+        "content_html",
 
-        data &&
-        data.version &&
-        data.version.version_id,
+        "rendered_html",
 
-        data &&
-        data.version &&
-        data.version.id,
+        "generated_html",
 
-        data &&
-        data.job &&
-        data.job.current_version,
+        "document",
 
-        data &&
-        data.job &&
-        data.job.current_version_id,
+        "content",
 
-        data &&
-        data.job &&
-        data.job.version_id
+        "text",
+
+        "document_text",
+
+        "full_document",
+
+        "full_content",
+
+        "output",
+
+        "result"
 
     ];
 
 
     for(
-        const value of candidates
+        const object of objects
     ){
 
-        if(
-            value !== undefined &&
-            value !== null &&
-            String(value).trim()
+        for(
+            const key of keys
         ){
 
-            return String(
-                value
-            );
+            const value =
+                object[key];
+
+
+            if(
+                typeof value === "string" &&
+                value.trim()
+            ){
+
+                return {
+                    type:"string",
+                    value:value
+                };
+
+            }
+
+
+            if(
+                Array.isArray(value) &&
+                value.length
+            ){
+
+                return {
+                    type:"array",
+                    value:value
+                };
+
+            }
+
+
+            if(
+                value &&
+                typeof value === "object"
+            ){
+
+                if(
+                    typeof value.html === "string"
+                ){
+
+                    return {
+                        type:"string",
+                        value:value.html
+                    };
+
+                }
+
+                if(
+                    typeof value.content === "string"
+                ){
+
+                    return {
+                        type:"string",
+                        value:value.content
+                    };
+
+                }
+
+                if(
+                    typeof value.text === "string"
+                ){
+
+                    return {
+                        type:"string",
+                        value:value.text
+                    };
+
+                }
+
+            }
 
         }
 
@@ -2040,281 +1934,1056 @@ function findVersionId(
 
 
 /* ============================================================
-   STATUS
+   DOCUMENT RENDERING
 ============================================================ */
 
-function getHumanStatus(
-    data
-){
+function renderDocument(data){
 
-    const value =
-        String(
-            data &&
-            (
-                data.status ||
-                data.job_status ||
-                (
-                    data.job &&
-                    data.job.status
-                ) ||
-                ""
-            )
-        ).toLowerCase();
+    const result =
+        getDocumentContent(data);
 
 
-    if(
-        [
-            "completed",
-            "complete",
-            "ready",
-            "assembled",
-            "finished"
-        ].includes(
-            value
-        )
-    ){
+    if(!result){
 
-        return "Your work has been completed. Connecting it to the review page...";
+        if(
+            isFinished(data)
+        ){
 
-    }
+            documentBox.innerHTML =
+                `
+                <div class="document-text">
+                    Your document was completed, but the document content
+                    was not included in the review response.
+                </div>
+                `;
 
+        }
 
-    if(
-        [
-            "processing",
-            "generating",
-            "running",
-            "in_progress",
-            "in-progress"
-        ].includes(
-            value
-        )
-    ){
-
-        return "Your work is still being completed. We are waiting for the finished document...";
-
-    }
-
-
-    return "Your review page is connected to your job and is retrieving the completed work.";
-
-}
-
-
-/* ============================================================
-   RETRIEVING STATE
-============================================================ */
-
-function setRetrievingState(
-    message
-){
-
-    statusText.textContent =
-        "RETRIEVING";
-
-
-    statusPill.classList.remove(
-        "ready"
-    );
-
-
-    documentState.textContent =
-        "RETRIEVING";
-
-
-    documentState.classList.remove(
-        "ready",
-        "error"
-    );
-
-
-    retrievalMessage.className =
-        "retrieval show";
-
-
-    retrievalMessage.textContent =
-        message;
-
-
-    heroText.textContent =
-        "Your review page is connected to your job and is retrieving the actual completed work.";
-
-
-    correctionButton.disabled =
-        true;
-
-    approveButton.disabled =
-        true;
-
-    paymentButton.disabled =
-        true;
-
-    downloadButton.disabled =
-        true;
-
-}
-
-
-/* ============================================================
-   READY STATE
-============================================================ */
-
-function setReadyState(
-    pageCount
-){
-
-    statusText.textContent =
-        "READY";
-
-
-    statusPill.classList.add(
-        "ready"
-    );
-
-
-    documentState.textContent =
-        "READY FOR REVIEW";
-
-
-    documentState.classList.add(
-        "ready"
-    );
-
-
-    retrievalMessage.className =
-        "retrieval show success";
-
-
-    retrievalMessage.textContent =
-        pageCount > 1
-        ? "Your completed work has been retrieved and all pages have been brought together below."
-        : "Your completed work has been retrieved and is ready for review.";
-
-
-    heroText.textContent =
-        "Your complete work has been retrieved from the job. Read it below, request corrections if needed, or approve it when you are satisfied.";
-
-}
-
-
-/* ============================================================
-   ERROR
-============================================================ */
-
-function setError(
-    message
-){
-
-    statusText.textContent =
-        "ERROR";
-
-
-    statusPill.classList.remove(
-        "ready"
-    );
-
-
-    documentState.textContent =
-        "UNAVAILABLE";
-
-
-    documentState.classList.add(
-        "error"
-    );
-
-
-    retrievalMessage.className =
-        "retrieval show error";
-
-
-    retrievalMessage.textContent =
-        message;
-
-
-    heroText.textContent =
-        "We could not connect this review page to the completed work.";
-
-}
-
-
-/* ============================================================
-   ACTION STATE
-============================================================ */
-
-function updateActions(
-    data,
-    ready
-){
-
-    if(!ready){
-
-        correctionButton.disabled =
-            true;
-
-        approveButton.disabled =
-            true;
-
-        paymentButton.disabled =
-            true;
-
-        downloadButton.disabled =
-            true;
+        documentStatus.textContent =
+            isFinished(data)
+            ? "READY"
+            : "BUILDING";
 
         return;
 
     }
 
 
+    /*
+        ARRAY RESPONSE
+
+        Handles pages, sections, document parts,
+        and generated content returned as arrays.
+    */
+
+    if(
+        result.type === "array"
+    ){
+
+        renderDocumentArray(
+            result.value
+        );
+
+    }else{
+
+        renderDocumentString(
+            result.value
+        );
+
+    }
+
+
+    if(
+        isFinished(data)
+    ){
+
+        documentStatus.textContent =
+            "READY FOR REVIEW";
+
+        documentStatus.classList.add(
+            "ready"
+        );
+
+    }else{
+
+        documentStatus.textContent =
+            "BUILDING";
+
+        documentStatus.classList.remove(
+            "ready"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   STRING DOCUMENT RENDERER
+============================================================ */
+
+function renderDocumentString(
+    content
+){
+
+    const value =
+        String(content || "")
+        .trim();
+
+
+    if(!value){
+
+        documentBox.innerHTML = "";
+
+        return;
+
+    }
+
+
+    /*
+        If backend returned HTML,
+        render it directly.
+    */
+
+    if(
+        /<([a-z][\w-]*)(\s[^>]*)?>/i.test(
+            value
+        )
+    ){
+
+        documentBox.innerHTML =
+            value;
+
+        return;
+
+    }
+
+
+    /*
+        Plain text document.
+        Preserve every line.
+    */
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+    wrapper.className =
+        "document-text";
+
+    wrapper.textContent =
+        value;
+
+    documentBox.innerHTML = "";
+
+    documentBox.appendChild(
+        wrapper
+    );
+
+}
+
+
+/* ============================================================
+   ARRAY DOCUMENT RENDERER
+============================================================ */
+
+function renderDocumentArray(
+    items
+){
+
+    documentBox.innerHTML = "";
+
+
+    items.forEach(
+        (
+            item,
+            index
+        ) => {
+
+            const page =
+                document.createElement(
+                    "div"
+                );
+
+            page.className =
+                "document-page";
+
+
+            if(
+                typeof item === "string"
+            ){
+
+                if(
+                    /<([a-z][\w-]*)(\s[^>]*)?>/i.test(
+                        item
+                    )
+                ){
+
+                    page.innerHTML =
+                        item;
+
+                }else{
+
+                    const text =
+                        document.createElement(
+                            "div"
+                        );
+
+                    text.className =
+                        "document-text";
+
+                    text.textContent =
+                        item;
+
+                    page.appendChild(
+                        text
+                    );
+
+                }
+
+            }else if(
+                item &&
+                typeof item === "object"
+            ){
+
+                const html =
+                    item.html ||
+                    item.document_html ||
+                    item.content_html ||
+                    item.content ||
+                    item.text ||
+                    item.body ||
+                    "";
+
+
+                const title =
+                    item.title ||
+                    item.name ||
+                    item.heading ||
+                    item.section_title ||
+                    "";
+
+
+                if(title){
+
+                    const heading =
+                        document.createElement(
+                            "h2"
+                        );
+
+                    heading.textContent =
+                        title;
+
+                    page.appendChild(
+                        heading
+                    );
+
+                }
+
+
+                if(
+                    typeof html === "string"
+                ){
+
+                    if(
+                        /<([a-z][\w-]*)(\s[^>]*)?>/i.test(
+                            html
+                        )
+                    ){
+
+                        page.insertAdjacentHTML(
+                            "beforeend",
+                            html
+                        );
+
+                    }else{
+
+                        const text =
+                            document.createElement(
+                                "div"
+                            );
+
+                        text.className =
+                            "document-text";
+
+                        text.textContent =
+                            html;
+
+                        page.appendChild(
+                            text
+                        );
+
+                    }
+
+                }
+
+            }
+
+
+            documentBox.appendChild(
+                page
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   FINISHED
+============================================================ */
+
+function isFinished(data){
+
+    if(!data){
+        return false;
+    }
+
+
+    const status =
+        getStatus(data);
+
+
+    if([
+
+        "complete",
+        "completed",
+        "ready",
+        "assembled",
+        "approved",
+        "finished"
+
+    ].includes(status)){
+
+        return true;
+
+    }
+
+
+    const sections =
+        getSections(data);
+
+
+    const total =
+        getTotalCount(
+            data,
+            sections
+        );
+
+
+    const completed =
+        getCompletedCount(
+            data,
+            sections
+        );
+
+
+    const document =
+        getDocumentContent(data);
+
+
+    return (
+
+        total > 0 &&
+        completed >= total &&
+        Boolean(document)
+
+    );
+
+}
+
+
+/* ============================================================
+   MAIN RENDER
+============================================================ */
+
+function renderReview(data){
+
+    const sections =
+        getSections(data);
+
+
+    const completed =
+        getCompletedCount(
+            data,
+            sections
+        );
+
+
+    const total =
+        getTotalCount(
+            data,
+            sections
+        );
+
+
+    renderProgress(
+        completed,
+        total,
+        data
+    );
+
+
+    renderSections(
+        sections
+    );
+
+
+    renderDocument(
+        data
+    );
+
+
+    updateMagic(
+        completed,
+        total,
+        data
+    );
+
+
+    updateActions(
+        data
+    );
+
+
+    animateNewlyCompletedSections(
+        sections
+    );
+
+}
+
+
+/* ============================================================
+   PROGRESS
+============================================================ */
+
+function renderProgress(
+    completed,
+    total,
+    data
+){
+
+    let percent = 0;
+
+
+    if(total > 0){
+
+        percent =
+            Math.round(
+                (
+                    completed /
+                    total
+                ) * 100
+            );
+
+    }
+
+
+    if(
+        isFinished(data)
+    ){
+
+        percent = 100;
+
+    }
+
+
+    percent =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                percent
+            )
+        );
+
+
+    progressBar.style.width =
+        percent + "%";
+
+
+    progressNumber.textContent =
+        percent + "%";
+
+
+    if(
+        isFinished(data)
+    ){
+
+        sectionCount.textContent =
+            "Creation complete";
+
+        progressLabel.textContent =
+            "Your complete document is ready.";
+
+    }else if(
+        completed > 0
+    ){
+
+        sectionCount.textContent =
+            "Creating your service";
+
+        progressLabel.textContent =
+            "Creating your complete document...";
+
+    }else{
+
+        sectionCount.textContent =
+            "Getting started";
+
+        progressLabel.textContent =
+            "Preparing your document...";
+
+    }
+
+}
+
+
+/* ============================================================
+   SECTION LIST
+============================================================ */
+
+function renderSections(
+    sections
+){
+
+    sectionList.innerHTML = "";
+
+
+    if(!sections.length){
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+        row.className =
+            "section-row active";
+
+
+        row.innerHTML = `
+
+            <div class="section-number">
+                •
+            </div>
+
+            <div class="section-info">
+
+                <div class="section-title">
+                    Preparing the creation plan...
+                </div>
+
+                <div class="section-state">
+                    Your service is being organized.
+                </div>
+
+            </div>
+
+            <div class="section-mark">
+                ✦
+            </div>
+
+        `;
+
+
+        sectionList.appendChild(
+            row
+        );
+
+        return;
+
+    }
+
+
+    const sorted =
+        [...sections].sort(
+            (
+                a,
+                b
+            ) => {
+
+                return Number(
+                    a.section_order ??
+                    a.order ??
+                    a.position ??
+                    0
+                )
+                -
+                Number(
+                    b.section_order ??
+                    b.order ??
+                    b.position ??
+                    0
+                );
+
+            }
+        );
+
+
+    sorted.forEach(
+        (
+            section,
+            index
+        ) => {
+
+            const status =
+                String(
+                    section.status || ""
+                ).toLowerCase();
+
+
+            const done =
+                isDoneStatus(
+                    status
+                );
+
+
+            const active =
+                isActiveStatus(
+                    status
+                );
+
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "section-row" +
+                (
+                    done
+                    ? " done"
+                    : active
+                    ? " active"
+                    : ""
+                );
+
+
+            const number =
+                Number(
+                    section.section_order ??
+                    section.order ??
+                    section.position ??
+                    index + 1
+                );
+
+
+            const title =
+                escapeHTML(
+                    section.title ||
+                    section.name ||
+                    section.heading ||
+                    "Document Section " +
+                    number
+                );
+
+
+            let stateText =
+                "Waiting";
+
+
+            if(done){
+
+                stateText =
+                    "Completed ✓";
+
+            }else if(active){
+
+                stateText =
+                    "Creating now...";
+
+            }else if(
+                status === "failed" ||
+                status === "error"
+            ){
+
+                stateText =
+                    "Needs attention";
+
+            }
+
+
+            row.innerHTML = `
+
+                <div class="section-number">
+                    ${number}
+                </div>
+
+                <div class="section-info">
+
+                    <div class="section-title">
+                        ${title}
+                    </div>
+
+                    <div class="section-state">
+                        ${stateText}
+                    </div>
+
+                </div>
+
+                <div class="section-mark">
+
+                    ${
+                        done
+                        ? "✓"
+                        : active
+                        ? "✦"
+                        : "•"
+                    }
+
+                </div>
+
+            `;
+
+
+            sectionList.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   MAGIC
+============================================================ */
+
+function updateMagic(
+    completed,
+    total,
+    data
+){
+
+    if(
+        isFinished(data)
+    ){
+
+        magicTitle.textContent =
+            "✨ Your Service Has Come to Life ✨";
+
+
+        magicMessage.textContent =
+            "Every part has been created and assembled into your complete document.";
+
+
+        heroMessage.textContent =
+            "Your complete document is now ready for you to review.";
+
+
+        jobState.textContent =
+            "READY";
+
+
+        return;
+
+    }
+
+
+    magicTitle.textContent =
+        "✨ The Magic of Creation ✨";
+
+
+    if(total > 0){
+
+        magicMessage.textContent =
+            "We are creating your service and bringing every part together.";
+
+
+        heroMessage.textContent =
+            "Watch as your complete service is created and assembled.";
+
+
+        jobState.textContent =
+            "CREATING";
+
+    }else{
+
+        magicMessage.textContent =
+            "Your service is being prepared...";
+
+
+        heroMessage.textContent =
+            "We are getting everything ready before the creation begins.";
+
+
+        jobState.textContent =
+            "PREPARING";
+
+    }
+
+}
+
+
+/* ============================================================
+   FLYING SECTIONS
+============================================================ */
+
+function animateNewlyCompletedSections(
+    sections
+){
+
+    sections.forEach(
+        (
+            section,
+            index
+        ) => {
+
+            const id =
+                String(
+                    section.section_id ??
+                    section.id ??
+                    section.section_order ??
+                    section.order ??
+                    index + 1
+                );
+
+
+            if(
+                isDoneStatus(
+                    section.status
+                ) &&
+                !knownDoneIds.has(id)
+            ){
+
+                knownDoneIds.add(id);
+
+                createFlyingFile(
+                    section,
+                    index
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+function createFlyingFile(
+    section,
+    index
+){
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+
+    const direction =
+        animationCounter % 2 === 0
+        ? "left"
+        : "right";
+
+
+    animationCounter++;
+
+
+    card.className =
+        "fly " +
+        direction +
+        " visible";
+
+
+    const title =
+        escapeHTML(
+            section.title ||
+            section.name ||
+            section.heading ||
+            "Document Section"
+        );
+
+
+    const icons = [
+        "📄",
+        "📑",
+        "📝",
+        "📋",
+        "✨",
+        "📚"
+    ];
+
+
+    const icon =
+        icons[
+            index %
+            icons.length
+        ];
+
+
+    card.innerHTML = `
+
+        <div class="fly-icon">
+            ${icon}
+        </div>
+
+        <div class="fly-text">
+
+            <div class="fly-title">
+                ${title}
+            </div>
+
+            <div class="fly-status">
+                Created • assembling
+            </div>
+
+        </div>
+
+    `;
+
+
+    const positions = [
+        "15%",
+        "28%",
+        "42%",
+        "56%",
+        "68%",
+        "31%"
+    ];
+
+
+    card.style.setProperty(
+        "--top",
+        positions[
+            index %
+            positions.length
+        ]
+    );
+
+
+    flightArea.appendChild(
+        card
+    );
+
+
+    setTimeout(
+        () => {
+
+            card.remove();
+
+        },
+        2800
+    );
+
+}
+
+
+/* ============================================================
+   ACTIONS
+============================================================ */
+
+function updateActions(data){
+
+    const ready =
+        isFinished(data);
+
+
+    correctionButton.disabled =
+        !ready;
+
+
+    approveButton.disabled =
+        !ready;
+
+
+    const objects =
+        getCandidateObjects(data);
+
+
     const approved =
         Boolean(
-            data &&
-            (
-                data.approved ||
-                data.is_approved ||
-                data.approval_status === "approved" ||
-                (
-                    data.version &&
-                    (
-                        data.version.is_approved ||
-                        data.version.approved
-                    )
-                )
+            firstValue(
+                objects,
+                [
+                    "approved",
+                    "is_approved"
+                ]
             )
+        );
+
+
+    const paymentObjects = [];
+
+
+    objects.forEach(
+        object => {
+
+            if(
+                object.payment &&
+                typeof object.payment === "object"
+            ){
+
+                paymentObjects.push(
+                    object.payment
+                );
+
+            }
+
+        }
+    );
+
+
+    const paymentStatus =
+        firstValue(
+            objects,
+            [
+                "payment_status",
+                "paid"
+            ]
         );
 
 
     const paid =
         Boolean(
-            data &&
-            (
-                data.paid ||
-                data.payment_status === "paid" ||
-                (
-                    data.payment &&
-                    (
-                        data.payment.status === "paid" ||
-                        data.payment.paid === true
-                    )
-                )
-            )
+            paymentStatus === true ||
+            paymentStatus === "paid" ||
+            firstValue(
+                paymentObjects,
+                [
+                    "status"
+                ]
+            ) === "paid"
         );
 
 
-    correctionButton.disabled =
-        false;
-
-
-    approveButton.disabled =
-        approved;
-
-
     paymentButton.disabled =
+        !ready ||
         !approved;
 
 
     downloadButton.disabled =
+        !ready ||
         !approved ||
         !paid;
+
+}
+
+
+/* ============================================================
+   VERSION ID
+============================================================ */
+
+function getVersionId(data){
+
+    const objects =
+        getCandidateObjects(data);
+
+
+    return firstValue(
+        objects,
+        [
+            "version_id",
+            "current_version",
+            "id"
+        ]
+    );
 
 }
 
@@ -2332,7 +3001,7 @@ async function requestCorrection(){
     if(!instruction){
 
         showNotice(
-            "Please tell us exactly what you want changed.",
+            "Please tell us what you would like changed.",
             "error"
         );
 
@@ -2369,64 +3038,34 @@ async function requestCorrection(){
                             jobId,
 
                         instruction:
-                            instruction,
-
-                        version_id:
-                            latestVersionId
+                            instruction
 
                     })
                 }
             );
 
 
-        const data =
-            await safeJSON(
-                response
-            );
-
-
-        if(
-            !response.ok
-        ){
+        if(!response.ok){
 
             throw new Error(
-                data.message ||
-                data.error ||
                 "Correction request failed."
             );
 
         }
 
 
-        correctionText.value =
-            "";
+        correctionText.value = "";
 
 
         showNotice(
-            "Your correction has been submitted. We will update the affected work and bring the revised document back here.",
+            "Correction submitted. The affected part of your document is being worked on again.",
             "success"
         );
 
 
-        successfulRetrieval =
-            false;
+        polling = false;
 
-
-        setRetrievingState(
-            "Your correction is being worked on. We will retrieve the revised document here."
-        );
-
-
-        clearTimeout(
-            pollTimer
-        );
-
-
-        pollTimer =
-            setTimeout(
-                fetchReview,
-                1200
-            );
+        startPolling();
 
 
     }catch(error){
@@ -2436,15 +3075,14 @@ async function requestCorrection(){
         );
 
 
-        correctionButton.disabled =
-            false;
-
-
         showNotice(
-            error.message ||
-            "We could not submit the correction right now.",
+            "We could not submit that correction right now. Your current document has not been changed.",
             "error"
         );
+
+
+        correctionButton.disabled =
+            false;
 
     }
 
@@ -2452,26 +3090,32 @@ async function requestCorrection(){
 
 
 /* ============================================================
-   APPROVE
+   APPROVAL
 ============================================================ */
 
 async function approveDocument(){
 
-    if(
-        !latestData ||
-        !latestPages.length
-    ){
-
+    if(!latestData){
         return;
-
     }
 
 
     const versionId =
-        latestVersionId ||
-        findVersionId(
+        getVersionId(
             latestData
         );
+
+
+    if(!versionId){
+
+        showNotice(
+            "The document version could not be identified. Please wait a moment and try again.",
+            "error"
+        );
+
+        return;
+
+    }
 
 
     approveButton.disabled =
@@ -2507,59 +3151,22 @@ async function approveDocument(){
             );
 
 
-        const data =
-            await safeJSON(
-                response
-            );
-
-
-        if(
-            !response.ok
-        ){
+        if(!response.ok){
 
             throw new Error(
-                data.message ||
-                data.error ||
-                "Approval could not be completed."
+                "Approval failed."
             );
-
-        }
-
-
-        if(
-            data &&
-            data.version_id
-        ){
-
-            latestVersionId =
-                String(
-                    data.version_id
-                );
 
         }
 
 
         showNotice(
-            "Your document has been approved successfully. You can now continue to payment.",
+            "Your document has been approved successfully.",
             "success"
         );
 
 
-        latestData =
-            Object.assign(
-                {},
-                latestData,
-                data,
-                {
-                    approved:true
-                }
-            );
-
-
-        updateActions(
-            latestData,
-            true
-        );
+        await fetchReview();
 
 
     }catch(error){
@@ -2569,15 +3176,14 @@ async function approveDocument(){
         );
 
 
-        approveButton.disabled =
-            false;
-
-
         showNotice(
-            error.message ||
             "Approval could not be completed. Your document remains unchanged.",
             "error"
         );
+
+
+        approveButton.disabled =
+            false;
 
     }
 
@@ -2599,14 +3205,6 @@ function continueToPayment(){
         "payment.html?job_id=" +
         encodeURIComponent(
             jobId
-        ) +
-        (
-            latestVersionId
-            ? "&version_id=" +
-              encodeURIComponent(
-                  latestVersionId
-              )
-            : ""
         );
 
 }
@@ -2623,28 +3221,33 @@ function downloadDocument(){
     }
 
 
-    let url =
-        "/api/download?job_id=" +
-        encodeURIComponent(
-            jobId
+    const versionId =
+        getVersionId(
+            latestData
         );
 
 
-    if(
-        latestVersionId
-    ){
+    if(!versionId){
 
-        url +=
-            "&version_id=" +
-            encodeURIComponent(
-                latestVersionId
-            );
+        showNotice(
+            "The approved document version is not available yet.",
+            "error"
+        );
+
+        return;
 
     }
 
 
     window.location.href =
-        url;
+        "/api/download?job_id=" +
+        encodeURIComponent(
+            jobId
+        ) +
+        "&version_id=" +
+        encodeURIComponent(
+            versionId
+        );
 
 }
 
@@ -2693,41 +3296,6 @@ function showNotice(
             type ||
             ""
         );
-
-}
-
-
-/* ============================================================
-   SAFE JSON
-============================================================ */
-
-async function safeJSON(
-    response
-){
-
-    const text =
-        await response.text();
-
-
-    if(!text){
-        return {};
-    }
-
-
-    try{
-
-        return JSON.parse(
-            text
-        );
-
-    }catch(error){
-
-        return {
-            message:
-                text
-        };
-
-    }
 
 }
 
@@ -2782,5 +3350,7 @@ window.addEventListener(
     }
 );
 
-</script></body>
+</script>
+
+</body>
 </html>
