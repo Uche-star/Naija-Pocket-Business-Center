@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+
+<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8"><meta name="viewport"
+content="width=device-width,initial-scale=1,viewport-fit=cover">
 
-<meta
-    name="viewport"
-    content="width=device-width,initial-scale=1,viewport-fit=cover"
->
+<title>Naija Pocket Business Center</title><style>
 
-<title>Naija Pocket Business Center</title>
-
-<style>
 *{
     box-sizing:border-box;
 }
@@ -86,7 +81,6 @@ button{
     gap:10px;
 
     background:#050505;
-
     border-bottom:1px solid var(--border);
 
     z-index:20;
@@ -103,7 +97,6 @@ button{
 
     font-size:clamp(18px,4vw,25px);
     font-weight:800;
-
     line-height:1.2;
 }
 
@@ -123,7 +116,6 @@ button{
     background:#171717;
 
     border:1px solid rgba(212,175,55,.55);
-
     border-radius:999px;
 
     color:var(--gold2);
@@ -170,7 +162,7 @@ button{
 }
 
 /* =========================================================
-   INTRO
+   SERVICE FORM
    ========================================================= */
 
 .intro-card,
@@ -227,7 +219,6 @@ button{
     background:rgba(212,175,55,.09);
 
     border:1px solid rgba(212,175,55,.3);
-
     border-radius:8px;
 
     color:var(--gold2);
@@ -235,10 +226,6 @@ button{
     font-size:12px;
     font-weight:800;
 }
-
-/* =========================================================
-   FORM
-   ========================================================= */
 
 .form-card{
     background:#101010;
@@ -296,7 +283,6 @@ button{
     width:100%;
 
     border:1px solid rgba(255,255,255,.14);
-
     border-radius:9px;
 
     background:#181818;
@@ -329,7 +315,6 @@ button{
     background:#151515;
 
     border-left:3px solid var(--gold);
-
     border-radius:7px;
 
     color:#bdbdbd;
@@ -346,7 +331,6 @@ button{
     margin-top:15px;
 
     border:0;
-
     border-radius:10px;
 
     background:var(--gold);
@@ -403,6 +387,13 @@ button{
     line-height:1.5;
 }
 
+/*
+* The workspace no longer attempts to display the complete
+* generated document here.
+*
+* This area is only the local review gateway/status.
+*/
+
 .workspace-review-gateway{
     width:100%;
 
@@ -443,7 +434,6 @@ button{
     margin-top:15px;
 
     border:0;
-
     border-radius:9px;
 
     background:var(--gold);
@@ -454,17 +444,193 @@ button{
 }
 
 /* =========================================================
-   HIDDEN LEGACY HOLDERS
+   LEGACY WORK CONTENT HOLDER
+
+   Kept hidden from the workspace.
+   The complete document is stored and handed to review.html.
    ========================================================= */
 
-.work-card,
-.work-content,
-.correction-card{
+.work-card{
+    display:none;
+}
+
+.work-content{
     display:none;
 }
 
 /* =========================================================
-   REVIEW POPUP
+   CORRECTIONS
+   ========================================================= */
+
+.correction-card{
+    display:none;
+
+    margin-top:12px;
+
+    padding:14px;
+
+    background:#111;
+
+    border:1px solid rgba(255,255,255,.1);
+}
+
+.correction-title{
+    margin:0 0 4px;
+
+    font-size:14px;
+}
+
+.correction-help{
+    margin:0 0 9px;
+
+    color:#999;
+
+    font-size:10px;
+    line-height:1.45;
+}
+
+.correction-input{
+    width:100%;
+
+    min-height:100px;
+
+    resize:vertical;
+
+    padding:11px;
+
+    background:#191919;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:9px;
+
+    outline:0;
+}
+
+.review-actions,
+.payment-buttons{
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:7px;
+
+    margin-top:10px;
+}
+
+.review-button,
+.payment-buttons button{
+    min-height:43px;
+
+    border-radius:8px;
+
+    font-size:11px;
+    font-weight:850;
+}
+
+.apply-button{
+    background:#252525;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.14);
+}
+
+.approve-button,
+.payment-report{
+    background:var(--gold);
+    color:#000;
+
+    border:0;
+}
+
+.download-button{
+    display:none;
+
+    width:100%;
+
+    min-height:47px;
+
+    margin-top:8px;
+
+    border-radius:8px;
+
+    background:#242424;
+    color:#777;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    font-size:11px;
+    font-weight:850;
+
+    cursor:not-allowed;
+}
+
+.download-button.active{
+    background:var(--green);
+    color:#fff;
+
+    border-color:var(--green);
+
+    cursor:pointer;
+}
+
+.payment-message{
+    display:none;
+
+    margin-top:8px;
+
+    color:#858585;
+
+    font-size:9px;
+
+    text-align:center;
+}
+
+.payment-panel{
+    display:none;
+
+    margin-top:11px;
+
+    padding:13px;
+
+    background:#121212;
+
+    border:1px solid rgba(212,175,55,.38);
+    border-radius:12px;
+}
+
+.payment-panel.show{
+    display:block;
+}
+
+.payment-title{
+    color:var(--gold2);
+
+    font-size:13px;
+    font-weight:900;
+
+    margin-bottom:6px;
+}
+
+.payment-details{
+    color:#ddd;
+
+    white-space:pre-wrap;
+
+    font-size:11px;
+    line-height:1.5;
+}
+
+.payment-check{
+    background:#282828;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.13);
+}
+
+/* =========================================================
+   REVIEW POPUP GATEWAY
    ========================================================= */
 
 .review-gateway-overlay{
@@ -573,7 +739,6 @@ button{
     margin-top:16px;
 
     border:0;
-
     border-radius:10px;
 
     background:var(--gold);
@@ -581,6 +746,10 @@ button{
 
     font-size:13px;
     font-weight:900;
+}
+
+.review-gateway-button:active{
+    transform:scale(.99);
 }
 
 .review-gateway-close{
@@ -602,7 +771,7 @@ button{
 }
 
 /* =========================================================
-   BOTTOM
+   BOTTOM CONTROLS
    ========================================================= */
 
 .bottom{
@@ -692,7 +861,6 @@ button{
     color:#fff;
 
     border:1px solid rgba(255,255,255,.16);
-
     border-radius:9px;
 
     outline:0;
@@ -704,7 +872,6 @@ button{
     min-height:45px;
 
     border:0;
-
     border-radius:9px;
 
     background:var(--gold);
@@ -724,7 +891,6 @@ button{
     background:#190707;
 
     border:1px solid rgba(179,0,0,.55);
-
     border-radius:8px;
 
     color:#ff8c8c;
@@ -769,6 +935,22 @@ button:disabled{
 }
 
 /* =========================================================
+   READ ONLY
+   ========================================================= */
+
+#introText,
+.intro-card,
+.work-card{
+    user-select:none;
+
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+
+    -webkit-touch-callout:none;
+}
+
+/* =========================================================
    MOBILE
    ========================================================= */
 
@@ -781,7 +963,12 @@ button:disabled{
     .review-gateway-card{
         padding:20px 16px;
     }
+
 }
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
 
 @media(max-height:650px){
 
@@ -790,171 +977,134 @@ button:disabled{
 
         overflow-y:auto;
     }
+
 }
-</style>
-</head>
 
-<body>
+</style></head><body><div class="app"><header class="header"><div class="brand">
 
-<div class="app">
+    <h1 class="brand-title">
+        Naija Pocket Business Center
+    </h1>
 
-<header class="header">
-
-    <div class="brand">
-
-        <h1 class="brand-title">
-            Naija Pocket Business Center
-        </h1>
-
-        <div class="brand-subtitle">
-            Your Business Center
-        </div>
-
+    <div class="brand-subtitle">
+        Your Business Center
     </div>
 
+</div>
+
+<div
+    id="serviceBadge"
+    class="service-badge"
+>
+    Service
+</div>
+
+</header><main class="main"><div class="main-inner"><section id="formView"><div
+    class="intro-card"
+    id="introCard"
+>
+
+    <h2
+        id="introTitle"
+        class="intro-title"
+    >
+        Let's get started
+    </h2>
+
+    <p
+        id="introText"
+        class="intro-text"
+    >
+        Please wait while we prepare useful information for this service.
+    </p>
+
     <div
-        id="serviceBadge"
-        class="service-badge"
+        id="price"
+        class="price"
     >
         Service
     </div>
 
-</header>
+</div>
 
 
-<main class="main">
+<div class="form-card">
 
-<div class="main-inner">
+    <h3 class="form-heading">
+        Your Service Information
+    </h3>
 
-<section id="formView">
+    <p class="form-description">
+        Fill in the information relevant to your request.
+        Optional fields can be left blank.
+    </p>
 
-    <div
-        class="intro-card"
-        id="introCard"
-    >
-
-        <h2
-            id="introTitle"
-            class="intro-title"
-        >
-            Let's get started
-        </h2>
-
-        <p
-            id="introText"
-            class="intro-text"
-        >
-            Please wait while we prepare useful information for this service.
-        </p>
+    <form id="serviceForm">
 
         <div
-            id="price"
-            class="price"
-        >
-            Service
+            id="fields"
+            class="fields"
+        ></div>
+
+        <div class="form-note">
+            When you tap <strong>SEND</strong>, your information
+            will be sent for processing and your prepared work
+            will open immediately in the review area.
         </div>
 
-    </div>
-
-
-    <div class="form-card">
-
-        <h3 class="form-heading">
-            Your Service Information
-        </h3>
-
-        <p class="form-description">
-            Fill in the information relevant to your request.
-            Optional fields can be left blank.
-        </p>
-
-        <form id="serviceForm">
-
-            <div
-                id="fields"
-                class="fields"
-            ></div>
-
-            <div class="form-note">
-
-                When you tap <strong>SEND</strong>,
-                your information will be sent to the
-                active intelligence workflow for processing.
-
-                Your job context remains attached throughout
-                the request.
-
-            </div>
-
-            <button
-                id="formSubmit"
-                class="form-submit"
-                type="submit"
-            >
-                SEND
-            </button>
-
-        </form>
-
-    </div>
-
-</section>
-
-
-<section
-    id="reviewView"
-    class="review-view"
->
-
-    <div class="review-header">
-
-        <h2 class="review-title">
-            Your Work Is Ready
-        </h2>
-
-        <p class="review-subtitle">
-            Your completed work has been received.
-            Open the full review page to read it,
-            request corrections, approve it and continue
-            to payment.
-        </p>
-
-    </div>
-
-
-    <div class="workspace-review-gateway">
-
-        <h3 class="workspace-review-gateway-title">
-            Full Review Available
-        </h3>
-
-        <p class="workspace-review-gateway-text">
-            The complete work is stored with this active job
-            and will be handed to the review page.
-        </p>
-
         <button
-            id="workspaceOpenReviewButton"
-            class="workspace-review-open"
-            type="button"
+            id="formSubmit"
+            class="form-submit"
+            type="submit"
         >
-            Open Full Review
+            SEND
         </button>
 
-    </div>
-
-</section>
+    </form>
 
 </div>
 
-</main>
+</section><section
+    id="reviewView"
+    class="review-view"
+><div class="review-header">
+
+    <h2 class="review-title">
+        Your Work Is Ready
+    </h2>
+
+    <p class="review-subtitle">
+        Your complete prepared work has been received.
+        Open the full review page to read it, request corrections,
+        approve it and continue to payment.
+    </p>
+
+</div>
 
 
-<section class="bottom">
+<div class="workspace-review-gateway">
 
-<div class="bottom-inner">
+    <h3 class="workspace-review-gateway-title">
+        Full Review Available
+    </h3>
 
-<div
+    <p class="workspace-review-gateway-text">
+        Your complete document is kept separately from this
+        workspace so long documents are not forced into a
+        limited card.
+    </p>
+
+    <button
+        id="workspaceOpenReviewButton"
+        class="workspace-review-open"
+        type="button"
+    >
+        Open Full Review
+    </button>
+
+</div>
+
+</section></div></main><section class="bottom"><div class="bottom-inner"><div
     id="voiceRecording"
     class="voice-recording"
 >
@@ -1033,26 +1183,21 @@ button:disabled{
     class="status"
 ></div>
 
-</div>
+</div></section></div><!-- =======================================================
+     POPUP REVIEW GATEWAY
 
-</section>
+     This popup does NOT contain the document.
 
-</div>
+     It only opens review.html.
 
-
-<!-- =======================================================
-     REVIEW GATEWAY
-======================================================= -->
-
-<div
+     The COMPLETE document is stored in localStorage first.
+     ======================================================= --><div
     id="reviewGatewayOverlay"
     class="review-gateway-overlay"
     role="dialog"
     aria-modal="true"
     aria-labelledby="reviewGatewayTitle"
->
-
-<div class="review-gateway-card">
+><div class="review-gateway-card">
 
     <div class="review-gateway-icon">
         📄
@@ -1066,14 +1211,14 @@ button:disabled{
     </h2>
 
     <p class="review-gateway-message">
-        Your completed work is ready.
-        Open the full review page to read the document
-        and continue the job.
+        Your complete prepared document is ready for review.
+        Open the full review page to read everything without
+        the workspace card limiting the document.
     </p>
 
     <div class="review-gateway-note">
-        Your active job, service and complete work remain
-        attached to this review.
+        Your complete document will be carried into the review
+        page automatically.
     </div>
 
     <button
@@ -1094,27 +1239,39 @@ button:disabled{
 
 </div>
 
-</div>
+</div><script>
 
-
-<script>
 "use strict";
 
 /* =========================================================
-   API
-========================================================= */
+   API CONNECTION
+   ========================================================= */
 
 const API_BASE = "";
 
 
 /* =========================================================
-   REVIEW
-========================================================= */
+   REVIEW PAGE CONNECTION
+   =========================================================
 
-const REVIEW_PAGE = "review.html";
+   IMPORTANT:
+
+   review.html must read these storage keys.
+
+   The document itself is NOT put into the URL.
+
+   This prevents long documents from becoming oversized URLs
+   and prevents the popup card from becoming the document
+   container.
+   ========================================================= */
+
+const REVIEW_PAGE =
+    "review.html";
+
 
 const REVIEW_STORAGE_KEY =
     "npbc_complete_review_document";
+
 
 const REVIEW_META_KEY =
     "npbc_complete_review_metadata";
@@ -1122,63 +1279,58 @@ const REVIEW_META_KEY =
 
 /* =========================================================
    ELEMENTS
-========================================================= */
+   ========================================================= */
 
 const $ = id => document.getElementById(id);
 
-const formView =
-    $("formView");
+const formView = $("formView");
+const reviewView = $("reviewView");
 
-const reviewView =
-    $("reviewView");
+const serviceForm = $("serviceForm");
+const fields = $("fields");
+const formSubmit = $("formSubmit");
 
-const serviceForm =
-    $("serviceForm");
+const serviceBadge = $("serviceBadge");
 
-const fields =
-    $("fields");
+const introTitle = $("introTitle");
+const introText = $("introText");
+const price = $("price");
+const introCard = $("introCard");
 
-const formSubmit =
-    $("formSubmit");
+const workCard = $("workCard");
+const workContent = $("workContent");
 
-const serviceBadge =
-    $("serviceBadge");
+const correctionInput = null;
 
-const introTitle =
-    $("introTitle");
+const applyBtn = null;
+const approveBtn = null;
 
-const introText =
-    $("introText");
+const downloadBtn = null;
 
-const price =
-    $("price");
+const uploadBtn = $("uploadButton");
+const voiceBtn = $("voiceButton");
+const customerBtn = $("customerServiceButton");
+const chooseBtn = $("chooseServiceButton");
 
-const uploadBtn =
-    $("uploadButton");
+const fileInput = $("fileInput");
 
-const voiceBtn =
-    $("voiceButton");
+const messageInput = $("messageInput");
+const sendBtn = $("sendButton");
 
-const customerBtn =
-    $("customerServiceButton");
+const status = $("status");
 
-const chooseBtn =
-    $("chooseServiceButton");
+const voiceRecording = $("voiceRecording");
 
-const fileInput =
-    $("fileInput");
+const paymentPanel = null;
+const paymentDetails = null;
 
-const messageInput =
-    $("messageInput");
+const paymentReport = null;
+const paymentCheck = null;
 
-const sendBtn =
-    $("sendButton");
 
-const status =
-    $("status");
-
-const voiceRecording =
-    $("voiceRecording");
+/* =========================================================
+   REVIEW GATEWAY ELEMENTS
+   ========================================================= */
 
 const reviewGatewayOverlay =
     $("reviewGatewayOverlay");
@@ -1195,31 +1347,54 @@ const workspaceOpenReviewButton =
 
 /* =========================================================
    SERVICE
-========================================================= */
+   ========================================================= */
 
 const params =
     new URLSearchParams(
         location.search
     );
 
-const service =
-    (
-        params.get("service") ||
-        "Business Center Service"
-    ).trim();
+
+const service = (
+    params.get("service") ||
+    "Business Center Service"
+).trim();
 
 
 /* =========================================================
-   STORAGE
-========================================================= */
+   IDENTIFIERS
+   ========================================================= */
+
+function makeId(prefix){
+
+    if(
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+    ){
+        return prefix + crypto.randomUUID();
+    }
+
+    return (
+        prefix +
+        Date.now() +
+        "_" +
+        Math.random().toString(36).slice(2)
+    );
+}
+
 
 function get(key){
 
     try{
+
         return localStorage.getItem(key);
-    }catch(error){
+
+    }catch(e){
+
         return null;
+
     }
+
 }
 
 
@@ -1229,41 +1404,17 @@ function put(key,value){
 
         localStorage.setItem(
             key,
-            String(value)
+            value
         );
 
         return true;
 
-    }catch(error){
+    }catch(e){
 
         return false;
 
     }
-}
 
-
-/* =========================================================
-   IDENTIFIERS
-========================================================= */
-
-function makeId(prefix){
-
-    if(
-        typeof crypto !== "undefined" &&
-        typeof crypto.randomUUID === "function"
-    ){
-
-        return prefix +
-            crypto.randomUUID();
-
-    }
-
-    return prefix +
-        Date.now() +
-        "_" +
-        Math.random()
-            .toString(36)
-            .slice(2);
 }
 
 
@@ -1300,33 +1451,31 @@ put(
 
 /* =========================================================
    STATE
-========================================================= */
+   ========================================================= */
 
 let busy = false;
 
 let currentWork = "";
 
 let mediaRecorder = null;
-
 let recordedChunks = [];
-
 let recordingStream = null;
 
 
 /* =========================================================
-   BASIC HELPERS
-========================================================= */
+   HELPERS
+   ========================================================= */
 
 function clean(value){
 
-    if(value === undefined ||
-       value === null){
+    if(value == null){
 
-        return "";
+        return null;
 
     }
 
-    return String(value).trim();
+    return String(value).trim() || null;
+
 }
 
 
@@ -1340,12 +1489,13 @@ function setStatus(
 
     status.className =
         "status " + type;
+
 }
 
 
-function setBusy(value){
+function busyState(value){
 
-    busy = Boolean(value);
+    busy = value;
 
     [
         formSubmit,
@@ -1359,209 +1509,145 @@ function setBusy(value){
         if(button){
 
             button.disabled =
-                busy;
+                value;
 
         }
 
     });
-}
-
-
-/* =========================================================
-   RESPONSE NORMALISATION
-=========================================================
-
-   IMPORTANT:
-
-   The frontend must NOT require `success:true`
-   before accepting an intelligence response.
-
-   Different backend layers may return:
-
-       reply
-       message
-       response
-       content
-       work
-       document
-       result
-
-   We preserve all useful response fields.
-
-========================================================= */
-
-function parseResponseData(data){
-
-    if(!data){
-
-        return {
-            reply:"",
-            work:"",
-            jobId:null,
-            raw:{}
-        };
-
-    }
-
-
-    const reply =
-        clean(
-            data.reply ??
-            data.response ??
-            data.message ??
-            data.answer ??
-            ""
-        );
-
-
-    const work =
-        clean(
-            data.work ??
-            data.document ??
-            data.completed_work ??
-            data.generated_document ??
-            data.content ??
-            ""
-        );
-
-
-    const returnedJobId =
-        clean(
-            data.job_id ??
-            data.jobId ??
-            data.job ??
-            ""
-        );
-
-
-    return {
-
-        reply,
-
-        work,
-
-        jobId:
-            returnedJobId || null,
-
-        raw:
-            data
-
-    };
 
 }
 
 
 /* =========================================================
-   API CHAT
-=========================================================
+   COMPLETE REVIEW HANDOFF
+   =========================================================
 
-   This is the central intelligence connection.
+   This is the critical connection.
 
-   We do NOT implement intelligence in this file.
+   The FULL generated response is stored.
 
-   We send the customer's event and job context to /api/chat.
+   No:
+       slice()
+       substring()
+       substr()
+       first section
+       preview extraction
+       character limit
+       page limit
 
-========================================================= */
+   The complete document goes into storage.
+   ========================================================= */
 
-async function apiChat(payload){
+function saveCompleteReviewDocument(work){
 
-    const response =
-        await fetch(
-            API_BASE + "/api/chat",
-            {
-                method:"POST",
+    const completeWork =
+        String(work ?? "");
 
-                headers:{
-                    "Content-Type":
-                        "application/json"
-                },
+    if(!completeWork){
 
-                body:
-                    JSON.stringify(payload)
-            }
+        throw new Error(
+            "The prepared document is empty."
         );
-
-
-    const rawText =
-        await response.text();
-
-
-    let data = {};
-
-
-    if(rawText){
-
-        try{
-
-            data =
-                JSON.parse(rawText);
-
-        }catch(error){
-
-            data = {
-                reply:
-                    rawText
-            };
-
-        }
 
     }
 
 
     /*
-     * HTTP failure is a real API failure.
-
-     * We do NOT reject merely because data.success
-     * is missing.
+     * Store the complete document as-is.
      */
-    if(!response.ok){
+    const stored =
+        put(
+            REVIEW_STORAGE_KEY,
+            completeWork
+        );
 
-        const message =
-            clean(
-                data.reply ??
-                data.message ??
-                data.error ??
-                data.detail ??
-                rawText
-            );
 
+    if(!stored){
 
         throw new Error(
-            message ||
-            `Request failed (${response.status}).`
+            "The complete document could not be stored for review."
         );
 
     }
 
 
-    return parseResponseData(
-        data
+    /*
+     * Store the identifiers and service separately.
+     */
+    const metadata = {
+
+        customer_id:
+            customerId,
+
+        job_id:
+            jobId,
+
+        client_request_id:
+            requestId,
+
+        service,
+
+        created_at:
+            new Date().toISOString(),
+
+        document_length:
+            completeWork.length
+
+    };
+
+
+    put(
+        REVIEW_META_KEY,
+        JSON.stringify(metadata)
     );
+
+
+    /*
+     * Also maintain a current-work copy.
+
+     * This allows other pages in the workflow to find
+     * the latest complete document if required.
+     */
+    put(
+        "npbc_current_work",
+        completeWork
+    );
+
+
+    return true;
 
 }
 
 
 /* =========================================================
-   SAVE JOB CONTEXT
-========================================================= */
+   OPEN FULL REVIEW PAGE
+   ========================================================= */
 
-function saveJobContext(){
+function openFullReview(){
 
-    put(
-        "npbc_job_id",
-        jobId
-    );
+    /*
+     * Verify that the complete document exists before
+     * navigating away.
+     */
+    const storedWork =
+        get(REVIEW_STORAGE_KEY);
 
-    put(
-        "npbc_customer_id",
-        customerId
-    );
 
-    put(
-        "npbc_client_request_id",
-        requestId
-    );
+    if(!storedWork){
 
+        setStatus(
+            "The prepared document is not available for review.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Keep service/job information available to review.html.
+     */
     put(
         "npbc_review_service",
         service
@@ -1582,115 +1668,10 @@ function saveJobContext(){
         requestId
     );
 
-}
-
-
-/* =========================================================
-   COMPLETE REVIEW DOCUMENT
-========================================================= */
-
-function saveCompleteReviewDocument(work){
-
-    const completeWork =
-        clean(work);
-
-
-    if(!completeWork){
-
-        throw new Error(
-            "The completed work is empty."
-        );
-
-    }
-
 
     /*
-     * No slice.
-     * No substring.
-     * No preview.
-     * No character limit.
-     *
-     * Store the complete returned work.
-     */
-    if(
-        !put(
-            REVIEW_STORAGE_KEY,
-            completeWork
-        )
-    ){
-
-        throw new Error(
-            "The completed work could not be stored for review."
-        );
-
-    }
-
-
-    put(
-        "npbc_current_work",
-        completeWork
-    );
-
-
-    put(
-        REVIEW_META_KEY,
-        JSON.stringify({
-
-            customer_id:
-                customerId,
-
-            job_id:
-                jobId,
-
-            client_request_id:
-                requestId,
-
-            service,
-
-            created_at:
-                new Date().toISOString(),
-
-            document_length:
-                completeWork.length
-
-        })
-    );
-
-
-    saveJobContext();
-
-}
-
-
-/* =========================================================
-   OPEN REVIEW
-========================================================= */
-
-function openFullReview(){
-
-    const storedWork =
-        get(REVIEW_STORAGE_KEY);
-
-
-    if(!storedWork){
-
-        setStatus(
-            "The completed work is not available yet.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    saveJobContext();
-
-
-    /*
-     * review.html reads the complete document from storage.
-     *
-     * Only identifiers are placed in the URL.
+     * review.html receives the document through storage,
+     * NOT through a URL parameter.
      */
     const reviewUrl =
         REVIEW_PAGE +
@@ -1700,94 +1681,93 @@ function openFullReview(){
         encodeURIComponent(jobId);
 
 
-    window.location.href =
+    location.href =
         reviewUrl;
 
 }
 
 
 /* =========================================================
-   REVIEW GATEWAY
-========================================================= */
+   SHOW REVIEW GATEWAY
+   ========================================================= */
 
 function showReviewGateway(){
 
-    reviewGatewayOverlay
-        .classList
-        .add("show");
+    reviewGatewayOverlay.classList.add(
+        "show"
+    );
 
 }
 
 
 function closeReviewGateway(){
 
-    reviewGatewayOverlay
-        .classList
-        .remove("show");
+    reviewGatewayOverlay.classList.remove(
+        "show"
+    );
 
 }
 
 
-reviewGatewayOpenButton
-    .addEventListener(
-        "click",
-        openFullReview
-    );
+/* =========================================================
+   DOCUMENT CLEANING
+   =========================================================
 
+   Kept here only for compatibility with any future workspace
+   rendering requirement.
 
-workspaceOpenReviewButton
-    .addEventListener(
-        "click",
-        openFullReview
-    );
+   The document itself is NOT rendered into the workspace.
+   ========================================================= */
 
+function removeHtmlCodeFences(value){
 
-reviewGatewayCloseButton
-    .addEventListener(
-        "click",
-        closeReviewGateway
-    );
+    let html =
+        String(value || "").trim();
 
+    html =
+        html.replace(
+            /^```(?:html|HTML)?\s*/i,
+            ""
+        );
 
-reviewGatewayOverlay
-    .addEventListener(
-        "click",
-        event => {
+    html =
+        html.replace(
+            /\s*```$/i,
+            ""
+        );
 
-            if(
-                event.target ===
-                reviewGatewayOverlay
-            ){
+    return html.trim();
 
-                closeReviewGateway();
-
-            }
-
-        }
-    );
-
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if(
-            event.key === "Escape"
-        ){
-
-            closeReviewGateway();
-
-        }
-
-    }
-);
+}
 
 
 /* =========================================================
-   FORMS
-========================================================= */
+   LEGACY RENDER FUNCTION
 
-const genericFields = [
+   Deliberately does not render the complete document into the
+   workspace review card.
+
+   The complete document goes directly to review.html.
+   ========================================================= */
+
+function renderDocument(work){
+
+    currentWork =
+        String(work ?? "");
+
+    /*
+     * Intentionally no innerHTML assignment here.
+     *
+     * The complete document is stored and handed to review.html.
+     */
+}
+
+
+/* =========================================================
+   SERVICE FORMS
+   ========================================================= */
+
+const generic = [
 
     {
         name:"request",
@@ -2039,22 +2019,19 @@ const forms = {
 };
 
 
-function getFormDefinition(){
+function definition(){
 
-    const serviceLower =
+    const s =
         service.toLowerCase();
 
-
-    const match =
+    const key =
         Object.keys(forms).find(
-            key =>
-                serviceLower.includes(key)
+            k => s.includes(k)
         );
 
-
-    return match
-        ? forms[match]
-        : genericFields;
+    return key
+        ? forms[key]
+        : generic;
 
 }
 
@@ -2064,94 +2041,81 @@ function renderForm(){
     fields.innerHTML = "";
 
 
-    getFormDefinition()
-        .forEach(field => {
+    definition().forEach(f => {
 
-            const wrapper =
-                document.createElement("div");
+        const wrapper =
+            document.createElement("div");
 
-            wrapper.className =
-                "field";
+        const label =
+            document.createElement("label");
 
-
-            const label =
-                document.createElement("label");
-
-
-            label.htmlFor =
-                field.name;
-
-
-            label.innerHTML =
-                field.label +
-                (
-                    field.required
-                        ? ' <span class="required">*</span>'
-                        : ' <span class="optional">(optional)</span>'
-                );
-
-
-            let input;
-
-
-            if(
-                field.type === "textarea"
-            ){
-
-                input =
-                    document.createElement(
-                        "textarea"
-                    );
-
-            }else{
-
-                input =
-                    document.createElement(
-                        "input"
-                    );
-
-                input.type =
-                    field.type ||
-                    "text";
-
-            }
-
-
-            input.id =
-                field.name;
-
-            input.name =
-                field.name;
-
-            input.placeholder =
-                field.placeholder ||
-                "";
-
-
-            if(field.required){
-
-                input.required =
-                    true;
-
-            }
-
-
-            wrapper.append(
-                label,
-                input
+        const input =
+            document.createElement(
+                f.type === "textarea"
+                    ? "textarea"
+                    : "input"
             );
 
 
-            fields.appendChild(
-                wrapper
+        wrapper.className =
+            "field";
+
+
+        label.htmlFor =
+            f.name;
+
+
+        label.innerHTML =
+            f.label +
+            (
+                f.required
+                    ? ' <span class="required">*</span>'
+                    : ' <span class="optional">(optional)</span>'
             );
 
-        });
+
+        input.id =
+            f.name;
+
+        input.name =
+            f.name;
+
+        input.placeholder =
+            f.placeholder || "";
+
+
+        if(f.required){
+
+            input.required =
+                true;
+
+        }
+
+
+        if(f.type !== "textarea"){
+
+            input.type =
+                f.type || "text";
+
+        }
+
+
+        wrapper.append(
+            label,
+            input
+        );
+
+
+        fields.appendChild(
+            wrapper
+        );
+
+    });
 
 }
 
 
-function collectForm(){
+function collect(){
 
     const data = {};
 
@@ -2164,7 +2128,6 @@ function collectForm(){
 
             const value =
                 clean(element.value);
-
 
             if(value){
 
@@ -2182,28 +2145,103 @@ function collectForm(){
 
 
 /* =========================================================
-   INTELLIGENCE: SERVICE SELECTION
-========================================================= */
+   API
+   ========================================================= */
+
+async function apiChat(body){
+
+    const response =
+        await fetch(
+            API_BASE + "/api/chat",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(body)
+            }
+        );
+
+
+    const data =
+        await response
+            .json()
+            .catch(
+                () => ({})
+            );
+
+
+    if(
+        !response.ok ||
+        !data.success
+    ){
+
+        throw new Error(
+            data.reply ||
+            data.message ||
+            data.error ||
+            "Request failed."
+        );
+
+    }
+
+
+    return data;
+
+}
+
+
+/* =========================================================
+   GUIDANCE
+   ========================================================= */
+
+function guidancePrompt(){
+
+    return `
+The customer has just selected this service: ${service}.
+
+Prepare a short, clear customer-facing introduction explaining:
+
+- what the service does
+- what the customer will receive
+- the current fee or that quotation is required
+- useful information to prepare
+- practical tips specific to the service
+- useful documents they may upload
+
+Do not create the actual work yet.
+Do not ask for payment yet.
+Do not mention internal software, models, APIs or providers.
+
+Write concise, friendly Nigerian English.
+`;
+
+}
+
 
 async function loadGuidance(){
 
     setStatus(
-        "Connecting to the assistant..."
+        "Preparing useful information for this service..."
     );
 
 
     try{
 
-        const result =
+        const data =
             await apiChat({
 
                 message:
-                    `The customer has selected the service "${service}". Begin the customer-facing service conversation. Explain what is useful for the customer to know and what information is needed to proceed. Do not create the final work yet unless the customer has already supplied everything required.`,
+                    guidancePrompt(),
 
                 service,
 
                 event:
-                    "service_selected",
+                    "service_selected_guidance",
 
                 customer_id:
                     customerId,
@@ -2217,31 +2255,73 @@ async function loadGuidance(){
                 activate_intelligence:
                     true,
 
+                guidance_only:
+                    true,
+
                 create_work:
                     false
 
             });
 
 
-        if(result.jobId){
-
-            jobId =
-                result.jobId;
-
-            saveJobContext();
-
-        }
+        introTitle.textContent =
+            service;
 
 
-        if(result.reply){
+        introText.textContent =
+            clean(data.reply) ||
+            "Please provide the information requested below.";
 
-            introText.textContent =
-                result.reply;
+
+        const amount =
+            data.amount ||
+            data.price ||
+            data.service_amount;
+
+
+        if(amount){
+
+            const numericAmount =
+                Number(
+                    String(amount)
+                        .replace(
+                            /[^0-9.]/g,
+                            ""
+                        )
+                );
+
+
+            price.textContent =
+                "Service fee: ₦" +
+                numericAmount.toLocaleString();
+
+        }else if(
+            /₦\s?[\d,]+/.test(
+                data.reply || ""
+            )
+        ){
+
+            price.textContent =
+                "Service fee: " +
+                (
+                    data.reply.match(
+                        /₦\s?[\d,]+/
+                    ) || [""]
+                )[0];
+
+        }else if(
+            /quotation/i.test(
+                data.reply || ""
+            )
+        ){
+
+            price.textContent =
+                "Service fee: Quotation required";
 
         }else{
 
-            introText.textContent =
-                "Please provide the information requested below. You can also type a message and the assistant will help you.";
+            price.textContent =
+                "Service: " + service;
 
         }
 
@@ -2250,17 +2330,14 @@ async function loadGuidance(){
 
     }catch(error){
 
-        /*
-         * The workspace remains usable even if the
-         * initial guidance call fails.
-         *
-         * We do not disable the service form.
-         */
         introText.textContent =
-            "Please provide the information requested below. You can also type a message and the assistant will help you.";
+            "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
+
+        price.textContent =
+            "Service: " + service;
 
         setStatus(
-            "The assistant could not load the introduction. You can still continue.",
+            "You can still complete the form or ask a question below.",
             "error"
         );
 
@@ -2270,59 +2347,94 @@ async function loadGuidance(){
 
 
 /* =========================================================
-   INTELLIGENCE: CREATE WORK
-========================================================= */
+   WORK CREATION
+   ========================================================= */
 
-function creationMessage(data){
+function creationPrompt(data){
 
     return `
-The customer has submitted the information below for the active service.
+The customer has completed the service information form.
 
-Service:
-${service}
+Create the actual requested work now.
 
-Customer information:
-${Object.entries(data)
-    .map(
-        ([key,value]) =>
-            `${key}: ${value}`
-    )
-    .join("\n\n")}
+RETURN THE COMPLETE REQUESTED WORK.
 
-Use the active job context and the customer's request.
+IMPORTANT DOCUMENT OUTPUT RULE:
 
-Process the customer's request through the normal intelligence workflow.
+When the requested work is a document, return the COMPLETE document as properly structured HTML using normal document elements such as:
 
-If the service requires creation of a document or completed work, produce the COMPLETE requested work.
+<h1>
+<h2>
+<h3>
+<p>
+<strong>
+<em>
+<ul>
+<ol>
+<li>
+<hr>
+<table>
+<tr>
+<th>
+<td>
 
-Do not return an outline when the customer requested a finished document.
+where appropriate.
 
-Do not deliberately truncate the work.
+The requested length must be respected.
+
+If the customer requests a specific number of pages, produce enough complete content to reasonably fill the requested number of pages.
+
+DO NOT deliberately shorten the work.
+
+For an 8-page request, the response must contain the complete body required for the requested document and must NOT stop after the introduction.
+
+Continue through every necessary section.
+
+For academic papers, include all necessary sections and finish the complete paper, including the conclusion and references where appropriate.
 
 Do not stop after an introduction.
 
-Complete all required sections and finish the requested work.
+Do not stop after a few sections.
 
-If a completed document is produced, return it in the normal completed-work response field used by the backend.
+Do not return an outline instead of the requested document.
+
+Do not summarize the requested document.
+
+Do not say that the remaining sections can be added later.
+
+Do not return only part of the document.
+
+Do not wrap the HTML in markdown code fences.
+
+Do not return HTML source as an explanation.
+
+The HTML itself is the document that should be displayed to the customer for review.
+
+Do not ask for an email address or send the customer elsewhere unless genuinely required.
+
+SERVICE:
+
+${service}
+
+CUSTOMER FORM INFORMATION:
+
+${Object.entries(data)
+    .map(
+        ([key,value]) =>
+            `${key}:\n${value}`
+    )
+    .join("\n\n")}
 `;
-
 
 }
 
 
 async function createWork(data){
 
-    if(busy){
-
-        return;
-
-    }
-
-
-    setBusy(true);
+    busyState(true);
 
     setStatus(
-        "Your request is being processed..."
+        "Preparing your work..."
     );
 
 
@@ -2332,12 +2444,12 @@ async function createWork(data){
             await apiChat({
 
                 message:
-                    creationMessage(data),
+                    creationPrompt(data),
 
                 service,
 
                 event:
-                    "form_submitted",
+                    "form_submitted_create_work",
 
                 customer_id:
                     customerId,
@@ -2360,87 +2472,81 @@ async function createWork(data){
             });
 
 
-        if(result.jobId){
+        if(result.job_id){
 
             jobId =
-                result.jobId;
+                result.job_id;
 
-            saveJobContext();
+            put(
+                "npbc_job_id",
+                jobId
+            );
 
         }
 
 
         /*
-         * ONLY treat an explicit completed-work field
-         * as the completed document.
+         * CRITICAL:
 
-         * Do NOT turn every ordinary assistant reply
-         * into a document.
+         * Select the complete returned work.
+         *
+         * There is deliberately NO truncation.
          */
-        const completedWork =
-            result.work;
+        currentWork =
+            clean(result.work) ||
+            clean(result.content) ||
+            clean(result.reply) ||
+            "";
 
 
-        if(completedWork){
+        if(!currentWork){
 
-            currentWork =
-                completedWork;
-
-
-            saveCompleteReviewDocument(
-                currentWork
+            throw new Error(
+                "The service completed without returning the prepared work."
             );
-
-
-            showReview();
-
-            showReviewGateway();
-
-            setStatus(
-                "Your completed work is ready for review.",
-                "success"
-            );
-
-
-            return;
 
         }
 
 
         /*
-         * If the intelligence is still conversing,
-         * keep the customer in the workspace.
+         * Save the COMPLETE document before showing
+         * the gateway.
          */
-        if(result.reply){
+        saveCompleteReviewDocument(
+            currentWork
+        );
 
-            introText.textContent =
-                result.reply;
 
-            setStatus(
-                "The assistant has responded. Continue your request below.",
-                "success"
-            );
+        /*
+         * Show the workspace review state.
+         */
+        showReview(
+            currentWork
+        );
 
-        }else{
 
-            setStatus(
-                "The request was received. Continue below.",
-                "success"
-            );
+        /*
+         * Then show the popup gateway.
+         */
+        showReviewGateway();
 
-        }
+
+        setStatus(
+            "Your complete work is ready for review.",
+            "success"
+        );
+
 
     }catch(error){
 
         setStatus(
-            error.message ||
-            "The request could not be processed.",
+            error.message,
             "error"
         );
 
     }finally{
 
-        setBusy(false);
+        busyState(false);
 
     }
 
@@ -2448,10 +2554,10 @@ async function createWork(data){
 
 
 /* =========================================================
-   SHOW REVIEW
-========================================================= */
+   REVIEW
+   ========================================================= */
 
-function showReview(){
+function showReview(work){
 
     formView.style.display =
         "none";
@@ -2460,28 +2566,134 @@ function showReview(){
         "show"
     );
 
+
+    /*
+     * Keep the complete document in memory.
+     */
+    currentWork =
+        String(work || "");
+
+
+    /*
+     * Persist the complete document again immediately
+     * before the review gateway is presented.
+     */
+    saveCompleteReviewDocument(
+        currentWork
+    );
+
 }
 
 
 /* =========================================================
-   CUSTOMER MESSAGE
-========================================================= */
+   FORM SUBMISSION
+   ========================================================= */
+
+serviceForm.addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        if(
+            !busy &&
+            serviceForm.reportValidity()
+        ){
+
+            createWork(
+                collect()
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   POPUP GATEWAY EVENTS
+   ========================================================= */
+
+reviewGatewayOpenButton.addEventListener(
+    "click",
+    () => {
+
+        openFullReview();
+
+    }
+);
+
+
+reviewGatewayCloseButton.addEventListener(
+    "click",
+    () => {
+
+        closeReviewGateway();
+
+    }
+);
+
+
+workspaceOpenReviewButton.addEventListener(
+    "click",
+    () => {
+
+        openFullReview();
+
+    }
+);
+
+
+/*
+* Tapping outside the popup closes the gateway,
+* but does NOT delete the document.
+*/
+reviewGatewayOverlay.addEventListener(
+    "click",
+    event => {
+
+        if(
+            event.target ===
+            reviewGatewayOverlay
+        ){
+
+            closeReviewGateway();
+
+        }
+
+    }
+);
+
+
+/*
+* Escape closes the popup.
+* The complete document remains stored.
+*/
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key === "Escape"
+        ){
+
+            closeReviewGateway();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CUSTOMER MESSAGES
+   ========================================================= */
 
 async function sendMessage(
     message,
-    eventName="customer_message"
+    event
 ){
-
-    const text =
-        clean(message);
-
-
-    if(!text){
-
-        return null;
-
-    }
-
 
     if(busy){
 
@@ -2490,7 +2702,8 @@ async function sendMessage(
     }
 
 
-    setBusy(true);
+    busyState(true);
+
 
     setStatus(
         "Processing your message..."
@@ -2499,16 +2712,14 @@ async function sendMessage(
 
     try{
 
-        const result =
+        const data =
             await apiChat({
 
-                message:
-                    text,
+                message,
 
                 service,
 
-                event:
-                    eventName,
+                event,
 
                 customer_id:
                     customerId,
@@ -2520,87 +2731,101 @@ async function sendMessage(
                     requestId,
 
                 current_work:
-                    currentWork || null,
+                    currentWork,
 
                 activate_intelligence:
                     true,
 
                 create_work:
-                    false
+                    true
 
             });
 
 
-        if(result.jobId){
+        if(data.job_id){
 
             jobId =
-                result.jobId;
+                data.job_id;
 
-            saveJobContext();
+            put(
+                "npbc_job_id",
+                jobId
+            );
 
         }
 
 
         /*
-         * An explicit work field means the intelligence
-         * has supplied completed/updated work.
+         * If Ada returns a new complete work document,
+         * replace the stored complete document.
+
+         * Again, there is NO truncation.
          */
-        if(result.work){
+        const returnedWork =
+            clean(data.work) ||
+            clean(data.content) ||
+            clean(data.reply);
+
+
+        if(returnedWork){
 
             currentWork =
-                result.work;
+                returnedWork;
 
 
+            /*
+             * Persist the COMPLETE updated document.
+             */
             saveCompleteReviewDocument(
                 currentWork
             );
 
 
-            showReview();
+            /*
+             * If we are already in the review stage,
+             * reopen the gateway so the customer can enter
+             * review.html and see the updated complete work.
+             */
+            if(
+                reviewView.classList.contains(
+                    "show"
+                )
+            ){
 
-            showReviewGateway();
+                showReviewGateway();
 
-        }
-
-
-        if(result.reply){
-
-            introText.textContent =
-                result.reply;
+            }
 
         }
 
 
         setStatus(
-            "Ready.",
+            "Ready for your next instruction.",
             "success"
         );
 
 
-        return result;
+        return data;
+
 
     }catch(error){
 
         setStatus(
-            error.message ||
-            "Your message could not be processed.",
+            error.message,
             "error"
         );
 
         return null;
 
+
     }finally{
 
-        setBusy(false);
+        busyState(false);
 
     }
 
 }
 
-
-/* =========================================================
-   SEND BUTTON
-========================================================= */
 
 sendBtn.addEventListener(
     "click",
@@ -2676,37 +2901,8 @@ messageInput.addEventListener(
 
 
 /* =========================================================
-   FORM SUBMIT
-========================================================= */
-
-serviceForm.addEventListener(
-    "submit",
-    event => {
-
-        event.preventDefault();
-
-
-        if(
-            busy ||
-            !serviceForm.reportValidity()
-        ){
-
-            return;
-
-        }
-
-
-        createWork(
-            collectForm()
-        );
-
-    }
-);
-
-
-/* =========================================================
    CUSTOMER SERVICE
-========================================================= */
+   ========================================================= */
 
 customerBtn.addEventListener(
     "click",
@@ -2719,10 +2915,82 @@ customerBtn.addEventListener(
         }
 
 
-        await sendMessage(
-            "The customer is requesting Customer Service assistance for this active job. Please assist with the request and continue using the existing job context.",
-            "customer_service"
+        busyState(true);
+
+
+        setStatus(
+            "Connecting you to Customer Service..."
         );
+
+
+        try{
+
+            const query =
+                new URLSearchParams({
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId,
+
+                    service
+
+                });
+
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/customer-service?" +
+                    query.toString(),
+                    {
+                        method:"POST"
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.reply ||
+                    data.message ||
+                    "Customer Service is unavailable."
+                );
+
+            }
+
+
+            setStatus(
+                data.reply ||
+                "Customer Service is available to help.",
+                "success"
+            );
+
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            busyState(false);
+
+        }
 
     }
 );
@@ -2730,7 +2998,7 @@ customerBtn.addEventListener(
 
 /* =========================================================
    CHOOSE ANOTHER SERVICE
-========================================================= */
+   ========================================================= */
 
 chooseBtn.addEventListener(
     "click",
@@ -2738,7 +3006,7 @@ chooseBtn.addEventListener(
 
         if(!busy){
 
-            window.location.href =
+            location.href =
                 "conversation.html";
 
         }
@@ -2749,7 +3017,7 @@ chooseBtn.addEventListener(
 
 /* =========================================================
    UPLOAD
-========================================================= */
+   ========================================================= */
 
 uploadBtn.addEventListener(
     "click",
@@ -2780,44 +3048,42 @@ fileInput.addEventListener(
         }
 
 
-        setBusy(true);
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "file",
+            file
+        );
+
+        formData.append(
+            "customer_id",
+            customerId
+        );
+
+        formData.append(
+            "job_id",
+            jobId
+        );
+
+        formData.append(
+            "client_request_id",
+            requestId
+        );
+
+        formData.append(
+            "service",
+            service
+        );
+
 
         setStatus(
-            "Uploading your document..."
+            "Uploading the document you want to give us..."
         );
 
 
         try{
-
-            const formData =
-                new FormData();
-
-
-            formData.append(
-                "file",
-                file
-            );
-
-            formData.append(
-                "customer_id",
-                customerId
-            );
-
-            formData.append(
-                "job_id",
-                jobId
-            );
-
-            formData.append(
-                "client_request_id",
-                requestId
-            );
-
-            formData.append(
-                "service",
-                service
-            );
-
 
             const response =
                 await fetch(
@@ -2830,68 +3096,35 @@ fileInput.addEventListener(
                 );
 
 
-            const text =
-                await response.text();
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
 
 
-            let data = {};
-
-
-            try{
-
-                data =
-                    JSON.parse(text);
-
-            }catch(error){
-
-                data = {
-                    message:text
-                };
-
-            }
-
-
-            if(!response.ok){
+            if(
+                !response.ok ||
+                !data.success
+            ){
 
                 throw new Error(
-                    clean(
-                        data.message ??
-                        data.error ??
-                        text
-                    ) ||
+                    data.message ||
                     "Document upload failed."
                 );
 
             }
 
 
-            if(
-                data.job_id ||
-                data.jobId
-            ){
-
-                jobId =
-                    clean(
-                        data.job_id ??
-                        data.jobId
-                    );
-
-                saveJobContext();
-
-            }
-
-
             setStatus(
-                "Your document has been received.",
+                "Your document has been received successfully.",
                 "success"
             );
 
 
-            /*
-             * Now return control to the intelligence layer.
-             */
             await sendMessage(
-                "The customer has uploaded a document for the active service. Use the uploaded document and existing job context to continue the request.",
+                "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.",
                 "document_uploaded"
             );
 
@@ -2907,8 +3140,6 @@ fileInput.addEventListener(
 
             fileInput.value = "";
 
-            setBusy(false);
-
         }
 
     }
@@ -2917,15 +3148,14 @@ fileInput.addEventListener(
 
 /* =========================================================
    VOICE
-========================================================= */
+   ========================================================= */
 
 voiceBtn.addEventListener(
     "click",
     async () => {
 
         if(
-            mediaRecorder &&
-            mediaRecorder.state ===
+            mediaRecorder?.state ===
             "recording"
         ){
 
@@ -2937,8 +3167,7 @@ voiceBtn.addEventListener(
 
 
         if(
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia
+            !navigator.mediaDevices?.getUserMedia
         ){
 
             setStatus(
@@ -2972,8 +3201,7 @@ voiceBtn.addEventListener(
                 event => {
 
                     if(
-                        event.data &&
-                        event.data.size
+                        event.data?.size
                     ){
 
                         recordedChunks.push(
@@ -2996,13 +3224,12 @@ voiceBtn.addEventListener(
                         );
 
 
-                    recordingStream =
-                        null;
+                    recordingStream = null;
 
 
-                    voiceRecording
-                        .classList
-                        .remove("show");
+                    voiceRecording.classList.remove(
+                        "show"
+                    );
 
 
                     voiceBtn.textContent =
@@ -3023,52 +3250,45 @@ voiceBtn.addEventListener(
                     }
 
 
-                    setBusy(true);
+                    const formData =
+                        new FormData();
 
-                    setStatus(
-                        "Sending your voice instruction..."
+
+                    formData.append(
+                        "file",
+                        new Blob(
+                            recordedChunks,
+                            {
+                                type:
+                                    "audio/webm"
+                            }
+                        ),
+                        "voice_message.webm"
+                    );
+
+
+                    formData.append(
+                        "customer_id",
+                        customerId
+                    );
+
+                    formData.append(
+                        "job_id",
+                        jobId
+                    );
+
+                    formData.append(
+                        "client_request_id",
+                        requestId
+                    );
+
+                    formData.append(
+                        "service",
+                        service
                     );
 
 
                     try{
-
-                        const formData =
-                            new FormData();
-
-
-                        formData.append(
-                            "file",
-                            new Blob(
-                                recordedChunks,
-                                {
-                                    type:
-                                        "audio/webm"
-                                }
-                            ),
-                            "voice_message.webm"
-                        );
-
-
-                        formData.append(
-                            "customer_id",
-                            customerId
-                        );
-
-                        formData.append(
-                            "job_id",
-                            jobId
-                        );
-
-                        formData.append(
-                            "client_request_id",
-                            requestId
-                        );
-
-                        formData.append(
-                            "service",
-                            service
-                        );
-
 
                         const response =
                             await fetch(
@@ -3081,63 +3301,29 @@ voiceBtn.addEventListener(
                             );
 
 
-                        const text =
-                            await response.text();
+                        const data =
+                            await response
+                                .json()
+                                .catch(
+                                    () => ({})
+                                );
 
 
-                        let data = {};
-
-
-                        try{
-
-                            data =
-                                JSON.parse(text);
-
-                        }catch(error){
-
-                            data = {
-                                message:text
-                            };
-
-                        }
-
-
-                        if(!response.ok){
+                        if(
+                            !response.ok ||
+                            !data.success
+                        ){
 
                             throw new Error(
-                                clean(
-                                    data.message ??
-                                    data.error ??
-                                    text
-                                ) ||
+                                data.message ||
                                 "Voice recording failed."
                             );
 
                         }
 
 
-                        if(
-                            data.job_id ||
-                            data.jobId
-                        ){
-
-                            jobId =
-                                clean(
-                                    data.job_id ??
-                                    data.jobId
-                                );
-
-                            saveJobContext();
-
-                        }
-
-
-                        /*
-                         * Intelligence remains responsible for
-                         * interpreting the voice instruction.
-                         */
                         await sendMessage(
-                            "The customer's voice instruction has been received for the active service. Use the voice instruction and current job context to continue.",
+                            "A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.",
                             "voice_uploaded"
                         );
 
@@ -3149,10 +3335,6 @@ voiceBtn.addEventListener(
                             "error"
                         );
 
-                    }finally{
-
-                        setBusy(false);
-
                     }
 
                 };
@@ -3161,9 +3343,9 @@ voiceBtn.addEventListener(
             mediaRecorder.start();
 
 
-            voiceRecording
-                .classList
-                .add("show");
+            voiceRecording.classList.add(
+                "show"
+            );
 
 
             voiceBtn.textContent =
@@ -3190,23 +3372,17 @@ voiceBtn.addEventListener(
 
 /* =========================================================
    INITIALISE
-========================================================= */
+   ========================================================= */
 
 async function init(){
 
     serviceBadge.textContent =
         service;
 
-
     introTitle.textContent =
         service;
 
-
     renderForm();
-
-
-    saveJobContext();
-
 
     await loadGuidance();
 
@@ -3215,7 +3391,5 @@ async function init(){
 
 init();
 
-</script>
-
-</body>
-</html>
+</script></body>
+</html> 
