@@ -17,11 +17,23 @@ FastAPI Job State
     ↓
 Review Page
 
-ACTIVE FILES
-------------
+
+ACTIVE ARCHITECTURE
+-------------------
+
 ada_api.py
+    ↓
 ada_response.py
+    ↓
+Groq
+
 review.html
+    ↑
+FastAPI Job State
+
+
+IMPORTANT
+---------
 
 NO FLASK
 NO phone_bridge.py
@@ -31,7 +43,7 @@ NO RETIRED KEYWORD INTELLIGENCE
 
 AdaResponse remains the intelligence engine.
 
-FastAPI is the connection/state layer.
+FastAPI is the connection/state/application layer.
 
 Review is the visual document/review layer.
 """
@@ -39,10 +51,10 @@ Review is the visual document/review layer.
 from __future__ import annotations
 
 import asyncio
-import html
 import os
 import traceback
 import uuid
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
@@ -85,7 +97,19 @@ DEBUG_ERRORS = (
 BASE_DIR = Path(__file__).resolve().parent
 
 
-def find_file(filename: str) -> Path | None:
+def find_file(
+    filename: str,
+) -> Path | None:
+    """
+    Locate a customer-facing HTML file.
+
+    Supported locations:
+
+        .
+        ./app
+        ./static
+        ./public
+    """
 
     candidates = [
         BASE_DIR / filename,
@@ -95,11 +119,104 @@ def find_file(filename: str) -> Path | None:
     ]
 
     for path in candidates:
-
         if path.is_file():
             return path
 
     return None
+
+
+# ============================================================
+# IN-MEMORY APPLICATION STATE
+# ============================================================
+#
+# AdaResponse owns intelligence/conversation.
+#
+# FastAPI owns:
+#
+#   - HTTP connections
+#   - session references
+#   - document jobs
+#   - review state
+#   - generation tasks
+#
+# This intentionally remains outside ada_response.py.
+# ============================================================
+
+_sessions: dict[str, AdaResponse] = {}
+
+_jobs: dict[str, dict[str, Any]] = {}
+
+_generation_tasks: dict[str, asyncio.Task[Any]] = {}
+
+
+# ============================================================
+# LIFESPAN
+# ============================================================
+#
+# FastAPI now recommends lifespan handlers instead of the
+# deprecated @app.on_event("startup") pattern.
+# ============================================================
+
+@asynccontextmanager
+async def lifespan(
+    application: FastAPI,
+):
+    print()
+    print("=" * 70)
+    print("NAIJA POCKET BUSINESS CENTER")
+    print("FASTAPI + AdaResponse + REVIEW")
+    print("=" * 70)
+
+    print("API:", "FastAPI")
+    print("Intelligence:", "AdaResponse")
+    print("Model:", get_ada_model())
+
+    try:
+        configured = is_configured()
+    except Exception:
+        configured = False
+
+    print("Configured:", configured)
+
+    print("Chat:", "/api/chat")
+    print("Review:", "/api/review")
+    print("Correction:", "/api/correct")
+    print("Approval:", "/api/approve")
+    print("Payment:", "NOT CONNECTED YET")
+    print("Download:", "NOT CONNECTED YET")
+
+    print("Flask:", "DISABLED")
+    print("phone_bridge.py:", "DISABLED")
+    print("AdaController:", "DISABLED")
+    print("AdaAIEngine:", "DISABLED")
+    print("Keyword intelligence:", "DISABLED")
+
+    print("=" * 70)
+    print()
+
+    yield
+
+    # --------------------------------------------------------
+    # APPLICATION SHUTDOWN
+    # --------------------------------------------------------
+
+    tasks = list(
+        _generation_tasks.values()
+    )
+
+    for task in tasks:
+        if not task.done():
+            task.cancel()
+
+    if tasks:
+        await asyncio.gather(
+            *tasks,
+            return_exceptions=True,
+        )
+
+    _generation_tasks.clear()
+    _sessions.clear()
+    _jobs.clear()
 
 
 # ============================================================
@@ -109,6 +226,7 @@ def find_file(filename: str) -> Path | None:
 app = FastAPI(
     title="Naija Pocket Business Center",
     version="current",
+    lifespan=lifespan,
 )
 
 
@@ -122,11 +240,8 @@ app.add_middleware(
 
 
 # ============================================================
-# ADA SESSIONS
+# SESSION HELPERS
 # ============================================================
-
-_sessions: dict[str, AdaResponse] = {}
-
 
 def session_key(
     customer_id: str | None,
@@ -134,12 +249,16 @@ def session_key(
 ) -> str:
 
     customer = (
-        str(customer_id or "anonymous").strip()
+        str(
+            customer_id or "anonymous"
+        ).strip()
         or "anonymous"
     )
 
     job = (
-        str(job_id or "default").strip()
+        str(
+            job_id or "default"
+        ).strip()
         or "default"
     )
 
@@ -157,42 +276,32 @@ def get_session(
         job_id,
     )
 
-    if key not in _sessions:
+    session = _sessions.get(key)
 
-        _sessions[key] = AdaResponse(
+    if session is None:
+
+        session = AdaResponse(
             service=service
         )
 
+        _sessions[key] = session
+
     elif service:
 
-        _sessions[key].set_service(
+        session.set_service(
             service
         )
 
-    return _sessions[key]
+    return session
 
 
 # ============================================================
-# REVIEW JOB STATE
-# ============================================================
-#
-# FastAPI owns application state.
-#
-# AdaResponse owns intelligence.
-#
-# Review reads this state.
-#
-# This is intentionally kept here rather than inside
-# ada_response.py so the intelligence engine does not become
-# a web/application-state manager.
+# JOB HELPERS
 # ============================================================
 
-_jobs: dict[str, dict[str, Any]] = {}
-
-_generation_tasks: dict[str, asyncio.Task] = {}
-
-
-def get_job(job_id: str) -> dict[str, Any] | None:
+def get_job(
+    job_id: str,
+) -> dict[str, Any] | None:
 
     return _jobs.get(
         str(job_id)
@@ -220,14 +329,17 @@ def create_job(
 
         "context": context,
 
-        "client_request_id":
-            client_request_id,
+        "client_request_id": (
+            client_request_id
+        ),
 
         "status": "generating",
 
         "current_version": 1,
 
-        "version_id": f"{job_id}:1",
+        "version_id": (
+            f"{job_id}:1"
+        ),
 
         "approved": False,
 
@@ -240,7 +352,9 @@ def create_job(
 
         "sections": [
             {
-                "section_id": f"{job_id}:section:1",
+                "section_id": (
+                    f"{job_id}:section:1"
+                ),
                 "section_order": 1,
                 "title": (
                     service
@@ -265,7 +379,7 @@ def create_job(
 
 
 # ============================================================
-# ERROR FORMAT
+# ERROR HANDLING
 # ============================================================
 
 def error_response(
@@ -274,7 +388,7 @@ def error_response(
     error: Exception | str,
     status_code: int = 500,
     error_code: str | None = None,
-):
+) -> JSONResponse:
 
     error_type = (
         type(error).__name__
@@ -296,7 +410,7 @@ def error_response(
     if isinstance(error, Exception):
         traceback.print_exc()
 
-    content = {
+    content: dict[str, Any] = {
         "success": False,
         "stage": stage,
         "error": (
@@ -384,7 +498,9 @@ async def customer_home():
                 "index.html was not found."
             ),
             status_code=500,
-            error_code="INDEX_HTML_NOT_FOUND",
+            error_code=(
+                "INDEX_HTML_NOT_FOUND"
+            ),
         )
 
     return FileResponse(
@@ -485,7 +601,6 @@ async def customer_review():
 async def health():
 
     try:
-
         configured = is_configured()
 
     except Exception as error:
@@ -511,7 +626,6 @@ async def health():
 async def api_status():
 
     try:
-
         configured = is_configured()
 
     except Exception as error:
@@ -531,6 +645,13 @@ async def api_status():
         "configured": configured,
         "active_sessions": len(_sessions),
         "active_jobs": len(_jobs),
+        "active_generation_tasks": len(
+            [
+                task
+                for task in _generation_tasks.values()
+                if not task.done()
+            ]
+        ),
     }
 
 
@@ -558,7 +679,9 @@ async def chat(
 
         return error_response(
             stage="CHAT_VALIDATION",
-            error="The chat message is empty.",
+            error=(
+                "The chat message is empty."
+            ),
             status_code=400,
             error_code="EMPTY_MESSAGE",
         )
@@ -571,11 +694,12 @@ async def chat(
                 "Intelligence activation is disabled."
             ),
             status_code=400,
-            error_code="INTELLIGENCE_NOT_ACTIVATED",
+            error_code=(
+                "INTELLIGENCE_NOT_ACTIVATED"
+            ),
         )
 
     try:
-
         configured = is_configured()
 
     except Exception as error:
@@ -584,7 +708,9 @@ async def chat(
             stage="CONFIGURATION_CHECK",
             error=error,
             status_code=500,
-            error_code="CONFIGURATION_ERROR",
+            error_code=(
+                "CONFIGURATION_ERROR"
+            ),
         )
 
     if not configured:
@@ -595,20 +721,24 @@ async def chat(
                 "AdaResponse is not configured."
             ),
             status_code=503,
-            error_code="INTELLIGENCE_NOT_CONFIGURED",
+            error_code=(
+                "INTELLIGENCE_NOT_CONFIGURED"
+            ),
         )
 
     # --------------------------------------------------------
     # JOB ID
     # --------------------------------------------------------
 
-    job_id = (
+    supplied_job_id = (
         str(
             request.job_id or ""
         ).strip()
-        or str(
-            uuid.uuid4()
-        )
+    )
+
+    job_id = (
+        supplied_job_id
+        or str(uuid.uuid4())
     )
 
     # --------------------------------------------------------
@@ -639,14 +769,10 @@ async def chat(
             )
         )
 
-    if request.job_id:
-
-        context_parts.append(
-            "ACTIVE JOB ID\n"
-            + str(
-                request.job_id
-            )
-        )
+    context_parts.append(
+        "ACTIVE JOB ID\n"
+        + job_id
+    )
 
     if request.client_request_id:
 
@@ -680,7 +806,9 @@ async def chat(
     try:
 
         ada = get_session(
-            customer_id=request.customer_id,
+            customer_id=(
+                request.customer_id
+            ),
             job_id=job_id,
             service=request.service,
         )
@@ -695,7 +823,13 @@ async def chat(
         )
 
     # --------------------------------------------------------
-    # NORMAL ADA CONVERSATION
+    # REAL ADA INTELLIGENCE
+    # --------------------------------------------------------
+    #
+    # There is deliberately NO keyword matching here.
+    #
+    # The complete customer message goes directly to
+    # AdaResponse.
     # --------------------------------------------------------
 
     try:
@@ -713,7 +847,9 @@ async def chat(
             stage="ADA_RESPONSE",
             error=error,
             status_code=500,
-            error_code="ADA_RESPONSE_ERROR",
+            error_code=(
+                "ADA_RESPONSE_ERROR"
+            ),
         )
 
     reply = str(
@@ -728,22 +864,26 @@ async def chat(
                 "AdaResponse returned an empty response."
             ),
             status_code=500,
-            error_code="EMPTY_ADA_RESPONSE",
+            error_code=(
+                "EMPTY_ADA_RESPONSE"
+            ),
         )
 
     # --------------------------------------------------------
-    # CREATE / UPDATE REVIEW JOB
+    # CREATE OR UPDATE JOB
     # --------------------------------------------------------
 
-    existing_job = _jobs.get(
+    job = _jobs.get(
         job_id
     )
 
-    if existing_job is None:
+    if job is None:
 
-        create_job(
+        job = create_job(
             job_id=job_id,
-            customer_id=request.customer_id,
+            customer_id=(
+                request.customer_id
+            ),
             service=request.service,
             message=message,
             context=application_context,
@@ -754,18 +894,30 @@ async def chat(
 
     else:
 
-        existing_job["original_request"] = message
+        job["original_request"] = message
+
+        if request.customer_id:
+
+            job["customer_id"] = (
+                request.customer_id
+            )
 
         if request.service:
 
-            existing_job["service"] = (
+            job["service"] = (
                 request.service
             )
 
         if application_context:
 
-            existing_job["context"] = (
+            job["context"] = (
                 application_context
+            )
+
+        if request.client_request_id:
+
+            job["client_request_id"] = (
+                request.client_request_id
             )
 
     print(
@@ -775,6 +927,12 @@ async def chat(
     print(
         "Job:",
         job_id,
+    )
+
+    print(
+        "Service:",
+        request.service
+        or ada.service,
     )
 
     print("-" * 70)
@@ -791,15 +949,20 @@ async def chat(
             or ada.service
         ),
 
-        "customer_id":
-            request.customer_id,
+        "customer_id": (
+            request.customer_id
+        ),
 
-        "client_request_id":
-            request.client_request_id,
+        "client_request_id": (
+            request.client_request_id
+        ),
 
-        "review_url":
+        "status": job["status"],
+
+        "review_url": (
             "/review.html?job_id="
-            + job_id,
+            + job_id
+        ),
     }
 
 
@@ -810,6 +973,13 @@ async def chat(
 async def generate_document_for_job(
     job_id: str,
 ):
+    """
+    Generate the actual customer document through AdaResponse.
+
+    FastAPI schedules and stores the job.
+
+    AdaResponse performs the intelligence.
+    """
 
     job = _jobs.get(
         job_id
@@ -824,21 +994,34 @@ async def generate_document_for_job(
         return
 
     job["generation_started"] = True
+    job["generation_finished"] = False
     job["status"] = "generating"
+    job["error"] = None
+
+    job["progress"] = {
+        "completed": 0,
+        "total": 1,
+    }
 
     for section in job["sections"]:
 
-        section["status"] = "generating"
+        section["status"] = (
+            "generating"
+        )
 
     try:
 
         ada = get_session(
-            customer_id=job.get(
-                "customer_id"
+            customer_id=(
+                job.get(
+                    "customer_id"
+                )
             ),
             job_id=job_id,
-            service=job.get(
-                "service"
+            service=(
+                job.get(
+                    "service"
+                )
             ),
         )
 
@@ -847,32 +1030,35 @@ async def generate_document_for_job(
         print("DOCUMENT GENERATION STARTED")
         print("=" * 70)
         print("Job:", job_id)
-        print("Service:", job.get("service"))
+        print(
+            "Service:",
+            job.get("service"),
+        )
         print("=" * 70)
-
-        # ----------------------------------------------------
-        # ADAResponse remains responsible for the actual
-        # document intelligence.
-        #
-        # FastAPI simply passes the complete request/context
-        # through.
-        # ----------------------------------------------------
 
         document_html = (
             await asyncio.to_thread(
                 ada.generate_complete_document,
-                original_request=job[
-                    "original_request"
-                ],
-                service=job.get(
-                    "service"
+                original_request=(
+                    job[
+                        "original_request"
+                    ]
                 ),
-                context=job.get(
-                    "context"
+                service=(
+                    job.get(
+                        "service"
+                    )
+                ),
+                context=(
+                    job.get(
+                        "context"
+                    )
                 ),
                 correction=False,
                 existing_work=None,
-                event="document_generation",
+                event=(
+                    "document_generation"
+                ),
             )
         )
 
@@ -883,11 +1069,12 @@ async def generate_document_for_job(
         if not document_html:
 
             raise RuntimeError(
-                "AdaResponse generated an empty document."
+                "AdaResponse generated "
+                "an empty document."
             )
 
         # ----------------------------------------------------
-        # DOCUMENT READY
+        # SAVE COMPLETED DOCUMENT
         # ----------------------------------------------------
 
         job["document_html"] = (
@@ -899,16 +1086,14 @@ async def generate_document_for_job(
             "total": 1,
         }
 
-        job["sections"][0][
-            "status"
-        ] = "done"
+        for section in job["sections"]:
 
-        job["sections"][0][
-            "title"
-        ] = (
-            job.get("service")
-            or "Completed Service"
-        )
+            section["status"] = "done"
+
+            section["title"] = (
+                job.get("service")
+                or "Completed Service"
+            )
 
         job["status"] = "complete"
 
@@ -924,15 +1109,33 @@ async def generate_document_for_job(
         )
         print()
 
+    except asyncio.CancelledError:
+
+        job["status"] = "cancelled"
+
+        job["error"] = {
+            "type": (
+                "GenerationCancelled"
+            ),
+            "message": (
+                "Document generation "
+                "was cancelled."
+            ),
+        }
+
+        job["generation_finished"] = True
+
+        raise
+
     except Exception as error:
 
         job["status"] = "error"
 
         job["error"] = {
-            "type":
-                type(error).__name__,
-            "message":
-                str(error),
+            "type": (
+                type(error).__name__
+            ),
+            "message": str(error),
         }
 
         job["generation_finished"] = True
@@ -941,6 +1144,10 @@ async def generate_document_for_job(
         print(
             "DOCUMENT GENERATION FAILED"
         )
+        print(
+            "Job:",
+            job_id,
+        )
 
         traceback.print_exc()
 
@@ -948,15 +1155,13 @@ async def generate_document_for_job(
 def ensure_generation_started(
     job_id: str,
 ):
+    """
+    Start document generation exactly once for a job.
 
-    if job_id in _generation_tasks:
-
-        task = _generation_tasks[
-            job_id
-        ]
-
-        if not task.done():
-            return
+    The generation runs independently of the review polling
+    request, allowing review.html to poll /api/review while
+    AdaResponse is working.
+    """
 
     job = _jobs.get(
         job_id
@@ -970,12 +1175,50 @@ def ensure_generation_started(
     ):
         return
 
-    _generation_tasks[
-        job_id
-    ] = asyncio.create_task(
+    existing_task = (
+        _generation_tasks.get(
+            job_id
+        )
+    )
+
+    if existing_task is not None:
+
+        if not existing_task.done():
+            return
+
+        _generation_tasks.pop(
+            job_id,
+            None,
+        )
+
+    task = asyncio.create_task(
         generate_document_for_job(
             job_id
         )
+    )
+
+    _generation_tasks[
+        job_id
+    ] = task
+
+    def task_finished(
+        completed_task: asyncio.Task[Any],
+    ):
+        current = (
+            _generation_tasks.get(
+                job_id
+            )
+        )
+
+        if current is completed_task:
+
+            _generation_tasks.pop(
+                job_id,
+                None,
+            )
+
+    task.add_done_callback(
+        task_finished
     )
 
 
@@ -989,19 +1232,25 @@ async def review(
 ):
 
     job_id = (
-        str(job_id or "").strip()
+        str(
+            job_id or ""
+        ).strip()
     )
 
     if not job_id:
 
         return error_response(
             stage="REVIEW",
-            error="job_id is required.",
+            error=(
+                "job_id is required."
+            ),
             status_code=400,
-            error_code="JOB_ID_REQUIRED",
+            error_code=(
+                "JOB_ID_REQUIRED"
+            ),
         )
 
-    job = _jobs.get(
+    job = get_job(
         job_id
     )
 
@@ -1011,11 +1260,24 @@ async def review(
             stage="REVIEW",
             error=(
                 "The requested document job "
-                "does not exist in this application session."
+                "does not exist in this "
+                "application session."
             ),
             status_code=404,
-            error_code="JOB_NOT_FOUND",
+            error_code=(
+                "JOB_NOT_FOUND"
+            ),
         )
+
+    # --------------------------------------------------------
+    # IMPORTANT
+    # --------------------------------------------------------
+    #
+    # The first visit to review starts document generation.
+    #
+    # Subsequent polling requests simply return the current
+    # state.
+    # --------------------------------------------------------
 
     ensure_generation_started(
         job_id
@@ -1024,35 +1286,41 @@ async def review(
     return {
         "success": True,
 
-        "job_id":
-            job["job_id"],
+        "job_id": job["job_id"],
 
-        "status":
-            job["status"],
+        "status": job["status"],
 
-        "current_version":
-            job["current_version"],
+        "current_version": (
+            job["current_version"]
+        ),
 
-        "version_id":
-            job["version_id"],
+        "version_id": (
+            job["version_id"]
+        ),
 
-        "progress":
-            job["progress"],
+        "progress": (
+            job["progress"]
+        ),
 
-        "sections":
-            job["sections"],
+        "sections": (
+            job["sections"]
+        ),
 
-        "document_html":
-            job["document_html"],
+        "document_html": (
+            job["document_html"]
+        ),
 
-        "approved":
-            job["approved"],
+        "approved": (
+            job["approved"]
+        ),
 
-        "paid":
-            job["paid"],
+        "paid": (
+            job["paid"]
+        ),
 
-        "error":
-            job["error"],
+        "error": (
+            job["error"]
+        ),
     }
 
 
@@ -1065,7 +1333,7 @@ async def correct(
     request: CorrectionRequest,
 ):
 
-    job = _jobs.get(
+    job = get_job(
         request.job_id
     )
 
@@ -1075,12 +1343,15 @@ async def correct(
             stage="CORRECTION",
             error="Job not found.",
             status_code=404,
-            error_code="JOB_NOT_FOUND",
+            error_code=(
+                "JOB_NOT_FOUND"
+            ),
         )
 
     instruction = (
         str(
             request.instruction
+            or ""
         ).strip()
     )
 
@@ -1088,47 +1359,123 @@ async def correct(
 
         return error_response(
             stage="CORRECTION",
-            error="Correction instruction is empty.",
+            error=(
+                "Correction instruction "
+                "is empty."
+            ),
             status_code=400,
-            error_code="EMPTY_CORRECTION",
+            error_code=(
+                "EMPTY_CORRECTION"
+            ),
         )
+
+    # --------------------------------------------------------
+    # If an old generation task is still running, cancel it.
+    # --------------------------------------------------------
+
+    old_task = (
+        _generation_tasks.pop(
+            request.job_id,
+            None,
+        )
+    )
+
+    if (
+        old_task is not None
+        and not old_task.done()
+    ):
+
+        old_task.cancel()
+
+        await asyncio.gather(
+            old_task,
+            return_exceptions=True,
+        )
+
+    # --------------------------------------------------------
+    # Create the new working state.
+    # --------------------------------------------------------
 
     job["status"] = "generating"
 
     job["approved"] = False
+
+    job["error"] = None
 
     job["progress"] = {
         "completed": 0,
         "total": 1,
     }
 
-    job["sections"][0][
-        "status"
-    ] = "generating"
+    job["document_html"] = ""
+
+    job["generation_started"] = False
 
     job["generation_finished"] = False
 
+    job["current_version"] = (
+        int(
+            job.get(
+                "current_version",
+                1,
+            )
+        )
+        + 1
+    )
+
+    job["version_id"] = (
+        f"{request.job_id}:"
+        f"{job['current_version']}"
+    )
+
+    for section in job["sections"]:
+
+        section["status"] = (
+            "generating"
+        )
+
+    # --------------------------------------------------------
+    # Preserve the customer's original request and append
+    # the correction.
+    # --------------------------------------------------------
+
+    previous_request = str(
+        job.get(
+            "original_request",
+            "",
+        )
+    ).strip()
+
     job["original_request"] = (
-        job["original_request"]
+        previous_request
         + "\n\nCUSTOMER CORRECTION:\n"
         + instruction
     )
 
-    # Remove old completed task reference.
-    _generation_tasks.pop(
-        request.job_id,
-        None,
-    )
+    # --------------------------------------------------------
+    # Tell AdaResponse to regenerate.
+    # --------------------------------------------------------
 
-    # Start a new generation.
     ensure_generation_started(
         request.job_id
     )
 
     return {
         "success": True,
-        "job_id": request.job_id,
+
+        "job_id": (
+            request.job_id
+        ),
+
         "status": "generating",
+
+        "current_version": (
+            job["current_version"]
+        ),
+
+        "version_id": (
+            job["version_id"]
+        ),
     }
 
 
@@ -1141,7 +1488,7 @@ async def approve(
     request: ApprovalRequest,
 ):
 
-    job = _jobs.get(
+    job = get_job(
         request.job_id
     )
 
@@ -1151,21 +1498,27 @@ async def approve(
             stage="APPROVAL",
             error="Job not found.",
             status_code=404,
-            error_code="JOB_NOT_FOUND",
+            error_code=(
+                "JOB_NOT_FOUND"
+            ),
         )
 
-    if request.version_id != job[
-        "version_id"
-    ]:
+    if (
+        request.version_id
+        != job["version_id"]
+    ):
 
         return error_response(
             stage="APPROVAL",
             error=(
-                "The supplied document version "
-                "does not match the current version."
+                "The supplied document "
+                "version does not match "
+                "the current version."
             ),
             status_code=409,
-            error_code="VERSION_MISMATCH",
+            error_code=(
+                "VERSION_MISMATCH"
+            ),
         )
 
     if job["status"] != "complete":
@@ -1177,15 +1530,24 @@ async def approve(
                 "for approval."
             ),
             status_code=409,
-            error_code="DOCUMENT_NOT_READY",
+            error_code=(
+                "DOCUMENT_NOT_READY"
+            ),
         )
 
     job["approved"] = True
 
     return {
         "success": True,
-        "job_id": request.job_id,
-        "version_id": request.version_id,
+
+        "job_id": (
+            request.job_id
+        ),
+
+        "version_id": (
+            request.version_id
+        ),
+
         "approved": True,
     }
 
@@ -1194,9 +1556,23 @@ async def approve(
 # DOWNLOAD PLACEHOLDER
 # ============================================================
 #
-# Payment/download is deliberately NOT being developed yet.
+# Payment/download is intentionally NOT connected yet.
 #
-# The review connection is being established first.
+# The current workflow is:
+#
+# Customer
+#     ↓
+# AdaResponse
+#     ↓
+# Job
+#     ↓
+# Review
+#     ↓
+# Correction
+#     ↓
+# Approval
+#
+# Payment and final download remain the next layer.
 # ============================================================
 
 @app.get("/api/download")
@@ -1205,7 +1581,7 @@ async def download(
     version_id: str,
 ):
 
-    job = _jobs.get(
+    job = get_job(
         job_id
     )
 
@@ -1215,17 +1591,40 @@ async def download(
             stage="DOWNLOAD",
             error="Job not found.",
             status_code=404,
-            error_code="JOB_NOT_FOUND",
+            error_code=(
+                "JOB_NOT_FOUND"
+            ),
+        )
+
+    if (
+        version_id
+        != job["version_id"]
+    ):
+
+        return error_response(
+            stage="DOWNLOAD",
+            error=(
+                "The supplied document "
+                "version does not match "
+                "the current version."
+            ),
+            status_code=409,
+            error_code=(
+                "VERSION_MISMATCH"
+            ),
         )
 
     return error_response(
         stage="DOWNLOAD",
         error=(
-            "Payment and final download workflow "
-            "has not been connected yet."
+            "Payment and final download "
+            "workflow has not been "
+            "connected yet."
         ),
         status_code=409,
-        error_code="DOWNLOAD_NOT_CONNECTED",
+        error_code=(
+            "DOWNLOAD_NOT_CONNECTED"
+        ),
     )
 
 
@@ -1250,14 +1649,15 @@ async def clear_chat(
             key
         )
 
-        if session:
+        if session is not None:
 
             session.clear_history()
 
         return {
             "success": True,
-            "message":
-                "Conversation cleared.",
+            "message": (
+                "Conversation cleared."
+            ),
         }
 
     except Exception as error:
@@ -1266,98 +1666,10 @@ async def clear_chat(
             stage="CLEAR_CHAT",
             error=error,
             status_code=500,
-            error_code="CLEAR_CHAT_ERROR",
+            error_code=(
+                "CLEAR_CHAT_ERROR"
+            ),
         )
-
-
-# ============================================================
-# STARTUP
-# ============================================================
-
-@app.on_event("startup")
-async def startup():
-
-    print()
-    print("=" * 70)
-    print("NAIJA POCKET BUSINESS CENTER")
-    print("FASTAPI + AdaResponse + REVIEW")
-    print("=" * 70)
-
-    print(
-        "API:",
-        "FastAPI",
-    )
-
-    print(
-        "Intelligence:",
-        "AdaResponse",
-    )
-
-    print(
-        "Model:",
-        get_ada_model(),
-    )
-
-    try:
-
-        configured = is_configured()
-
-    except Exception:
-
-        configured = False
-
-    print(
-        "Configured:",
-        configured,
-    )
-
-    print(
-        "Chat:",
-        "/api/chat",
-    )
-
-    print(
-        "Review:",
-        "/api/review",
-    )
-
-    print(
-        "Correction:",
-        "/api/correct",
-    )
-
-    print(
-        "Approval:",
-        "/api/approve",
-    )
-
-    print(
-        "Payment:",
-        "NOT CONNECTED YET",
-    )
-
-    print(
-        "Download:",
-        "NOT CONNECTED YET",
-    )
-
-    print(
-        "Flask:",
-        "DISABLED",
-    )
-
-    print(
-        "AdaController:",
-        "DISABLED",
-    )
-
-    print(
-        "AdaAIEngine:",
-        "DISABLED",
-    )
-
-    print("=" * 70)
-    print()
 
 
 # ============================================================
