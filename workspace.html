@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8"><meta name="viewport"
+content="width=device-width,initial-scale=1,viewport-fit=cover">
 
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover">
-
-<title>Naija Pocket Business Center</title>
-
-<style>
+<title>Naija Pocket Business Center</title><style>
 
 *{
     box-sizing:border-box;
@@ -391,327 +386,75 @@ button{
     line-height:1.5;
 }
 
+/*
+ * The workspace no longer attempts to display the complete
+ * generated document here.
+ *
+ * This area is only the local review gateway/status.
+ */
+
+.workspace-review-gateway{
+    width:100%;
+
+    padding:22px 16px;
+
+    background:#101010;
+
+    border:1px solid rgba(212,175,55,.30);
+
+    border-radius:13px;
+
+    text-align:center;
+}
+
+.workspace-review-gateway-title{
+    margin:0;
+
+    color:var(--gold2);
+
+    font-size:17px;
+    font-weight:900;
+}
+
+.workspace-review-gateway-text{
+    margin:8px 0 0;
+
+    color:#bdbdbd;
+
+    font-size:11px;
+    line-height:1.55;
+}
+
+.workspace-review-open{
+    width:100%;
+
+    min-height:48px;
+
+    margin-top:15px;
+
+    border:0;
+    border-radius:9px;
+
+    background:var(--gold);
+    color:#000;
+
+    font-size:12px;
+    font-weight:900;
+}
+
 /* =========================================================
-   REVIEW DOCUMENT CONTAINER
+   LEGACY WORK CONTENT HOLDER
 
-   IMPORTANT:
-   The CARD is the scrolling viewport.
-
-   The document itself has NO fixed height.
-   The document itself has NO max-height.
-   No content is sliced.
-   No content is shortened by CSS.
+   Kept hidden from the workspace.
+   The complete document is stored and handed to review.html.
    ========================================================= */
 
 .work-card{
-    width:100%;
-    min-width:0;
-
-    height:clamp(
-        360px,
-        calc(100dvh - 285px),
-        900px
-    );
-
-    min-height:360px;
-
-    background:#f7f7f7;
-    color:#111;
-
-    border-radius:11px;
-
-    padding:0;
-
-    overflow-y:auto;
-    overflow-x:hidden;
-
-    -webkit-overflow-scrolling:touch;
-
-    overscroll-behavior:contain;
-
-    scrollbar-width:auto;
-
-    overflow-wrap:anywhere;
-    word-wrap:break-word;
-
-    user-select:none;
-    -webkit-user-select:none;
-    -webkit-touch-callout:none;
+    display:none;
 }
-
-/* =========================================================
-   DOCUMENT CONTENT
-
-   NO HEIGHT LIMIT.
-   NO MAX HEIGHT.
-   NO TRUNCATION.
-   ========================================================= */
 
 .work-content{
-    display:block;
-
-    width:100%;
-    min-width:0;
-
-    min-height:100%;
-
-    padding:22px 17px;
-
-    color:#111;
-    background:#f7f7f7;
-
-    font-size:14px;
-    line-height:1.7;
-
-    overflow:visible;
-
-    overflow-wrap:anywhere;
-    word-wrap:break-word;
-
-    user-select:none;
-    -webkit-user-select:none;
-    -webkit-touch-callout:none;
-}
-
-.work-content.document-html{
-    display:block;
-
-    width:100%;
-    min-width:0;
-
-    min-height:100%;
-
-    color:#111;
-    background:#fff;
-
-    overflow:visible;
-}
-
-/* =========================================================
-   DOCUMENT HEADINGS
-   ========================================================= */
-
-.work-content h1{
-    margin:0 0 18px;
-
-    color:#111;
-
-    font-size:28px;
-    line-height:1.25;
-
-    font-weight:800;
-
-    text-align:left;
-}
-
-.work-content h2{
-    margin:24px 0 10px;
-
-    color:#111;
-
-    font-size:21px;
-    line-height:1.3;
-
-    font-weight:800;
-}
-
-.work-content h3{
-    margin:20px 0 8px;
-
-    color:#111;
-
-    font-size:17px;
-    line-height:1.35;
-
-    font-weight:800;
-}
-
-.work-content h4,
-.work-content h5,
-.work-content h6{
-    margin:16px 0 7px;
-
-    color:#111;
-
-    font-weight:800;
-}
-
-/* =========================================================
-   DOCUMENT TEXT
-   ========================================================= */
-
-.work-content p{
-    margin:0 0 12px;
-
-    color:#111;
-
-    font-size:14px;
-    line-height:1.75;
-}
-
-.work-content strong,
-.work-content b{
-    font-weight:800;
-}
-
-.work-content em,
-.work-content i{
-    font-style:italic;
-}
-
-.work-content u{
-    text-decoration:underline;
-}
-
-/* =========================================================
-   LISTS
-   ========================================================= */
-
-.work-content ul,
-.work-content ol{
-    margin:8px 0 15px 25px;
-    padding:0;
-}
-
-.work-content li{
-    margin:5px 0;
-
-    line-height:1.65;
-}
-
-/* =========================================================
-   DIVIDER
-   ========================================================= */
-
-.work-content hr{
-    border:0;
-
-    border-top:1px solid #999;
-
-    margin:20px 0;
-}
-
-/* =========================================================
-   TABLES
-   ========================================================= */
-
-.work-content table{
-    width:100%;
-    max-width:100%;
-
-    border-collapse:collapse;
-
-    margin:15px 0;
-
-    color:#111;
-
-    font-size:13px;
-
-    table-layout:auto;
-}
-
-.work-content th,
-.work-content td{
-    border:1px solid #999;
-
-    padding:8px;
-
-    text-align:left;
-    vertical-align:top;
-
-    overflow-wrap:anywhere;
-    word-break:normal;
-}
-
-.work-content th{
-    font-weight:800;
-
-    background:#eee;
-}
-
-/* =========================================================
-   QUOTES
-   ========================================================= */
-
-.work-content blockquote{
-    margin:15px 0;
-
-    padding:10px 14px;
-
-    border-left:4px solid #777;
-
-    background:#f0f0f0;
-}
-
-/* =========================================================
-   CODE
-   ========================================================= */
-
-.work-content pre{
-    white-space:pre-wrap;
-
-    word-break:break-word;
-    overflow-wrap:anywhere;
-
-    margin:12px 0;
-    padding:12px;
-
-    background:#eee;
-
-    border-radius:6px;
-
-    font-family:monospace;
-    font-size:12px;
-}
-
-.work-content code{
-    font-family:monospace;
-
-    overflow-wrap:anywhere;
-}
-
-/* =========================================================
-   LINKS
-   ========================================================= */
-
-.work-content a{
-    color:#111;
-
-    text-decoration:underline;
-
-    overflow-wrap:anywhere;
-}
-
-/* =========================================================
-   IMAGES
-   ========================================================= */
-
-.work-content img{
-    max-width:100%;
-    height:auto;
-
-    display:block;
-
-    margin:12px auto;
-}
-
-/* =========================================================
-   SPACING
-   ========================================================= */
-
-.work-content .document-spacer{
-    height:10px;
-}
-
-.work-placeholder{
-    color:#777;
-
-    text-align:center;
-
-    padding:70px 10px;
-
-    user-select:none;
-    -webkit-user-select:none;
+    display:none;
 }
 
 /* =========================================================
@@ -719,6 +462,8 @@ button{
    ========================================================= */
 
 .correction-card{
+    display:none;
+
     margin-top:12px;
 
     padding:14px;
@@ -799,6 +544,8 @@ button{
 }
 
 .download-button{
+    display:none;
+
     width:100%;
 
     min-height:47px;
@@ -828,6 +575,8 @@ button{
 }
 
 .payment-message{
+    display:none;
+
     margin-top:8px;
 
     color:#858585;
@@ -877,6 +626,147 @@ button{
     color:#fff;
 
     border:1px solid rgba(255,255,255,.13);
+}
+
+/* =========================================================
+   REVIEW POPUP GATEWAY
+   ========================================================= */
+
+.review-gateway-overlay{
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,.82);
+
+    z-index:1000;
+
+    backdrop-filter:blur(5px);
+    -webkit-backdrop-filter:blur(5px);
+}
+
+.review-gateway-overlay.show{
+    display:flex;
+}
+
+.review-gateway-card{
+    width:min(100%,420px);
+
+    padding:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1b1b1b,
+            #0b0b0b
+        );
+
+    border:1px solid rgba(212,175,55,.55);
+
+    border-radius:17px;
+
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.65);
+
+    text-align:center;
+}
+
+.review-gateway-icon{
+    width:58px;
+    height:58px;
+
+    margin:0 auto 13px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:rgba(212,175,55,.12);
+
+    border:1px solid rgba(212,175,55,.45);
+
+    font-size:27px;
+}
+
+.review-gateway-title{
+    margin:0;
+
+    color:var(--gold2);
+
+    font-size:20px;
+    font-weight:900;
+}
+
+.review-gateway-message{
+    margin:9px 0 0;
+
+    color:#d0d0d0;
+
+    font-size:12px;
+    line-height:1.6;
+}
+
+.review-gateway-note{
+    margin:12px 0 0;
+
+    padding:9px;
+
+    background:#111;
+
+    border-radius:8px;
+
+    color:#999;
+
+    font-size:10px;
+    line-height:1.5;
+}
+
+.review-gateway-button{
+    width:100%;
+
+    min-height:50px;
+
+    margin-top:16px;
+
+    border:0;
+    border-radius:10px;
+
+    background:var(--gold);
+    color:#000;
+
+    font-size:13px;
+    font-weight:900;
+}
+
+.review-gateway-button:active{
+    transform:scale(.99);
+}
+
+.review-gateway-close{
+    width:100%;
+
+    min-height:42px;
+
+    margin-top:7px;
+
+    border-radius:9px;
+
+    background:#181818;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.13);
+
+    font-size:11px;
+    font-weight:800;
 }
 
 /* =========================================================
@@ -1069,376 +959,286 @@ button:disabled{
         padding:12px 9px 30px;
     }
 
-    .work-card{
-        height:calc(100dvh - 315px);
-
-        min-height:300px;
-
-        border-radius:10px;
+    .review-gateway-card{
+        padding:20px 16px;
     }
 
-    .work-content{
-        padding:18px 14px 28px;
-    }
-
-    .work-content h1{
-        font-size:24px;
-    }
-
-    .work-content h2{
-        font-size:19px;
-    }
-
-    .work-content h3{
-        font-size:16px;
-    }
-
-    .work-content p{
-        font-size:14px;
-    }
-
-    .work-content table{
-        font-size:12px;
-    }
-
-    .work-content th,
-    .work-content td{
-        padding:7px;
-    }
 }
 
-</style>
-</head>
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
 
-<body>
+@media(max-height:650px){
 
-<div class="app">
+    .review-gateway-card{
+        max-height:calc(100dvh - 30px);
 
-<header class="header">
+        overflow-y:auto;
+    }
 
-    <div class="brand">
+}
 
-        <h1 class="brand-title">
-            Naija Pocket Business Center
-        </h1>
+</style></head><body><div class="app"><header class="header"><div class="brand">
 
-        <div class="brand-subtitle">
-            Your Business Center
-        </div>
+    <h1 class="brand-title">
+        Naija Pocket Business Center
+    </h1>
 
+    <div class="brand-subtitle">
+        Your Business Center
     </div>
 
+</div>
+
+<div
+    id="serviceBadge"
+    class="service-badge"
+>
+    Service
+</div>
+
+</header><main class="main"><div class="main-inner"><section id="formView"><div
+    class="intro-card"
+    id="introCard"
+>
+
+    <h2
+        id="introTitle"
+        class="intro-title"
+    >
+        Let's get started
+    </h2>
+
+    <p
+        id="introText"
+        class="intro-text"
+    >
+        Please wait while we prepare useful information for this service.
+    </p>
+
     <div
-        id="serviceBadge"
-        class="service-badge"
+        id="price"
+        class="price"
     >
         Service
     </div>
 
-</header>
-
-
-<main class="main">
-
-<div class="main-inner">
-
-
-<section id="formView">
-
-    <div
-        class="intro-card"
-        id="introCard"
-    >
-
-        <h2
-            id="introTitle"
-            class="intro-title"
-        >
-            Let's get started
-        </h2>
-
-        <p
-            id="introText"
-            class="intro-text"
-        >
-            Please wait while we prepare useful information for this service.
-        </p>
-
-        <div
-            id="price"
-            class="price"
-        >
-            Service
-        </div>
-
-    </div>
-
-
-    <div class="form-card">
-
-        <h3 class="form-heading">
-            Your Service Information
-        </h3>
-
-        <p class="form-description">
-            Fill in the information relevant to your request.
-            Optional fields can be left blank.
-        </p>
-
-        <form id="serviceForm">
-
-            <div
-                id="fields"
-                class="fields"
-            ></div>
-
-            <div class="form-note">
-                When you tap <strong>SEND</strong>, your information
-                will be sent for processing and your prepared work
-                will open immediately in the review area.
-            </div>
-
-            <button
-                id="formSubmit"
-                class="form-submit"
-                type="submit"
-            >
-                SEND
-            </button>
-
-        </form>
-
-    </div>
-
-</section>
-
-
-<section
-    id="reviewView"
-    class="review-view"
->
-
-    <div class="review-header">
-
-        <h2 class="review-title">
-            Your Work
-        </h2>
-
-        <p class="review-subtitle">
-            Read through your prepared work carefully.
-            You can request corrections before approving it.
-        </p>
-
-    </div>
-
-
-    <div
-        id="workCard"
-        class="work-card"
-    >
-
-        <div
-            id="workContent"
-            class="work-content"
-        >
-
-            <div class="work-placeholder">
-                Your prepared work will appear here.
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="correction-card">
-
-        <h3 class="correction-title">
-            Need any corrections?
-        </h3>
-
-        <p class="correction-help">
-            Tell us exactly what you want changed, added or corrected.
-        </p>
-
-        <textarea
-            id="correctionInput"
-            class="correction-input"
-            placeholder="Write your corrections or changes here..."
-        ></textarea>
-
-        <div class="review-actions">
-
-            <button
-                id="applyCorrectionsButton"
-                class="review-button apply-button"
-                type="button"
-            >
-                Apply My Corrections
-            </button>
-
-            <button
-                id="approveButton"
-                class="review-button approve-button"
-                type="button"
-            >
-                Approve &amp; Pay
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <button
-        id="downloadButton"
-        class="download-button"
-        type="button"
-        disabled
-    >
-        🔒 Download Your Work
-    </button>
-
-    <div class="payment-message">
-        Payment must be confirmed before the download button becomes active.
-    </div>
-
-
-    <div
-        id="paymentPanel"
-        class="payment-panel"
-    >
-
-        <div class="payment-title">
-            Payment
-        </div>
-
-        <div
-            id="paymentDetails"
-            class="payment-details"
-        ></div>
-
-        <div class="payment-buttons">
-
-            <button
-                id="paymentReportButton"
-                class="payment-report"
-                type="button"
-            >
-                Report Payment
-            </button>
-
-            <button
-                id="paymentCheckButton"
-                class="payment-check"
-                type="button"
-            >
-                Check Status
-            </button>
-
-        </div>
-
-    </div>
-
-</section>
-
-
 </div>
 
-</main>
 
+<div class="form-card">
 
-<section class="bottom">
+    <h3 class="form-heading">
+        Your Service Information
+    </h3>
 
-<div class="bottom-inner">
+    <p class="form-description">
+        Fill in the information relevant to your request.
+        Optional fields can be left blank.
+    </p>
 
-    <div
-        id="voiceRecording"
-        class="voice-recording"
-    >
-        🔴 Recording... tap Voice again to stop.
-    </div>
+    <form id="serviceForm">
 
+        <div
+            id="fields"
+            class="fields"
+        ></div>
 
-    <div class="tools">
-
-        <button
-            id="uploadButton"
-            class="tool-button"
-            type="button"
-        >
-            📄 Upload Documents You Want To Give Us
-        </button>
-
-        <button
-            id="voiceButton"
-            class="tool-button gold"
-            type="button"
-        >
-            🎤 Voice
-        </button>
+        <div class="form-note">
+            When you tap <strong>SEND</strong>, your information
+            will be sent for processing and your prepared work
+            will open immediately in the review area.
+        </div>
 
         <button
-            id="customerServiceButton"
-            class="tool-button"
-            type="button"
-        >
-            Customer Service
-        </button>
-
-    </div>
-
-
-    <button
-        id="chooseServiceButton"
-        class="choose-service-button"
-        type="button"
-    >
-        Choose Another Service
-    </button>
-
-
-    <input
-        id="fileInput"
-        type="file"
-        accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
-    >
-
-
-    <div class="composer">
-
-        <textarea
-            id="messageInput"
-            class="message-input"
-            rows="1"
-            placeholder="Type your message..."
-            autocomplete="off"
-        ></textarea>
-
-        <button
-            id="sendButton"
-            class="send-button"
-            type="button"
+            id="formSubmit"
+            class="form-submit"
+            type="submit"
         >
             SEND
         </button>
 
+    </form>
+
+</div>
+
+</section><section
+    id="reviewView"
+    class="review-view"
+><div class="review-header">
+
+    <h2 class="review-title">
+        Your Work Is Ready
+    </h2>
+
+    <p class="review-subtitle">
+        Your complete prepared work has been received.
+        Open the full review page to read it, request corrections,
+        approve it and continue to payment.
+    </p>
+
+</div>
+
+
+<div class="workspace-review-gateway">
+
+    <h3 class="workspace-review-gateway-title">
+        Full Review Available
+    </h3>
+
+    <p class="workspace-review-gateway-text">
+        Your complete document is kept separately from this
+        workspace so long documents are not forced into a
+        limited card.
+    </p>
+
+    <button
+        id="workspaceOpenReviewButton"
+        class="workspace-review-open"
+        type="button"
+    >
+        Open Full Review
+    </button>
+
+</div>
+
+</section></div></main><section class="bottom"><div class="bottom-inner"><div
+    id="voiceRecording"
+    class="voice-recording"
+>
+    🔴 Recording... tap Voice again to stop.
+</div>
+
+
+<div class="tools">
+
+    <button
+        id="uploadButton"
+        class="tool-button"
+        type="button"
+    >
+        📄 Upload Documents You Want To Give Us
+    </button>
+
+    <button
+        id="voiceButton"
+        class="tool-button gold"
+        type="button"
+    >
+        🎤 Voice
+    </button>
+
+    <button
+        id="customerServiceButton"
+        class="tool-button"
+        type="button"
+    >
+        Customer Service
+    </button>
+
+</div>
+
+
+<button
+    id="chooseServiceButton"
+    class="choose-service-button"
+    type="button"
+>
+    Choose Another Service
+</button>
+
+
+<input
+    id="fileInput"
+    type="file"
+    accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+>
+
+
+<div class="composer">
+
+    <textarea
+        id="messageInput"
+        class="message-input"
+        rows="1"
+        placeholder="Type your message..."
+        autocomplete="off"
+    ></textarea>
+
+    <button
+        id="sendButton"
+        class="send-button"
+        type="button"
+    >
+        SEND
+    </button>
+
+</div>
+
+
+<div
+    id="status"
+    class="status"
+></div>
+
+</div></section></div><!-- =======================================================
+     POPUP REVIEW GATEWAY
+
+     This popup does NOT contain the document.
+
+     It only opens review.html.
+
+     The COMPLETE document is stored in localStorage first.
+     ======================================================= --><div
+    id="reviewGatewayOverlay"
+    class="review-gateway-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="reviewGatewayTitle"
+><div class="review-gateway-card">
+
+    <div class="review-gateway-icon">
+        📄
     </div>
 
+    <h2
+        id="reviewGatewayTitle"
+        class="review-gateway-title"
+    >
+        Your Work Is Ready
+    </h2>
 
-    <div
-        id="status"
-        class="status"
-    ></div>
+    <p class="review-gateway-message">
+        Your complete prepared document is ready for review.
+        Open the full review page to read everything without
+        the workspace card limiting the document.
+    </p>
+
+    <div class="review-gateway-note">
+        Your complete document will be carried into the review
+        page automatically.
+    </div>
+
+    <button
+        id="reviewGatewayOpenButton"
+        class="review-gateway-button"
+        type="button"
+    >
+        Open Full Review
+    </button>
+
+    <button
+        id="reviewGatewayCloseButton"
+        class="review-gateway-close"
+        type="button"
+    >
+        Continue Here
+    </button>
 
 </div>
 
-</section>
-
-</div>
-
-
-<script>
+</div><script>
 
 "use strict";
 
@@ -1447,6 +1247,33 @@ button:disabled{
    ========================================================= */
 
 const API_BASE = "";
+
+
+/* =========================================================
+   REVIEW PAGE CONNECTION
+   =========================================================
+
+   IMPORTANT:
+
+   review.html must read these storage keys.
+
+   The document itself is NOT put into the URL.
+
+   This prevents long documents from becoming oversized URLs
+   and prevents the popup card from becoming the document
+   container.
+   ========================================================= */
+
+const REVIEW_PAGE =
+    "review.html";
+
+
+const REVIEW_STORAGE_KEY =
+    "npbc_complete_review_document";
+
+
+const REVIEW_META_KEY =
+    "npbc_complete_review_metadata";
 
 
 /* =========================================================
@@ -1472,12 +1299,12 @@ const introCard = $("introCard");
 const workCard = $("workCard");
 const workContent = $("workContent");
 
-const correctionInput = $("correctionInput");
+const correctionInput = null;
 
-const applyBtn = $("applyCorrectionsButton");
-const approveBtn = $("approveButton");
+const applyBtn = null;
+const approveBtn = null;
 
-const downloadBtn = $("downloadButton");
+const downloadBtn = null;
 
 const uploadBtn = $("uploadButton");
 const voiceBtn = $("voiceButton");
@@ -1493,18 +1320,39 @@ const status = $("status");
 
 const voiceRecording = $("voiceRecording");
 
-const paymentPanel = $("paymentPanel");
-const paymentDetails = $("paymentDetails");
+const paymentPanel = null;
+const paymentDetails = null;
 
-const paymentReport = $("paymentReportButton");
-const paymentCheck = $("paymentCheckButton");
+const paymentReport = null;
+const paymentCheck = null;
+
+
+/* =========================================================
+   REVIEW GATEWAY ELEMENTS
+   ========================================================= */
+
+const reviewGatewayOverlay =
+    $("reviewGatewayOverlay");
+
+const reviewGatewayOpenButton =
+    $("reviewGatewayOpenButton");
+
+const reviewGatewayCloseButton =
+    $("reviewGatewayCloseButton");
+
+const workspaceOpenReviewButton =
+    $("workspaceOpenReviewButton");
 
 
 /* =========================================================
    SERVICE
    ========================================================= */
 
-const params = new URLSearchParams(location.search);
+const params =
+    new URLSearchParams(
+        location.search
+    );
+
 
 const service = (
     params.get("service") ||
@@ -1537,9 +1385,13 @@ function makeId(prefix){
 function get(key){
 
     try{
+
         return localStorage.getItem(key);
+
     }catch(e){
+
         return null;
+
     }
 
 }
@@ -1548,8 +1400,19 @@ function get(key){
 function put(key,value){
 
     try{
-        localStorage.setItem(key,value);
-    }catch(e){}
+
+        localStorage.setItem(
+            key,
+            value
+        );
+
+        return true;
+
+    }catch(e){
+
+        return false;
+
+    }
 
 }
 
@@ -1591,9 +1454,6 @@ put(
 
 let busy = false;
 
-let approved = false;
-let paymentConfirmed = false;
-
 let currentWork = "";
 
 let mediaRecorder = null;
@@ -1608,19 +1468,27 @@ let recordingStream = null;
 function clean(value){
 
     if(value == null){
+
         return null;
+
     }
 
     return String(value).trim() || null;
+
 }
 
 
-function setStatus(message,type=""){
+function setStatus(
+    message,
+    type=""
+){
 
-    status.textContent = message || "";
+    status.textContent =
+        message || "";
 
     status.className =
         "status " + type;
+
 }
 
 
@@ -1634,337 +1502,263 @@ function busyState(value){
         uploadBtn,
         voiceBtn,
         customerBtn,
-        chooseBtn,
-        applyBtn,
-        approveBtn
+        chooseBtn
     ].forEach(button => {
 
         if(button){
-            button.disabled = value;
+
+            button.disabled =
+                value;
+
         }
 
     });
+
+}
+
+
+/* =========================================================
+   COMPLETE REVIEW HANDOFF
+   =========================================================
+
+   This is the critical connection.
+
+   The FULL generated response is stored.
+
+   No:
+       slice()
+       substring()
+       substr()
+       first section
+       preview extraction
+       character limit
+       page limit
+
+   The complete document goes into storage.
+   ========================================================= */
+
+function saveCompleteReviewDocument(work){
+
+    const completeWork =
+        String(work ?? "");
+
+    if(!completeWork){
+
+        throw new Error(
+            "The prepared document is empty."
+        );
+
+    }
+
+
+    /*
+     * Store the complete document as-is.
+     */
+    const stored =
+        put(
+            REVIEW_STORAGE_KEY,
+            completeWork
+        );
+
+
+    if(!stored){
+
+        throw new Error(
+            "The complete document could not be stored for review."
+        );
+
+    }
+
+
+    /*
+     * Store the identifiers and service separately.
+     */
+    const metadata = {
+
+        customer_id:
+            customerId,
+
+        job_id:
+            jobId,
+
+        client_request_id:
+            requestId,
+
+        service,
+
+        created_at:
+            new Date().toISOString(),
+
+        document_length:
+            completeWork.length
+
+    };
+
+
+    put(
+        REVIEW_META_KEY,
+        JSON.stringify(metadata)
+    );
+
+
+    /*
+     * Also maintain a current-work copy.
+
+     * This allows other pages in the workflow to find
+     * the latest complete document if required.
+     */
+    put(
+        "npbc_current_work",
+        completeWork
+    );
+
+
+    return true;
+
+}
+
+
+/* =========================================================
+   OPEN FULL REVIEW PAGE
+   ========================================================= */
+
+function openFullReview(){
+
+    /*
+     * Verify that the complete document exists before
+     * navigating away.
+     */
+    const storedWork =
+        get(REVIEW_STORAGE_KEY);
+
+
+    if(!storedWork){
+
+        setStatus(
+            "The prepared document is not available for review.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Keep service/job information available to review.html.
+     */
+    put(
+        "npbc_review_service",
+        service
+    );
+
+    put(
+        "npbc_review_job_id",
+        jobId
+    );
+
+    put(
+        "npbc_review_customer_id",
+        customerId
+    );
+
+    put(
+        "npbc_review_request_id",
+        requestId
+    );
+
+
+    /*
+     * review.html receives the document through storage,
+     * NOT through a URL parameter.
+     */
+    const reviewUrl =
+        REVIEW_PAGE +
+        "?service=" +
+        encodeURIComponent(service) +
+        "&job_id=" +
+        encodeURIComponent(jobId);
+
+
+    location.href =
+        reviewUrl;
+
+}
+
+
+/* =========================================================
+   SHOW REVIEW GATEWAY
+   ========================================================= */
+
+function showReviewGateway(){
+
+    reviewGatewayOverlay.classList.add(
+        "show"
+    );
+
+}
+
+
+function closeReviewGateway(){
+
+    reviewGatewayOverlay.classList.remove(
+        "show"
+    );
 
 }
 
 
 /* =========================================================
    DOCUMENT CLEANING
+   =========================================================
+
+   Kept here only for compatibility with any future workspace
+   rendering requirement.
+
+   The document itself is NOT rendered into the workspace.
    ========================================================= */
 
 function removeHtmlCodeFences(value){
 
-    let html = String(value || "").trim();
-
-    html = html.replace(
-        /^```(?:html|HTML)?\s*/i,
-        ""
-    );
-
-    html = html.replace(
-        /\s*```$/i,
-        ""
-    );
-
-    return html.trim();
-}
-
-
-function looksLikeHtml(value){
-
-    const text =
+    let html =
         String(value || "").trim();
 
-    return /<\/?(h[1-6]|p|strong|b|em|i|u|ul|ol|li|hr|table|thead|tbody|tfoot|tr|th|td|blockquote|pre|code|br|div|span|a|img)\b[^>]*>/i.test(text);
+    html =
+        html.replace(
+            /^```(?:html|HTML)?\s*/i,
+            ""
+        );
+
+    html =
+        html.replace(
+            /\s*```$/i,
+            ""
+        );
+
+    return html.trim();
+
 }
 
 
 /* =========================================================
-   SANITIZE DOCUMENT HTML
+   LEGACY RENDER FUNCTION
 
-   Removes executable elements but DOES NOT truncate
-   document content.
-   ========================================================= */
+   Deliberately does not render the complete document into the
+   workspace review card.
 
-function sanitizeDocumentHtml(html){
-
-    const source =
-        document.createElement("div");
-
-    source.innerHTML = html;
-
-
-    source.querySelectorAll(
-        "script,iframe,object,embed,form,input,button,textarea,select,style,link,meta,base"
-    ).forEach(element => {
-
-        element.remove();
-
-    });
-
-
-    const allowedTags = new Set([
-
-        "H1",
-        "H2",
-        "H3",
-        "H4",
-        "H5",
-        "H6",
-
-        "P",
-
-        "STRONG",
-        "B",
-        "EM",
-        "I",
-        "U",
-
-        "UL",
-        "OL",
-        "LI",
-
-        "HR",
-        "BR",
-
-        "TABLE",
-        "THEAD",
-        "TBODY",
-        "TFOOT",
-        "TR",
-        "TH",
-        "TD",
-
-        "BLOCKQUOTE",
-
-        "PRE",
-        "CODE",
-
-        "DIV",
-        "SPAN",
-
-        "A",
-        "IMG"
-
-    ]);
-
-
-    function cleanNode(node){
-
-        if(node.nodeType === Node.TEXT_NODE){
-            return;
-        }
-
-
-        if(node.nodeType !== Node.ELEMENT_NODE){
-
-            node.remove();
-
-            return;
-        }
-
-
-        const tag =
-            node.tagName;
-
-
-        if(!allowedTags.has(tag)){
-
-            const parent =
-                node.parentNode;
-
-            if(parent){
-
-                while(node.firstChild){
-
-                    parent.insertBefore(
-                        node.firstChild,
-                        node
-                    );
-
-                }
-
-                node.remove();
-
-            }
-
-            return;
-        }
-
-
-        Array.from(
-            node.attributes
-        ).forEach(attr => {
-
-            const name =
-                attr.name.toLowerCase();
-
-            const keep =
-                name === "href" ||
-                name === "src" ||
-                name === "alt" ||
-                name === "title";
-
-            if(!keep){
-
-                node.removeAttribute(
-                    attr.name
-                );
-
-            }
-
-        });
-
-
-        if(tag === "A"){
-
-            const href =
-                node.getAttribute("href") || "";
-
-            if(
-                !/^https?:\/\//i.test(href) &&
-                !/^mailto:/i.test(href)
-            ){
-
-                node.removeAttribute(
-                    "href"
-                );
-
-            }else{
-
-                node.setAttribute(
-                    "target",
-                    "_blank"
-                );
-
-                node.setAttribute(
-                    "rel",
-                    "noopener noreferrer"
-                );
-
-            }
-
-        }
-
-
-        if(tag === "IMG"){
-
-            const src =
-                node.getAttribute("src") || "";
-
-            if(
-                !/^https?:\/\//i.test(src) &&
-                !/^data:image\//i.test(src)
-            ){
-
-                node.remove();
-
-                return;
-            }
-
-        }
-
-
-        Array.from(
-            node.childNodes
-        ).forEach(cleanNode);
-
-    }
-
-
-    Array.from(
-        source.childNodes
-    ).forEach(cleanNode);
-
-
-    return source.innerHTML;
-}
-
-
-/* =========================================================
-   COMPLETE DOCUMENT RENDERER
-
-   IMPORTANT:
-   We deliberately do not use:
-
-   slice()
-   substring()
-   substr()
-   first section only
-   page limit
-   character limit
-   height measurement
-
-   The entire returned response is rendered.
+   The complete document goes directly to review.html.
    ========================================================= */
 
 function renderDocument(work){
 
-    const raw =
-        clean(work) || "";
-
-    workContent.innerHTML = "";
-
-    workContent.classList.remove(
-        "document-html"
-    );
-
-
-    if(!raw){
-
-        const placeholder =
-            document.createElement("div");
-
-        placeholder.className =
-            "work-placeholder";
-
-        placeholder.textContent =
-            "Your prepared work will appear here.";
-
-        workContent.appendChild(
-            placeholder
-        );
-
-        return;
-    }
-
-
-    const cleaned =
-        removeHtmlCodeFences(raw);
-
-
-    if(looksLikeHtml(cleaned)){
-
-        const safeHtml =
-            sanitizeDocumentHtml(
-                cleaned
-            );
-
-        workContent.classList.add(
-            "document-html"
-        );
-
-        workContent.innerHTML =
-            safeHtml;
-
-    }else{
-
-        /*
-         * textContent deliberately receives
-         * the COMPLETE returned response.
-         */
-        workContent.textContent =
-            cleaned;
-
-    }
-
+    currentWork =
+        String(work ?? "");
 
     /*
-     * The CARD is the scroll viewport.
+     * Intentionally no innerHTML assignment here.
      *
-     * Start at page one.
+     * The complete document is stored and handed to review.html.
      */
-    workCard.scrollTop = 0;
 }
 
 
@@ -2237,6 +2031,7 @@ function definition(){
     return key
         ? forms[key]
         : generic;
+
 }
 
 
@@ -2290,7 +2085,8 @@ function renderForm(){
 
         if(f.required){
 
-            input.required = true;
+            input.required =
+                true;
 
         }
 
@@ -2343,6 +2139,7 @@ function collect(){
 
 
     return data;
+
 }
 
 
@@ -2393,6 +2190,7 @@ async function apiChat(body){
 
 
     return data;
+
 }
 
 
@@ -2687,30 +2485,53 @@ async function createWork(data){
 
 
         /*
-         * IMPORTANT:
-         *
-         * Never slice the response.
-         * Never substring it.
-         * Never select only a first section.
-         *
-         * Prefer the API's explicit work/content field
-         * when supplied, otherwise use the complete reply.
-         */
+         * CRITICAL:
 
+         * Select the complete returned work.
+         *
+         * There is deliberately NO truncation.
+         */
         currentWork =
             clean(result.work) ||
             clean(result.content) ||
             clean(result.reply) ||
-            "Your work has been prepared.";
+            "";
 
 
+        if(!currentWork){
+
+            throw new Error(
+                "The service completed without returning the prepared work."
+            );
+
+        }
+
+
+        /*
+         * Save the COMPLETE document before showing
+         * the gateway.
+         */
+        saveCompleteReviewDocument(
+            currentWork
+        );
+
+
+        /*
+         * Show the workspace review state.
+         */
         showReview(
             currentWork
         );
 
 
+        /*
+         * Then show the popup gateway.
+         */
+        showReviewGateway();
+
+
         setStatus(
-            "Your work is ready for review.",
+            "Your complete work is ready for review.",
             "success"
         );
 
@@ -2745,43 +2566,20 @@ function showReview(work){
     );
 
 
+    /*
+     * Keep the complete document in memory.
+     */
     currentWork =
-        work || "";
+        String(work || "");
 
 
-    renderDocument(
+    /*
+     * Persist the complete document again immediately
+     * before the review gateway is presented.
+     */
+    saveCompleteReviewDocument(
         currentWork
     );
-
-
-    correctionInput.value = "";
-
-
-    paymentPanel.classList.remove(
-        "show"
-    );
-
-
-    approved = false;
-    paymentConfirmed = false;
-
-
-    downloadBtn.disabled =
-        true;
-
-    downloadBtn.classList.remove(
-        "active"
-    );
-
-    downloadBtn.textContent =
-        "🔒 Download Your Work";
-
-
-    requestAnimationFrame(() => {
-
-        workCard.scrollTop = 0;
-
-    });
 
 }
 
@@ -2813,593 +2611,53 @@ serviceForm.addEventListener(
 
 
 /* =========================================================
-   READ ONLY PROTECTION
+   POPUP GATEWAY EVENTS
    ========================================================= */
 
-[
-    introCard,
-    workCard
-].forEach(element => {
-
-    [
-        "copy",
-        "cut",
-        "contextmenu",
-        "selectstart",
-        "dragstart"
-    ].forEach(eventName => {
-
-        element.addEventListener(
-            eventName,
-            event => {
-
-                event.preventDefault();
-
-                if(event.clipboardData){
-
-                    event.clipboardData.setData(
-                        "text/plain",
-                        ""
-                    );
-
-                }
-
-            }
-        );
-
-    });
-
-
-    element.addEventListener(
-        "keydown",
-        event => {
-
-            if(
-                (event.ctrlKey || event.metaKey) &&
-                [
-                    "a",
-                    "c",
-                    "x",
-                    "s",
-                    "u"
-                ].includes(
-                    event.key.toLowerCase()
-                )
-            ){
-
-                event.preventDefault();
-
-            }
-
-        }
-    );
-
-});
-
-
-/* =========================================================
-   CORRECTIONS
-   ========================================================= */
-
-applyBtn.addEventListener(
-    "click",
-    async () => {
-
-        const correction =
-            clean(
-                correctionInput.value
-            );
-
-
-        if(!correction){
-
-            setStatus(
-                "Please write the correction or change you want.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        if(busy){
-
-            return;
-
-        }
-
-
-        busyState(true);
-
-        setStatus(
-            "Applying your corrections..."
-        );
-
-
-        try{
-
-            const result =
-                await apiChat({
-
-                    message:`
-
-Please revise the prepared work using these customer corrections:
-
-${correction}
-
-RETURN THE COMPLETE REVISED WORK FOR REVIEW.
-
-IMPORTANT:
-
-If the prepared work is a document, return the COMPLETE revised document as properly structured HTML.
-
-Preserve the full document.
-
-Do not shorten it merely to save space.
-
-Do not remove sections that were not requested to be changed.
-
-Do not return only the changed section.
-
-Do not return only the introduction.
-
-Do not stop before the conclusion or final section.
-
-If the original document was intended to be 8 pages, preserve the requested full length while applying the correction.
-
-Do not summarize the document.
-
-Do not replace the complete document with an outline.
-
-Do not wrap the HTML in markdown code fences.
-
-Do not return the HTML source as an explanation.
-
-The returned document itself must be complete.
-
-`,
-
-                    service,
-
-                    event:
-                        "review_correction",
-
-                    customer_id:
-                        customerId,
-
-                    job_id:
-                        jobId,
-
-                    client_request_id:
-                        requestId,
-
-                    current_work:
-                        currentWork,
-
-                    correction,
-
-                    activate_intelligence:
-                        true,
-
-                    create_work:
-                        true
-
-                });
-
-
-            currentWork =
-                clean(result.work) ||
-                clean(result.content) ||
-                clean(result.reply) ||
-                currentWork;
-
-
-            renderDocument(
-                currentWork
-            );
-
-
-            correctionInput.value = "";
-
-
-            setStatus(
-                "Your corrections have been applied. Please review the updated work.",
-                "success"
-            );
-
-
-        }catch(error){
-
-            setStatus(
-                error.message,
-                "error"
-            );
-
-        }finally{
-
-            busyState(false);
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   APPROVAL
-   ========================================================= */
-
-approveBtn.addEventListener(
-    "click",
-    async () => {
-
-        if(busy){
-
-            return;
-
-        }
-
-
-        busyState(true);
-
-        setStatus(
-            "Preparing your payment step..."
-        );
-
-
-        try{
-
-            const query =
-                new URLSearchParams({
-
-                    customer_id:
-                        customerId,
-
-                    job_id:
-                        jobId,
-
-                    client_request_id:
-                        requestId,
-
-                    service
-
-                });
-
-
-            const response =
-                await fetch(
-                    API_BASE +
-                    "/api/approve?" +
-                    query.toString(),
-                    {
-                        method:"POST"
-                    }
-                );
-
-
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
-
-
-            if(
-                !response.ok ||
-                !data.success
-            ){
-
-                throw new Error(
-                    data.message ||
-                    "Approval could not be completed."
-                );
-
-            }
-
-
-            approved = true;
-
-
-            paymentPanel.classList.add(
-                "show"
-            );
-
-
-            const amount =
-                Number(
-                    data.amount || 0
-                );
-
-
-            paymentDetails.textContent =
-`Service: ${data.service || service}
-Amount: ${
-    amount > 0
-        ? "₦" + amount.toLocaleString()
-        : "Quotation required"
-}
-Order: ${data.order_number || "Pending"}`;
-
-
-            setStatus(
-                "Your work is approved. Payment is ready.",
-                "success"
-            );
-
-
-            paymentPanel.scrollIntoView({
-                behavior:"smooth",
-                block:"center"
-            });
-
-
-        }catch(error){
-
-            setStatus(
-                error.message,
-                "error"
-            );
-
-        }finally{
-
-            busyState(false);
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   PAYMENT
-   ========================================================= */
-
-paymentReport.addEventListener(
-    "click",
-    async () => {
-
-        if(!approved){
-
-            setStatus(
-                "Approve the work first.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        const amountMatch =
-            paymentDetails.textContent.match(
-                /Amount:\s*([^\n]+)/
-            );
-
-
-        const amount =
-            amountMatch
-                ? Number(
-                    amountMatch[1]
-                        .replace(
-                            /[^0-9.]/g,
-                            ""
-                        )
-                )
-                : 0;
-
-
-        if(amount <= 0){
-
-            setStatus(
-                "This service requires a quotation before payment.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        try{
-
-            const response =
-                await fetch(
-                    API_BASE +
-                    "/api/payment/create",
-                    {
-
-                        method:"POST",
-
-                        headers:{
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify({
-
-                                job_id:
-                                    jobId,
-
-                                customer_id:
-                                    customerId,
-
-                                service,
-
-                                amount,
-
-                                payment_method:
-                                    "bank_transfer"
-
-                            })
-
-                    }
-                );
-
-
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
-
-
-            if(
-                !response.ok ||
-                !data.success
-            ){
-
-                throw new Error(
-                    data.message ||
-                    "Payment record could not be created."
-                );
-
-            }
-
-
-            paymentDetails.textContent +=
-                `\nPayment ID: ${data.payment_id}\nStatus: Pending`;
-
-
-            setStatus(
-                "Payment reported. Verification is pending.",
-                "success"
-            );
-
-
-        }catch(error){
-
-            setStatus(
-                error.message,
-                "error"
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   PAYMENT STATUS / DOWNLOAD
-   ========================================================= */
-
-paymentCheck.addEventListener(
-    "click",
-    async () => {
-
-        try{
-
-            const response =
-                await fetch(
-                    API_BASE +
-                    "/api/payment/status?job_id=" +
-                    encodeURIComponent(
-                        jobId
-                    )
-                );
-
-
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
-
-
-            if(
-                !response.ok ||
-                !data.success
-            ){
-
-                throw new Error(
-                    data.message ||
-                    "Payment status could not be checked."
-                );
-
-            }
-
-
-            if(
-                String(
-                    data.status || ""
-                ).toLowerCase() === "paid"
-            ){
-
-                paymentConfirmed = true;
-
-
-                downloadBtn.disabled =
-                    false;
-
-                downloadBtn.classList.add(
-                    "active"
-                );
-
-                downloadBtn.textContent =
-                    "⬇ Download Your Work";
-
-
-                downloadBtn.onclick = () => {
-
-                    location.href =
-                        API_BASE +
-                        "/api/download?job_id=" +
-                        encodeURIComponent(
-                            jobId
-                        ) +
-                        "&customer_id=" +
-                        encodeURIComponent(
-                            customerId
-                        );
-
-                };
-
-
-                paymentDetails.textContent +=
-                    "\nStatus: Paid";
-
-
-                setStatus(
-                    "Payment confirmed. Your download is now available.",
-                    "success"
-                );
-
-
-            }else{
-
-                setStatus(
-                    "Payment is still pending."
-                );
-
-            }
-
-
-        }catch(error){
-
-            setStatus(
-                error.message,
-                "error"
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   UPLOAD
-   ========================================================= */
-
-uploadBtn.addEventListener(
+reviewGatewayOpenButton.addEventListener(
     "click",
     () => {
 
-        if(!busy){
+        openFullReview();
 
-            fileInput.click();
+    }
+);
+
+
+reviewGatewayCloseButton.addEventListener(
+    "click",
+    () => {
+
+        closeReviewGateway();
+
+    }
+);
+
+
+workspaceOpenReviewButton.addEventListener(
+    "click",
+    () => {
+
+        openFullReview();
+
+    }
+);
+
+
+/*
+ * Tapping outside the popup closes the gateway,
+ * but does NOT delete the document.
+ */
+reviewGatewayOverlay.addEventListener(
+    "click",
+    event => {
+
+        if(
+            event.target ===
+            reviewGatewayOverlay
+        ){
+
+            closeReviewGateway();
 
         }
 
@@ -3407,112 +2665,19 @@ uploadBtn.addEventListener(
 );
 
 
-fileInput.addEventListener(
-    "change",
-    async () => {
+/*
+ * Escape closes the popup.
+ * The complete document remains stored.
+ */
+document.addEventListener(
+    "keydown",
+    event => {
 
-        const file =
-            fileInput.files?.[0];
+        if(
+            event.key === "Escape"
+        ){
 
-
-        if(!file){
-
-            return;
-
-        }
-
-
-        const formData =
-            new FormData();
-
-
-        formData.append(
-            "file",
-            file
-        );
-
-        formData.append(
-            "customer_id",
-            customerId
-        );
-
-        formData.append(
-            "job_id",
-            jobId
-        );
-
-        formData.append(
-            "client_request_id",
-            requestId
-        );
-
-        formData.append(
-            "service",
-            service
-        );
-
-
-        setStatus(
-            "Uploading the document you want to give us..."
-        );
-
-
-        try{
-
-            const response =
-                await fetch(
-                    API_BASE +
-                    "/api/upload",
-                    {
-                        method:"POST",
-                        body:formData
-                    }
-                );
-
-
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
-
-
-            if(
-                !response.ok ||
-                !data.success
-            ){
-
-                throw new Error(
-                    data.message ||
-                    "Document upload failed."
-                );
-
-            }
-
-
-            setStatus(
-                "Your document has been received successfully.",
-                "success"
-            );
-
-
-            await sendMessage(
-                "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.",
-                "document_uploaded"
-            );
-
-
-        }catch(error){
-
-            setStatus(
-                error.message,
-                "error"
-            );
-
-        }finally{
-
-            fileInput.value = "";
+            closeReviewGateway();
 
         }
 
@@ -3590,31 +2755,45 @@ async function sendMessage(
 
 
         /*
-         * Only replace the current document when
-         * the API actually returned new work.
-         *
-         * Prefer explicit work/content fields.
-         */
+         * If Ada returns a new complete work document,
+         * replace the stored complete document.
 
+         * Again, there is NO truncation.
+         */
         const returnedWork =
             clean(data.work) ||
             clean(data.content) ||
             clean(data.reply);
 
 
-        if(
-            returnedWork &&
-            reviewView.classList.contains(
-                "show"
-            )
-        ){
+        if(returnedWork){
 
             currentWork =
                 returnedWork;
 
-            renderDocument(
+
+            /*
+             * Persist the COMPLETE updated document.
+             */
+            saveCompleteReviewDocument(
                 currentWork
             );
+
+
+            /*
+             * If we are already in the review stage,
+             * reopen the gateway so the customer can enter
+             * review.html and see the updated complete work.
+             */
+            if(
+                reviewView.classList.contains(
+                    "show"
+                )
+            ){
+
+                showReviewGateway();
+
+            }
 
         }
 
@@ -3665,6 +2844,7 @@ sendBtn.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -3827,6 +3007,137 @@ chooseBtn.addEventListener(
 
             location.href =
                 "conversation.html";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   UPLOAD
+   ========================================================= */
+
+uploadBtn.addEventListener(
+    "click",
+    () => {
+
+        if(!busy){
+
+            fileInput.click();
+
+        }
+
+    }
+);
+
+
+fileInput.addEventListener(
+    "change",
+    async () => {
+
+        const file =
+            fileInput.files?.[0];
+
+
+        if(!file){
+
+            return;
+
+        }
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "file",
+            file
+        );
+
+        formData.append(
+            "customer_id",
+            customerId
+        );
+
+        formData.append(
+            "job_id",
+            jobId
+        );
+
+        formData.append(
+            "client_request_id",
+            requestId
+        );
+
+        formData.append(
+            "service",
+            service
+        );
+
+
+        setStatus(
+            "Uploading the document you want to give us..."
+        );
+
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE +
+                    "/api/upload",
+                    {
+                        method:"POST",
+                        body:formData
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok ||
+                !data.success
+            ){
+
+                throw new Error(
+                    data.message ||
+                    "Document upload failed."
+                );
+
+            }
+
+
+            setStatus(
+                "Your document has been received successfully.",
+                "success"
+            );
+
+
+            await sendMessage(
+                "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.",
+                "document_uploaded"
+            );
+
+
+        }catch(error){
+
+            setStatus(
+                error.message,
+                "error"
+            );
+
+        }finally{
+
+            fileInput.value = "";
 
         }
 
@@ -4079,7 +3390,5 @@ async function init(){
 
 init();
 
-</script>
-
-</body>
+</script></body>
 </html>
