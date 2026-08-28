@@ -1,70 +1,50 @@
 """
 Naija Pocket Business Center
-CURRENT FastAPI APPLICATION
+CURRENT FASTAPI APPLICATION
 
-CUSTOMER WEBSITE
-    /
-    /conversation.html
-    /workspace.html
+LIVE ARCHITECTURE
+-----------------
 
-CURRENT INTELLIGENCE
-    /api/chat
-        ↓
-    AdaResponse
-        ↓
-    Groq
+Customer
+    ↓
+FastAPI
+    ↓
+AdaResponse
+    ↓
+Groq
+    ↓
+FastAPI Job State
+    ↓
+Review Page
 
-CURRENT ARCHITECTURE ONLY
+ACTIVE FILES
+------------
+ada_api.py
+ada_response.py
+review.html
+
 NO FLASK
 NO phone_bridge.py
 NO AdaController
 NO AdaAIEngine
-NO RETIRED INTELLIGENCE CHAIN
-
-IMPORTANT
----------
-This file is the FastAPI application/connection layer.
-
-It does NOT contain the intelligence itself.
+NO RETIRED KEYWORD INTELLIGENCE
 
 AdaResponse remains the intelligence engine.
 
-This file must preserve:
-    - customer message
-    - selected service
-    - application context
-    - current event
-    - customer ID
-    - job ID
-    - client request ID
-    - conversation session
-    - AdaResponse reasoning
-    - billing/service context supplied to AdaResponse
+FastAPI is the connection/state layer.
 
-TOKEN SAFETY
-------------
-This file does NOT truncate the customer's message,
-application context, service information, or AdaResponse
-prompt.
-
-Token control belongs inside ada_response.py, where the
-intelligence layer can control the provider request without
-the API connection layer cutting off customer information.
-
-DEBUG MODE
-----------
-Real application errors are returned by the API while
-ADA_DEBUG_ERRORS is enabled.
-
-Sensitive configuration values such as API keys are NEVER
-returned.
+Review is the visual document/review layer.
 """
 
 from __future__ import annotations
 
+import asyncio
+import html
 import os
 import traceback
+import uuid
 from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -105,13 +85,7 @@ DEBUG_ERRORS = (
 BASE_DIR = Path(__file__).resolve().parent
 
 
-def find_file(
-    filename: str,
-) -> Path | None:
-    """
-    Locate customer-facing HTML files without changing the
-    existing project structure.
-    """
+def find_file(filename: str) -> Path | None:
 
     candidates = [
         BASE_DIR / filename,
@@ -121,6 +95,7 @@ def find_file(
     ]
 
     for path in candidates:
+
         if path.is_file():
             return path
 
@@ -136,10 +111,6 @@ app = FastAPI(
     version="current",
 )
 
-
-# ============================================================
-# CORS
-# ============================================================
 
 app.add_middleware(
     CORSMiddleware,
@@ -161,24 +132,15 @@ def session_key(
     customer_id: str | None,
     job_id: str | None,
 ) -> str:
-    """
-    Every customer/job receives its own AdaResponse session.
-
-    This prevents unrelated jobs from sharing conversation
-    history while allowing the same job to continue its
-    conversation.
-    """
 
     customer = (
-        str(
-            customer_id or "anonymous"
-        ).strip()
+        str(customer_id or "anonymous").strip()
+        or "anonymous"
     )
 
     job = (
-        str(
-            job_id or "default"
-        ).strip()
+        str(job_id or "default").strip()
+        or "default"
     )
 
     return f"{customer}:{job}"
@@ -189,17 +151,6 @@ def get_session(
     job_id: str | None,
     service: str | None = None,
 ) -> AdaResponse:
-    """
-    Get or create the AdaResponse intelligence session.
-
-    The intelligence object itself remains responsible for:
-        - prompts
-        - reasoning
-        - service context
-        - billing context
-        - conversation history
-        - Groq communication
-    """
 
     key = session_key(
         customer_id,
@@ -222,6 +173,98 @@ def get_session(
 
 
 # ============================================================
+# REVIEW JOB STATE
+# ============================================================
+#
+# FastAPI owns application state.
+#
+# AdaResponse owns intelligence.
+#
+# Review reads this state.
+#
+# This is intentionally kept here rather than inside
+# ada_response.py so the intelligence engine does not become
+# a web/application-state manager.
+# ============================================================
+
+_jobs: dict[str, dict[str, Any]] = {}
+
+_generation_tasks: dict[str, asyncio.Task] = {}
+
+
+def get_job(job_id: str) -> dict[str, Any] | None:
+
+    return _jobs.get(
+        str(job_id)
+    )
+
+
+def create_job(
+    *,
+    job_id: str,
+    customer_id: str | None,
+    service: str | None,
+    message: str,
+    context: str | None,
+    client_request_id: str | None,
+) -> dict[str, Any]:
+
+    job = {
+        "job_id": job_id,
+
+        "customer_id": customer_id,
+
+        "service": service,
+
+        "original_request": message,
+
+        "context": context,
+
+        "client_request_id":
+            client_request_id,
+
+        "status": "generating",
+
+        "current_version": 1,
+
+        "version_id": f"{job_id}:1",
+
+        "approved": False,
+
+        "paid": False,
+
+        "progress": {
+            "completed": 0,
+            "total": 1,
+        },
+
+        "sections": [
+            {
+                "section_id": f"{job_id}:section:1",
+                "section_order": 1,
+                "title": (
+                    service
+                    or "Your Requested Service"
+                ),
+                "status": "generating",
+            }
+        ],
+
+        "document_html": "",
+
+        "error": None,
+
+        "generation_started": False,
+
+        "generation_finished": False,
+    }
+
+    _jobs[job_id] = job
+
+    return job
+
+
+# ============================================================
 # ERROR FORMAT
 # ============================================================
 
@@ -232,12 +275,6 @@ def error_response(
     status_code: int = 500,
     error_code: str | None = None,
 ):
-    """
-    Central application error response.
-
-    API keys and other sensitive configuration values are not
-    deliberately included in the response.
-    """
 
     error_type = (
         type(error).__name__
@@ -262,7 +299,10 @@ def error_response(
     content = {
         "success": False,
         "stage": stage,
-        "error": error_code or "APPLICATION_ERROR",
+        "error": (
+            error_code
+            or "APPLICATION_ERROR"
+        ),
         "error_type": error_type,
         "error_message": error_message,
     }
@@ -287,15 +327,10 @@ def error_response(
 
 
 # ============================================================
-# CHAT REQUEST
+# REQUEST MODELS
 # ============================================================
 
 class ChatRequest(BaseModel):
-    """
-    JSON request received from the customer-facing pages.
-
-    All existing application fields are preserved.
-    """
 
     message: str = Field(
         default=""
@@ -316,31 +351,44 @@ class ChatRequest(BaseModel):
     context: str | None = None
 
 
+class CorrectionRequest(BaseModel):
+
+    job_id: str
+
+    instruction: str
+
+
+class ApprovalRequest(BaseModel):
+
+    job_id: str
+
+    version_id: str
+
+
 # ============================================================
-# CUSTOMER WEBSITE
+# CUSTOMER PAGES
 # ============================================================
 
 @app.get("/")
 async def customer_home():
 
-    index_file = find_file(
+    file = find_file(
         "index.html"
     )
 
-    if index_file is None:
+    if file is None:
 
         return error_response(
             stage="CUSTOMER_HOME",
             error=(
-                "index.html was not found. "
-                f"BASE_DIR={BASE_DIR}"
+                "index.html was not found."
             ),
             status_code=500,
             error_code="INDEX_HTML_NOT_FOUND",
         )
 
     return FileResponse(
-        index_file,
+        file,
         media_type="text/html",
     )
 
@@ -363,11 +411,12 @@ async def customer_conversation():
         return error_response(
             stage="CONVERSATION_PAGE",
             error=(
-                "conversation.html was not found. "
-                f"BASE_DIR={BASE_DIR}"
+                "conversation.html was not found."
             ),
             status_code=404,
-            error_code="CONVERSATION_HTML_NOT_FOUND",
+            error_code=(
+                "CONVERSATION_HTML_NOT_FOUND"
+            ),
         )
 
     return FileResponse(
@@ -388,11 +437,38 @@ async def customer_workspace():
         return error_response(
             stage="WORKSPACE_PAGE",
             error=(
-                "workspace.html was not found. "
-                f"BASE_DIR={BASE_DIR}"
+                "workspace.html was not found."
             ),
             status_code=404,
-            error_code="WORKSPACE_HTML_NOT_FOUND",
+            error_code=(
+                "WORKSPACE_HTML_NOT_FOUND"
+            ),
+        )
+
+    return FileResponse(
+        file,
+        media_type="text/html",
+    )
+
+
+@app.get("/review.html")
+async def customer_review():
+
+    file = find_file(
+        "review.html"
+    )
+
+    if file is None:
+
+        return error_response(
+            stage="REVIEW_PAGE",
+            error=(
+                "review.html was not found."
+            ),
+            status_code=404,
+            error_code=(
+                "REVIEW_HTML_NOT_FOUND"
+            ),
         )
 
     return FileResponse(
@@ -402,20 +478,23 @@ async def customer_workspace():
 
 
 # ============================================================
-# API STATUS
+# HEALTH
 # ============================================================
 
 @app.get("/health")
 async def health():
 
     try:
+
         configured = is_configured()
+
     except Exception as error:
+
         return error_response(
-            stage="HEALTH_CONFIGURATION_CHECK",
+            stage="HEALTH",
             error=error,
             status_code=500,
-            error_code="HEALTH_CONFIGURATION_ERROR",
+            error_code="HEALTH_ERROR",
         )
 
     return {
@@ -425,7 +504,6 @@ async def health():
         "intelligence": "AdaResponse",
         "model": get_ada_model(),
         "configured": configured,
-        "debug_errors": DEBUG_ERRORS,
     }
 
 
@@ -433,13 +511,16 @@ async def health():
 async def api_status():
 
     try:
+
         configured = is_configured()
+
     except Exception as error:
+
         return error_response(
-            stage="API_STATUS_CONFIGURATION_CHECK",
+            stage="API_STATUS",
             error=error,
             status_code=500,
-            error_code="API_STATUS_CONFIGURATION_ERROR",
+            error_code="STATUS_ERROR",
         )
 
     return {
@@ -449,7 +530,7 @@ async def api_status():
         "model": get_ada_model(),
         "configured": configured,
         "active_sessions": len(_sessions),
-        "debug_errors": DEBUG_ERRORS,
+        "active_jobs": len(_jobs),
     }
 
 
@@ -461,70 +542,11 @@ async def api_status():
 async def chat(
     request: ChatRequest,
 ):
-    """
-    Main customer intelligence route.
-
-    IMPORTANT:
-    Nothing in this function replaces AdaResponse reasoning.
-
-    The flow is:
-
-        customer request
-              ↓
-        FastAPI validation
-              ↓
-        session selection
-              ↓
-        application context
-              ↓
-        AdaResponse.respond(...)
-              ↓
-        Groq
-              ↓
-        customer reply
-    """
 
     print()
     print("-" * 70)
     print("CHAT REQUEST RECEIVED")
     print("-" * 70)
-
-    print(
-        "Service:",
-        request.service,
-    )
-
-    print(
-        "Customer:",
-        request.customer_id,
-    )
-
-    print(
-        "Job:",
-        request.job_id,
-    )
-
-    print(
-        "Event:",
-        request.event,
-    )
-
-    print(
-        "Message:",
-        request.message,
-    )
-
-    print(
-        "Activate intelligence:",
-        request.activate_intelligence,
-    )
-
-    print("-" * 70)
-
-
-    # --------------------------------------------------------
-    # MESSAGE
-    # --------------------------------------------------------
 
     message = (
         str(
@@ -536,87 +558,130 @@ async def chat(
 
         return error_response(
             stage="CHAT_VALIDATION",
-            error=(
-                "The chat message is empty."
-            ),
+            error="The chat message is empty.",
             status_code=400,
             error_code="EMPTY_MESSAGE",
         )
-
-
-    # --------------------------------------------------------
-    # INTELLIGENCE ACTIVATION
-    # --------------------------------------------------------
-    #
-    # The field is retained for frontend compatibility.
-    #
-    # The normal customer chat route must always use the
-    # intelligence layer. There is deliberately no fallback
-    # keyword engine and no alternative chatbot.
-    #
-    # A false value is treated as a client/application state
-    # problem rather than silently bypassing AdaResponse.
-    # --------------------------------------------------------
 
     if not request.activate_intelligence:
 
         return error_response(
             stage="INTELLIGENCE_ACTIVATION",
             error=(
-                "Intelligence activation is disabled "
-                "for this request."
+                "Intelligence activation is disabled."
             ),
             status_code=400,
             error_code="INTELLIGENCE_NOT_ACTIVATED",
         )
 
-
-    # --------------------------------------------------------
-    # INTELLIGENCE CONFIGURATION
-    # --------------------------------------------------------
-
     try:
 
-        configured = (
-            is_configured()
-        )
+        configured = is_configured()
 
     except Exception as error:
 
         return error_response(
-            stage="INTELLIGENCE_CONFIGURATION_CHECK",
+            stage="CONFIGURATION_CHECK",
             error=error,
             status_code=500,
-            error_code=(
-                "CONFIGURATION_CHECK_ERROR"
-            ),
+            error_code="CONFIGURATION_ERROR",
         )
-
 
     if not configured:
 
         return error_response(
             stage="INTELLIGENCE_CONFIGURATION",
             error=(
-                "AdaResponse is not configured. "
-                "Check the Groq configuration."
+                "AdaResponse is not configured."
             ),
             status_code=503,
-            error_code=(
-                "INTELLIGENCE_NOT_CONFIGURED"
-            ),
+            error_code="INTELLIGENCE_NOT_CONFIGURED",
         )
 
+    # --------------------------------------------------------
+    # JOB ID
+    # --------------------------------------------------------
+
+    job_id = (
+        str(
+            request.job_id or ""
+        ).strip()
+        or str(
+            uuid.uuid4()
+        )
+    )
 
     # --------------------------------------------------------
-    # SESSION
+    # CONTEXT
+    # --------------------------------------------------------
+
+    context_parts: list[str] = []
+
+    if request.context:
+
+        value = (
+            str(
+                request.context
+            ).strip()
+        )
+
+        if value:
+            context_parts.append(
+                value
+            )
+
+    if request.customer_id:
+
+        context_parts.append(
+            "CUSTOMER ID\n"
+            + str(
+                request.customer_id
+            )
+        )
+
+    if request.job_id:
+
+        context_parts.append(
+            "ACTIVE JOB ID\n"
+            + str(
+                request.job_id
+            )
+        )
+
+    if request.client_request_id:
+
+        context_parts.append(
+            "CLIENT REQUEST ID\n"
+            + str(
+                request.client_request_id
+            )
+        )
+
+    if request.service:
+
+        context_parts.append(
+            "CURRENT SELECTED SERVICE\n"
+            + str(
+                request.service
+            )
+        )
+
+    application_context = (
+        "\n\n".join(
+            context_parts
+        )
+        or None
+    )
+
+    # --------------------------------------------------------
+    # ADA SESSION
     # --------------------------------------------------------
 
     try:
 
         ada = get_session(
             customer_id=request.customer_id,
-            job_id=request.job_id,
+            job_id=job_id,
             service=request.service,
         )
 
@@ -629,213 +694,539 @@ async def chat(
             error_code="SESSION_ERROR",
         )
 
-
     # --------------------------------------------------------
-    # APPLICATION CONTEXT
+    # NORMAL ADA CONVERSATION
     # --------------------------------------------------------
-    #
-    # IMPORTANT:
-    # The API does not truncate this information.
-    #
-    # AdaResponse is responsible for provider-side token
-    # control.
-    #
-    # This preserves the complete information supplied by
-    # the customer-facing application.
-    # --------------------------------------------------------
-
-    context_parts: list[str] = []
-
-    if request.context:
-
-        supplied_context = (
-            str(
-                request.context
-            ).strip()
-        )
-
-        if supplied_context:
-
-            context_parts.append(
-                supplied_context
-            )
-
-
-    if request.customer_id:
-
-        context_parts.append(
-            "CUSTOMER ID\n"
-            + str(
-                request.customer_id
-            )
-        )
-
-
-    if request.job_id:
-
-        context_parts.append(
-            "ACTIVE JOB ID\n"
-            + str(
-                request.job_id
-            )
-        )
-
-
-    if request.client_request_id:
-
-        context_parts.append(
-            "CLIENT REQUEST ID\n"
-            + str(
-                request.client_request_id
-            )
-        )
-
-
-    if request.service:
-
-        context_parts.append(
-            "CURRENT SELECTED SERVICE\n"
-            + str(
-                request.service
-            )
-        )
-
-
-    application_context = (
-        "\n\n".join(
-            part
-            for part in context_parts
-            if part
-        )
-    )
-
-
-    # --------------------------------------------------------
-    # CURRENT EVENT
-    # --------------------------------------------------------
-
-    event = (
-        str(
-            request.event or ""
-        ).strip()
-        or None
-    )
-
-
-    # --------------------------------------------------------
-    # INTELLIGENCE CALL
-    # --------------------------------------------------------
-
-    print()
-    print(
-        "CALLING AdaResponse..."
-    )
-
-    print(
-        "Model:",
-        get_ada_model(),
-    )
-
-    print(
-        "Service:",
-        request.service,
-    )
-
-    print(
-        "Event:",
-        event,
-    )
-
-    print(
-        "Context supplied:",
-        bool(application_context),
-    )
-
-    print(
-        "Message characters:",
-        len(message),
-    )
-
-    print()
-
 
     try:
 
         reply = ada.respond(
             message=message,
             service=request.service,
-            event=event,
-            context=(
-                application_context
-                or None
-            ),
+            event=request.event,
+            context=application_context,
         )
 
     except Exception as error:
 
         return error_response(
-            stage="ADA_INTELLIGENCE",
+            stage="ADA_RESPONSE",
             error=error,
             status_code=500,
-            error_code=(
-                "INTELLIGENCE_ERROR"
-            ),
+            error_code="ADA_RESPONSE_ERROR",
         )
-
-
-    # --------------------------------------------------------
-    # RESPONSE
-    # --------------------------------------------------------
 
     reply = str(
         reply or ""
     ).strip()
 
-
     if not reply:
 
         return error_response(
-            stage="ADA_INTELLIGENCE_RESPONSE",
+            stage="ADA_RESPONSE",
             error=(
                 "AdaResponse returned an empty response."
             ),
             status_code=500,
-            error_code=(
-                "EMPTY_INTELLIGENCE_RESPONSE"
+            error_code="EMPTY_ADA_RESPONSE",
+        )
+
+    # --------------------------------------------------------
+    # CREATE / UPDATE REVIEW JOB
+    # --------------------------------------------------------
+
+    existing_job = _jobs.get(
+        job_id
+    )
+
+    if existing_job is None:
+
+        create_job(
+            job_id=job_id,
+            customer_id=request.customer_id,
+            service=request.service,
+            message=message,
+            context=application_context,
+            client_request_id=(
+                request.client_request_id
             ),
         )
 
+    else:
 
-    print()
+        existing_job["original_request"] = message
+
+        if request.service:
+
+            existing_job["service"] = (
+                request.service
+            )
+
+        if application_context:
+
+            existing_job["context"] = (
+                application_context
+            )
+
     print(
         "AdaResponse returned successfully."
     )
 
     print(
-        "Reply:",
-        reply,
+        "Job:",
+        job_id,
     )
 
-    print()
-
+    print("-" * 70)
 
     return {
         "success": True,
+
         "reply": reply,
+
+        "job_id": job_id,
+
         "service": (
             request.service
             or ada.service
         ),
-        "customer_id": (
-            request.customer_id
-        ),
-        "job_id": (
-            request.job_id
-        ),
-        "client_request_id": (
-            request.client_request_id
-        ),
+
+        "customer_id":
+            request.customer_id,
+
+        "client_request_id":
+            request.client_request_id,
+
+        "review_url":
+            "/review.html?job_id="
+            + job_id,
     }
+
+
+# ============================================================
+# DOCUMENT GENERATION
+# ============================================================
+
+async def generate_document_for_job(
+    job_id: str,
+):
+
+    job = _jobs.get(
+        job_id
+    )
+
+    if job is None:
+        return
+
+    if job.get(
+        "generation_started"
+    ):
+        return
+
+    job["generation_started"] = True
+    job["status"] = "generating"
+
+    for section in job["sections"]:
+
+        section["status"] = "generating"
+
+    try:
+
+        ada = get_session(
+            customer_id=job.get(
+                "customer_id"
+            ),
+            job_id=job_id,
+            service=job.get(
+                "service"
+            ),
+        )
+
+        print()
+        print("=" * 70)
+        print("DOCUMENT GENERATION STARTED")
+        print("=" * 70)
+        print("Job:", job_id)
+        print("Service:", job.get("service"))
+        print("=" * 70)
+
+        # ----------------------------------------------------
+        # ADAResponse remains responsible for the actual
+        # document intelligence.
+        #
+        # FastAPI simply passes the complete request/context
+        # through.
+        # ----------------------------------------------------
+
+        document_html = (
+            await asyncio.to_thread(
+                ada.generate_complete_document,
+                original_request=job[
+                    "original_request"
+                ],
+                service=job.get(
+                    "service"
+                ),
+                context=job.get(
+                    "context"
+                ),
+                correction=False,
+                existing_work=None,
+                event="document_generation",
+            )
+        )
+
+        document_html = str(
+            document_html or ""
+        ).strip()
+
+        if not document_html:
+
+            raise RuntimeError(
+                "AdaResponse generated an empty document."
+            )
+
+        # ----------------------------------------------------
+        # DOCUMENT READY
+        # ----------------------------------------------------
+
+        job["document_html"] = (
+            document_html
+        )
+
+        job["progress"] = {
+            "completed": 1,
+            "total": 1,
+        }
+
+        job["sections"][0][
+            "status"
+        ] = "done"
+
+        job["sections"][0][
+            "title"
+        ] = (
+            job.get("service")
+            or "Completed Service"
+        )
+
+        job["status"] = "complete"
+
+        job["generation_finished"] = True
+
+        print()
+        print(
+            "DOCUMENT GENERATION COMPLETE"
+        )
+        print(
+            "Job:",
+            job_id,
+        )
+        print()
+
+    except Exception as error:
+
+        job["status"] = "error"
+
+        job["error"] = {
+            "type":
+                type(error).__name__,
+            "message":
+                str(error),
+        }
+
+        job["generation_finished"] = True
+
+        print()
+        print(
+            "DOCUMENT GENERATION FAILED"
+        )
+
+        traceback.print_exc()
+
+
+def ensure_generation_started(
+    job_id: str,
+):
+
+    if job_id in _generation_tasks:
+
+        task = _generation_tasks[
+            job_id
+        ]
+
+        if not task.done():
+            return
+
+    job = _jobs.get(
+        job_id
+    )
+
+    if job is None:
+        return
+
+    if job.get(
+        "generation_finished"
+    ):
+        return
+
+    _generation_tasks[
+        job_id
+    ] = asyncio.create_task(
+        generate_document_for_job(
+            job_id
+        )
+    )
+
+
+# ============================================================
+# REVIEW
+# ============================================================
+
+@app.get("/api/review")
+async def review(
+    job_id: str,
+):
+
+    job_id = (
+        str(job_id or "").strip()
+    )
+
+    if not job_id:
+
+        return error_response(
+            stage="REVIEW",
+            error="job_id is required.",
+            status_code=400,
+            error_code="JOB_ID_REQUIRED",
+        )
+
+    job = _jobs.get(
+        job_id
+    )
+
+    if job is None:
+
+        return error_response(
+            stage="REVIEW",
+            error=(
+                "The requested document job "
+                "does not exist in this application session."
+            ),
+            status_code=404,
+            error_code="JOB_NOT_FOUND",
+        )
+
+    ensure_generation_started(
+        job_id
+    )
+
+    return {
+        "success": True,
+
+        "job_id":
+            job["job_id"],
+
+        "status":
+            job["status"],
+
+        "current_version":
+            job["current_version"],
+
+        "version_id":
+            job["version_id"],
+
+        "progress":
+            job["progress"],
+
+        "sections":
+            job["sections"],
+
+        "document_html":
+            job["document_html"],
+
+        "approved":
+            job["approved"],
+
+        "paid":
+            job["paid"],
+
+        "error":
+            job["error"],
+    }
+
+
+# ============================================================
+# CORRECTION
+# ============================================================
+
+@app.post("/api/correct")
+async def correct(
+    request: CorrectionRequest,
+):
+
+    job = _jobs.get(
+        request.job_id
+    )
+
+    if job is None:
+
+        return error_response(
+            stage="CORRECTION",
+            error="Job not found.",
+            status_code=404,
+            error_code="JOB_NOT_FOUND",
+        )
+
+    instruction = (
+        str(
+            request.instruction
+        ).strip()
+    )
+
+    if not instruction:
+
+        return error_response(
+            stage="CORRECTION",
+            error="Correction instruction is empty.",
+            status_code=400,
+            error_code="EMPTY_CORRECTION",
+        )
+
+    job["status"] = "generating"
+
+    job["approved"] = False
+
+    job["progress"] = {
+        "completed": 0,
+        "total": 1,
+    }
+
+    job["sections"][0][
+        "status"
+    ] = "generating"
+
+    job["generation_finished"] = False
+
+    job["original_request"] = (
+        job["original_request"]
+        + "\n\nCUSTOMER CORRECTION:\n"
+        + instruction
+    )
+
+    # Remove old completed task reference.
+    _generation_tasks.pop(
+        request.job_id,
+        None,
+    )
+
+    # Start a new generation.
+    ensure_generation_started(
+        request.job_id
+    )
+
+    return {
+        "success": True,
+        "job_id": request.job_id,
+        "status": "generating",
+    }
+
+
+# ============================================================
+# APPROVAL
+# ============================================================
+
+@app.post("/api/approve")
+async def approve(
+    request: ApprovalRequest,
+):
+
+    job = _jobs.get(
+        request.job_id
+    )
+
+    if job is None:
+
+        return error_response(
+            stage="APPROVAL",
+            error="Job not found.",
+            status_code=404,
+            error_code="JOB_NOT_FOUND",
+        )
+
+    if request.version_id != job[
+        "version_id"
+    ]:
+
+        return error_response(
+            stage="APPROVAL",
+            error=(
+                "The supplied document version "
+                "does not match the current version."
+            ),
+            status_code=409,
+            error_code="VERSION_MISMATCH",
+        )
+
+    if job["status"] != "complete":
+
+        return error_response(
+            stage="APPROVAL",
+            error=(
+                "The document is not ready "
+                "for approval."
+            ),
+            status_code=409,
+            error_code="DOCUMENT_NOT_READY",
+        )
+
+    job["approved"] = True
+
+    return {
+        "success": True,
+        "job_id": request.job_id,
+        "version_id": request.version_id,
+        "approved": True,
+    }
+
+
+# ============================================================
+# DOWNLOAD PLACEHOLDER
+# ============================================================
+#
+# Payment/download is deliberately NOT being developed yet.
+#
+# The review connection is being established first.
+# ============================================================
+
+@app.get("/api/download")
+async def download(
+    job_id: str,
+    version_id: str,
+):
+
+    job = _jobs.get(
+        job_id
+    )
+
+    if job is None:
+
+        return error_response(
+            stage="DOWNLOAD",
+            error="Job not found.",
+            status_code=404,
+            error_code="JOB_NOT_FOUND",
+        )
+
+    return error_response(
+        stage="DOWNLOAD",
+        error=(
+            "Payment and final download workflow "
+            "has not been connected yet."
+        ),
+        status_code=409,
+        error_code="DOWNLOAD_NOT_CONNECTED",
+    )
 
 
 # ============================================================
@@ -865,9 +1256,8 @@ async def clear_chat(
 
         return {
             "success": True,
-            "message": (
-                "Conversation cleared."
-            ),
+            "message":
+                "Conversation cleared.",
         }
 
     except Exception as error:
@@ -881,78 +1271,6 @@ async def clear_chat(
 
 
 # ============================================================
-# CUSTOMER SERVICE
-# ============================================================
-
-@app.post("/api/customer-service")
-async def customer_service(
-    customer_id: str | None = None,
-    job_id: str | None = None,
-    service: str | None = None,
-):
-
-    try:
-
-        ada = get_session(
-            customer_id=customer_id,
-            job_id=job_id,
-            service=service,
-        )
-
-        reply = ada.respond(
-            message=(
-                "The customer is requesting "
-                "Customer Service assistance. "
-                "Respond appropriately."
-            ),
-            service=service,
-            event=(
-                "customer_service_requested"
-            ),
-        )
-
-        reply = str(
-            reply or ""
-        ).strip()
-
-        if not reply:
-
-            return error_response(
-                stage="CUSTOMER_SERVICE_RESPONSE",
-                error=(
-                    "AdaResponse returned an empty "
-                    "customer service response."
-                ),
-                status_code=500,
-                error_code=(
-                    "EMPTY_CUSTOMER_SERVICE_RESPONSE"
-                ),
-            )
-
-        return {
-            "success": True,
-            "reply": reply,
-            "service": (
-                service
-                or ada.service
-            ),
-            "customer_id": customer_id,
-            "job_id": job_id,
-        }
-
-    except Exception as error:
-
-        return error_response(
-            stage="CUSTOMER_SERVICE",
-            error=error,
-            status_code=500,
-            error_code=(
-                "CUSTOMER_SERVICE_ERROR"
-            ),
-        )
-
-
-# ============================================================
 # STARTUP
 # ============================================================
 
@@ -961,13 +1279,14 @@ async def startup():
 
     print()
     print("=" * 70)
-    print(
-        "NAIJA POCKET BUSINESS CENTER"
-    )
-    print(
-        "CURRENT FASTAPI APPLICATION"
-    )
+    print("NAIJA POCKET BUSINESS CENTER")
+    print("FASTAPI + AdaResponse + REVIEW")
     print("=" * 70)
+
+    print(
+        "API:",
+        "FastAPI",
+    )
 
     print(
         "Intelligence:",
@@ -981,18 +1300,11 @@ async def startup():
 
     try:
 
-        configured = (
-            is_configured()
-        )
+        configured = is_configured()
 
-    except Exception as error:
+    except Exception:
 
         configured = False
-
-        print(
-            "Configuration check error:",
-            type(error).__name__,
-        )
 
     print(
         "Configured:",
@@ -1000,53 +1312,48 @@ async def startup():
     )
 
     print(
-        "Debug errors:",
-        DEBUG_ERRORS,
-    )
-
-    print(
-        "Website:",
-        "FastAPI FileResponse",
-    )
-
-    print(
-        "Intelligence route:",
+        "Chat:",
         "/api/chat",
     )
 
     print(
-        "Keyword workflow:",
-        "DISABLED",
+        "Review:",
+        "/api/review",
+    )
+
+    print(
+        "Correction:",
+        "/api/correct",
+    )
+
+    print(
+        "Approval:",
+        "/api/approve",
+    )
+
+    print(
+        "Payment:",
+        "NOT CONNECTED YET",
+    )
+
+    print(
+        "Download:",
+        "NOT CONNECTED YET",
     )
 
     print(
         "Flask:",
-        "NOT USED",
-    )
-
-    print(
-        "phone_bridge.py:",
-        "NOT USED",
+        "DISABLED",
     )
 
     print(
         "AdaController:",
-        "NOT USED",
+        "DISABLED",
     )
 
     print(
         "AdaAIEngine:",
-        "NOT USED",
-    )
-
-    print(
-        "AdaResponse:",
-        "ACTIVE",
-    )
-
-    print(
-        "Provider-side token control:",
-        "HANDLED BY ada_response.py",
+        "DISABLED",
     )
 
     print("=" * 70)
