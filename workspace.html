@@ -15,7 +15,6 @@ html,body{
     width:100%;
     height:100%;
     margin:0;
-    padding:0;
     overflow:hidden;
 }
 
@@ -25,8 +24,16 @@ body{
     font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
 
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
+button,
+input,
+textarea,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
 
 :root{
     --gold:#d4af37;
@@ -37,9 +44,7 @@ button{cursor:pointer}
 }
 
 .app{
-    width:100%;
     height:100dvh;
-    min-height:0;
     display:flex;
     flex-direction:column;
     background:#000;
@@ -64,10 +69,9 @@ button{cursor:pointer}
 
 .brand-title{
     margin:0;
-    color:var(--green);
+    color:var(--gold);
     font-size:clamp(18px,4vw,25px);
     font-weight:800;
-    line-height:1.2;
 }
 
 .brand-subtitle{
@@ -91,51 +95,62 @@ button{cursor:pointer}
 }
 
 .main{
-    flex:1 1 auto;
+    flex:1;
     min-height:0;
-    width:100%;
-    overflow-x:hidden;
     overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
-    overscroll-behavior:contain;
+    overflow-x:hidden;
     background:
-        radial-gradient(circle at top,#181818 0,#080808 35%,#000 100%);
+        radial-gradient(
+            circle at top,
+            #181818 0,
+            #080808 35%,
+            #000 100%
+        );
 }
 
 .main-inner{
-    width:100%;
     max-width:900px;
-    margin:0 auto;
-    padding:14px 10px 35px;
+    margin:auto;
+    padding:14px 10px 25px;
+}
+
+.intro-card,
+.form-card,
+.review-header,
+.correction-card{
+    border-radius:15px;
 }
 
 .intro-card{
     margin-bottom:12px;
     padding:16px;
-    border-radius:15px;
     background:linear-gradient(145deg,#191919,#0d0d0d);
     border:1px solid var(--border);
 }
 
-.intro-title{
+.intro-title,
+.review-title{
     margin:0;
     color:var(--gold2);
-    font-size:20px;
     font-weight:900;
 }
 
+.intro-title{
+    font-size:19px;
+}
+
 .intro-text{
-    margin:8px 0 0;
+    margin:7px 0 0;
     color:#dedede;
     font-size:13px;
-    line-height:1.65;
+    line-height:1.6;
     white-space:pre-wrap;
 }
 
 .price{
     display:inline-block;
     margin-top:10px;
-    padding:8px 11px;
+    padding:7px 10px;
     background:rgba(212,175,55,.09);
     border:1px solid rgba(212,175,55,.3);
     border-radius:8px;
@@ -147,7 +162,6 @@ button{cursor:pointer}
 .form-card{
     background:#101010;
     border:1px solid rgba(255,255,255,.09);
-    border-radius:15px;
     padding:15px;
 }
 
@@ -177,7 +191,9 @@ button{cursor:pointer}
     font-weight:800;
 }
 
-.required{color:#ff8585}
+.required{
+    color:#ff8585;
+}
 
 .optional{
     color:#777;
@@ -231,35 +247,187 @@ button{cursor:pointer}
     font-weight:900;
 }
 
-.document-state{
-    display:none;
-    margin-bottom:12px;
-    padding:12px;
-    border-radius:10px;
-    background:#151515;
-    border:1px solid rgba(212,175,55,.25);
+.form-submit:disabled{
+    opacity:.45;
 }
 
-.document-state.show{
+.review-view{
+    display:none;
+}
+
+.review-view.show{
     display:block;
 }
 
-.document-name{
-    color:var(--gold2);
-    font-size:12px;
-    font-weight:900;
-    word-break:break-word;
+.review-header{
+    padding:16px;
+    margin-bottom:11px;
+    background:linear-gradient(145deg,#191919,#0d0d0d);
+    border:1px solid rgba(212,175,55,.38);
 }
 
-.document-info{
-    margin-top:4px;
-    color:#aaa;
+.review-title{
+    font-size:20px;
+}
+
+.review-subtitle{
+    margin:5px 0 0;
+    color:#bdbdbd;
+    font-size:11px;
+    line-height:1.5;
+}
+
+.work-card{
+    background:#f7f7f7;
+    color:#111;
+    border-radius:11px;
+    min-height:350px;
+    padding:22px 17px;
+    overflow-wrap:anywhere;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+}
+
+.work-content{
+    white-space:pre-wrap;
+    line-height:1.7;
+    font-size:14px;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+}
+
+.work-placeholder{
+    color:#777;
+    text-align:center;
+    padding:70px 10px;
+    user-select:none;
+    -webkit-user-select:none;
+}
+
+.correction-card{
+    margin-top:12px;
+    padding:14px;
+    background:#111;
+    border:1px solid rgba(255,255,255,.1);
+}
+
+.correction-title{
+    margin:0 0 4px;
+    font-size:14px;
+}
+
+.correction-help{
+    margin:0 0 9px;
+    color:#999;
     font-size:10px;
+    line-height:1.45;
+}
+
+.correction-input{
+    width:100%;
+    min-height:100px;
+    resize:vertical;
+    padding:11px;
+    background:#191919;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:9px;
+    outline:0;
+}
+
+.review-actions,
+.payment-buttons{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+    margin-top:10px;
+}
+
+.review-button,
+.payment-buttons button{
+    min-height:43px;
+    border-radius:8px;
+    font-size:11px;
+    font-weight:850;
+}
+
+.apply-button{
+    background:#252525;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.14);
+}
+
+.approve-button,
+.payment-report{
+    background:var(--gold);
+    color:#000;
+    border:0;
+}
+
+.download-button{
+    width:100%;
+    min-height:47px;
+    margin-top:8px;
+    border-radius:8px;
+    background:#242424;
+    color:#777;
+    border:1px solid rgba(255,255,255,.1);
+    font-size:11px;
+    font-weight:850;
+    cursor:not-allowed;
+}
+
+.download-button.active{
+    background:var(--green);
+    color:#fff;
+    border-color:var(--green);
+    cursor:pointer;
+}
+
+.payment-message{
+    margin-top:8px;
+    color:#858585;
+    font-size:9px;
+    text-align:center;
+}
+
+.payment-panel{
+    display:none;
+    margin-top:11px;
+    padding:13px;
+    background:#121212;
+    border:1px solid rgba(212,175,55,.38);
+    border-radius:12px;
+}
+
+.payment-panel.show{
+    display:block;
+}
+
+.payment-title{
+    color:var(--gold2);
+    font-size:13px;
+    font-weight:900;
+    margin-bottom:6px;
+}
+
+.payment-details{
+    color:#ddd;
+    white-space:pre-wrap;
+    font-size:11px;
+    line-height:1.5;
+}
+
+.payment-check{
+    background:#282828;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.13);
 }
 
 .bottom{
     flex:0 0 auto;
-    width:100%;
     padding:8px 9px calc(8px + env(safe-area-inset-bottom));
     background:#080808;
     border-top:1px solid var(--border);
@@ -280,7 +448,7 @@ button{cursor:pointer}
 
 .tool-button,
 .choose-service-button{
-    min-height:42px;
+    min-height:39px;
     border-radius:8px;
     background:#181818;
     color:#fff;
@@ -355,8 +523,13 @@ button{cursor:pointer}
     text-align:center;
 }
 
-.status.error{color:#ff7777}
-.status.success{color:#7bd99a}
+.status.error{
+    color:#ff7777;
+}
+
+.status.success{
+    color:#7bd99a;
+}
 
 #fileInput{
     display:none;
@@ -367,19 +540,16 @@ button:disabled{
     cursor:not-allowed;
 }
 
-@media(max-width:600px){
+/* READ-ONLY CUSTOMER-FACING INTELLIGENCE / PREPARED WORK */
 
-    .main-inner{
-        padding:12px 9px 30px;
-    }
-
-    .tools{
-        grid-template-columns:1fr 1fr 1fr;
-    }
-
-    .tool-button{
-        font-size:9px;
-    }
+#introText,
+.intro-card,
+#workCard{
+    user-select:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    -webkit-touch-callout:none;
 }
 </style>
 </head>
@@ -389,78 +559,36 @@ button:disabled{
 <div class="app">
 
 <header class="header">
-
     <div class="brand">
-
-        <h1 class="brand-title">
-            Naija Pocket Business Center
-        </h1>
-
-        <div class="brand-subtitle">
-            Your Business Center
-        </div>
-
+        <h1 class="brand-title">Naija Pocket Business Center</h1>
+        <div class="brand-subtitle">Your Business Center</div>
     </div>
 
-    <div
-        id="serviceBadge"
-        class="service-badge"
-    >
+    <div id="serviceBadge" class="service-badge">
         Service
     </div>
-
 </header>
 
-
-<main class="main">
-
+<main class="main" id="main">
 <div class="main-inner">
 
-<section>
+<section id="formView">
 
-    <div class="intro-card">
+    <div class="intro-card" id="introCard">
 
-        <h2
-            id="introTitle"
-            class="intro-title"
-        >
+        <h2 id="introTitle" class="intro-title">
             Let's get started
         </h2>
 
-        <p
-            id="introText"
-            class="intro-text"
-        >
+        <p id="introText" class="intro-text">
             Please wait while we prepare useful information for this service.
         </p>
 
-        <div
-            id="price"
-            class="price"
-        >
+        <div id="price" class="price">
             Service
         </div>
 
     </div>
-
-
-    <div
-        id="documentState"
-        class="document-state"
-    >
-
-        <div
-            id="documentName"
-            class="document-name"
-        ></div>
-
-        <div
-            id="documentInfo"
-            class="document-info"
-        ></div>
-
-    </div>
-
 
     <div class="form-card">
 
@@ -475,19 +603,12 @@ button:disabled{
 
         <form id="serviceForm">
 
-            <div
-                id="fields"
-                class="fields"
-            ></div>
+            <div id="fields" class="fields"></div>
 
             <div class="form-note">
-
-                When you tap
-                <strong>SEND REQUEST</strong>,
-                your information and any uploaded document
-                will be sent into the processing and review
-                workflow.
-
+                When you tap <strong>SEND</strong>, your information
+                will be processed and your prepared work will be sent
+                into the document review process.
             </div>
 
             <button
@@ -495,7 +616,7 @@ button:disabled{
                 class="form-submit"
                 type="submit"
             >
-                SEND REQUEST
+                SEND
             </button>
 
         </form>
@@ -504,8 +625,118 @@ button:disabled{
 
 </section>
 
-</div>
 
+<section id="reviewView" class="review-view">
+
+    <div class="review-header">
+
+        <h2 class="review-title">
+            Your Work
+        </h2>
+
+        <p class="review-subtitle">
+            Your prepared work is being reviewed page by page.
+            You can review the completed result and request corrections.
+        </p>
+
+    </div>
+
+    <div id="workCard" class="work-card">
+
+        <div id="workContent" class="work-content">
+
+            <div class="work-placeholder">
+                Your prepared work will appear here.
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="correction-card">
+
+        <h3 class="correction-title">
+            Need any corrections?
+        </h3>
+
+        <p class="correction-help">
+            Tell us exactly what you want changed, added or corrected.
+        </p>
+
+        <textarea
+            id="correctionInput"
+            class="correction-input"
+            placeholder="Write your corrections or changes here..."
+        ></textarea>
+
+        <div class="review-actions">
+
+            <button
+                id="applyCorrectionsButton"
+                class="review-button apply-button"
+                type="button"
+            >
+                Apply My Corrections
+            </button>
+
+            <button
+                id="approveButton"
+                class="review-button approve-button"
+                type="button"
+            >
+                Approve &amp; Pay
+            </button>
+
+        </div>
+
+    </div>
+
+    <button
+        id="downloadButton"
+        class="download-button"
+        type="button"
+        disabled
+    >
+        🔒 Download Your Work
+    </button>
+
+    <div class="payment-message">
+        Payment must be confirmed before the download button becomes active.
+    </div>
+
+    <div id="paymentPanel" class="payment-panel">
+
+        <div class="payment-title">
+            Payment
+        </div>
+
+        <div id="paymentDetails" class="payment-details"></div>
+
+        <div class="payment-buttons">
+
+            <button
+                id="paymentReportButton"
+                class="payment-report"
+                type="button"
+            >
+                Report Payment
+            </button>
+
+            <button
+                id="paymentCheckButton"
+                class="payment-check"
+                type="button"
+            >
+                Check Status
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+</div>
 </main>
 
 
@@ -520,7 +751,6 @@ button:disabled{
         🔴 Recording... tap Voice again to stop.
     </div>
 
-
     <div class="tools">
 
         <button
@@ -528,7 +758,7 @@ button:disabled{
             class="tool-button"
             type="button"
         >
-            📄 Upload Documents
+            📄 Upload Documents You Want To Give Us
         </button>
 
         <button
@@ -549,7 +779,6 @@ button:disabled{
 
     </div>
 
-
     <button
         id="chooseServiceButton"
         class="choose-service-button"
@@ -558,13 +787,11 @@ button:disabled{
         Choose Another Service
     </button>
 
-
     <input
         id="fileInput"
         type="file"
         accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
     >
-
 
     <div class="composer">
 
@@ -586,11 +813,7 @@ button:disabled{
 
     </div>
 
-
-    <div
-        id="status"
-        class="status"
-    ></div>
+    <div id="status" class="status"></div>
 
 </div>
 
@@ -602,53 +825,119 @@ button:disabled{
 <script>
 "use strict";
 
+/*
+============================================================
+NAIJA POCKET BUSINESS CENTER
+WORKSPACE
+============================================================
 
-/* =========================================================
-   API
-   ========================================================= */
+This page preserves the existing application architecture.
+
+CUSTOMER
+   ↓
+WORKSPACE
+   ↓
+FASTAPI /api/chat
+   ↓
+EXISTING INTELLIGENCE
+   ↓
+PREPARED WORK
+   ↓
+FASTAPI document_text intake
+   ↓
+PAGE CREATION
+   ↓
+FASTAPI review job
+   ↓
+review.html
+   ↓
+correction / approval / payment
+============================================================
+*/
 
 const API_BASE = "";
 
-const $ = id =>
-    document.getElementById(id);
+const $ = id => document.getElementById(id);
 
 
-const params =
-    new URLSearchParams(
-        location.search
-    );
+/* ============================================================
+   ELEMENTS
+============================================================ */
+
+const formView = $("formView");
+const reviewView = $("reviewView");
+const serviceForm = $("serviceForm");
+const fields = $("fields");
+const formSubmit = $("formSubmit");
+
+const serviceBadge = $("serviceBadge");
+const introTitle = $("introTitle");
+const introText = $("introText");
+const price = $("price");
+const introCard = $("introCard");
+
+const workCard = $("workCard");
+const workContent = $("workContent");
+
+const correctionInput = $("correctionInput");
+const applyBtn = $("applyCorrectionsButton");
+const approveBtn = $("approveButton");
+
+const downloadBtn = $("downloadButton");
+
+const uploadBtn = $("uploadButton");
+const voiceBtn = $("voiceButton");
+const customerBtn = $("customerServiceButton");
+const chooseBtn = $("chooseServiceButton");
+
+const fileInput = $("fileInput");
+
+const messageInput = $("messageInput");
+const sendBtn = $("sendButton");
+
+const status = $("status");
+const main = $("main");
+
+const voiceRecording = $("voiceRecording");
+
+const paymentPanel = $("paymentPanel");
+const paymentDetails = $("paymentDetails");
+const paymentReport = $("paymentReportButton");
+const paymentCheck = $("paymentCheckButton");
 
 
-const service =
-    (
-        params.get("service") ||
-        "Business Center Service"
-    ).trim();
+/* ============================================================
+   SESSION
+============================================================ */
+
+const params = new URLSearchParams(
+    location.search
+);
+
+const service = (
+    params.get("service")
+    || "Business Center Service"
+).trim();
 
 
-/* =========================================================
-   IDENTIFIERS
-   ========================================================= */
+function createId(prefix){
 
-function makeId(prefix){
+    try{
 
-    if(
-        typeof crypto !== "undefined" &&
-        typeof crypto.randomUUID === "function"
-    ){
+        if(
+            typeof crypto !== "undefined"
+            && typeof crypto.randomUUID === "function"
+        ){
+            return prefix + crypto.randomUUID();
+        }
 
-        return (
-            prefix +
-            crypto.randomUUID()
-        );
-
-    }
+    }catch(e){}
 
     return (
-        prefix +
-        Date.now() +
-        "_" +
-        Math.random()
+        prefix
+        + Date.now()
+        + "_"
+        + Math.random()
             .toString(36)
             .slice(2)
     );
@@ -668,19 +957,14 @@ function get(key){
 function put(key,value){
 
     try{
-        localStorage.setItem(
-            key,
-            value
-        );
+        localStorage.setItem(key,value);
     }catch(e){}
-
 }
 
 
 let customerId =
-    get("npbc_customer_id") ||
-    makeId("customer_");
-
+    get("npbc_customer_id")
+    || createId("customer_");
 
 put(
     "npbc_customer_id",
@@ -689,9 +973,9 @@ put(
 
 
 let jobId =
-    params.get("job_id") ||
-    makeId("job_");
-
+    params.get("job_id")
+    || get("npbc_job_id")
+    || createId("job_");
 
 put(
     "npbc_job_id",
@@ -700,9 +984,8 @@ put(
 
 
 let requestId =
-    get("npbc_client_request_id") ||
-    makeId("request_");
-
+    get("npbc_client_request_id")
+    || createId("request_");
 
 put(
     "npbc_client_request_id",
@@ -710,75 +993,17 @@ put(
 );
 
 
-/* =========================================================
-   ELEMENTS
-   ========================================================= */
-
-const formSubmit =
-    $("formSubmit");
-
-const serviceBadge =
-    $("serviceBadge");
-
-const introTitle =
-    $("introTitle");
-
-const introText =
-    $("introText");
-
-const price =
-    $("price");
-
-const serviceForm =
-    $("serviceForm");
-
-const fields =
-    $("fields");
-
-const documentState =
-    $("documentState");
-
-const documentName =
-    $("documentName");
-
-const documentInfo =
-    $("documentInfo");
-
-const uploadBtn =
-    $("uploadButton");
-
-const voiceBtn =
-    $("voiceButton");
-
-const customerBtn =
-    $("customerServiceButton");
-
-const chooseBtn =
-    $("chooseServiceButton");
-
-const fileInput =
-    $("fileInput");
-
-const messageInput =
-    $("messageInput");
-
-const sendBtn =
-    $("sendButton");
-
-const status =
-    $("status");
-
-const voiceRecording =
-    $("voiceRecording");
-
-
-/* =========================================================
-   STATE
-   ========================================================= */
-
 let busy = false;
 
-let uploadedDocument = null;
+let approved = false;
+
+let paymentConfirmed = false;
+
+let currentWork = "";
+
+let currentVersionId = "";
+
+let reviewPollTimer = null;
 
 let mediaRecorder = null;
 
@@ -787,9 +1012,9 @@ let recordedChunks = [];
 let recordingStream = null;
 
 
-/* =========================================================
+/* ============================================================
    HELPERS
-   ========================================================= */
+============================================================ */
 
 function clean(value){
 
@@ -797,24 +1022,22 @@ function clean(value){
         return null;
     }
 
-    return (
-        String(value)
-            .trim() ||
-        null
-    );
+    const result = String(value).trim();
+
+    return result || null;
 }
 
 
 function setStatus(
     message,
-    type=""
+    type = ""
 ){
 
-    status.textContent =
-        message || "";
+    status.textContent = message || "";
 
     status.className =
-        "status " + type;
+        "status "
+        + type;
 }
 
 
@@ -828,49 +1051,22 @@ function busyState(value){
         uploadBtn,
         voiceBtn,
         customerBtn,
-        chooseBtn
-    ].forEach(
-        button=>{
-            button.disabled =
-                value;
+        chooseBtn,
+        applyBtn,
+        approveBtn
+    ].forEach(button => {
+
+        if(button){
+            button.disabled = value;
         }
-    );
 
+    });
 }
 
 
-function saveReviewContext(){
-
-    try{
-
-        sessionStorage.setItem(
-            "npbc_review_customer_id",
-            customerId
-        );
-
-        sessionStorage.setItem(
-            "npbc_review_job_id",
-            jobId
-        );
-
-        sessionStorage.setItem(
-            "npbc_review_request_id",
-            requestId
-        );
-
-        sessionStorage.setItem(
-            "npbc_review_service",
-            service
-        );
-
-    }catch(e){}
-
-}
-
-
-/* =========================================================
+/* ============================================================
    SERVICE FORMS
-   ========================================================= */
+============================================================ */
 
 const generic = [
 
@@ -1013,7 +1209,7 @@ const forms = {
 
         {
             name:"topic",
-            label:"Essay topic or question",
+            label:"Essay topic",
             required:true,
             type:"textarea",
             placeholder:"Enter the essay topic or question"
@@ -1096,13 +1292,12 @@ const forms = {
 
 function definition(){
 
-    const s =
+    const selected =
         service.toLowerCase();
 
     const key =
         Object.keys(forms).find(
-            k =>
-                s.includes(k)
+            name => selected.includes(name)
         );
 
     return key
@@ -1115,107 +1310,57 @@ function renderForm(){
 
     fields.innerHTML = "";
 
-    definition().forEach(
-        f=>{
+    definition().forEach(field => {
 
-            const wrapper =
-                document.createElement(
-                    "div"
-                );
+        const wrapper =
+            document.createElement("div");
 
-            wrapper.className =
-                "field";
+        const label =
+            document.createElement("label");
 
-
-            const label =
-                document.createElement(
-                    "label"
-                );
-
-            label.textContent =
-                f.label;
-
-
-            if(f.required){
-
-                const required =
-                    document.createElement(
-                        "span"
-                    );
-
-                required.className =
-                    "required";
-
-                required.textContent =
-                    " *";
-
-                label.appendChild(
-                    required
-                );
-
-            }else{
-
-                const optional =
-                    document.createElement(
-                        "span"
-                    );
-
-                optional.className =
-                    "optional";
-
-                optional.textContent =
-                    " (optional)";
-
-                label.appendChild(
-                    optional
-                );
-
-            }
-
-
-            const input =
-                document.createElement(
-                    f.type === "textarea"
-                        ? "textarea"
-                        : "input"
-                );
-
-
-            input.id =
-                f.name;
-
-            input.name =
-                f.name;
-
-            input.placeholder =
-                f.placeholder || "";
-
-
-            if(f.required){
-                input.required = true;
-            }
-
-
-            if(f.type !== "textarea"){
-
-                input.type =
-                    f.type || "text";
-
-            }
-
-
-            wrapper.append(
-                label,
-                input
+        const input =
+            document.createElement(
+                field.type === "textarea"
+                    ? "textarea"
+                    : "input"
             );
 
-            fields.appendChild(
-                wrapper
+        wrapper.className = "field";
+
+        label.htmlFor = field.name;
+
+        label.innerHTML =
+            field.label
+            + (
+                field.required
+                    ? ' <span class="required">*</span>'
+                    : ' <span class="optional">(optional)</span>'
             );
 
+        input.id = field.name;
+
+        input.name = field.name;
+
+        input.placeholder =
+            field.placeholder || "";
+
+        if(field.required){
+            input.required = true;
         }
-    );
 
+        if(field.type !== "textarea"){
+            input.type =
+                field.type || "text";
+        }
+
+        wrapper.append(
+            label,
+            input
+        );
+
+        fields.append(wrapper);
+
+    });
 }
 
 
@@ -1227,84 +1372,135 @@ function collect(){
         .querySelectorAll(
             "input,textarea,select"
         )
-        .forEach(
-            element=>{
+        .forEach(element => {
 
-                const value =
-                    clean(
-                        element.value
-                    );
+            const value =
+                clean(element.value);
 
-                if(value){
-
-                    data[
-                        element.name
-                    ] = value;
-
-                }
-
+            if(value){
+                data[element.name] =
+                    value;
             }
-        );
+
+        });
 
     return data;
 }
 
 
-/* =========================================================
+/* ============================================================
+   GUIDANCE
+============================================================ */
+
+function guidancePrompt(){
+
+    return `
+The customer has just selected this service:
+
+${service}
+
+Prepare a short, clear customer-facing introduction explaining:
+
+- what the service does;
+- what the customer will receive;
+- the current fee or whether quotation is required;
+- useful information the customer should prepare;
+- practical tips specific to this service;
+- useful documents the customer may provide.
+
+Do not create the actual work yet.
+
+Do not ask for payment yet.
+
+Do not mention internal software, models, APIs or providers.
+
+Write concise, friendly Nigerian English.
+`.trim();
+}
+
+
+/* ============================================================
    API
-   ========================================================= */
+============================================================ */
 
 async function apiChat(body){
 
     const response =
         await fetch(
-            API_BASE +
-            "/api/chat",
+            API_BASE + "/api/chat",
             {
                 method:"POST",
-
                 headers:{
                     "Content-Type":
                         "application/json"
                 },
-
-                body:
-                    JSON.stringify(body)
+                body:JSON.stringify(body)
             }
         );
-
 
     const data =
         await response
             .json()
             .catch(
-                ()=>({})
+                () => ({})
             );
 
-
     if(
-        !response.ok ||
-        !data.success
+        !response.ok
+        || !data.success
     ){
 
         throw new Error(
-            data.error_message ||
-            data.reply ||
-            data.message ||
-            data.error ||
-            "Request failed."
+            data.error_message
+            || data.message
+            || data.reply
+            || data.error
+            || "Request failed."
         );
 
     }
-
 
     return data;
 }
 
 
-/* =========================================================
-   GUIDANCE
-   ========================================================= */
+async function apiReview(){
+
+    const response =
+        await fetch(
+            API_BASE
+            + "/api/review?job_id="
+            + encodeURIComponent(jobId)
+        );
+
+    const data =
+        await response
+            .json()
+            .catch(
+                () => ({})
+            );
+
+    if(
+        !response.ok
+        || !data.success
+    ){
+
+        throw new Error(
+            data.error_message
+            || data.message
+            || data.error
+            || "Unable to load the review."
+        );
+
+    }
+
+    return data;
+}
+
+
+/* ============================================================
+   GUIDANCE LOAD
+============================================================ */
 
 async function loadGuidance(){
 
@@ -1318,9 +1514,7 @@ async function loadGuidance(){
             await apiChat({
 
                 message:
-                    `The customer has selected the service "${service}".
-Provide a short, useful customer-facing explanation of what is needed to begin this service.
-Do not create the requested work yet.`,
+                    guidancePrompt(),
 
                 service,
 
@@ -1351,49 +1545,46 @@ Do not create the requested work yet.`,
         introTitle.textContent =
             service;
 
-
         introText.textContent =
-            clean(
-                data.reply
-            ) ||
-            "Please provide the information requested below.";
+            clean(data.reply)
+            || "Please provide the information requested below.";
 
 
         const amount =
-            data.amount ||
-            data.price ||
-            data.service_amount;
+            data.amount
+            || data.price
+            || data.service_amount;
 
 
         if(amount){
 
-            const numericAmount =
-                Number(
+            price.textContent =
+                "Service fee: ₦"
+                + Number(
                     String(amount)
                         .replace(
                             /[^0-9.]/g,
                             ""
                         )
-                );
+                ).toLocaleString();
 
-            price.textContent =
-                "Service fee: ₦" +
-                numericAmount.toLocaleString();
-
-        }else if(
-            /₦\s?[\d,]+/
-                .test(
-                    data.reply || ""
-                )
+        }
+        else if(
+            /₦\s?[\d,]+/.test(
+                data.reply || ""
+            )
         ){
 
             price.textContent =
-                "Service fee: " +
-                data.reply.match(
-                    /₦\s?[\d,]+/
+                "Service fee: "
+                + (
+                    data.reply.match(
+                        /₦\s?[\d,]+/
+                    ) || [""]
                 )[0];
 
-        }else if(
+        }
+        else if(
             /quotation/i.test(
                 data.reply || ""
             )
@@ -1402,31 +1593,29 @@ Do not create the requested work yet.`,
             price.textContent =
                 "Service fee: Quotation required";
 
-        }else{
+        }
+        else{
 
             price.textContent =
-                "Service: " +
-                service;
+                "Service: " + service;
 
         }
 
 
         setStatus("");
 
-    }catch(error){
-
-        introTitle.textContent =
-            service;
+    }
+    catch(error){
 
         introText.textContent =
-            "Tell us what you need and provide the information requested below.";
+            "Please provide the information requested in the form. "
+            + "If you are unsure what to provide, type your question below.";
 
         price.textContent =
-            "Service: " +
-            service;
+            "Service: " + service;
 
         setStatus(
-            "You can still complete the request.",
+            "You can still complete the form or ask a question below.",
             "error"
         );
 
@@ -1435,188 +1624,109 @@ Do not create the requested work yet.`,
 }
 
 
-/* =========================================================
-   START ACTUAL DOCUMENT REVIEW
-   ========================================================= */
+/* ============================================================
+   FORM → INTELLIGENCE
+============================================================ */
 
-async function startReview({
+/*
+The important correction is here.
 
-    message="",
-    formData=null,
-    pages=null,
-    event="send_for_review"
+The old workspace sent the form with create_work:true
+and expected the returned reply to BE the review.
 
-}){
+The API's review pipeline, however, requires actual
+document_pages or document_text.
 
-    if(
-        !Array.isArray(pages) ||
-        pages.length === 0
-    ){
+Therefore:
 
-        throw new Error(
-            "There is no document available to send for review."
-        );
+1. The customer's form goes through the existing
+   intelligence path.
 
-    }
+2. The resulting prepared work is captured.
 
+3. That prepared work is sent as document_text to
+   the existing API review path.
 
-    const result =
-        await apiChat({
+4. The API converts it into pages.
 
-            message,
+5. The API creates the review job.
 
-            service,
+6. The page-by-page review begins.
 
-            event,
-
-            customer_id:
-                customerId,
-
-            job_id:
-                jobId,
-
-            client_request_id:
-                requestId,
-
-            form_data:
-                formData,
-
-            document_pages:
-                pages,
-
-            activate_intelligence:
-                true,
-
-            create_work:
-                true
-
-        });
+7. Only then do we open review.html.
+*/
 
 
-    if(result.job_id){
+function creationPrompt(data){
 
-        jobId =
-            result.job_id;
+    return `
+The customer has completed the service information form.
 
-        put(
-            "npbc_job_id",
-            jobId
-        );
+Use the customer's information and the selected service to create
+the actual requested work.
 
-    }
+This is now a real work request.
 
+Return the complete prepared work, not an explanation of what you
+could do.
 
-    saveReviewContext();
+The result must be suitable to pass into the document review stage.
 
+Do not ask the customer to provide information that is already present
+in the form.
 
-    /*
-     * IMPORTANT:
-     *
-     * We do NOT put the document in the URL.
-     *
-     * We do NOT use Ada's acknowledgement as
-     * the document.
-     *
-     * The actual document already exists in the
-     * FastAPI review job.
-     */
+Do not ask for an email address unless genuinely required.
 
+Do not send the customer elsewhere.
 
-    setStatus(
-        "Document received. Opening Review...",
-        "success"
-    );
+Do not discuss internal software, models, APIs or providers.
 
+SERVICE:
+${service}
 
-    location.href =
-        "review.html?job_id=" +
-        encodeURIComponent(
-            jobId
-        );
+CUSTOMER FORM INFORMATION:
+
+${
+    Object.entries(data)
+        .map(
+            ([key,value]) =>
+                `${key}:\n${value}`
+        )
+        .join("\n\n")
+}
+`.trim();
 
 }
 
 
-/* =========================================================
-   FORM SUBMISSION
-   ========================================================= */
+/* ============================================================
+   START ACTUAL WORK + REVIEW
+============================================================ */
 
-async function submitForm(){
+async function createWork(data){
 
     if(busy){
         return;
     }
 
-
-    if(
-        !serviceForm.reportValidity()
-    ){
-
-        return;
-    }
-
-
-    const data =
-        collect();
-
-
     busyState(true);
 
+    setStatus(
+        "Preparing your work..."
+    );
 
     try{
 
         /*
-         * If a document was uploaded, this is the
-         * actual review request.
-         */
+        STEP 1
+        Existing intelligence prepares the customer's work.
+        */
 
-        if(
-            uploadedDocument &&
-            Array.isArray(
-                uploadedDocument.document_pages
-            ) &&
-            uploadedDocument.document_pages.length
-        ){
-
-            setStatus(
-                "Sending your document for review..."
-            );
-
-
-            await startReview({
-
-                message:
-                    "The customer has completed the service information form. Review the uploaded document according to the selected service and the customer's instructions.",
-
-                formData:data,
-
-                pages:
-                    uploadedDocument.document_pages,
-
-                event:
-                    "send_for_review"
-
-            });
-
-
-            return;
-        }
-
-
-        /*
-         * No document exists.
-         *
-         * This is still a valid Ada request, but it
-         * must NOT pretend that a normal chat reply is
-         * a review document.
-         */
-
-        const result =
+        const prepared =
             await apiChat({
 
                 message:
-                    `The customer has completed the service information form.
-Use the selected service and customer information to understand the request and continue the customer workflow.`,
+                    creationPrompt(data),
 
                 service,
 
@@ -1644,10 +1754,29 @@ Use the selected service and customer information to understand the request and 
             });
 
 
-        if(result.job_id){
+        const preparedWork =
+            clean(
+                prepared.reply
+            );
+
+
+        if(!preparedWork){
+
+            throw new Error(
+                "The requested work was not returned."
+            );
+
+        }
+
+
+        currentWork =
+            preparedWork;
+
+
+        if(prepared.job_id){
 
             jobId =
-                result.job_id;
+                prepared.job_id;
 
             put(
                 "npbc_job_id",
@@ -1657,36 +1786,116 @@ Use the selected service and customer information to understand the request and 
         }
 
 
+        /*
+        STEP 2
+
+        Put the actual prepared work into the existing
+        document-review intake.
+
+        This is what creates document pages.
+        */
+
         setStatus(
-            result.reply ||
-            "Your request has been received.",
+            "Sending your prepared work for page-by-page review..."
+        );
+
+
+        const reviewData =
+            await apiChat({
+
+                message:
+                    "Review the prepared work for the customer.",
+
+                service,
+
+                event:
+                    "review_requested",
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId,
+
+                client_request_id:
+                    requestId,
+
+                activate_intelligence:
+                    true,
+
+                create_work:
+                    true,
+
+                document_text:
+                    preparedWork,
+
+                context:
+                    "This document was just prepared from the customer's completed service form. Review the complete prepared work page by page before the customer approves it."
+
+            });
+
+
+        if(reviewData.job_id){
+
+            jobId =
+                reviewData.job_id;
+
+            put(
+                "npbc_job_id",
+                jobId
+            );
+
+        }
+
+
+        /*
+        Do NOT display the prepared work as if it has already
+        passed review.
+
+        The review page is the official review state.
+        */
+
+        setStatus(
+            "Your work has entered the review process. Opening the review page...",
             "success"
         );
 
 
         /*
-         * A generated reply is not automatically treated
-         * as a document-review job.
-         *
-         * Keep the customer in the workspace until a
-         * real document exists.
-         */
+        Give the browser a moment to receive the successful
+        response before navigating.
+        */
 
-        if(result.reply){
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    150
+                )
+        );
 
-            introText.textContent =
-                result.reply;
 
-        }
+        location.href =
+            "review.html?job_id="
+            + encodeURIComponent(jobId);
 
-    }catch(error){
+
+    }
+    catch(error){
+
+        console.error(
+            "FORM REVIEW START ERROR:",
+            error
+        );
 
         setStatus(
-            error.message,
+            error.message
+            || "We could not start the review.",
             "error"
         );
 
-    }finally{
+    }
+    finally{
 
         busyState(false);
 
@@ -1695,34 +1904,710 @@ Use the selected service and customer information to understand the request and 
 }
 
 
-/* =========================================================
-   FORM EVENT
-   ========================================================= */
+/* ============================================================
+   FORM SUBMISSION
+============================================================ */
 
 serviceForm.addEventListener(
     "submit",
-    event=>{
+    event => {
 
         event.preventDefault();
 
-        submitForm();
+        if(
+            busy
+            || !serviceForm.reportValidity()
+        ){
+            return;
+        }
+
+        createWork(
+            collect()
+        );
 
     }
 );
 
 
-/* =========================================================
-   UPLOAD
-   ========================================================= */
+/* ============================================================
+   READ-ONLY PROTECTION
+============================================================ */
+
+[
+    introCard,
+    workCard
+].forEach(element => {
+
+    if(!element){
+        return;
+    }
+
+    [
+        "copy",
+        "cut",
+        "contextmenu",
+        "selectstart",
+        "dragstart"
+    ].forEach(eventName => {
+
+        element.addEventListener(
+            eventName,
+            event => {
+
+                event.preventDefault();
+
+                if(event.clipboardData){
+
+                    event.clipboardData.setData(
+                        "text/plain",
+                        ""
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+
+    element.addEventListener(
+        "keydown",
+        event => {
+
+            if(
+                (event.ctrlKey || event.metaKey)
+                && [
+                    "a",
+                    "c",
+                    "x",
+                    "s",
+                    "u"
+                ].includes(
+                    event.key.toLowerCase()
+                )
+            ){
+
+                event.preventDefault();
+
+            }
+
+        }
+    );
+
+
+    element.addEventListener(
+        "mousedown",
+        event => {
+
+            if(event.detail > 1){
+
+                event.preventDefault();
+
+            }
+
+        }
+    );
+
+});
+
+
+/* ============================================================
+   CORRECTION
+============================================================ */
+
+/*
+Corrections now belong to the actual review job.
+
+The correction endpoint receives:
+
+job_id
+instruction
+
+The server then applies the correction to the current
+document version and automatically starts a new review.
+*/
+
+applyBtn.addEventListener(
+    "click",
+    async () => {
+
+        const correction =
+            clean(
+                correctionInput.value
+            );
+
+        if(!correction){
+
+            setStatus(
+                "Please write the correction or change you want.",
+                "error"
+            );
+
+            return;
+        }
+
+        if(busy){
+            return;
+        }
+
+        if(!jobId){
+
+            setStatus(
+                "There is no active review job.",
+                "error"
+            );
+
+            return;
+        }
+
+        busyState(true);
+
+        setStatus(
+            "Applying your corrections..."
+        );
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE + "/api/correct",
+                    {
+                        method:"POST",
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body:JSON.stringify({
+
+                            job_id:
+                                jobId,
+
+                            instruction:
+                                correction
+
+                        })
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok
+                || !data.success
+            ){
+
+                throw new Error(
+                    data.error_message
+                    || data.message
+                    || data.error
+                    || "The correction could not be submitted."
+                );
+
+            }
+
+
+            if(data.version_id){
+
+                currentVersionId =
+                    data.version_id;
+
+            }
+
+
+            correctionInput.value = "";
+
+
+            setStatus(
+                "Your corrections have been submitted. The corrected version is being reviewed again.",
+                "success"
+            );
+
+
+            /*
+            The review page owns the live review state.
+
+            Send the customer to it so the new version and
+            page-by-page progress are shown there.
+            */
+
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        150
+                    )
+            );
+
+
+            location.href =
+                "review.html?job_id="
+                + encodeURIComponent(jobId);
+
+
+        }
+        catch(error){
+
+            console.error(
+                "CORRECTION ERROR:",
+                error
+            );
+
+            setStatus(
+                error.message
+                || "The correction could not be submitted.",
+                "error"
+            );
+
+        }
+        finally{
+
+            busyState(false);
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   APPROVAL
+============================================================ */
+
+/*
+The API requires both job_id and version_id in the JSON body.
+
+The previous workspace sent unrelated query parameters and
+did not supply version_id.
+
+This now follows the API contract.
+*/
+
+approveBtn.addEventListener(
+    "click",
+    async () => {
+
+        if(busy){
+            return;
+        }
+
+        if(!jobId){
+
+            setStatus(
+                "There is no active document job.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        busyState(true);
+
+        setStatus(
+            "Checking that the reviewed version is ready for approval..."
+        );
+
+
+        try{
+
+            /*
+            Obtain the authoritative current review state.
+            */
+
+            const review =
+                await apiReview();
+
+
+            if(
+                review.status
+                !== "review_complete"
+            ){
+
+                throw new Error(
+                    "The document review is not complete yet."
+                );
+
+            }
+
+
+            const versionId =
+                review.version_id;
+
+
+            if(!versionId){
+
+                throw new Error(
+                    "The current document version could not be identified."
+                );
+
+            }
+
+
+            const response =
+                await fetch(
+                    API_BASE + "/api/approve",
+                    {
+                        method:"POST",
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body:JSON.stringify({
+
+                            job_id:
+                                jobId,
+
+                            version_id:
+                                versionId
+
+                        })
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok
+                || !data.success
+            ){
+
+                throw new Error(
+                    data.error_message
+                    || data.message
+                    || data.error
+                    || "Approval could not be completed."
+                );
+
+            }
+
+
+            approved = true;
+
+            currentVersionId =
+                data.version_id
+                || versionId;
+
+
+            paymentPanel.classList.add(
+                "show"
+            );
+
+
+            paymentDetails.textContent =
+                "Your work has been approved.\n"
+                + "Version: "
+                + currentVersionId
+                + "\n\n"
+                + "Payment can now be completed.";
+
+
+            setStatus(
+                "Your work is approved. Payment is ready.",
+                "success"
+            );
+
+
+            paymentPanel.scrollIntoView({
+                behavior:"smooth",
+                block:"center"
+            });
+
+
+        }
+        catch(error){
+
+            console.error(
+                "APPROVAL ERROR:",
+                error
+            );
+
+            setStatus(
+                error.message
+                || "Approval could not be completed.",
+                "error"
+            );
+
+        }
+        finally{
+
+            busyState(false);
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   PAYMENT
+============================================================ */
+
+paymentReport.addEventListener(
+    "click",
+    async () => {
+
+        if(!approved){
+
+            setStatus(
+                "Approve the work first.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        setStatus(
+            "Preparing payment..."
+        );
+
+
+        try{
+
+            /*
+            Payment endpoints are kept as the existing
+            payment integration points.
+
+            The workspace does not fabricate an amount.
+            */
+
+            const review =
+                await apiReview();
+
+
+            const response =
+                await fetch(
+                    API_BASE + "/api/payment/create",
+                    {
+                        method:"POST",
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body:JSON.stringify({
+
+                            job_id:
+                                jobId,
+
+                            customer_id:
+                                customerId,
+
+                            service,
+
+                            amount:
+                                0,
+
+                            payment_method:
+                                "bank_transfer"
+
+                        })
+                    }
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok
+                || !data.success
+            ){
+
+                throw new Error(
+                    data.error_message
+                    || data.message
+                    || data.error
+                    || "Payment record could not be created."
+                );
+
+            }
+
+
+            paymentDetails.textContent =
+                "Payment has been reported.\n"
+                + "Payment ID: "
+                + (
+                    data.payment_id
+                    || "Pending"
+                )
+                + "\nStatus: Pending";
+
+
+            setStatus(
+                "Payment reported. Verification is pending.",
+                "success"
+            );
+
+
+        }
+        catch(error){
+
+            setStatus(
+                error.message
+                || "Payment could not be recorded.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   PAYMENT STATUS
+============================================================ */
+
+paymentCheck.addEventListener(
+    "click",
+    async () => {
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE
+                    + "/api/payment/status?job_id="
+                    + encodeURIComponent(jobId)
+                );
+
+
+            const data =
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
+
+            if(
+                !response.ok
+                || !data.success
+            ){
+
+                throw new Error(
+                    data.error_message
+                    || data.message
+                    || data.error
+                    || "Payment status could not be checked."
+                );
+
+            }
+
+
+            if(
+                String(
+                    data.status || ""
+                ).toLowerCase()
+                === "paid"
+            ){
+
+                paymentConfirmed = true;
+
+                downloadBtn.disabled =
+                    false;
+
+                downloadBtn.classList.add(
+                    "active"
+                );
+
+                downloadBtn.textContent =
+                    "⬇ Download Your Work";
+
+
+                downloadBtn.onclick =
+                    () => {
+
+                        if(!jobId){
+                            return;
+                        }
+
+                        location.href =
+                            API_BASE
+                            + "/api/download?job_id="
+                            + encodeURIComponent(jobId)
+                            + "&version_id="
+                            + encodeURIComponent(
+                                currentVersionId
+                                || data.version_id
+                                || ""
+                            );
+
+                    };
+
+
+                paymentDetails.textContent +=
+                    "\nStatus: Paid";
+
+
+                setStatus(
+                    "Payment confirmed. Your download is now available.",
+                    "success"
+                );
+
+            }
+            else{
+
+                setStatus(
+                    "Payment is still pending."
+                );
+
+            }
+
+        }
+        catch(error){
+
+            setStatus(
+                error.message
+                || "Payment status could not be checked.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   DOCUMENT UPLOAD
+============================================================ */
+
+/*
+Uploads remain connected to /api/upload.
+
+The returned document pages are immediately sent into
+the active work/review conversation.
+
+This does not replace the existing document upload path.
+*/
 
 uploadBtn.addEventListener(
     "click",
-    ()=>{
+    () => {
 
         if(!busy){
-
             fileInput.click();
-
         }
 
     }
@@ -1731,7 +2616,7 @@ uploadBtn.addEventListener(
 
 fileInput.addEventListener(
     "change",
-    async ()=>{
+    async () => {
 
         const file =
             fileInput.files?.[0];
@@ -1742,54 +2627,50 @@ fileInput.addEventListener(
         }
 
 
-        busyState(true);
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "file",
+            file
+        );
+
+
+        formData.append(
+            "customer_id",
+            customerId
+        );
+
+
+        formData.append(
+            "job_id",
+            jobId
+        );
+
+
+        formData.append(
+            "client_request_id",
+            requestId
+        );
+
+
+        formData.append(
+            "service",
+            service
+        );
 
 
         setStatus(
-            "Uploading and preparing your document..."
+            "Uploading the document you want to give us..."
         );
 
 
         try{
 
-            const formData =
-                new FormData();
-
-
-            formData.append(
-                "file",
-                file
-            );
-
-
-            formData.append(
-                "customer_id",
-                customerId
-            );
-
-
-            formData.append(
-                "job_id",
-                jobId
-            );
-
-
-            formData.append(
-                "client_request_id",
-                requestId
-            );
-
-
-            formData.append(
-                "service",
-                service
-            );
-
-
             const response =
                 await fetch(
-                    API_BASE +
-                    "/api/upload",
+                    API_BASE + "/api/upload",
                     {
                         method:"POST",
                         body:formData
@@ -1801,119 +2682,135 @@ fileInput.addEventListener(
                 await response
                     .json()
                     .catch(
-                        ()=>({})
+                        () => ({})
                     );
 
 
             if(
-                !response.ok ||
-                !data.success
+                !response.ok
+                || !data.success
             ){
 
                 throw new Error(
-                    data.error_message ||
-                    data.message ||
-                    data.error ||
-                    "Document upload failed."
+                    data.error_message
+                    || data.message
+                    || data.error
+                    || "Document upload failed."
                 );
 
             }
-
-
-            if(
-                !Array.isArray(
-                    data.document_pages
-                ) ||
-                !data.document_pages.length
-            ){
-
-                throw new Error(
-                    "The server received the file but produced no reviewable pages."
-                );
-
-            }
-
-
-            /*
-             * THIS is the important state.
-             *
-             * The actual document pages remain in JavaScript
-             * until SEND REQUEST is pressed.
-             */
-
-            uploadedDocument = {
-
-                filename:
-                    data.filename,
-
-                total_pages:
-                    data.total_pages,
-
-                document_pages:
-                    data.document_pages
-
-            };
-
-
-            if(data.job_id){
-
-                jobId =
-                    data.job_id;
-
-                put(
-                    "npbc_job_id",
-                    jobId
-                );
-
-            }
-
-
-            documentState
-                .classList
-                .add("show");
-
-
-            documentName.textContent =
-                "📄 " +
-                data.filename;
-
-
-            documentInfo.textContent =
-                data.total_pages +
-                " reviewable page" +
-                (
-                    data.total_pages === 1
-                        ? ""
-                        : "s"
-                ) +
-                " ready for Ada.";
 
 
             setStatus(
-                "Document ready. Complete the information above and tap SEND REQUEST.",
+                "Your document has been received successfully.",
                 "success"
             );
 
-        }catch(error){
 
-            uploadedDocument =
-                null;
+            /*
+            Preserve the returned document pages.
 
-            documentState
-                .classList
-                .remove("show");
+            The uploaded document is not silently discarded.
+            */
 
+            if(
+                Array.isArray(
+                    data.document_pages
+                )
+                && data.document_pages.length
+            ){
+
+                const documentText =
+                    data.document_pages
+                        .map(
+                            page =>
+                                page.content
+                                || ""
+                        )
+                        .join("\n\n");
+
+
+                /*
+                If there is an active job, put the uploaded
+                document through the existing review path.
+                */
+
+                if(documentText){
+
+                    const review =
+                        await apiChat({
+
+                            message:
+                                "The customer has supplied a document for the active service. Review the supplied document according to the customer's current request.",
+
+                            service,
+
+                            event:
+                                "document_uploaded",
+
+                            customer_id:
+                                customerId,
+
+                            job_id:
+                                jobId,
+
+                            client_request_id:
+                                requestId,
+
+                            activate_intelligence:
+                                true,
+
+                            create_work:
+                                true,
+
+                            document_text:
+                                documentText
+
+                        });
+
+
+                    if(review.job_id){
+
+                        jobId =
+                            review.job_id;
+
+                        put(
+                            "npbc_job_id",
+                            jobId
+                        );
+
+                    }
+
+
+                    location.href =
+                        "review.html?job_id="
+                        + encodeURIComponent(
+                            jobId
+                        );
+
+                }
+
+            }
+
+
+        }
+        catch(error){
+
+            console.error(
+                "DOCUMENT UPLOAD ERROR:",
+                error
+            );
 
             setStatus(
-                error.message,
+                error.message
+                || "Document upload failed.",
                 "error"
             );
 
-        }finally{
+        }
+        finally{
 
             fileInput.value = "";
-
-            busyState(false);
 
         }
 
@@ -1921,9 +2818,9 @@ fileInput.addEventListener(
 );
 
 
-/* =========================================================
-   CUSTOMER MESSAGE
-   ========================================================= */
+/* ============================================================
+   NORMAL CUSTOMER MESSAGE
+============================================================ */
 
 async function sendMessage(
     message,
@@ -1931,57 +2828,18 @@ async function sendMessage(
 ){
 
     if(busy){
-        return;
+        return null;
     }
 
 
     busyState(true);
 
+    setStatus(
+        "Processing your message..."
+    );
+
 
     try{
-
-        /*
-         * If there is already an uploaded document,
-         * a customer message can directly trigger review.
-         */
-
-        if(
-            uploadedDocument &&
-            Array.isArray(
-                uploadedDocument.document_pages
-            ) &&
-            uploadedDocument.document_pages.length
-        ){
-
-            setStatus(
-                "Sending your document and instructions for review..."
-            );
-
-
-            await startReview({
-
-                message,
-
-                formData:
-                    collect(),
-
-                pages:
-                    uploadedDocument.document_pages,
-
-                event:
-                    "send_for_review"
-
-            });
-
-
-            return;
-        }
-
-
-        setStatus(
-            "Processing your message..."
-        );
-
 
         const data =
             await apiChat({
@@ -2001,11 +2859,16 @@ async function sendMessage(
                 client_request_id:
                     requestId,
 
+                context:
+                    currentWork
+                    ? "Current prepared work exists in the active customer job."
+                    : null,
+
                 activate_intelligence:
                     true,
 
                 create_work:
-                    false
+                    true
 
             });
 
@@ -2023,28 +2886,43 @@ async function sendMessage(
         }
 
 
+        if(
+            data.reply
+            && reviewView.classList.contains(
+                "show"
+            )
+        ){
+
+            currentWork =
+                data.reply;
+
+            workContent.textContent =
+                currentWork;
+
+        }
+
+
         setStatus(
-            data.reply ||
-            "Your message has been received.",
+            "Ready for your next instruction.",
             "success"
         );
 
 
-        if(data.reply){
+        return data;
 
-            introText.textContent =
-                data.reply;
-
-        }
-
-    }catch(error){
+    }
+    catch(error){
 
         setStatus(
-            error.message,
+            error.message
+            || "Your message could not be processed.",
             "error"
         );
 
-    }finally{
+        return null;
+
+    }
+    finally{
 
         busyState(false);
 
@@ -2055,7 +2933,7 @@ async function sendMessage(
 
 sendBtn.addEventListener(
     "click",
-    ()=>{
+    () => {
 
         const text =
             clean(
@@ -2091,11 +2969,11 @@ sendBtn.addEventListener(
 
 messageInput.addEventListener(
     "keydown",
-    event=>{
+    event => {
 
         if(
-            event.key === "Enter" &&
-            !event.shiftKey
+            event.key === "Enter"
+            && !event.shiftKey
         ){
 
             event.preventDefault();
@@ -2110,7 +2988,7 @@ messageInput.addEventListener(
 
 messageInput.addEventListener(
     "input",
-    ()=>{
+    () => {
 
         messageInput.style.height =
             "auto";
@@ -2119,20 +2997,19 @@ messageInput.addEventListener(
             Math.min(
                 messageInput.scrollHeight,
                 105
-            ) +
-            "px";
+            ) + "px";
 
     }
 );
 
 
-/* =========================================================
+/* ============================================================
    CUSTOMER SERVICE
-   ========================================================= */
+============================================================ */
 
 customerBtn.addEventListener(
     "click",
-    async ()=>{
+    async () => {
 
         if(busy){
             return;
@@ -2141,7 +3018,6 @@ customerBtn.addEventListener(
 
         busyState(true);
 
-
         setStatus(
             "Connecting you to Customer Service..."
         );
@@ -2149,25 +3025,21 @@ customerBtn.addEventListener(
 
         try{
 
-            const query =
-                new URLSearchParams({
-
-                    customer_id:
-                        customerId,
-
-                    job_id:
-                        jobId,
-
-                    service
-
-                });
-
-
             const response =
                 await fetch(
-                    API_BASE +
-                    "/api/customer-service?" +
-                    query.toString(),
+                    API_BASE
+                    + "/api/customer-service?"
+                    + new URLSearchParams({
+
+                        customer_id:
+                            customerId,
+
+                        job_id:
+                            jobId,
+
+                        service
+
+                    }),
                     {
                         method:"POST"
                     }
@@ -2178,39 +3050,43 @@ customerBtn.addEventListener(
                 await response
                     .json()
                     .catch(
-                        ()=>({})
+                        () => ({})
                     );
 
 
             if(
-                !response.ok ||
-                !data.success
+                !response.ok
+                || !data.success
             ){
 
                 throw new Error(
-                    data.reply ||
-                    data.message ||
-                    data.error_message ||
-                    "Customer Service is unavailable."
+                    data.error_message
+                    || data.reply
+                    || data.message
+                    || "Customer Service is unavailable."
                 );
 
             }
 
 
             setStatus(
-                data.reply ||
-                "Customer Service is available to help.",
+                data.reply
+                || "Customer Service is available to help.",
                 "success"
             );
 
-        }catch(error){
+
+        }
+        catch(error){
 
             setStatus(
-                error.message,
+                error.message
+                || "Customer Service is unavailable.",
                 "error"
             );
 
-        }finally{
+        }
+        finally{
 
             busyState(false);
 
@@ -2220,13 +3096,13 @@ customerBtn.addEventListener(
 );
 
 
-/* =========================================================
+/* ============================================================
    CHOOSE SERVICE
-   ========================================================= */
+============================================================ */
 
 chooseBtn.addEventListener(
     "click",
-    ()=>{
+    () => {
 
         if(!busy){
 
@@ -2239,28 +3115,29 @@ chooseBtn.addEventListener(
 );
 
 
-/* =========================================================
+/* ============================================================
    VOICE
-   ========================================================= */
+============================================================ */
 
 voiceBtn.addEventListener(
     "click",
-    async ()=>{
+    async () => {
 
         if(
-            mediaRecorder?.state ===
-            "recording"
+            mediaRecorder
+            && mediaRecorder.state
+                === "recording"
         ){
 
             mediaRecorder.stop();
 
             return;
-
         }
 
 
         if(
-            !navigator.mediaDevices?.getUserMedia
+            !navigator.mediaDevices
+            || !navigator.mediaDevices.getUserMedia
         ){
 
             setStatus(
@@ -2276,10 +3153,9 @@ voiceBtn.addEventListener(
         try{
 
             recordingStream =
-                await navigator.mediaDevices
-                    .getUserMedia({
-                        audio:true
-                    });
+                await navigator.mediaDevices.getUserMedia({
+                    audio:true
+                });
 
 
             recordedChunks = [];
@@ -2292,10 +3168,11 @@ voiceBtn.addEventListener(
 
 
             mediaRecorder.ondataavailable =
-                event=>{
+                event => {
 
                     if(
-                        event.data?.size
+                        event.data
+                        && event.data.size
                     ){
 
                         recordedChunks.push(
@@ -2308,7 +3185,7 @@ voiceBtn.addEventListener(
 
 
             mediaRecorder.onstop =
-                async ()=>{
+                async () => {
 
                     recordingStream
                         ?.getTracks()
@@ -2318,13 +3195,12 @@ voiceBtn.addEventListener(
                         );
 
 
-                    recordingStream =
-                        null;
+                    recordingStream = null;
 
 
-                    voiceRecording
-                        .classList
-                        .remove("show");
+                    voiceRecording.classList.remove(
+                        "show"
+                    );
 
 
                     voiceBtn.textContent =
@@ -2354,8 +3230,7 @@ voiceBtn.addEventListener(
                         new Blob(
                             recordedChunks,
                             {
-                                type:
-                                    "audio/webm"
+                                type:"audio/webm"
                             }
                         ),
                         "voice_message.webm"
@@ -2390,8 +3265,7 @@ voiceBtn.addEventListener(
 
                         const response =
                             await fetch(
-                                API_BASE +
-                                "/api/voice",
+                                API_BASE + "/api/voice",
                                 {
                                     method:"POST",
                                     body:formData
@@ -2403,19 +3277,20 @@ voiceBtn.addEventListener(
                             await response
                                 .json()
                                 .catch(
-                                    ()=>({})
+                                    () => ({})
                                 );
 
 
                         if(
-                            !response.ok ||
-                            !data.success
+                            !response.ok
+                            || !data.success
                         ){
 
                             throw new Error(
-                                data.error_message ||
-                                data.message ||
-                                "Voice recording failed."
+                                data.error_message
+                                || data.message
+                                || data.error
+                                || "Voice recording failed."
                             );
 
                         }
@@ -2426,10 +3301,13 @@ voiceBtn.addEventListener(
                             "voice_uploaded"
                         );
 
-                    }catch(error){
+
+                    }
+                    catch(error){
 
                         setStatus(
-                            error.message,
+                            error.message
+                            || "Voice recording failed.",
                             "error"
                         );
 
@@ -2441,9 +3319,9 @@ voiceBtn.addEventListener(
             mediaRecorder.start();
 
 
-            voiceRecording
-                .classList
-                .add("show");
+            voiceRecording.classList.add(
+                "show"
+            );
 
 
             voiceBtn.textContent =
@@ -2454,7 +3332,14 @@ voiceBtn.addEventListener(
                 "Recording your voice..."
             );
 
-        }catch(error){
+
+        }
+        catch(error){
+
+            console.error(
+                "VOICE ERROR:",
+                error
+            );
 
             setStatus(
                 "Could not access your microphone.",
@@ -2467,9 +3352,9 @@ voiceBtn.addEventListener(
 );
 
 
-/* =========================================================
-   INITIALISE
-   ========================================================= */
+/* ============================================================
+   INITIALIZATION
+============================================================ */
 
 async function init(){
 
@@ -2485,6 +3370,15 @@ async function init(){
 
 }
 
+
+/*
+No automatic work creation occurs here.
+
+Selecting a service only loads the useful service guidance.
+
+The customer's SEND action is the point at which the actual
+request is created and handed into the review workflow.
+*/
 
 init();
 
