@@ -2,10 +2,11 @@
 Naija Pocket Business Center
 ADA RESPONSE ENGINE
 
-END-TO-END REVIEW INTELLIGENCE
+END-TO-END DOCUMENT INTELLIGENCE
+================================
 
-IMPORTANT ARCHITECTURE
-----------------------
+ACTIVE ARCHITECTURE
+-------------------
 
 Workspace
     ↓
@@ -21,39 +22,72 @@ Review Page
 
 AdaResponse is the intelligence layer.
 
-The application owns the complete customer document.
+IMPORTANT
+---------
 
-AdaResponse does NOT own or discard the document.
+AdaResponse does NOT own the customer's permanent document state.
 
-For review:
+The application owns the complete document.
 
-    complete document
-        ↓
-    page 1
-        ↓
-    Groq
-        ↓
-    review result
-        ↓
-    page 2
-        ↓
-    Groq
-        ↓
-    review result
-        ↓
-    ...
-        ↓
-    assembled review
+AdaResponse receives document content from the application,
+processes it intelligently, and returns structured results.
 
-The Groq request is limited.
+A large document is NOT sent to Groq as one giant request.
 
-The customer's document is NOT limited.
+Instead:
 
-No page is silently discarded.
+    COMPLETE DOCUMENT
+          ↓
+    PAGE 1 → GROQ → REVIEW CARD 1
+          ↓
+    PAGE 2 → GROQ → REVIEW CARD 2
+          ↓
+    PAGE 3 → GROQ → REVIEW CARD 3
+          ↓
+          ...
+          ↓
+    LAST PAGE → GROQ → LAST REVIEW CARD
+          ↓
+    COMPLETE REVIEW
 
-No page is replaced by a summary.
+The customer document is never silently truncated,
+summarized, discarded, or replaced by an LLM summary.
 
-No keyword decision workflow is used.
+Groq request limits apply to individual requests only.
+
+REVIEW INTELLIGENCE
+-------------------
+
+Ada reasons about the actual customer request.
+
+No keyword-based workflow is used.
+
+The selected service provides context.
+
+The application event provides workflow context.
+
+The document provides the material being worked on.
+
+Ada remains available after the complete review so the customer
+can request corrections.
+
+CORRECTION
+----------
+
+The application sends the current document version plus the
+customer's correction instruction.
+
+Ada returns corrected page content.
+
+The application remains responsible for storing the new version.
+
+SECURITY
+--------
+
+Technical errors are logged server-side.
+
+Internal architecture is never exposed to customers unless
+ADA_EXPOSE_ERRORS=true is explicitly configured.
 """
 
 from __future__ import annotations
@@ -90,7 +124,10 @@ API_KEY = (
 ).strip()
 
 EXPOSE_ERRORS_TO_CLIENT = (
-    os.getenv("ADA_EXPOSE_ERRORS", "false")
+    os.getenv(
+        "ADA_EXPOSE_ERRORS",
+        "false",
+    )
     .strip()
     .lower()
     in {
@@ -107,27 +144,31 @@ EXPOSE_ERRORS_TO_CLIENT = (
 # ============================================================
 
 MAX_SYSTEM_PROMPT_CHARS = 16000
+
 MAX_HISTORY_MESSAGES = 8
 MAX_HISTORY_MESSAGE_CHARS = 2000
 
 MAX_USER_MESSAGE_CHARS = 5000
 MAX_CONTEXT_CHARS = 6000
 
-# The actual document is handled separately.
-# This limit controls ONE Groq review request.
+# Maximum content placed into ONE review request.
 REVIEW_PAGE_INPUT_CHARS = 8000
 
-# Previous review information carried into the next page.
+# Maximum continuity information carried forward.
 REVIEW_CONTINUITY_CHARS = 2500
 
+# Maximum number of review findings generated per request.
 REVIEW_OUTPUT_TOKENS = 700
 
-# Maximum number of real document pages accepted.
+# Maximum number of actual pages accepted by the engine.
 MAX_DOCUMENT_PAGES = 1000
 
-# Generated/corrected page output.
-CORRECTION_OUTPUT_TOKENS = 900
+# Correction request limits.
 CORRECTION_INPUT_CHARS = 8000
+CORRECTION_OUTPUT_TOKENS = 900
+
+# Normal conversational response.
+NORMAL_OUTPUT_TOKENS = 700
 
 
 # ============================================================
@@ -158,6 +199,9 @@ CORRECTION_EVENTS = {
 # ============================================================
 
 class AdaResponseError(Exception):
+    """
+    Controlled application error raised by AdaResponse.
+    """
 
     def __init__(
         self,
@@ -184,6 +228,9 @@ _client = None
 
 
 def get_client():
+    """
+    Lazily create the Groq client.
+    """
 
     global _client
 
@@ -205,7 +252,6 @@ def get_client():
         )
 
     try:
-
         _client = Groq(
             api_key=API_KEY
         )
@@ -213,7 +259,6 @@ def get_client():
         return _client
 
     except Exception as error:
-
         raise AdaResponseError(
             "Groq client initialization failed.",
             stage="CLIENT_INITIALIZATION",
@@ -223,7 +268,7 @@ def get_client():
 
 
 # ============================================================
-# PUBLIC
+# PUBLIC CONFIGURATION
 # ============================================================
 
 def get_ada_model() -> str:
@@ -231,7 +276,6 @@ def get_ada_model() -> str:
 
 
 def is_configured() -> bool:
-
     return (
         Groq is not None
         and bool(API_KEY)
@@ -239,10 +283,13 @@ def is_configured() -> bool:
 
 
 # ============================================================
-# TEXT
+# TEXT UTILITIES
 # ============================================================
 
 def safe_text(value: Any) -> str:
+    """
+    Convert arbitrary input into safe stripped text.
+    """
 
     if value is None:
         return ""
@@ -257,6 +304,12 @@ def compact_text(
     text: Any,
     maximum: int,
 ) -> str:
+    """
+    Compact internal context without silently using this
+    mechanism to destroy customer document pages.
+
+    This helper is for prompts, history and continuity only.
+    """
 
     text = safe_text(text)
 
@@ -283,9 +336,7 @@ def compact_text(
         available * 0.65
     )
 
-    last = (
-        available - first
-    )
+    last = available - first
 
     return (
         text[:first]
@@ -295,7 +346,7 @@ def compact_text(
 
 
 # ============================================================
-# ERROR CLASSIFICATION
+# GROQ ERROR CLASSIFICATION
 # ============================================================
 
 def get_error_status_code(
@@ -381,6 +432,9 @@ def log_error(
     page_number: int | None = None,
     event: str | None = None,
 ):
+    """
+    Server-side diagnostic logging.
+    """
 
     print()
     print("=" * 78)
@@ -434,6 +488,9 @@ def log_error(
 def client_error_message(
     error: Exception,
 ) -> str:
+    """
+    Convert an internal error into a safe customer message.
+    """
 
     if not EXPOSE_ERRORS_TO_CLIENT:
         return (
@@ -460,12 +517,20 @@ def client_error_message(
 
 
 # ============================================================
-# PAGE NORMALIZATION
+# DOCUMENT PAGE NORMALIZATION
 # ============================================================
 
 def normalize_document_pages(
     pages: Any,
 ) -> list[dict[str, Any]]:
+    """
+    Normalize all supported page formats.
+
+    IMPORTANT:
+    This function does NOT compact page content.
+
+    Customer document content is preserved exactly as supplied.
+    """
 
     if pages is None:
         return []
@@ -483,6 +548,10 @@ def normalize_document_pages(
         start=1,
     ):
 
+        # ----------------------------------------------------
+        # Plain string page
+        # ----------------------------------------------------
+
         if isinstance(
             item,
             str,
@@ -497,17 +566,22 @@ def normalize_document_pages(
                 {
                     "page_number": index,
                     "content": content,
+                    "title": "",
                 }
             )
 
             continue
+
+        # ----------------------------------------------------
+        # Dictionary page
+        # ----------------------------------------------------
 
         if isinstance(
             item,
             dict,
         ):
 
-            page_number = (
+            raw_page_number = (
                 item.get(
                     "page_number"
                 )
@@ -516,6 +590,13 @@ def normalize_document_pages(
                 )
                 or index
             )
+
+            try:
+                page_number = int(
+                    raw_page_number
+                )
+            except Exception:
+                page_number = index
 
             content = (
                 item.get("content")
@@ -534,33 +615,49 @@ def normalize_document_pages(
 
             result.append(
                 {
-                    "page_number": int(
-                        page_number
-                    ),
-                    "content": content,
-                    "title": safe_text(
-                        item.get(
-                            "title"
-                        )
-                    ),
+                    "page_number":
+                        page_number,
+
+                    "content":
+                        content,
+
+                    "title":
+                        safe_text(
+                            item.get(
+                                "title"
+                            )
+                        ),
                 }
             )
 
     if len(result) > MAX_DOCUMENT_PAGES:
-        result = result[
-            :MAX_DOCUMENT_PAGES
-        ]
+        raise AdaResponseError(
+            (
+                "The document contains too many pages "
+                "for this processing session."
+            ),
+            stage="DOCUMENT_NORMALIZATION",
+            category="DOCUMENT_TOO_LARGE",
+        )
 
     return result
 
 
 # ============================================================
-# FALLBACK DOCUMENT SPLITTER
+# DOCUMENT TEXT → PAGES
 # ============================================================
 
 def document_text_to_pages(
     document: str,
 ) -> list[dict[str, Any]]:
+    """
+    Convert a complete text document into logical pages.
+
+    Explicit PAGE markers are respected.
+
+    If no markers exist, the complete document becomes one
+    logical page rather than being silently truncated.
+    """
 
     document = safe_text(
         document
@@ -569,7 +666,6 @@ def document_text_to_pages(
     if not document:
         return []
 
-    # First respect explicit page markers.
     marker_pattern = re.compile(
         r"(?:^|\n)"
         r"(?:={2,}\s*)?"
@@ -617,18 +713,19 @@ def document_text_to_pages(
                             ),
                         "content":
                             content,
+                        "title":
+                            "",
                     }
                 )
 
         if pages:
             return pages
 
-    # If there are no page markers, preserve the complete
-    # document as one logical page.
     return [
         {
             "page_number": 1,
             "content": document,
+            "title": "",
         }
     ]
 
@@ -638,6 +735,28 @@ def document_text_to_pages(
 # ============================================================
 
 class AdaResponse:
+    """
+    End-to-end intelligence layer.
+
+    AdaResponse is deliberately independent of the old controller
+    architecture.
+
+    FastAPI can instantiate this class and call:
+
+        respond()
+
+    for normal conversation,
+
+        review_document_pages()
+
+    for Send-for-Review,
+
+    and
+
+        correct_document()
+
+    for customer corrections.
+    """
 
     def __init__(
         self,
@@ -669,7 +788,6 @@ class AdaResponse:
         self,
         service: str | None,
     ):
-
         service = safe_text(
             service
         )
@@ -717,7 +835,7 @@ class AdaResponse:
             return service
 
     # ========================================================
-    # BILLING
+    # BILLING CONTEXT
     # ========================================================
 
     def get_billing_context(
@@ -809,7 +927,7 @@ class AdaResponse:
         )
 
     # ========================================================
-    # CORE INTELLIGENCE
+    # CORE INTELLIGENCE PROMPT
     # ========================================================
 
     def get_intelligence_prompt(
@@ -821,25 +939,32 @@ class AdaResponse:
             "customer-facing assistant of "
             "Naija Pocket Business Center.\n\n"
 
-            "You are responsible for intelligent "
-            "reasoning about the customer's request.\n\n"
+            "Your job is to understand the customer's "
+            "actual request and reason intelligently "
+            "about the work being performed.\n\n"
 
             "Do NOT use keyword matching to determine "
-            "what the customer means.\n\n"
+            "customer intent.\n\n"
 
-            "Understand the customer's actual request, "
-            "selected service, supplied document, "
-            "application state and workflow action.\n\n"
+            "Use the selected service, customer request, "
+            "document content and application state as "
+            "context for reasoning.\n\n"
 
-            "REVIEW MODE\n"
-            "===========\n"
-            "When the application sends document pages "
-            "for review, every page belongs to ONE "
-            "customer document.\n\n"
+            "DOCUMENT REVIEW\n"
+            "===============\n"
+            "A document may contain many pages.\n\n"
 
-            "Review the supplied page intelligently.\n\n"
+            "Every supplied page belongs to the same "
+            "customer document unless the application "
+            "explicitly says otherwise.\n\n"
 
-            "Check:\n"
+            "Review each page as part of the complete "
+            "document.\n\n"
+
+            "Maintain awareness of important information "
+            "from earlier pages when reviewing later pages.\n\n"
+
+            "Look for:\n"
             "- correctness\n"
             "- completeness\n"
             "- relevance\n"
@@ -848,46 +973,44 @@ class AdaResponse:
             "- consistency\n"
             "- contradictions\n"
             "- structure\n"
-            "- formatting problems visible in supplied text\n"
+            "- visible formatting problems\n"
             "- compliance with the customer's request\n\n"
-
-            "Maintain continuity with earlier pages.\n\n"
 
             "Do not invent facts.\n\n"
 
-            "Do not rewrite the customer's entire document "
-            "during review unless specifically asked.\n\n"
+            "Do not claim that a page is missing unless "
+            "the application actually says it is missing.\n\n"
 
-            "Do not treat a page as a separate customer job.\n\n"
-
-            "Do not say that a page is missing unless the "
-            "application actually reports that page missing.\n\n"
+            "Do not treat each page as a separate job.\n\n"
 
             "DOCUMENT PRESERVATION\n"
             "=====================\n"
-            "The application owns the complete customer "
+            "The application owns the customer's complete "
             "document.\n\n"
 
             "Never delete document content.\n"
             "Never silently summarize the document.\n"
-            "Never replace pages with a summary.\n"
+            "Never replace a page with a summary.\n"
             "Never invent pages.\n\n"
 
-            "The request limit is an LLM request limit, "
-            "NOT a customer-document limit.\n\n"
+            "An LLM request limit is NOT a customer-document "
+            "limit.\n\n"
 
             "CORRECTION MODE\n"
             "===============\n"
-            "When the customer asks for a correction, "
-            "reason from the current document version "
-            "and the customer's correction instruction.\n\n"
+            "When the customer requests a correction, work "
+            "from the current document version supplied by "
+            "the application.\n\n"
+
+            "Apply the requested correction without "
+            "unnecessarily changing unrelated content.\n\n"
 
             "Do not revert to an earlier version.\n\n"
 
             "BILLING\n"
             "=======\n"
             "BillingManager is authoritative for pricing.\n"
-            "Never invent prices.\n\n"
+            "Never invent a price.\n\n"
 
             "CUSTOMER COMMUNICATION\n"
             "=======================\n"
@@ -916,6 +1039,10 @@ class AdaResponse:
 
         parts = []
 
+        # ----------------------------------------------------
+        # Existing Ada prompt manager
+        # ----------------------------------------------------
+
         try:
 
             central = (
@@ -943,9 +1070,17 @@ class AdaResponse:
                 category="PROMPT_MANAGER",
             )
 
+        # ----------------------------------------------------
+        # Core intelligence rules
+        # ----------------------------------------------------
+
         parts.append(
             self.get_intelligence_prompt()
         )
+
+        # ----------------------------------------------------
+        # Billing
+        # ----------------------------------------------------
 
         billing = (
             self.get_billing_context(
@@ -958,6 +1093,10 @@ class AdaResponse:
                 billing
             )
 
+        # ----------------------------------------------------
+        # Application state
+        # ----------------------------------------------------
+
         if context:
 
             parts.append(
@@ -967,6 +1106,10 @@ class AdaResponse:
                     MAX_CONTEXT_CHARS,
                 )
             )
+
+        # ----------------------------------------------------
+        # Selected service
+        # ----------------------------------------------------
 
         if active_service:
 
@@ -1015,7 +1158,6 @@ class AdaResponse:
         )
 
     def clear_history(self):
-
         self.history.clear()
 
     # ========================================================
@@ -1041,14 +1183,8 @@ class AdaResponse:
         print("Stage:", stage)
         print("Model:", MODEL)
         print("Page:", page_number)
-        print(
-            "Messages:",
-            len(messages),
-        )
-        print(
-            "Output tokens:",
-            output_tokens,
-        )
+        print("Messages:", len(messages))
+        print("Output tokens:", output_tokens)
         print("=" * 78)
 
         try:
@@ -1097,6 +1233,7 @@ class AdaResponse:
             ) from error
 
         if not response:
+
             raise AdaResponseError(
                 "Groq returned no response.",
                 stage=stage,
@@ -1104,6 +1241,7 @@ class AdaResponse:
             )
 
         if not response.choices:
+
             raise AdaResponseError(
                 "Groq returned no choices.",
                 stage=stage,
@@ -1118,6 +1256,7 @@ class AdaResponse:
         )
 
         if not content:
+
             raise AdaResponseError(
                 "Groq returned empty content.",
                 stage=stage,
@@ -1166,7 +1305,7 @@ class AdaResponse:
         return content
 
     # ========================================================
-    # REVIEW PAGE PROMPT
+    # REVIEW PROMPT
     # ========================================================
 
     def build_page_review_prompt(
@@ -1175,31 +1314,33 @@ class AdaResponse:
         page_number: int,
         total_pages: int,
         page_content: str,
-        previous_review: str,
+        previous_reviews: str,
         customer_request: str,
     ) -> str:
 
         return (
             "CUSTOMER DOCUMENT REVIEW\n\n"
 
-            "This is ONE document.\n"
-            f"This is page {page_number} "
-            f"of {total_pages}.\n\n"
+            "You are reviewing one page of one "
+            "complete customer document.\n\n"
+
+            f"CURRENT PAGE: {page_number} "
+            f"OF {total_pages}\n\n"
 
             "CUSTOMER'S REVIEW REQUEST:\n"
             f"{compact_text(customer_request, 3000)}\n\n"
 
-            "CURRENT DOCUMENT PAGE:\n"
+            "CURRENT PAGE CONTENT:\n"
             f"{compact_text(page_content, REVIEW_PAGE_INPUT_CHARS)}\n\n"
 
-            "PREVIOUS REVIEW CONTINUITY:\n"
-            f"{compact_text(previous_review, REVIEW_CONTINUITY_CHARS)}\n\n"
+            "EARLIER REVIEW CONTINUITY:\n"
+            f"{compact_text(previous_reviews, REVIEW_CONTINUITY_CHARS)}\n\n"
 
-            "YOUR TASK\n"
-            "=========\n"
+            "TASK\n"
+            "====\n"
 
-            "Intelligently review this page as part of "
-            "the complete document.\n\n"
+            "Review this page intelligently while treating "
+            "it as part of the complete document.\n\n"
 
             "Look for genuine issues only.\n\n"
 
@@ -1208,18 +1349,20 @@ class AdaResponse:
             "structure, visible formatting problems and "
             "compliance with the customer's request.\n\n"
 
-            "If this page is satisfactory, clearly state "
-            "that it is satisfactory.\n\n"
+            "Use earlier review continuity to identify "
+            "cross-page inconsistencies where possible.\n\n"
 
-            "If there are issues, identify them precisely.\n\n"
+            "If the page is satisfactory, say so clearly.\n\n"
 
-            "Do not invent facts.\n"
+            "If there are problems, identify them precisely "
+            "and explain what needs attention.\n\n"
 
-            "Do not rewrite the whole page unless the "
-            "customer explicitly requested rewriting.\n\n"
+            "Do not invent facts.\n\n"
 
-            "Do not mention token limits, Groq, API calls "
-            "or internal processing."
+            "Do not rewrite the entire page unless the "
+            "customer explicitly asked for rewriting.\n\n"
+
+            "Do not mention internal processing."
         )
 
     # ========================================================
@@ -1235,7 +1378,7 @@ class AdaResponse:
         service: str | None,
         context: str | None,
         customer_request: str,
-        previous_review: str = "",
+        previous_reviews: str = "",
         event: str = "review",
     ) -> str:
 
@@ -1262,19 +1405,23 @@ class AdaResponse:
                 page_number=page_number,
                 total_pages=total_pages,
                 page_content=page_content,
-                previous_review=previous_review,
+                previous_reviews=previous_reviews,
                 customer_request=customer_request,
             )
         )
 
         messages = [
             {
-                "role": "system",
-                "content": system_prompt,
+                "role":
+                    "system",
+                "content":
+                    system_prompt,
             },
             {
-                "role": "user",
-                "content": prompt,
+                "role":
+                    "user",
+                "content":
+                    prompt,
             },
         ]
 
@@ -1303,6 +1450,17 @@ class AdaResponse:
             None
         ] | None = None,
     ) -> dict[str, Any]:
+        """
+        Review every page individually.
+
+        The callback receives a page_started event before
+        each Groq call and page_completed immediately after
+        each Groq response.
+
+        This allows FastAPI to place review cards into the
+        review state progressively instead of waiting for the
+        complete document before receiving any result.
+        """
 
         normalized_pages = (
             normalize_document_pages(
@@ -1324,14 +1482,22 @@ class AdaResponse:
 
         page_results = []
 
-        previous_review = ""
+        # ----------------------------------------------------
+        # This is continuity, NOT document content.
+        #
+        # Only review intelligence is carried forward.
+        # The actual page content is always supplied separately
+        # for the page currently being reviewed.
+        # ----------------------------------------------------
+
+        continuity_items = []
 
         for position, page in enumerate(
             normalized_pages,
             start=1,
         ):
 
-            actual_page_number = int(
+            page_number = int(
                 page.get(
                     "page_number",
                     position,
@@ -1344,28 +1510,55 @@ class AdaResponse:
                 )
             )
 
+            # ------------------------------------------------
+            # Notify application immediately.
+            # ------------------------------------------------
+
             if progress_callback:
 
                 progress_callback(
                     {
-                        "type": "page_started",
+                        "type":
+                            "page_started",
+
                         "page_number":
-                            actual_page_number,
+                            page_number,
+
                         "position":
                             position,
+
                         "total_pages":
                             total_pages,
+
+                        "status":
+                            "processing",
+
                         "content":
                             content,
                     }
                 )
 
+            # ------------------------------------------------
+            # Build continuity from previous findings.
+            # ------------------------------------------------
+
+            previous_reviews = "\n\n".join(
+                continuity_items
+            )
+
+            previous_reviews = compact_text(
+                previous_reviews,
+                REVIEW_CONTINUITY_CHARS,
+            )
+
+            # ------------------------------------------------
+            # One page → one Groq request.
+            # ------------------------------------------------
+
             try:
 
                 review = self.review_page(
-                    page_number=(
-                        actual_page_number
-                    ),
+                    page_number=page_number,
                     total_pages=total_pages,
                     page_content=content,
                     service=service,
@@ -1373,8 +1566,8 @@ class AdaResponse:
                     customer_request=(
                         customer_request
                     ),
-                    previous_review=(
-                        previous_review
+                    previous_reviews=(
+                        previous_reviews
                     ),
                     event=event,
                 )
@@ -1387,31 +1580,54 @@ class AdaResponse:
                         {
                             "type":
                                 "page_error",
+
                             "page_number":
-                                actual_page_number,
+                                page_number,
+
                             "position":
                                 position,
+
                             "total_pages":
                                 total_pages,
+
+                            "status":
+                                "error",
+
                             "error":
-                                str(error),
+                                client_error_message(
+                                    error
+                                ),
                         }
                     )
 
                 raise
 
+            review = safe_text(
+                review
+            )
+
+            # ------------------------------------------------
+            # Structured review card.
+            # ------------------------------------------------
+
             result = {
+                "type":
+                    "review_card",
+
                 "page_number":
-                    actual_page_number,
+                    page_number,
 
                 "position":
                     position,
+
+                "total_pages":
+                    total_pages,
 
                 "content":
                     content,
 
                 "review":
-                    safe_text(review),
+                    review,
 
                 "status":
                     "reviewed",
@@ -1421,37 +1637,35 @@ class AdaResponse:
                 result
             )
 
-            previous_review = compact_text(
-                review,
-                REVIEW_CONTINUITY_CHARS,
+            # ------------------------------------------------
+            # Preserve review continuity.
+            # ------------------------------------------------
+
+            continuity_items.append(
+                (
+                    f"PAGE {page_number} REVIEW:\n"
+                    f"{review}"
+                )
             )
+
+            # Prevent continuity from growing indefinitely.
+            continuity_items = continuity_items[
+                -6:
+            ]
+
+            # ------------------------------------------------
+            # Send completed card immediately.
+            # ------------------------------------------------
 
             if progress_callback:
 
                 progress_callback(
-                    {
-                        "type":
-                            "page_completed",
-
-                        "page_number":
-                            actual_page_number,
-
-                        "position":
-                            position,
-
-                        "total_pages":
-                            total_pages,
-
-                        "content":
-                            content,
-
-                        "review":
-                            safe_text(review),
-
-                        "status":
-                            "reviewed",
-                    }
+                    result
                 )
+
+        # ----------------------------------------------------
+        # Complete assembled review.
+        # ----------------------------------------------------
 
         assembled_review = (
             self.assemble_review(
@@ -1459,19 +1673,27 @@ class AdaResponse:
             )
         )
 
+        complete_result = {
+            "type":
+                "review_completed",
+
+            "status":
+                "completed",
+
+            "total_pages":
+                total_pages,
+
+            "pages":
+                page_results,
+
+            "assembled_review":
+                assembled_review,
+        }
+
         if progress_callback:
 
             progress_callback(
-                {
-                    "type":
-                        "review_completed",
-
-                    "total_pages":
-                        total_pages,
-
-                    "assembled_review":
-                        assembled_review,
-                }
+                complete_result
             )
 
         return {
@@ -1483,6 +1705,9 @@ class AdaResponse:
 
             "assembled_review":
                 assembled_review,
+
+            "status":
+                "completed",
         }
 
     # ========================================================
@@ -1495,10 +1720,27 @@ class AdaResponse:
             dict[str, Any]
         ],
     ) -> str:
+        """
+        Assemble review findings.
+
+        This assembles review results only.
+
+        It does NOT replace the customer's original document.
+        """
+
+        ordered = sorted(
+            page_results,
+            key=lambda item: int(
+                item.get(
+                    "page_number",
+                    0,
+                )
+            ),
+        )
 
         parts = []
 
-        for item in page_results:
+        for item in ordered:
 
             page_number = item.get(
                 "page_number"
@@ -1533,7 +1775,50 @@ class AdaResponse:
         )
 
     # ========================================================
-    # CORRECTION
+    # CORRECTION PROMPT
+    # ========================================================
+
+    def build_correction_prompt(
+        self,
+        *,
+        page_number: int,
+        total_pages: int,
+        page_content: str,
+        correction: str,
+    ) -> str:
+
+        return (
+            "CUSTOMER DOCUMENT CORRECTION\n\n"
+
+            "This page belongs to the customer's current "
+            "document version.\n\n"
+
+            f"PAGE {page_number} OF {total_pages}\n\n"
+
+            "CUSTOMER'S CORRECTION REQUEST:\n"
+            f"{compact_text(correction, 4000)}\n\n"
+
+            "CURRENT PAGE CONTENT:\n"
+            f"{compact_text(page_content, CORRECTION_INPUT_CHARS)}\n\n"
+
+            "TASK\n"
+            "====\n"
+
+            "Apply the customer's correction to this page.\n\n"
+
+            "Rules:\n"
+            "- Preserve existing facts.\n"
+            "- Do not invent facts.\n"
+            "- Apply the requested correction.\n"
+            "- Do not unnecessarily change unrelated content.\n"
+            "- Preserve the page's useful structure.\n"
+            "- Return the corrected page content only.\n"
+            "- Do not explain the correction process.\n"
+            "- Do not mention internal processing."
+        )
+
+    # ========================================================
+    # CORRECT DOCUMENT
     # ========================================================
 
     def correct_document(
@@ -1548,6 +1833,19 @@ class AdaResponse:
             None
         ] | None = None,
     ) -> dict[str, Any]:
+        """
+        Correct the current document version.
+
+        IMPORTANT:
+
+        The application should pass the CURRENT document version.
+
+        AdaResponse does not keep an older document and does not
+        restore an old version.
+
+        Each supplied page is processed individually so that a
+        large document does not have to fit inside one Groq request.
+        """
 
         pages = normalize_document_pages(
             document_pages
@@ -1573,11 +1871,11 @@ class AdaResponse:
                 category="EMPTY_CORRECTION",
             )
 
-        corrected_pages = []
-
         total_pages = len(
             pages
         )
+
+        corrected_pages = []
 
         for position, page in enumerate(
             pages,
@@ -1597,18 +1895,28 @@ class AdaResponse:
                 )
             )
 
+            # ------------------------------------------------
+            # Notify application.
+            # ------------------------------------------------
+
             if progress_callback:
 
                 progress_callback(
                     {
                         "type":
                             "correction_page_started",
+
                         "page_number":
                             page_number,
+
                         "position":
                             position,
+
                         "total_pages":
                             total_pages,
+
+                        "status":
+                            "processing",
                     }
                 )
 
@@ -1620,26 +1928,12 @@ class AdaResponse:
             )
 
             prompt = (
-                "CORRECT THE CUSTOMER'S CURRENT "
-                "DOCUMENT VERSION.\n\n"
-
-                f"PAGE {page_number} OF "
-                f"{total_pages}\n\n"
-
-                "CUSTOMER CORRECTION:\n"
-                f"{compact_text(correction, 4000)}\n\n"
-
-                "CURRENT PAGE CONTENT:\n"
-                f"{compact_text(content, CORRECTION_INPUT_CHARS)}\n\n"
-
-                "INSTRUCTIONS:\n"
-                "- Preserve facts.\n"
-                "- Do not invent facts.\n"
-                "- Apply the customer's correction.\n"
-                "- Do not unnecessarily change unrelated content.\n"
-                "- Return the corrected page content.\n"
-                "- Do not discuss the correction process.\n"
-                "- Do not mention Groq or token limits."
+                self.build_correction_prompt(
+                    page_number=page_number,
+                    total_pages=total_pages,
+                    page_content=content,
+                    correction=correction,
+                )
             )
 
             messages = [
@@ -1657,21 +1951,64 @@ class AdaResponse:
                 },
             ]
 
-            corrected = self.call_groq(
-                messages=messages,
-                output_tokens=CORRECTION_OUTPUT_TOKENS,
-                stage="CORRECTION_PAGE",
-                page_number=page_number,
-                event="document_correction",
-            )
+            try:
+
+                corrected = self.call_groq(
+                    messages=messages,
+                    output_tokens=(
+                        CORRECTION_OUTPUT_TOKENS
+                    ),
+                    stage="CORRECTION_PAGE",
+                    page_number=page_number,
+                    event="document_correction",
+                )
+
+            except Exception as error:
+
+                if progress_callback:
+
+                    progress_callback(
+                        {
+                            "type":
+                                "correction_page_error",
+
+                            "page_number":
+                                page_number,
+
+                            "position":
+                                position,
+
+                            "total_pages":
+                                total_pages,
+
+                            "status":
+                                "error",
+
+                            "error":
+                                client_error_message(
+                                    error
+                                ),
+                        }
+                    )
+
+                raise
 
             corrected = safe_text(
                 corrected
             )
 
             corrected_page = {
+                "type":
+                    "corrected_page",
+
                 "page_number":
                     page_number,
+
+                "position":
+                    position,
+
+                "total_pages":
+                    total_pages,
 
                 "content":
                     corrected,
@@ -1687,19 +2024,37 @@ class AdaResponse:
             if progress_callback:
 
                 progress_callback(
-                    {
-                        "type":
-                            "correction_page_completed",
-                        "page_number":
-                            page_number,
-                        "position":
-                            position,
-                        "total_pages":
-                            total_pages,
-                        "content":
-                            corrected,
-                    }
+                    corrected_page
                 )
+
+        document_text = (
+            self.assemble_document(
+                corrected_pages
+            )
+        )
+
+        complete_result = {
+            "type":
+                "correction_completed",
+
+            "status":
+                "completed",
+
+            "total_pages":
+                total_pages,
+
+            "pages":
+                corrected_pages,
+
+            "document_text":
+                document_text,
+        }
+
+        if progress_callback:
+
+            progress_callback(
+                complete_result
+            )
 
         return {
             "pages":
@@ -1709,9 +2064,10 @@ class AdaResponse:
                 total_pages,
 
             "document_text":
-                self.assemble_document(
-                    corrected_pages
-                ),
+                document_text,
+
+            "status":
+                "completed",
         }
 
     # ========================================================
@@ -1724,6 +2080,12 @@ class AdaResponse:
             dict[str, Any]
         ],
     ) -> str:
+        """
+        Reassemble the complete current document.
+
+        No page is summarized here.
+        No page is discarded here.
+        """
 
         ordered = sorted(
             pages,
@@ -1765,6 +2127,12 @@ class AdaResponse:
         event: str | None = None,
         context: str | None = None,
     ) -> str:
+        """
+        Normal conversational intelligence.
+
+        This is used when the customer is talking to Ada
+        outside the page-by-page review operation.
+        """
 
         message = safe_text(
             message
@@ -1812,6 +2180,7 @@ class AdaResponse:
                 {
                     "role":
                         item["role"],
+
                     "content":
                         compact_text(
                             item["content"],
@@ -1826,10 +2195,13 @@ class AdaResponse:
                 {
                     "role":
                         "system",
+
                     "content":
-                        "CURRENT APPLICATION EVENT\n"
-                        + safe_text(
-                            event
+                        (
+                            "CURRENT APPLICATION EVENT\n"
+                            + safe_text(
+                                event
+                            )
                         ),
                 }
             )
@@ -1838,6 +2210,7 @@ class AdaResponse:
             {
                 "role":
                     "user",
+
                 "content":
                     compact_text(
                         message,
@@ -1848,7 +2221,7 @@ class AdaResponse:
 
         response = self.call_groq(
             messages=messages,
-            output_tokens=700,
+            output_tokens=NORMAL_OUTPUT_TOKENS,
             stage="NORMAL_RESPONSE",
             event=event,
         )
@@ -1931,8 +2304,13 @@ if __name__ == "__main__":
     )
 
     print(
-        "Progressive review state:",
-        "SUPPORTED",
+        "Progressive review cards:",
+        "ENABLED",
+    )
+
+    print(
+        "Review continuity:",
+        "ENABLED",
     )
 
     print(
@@ -1948,6 +2326,11 @@ if __name__ == "__main__":
     print(
         "Keyword intelligence:",
         "DISABLED",
+    )
+
+    print(
+        "Old controller dependency:",
+        "NONE",
     )
 
     print("=" * 78)
