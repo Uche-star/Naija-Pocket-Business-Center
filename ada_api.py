@@ -9,8 +9,12 @@ REAL DOCUMENT REVIEW INTELLIGENCE
 Customer
     ↓
 Workspace
-    ↓ SEND
-FastAPI /api/chat
+    ↓
+Upload / Send Request
+    ↓
+FastAPI
+    ↓
+Document extraction
     ↓
 Document pages
     ↓
@@ -36,45 +40,30 @@ Approval
     ↓
 Payment / Download
 
-FASTAPI OWNS
-------------
-- sessions
-- jobs
-- document state
-- page state
-- review state
-- progress
-- versions
-- approval state
-- workflow coordination
-
-ADARESPONSE OWNS
-----------------
-- intelligence
-- reasoning
-- Groq communication
-- document review
-- correction reasoning
-- review assembly
-
 IMPORTANT
 ---------
 This file contains NO keyword intelligence.
 
 Events are workflow signals only.
-AdaResponse remains responsible for customer reasoning.
+
+AdaResponse owns intelligence and reasoning.
+FastAPI owns workflow state and document transport.
 """
 
 from __future__ import annotations
 
 import asyncio
+import io
 import os
+import re
 import traceback
 import uuid
+import zipfile
 from pathlib import Path
 from typing import Any
+from xml.etree import ElementTree as ET
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
@@ -99,6 +88,13 @@ DEBUG_ERRORS = (
     in {"1", "true", "yes", "on"}
 )
 
+MAX_UPLOAD_BYTES = int(
+    os.getenv(
+        "ADA_MAX_UPLOAD_BYTES",
+        str(25 * 1024 * 1024),
+    )
+)
+
 
 # ============================================================
 # PATHS
@@ -108,9 +104,6 @@ BASE_DIR = Path(__file__).resolve().parent
 
 
 def find_file(filename: str) -> Path | None:
-    """
-    Locate customer-facing HTML files.
-    """
 
     candidates = (
         BASE_DIR / filename,
@@ -121,6 +114,7 @@ def find_file(filename: str) -> Path | None:
     )
 
     for path in candidates:
+
         if path.is_file():
             return path
 
@@ -133,7 +127,7 @@ def find_file(filename: str) -> Path | None:
 
 app = FastAPI(
     title="Naija Pocket Business Center",
-    version="review-intelligence-v3",
+    version="review-intelligence-v4",
 )
 
 
@@ -185,12 +179,15 @@ def get_session(
     session = _sessions.get(key)
 
     if session is None:
+
         session = AdaResponse(
             service=service
         )
+
         _sessions[key] = session
 
     elif service:
+
         session.set_service(service)
 
     return session
@@ -255,7 +252,7 @@ class ApprovalRequest(BaseModel):
 
 
 # ============================================================
-# EVENT HELPERS
+# EVENTS
 # ============================================================
 
 REVIEW_EVENTS = {
@@ -264,6 +261,8 @@ REVIEW_EVENTS = {
     "send_for_review",
     "review_document",
     "review_called",
+    "form_submitted_create_work",
+    "document_uploaded",
 }
 
 
@@ -325,7 +324,7 @@ def error_response(
 
 
 # ============================================================
-# CUSTOMER REQUEST CONSTRUCTION
+# CUSTOMER REQUEST
 # ============================================================
 
 def build_customer_request(
@@ -339,6 +338,7 @@ def build_customer_request(
     parts: list[str] = []
 
     if service:
+
         parts.append(
             "SELECTED SERVICE:\n"
             + str(service).strip()
@@ -369,6 +369,7 @@ def build_customer_request(
             )
 
         if lines:
+
             parts.append(
                 "CUSTOMER PROVIDED SERVICE INFORMATION:\n"
                 + "\n".join(lines)
@@ -381,6 +382,7 @@ def build_customer_request(
         ).strip()
 
         if context_text:
+
             parts.append(
                 "ADDITIONAL CONTEXT:\n"
                 + context_text
@@ -391,6 +393,7 @@ def build_customer_request(
     ).strip()
 
     if message_text:
+
         parts.append(
             "CUSTOMER REQUEST:\n"
             + message_text
@@ -432,6 +435,457 @@ def build_application_context(
 
 
 # ============================================================
+# DOCUMENT TEXT EXTRACTION
+# ============================================================
+
+def strip_xml_text(
+    xml_bytes: bytes,
+) -> str:
+
+    root = ET.fromstring(xml_bytes)
+
+    chunks: list[str] = []
+
+    for element in root.iter():
+
+        tag = element.tag
+
+        if isinstance(tag, str):
+            tag = tag.rsplit("}", 1)[-1]
+
+        if tag in {
+            "t",
+            "text",
+            "v",
+            "p",
+            "br",
+            "tab",
+        }:
+
+            text = (
+                element.text
+                or ""
+            )
+
+            if text.strip():
+                chunks.append(text)
+
+            if tag in {"p", "br"}:
+                chunks.append("\n")
+
+    return " ".join(chunks)
+
+
+def extract_docx_text(
+    data: bytes,
+) -> str:
+
+    with zipfile.ZipFile(
+        io.BytesIO(data)
+    ) as archive:
+
+        names = archive.namelist()
+
+        if "word/document.xml" not in names:
+            raise ValueError(
+                "The DOCX file does not contain a valid document."
+            )
+
+        xml = archive.read(
+            "word/document.xml"
+        )
+
+        root = ET.fromstring(xml)
+
+        paragraphs: list[str] = []
+
+        for paragraph in root.iter():
+
+            tag = paragraph.tag
+
+            if isinstance(tag, str):
+                tag = tag.rsplit("}", 1)[-1]
+
+            if tag != "p":
+                continue
+
+            text_parts: list[str] = []
+
+            for child in paragraph.iter():
+
+                child_tag = child.tag
+
+                if isinstance(child_tag, str):
+                    child_tag = child_tag.rsplit("}", 1)[-1]
+
+                if child_tag == "t":
+
+                    text_parts.append(
+                        child.text or ""
+                    )
+
+                elif child_tag == "tab":
+
+                    text_parts.append("\t")
+
+            text = "".join(
+                text_parts
+            ).strip()
+
+            if text:
+                paragraphs.append(text)
+
+        return "\n\n".join(
+            paragraphs
+        )
+
+
+def extract_xlsx_text(
+    data: bytes,
+) -> str:
+
+    with zipfile.ZipFile(
+        io.BytesIO(data)
+    ) as archive:
+
+        shared_strings: list[str] = []
+
+        if (
+            "xl/sharedStrings.xml"
+            in archive.namelist()
+        ):
+
+            root = ET.fromstring(
+                archive.read(
+                    "xl/sharedStrings.xml"
+                )
+            )
+
+            for item in root:
+
+                parts = []
+
+                for child in item.iter():
+
+                    tag = child.tag
+
+                    if isinstance(tag, str):
+                        tag = tag.rsplit("}", 1)[-1]
+
+                    if tag == "t":
+                        parts.append(
+                            child.text or ""
+                        )
+
+                shared_strings.append(
+                    "".join(parts)
+                )
+
+        rows: list[str] = []
+
+        sheet_names = [
+            name
+            for name in archive.namelist()
+            if re.match(
+                r"xl/worksheets/sheet\d+\.xml$",
+                name,
+            )
+        ]
+
+        for sheet_name in sorted(
+            sheet_names
+        ):
+
+            root = ET.fromstring(
+                archive.read(sheet_name)
+            )
+
+            for row in root.iter():
+
+                tag = row.tag
+
+                if isinstance(tag, str):
+                    tag = tag.rsplit("}", 1)[-1]
+
+                if tag != "row":
+                    continue
+
+                values: list[str] = []
+
+                for cell in row:
+
+                    cell_tag = cell.tag
+
+                    if isinstance(cell_tag, str):
+                        cell_tag = cell_tag.rsplit("}", 1)[-1]
+
+                    if cell_tag != "c":
+                        continue
+
+                    cell_type = cell.attrib.get(
+                        "t"
+                    )
+
+                    value = ""
+
+                    for child in cell:
+
+                        child_tag = child.tag
+
+                        if isinstance(child_tag, str):
+                            child_tag = child_tag.rsplit(
+                                "}",
+                                1,
+                            )[-1]
+
+                        if child_tag == "v":
+                            value = (
+                                child.text or ""
+                            )
+
+                    if (
+                        cell_type == "s"
+                        and value.isdigit()
+                    ):
+
+                        index = int(value)
+
+                        if (
+                            0 <= index
+                            < len(shared_strings)
+                        ):
+                            value = (
+                                shared_strings[index]
+                            )
+
+                    values.append(value)
+
+                if any(
+                    value.strip()
+                    for value in values
+                ):
+
+                    rows.append(
+                        "\t".join(values)
+                    )
+
+        return "\n".join(rows)
+
+
+def extract_pptx_text(
+    data: bytes,
+) -> str:
+
+    with zipfile.ZipFile(
+        io.BytesIO(data)
+    ) as archive:
+
+        slide_names = [
+            name
+            for name in archive.namelist()
+            if re.match(
+                r"ppt/slides/slide\d+\.xml$",
+                name,
+            )
+        ]
+
+        slides: list[str] = []
+
+        for name in sorted(
+            slide_names
+        ):
+
+            root = ET.fromstring(
+                archive.read(name)
+            )
+
+            texts: list[str] = []
+
+            for element in root.iter():
+
+                tag = element.tag
+
+                if isinstance(tag, str):
+                    tag = tag.rsplit("}", 1)[-1]
+
+                if tag == "t":
+
+                    value = (
+                        element.text or ""
+                    ).strip()
+
+                    if value:
+                        texts.append(value)
+
+            if texts:
+
+                slides.append(
+                    " ".join(texts)
+                )
+
+        return "\n\n".join(slides)
+
+
+def extract_pdf_text(
+    data: bytes,
+) -> str:
+
+    try:
+
+        from pypdf import PdfReader
+
+    except ImportError as error:
+
+        raise RuntimeError(
+            "PDF support requires the pypdf package."
+        ) from error
+
+    reader = PdfReader(
+        io.BytesIO(data)
+    )
+
+    pages: list[str] = []
+
+    for page in reader.pages:
+
+        text = (
+            page.extract_text()
+            or ""
+        ).strip()
+
+        pages.append(text)
+
+    return "\n\n".join(pages)
+
+
+def extract_document_text(
+    *,
+    filename: str,
+    data: bytes,
+) -> str:
+
+    suffix = (
+        Path(filename)
+        .suffix
+        .lower()
+    )
+
+    if suffix == ".txt":
+
+        return data.decode(
+            "utf-8",
+            errors="replace",
+        )
+
+    if suffix == ".csv":
+
+        return data.decode(
+            "utf-8",
+            errors="replace",
+        )
+
+    if suffix == ".rtf":
+
+        text = data.decode(
+            "utf-8",
+            errors="replace",
+        )
+
+        text = re.sub(
+            r"\\'[0-9a-fA-F]{2}",
+            " ",
+            text,
+        )
+
+        text = re.sub(
+            r"\\[a-zA-Z]+\d* ?",
+            " ",
+            text,
+        )
+
+        return re.sub(
+            r"[{}]",
+            "",
+            text,
+        )
+
+    if suffix == ".docx":
+
+        return extract_docx_text(data)
+
+    if suffix == ".xlsx":
+
+        return extract_xlsx_text(data)
+
+    if suffix == ".pptx":
+
+        return extract_pptx_text(data)
+
+    if suffix == ".pdf":
+
+        return extract_pdf_text(data)
+
+    if suffix == ".doc":
+
+        raise RuntimeError(
+            "Legacy .doc files require a document conversion "
+            "component before their text can be reviewed."
+        )
+
+    if suffix == ".xls":
+
+        raise RuntimeError(
+            "Legacy .xls files require a spreadsheet conversion "
+            "component before their content can be reviewed."
+        )
+
+    if suffix == ".ppt":
+
+        raise RuntimeError(
+            "Legacy .ppt files require a presentation conversion "
+            "component before their content can be reviewed."
+        )
+
+    raise RuntimeError(
+        f"Unsupported document type: {suffix or 'unknown'}"
+    )
+
+
+def document_to_pages(
+    *,
+    filename: str,
+    data: bytes,
+) -> list[dict[str, Any]]:
+
+    text = extract_document_text(
+        filename=filename,
+        data=data,
+    ).strip()
+
+    if not text:
+
+        raise ValueError(
+            "The uploaded document contains no extractable text."
+        )
+
+    pages = document_text_to_pages(
+        text
+    )
+
+    pages = normalize_document_pages(
+        pages
+    )
+
+    if not pages:
+
+        raise ValueError(
+            "The uploaded document produced no usable document pages."
+        )
+
+    return pages
+
+
+# ============================================================
 # DOCUMENT INTAKE
 # ============================================================
 
@@ -455,7 +909,10 @@ def extract_document_pages(
         ).strip()
 
         if text:
-            return document_text_to_pages(text)
+
+            return document_text_to_pages(
+                text
+            )
 
     return []
 
@@ -470,13 +927,16 @@ def page_number(
 ) -> int:
 
     try:
+
         return int(
             page.get(
                 "page_number",
                 fallback,
             )
         )
+
     except Exception:
+
         return fallback
 
 
@@ -537,6 +997,7 @@ def create_review_job(
 ) -> dict[str, Any]:
 
     job = {
+
         "job_id": job_id,
 
         "customer_id": customer_id,
@@ -614,7 +1075,7 @@ def reset_review_state(
 
 
 # ============================================================
-# LIVE REVIEW ASSEMBLY
+# LIVE REVIEW
 # ============================================================
 
 def build_live_review(
@@ -623,12 +1084,10 @@ def build_live_review(
 
     parts: list[str] = []
 
-    pages = job.get(
+    for page in job.get(
         "review_pages",
         [],
-    )
-
-    for page in pages:
+    ):
 
         review = str(
             page.get(
@@ -694,7 +1153,9 @@ def make_review_progress_callback(
         if total is not None:
 
             try:
-                job["progress"]["total"] = int(total)
+                job["progress"]["total"] = int(
+                    total
+                )
             except Exception:
                 pass
 
@@ -722,6 +1183,7 @@ def make_review_progress_callback(
                     page["status"] = "reviewed"
 
                     if "content" in update:
+
                         page["content"] = str(
                             update.get(
                                 "content"
@@ -788,8 +1250,11 @@ def make_review_progress_callback(
             ).strip()
 
             if assembled:
+
                 job["assembled_review"] = assembled
+
             else:
+
                 job["assembled_review"] = (
                     build_live_review(job)
                 )
@@ -836,6 +1301,7 @@ async def run_review_job(
         )
 
         if not pages:
+
             raise ValueError(
                 "Cannot review an empty document."
             )
@@ -866,34 +1332,26 @@ async def run_review_job(
         )
 
         if not isinstance(result, dict):
+
             raise TypeError(
                 "AdaResponse returned an invalid review result."
-            )
-
-        assembled = str(
-            result.get(
-                "assembled_review",
-                "",
-            )
-            or ""
-        ).strip()
-
-        if assembled:
-            job["assembled_review"] = assembled
-        else:
-            job["assembled_review"] = (
-                build_live_review(job)
             )
 
         returned_pages = result.get(
             "pages"
         )
 
-        if isinstance(returned_pages, list):
+        if isinstance(
+            returned_pages,
+            list,
+        ):
 
             for returned in returned_pages:
 
-                if not isinstance(returned, dict):
+                if not isinstance(
+                    returned,
+                    dict,
+                ):
                     continue
 
                 number = returned.get(
@@ -909,6 +1367,7 @@ async def run_review_job(
                     ) == str(number):
 
                         if "review" in returned:
+
                             stored["review"] = str(
                                 returned.get(
                                     "review"
@@ -917,6 +1376,7 @@ async def run_review_job(
                             )
 
                         if "content" in returned:
+
                             stored["content"] = str(
                                 returned.get(
                                     "content"
@@ -925,7 +1385,21 @@ async def run_review_job(
                             )
 
                         stored["status"] = "reviewed"
+
                         break
+
+        assembled = str(
+            result.get(
+                "assembled_review",
+                "",
+            )
+            or ""
+        ).strip()
+
+        job["assembled_review"] = (
+            assembled
+            or build_live_review(job)
+        )
 
         job["status"] = "review_complete"
 
@@ -937,35 +1411,11 @@ async def run_review_job(
             job["progress"]["total"]
         )
 
-        job["assembled_review"] = (
-            str(
-                job.get(
-                    "assembled_review",
-                    "",
-                )
-                or ""
-            ).strip()
-        )
-
         print()
         print("=" * 78)
         print("ADA REVIEW INTELLIGENCE COMPLETE")
         print("=" * 78)
         print("Job:", job_id)
-        print(
-            "Pages reviewed:",
-            len(
-                result.get(
-                    "pages",
-                    [],
-                )
-            )
-            if isinstance(
-                result.get("pages"),
-                list,
-            )
-            else 0,
-        )
         print("=" * 78)
 
     except asyncio.CancelledError:
@@ -1004,9 +1454,15 @@ def ensure_review_started(
     if job is None:
         return False
 
-    task = _review_tasks.get(job_id)
+    task = _review_tasks.get(
+        job_id
+    )
 
-    if task is not None and not task.done():
+    if (
+        task is not None
+        and not task.done()
+    ):
+
         return False
 
     if job.get("status") != "reviewing":
@@ -1031,7 +1487,9 @@ def ensure_review_started(
 @app.get("/")
 async def customer_home():
 
-    file = find_file("index.html")
+    file = find_file(
+        "index.html"
+    )
 
     if file is None:
 
@@ -1050,6 +1508,7 @@ async def customer_home():
 
 @app.get("/index.html")
 async def customer_index():
+
     return await customer_home()
 
 
@@ -1157,6 +1616,98 @@ async def api_status():
 
 
 # ============================================================
+# UPLOAD
+# ============================================================
+
+@app.post("/api/upload")
+async def upload_document(
+    file: UploadFile = File(...),
+    customer_id: str | None = Form(None),
+    job_id: str | None = Form(None),
+    client_request_id: str | None = Form(None),
+    service: str | None = Form(None),
+):
+
+    try:
+
+        filename = (
+            str(
+                file.filename
+                or "uploaded_document"
+            )
+            .strip()
+        )
+
+        data = await file.read()
+
+        if not data:
+
+            return error_response(
+                stage="DOCUMENT_UPLOAD",
+                error="The uploaded file is empty.",
+                status_code=400,
+                error_code="EMPTY_FILE",
+            )
+
+        if len(data) > MAX_UPLOAD_BYTES:
+
+            return error_response(
+                stage="DOCUMENT_UPLOAD",
+                error=(
+                    "The uploaded document is too large."
+                ),
+                status_code=413,
+                error_code="FILE_TOO_LARGE",
+            )
+
+        print()
+        print("=" * 78)
+        print("DOCUMENT UPLOAD RECEIVED")
+        print("=" * 78)
+        print("Filename:", filename)
+        print("Bytes:", len(data))
+        print("Customer:", customer_id)
+        print("Job:", job_id)
+        print("Service:", service)
+        print("=" * 78)
+
+        pages = await asyncio.to_thread(
+            document_to_pages,
+            filename=filename,
+            data=data,
+        )
+
+        upload_job_id = (
+            str(job_id or "").strip()
+            or str(uuid.uuid4())
+        )
+
+        return {
+            "success": True,
+            "filename": filename,
+            "job_id": upload_job_id,
+            "customer_id": customer_id,
+            "client_request_id": client_request_id,
+            "service": service,
+            "total_pages": len(pages),
+            "document_pages": pages,
+            "message": (
+                "Document received and converted "
+                "into reviewable pages."
+            ),
+        }
+
+    except Exception as error:
+
+        return error_response(
+            stage="DOCUMENT_UPLOAD",
+            error=error,
+            status_code=400,
+            error_code="DOCUMENT_UPLOAD_ERROR",
+        )
+
+
+# ============================================================
 # CHAT
 # ============================================================
 
@@ -1182,8 +1733,23 @@ async def chat(
         request
     )
 
+    print(
+        "Event:",
+        event or "(none)",
+    )
+
+    print(
+        "Service:",
+        request.service or "(none)",
+    )
+
+    print(
+        "Document pages:",
+        len(document_pages),
+    )
+
     # --------------------------------------------------------
-    # Intelligence activation
+    # Intelligence
     # --------------------------------------------------------
 
     if not request.activate_intelligence:
@@ -1205,30 +1771,8 @@ async def chat(
         )
 
     # --------------------------------------------------------
-    # A document review request is allowed to have an empty
-    # message because the document itself is the payload.
+    # Job ID
     # --------------------------------------------------------
-
-    is_review_request = (
-        bool(document_pages)
-        and (
-            request.create_work
-            or event in REVIEW_EVENTS
-        )
-    )
-
-    # --------------------------------------------------------
-    # Normal chat still requires actual text.
-    # --------------------------------------------------------
-
-    if not message and not is_review_request:
-
-        return error_response(
-            stage="CHAT_VALIDATION",
-            error="The chat message is empty.",
-            status_code=400,
-            error_code="EMPTY_MESSAGE",
-        )
 
     job_id = (
         str(
@@ -1244,7 +1788,7 @@ async def chat(
     )
 
     # ========================================================
-    # GUIDANCE ONLY
+    # GUIDANCE
     # ========================================================
 
     if request.guidance_only:
@@ -1293,9 +1837,14 @@ async def chat(
 
     # ========================================================
     # DOCUMENT REVIEW
+    #
+    # This is the critical path.
+    #
+    # If document pages exist, the API creates the actual
+    # review job BEFORE returning to the browser.
     # ========================================================
 
-    if is_review_request:
+    if document_pages:
 
         complete_request = (
             build_customer_request(
@@ -1306,7 +1855,9 @@ async def chat(
             )
         )
 
-        job = _jobs.get(job_id)
+        job = _jobs.get(
+            job_id
+        )
 
         if job is None:
 
@@ -1322,11 +1873,6 @@ async def chat(
 
         else:
 
-            # ------------------------------------------------
-            # If a review is already running, do not create a
-            # second intelligence task accidentally.
-            # ------------------------------------------------
-
             active_task = _review_tasks.get(
                 job_id
             )
@@ -1340,12 +1886,14 @@ async def chat(
                 return {
                     "success": True,
                     "reply": (
-                        "Your document is already being "
-                        "reviewed page by page."
+                        "Your document is already "
+                        "being reviewed page by page."
                     ),
                     "job_id": job_id,
-                    "service": request.service
-                    or job.get("service"),
+                    "service": (
+                        request.service
+                        or job.get("service")
+                    ),
                     "created_work": True,
                     "review_started": True,
                     "status": "reviewing",
@@ -1361,11 +1909,6 @@ async def chat(
                         + job_id
                     ),
                 }
-
-            # ------------------------------------------------
-            # A new explicit document payload replaces the
-            # previous review state.
-            # ------------------------------------------------
 
             reset_review_state(
                 job,
@@ -1393,22 +1936,27 @@ async def chat(
                 request.client_request_id
             )
 
-        ensure_review_started(
+        started = ensure_review_started(
             job_id
         )
 
         print(
-            "ADA INTELLIGENCE ACTIVATED."
+            "DOCUMENT REVIEW JOB CREATED:"
         )
 
         print(
-            "Document pages received:",
+            "Job:",
+            job_id,
+        )
+
+        print(
+            "Pages:",
             len(document_pages),
         )
 
         print(
-            "Review task:",
-            job_id,
+            "Review task started:",
+            started,
         )
 
         print("=" * 78)
@@ -1447,7 +1995,7 @@ async def chat(
         }
 
     # ========================================================
-    # REVIEW WAS REQUESTED BUT DOCUMENT WAS NOT PROVIDED
+    # REVIEW REQUEST WITHOUT DOCUMENT
     # ========================================================
 
     if (
@@ -1459,8 +2007,8 @@ async def chat(
         return error_response(
             stage="DOCUMENT_INTAKE",
             error=(
-                "Workspace requested document review "
-                "but did not send any document pages."
+                "The workspace requested review, "
+                "but no document pages were supplied."
             ),
             status_code=400,
             error_code="NO_DOCUMENT_PAGES",
@@ -1469,6 +2017,15 @@ async def chat(
     # ========================================================
     # NORMAL ADA CONVERSATION
     # ========================================================
+
+    if not message:
+
+        return error_response(
+            stage="CHAT_VALIDATION",
+            error="The chat message is empty.",
+            status_code=400,
+            error_code="EMPTY_MESSAGE",
+        )
 
     try:
 
@@ -1487,18 +2044,14 @@ async def chat(
 
         return {
             "success": True,
-
             "reply": str(
                 reply or ""
             ).strip(),
-
             "job_id": job_id,
-
             "service": (
                 request.service
                 or ada.service
             ),
-
             "created_work": False,
         }
 
@@ -1534,7 +2087,9 @@ async def review(
             error_code="JOB_ID_REQUIRED",
         )
 
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if job is None:
 
@@ -1544,15 +2099,6 @@ async def review(
             status_code=404,
             error_code="JOB_NOT_FOUND",
         )
-
-    # --------------------------------------------------------
-    # IMPORTANT:
-    # Never restart a completed review simply because the
-    # browser polls /api/review.
-    #
-    # Only recover a task when the job says it is still
-    # reviewing and there is no active task.
-    # --------------------------------------------------------
 
     if (
         job.get("status") == "reviewing"
@@ -1565,43 +2111,32 @@ async def review(
 
     return {
         "success": True,
-
         "job_id": job["job_id"],
-
         "status": job["status"],
-
         "current_version": job[
             "current_version"
         ],
-
         "version_id": job[
             "version_id"
         ],
-
         "progress": job[
             "progress"
         ],
-
         "document_pages": job[
             "document_pages"
         ],
-
         "review_pages": job[
             "review_pages"
         ],
-
         "assembled_review": job[
             "assembled_review"
         ],
-
         "approved": job[
             "approved"
         ],
-
         "paid": job[
             "paid"
         ],
-
         "error": job[
             "review_error"
         ],
@@ -1620,7 +2155,9 @@ def make_correction_callback(
         update: dict[str, Any],
     ) -> None:
 
-        job = _jobs.get(job_id)
+        job = _jobs.get(
+            job_id
+        )
 
         if job is None:
             return
@@ -1646,6 +2183,7 @@ def make_correction_callback(
                 ) == str(number):
 
                     page["status"] = "correcting"
+
                     break
 
         elif update_type == "correction_page_completed":
@@ -1661,6 +2199,7 @@ def make_correction_callback(
                 ) == str(number):
 
                     if "content" in update:
+
                         page["content"] = str(
                             update.get(
                                 "content"
@@ -1669,6 +2208,7 @@ def make_correction_callback(
                         )
 
                     page["status"] = "corrected"
+
                     break
 
             position = update.get(
@@ -1680,13 +2220,17 @@ def make_correction_callback(
             )
 
             try:
+
                 completed = int(
                     position or 0
                 )
+
             except Exception:
+
                 completed = 0
 
             try:
+
                 total_pages = int(
                     total
                     or len(
@@ -1695,7 +2239,9 @@ def make_correction_callback(
                         ]
                     )
                 )
+
             except Exception:
+
                 total_pages = len(
                     job[
                         "document_pages"
@@ -1745,7 +2291,9 @@ async def correct(
             error_code="EMPTY_CORRECTION",
         )
 
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if job is None:
 
@@ -1761,8 +2309,7 @@ async def correct(
         return error_response(
             stage="CORRECTION",
             error=(
-                "Ada is still reviewing the document. "
-                "Please wait until review is complete."
+                "Ada is still reviewing the document."
             ),
             status_code=409,
             error_code="REVIEW_STILL_RUNNING",
@@ -1772,16 +2319,10 @@ async def correct(
 
         return error_response(
             stage="CORRECTION",
-            error=(
-                "There is no document available for correction."
-            ),
+            error="There is no document available for correction.",
             status_code=409,
             error_code="NO_DOCUMENT",
         )
-
-    # --------------------------------------------------------
-    # New document version
-    # --------------------------------------------------------
 
     job["current_version"] += 1
 
@@ -1812,10 +2353,6 @@ async def correct(
         instruction
     )
 
-    # --------------------------------------------------------
-    # Prevent two corrections from running simultaneously.
-    # --------------------------------------------------------
-
     old_task = _correction_tasks.pop(
         job_id,
         None,
@@ -1825,6 +2362,7 @@ async def correct(
         old_task is not None
         and not old_task.done()
     ):
+
         old_task.cancel()
 
     task = asyncio.create_task(
@@ -1838,11 +2376,8 @@ async def correct(
 
     return {
         "success": True,
-
         "job_id": job_id,
-
         "status": "correcting",
-
         "version_id": job[
             "version_id"
         ],
@@ -1858,7 +2393,9 @@ async def run_correction_job(
     instruction: str,
 ) -> None:
 
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if job is None:
         return
@@ -1887,12 +2424,20 @@ async def run_correction_job(
                 "document_pages"
             ],
             correction=instruction,
-            service=job.get("service"),
-            context=job.get("context"),
+            service=job.get(
+                "service"
+            ),
+            context=job.get(
+                "context"
+            ),
             progress_callback=callback,
         )
 
-        if not isinstance(result, dict):
+        if not isinstance(
+            result,
+            dict,
+        ):
+
             raise TypeError(
                 "AdaResponse returned an invalid correction result."
             )
@@ -1925,10 +2470,6 @@ async def run_correction_job(
             corrected_pages
         )
 
-        # ----------------------------------------------------
-        # Prepare the new version for review.
-        # ----------------------------------------------------
-
         job["review_pages"] = (
             make_review_pages(
                 corrected_pages
@@ -1952,10 +2493,6 @@ async def run_correction_job(
             ),
         }
 
-        # ----------------------------------------------------
-        # Cancel any stale review task.
-        # ----------------------------------------------------
-
         existing_review_task = (
             _review_tasks.pop(
                 job_id,
@@ -1967,12 +2504,8 @@ async def run_correction_job(
             existing_review_task is not None
             and not existing_review_task.done()
         ):
-            existing_review_task.cancel()
 
-        # ----------------------------------------------------
-        # Start exactly one review task for the corrected
-        # version.
-        # ----------------------------------------------------
+            existing_review_task.cancel()
 
         ensure_review_started(
             job_id
@@ -1980,8 +2513,7 @@ async def run_correction_job(
 
         print(
             "Correction complete; "
-            "corrected version sent back to Ada "
-            "for review:",
+            "corrected version sent back for review:",
             job_id,
         )
 
@@ -2036,10 +2568,7 @@ async def approve(
 
         return error_response(
             stage="APPROVAL",
-            error=(
-                "The supplied document version "
-                "does not match the current version."
-            ),
+            error="The supplied document version does not match.",
             status_code=409,
             error_code="VERSION_MISMATCH",
         )
@@ -2059,13 +2588,9 @@ async def approve(
 
     return {
         "success": True,
-
         "job_id": request.job_id,
-
         "version_id": request.version_id,
-
         "approved": True,
-
         "status": "approved",
     }
 
@@ -2080,7 +2605,9 @@ async def download(
     version_id: str,
 ):
 
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if job is None:
 
@@ -2106,10 +2633,7 @@ async def download(
 
         return error_response(
             stage="DOWNLOAD",
-            error=(
-                "The current document version "
-                "has not been approved."
-            ),
+            error="The current document version has not been approved.",
             status_code=409,
             error_code="DOCUMENT_NOT_APPROVED",
         )
@@ -2118,20 +2642,14 @@ async def download(
 
         return error_response(
             stage="DOWNLOAD",
-            error=(
-                "Payment and final download workflow "
-                "has not been connected yet."
-            ),
+            error="Payment and final download workflow has not been connected yet.",
             status_code=409,
             error_code="PAYMENT_NOT_CONNECTED",
         )
 
     return error_response(
         stage="DOWNLOAD",
-        error=(
-            "Final document generation has not "
-            "been connected yet."
-        ),
+        error="Final document generation has not been connected yet.",
         status_code=409,
         error_code="DOWNLOAD_GENERATION_NOT_CONNECTED",
     )
@@ -2154,7 +2672,9 @@ async def clear_chat(
             job_id,
         )
 
-        session = _sessions.get(key)
+        session = _sessions.get(
+            key
+        )
 
         if session is not None:
             session.clear_history()
@@ -2197,6 +2717,8 @@ async def startup():
 
     print("Workspace:", "/workspace.html")
 
+    print("Upload:", "/api/upload")
+
     print("Chat:", "/api/chat")
 
     print("Review:", "/api/review")
@@ -2206,17 +2728,17 @@ async def startup():
     print("Approval:", "/api/approve")
 
     print(
+        "Document intake:",
+        "ENABLED",
+    )
+
+    print(
         "Page-by-page intelligence:",
         "ENABLED",
     )
 
     print(
         "Progressive review:",
-        "ENABLED",
-    )
-
-    print(
-        "Complete document preservation:",
         "ENABLED",
     )
 
