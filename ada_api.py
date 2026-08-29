@@ -16,41 +16,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
+# IMPORTANT:
+# Do NOT import normalize_document_pages from ada_response.
+# The deployed ada_response.py does not expose that function.
 from ada_response import (
     AdaResponse,
     get_ada_model,
     is_configured,
-    normalize_document_pages,
 )
 
 
 # ============================================================
-# NAIJA POCKET BUSINESS CENTER
-# THIN INTELLIGENCE API
-#
-# IMPORTANT ARCHITECTURE
-# ------------------------------------------------------------
-# The intelligence decides what the customer's service needs.
-#
-# This API does NOT:
-#   - use keywords to determine service behaviour
-#   - require every service to have a page count
-#   - require the intelligence to manufacture a pages array
-#   - decide how many pages a service should have
-#   - rewrite the customer's requested service
-#
-# The intelligence creates the work.
-#
-# This API:
-#   - transports requests
-#   - stores the complete result
-#   - creates a review representation
-#   - tracks job state
-#   - sends corrections back to intelligence
-#   - handles approval/payment/download state
-#
+# CONFIGURATION
 # ============================================================
-
 
 DEBUG = os.getenv(
     "ADA_DEBUG_ERRORS",
@@ -69,19 +47,6 @@ MAX_UPLOAD = int(
     )
 )
 
-BASE = Path(__file__).resolve().parent
-
-
-# ============================================================
-# OPTIONAL REVIEW CHUNKING
-#
-# This is NOT a customer page requirement.
-#
-# It exists only so a long completed document can be displayed
-# one review section at a time if the intelligence returns one
-# complete text body instead of explicit pages.
-# ============================================================
-
 REVIEW_CHUNK_CHARS = int(
     os.getenv(
         "ADA_REVIEW_CHUNK_CHARS",
@@ -96,6 +61,8 @@ REVIEW_MIN_CHARS = int(
     )
 )
 
+BASE = Path(__file__).resolve().parent
+
 
 # ============================================================
 # RUNTIME
@@ -103,7 +70,6 @@ REVIEW_MIN_CHARS = int(
 
 _sessions: dict[str, AdaResponse] = {}
 _jobs: dict[str, dict[str, Any]] = {}
-
 _review_tasks: dict[str, asyncio.Task] = {}
 _correction_tasks: dict[str, asyncio.Task] = {}
 
@@ -114,7 +80,7 @@ _correction_tasks: dict[str, asyncio.Task] = {}
 
 app = FastAPI(
     title="Naija Pocket Business Center",
-    version="intelligence-first-v1",
+    version="intelligence-first-v8",
 )
 
 app.add_middleware(
@@ -172,6 +138,160 @@ def job_key(
     return f"{customer}:{job}"
 
 
+def clean_text(value: Any) -> str:
+
+    if value is None:
+        return ""
+
+    text = str(value)
+
+    text = text.replace(
+        "\r\n",
+        "\n",
+    )
+
+    text = text.replace(
+        "\r",
+        "\n",
+    )
+
+    text = re.sub(
+        r"```(?:markdown|md|text)?",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    text = text.replace(
+        "```",
+        "",
+    )
+
+    return text.strip()
+
+
+# ============================================================
+# LOCAL PAGE NORMALIZATION
+#
+# This replaces the missing normalize_document_pages()
+# dependency from ada_response.py.
+#
+# It does NOT decide how many pages a document should have.
+# It only normalizes pages that already exist.
+# ============================================================
+
+def normalize_document_pages(
+    pages: Any,
+) -> list[dict[str, Any]]:
+
+    if pages is None:
+        return []
+
+    if isinstance(
+        pages,
+        str,
+    ):
+
+        text = clean_text(
+            pages
+        )
+
+        if not text:
+            return []
+
+        return [
+            {
+                "page_number": 1,
+                "position": 1,
+                "content": text,
+            }
+        ]
+
+    if not isinstance(
+        pages,
+        list,
+    ):
+
+        return []
+
+    output: list[dict[str, Any]] = []
+
+    for index, item in enumerate(
+        pages,
+        1,
+    ):
+
+        if isinstance(
+            item,
+            dict,
+        ):
+
+            content = clean_text(
+                item.get(
+                    "content",
+                    item.get(
+                        "text",
+                        item.get(
+                            "document_text",
+                            "",
+                        ),
+                    ),
+                )
+            )
+
+            if not content:
+                continue
+
+            page = dict(item)
+
+            page["page_number"] = index
+            page["position"] = index
+            page["content"] = content
+
+            output.append(
+                page
+            )
+
+        elif isinstance(
+            item,
+            str,
+        ):
+
+            content = clean_text(
+                item
+            )
+
+            if content:
+
+                output.append(
+                    {
+                        "page_number":
+                            index,
+
+                        "position":
+                            index,
+
+                        "content":
+                            content,
+                    }
+                )
+
+    return output
+
+
+def normalize_pages(
+    pages: Any,
+) -> list[dict[str, Any]]:
+
+    return normalize_document_pages(
+        pages
+    )
+
+
+# ============================================================
+# SESSION
+# ============================================================
+
 def get_session(
     customer_id: Any,
     job_id: Any,
@@ -183,7 +303,9 @@ def get_session(
         job_id,
     )
 
-    ada = _sessions.get(key)
+    ada = _sessions.get(
+        key
+    )
 
     if ada is None:
 
@@ -201,11 +323,20 @@ def get_session(
             None,
         )
 
-        if callable(setter):
-            setter(service)
+        if callable(
+            setter
+        ):
+
+            setter(
+                service
+            )
 
     return ada
 
+
+# ============================================================
+# ERROR RESPONSE
+# ============================================================
 
 def application_error(
     stage: str,
@@ -220,25 +351,42 @@ def application_error(
         f"{error}"
     )
 
-    if isinstance(error, Exception):
+    if isinstance(
+        error,
+        Exception,
+    ):
+
         traceback.print_exc()
 
     return JSONResponse(
         status_code=status,
         content={
-            "success": False,
-            "stage": stage,
-            "error": code,
-            "error_type": (
-                type(error).__name__
-                if isinstance(error, Exception)
-                else "ApplicationError"
-            ),
-            "error_message": (
-                str(error)
-                if DEBUG
-                else "An internal application error occurred."
-            ),
+            "success":
+                False,
+
+            "stage":
+                stage,
+
+            "error":
+                code,
+
+            "error_type":
+                (
+                    type(error).__name__
+                    if isinstance(
+                        error,
+                        Exception,
+                    )
+                    else "ApplicationError"
+                ),
+
+            "error_message":
+                (
+                    str(error)
+                    if DEBUG
+                    else
+                    "An internal application error occurred."
+                ),
         },
     )
 
@@ -252,9 +400,11 @@ class Chat(BaseModel):
     message: str = ""
 
     service: str | None = None
+
     event: str | None = None
 
     customer_id: str | None = None
+
     job_id: str | None = None
 
     client_request_id: str | None = None
@@ -299,6 +449,7 @@ def build_customer_request(
     parts: list[str] = []
 
     if request.service:
+
         parts.append(
             "SELECTED SERVICE:\n"
             + request.service.strip()
@@ -308,7 +459,9 @@ def build_customer_request(
 
         information: list[str] = []
 
-        for key, value in request.form_data.items():
+        for key, value in (
+            request.form_data.items()
+        ):
 
             value_text = str(
                 value or ""
@@ -319,7 +472,10 @@ def build_customer_request(
 
             label = (
                 str(key)
-                .replace("_", " ")
+                .replace(
+                    "_",
+                    " ",
+                )
                 .strip()
                 .title()
             )
@@ -375,7 +531,10 @@ def build_context(
         value = request.context.strip()
 
         if value:
-            parts.append(value)
+
+            parts.append(
+                value
+            )
 
     if request.customer_id:
 
@@ -391,66 +550,28 @@ def build_context(
             + request.client_request_id
         )
 
-    return (
-        "\n\n".join(parts).strip()
-        or None
-    )
+    result = "\n\n".join(
+        parts
+    ).strip()
+
+    return result or None
 
 
 # ============================================================
-# COMPLETE DOCUMENT NORMALIZATION
+# DOCUMENT TEXT → REVIEW SECTIONS
+#
+# This is DISPLAY chunking only.
+#
+# It does not tell Ada how many pages to create.
 # ============================================================
-
-def clean_text(
-    value: Any,
-) -> str:
-
-    if value is None:
-        return ""
-
-    text = str(value)
-
-    text = text.replace(
-        "\r\n",
-        "\n",
-    )
-
-    text = text.replace(
-        "\r",
-        "\n",
-    )
-
-    text = re.sub(
-        r"```(?:markdown|md|text)?",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-
-    text = text.replace(
-        "```",
-        "",
-    )
-
-    return text.strip()
-
 
 def text_to_review_pages(
     text: str,
 ) -> list[dict[str, Any]]:
 
-    """
-    Convert one COMPLETE document body into review sections.
-
-    This is only a display representation.
-
-    It does NOT mean the customer requested this number
-    of pages.
-
-    It does NOT tell intelligence how many pages to create.
-    """
-
-    text = clean_text(text)
+    text = clean_text(
+        text
+    )
 
     if not text:
         return []
@@ -470,7 +591,7 @@ def text_to_review_pages(
         text,
     )
 
-    pages: list[str] = []
+    chunks: list[str] = []
 
     current: list[str] = []
 
@@ -483,7 +604,9 @@ def text_to_review_pages(
         if not paragraph:
             continue
 
-        length = len(paragraph)
+        length = len(
+            paragraph
+        )
 
         if (
             current
@@ -494,7 +617,7 @@ def text_to_review_pages(
             > REVIEW_CHUNK_CHARS
         ):
 
-            pages.append(
+            chunks.append(
                 "\n\n".join(
                     current
                 ).strip()
@@ -528,7 +651,9 @@ def text_to_review_pages(
             if not sentence:
                 continue
 
-            length = len(sentence)
+            length = len(
+                sentence
+            )
 
             if (
                 current
@@ -539,7 +664,7 @@ def text_to_review_pages(
                 > REVIEW_CHUNK_CHARS
             ):
 
-                pages.append(
+                chunks.append(
                     "\n".join(
                         current
                     ).strip()
@@ -559,156 +684,66 @@ def text_to_review_pages(
 
     if current:
 
-        pages.append(
+        chunks.append(
             "\n\n".join(
                 current
             ).strip()
         )
 
-    # Avoid an unnecessary tiny final section where possible.
-
     if (
-        len(pages) >= 2
-        and len(pages[-1]) < REVIEW_MIN_CHARS
+        len(chunks) >= 2
         and
-        len(pages[-2])
-        + len(pages[-1])
+        len(chunks[-1]) < REVIEW_MIN_CHARS
+        and
+        len(chunks[-2])
+        + len(chunks[-1])
         + 2
         <= REVIEW_CHUNK_CHARS
     ):
 
-        pages[-2] = (
-            pages[-2]
+        chunks[-2] = (
+            chunks[-2]
             + "\n\n"
-            + pages[-1]
+            + chunks[-1]
         )
 
-        pages.pop()
+        chunks.pop()
 
     return [
         {
-            "page_number": index,
-            "position": index,
-            "content": content,
+            "page_number":
+                index,
+
+            "position":
+                index,
+
+            "content":
+                content,
         }
+
         for index, content
         in enumerate(
-            pages,
+            chunks,
             1,
         )
+
         if content.strip()
     ]
 
 
-def normalize_pages(
-    pages: Any,
-) -> list[dict[str, Any]]:
-
-    if not isinstance(
-        pages,
-        list,
-    ):
-        return []
-
-    try:
-
-        normalized = normalize_document_pages(
-            pages
-        )
-
-    except Exception:
-
-        normalized = pages
-
-    output: list[dict[str, Any]] = []
-
-    for position, item in enumerate(
-        normalized,
-        1,
-    ):
-
-        if isinstance(
-            item,
-            dict,
-        ):
-
-            content = clean_text(
-                item.get(
-                    "content",
-                    item.get(
-                        "text",
-                        item.get(
-                            "document_text",
-                            "",
-                        ),
-                    ),
-                )
-            )
-
-            if not content:
-                continue
-
-            output.append(
-                {
-                    **item,
-                    "page_number": position,
-                    "position": position,
-                    "content": content,
-                }
-            )
-
-        elif isinstance(
-            item,
-            str,
-        ):
-
-            content = clean_text(
-                item
-            )
-
-            if content:
-
-                output.append(
-                    {
-                        "page_number":
-                            position,
-                        "position":
-                            position,
-                        "content":
-                            content,
-                    }
-                )
-
-    return output
-
-
 # ============================================================
-# INTELLIGENCE RESULT
+# INTELLIGENCE RESULT EXTRACTION
 # ============================================================
 
 def extract_complete_document(
     result: Any,
-) -> tuple[str, list[dict[str, Any]], dict[str, Any]]:
-    """
-    Accept the intelligence result without forcing one rigid
-    response schema.
-
-    Priority:
-
-    1. Explicit structured pages.
-    2. Complete document text.
-    3. Common document-result fields.
-    4. Object attributes containing the document.
-
-    The API does NOT reject the work merely because it was
-    returned in a different valid form.
-    """
+) -> tuple[
+    str,
+    list[dict[str, Any]],
+    dict[str, Any],
+]:
 
     metadata: dict[str, Any] = {}
-
-    # --------------------------------------------------------
-    # STRING RESULT
-    # --------------------------------------------------------
 
     if isinstance(
         result,
@@ -721,13 +756,11 @@ def extract_complete_document(
 
         return (
             text,
-            text_to_review_pages(text),
+            text_to_review_pages(
+                text
+            ),
             metadata,
         )
-
-    # --------------------------------------------------------
-    # LIST RESULT
-    # --------------------------------------------------------
 
     if isinstance(
         result,
@@ -750,10 +783,6 @@ def extract_complete_document(
                 pages,
                 metadata,
             )
-
-    # --------------------------------------------------------
-    # DICTIONARY RESULT
-    # --------------------------------------------------------
 
     if isinstance(
         result,
@@ -779,9 +808,6 @@ def extract_complete_document(
                 "message",
             }
         }
-
-        # Structured pages are authoritative when intelligence
-        # explicitly supplies them.
 
         for key in (
             "pages",
@@ -810,8 +836,6 @@ def extract_complete_document(
                     pages,
                     metadata,
                 )
-
-        # Complete document fields.
 
         for key in (
             "document_text",
@@ -846,10 +870,6 @@ def extract_complete_document(
                         ),
                         metadata,
                     )
-
-    # --------------------------------------------------------
-    # OBJECT RESULT
-    # --------------------------------------------------------
 
     for attribute in (
         "document_text",
@@ -920,36 +940,6 @@ def extract_complete_document(
     raise ValueError(
         "The intelligence completed the operation "
         "but returned no usable document content."
-    )
-
-
-# ============================================================
-# UPLOAD DOCUMENT → REVIEW REPRESENTATION
-# ============================================================
-
-def uploaded_document_pages(
-    filename: str,
-    data: bytes,
-) -> list[dict[str, Any]]:
-
-    text = extract_document(
-        data,
-        filename,
-    )
-
-    text = clean_text(
-        text
-    )
-
-    if not text:
-
-        raise ValueError(
-            "The uploaded document contains "
-            "no extractable text."
-        )
-
-    return text_to_review_pages(
-        text
     )
 
 
@@ -1049,8 +1039,7 @@ def extract_document(
 
                 values = [
                     element.text or ""
-                    for element
-                    in root.iter()
+                    for element in root.iter()
                     if (
                         isinstance(
                             element.tag,
@@ -1080,6 +1069,30 @@ def extract_document(
     raise RuntimeError(
         "Unsupported document type: "
         f"{suffix or 'unknown'}"
+    )
+
+
+def uploaded_document_pages(
+    filename: str,
+    data: bytes,
+) -> list[dict[str, Any]]:
+
+    text = clean_text(
+        extract_document(
+            data,
+            filename,
+        )
+    )
+
+    if not text:
+
+        raise ValueError(
+            "The uploaded document contains "
+            "no extractable text."
+        )
+
+    return text_to_review_pages(
+        text
     )
 
 
@@ -1421,9 +1434,7 @@ def review_callback(
             ]:
 
                 if str(
-                    page[
-                        "page_number"
-                    ]
+                    page["page_number"]
                 ) == page_number:
 
                     page[
@@ -1437,9 +1448,7 @@ def review_callback(
             ]:
 
                 if str(
-                    page[
-                        "page_number"
-                    ]
+                    page["page_number"]
                 ) != page_number:
 
                     continue
@@ -1508,9 +1517,7 @@ def review_callback(
             ]:
 
                 if str(
-                    page[
-                        "page_number"
-                    ]
+                    page["page_number"]
                 ) == page_number:
 
                     page[
@@ -1597,8 +1604,23 @@ async def run_review(
             ]
         )
 
+        method = getattr(
+            ada,
+            "review_document_pages",
+            None,
+        )
+
+        if not callable(
+            method
+        ):
+
+            raise AttributeError(
+                "AdaResponse has no "
+                "review_document_pages() method."
+            )
+
         result = await asyncio.to_thread(
-            ada.review_document_pages,
+            method,
             pages=pages,
             service=job.get(
                 "service"
@@ -1637,9 +1659,7 @@ async def run_review(
                 job[
                     "document_text"
                 ] = "\n\n".join(
-                    page[
-                        "content"
-                    ]
+                    page["content"]
                     for page
                     in returned_pages
                 )
@@ -1774,20 +1794,11 @@ async def create_document_with_intelligence(
     request: Chat,
     customer_request: str,
     context: str | None,
-) -> tuple[str, list[dict[str, Any]], dict[str, Any]]:
-    """
-    Intelligence-first document creation.
-
-    There is deliberately NO requirement that the intelligence
-    return a particular page structure.
-
-    We first give intelligence the opportunity to use its own
-    dedicated document-generation capability.
-
-    If that capability does not exist, respond() is used.
-
-    The API accepts the resulting complete document.
-    """
+) -> tuple[
+    str,
+    list[dict[str, Any]],
+    dict[str, Any],
+]:
 
     methods = (
         "create_document",
@@ -1808,10 +1819,6 @@ async def create_document_with_intelligence(
             method
         ):
             continue
-
-        # ----------------------------------------------------
-        # Preferred call.
-        # ----------------------------------------------------
 
         try:
 
@@ -1838,43 +1845,8 @@ async def create_document_with_intelligence(
             )
 
         except TypeError:
+
             pass
-
-        # ----------------------------------------------------
-        # Compatibility call.
-        # ----------------------------------------------------
-
-        try:
-
-            result = await asyncio.to_thread(
-                method,
-                message=
-                    customer_request,
-
-                service=
-                    request.service,
-
-                context=
-                    context,
-
-                event=
-                    request.event,
-            )
-
-            return extract_complete_document(
-                result
-            )
-
-        except TypeError:
-            continue
-
-    # --------------------------------------------------------
-    # Intelligence's normal response path.
-    #
-    # No artificial create_work argument.
-    # No page-count argument.
-    # No keyword service routing.
-    # --------------------------------------------------------
 
     respond = getattr(
         ada,
@@ -2211,10 +2183,6 @@ async def chat(
         )
     )
 
-    # --------------------------------------------------------
-    # Existing uploaded document, if one exists.
-    # --------------------------------------------------------
-
     pages = normalize_pages(
         request.document_pages
     )
@@ -2236,9 +2204,9 @@ async def chat(
             request.service,
         )
 
-        # ====================================================
-        # GUIDANCE
-        # ====================================================
+        # ----------------------------------------------------
+        # GUIDANCE CHAT
+        # ----------------------------------------------------
 
         if request.guidance_only:
 
@@ -2282,12 +2250,9 @@ async def chat(
                     False,
             }
 
-        # ====================================================
+        # ----------------------------------------------------
         # CREATE WORK
-        #
-        # Intelligence decides how to handle the selected
-        # service and its information.
-        # ====================================================
+        # ----------------------------------------------------
 
         create_requested = (
             request.create_work
@@ -2306,12 +2271,8 @@ async def chat(
 
         if create_requested:
 
-            # ------------------------------------------------
-            # If customer already supplied document content,
-            # do not unnecessarily ask intelligence to create
-            # another document.
-            # ------------------------------------------------
-
+            # Existing authoritative document:
+            # send it into review.
             if pages:
 
                 document_text = "\n\n".join(
@@ -2320,20 +2281,11 @@ async def chat(
                 )
 
                 job = create_job(
-                    job_id=
-                        job_id,
-
-                    request=
-                        request,
-
-                    original_request=
-                        customer_request,
-
-                    document_text=
-                        document_text,
-
-                    pages=
-                        pages,
+                    job_id,
+                    request,
+                    customer_request,
+                    document_text,
+                    pages,
                 )
 
             else:
@@ -2348,36 +2300,15 @@ async def chat(
                         "EMPTY_WORK_REQUEST",
                     )
 
-                # --------------------------------------------
-                # THIS IS THE IMPORTANT PART.
-                #
-                # Intelligence owns creation.
-                # --------------------------------------------
-
                 (
                     document_text,
                     created_pages,
                     metadata,
                 ) = await create_document_with_intelligence(
-                    ada=
-                        ada,
-
-                    request=
-                        request,
-
-                    customer_request=
-                        customer_request,
-
-                    context=
-                        context,
-                )
-
-                # --------------------------------------------
-                # Complete document is now authoritative.
-                # --------------------------------------------
-
-                created_pages = normalize_pages(
-                    created_pages
+                    ada,
+                    request,
+                    customer_request,
+                    context,
                 )
 
                 if not created_pages:
@@ -2391,26 +2322,16 @@ async def chat(
                 if not created_pages:
 
                     raise ValueError(
-                        "Intelligence completed the service "
-                        "operation but returned no complete "
-                        "document content."
+                        "Intelligence completed the operation "
+                        "but returned no complete document."
                     )
 
                 job = create_job(
-                    job_id=
-                        job_id,
-
-                    request=
-                        request,
-
-                    original_request=
-                        customer_request,
-
-                    document_text=
-                        document_text,
-
-                    pages=
-                        created_pages,
+                    job_id,
+                    request,
+                    customer_request,
+                    document_text,
+                    created_pages,
                 )
 
                 job[
@@ -2446,9 +2367,9 @@ async def chat(
 
             return response
 
-        # ====================================================
-        # DOCUMENT PAGES ALREADY SUPPLIED
-        # ====================================================
+        # ----------------------------------------------------
+        # DOCUMENT ALREADY SUPPLIED
+        # ----------------------------------------------------
 
         if pages:
 
@@ -2530,23 +2451,14 @@ async def chat(
             else:
 
                 job = create_job(
-                    job_id=
-                        job_id,
-
-                    request=
-                        request,
-
-                    original_request=
-                        customer_request,
-
-                    document_text=
-                        "\n\n".join(
-                            page["content"]
-                            for page in pages
-                        ),
-
-                    pages=
-                        pages,
+                    job_id,
+                    request,
+                    customer_request,
+                    "\n\n".join(
+                        page["content"]
+                        for page in pages
+                    ),
+                    pages,
                 )
 
             started = start_review(
@@ -2576,9 +2488,9 @@ async def chat(
 
             return response
 
-        # ====================================================
+        # ----------------------------------------------------
         # NORMAL INTELLIGENT CHAT
-        # ====================================================
+        # ----------------------------------------------------
 
         if not request.message.strip():
 
@@ -2641,7 +2553,7 @@ async def chat(
 
 
 # ============================================================
-# REVIEW STATUS
+# REVIEW
 # ============================================================
 
 @app.get("/api/review")
@@ -2670,10 +2582,6 @@ async def get_review(
         job
     )
 
-
-# ============================================================
-# REVIEW PAGES
-# ============================================================
 
 @app.get("/api/review/pages")
 async def get_review_pages(
@@ -2908,7 +2816,6 @@ async def correct(
 
             result = await asyncio.to_thread(
                 method,
-
                 document_pages=
                     normalize_pages(
                         job[
@@ -2939,10 +2846,6 @@ async def correct(
                 metadata,
             ) = extract_complete_document(
                 result
-            )
-
-            corrected_pages = normalize_pages(
-                corrected_pages
             )
 
             if not corrected_pages:
@@ -3020,14 +2923,10 @@ async def correct(
                 "review_error"
             ] = {
                 "type":
-                    type(
-                        error
-                    ).__name__,
+                    type(error).__name__,
 
                 "message":
-                    str(
-                        error
-                    ),
+                    str(error),
             }
 
             traceback.print_exc()
@@ -3273,10 +3172,6 @@ async def payment_complete(
     }
 
 
-# ============================================================
-# PAYMENT STATE
-# ============================================================
-
 @app.get("/api/payment")
 async def payment_state(
     job_id: str,
@@ -3520,11 +3415,6 @@ async def startup():
     print(
         "Configured:",
         is_configured(),
-    )
-
-    print(
-        "Service requirements:",
-        "CONTROLLED BY INTELLIGENCE",
     )
 
     print(
