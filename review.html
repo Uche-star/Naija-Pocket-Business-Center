@@ -44,6 +44,7 @@ button{
 
 :root{
     --brand-green:#22c55e;
+    --brand-green-light:#5ee58b;
     --gold:#e0bd55;
     --gold-light:#f5dc88;
     --white:#fff;
@@ -55,12 +56,19 @@ button{
     --red:#d94747;
 }
 
+/* =========================================================
+   APP
+========================================================= */
+
 .app{
-    width:100%;
     min-height:100vh;
     display:flex;
     flex-direction:column;
 }
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 .header{
     position:sticky;
@@ -70,7 +78,6 @@ button{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:12px;
     padding:11px 16px;
     background:#050505;
     border-bottom:1px solid var(--border);
@@ -94,7 +101,6 @@ button{
     display:flex;
     align-items:center;
     gap:7px;
-    flex:0 0 auto;
     padding:7px 10px;
     border:1px solid #282828;
     border-radius:20px;
@@ -106,18 +112,25 @@ button{
 .job-dot{
     width:7px;
     height:7px;
-    flex:0 0 auto;
     border-radius:50%;
     background:var(--gold);
     box-shadow:0 0 12px rgba(224,189,85,.7);
 }
 
+/* =========================================================
+   MAIN
+========================================================= */
+
 .main{
     width:100%;
     max-width:1050px;
-    margin:0 auto;
+    margin:auto;
     padding:20px 14px 50px;
 }
+
+/* =========================================================
+   HERO
+========================================================= */
 
 .hero{
     text-align:center;
@@ -137,12 +150,16 @@ button{
 }
 
 .hero p{
-    max-width:700px;
+    max-width:650px;
     margin:9px auto 0;
     color:#999;
     font-size:13px;
     line-height:1.55;
 }
+
+/* =========================================================
+   MAGIC CREATION STAGE
+========================================================= */
 
 .magic{
     position:relative;
@@ -192,6 +209,7 @@ button{
     from{
         left:-45%;
     }
+
     to{
         left:110%;
     }
@@ -219,11 +237,19 @@ button{
     font-size:11px;
 }
 
+/* =========================================================
+   FLIGHT AREA
+========================================================= */
+
 .flight-area{
     position:relative;
     height:245px;
     overflow:hidden;
 }
+
+/* =========================================================
+   CENTRAL ASSEMBLY
+========================================================= */
 
 .assembly-core{
     position:absolute;
@@ -280,6 +306,10 @@ button{
     text-transform:uppercase;
     letter-spacing:1.3px;
 }
+
+/* =========================================================
+   FLYING DOCUMENTS
+========================================================= */
 
 .fly{
     position:absolute;
@@ -340,20 +370,24 @@ button{
 }
 
 .fly.left{
-    animation:flyLeft 2.5s cubic-bezier(.18,.7,.22,1) forwards;
+    animation:
+        flyLeft 2.5s cubic-bezier(.18,.7,.22,1) forwards;
 }
 
 .fly.right{
     left:auto;
     right:-150px;
-    animation:flyRight 2.5s cubic-bezier(.18,.7,.22,1) forwards;
+    animation:
+        flyRight 2.5s cubic-bezier(.18,.7,.22,1) forwards;
 }
 
 @keyframes flyLeft{
     0%{
         left:-150px;
         top:var(--top);
-        transform:scale(.72) rotate(-4deg);
+        transform:
+            scale(.72)
+            rotate(-4deg);
         opacity:0;
     }
 
@@ -362,7 +396,9 @@ button{
     }
 
     50%{
-        transform:scale(1) rotate(1deg);
+        transform:
+            scale(1)
+            rotate(1deg);
     }
 
     88%{
@@ -372,7 +408,9 @@ button{
     100%{
         left:calc(50% - 67px);
         top:calc(50% - 26px);
-        transform:scale(.72) rotate(0deg);
+        transform:
+            scale(.72)
+            rotate(0deg);
         opacity:0;
     }
 }
@@ -381,7 +419,9 @@ button{
     0%{
         right:-150px;
         top:var(--top);
-        transform:scale(.72) rotate(4deg);
+        transform:
+            scale(.72)
+            rotate(4deg);
         opacity:0;
     }
 
@@ -390,7 +430,9 @@ button{
     }
 
     50%{
-        transform:scale(1) rotate(-1deg);
+        transform:
+            scale(1)
+            rotate(-1deg);
     }
 
     88%{
@@ -400,10 +442,16 @@ button{
     100%{
         right:calc(50% - 67px);
         top:calc(50% - 26px);
-        transform:scale(.72) rotate(0deg);
+        transform:
+            scale(.72)
+            rotate(0deg);
         opacity:0;
     }
 }
+
+/* =========================================================
+   PROGRESS
+========================================================= */
 
 .progress-area{
     position:relative;
@@ -415,7 +463,6 @@ button{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:10px;
     margin-bottom:7px;
 }
 
@@ -452,6 +499,10 @@ button{
     transition:width .6s ease;
 }
 
+/* =========================================================
+   SECTIONS
+========================================================= */
+
 .sections{
     margin-top:17px;
     border:1px solid var(--border);
@@ -464,7 +515,6 @@ button{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:10px;
     padding:13px 15px;
     border-bottom:1px solid #242424;
 }
@@ -491,6 +541,9 @@ button{
     gap:11px;
     padding:9px 14px;
     border-bottom:1px solid #1d1d1d;
+    transition:
+        background .3s ease,
+        transform .3s ease;
 }
 
 .section-row:last-child{
@@ -568,6 +621,10 @@ button{
     color:var(--green);
 }
 
+/* =========================================================
+   COMPLETE DOCUMENT
+========================================================= */
+
 .document-panel{
     margin-top:18px;
     border:1px solid var(--border);
@@ -605,118 +662,27 @@ button{
 }
 
 .document{
-    width:100%;
-    padding:24px 20px 30px;
+    padding:22px 18px;
     color:#ddd;
     font-size:14px;
     line-height:1.75;
-    overflow:visible;
     overflow-wrap:anywhere;
-    word-break:normal;
-}
-
-/*
-    IMPORTANT:
-
-    There is deliberately NO fixed height here.
-    The complete returned document is allowed to grow
-    to its full natural height.
-*/
-
-.document *{
-    max-width:100%;
-    overflow-wrap:anywhere;
-}
-
-.document img{
-    display:block;
-    max-width:100%;
-    height:auto;
 }
 
 .document h1,
 .document h2,
 .document h3,
-.document h4,
-.document h5,
-.document h6{
+.document h4{
     color:#fff;
     font-family:Montserrat,Arial,sans-serif;
-    line-height:1.3;
-}
-
-.document h1{
-    margin:0 0 22px;
-    font-size:26px;
 }
 
 .document h2{
-    margin:30px 0 12px;
-    font-size:20px;
-}
-
-.document h3{
-    margin:24px 0 10px;
-    font-size:17px;
-}
-
-.document h4,
-.document h5,
-.document h6{
-    margin:20px 0 8px;
-    font-size:15px;
+    margin-top:28px;
 }
 
 .document p{
-    margin:0 0 15px;
-}
-
-.document ul,
-.document ol{
-    margin:0 0 18px;
-    padding-left:25px;
-}
-
-.document li{
-    margin-bottom:7px;
-}
-
-.document table{
-    width:100%;
-    max-width:100%;
-    border-collapse:collapse;
-    margin:20px 0;
-    display:block;
-    overflow-x:auto;
-}
-
-.document th,
-.document td{
-    border:1px solid #303030;
-    padding:9px 10px;
-    text-align:left;
-    vertical-align:top;
-}
-
-.document th{
-    color:#fff;
-    background:#151515;
-}
-
-.document blockquote{
-    margin:18px 0;
-    padding:12px 15px;
-    border-left:3px solid var(--gold);
-    background:#111;
-    color:#bbb;
-}
-
-.document pre{
-    max-width:100%;
-    overflow:auto;
-    padding:14px;
-    border-radius:10px;
-    background:#050505;
+    margin:0 0 14px;
 }
 
 .document:empty{
@@ -732,29 +698,9 @@ button{
     content:"Your completed document will appear here.";
 }
 
-.document-page{
-    width:100%;
-    margin:0 0 35px;
-    padding:28px 25px;
-    border:1px solid #242424;
-    border-radius:10px;
-    background:#101010;
-}
-
-.document-page:last-child{
-    margin-bottom:0;
-}
-
-.page-break{
-    display:block;
-    height:1px;
-    margin:30px 0;
-    border-top:1px dashed #333;
-}
-
-.document-text{
-    white-space:pre-wrap;
-}
+/* =========================================================
+   CORRECTION
+========================================================= */
 
 .correction{
     margin-top:18px;
@@ -798,6 +744,10 @@ textarea:focus{
 textarea::placeholder{
     color:#555;
 }
+
+/* =========================================================
+   ACTIONS
+========================================================= */
 
 .actions{
     display:grid;
@@ -857,6 +807,10 @@ textarea::placeholder{
     transform:none;
 }
 
+/* =========================================================
+   NOTICE
+========================================================= */
+
 .notice{
     display:none;
     margin-top:14px;
@@ -882,6 +836,10 @@ textarea::placeholder{
     border-color:rgba(72,212,138,.35);
     color:#83e5ad;
 }
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media(max-width:600px){
 
@@ -923,24 +881,8 @@ textarea::placeholder{
     }
 
     .document{
-        padding:18px 13px 25px;
+        padding:18px 13px;
         font-size:13px;
-    }
-
-    .document-page{
-        padding:20px 15px;
-    }
-
-    .document h1{
-        font-size:22px;
-    }
-
-    .document h2{
-        font-size:18px;
-    }
-
-    .document h3{
-        font-size:16px;
     }
 }
 
@@ -976,7 +918,10 @@ textarea::placeholder{
 
     <div class="job-pill">
         <span class="job-dot"></span>
-        <span id="jobState">CREATING</span>
+
+        <span id="jobState">
+            CREATING
+        </span>
     </div>
 
 </header>
@@ -991,14 +936,18 @@ textarea::placeholder{
     </h1>
 
     <p id="heroMessage">
-        Your service is being created and assembled into your
-        complete document.
+        Your service is being created one section at a time.
+        Each completed part is brought together into your
+        finished document.
     </p>
 
 </section>
 
 
-<section class="magic" id="magic">
+<section
+    class="magic"
+    id="magic"
+>
 
     <div class="magic-head">
 
@@ -1211,20 +1160,55 @@ textarea::placeholder{
 <script>
 "use strict";
 
+/* ============================================================
+   REVIEW JOB ID HANDOFF
+
+   Workspace can hand the job to this page using:
+
+       ?job_id=123
+
+   We also accept ?id=123 for compatibility.
+
+   The important part is that the review page uses the SAME
+   job_id created by Workspace.
+
+   We do NOT create a new job here.
+============================================================ */
+
+const params =
+    new URLSearchParams(window.location.search);
+
+let jobId =
+    params.get("job_id") ||
+    params.get("id") ||
+    localStorage.getItem("job_id") ||
+    localStorage.getItem("review_job_id") ||
+    "";
+
+jobId = String(jobId).trim();
+
+
+/* ============================================================
+   SAVE THE SAME JOB ID FOR THE REVIEW FLOW
+============================================================ */
+
+if(jobId){
+
+    localStorage.setItem(
+        "job_id",
+        jobId
+    );
+
+    localStorage.setItem(
+        "review_job_id",
+        jobId
+    );
+}
+
 
 /* ============================================================
    STATE
 ============================================================ */
-
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
-
-const jobId =
-    params.get("job_id") ||
-    params.get("id") ||
-    localStorage.getItem("job_id");
 
 let latestData = null;
 
@@ -1313,7 +1297,6 @@ if(!jobId){
 }else{
 
     startPolling();
-
 }
 
 
@@ -1323,6 +1306,10 @@ if(!jobId){
 
 function startPolling(){
 
+    if(!jobId){
+        return;
+    }
+
     if(polling){
         return;
     }
@@ -1330,13 +1317,13 @@ function startPolling(){
     polling = true;
 
     fetchReview();
-
 }
 
 
 async function fetchReview(){
 
     if(!jobId){
+        polling = false;
         return;
     }
 
@@ -1382,26 +1369,7 @@ async function fetchReview(){
         );
 
 
-        clearTimeout(
-            pollTimer
-        );
-
-
-        if(
-            !isFinished(data)
-        ){
-
-            pollTimer =
-                setTimeout(
-                    fetchReview,
-                    1800
-                );
-
-        }else{
-
-            polling = false;
-
-        }
+        hideErrorNotice();
 
 
     }catch(error){
@@ -1417,123 +1385,36 @@ async function fetchReview(){
             "error"
         );
 
+    }
 
-        clearTimeout(
-            pollTimer
-        );
 
+    clearTimeout(
+        pollTimer
+    );
+
+
+    if(
+        !isFinished(
+            latestData
+        )
+    ){
 
         pollTimer =
             setTimeout(
                 fetchReview,
-                2500
+                1800
             );
 
-    }
+    }else{
 
+        polling = false;
+
+    }
 }
 
 
 /* ============================================================
-   GENERIC OBJECT HELPERS
-============================================================ */
-
-function firstValue(
-    objects,
-    keys
-){
-
-    for(
-        const object of objects
-    ){
-
-        if(
-            !object ||
-            typeof object !== "object"
-        ){
-            continue;
-        }
-
-        for(
-            const key of keys
-        ){
-
-            if(
-                object[key] !== undefined &&
-                object[key] !== null
-            ){
-
-                return object[key];
-
-            }
-
-        }
-
-    }
-
-    return null;
-
-}
-
-
-function getCandidateObjects(data){
-
-    const objects = [];
-
-    if(data && typeof data === "object"){
-
-        objects.push(data);
-
-        if(
-            data.job &&
-            typeof data.job === "object"
-        ){
-            objects.push(data.job);
-        }
-
-        if(
-            data.version &&
-            typeof data.version === "object"
-        ){
-            objects.push(data.version);
-        }
-
-        if(
-            data.document &&
-            typeof data.document === "object"
-        ){
-            objects.push(data.document);
-        }
-
-        if(
-            data.review &&
-            typeof data.review === "object"
-        ){
-            objects.push(data.review);
-        }
-
-        if(
-            data.result &&
-            typeof data.result === "object"
-        ){
-            objects.push(data.result);
-        }
-
-        if(
-            data.data &&
-            typeof data.data === "object"
-        ){
-            objects.push(data.data);
-        }
-    }
-
-    return objects;
-
-}
-
-
-/* ============================================================
-   NORMALIZE SECTIONS
+   NORMALIZE BACKEND DATA
 ============================================================ */
 
 function getSections(data){
@@ -1543,107 +1424,63 @@ function getSections(data){
     }
 
 
-    const objects =
-        getCandidateObjects(data);
-
-
-    for(
-        const object of objects
+    if(
+        Array.isArray(
+            data.sections
+        )
     ){
 
-        const candidates = [
+        return data.sections;
 
-            object.sections,
-
-            object.document_sections,
-
-            object.generated_sections,
-
-            object.content_sections,
-
-            object.parts,
-
-            object.pages
-
-        ];
+    }
 
 
-        for(
-            const candidate of candidates
-        ){
+    if(
+        data.version &&
+        Array.isArray(
+            data.version.sections
+        )
+    ){
 
-            if(
-                Array.isArray(candidate)
-            ){
+        return data.version.sections;
 
-                return candidate;
+    }
 
-            }
 
-        }
+    if(
+        data.job &&
+        Array.isArray(
+            data.job.sections
+        )
+    ){
+
+        return data.job.sections;
 
     }
 
 
     return [];
-
 }
 
-
-/* ============================================================
-   PROGRESS
-============================================================ */
 
 function getCompletedCount(
     data,
     sections
 ){
 
-    const objects =
-        getCandidateObjects(data);
-
-
-    const progressObjects = [];
-
-
-    for(
-        const object of objects
-    ){
-
-        if(
-            object.progress &&
-            typeof object.progress === "object"
-        ){
-
-            progressObjects.push(
-                object.progress
-            );
-
-        }
-
-    }
-
-
-    const value =
-        firstValue(
-            progressObjects,
-            [
-                "completed",
-                "completed_sections",
-                "finished",
-                "done"
-            ]
-        );
-
-
     if(
-        value !== null &&
+        data &&
+        data.progress &&
         Number.isFinite(
-            Number(value)
+            Number(
+                data.progress.completed
+            )
         )
     ){
 
-        return Number(value);
+        return Number(
+            data.progress.completed
+        );
 
     }
 
@@ -1651,11 +1488,9 @@ function getCompletedCount(
     return sections.filter(
         section =>
             isDoneStatus(
-                section &&
                 section.status
             )
     ).length;
-
 }
 
 
@@ -1664,62 +1499,69 @@ function getTotalCount(
     sections
 ){
 
-    const objects =
-        getCandidateObjects(data);
-
-
-    const progressObjects = [];
-
-
-    for(
-        const object of objects
-    ){
-
-        if(
-            object.progress &&
-            typeof object.progress === "object"
-        ){
-
-            progressObjects.push(
-                object.progress
-            );
-
-        }
-
-    }
-
-
-    const value =
-        firstValue(
-            progressObjects,
-            [
-                "total",
-                "total_sections",
-                "count"
-            ]
-        );
-
-
     if(
-        value !== null &&
+        data &&
+        data.progress &&
         Number.isFinite(
-            Number(value)
+            Number(
+                data.progress.total
+            )
         )
     ){
 
-        return Number(value);
+        return Number(
+            data.progress.total
+        );
 
     }
 
 
     return sections.length;
-
 }
 
 
-/* ============================================================
-   STATUS
-============================================================ */
+function getDocumentHTML(data){
+
+    if(!data){
+        return "";
+    }
+
+
+    if(
+        typeof data.document_html ===
+        "string"
+    ){
+
+        return data.document_html;
+
+    }
+
+
+    if(
+        data.version &&
+        typeof data.version.document_html ===
+        "string"
+    ){
+
+        return data.version.document_html;
+
+    }
+
+
+    if(
+        data.job &&
+        typeof data.job.document_html ===
+        "string"
+    ){
+
+        return data.job.document_html;
+
+    }
+
+
+    return "";
+}
+
 
 function getStatus(data){
 
@@ -1728,28 +1570,21 @@ function getStatus(data){
     }
 
 
-    const objects =
-        getCandidateObjects(data);
-
-
-    const value =
-        firstValue(
-            objects,
-            [
-                "status",
-                "job_status",
-                "review_status",
-                "document_status"
-            ]
-        );
-
-
     return String(
-        value || ""
+        data.status ||
+        data.job_status ||
+        (
+            data.job &&
+            data.job.status
+        ) ||
+        ""
     ).toLowerCase();
-
 }
 
+
+/* ============================================================
+   STATUS HELPERS
+============================================================ */
 
 function isDoneStatus(status){
 
@@ -1760,17 +1595,15 @@ function isDoneStatus(status){
 
 
     return [
-
         "done",
         "complete",
         "completed",
         "ready",
         "assembled",
-        "approved",
-        "finished"
-
-    ].includes(value);
-
+        "approved"
+    ].includes(
+        value
+    );
 }
 
 
@@ -1783,7 +1616,6 @@ function isActiveStatus(status){
 
 
     return [
-
         "generating",
         "processing",
         "active",
@@ -1793,447 +1625,11 @@ function isActiveStatus(status){
         "queued",
         "pending",
         "creating"
-
-    ].includes(value);
-
-}
-
-
-/* ============================================================
-   COMPLETE DOCUMENT EXTRACTION
-============================================================ */
-
-function getDocumentContent(data){
-
-    if(!data){
-        return null;
-    }
-
-
-    const objects =
-        getCandidateObjects(data);
-
-
-    const keys = [
-
-        "document_html",
-
-        "html",
-
-        "content_html",
-
-        "rendered_html",
-
-        "generated_html",
-
-        "document",
-
-        "content",
-
-        "text",
-
-        "document_text",
-
-        "full_document",
-
-        "full_content",
-
-        "output",
-
-        "result"
-
-    ];
-
-
-    for(
-        const object of objects
-    ){
-
-        for(
-            const key of keys
-        ){
-
-            const value =
-                object[key];
-
-
-            if(
-                typeof value === "string" &&
-                value.trim()
-            ){
-
-                return {
-                    type:"string",
-                    value:value
-                };
-
-            }
-
-
-            if(
-                Array.isArray(value) &&
-                value.length
-            ){
-
-                return {
-                    type:"array",
-                    value:value
-                };
-
-            }
-
-
-            if(
-                value &&
-                typeof value === "object"
-            ){
-
-                if(
-                    typeof value.html === "string"
-                ){
-
-                    return {
-                        type:"string",
-                        value:value.html
-                    };
-
-                }
-
-                if(
-                    typeof value.content === "string"
-                ){
-
-                    return {
-                        type:"string",
-                        value:value.content
-                    };
-
-                }
-
-                if(
-                    typeof value.text === "string"
-                ){
-
-                    return {
-                        type:"string",
-                        value:value.text
-                    };
-
-                }
-
-            }
-
-        }
-
-    }
-
-
-    return null;
-
-}
-
-
-/* ============================================================
-   DOCUMENT RENDERING
-============================================================ */
-
-function renderDocument(data){
-
-    const result =
-        getDocumentContent(data);
-
-
-    if(!result){
-
-        if(
-            isFinished(data)
-        ){
-
-            documentBox.innerHTML =
-                `
-                <div class="document-text">
-                    Your document was completed, but the document content
-                    was not included in the review response.
-                </div>
-                `;
-
-        }
-
-        documentStatus.textContent =
-            isFinished(data)
-            ? "READY"
-            : "BUILDING";
-
-        return;
-
-    }
-
-
-    /*
-        ARRAY RESPONSE
-
-        Handles pages, sections, document parts,
-        and generated content returned as arrays.
-    */
-
-    if(
-        result.type === "array"
-    ){
-
-        renderDocumentArray(
-            result.value
-        );
-
-    }else{
-
-        renderDocumentString(
-            result.value
-        );
-
-    }
-
-
-    if(
-        isFinished(data)
-    ){
-
-        documentStatus.textContent =
-            "READY FOR REVIEW";
-
-        documentStatus.classList.add(
-            "ready"
-        );
-
-    }else{
-
-        documentStatus.textContent =
-            "BUILDING";
-
-        documentStatus.classList.remove(
-            "ready"
-        );
-
-    }
-
-}
-
-
-/* ============================================================
-   STRING DOCUMENT RENDERER
-============================================================ */
-
-function renderDocumentString(
-    content
-){
-
-    const value =
-        String(content || "")
-        .trim();
-
-
-    if(!value){
-
-        documentBox.innerHTML = "";
-
-        return;
-
-    }
-
-
-    /*
-        If backend returned HTML,
-        render it directly.
-    */
-
-    if(
-        /<([a-z][\w-]*)(\s[^>]*)?>/i.test(
-            value
-        )
-    ){
-
-        documentBox.innerHTML =
-            value;
-
-        return;
-
-    }
-
-
-    /*
-        Plain text document.
-        Preserve every line.
-    */
-
-    const wrapper =
-        document.createElement(
-            "div"
-        );
-
-    wrapper.className =
-        "document-text";
-
-    wrapper.textContent =
-        value;
-
-    documentBox.innerHTML = "";
-
-    documentBox.appendChild(
-        wrapper
+    ].includes(
+        value
     );
-
 }
 
-
-/* ============================================================
-   ARRAY DOCUMENT RENDERER
-============================================================ */
-
-function renderDocumentArray(
-    items
-){
-
-    documentBox.innerHTML = "";
-
-
-    items.forEach(
-        (
-            item,
-            index
-        ) => {
-
-            const page =
-                document.createElement(
-                    "div"
-                );
-
-            page.className =
-                "document-page";
-
-
-            if(
-                typeof item === "string"
-            ){
-
-                if(
-                    /<([a-z][\w-]*)(\s[^>]*)?>/i.test(
-                        item
-                    )
-                ){
-
-                    page.innerHTML =
-                        item;
-
-                }else{
-
-                    const text =
-                        document.createElement(
-                            "div"
-                        );
-
-                    text.className =
-                        "document-text";
-
-                    text.textContent =
-                        item;
-
-                    page.appendChild(
-                        text
-                    );
-
-                }
-
-            }else if(
-                item &&
-                typeof item === "object"
-            ){
-
-                const html =
-                    item.html ||
-                    item.document_html ||
-                    item.content_html ||
-                    item.content ||
-                    item.text ||
-                    item.body ||
-                    "";
-
-
-                const title =
-                    item.title ||
-                    item.name ||
-                    item.heading ||
-                    item.section_title ||
-                    "";
-
-
-                if(title){
-
-                    const heading =
-                        document.createElement(
-                            "h2"
-                        );
-
-                    heading.textContent =
-                        title;
-
-                    page.appendChild(
-                        heading
-                    );
-
-                }
-
-
-                if(
-                    typeof html === "string"
-                ){
-
-                    if(
-                        /<([a-z][\w-]*)(\s[^>]*)?>/i.test(
-                            html
-                        )
-                    ){
-
-                        page.insertAdjacentHTML(
-                            "beforeend",
-                            html
-                        );
-
-                    }else{
-
-                        const text =
-                            document.createElement(
-                                "div"
-                            );
-
-                        text.className =
-                            "document-text";
-
-                        text.textContent =
-                            html;
-
-                        page.appendChild(
-                            text
-                        );
-
-                    }
-
-                }
-
-            }
-
-
-            documentBox.appendChild(
-                page
-            );
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   FINISHED
-============================================================ */
 
 function isFinished(data){
 
@@ -2243,19 +1639,21 @@ function isFinished(data){
 
 
     const status =
-        getStatus(data);
+        getStatus(
+            data
+        );
 
 
     if([
-
         "complete",
         "completed",
         "ready",
         "assembled",
         "approved",
         "finished"
-
-    ].includes(status)){
+    ].includes(
+        status
+    )){
 
         return true;
 
@@ -2263,7 +1661,9 @@ function isFinished(data){
 
 
     const sections =
-        getSections(data);
+        getSections(
+            data
+        );
 
 
     const total =
@@ -2280,29 +1680,28 @@ function isFinished(data){
         );
 
 
-    const document =
-        getDocumentContent(data);
-
-
     return (
-
         total > 0 &&
         completed >= total &&
-        Boolean(document)
-
+        Boolean(
+            getDocumentHTML(
+                data
+            )
+        )
     );
-
 }
 
 
 /* ============================================================
-   MAIN RENDER
+   RENDER
 ============================================================ */
 
 function renderReview(data){
 
     const sections =
-        getSections(data);
+        getSections(
+            data
+        );
 
 
     const completed =
@@ -2344,14 +1743,15 @@ function renderReview(data){
 
 
     updateActions(
-        data
+        data,
+        completed,
+        total
     );
 
 
     animateNewlyCompletedSections(
         sections
     );
-
 }
 
 
@@ -2382,7 +1782,9 @@ function renderProgress(
 
 
     if(
-        isFinished(data)
+        isFinished(
+            data
+        )
     ){
 
         percent = 100;
@@ -2409,14 +1811,13 @@ function renderProgress(
 
 
     if(
-        isFinished(data)
+        isFinished(
+            data
+        )
     ){
 
         sectionCount.textContent =
             "Creation complete";
-
-        progressLabel.textContent =
-            "Your complete document is ready.";
 
     }else if(
         completed > 0
@@ -2425,19 +1826,36 @@ function renderProgress(
         sectionCount.textContent =
             "Creating your service";
 
-        progressLabel.textContent =
-            "Creating your complete document...";
-
     }else{
 
         sectionCount.textContent =
             "Getting started";
 
+    }
+
+
+    if(
+        isFinished(
+            data
+        )
+    ){
+
+        progressLabel.textContent =
+            "Your document is complete.";
+
+    }else if(
+        completed > 0
+    ){
+
+        progressLabel.textContent =
+            "Creating your document...";
+
+    }else{
+
         progressLabel.textContent =
             "Preparing your document...";
 
     }
-
 }
 
 
@@ -2459,15 +1877,13 @@ function renderSections(
                 "div"
             );
 
+
         row.className =
             "section-row active";
 
 
         row.innerHTML = `
-
-            <div class="section-number">
-                •
-            </div>
+            <div class="section-number">•</div>
 
             <div class="section-info">
 
@@ -2484,7 +1900,6 @@ function renderSections(
             <div class="section-mark">
                 ✦
             </div>
-
         `;
 
 
@@ -2492,33 +1907,24 @@ function renderSections(
             row
         );
 
-        return;
 
+        return;
     }
 
 
     const sorted =
         [...sections].sort(
-            (
-                a,
-                b
-            ) => {
-
-                return Number(
+            (a,b) =>
+                Number(
                     a.section_order ??
                     a.order ??
-                    a.position ??
                     0
-                )
-                -
+                ) -
                 Number(
                     b.section_order ??
                     b.order ??
-                    b.position ??
                     0
-                );
-
-            }
+                )
         );
 
 
@@ -2530,7 +1936,8 @@ function renderSections(
 
             const status =
                 String(
-                    section.status || ""
+                    section.status ||
+                    ""
                 ).toLowerCase();
 
 
@@ -2567,18 +1974,29 @@ function renderSections(
                 Number(
                     section.section_order ??
                     section.order ??
-                    section.position ??
                     index + 1
                 );
 
 
+            /*
+                FIXED:
+                The previous file contained broken
+                markdown-style expressions here.
+
+                Correct JavaScript:
+                    section.name
+            */
+
+            const rawTitle =
+                section.title ||
+                section.name ||
+                "Document Section " +
+                number;
+
+
             const title =
                 escapeHTML(
-                    section.title ||
-                    section.name ||
-                    section.heading ||
-                    "Document Section " +
-                    number
+                    rawTitle
                 );
 
 
@@ -2608,7 +2026,6 @@ function renderSections(
 
 
             row.innerHTML = `
-
                 <div class="section-number">
                     ${number}
                 </div>
@@ -2626,7 +2043,6 @@ function renderSections(
                 </div>
 
                 <div class="section-mark">
-
                     ${
                         done
                         ? "✓"
@@ -2634,9 +2050,7 @@ function renderSections(
                         ? "✦"
                         : "•"
                     }
-
                 </div>
-
             `;
 
 
@@ -2646,12 +2060,64 @@ function renderSections(
 
         }
     );
-
 }
 
 
 /* ============================================================
-   MAGIC
+   DOCUMENT
+============================================================ */
+
+function renderDocument(
+    data
+){
+
+    const html =
+        getDocumentHTML(
+            data
+        );
+
+
+    if(
+        html &&
+        typeof html === "string"
+    ){
+
+        documentBox.innerHTML =
+            html;
+
+    }
+
+
+    const ready =
+        isFinished(
+            data
+        );
+
+
+    if(ready){
+
+        documentStatus.textContent =
+            "READY FOR REVIEW";
+
+        documentStatus.classList.add(
+            "ready"
+        );
+
+    }else{
+
+        documentStatus.textContent =
+            "BUILDING";
+
+        documentStatus.classList.remove(
+            "ready"
+        );
+
+    }
+}
+
+
+/* ============================================================
+   MAGIC MESSAGES
 ============================================================ */
 
 function updateMagic(
@@ -2661,7 +2127,9 @@ function updateMagic(
 ){
 
     if(
-        isFinished(data)
+        isFinished(
+            data
+        )
     ){
 
         magicTitle.textContent =
@@ -2669,11 +2137,11 @@ function updateMagic(
 
 
         magicMessage.textContent =
-            "Every part has been created and assembled into your complete document.";
+            "Every section has been created and assembled into your document.";
 
 
         heroMessage.textContent =
-            "Your complete document is now ready for you to review.";
+            "The creation is complete. Your finished service is now ready for you to review.";
 
 
         jobState.textContent =
@@ -2681,7 +2149,6 @@ function updateMagic(
 
 
         return;
-
     }
 
 
@@ -2692,11 +2159,11 @@ function updateMagic(
     if(total > 0){
 
         magicMessage.textContent =
-            "We are creating your service and bringing every part together.";
+            "We are creating your service one carefully prepared section at a time.";
 
 
         heroMessage.textContent =
-            "Watch as your complete service is created and assembled.";
+            "Watch as each part of your service is created and brought together.";
 
 
         jobState.textContent =
@@ -2714,14 +2181,12 @@ function updateMagic(
 
         jobState.textContent =
             "PREPARING";
-
     }
-
 }
 
 
 /* ============================================================
-   FLYING SECTIONS
+   FLYING FILES
 ============================================================ */
 
 function animateNewlyCompletedSections(
@@ -2734,13 +2199,23 @@ function animateNewlyCompletedSections(
             index
         ) => {
 
+            /*
+                FIXED:
+                The previous file contained broken
+                markdown-style JavaScript.
+
+                Correct:
+                    section.id
+            */
+
             const id =
                 String(
                     section.section_id ??
                     section.id ??
-                    section.section_order ??
-                    section.order ??
-                    index + 1
+                    (
+                        section.section_order ??
+                        index + 1
+                    )
                 );
 
 
@@ -2748,21 +2223,24 @@ function animateNewlyCompletedSections(
                 isDoneStatus(
                     section.status
                 ) &&
-                !knownDoneIds.has(id)
+                !knownDoneIds.has(
+                    id
+                )
             ){
 
-                knownDoneIds.add(id);
+                knownDoneIds.add(
+                    id
+                );
+
 
                 createFlyingFile(
                     section,
                     index
                 );
-
             }
 
         }
     );
-
 }
 
 
@@ -2792,12 +2270,15 @@ function createFlyingFile(
         " visible";
 
 
+    const rawTitle =
+        section.title ||
+        section.name ||
+        "Document Section";
+
+
     const title =
         escapeHTML(
-            section.title ||
-            section.name ||
-            section.heading ||
-            "Document Section"
+            rawTitle
         );
 
 
@@ -2819,7 +2300,6 @@ function createFlyingFile(
 
 
     card.innerHTML = `
-
         <div class="fly-icon">
             ${icon}
         </div>
@@ -2835,7 +2315,6 @@ function createFlyingFile(
             </div>
 
         </div>
-
     `;
 
 
@@ -2865,13 +2344,10 @@ function createFlyingFile(
 
     setTimeout(
         () => {
-
             card.remove();
-
         },
         2800
     );
-
 }
 
 
@@ -2879,10 +2355,16 @@ function createFlyingFile(
    ACTIONS
 ============================================================ */
 
-function updateActions(data){
+function updateActions(
+    data,
+    completed,
+    total
+){
 
     const ready =
-        isFinished(data);
+        isFinished(
+            data
+        );
 
 
     correctionButton.disabled =
@@ -2893,63 +2375,31 @@ function updateActions(data){
         !ready;
 
 
-    const objects =
-        getCandidateObjects(data);
-
-
     const approved =
         Boolean(
-            firstValue(
-                objects,
-                [
-                    "approved",
-                    "is_approved"
-                ]
+            data &&
+            (
+                data.approved ||
+                data.is_approved ||
+                (
+                    data.version &&
+                    data.version.is_approved
+                )
             )
-        );
-
-
-    const paymentObjects = [];
-
-
-    objects.forEach(
-        object => {
-
-            if(
-                object.payment &&
-                typeof object.payment === "object"
-            ){
-
-                paymentObjects.push(
-                    object.payment
-                );
-
-            }
-
-        }
-    );
-
-
-    const paymentStatus =
-        firstValue(
-            objects,
-            [
-                "payment_status",
-                "paid"
-            ]
         );
 
 
     const paid =
         Boolean(
-            paymentStatus === true ||
-            paymentStatus === "paid" ||
-            firstValue(
-                paymentObjects,
-                [
-                    "status"
-                ]
-            ) === "paid"
+            data &&
+            (
+                data.paid ||
+                data.payment_status === "paid" ||
+                (
+                    data.payment &&
+                    data.payment.status === "paid"
+                )
+            )
         );
 
 
@@ -2962,29 +2412,6 @@ function updateActions(data){
         !ready ||
         !approved ||
         !paid;
-
-}
-
-
-/* ============================================================
-   VERSION ID
-============================================================ */
-
-function getVersionId(data){
-
-    const objects =
-        getCandidateObjects(data);
-
-
-    return firstValue(
-        objects,
-        [
-            "version_id",
-            "current_version",
-            "id"
-        ]
-    );
-
 }
 
 
@@ -3005,15 +2432,32 @@ async function requestCorrection(){
             "error"
         );
 
+
         correctionText.focus();
 
         return;
+    }
 
+
+    if(!jobId){
+
+        showNotice(
+            "This document job could not be identified.",
+            "error"
+        );
+
+        return;
     }
 
 
     correctionButton.disabled =
         true;
+
+
+    showNotice(
+        "Your correction is being prepared. Only the affected part of the document will be regenerated.",
+        "success"
+    );
 
 
     try{
@@ -3033,13 +2477,11 @@ async function requestCorrection(){
                     },
 
                     body:JSON.stringify({
-
                         job_id:
                             jobId,
 
                         instruction:
                             instruction
-
                     })
                 }
             );
@@ -3054,11 +2496,12 @@ async function requestCorrection(){
         }
 
 
-        correctionText.value = "";
+        correctionText.value =
+            "";
 
 
         showNotice(
-            "Correction submitted. The affected part of your document is being worked on again.",
+            "Correction submitted. Watch the affected section return to the creation flow.",
             "success"
         );
 
@@ -3083,9 +2526,7 @@ async function requestCorrection(){
 
         correctionButton.disabled =
             false;
-
     }
-
 }
 
 
@@ -3100,9 +2541,27 @@ async function approveDocument(){
     }
 
 
+    if(!jobId){
+
+        showNotice(
+            "This document job could not be identified.",
+            "error"
+        );
+
+        return;
+    }
+
+
     const versionId =
-        getVersionId(
-            latestData
+        latestData.version_id ||
+        (
+            latestData.version &&
+            latestData.version.version_id
+        ) ||
+        latestData.current_version ||
+        (
+            latestData.job &&
+            latestData.job.current_version
         );
 
 
@@ -3114,7 +2573,6 @@ async function approveDocument(){
         );
 
         return;
-
     }
 
 
@@ -3184,9 +2642,7 @@ async function approveDocument(){
 
         approveButton.disabled =
             false;
-
     }
-
 }
 
 
@@ -3206,7 +2662,6 @@ function continueToPayment(){
         encodeURIComponent(
             jobId
         );
-
 }
 
 
@@ -3222,8 +2677,14 @@ function downloadDocument(){
 
 
     const versionId =
-        getVersionId(
-            latestData
+        latestData &&
+        (
+            latestData.version_id ||
+            latestData.current_version ||
+            (
+                latestData.version &&
+                latestData.version.version_id
+            )
         );
 
 
@@ -3235,7 +2696,6 @@ function downloadDocument(){
         );
 
         return;
-
     }
 
 
@@ -3248,7 +2708,6 @@ function downloadDocument(){
         encodeURIComponent(
             versionId
         );
-
 }
 
 
@@ -3267,13 +2726,15 @@ function goBack(){
         history.back();
 
         return;
-
     }
 
 
+    /*
+        Keep the Workspace fallback on the same site.
+    */
+
     window.location.href =
         "workspace.html";
-
 }
 
 
@@ -3296,7 +2757,21 @@ function showNotice(
             type ||
             ""
         );
+}
 
+
+function hideErrorNotice(){
+
+    if(
+        notice.classList.contains(
+            "error"
+        )
+    ){
+
+        notice.className =
+            "notice";
+
+    }
 }
 
 
@@ -3331,7 +2806,6 @@ function escapeHTML(
         "'",
         "&#039;"
     );
-
 }
 
 
