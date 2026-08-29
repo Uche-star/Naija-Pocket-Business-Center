@@ -50,39 +50,6 @@ BASE = Path(__file__).resolve().parent
 
 
 # ============================================================
-# DOCUMENT PAGINATION CONFIGURATION
-# ============================================================
-
-# This is deliberately kept independent from Workspace
-# intelligence.
-#
-# The intelligence produces the work.
-# This API is responsible for storing that work as pages
-# for the review workflow.
-
-PAGE_TARGET_CHARS = int(
-    os.getenv(
-        "ADA_REVIEW_PAGE_TARGET_CHARS",
-        "5000",
-    )
-)
-
-PAGE_MIN_CHARS = int(
-    os.getenv(
-        "ADA_REVIEW_PAGE_MIN_CHARS",
-        "2500",
-    )
-)
-
-PAGE_MAX_CHARS = int(
-    os.getenv(
-        "ADA_REVIEW_PAGE_MAX_CHARS",
-        "7000",
-    )
-)
-
-
-# ============================================================
 # RUNTIME STATE
 # ============================================================
 
@@ -99,7 +66,7 @@ _correction_tasks: dict[str, asyncio.Task] = {}
 
 app = FastAPI(
     title="Naija Pocket Business Center",
-    version="review-intelligence-v9",
+    version="review-intelligence-v10",
 )
 
 app.add_middleware(
@@ -177,6 +144,7 @@ def get_session(
         _sessions[key] = ada
 
     elif service:
+
         setter = getattr(
             ada,
             "set_service",
@@ -281,12 +249,17 @@ def build_form_request(
         )
 
     if request.form_data:
+
         information = []
 
         for key, value in request.form_data.items():
-            value_text = str(value or "").strip()
+
+            value_text = str(
+                value or ""
+            ).strip()
 
             if value_text:
+
                 label = (
                     str(key)
                     .replace("_", " ")
@@ -298,20 +271,25 @@ def build_form_request(
                 )
 
         if information:
+
             parts.append(
                 "CUSTOMER PROVIDED SERVICE INFORMATION:\n"
                 + "\n".join(information)
             )
 
     if request.context:
+
         if request.context.strip():
+
             parts.append(
                 "ADDITIONAL CONTEXT:\n"
                 + request.context.strip()
             )
 
     if request.message:
+
         if request.message.strip():
+
             parts.append(
                 "CUSTOMER REQUEST:\n"
                 + request.message.strip()
@@ -327,18 +305,22 @@ def build_context(
     parts: list[str] = []
 
     if request.context:
+
         if request.context.strip():
+
             parts.append(
                 request.context.strip()
             )
 
     if request.customer_id:
+
         parts.append(
             "CUSTOMER ID:\n"
             + request.customer_id
         )
 
     if request.client_request_id:
+
         parts.append(
             "CLIENT REQUEST ID:\n"
             + request.client_request_id
@@ -355,8 +337,14 @@ def stored_pages(
     pages: Any,
 ) -> list[dict[str, Any]]:
 
+    if not isinstance(
+        pages,
+        list,
+    ):
+        return []
+
     normalized = normalize_document_pages(
-        pages or []
+        pages
     )
 
     output: list[dict[str, Any]] = []
@@ -365,59 +353,47 @@ def stored_pages(
         normalized,
         1,
     ):
-        if not isinstance(page, dict):
+
+        if not isinstance(
+            page,
+            dict,
+        ):
             continue
 
-        page_number = page.get(
-            "page_number",
-            position,
-        )
-
-        try:
-            page_number = int(
-                page_number or position
+        content = str(
+            page.get(
+                "content",
+                "",
             )
-        except Exception:
-            page_number = position
+            or ""
+        ).strip()
+
+        if not content:
+            continue
 
         output.append(
             {
                 **page,
-                "page_number": page_number,
+                "page_number": position,
                 "position": position,
-                "content": str(
-                    page.get(
-                        "content",
-                        "",
-                    )
-                    or ""
-                ),
+                "content": content,
             }
         )
-
-    # Always rebuild position/page numbering
-    # sequentially. This prevents duplicated or
-    # missing page numbers from reaching review.html.
-
-    for position, page in enumerate(
-        output,
-        1,
-    ):
-        page["position"] = position
-        page["page_number"] = position
 
     return output
 
 
 # ============================================================
-# INTELLIGENT TEXT → COMPLETE PAGE COLLECTION
+# GENERATED TEXT CLEANING
 # ============================================================
 
 def clean_generated_text(
     text: str,
 ) -> str:
 
-    text = str(text or "").replace(
+    text = str(
+        text or ""
+    ).replace(
         "\r\n",
         "\n",
     )
@@ -427,7 +403,6 @@ def clean_generated_text(
         "\n",
     )
 
-    # Remove obvious transport-only fences.
     text = re.sub(
         r"```(?:markdown|md|text)?",
         "",
@@ -443,47 +418,50 @@ def clean_generated_text(
     return text.strip()
 
 
+# ============================================================
+# EXPLICIT PAGE DETECTION
+# ============================================================
+
 def split_explicit_pages(
     text: str,
 ) -> list[str]:
 
     """
-    Detect page boundaries that the generated work may
-    already contain.
+    Only separates pages when the generated document itself
+    explicitly identifies page boundaries.
 
-    Supported examples:
+    Supported forms include:
 
         --- PAGE 1 ---
+        === PAGE 1 ===
         PAGE 1
-        Page 1
         [PAGE 1]
         <PAGE 1>
-        === PAGE 1 ===
 
-    If no meaningful page boundaries exist, return [].
+    This function does NOT invent page boundaries.
     """
 
     pattern = re.compile(
         r"""
+        ^\s*
         (?:
-            ^\s*
-            (?:
-                ---+\s*PAGE\s*\d+\s*---+
-                |
-                ===+\s*PAGE\s*\d+\s*===+
-                |
-                \[\s*PAGE\s*\d+\s*\]
-                |
-                <\s*PAGE\s*\d+\s*>
-                |
-                PAGE\s*\d+
-            )
-            \s*$
+            ---+\s*PAGE\s*\d+\s*---+
+            |
+            ===+\s*PAGE\s*\d+\s*===+
+            |
+            \[\s*PAGE\s*\d+\s*\]
+            |
+            <\s*PAGE\s*\d+\s*>
+            |
+            PAGE\s*\d+
         )
+        \s*$
         """,
-        flags=re.IGNORECASE
-        | re.MULTILINE
-        | re.VERBOSE,
+        flags=(
+            re.IGNORECASE
+            | re.MULTILINE
+            | re.VERBOSE
+        ),
     )
 
     matches = list(
@@ -495,7 +473,10 @@ def split_explicit_pages(
 
     pages: list[str] = []
 
-    for index, match in enumerate(matches):
+    for index, match in enumerate(
+        matches
+    ):
+
         start = match.end()
 
         if index + 1 < len(matches):
@@ -510,252 +491,37 @@ def split_explicit_pages(
         ].strip()
 
         if content:
-            pages.append(content)
+            pages.append(
+                content
+            )
 
     return pages
 
 
-def split_by_sections(
-    text: str,
-) -> list[str]:
-
-    """
-    First attempt to preserve logical document structure.
-
-    Major headings are used as natural boundaries when the
-    generated document is long enough.
-    """
-
-    lines = text.splitlines()
-
-    sections: list[str] = []
-    current: list[str] = []
-
-    heading_pattern = re.compile(
-        r"""
-        ^\s*
-        (?:
-            \#{1,6}\s+
-            |
-            \d+[\.\)]\s+
-            |
-            (?:CHAPTER|SECTION|PART)\s+
-        )
-        .+
-        $
-        """,
-        flags=re.IGNORECASE
-        | re.VERBOSE,
-    )
-
-    for line in lines:
-        if (
-            current
-            and heading_pattern.match(line)
-        ):
-            section = "\n".join(
-                current
-            ).strip()
-
-            if section:
-                sections.append(
-                    section
-                )
-
-            current = [line]
-
-        else:
-            current.append(line)
-
-    if current:
-        section = "\n".join(
-            current
-        ).strip()
-
-        if section:
-            sections.append(section)
-
-    return sections
-
-
-def split_long_block(
-    text: str,
-) -> list[str]:
-
-    """
-    Split continuous text into review pages.
-
-    The split is paragraph-aware first and sentence-aware
-    second. This prevents the entire generated document from
-    becoming one page simply because the model returned one
-    string.
-    """
-
-    text = text.strip()
-
-    if not text:
-        return []
-
-    if len(text) <= PAGE_MAX_CHARS:
-        return [text]
-
-    paragraphs = re.split(
-        r"\n\s*\n",
-        text,
-    )
-
-    pages: list[str] = []
-    current: list[str] = []
-    current_length = 0
-
-    def flush():
-        nonlocal current
-        nonlocal current_length
-
-        if current:
-            content = "\n\n".join(
-                current
-            ).strip()
-
-            if content:
-                pages.append(
-                    content
-                )
-
-        current = []
-        current_length = 0
-
-    for paragraph in paragraphs:
-        paragraph = paragraph.strip()
-
-        if not paragraph:
-            continue
-
-        paragraph_length = len(
-            paragraph
-        )
-
-        if (
-            current
-            and current_length
-            + paragraph_length
-            + 2
-            > PAGE_MAX_CHARS
-        ):
-            flush()
-
-        if (
-            paragraph_length
-            <= PAGE_MAX_CHARS
-        ):
-            current.append(
-                paragraph
-            )
-
-            current_length += (
-                paragraph_length
-                + 2
-            )
-
-            continue
-
-        # A single paragraph is itself too large.
-        # Split it without cutting words.
-
-        sentences = re.split(
-            r"(?<=[.!?])\s+",
-            paragraph,
-        )
-
-        for sentence in sentences:
-            sentence = sentence.strip()
-
-            if not sentence:
-                continue
-
-            sentence_length = len(
-                sentence
-            )
-
-            if (
-                current
-                and current_length
-                + sentence_length
-                + 1
-                > PAGE_MAX_CHARS
-            ):
-                flush()
-
-            current.append(
-                sentence
-            )
-
-            current_length += (
-                sentence_length
-                + 1
-            )
-
-    flush()
-
-    return pages
-
-
-def balance_small_pages(
-    pages: list[str],
-) -> list[str]:
-
-    """
-    Avoid producing a tiny trailing page when the previous page
-    can reasonably absorb it.
-    """
-
-    if len(pages) < 2:
-        return pages
-
-    balanced = list(pages)
-
-    while len(balanced) >= 2:
-        previous = balanced[-2]
-        last = balanced[-1]
-
-        if (
-            len(last) < PAGE_MIN_CHARS
-            and len(previous)
-            + len(last)
-            + 2
-            <= PAGE_MAX_CHARS
-        ):
-            balanced[-2] = (
-                previous
-                + "\n\n"
-                + last
-            )
-
-            balanced.pop()
-
-        else:
-            break
-
-    return balanced
-
+# ============================================================
+# GENERATED DOCUMENT → PAGE COLLECTION
+# ============================================================
 
 def paginate_generated_text(
     text: str,
 ) -> list[dict[str, Any]]:
 
     """
-    Converts a generated document into the complete page
-    collection used by the review workflow.
+    IMPORTANT ARCHITECTURE RULE:
 
-    Priority:
+    This function does NOT impose a universal page-count rule.
 
-    1. Explicit page markers.
-    2. Existing structured page conversion.
-    3. Logical section splitting.
-    4. Paragraph/sentence pagination.
+    Intelligence is responsible for understanding the service
+    and producing the requested work.
 
-    This function does NOT change the intelligence.
-    It only gives the finished work a real page structure.
+    The API preserves explicit pages when they are supplied.
+
+    A plain text result without explicit page structure remains
+    one document unit.
+
+    This prevents services such as CV, letterhead, business
+    cards, invoices, letters and similar services from being
+    arbitrarily divided by character count.
     """
 
     text = clean_generated_text(
@@ -765,22 +531,19 @@ def paginate_generated_text(
     if not text:
         return []
 
-    # --------------------------------------------------------
-    # Explicit page markers.
-    # --------------------------------------------------------
-
     explicit = split_explicit_pages(
         text
     )
 
     if explicit:
+
         return stored_pages(
             [
                 {
                     "page_number": index,
-                    "content": page,
+                    "content": content,
                 }
-                for index, page
+                for index, content
                 in enumerate(
                     explicit,
                     1,
@@ -788,121 +551,12 @@ def paginate_generated_text(
             ]
         )
 
-    # --------------------------------------------------------
-    # Ask the existing document-page utility first.
-    # --------------------------------------------------------
-
-    try:
-        existing = stored_pages(
-            document_text_to_pages(
-                text
-            )
-        )
-
-        # Only trust this conversion as a page collection
-        # if it actually produced multiple pages.
-        if len(existing) > 1:
-            return existing
-
-    except Exception:
-        pass
-
-    # --------------------------------------------------------
-    # Logical section pagination.
-    # --------------------------------------------------------
-
-    sections = split_by_sections(
-        text
-    )
-
-    if len(sections) > 1:
-        pages: list[str] = []
-        current: list[str] = []
-        current_length = 0
-
-        for section in sections:
-            section_length = len(
-                section
-            )
-
-            if (
-                current
-                and current_length
-                + section_length
-                + 2
-                > PAGE_TARGET_CHARS
-            ):
-                pages.append(
-                    "\n\n".join(
-                        current
-                    ).strip()
-                )
-
-                current = []
-                current_length = 0
-
-            current.append(
-                section
-            )
-
-            current_length += (
-                section_length
-                + 2
-            )
-
-        if current:
-            pages.append(
-                "\n\n".join(
-                    current
-                ).strip()
-            )
-
-        pages = balance_small_pages(
-            [
-                page
-                for page in pages
-                if page.strip()
-            ]
-        )
-
-        if len(pages) > 1:
-            return stored_pages(
-                [
-                    {
-                        "page_number": index,
-                        "content": page,
-                    }
-                    for index, page
-                    in enumerate(
-                        pages,
-                        1,
-                    )
-                ]
-            )
-
-    # --------------------------------------------------------
-    # Continuous-text pagination.
-    # --------------------------------------------------------
-
-    pages = split_long_block(
-        text
-    )
-
-    pages = balance_small_pages(
-        pages
-    )
-
     return stored_pages(
         [
             {
-                "page_number": index,
-                "content": page,
+                "page_number": 1,
+                "content": text,
             }
-            for index, page
-            in enumerate(
-                pages,
-                1,
-            )
         ]
     )
 
@@ -921,6 +575,7 @@ def make_review_pages(
         stored_pages(pages),
         1,
     ):
+
         output.append(
             {
                 "page_number": position,
@@ -958,21 +613,20 @@ def make_job_response(
 
     job["document_pages"] = pages
 
-    # Keep review pages synchronized with the actual document
-    # pages. This prevents review.html from seeing one collection
-    # while the job contains another.
-
-    existing_review_pages = (
-        job.get(
-            "review_pages",
-            [],
-        )
+    existing_review_pages = job.get(
+        "review_pages",
+        [],
     )
 
     if (
-        len(existing_review_pages)
+        not isinstance(
+            existing_review_pages,
+            list,
+        )
+        or len(existing_review_pages)
         != len(pages)
     ):
+
         job["review_pages"] = (
             make_review_pages(
                 pages
@@ -1087,6 +741,7 @@ def create_job(
     )
 
     if not pages:
+
         raise ValueError(
             "Cannot create a job without "
             "document pages."
@@ -1105,9 +760,8 @@ def create_job(
             request
         ),
 
-        "client_request_id": (
-            request.client_request_id
-        ),
+        "client_request_id":
+            request.client_request_id,
 
         "status": "reviewing",
 
@@ -1134,9 +788,8 @@ def create_job(
 
         "current_version": 1,
 
-        "version_id": (
-            job_id + ":1"
-        ),
+        "version_id":
+            job_id + ":1",
 
         "approved": False,
 
@@ -1183,11 +836,13 @@ def review_callback(
             for page in job[
                 "review_pages"
             ]:
+
                 if str(
                     page[
                         "page_number"
                     ]
                 ) == page_number:
+
                     page[
                         "status"
                     ] = "reviewing"
@@ -1197,6 +852,7 @@ def review_callback(
             for page in job[
                 "review_pages"
             ]:
+
                 if str(
                     page[
                         "page_number"
@@ -1234,6 +890,7 @@ def review_callback(
                     ] = None
 
             try:
+
                 completed = int(
                     update.get(
                         "position",
@@ -1246,6 +903,7 @@ def review_callback(
                 )
 
             except Exception:
+
                 completed = job[
                     "progress"
                 ][
@@ -1256,7 +914,14 @@ def review_callback(
                 "progress"
             ][
                 "completed"
-            ] = completed
+            ] = min(
+                completed,
+                len(
+                    job[
+                        "document_pages"
+                    ]
+                ),
+            )
 
         elif update_type == "page_error":
 
@@ -1374,6 +1039,7 @@ async def run_review(
             result,
             dict,
         ):
+
             raise TypeError(
                 "Invalid review result."
             )
@@ -1410,6 +1076,7 @@ async def run_review(
                 ) == returned_number:
 
                     if "review" in returned:
+
                         page[
                             "review"
                         ] = str(
@@ -1420,6 +1087,7 @@ async def run_review(
                         )
 
                     if "content" in returned:
+
                         page[
                             "content"
                         ] = str(
@@ -1469,6 +1137,7 @@ async def run_review(
         }
 
     except asyncio.CancelledError:
+
         raise
 
     except Exception as error:
@@ -1484,13 +1153,11 @@ async def run_review(
         job[
             "review_error"
         ] = {
-            "type": type(
-                error
-            ).__name__,
+            "type":
+                type(error).__name__,
 
-            "message": str(
-                error
-            ),
+            "message":
+                str(error),
         }
 
         traceback.print_exc()
@@ -1513,6 +1180,7 @@ def start_review(
             "status"
         ) != "reviewing"
     ):
+
         return False
 
     task = _review_tasks.get(
@@ -1523,6 +1191,7 @@ def start_review(
         task
         and not task.done()
     ):
+
         return False
 
     _review_tasks[
@@ -1641,8 +1310,7 @@ def extract_document(
 
                 values = [
                     element.text or ""
-                    for element
-                    in root.iter()
+                    for element in root.iter()
                     if (
                         isinstance(
                             element.tag,
@@ -1658,6 +1326,7 @@ def extract_document(
                 ]
 
                 if values:
+
                     texts.append(
                         " ".join(
                             values
@@ -1679,12 +1348,66 @@ def upload_to_pages(
     data: bytes,
 ) -> list[dict[str, Any]]:
 
+    """
+    Uploaded documents retain their natural document-page
+    structure where the document format exposes it.
+
+    For plain extracted text, the API does not invent a
+    requested page count.
+    """
+
+    suffix = Path(
+        filename
+    ).suffix.lower()
+
+    # PDF has an actual physical page structure.
+    if suffix == ".pdf":
+
+        from pypdf import PdfReader
+
+        reader = PdfReader(
+            io.BytesIO(data)
+        )
+
+        pages = []
+
+        for index, source_page in enumerate(
+            reader.pages,
+            1,
+        ):
+
+            content = (
+                source_page.extract_text()
+                or ""
+            ).strip()
+
+            if content:
+
+                pages.append(
+                    {
+                        "page_number": index,
+                        "content": content,
+                    }
+                )
+
+        if not pages:
+
+            raise ValueError(
+                "The uploaded PDF contains "
+                "no extractable text."
+            )
+
+        return stored_pages(
+            pages
+        )
+
     text = extract_document(
         data,
         filename,
     ).strip()
 
     if not text:
+
         raise ValueError(
             "The uploaded document contains "
             "no extractable text."
@@ -1703,14 +1426,26 @@ def generated_document_pages(
     result: Any,
 ) -> list[dict[str, Any]]:
 
-    # --------------------------------------------------------
-    # Structured document output is authoritative.
-    # --------------------------------------------------------
+    """
+    Intelligence output is authoritative.
+
+    Priority:
+
+    1. Explicit structured page collection.
+    2. Explicit page markers inside generated text.
+    3. A plain generated document as one document unit.
+
+    The API does NOT create pages based on character length.
+    """
 
     if isinstance(
         result,
         dict,
     ):
+
+        # ----------------------------------------------------
+        # Structured intelligence output.
+        # ----------------------------------------------------
 
         for key in (
             "pages",
@@ -1733,10 +1468,20 @@ def generated_document_pages(
                 )
 
                 if pages:
+
                     return pages
 
         # ----------------------------------------------------
-        # Text/document fields.
+        # Some intelligence implementations may return a
+        # document object containing a text field plus a
+        # separate page count/structure.
+        #
+        # If actual page structures exist, they were handled
+        # above.
+        #
+        # A requested page count alone is NOT used here to
+        # manufacture pages. Intelligence must produce the
+        # corresponding work.
         # ----------------------------------------------------
 
         for key in (
@@ -1767,7 +1512,7 @@ def generated_document_pages(
                 )
 
     # --------------------------------------------------------
-    # Plain string response.
+    # Plain string intelligence result.
     # --------------------------------------------------------
 
     if (
@@ -1800,23 +1545,18 @@ async def create_document_work(
 ) -> list[dict[str, Any]]:
 
     """
-    Create the customer's actual document through the existing
-    intelligence.
+    Intelligence creates the customer's actual work.
 
-    IMPORTANT:
+    The API does not use keyword matching.
 
-    Workspace intelligence remains untouched.
+    The API does not decide which services require pages.
 
-    This function does not perform keyword matching.
+    The selected service, customer information, requested
+    quantity/page requirements and instructions are passed to
+    intelligence as part of the customer request.
 
-    It does not create a second intelligence system.
-
-    It does not pass create_work into respond().
+    Intelligence determines the appropriate output.
     """
-
-    # --------------------------------------------------------
-    # Preferred dedicated document-generation methods.
-    # --------------------------------------------------------
 
     for method_name in (
         "create_document",
@@ -1868,18 +1608,11 @@ async def create_document_work(
                 )
 
             except TypeError:
+
                 continue
 
     # --------------------------------------------------------
-    # Signature-safe respond() compatibility path.
-    #
-    # CRITICAL:
-    #
-    # create_work is NOT passed here.
-    # form_data is NOT passed here.
-    #
-    # The customer's service information has already been
-    # assembled into customer_request.
+    # Compatibility path.
     # --------------------------------------------------------
 
     respond = getattr(
@@ -1891,6 +1624,7 @@ async def create_document_work(
     if not callable(
         respond
     ):
+
         raise AttributeError(
             "AdaResponse has no document creation "
             "method and no respond() method."
@@ -1922,6 +1656,7 @@ def serve_html(
     )
 
     if not path:
+
         return application_error(
             "PAGE",
             f"{filename} was not found.",
@@ -2037,6 +1772,7 @@ async def upload(
         data = await file.read()
 
         if not data:
+
             return application_error(
                 "UPLOAD",
                 "The uploaded file is empty.",
@@ -2045,6 +1781,7 @@ async def upload(
             )
 
         if len(data) > MAX_UPLOAD:
+
             return application_error(
                 "UPLOAD",
                 "The uploaded document is too large.",
@@ -2064,8 +1801,12 @@ async def upload(
         )
 
         job_id_value = (
-            str(job_id or "").strip()
-            or str(uuid.uuid4())
+            str(
+                job_id or ""
+            ).strip()
+            or str(
+                uuid.uuid4()
+            )
         )
 
         return {
@@ -2101,10 +1842,6 @@ async def chat(
     request: Chat,
 ):
 
-    # --------------------------------------------------------
-    # Intelligence must be active.
-    # --------------------------------------------------------
-
     if not request.activate_intelligence:
 
         return application_error(
@@ -2127,7 +1864,9 @@ async def chat(
         str(
             request.job_id or ""
         ).strip()
-        or str(uuid.uuid4())
+        or str(
+            uuid.uuid4()
+        )
     )
 
     context = build_context(
@@ -2137,10 +1876,6 @@ async def chat(
     pages = stored_pages(
         request.document_pages or []
     )
-
-    # --------------------------------------------------------
-    # document_text → authoritative pages
-    # --------------------------------------------------------
 
     if (
         not pages
@@ -2234,7 +1969,7 @@ async def chat(
                 )
 
             # ------------------------------------------------
-            # EXISTING INTELLIGENCE CREATES THE WORK.
+            # Intelligence creates the actual work.
             # ------------------------------------------------
 
             created_pages = (
@@ -2246,12 +1981,6 @@ async def chat(
                 )
             )
 
-            # ------------------------------------------------
-            # HARD GUARANTEE:
-            # The generated work must contain a complete
-            # page collection before entering review.
-            # ------------------------------------------------
-
             created_pages = stored_pages(
                 created_pages
             )
@@ -2262,6 +1991,11 @@ async def chat(
                     "The generated document contained "
                     "no usable pages."
                 )
+
+            # ------------------------------------------------
+            # The API stores exactly the page collection
+            # intelligence produced.
+            # ------------------------------------------------
 
             job = create_job(
                 job_id=job_id,
@@ -2336,33 +2070,42 @@ async def chat(
 
                 job.update(
                     {
-                        "document_pages": pages,
+                        "document_pages":
+                            pages,
 
                         "review_pages":
                             make_review_pages(
                                 pages
                             ),
 
-                        "assembled_review": "",
+                        "assembled_review":
+                            "",
 
-                        "status": "reviewing",
+                        "status":
+                            "reviewing",
 
-                        "review_started": True,
+                        "review_started":
+                            True,
 
-                        "review_finished": False,
+                        "review_finished":
+                            False,
 
-                        "review_error": None,
+                        "review_error":
+                            None,
 
-                        "approved": False,
+                        "approved":
+                            False,
 
-                        "paid": False,
+                        "paid":
+                            False,
 
-                        "progress": {
-                            "completed": 0,
-                            "total": len(
-                                pages
-                            ),
-                        },
+                        "progress":
+                            {
+                                "completed": 0,
+                                "total": len(
+                                    pages
+                                ),
+                            },
 
                         "customer_id":
                             request.customer_id,
@@ -2520,8 +2263,6 @@ async def get_review_pages(
         )
     )
 
-    # Synchronize review pages with the complete document.
-
     if (
         len(
             job.get(
@@ -2541,7 +2282,8 @@ async def get_review_pages(
     return {
         "success": True,
 
-        "job_id": job_id,
+        "job_id":
+            job_id,
 
         "current_version":
             job[
@@ -2751,6 +2493,13 @@ async def correct(
                 )
             )
 
+            if not corrected_pages:
+
+                raise ValueError(
+                    "Correction produced no usable "
+                    "document pages."
+                )
+
             job[
                 "document_pages"
             ] = corrected_pages
@@ -2816,6 +2565,7 @@ async def correct(
         old_task
         and not old_task.done()
     ):
+
         old_task.cancel()
 
     _correction_tasks[
@@ -3242,6 +2992,7 @@ async def clear_chat(
         if callable(
             clear_method
         ):
+
             clear_method()
 
     return {
@@ -3273,23 +3024,23 @@ async def startup():
     )
 
     print(
-        "Complete page workflow: ENABLED"
+        "Intelligence-controlled document structure: ENABLED"
+    )
+
+    print(
+        "Universal character-based pagination: DISABLED"
+    )
+
+    print(
+        "Explicit intelligence-produced pages: PRESERVED"
+    )
+
+    print(
+        "Complete page collection workflow: ENABLED"
     )
 
     print(
         "Keyword intelligence: DISABLED"
-    )
-
-    print(
-        "Signature-safe intelligence integration: ENABLED"
-    )
-
-    print(
-        "Generated document pagination: ENABLED"
-    )
-
-    print(
-        "Complete document page collection: ENABLED"
     )
 
     print("=" * 70)
