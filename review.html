@@ -1,18 +1,21 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Review Your Service | Naija Pocket Business Center"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet"><style>
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<title>Review Your Service | Naija Pocket Business Center</title>
+
+<style>
 *{
     box-sizing:border-box;
 }
 
-html,
-body{
+html,body{
+    margin:0;
     width:100%;
     min-height:100%;
-    margin:0;
-    padding:0;
 }
 
 body{
@@ -22,8 +25,7 @@ body{
     overflow-x:hidden;
 }
 
-button,
-textarea{
+button,textarea{
     font:inherit;
 }
 
@@ -32,17 +34,14 @@ button{
 }
 
 :root{
-    --brand-green:#22c55e;
-    --brand-green-light:#5ee58b;
     --gold:#e0bd55;
     --gold-light:#f5dc88;
-    --white:#fff;
-    --muted:#929292;
-    --panel:#0d0d0d;
-    --panel2:#151515;
-    --border:#292929;
     --green:#48d48a;
     --red:#d94747;
+    --panel:#0c0c0c;
+    --panel2:#151515;
+    --border:#292929;
+    --muted:#888;
 }
 
 .app{
@@ -56,18 +55,17 @@ button{
     top:0;
     z-index:100;
     min-height:68px;
+    padding:11px 16px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:12px;
-    padding:11px 16px;
     background:#050505;
     border-bottom:1px solid var(--border);
 }
 
 .brand-title{
-    margin:0;
-    color:var(--brand-green);
+    color:#22c55e;
     font-family:Montserrat,Arial,sans-serif;
     font-size:17px;
     font-weight:800;
@@ -89,16 +87,13 @@ button{
     background:#0c0c0c;
     color:#aaa;
     font-size:10px;
-    white-space:nowrap;
 }
 
 .job-dot{
     width:7px;
     height:7px;
-    flex:0 0 auto;
     border-radius:50%;
     background:var(--gold);
-    box-shadow:0 0 12px rgba(224,189,85,.7);
 }
 
 .main{
@@ -117,8 +112,6 @@ button{
     margin:0;
     font-family:Montserrat,Arial,sans-serif;
     font-size:27px;
-    line-height:1.2;
-    font-weight:800;
 }
 
 .hero h1 span{
@@ -126,70 +119,32 @@ button{
 }
 
 .hero p{
-    max-width:650px;
+    max-width:680px;
     margin:9px auto 0;
     color:#999;
     font-size:13px;
     line-height:1.55;
 }
 
+/* ==============================
+   CREATION AREA
+============================== */
+
 .magic{
-    position:relative;
-    min-height:390px;
-    overflow:hidden;
     border:1px solid #282828;
     border-radius:24px;
     background:
         radial-gradient(
-            circle at 50% 48%,
+            circle at 50% 45%,
             rgba(224,189,85,.10),
-            transparent 34%
-        ),
-        radial-gradient(
-            circle at 15% 20%,
-            rgba(70,130,255,.07),
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 85% 80%,
-            rgba(190,70,255,.06),
-            transparent 28%
+            transparent 35%
         ),
         #080808;
-    box-shadow:0 20px 80px rgba(0,0,0,.5);
-}
-
-.magic::before{
-    content:"";
-    position:absolute;
-    width:55%;
-    height:200%;
-    top:-50%;
-    left:-30%;
-    background:linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,.025),
-        transparent
-    );
-    transform:rotate(18deg);
-    animation:lightSweep 6s linear infinite;
-    pointer-events:none;
-}
-
-@keyframes lightSweep{
-    from{
-        left:-45%;
-    }
-    to{
-        left:110%;
-    }
+    overflow:hidden;
 }
 
 .magic-head{
-    position:relative;
-    z-index:10;
-    padding:17px 17px 12px;
+    padding:17px;
     text-align:center;
 }
 
@@ -198,8 +153,6 @@ button{
     color:var(--gold-light);
     font-family:Montserrat,Arial,sans-serif;
     font-size:16px;
-    font-weight:800;
-    letter-spacing:.4px;
 }
 
 .magic-message{
@@ -210,7 +163,7 @@ button{
 
 .flight-area{
     position:relative;
-    height:245px;
+    height:170px;
     overflow:hidden;
 }
 
@@ -218,201 +171,58 @@ button{
     position:absolute;
     left:50%;
     top:50%;
-    width:116px;
-    height:116px;
+    width:105px;
+    height:105px;
     transform:translate(-50%,-50%);
-    border:1px solid rgba(224,189,85,.35);
-    border-radius:50%;
-    background:
-        radial-gradient(
-            circle,
-            rgba(224,189,85,.13),
-            rgba(0,0,0,.15) 65%
-        );
-    box-shadow:
-        0 0 35px rgba(224,189,85,.08),
-        inset 0 0 30px rgba(224,189,85,.05);
     display:flex;
     align-items:center;
     justify-content:center;
-    z-index:4;
-}
-
-.core-ring{
-    position:absolute;
-    inset:9px;
-    border:1px dashed rgba(224,189,85,.3);
+    border:1px solid rgba(224,189,85,.35);
     border-radius:50%;
-    animation:spin 8s linear infinite;
-}
-
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
+    background:rgba(224,189,85,.05);
 }
 
 .core-content{
-    position:relative;
-    z-index:2;
     text-align:center;
 }
 
 .core-icon{
-    font-size:27px;
+    font-size:26px;
 }
 
 .core-label{
-    margin-top:3px;
-    color:#c7c7c7;
+    margin-top:4px;
+    color:#aaa;
     font-size:9px;
     text-transform:uppercase;
-    letter-spacing:1.3px;
-}
-
-.fly{
-    position:absolute;
-    left:-150px;
-    width:135px;
-    min-height:52px;
-    padding:9px 11px;
-    display:flex;
-    align-items:center;
-    gap:9px;
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:12px;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.09),
-            rgba(255,255,255,.025)
-        );
-    box-shadow:0 9px 28px rgba(0,0,0,.35);
-    opacity:0;
-    z-index:7;
-    pointer-events:none;
-}
-
-.fly.visible{
-    opacity:1;
-}
-
-.fly-icon{
-    width:31px;
-    height:35px;
-    flex:0 0 auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:7px;
-    background:rgba(255,255,255,.08);
-    font-size:16px;
-}
-
-.fly-text{
-    min-width:0;
-}
-
-.fly-title{
-    overflow:hidden;
-    color:#fff;
-    font-size:10px;
-    font-weight:700;
-    white-space:nowrap;
-    text-overflow:ellipsis;
-}
-
-.fly-status{
-    margin-top:3px;
-    color:#929292;
-    font-size:8px;
-}
-
-.fly.left{
-    animation:flyLeft 2.5s cubic-bezier(.18,.7,.22,1) forwards;
-}
-
-.fly.right{
-    left:auto;
-    right:-150px;
-    animation:flyRight 2.5s cubic-bezier(.18,.7,.22,1) forwards;
-}
-
-@keyframes flyLeft{
-    0%{
-        left:-150px;
-        top:var(--top);
-        transform:scale(.72) rotate(-4deg);
-        opacity:0;
-    }
-    12%{
-        opacity:1;
-    }
-    50%{
-        transform:scale(1) rotate(1deg);
-    }
-    88%{
-        opacity:1;
-    }
-    100%{
-        left:calc(50% - 67px);
-        top:calc(50% - 26px);
-        transform:scale(.72) rotate(0deg);
-        opacity:0;
-    }
-}
-
-@keyframes flyRight{
-    0%{
-        right:-150px;
-        top:var(--top);
-        transform:scale(.72) rotate(4deg);
-        opacity:0;
-    }
-    12%{
-        opacity:1;
-    }
-    50%{
-        transform:scale(1) rotate(-1deg);
-    }
-    88%{
-        opacity:1;
-    }
-    100%{
-        right:calc(50% - 67px);
-        top:calc(50% - 26px);
-        transform:scale(.72) rotate(0deg);
-        opacity:0;
-    }
+    letter-spacing:1px;
 }
 
 .progress-area{
-    position:relative;
-    z-index:10;
     padding:0 18px 17px;
 }
 
 .progress-top{
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    gap:10px;
     margin-bottom:7px;
+}
+
+.progress-label,
+.progress-number{
+    font-size:10px;
 }
 
 .progress-label{
     color:#aaa;
-    font-size:10px;
 }
 
 .progress-number{
     color:var(--gold-light);
-    font-size:10px;
     font-weight:700;
 }
 
 .progress-track{
-    width:100%;
     height:5px;
     overflow:hidden;
     border-radius:10px;
@@ -422,36 +232,47 @@ button{
 .progress-bar{
     width:0;
     height:100%;
-    border-radius:10px;
     background:linear-gradient(
         90deg,
         #9b7923,
         #f5dc88,
         #c49c35
     );
-    box-shadow:0 0 12px rgba(224,189,85,.35);
-    transition:width .6s ease;
+    transition:width .5s ease;
 }
 
-.sections{
-    margin-top:17px;
+/* ==============================
+   SECTIONS
+============================== */
+
+.sections,
+.document-panel,
+.correction{
+    margin-top:18px;
     border:1px solid var(--border);
-    border-radius:18px;
-    overflow:hidden;
+    border-radius:20px;
     background:#0b0b0b;
+    overflow:hidden;
 }
 
-.sections-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    padding:13px 15px;
+.sections-head,
+.document-head{
+    padding:14px 15px;
     border-bottom:1px solid #242424;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.sections-head strong,
+.document-head h2,
+.correction h3{
+    margin:0;
+    font-family:Montserrat,Arial,sans-serif;
 }
 
 .sections-head strong{
-    font-family:Montserrat,Arial,sans-serif;
     font-size:13px;
 }
 
@@ -472,21 +293,6 @@ button{
     gap:11px;
     padding:9px 14px;
     border-bottom:1px solid #1d1d1d;
-    transition:
-        background .3s ease,
-        transform .3s ease;
-}
-
-.section-row:last-child{
-    border-bottom:0;
-}
-
-.section-row.done{
-    background:rgba(72,212,138,.025);
-}
-
-.section-row.active{
-    background:rgba(224,189,85,.045);
 }
 
 .section-number{
@@ -501,16 +307,6 @@ button{
     color:#777;
     font-size:9px;
     font-weight:700;
-}
-
-.section-row.done .section-number{
-    border-color:rgba(72,212,138,.4);
-    color:var(--green);
-}
-
-.section-row.active .section-number{
-    border-color:rgba(224,189,85,.45);
-    color:var(--gold-light);
 }
 
 .section-info{
@@ -533,45 +329,33 @@ button{
     font-size:9px;
 }
 
+.section-row.done .section-number{
+    color:var(--green);
+    border-color:rgba(72,212,138,.4);
+}
+
 .section-row.done .section-state{
     color:var(--green);
+}
+
+.section-row.active{
+    background:rgba(224,189,85,.045);
+}
+
+.section-row.active .section-number{
+    color:var(--gold-light);
+    border-color:rgba(224,189,85,.45);
 }
 
 .section-row.active .section-state{
     color:var(--gold);
 }
 
-.section-mark{
-    width:24px;
-    text-align:center;
-    color:#555;
-    font-size:14px;
-}
-
-.section-row.done .section-mark{
-    color:var(--green);
-}
-
-.document-panel{
-    margin-top:18px;
-    border:1px solid var(--border);
-    border-radius:20px;
-    background:#0b0b0b;
-    overflow:hidden;
-}
-
-.document-head{
-    padding:15px;
-    border-bottom:1px solid #242424;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-}
+/* ==============================
+   DOCUMENT REVIEW
+============================== */
 
 .document-head h2{
-    margin:0;
-    font-family:Montserrat,Arial,sans-serif;
     font-size:15px;
 }
 
@@ -588,54 +372,174 @@ button{
     border-color:rgba(72,212,138,.35);
 }
 
-.document{
-    padding:22px 18px;
-    color:#ddd;
-    font-size:14px;
-    line-height:1.75;
-    overflow-wrap:anywhere;
+/*
+    IMPORTANT:
+
+    The document viewer is intentionally separate from the
+    creation/progress area.
+
+    Every page is placed inside its own review-page element.
+    The customer navigates through ALL pages with Previous
+    and Next controls.
+*/
+
+.document-viewer{
+    padding:16px;
+    background:#070707;
 }
 
-.document h1,
-.document h2,
-.document h3,
-.document h4{
-    color:#fff;
+.review-page{
+    display:none;
+    width:100%;
+    min-height:720px;
+    padding:42px 42px 55px;
+    background:#fff;
+    color:#111;
+    border-radius:4px;
+    box-shadow:0 12px 35px rgba(0,0,0,.45);
+    overflow-wrap:anywhere;
+    line-height:1.7;
+}
+
+.review-page.active{
+    display:block;
+}
+
+.review-page h1,
+.review-page h2,
+.review-page h3,
+.review-page h4{
+    color:#111;
     font-family:Montserrat,Arial,sans-serif;
 }
 
-.document h2{
+.review-page h1{
+    font-size:27px;
+    margin-top:0;
+}
+
+.review-page h2{
+    font-size:21px;
     margin-top:28px;
 }
 
-.document p{
+.review-page h3{
+    font-size:17px;
+    margin-top:22px;
+}
+
+.review-page p{
     margin:0 0 14px;
 }
 
-.document:empty{
-    min-height:130px;
+.review-page ul,
+.review-page ol{
+    padding-left:25px;
+}
+
+.review-page table{
+    width:100%;
+    border-collapse:collapse;
+    margin:18px 0;
+}
+
+.review-page th,
+.review-page td{
+    border:1px solid #bbb;
+    padding:8px;
+    text-align:left;
+}
+
+.review-page img{
+    max-width:100%;
+    height:auto;
+}
+
+.page-empty{
+    min-height:250px;
     display:flex;
     align-items:center;
     justify-content:center;
-    color:#666;
-    font-size:12px;
+    color:#777;
+    text-align:center;
 }
 
-.document:empty::after{
-    content:"Your completed document will appear here.";
-}
+/* ==============================
+   PAGE NAVIGATION
+============================== */
 
-.correction{
-    margin-top:18px;
-    padding:16px;
-    border:1px solid var(--border);
-    border-radius:20px;
+.page-navigation{
+    padding:13px 15px 15px;
+    border-top:1px solid #252525;
     background:#0b0b0b;
 }
 
+.page-counter{
+    text-align:center;
+    margin-bottom:10px;
+    color:#aaa;
+    font-size:11px;
+}
+
+.page-counter strong{
+    color:var(--gold-light);
+}
+
+.page-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+}
+
+.page-button{
+    min-height:45px;
+    border:1px solid #333;
+    border-radius:11px;
+    background:#151515;
+    color:#fff;
+    font-size:11px;
+    font-weight:700;
+}
+
+.page-button:hover{
+    background:#1d1d1d;
+}
+
+.page-button:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}
+
+.page-dots{
+    display:flex;
+    justify-content:center;
+    gap:5px;
+    flex-wrap:wrap;
+    margin-top:11px;
+}
+
+.page-dot{
+    width:7px;
+    height:7px;
+    padding:0;
+    border:0;
+    border-radius:50%;
+    background:#444;
+}
+
+.page-dot.active{
+    background:var(--gold);
+}
+
+/* ==============================
+   CORRECTION
+============================== */
+
+.correction{
+    padding:16px;
+}
+
 .correction h3{
-    margin:0;
-    font-family:Montserrat,Arial,sans-serif;
     font-size:14px;
 }
 
@@ -648,9 +552,9 @@ button{
 
 textarea{
     width:100%;
-    min-height:90px;
-    resize:vertical;
+    min-height:95px;
     padding:12px;
+    resize:vertical;
     border:1px solid #2c2c2c;
     border-radius:12px;
     outline:none;
@@ -664,15 +568,11 @@ textarea:focus{
     border-color:rgba(224,189,85,.55);
 }
 
-textarea::placeholder{
-    color:#555;
-}
-
 .actions{
     display:grid;
     grid-template-columns:repeat(2,1fr);
     gap:9px;
-    margin-top:18px;
+    margin-top:12px;
 }
 
 .action{
@@ -683,29 +583,12 @@ textarea::placeholder{
     color:#fff;
     font-size:11px;
     font-weight:700;
-    transition:
-        transform .2s ease,
-        background .2s ease,
-        border-color .2s ease;
-}
-
-.action:hover{
-    background:#1c1c1c;
-    border-color:#464646;
-}
-
-.action:active{
-    transform:scale(.98);
 }
 
 .action.gold{
     border-color:#8b722c;
     background:#b28c31;
     color:#080808;
-}
-
-.action.gold:hover{
-    background:#d0aa4a;
 }
 
 .action.green{
@@ -723,16 +606,19 @@ textarea::placeholder{
 .action:disabled{
     opacity:.4;
     cursor:not-allowed;
-    transform:none;
 }
+
+/* ==============================
+   NOTICE
+============================== */
 
 .notice{
     display:none;
     margin-top:14px;
     padding:11px 13px;
+    border:1px solid #2b2b2b;
     border-radius:11px;
     background:#111;
-    border:1px solid #2b2b2b;
     color:#aaa;
     font-size:10px;
     line-height:1.5;
@@ -743,16 +629,21 @@ textarea::placeholder{
 }
 
 .notice.error{
-    border-color:rgba(217,71,71,.4);
     color:#ff9a9a;
+    border-color:rgba(217,71,71,.4);
 }
 
 .notice.success{
-    border-color:rgba(72,212,138,.35);
     color:#83e5ad;
+    border-color:rgba(72,212,138,.35);
 }
 
+/* ==============================
+   MOBILE
+============================== */
+
 @media(max-width:600px){
+
     .main{
         padding:15px 10px 35px;
     }
@@ -765,301 +656,457 @@ textarea::placeholder{
         font-size:15px;
     }
 
-    .job-pill{
-        font-size:9px;
-    }
-
     .hero h1{
         font-size:23px;
     }
 
     .magic{
-        min-height:375px;
         border-radius:19px;
     }
 
     .flight-area{
-        height:235px;
+        height:145px;
     }
 
-    .fly{
-        width:125px;
+    .review-page{
+        min-height:650px;
+        padding:28px 20px 40px;
+        font-size:13px;
+    }
+
+    .review-page h1{
+        font-size:23px;
+    }
+
+    .review-page h2{
+        font-size:19px;
+    }
+
+    .document-viewer{
+        padding:8px;
     }
 
     .actions{
         grid-template-columns:1fr;
     }
-
-    .document{
-        padding:18px 13px;
-        font-size:13px;
-    }
 }
+</style>
+</head>
 
-@media(prefers-reduced-motion:reduce){
-    *,
-    *::before,
-    *::after{
-        animation-duration:.001ms !important;
-        animation-iteration-count:1 !important;
-        scroll-behavior:auto !important;
-        transition:none !important;
-    }
-}
-</style></head><body><div class="app"><header class="header">
+<body>
+
+<div class="app">
+
+<header class="header">
+
     <div>
         <div class="brand-title">
             Naija Pocket Business Center
-        </div>    <div class="brand-subtitle">
-        Your service is being carefully prepared
-    </div>
-</div>
+        </div>
 
-<div class="job-pill">
-    <span class="job-dot"></span>
-    <span id="jobState">CREATING</span>
-</div>
-
-</header><main class="main"><section class="hero">
-    <h1>
-        Watch the <span>Magic of Creation</span>
-    </h1><p id="heroMessage">
-    Your service is being created one section at a time.
-    Each completed part is brought together into your
-    finished document.
-</p>
-
-</section><section class="magic" id="magic"><div class="magic-head">
-    <h2 class="magic-title" id="magicTitle">
-        ✨ Creating Your Service ✨
-    </h2>
-
-    <p class="magic-message" id="magicMessage">
-        Please give us a moment while your document
-        comes to life.
-    </p>
-</div>
-
-<div class="flight-area" id="flightArea">
-
-    <div class="assembly-core">
-        <div class="core-ring"></div>
-
-        <div class="core-content">
-            <div class="core-icon">
-                ✨
-            </div>
-
-            <div class="core-label">
-                Assembly
-            </div>
+        <div class="brand-subtitle">
+            Your service is being carefully prepared
         </div>
     </div>
 
-</div>
+    <div class="job-pill">
+        <span class="job-dot"></span>
+        <span id="jobState">CREATING</span>
+    </div>
 
-<div class="progress-area">
+</header>
 
-    <div class="progress-top">
 
-        <span
-            class="progress-label"
-            id="progressLabel"
+<main class="main">
+
+<section class="hero">
+
+    <h1>
+        Watch the <span>Magic of Creation</span>
+    </h1>
+
+    <p id="heroMessage">
+        Your service is being created one section at a time.
+    </p>
+
+</section>
+
+
+<!-- =========================
+     CREATION
+========================= -->
+
+<section class="magic">
+
+    <div class="magic-head">
+
+        <h2
+            class="magic-title"
+            id="magicTitle"
         >
-            Preparing your document...
-        </span>
+            ✨ Creating Your Service ✨
+        </h2>
 
-        <span
-            class="progress-number"
-            id="progressNumber"
+        <p
+            class="magic-message"
+            id="magicMessage"
         >
-            0%
+            Please give us a moment while your document
+            comes to life.
+        </p>
+
+    </div>
+
+
+    <div class="flight-area">
+
+        <div class="assembly-core">
+
+            <div class="core-content">
+
+                <div class="core-icon">
+                    ✨
+                </div>
+
+                <div class="core-label">
+                    Assembly
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="progress-area">
+
+        <div class="progress-top">
+
+            <span
+                class="progress-label"
+                id="progressLabel"
+            >
+                Preparing your document...
+            </span>
+
+            <span
+                class="progress-number"
+                id="progressNumber"
+            >
+                0%
+            </span>
+
+        </div>
+
+        <div class="progress-track">
+
+            <div
+                class="progress-bar"
+                id="progressBar"
+            ></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CREATION SECTIONS
+========================= -->
+
+<section class="sections">
+
+    <div class="sections-head">
+
+        <strong>
+            Creation Progress
+        </strong>
+
+        <span id="sectionCount">
+            Preparing...
         </span>
 
     </div>
 
-    <div class="progress-track">
+    <div
+        class="section-list"
+        id="sectionList"
+    ></div>
+
+</section>
+
+
+<!-- =========================
+     COMPLETE DOCUMENT REVIEW
+========================= -->
+
+<section class="document-panel">
+
+    <div class="document-head">
+
+        <h2>
+            Your Complete Document
+        </h2>
 
         <div
-            class="progress-bar"
-            id="progressBar"
+            class="document-status"
+            id="documentStatus"
+        >
+            BUILDING
+        </div>
+
+    </div>
+
+
+    <div
+        class="document-viewer"
+        id="documentViewer"
+    >
+
+        <div class="review-page active">
+
+            <div class="page-empty">
+                Your completed document will appear here.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="page-navigation">
+
+        <div
+            class="page-counter"
+            id="pageCounter"
+        >
+            Page <strong>0</strong> of <strong>0</strong>
+        </div>
+
+
+        <div class="page-buttons">
+
+            <button
+                class="page-button"
+                id="previousPage"
+                onclick="previousPage()"
+                disabled
+            >
+                ← Previous Page
+            </button>
+
+            <button
+                class="page-button"
+                id="nextPage"
+                onclick="nextPage()"
+                disabled
+            >
+                Next Page →
+            </button>
+
+        </div>
+
+
+        <div
+            class="page-dots"
+            id="pageDots"
         ></div>
 
     </div>
 
-</div>
+</section>
 
-</section><section class="sections"><div class="sections-head">
 
-    <strong>
-        Creation Progress
-    </strong>
+<!-- =========================
+     CORRECTION
+========================= -->
 
-    <span id="sectionCount">
-        Preparing...
-    </span>
+<section class="correction">
 
-</div>
+    <h3>
+        Want anything changed?
+    </h3>
 
-<div
-    class="section-list"
-    id="sectionList"
-></div>
+    <p>
+        Tell us what you want improved. The correction
+        will be sent back through the same document job.
+    </p>
 
-</section><section class="document-panel"><div class="document-head">
+    <textarea
+        id="correctionText"
+        placeholder="Example: Expand the methodology section and make the recommendations more detailed..."
+    ></textarea>
 
-    <h2>
-        Your Complete Document
-    </h2>
 
-    <div
-        class="document-status"
-        id="documentStatus"
-    >
-        BUILDING
+    <div class="actions">
+
+        <button
+            class="action"
+            id="correctionButton"
+            onclick="requestCorrection()"
+            disabled
+        >
+            Request Correction
+        </button>
+
+
+        <button
+            class="action green"
+            id="approveButton"
+            onclick="approveDocument()"
+            disabled
+        >
+            Approve Document
+        </button>
+
     </div>
 
-</div>
+</section>
 
-<article
-    class="document"
-    id="document"
-></article>
 
-</section><section class="correction"><h3>
-    Want anything changed?
-</h3>
-
-<p>
-    Tell us what you want improved. Only the affected
-    part of your document needs to be worked on again.
-</p>
-
-<textarea
-    id="correctionText"
-    placeholder="Example: Expand the methodology section and make the recommendations more detailed..."
-></textarea>
+<!-- =========================
+     WORKFLOW ACTIONS
+========================= -->
 
 <div class="actions">
 
     <button
         class="action"
-        id="correctionButton"
-        onclick="requestCorrection()"
-        disabled
+        onclick="goBack()"
     >
-        Request Correction
+        ← Back
     </button>
 
+
     <button
-        class="action green"
-        id="approveButton"
-        onclick="approveDocument()"
+        class="action gold"
+        id="paymentButton"
+        onclick="continueToPayment()"
         disabled
     >
-        Approve Document
+        Payment
+    </button>
+
+
+    <button
+        class="action gold"
+        id="downloadButton"
+        onclick="downloadDocument()"
+        disabled
+    >
+        Download
     </button>
 
 </div>
 
-</section><div class="actions"><button
-    class="action"
-    onclick="goBack()"
->
-    ← Back
-</button>
 
-<button
-    class="action gold"
-    id="paymentButton"
-    onclick="continueToPayment()"
-    disabled
->
-    Payment
-</button>
-
-<button
-    class="action gold"
-    id="downloadButton"
-    onclick="downloadDocument()"
-    disabled
->
-    Download
-</button>
-
-</div><div
+<div
     class="notice"
     id="notice"
-></div></main>
-</div><script>
+></div>
+
+</main>
+</div>
+
+
+<script>
 "use strict";
 
 /*
 ============================================================
- REVIEW / WORKSPACE CONTRACT
+ REVIEW PAGE — SINGLE JOB CONTRACT
 ============================================================
 
-The Workspace creates a job and must send the customer to:
+Workspace creates the job.
 
-    review.html?job_id=<JOB_ID>
+Workspace sends:
 
-This page NEVER invents a job ID.
+    review.html?job_id=<REAL_JOB_ID>
 
-It accepts the job ID from:
-    1. job_id
-    2. id
-    3. stored job_id
+Review never creates another job.
 
-The review endpoint is then always queried with that same ID.
+Every operation continues using that same job_id:
 
-The response may contain the sections/document directly,
-inside "job", or inside "version".
+    GET  /api/review?job_id=...
+    POST /api/correct
+    POST /api/approve
+    payment.html?job_id=...
+    GET  /api/download?job_id=...
 
-The UI normalizes those possible response shapes so the
-Workspace and Review page do not have to use identical
-internal JSON structures.
+The document returned by the backend is converted into
+customer-readable pages.
+
+The page system understands:
+
+    1. Existing explicit page containers
+    2. Page-break elements/classes
+    3. Document sections/headings
+    4. A complete-document fallback
+
+Therefore the customer is never limited to one visible
+piece of the generated document.
 ============================================================
 */
+
+
+/* ============================================================
+   JOB
+============================================================ */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+let jobId =
+    cleanId(
+        params.get("job_id")
+    ) ||
+    cleanId(
+        params.get("id")
+    ) ||
+    cleanId(
+        localStorage.getItem("job_id")
+    );
 
 
 /* ============================================================
    STATE
 ============================================================ */
 
-const params =
-    new URLSearchParams(window.location.search);
-
-let jobId =
-    cleanId(params.get("job_id")) ||
-    cleanId(params.get("id")) ||
-    cleanId(localStorage.getItem("job_id"));
-
 let latestData = null;
 
-let polling = false;
 let pollTimer = null;
 
-let animationCounter = 0;
+let consecutiveErrors = 0;
+
+let currentPage = 0;
+
+let reviewPages = [];
+
+let lastDocumentHTML = "";
 
 let knownDoneIds = new Set();
-
-let lastRenderedDocument = "";
-
-let consecutiveErrors = 0;
 
 
 /* ============================================================
    DOM
 ============================================================ */
 
-const flightArea =
-    document.getElementById("flightArea");
+const jobState =
+    document.getElementById("jobState");
 
-const sectionList =
-    document.getElementById("sectionList");
+const heroMessage =
+    document.getElementById("heroMessage");
 
-const documentBox =
-    document.getElementById("document");
+const magicTitle =
+    document.getElementById("magicTitle");
+
+const magicMessage =
+    document.getElementById("magicMessage");
 
 const progressBar =
     document.getElementById("progressBar");
@@ -1073,20 +1120,26 @@ const progressLabel =
 const sectionCount =
     document.getElementById("sectionCount");
 
+const sectionList =
+    document.getElementById("sectionList");
+
+const documentViewer =
+    document.getElementById("documentViewer");
+
 const documentStatus =
     document.getElementById("documentStatus");
 
-const jobState =
-    document.getElementById("jobState");
+const pageCounter =
+    document.getElementById("pageCounter");
 
-const magicTitle =
-    document.getElementById("magicTitle");
+const pageDots =
+    document.getElementById("pageDots");
 
-const magicMessage =
-    document.getElementById("magicMessage");
+const previousPageButton =
+    document.getElementById("previousPage");
 
-const heroMessage =
-    document.getElementById("heroMessage");
+const nextPageButton =
+    document.getElementById("nextPage");
 
 const correctionText =
     document.getElementById("correctionText");
@@ -1108,12 +1161,13 @@ const notice =
 
 
 /* ============================================================
-   INITIALIZATION
+   INITIAL START
 ============================================================ */
 
 if(!jobId){
 
-    jobState.textContent = "NO JOB";
+    jobState.textContent =
+        "NO JOB";
 
     showNotice(
         "No document job was supplied. Please return to your workspace and start the service again.",
@@ -1122,20 +1176,17 @@ if(!jobId){
 
 }else{
 
-    /*
-        Store the exact job ID created by the Workspace.
-
-        This is important because the Review page must follow
-        the same job throughout the complete workflow.
-    */
     try{
+
         localStorage.setItem(
             "job_id",
             jobId
         );
+
     }catch(error){
+
         console.warn(
-            "Could not save job_id locally.",
+            "Unable to save job ID.",
             error
         );
     }
@@ -1145,7 +1196,7 @@ if(!jobId){
 
 
 /* ============================================================
-   ID NORMALIZATION
+   ID CLEANING
 ============================================================ */
 
 function cleanId(value){
@@ -1164,20 +1215,13 @@ function cleanId(value){
         return "";
     }
 
-    /*
-        Do not accept values such as:
-        null
-        undefined
-        false
-        [object Object]
-    */
+    if([
+        "null",
+        "undefined",
+        "false",
+        "[object Object]"
+    ].includes(result)){
 
-    if(
-        result === "null" ||
-        result === "undefined" ||
-        result === "false" ||
-        result === "[object Object]"
-    ){
         return "";
     }
 
@@ -1195,9 +1239,9 @@ function startPolling(){
         return;
     }
 
-    clearTimeout(pollTimer);
-
-    polling = true;
+    clearTimeout(
+        pollTimer
+    );
 
     fetchReview();
 }
@@ -1217,12 +1261,10 @@ async function fetchReview(){
                 encodeURIComponent(jobId),
                 {
                     method:"GET",
-
                     headers:{
                         "Accept":
                             "application/json"
                     },
-
                     cache:"no-store"
                 }
             );
@@ -1250,16 +1292,11 @@ async function fetchReview(){
     }catch(error){
 
         console.error(
-            "Review polling error:",
+            "Review error:",
             error
         );
 
         consecutiveErrors++;
-
-        /*
-            Do not destroy the existing document when one
-            request temporarily fails.
-        */
 
         if(consecutiveErrors >= 2){
 
@@ -1268,10 +1305,13 @@ async function fetchReview(){
                 "error"
             );
         }
-
     }
 
-    clearTimeout(pollTimer);
+
+    clearTimeout(
+        pollTimer
+    );
+
 
     if(
         !isFinished(
@@ -1279,60 +1319,23 @@ async function fetchReview(){
         )
     ){
 
-        polling = true;
-
         pollTimer =
             setTimeout(
                 fetchReview,
                 1800
             );
-
-    }else{
-
-        polling = false;
     }
 }
 
 
 /* ============================================================
-   RESPONSE NORMALIZATION
+   RESPONSE
 ============================================================ */
 
 function normalizeResponse(data){
 
-    if(!data){
-        return {};
-    }
-
-    /*
-        Some backends return:
-
-            {
-                job_id: "...",
-                sections: [...]
-            }
-
-        Others return:
-
-            {
-                job: {
-                    id: "...",
-                    sections: [...]
-                }
-            }
-
-        Others return:
-
-            {
-                version: {
-                    sections: [...]
-                }
-            }
-
-        The Review page accepts all three.
-    */
-
     if(
+        !data ||
         typeof data !== "object"
     ){
         return {};
@@ -1343,7 +1346,30 @@ function normalizeResponse(data){
 
 
 /* ============================================================
-   SECTION EXTRACTION
+   GENERIC VALUE LOOKUP
+============================================================ */
+
+function firstString(values){
+
+    for(
+        const value of values
+    ){
+
+        if(
+            typeof value === "string" &&
+            value.trim()
+        ){
+
+            return value.trim();
+        }
+    }
+
+    return "";
+}
+
+
+/* ============================================================
+   SECTIONS
 ============================================================ */
 
 function getSections(data){
@@ -1360,9 +1386,6 @@ function getSections(data){
 
         data.document_sections,
 
-        data.version &&
-            data.version.sections,
-
         data.job &&
             data.job.sections,
 
@@ -1372,11 +1395,11 @@ function getSections(data){
         data.job &&
             data.job.document_sections,
 
-        data.result &&
-            data.result.sections,
+        data.version &&
+            data.version.sections,
 
         data.result &&
-            data.result.document_sections
+            data.result.sections
 
     ];
 
@@ -1387,7 +1410,6 @@ function getSections(data){
         if(
             Array.isArray(candidate)
         ){
-
             return candidate;
         }
     }
@@ -1397,7 +1419,7 @@ function getSections(data){
 
 
 /* ============================================================
-   DOCUMENT EXTRACTION
+   DOCUMENT
 ============================================================ */
 
 function getDocumentHTML(data){
@@ -1409,15 +1431,15 @@ function getDocumentHTML(data){
     const candidates = [
 
         data.document_html,
-
-        data.html,
-
-        data.document,
-
         data.content_html,
+        data.html,
+        data.document,
 
         data.version &&
             data.version.document_html,
+
+        data.version &&
+            data.version.content_html,
 
         data.version &&
             data.version.html,
@@ -1429,6 +1451,9 @@ function getDocumentHTML(data){
             data.job.document_html,
 
         data.job &&
+            data.job.content_html,
+
+        data.job &&
             data.job.html,
 
         data.job &&
@@ -1438,33 +1463,18 @@ function getDocumentHTML(data){
             data.result.document_html,
 
         data.result &&
-            data.result.html,
-
-        data.result &&
-            data.result.document
+            data.result.html
 
     ];
 
-    for(
-        const candidate of candidates
-    ){
-
-        if(
-            typeof candidate ===
-            "string" &&
-            candidate.trim()
-        ){
-
-            return candidate;
-        }
-    }
-
-    return "";
+    return firstString(
+        candidates
+    );
 }
 
 
 /* ============================================================
-   STATUS EXTRACTION
+   STATUS
 ============================================================ */
 
 function getStatus(data){
@@ -1473,7 +1483,7 @@ function getStatus(data){
         return "";
     }
 
-    const value =
+    return String(
 
         data.status ||
 
@@ -1497,230 +1507,13 @@ function getStatus(data){
             )
         ) ||
 
-        "";
+        ""
 
-    return String(
-        value
     ).toLowerCase().trim();
 }
 
 
-/* ============================================================
-   VERSION ID
-============================================================ */
-
-function getVersionId(data){
-
-    if(!data){
-        return "";
-    }
-
-    const candidates = [
-
-        data.version_id,
-
-        data.current_version_id,
-
-        data.current_version,
-
-        data.version &&
-            data.version.version_id,
-
-        data.version &&
-            data.version.id,
-
-        data.job &&
-            data.job.version_id,
-
-        data.job &&
-            data.job.current_version_id,
-
-        data.job &&
-            data.job.current_version,
-
-        data.job &&
-            data.job.version &&
-            data.job.version.version_id,
-
-        data.result &&
-            data.result.version_id
-
-    ];
-
-    for(
-        const candidate of candidates
-    ){
-
-        const value =
-            cleanId(candidate);
-
-        if(value){
-            return value;
-        }
-    }
-
-    return "";
-}
-
-
-/* ============================================================
-   JOB ID FROM RESPONSE
-============================================================ */
-
-function getResponseJobId(data){
-
-    if(!data){
-        return "";
-    }
-
-    const candidates = [
-
-        data.job_id,
-
-        data.id,
-
-        data.job &&
-            data.job.job_id,
-
-        data.job &&
-            data.job.id,
-
-        data.result &&
-            data.result.job_id,
-
-        data.result &&
-            data.result.id
-
-    ];
-
-    for(
-        const candidate of candidates
-    ){
-
-        const value =
-            cleanId(candidate);
-
-        if(value){
-            return value;
-        }
-    }
-
-    return "";
-}
-
-
-/* ============================================================
-   COMPLETION
-============================================================ */
-
-function getCompletedCount(
-    data,
-    sections
-){
-
-    if(
-        data &&
-        data.progress &&
-        Number.isFinite(
-            Number(
-                data.progress.completed
-            )
-        )
-    ){
-
-        return Math.max(
-            0,
-            Number(
-                data.progress.completed
-            )
-        );
-    }
-
-    if(
-        data &&
-        Number.isFinite(
-            Number(
-                data.completed
-            )
-        )
-    ){
-
-        return Math.max(
-            0,
-            Number(
-                data.completed
-            )
-        );
-    }
-
-    return sections.filter(
-        section =>
-            isDoneStatus(
-                section &&
-                section.status
-            )
-    ).length;
-}
-
-
-/* ============================================================
-   TOTAL
-============================================================ */
-
-function getTotalCount(
-    data,
-    sections
-){
-
-    if(
-        data &&
-        data.progress &&
-        Number.isFinite(
-            Number(
-                data.progress.total
-            )
-        )
-    ){
-
-        return Math.max(
-            0,
-            Number(
-                data.progress.total
-            )
-        );
-    }
-
-    if(
-        data &&
-        Number.isFinite(
-            Number(
-                data.total
-            )
-        )
-    ){
-
-        return Math.max(
-            0,
-            Number(
-                data.total
-            )
-        );
-    }
-
-    return sections.length;
-}
-
-
-/* ============================================================
-   STATUS HELPERS
-============================================================ */
-
 function isDoneStatus(status){
-
-    const value =
-        String(
-            status || ""
-        ).toLowerCase().trim();
 
     return [
 
@@ -1734,16 +1527,15 @@ function isDoneStatus(status){
         "success",
         "successful"
 
-    ].includes(value);
+    ].includes(
+        String(status || "")
+        .toLowerCase()
+        .trim()
+    );
 }
 
 
 function isActiveStatus(status){
-
-    const value =
-        String(
-            status || ""
-        ).toLowerCase().trim();
 
     return [
 
@@ -1759,26 +1551,99 @@ function isActiveStatus(status){
         "writing",
         "working"
 
-    ].includes(value);
+    ].includes(
+        String(status || "")
+        .toLowerCase()
+        .trim()
+    );
 }
 
 
-function isFailedStatus(status){
+/* ============================================================
+   COUNTS
+============================================================ */
 
-    const value =
-        String(
-            status || ""
-        ).toLowerCase().trim();
+function getCompletedCount(
+    data,
+    sections
+){
 
-    return [
+    const direct =
+        data &&
+        data.progress &&
+        data.progress.completed;
 
-        "failed",
-        "failure",
-        "error",
-        "cancelled",
-        "canceled"
+    if(
+        Number.isFinite(
+            Number(direct)
+        )
+    ){
+        return Math.max(
+            0,
+            Number(direct)
+        );
+    }
 
-    ].includes(value);
+    if(
+        Number.isFinite(
+            Number(
+                data &&
+                data.completed
+            )
+        )
+    ){
+        return Math.max(
+            0,
+            Number(data.completed)
+        );
+    }
+
+    return sections.filter(
+        section =>
+            isDoneStatus(
+                section &&
+                section.status
+            )
+    ).length;
+}
+
+
+function getTotalCount(
+    data,
+    sections
+){
+
+    const direct =
+        data &&
+        data.progress &&
+        data.progress.total;
+
+    if(
+        Number.isFinite(
+            Number(direct)
+        )
+    ){
+        return Math.max(
+            0,
+            Number(direct)
+        );
+    }
+
+    if(
+        Number.isFinite(
+            Number(
+                data &&
+                data.total
+            )
+        )
+    ){
+        return Math.max(
+            0,
+            Number(data.total)
+        );
+    }
+
+    return sections.length;
 }
 
 
@@ -1796,7 +1661,6 @@ function isFinished(data){
         getStatus(data);
 
     if([
-
         "complete",
         "completed",
         "ready",
@@ -1805,7 +1669,6 @@ function isFinished(data){
         "finished",
         "success",
         "successful"
-
     ].includes(status)){
 
         return true;
@@ -1826,20 +1689,62 @@ function isFinished(data){
             sections
         );
 
-    const html =
-        getDocumentHTML(data);
-
     return (
-
         total > 0 &&
-
         completed >= total &&
-
         Boolean(
-            html
+            getDocumentHTML(data)
         )
-
     );
+}
+
+
+/* ============================================================
+   VERSION
+============================================================ */
+
+function getVersionId(data){
+
+    if(!data){
+        return "";
+    }
+
+    const candidates = [
+
+        data.version_id,
+        data.current_version_id,
+        data.current_version,
+
+        data.version &&
+            data.version.version_id,
+
+        data.version &&
+            data.version.id,
+
+        data.job &&
+            data.job.version_id,
+
+        data.job &&
+            data.job.current_version_id,
+
+        data.result &&
+            data.result.version_id
+
+    ];
+
+    for(
+        const candidate of candidates
+    ){
+
+        const value =
+            cleanId(candidate);
+
+        if(value){
+            return value;
+        }
+    }
+
+    return "";
 }
 
 
@@ -1864,32 +1769,26 @@ function renderReview(data){
             sections
         );
 
+
     renderProgress(
         completed,
         total,
         data
     );
 
+
     renderSections(
         sections
     );
+
 
     renderDocument(
         data
     );
 
-    updateMagic(
-        completed,
-        total,
-        data
-    );
 
     updateActions(
         data
-    );
-
-    animateNewlyCompletedSections(
-        sections
     );
 }
 
@@ -1910,17 +1809,15 @@ function renderProgress(
 
         percent =
             Math.round(
-                (
-                    completed /
-                    total
-                ) * 100
+                completed /
+                total *
+                100
             );
     }
 
     if(
         isFinished(data)
     ){
-
         percent = 100;
     }
 
@@ -1939,34 +1836,88 @@ function renderProgress(
     progressNumber.textContent =
         percent + "%";
 
+
     if(
         isFinished(data)
     ){
 
+        progressLabel.textContent =
+            "Your complete document is ready.";
+
         sectionCount.textContent =
             "Creation complete";
-
-        progressLabel.textContent =
-            "Your document is complete.";
 
     }else if(
         completed > 0
     ){
 
-        sectionCount.textContent =
-            "Creating your service";
-
         progressLabel.textContent =
             "Creating your document...";
 
-    }else{
-
         sectionCount.textContent =
-            "Getting started";
+            "Creating your service";
+
+    }else{
 
         progressLabel.textContent =
             "Preparing your document...";
+
+        sectionCount.textContent =
+            "Getting started";
     }
+
+
+    updateCreationMessage(
+        completed,
+        total,
+        data
+    );
+}
+
+
+/* ============================================================
+   CREATION MESSAGE
+============================================================ */
+
+function updateCreationMessage(
+    completed,
+    total,
+    data
+){
+
+    if(
+        isFinished(data)
+    ){
+
+        magicTitle.textContent =
+            "✨ Your Service Has Come to Life ✨";
+
+        magicMessage.textContent =
+            "Your complete document has been assembled. You can now review every page.";
+
+        heroMessage.textContent =
+            "Your complete service is ready. Use the page controls below to go through the entire document.";
+
+        jobState.textContent =
+            "READY";
+
+        return;
+    }
+
+
+    magicTitle.textContent =
+        "✨ The Magic of Creation ✨";
+
+    magicMessage.textContent =
+        "We are creating your service one carefully prepared section at a time.";
+
+    heroMessage.textContent =
+        "Watch as each part of your service is created and brought together.";
+
+    jobState.textContent =
+        total > 0
+        ? "CREATING"
+        : "PREPARING";
 }
 
 
@@ -1983,17 +1934,13 @@ function sectionOrder(
         return fallback;
     }
 
-    const candidates = [
-
-        section.section_order,
-        section.order,
-        section.position,
-        section.index
-
-    ];
-
     for(
-        const value of candidates
+        const value of [
+            section.section_order,
+            section.order,
+            section.position,
+            section.index
+        ]
     ){
 
         const number =
@@ -2002,7 +1949,6 @@ function sectionOrder(
         if(
             Number.isFinite(number)
         ){
-
             return number;
         }
     }
@@ -2015,7 +1961,7 @@ function sectionOrder(
    SECTION TITLE
 ============================================================ */
 
-function getSectionTitle(
+function sectionTitle(
     section,
     number
 ){
@@ -2024,7 +1970,7 @@ function getSectionTitle(
         return "Document Section " + number;
     }
 
-    const candidates = [
+    return firstString([
 
         section.title,
         section.name,
@@ -2032,22 +1978,8 @@ function getSectionTitle(
         section.section_title,
         section.label
 
-    ];
-
-    for(
-        const value of candidates
-    ){
-
-        if(
-            typeof value === "string" &&
-            value.trim()
-        ){
-
-            return value.trim();
-        }
-    }
-
-    return "Document Section " + number;
+    ]) ||
+    "Document Section " + number;
 }
 
 
@@ -2073,9 +2005,7 @@ function renderSections(
 
         row.innerHTML = `
 
-            <div class="section-number">
-                •
-            </div>
+            <div class="section-number">•</div>
 
             <div class="section-info">
 
@@ -2088,25 +2018,23 @@ function renderSections(
                 </div>
 
             </div>
-
-            <div class="section-mark">
-                ✦
-            </div>
         `;
 
-        sectionList.appendChild(row);
+        sectionList.appendChild(
+            row
+        );
 
         return;
     }
 
-    const sorted =
-        [...sections].sort(
-            (a,b) =>
-                sectionOrder(a,0) -
-                sectionOrder(b,0)
-        );
 
-    sorted.forEach(
+    [...sections]
+    .sort(
+        (a,b) =>
+            sectionOrder(a,0) -
+            sectionOrder(b,0)
+    )
+    .forEach(
         (
             section,
             index
@@ -2125,21 +2053,10 @@ function renderSections(
             const active =
                 isActiveStatus(status);
 
-            const failed =
-                isFailedStatus(status);
-
             const number =
                 sectionOrder(
                     section,
                     index + 1
-                );
-
-            const title =
-                escapeHTML(
-                    getSectionTitle(
-                        section,
-                        number
-                    )
                 );
 
             const row =
@@ -2148,45 +2065,14 @@ function renderSections(
                 );
 
             row.className =
-                "section-row" +
+                "section-row " +
                 (
                     done
-                    ? " done"
+                    ? "done"
                     : active
-                    ? " active"
+                    ? "active"
                     : ""
                 );
-
-            let stateText =
-                "Waiting";
-
-            let mark =
-                "•";
-
-            if(done){
-
-                stateText =
-                    "Completed ✓";
-
-                mark =
-                    "✓";
-
-            }else if(active){
-
-                stateText =
-                    "Creating now...";
-
-                mark =
-                    "✦";
-
-            }else if(failed){
-
-                stateText =
-                    "Needs attention";
-
-                mark =
-                    "!";
-            }
 
             row.innerHTML = `
 
@@ -2197,17 +2083,24 @@ function renderSections(
                 <div class="section-info">
 
                     <div class="section-title">
-                        ${title}
+                        ${escapeHTML(
+                            sectionTitle(
+                                section,
+                                number
+                            )
+                        )}
                     </div>
 
                     <div class="section-state">
-                        ${stateText}
+                        ${
+                            done
+                            ? "Completed ✓"
+                            : active
+                            ? "Creating now..."
+                            : "Waiting"
+                        }
                     </div>
 
-                </div>
-
-                <div class="section-mark">
-                    ${mark}
                 </div>
             `;
 
@@ -2220,7 +2113,210 @@ function renderSections(
 
 
 /* ============================================================
-   DOCUMENT
+   DOCUMENT PAGE BUILDER
+============================================================
+
+   This is the key fix.
+
+   The backend may return a document already divided into
+   pages, or a normal HTML document.
+
+   We preserve explicit page breaks first.
+
+   If there are no explicit pages, we create customer
+   navigation pages from meaningful document blocks/headings.
+
+   Nothing is discarded.
+============================================================ */
+
+function buildReviewPages(
+    html
+){
+
+    const source =
+        document.createElement(
+            "div"
+        );
+
+    source.innerHTML =
+        html;
+
+
+    /*
+        Remove unsafe executable elements.
+    */
+
+    source
+        .querySelectorAll(
+            "script,iframe,object,embed,form"
+        )
+        .forEach(
+            element =>
+                element.remove()
+        );
+
+
+    /*
+        1. Explicit pages.
+
+        Supported examples:
+
+            <div class="page">...</div>
+            <div class="document-page">...</div>
+            <section class="page">...</section>
+            <div style="page-break-after:always">...</div>
+    */
+
+    const explicitPages =
+        source.querySelectorAll(
+            ".page, .document-page, .review-page, [data-page]"
+        );
+
+
+    if(
+        explicitPages.length > 0
+    ){
+
+        return [...explicitPages]
+            .map(
+                element =>
+                    element.innerHTML.trim()
+            )
+            .filter(Boolean);
+    }
+
+
+    /*
+        2. Detect hard page breaks.
+    */
+
+    const blocks =
+        [...source.children];
+
+    const pages = [];
+
+    let current =
+        document.createElement(
+            "div"
+        );
+
+
+    function pushCurrent(){
+
+        const content =
+            current.innerHTML.trim();
+
+        if(content){
+
+            pages.push(
+                content
+            );
+        }
+
+        current =
+            document.createElement(
+                "div"
+            );
+    }
+
+
+    for(
+        const element of blocks
+    ){
+
+        const style =
+            String(
+                element.getAttribute(
+                    "style"
+                ) || ""
+            ).toLowerCase();
+
+        const className =
+            String(
+                element.className || ""
+            ).toLowerCase();
+
+        const forcedBreak =
+            style.includes(
+                "page-break-after"
+            ) ||
+            style.includes(
+                "break-after"
+            ) ||
+            className.includes(
+                "page-break"
+            );
+
+
+        if(forcedBreak){
+
+            current.appendChild(
+                element.cloneNode(true)
+            );
+
+            pushCurrent();
+
+            continue;
+        }
+
+
+        /*
+            Keep document content intact.
+
+            Headings begin new logical review pages when
+            enough content has already accumulated.
+        */
+
+        const isHeading =
+            /^H[1-3]$/.test(
+                element.tagName
+            );
+
+        const currentLength =
+            current.innerText.length;
+
+
+        if(
+            isHeading &&
+            currentLength > 2600
+        ){
+
+            pushCurrent();
+        }
+
+
+        current.appendChild(
+            element.cloneNode(true)
+        );
+    }
+
+
+    pushCurrent();
+
+
+    /*
+        If the generated document was a single giant HTML
+        block, do NOT throw it away.
+
+        It becomes one complete page and remains fully
+        accessible.
+    */
+
+    if(!pages.length){
+
+        pages.push(
+            source.innerHTML ||
+            "<div class='page-empty'>Document is being prepared.</div>"
+        );
+    }
+
+
+    return pages;
+}
+
+
+/* ============================================================
+   RENDER DOCUMENT
 ============================================================ */
 
 function renderDocument(data){
@@ -2228,22 +2324,33 @@ function renderDocument(data){
     const html =
         getDocumentHTML(data);
 
+
     if(
         html &&
-        html !== lastRenderedDocument
+        html !== lastDocumentHTML
     ){
 
-        documentBox.innerHTML =
+        lastDocumentHTML =
             html;
 
-        lastRenderedDocument =
-            html;
+        reviewPages =
+            buildReviewPages(
+                html
+            );
+
+        currentPage = 0;
+
+        renderPageNavigation();
+
+        showPage(
+            0
+        );
     }
 
-    const ready =
-        isFinished(data);
 
-    if(ready){
+    if(
+        isFinished(data)
+    ){
 
         documentStatus.textContent =
             "READY FOR REVIEW";
@@ -2265,331 +2372,302 @@ function renderDocument(data){
 
 
 /* ============================================================
-   MAGIC STATUS
+   SHOW PAGE
 ============================================================ */
 
-function updateMagic(
-    completed,
-    total,
-    data
-){
-
-    if(
-        isFinished(data)
-    ){
-
-        magicTitle.textContent =
-            "✨ Your Service Has Come to Life ✨";
-
-        magicMessage.textContent =
-            "Every section has been created and assembled into your document.";
-
-        heroMessage.textContent =
-            "The creation is complete. Your finished service is now ready for you to review.";
-
-        jobState.textContent =
-            "READY";
-
-        return;
-    }
-
-    const status =
-        getStatus(data);
-
-    if(
-        isFailedStatus(status)
-    ){
-
-        magicTitle.textContent =
-            "Your Service Needs Attention";
-
-        magicMessage.textContent =
-            "We are checking the document so the work can continue safely.";
-
-        heroMessage.textContent =
-            "Something interrupted the creation process. We are checking your document.";
-
-        jobState.textContent =
-            "CHECKING";
-
-        return;
-    }
-
-    magicTitle.textContent =
-        "✨ The Magic of Creation ✨";
-
-    if(total > 0){
-
-        magicMessage.textContent =
-            "We are creating your service one carefully prepared section at a time.";
-
-        heroMessage.textContent =
-            "Watch as each part of your service is created and brought together.";
-
-        jobState.textContent =
-            "CREATING";
-
-    }else{
-
-        magicMessage.textContent =
-            "Your service is being prepared...";
-
-        heroMessage.textContent =
-            "We are getting everything ready before the creation begins.";
-
-        jobState.textContent =
-            "PREPARING";
-    }
-}
-
-
-/* ============================================================
-   SECTION IDENTIFIER
-============================================================ */
-
-function getSectionId(
-    section,
+function showPage(
     index
 ){
 
-    if(!section){
-        return String(index + 1);
-    }
-
-    const candidates = [
-
-        section.section_id,
-        section.id,
-        section.uuid,
-        section.key,
-        section.section_order,
-        section.order
-
-    ];
-
-    for(
-        const candidate of candidates
+    if(
+        !reviewPages.length
     ){
-
-        const value =
-            cleanId(candidate);
-
-        if(value){
-            return value;
-        }
+        return;
     }
 
-    return String(
-        index + 1
-    );
-}
 
-
-/* ============================================================
-   FLYING FILES
-============================================================ */
-
-function animateNewlyCompletedSections(
-    sections
-){
-
-    sections.forEach(
-        (
-            section,
-            index
-        ) => {
-
-            const id =
-                getSectionId(
-                    section,
-                    index
-                );
-
-            if(
-                isDoneStatus(
-                    section &&
-                    section.status
-                ) &&
-                !knownDoneIds.has(id)
-            ){
-
-                knownDoneIds.add(id);
-
-                createFlyingFile(
-                    section,
-                    index
-                );
-            }
-        }
-    );
-}
-
-
-function createFlyingFile(
-    section,
-    index
-){
-
-    const card =
-        document.createElement(
-            "div"
-        );
-
-    const direction =
-        animationCounter % 2 === 0
-        ? "left"
-        : "right";
-
-    animationCounter++;
-
-    card.className =
-        "fly " +
-        direction +
-        " visible";
-
-    const title =
-        escapeHTML(
-            getSectionTitle(
-                section,
-                index + 1
+    currentPage =
+        Math.max(
+            0,
+            Math.min(
+                reviewPages.length - 1,
+                index
             )
         );
 
-    const icons = [
 
-        "📄",
-        "📑",
-        "📝",
-        "📋",
-        "✨",
-        "📚"
+    documentViewer.innerHTML = "";
 
-    ];
 
-    const icon =
-        icons[
-            index %
-            icons.length
-        ];
+    reviewPages.forEach(
+        (
+            html,
+            pageIndex
+        ) => {
 
-    card.innerHTML = `
+            const page =
+                document.createElement(
+                    "article"
+                );
 
-        <div class="fly-icon">
-            ${icon}
-        </div>
+            page.className =
+                "review-page" +
+                (
+                    pageIndex === currentPage
+                    ? " active"
+                    : ""
+                );
 
-        <div class="fly-text">
+            page.innerHTML =
+                html;
 
-            <div class="fly-title">
-                ${title}
-            </div>
 
-            <div class="fly-status">
-                Created • assembling
-            </div>
-
-        </div>
-    `;
-
-    const positions = [
-
-        "15%",
-        "28%",
-        "42%",
-        "56%",
-        "68%",
-        "31%"
-
-    ];
-
-    card.style.setProperty(
-        "--top",
-        positions[
-            index %
-            positions.length
-        ]
+            documentViewer.appendChild(
+                page
+            );
+        }
     );
 
-    flightArea.appendChild(
-        card
-    );
 
-    setTimeout(
-        () => {
+    updatePageControls();
 
-            if(card.parentNode){
-                card.remove();
-            }
 
-        },
-        2800
-    );
+    /*
+        Always bring the customer to the beginning of the
+        selected page, not somewhere in the previous page.
+    */
+
+    documentViewer.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
 }
 
 
 /* ============================================================
-   ACTION STATE
+   PAGE CONTROLS
 ============================================================ */
 
-function updateActions(
-    data
-){
+function updatePageControls(){
+
+    const total =
+        reviewPages.length;
+
+
+    pageCounter.innerHTML =
+        total
+        ? "Page <strong>" +
+          (currentPage + 1) +
+          "</strong> of <strong>" +
+          total +
+          "</strong>"
+        : "Page <strong>0</strong> of <strong>0</strong>";
+
+
+    previousPageButton.disabled =
+        currentPage <= 0 ||
+        total === 0;
+
+
+    nextPageButton.disabled =
+        currentPage >= total - 1 ||
+        total === 0;
+
+
+    pageDots.innerHTML = "";
+
+
+    /*
+        For a very long document, show useful navigation
+        without creating hundreds of giant controls.
+    */
+
+    const maxDots =
+        Math.min(
+            total,
+            40
+        );
+
+
+    for(
+        let i = 0;
+        i < maxDots;
+        i++
+    ){
+
+        const dot =
+            document.createElement(
+                "button"
+            );
+
+        dot.className =
+            "page-dot" +
+            (
+                i === currentPage
+                ? " active"
+                : ""
+            );
+
+        dot.setAttribute(
+            "aria-label",
+            "Go to page " +
+            (i + 1)
+        );
+
+        dot.onclick =
+            () =>
+                showPage(i);
+
+        pageDots.appendChild(
+            dot
+        );
+    }
+}
+
+
+function nextPage(){
+
+    if(
+        currentPage <
+        reviewPages.length - 1
+    ){
+
+        showPage(
+            currentPage + 1
+        );
+    }
+}
+
+
+function previousPage(){
+
+    if(
+        currentPage > 0
+    ){
+
+        showPage(
+            currentPage - 1
+        );
+    }
+}
+
+
+/* ============================================================
+   KEYBOARD PAGE NAVIGATION
+============================================================ */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.target.tagName ===
+            "TEXTAREA"
+        ){
+            return;
+        }
+
+        if(
+            event.key ===
+            "ArrowRight"
+        ){
+            nextPage();
+        }
+
+        if(
+            event.key ===
+            "ArrowLeft"
+        ){
+            previousPage();
+        }
+    }
+);
+
+
+/* ============================================================
+   APPROVAL / PAYMENT STATE
+============================================================ */
+
+function isApproved(data){
+
+    return Boolean(
+
+        data &&
+        (
+            data.approved === true ||
+            data.is_approved === true ||
+            data.approval_status === "approved" ||
+
+            (
+                data.version &&
+                (
+                    data.version.approved === true ||
+                    data.version.is_approved === true ||
+                    data.version.approval_status === "approved"
+                )
+            ) ||
+
+            (
+                data.job &&
+                (
+                    data.job.approved === true ||
+                    data.job.is_approved === true ||
+                    data.job.approval_status === "approved"
+                )
+            )
+        )
+    );
+}
+
+
+function isPaid(data){
+
+    return Boolean(
+
+        data &&
+        (
+            data.paid === true ||
+            data.payment_status === "paid" ||
+
+            (
+                data.payment &&
+                data.payment.status === "paid"
+            ) ||
+
+            (
+                data.job &&
+                data.job.payment_status === "paid"
+            )
+        )
+    );
+}
+
+
+function updateActions(data){
 
     const ready =
         isFinished(data);
 
+    const approved =
+        isApproved(data);
+
+    const paid =
+        isPaid(data);
+
+
     correctionButton.disabled =
         !ready;
 
+
     approveButton.disabled =
-        !ready;
+        !ready ||
+        approved;
 
-    const approved =
-        Boolean(
-            data &&
-            (
-                data.approved === true ||
-                data.is_approved === true ||
-                data.approval_status === "approved" ||
-                (
-                    data.version &&
-                    (
-                        data.version.approved === true ||
-                        data.version.is_approved === true ||
-                        data.version.approval_status === "approved"
-                    )
-                ) ||
-                (
-                    data.job &&
-                    (
-                        data.job.approved === true ||
-                        data.job.is_approved === true ||
-                        data.job.approval_status === "approved"
-                    )
-                )
-            )
-        );
-
-    const paid =
-        Boolean(
-            data &&
-            (
-                data.paid === true ||
-                data.payment_status === "paid" ||
-                (
-                    data.payment &&
-                    data.payment.status === "paid"
-                ) ||
-                (
-                    data.job &&
-                    data.job.payment_status === "paid"
-                )
-            )
-        );
 
     paymentButton.disabled =
         !ready ||
         !approved;
+
 
     downloadButton.disabled =
         !ready ||
@@ -2607,6 +2685,7 @@ async function requestCorrection(){
     const instruction =
         correctionText.value.trim();
 
+
     if(!instruction){
 
         showNotice(
@@ -2619,6 +2698,7 @@ async function requestCorrection(){
         return;
     }
 
+
     if(!jobId){
 
         showNotice(
@@ -2629,13 +2709,16 @@ async function requestCorrection(){
         return;
     }
 
+
     correctionButton.disabled =
         true;
 
+
     showNotice(
-        "Your correction is being prepared. Only the affected part of the document will be regenerated.",
+        "Your correction is being sent back through the same document job.",
         "success"
     );
+
 
     try{
 
@@ -2664,32 +2747,39 @@ async function requestCorrection(){
                 }
             );
 
+
         if(!response.ok){
 
             throw new Error(
-                "Correction request failed: " +
+                "Correction failed: " +
                 response.status
             );
         }
 
+
         correctionText.value =
             "";
 
+
         /*
-            Reset only the local visual completion memory.
-
-            This allows a regenerated section to enter the
-            creation animation again.
+            Force the next generated document/version to be
+            accepted as new content.
         */
-        knownDoneIds.clear();
 
-        lastRenderedDocument =
+        lastDocumentHTML =
             "";
 
+        reviewPages =
+            [];
+
+        currentPage =
+            0;
+
         showNotice(
-            "Correction submitted. Watch the affected section return to the creation flow.",
+            "Correction submitted. The affected part of your document is being worked on again.",
             "success"
         );
+
 
         startPolling();
 
@@ -2700,7 +2790,7 @@ async function requestCorrection(){
         );
 
         showNotice(
-            "We could not submit that correction right now. Your current document has not been changed.",
+            "We could not submit the correction right now. Your current document has not been changed.",
             "error"
         );
 
@@ -2711,42 +2801,36 @@ async function requestCorrection(){
 
 
 /* ============================================================
-   APPROVAL
+   APPROVE
 ============================================================ */
 
 async function approveDocument(){
 
-    if(!latestData){
-        return;
-    }
-
     if(!jobId){
-
-        showNotice(
-            "This document job could not be identified.",
-            "error"
-        );
-
         return;
     }
+
 
     const versionId =
         getVersionId(
             latestData
         );
 
+
     if(!versionId){
 
         showNotice(
-            "The document version could not be identified. Please wait a moment and try again.",
+            "The document version could not be identified yet. Please wait a moment and try again.",
             "error"
         );
 
         return;
     }
 
+
     approveButton.disabled =
         true;
+
 
     try{
 
@@ -2775,6 +2859,7 @@ async function approveDocument(){
                 }
             );
 
+
         if(!response.ok){
 
             throw new Error(
@@ -2783,10 +2868,12 @@ async function approveDocument(){
             );
         }
 
+
         showNotice(
             "Your document has been approved successfully.",
             "success"
         );
+
 
         await fetchReview();
 
@@ -2817,6 +2904,7 @@ function continueToPayment(){
         return;
     }
 
+
     window.location.href =
         "payment.html?job_id=" +
         encodeURIComponent(
@@ -2835,10 +2923,12 @@ function downloadDocument(){
         return;
     }
 
+
     const versionId =
         getVersionId(
             latestData
         );
+
 
     if(!versionId){
 
@@ -2849,6 +2939,7 @@ function downloadDocument(){
 
         return;
     }
+
 
     window.location.href =
         "/api/download?job_id=" +
@@ -2879,6 +2970,7 @@ function goBack(){
         return;
     }
 
+
     window.location.href =
         "workspace.html";
 }
@@ -2906,36 +2998,34 @@ function showNotice(
 
 
 /* ============================================================
-   HTML ESCAPING
+   ESCAPE
 ============================================================ */
 
 function escapeHTML(
     value
 ){
 
-    return String(
-        value
-    )
-    .replaceAll(
-        "&",
-        "&amp;"
-    )
-    .replaceAll(
-        "<",
-        "&lt;"
-    )
-    .replaceAll(
-        ">",
-        "&gt;"
-    )
-    .replaceAll(
-        '"',
-        "&quot;"
-    )
-    .replaceAll(
-        "'",
-        "&#039;"
-    );
+    return String(value)
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 }
 
 
@@ -2952,5 +3042,7 @@ window.addEventListener(
         );
     }
 );
-</script></body>
+</script>
+
+</body>
 </html>
