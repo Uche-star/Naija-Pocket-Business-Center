@@ -12,7 +12,8 @@
     box-sizing:border-box;
 }
 
-html,body{
+html,
+body{
     margin:0;
     width:100%;
     min-height:100%;
@@ -25,7 +26,8 @@ body{
     overflow-x:hidden;
 }
 
-button,textarea{
+button,
+textarea{
     font:inherit;
 }
 
@@ -33,12 +35,16 @@ button{
     cursor:pointer;
 }
 
+button:disabled{
+    cursor:not-allowed;
+}
+
 :root{
     --gold:#e0bd55;
     --gold-light:#f5dc88;
     --green:#48d48a;
     --red:#d94747;
-    --panel:#0c0c0c;
+    --panel:#0b0b0b;
     --panel2:#151515;
     --border:#292929;
     --muted:#888;
@@ -92,6 +98,7 @@ button{
 .job-dot{
     width:7px;
     height:7px;
+    flex:0 0 auto;
     border-radius:50%;
     background:var(--gold);
 }
@@ -99,8 +106,8 @@ button{
 .main{
     width:100%;
     max-width:1050px;
-    margin:auto;
-    padding:20px 14px 50px;
+    margin:0 auto;
+    padding:18px 14px 50px;
 }
 
 .hero{
@@ -119,83 +126,41 @@ button{
 }
 
 .hero p{
-    max-width:680px;
+    max-width:700px;
     margin:9px auto 0;
     color:#999;
     font-size:13px;
     line-height:1.55;
 }
 
-/* ==============================
-   CREATION AREA
-============================== */
+/* ==========================================================
+   CREATION
+========================================================== */
 
-.magic{
+.creation{
     border:1px solid #282828;
-    border-radius:24px;
-    background:
-        radial-gradient(
-            circle at 50% 45%,
-            rgba(224,189,85,.10),
-            transparent 35%
-        ),
-        #080808;
+    border-radius:22px;
+    background:#080808;
     overflow:hidden;
 }
 
-.magic-head{
+.creation-head{
     padding:17px;
     text-align:center;
 }
 
-.magic-title{
+.creation-title{
     margin:0;
     color:var(--gold-light);
     font-family:Montserrat,Arial,sans-serif;
     font-size:16px;
 }
 
-.magic-message{
+.creation-message{
     margin:6px 0 0;
     color:#999;
     font-size:11px;
-}
-
-.flight-area{
-    position:relative;
-    height:170px;
-    overflow:hidden;
-}
-
-.assembly-core{
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:105px;
-    height:105px;
-    transform:translate(-50%,-50%);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border:1px solid rgba(224,189,85,.35);
-    border-radius:50%;
-    background:rgba(224,189,85,.05);
-}
-
-.core-content{
-    text-align:center;
-}
-
-.core-icon{
-    font-size:26px;
-}
-
-.core-label{
-    margin-top:4px;
-    color:#aaa;
-    font-size:9px;
-    text-transform:uppercase;
-    letter-spacing:1px;
+    line-height:1.5;
 }
 
 .progress-area{
@@ -205,6 +170,7 @@ button{
 .progress-top{
     display:flex;
     justify-content:space-between;
+    gap:10px;
     margin-bottom:7px;
 }
 
@@ -238,16 +204,14 @@ button{
         #f5dc88,
         #c49c35
     );
-    transition:width .5s ease;
+    transition:width .45s ease;
 }
 
-/* ==============================
+/* ==========================================================
    SECTIONS
-============================== */
+========================================================== */
 
-.sections,
-.document-panel,
-.correction{
+.sections{
     margin-top:18px;
     border:1px solid var(--border);
     border-radius:20px;
@@ -255,8 +219,7 @@ button{
     overflow:hidden;
 }
 
-.sections-head,
-.document-head{
+.sections-head{
     padding:14px 15px;
     border-bottom:1px solid #242424;
     display:flex;
@@ -265,14 +228,8 @@ button{
     gap:10px;
 }
 
-.sections-head strong,
-.document-head h2,
-.correction h3{
-    margin:0;
-    font-family:Montserrat,Arial,sans-serif;
-}
-
 .sections-head strong{
+    font-family:Montserrat,Arial,sans-serif;
     font-size:13px;
 }
 
@@ -310,8 +267,8 @@ button{
 }
 
 .section-info{
-    flex:1;
     min-width:0;
+    flex:1;
 }
 
 .section-title{
@@ -351,11 +308,31 @@ button{
     color:var(--gold);
 }
 
-/* ==============================
+/* ==========================================================
    DOCUMENT REVIEW
-============================== */
+========================================================== */
+
+.document-panel{
+    margin-top:18px;
+    border:1px solid var(--border);
+    border-radius:20px;
+    background:#0b0b0b;
+    overflow:hidden;
+}
+
+.document-head{
+    min-height:54px;
+    padding:14px 15px;
+    border-bottom:1px solid #242424;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
 
 .document-head h2{
+    margin:0;
+    font-family:Montserrat,Arial,sans-serif;
     font-size:15px;
 }
 
@@ -365,6 +342,7 @@ button{
     border-radius:15px;
     color:#888;
     font-size:9px;
+    white-space:nowrap;
 }
 
 .document-status.ready{
@@ -372,24 +350,24 @@ button{
     border-color:rgba(72,212,138,.35);
 }
 
-/*
-    IMPORTANT:
-
-    The document viewer is intentionally separate from the
-    creation/progress area.
-
-    Every page is placed inside its own review-page element.
-    The customer navigates through ALL pages with Previous
-    and Next controls.
-*/
+.document-status.review{
+    color:var(--gold-light);
+    border-color:rgba(224,189,85,.35);
+}
 
 .document-viewer{
     padding:16px;
     background:#070707;
 }
 
+/*
+   Only ONE page is placed into the visible viewer at a time.
+
+   This is important. The customer is not given a giant
+   document whose lower pages are hidden or cut off.
+*/
+
 .review-page{
-    display:none;
     width:100%;
     min-height:720px;
     padding:42px 42px 55px;
@@ -398,34 +376,33 @@ button{
     border-radius:4px;
     box-shadow:0 12px 35px rgba(0,0,0,.45);
     overflow-wrap:anywhere;
+    word-break:normal;
     line-height:1.7;
-}
-
-.review-page.active{
-    display:block;
 }
 
 .review-page h1,
 .review-page h2,
 .review-page h3,
-.review-page h4{
+.review-page h4,
+.review-page h5,
+.review-page h6{
     color:#111;
     font-family:Montserrat,Arial,sans-serif;
 }
 
 .review-page h1{
-    font-size:27px;
     margin-top:0;
+    font-size:27px;
 }
 
 .review-page h2{
-    font-size:21px;
     margin-top:28px;
+    font-size:21px;
 }
 
 .review-page h3{
-    font-size:17px;
     margin-top:22px;
+    font-size:17px;
 }
 
 .review-page p{
@@ -437,6 +414,10 @@ button{
     padding-left:25px;
 }
 
+.review-page li{
+    margin-bottom:5px;
+}
+
 .review-page table{
     width:100%;
     border-collapse:collapse;
@@ -445,9 +426,10 @@ button{
 
 .review-page th,
 .review-page td{
-    border:1px solid #bbb;
+    border:1px solid #aaa;
     padding:8px;
     text-align:left;
+    vertical-align:top;
 }
 
 .review-page img{
@@ -455,28 +437,47 @@ button{
     height:auto;
 }
 
-.page-empty{
-    min-height:250px;
+.review-page blockquote{
+    margin:16px 0;
+    padding:10px 14px;
+    border-left:4px solid #aaa;
+}
+
+.review-page pre{
+    max-width:100%;
+    overflow:auto;
+    white-space:pre-wrap;
+}
+
+.review-page hr{
+    border:0;
+    border-top:1px solid #aaa;
+    margin:25px 0;
+}
+
+.empty-document{
+    min-height:300px;
     display:flex;
     align-items:center;
     justify-content:center;
-    color:#777;
     text-align:center;
+    color:#777;
+    line-height:1.6;
 }
 
-/* ==============================
+/* ==========================================================
    PAGE NAVIGATION
-============================== */
+========================================================== */
 
 .page-navigation{
-    padding:13px 15px 15px;
+    padding:14px 15px 15px;
     border-top:1px solid #252525;
     background:#0b0b0b;
 }
 
 .page-counter{
     text-align:center;
-    margin-bottom:10px;
+    margin-bottom:11px;
     color:#aaa;
     font-size:11px;
 }
@@ -492,7 +493,7 @@ button{
 }
 
 .page-button{
-    min-height:45px;
+    min-height:46px;
     border:1px solid #333;
     border-radius:11px;
     background:#151515;
@@ -501,26 +502,26 @@ button{
     font-weight:700;
 }
 
-.page-button:hover{
-    background:#1d1d1d;
+.page-button:hover:not(:disabled){
+    background:#1e1e1e;
 }
 
 .page-button:disabled{
     opacity:.35;
-    cursor:not-allowed;
 }
 
 .page-dots{
     display:flex;
     justify-content:center;
-    gap:5px;
+    align-items:center;
+    gap:6px;
     flex-wrap:wrap;
-    margin-top:11px;
+    margin-top:12px;
 }
 
 .page-dot{
-    width:7px;
-    height:7px;
+    width:8px;
+    height:8px;
     padding:0;
     border:0;
     border-radius:50%;
@@ -529,17 +530,54 @@ button{
 
 .page-dot.active{
     background:var(--gold);
+    transform:scale(1.25);
 }
 
-/* ==============================
+.page-jump{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-top:12px;
+}
+
+.page-jump input{
+    width:70px;
+    min-height:36px;
+    border:1px solid #333;
+    border-radius:9px;
+    background:#111;
+    color:#fff;
+    text-align:center;
+    outline:none;
+}
+
+.page-jump button{
+    min-height:36px;
+    padding:0 13px;
+    border:1px solid #333;
+    border-radius:9px;
+    background:#151515;
+    color:#fff;
+    font-size:10px;
+    font-weight:700;
+}
+
+/* ==========================================================
    CORRECTION
-============================== */
+========================================================== */
 
 .correction{
+    margin-top:18px;
     padding:16px;
+    border:1px solid var(--border);
+    border-radius:20px;
+    background:#0b0b0b;
 }
 
 .correction h3{
+    margin:0;
+    font-family:Montserrat,Arial,sans-serif;
     font-size:14px;
 }
 
@@ -605,12 +643,11 @@ textarea:focus{
 
 .action:disabled{
     opacity:.4;
-    cursor:not-allowed;
 }
 
-/* ==============================
+/* ==========================================================
    NOTICE
-============================== */
+========================================================== */
 
 .notice{
     display:none;
@@ -638,9 +675,14 @@ textarea:focus{
     border-color:rgba(72,212,138,.35);
 }
 
-/* ==============================
+.notice.info{
+    color:#aaa;
+    border-color:#333;
+}
+
+/* ==========================================================
    MOBILE
-============================== */
+========================================================== */
 
 @media(max-width:600px){
 
@@ -658,14 +700,6 @@ textarea:focus{
 
     .hero h1{
         font-size:23px;
-    }
-
-    .magic{
-        border-radius:19px;
-    }
-
-    .flight-area{
-        height:145px;
     }
 
     .review-page{
@@ -689,6 +723,10 @@ textarea:focus{
     .actions{
         grid-template-columns:1fr;
     }
+
+    .page-buttons{
+        grid-template-columns:1fr 1fr;
+    }
 }
 </style>
 </head>
@@ -711,7 +749,7 @@ textarea:focus{
 
     <div class="job-pill">
         <span class="job-dot"></span>
-        <span id="jobState">CREATING</span>
+        <span id="jobState">PREPARING</span>
     </div>
 
 </header>
@@ -722,62 +760,37 @@ textarea:focus{
 <section class="hero">
 
     <h1>
-        Watch the <span>Magic of Creation</span>
+        Review Your <span>Complete Service</span>
     </h1>
 
     <p id="heroMessage">
-        Your service is being created one section at a time.
+        Your service is being prepared. Once it is ready,
+        you will be able to go through every page.
     </p>
 
 </section>
 
 
-<!-- =========================
-     CREATION
-========================= -->
+<section class="creation">
 
-<section class="magic">
-
-    <div class="magic-head">
+    <div class="creation-head">
 
         <h2
-            class="magic-title"
-            id="magicTitle"
+            class="creation-title"
+            id="creationTitle"
         >
             ✨ Creating Your Service ✨
         </h2>
 
         <p
-            class="magic-message"
-            id="magicMessage"
+            class="creation-message"
+            id="creationMessage"
         >
             Please give us a moment while your document
-            comes to life.
+            is being prepared.
         </p>
 
     </div>
-
-
-    <div class="flight-area">
-
-        <div class="assembly-core">
-
-            <div class="core-content">
-
-                <div class="core-icon">
-                    ✨
-                </div>
-
-                <div class="core-label">
-                    Assembly
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
 
     <div class="progress-area">
 
@@ -813,10 +826,6 @@ textarea:focus{
 </section>
 
 
-<!-- =========================
-     CREATION SECTIONS
-========================= -->
-
 <section class="sections">
 
     <div class="sections-head">
@@ -838,10 +847,6 @@ textarea:focus{
 
 </section>
 
-
-<!-- =========================
-     COMPLETE DOCUMENT REVIEW
-========================= -->
 
 <section class="document-panel">
 
@@ -866,13 +871,14 @@ textarea:focus{
         id="documentViewer"
     >
 
-        <div class="review-page active">
+        <article class="review-page">
 
-            <div class="page-empty">
-                Your completed document will appear here.
+            <div class="empty-document">
+                Your completed document will appear here
+                when preparation is finished.
             </div>
 
-        </div>
+        </article>
 
     </div>
 
@@ -890,18 +896,18 @@ textarea:focus{
         <div class="page-buttons">
 
             <button
+                type="button"
                 class="page-button"
                 id="previousPage"
-                onclick="previousPage()"
                 disabled
             >
                 ← Previous Page
             </button>
 
             <button
+                type="button"
                 class="page-button"
                 id="nextPage"
-                onclick="nextPage()"
                 disabled
             >
                 Next Page →
@@ -915,14 +921,30 @@ textarea:focus{
             id="pageDots"
         ></div>
 
+
+        <div class="page-jump">
+
+            <input
+                id="pageInput"
+                type="number"
+                min="1"
+                placeholder="Page"
+                aria-label="Page number"
+            >
+
+            <button
+                type="button"
+                id="pageGo"
+            >
+                GO TO PAGE
+            </button>
+
+        </div>
+
     </div>
 
 </section>
 
-
-<!-- =========================
-     CORRECTION
-========================= -->
 
 <section class="correction">
 
@@ -931,8 +953,8 @@ textarea:focus{
     </h3>
 
     <p>
-        Tell us what you want improved. The correction
-        will be sent back through the same document job.
+        Tell us exactly what you want changed. Your
+        correction will continue through the same document job.
     </p>
 
     <textarea
@@ -944,9 +966,9 @@ textarea:focus{
     <div class="actions">
 
         <button
+            type="button"
             class="action"
             id="correctionButton"
-            onclick="requestCorrection()"
             disabled
         >
             Request Correction
@@ -954,9 +976,9 @@ textarea:focus{
 
 
         <button
+            type="button"
             class="action green"
             id="approveButton"
-            onclick="approveDocument()"
             disabled
         >
             Approve Document
@@ -967,24 +989,21 @@ textarea:focus{
 </section>
 
 
-<!-- =========================
-     WORKFLOW ACTIONS
-========================= -->
-
 <div class="actions">
 
     <button
+        type="button"
         class="action"
-        onclick="goBack()"
+        id="backButton"
     >
         ← Back
     </button>
 
 
     <button
+        type="button"
         class="action gold"
         id="paymentButton"
-        onclick="continueToPayment()"
         disabled
     >
         Payment
@@ -992,9 +1011,9 @@ textarea:focus{
 
 
     <button
+        type="button"
         class="action gold"
         id="downloadButton"
-        onclick="downloadDocument()"
         disabled
     >
         Download
@@ -1016,45 +1035,56 @@ textarea:focus{
 "use strict";
 
 /*
-============================================================
- REVIEW PAGE — SINGLE JOB CONTRACT
-============================================================
+================================================================
+ REVIEW.HTML
+================================================================
 
-Workspace creates the job.
+ SINGLE JOB CONTRACT
 
-Workspace sends:
+ The workspace creates the job.
 
-    review.html?job_id=<REAL_JOB_ID>
+ This page NEVER creates another job.
 
-Review never creates another job.
+ Everything is tied to:
 
-Every operation continues using that same job_id:
+     job_id
 
-    GET  /api/review?job_id=...
-    POST /api/correct
-    POST /api/approve
-    payment.html?job_id=...
-    GET  /api/download?job_id=...
+ Review flow:
 
-The document returned by the backend is converted into
-customer-readable pages.
+     /api/review?job_id=JOB
+             |
+             +--> /api/review/pages?job_id=JOB
+             |
+             +--> complete page collection
+             |
+             +--> customer reviews every page
+             |
+             +--> correction
+             |
+             +--> approval
+             |
+             +--> payment
+             |
+             +--> download
 
-The page system understands:
+ The page endpoint is deliberately preferred because the
+ backend already exposes:
 
-    1. Existing explicit page containers
-    2. Page-break elements/classes
-    3. Document sections/headings
-    4. A complete-document fallback
+     /api/review/pages
 
-Therefore the customer is never limited to one visible
-piece of the generated document.
-============================================================
+ If that endpoint is unavailable or returns no usable pages,
+ the review endpoint's document content is used as fallback.
+
+ No keyword intelligence is used here.
+ No second job is created.
+ No document content is intentionally discarded.
+================================================================
 */
 
 
-/* ============================================================
-   JOB
-============================================================ */
+/* ==============================================================
+   URL / JOB
+============================================================== */
 
 const params =
     new URLSearchParams(
@@ -1067,102 +1097,186 @@ let jobId =
     ) ||
     cleanId(
         params.get("id")
-    ) ||
-    cleanId(
-        localStorage.getItem("job_id")
     );
 
 
-/* ============================================================
-   STATE
-============================================================ */
+/*
+   Only use localStorage as a last-resort recovery.
 
-let latestData = null;
+   The URL remains the authoritative source because the workspace
+   is expected to send the real job_id into this page.
+*/
+
+if(!jobId){
+
+    try{
+
+        jobId =
+            cleanId(
+                localStorage.getItem(
+                    "job_id"
+                )
+            );
+
+    }catch(error){
+
+        console.warn(
+            "Unable to read local job state.",
+            error
+        );
+    }
+}
+
+
+/* ==============================================================
+   STATE
+============================================================== */
+
+let latestReview = null;
+
+let reviewPages = [];
+
+let currentPage = 0;
 
 let pollTimer = null;
 
 let consecutiveErrors = 0;
 
-let currentPage = 0;
-
-let reviewPages = [];
+let lastPageSignature = "";
 
 let lastDocumentHTML = "";
 
-let knownDoneIds = new Set();
+let isCorrectionRunning = false;
 
 
-/* ============================================================
+/* ==============================================================
    DOM
-============================================================ */
+============================================================== */
 
 const jobState =
-    document.getElementById("jobState");
+    document.getElementById(
+        "jobState"
+    );
 
 const heroMessage =
-    document.getElementById("heroMessage");
+    document.getElementById(
+        "heroMessage"
+    );
 
-const magicTitle =
-    document.getElementById("magicTitle");
+const creationTitle =
+    document.getElementById(
+        "creationTitle"
+    );
 
-const magicMessage =
-    document.getElementById("magicMessage");
+const creationMessage =
+    document.getElementById(
+        "creationMessage"
+    );
 
 const progressBar =
-    document.getElementById("progressBar");
+    document.getElementById(
+        "progressBar"
+    );
 
 const progressNumber =
-    document.getElementById("progressNumber");
+    document.getElementById(
+        "progressNumber"
+    );
 
 const progressLabel =
-    document.getElementById("progressLabel");
+    document.getElementById(
+        "progressLabel"
+    );
 
 const sectionCount =
-    document.getElementById("sectionCount");
+    document.getElementById(
+        "sectionCount"
+    );
 
 const sectionList =
-    document.getElementById("sectionList");
+    document.getElementById(
+        "sectionList"
+    );
 
 const documentViewer =
-    document.getElementById("documentViewer");
+    document.getElementById(
+        "documentViewer"
+    );
 
 const documentStatus =
-    document.getElementById("documentStatus");
+    document.getElementById(
+        "documentStatus"
+    );
 
 const pageCounter =
-    document.getElementById("pageCounter");
+    document.getElementById(
+        "pageCounter"
+    );
 
 const pageDots =
-    document.getElementById("pageDots");
+    document.getElementById(
+        "pageDots"
+    );
 
-const previousPageButton =
-    document.getElementById("previousPage");
+const pageInput =
+    document.getElementById(
+        "pageInput"
+    );
 
-const nextPageButton =
-    document.getElementById("nextPage");
+const pageGo =
+    document.getElementById(
+        "pageGo"
+    );
+
+const previousPage =
+    document.getElementById(
+        "previousPage"
+    );
+
+const nextPage =
+    document.getElementById(
+        "nextPage"
+    );
 
 const correctionText =
-    document.getElementById("correctionText");
+    document.getElementById(
+        "correctionText"
+    );
 
 const correctionButton =
-    document.getElementById("correctionButton");
+    document.getElementById(
+        "correctionButton"
+    );
 
 const approveButton =
-    document.getElementById("approveButton");
+    document.getElementById(
+        "approveButton"
+    );
 
 const paymentButton =
-    document.getElementById("paymentButton");
+    document.getElementById(
+        "paymentButton"
+    );
 
 const downloadButton =
-    document.getElementById("downloadButton");
+    document.getElementById(
+        "downloadButton"
+    );
+
+const backButton =
+    document.getElementById(
+        "backButton"
+    );
 
 const notice =
-    document.getElementById("notice");
+    document.getElementById(
+        "notice"
+    );
 
 
-/* ============================================================
-   INITIAL START
-============================================================ */
+/* ==============================================================
+   START
+============================================================== */
 
 if(!jobId){
 
@@ -1170,7 +1284,7 @@ if(!jobId){
         "NO JOB";
 
     showNotice(
-        "No document job was supplied. Please return to your workspace and start the service again.",
+        "This review page did not receive a document job. Please return to the workspace and start the service again.",
         "error"
     );
 
@@ -1186,18 +1300,161 @@ if(!jobId){
     }catch(error){
 
         console.warn(
-            "Unable to save job ID.",
+            "Could not store job ID.",
             error
         );
     }
 
-    startPolling();
+    startReviewLoop();
 }
 
 
-/* ============================================================
-   ID CLEANING
-============================================================ */
+/* ==============================================================
+   EVENT HANDLERS
+============================================================== */
+
+previousPage.addEventListener(
+    "click",
+    () => {
+
+        if(
+            currentPage > 0
+        ){
+
+            showPage(
+                currentPage - 1
+            );
+        }
+    }
+);
+
+
+nextPage.addEventListener(
+    "click",
+    () => {
+
+        if(
+            currentPage <
+            reviewPages.length - 1
+        ){
+
+            showPage(
+                currentPage + 1
+            );
+        }
+    }
+);
+
+
+pageGo.addEventListener(
+    "click",
+    goToTypedPage
+);
+
+
+pageInput.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key ===
+            "Enter"
+        ){
+
+            goToTypedPage();
+        }
+    }
+);
+
+
+correctionButton.addEventListener(
+    "click",
+    requestCorrection
+);
+
+
+approveButton.addEventListener(
+    "click",
+    approveDocument
+);
+
+
+paymentButton.addEventListener(
+    "click",
+    continueToPayment
+);
+
+
+downloadButton.addEventListener(
+    "click",
+    downloadDocument
+);
+
+
+backButton.addEventListener(
+    "click",
+    goBack
+);
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.target &&
+            event.target.tagName ===
+            "TEXTAREA"
+        ){
+            return;
+        }
+
+        if(
+            event.target &&
+            event.target.tagName ===
+            "INPUT"
+        ){
+            return;
+        }
+
+        if(
+            event.key ===
+            "ArrowLeft"
+        ){
+
+            if(
+                currentPage > 0
+            ){
+
+                showPage(
+                    currentPage - 1
+                );
+            }
+        }
+
+
+        if(
+            event.key ===
+            "ArrowRight"
+        ){
+
+            if(
+                currentPage <
+                reviewPages.length - 1
+            ){
+
+                showPage(
+                    currentPage + 1
+                );
+            }
+        }
+    }
+);
+
+
+/* ==============================================================
+   CLEAN ID
+============================================================== */
 
 function cleanId(value){
 
@@ -1229,15 +1486,11 @@ function cleanId(value){
 }
 
 
-/* ============================================================
-   POLLING
-============================================================ */
+/* ==============================================================
+   REVIEW LOOP
+============================================================== */
 
-function startPolling(){
-
-    if(!jobId){
-        return;
-    }
+function startReviewLoop(){
 
     clearTimeout(
         pollTimer
@@ -1253,12 +1506,22 @@ async function fetchReview(){
         return;
     }
 
+
     try{
 
-        const response =
+        /*
+           STEP 1
+
+           Ask the backend for the authoritative job/review
+           state.
+        */
+
+        const reviewResponse =
             await fetch(
                 "/api/review?job_id=" +
-                encodeURIComponent(jobId),
+                encodeURIComponent(
+                    jobId
+                ),
                 {
                     method:"GET",
                     headers:{
@@ -1269,39 +1532,71 @@ async function fetchReview(){
                 }
             );
 
-        if(!response.ok){
+
+        if(!reviewResponse.ok){
 
             throw new Error(
-                "Review request failed: " +
-                response.status
+                "Review API returned HTTP " +
+                reviewResponse.status
             );
         }
 
-        const data =
-            await response.json();
+
+        const reviewData =
+            await reviewResponse.json();
+
+
+        latestReview =
+            reviewData || {};
+
 
         consecutiveErrors = 0;
 
-        latestData =
-            normalizeResponse(data);
+
+        /*
+           STEP 2
+
+           Once the review endpoint responds, explicitly ask
+           the backend for the complete page collection.
+
+           This is the critical difference from the previous
+           file.
+        */
+
+        const pagesLoaded =
+            await fetchReviewPages(
+                latestReview
+            );
+
+
+        /*
+           STEP 3
+
+           Render the state and page collection.
+        */
 
         renderReview(
-            latestData
+            latestReview,
+            pagesLoaded
         );
+
 
     }catch(error){
 
         console.error(
-            "Review error:",
+            "Review polling error:",
             error
         );
 
         consecutiveErrors++;
 
-        if(consecutiveErrors >= 2){
+
+        if(
+            consecutiveErrors >= 2
+        ){
 
             showNotice(
-                "We are reconnecting to your document. Your work remains safe.",
+                "We are reconnecting to your document. Your job remains tied to the same document job.",
                 "error"
             );
         }
@@ -1313,10 +1608,27 @@ async function fetchReview(){
     );
 
 
+    /*
+       Continue polling until the backend says the work is
+       complete.
+
+       We continue polling after completion too when pages have
+       not yet arrived, because page generation may be a separate
+       backend operation.
+    */
+
+    const finished =
+        isFinished(
+            latestReview
+        );
+
+    const havePages =
+        reviewPages.length > 0;
+
+
     if(
-        !isFinished(
-            latestData
-        )
+        !finished ||
+        !havePages
     ){
 
         pollTimer =
@@ -1324,444 +1636,920 @@ async function fetchReview(){
                 fetchReview,
                 1800
             );
+
+    }else{
+
+        /*
+           Do one slower verification cycle after completion.
+           This catches cases where the document becomes ready
+           immediately before the page collection is persisted.
+        */
+
+        pollTimer =
+            setTimeout(
+                verifyFinalPages,
+                5000
+            );
     }
 }
 
 
-/* ============================================================
-   RESPONSE
-============================================================ */
+/* ==============================================================
+   FINAL PAGE VERIFICATION
+============================================================== */
 
-function normalizeResponse(data){
+async function verifyFinalPages(){
 
-    if(
-        !data ||
-        typeof data !== "object"
-    ){
-        return {};
+    try{
+
+        await fetchReview();
+
+    }catch(error){
+
+        console.error(
+            "Final review verification failed:",
+            error
+        );
     }
-
-    return data;
 }
 
 
-/* ============================================================
-   GENERIC VALUE LOOKUP
-============================================================ */
+/* ==============================================================
+   PAGE API
+============================================================== */
 
-function firstString(values){
+async function fetchReviewPages(
+    reviewData
+){
 
-    for(
-        const value of values
-    ){
+    /*
+       The backend advertises this endpoint:
+
+           GET /api/review/pages
+
+       It is therefore the primary page source.
+    */
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/review/pages?job_id=" +
+                encodeURIComponent(
+                    jobId
+                ),
+                {
+                    method:"GET",
+                    headers:{
+                        "Accept":
+                            "application/json"
+                    },
+                    cache:"no-store"
+                }
+            );
+
 
         if(
-            typeof value === "string" &&
-            value.trim()
+            response.ok
         ){
 
-            return value.trim();
+            const data =
+                await response.json();
+
+
+            const extracted =
+                extractPages(
+                    data
+                );
+
+
+            if(
+                extracted.length > 0
+            ){
+
+                const signature =
+                    pageSignature(
+                        extracted
+                    );
+
+
+                if(
+                    signature !==
+                    lastPageSignature
+                ){
+
+                    reviewPages =
+                        extracted;
+
+                    lastPageSignature =
+                        signature;
+
+
+                    /*
+                       Keep the customer on the same page when
+                       a refresh occurs, unless the new collection
+                       is smaller.
+                    */
+
+                    if(
+                        currentPage >=
+                        reviewPages.length
+                    ){
+
+                        currentPage =
+                            reviewPages.length - 1;
+                    }
+
+
+                    if(
+                        currentPage < 0
+                    ){
+
+                        currentPage = 0;
+                    }
+
+
+                    showPage(
+                        currentPage,
+                        false
+                    );
+                }
+
+                return true;
+            }
         }
+
+    }catch(error){
+
+        /*
+           A page endpoint failure does not destroy the job.
+           The complete-document fallback below is used.
+        */
+
+        console.warn(
+            "Page endpoint unavailable:",
+            error
+        );
     }
 
-    return "";
+
+    /*
+       FALLBACK
+
+       If the dedicated page endpoint did not return pages,
+       build pages from the document returned by /api/review.
+    */
+
+    const html =
+        getDocumentHTML(
+            reviewData
+        );
+
+
+    if(
+        html
+    ){
+
+        const signature =
+            "fallback:" +
+            html.length +
+            ":" +
+            html.slice(
+                0,
+                120
+            );
+
+
+        if(
+            signature !==
+            lastPageSignature
+        ){
+
+            reviewPages =
+                buildFallbackPages(
+                    html
+                );
+
+            lastPageSignature =
+                signature;
+
+
+            if(
+                currentPage >=
+                reviewPages.length
+            ){
+
+                currentPage =
+                    Math.max(
+                        0,
+                        reviewPages.length - 1
+                    );
+            }
+
+
+            showPage(
+                currentPage,
+                false
+            );
+        }
+
+
+        return reviewPages.length > 0;
+    }
+
+
+    return false;
 }
 
 
-/* ============================================================
-   SECTIONS
-============================================================ */
+/* ==============================================================
+   EXTRACT PAGES
+============================================================== */
 
-function getSections(data){
+function extractPages(
+    payload
+){
 
-    if(!data){
+    if(!payload){
         return [];
     }
 
+
+    /*
+       Possible direct array response.
+    */
+
+    if(
+        Array.isArray(payload)
+    ){
+
+        return normalizePageArray(
+            payload
+        );
+    }
+
+
+    if(
+        typeof payload !==
+        "object"
+    ){
+
+        return [];
+    }
+
+
+    /*
+       Search the common page collection locations.
+    */
+
     const candidates = [
 
-        data.sections,
+        payload.pages,
 
-        data.creation_sections,
+        payload.review_pages,
 
-        data.document_sections,
+        payload.document_pages,
 
-        data.job &&
-            data.job.sections,
+        payload.page_data,
 
-        data.job &&
-            data.job.creation_sections,
+        payload.result &&
+            payload.result.pages,
 
-        data.job &&
-            data.job.document_sections,
+        payload.data &&
+            payload.data.pages,
 
-        data.version &&
-            data.version.sections,
+        payload.review &&
+            payload.review.pages,
 
-        data.result &&
-            data.result.sections
+        payload.document &&
+            payload.document.pages,
+
+        payload.job &&
+            payload.job.pages,
+
+        payload.version &&
+            payload.version.pages
 
     ];
 
+
     for(
-        const candidate of candidates
+        const candidate of
+        candidates
     ){
 
         if(
             Array.isArray(candidate)
         ){
-            return candidate;
+
+            const normalized =
+                normalizePageArray(
+                    candidate
+                );
+
+
+            if(
+                normalized.length
+            ){
+
+                return normalized;
+            }
         }
     }
+
+
+    /*
+       Some APIs return:
+
+           {
+               "pages": {
+                   "1": "...",
+                   "2": "..."
+               }
+           }
+    */
+
+    const objectCandidates = [
+
+        payload.pages,
+
+        payload.review_pages,
+
+        payload.document_pages
+
+    ];
+
+
+    for(
+        const candidate of
+        objectCandidates
+    ){
+
+        if(
+            candidate &&
+            typeof candidate ===
+            "object" &&
+            !Array.isArray(candidate)
+        ){
+
+            const keys =
+                Object.keys(candidate);
+
+
+            if(keys.length){
+
+                return normalizePageObject(
+                    candidate
+                );
+            }
+        }
+    }
+
 
     return [];
 }
 
 
-/* ============================================================
-   DOCUMENT
-============================================================ */
+/* ==============================================================
+   NORMALIZE PAGE ARRAY
+============================================================== */
 
-function getDocumentHTML(data){
+function normalizePageArray(
+    array
+){
 
-    if(!data){
-        return "";
+    return array
+        .map(
+            (
+                item,
+                index
+            ) => {
+
+                return normalizeSinglePage(
+                    item,
+                    index + 1
+                );
+            }
+        )
+        .filter(Boolean)
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                a.number -
+                b.number
+        );
+}
+
+
+/* ==============================================================
+   NORMALIZE PAGE OBJECT
+============================================================== */
+
+function normalizePageObject(
+    object
+){
+
+    return Object.keys(
+        object
+    )
+    .map(
+        key => {
+
+            const number =
+                Number(key);
+
+
+            const page =
+                normalizeSinglePage(
+                    object[key],
+                    Number.isFinite(number)
+                    ? number
+                    : 999999
+                );
+
+
+            return page;
+        }
+    )
+    .filter(Boolean)
+    .sort(
+        (
+            a,
+            b
+        ) =>
+            a.number -
+            b.number
+    );
+}
+
+
+/* ==============================================================
+   SINGLE PAGE
+============================================================== */
+
+function normalizeSinglePage(
+    item,
+    fallbackNumber
+){
+
+    if(
+        item === null ||
+        item === undefined
+    ){
+
+        return null;
     }
 
-    const candidates = [
 
-        data.document_html,
-        data.content_html,
-        data.html,
-        data.document,
+    /*
+       Plain string page.
+    */
 
-        data.version &&
-            data.version.document_html,
+    if(
+        typeof item ===
+        "string"
+    ){
 
-        data.version &&
-            data.version.content_html,
+        const html =
+            sanitizeHTML(
+                item
+            );
 
-        data.version &&
-            data.version.html,
 
-        data.version &&
-            data.version.document,
+        if(!html){
+            return null;
+        }
 
-        data.job &&
-            data.job.document_html,
 
-        data.job &&
-            data.job.content_html,
+        return {
 
-        data.job &&
-            data.job.html,
+            number:
+                fallbackNumber,
 
-        data.job &&
-            data.job.document,
+            html:
+                html
 
-        data.result &&
-            data.result.document_html,
+        };
+    }
 
-        data.result &&
-            data.result.html
+
+    if(
+        typeof item !==
+        "object"
+    ){
+
+        return null;
+    }
+
+
+    const numberCandidates = [
+
+        item.page_number,
+        item.page,
+        item.number,
+        item.index,
+        item.position,
+        item.order
 
     ];
 
-    return firstString(
-        candidates
-    );
-}
 
+    let number =
+        fallbackNumber;
 
-/* ============================================================
-   STATUS
-============================================================ */
-
-function getStatus(data){
-
-    if(!data){
-        return "";
-    }
-
-    return String(
-
-        data.status ||
-
-        data.job_status ||
-
-        data.state ||
-
-        (
-            data.job &&
-            (
-                data.job.status ||
-                data.job.state
-            )
-        ) ||
-
-        (
-            data.version &&
-            (
-                data.version.status ||
-                data.version.state
-            )
-        ) ||
-
-        ""
-
-    ).toLowerCase().trim();
-}
-
-
-function isDoneStatus(status){
-
-    return [
-
-        "done",
-        "complete",
-        "completed",
-        "ready",
-        "assembled",
-        "approved",
-        "finished",
-        "success",
-        "successful"
-
-    ].includes(
-        String(status || "")
-        .toLowerCase()
-        .trim()
-    );
-}
-
-
-function isActiveStatus(status){
-
-    return [
-
-        "generating",
-        "processing",
-        "active",
-        "running",
-        "in_progress",
-        "in-progress",
-        "queued",
-        "pending",
-        "creating",
-        "writing",
-        "working"
-
-    ].includes(
-        String(status || "")
-        .toLowerCase()
-        .trim()
-    );
-}
-
-
-/* ============================================================
-   COUNTS
-============================================================ */
-
-function getCompletedCount(
-    data,
-    sections
-){
-
-    const direct =
-        data &&
-        data.progress &&
-        data.progress.completed;
-
-    if(
-        Number.isFinite(
-            Number(direct)
-        )
-    ){
-        return Math.max(
-            0,
-            Number(direct)
-        );
-    }
-
-    if(
-        Number.isFinite(
-            Number(
-                data &&
-                data.completed
-            )
-        )
-    ){
-        return Math.max(
-            0,
-            Number(data.completed)
-        );
-    }
-
-    return sections.filter(
-        section =>
-            isDoneStatus(
-                section &&
-                section.status
-            )
-    ).length;
-}
-
-
-function getTotalCount(
-    data,
-    sections
-){
-
-    const direct =
-        data &&
-        data.progress &&
-        data.progress.total;
-
-    if(
-        Number.isFinite(
-            Number(direct)
-        )
-    ){
-        return Math.max(
-            0,
-            Number(direct)
-        );
-    }
-
-    if(
-        Number.isFinite(
-            Number(
-                data &&
-                data.total
-            )
-        )
-    ){
-        return Math.max(
-            0,
-            Number(data.total)
-        );
-    }
-
-    return sections.length;
-}
-
-
-/* ============================================================
-   FINISHED
-============================================================ */
-
-function isFinished(data){
-
-    if(!data){
-        return false;
-    }
-
-    const status =
-        getStatus(data);
-
-    if([
-        "complete",
-        "completed",
-        "ready",
-        "assembled",
-        "approved",
-        "finished",
-        "success",
-        "successful"
-    ].includes(status)){
-
-        return true;
-    }
-
-    const sections =
-        getSections(data);
-
-    const total =
-        getTotalCount(
-            data,
-            sections
-        );
-
-    const completed =
-        getCompletedCount(
-            data,
-            sections
-        );
-
-    return (
-        total > 0 &&
-        completed >= total &&
-        Boolean(
-            getDocumentHTML(data)
-        )
-    );
-}
-
-
-/* ============================================================
-   VERSION
-============================================================ */
-
-function getVersionId(data){
-
-    if(!data){
-        return "";
-    }
-
-    const candidates = [
-
-        data.version_id,
-        data.current_version_id,
-        data.current_version,
-
-        data.version &&
-            data.version.version_id,
-
-        data.version &&
-            data.version.id,
-
-        data.job &&
-            data.job.version_id,
-
-        data.job &&
-            data.job.current_version_id,
-
-        data.result &&
-            data.result.version_id
-
-    ];
 
     for(
-        const candidate of candidates
+        const value of
+        numberCandidates
     ){
 
-        const value =
-            cleanId(candidate);
+        const parsed =
+            Number(value);
 
-        if(value){
-            return value;
+
+        if(
+            Number.isFinite(parsed) &&
+            parsed > 0
+        ){
+
+            number = parsed;
+
+            break;
         }
     }
 
-    return "";
+
+    const html =
+        firstString([
+
+            item.html,
+            item.content_html,
+            item.document_html,
+            item.body_html,
+            item.content,
+            item.body,
+            item.text
+
+        ]);
+
+
+    if(!html){
+        return null;
+    }
+
+
+    return {
+
+        number:
+            number,
+
+        html:
+            sanitizeHTML(
+                html
+            )
+    };
 }
 
 
-/* ============================================================
-   MAIN RENDER
-============================================================ */
+/* ==============================================================
+   SANITIZE
+============================================================== */
 
-function renderReview(data){
+function sanitizeHTML(
+    html
+){
+
+    const holder =
+        document.createElement(
+            "div"
+        );
+
+
+    holder.innerHTML =
+        String(
+            html || ""
+        );
+
+
+    holder
+        .querySelectorAll(
+            "script,iframe,object,embed,form"
+        )
+        .forEach(
+            element =>
+                element.remove()
+        );
+
+
+    holder
+        .querySelectorAll(
+            "[onclick],[onload],[onerror],[onmouseover],[onfocus],[oninput],[onsubmit]"
+        )
+        .forEach(
+            element => {
+
+                [
+                    "onclick",
+                    "onload",
+                    "onerror",
+                    "onmouseover",
+                    "onfocus",
+                    "oninput",
+                    "onsubmit"
+                ].forEach(
+                    attribute =>
+                        element.removeAttribute(
+                            attribute
+                        )
+                );
+            }
+        );
+
+
+    return holder.innerHTML.trim();
+}
+
+
+/* ==============================================================
+   FALLBACK PAGE BUILDER
+==============================================================
+
+   This is NOT the primary page system.
+
+   It exists only when /api/review/pages has not returned
+   usable page data.
+
+   It preserves the complete HTML and creates sensible review
+   pages around headings and explicit page breaks.
+============================================================== */
+
+function buildFallbackPages(
+    html
+){
+
+    const source =
+        document.createElement(
+            "div"
+        );
+
+
+    source.innerHTML =
+        sanitizeHTML(
+            html
+        );
+
+
+    /*
+       Explicit page containers first.
+    */
+
+    const explicit =
+        source.querySelectorAll(
+            ".page, .document-page, [data-page]"
+        );
+
+
+    if(
+        explicit.length > 0
+    ){
+
+        const pages =
+            [...explicit]
+            .map(
+                element =>
+                    element.innerHTML.trim()
+            )
+            .filter(Boolean);
+
+
+        if(
+            pages.length
+        ){
+
+            return pages.map(
+                content => ({
+                    number:0,
+                    html:content
+                })
+            );
+        }
+    }
+
+
+    /*
+       Split on hard page-break markers.
+    */
+
+    const children =
+        [...source.children];
+
+
+    const pages = [];
+
+    let current =
+        document.createElement(
+            "div"
+        );
+
+
+    function push(){
+
+        const content =
+            current.innerHTML.trim();
+
+
+        if(content){
+
+            pages.push(
+                content
+            );
+        }
+
+
+        current =
+            document.createElement(
+                "div"
+            );
+    }
+
+
+    for(
+        const element of
+        children
+    ){
+
+        const style =
+            String(
+                element.getAttribute(
+                    "style"
+                ) || ""
+            ).toLowerCase();
+
+
+        const classes =
+            String(
+                element.className ||
+                ""
+            ).toLowerCase();
+
+
+        const hardBreak =
+            style.includes(
+                "page-break-after"
+            ) ||
+            style.includes(
+                "break-after"
+            ) ||
+            classes.includes(
+                "page-break"
+            );
+
+
+        if(hardBreak){
+
+            current.appendChild(
+                element.cloneNode(true)
+            );
+
+            push();
+
+            continue;
+        }
+
+
+        /*
+           Keep a meaningful amount of material together.
+
+           We do NOT throw away content.
+        */
+
+        const currentTextLength =
+            current.innerText.length;
+
+
+        const isHeading =
+            /^H[1-3]$/.test(
+                element.tagName
+            );
+
+
+        if(
+            isHeading &&
+            currentTextLength > 3000
+        ){
+
+            push();
+        }
+
+
+        current.appendChild(
+            element.cloneNode(true)
+        );
+
+
+        /*
+           If an unusually large block is encountered, preserve
+           it as a complete block rather than truncating it.
+        */
+
+        if(
+            current.innerText.length >
+            6500
+        ){
+
+            push();
+        }
+    }
+
+
+    push();
+
+
+    if(
+        pages.length === 0
+    ){
+
+        pages.push(
+            source.innerHTML ||
+            "<div class='empty-document'>Your document is being prepared.</div>"
+        );
+    }
+
+
+    return pages.map(
+        (
+            content,
+            index
+        ) => ({
+
+            number:
+                index + 1,
+
+            html:
+                content
+
+        })
+    );
+}
+
+
+/* ==============================================================
+   PAGE SIGNATURE
+============================================================== */
+
+function pageSignature(
+    pages
+){
+
+    return pages
+        .map(
+            (
+                page,
+                index
+            ) =>
+                (
+                    page.number ||
+                    index + 1
+                ) +
+                ":" +
+                String(
+                    page.html || ""
+                ).length +
+                ":" +
+                String(
+                    page.html || ""
+                ).slice(
+                    0,
+                    80
+                )
+        )
+        .join("|");
+}
+
+
+/* ==============================================================
+   RENDER REVIEW
+============================================================== */
+
+function renderReview(
+    data,
+    pagesLoaded
+){
 
     const sections =
-        getSections(data);
+        getSections(
+            data
+        );
+
 
     const completed =
         getCompletedCount(
             data,
             sections
         );
+
 
     const total =
         getTotalCount(
@@ -1782,8 +2570,9 @@ function renderReview(data){
     );
 
 
-    renderDocument(
-        data
+    updateDocumentStatus(
+        data,
+        pagesLoaded
     );
 
 
@@ -1793,9 +2582,9 @@ function renderReview(data){
 }
 
 
-/* ============================================================
+/* ==============================================================
    PROGRESS
-============================================================ */
+============================================================== */
 
 function renderProgress(
     completed,
@@ -1805,7 +2594,10 @@ function renderProgress(
 
     let percent = 0;
 
-    if(total > 0){
+
+    if(
+        total > 0
+    ){
 
         percent =
             Math.round(
@@ -1815,11 +2607,16 @@ function renderProgress(
             );
     }
 
+
     if(
-        isFinished(data)
+        isFinished(
+            data
+        )
     ){
+
         percent = 100;
     }
+
 
     percent =
         Math.max(
@@ -1830,15 +2627,19 @@ function renderProgress(
             )
         );
 
+
     progressBar.style.width =
         percent + "%";
+
 
     progressNumber.textContent =
         percent + "%";
 
 
     if(
-        isFinished(data)
+        isFinished(
+            data
+        )
     ){
 
         progressLabel.textContent =
@@ -1867,125 +2668,48 @@ function renderProgress(
     }
 
 
-    updateCreationMessage(
-        completed,
-        total,
-        data
-    );
-}
-
-
-/* ============================================================
-   CREATION MESSAGE
-============================================================ */
-
-function updateCreationMessage(
-    completed,
-    total,
-    data
-){
-
     if(
-        isFinished(data)
+        isFinished(
+            data
+        )
     ){
 
-        magicTitle.textContent =
-            "✨ Your Service Has Come to Life ✨";
+        creationTitle.textContent =
+            "✨ Your Service Is Ready ✨";
 
-        magicMessage.textContent =
-            "Your complete document has been assembled. You can now review every page.";
+        creationMessage.textContent =
+            "Your complete document has been assembled. You can now go through every available page.";
 
         heroMessage.textContent =
-            "Your complete service is ready. Use the page controls below to go through the entire document.";
+            reviewPages.length > 0
+            ? "Your complete service is ready. Use Previous Page and Next Page to go through the entire document."
+            : "Your service is ready. We are loading the complete page collection.";
 
         jobState.textContent =
             "READY";
 
-        return;
+    }else{
+
+        creationTitle.textContent =
+            "✨ Creating Your Service ✨";
+
+        creationMessage.textContent =
+            "We are preparing your service one section at a time.";
+
+        heroMessage.textContent =
+            "Your service is being prepared. Once ready, you will be able to go through every page.";
+
+        jobState.textContent =
+            total > 0
+            ? "CREATING"
+            : "PREPARING";
     }
-
-
-    magicTitle.textContent =
-        "✨ The Magic of Creation ✨";
-
-    magicMessage.textContent =
-        "We are creating your service one carefully prepared section at a time.";
-
-    heroMessage.textContent =
-        "Watch as each part of your service is created and brought together.";
-
-    jobState.textContent =
-        total > 0
-        ? "CREATING"
-        : "PREPARING";
 }
 
 
-/* ============================================================
-   SECTION ORDER
-============================================================ */
-
-function sectionOrder(
-    section,
-    fallback
-){
-
-    if(!section){
-        return fallback;
-    }
-
-    for(
-        const value of [
-            section.section_order,
-            section.order,
-            section.position,
-            section.index
-        ]
-    ){
-
-        const number =
-            Number(value);
-
-        if(
-            Number.isFinite(number)
-        ){
-            return number;
-        }
-    }
-
-    return fallback;
-}
-
-
-/* ============================================================
-   SECTION TITLE
-============================================================ */
-
-function sectionTitle(
-    section,
-    number
-){
-
-    if(!section){
-        return "Document Section " + number;
-    }
-
-    return firstString([
-
-        section.title,
-        section.name,
-        section.heading,
-        section.section_title,
-        section.label
-
-    ]) ||
-    "Document Section " + number;
-}
-
-
-/* ============================================================
-   SECTION LIST
-============================================================ */
+/* ==============================================================
+   SECTIONS
+============================================================== */
 
 function renderSections(
     sections
@@ -1993,24 +2717,31 @@ function renderSections(
 
     sectionList.innerHTML = "";
 
-    if(!sections.length){
+
+    if(
+        !sections.length
+    ){
 
         const row =
             document.createElement(
                 "div"
             );
 
+
         row.className =
             "section-row active";
 
+
         row.innerHTML = `
 
-            <div class="section-number">•</div>
+            <div class="section-number">
+                •
+            </div>
 
             <div class="section-info">
 
                 <div class="section-title">
-                    Preparing the creation plan...
+                    Preparing the document structure...
                 </div>
 
                 <div class="section-state">
@@ -2020,368 +2751,209 @@ function renderSections(
             </div>
         `;
 
+
         sectionList.appendChild(
             row
         );
+
 
         return;
     }
 
 
     [...sections]
-    .sort(
-        (a,b) =>
-            sectionOrder(a,0) -
-            sectionOrder(b,0)
-    )
-    .forEach(
-        (
-            section,
-            index
-        ) => {
-
-            const status =
-                String(
-                    section &&
-                    section.status ||
-                    ""
-                ).toLowerCase();
-
-            const done =
-                isDoneStatus(status);
-
-            const active =
-                isActiveStatus(status);
-
-            const number =
+        .sort(
+            (
+                a,
+                b
+            ) =>
                 sectionOrder(
-                    section,
-                    index + 1
-                );
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-            row.className =
-                "section-row " +
-                (
-                    done
-                    ? "done"
-                    : active
-                    ? "active"
-                    : ""
-                );
-
-            row.innerHTML = `
-
-                <div class="section-number">
-                    ${escapeHTML(number)}
-                </div>
-
-                <div class="section-info">
-
-                    <div class="section-title">
-                        ${escapeHTML(
-                            sectionTitle(
-                                section,
-                                number
-                            )
-                        )}
-                    </div>
-
-                    <div class="section-state">
-                        ${
-                            done
-                            ? "Completed ✓"
-                            : active
-                            ? "Creating now..."
-                            : "Waiting"
-                        }
-                    </div>
-
-                </div>
-            `;
-
-            sectionList.appendChild(
-                row
-            );
-        }
-    );
-}
-
-
-/* ============================================================
-   DOCUMENT PAGE BUILDER
-============================================================
-
-   This is the key fix.
-
-   The backend may return a document already divided into
-   pages, or a normal HTML document.
-
-   We preserve explicit page breaks first.
-
-   If there are no explicit pages, we create customer
-   navigation pages from meaningful document blocks/headings.
-
-   Nothing is discarded.
-============================================================ */
-
-function buildReviewPages(
-    html
-){
-
-    const source =
-        document.createElement(
-            "div"
-        );
-
-    source.innerHTML =
-        html;
-
-
-    /*
-        Remove unsafe executable elements.
-    */
-
-    source
-        .querySelectorAll(
-            "script,iframe,object,embed,form"
+                    a,
+                    0
+                ) -
+                sectionOrder(
+                    b,
+                    0
+                )
         )
         .forEach(
-            element =>
-                element.remove()
+            (
+                section,
+                index
+            ) => {
+
+                const status =
+                    String(
+                        section &&
+                        section.status ||
+                        ""
+                    )
+                    .toLowerCase()
+                    .trim();
+
+
+                const done =
+                    isDoneStatus(
+                        status
+                    );
+
+
+                const active =
+                    isActiveStatus(
+                        status
+                    );
+
+
+                const number =
+                    sectionOrder(
+                        section,
+                        index + 1
+                    );
+
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "section-row " +
+                    (
+                        done
+                        ? "done"
+                        : active
+                        ? "active"
+                        : ""
+                    );
+
+
+                row.innerHTML = `
+
+                    <div class="section-number">
+                        ${escapeHTML(number)}
+                    </div>
+
+                    <div class="section-info">
+
+                        <div class="section-title">
+                            ${escapeHTML(
+                                sectionTitle(
+                                    section,
+                                    number
+                                )
+                            )}
+                        </div>
+
+                        <div class="section-state">
+                            ${
+                                done
+                                ? "Completed ✓"
+                                : active
+                                ? "Creating now..."
+                                : "Waiting"
+                            }
+                        </div>
+
+                    </div>
+                `;
+
+
+                sectionList.appendChild(
+                    row
+                );
+            }
         );
-
-
-    /*
-        1. Explicit pages.
-
-        Supported examples:
-
-            <div class="page">...</div>
-            <div class="document-page">...</div>
-            <section class="page">...</section>
-            <div style="page-break-after:always">...</div>
-    */
-
-    const explicitPages =
-        source.querySelectorAll(
-            ".page, .document-page, .review-page, [data-page]"
-        );
-
-
-    if(
-        explicitPages.length > 0
-    ){
-
-        return [...explicitPages]
-            .map(
-                element =>
-                    element.innerHTML.trim()
-            )
-            .filter(Boolean);
-    }
-
-
-    /*
-        2. Detect hard page breaks.
-    */
-
-    const blocks =
-        [...source.children];
-
-    const pages = [];
-
-    let current =
-        document.createElement(
-            "div"
-        );
-
-
-    function pushCurrent(){
-
-        const content =
-            current.innerHTML.trim();
-
-        if(content){
-
-            pages.push(
-                content
-            );
-        }
-
-        current =
-            document.createElement(
-                "div"
-            );
-    }
-
-
-    for(
-        const element of blocks
-    ){
-
-        const style =
-            String(
-                element.getAttribute(
-                    "style"
-                ) || ""
-            ).toLowerCase();
-
-        const className =
-            String(
-                element.className || ""
-            ).toLowerCase();
-
-        const forcedBreak =
-            style.includes(
-                "page-break-after"
-            ) ||
-            style.includes(
-                "break-after"
-            ) ||
-            className.includes(
-                "page-break"
-            );
-
-
-        if(forcedBreak){
-
-            current.appendChild(
-                element.cloneNode(true)
-            );
-
-            pushCurrent();
-
-            continue;
-        }
-
-
-        /*
-            Keep document content intact.
-
-            Headings begin new logical review pages when
-            enough content has already accumulated.
-        */
-
-        const isHeading =
-            /^H[1-3]$/.test(
-                element.tagName
-            );
-
-        const currentLength =
-            current.innerText.length;
-
-
-        if(
-            isHeading &&
-            currentLength > 2600
-        ){
-
-            pushCurrent();
-        }
-
-
-        current.appendChild(
-            element.cloneNode(true)
-        );
-    }
-
-
-    pushCurrent();
-
-
-    /*
-        If the generated document was a single giant HTML
-        block, do NOT throw it away.
-
-        It becomes one complete page and remains fully
-        accessible.
-    */
-
-    if(!pages.length){
-
-        pages.push(
-            source.innerHTML ||
-            "<div class='page-empty'>Document is being prepared.</div>"
-        );
-    }
-
-
-    return pages;
 }
 
 
-/* ============================================================
-   RENDER DOCUMENT
-============================================================ */
+/* ==============================================================
+   DOCUMENT STATUS
+============================================================== */
 
-function renderDocument(data){
-
-    const html =
-        getDocumentHTML(data);
-
+function updateDocumentStatus(
+    data,
+    pagesLoaded
+){
 
     if(
-        html &&
-        html !== lastDocumentHTML
+        isFinished(
+            data
+        ) &&
+        reviewPages.length > 0
     ){
 
-        lastDocumentHTML =
-            html;
+        documentStatus.textContent =
+            "READY — " +
+            reviewPages.length +
+            " PAGES";
 
-        reviewPages =
-            buildReviewPages(
-                html
-            );
 
-        currentPage = 0;
+        documentStatus.className =
+            "document-status ready";
 
-        renderPageNavigation();
 
-        showPage(
-            0
-        );
+        return;
     }
 
 
     if(
-        isFinished(data)
+        reviewPages.length > 0
     ){
 
         documentStatus.textContent =
-            "READY FOR REVIEW";
+            reviewPages.length +
+            " PAGES AVAILABLE";
 
-        documentStatus.classList.add(
-            "ready"
-        );
 
-    }else{
+        documentStatus.className =
+            "document-status review";
 
-        documentStatus.textContent =
-            "BUILDING";
 
-        documentStatus.classList.remove(
-            "ready"
-        );
+        return;
     }
+
+
+    documentStatus.textContent =
+        "BUILDING";
+
+
+    documentStatus.className =
+        "document-status";
 }
 
 
-/* ============================================================
+/* ==============================================================
    SHOW PAGE
-============================================================ */
+============================================================== */
 
 function showPage(
-    index
+    index,
+    scroll
 ){
 
     if(
         !reviewPages.length
     ){
+
+        documentViewer.innerHTML = `
+
+            <article class="review-page">
+
+                <div class="empty-document">
+
+                    The complete document is being prepared.
+                    <br><br>
+                    Please wait a moment.
+
+                </div>
+
+            </article>
+        `;
+
+
+        updatePageControls();
+
         return;
     }
 
@@ -2391,62 +2963,59 @@ function showPage(
             0,
             Math.min(
                 reviewPages.length - 1,
-                index
+                Number(index) || 0
             )
         );
+
+
+    const page =
+        reviewPages[
+            currentPage
+        ];
 
 
     documentViewer.innerHTML = "";
 
 
-    reviewPages.forEach(
-        (
-            html,
-            pageIndex
-        ) => {
-
-            const page =
-                document.createElement(
-                    "article"
-                );
-
-            page.className =
-                "review-page" +
-                (
-                    pageIndex === currentPage
-                    ? " active"
-                    : ""
-                );
-
-            page.innerHTML =
-                html;
+    const article =
+        document.createElement(
+            "article"
+        );
 
 
-            documentViewer.appendChild(
-                page
-            );
-        }
+    article.className =
+        "review-page";
+
+
+    article.innerHTML =
+        sanitizeHTML(
+            page.html
+        );
+
+
+    documentViewer.appendChild(
+        article
     );
 
 
     updatePageControls();
 
 
-    /*
-        Always bring the customer to the beginning of the
-        selected page, not somewhere in the previous page.
-    */
+    if(
+        scroll !== false
+    ){
 
-    documentViewer.scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-    });
+        documentViewer.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+    }
 }
 
 
-/* ============================================================
+/* ==============================================================
    PAGE CONTROLS
-============================================================ */
+============================================================== */
 
 function updatePageControls(){
 
@@ -2454,32 +3023,45 @@ function updatePageControls(){
         reviewPages.length;
 
 
-    pageCounter.innerHTML =
-        total
-        ? "Page <strong>" +
-          (currentPage + 1) +
-          "</strong> of <strong>" +
-          total +
-          "</strong>"
-        : "Page <strong>0</strong> of <strong>0</strong>";
+    if(
+        total === 0
+    ){
+
+        pageCounter.innerHTML =
+            "Page <strong>0</strong> of <strong>0</strong>";
+
+    }else{
+
+        pageCounter.innerHTML =
+            "Page <strong>" +
+            (
+                currentPage + 1
+            ) +
+            "</strong> of <strong>" +
+            total +
+            "</strong>";
+    }
 
 
-    previousPageButton.disabled =
-        currentPage <= 0 ||
-        total === 0;
+    previousPage.disabled =
+        total === 0 ||
+        currentPage <= 0;
 
 
-    nextPageButton.disabled =
-        currentPage >= total - 1 ||
-        total === 0;
+    nextPage.disabled =
+        total === 0 ||
+        currentPage >=
+        total - 1;
 
 
     pageDots.innerHTML = "";
 
 
     /*
-        For a very long document, show useful navigation
-        without creating hundreds of giant controls.
+       Show dots for manageable page counts.
+
+       The GO TO PAGE control remains available for very large
+       documents.
     */
 
     const maxDots =
@@ -2490,9 +3072,9 @@ function updatePageControls(){
 
 
     for(
-        let i = 0;
-        i < maxDots;
-        i++
+        let index = 0;
+        index < maxDots;
+        index++
     ){
 
         const dot =
@@ -2500,23 +3082,38 @@ function updatePageControls(){
                 "button"
             );
 
+
+        dot.type =
+            "button";
+
+
         dot.className =
             "page-dot" +
             (
-                i === currentPage
+                index ===
+                currentPage
                 ? " active"
                 : ""
             );
 
+
         dot.setAttribute(
             "aria-label",
             "Go to page " +
-            (i + 1)
+            (
+                index + 1
+            )
         );
 
-        dot.onclick =
+
+        dot.addEventListener(
+            "click",
             () =>
-                showPage(i);
+                showPage(
+                    index
+                )
+        );
+
 
         pageDots.appendChild(
             dot
@@ -2525,70 +3122,635 @@ function updatePageControls(){
 }
 
 
-function nextPage(){
+/* ==============================================================
+   GO TO PAGE
+============================================================== */
+
+function goToTypedPage(){
+
+    const requested =
+        Number(
+            pageInput.value
+        );
+
 
     if(
-        currentPage <
-        reviewPages.length - 1
+        !Number.isFinite(
+            requested
+        )
     ){
 
-        showPage(
-            currentPage + 1
-        );
+        return;
     }
+
+
+    const index =
+        Math.floor(
+            requested
+        ) - 1;
+
+
+    if(
+        index < 0 ||
+        index >= reviewPages.length
+    ){
+
+        showNotice(
+            "That page number is outside the available document.",
+            "error"
+        );
+
+
+        return;
+    }
+
+
+    showPage(
+        index
+    );
+
+
+    pageInput.value = "";
 }
 
 
-function previousPage(){
+/* ==============================================================
+   GENERIC LOOKUPS
+============================================================== */
 
-    if(
-        currentPage > 0
+function firstString(
+    values
+){
+
+    for(
+        const value of
+        values
     ){
 
-        showPage(
-            currentPage - 1
-        );
+        if(
+            typeof value ===
+            "string" &&
+            value.trim()
+        ){
+
+            return value.trim();
+        }
     }
+
+
+    return "";
 }
 
 
-/* ============================================================
-   KEYBOARD PAGE NAVIGATION
-============================================================ */
+/* ==============================================================
+   SECTIONS
+============================================================== */
 
-document.addEventListener(
-    "keydown",
-    event => {
+function getSections(
+    data
+){
+
+    if(!data){
+        return [];
+    }
+
+
+    const candidates = [
+
+        data.sections,
+
+        data.creation_sections,
+
+        data.document_sections,
+
+        data.job &&
+            data.job.sections,
+
+        data.job &&
+            data.job.creation_sections,
+
+        data.job &&
+            data.job.document_sections,
+
+        data.version &&
+            data.version.sections,
+
+        data.result &&
+            data.result.sections,
+
+        data.data &&
+            data.data.sections
+
+    ];
+
+
+    for(
+        const candidate of
+        candidates
+    ){
 
         if(
-            event.target.tagName ===
-            "TEXTAREA"
+            Array.isArray(
+                candidate
+            )
         ){
-            return;
-        }
 
-        if(
-            event.key ===
-            "ArrowRight"
-        ){
-            nextPage();
-        }
-
-        if(
-            event.key ===
-            "ArrowLeft"
-        ){
-            previousPage();
+            return candidate;
         }
     }
-);
 
 
-/* ============================================================
-   APPROVAL / PAYMENT STATE
-============================================================ */
+    return [];
+}
 
-function isApproved(data){
+
+/* ==============================================================
+   SECTION ORDER
+============================================================== */
+
+function sectionOrder(
+    section,
+    fallback
+){
+
+    if(!section){
+        return fallback;
+    }
+
+
+    for(
+        const value of [
+
+            section.section_order,
+            section.order,
+            section.position,
+            section.index
+
+        ]
+    ){
+
+        const number =
+            Number(value);
+
+
+        if(
+            Number.isFinite(
+                number
+            )
+        ){
+
+            return number;
+        }
+    }
+
+
+    return fallback;
+}
+
+
+/* ==============================================================
+   SECTION TITLE
+============================================================== */
+
+function sectionTitle(
+    section,
+    number
+){
+
+    if(!section){
+
+        return (
+            "Document Section " +
+            number
+        );
+    }
+
+
+    return firstString([
+
+        section.title,
+        section.name,
+        section.heading,
+        section.section_title,
+        section.label
+
+    ]) ||
+    (
+        "Document Section " +
+        number
+    );
+}
+
+
+/* ==============================================================
+   DOCUMENT HTML FALLBACK
+============================================================== */
+
+function getDocumentHTML(
+    data
+){
+
+    if(!data){
+        return "";
+    }
+
+
+    return firstString([
+
+        data.document_html,
+        data.content_html,
+        data.html,
+        data.document,
+
+        data.result &&
+            data.result.document_html,
+
+        data.result &&
+            data.result.content_html,
+
+        data.result &&
+            data.result.html,
+
+        data.result &&
+            data.result.document,
+
+        data.data &&
+            data.data.document_html,
+
+        data.data &&
+            data.data.html,
+
+        data.version &&
+            data.version.document_html,
+
+        data.version &&
+            data.version.content_html,
+
+        data.version &&
+            data.version.html,
+
+        data.version &&
+            data.version.document,
+
+        data.job &&
+            data.job.document_html,
+
+        data.job &&
+            data.job.content_html,
+
+        data.job &&
+            data.job.html,
+
+        data.job &&
+            data.job.document
+
+    ]);
+}
+
+
+/* ==============================================================
+   STATUS
+============================================================== */
+
+function getStatus(
+    data
+){
+
+    if(!data){
+        return "";
+    }
+
+
+    return String(
+
+        data.status ||
+
+        data.job_status ||
+
+        data.state ||
+
+        (
+            data.job &&
+            (
+                data.job.status ||
+                data.job.state
+            )
+        ) ||
+
+        (
+            data.version &&
+            (
+                data.version.status ||
+                data.version.state
+            )
+        ) ||
+
+        ""
+
+    )
+    .toLowerCase()
+    .trim();
+}
+
+
+/* ==============================================================
+   STATUS HELPERS
+============================================================== */
+
+function isDoneStatus(
+    status
+){
+
+    return [
+
+        "done",
+        "complete",
+        "completed",
+        "ready",
+        "assembled",
+        "approved",
+        "finished",
+        "success",
+        "successful"
+
+    ].includes(
+        String(
+            status || ""
+        )
+        .toLowerCase()
+        .trim()
+    );
+}
+
+
+function isActiveStatus(
+    status
+){
+
+    return [
+
+        "generating",
+        "processing",
+        "active",
+        "running",
+        "in_progress",
+        "in-progress",
+        "queued",
+        "pending",
+        "creating",
+        "writing",
+        "working"
+
+    ].includes(
+        String(
+            status || ""
+        )
+        .toLowerCase()
+        .trim()
+    );
+}
+
+
+/* ==============================================================
+   COUNTS
+============================================================== */
+
+function getCompletedCount(
+    data,
+    sections
+){
+
+    const direct =
+        data &&
+        data.progress &&
+        data.progress.completed;
+
+
+    if(
+        Number.isFinite(
+            Number(
+                direct
+            )
+        )
+    ){
+
+        return Math.max(
+            0,
+            Number(
+                direct
+            )
+        );
+    }
+
+
+    if(
+        Number.isFinite(
+            Number(
+                data &&
+                data.completed
+            )
+        )
+    ){
+
+        return Math.max(
+            0,
+            Number(
+                data.completed
+            )
+        );
+    }
+
+
+    return sections.filter(
+        section =>
+            isDoneStatus(
+                section &&
+                section.status
+            )
+    ).length;
+}
+
+
+function getTotalCount(
+    data,
+    sections
+){
+
+    const direct =
+        data &&
+        data.progress &&
+        data.progress.total;
+
+
+    if(
+        Number.isFinite(
+            Number(
+                direct
+            )
+        )
+    ){
+
+        return Math.max(
+            0,
+            Number(
+                direct
+            )
+        );
+    }
+
+
+    if(
+        Number.isFinite(
+            Number(
+                data &&
+                data.total
+            )
+        )
+    ){
+
+        return Math.max(
+            0,
+            Number(
+                data.total
+            )
+        );
+    }
+
+
+    return sections.length;
+}
+
+
+/* ==============================================================
+   FINISHED
+============================================================== */
+
+function isFinished(
+    data
+){
+
+    if(!data){
+        return false;
+    }
+
+
+    const status =
+        getStatus(
+            data
+        );
+
+
+    if(
+        isDoneStatus(
+            status
+        )
+    ){
+
+        return true;
+    }
+
+
+    const sections =
+        getSections(
+            data
+        );
+
+
+    const total =
+        getTotalCount(
+            data,
+            sections
+        );
+
+
+    const completed =
+        getCompletedCount(
+            data,
+            sections
+        );
+
+
+    return (
+        total > 0 &&
+        completed >= total &&
+        Boolean(
+            getDocumentHTML(
+                data
+            ) ||
+            reviewPages.length
+        )
+    );
+}
+
+
+/* ==============================================================
+   VERSION
+============================================================== */
+
+function getVersionId(
+    data
+){
+
+    if(!data){
+        return "";
+    }
+
+
+    const candidates = [
+
+        data.version_id,
+        data.current_version_id,
+        data.current_version,
+
+        data.version &&
+            data.version.version_id,
+
+        data.version &&
+            data.version.id,
+
+        data.job &&
+            data.job.version_id,
+
+        data.job &&
+            data.job.current_version_id,
+
+        data.result &&
+            data.result.version_id,
+
+        data.data &&
+            data.data.version_id
+
+    ];
+
+
+    for(
+        const candidate of
+        candidates
+    ){
+
+        const value =
+            cleanId(
+                candidate
+            );
+
+
+        if(value){
+            return value;
+        }
+    }
+
+
+    return "";
+}
+
+
+/* ==============================================================
+   APPROVAL STATE
+============================================================== */
+
+function isApproved(
+    data
+){
 
     return Boolean(
 
@@ -2596,14 +3758,16 @@ function isApproved(data){
         (
             data.approved === true ||
             data.is_approved === true ||
-            data.approval_status === "approved" ||
+            data.approval_status ===
+                "approved" ||
 
             (
                 data.version &&
                 (
                     data.version.approved === true ||
                     data.version.is_approved === true ||
-                    data.version.approval_status === "approved"
+                    data.version.approval_status ===
+                        "approved"
                 )
             ) ||
 
@@ -2612,7 +3776,8 @@ function isApproved(data){
                 (
                     data.job.approved === true ||
                     data.job.is_approved === true ||
-                    data.job.approval_status === "approved"
+                    data.job.approval_status ===
+                        "approved"
                 )
             )
         )
@@ -2620,65 +3785,93 @@ function isApproved(data){
 }
 
 
-function isPaid(data){
+/* ==============================================================
+   PAYMENT STATE
+============================================================== */
+
+function isPaid(
+    data
+){
 
     return Boolean(
 
         data &&
         (
             data.paid === true ||
-            data.payment_status === "paid" ||
+
+            data.payment_status ===
+                "paid" ||
 
             (
                 data.payment &&
-                data.payment.status === "paid"
+                data.payment.status ===
+                    "paid"
             ) ||
 
             (
                 data.job &&
-                data.job.payment_status === "paid"
+                data.job.payment_status ===
+                    "paid"
             )
         )
     );
 }
 
 
-function updateActions(data){
+/* ==============================================================
+   ACTIONS
+============================================================== */
+
+function updateActions(
+    data
+){
 
     const ready =
-        isFinished(data);
+        isFinished(
+            data
+        );
+
 
     const approved =
-        isApproved(data);
+        isApproved(
+            data
+        );
+
 
     const paid =
-        isPaid(data);
+        isPaid(
+            data
+        );
 
 
     correctionButton.disabled =
-        !ready;
+        !ready ||
+        isCorrectionRunning;
 
 
     approveButton.disabled =
         !ready ||
-        approved;
+        approved ||
+        isCorrectionRunning;
 
 
     paymentButton.disabled =
         !ready ||
-        !approved;
+        !approved ||
+        isCorrectionRunning;
 
 
     downloadButton.disabled =
         !ready ||
         !approved ||
-        !paid;
+        !paid ||
+        isCorrectionRunning;
 }
 
 
-/* ============================================================
+/* ==============================================================
    CORRECTION
-============================================================ */
+============================================================== */
 
 async function requestCorrection(){
 
@@ -2693,7 +3886,9 @@ async function requestCorrection(){
             "error"
         );
 
+
         correctionText.focus();
+
 
         return;
     }
@@ -2706,17 +3901,23 @@ async function requestCorrection(){
             "error"
         );
 
+
         return;
     }
 
 
-    correctionButton.disabled =
+    isCorrectionRunning =
         true;
 
 
+    updateActions(
+        latestReview
+    );
+
+
     showNotice(
-        "Your correction is being sent back through the same document job.",
-        "success"
+        "Your correction is being sent through the same document job.",
+        "info"
     );
 
 
@@ -2748,61 +3949,102 @@ async function requestCorrection(){
             );
 
 
-        if(!response.ok){
+        if(
+            !response.ok
+        ){
 
             throw new Error(
-                "Correction failed: " +
+                "Correction returned HTTP " +
                 response.status
             );
         }
 
 
+        /*
+           Do not create another job.
+
+           We simply clear the currently displayed page
+           collection so the same job can provide its updated
+           version.
+        */
+
         correctionText.value =
             "";
 
 
-        /*
-            Force the next generated document/version to be
-            accepted as new content.
-        */
+        reviewPages = [];
 
-        lastDocumentHTML =
-            "";
+        currentPage = 0;
 
-        reviewPages =
-            [];
+        lastPageSignature = "";
 
-        currentPage =
-            0;
+        lastDocumentHTML = "";
+
+
+        documentViewer.innerHTML = `
+
+            <article class="review-page">
+
+                <div class="empty-document">
+
+                    Your correction has been submitted.
+                    <br><br>
+                    The document is being prepared again.
+
+                </div>
+
+            </article>
+        `;
+
 
         showNotice(
-            "Correction submitted. The affected part of your document is being worked on again.",
+            "Correction submitted successfully. The updated document will appear here automatically.",
             "success"
         );
 
 
-        startPolling();
+        clearTimeout(
+            pollTimer
+        );
+
+
+        pollTimer =
+            setTimeout(
+                fetchReview,
+                500
+            );
+
 
     }catch(error){
 
         console.error(
+            "Correction error:",
             error
         );
 
+
         showNotice(
-            "We could not submit the correction right now. Your current document has not been changed.",
+            "The correction could not be submitted. Your current document has not been changed.",
             "error"
         );
 
-        correctionButton.disabled =
+
+    }finally{
+
+        isCorrectionRunning =
             false;
+
+
+        updateActions(
+            latestReview
+        );
     }
 }
 
 
-/* ============================================================
-   APPROVE
-============================================================ */
+/* ==============================================================
+   APPROVAL
+============================================================== */
 
 async function approveDocument(){
 
@@ -2813,16 +4055,17 @@ async function approveDocument(){
 
     const versionId =
         getVersionId(
-            latestData
+            latestReview
         );
 
 
     if(!versionId){
 
         showNotice(
-            "The document version could not be identified yet. Please wait a moment and try again.",
+            "The document version is not available yet. Please wait a moment and try again.",
             "error"
         );
+
 
         return;
     }
@@ -2860,10 +4103,12 @@ async function approveDocument(){
             );
 
 
-        if(!response.ok){
+        if(
+            !response.ok
+        ){
 
             throw new Error(
-                "Approval failed: " +
+                "Approval returned HTTP " +
                 response.status
             );
         }
@@ -2877,26 +4122,31 @@ async function approveDocument(){
 
         await fetchReview();
 
+
     }catch(error){
 
         console.error(
+            "Approval error:",
             error
         );
+
 
         showNotice(
             "Approval could not be completed. Your document remains unchanged.",
             "error"
         );
 
-        approveButton.disabled =
-            false;
+
+        updateActions(
+            latestReview
+        );
     }
 }
 
 
-/* ============================================================
+/* ==============================================================
    PAYMENT
-============================================================ */
+============================================================== */
 
 function continueToPayment(){
 
@@ -2913,9 +4163,9 @@ function continueToPayment(){
 }
 
 
-/* ============================================================
+/* ==============================================================
    DOWNLOAD
-============================================================ */
+============================================================== */
 
 function downloadDocument(){
 
@@ -2926,7 +4176,7 @@ function downloadDocument(){
 
     const versionId =
         getVersionId(
-            latestData
+            latestReview
         );
 
 
@@ -2936,6 +4186,7 @@ function downloadDocument(){
             "The approved document version is not available yet.",
             "error"
         );
+
 
         return;
     }
@@ -2953,9 +4204,9 @@ function downloadDocument(){
 }
 
 
-/* ============================================================
+/* ==============================================================
    BACK
-============================================================ */
+============================================================== */
 
 function goBack(){
 
@@ -2976,9 +4227,9 @@ function goBack(){
 }
 
 
-/* ============================================================
+/* ==============================================================
    NOTICE
-============================================================ */
+============================================================== */
 
 function showNotice(
     message,
@@ -2988,50 +4239,53 @@ function showNotice(
     notice.textContent =
         message;
 
+
     notice.className =
         "notice show " +
         (
             type ||
-            ""
+            "info"
         );
 }
 
 
-/* ============================================================
+/* ==============================================================
    ESCAPE
-============================================================ */
+============================================================== */
 
 function escapeHTML(
     value
 ){
 
-    return String(value)
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+    return String(
+        value
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
 }
 
 
-/* ============================================================
+/* ==============================================================
    CLEANUP
-============================================================ */
+============================================================== */
 
 window.addEventListener(
     "beforeunload",
@@ -3042,6 +4296,7 @@ window.addEventListener(
         );
     }
 );
+
 </script>
 
 </body>
