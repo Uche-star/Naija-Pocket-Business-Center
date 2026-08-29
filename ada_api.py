@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import inspect
 import io
 import os
 import re
@@ -16,47 +17,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
-from ada_response import (
-    AdaResponse,
-    get_ada_model,
-    is_configured,
-)
+from ada_response import AdaResponse, get_ada_model, is_configured
 
 
 # ============================================================
 # CONFIGURATION
 # ============================================================
 
-DEBUG = os.getenv(
-    "ADA_DEBUG_ERRORS",
-    "true",
-).lower() in {
-    "1",
-    "true",
-    "yes",
-    "on",
+DEBUG = os.getenv("ADA_DEBUG_ERRORS", "true").lower() in {
+    "1", "true", "yes", "on"
 }
 
-MAX_UPLOAD = int(
-    os.getenv(
-        "ADA_MAX_UPLOAD_BYTES",
-        str(25 * 1024 * 1024),
-    )
-)
+MAX_UPLOAD = int(os.getenv("ADA_MAX_UPLOAD_BYTES", str(25 * 1024 * 1024)))
 
-REVIEW_CHUNK_CHARS = int(
-    os.getenv(
-        "ADA_REVIEW_CHUNK_CHARS",
-        "5000",
-    )
-)
-
-REVIEW_MIN_CHARS = int(
-    os.getenv(
-        "ADA_REVIEW_MIN_CHARS",
-        "2500",
-    )
-)
+# This is REVIEW DISPLAY chunking only. It is deliberately not
+# used as a customer page-count requirement.
+REVIEW_CHUNK_CHARS = int(os.getenv("ADA_REVIEW_CHUNK_CHARS", "7000"))
+REVIEW_MIN_CHARS = int(os.getenv("ADA_REVIEW_MIN_CHARS", "2500"))
 
 BASE = Path(__file__).resolve().parent
 
@@ -75,10 +52,7 @@ _correction_tasks: dict[str, asyncio.Task] = {}
 # FASTAPI
 # ============================================================
 
-app = FastAPI(
-    title="Naija Pocket Business Center",
-    version="intelligence-first-v9",
-)
+app = FastAPI(title="Naija Pocket Business Center", version="intelligence-first-v9")
 
 app.add_middleware(
     CORSMiddleware,
@@ -90,543 +64,175 @@ app.add_middleware(
 
 
 # ============================================================
-# FILE HELPERS
+# HELPERS
 # ============================================================
 
 def find_file(name: str):
-    locations = [
+    for path in (
         BASE / name,
         BASE / "app" / name,
         BASE / "static" / name,
         BASE / "public" / name,
         BASE / "assets" / name,
-    ]
-
-    for path in locations:
+    ):
         if path.is_file():
             return path
-
     return None
 
-
-# ============================================================
-# GENERAL HELPERS
-# ============================================================
 
 def event_value(value: Any) -> str:
     return str(value or "").strip().lower()
 
 
-def job_key(
-    customer_id: Any,
-    job_id: Any,
-) -> str:
-
-    customer = (
-        str(customer_id or "anonymous").strip()
-        or "anonymous"
-    )
-
-    job = (
-        str(job_id or "default").strip()
-        or "default"
-    )
-
+def job_key(customer_id: Any, job_id: Any) -> str:
+    customer = str(customer_id or "anonymous").strip() or "anonymous"
+    job = str(job_id or "default").strip() or "default"
     return f"{customer}:{job}"
 
 
 def clean_text(value: Any) -> str:
-
     if value is None:
         return ""
+    text = str(value).replace("\r\n", "\n").replace("\r", "\n")
+    text = re.sub(r"```(?:markdown|md|text)?", "", text, flags=re.I)
+    return text.replace("```", "").strip()
 
-    text = str(value)
 
-    text = text.replace(
-        "\r\n",
-        "\n",
+def application_error(stage: str, error: Exception | str, status: int = 500, code: str = "APPLICATION_ERROR"):
+    print(f"[{stage}] {type(error).__name__}: {error}")
+    if isinstance(error, Exception):
+        traceback.print_exc()
+    return JSONResponse(
+        status_code=status,
+        content={
+            "success": False,
+            "stage": stage,
+            "error": code,
+            "error_type": type(error).__name__ if isinstance(error, Exception) else "ApplicationError",
+            "error_message": str(error) if DEBUG else "An internal application error occurred.",
+        },
     )
-
-    text = text.replace(
-        "\r",
-        "\n",
-    )
-
-    text = re.sub(
-        r"```(?:markdown|md|text)?",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-
-    text = text.replace(
-        "```",
-        "",
-    )
-
-    return text.strip()
-
-
-# ============================================================
-# RESULT TEXT EXTRACTION
-#
-# IMPORTANT:
-# The intelligence layer may return:
-#
-#   str
-#   dict
-#   list
-#   tuple
-#   object with document_text/content/text/reply
-#   OpenAI/Groq-style object with choices[0].message.content
-#
-# This function deliberately accepts all of them.
-#
-# The API must NOT incorrectly report "empty content" merely
-# because the intelligence returned a different valid shape.
-# ============================================================
-
-def extract_text_from_value(
-    value: Any,
-) -> str:
-
-    if value is None:
-        return ""
-
-    if isinstance(
-        value,
-        str,
-    ):
-        return clean_text(
-            value
-        )
-
-    if isinstance(
-        value,
-        bytes,
-    ):
-        try:
-            return clean_text(
-                value.decode(
-                    "utf-8",
-                    "replace",
-                )
-            )
-        except Exception:
-            return ""
-
-    if isinstance(
-        value,
-        dict,
-    ):
-
-        # Prefer document/work fields.
-        for key in (
-            "document_text",
-            "prepared_work",
-            "document",
-            "generated_document",
-            "generated_text",
-            "content",
-            "text",
-            "reply",
-            "response",
-            "message",
-        ):
-
-            if key not in value:
-                continue
-
-            candidate = value.get(
-                key
-            )
-
-            text = extract_text_from_value(
-                candidate
-            )
-
-            if text:
-                return text
-
-        # Common API response shape.
-        choices = value.get(
-            "choices"
-        )
-
-        if choices:
-
-            text = extract_text_from_value(
-                choices
-            )
-
-            if text:
-                return text
-
-        return ""
-
-    if isinstance(
-        value,
-        (list, tuple),
-    ):
-
-        # A list of strings/dicts can represent document parts.
-        pieces: list[str] = []
-
-        for item in value:
-
-            text = extract_text_from_value(
-                item
-            )
-
-            if text:
-                pieces.append(
-                    text
-                )
-
-        return "\n\n".join(
-            pieces
-        ).strip()
-
-    # Object-style response.
-    for attribute in (
-        "document_text",
-        "prepared_work",
-        "generated_document",
-        "generated_text",
-        "content",
-        "text",
-        "reply",
-        "response",
-        "message",
-    ):
-
-        try:
-            candidate = getattr(
-                value,
-                attribute,
-                None,
-            )
-        except Exception:
-            candidate = None
-
-        if candidate is None:
-            continue
-
-        text = extract_text_from_value(
-            candidate
-        )
-
-        if text:
-            return text
-
-    # OpenAI/Groq-style:
-    # result.choices[0].message.content
-    try:
-
-        choices = getattr(
-            value,
-            "choices",
-            None,
-        )
-
-        if choices:
-
-            text = extract_text_from_value(
-                choices
-            )
-
-            if text:
-                return text
-
-    except Exception:
-        pass
-
-    return ""
-
-
-def normalize_document_marker_text(
-    text: str,
-) -> str:
-
-    text = clean_text(
-        text
-    )
-
-    # These are generation-control markers.
-    # They must never become visible document content.
-    text = re.sub(
-        r"\[CONTINUE\]",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-
-    text = re.sub(
-        r"\[END OF DOCUMENT\]",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-
-    text = re.sub(
-        r"\[DOCUMENT COMPLETE\]",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-
-    text = re.sub(
-        r"###\s*END\s*###",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-
-    return text.strip()
 
 
 # ============================================================
 # PAGE NORMALIZATION
 # ============================================================
 
-def normalize_document_pages(
-    pages: Any,
-) -> list[dict[str, Any]]:
-
+def normalize_document_pages(pages: Any) -> list[dict[str, Any]]:
     if pages is None:
         return []
-
-    if isinstance(
-        pages,
-        str,
-    ):
-
-        text = normalize_document_marker_text(
-            pages
-        )
-
-        if not text:
-            return []
-
-        return [
-            {
-                "page_number": 1,
-                "position": 1,
-                "content": text,
-            }
-        ]
-
-    if not isinstance(
-        pages,
-        list,
-    ):
-
+    if isinstance(pages, str):
+        text = clean_text(pages)
+        return ([{"page_number": 1, "position": 1, "content": text}] if text else [])
+    if not isinstance(pages, list):
         return []
 
     output: list[dict[str, Any]] = []
-
-    for item in pages:
-
-        if isinstance(
-            item,
-            dict,
-        ):
-
-            content = ""
-
-            for key in (
-                "content",
-                "text",
-                "document_text",
-                "prepared_work",
-            ):
-
-                candidate = item.get(
-                    key
-                )
-
-                if candidate is not None:
-
-                    content = (
-                        extract_text_from_value(
-                            candidate
-                        )
-                    )
-
-                    if content:
-                        break
-
-            content = normalize_document_marker_text(
-                content
+    for index, item in enumerate(pages, 1):
+        if isinstance(item, dict):
+            content = clean_text(
+                item.get("content", item.get("text", item.get("document_text", "")))
             )
-
             if not content:
                 continue
-
-            page = dict(
-                item
-            )
-
-            position = len(
-                output
-            ) + 1
-
-            page[
-                "page_number"
-            ] = position
-
-            page[
-                "position"
-            ] = position
-
-            page[
-                "content"
-            ] = content
-
-            output.append(
-                page
-            )
-
-        elif isinstance(
-            item,
-            str,
-        ):
-
-            content = normalize_document_marker_text(
-                item
-            )
-
+            page = dict(item)
+            page["page_number"] = index
+            page["position"] = index
+            page["content"] = content
+            output.append(page)
+        elif isinstance(item, str):
+            content = clean_text(item)
             if content:
-
-                position = len(
-                    output
-                ) + 1
-
-                output.append(
-                    {
-                        "page_number":
-                            position,
-
-                        "position":
-                            position,
-
-                        "content":
-                            content,
-                    }
-                )
-
+                output.append({"page_number": index, "position": index, "content": content})
     return output
 
 
-def normalize_pages(
-    pages: Any,
-) -> list[dict[str, Any]]:
+def text_to_review_pages(text: str) -> list[dict[str, Any]]:
+    """Turn the COMPLETE returned document into review chunks.
 
-    return normalize_document_pages(
-        pages
-    )
+    This function never truncates the supplied text and never limits
+    the result to one page. If more text exists, more review pages
+    are produced.
+    """
+    text = clean_text(text)
+    if not text:
+        return []
+
+    paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+    chunks: list[str] = []
+    current: list[str] = []
+    current_length = 0
+
+    def flush() -> None:
+        nonlocal current, current_length
+        if current:
+            chunks.append("\n\n".join(current).strip())
+            current = []
+            current_length = 0
+
+    for paragraph in paragraphs:
+        if len(paragraph) <= REVIEW_CHUNK_CHARS:
+            if current and current_length + len(paragraph) + 2 > REVIEW_CHUNK_CHARS:
+                flush()
+            current.append(paragraph)
+            current_length += len(paragraph) + 2
+            continue
+
+        for sentence in re.split(r"(?<=[.!?])\s+", paragraph):
+            sentence = sentence.strip()
+            if not sentence:
+                continue
+            if current and current_length + len(sentence) + 1 > REVIEW_CHUNK_CHARS:
+                flush()
+            current.append(sentence)
+            current_length += len(sentence) + 1
+
+    flush()
+
+    if len(chunks) >= 2 and len(chunks[-1]) < REVIEW_MIN_CHARS:
+        if len(chunks[-2]) + len(chunks[-1]) + 2 <= REVIEW_CHUNK_CHARS:
+            chunks[-2] += "\n\n" + chunks[-1]
+            chunks.pop()
+
+    return [
+        {"page_number": i, "position": i, "content": chunk}
+        for i, chunk in enumerate(chunks, 1)
+        if chunk.strip()
+    ]
+
+
+def normalize_pages_for_review(text: str, supplied_pages: Any = None) -> list[dict[str, Any]]:
+    """Use all available document text and never collapse it to page 1.
+
+    If a full document string is available, it is the authoritative
+    source for review pagination. Returned page objects are only used
+    when no usable full text can be assembled.
+    """
+    text = clean_text(text)
+    if text:
+        return text_to_review_pages(text)
+    return normalize_document_pages(supplied_pages)
+
+
+def normalize_pages(pages: Any) -> list[dict[str, Any]]:
+    return normalize_document_pages(pages)
 
 
 # ============================================================
 # SESSION
 # ============================================================
 
-def get_session(
-    customer_id: Any,
-    job_id: Any,
-    service: str | None = None,
-) -> AdaResponse:
-
-    key = job_key(
-        customer_id,
-        job_id,
-    )
-
-    ada = _sessions.get(
-        key
-    )
-
+def get_session(customer_id: Any, job_id: Any, service: str | None = None) -> AdaResponse:
+    key = job_key(customer_id, job_id)
+    ada = _sessions.get(key)
     if ada is None:
-
-        ada = AdaResponse(
-            service=service
-        )
-
+        ada = AdaResponse(service=service)
         _sessions[key] = ada
-
     elif service:
-
-        setter = getattr(
-            ada,
-            "set_service",
-            None,
-        )
-
-        if callable(
-            setter
-        ):
-
-            setter(
-                service
-            )
-
+        setter = getattr(ada, "set_service", None)
+        if callable(setter):
+            setter(service)
     return ada
-
-
-# ============================================================
-# ERROR RESPONSE
-# ============================================================
-
-def application_error(
-    stage: str,
-    error: Exception | str,
-    status: int = 500,
-    code: str = "APPLICATION_ERROR",
-):
-
-    print(
-        f"[{stage}] "
-        f"{type(error).__name__}: "
-        f"{error}"
-    )
-
-    if isinstance(
-        error,
-        Exception,
-    ):
-        traceback.print_exc()
-
-    return JSONResponse(
-        status_code=status,
-        content={
-            "success":
-                False,
-
-            "stage":
-                stage,
-
-            "error":
-                code,
-
-            "error_type":
-                (
-                    type(error).__name__
-                    if isinstance(
-                        error,
-                        Exception,
-                    )
-                    else "ApplicationError"
-                ),
-
-            "error_message":
-                (
-                    str(error)
-                    if DEBUG
-                    else
-                    "An internal application error occurred."
-                ),
-        },
-    )
 
 
 # ============================================================
@@ -634,45 +240,28 @@ def application_error(
 # ============================================================
 
 class Chat(BaseModel):
-
     message: str = ""
-
     service: str | None = None
-
     event: str | None = None
-
     customer_id: str | None = None
-
     job_id: str | None = None
-
     client_request_id: str | None = None
-
     activate_intelligence: bool = True
-
     context: str | None = None
-
     form_data: dict[str, Any] | None = None
-
     guidance_only: bool = False
-
     create_work: bool = False
-
     document_pages: list[Any] | None = None
-
     document_text: str | None = None
 
 
 class Correction(BaseModel):
-
     job_id: str
-
     instruction: str
 
 
 class Approval(BaseModel):
-
     job_id: str
-
     version_id: str
 
 
@@ -680,1695 +269,491 @@ class Approval(BaseModel):
 # CUSTOMER REQUEST
 # ============================================================
 
-def build_customer_request(
-    request: Chat,
-) -> str:
-
+def build_customer_request(request: Chat) -> str:
     parts: list[str] = []
-
     if request.service:
-
-        parts.append(
-            "SELECTED SERVICE:\n"
-            + request.service.strip()
-        )
-
+        parts.append("SELECTED SERVICE:\n" + request.service.strip())
     if request.form_data:
-
         information: list[str] = []
-
-        for key, value in (
-            request.form_data.items()
-        ):
-
-            value_text = str(
-                value or ""
-            ).strip()
-
+        for key, value in request.form_data.items():
+            value_text = str(value or "").strip()
             if not value_text:
                 continue
-
-            label = (
-                str(key)
-                .replace(
-                    "_",
-                    " ",
-                )
-                .strip()
-                .title()
-            )
-
-            information.append(
-                f"{label}: {value_text}"
-            )
-
+            label = str(key).replace("_", " ").strip().title()
+            information.append(f"{label}: {value_text}")
         if information:
-
-            parts.append(
-                "CUSTOMER PROVIDED SERVICE INFORMATION:\n"
-                + "\n".join(
-                    information
-                )
-            )
-
-    if request.context:
-
-        context = request.context.strip()
-
-        if context:
-
-            parts.append(
-                "ADDITIONAL CUSTOMER CONTEXT:\n"
-                + context
-            )
-
-    if request.message:
-
-        message = request.message.strip()
-
-        if message:
-
-            parts.append(
-                "CUSTOMER REQUEST:\n"
-                + message
-            )
-
-    return "\n\n".join(
-        parts
-    ).strip()
+            parts.append("CUSTOMER PROVIDED SERVICE INFORMATION:\n" + "\n".join(information))
+    if request.context and request.context.strip():
+        parts.append("ADDITIONAL CUSTOMER CONTEXT:\n" + request.context.strip())
+    if request.message and request.message.strip():
+        parts.append("CUSTOMER REQUEST:\n" + request.message.strip())
+    return "\n\n".join(parts).strip()
 
 
-def build_context(
-    request: Chat,
-) -> str | None:
-
+def build_context(request: Chat) -> str | None:
     parts: list[str] = []
-
-    if request.context:
-
-        value = request.context.strip()
-
-        if value:
-
-            parts.append(
-                value
-            )
-
+    if request.context and request.context.strip():
+        parts.append(request.context.strip())
     if request.customer_id:
-
-        parts.append(
-            "CUSTOMER ID:\n"
-            + request.customer_id
-        )
-
+        parts.append("CUSTOMER ID:\n" + request.customer_id)
     if request.client_request_id:
-
-        parts.append(
-            "CLIENT REQUEST ID:\n"
-            + request.client_request_id
-        )
-
-    result = "\n\n".join(
-        parts
-    ).strip()
-
+        parts.append("CLIENT REQUEST ID:\n" + request.client_request_id)
+    result = "\n\n".join(parts).strip()
     return result or None
-
-
-# ============================================================
-# DOCUMENT TEXT → REVIEW SECTIONS
-#
-# DISPLAY/REVIEW CHUNKING ONLY.
-#
-# THERE IS NO ONE-PAGE CAP HERE.
-# ============================================================
-
-def text_to_review_pages(
-    text: str,
-) -> list[dict[str, Any]]:
-
-    text = normalize_document_marker_text(
-        text
-    )
-
-    if not text:
-        return []
-
-    if len(text) <= REVIEW_CHUNK_CHARS:
-
-        return [
-            {
-                "page_number": 1,
-                "position": 1,
-                "content": text,
-            }
-        ]
-
-    paragraphs = re.split(
-        r"\n\s*\n",
-        text,
-    )
-
-    chunks: list[str] = []
-
-    current: list[str] = []
-
-    current_length = 0
-
-    for paragraph in paragraphs:
-
-        paragraph = paragraph.strip()
-
-        if not paragraph:
-            continue
-
-        length = len(
-            paragraph
-        )
-
-        if (
-            current
-            and
-            current_length
-            + length
-            + 2
-            > REVIEW_CHUNK_CHARS
-        ):
-
-            chunks.append(
-                "\n\n".join(
-                    current
-                ).strip()
-            )
-
-            current = []
-
-            current_length = 0
-
-        if length <= REVIEW_CHUNK_CHARS:
-
-            current.append(
-                paragraph
-            )
-
-            current_length += (
-                length + 2
-            )
-
-            continue
-
-        sentences = re.split(
-            r"(?<=[.!?])\s+",
-            paragraph,
-        )
-
-        for sentence in sentences:
-
-            sentence = sentence.strip()
-
-            if not sentence:
-                continue
-
-            length = len(
-                sentence
-            )
-
-            if (
-                current
-                and
-                current_length
-                + length
-                + 1
-                > REVIEW_CHUNK_CHARS
-            ):
-
-                chunks.append(
-                    "\n".join(
-                        current
-                    ).strip()
-                )
-
-                current = []
-
-                current_length = 0
-
-            current.append(
-                sentence
-            )
-
-            current_length += (
-                length + 1
-            )
-
-    if current:
-
-        chunks.append(
-            "\n\n".join(
-                current
-            ).strip()
-        )
-
-    if (
-        len(chunks) >= 2
-        and
-        len(chunks[-1]) < REVIEW_MIN_CHARS
-        and
-        len(chunks[-2])
-        + len(chunks[-1])
-        + 2
-        <= REVIEW_CHUNK_CHARS
-    ):
-
-        chunks[-2] = (
-            chunks[-2]
-            + "\n\n"
-            + chunks[-1]
-        )
-
-        chunks.pop()
-
-    return [
-        {
-            "page_number":
-                index,
-
-            "position":
-                index,
-
-            "content":
-                content,
-        }
-
-        for index, content
-        in enumerate(
-            chunks,
-            1,
-        )
-
-        if content.strip()
-    ]
 
 
 # ============================================================
 # INTELLIGENCE RESULT EXTRACTION
 # ============================================================
 
-def extract_complete_document(
-    result: Any,
-) -> tuple[
-    str,
-    list[dict[str, Any]],
-    dict[str, Any],
-]:
+_TEXT_KEYS = (
+    "document_text", "prepared_work", "generated_document", "generated", "output",
+    "document", "content", "text", "reply", "response", "message", "result", "answer",
+)
+_PAGE_KEYS = ("pages", "document_pages", "prepared_pages", "content_pages")
+
+
+def _extract_from_value(value: Any, depth: int = 0) -> tuple[str, list[dict[str, Any]]]:
+    if depth > 4 or value is None:
+        return "", []
+
+    if isinstance(value, str):
+        text = clean_text(value)
+        return text, text_to_review_pages(text) if text else []
+
+    if isinstance(value, list):
+        pages = normalize_pages(value)
+        if pages:
+            text = "\n\n".join(p["content"] for p in pages)
+            return text, text_to_review_pages(text)
+        return "", []
+
+    if isinstance(value, dict):
+        # Prefer explicit full-document fields before generic reply fields.
+        for key in _TEXT_KEYS:
+            candidate = value.get(key)
+            if isinstance(candidate, str) and clean_text(candidate):
+                text = clean_text(candidate)
+                return text, text_to_review_pages(text)
+        for key in _PAGE_KEYS:
+            candidate = value.get(key)
+            text, pages = _extract_from_value(candidate, depth + 1)
+            if text or pages:
+                return text, pages
+        for key, candidate in value.items():
+            if key in _TEXT_KEYS or key in _PAGE_KEYS:
+                continue
+            text, pages = _extract_from_value(candidate, depth + 1)
+            if text or pages:
+                return text, pages
+        return "", []
+
+    # Handle Pydantic/dataclass/custom result objects without requiring
+    # one rigid response schema.
+    try:
+        data = vars(value)
+    except Exception:
+        data = None
+    if isinstance(data, dict):
+        return _extract_from_value(data, depth + 1)
+
+    for key in _TEXT_KEYS + _PAGE_KEYS:
+        try:
+            candidate = getattr(value, key, None)
+        except Exception:
+            candidate = None
+        text, pages = _extract_from_value(candidate, depth + 1)
+        if text or pages:
+            return text, pages
+
+    return "", []
+
+
+def extract_complete_document(result: Any) -> tuple[str, list[dict[str, Any]], dict[str, Any]]:
+    text, pages = _extract_from_value(result)
+    if not text:
+        raise ValueError("The intelligence completed the operation but returned no usable document content.")
+
+    # IMPORTANT: the text is authoritative. Rebuild review pages from
+    # the complete text instead of trusting a single page object.
+    pages = text_to_review_pages(text)
+    if not pages:
+        raise ValueError("Usable document text was returned but no review pages could be constructed.")
 
     metadata: dict[str, Any] = {}
-
-    print(
-        "[INTELLIGENCE-RESULT]"
-        f" type={type(result).__name__}"
-    )
-
-    # --------------------------------------------------------
-    # STRING
-    # --------------------------------------------------------
-
-    if isinstance(
-        result,
-        str,
-    ):
-
-        text = normalize_document_marker_text(
-            result
-        )
-
-        pages = text_to_review_pages(
-            text
-        )
-
-        if text:
-
-            print(
-                "[INTELLIGENCE-RESULT]"
-                f" string_chars={len(text)}"
-                f" pages={len(pages)}"
-            )
-
-            return (
-                text,
-                pages,
-                metadata,
-            )
-
-    # --------------------------------------------------------
-    # LIST / TUPLE
-    # --------------------------------------------------------
-
-    if isinstance(
-        result,
-        (list, tuple),
-    ):
-
-        # First try to interpret it as pages.
-        pages = normalize_pages(
-            result
-        )
-
-        if pages:
-
-            text = "\n\n".join(
-                page["content"]
-                for page in pages
-            )
-
-            print(
-                "[INTELLIGENCE-RESULT]"
-                f" page_collection"
-                f" chars={len(text)}"
-                f" pages={len(pages)}"
-            )
-
-            return (
-                text,
-                pages,
-                metadata,
-            )
-
-        # Then try generic extraction.
-        text = extract_text_from_value(
-            result
-        )
-
-        text = normalize_document_marker_text(
-            text
-        )
-
-        if text:
-
-            pages = text_to_review_pages(
-                text
-            )
-
-            print(
-                "[INTELLIGENCE-RESULT]"
-                f" collection_text_chars={len(text)}"
-                f" pages={len(pages)}"
-            )
-
-            return (
-                text,
-                pages,
-                metadata,
-            )
-
-    # --------------------------------------------------------
-    # DICTIONARY
-    # --------------------------------------------------------
-
-    if isinstance(
-        result,
-        dict,
-    ):
-
-        # Preserve useful metadata while excluding content.
-        metadata = {
-            key: value
-            for key, value
-            in result.items()
-            if key not in {
-                "pages",
-                "document_pages",
-                "prepared_pages",
-                "content_pages",
-                "document",
-                "document_text",
-                "prepared_work",
-                "generated_document",
-                "generated_text",
-                "content",
-                "text",
-                "reply",
-                "response",
-                "message",
-            }
-        }
-
-        # Explicit page collections first.
-        for key in (
-            "pages",
-            "document_pages",
-            "prepared_pages",
-            "content_pages",
-        ):
-
-            value = result.get(
-                key
-            )
-
-            pages = normalize_pages(
-                value
-            )
-
-            if pages:
-
-                text = "\n\n".join(
-                    page["content"]
-                    for page in pages
-                )
-
-                print(
-                    "[INTELLIGENCE-RESULT]"
-                    f" key={key}"
-                    f" chars={len(text)}"
-                    f" pages={len(pages)}"
-                )
-
-                return (
-                    text,
-                    pages,
-                    metadata,
-                )
-
-        # Then all supported text fields.
-        text = extract_text_from_value(
-            result
-        )
-
-        text = normalize_document_marker_text(
-            text
-        )
-
-        if text:
-
-            pages = text_to_review_pages(
-                text
-            )
-
-            print(
-                "[INTELLIGENCE-RESULT]"
-                f" dict_text_chars={len(text)}"
-                f" pages={len(pages)}"
-            )
-
-            return (
-                text,
-                pages,
-                metadata,
-            )
-
-    # --------------------------------------------------------
-    # OBJECT
-    # --------------------------------------------------------
-
-    text = extract_text_from_value(
-        result
-    )
-
-    text = normalize_document_marker_text(
-        text
-    )
-
-    if text:
-
-        pages = text_to_review_pages(
-            text
-        )
-
-        print(
-            "[INTELLIGENCE-RESULT]"
-            f" object_text_chars={len(text)}"
-            f" pages={len(pages)}"
-        )
-
-        return (
-            text,
-            pages,
-            metadata,
-        )
-
-    raise ValueError(
-        "The intelligence completed the operation "
-        "but returned no usable document content."
-    )
+    if isinstance(result, dict):
+        metadata = {k: v for k, v in result.items() if k not in _TEXT_KEYS + _PAGE_KEYS}
+    return text, pages, metadata
 
 
 # ============================================================
-# DOCUMENT EXTRACTION
+# DOCUMENT CREATION CALLER
 # ============================================================
 
-def extract_document(
-    data: bytes,
-    filename: str,
-) -> str:
-
-    suffix = Path(
-        filename
-    ).suffix.lower()
-
-    if suffix in {
-        ".txt",
-        ".csv",
-    }:
-
-        return data.decode(
-            "utf-8",
-            "replace",
-        )
-
-    if suffix == ".pdf":
-
-        from pypdf import PdfReader
-
-        reader = PdfReader(
-            io.BytesIO(data)
-        )
-
-        return "\n\n".join(
-            page.extract_text() or ""
-            for page in reader.pages
-        )
-
-    if suffix in {
-        ".docx",
-        ".xlsx",
-        ".pptx",
-    }:
-
-        with zipfile.ZipFile(
-            io.BytesIO(data)
-        ) as archive:
-
-            names = archive.namelist()
-
-            if suffix == ".docx":
-
-                target = (
-                    "word/document.xml"
-                )
-
-                names = (
-                    [target]
-                    if target in names
-                    else []
-                )
-
-            elif suffix == ".pptx":
-
-                names = [
-                    name
-                    for name in names
-                    if re.match(
-                        r"ppt/slides/slide\d+\.xml",
-                        name,
-                    )
-                ]
-
-            else:
-
-                names = [
-                    name
-                    for name in names
-                    if re.match(
-                        r"xl/worksheets/sheet\d+\.xml",
-                        name,
-                    )
-                ]
-
-            texts: list[str] = []
-
-            for name in sorted(
-                names
-            ):
-
-                root = ET.fromstring(
-                    archive.read(
-                        name
-                    )
-                )
-
-                values = [
-                    element.text or ""
-                    for element in root.iter()
-                    if (
-                        isinstance(
-                            element.tag,
-                            str,
-                        )
-                        and
-                        element.tag.rsplit(
-                            "}",
-                            1,
-                        )[-1]
-                        == "t"
-                    )
-                ]
-
-                if values:
-
-                    texts.append(
-                        " ".join(
-                            values
-                        )
-                    )
-
-            return "\n\n".join(
-                texts
-            )
-
-    raise RuntimeError(
-        "Unsupported document type: "
-        f"{suffix or 'unknown'}"
-    )
-
-
-def uploaded_document_pages(
-    filename: str,
-    data: bytes,
-) -> list[dict[str, Any]]:
-
-    text = clean_text(
-        extract_document(
-            data,
-            filename,
-        )
-    )
-
-    if not text:
-
-        raise ValueError(
-            "The uploaded document contains "
-            "no extractable text."
-        )
-
-    return text_to_review_pages(
-        text
-    )
-
-
-# ============================================================
-# REVIEW STATE
-# ============================================================
-
-def make_review_pages(
-    pages: Any,
-) -> list[dict[str, Any]]:
-
-    normalized = normalize_pages(
-        pages
-    )
-
-    return [
-        {
-            "page_number":
-                index,
-
-            "position":
-                index,
-
-            "status":
-                "queued",
-
-            "content":
-                page["content"],
-
-            "review":
-                "",
-
-            "error":
-                None,
-        }
-
-        for index, page
-        in enumerate(
-            normalized,
-            1,
-        )
-    ]
-
-
-def synchronize_job_document(
-    job: dict[str, Any],
-):
-
-    pages = normalize_pages(
-        job.get(
-            "document_pages",
-            [],
-        )
-    )
-
-    job[
-        "document_pages"
-    ] = pages
-
-    existing = job.get(
-        "review_pages",
-        [],
-    )
-
-    if len(existing) != len(pages):
-
-        job[
-            "review_pages"
-        ] = make_review_pages(
-            pages
-        )
-
-    job[
-        "total_pages"
-    ] = len(pages)
-
-
-# ============================================================
-# JOB RESPONSE
-# ============================================================
-
-def make_job_response(
-    job: dict[str, Any],
-) -> dict[str, Any]:
-
-    synchronize_job_document(
-        job
-    )
-
-    pages = job[
-        "document_pages"
-    ]
-
-    progress = job.get(
-        "progress",
-        {},
-    )
-
-    return {
-        "success":
-            True,
-
-        "job_id":
-            job["job_id"],
-
-        "customer_id":
-            job.get(
-                "customer_id"
-            ),
-
-        "service":
-            job.get(
-                "service"
-            ),
-
-        "status":
-            job.get(
-                "status"
-            ),
-
-        "current_version":
-            job.get(
-                "current_version",
-                1,
-            ),
-
-        "version_id":
-            job.get(
-                "version_id"
-            ),
-
-        "review_started":
-            job.get(
-                "review_started",
-                False,
-            ),
-
-        "review_finished":
-            job.get(
-                "review_finished",
-                False,
-            ),
-
-        "approved":
-            job.get(
-                "approved",
-                False,
-            ),
-
-        "paid":
-            job.get(
-                "paid",
-                False,
-            ),
-
-        "progress":
-            {
-                "completed":
-                    int(
-                        progress.get(
-                            "completed",
-                            0,
-                        )
-                    ),
-
-                "total":
-                    len(pages),
-            },
-
-        "total_pages":
-            len(pages),
-
-        "document_pages":
-            pages,
-
-        "pages":
-            pages,
-
-        "review_pages":
-            job.get(
-                "review_pages",
-                [],
-            ),
-
-        "document_text":
-            job.get(
-                "document_text",
-                "",
-            ),
-
-        "assembled_review":
-            job.get(
-                "assembled_review",
-                "",
-            ),
-
-        "error":
-            job.get(
-                "review_error"
-            ),
-
-        "review_url":
-            (
-                "/review.html"
-                f"?job_id={job['job_id']}"
-            ),
-    }
-
-
-# ============================================================
-# CREATE JOB
-# ============================================================
-
-def create_job(
-    job_id: str,
-    request: Chat,
-    original_request: str,
-    document_text: str,
-    pages: Any,
-) -> dict[str, Any]:
-
-    normalized = normalize_pages(
-        pages
-    )
-
-    if not normalized:
-
-        raise ValueError(
-            "No complete document content was "
-            "returned by intelligence."
-        )
-
-    document_text = (
-        document_text
-        or
-        "\n\n".join(
-            page["content"]
-            for page in normalized
-        )
-    )
-
-    document_text = normalize_document_marker_text(
-        document_text
-    )
-
-    if not document_text:
-
-        raise ValueError(
-            "The generated document contains no usable text."
-        )
-
-    print(
-        "[JOB-CREATE]"
-        f" job={job_id}"
-        f" chars={len(document_text)}"
-        f" pages={len(normalized)}"
-    )
-
-    job = {
-        "job_id":
-            job_id,
-
-        "customer_id":
-            request.customer_id,
-
-        "service":
-            request.service,
-
-        "original_request":
-            original_request,
-
-        "context":
-            build_context(
-                request
-            ),
-
-        "status":
-            "reviewing",
-
-        "review_started":
-            True,
-
-        "review_finished":
-            False,
-
-        "review_error":
-            None,
-
-        "progress":
-            {
-                "completed": 0,
-                "total": len(
-                    normalized
-                ),
-            },
-
-        "document_text":
-            document_text,
-
-        "document_pages":
-            normalized,
-
-        "review_pages":
-            make_review_pages(
-                normalized
-            ),
-
-        "assembled_review":
-            "",
-
-        "current_version":
-            1,
-
-        "version_id":
-            f"{job_id}:1",
-
-        "approved":
-            False,
-
-        "paid":
-            False,
-    }
-
-    _jobs[
-        job_id
-    ] = job
-
-    return job
-
-
-# ============================================================
-# REVIEW CALLBACK
-# ============================================================
-
-def review_callback(
-    job_id: str,
-):
-
-    def callback(
-        update: dict[str, Any]
-    ):
-
-        job = _jobs.get(
-            job_id
-        )
-
-        if not job:
-            return
-
-        update_type = event_value(
-            update.get("type")
-        )
-
-        page_number = str(
-            update.get(
-                "page_number",
-                "",
-            )
-        )
-
-        if update_type == "page_started":
-
-            for page in job[
-                "review_pages"
-            ]:
-
-                if str(
-                    page["page_number"]
-                ) == page_number:
-
-                    page[
-                        "status"
-                    ] = "reviewing"
-
-        elif update_type == "page_completed":
-
-            for page in job[
-                "review_pages"
-            ]:
-
-                if str(
-                    page["page_number"]
-                ) != page_number:
-
-                    continue
-
-                page[
-                    "status"
-                ] = "reviewed"
-
-                page[
-                    "review"
-                ] = clean_text(
-                    update.get(
-                        "review",
-                        "",
-                    )
-                )
-
-                if update.get(
-                    "content"
-                ) is not None:
-
-                    page[
-                        "content"
-                    ] = clean_text(
-                        update.get(
-                            "content"
-                        )
-                    )
-
-                page[
-                    "error"
-                ] = None
-
-            try:
-
-                completed = int(
-                    update.get(
-                        "position",
-                        0,
-                    )
-                )
-
-            except Exception:
-
-                completed = 0
-
-            if completed:
-
-                job[
-                    "progress"
-                ][
-                    "completed"
-                ] = min(
-                    completed,
-                    len(
-                        job[
-                            "document_pages"
-                        ]
-                    ),
-                )
-
-        elif update_type == "page_error":
-
-            for page in job[
-                "review_pages"
-            ]:
-
-                if str(
-                    page["page_number"]
-                ) == page_number:
-
-                    page[
-                        "status"
-                    ] = "error"
-
-                    page[
-                        "error"
-                    ] = str(
-                        update.get(
-                            "error",
-                            "Page review failed.",
-                        )
-                    )
-
-        elif update_type == "review_completed":
-
-            total = len(
-                job[
-                    "document_pages"
-                ]
-            )
-
-            job[
-                "status"
-            ] = "review_complete"
-
-            job[
-                "review_finished"
-            ] = True
-
-            job[
-                "progress"
-            ] = {
-                "completed":
-                    total,
-
-                "total":
-                    total,
-            }
-
-            job[
-                "assembled_review"
-            ] = clean_text(
-                update.get(
-                    "assembled_review",
-                    "",
-                )
-            )
-
-    return callback
-
-
-# ============================================================
-# REVIEW ENGINE
-# ============================================================
-
-async def run_review(
-    job_id: str,
-):
-
-    job = _jobs.get(
-        job_id
-    )
-
-    if not job:
-        return
-
+async def _call_method_flexibly(method: Any, kwargs: dict[str, Any]) -> Any:
+    """Call an intelligence method without throwing away a valid result
+    because its signature uses fewer parameters.
+    """
     try:
+        signature = inspect.signature(method)
+    except (TypeError, ValueError):
+        return await asyncio.to_thread(method, **kwargs)
 
-        ada = get_session(
-            job.get(
-                "customer_id"
-            ),
-            job_id,
-            job.get(
-                "service"
-            ),
-        )
+    parameters = signature.parameters
+    accepts_kwargs = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in parameters.values())
+    if accepts_kwargs:
+        call_kwargs = kwargs
+    else:
+        call_kwargs = {k: v for k, v in kwargs.items() if k in parameters}
+    return await asyncio.to_thread(method, **call_kwargs)
 
-        pages = normalize_pages(
-            job[
-                "document_pages"
-            ]
-        )
-
-        method = getattr(
-            ada,
-            "review_document_pages",
-            None,
-        )
-
-        if not callable(
-            method
-        ):
-
-            raise AttributeError(
-                "AdaResponse has no "
-                "review_document_pages() method."
-            )
-
-        result = await asyncio.to_thread(
-            method,
-            pages=pages,
-            service=job.get(
-                "service"
-            ),
-            context=job.get(
-                "context"
-            ),
-            customer_request=job.get(
-                "original_request"
-            ),
-            event="send_for_review",
-            progress_callback=
-                review_callback(
-                    job_id
-                ),
-        )
-
-        if isinstance(
-            result,
-            dict,
-        ):
-
-            returned_pages = normalize_pages(
-                result.get(
-                    "pages",
-                    [],
-                )
-            )
-
-            if returned_pages:
-
-                job[
-                    "document_pages"
-                ] = returned_pages
-
-                job[
-                    "document_text"
-                ] = "\n\n".join(
-                    page["content"]
-                    for page
-                    in returned_pages
-                )
-
-                job[
-                    "review_pages"
-                ] = make_review_pages(
-                    returned_pages
-                )
-
-            job[
-                "assembled_review"
-            ] = clean_text(
-                result.get(
-                    "assembled_review",
-                    job.get(
-                        "assembled_review",
-                        "",
-                    ),
-                )
-            )
-
-        synchronize_job_document(
-            job
-        )
-
-        total = len(
-            job[
-                "document_pages"
-            ]
-        )
-
-        job[
-            "progress"
-        ] = {
-            "completed":
-                total,
-
-            "total":
-                total,
-        }
-
-        job[
-            "status"
-        ] = "review_complete"
-
-        job[
-            "review_started"
-        ] = True
-
-        job[
-            "review_finished"
-        ] = True
-
-        job[
-            "review_error"
-        ] = None
-
-        print(
-            "[REVIEW-COMPLETE]"
-            f" job={job_id}"
-            f" pages={total}"
-        )
-
-    except asyncio.CancelledError:
-
-        raise
-
-    except Exception as error:
-
-        job[
-            "status"
-        ] = "review_error"
-
-        job[
-            "review_finished"
-        ] = True
-
-        job[
-            "review_error"
-        ] = {
-            "type":
-                type(error).__name__,
-
-            "message":
-                str(error),
-        }
-
-        traceback.print_exc()
-
-
-def start_review(
-    job_id: str,
-) -> bool:
-
-    job = _jobs.get(
-        job_id
-    )
-
-    if not job:
-        return False
-
-    if not job.get(
-        "document_pages"
-    ):
-        return False
-
-    if job.get(
-        "status"
-    ) != "reviewing":
-
-        return False
-
-    existing = _review_tasks.get(
-        job_id
-    )
-
-    if (
-        existing
-        and not existing.done()
-    ):
-
-        return False
-
-    _review_tasks[
-        job_id
-    ] = asyncio.create_task(
-        run_review(
-            job_id
-        )
-    )
-
-    return True
-
-
-# ============================================================
-# INTELLIGENCE DOCUMENT CREATION
-#
-# IMPORTANT:
-# This layer does NOT generate the document itself.
-# AdaResponse remains responsible for generation.
-#
-# This function only calls the available document method and
-# safely extracts whatever valid result AdaResponse returns.
-# ============================================================
 
 async def create_document_with_intelligence(
     ada: AdaResponse,
     request: Chat,
     customer_request: str,
     context: str | None,
-) -> tuple[
-    str,
-    list[dict[str, Any]],
-    dict[str, Any],
-]:
+) -> tuple[str, list[dict[str, Any]], dict[str, Any]]:
+    kwargs = {
+        "customer_request": customer_request,
+        "service": request.service,
+        "form_data": request.form_data,
+        "context": context,
+        "event": request.event,
+        "message": customer_request,
+        "original_request": customer_request,
+        "create_work": True,
+    }
 
-    methods = (
-        "create_document",
-        "generate_document",
-        "create_work",
-        "generate_work",
-    )
-
-    last_type_error: Exception | None = None
-
-    for method_name in methods:
-
-        method = getattr(
-            ada,
-            method_name,
-            None,
-        )
-
-        if not callable(
-            method
-        ):
+    attempted: list[str] = []
+    for method_name in ("create_document", "generate_document", "create_work", "generate_work"):
+        method = getattr(ada, method_name, None)
+        if not callable(method):
             continue
-
-        print(
-            "[DOCUMENT-CREATION]"
-            f" trying={method_name}"
-        )
-
+        attempted.append(method_name)
+        result = await _call_method_flexibly(method, kwargs)
         try:
-
-            result = await asyncio.to_thread(
-                method,
-                customer_request=
-                    customer_request,
-
-                service=
-                    request.service,
-
-                form_data=
-                    request.form_data,
-
-                context=
-                    context,
-
-                event=
-                    request.event,
-            )
-
-            print(
-                "[DOCUMENT-CREATION]"
-                f" method={method_name}"
-                f" result_type={type(result).__name__}"
-            )
-
-            return extract_complete_document(
-                result
-            )
-
-        except TypeError as error:
-
-            # Signature mismatch:
-            # try the next supported method.
-            last_type_error = error
-
-            print(
-                "[DOCUMENT-CREATION]"
-                f" method={method_name}"
-                " signature mismatch"
-            )
-
+            return extract_complete_document(result)
+        except ValueError:
+            # A method exists but did not return a document. Continue to
+            # another explicit document-generation method before falling back
+            # to ordinary chat.
             continue
 
-    # --------------------------------------------------------
-    # FALLBACK TO RESPOND()
-    #
-    # Only used if no document-generation method is available.
-    # --------------------------------------------------------
+    respond = getattr(ada, "respond", None)
+    if callable(respond):
+        result = await _call_method_flexibly(
+            respond,
+            {
+                "message": customer_request,
+                "service": request.service,
+                "event": request.event,
+                "context": context,
+            },
+        )
+        return extract_complete_document(result)
 
-    respond = getattr(
-        ada,
-        "respond",
-        None,
+    raise AttributeError(
+        "AdaResponse has no usable document creation method. "
+        f"Methods checked: {', '.join(attempted) or 'none'}."
     )
 
-    if not callable(
-        respond
-    ):
 
-        if last_type_error:
+# ============================================================
+# JOBS / REVIEW
+# ============================================================
 
-            raise last_type_error
+def make_review_pages(pages: Any) -> list[dict[str, Any]]:
+    normalized = normalize_pages(pages)
+    return [
+        {
+            "page_number": i,
+            "position": i,
+            "status": "queued",
+            "content": page["content"],
+            "review": "",
+            "error": None,
+        }
+        for i, page in enumerate(normalized, 1)
+    ]
 
-        raise AttributeError(
-            "AdaResponse has no document creation "
-            "method and no respond() method."
+
+def synchronize_job_document(job: dict[str, Any]) -> None:
+    pages = normalize_pages(job.get("document_pages", []))
+    job["document_pages"] = pages
+    if len(job.get("review_pages", [])) != len(pages):
+        job["review_pages"] = make_review_pages(pages)
+    job["total_pages"] = len(pages)
+
+
+def create_job(job_id: str, request: Chat, original_request: str, document_text: str, pages: Any) -> dict[str, Any]:
+    # Rebuild pages from the complete text. This is the critical API-side
+    # protection against a valid multi-page document being represented as
+    # one page merely because the intelligence returned one page object.
+    document_text = clean_text(document_text)
+    normalized = text_to_review_pages(document_text)
+    if not normalized:
+        normalized = normalize_pages(pages)
+    if not normalized:
+        raise ValueError("No complete document content was returned by intelligence.")
+
+    job = {
+        "job_id": job_id,
+        "customer_id": request.customer_id,
+        "service": request.service,
+        "original_request": original_request,
+        "context": build_context(request),
+        "status": "reviewing",
+        "review_started": True,
+        "review_finished": False,
+        "review_error": None,
+        "progress": {"completed": 0, "total": len(normalized)},
+        "document_text": document_text,
+        "document_pages": normalized,
+        "review_pages": make_review_pages(normalized),
+        "assembled_review": "",
+        "current_version": 1,
+        "version_id": f"{job_id}:1",
+        "approved": False,
+        "paid": False,
+    }
+    _jobs[job_id] = job
+    print(f"[JOB] created job={job_id} document_chars={len(document_text)} total_pages={len(normalized)}")
+    return job
+
+
+def review_callback(job_id: str):
+    def callback(update: dict[str, Any]):
+        job = _jobs.get(job_id)
+        if not job:
+            return
+        update_type = event_value(update.get("type"))
+        page_number = str(update.get("page_number", ""))
+        if update_type == "page_started":
+            for page in job["review_pages"]:
+                if str(page["page_number"]) == page_number:
+                    page["status"] = "reviewing"
+        elif update_type == "page_completed":
+            for page in job["review_pages"]:
+                if str(page["page_number"]) != page_number:
+                    continue
+                page["status"] = "reviewed"
+                page["review"] = clean_text(update.get("review", ""))
+                if update.get("content") is not None:
+                    page["content"] = clean_text(update.get("content"))
+                page["error"] = None
+            try:
+                completed = int(update.get("position", 0))
+            except Exception:
+                completed = 0
+            if completed:
+                job["progress"]["completed"] = min(completed, len(job["document_pages"]))
+        elif update_type == "page_error":
+            for page in job["review_pages"]:
+                if str(page["page_number"]) == page_number:
+                    page["status"] = "error"
+                    page["error"] = str(update.get("error", "Page review failed."))
+        elif update_type == "review_completed":
+            total = len(job["document_pages"])
+            job["status"] = "review_complete"
+            job["review_finished"] = True
+            job["progress"] = {"completed": total, "total": total}
+            job["assembled_review"] = clean_text(update.get("assembled_review", ""))
+    return callback
+
+
+async def run_review(job_id: str):
+    job = _jobs.get(job_id)
+    if not job:
+        return
+    try:
+        ada = get_session(job.get("customer_id"), job_id, job.get("service"))
+        pages = normalize_pages(job["document_pages"])
+        method = getattr(ada, "review_document_pages", None)
+        if not callable(method):
+            raise AttributeError("AdaResponse has no review_document_pages() method.")
+
+        result = await _call_method_flexibly(
+            method,
+            {
+                "pages": pages,
+                "service": job.get("service"),
+                "context": job.get("context"),
+                "customer_request": job.get("original_request"),
+                "event": "send_for_review",
+                "progress_callback": review_callback(job_id),
+            },
         )
 
-    print(
-        "[DOCUMENT-CREATION]"
-        " fallback=respond"
-    )
+        if isinstance(result, dict):
+            returned_pages = normalize_pages(result.get("pages", []))
+            if returned_pages:
+                # Review may update content, but do not permit it to collapse
+                # a complete multi-page document to a single page.
+                returned_text = "\n\n".join(p["content"] for p in returned_pages)
+                if returned_text:
+                    job["document_text"] = returned_text
+                    job["document_pages"] = text_to_review_pages(returned_text)
+                    job["review_pages"] = make_review_pages(job["document_pages"])
+            job["assembled_review"] = clean_text(
+                result.get("assembled_review", job.get("assembled_review", ""))
+            )
 
-    result = await asyncio.to_thread(
-        respond,
-        message=
-            customer_request,
+        total = len(job["document_pages"])
+        job["progress"] = {"completed": total, "total": total}
+        job["status"] = "review_complete"
+        job["review_started"] = True
+        job["review_finished"] = True
+        job["review_error"] = None
+        print(f"[REVIEW] job={job_id} total_pages={total}")
+    except asyncio.CancelledError:
+        raise
+    except Exception as error:
+        job["status"] = "review_error"
+        job["review_finished"] = True
+        job["review_error"] = {"type": type(error).__name__, "message": str(error)}
+        traceback.print_exc()
 
-        service=
-            request.service,
 
-        event=
-            request.event,
+def start_review(job_id: str) -> bool:
+    job = _jobs.get(job_id)
+    if not job or not job.get("document_pages") or job.get("status") != "reviewing":
+        return False
+    existing = _review_tasks.get(job_id)
+    if existing and not existing.done():
+        return False
+    _review_tasks[job_id] = asyncio.create_task(run_review(job_id))
+    return True
 
-        context=
-            context,
-    )
 
-    print(
-        "[DOCUMENT-CREATION]"
-        f" respond_result_type={type(result).__name__}"
-    )
-
-    return extract_complete_document(
-        result
-    )
+def make_job_response(job: dict[str, Any]) -> dict[str, Any]:
+    synchronize_job_document(job)
+    pages = job["document_pages"]
+    progress = job.get("progress", {})
+    return {
+        "success": True,
+        "job_id": job["job_id"],
+        "customer_id": job.get("customer_id"),
+        "service": job.get("service"),
+        "status": job.get("status"),
+        "current_version": job.get("current_version", 1),
+        "version_id": job.get("version_id"),
+        "review_started": job.get("review_started", False),
+        "review_finished": job.get("review_finished", False),
+        "approved": job.get("approved", False),
+        "paid": job.get("paid", False),
+        "progress": {"completed": int(progress.get("completed", 0)), "total": len(pages)},
+        "total_pages": len(pages),
+        "document_pages": pages,
+        "pages": pages,
+        "review_pages": job.get("review_pages", []),
+        "document_text": job.get("document_text", ""),
+        "assembled_review": job.get("assembled_review", ""),
+        "error": job.get("review_error"),
+        "review_url": f"/review.html?job_id={job['job_id']}",
+    }
 
 
 # ============================================================
-# HTML
+# DOCUMENT EXTRACTION / UPLOAD
 # ============================================================
 
-def serve_html(
-    filename: str,
-):
+def extract_document(data: bytes, filename: str) -> str:
+    suffix = Path(filename).suffix.lower()
+    if suffix in {".txt", ".csv"}:
+        return data.decode("utf-8", "replace")
+    if suffix == ".pdf":
+        from pypdf import PdfReader
+        reader = PdfReader(io.BytesIO(data))
+        return "\n\n".join(page.extract_text() or "" for page in reader.pages)
+    if suffix in {".docx", ".xlsx", ".pptx"}:
+        with zipfile.ZipFile(io.BytesIO(data)) as archive:
+            names = archive.namelist()
+            if suffix == ".docx":
+                names = ["word/document.xml"] if "word/document.xml" in names else []
+            elif suffix == ".pptx":
+                names = [n for n in names if re.match(r"ppt/slides/slide\d+\.xml", n)]
+            else:
+                names = [n for n in names if re.match(r"xl/worksheets/sheet\d+\.xml", n)]
+            texts: list[str] = []
+            for name in sorted(names):
+                root = ET.fromstring(archive.read(name))
+                values = [
+                    element.text or ""
+                    for element in root.iter()
+                    if isinstance(element.tag, str) and element.tag.rsplit("}", 1)[-1] == "t"
+                ]
+                if values:
+                    texts.append(" ".join(values))
+            return "\n\n".join(texts)
+    raise RuntimeError(f"Unsupported document type: {suffix or 'unknown'}")
 
-    path = find_file(
-        filename
-    )
 
+def uploaded_document_pages(filename: str, data: bytes) -> list[dict[str, Any]]:
+    text = clean_text(extract_document(data, filename))
+    if not text:
+        raise ValueError("The uploaded document contains no extractable text.")
+    return text_to_review_pages(text)
+
+
+# ============================================================
+# HTML / HEALTH
+# ============================================================
+
+
+def serve_html(filename: str):
+    path = find_file(filename)
     if not path:
-
-        return application_error(
-            "PAGE",
-            f"{filename} was not found.",
-            404,
-            "HTML_NOT_FOUND",
-        )
-
-    return FileResponse(
-        path,
-        media_type="text/html",
-    )
+        return application_error("PAGE", f"{filename} was not found.", 404, "HTML_NOT_FOUND")
+    return FileResponse(path, media_type="text/html")
 
 
 @app.get("/")
-async def root():
-    return serve_html("index.html")
-
+async def root(): return serve_html("index.html")
 
 @app.get("/index.html")
-async def index():
-    return serve_html("index.html")
-
+async def index(): return serve_html("index.html")
 
 @app.get("/conversation.html")
-async def conversation():
-    return serve_html("conversation.html")
-
+async def conversation(): return serve_html("conversation.html")
 
 @app.get("/workspace.html")
-async def workspace():
-    return serve_html("workspace.html")
-
+async def workspace(): return serve_html("workspace.html")
 
 @app.get("/review.html")
-async def review_page():
-    return serve_html("review.html")
-
+async def review_page(): return serve_html("review.html")
 
 @app.get("/payment.html")
-async def payment_page():
-    return serve_html("payment.html")
-
+async def payment_page(): return serve_html("payment.html")
 
 @app.get("/download.html")
-async def download_page():
-    return serve_html("download.html")
+async def download_page(): return serve_html("download.html")
 
-
-# ============================================================
-# HEALTH
-# ============================================================
 
 @app.get("/health")
 async def health():
-
     return {
-        "success":
-            True,
-
-        "status":
-            "ok",
-
-        "api":
-            "FastAPI",
-
-        "intelligence":
-            "AdaResponse",
-
-        "model":
-            get_ada_model(),
-
-        "configured":
-            is_configured(),
-
-        "architecture":
-            "intelligence-first",
-
-        "document_generation":
-            "delegated_to_intelligence",
-
-        "page_limit":
-            None,
+        "success": True,
+        "status": "ok",
+        "api": "FastAPI",
+        "intelligence": "AdaResponse",
+        "model": get_ada_model(),
+        "configured": is_configured(),
+        "architecture": "intelligence-first",
     }
 
 
 @app.get("/api/status")
 async def api_status():
-
     return {
-        "success":
-            True,
-
-        "api":
-            "FastAPI",
-
-        "intelligence":
-            "AdaResponse",
-
-        "model":
-            get_ada_model(),
-
-        "configured":
-            is_configured(),
-
-        "active_sessions":
-            len(_sessions),
-
-        "active_jobs":
-            len(_jobs),
-
-        "architecture":
-            "intelligence-first",
-
-        "document_generation":
-            "delegated_to_intelligence",
-
-        "page_limit":
-            None,
+        "success": True,
+        "api": "FastAPI",
+        "intelligence": "AdaResponse",
+        "model": get_ada_model(),
+        "configured": is_configured(),
+        "active_sessions": len(_sessions),
+        "active_jobs": len(_jobs),
+        "architecture": "intelligence-first",
     }
 
 
@@ -2379,107 +764,35 @@ async def api_status():
 @app.post("/api/upload")
 async def upload(
     file: UploadFile = File(...),
-
-    customer_id:
-        str | None = Form(None),
-
-    job_id:
-        str | None = Form(None),
-
-    client_request_id:
-        str | None = Form(None),
-
-    service:
-        str | None = Form(None),
+    customer_id: str | None = Form(None),
+    job_id: str | None = Form(None),
+    client_request_id: str | None = Form(None),
+    service: str | None = Form(None),
 ):
-
     try:
-
         data = await file.read()
-
         if not data:
-
-            return application_error(
-                "UPLOAD",
-                "The uploaded file is empty.",
-                400,
-                "EMPTY_FILE",
-            )
-
+            return application_error("UPLOAD", "The uploaded file is empty.", 400, "EMPTY_FILE")
         if len(data) > MAX_UPLOAD:
-
-            return application_error(
-                "UPLOAD",
-                "The uploaded document is too large.",
-                413,
-                "FILE_TOO_LARGE",
-            )
-
-        filename = (
-            file.filename
-            or "document"
-        )
-
-        pages = await asyncio.to_thread(
-            uploaded_document_pages,
-            filename,
-            data,
-        )
-
-        job_id_value = (
-            str(
-                job_id or ""
-            ).strip()
-            or str(
-                uuid.uuid4()
-            )
-        )
-
-        text = "\n\n".join(
-            page["content"]
-            for page in pages
-        )
-
+            return application_error("UPLOAD", "The uploaded document is too large.", 413, "FILE_TOO_LARGE")
+        filename = file.filename or "document"
+        pages = await asyncio.to_thread(uploaded_document_pages, filename, data)
+        job_id_value = str(job_id or "").strip() or str(uuid.uuid4())
+        text = "\n\n".join(p["content"] for p in pages)
         return {
-            "success":
-                True,
-
-            "filename":
-                filename,
-
-            "job_id":
-                job_id_value,
-
-            "customer_id":
-                customer_id,
-
-            "client_request_id":
-                client_request_id,
-
-            "service":
-                service,
-
-            "document_text":
-                text,
-
-            "total_pages":
-                len(pages),
-
-            "document_pages":
-                pages,
-
-            "pages":
-                pages,
+            "success": True,
+            "filename": filename,
+            "job_id": job_id_value,
+            "customer_id": customer_id,
+            "client_request_id": client_request_id,
+            "service": service,
+            "document_text": text,
+            "total_pages": len(pages),
+            "document_pages": pages,
+            "pages": pages,
         }
-
     except Exception as error:
-
-        return application_error(
-            "UPLOAD",
-            error,
-            400,
-            "DOCUMENT_UPLOAD_ERROR",
-        )
+        return application_error("UPLOAD", error, 400, "DOCUMENT_UPLOAD_ERROR")
 
 
 # ============================================================
@@ -2487,473 +800,102 @@ async def upload(
 # ============================================================
 
 @app.post("/api/chat")
-async def chat(
-    request: Chat,
-):
-
+async def chat(request: Chat):
     if not request.activate_intelligence:
-
-        return application_error(
-            "INTELLIGENCE",
-            "Intelligence activation is disabled.",
-            400,
-            "INTELLIGENCE_NOT_ACTIVATED",
-        )
-
+        return application_error("INTELLIGENCE", "Intelligence activation is disabled.", 400, "INTELLIGENCE_NOT_ACTIVATED")
     if not is_configured():
+        return application_error("INTELLIGENCE", "Intelligence is not configured.", 503, "INTELLIGENCE_NOT_CONFIGURED")
 
-        return application_error(
-            "INTELLIGENCE",
-            "Intelligence is not configured.",
-            503,
-            "INTELLIGENCE_NOT_CONFIGURED",
-        )
-
-    job_id = (
-        str(
-            request.job_id or ""
-        ).strip()
-        or str(
-            uuid.uuid4()
-        )
-    )
-
-    context = build_context(
-        request
-    )
-
-    customer_request = (
-        build_customer_request(
-            request
-        )
-    )
-
-    pages = normalize_pages(
-        request.document_pages
-    )
-
-    if (
-        not pages
-        and request.document_text
-    ):
-
-        pages = text_to_review_pages(
-            request.document_text
-        )
+    job_id = str(request.job_id or "").strip() or str(uuid.uuid4())
+    context = build_context(request)
+    customer_request = build_customer_request(request)
+    pages = normalize_pages(request.document_pages)
+    document_text = clean_text(request.document_text)
+    if not document_text and pages:
+        document_text = "\n\n".join(p["content"] for p in pages)
 
     try:
-
-        ada = get_session(
-            request.customer_id,
-            job_id,
-            request.service,
-        )
-
-        # ----------------------------------------------------
-        # GUIDANCE CHAT
-        # ----------------------------------------------------
+        ada = get_session(request.customer_id, job_id, request.service)
 
         if request.guidance_only:
-
             if not request.message.strip():
-
-                return application_error(
-                    "GUIDANCE",
-                    "The guidance message is empty.",
-                    400,
-                    "EMPTY_GUIDANCE_MESSAGE",
-                )
-
-            reply_result = await asyncio.to_thread(
+                return application_error("GUIDANCE", "The guidance message is empty.", 400, "EMPTY_GUIDANCE_MESSAGE")
+            reply = await _call_method_flexibly(
                 ada.respond,
-                message=
-                    request.message.strip(),
-
-                service=
-                    request.service,
-
-                event=
-                    request.event,
-
-                context=
-                    context,
+                {"message": request.message.strip(), "service": request.service, "event": request.event, "context": context},
             )
+            return {"success": True, "reply": clean_text(reply), "job_id": job_id, "created_work": False}
 
-            reply = extract_text_from_value(
-                reply_result
-            )
-
-            return {
-                "success":
-                    True,
-
-                "reply":
-                    clean_text(
-                        reply
-                    ),
-
-                "job_id":
-                    job_id,
-
-                "created_work":
-                    False,
-            }
-
-        # ----------------------------------------------------
-        # CREATE WORK
-        # ----------------------------------------------------
-
-        create_requested = (
-            request.create_work
-            or
-            event_value(
-                request.event
-            )
-            in {
-                "form_submitted_create_work",
-                "create_work",
-                "create_document",
-                "submit_service",
-                "service_submitted",
-            }
-        )
-
-        if create_requested:
-
-            # ------------------------------------------------
-            # EXISTING AUTHORITATIVE DOCUMENT
-            # ------------------------------------------------
-
-            if pages:
-
-                document_text = "\n\n".join(
-                    page["content"]
-                    for page in pages
-                )
-
-                document_text = (
-                    normalize_document_marker_text(
-                        document_text
-                    )
-                )
-
-                job = create_job(
-                    job_id,
-                    request,
-                    customer_request,
-                    document_text,
-                    pages,
-                )
-
-            # ------------------------------------------------
-            # GENERATE NEW DOCUMENT
-            # ------------------------------------------------
-
-            else:
-
-                if not customer_request:
-
-                    return application_error(
-                        "WORK_CREATION",
-                        "The customer request contains "
-                        "no usable information.",
-                        400,
-                        "EMPTY_WORK_REQUEST",
-                    )
-
-                (
-                    document_text,
-                    created_pages,
-                    metadata,
-                ) = await create_document_with_intelligence(
-                    ada,
-                    request,
-                    customer_request,
-                    context,
-                )
-
-                # --------------------------------------------
-                # CRITICAL PRESERVATION CHECK
-                # --------------------------------------------
-
-                document_text = (
-                    normalize_document_marker_text(
-                        document_text
-                    )
-                )
-
-                print(
-                    "[PAG-INPUT]"
-                    f" document_text_chars="
-                    f"{len(document_text)}"
-                )
-
-                if not document_text:
-
-                    raise ValueError(
-                        "Intelligence returned an empty "
-                        "document after result extraction."
-                    )
-
-                # If intelligence returned text but no pages,
-                # pagination happens here.
-                if not created_pages:
-
-                    created_pages = (
-                        text_to_review_pages(
-                            document_text
-                        )
-                    )
-
-                # If pages were returned, preserve them.
-                if created_pages:
-
-                    created_pages = normalize_pages(
-                        created_pages
-                    )
-
-                if not created_pages:
-
-                    raise ValueError(
-                        "Intelligence returned document text "
-                        "but no usable document pages."
-                    )
-
-                print(
-                    "[PAG-OUTPUT]"
-                    f" document_text_chars="
-                    f"{len(document_text)}"
-                    f" pages={len(created_pages)}"
-                )
-
-                job = create_job(
-                    job_id,
-                    request,
-                    customer_request,
-                    document_text,
-                    created_pages,
-                )
-
-                job[
-                    "intelligence_metadata"
-                ] = metadata
-
-            started = start_review(
-                job_id
-            )
-
-            response = make_job_response(
-                job
-            )
-
-            response.update(
-                {
-                    "reply":
-                        (
-                            "Your work has been prepared "
-                            "and sent for review."
-                        ),
-
-                    "created_work":
-                        True,
-
-                    "work_created":
-                        True,
-
-                    "review_started":
-                        started,
-                }
-            )
-
-            return response
-
-        # ----------------------------------------------------
-        # DOCUMENT ALREADY SUPPLIED
-        # ----------------------------------------------------
-
-        if pages:
-
-            existing_job = _jobs.get(
-                job_id
-            )
-
-            if existing_job:
-
-                task = _review_tasks.get(
-                    job_id
-                )
-
-                if (
-                    task
-                    and not task.done()
-                    and existing_job.get(
-                        "status"
-                    ) == "reviewing"
-                ):
-
-                    return make_job_response(
-                        existing_job
-                    )
-
-                existing_job[
-                    "document_pages"
-                ] = pages
-
-                existing_job[
-                    "document_text"
-                ] = "\n\n".join(
-                    page["content"]
-                    for page in pages
-                )
-
-                existing_job[
-                    "review_pages"
-                ] = make_review_pages(
-                    pages
-                )
-
-                existing_job[
-                    "progress"
-                ] = {
-                    "completed":
-                        0,
-
-                    "total":
-                        len(pages),
-                }
-
-                existing_job[
-                    "status"
-                ] = "reviewing"
-
-                existing_job[
-                    "review_started"
-                ] = True
-
-                existing_job[
-                    "review_finished"
-                ] = False
-
-                existing_job[
-                    "review_error"
-                ] = None
-
-                existing_job[
-                    "approved"
-                ] = False
-
-                existing_job[
-                    "paid"
-                ] = False
-
-                job = existing_job
-
-            else:
-
-                job = create_job(
-                    job_id,
-                    request,
-                    customer_request,
-                    "\n\n".join(
-                        page["content"]
-                        for page in pages
-                    ),
-                    pages,
-                )
-
-            started = start_review(
-                job_id
-            )
-
-            response = make_job_response(
-                job
-            )
-
-            response.update(
-                {
-                    "reply":
-                        (
-                            "Your document has been "
-                            "received and is being "
-                            "reviewed."
-                        ),
-
-                    "created_work":
-                        True,
-
-                    "review_started":
-                        started,
-                }
-            )
-
-            return response
-
-        # ----------------------------------------------------
-        # NORMAL INTELLIGENT CHAT
-        # ----------------------------------------------------
-
-        if not request.message.strip():
-
-            return application_error(
-                "CHAT",
-                "The chat message is empty.",
-                400,
-                "EMPTY_MESSAGE",
-            )
-
-        reply_result = await asyncio.to_thread(
-            ada.respond,
-            message=
-                request.message.strip(),
-
-            service=
-                request.service,
-
-            event=
-                request.event,
-
-            context=
-                context,
-        )
-
-        reply = extract_text_from_value(
-            reply_result
-        )
-
-        return {
-            "success":
-                True,
-
-            "reply":
-                clean_text(
-                    reply
-                ),
-
-            "job_id":
-                job_id,
-
-            "service":
-                (
-                    request.service
-                    or getattr(
-                        ada,
-                        "service",
-                        None,
-                    )
-                ),
-
-            "created_work":
-                False,
+        create_requested = request.create_work or event_value(request.event) in {
+            "form_submitted_create_work", "create_work", "create_document", "submit_service", "service_submitted"
         }
 
-    except Exception as error:
+        if create_requested:
+            if document_text or pages:
+                complete_text = document_text or "\n\n".join(p["content"] for p in pages)
+                job = create_job(job_id, request, customer_request, complete_text, pages)
+            else:
+                if not customer_request:
+                    return application_error("WORK_CREATION", "The customer request contains no usable information.", 400, "EMPTY_WORK_REQUEST")
+                complete_text, created_pages, metadata = await create_document_with_intelligence(
+                    ada, request, customer_request, context
+                )
+                print(f"[PAG-INPUT] document_text_chars={len(complete_text)}")
+                print(f"[PAG-INPUT] generated_pages={len(created_pages)}")
+                job = create_job(job_id, request, customer_request, complete_text, created_pages)
+                job["intelligence_metadata"] = metadata
 
-        return application_error(
-            "CHAT",
-            error,
-            500,
-            "CHAT_ERROR",
+            started = start_review(job_id)
+            response = make_job_response(job)
+            response.update({
+                "reply": "Your work has been prepared and sent for review.",
+                "created_work": True,
+                "work_created": True,
+                "review_started": started,
+            })
+            return response
+
+        if pages or document_text:
+            complete_text = document_text or "\n\n".join(p["content"] for p in pages)
+            existing_job = _jobs.get(job_id)
+            if existing_job:
+                existing_job["document_text"] = complete_text
+                existing_job["document_pages"] = text_to_review_pages(complete_text)
+                existing_job["review_pages"] = make_review_pages(existing_job["document_pages"])
+                existing_job["progress"] = {"completed": 0, "total": len(existing_job["document_pages"])}
+                existing_job["status"] = "reviewing"
+                existing_job["review_started"] = True
+                existing_job["review_finished"] = False
+                existing_job["review_error"] = None
+                existing_job["approved"] = False
+                existing_job["paid"] = False
+                job = existing_job
+            else:
+                job = create_job(job_id, request, customer_request, complete_text, pages)
+            started = start_review(job_id)
+            response = make_job_response(job)
+            response.update({
+                "reply": "Your document has been received and is being reviewed.",
+                "created_work": True,
+                "review_started": started,
+            })
+            return response
+
+        if not request.message.strip():
+            return application_error("CHAT", "The chat message is empty.", 400, "EMPTY_MESSAGE")
+        reply = await _call_method_flexibly(
+            ada.respond,
+            {"message": request.message.strip(), "service": request.service, "event": request.event, "context": context},
         )
+        return {
+            "success": True,
+            "reply": clean_text(reply),
+            "job_id": job_id,
+            "service": request.service or getattr(ada, "service", None),
+            "created_work": False,
+        }
+    except Exception as error:
+        return application_error("CHAT", error, 500, "CHAT_ERROR")
 
 
 # ============================================================
@@ -2961,122 +903,35 @@ async def chat(
 # ============================================================
 
 @app.get("/api/review")
-async def get_review(
-    job_id: str,
-):
-
-    job = _jobs.get(
-        job_id
-    )
-
+async def get_review(job_id: str):
+    job = _jobs.get(job_id)
     if not job:
-
-        return application_error(
-            "REVIEW",
-            "The requested review job does not exist.",
-            404,
-            "JOB_NOT_FOUND",
-        )
-
-    start_review(
-        job_id
-    )
-
-    return make_job_response(
-        job
-    )
+        return application_error("REVIEW", "The requested review job does not exist.", 404, "JOB_NOT_FOUND")
+    start_review(job_id)
+    return make_job_response(job)
 
 
 @app.get("/api/review/pages")
-async def get_review_pages(
-    job_id: str,
-):
-
-    job = _jobs.get(
-        job_id
-    )
-
+async def get_review_pages(job_id: str):
+    job = _jobs.get(job_id)
     if not job:
-
-        return application_error(
-            "REVIEW_PAGES",
-            "The requested review job does not exist.",
-            404,
-            "JOB_NOT_FOUND",
-        )
-
-    start_review(
-        job_id
-    )
-
-    synchronize_job_document(
-        job
-    )
-
+        return application_error("REVIEW_PAGES", "The requested review job does not exist.", 404, "JOB_NOT_FOUND")
+    start_review(job_id)
+    synchronize_job_document(job)
     return {
-        "success":
-            True,
-
-        "job_id":
-            job_id,
-
-        "current_version":
-            job[
-                "current_version"
-            ],
-
-        "version_id":
-            job[
-                "version_id"
-            ],
-
-        "status":
-            job[
-                "status"
-            ],
-
-        "total_pages":
-            len(
-                job[
-                    "document_pages"
-                ]
-            ),
-
-        "document_text":
-            job.get(
-                "document_text",
-                "",
-            ),
-
-        "pages":
-            job[
-                "document_pages"
-            ],
-
-        "document_pages":
-            job[
-                "document_pages"
-            ],
-
-        "review_pages":
-            job[
-                "review_pages"
-            ],
-
-        "progress":
-            job[
-                "progress"
-            ],
-
-        "approved":
-            job[
-                "approved"
-            ],
-
-        "paid":
-            job[
-                "paid"
-            ],
+        "success": True,
+        "job_id": job_id,
+        "current_version": job["current_version"],
+        "version_id": job["version_id"],
+        "status": job["status"],
+        "total_pages": len(job["document_pages"]),
+        "document_text": job.get("document_text", ""),
+        "pages": job["document_pages"],
+        "document_pages": job["document_pages"],
+        "review_pages": job["review_pages"],
+        "progress": job["progress"],
+        "approved": job["approved"],
+        "paid": job["paid"],
     }
 
 
@@ -3085,807 +940,178 @@ async def get_review_pages(
 # ============================================================
 
 @app.post("/api/correct")
-async def correct(
-    request: Correction,
-):
-
-    job = _jobs.get(
-        request.job_id
-    )
-
+async def correct(request: Correction):
+    job = _jobs.get(request.job_id)
     if not job:
-
-        return application_error(
-            "CORRECTION",
-            "Job not found.",
-            404,
-            "JOB_NOT_FOUND",
-        )
-
-    instruction = (
-        request.instruction.strip()
-    )
-
+        return application_error("CORRECTION", "Job not found.", 404, "JOB_NOT_FOUND")
+    instruction = request.instruction.strip()
     if not instruction:
+        return application_error("CORRECTION", "Correction instruction is empty.", 400, "EMPTY_CORRECTION")
+    if job.get("status") in {"reviewing", "correcting"}:
+        return application_error("CORRECTION", "The document is still being processed.", 409, "DOCUMENT_STILL_PROCESSING")
+    if not job.get("document_pages"):
+        return application_error("CORRECTION", "There is no document available for correction.", 409, "NO_DOCUMENT")
 
-        return application_error(
-            "CORRECTION",
-            "Correction instruction is empty.",
-            400,
-            "EMPTY_CORRECTION",
-        )
-
-    if job.get(
-        "status"
-    ) in {
-        "reviewing",
-        "correcting",
-    }:
-
-        return application_error(
-            "CORRECTION",
-            "The document is still being processed.",
-            409,
-            "DOCUMENT_STILL_PROCESSING",
-        )
-
-    if not job.get(
-        "document_pages"
-    ):
-
-        return application_error(
-            "CORRECTION",
-            "There is no document available for correction.",
-            409,
-            "NO_DOCUMENT",
-        )
-
-    job[
-        "current_version"
-    ] += 1
-
-    job[
-        "version_id"
-    ] = (
-        f"{request.job_id}:"
-        f"{job['current_version']}"
-    )
-
-    job.update(
-        {
-            "status":
-                "correcting",
-
-            "approved":
-                False,
-
-            "paid":
-                False,
-
-            "review_started":
-                False,
-
-            "review_finished":
-                False,
-
-            "review_error":
-                None,
-
-            "correction_instruction":
-                instruction,
-
-            "progress":
-                {
-                    "completed":
-                        0,
-
-                    "total":
-                        len(
-                            job[
-                                "document_pages"
-                            ]
-                        ),
-                },
-        }
-    )
+    job["current_version"] += 1
+    job["version_id"] = f"{request.job_id}:{job['current_version']}"
+    job.update({
+        "status": "correcting", "approved": False, "paid": False,
+        "review_started": False, "review_finished": False, "review_error": None,
+        "correction_instruction": instruction,
+        "progress": {"completed": 0, "total": len(job["document_pages"])},
+    })
 
     async def correction_worker():
-
         try:
-
-            ada = get_session(
-                job.get(
-                    "customer_id"
-                ),
-                request.job_id,
-                job.get(
-                    "service"
-                ),
-            )
-
-            method = getattr(
-                ada,
-                "correct_document",
-                None,
-            )
-
-            if not callable(
-                method
-            ):
-
-                raise AttributeError(
-                    "AdaResponse has no "
-                    "correct_document() method."
-                )
-
-            result = await asyncio.to_thread(
+            ada = get_session(job.get("customer_id"), request.job_id, job.get("service"))
+            method = getattr(ada, "correct_document", None)
+            if not callable(method):
+                raise AttributeError("AdaResponse has no correct_document() method.")
+            result = await _call_method_flexibly(
                 method,
-                document_pages=
-                    normalize_pages(
-                        job[
-                            "document_pages"
-                        ]
-                    ),
-
-                correction=
-                    instruction,
-
-                service=
-                    job.get(
-                        "service"
-                    ),
-
-                context=
-                    job.get(
-                        "context"
-                    ),
-
-                progress_callback=
-                    None,
+                {
+                    "document_pages": normalize_pages(job["document_pages"]),
+                    "correction": instruction,
+                    "service": job.get("service"),
+                    "context": job.get("context"),
+                    "progress_callback": None,
+                },
             )
-
-            (
-                corrected_text,
-                corrected_pages,
-                metadata,
-            ) = extract_complete_document(
-                result
-            )
-
-            corrected_text = (
-                normalize_document_marker_text(
-                    corrected_text
-                )
-            )
-
-            if not corrected_pages:
-
-                corrected_pages = (
-                    text_to_review_pages(
-                        corrected_text
-                    )
-                )
-
-            if not corrected_pages:
-
-                raise ValueError(
-                    "Intelligence returned no corrected "
-                    "document content."
-                )
-
-            job[
-                "document_text"
-            ] = corrected_text
-
-            job[
-                "document_pages"
-            ] = corrected_pages
-
-            job[
-                "review_pages"
-            ] = make_review_pages(
-                corrected_pages
-            )
-
-            job[
-                "intelligence_metadata"
-            ] = metadata
-
-            job[
-                "status"
-            ] = "reviewing"
-
-            job[
-                "review_started"
-            ] = True
-
-            job[
-                "review_finished"
-            ] = False
-
-            job[
-                "review_error"
-            ] = None
-
-            job[
-                "progress"
-            ] = {
-                "completed":
-                    0,
-
-                "total":
-                    len(
-                        corrected_pages
-                    ),
-            }
-
-            start_review(
-                request.job_id
-            )
-
+            corrected_text, corrected_pages, metadata = extract_complete_document(result)
+            job["document_text"] = corrected_text
+            job["document_pages"] = corrected_pages
+            job["review_pages"] = make_review_pages(corrected_pages)
+            job["intelligence_metadata"] = metadata
+            job["status"] = "reviewing"
+            job["review_started"] = True
+            job["review_finished"] = False
+            job["review_error"] = None
+            job["progress"] = {"completed": 0, "total": len(corrected_pages)}
+            start_review(request.job_id)
         except Exception as error:
-
-            job[
-                "status"
-            ] = "correction_error"
-
-            job[
-                "review_error"
-            ] = {
-                "type":
-                    type(error).__name__,
-
-                "message":
-                    str(error),
-            }
-
+            job["status"] = "correction_error"
+            job["review_error"] = {"type": type(error).__name__, "message": str(error)}
             traceback.print_exc()
 
-    old_task = _correction_tasks.get(
-        request.job_id
-    )
-
-    if (
-        old_task
-        and not old_task.done()
-    ):
-
+    old_task = _correction_tasks.get(request.job_id)
+    if old_task and not old_task.done():
         old_task.cancel()
-
-    _correction_tasks[
-        request.job_id
-    ] = asyncio.create_task(
-        correction_worker()
-    )
+    _correction_tasks[request.job_id] = asyncio.create_task(correction_worker())
 
     return {
-        "success":
-            True,
-
-        "job_id":
-            request.job_id,
-
-        "status":
-            "correcting",
-
-        "version_id":
-            job[
-                "version_id"
-            ],
-
-        "current_version":
-            job[
-                "current_version"
-            ],
-
-        "message":
-            (
-                "Correction has started. "
-                "The corrected document will be "
-                "reviewed again."
-            ),
+        "success": True,
+        "job_id": request.job_id,
+        "status": "correcting",
+        "version_id": job["version_id"],
+        "current_version": job["current_version"],
+        "message": "Correction has started. The corrected document will be reviewed again.",
     }
 
 
 # ============================================================
-# APPROVAL
+# APPROVAL / PAYMENT / DOWNLOAD
 # ============================================================
 
 @app.post("/api/approve")
-async def approve(
-    request: Approval,
-):
-
-    job = _jobs.get(
-        request.job_id
-    )
-
+async def approve(request: Approval):
+    job = _jobs.get(request.job_id)
     if not job:
-
-        return application_error(
-            "APPROVAL",
-            "Job not found.",
-            404,
-            "JOB_NOT_FOUND",
-        )
-
-    if (
-        request.version_id
-        != job[
-            "version_id"
-        ]
-    ):
-
-        return application_error(
-            "APPROVAL",
-            "The supplied document version does not match.",
-            409,
-            "VERSION_MISMATCH",
-        )
-
-    if (
-        job[
-            "status"
-        ]
-        != "review_complete"
-    ):
-
-        return application_error(
-            "APPROVAL",
-            "The document review is not complete.",
-            409,
-            "REVIEW_NOT_COMPLETE",
-        )
-
-    job[
-        "approved"
-    ] = True
-
-    job[
-        "status"
-    ] = "approved"
-
+        return application_error("APPROVAL", "Job not found.", 404, "JOB_NOT_FOUND")
+    if request.version_id != job["version_id"]:
+        return application_error("APPROVAL", "The supplied document version does not match.", 409, "VERSION_MISMATCH")
+    if job["status"] != "review_complete":
+        return application_error("APPROVAL", "The document review is not complete.", 409, "REVIEW_NOT_COMPLETE")
+    job["approved"] = True
+    job["status"] = "approved"
     return {
-        "success":
-            True,
-
-        "job_id":
-            request.job_id,
-
-        "version_id":
-            request.version_id,
-
-        "current_version":
-            job[
-                "current_version"
-            ],
-
-        "approved":
-            True,
-
-        "status":
-            "approved",
-
-        "total_pages":
-            len(
-                job[
-                    "document_pages"
-                ]
-            ),
-
-        "pages":
-            job[
-                "document_pages"
-            ],
-
-        "payment_url":
-            (
-                "/payment.html"
-                f"?job_id={request.job_id}"
-                f"&version_id={request.version_id}"
-            ),
+        "success": True, "job_id": request.job_id, "version_id": request.version_id,
+        "current_version": job["current_version"], "approved": True, "status": "approved",
+        "total_pages": len(job["document_pages"]), "pages": job["document_pages"],
+        "payment_url": f"/payment.html?job_id={request.job_id}&version_id={request.version_id}",
     }
 
 
-# ============================================================
-# PAYMENT
-# ============================================================
-
 @app.post("/api/payment/complete")
-async def payment_complete(
-    job_id: str,
-    version_id: str,
-):
-
-    job = _jobs.get(
-        job_id
-    )
-
+async def payment_complete(job_id: str, version_id: str):
+    job = _jobs.get(job_id)
     if not job:
-
-        return application_error(
-            "PAYMENT",
-            "Job not found.",
-            404,
-            "JOB_NOT_FOUND",
-        )
-
-    if (
-        version_id
-        != job[
-            "version_id"
-        ]
-    ):
-
-        return application_error(
-            "PAYMENT",
-            "Version mismatch.",
-            409,
-            "VERSION_MISMATCH",
-        )
-
-    if not job[
-        "approved"
-    ]:
-
-        return application_error(
-            "PAYMENT",
-            "The document must be approved before payment.",
-            409,
-            "DOCUMENT_NOT_APPROVED",
-        )
-
-    job[
-        "paid"
-    ] = True
-
-    job[
-        "status"
-    ] = "paid"
-
+        return application_error("PAYMENT", "Job not found.", 404, "JOB_NOT_FOUND")
+    if version_id != job["version_id"]:
+        return application_error("PAYMENT", "Version mismatch.", 409, "VERSION_MISMATCH")
+    if not job["approved"]:
+        return application_error("PAYMENT", "The document must be approved before payment.", 409, "DOCUMENT_NOT_APPROVED")
+    job["paid"] = True
+    job["status"] = "paid"
     return {
-        "success":
-            True,
-
-        "job_id":
-            job_id,
-
-        "version_id":
-            version_id,
-
-        "paid":
-            True,
-
-        "status":
-            "paid",
-
-        "total_pages":
-            len(
-                job[
-                    "document_pages"
-                ]
-            ),
-
-        "download_url":
-            (
-                "/download.html"
-                f"?job_id={job_id}"
-                f"&version_id={version_id}"
-            ),
-
-        "api_download_url":
-            (
-                "/api/download"
-                f"?job_id={job_id}"
-                f"&version_id={version_id}"
-            ),
+        "success": True, "job_id": job_id, "version_id": version_id, "paid": True, "status": "paid",
+        "total_pages": len(job["document_pages"]),
+        "download_url": f"/download.html?job_id={job_id}&version_id={version_id}",
+        "api_download_url": f"/api/download?job_id={job_id}&version_id={version_id}",
     }
 
 
 @app.get("/api/payment")
-async def payment_state(
-    job_id: str,
-    version_id: str,
-):
-
-    job = _jobs.get(
-        job_id
-    )
-
+async def payment_state(job_id: str, version_id: str):
+    job = _jobs.get(job_id)
     if not job:
-
-        return application_error(
-            "PAYMENT_STATE",
-            "Job not found.",
-            404,
-            "JOB_NOT_FOUND",
-        )
-
-    if (
-        version_id
-        != job[
-            "version_id"
-        ]
-    ):
-
-        return application_error(
-            "PAYMENT_STATE",
-            "Version mismatch.",
-            409,
-            "VERSION_MISMATCH",
-        )
-
+        return application_error("PAYMENT_STATE", "Job not found.", 404, "JOB_NOT_FOUND")
+    if version_id != job["version_id"]:
+        return application_error("PAYMENT_STATE", "Version mismatch.", 409, "VERSION_MISMATCH")
     return {
-        "success":
-            True,
-
-        "job_id":
-            job_id,
-
-        "version_id":
-            version_id,
-
-        "status":
-            job[
-                "status"
-            ],
-
-        "approved":
-            job[
-                "approved"
-            ],
-
-        "paid":
-            job[
-                "paid"
-            ],
-
-        "total_pages":
-            len(
-                job[
-                    "document_pages"
-                ]
-            ),
-
-        "payment_complete":
-            job[
-                "paid"
-            ],
+        "success": True, "job_id": job_id, "version_id": version_id,
+        "status": job["status"], "approved": job["approved"], "paid": job["paid"],
+        "total_pages": len(job["document_pages"]), "payment_complete": job["paid"],
     }
 
-
-# ============================================================
-# DOWNLOAD
-# ============================================================
 
 @app.get("/api/download")
-async def download(
-    job_id: str,
-    version_id: str,
-):
-
-    job = _jobs.get(
-        job_id
-    )
-
+async def download(job_id: str, version_id: str):
+    job = _jobs.get(job_id)
     if not job:
-
-        return application_error(
-            "DOWNLOAD",
-            "Job not found.",
-            404,
-            "JOB_NOT_FOUND",
-        )
-
-    if (
-        version_id
-        != job[
-            "version_id"
-        ]
-    ):
-
-        return application_error(
-            "DOWNLOAD",
-            "Version mismatch.",
-            409,
-            "VERSION_MISMATCH",
-        )
-
-    if not job[
-        "approved"
-    ]:
-
-        return application_error(
-            "DOWNLOAD",
-            "The current document version has not been approved.",
-            409,
-            "DOCUMENT_NOT_APPROVED",
-        )
-
-    if not job[
-        "paid"
-    ]:
-
-        return application_error(
-            "DOWNLOAD",
-            "Payment for the current document version has not been completed.",
-            409,
-            "PAYMENT_NOT_COMPLETED",
-        )
-
+        return application_error("DOWNLOAD", "Job not found.", 404, "JOB_NOT_FOUND")
+    if version_id != job["version_id"]:
+        return application_error("DOWNLOAD", "Version mismatch.", 409, "VERSION_MISMATCH")
+    if not job["approved"]:
+        return application_error("DOWNLOAD", "The current document version has not been approved.", 409, "DOCUMENT_NOT_APPROVED")
+    if not job["paid"]:
+        return application_error("DOWNLOAD", "Payment for the current document version has not been completed.", 409, "PAYMENT_NOT_COMPLETED")
     return {
-        "success":
-            True,
-
-        "job_id":
-            job_id,
-
-        "version_id":
-            version_id,
-
-        "status":
-            "paid",
-
-        "total_pages":
-            len(
-                job[
-                    "document_pages"
-                ]
-            ),
-
-        "pages":
-            job[
-                "document_pages"
-            ],
-
-        "document_pages":
-            job[
-                "document_pages"
-            ],
-
-        "document_text":
-            job.get(
-                "document_text",
-                "",
-            ),
-
-        "message":
-            (
-                "The approved and paid document "
-                "is ready for final document generation."
-            ),
+        "success": True, "job_id": job_id, "version_id": version_id, "status": "paid",
+        "total_pages": len(job["document_pages"]), "pages": job["document_pages"],
+        "document_pages": job["document_pages"], "document_text": job.get("document_text", ""),
+        "message": "The approved and paid document is ready for final document generation.",
     }
 
 
 # ============================================================
-# CLEAR CHAT
+# CLEAR CHAT / STARTUP
 # ============================================================
 
 @app.post("/api/chat/clear")
-async def clear_chat(
-    customer_id:
-        str | None = None,
-
-    job_id:
-        str | None = None,
-):
-
-    ada = _sessions.get(
-        job_key(
-            customer_id,
-            job_id,
-        )
-    )
-
+async def clear_chat(customer_id: str | None = None, job_id: str | None = None):
+    ada = _sessions.get(job_key(customer_id, job_id))
     if ada:
-
-        clear_method = getattr(
-            ada,
-            "clear_history",
-            None,
-        )
-
-        if callable(
-            clear_method
-        ):
-
+        clear_method = getattr(ada, "clear_history", None)
+        if callable(clear_method):
             clear_method()
+    return {"success": True, "message": "Conversation cleared."}
 
-    return {
-        "success":
-            True,
-
-        "message":
-            "Conversation cleared.",
-    }
-
-
-# ============================================================
-# STARTUP
-# ============================================================
 
 @app.on_event("startup")
 async def startup():
-
+    print("=" * 70)
+    print("NAIJA POCKET BUSINESS CENTER — FASTAPI")
+    print("Architecture: INTELLIGENCE-FIRST")
+    print("Intelligence:", get_ada_model())
+    print("Configured:", is_configured())
+    print("Customer page-count requirement: DISABLED")
+    print("Global page assumption: DISABLED")
+    print("Complete document preservation: ENABLED")
+    print("Review workflow: ENABLED")
+    print("Review pagination source: COMPLETE DOCUMENT TEXT")
     print("=" * 70)
 
-    print(
-        "NAIJA POCKET BUSINESS CENTER — FASTAPI"
-    )
-
-    print(
-        "Architecture: INTELLIGENCE-FIRST"
-    )
-
-    print(
-        "Intelligence:",
-        get_ada_model(),
-    )
-
-    print(
-        "Configured:",
-        is_configured(),
-    )
-
-    print(
-        "Customer page-count requirement:",
-        "DISABLED",
-    )
-
-    print(
-        "Global page assumption:",
-        "DISABLED",
-    )
-
-    print(
-        "Keyword service routing:",
-        "DISABLED",
-    )
-
-    print(
-        "Rigid intelligence output schema:",
-        "DISABLED",
-    )
-
-    print(
-        "Complete document preservation:",
-        "ENABLED",
-    )
-
-    print(
-        "Result-shape compatibility:",
-        "ENABLED",
-    )
-
-    print(
-        "Review workflow:",
-        "ENABLED",
-    )
-
-    print(
-        "Document page limit:",
-        "NONE",
-    )
-
-    print("=" * 70)
-
-
-# ============================================================
-# DIRECT EXECUTION
-# ============================================================
 
 if __name__ == "__main__":
-
     import uvicorn
-
-    uvicorn.run(
-        "ada_api:app",
-        host="0.0.0.0",
-        port=int(
-            os.getenv(
-                "PORT",
-                "8000",
-            )
-        ),
-        reload=False,
-    )
+    uvicorn.run("ada_api:app", host="0.0.0.0", port=int(os.getenv("PORT", "8000")), reload=False)
