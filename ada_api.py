@@ -16,9 +16,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
-# IMPORTANT:
-# Do NOT import normalize_document_pages from ada_response.
-# The deployed ada_response.py does not expose that function.
 from ada_response import (
     AdaResponse,
     get_ada_model,
@@ -80,7 +77,7 @@ _correction_tasks: dict[str, asyncio.Task] = {}
 
 app = FastAPI(
     title="Naija Pocket Business Center",
-    version="intelligence-first-v8",
+    version="intelligence-first-v9",
 )
 
 app.add_middleware(
@@ -171,13 +168,225 @@ def clean_text(value: Any) -> str:
 
 
 # ============================================================
-# LOCAL PAGE NORMALIZATION
+# RESULT TEXT EXTRACTION
 #
-# This replaces the missing normalize_document_pages()
-# dependency from ada_response.py.
+# IMPORTANT:
+# The intelligence layer may return:
 #
-# It does NOT decide how many pages a document should have.
-# It only normalizes pages that already exist.
+#   str
+#   dict
+#   list
+#   tuple
+#   object with document_text/content/text/reply
+#   OpenAI/Groq-style object with choices[0].message.content
+#
+# This function deliberately accepts all of them.
+#
+# The API must NOT incorrectly report "empty content" merely
+# because the intelligence returned a different valid shape.
+# ============================================================
+
+def extract_text_from_value(
+    value: Any,
+) -> str:
+
+    if value is None:
+        return ""
+
+    if isinstance(
+        value,
+        str,
+    ):
+        return clean_text(
+            value
+        )
+
+    if isinstance(
+        value,
+        bytes,
+    ):
+        try:
+            return clean_text(
+                value.decode(
+                    "utf-8",
+                    "replace",
+                )
+            )
+        except Exception:
+            return ""
+
+    if isinstance(
+        value,
+        dict,
+    ):
+
+        # Prefer document/work fields.
+        for key in (
+            "document_text",
+            "prepared_work",
+            "document",
+            "generated_document",
+            "generated_text",
+            "content",
+            "text",
+            "reply",
+            "response",
+            "message",
+        ):
+
+            if key not in value:
+                continue
+
+            candidate = value.get(
+                key
+            )
+
+            text = extract_text_from_value(
+                candidate
+            )
+
+            if text:
+                return text
+
+        # Common API response shape.
+        choices = value.get(
+            "choices"
+        )
+
+        if choices:
+
+            text = extract_text_from_value(
+                choices
+            )
+
+            if text:
+                return text
+
+        return ""
+
+    if isinstance(
+        value,
+        (list, tuple),
+    ):
+
+        # A list of strings/dicts can represent document parts.
+        pieces: list[str] = []
+
+        for item in value:
+
+            text = extract_text_from_value(
+                item
+            )
+
+            if text:
+                pieces.append(
+                    text
+                )
+
+        return "\n\n".join(
+            pieces
+        ).strip()
+
+    # Object-style response.
+    for attribute in (
+        "document_text",
+        "prepared_work",
+        "generated_document",
+        "generated_text",
+        "content",
+        "text",
+        "reply",
+        "response",
+        "message",
+    ):
+
+        try:
+            candidate = getattr(
+                value,
+                attribute,
+                None,
+            )
+        except Exception:
+            candidate = None
+
+        if candidate is None:
+            continue
+
+        text = extract_text_from_value(
+            candidate
+        )
+
+        if text:
+            return text
+
+    # OpenAI/Groq-style:
+    # result.choices[0].message.content
+    try:
+
+        choices = getattr(
+            value,
+            "choices",
+            None,
+        )
+
+        if choices:
+
+            text = extract_text_from_value(
+                choices
+            )
+
+            if text:
+                return text
+
+    except Exception:
+        pass
+
+    return ""
+
+
+def normalize_document_marker_text(
+    text: str,
+) -> str:
+
+    text = clean_text(
+        text
+    )
+
+    # These are generation-control markers.
+    # They must never become visible document content.
+    text = re.sub(
+        r"\[CONTINUE\]",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    text = re.sub(
+        r"\[END OF DOCUMENT\]",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    text = re.sub(
+        r"\[DOCUMENT COMPLETE\]",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    text = re.sub(
+        r"###\s*END\s*###",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    return text.strip()
+
+
+# ============================================================
+# PAGE NORMALIZATION
 # ============================================================
 
 def normalize_document_pages(
@@ -192,7 +401,7 @@ def normalize_document_pages(
         str,
     ):
 
-        text = clean_text(
+        text = normalize_document_marker_text(
             pages
         )
 
@@ -216,37 +425,63 @@ def normalize_document_pages(
 
     output: list[dict[str, Any]] = []
 
-    for index, item in enumerate(
-        pages,
-        1,
-    ):
+    for item in pages:
 
         if isinstance(
             item,
             dict,
         ):
 
-            content = clean_text(
-                item.get(
-                    "content",
-                    item.get(
-                        "text",
-                        item.get(
-                            "document_text",
-                            "",
-                        ),
-                    ),
+            content = ""
+
+            for key in (
+                "content",
+                "text",
+                "document_text",
+                "prepared_work",
+            ):
+
+                candidate = item.get(
+                    key
                 )
+
+                if candidate is not None:
+
+                    content = (
+                        extract_text_from_value(
+                            candidate
+                        )
+                    )
+
+                    if content:
+                        break
+
+            content = normalize_document_marker_text(
+                content
             )
 
             if not content:
                 continue
 
-            page = dict(item)
+            page = dict(
+                item
+            )
 
-            page["page_number"] = index
-            page["position"] = index
-            page["content"] = content
+            position = len(
+                output
+            ) + 1
+
+            page[
+                "page_number"
+            ] = position
+
+            page[
+                "position"
+            ] = position
+
+            page[
+                "content"
+            ] = content
 
             output.append(
                 page
@@ -257,19 +492,23 @@ def normalize_document_pages(
             str,
         ):
 
-            content = clean_text(
+            content = normalize_document_marker_text(
                 item
             )
 
             if content:
 
+                position = len(
+                    output
+                ) + 1
+
                 output.append(
                     {
                         "page_number":
-                            index,
+                            position,
 
                         "position":
-                            index,
+                            position,
 
                         "content":
                             content,
@@ -355,7 +594,6 @@ def application_error(
         error,
         Exception,
     ):
-
         traceback.print_exc()
 
     return JSONResponse(
@@ -560,16 +798,16 @@ def build_context(
 # ============================================================
 # DOCUMENT TEXT → REVIEW SECTIONS
 #
-# This is DISPLAY chunking only.
+# DISPLAY/REVIEW CHUNKING ONLY.
 #
-# It does not tell Ada how many pages to create.
+# THERE IS NO ONE-PAGE CAP HERE.
 # ============================================================
 
 def text_to_review_pages(
     text: str,
 ) -> list[dict[str, Any]]:
 
-    text = clean_text(
+    text = normalize_document_marker_text(
         text
     )
 
@@ -745,28 +983,52 @@ def extract_complete_document(
 
     metadata: dict[str, Any] = {}
 
+    print(
+        "[INTELLIGENCE-RESULT]"
+        f" type={type(result).__name__}"
+    )
+
+    # --------------------------------------------------------
+    # STRING
+    # --------------------------------------------------------
+
     if isinstance(
         result,
         str,
     ):
 
-        text = clean_text(
+        text = normalize_document_marker_text(
             result
         )
 
-        return (
-            text,
-            text_to_review_pages(
-                text
-            ),
-            metadata,
+        pages = text_to_review_pages(
+            text
         )
+
+        if text:
+
+            print(
+                "[INTELLIGENCE-RESULT]"
+                f" string_chars={len(text)}"
+                f" pages={len(pages)}"
+            )
+
+            return (
+                text,
+                pages,
+                metadata,
+            )
+
+    # --------------------------------------------------------
+    # LIST / TUPLE
+    # --------------------------------------------------------
 
     if isinstance(
         result,
-        list,
+        (list, tuple),
     ):
 
+        # First try to interpret it as pages.
         pages = normalize_pages(
             result
         )
@@ -778,17 +1040,56 @@ def extract_complete_document(
                 for page in pages
             )
 
+            print(
+                "[INTELLIGENCE-RESULT]"
+                f" page_collection"
+                f" chars={len(text)}"
+                f" pages={len(pages)}"
+            )
+
             return (
                 text,
                 pages,
                 metadata,
             )
 
+        # Then try generic extraction.
+        text = extract_text_from_value(
+            result
+        )
+
+        text = normalize_document_marker_text(
+            text
+        )
+
+        if text:
+
+            pages = text_to_review_pages(
+                text
+            )
+
+            print(
+                "[INTELLIGENCE-RESULT]"
+                f" collection_text_chars={len(text)}"
+                f" pages={len(pages)}"
+            )
+
+            return (
+                text,
+                pages,
+                metadata,
+            )
+
+    # --------------------------------------------------------
+    # DICTIONARY
+    # --------------------------------------------------------
+
     if isinstance(
         result,
         dict,
     ):
 
+        # Preserve useful metadata while excluding content.
         metadata = {
             key: value
             for key, value
@@ -801,6 +1102,8 @@ def extract_complete_document(
                 "document",
                 "document_text",
                 "prepared_work",
+                "generated_document",
+                "generated_text",
                 "content",
                 "text",
                 "reply",
@@ -809,6 +1112,7 @@ def extract_complete_document(
             }
         }
 
+        # Explicit page collections first.
         for key in (
             "pages",
             "document_pages",
@@ -831,85 +1135,11 @@ def extract_complete_document(
                     for page in pages
                 )
 
-                return (
-                    text,
-                    pages,
-                    metadata,
-                )
-
-        for key in (
-            "document_text",
-            "prepared_work",
-            "document",
-            "content",
-            "text",
-            "reply",
-            "response",
-            "message",
-        ):
-
-            value = result.get(
-                key
-            )
-
-            if isinstance(
-                value,
-                str,
-            ):
-
-                text = clean_text(
-                    value
-                )
-
-                if text:
-
-                    return (
-                        text,
-                        text_to_review_pages(
-                            text
-                        ),
-                        metadata,
-                    )
-
-    for attribute in (
-        "document_text",
-        "prepared_work",
-        "document",
-        "content",
-        "text",
-        "reply",
-        "response",
-        "message",
-        "pages",
-        "document_pages",
-    ):
-
-        try:
-
-            value = getattr(
-                result,
-                attribute,
-                None,
-            )
-
-        except Exception:
-
-            value = None
-
-        if isinstance(
-            value,
-            list,
-        ):
-
-            pages = normalize_pages(
-                value
-            )
-
-            if pages:
-
-                text = "\n\n".join(
-                    page["content"]
-                    for page in pages
+                print(
+                    "[INTELLIGENCE-RESULT]"
+                    f" key={key}"
+                    f" chars={len(text)}"
+                    f" pages={len(pages)}"
                 )
 
                 return (
@@ -918,24 +1148,62 @@ def extract_complete_document(
                     metadata,
                 )
 
-        elif isinstance(
-            value,
-            str,
-        ):
+        # Then all supported text fields.
+        text = extract_text_from_value(
+            result
+        )
 
-            text = clean_text(
-                value
+        text = normalize_document_marker_text(
+            text
+        )
+
+        if text:
+
+            pages = text_to_review_pages(
+                text
             )
 
-            if text:
+            print(
+                "[INTELLIGENCE-RESULT]"
+                f" dict_text_chars={len(text)}"
+                f" pages={len(pages)}"
+            )
 
-                return (
-                    text,
-                    text_to_review_pages(
-                        text
-                    ),
-                    metadata,
-                )
+            return (
+                text,
+                pages,
+                metadata,
+            )
+
+    # --------------------------------------------------------
+    # OBJECT
+    # --------------------------------------------------------
+
+    text = extract_text_from_value(
+        result
+    )
+
+    text = normalize_document_marker_text(
+        text
+    )
+
+    if text:
+
+        pages = text_to_review_pages(
+            text
+        )
+
+        print(
+            "[INTELLIGENCE-RESULT]"
+            f" object_text_chars={len(text)}"
+            f" pages={len(pages)}"
+        )
+
+        return (
+            text,
+            pages,
+            metadata,
+        )
 
     raise ValueError(
         "The intelligence completed the operation "
@@ -1325,6 +1593,32 @@ def create_job(
             "returned by intelligence."
         )
 
+    document_text = (
+        document_text
+        or
+        "\n\n".join(
+            page["content"]
+            for page in normalized
+        )
+    )
+
+    document_text = normalize_document_marker_text(
+        document_text
+    )
+
+    if not document_text:
+
+        raise ValueError(
+            "The generated document contains no usable text."
+        )
+
+    print(
+        "[JOB-CREATE]"
+        f" job={job_id}"
+        f" chars={len(document_text)}"
+        f" pages={len(normalized)}"
+    )
+
     job = {
         "job_id":
             job_id,
@@ -1682,6 +1976,10 @@ async def run_review(
                 )
             )
 
+        synchronize_job_document(
+            job
+        )
+
         total = len(
             job[
                 "document_pages"
@@ -1713,6 +2011,12 @@ async def run_review(
         job[
             "review_error"
         ] = None
+
+        print(
+            "[REVIEW-COMPLETE]"
+            f" job={job_id}"
+            f" pages={total}"
+        )
 
     except asyncio.CancelledError:
 
@@ -1787,6 +2091,13 @@ def start_review(
 
 # ============================================================
 # INTELLIGENCE DOCUMENT CREATION
+#
+# IMPORTANT:
+# This layer does NOT generate the document itself.
+# AdaResponse remains responsible for generation.
+#
+# This function only calls the available document method and
+# safely extracts whatever valid result AdaResponse returns.
 # ============================================================
 
 async def create_document_with_intelligence(
@@ -1807,6 +2118,8 @@ async def create_document_with_intelligence(
         "generate_work",
     )
 
+    last_type_error: Exception | None = None
+
     for method_name in methods:
 
         method = getattr(
@@ -1819,6 +2132,11 @@ async def create_document_with_intelligence(
             method
         ):
             continue
+
+        print(
+            "[DOCUMENT-CREATION]"
+            f" trying={method_name}"
+        )
 
         try:
 
@@ -1840,13 +2158,35 @@ async def create_document_with_intelligence(
                     request.event,
             )
 
+            print(
+                "[DOCUMENT-CREATION]"
+                f" method={method_name}"
+                f" result_type={type(result).__name__}"
+            )
+
             return extract_complete_document(
                 result
             )
 
-        except TypeError:
+        except TypeError as error:
 
-            pass
+            # Signature mismatch:
+            # try the next supported method.
+            last_type_error = error
+
+            print(
+                "[DOCUMENT-CREATION]"
+                f" method={method_name}"
+                " signature mismatch"
+            )
+
+            continue
+
+    # --------------------------------------------------------
+    # FALLBACK TO RESPOND()
+    #
+    # Only used if no document-generation method is available.
+    # --------------------------------------------------------
 
     respond = getattr(
         ada,
@@ -1858,10 +2198,19 @@ async def create_document_with_intelligence(
         respond
     ):
 
+        if last_type_error:
+
+            raise last_type_error
+
         raise AttributeError(
             "AdaResponse has no document creation "
             "method and no respond() method."
         )
+
+    print(
+        "[DOCUMENT-CREATION]"
+        " fallback=respond"
+    )
 
     result = await asyncio.to_thread(
         respond,
@@ -1876,6 +2225,11 @@ async def create_document_with_intelligence(
 
         context=
             context,
+    )
+
+    print(
+        "[DOCUMENT-CREATION]"
+        f" respond_result_type={type(result).__name__}"
     )
 
     return extract_complete_document(
@@ -1912,58 +2266,37 @@ def serve_html(
 
 @app.get("/")
 async def root():
-
-    return serve_html(
-        "index.html"
-    )
+    return serve_html("index.html")
 
 
 @app.get("/index.html")
 async def index():
-
-    return serve_html(
-        "index.html"
-    )
+    return serve_html("index.html")
 
 
 @app.get("/conversation.html")
 async def conversation():
-
-    return serve_html(
-        "conversation.html"
-    )
+    return serve_html("conversation.html")
 
 
 @app.get("/workspace.html")
 async def workspace():
-
-    return serve_html(
-        "workspace.html"
-    )
+    return serve_html("workspace.html")
 
 
 @app.get("/review.html")
 async def review_page():
-
-    return serve_html(
-        "review.html"
-    )
+    return serve_html("review.html")
 
 
 @app.get("/payment.html")
 async def payment_page():
-
-    return serve_html(
-        "payment.html"
-    )
+    return serve_html("payment.html")
 
 
 @app.get("/download.html")
 async def download_page():
-
-    return serve_html(
-        "download.html"
-    )
+    return serve_html("download.html")
 
 
 # ============================================================
@@ -1994,6 +2327,12 @@ async def health():
 
         "architecture":
             "intelligence-first",
+
+        "document_generation":
+            "delegated_to_intelligence",
+
+        "page_limit":
+            None,
     }
 
 
@@ -2024,6 +2363,12 @@ async def api_status():
 
         "architecture":
             "intelligence-first",
+
+        "document_generation":
+            "delegated_to_intelligence",
+
+        "page_limit":
+            None,
     }
 
 
@@ -2219,7 +2564,7 @@ async def chat(
                     "EMPTY_GUIDANCE_MESSAGE",
                 )
 
-            reply = await asyncio.to_thread(
+            reply_result = await asyncio.to_thread(
                 ada.respond,
                 message=
                     request.message.strip(),
@@ -2232,6 +2577,10 @@ async def chat(
 
                 context=
                     context,
+            )
+
+            reply = extract_text_from_value(
+                reply_result
             )
 
             return {
@@ -2271,13 +2620,21 @@ async def chat(
 
         if create_requested:
 
-            # Existing authoritative document:
-            # send it into review.
+            # ------------------------------------------------
+            # EXISTING AUTHORITATIVE DOCUMENT
+            # ------------------------------------------------
+
             if pages:
 
                 document_text = "\n\n".join(
                     page["content"]
                     for page in pages
+                )
+
+                document_text = (
+                    normalize_document_marker_text(
+                        document_text
+                    )
                 )
 
                 job = create_job(
@@ -2287,6 +2644,10 @@ async def chat(
                     document_text,
                     pages,
                 )
+
+            # ------------------------------------------------
+            # GENERATE NEW DOCUMENT
+            # ------------------------------------------------
 
             else:
 
@@ -2311,6 +2672,31 @@ async def chat(
                     context,
                 )
 
+                # --------------------------------------------
+                # CRITICAL PRESERVATION CHECK
+                # --------------------------------------------
+
+                document_text = (
+                    normalize_document_marker_text(
+                        document_text
+                    )
+                )
+
+                print(
+                    "[PAG-INPUT]"
+                    f" document_text_chars="
+                    f"{len(document_text)}"
+                )
+
+                if not document_text:
+
+                    raise ValueError(
+                        "Intelligence returned an empty "
+                        "document after result extraction."
+                    )
+
+                # If intelligence returned text but no pages,
+                # pagination happens here.
                 if not created_pages:
 
                     created_pages = (
@@ -2319,12 +2705,26 @@ async def chat(
                         )
                     )
 
+                # If pages were returned, preserve them.
+                if created_pages:
+
+                    created_pages = normalize_pages(
+                        created_pages
+                    )
+
                 if not created_pages:
 
                     raise ValueError(
-                        "Intelligence completed the operation "
-                        "but returned no complete document."
+                        "Intelligence returned document text "
+                        "but no usable document pages."
                     )
+
+                print(
+                    "[PAG-OUTPUT]"
+                    f" document_text_chars="
+                    f"{len(document_text)}"
+                    f" pages={len(created_pages)}"
+                )
 
                 job = create_job(
                     job_id,
@@ -2501,7 +2901,7 @@ async def chat(
                 "EMPTY_MESSAGE",
             )
 
-        reply = await asyncio.to_thread(
+        reply_result = await asyncio.to_thread(
             ada.respond,
             message=
                 request.message.strip(),
@@ -2514,6 +2914,10 @@ async def chat(
 
             context=
                 context,
+        )
+
+        reply = extract_text_from_value(
+            reply_result
         )
 
         return {
@@ -2846,6 +3250,12 @@ async def correct(
                 metadata,
             ) = extract_complete_document(
                 result
+            )
+
+            corrected_text = (
+                normalize_document_marker_text(
+                    corrected_text
+                )
             )
 
             if not corrected_pages:
@@ -3443,8 +3853,18 @@ async def startup():
     )
 
     print(
+        "Result-shape compatibility:",
+        "ENABLED",
+    )
+
+    print(
         "Review workflow:",
         "ENABLED",
+    )
+
+    print(
+        "Document page limit:",
+        "NONE",
     )
 
     print("=" * 70)
