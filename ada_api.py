@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import os
 import traceback
 import uuid
@@ -24,38 +23,47 @@ from ada_response import (
 # NAIJA POCKET BUSINESS CENTER
 # ADA API
 #
-# THIN TRANSPORT + WORKFLOW BRIDGE
+# ARCHITECTURE:
 #
-# IMPORTANT:
+#       CUSTOMER
+#          |
+#       SERVICE
+#          |
+#     ADA INTELLIGENCE
+#          |
+#   ------------------
+#   |       |        |
+# CREATE   REVIEW  CORRECT
+#   |       |        |
+#   --------+--------
+#          |
+#       APPROVAL
+#          |
+#       PAYMENT
+#          |
+#       DOWNLOAD
 #
-# The API is NOT the intelligence.
+# IMPORTANT
+# ----------
+# This API is NOT the intelligence.
 #
-# The API does NOT:
-#   - decide what a service needs
-#   - impose page counts
-#   - split documents by character count
-#   - invent document structure
-#   - use keyword matching
-#   - decide whether CVs, letters, letterheads, etc. need pages
+# It does NOT decide:
+# - page count
+# - document type
+# - service structure
+# - CV length
+# - letterhead structure
+# - seminar-paper length
+# - review criteria
+# - correction strategy
 #
-# Intelligence is responsible for understanding the customer's
-# request and creating the appropriate work.
+# AdaResponse owns those decisions.
 #
-# The API's job is to transport the request and preserve the
-# intelligence result for Review -> Approval -> Payment ->
-# Download.
+# This file is transport + job state only.
 # ============================================================
 
 
-DEBUG = os.getenv(
-    "ADA_DEBUG_ERRORS",
-    "true",
-).lower() in {
-    "1",
-    "true",
-    "yes",
-    "on",
-}
+BASE = Path(__file__).resolve().parent
 
 MAX_UPLOAD = int(
     os.getenv(
@@ -63,8 +71,6 @@ MAX_UPLOAD = int(
         str(25 * 1024 * 1024),
     )
 )
-
-BASE = Path(__file__).resolve().parent
 
 
 # ============================================================
@@ -79,7 +85,7 @@ _correction_tasks: dict[str, asyncio.Task] = {}
 
 
 # ============================================================
-# FASTAPI
+# APP
 # ============================================================
 
 app = FastAPI(
@@ -97,18 +103,52 @@ app.add_middleware(
 
 
 # ============================================================
-# BASIC HELPERS
+# FILES
 # ============================================================
 
-def event_value(value: Any) -> str:
-    return str(value or "").strip().lower()
+def find_file(name: str):
+    locations = [
+        BASE / name,
+        BASE / "app" / name,
+        BASE / "static" / name,
+        BASE / "public" / name,
+        BASE / "assets" / name,
+    ]
 
+    for path in locations:
+        if path.is_file():
+            return path
+
+    return None
+
+
+def serve_html(name: str):
+    path = find_file(name)
+
+    if not path:
+        return JSONResponse(
+            status_code=404,
+            content={
+                "success": False,
+                "error": "HTML_NOT_FOUND",
+                "message": f"{name} was not found.",
+            },
+        )
+
+    return FileResponse(
+        path,
+        media_type="text/html",
+    )
+
+
+# ============================================================
+# HELPERS
+# ============================================================
 
 def job_key(
     customer_id: Any,
     job_id: Any,
 ) -> str:
-
     customer = (
         str(customer_id or "anonymous").strip()
         or "anonymous"
@@ -121,46 +161,6 @@ def job_key(
 
     return f"{customer}:{job}"
 
-
-def application_error(
-    stage: str,
-    error: Exception | str,
-    status: int = 500,
-    code: str = "APPLICATION_ERROR",
-):
-
-    print(
-        f"[{stage}] "
-        f"{type(error).__name__}: "
-        f"{error}"
-    )
-
-    if isinstance(error, Exception):
-        traceback.print_exc()
-
-    return JSONResponse(
-        status_code=status,
-        content={
-            "success": False,
-            "stage": stage,
-            "error": code,
-            "error_type": (
-                type(error).__name__
-                if isinstance(error, Exception)
-                else "ApplicationError"
-            ),
-            "error_message": (
-                str(error)
-                if DEBUG
-                else "An internal application error occurred."
-            ),
-        },
-    )
-
-
-# ============================================================
-# SESSION
-# ============================================================
 
 def get_session(
     customer_id: Any,
@@ -176,7 +176,6 @@ def get_session(
     ada = _sessions.get(key)
 
     if ada is None:
-
         ada = AdaResponse(
             service=service
         )
@@ -197,20 +196,34 @@ def get_session(
     return ada
 
 
+def fail(
+    stage: str,
+    message: str,
+    status: int = 500,
+    error: str = "APPLICATION_ERROR",
+):
+    return JSONResponse(
+        status_code=status,
+        content={
+            "success": False,
+            "stage": stage,
+            "error": error,
+            "message": message,
+        },
+    )
+
+
 # ============================================================
-# REQUEST MODEL
+# REQUEST MODELS
 # ============================================================
 
 class Chat(BaseModel):
-
     message: str = ""
 
     service: str | None = None
-
     event: str | None = None
 
     customer_id: str | None = None
-
     job_id: str | None = None
 
     client_request_id: str | None = None
@@ -231,27 +244,23 @@ class Chat(BaseModel):
 
 
 class Correction(BaseModel):
-
     job_id: str
-
     instruction: str
 
 
 class Approval(BaseModel):
-
     job_id: str
-
     version_id: str
 
 
 # ============================================================
-# CUSTOMER CONTEXT
+# CONTEXT
 #
-# No service-specific logic lives here.
-# We simply give intelligence all available information.
+# The API merely packages factual customer input.
+# Intelligence decides what it means.
 # ============================================================
 
-def build_intelligence_request(
+def build_customer_input(
     request: Chat,
 ) -> str:
 
@@ -259,13 +268,12 @@ def build_intelligence_request(
 
     if request.service:
         parts.append(
-            "SELECTED SERVICE:\n"
-            + request.service.strip()
+            f"SELECTED SERVICE:\n{request.service.strip()}"
         )
 
     if request.form_data:
 
-        values: list[str] = []
+        values = []
 
         for key, value in request.form_data.items():
 
@@ -280,6 +288,7 @@ def build_intelligence_request(
                 str(key)
                 .replace("_", " ")
                 .strip()
+                .title()
             )
 
             values.append(
@@ -287,54 +296,24 @@ def build_intelligence_request(
             )
 
         if values:
-
             parts.append(
                 "CUSTOMER PROVIDED INFORMATION:\n"
                 + "\n".join(values)
             )
 
     if request.context:
-
-        context = request.context.strip()
-
-        if context:
+        if request.context.strip():
             parts.append(
-                "CONTEXT:\n"
-                + context
+                "ADDITIONAL CONTEXT:\n"
+                + request.context.strip()
             )
 
     if request.message:
-
-        message = request.message.strip()
-
-        if message:
+        if request.message.strip():
             parts.append(
-                "CUSTOMER REQUEST:\n"
-                + message
+                "CUSTOMER MESSAGE:\n"
+                + request.message.strip()
             )
-
-    if request.document_text:
-
-        document_text = (
-            request.document_text.strip()
-        )
-
-        if document_text:
-
-            parts.append(
-                "CUSTOMER DOCUMENT CONTENT:\n"
-                + document_text
-            )
-
-    if request.document_pages:
-
-        parts.append(
-            "CUSTOMER DOCUMENT PAGES:\n"
-            + json.dumps(
-                request.document_pages,
-                ensure_ascii=False,
-            )
-        )
 
     return "\n\n".join(parts).strip()
 
@@ -343,27 +322,23 @@ def build_context(
     request: Chat,
 ) -> str | None:
 
-    parts: list[str] = []
+    parts = []
 
     if request.context:
-
-        value = request.context.strip()
-
-        if value:
-            parts.append(value)
+        if request.context.strip():
+            parts.append(
+                request.context.strip()
+            )
 
     if request.customer_id:
-
         parts.append(
-            "CUSTOMER ID: "
-            + request.customer_id
+            f"CUSTOMER ID:\n{request.customer_id}"
         )
 
     if request.client_request_id:
-
         parts.append(
-            "CLIENT REQUEST ID: "
-            + request.client_request_id
+            f"CLIENT REQUEST ID:\n"
+            f"{request.client_request_id}"
         )
 
     return "\n\n".join(parts) or None
@@ -376,333 +351,154 @@ def build_context(
 #
 # This is NOT pagination.
 #
-# It only reads whatever structured work intelligence returns.
+# It only discovers structures that intelligence itself
+# returned.
 #
-# If intelligence returns pages, we preserve them.
-# If intelligence returns document_text, we preserve it as one
-# document value rather than inventing page boundaries.
+# The API NEVER invents a page count.
 # ============================================================
 
-def normalize_pages(
-    value: Any,
+def intelligence_pages(
+    result: Any,
 ) -> list[dict[str, Any]]:
 
-    if not isinstance(value, list):
+    if not isinstance(result, dict):
         return []
 
-    pages: list[dict[str, Any]] = []
+    candidates = (
+        "pages",
+        "document_pages",
+        "prepared_pages",
+        "content_pages",
+    )
 
-    for index, item in enumerate(value, 1):
+    for key in candidates:
 
-        if isinstance(item, dict):
+        value = result.get(key)
 
-            content = str(
-                item.get(
-                    "content",
-                    item.get(
-                        "text",
-                        "",
-                    ),
-                )
-                or ""
-            )
-
-            page_number = item.get(
-                "page_number",
-                index,
-            )
-
-            try:
-                page_number = int(
-                    page_number
-                )
-            except Exception:
-                page_number = index
-
-            pages.append(
-                {
-                    **item,
-                    "page_number": page_number,
-                    "position": index,
-                    "content": content,
-                }
-            )
-
-        elif isinstance(item, str):
-
-            pages.append(
-                {
-                    "page_number": index,
-                    "position": index,
-                    "content": item,
-                }
-            )
-
-    return pages
-
-
-def extract_intelligence_result(
-    result: Any,
-) -> dict[str, Any]:
-
-    # --------------------------------------------------------
-    # AdaResponse may return a dictionary.
-    # --------------------------------------------------------
-
-    if isinstance(result, dict):
-
-        output = dict(result)
+        if not isinstance(value, list):
+            continue
 
         pages = []
 
-        for key in (
-            "document_pages",
-            "pages",
-            "prepared_pages",
-            "content_pages",
+        for position, item in enumerate(
+            value,
+            1,
         ):
 
-            candidate = output.get(key)
+            if isinstance(item, dict):
 
-            if isinstance(candidate, list):
-
-                pages = normalize_pages(
-                    candidate
+                content = str(
+                    item.get(
+                        "content",
+                        item.get(
+                            "text",
+                            "",
+                        ),
+                    )
+                    or ""
                 )
 
-                if pages:
-                    break
+                page_number = item.get(
+                    "page_number",
+                    position,
+                )
+
+                try:
+                    page_number = int(
+                        page_number
+                    )
+                except Exception:
+                    page_number = position
+
+                pages.append(
+                    {
+                        **item,
+                        "page_number": page_number,
+                        "position": position,
+                        "content": content,
+                    }
+                )
+
+            elif isinstance(item, str):
+
+                pages.append(
+                    {
+                        "page_number": position,
+                        "position": position,
+                        "content": item,
+                    }
+                )
 
         if pages:
-            output["document_pages"] = pages
-            output["pages"] = pages
+            return pages
 
-        return output
+    return []
 
-    # --------------------------------------------------------
-    # AdaResponse may return a JSON string.
-    # --------------------------------------------------------
+
+def intelligence_document(
+    result: Any,
+) -> dict[str, Any]:
+
+    """
+    Preserve the intelligence response.
+
+    Nothing here decides what a document SHOULD be.
+    """
+
+    if isinstance(result, dict):
+        return dict(result)
 
     if isinstance(result, str):
-
-        text = result.strip()
-
-        if not text:
-            return {
-                "reply": "",
-            }
-
-        try:
-
-            decoded = json.loads(text)
-
-            if isinstance(
-                decoded,
-                dict,
-            ):
-
-                return extract_intelligence_result(
-                    decoded
-                )
-
-        except Exception:
-            pass
-
-        # Plain intelligence response.
-        #
-        # We DO NOT turn it into artificial pages.
         return {
-            "reply": text,
-            "document_text": text,
+            "reply": result,
+            "document_text": result,
         }
 
-    # --------------------------------------------------------
-    # Unknown result.
-    # --------------------------------------------------------
-
     return {
-        "reply": str(
-            result or ""
-        )
+        "result": result
     }
 
 
 # ============================================================
-# INTELLIGENCE INVOCATION
+# JOB STATE
 # ============================================================
 
-async def ask_intelligence(
-    ada: AdaResponse,
-    request: Chat,
-    intelligence_request: str,
-    context: str | None,
-) -> dict[str, Any]:
+def make_review_pages(
+    pages: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
 
-    """
-    Give the existing intelligence complete responsibility for
-    understanding and executing the customer's request.
+    return [
+        {
+            "page_number": page["page_number"],
+            "position": page["position"],
+            "status": "queued",
+            "content": page.get(
+                "content",
+                "",
+            ),
+            "review": "",
+            "error": None,
+        }
+        for page in pages
+    ]
 
-    No keyword routing.
-    No artificial pagination.
-    No service-specific API rules.
-    """
-
-    # --------------------------------------------------------
-    # Preferred document/work methods.
-    # --------------------------------------------------------
-
-    for method_name in (
-        "create_document",
-        "generate_document",
-        "create_work",
-        "generate_work",
-    ):
-
-        method = getattr(
-            ada,
-            method_name,
-            None,
-        )
-
-        if not callable(method):
-            continue
-
-        try:
-
-            result = await asyncio.to_thread(
-                method,
-                customer_request=intelligence_request,
-                service=request.service,
-                form_data=request.form_data,
-                context=context,
-                event=request.event,
-            )
-
-            return extract_intelligence_result(
-                result
-            )
-
-        except TypeError:
-
-            try:
-
-                result = await asyncio.to_thread(
-                    method,
-                    message=intelligence_request,
-                    service=request.service,
-                    context=context,
-                    event=request.event,
-                )
-
-                return extract_intelligence_result(
-                    result
-                )
-
-            except TypeError:
-                continue
-
-    # --------------------------------------------------------
-    # Existing respond() path.
-    # --------------------------------------------------------
-
-    respond = getattr(
-        ada,
-        "respond",
-        None,
-    )
-
-    if not callable(respond):
-
-        raise AttributeError(
-            "AdaResponse does not expose a supported "
-            "intelligence method."
-        )
-
-    result = await asyncio.to_thread(
-        respond,
-        message=intelligence_request,
-        service=request.service,
-        event=request.event,
-        context=context,
-    )
-
-    return extract_intelligence_result(
-        result
-    )
-
-
-# ============================================================
-# WORK EXTRACTION
-# ============================================================
-
-def work_from_result(
-    result: dict[str, Any],
-) -> tuple[list[dict[str, Any]], str]:
-
-    """
-    Extract actual structured pages if intelligence supplied
-    them.
-
-    No page generation occurs here.
-    """
-
-    pages = normalize_pages(
-        result.get(
-            "document_pages"
-        )
-    )
-
-    if not pages:
-
-        pages = normalize_pages(
-            result.get(
-                "pages"
-            )
-        )
-
-    document_text = ""
-
-    for key in (
-        "document_text",
-        "prepared_work",
-        "document",
-        "content",
-        "text",
-    ):
-
-        value = result.get(key)
-
-        if isinstance(
-            value,
-            str,
-        ) and value.strip():
-
-            document_text = value.strip()
-            break
-
-    return pages, document_text
-
-
-# ============================================================
-# JOB
-# ============================================================
 
 def create_job(
-    job_id: str,
     request: Chat,
-    intelligence_result: dict[str, Any],
+    customer_request: str,
+    intelligence_result: Any,
+    pages: list[dict[str, Any]],
 ) -> dict[str, Any]:
 
-    pages, document_text = (
-        work_from_result(
-            intelligence_result
-        )
+    job_id = (
+        str(
+            request.job_id or ""
+        ).strip()
+        or str(uuid.uuid4())
     )
 
     job = {
-
-        "job_id":
-            job_id,
+        "job_id": job_id,
 
         "customer_id":
             request.customer_id,
@@ -711,29 +507,32 @@ def create_job(
             request.service,
 
         "original_request":
-            build_intelligence_request(
-                request
-            ),
+            customer_request,
 
         "context":
-            build_context(
-                request
-            ),
+            build_context(request),
+
+        "client_request_id":
+            request.client_request_id,
 
         "intelligence_result":
-            intelligence_result,
+            intelligence_document(
+                intelligence_result
+            ),
 
         "document_pages":
             pages,
 
-        "document_text":
-            document_text,
+        "review_pages":
+            make_review_pages(
+                pages
+            ),
 
         "status":
             "reviewing",
 
         "review_started":
-            True,
+            False,
 
         "review_finished":
             False,
@@ -741,39 +540,11 @@ def create_job(
         "review_error":
             None,
 
-        "review_pages":
-            [
-                {
-                    "page_number":
-                        page[
-                            "page_number"
-                        ],
+        "approved":
+            False,
 
-                    "position":
-                        page[
-                            "position"
-                        ],
-
-                    "status":
-                        "queued",
-
-                    "content":
-                        page[
-                            "content"
-                        ],
-
-                    "review":
-                        "",
-
-                    "error":
-                        None,
-                }
-
-                for page in pages
-            ],
-
-        "assembled_review":
-            "",
+        "paid":
+            False,
 
         "current_version":
             1,
@@ -781,20 +552,14 @@ def create_job(
         "version_id":
             f"{job_id}:1",
 
-        "approved":
-            False,
-
-        "paid":
-            False,
-
         "progress":
             {
-                "completed":
-                    0,
-
-                "total":
-                    len(pages),
+                "completed": 0,
+                "total": len(pages),
             },
+
+        "assembled_review":
+            "",
     }
 
     _jobs[job_id] = job
@@ -806,7 +571,7 @@ def create_job(
 # JOB RESPONSE
 # ============================================================
 
-def make_job_response(
+def job_response(
     job: dict[str, Any],
 ) -> dict[str, Any]:
 
@@ -820,28 +585,25 @@ def make_job_response(
         [],
     )
 
-    return {
+    progress = job.get(
+        "progress",
+        {},
+    )
 
-        "success":
-            True,
+    return {
+        "success": True,
 
         "job_id":
             job["job_id"],
 
         "customer_id":
-            job.get(
-                "customer_id"
-            ),
+            job.get("customer_id"),
 
         "service":
-            job.get(
-                "service"
-            ),
+            job.get("service"),
 
         "status":
-            job.get(
-                "status"
-            ),
+            job.get("status"),
 
         "current_version":
             job.get(
@@ -878,6 +640,20 @@ def make_job_response(
                 False,
             ),
 
+        "progress":
+            {
+                "completed":
+                    int(
+                        progress.get(
+                            "completed",
+                            0,
+                        )
+                    ),
+
+                "total":
+                    len(pages),
+            },
+
         "total_pages":
             len(pages),
 
@@ -886,12 +662,6 @@ def make_job_response(
 
         "pages":
             pages,
-
-        "document_text":
-            job.get(
-                "document_text",
-                "",
-            ),
 
         "review_pages":
             review_pages,
@@ -902,40 +672,188 @@ def make_job_response(
                 "",
             ),
 
-        "progress":
-            job.get(
-                "progress",
-                {
-                    "completed": 0,
-                    "total": len(pages),
-                },
-            ),
-
         "error":
             job.get(
                 "review_error"
             ),
 
+        "intelligence_result":
+            job.get(
+                "intelligence_result"
+            ),
+
         "review_url":
-            "/review.html"
-            f"?job_id={job['job_id']}",
+            f"/review.html?job_id={job['job_id']}",
     }
 
 
 # ============================================================
-# REVIEW
+# INTELLIGENCE — CREATE
 #
-# Review receives the actual work produced by intelligence.
-# The API does not create artificial pages.
+# The intelligence is asked to create the work.
+#
+# No API pagination.
+# No service-specific API rules.
+# ============================================================
+
+async def intelligence_create(
+    ada: AdaResponse,
+    request: Chat,
+    customer_request: str,
+    context: str | None,
+):
+
+    """
+    Give the intelligence the operation.
+
+    Preferred method:
+        create_document()
+
+    Compatibility:
+        generate_document()
+        create_work()
+        generate_work()
+        respond()
+
+    The API does NOT impose document structure.
+    """
+
+    operation = (
+        "Create the customer's requested service.\n\n"
+        "You are responsible for deciding the correct "
+        "document structure and format for this service.\n"
+        "Do not assume that every service needs multiple "
+        "pages.\n"
+        "Do not assume that every service needs one page.\n"
+        "If the customer explicitly requests a number of "
+        "pages, honour that requirement where appropriate.\n"
+        "If the service has no page-count requirement, use "
+        "the appropriate professional structure for that "
+        "service.\n\n"
+        "Return the completed work in a structured form "
+        "suitable for the review workflow. If the work "
+        "naturally consists of pages, return those pages "
+        "explicitly."
+        "\n\n"
+        "CUSTOMER REQUEST:\n"
+        + customer_request
+    )
+
+    methods = (
+        "create_document",
+        "generate_document",
+        "create_work",
+        "generate_work",
+    )
+
+    for name in methods:
+
+        method = getattr(
+            ada,
+            name,
+            None,
+        )
+
+        if not callable(method):
+            continue
+
+        try:
+
+            return await asyncio.to_thread(
+                method,
+                customer_request=operation,
+                service=request.service,
+                form_data=request.form_data,
+                context=context,
+                event=request.event,
+            )
+
+        except TypeError:
+            pass
+
+        try:
+
+            return await asyncio.to_thread(
+                method,
+                message=operation,
+                service=request.service,
+                context=context,
+                event=request.event,
+            )
+
+        except TypeError:
+            pass
+
+    respond = getattr(
+        ada,
+        "respond",
+        None,
+    )
+
+    if not callable(respond):
+        raise AttributeError(
+            "AdaResponse does not expose a "
+            "document creation or respond method."
+        )
+
+    return await asyncio.to_thread(
+        respond,
+        message=operation,
+        service=request.service,
+        event=request.event,
+        context=context,
+    )
+
+
+# ============================================================
+# INTELLIGENCE — REVIEW
+# ============================================================
+
+async def intelligence_review(
+    ada: AdaResponse,
+    job: dict[str, Any],
+):
+
+    method = getattr(
+        ada,
+        "review_document_pages",
+        None,
+    )
+
+    if not callable(method):
+
+        raise AttributeError(
+            "AdaResponse does not expose "
+            "review_document_pages()."
+        )
+
+    return await asyncio.to_thread(
+        method,
+        pages=job[
+            "document_pages"
+        ],
+        service=job.get(
+            "service"
+        ),
+        context=job.get(
+            "context"
+        ),
+        customer_request=job.get(
+            "original_request"
+        ),
+        event="send_for_review",
+    )
+
+
+# ============================================================
+# REVIEW WORKER
 # ============================================================
 
 async def run_review(
     job_id: str,
 ):
 
-    job = _jobs.get(
-        job_id
-    )
+    job = _jobs.get(job_id)
 
     if not job:
         return
@@ -952,113 +870,80 @@ async def run_review(
             ),
         )
 
-        pages = job.get(
-            "document_pages",
-            [],
-        )
-
-        # If intelligence did not provide structured pages,
-        # we still give the review intelligence the complete
-        # document text.
-        #
-        # We do NOT manufacture pages here.
-
-        review_method = getattr(
+        result = await intelligence_review(
             ada,
-            "review_document_pages",
-            None,
+            job,
         )
 
-        if not callable(
-            review_method
-        ):
-
-            raise AttributeError(
-                "AdaResponse does not expose "
-                "review_document_pages()."
-            )
-
-        result = await asyncio.to_thread(
-            review_method,
-            pages=pages,
-            service=job.get(
-                "service"
-            ),
-            context=job.get(
-                "context"
-            ),
-            customer_request=job.get(
-                "original_request"
-            ),
-            event="send_for_review",
-            progress_callback=None,
-        )
-
-        result = extract_intelligence_result(
+        job[
+            "intelligence_review_result"
+        ] = intelligence_document(
             result
         )
 
-        returned_pages = normalize_pages(
-            result.get(
-                "pages"
-            )
+        returned_pages = intelligence_pages(
+            result
         )
 
         if returned_pages:
 
             job[
                 "review_pages"
-            ] = [
+            ] = make_review_pages(
+                returned_pages
+            )
 
-                {
-                    "page_number":
-                        page[
-                            "page_number"
-                        ],
+            for page in job[
+                "review_pages"
+            ]:
 
-                    "position":
-                        page[
-                            "position"
-                        ],
+                page["status"] = "reviewed"
 
-                    "status":
-                        "reviewed",
+            # Intelligence has authority over the
+            # reviewed document representation.
 
-                    "content":
-                        page.get(
-                            "content",
-                            "",
-                        ),
+            job[
+                "document_pages"
+            ] = returned_pages
 
-                    "review":
-                        page.get(
-                            "review",
-                            "",
-                        ),
+        if isinstance(
+            result,
+            dict,
+        ):
 
-                    "error":
-                        None,
-                }
+            job[
+                "assembled_review"
+            ] = str(
+                result.get(
+                    "assembled_review",
+                    result.get(
+                        "review",
+                        "",
+                    ),
+                )
+                or ""
+            )
 
-                for page in returned_pages
+        total = len(
+            job[
+                "document_pages"
             ]
+        )
 
         job[
-            "assembled_review"
-        ] = str(
-            result.get(
-                "assembled_review",
-                result.get(
-                    "review",
-                    "",
-                ),
-            )
-            or ""
-        )
+            "progress"
+        ] = {
+            "completed": total,
+            "total": total,
+        }
 
         job[
             "status"
         ] = "review_complete"
+
+        job[
+            "review_started"
+        ] = True
 
         job[
             "review_finished"
@@ -1067,26 +952,6 @@ async def run_review(
         job[
             "review_error"
         ] = None
-
-        job[
-            "progress"
-        ] = {
-            "completed":
-                len(
-                    job.get(
-                        "document_pages",
-                        [],
-                    )
-                ),
-
-            "total":
-                len(
-                    job.get(
-                        "document_pages",
-                        [],
-                    )
-                ),
-        }
 
     except asyncio.CancelledError:
         raise
@@ -1098,6 +963,10 @@ async def run_review(
         ] = "review_error"
 
         job[
+            "review_started"
+        ] = True
+
+        job[
             "review_finished"
         ] = True
 
@@ -1105,14 +974,10 @@ async def run_review(
             "review_error"
         ] = {
             "type":
-                type(
-                    error
-                ).__name__,
+                type(error).__name__,
 
             "message":
-                str(
-                    error
-                ),
+                str(error),
         }
 
         traceback.print_exc()
@@ -1122,29 +987,38 @@ def start_review(
     job_id: str,
 ) -> bool:
 
-    job = _jobs.get(
-        job_id
-    )
+    job = _jobs.get(job_id)
 
     if not job:
         return False
 
-    task = _review_tasks.get(
+    if not job.get(
+        "document_pages"
+    ):
+        return False
+
+    existing = _review_tasks.get(
         job_id
     )
 
     if (
-        task
-        and not task.done()
+        existing
+        and not existing.done()
     ):
         return False
+
+    job[
+        "review_started"
+    ] = True
+
+    job[
+        "status"
+    ] = "reviewing"
 
     _review_tasks[
         job_id
     ] = asyncio.create_task(
-        run_review(
-            job_id
-        )
+        run_review(job_id)
     )
 
     return True
@@ -1154,101 +1028,39 @@ def start_review(
 # HTML
 # ============================================================
 
-def find_file(
-    name: str,
-):
-
-    locations = [
-
-        BASE / name,
-
-        BASE / "app" / name,
-
-        BASE / "static" / name,
-
-        BASE / "public" / name,
-
-        BASE / "assets" / name,
-    ]
-
-    for path in locations:
-
-        if path.is_file():
-            return path
-
-    return None
-
-
-def serve_html(
-    filename: str,
-):
-
-    path = find_file(
-        filename
-    )
-
-    if not path:
-
-        return application_error(
-            "PAGE",
-            f"{filename} was not found.",
-            404,
-            "HTML_NOT_FOUND",
-        )
-
-    return FileResponse(
-        path,
-        media_type="text/html",
-    )
-
-
 @app.get("/")
 async def root():
-    return serve_html(
-        "index.html"
-    )
+    return serve_html("index.html")
 
 
 @app.get("/index.html")
 async def index():
-    return serve_html(
-        "index.html"
-    )
+    return serve_html("index.html")
 
 
 @app.get("/conversation.html")
 async def conversation():
-    return serve_html(
-        "conversation.html"
-    )
+    return serve_html("conversation.html")
 
 
 @app.get("/workspace.html")
 async def workspace():
-    return serve_html(
-        "workspace.html"
-    )
+    return serve_html("workspace.html")
 
 
 @app.get("/review.html")
-async def review_page():
-    return serve_html(
-        "review.html"
-    )
+async def review():
+    return serve_html("review.html")
 
 
 @app.get("/payment.html")
-async def payment_page():
-    return serve_html(
-        "payment.html"
-    )
+async def payment():
+    return serve_html("payment.html")
 
 
 @app.get("/download.html")
 async def download_page():
-    return serve_html(
-        "download.html"
-    )
+    return serve_html("download.html")
 
 
 # ============================================================
@@ -1259,60 +1071,32 @@ async def download_page():
 async def health():
 
     return {
-
-        "success":
-            True,
-
-        "status":
-            "ok",
-
-        "api":
-            "FastAPI",
-
-        "intelligence":
-            "AdaResponse",
-
-        "model":
-            get_ada_model(),
-
-        "configured":
-            is_configured(),
-
+        "success": True,
+        "status": "ok",
+        "api": "FastAPI",
+        "intelligence": "AdaResponse",
+        "model": get_ada_model(),
+        "configured": is_configured(),
         "architecture":
             "intelligence-controlled",
     }
 
 
 @app.get("/api/status")
-async def api_status():
+async def status():
 
     return {
-
-        "success":
-            True,
-
-        "api":
-            "FastAPI",
-
-        "intelligence":
-            "AdaResponse",
-
-        "model":
-            get_ada_model(),
-
-        "configured":
-            is_configured(),
-
-        "active_sessions":
-            len(
-                _sessions
-            ),
-
-        "active_jobs":
-            len(
-                _jobs
-            ),
-
+        "success": True,
+        "api": "FastAPI",
+        "intelligence": "AdaResponse",
+        "model": get_ada_model(),
+        "configured": is_configured(),
+        "active_sessions": len(
+            _sessions
+        ),
+        "active_jobs": len(
+            _jobs
+        ),
         "architecture":
             "intelligence-controlled",
     }
@@ -1320,6 +1104,10 @@ async def api_status():
 
 # ============================================================
 # UPLOAD
+#
+# Upload extraction is transport functionality.
+#
+# It does NOT decide how the service should use the file.
 # ============================================================
 
 @app.post("/api/upload")
@@ -1336,8 +1124,7 @@ async def upload(
         data = await file.read()
 
         if not data:
-
-            return application_error(
+            return fail(
                 "UPLOAD",
                 "The uploaded file is empty.",
                 400,
@@ -1345,44 +1132,91 @@ async def upload(
             )
 
         if len(data) > MAX_UPLOAD:
-
-            return application_error(
+            return fail(
                 "UPLOAD",
-                "The uploaded document is too large.",
+                "The uploaded file is too large.",
                 413,
                 "FILE_TOO_LARGE",
             )
 
         filename = (
             file.filename
-            or "document"
+            or "uploaded-file"
         )
 
-        # ----------------------------------------------------
-        # Upload is transport only.
+        # The API deliberately does not turn the upload
+        # into artificial review pages.
         #
-        # We deliberately do not perform API pagination or
-        # document interpretation here.
-        # ----------------------------------------------------
+        # It sends the extracted content to intelligence
+        # during the actual operation.
+
+        text = ""
+
+        suffix = Path(
+            filename
+        ).suffix.lower()
+
+        if suffix in {
+            ".txt",
+            ".csv",
+        }:
+
+            text = data.decode(
+                "utf-8",
+                "replace",
+            )
+
+        elif suffix == ".pdf":
+
+            from pypdf import PdfReader
+
+            reader = PdfReader(
+                __import__(
+                    "io"
+                ).BytesIO(data)
+            )
+
+            text = "\n\n".join(
+                page.extract_text() or ""
+                for page in reader.pages
+            )
+
+        else:
+
+            # Preserve raw upload metadata.
+            # Actual service intelligence can decide
+            # how the file should be handled.
+
+            return {
+                "success": True,
+                "filename": filename,
+                "job_id":
+                    job_id
+                    or str(uuid.uuid4()),
+                "customer_id":
+                    customer_id,
+                "client_request_id":
+                    client_request_id,
+                "service":
+                    service,
+                "uploaded":
+                    True,
+                "document_text":
+                    "",
+                "message":
+                    "File received. Intelligence will "
+                    "handle it as part of the customer request.",
+            }
 
         return {
-
-            "success":
-                True,
+            "success": True,
 
             "filename":
                 filename,
 
             "job_id":
-                (
-                    str(
-                        job_id
-                        or ""
-                    ).strip()
-                    or str(
-                        uuid.uuid4()
-                    )
-                ),
+                job_id
+                or str(uuid.uuid4()),
 
             "customer_id":
                 customer_id,
@@ -1393,25 +1227,27 @@ async def upload(
             "service":
                 service,
 
-            "size":
-                len(data),
+            "uploaded":
+                True,
 
-            "message":
-                "Document received successfully.",
+            "document_text":
+                text.strip(),
         }
 
     except Exception as error:
 
-        return application_error(
+        traceback.print_exc()
+
+        return fail(
             "UPLOAD",
-            error,
+            str(error),
             400,
-            "DOCUMENT_UPLOAD_ERROR",
+            "UPLOAD_ERROR",
         )
 
 
 # ============================================================
-# CHAT / INTELLIGENCE ENTRY
+# CHAT
 # ============================================================
 
 @app.post("/api/chat")
@@ -1421,7 +1257,7 @@ async def chat(
 
     if not request.activate_intelligence:
 
-        return application_error(
+        return fail(
             "INTELLIGENCE",
             "Intelligence activation is disabled.",
             400,
@@ -1430,7 +1266,7 @@ async def chat(
 
     if not is_configured():
 
-        return application_error(
+        return fail(
             "INTELLIGENCE",
             "AdaResponse is not configured.",
             503,
@@ -1439,47 +1275,10 @@ async def chat(
 
     job_id = (
         str(
-            request.job_id
-            or ""
+            request.job_id or ""
         ).strip()
-        or str(
-            uuid.uuid4()
-        )
+        or str(uuid.uuid4())
     )
-
-    context = build_context(
-        request
-    )
-
-    intelligence_request = (
-        build_intelligence_request(
-            request
-        )
-    )
-
-    if (
-        request.guidance_only
-        and not request.message.strip()
-    ):
-
-        return application_error(
-            "GUIDANCE",
-            "The guidance message is empty.",
-            400,
-            "EMPTY_GUIDANCE_MESSAGE",
-        )
-
-    if (
-        not request.guidance_only
-        and not intelligence_request
-    ):
-
-        return application_error(
-            "CHAT",
-            "No usable customer request was supplied.",
-            400,
-            "EMPTY_REQUEST",
-        )
 
     try:
 
@@ -1489,162 +1288,214 @@ async def chat(
             request.service,
         )
 
-        # ----------------------------------------------------
-        # INTELLIGENCE OWNS THE REQUEST.
-        # ----------------------------------------------------
-
-        result = await ask_intelligence(
-            ada=ada,
-            request=request,
-            intelligence_request=
-                intelligence_request,
-            context=context,
+        customer_request = (
+            build_customer_input(
+                request
+            )
         )
 
-        # ----------------------------------------------------
-        # Guidance chat does not create a job unless
-        # intelligence explicitly returns work.
-        # ----------------------------------------------------
+        context = build_context(
+            request
+        )
+
+        # ====================================================
+        # GUIDANCE
+        # ====================================================
 
         if request.guidance_only:
 
+            if not request.message.strip():
+
+                return fail(
+                    "GUIDANCE",
+                    "The guidance message is empty.",
+                    400,
+                    "EMPTY_GUIDANCE",
+                )
+
+            result = await asyncio.to_thread(
+                ada.respond,
+                message=request.message.strip(),
+                service=request.service,
+                event=request.event,
+                context=context,
+            )
+
             return {
-
-                "success":
-                    True,
-
-                "reply":
-                    str(
-                        result.get(
-                            "reply",
-                            result.get(
-                                "message",
-                                "",
-                            ),
-                        )
-                        or ""
-                    ).strip(),
-
-                "job_id":
-                    job_id,
-
-                "created_work":
-                    False,
-
-                "intelligence":
-                    result,
+                "success": True,
+                "reply": str(
+                    result or ""
+                ).strip(),
+                "job_id": job_id,
+                "created_work": False,
             }
 
-        # ----------------------------------------------------
-        # Determine whether intelligence actually created
-        # document/work output.
-        # ----------------------------------------------------
+        # ====================================================
+        # EXISTING DOCUMENT
+        #
+        # If Workspace already possesses a document
+        # representation, preserve it.
+        # ====================================================
 
-        pages, document_text = (
-            work_from_result(
-                result
-            )
-        )
+        supplied_pages = []
 
-        explicit_work = (
-            bool(pages)
-            or bool(document_text)
-            or bool(
-                result.get(
-                    "document"
-                )
-            )
-            or bool(
-                result.get(
-                    "prepared_work"
-                )
-            )
-        )
+        if request.document_pages:
+
+            for position, item in enumerate(
+                request.document_pages,
+                1,
+            ):
+
+                if isinstance(
+                    item,
+                    dict,
+                ):
+
+                    supplied_pages.append(
+                        {
+                            **item,
+                            "page_number":
+                                item.get(
+                                    "page_number",
+                                    position,
+                                ),
+                            "position":
+                                position,
+                            "content":
+                                str(
+                                    item.get(
+                                        "content",
+                                        "",
+                                    )
+                                    or ""
+                                ),
+                        }
+                    )
+
+                elif isinstance(
+                    item,
+                    str,
+                ):
+
+                    supplied_pages.append(
+                        {
+                            "page_number":
+                                position,
+                            "position":
+                                position,
+                            "content":
+                                item,
+                        }
+                    )
+
+        # ====================================================
+        # CREATE WORK
+        #
+        # Intelligence decides the document.
+        # ====================================================
 
         create_requested = (
             request.create_work
-            or event_value(
-                request.event
-            )
+            or str(
+                request.event or ""
+            ).strip().lower()
             in {
                 "create_work",
                 "create_document",
                 "form_submitted_create_work",
-                "send_for_review",
-                "review",
+                "submit_service",
+                "service_submitted",
             }
         )
 
-        # ----------------------------------------------------
-        # If intelligence created work, preserve it exactly.
-        # ----------------------------------------------------
+        if create_requested:
 
-        if explicit_work or create_requested:
+            # Existing pages are accepted as authoritative
+            # input when Workspace explicitly supplied them.
+            #
+            # Otherwise intelligence creates the work.
 
-            if not explicit_work:
+            if supplied_pages:
 
-                return {
-
-                    "success":
-                        True,
-
-                    "reply":
-                        str(
-                            result.get(
-                                "reply",
-                                result.get(
-                                    "message",
-                                    "",
-                                ),
-                            )
-                            or ""
-                        ).strip(),
-
-                    "job_id":
-                        job_id,
-
-                    "created_work":
-                        False,
-
-                    "intelligence":
-                        result,
-
-                    "message":
-                        "Intelligence has not returned "
-                        "completed document work yet.",
+                result = {
+                    "pages":
+                        supplied_pages
                 }
 
+                pages = supplied_pages
+
+            else:
+
+                if not customer_request:
+
+                    return fail(
+                        "WORK_CREATION",
+                        "The customer request is empty.",
+                        400,
+                        "EMPTY_WORK_REQUEST",
+                    )
+
+                result = await intelligence_create(
+                    ada=ada,
+                    request=request,
+                    customer_request=customer_request,
+                    context=context,
+                )
+
+                # IMPORTANT:
+                #
+                # We do NOT paginate text here.
+                #
+                # If intelligence did not return a structured
+                # page collection, the API does not invent one.
+
+                pages = intelligence_pages(
+                    result
+                )
+
+            if not pages:
+
+                # This is deliberately a hard failure.
+                #
+                # Previously the API tried to manufacture pages
+                # from arbitrary text. That hid the real problem.
+                #
+                # Now we expose the real contract failure.
+
+                return fail(
+                    "INTELLIGENCE_OUTPUT",
+                    (
+                        "Intelligence completed the operation "
+                        "but did not return a structured "
+                        "document page collection. "
+                        "The API will not invent page structure."
+                    ),
+                    422,
+                    "INTELLIGENCE_DID_NOT_RETURN_DOCUMENT_PAGES",
+                )
+
             job = create_job(
-                job_id=
-                    job_id,
-
-                request=
-                    request,
-
-                intelligence_result=
-                    result,
+                request=request,
+                customer_request=customer_request,
+                intelligence_result=result,
+                pages=pages,
             )
 
             started = start_review(
-                job_id
+                job["job_id"]
             )
 
-            response = make_job_response(
+            response = job_response(
                 job
             )
 
             response.update(
                 {
-
                     "reply":
-                        str(
-                            result.get(
-                                "reply",
-                                "Your work has been prepared "
-                                "and sent for review.",
-                            )
-                            or ""
-                        ).strip(),
+                        (
+                            "Your service has been prepared "
+                            "and sent for review."
+                        ),
 
                     "created_work":
                         True,
@@ -1654,69 +1505,110 @@ async def chat(
 
                     "review_started":
                         started,
-
-                    "intelligence":
-                        result,
                 }
             )
 
             return response
 
-        # ----------------------------------------------------
-        # Normal intelligent conversation.
-        # ----------------------------------------------------
+        # ====================================================
+        # DOCUMENT SUPPLIED DIRECTLY
+        # ====================================================
+
+        if supplied_pages:
+
+            job = create_job(
+                request=request,
+                customer_request=customer_request,
+                intelligence_result={
+                    "pages":
+                        supplied_pages
+                },
+                pages=supplied_pages,
+            )
+
+            started = start_review(
+                job["job_id"]
+            )
+
+            response = job_response(
+                job
+            )
+
+            response.update(
+                {
+                    "reply":
+                        (
+                            "Your document has been received "
+                            "and sent for review."
+                        ),
+
+                    "created_work":
+                        True,
+
+                    "review_started":
+                        started,
+                }
+            )
+
+            return response
+
+        # ====================================================
+        # NORMAL CHAT
+        # ====================================================
+
+        if not request.message.strip():
+
+            return fail(
+                "CHAT",
+                "The chat message is empty.",
+                400,
+                "EMPTY_MESSAGE",
+            )
+
+        result = await asyncio.to_thread(
+            ada.respond,
+            message=request.message.strip(),
+            service=request.service,
+            event=request.event,
+            context=context,
+        )
 
         return {
-
-            "success":
-                True,
+            "success": True,
 
             "reply":
                 str(
-                    result.get(
-                        "reply",
-                        result.get(
-                            "message",
-                            "",
-                        ),
-                    )
-                    or ""
+                    result or ""
                 ).strip(),
 
             "job_id":
                 job_id,
 
             "service":
-                request.service
-                or getattr(
-                    ada,
-                    "service",
-                    None,
-                ),
+                request.service,
 
             "created_work":
                 False,
-
-            "intelligence":
-                result,
         }
 
     except Exception as error:
 
-        return application_error(
+        traceback.print_exc()
+
+        return fail(
             "CHAT",
-            error,
+            str(error),
             500,
             "CHAT_ERROR",
         )
 
 
 # ============================================================
-# REVIEW STATUS
+# REVIEW
 # ============================================================
 
 @app.get("/api/review")
-async def get_review(
+async def review_status(
     job_id: str,
 ):
 
@@ -1726,28 +1618,33 @@ async def get_review(
 
     if not job:
 
-        return application_error(
+        return fail(
             "REVIEW",
-            "The requested review job does not exist.",
+            "Job not found.",
             404,
             "JOB_NOT_FOUND",
         )
 
-    start_review(
-        job_id
-    )
+    if (
+        job.get(
+            "document_pages"
+        )
+        and job.get(
+            "status"
+        ) == "reviewing"
+    ):
 
-    return make_job_response(
+        start_review(
+            job_id
+        )
+
+    return job_response(
         job
     )
 
 
-# ============================================================
-# REVIEW PAGES
-# ============================================================
-
 @app.get("/api/review/pages")
-async def get_review_pages(
+async def review_pages(
     job_id: str,
 ):
 
@@ -1757,39 +1654,46 @@ async def get_review_pages(
 
     if not job:
 
-        return application_error(
-            "REVIEW_PAGES",
-            "The requested review job does not exist.",
+        return fail(
+            "REVIEW",
+            "Job not found.",
             404,
             "JOB_NOT_FOUND",
         )
 
-    start_review(
-        job_id
-    )
+    if (
+        job.get(
+            "document_pages"
+        )
+        and job.get(
+            "status"
+        ) == "reviewing"
+    ):
+
+        start_review(
+            job_id
+        )
 
     return {
-
-        "success":
-            True,
+        "success": True,
 
         "job_id":
             job_id,
 
+        "status":
+            job.get(
+                "status"
+            ),
+
         "current_version":
-            job[
+            job.get(
                 "current_version"
-            ],
+            ),
 
         "version_id":
-            job[
+            job.get(
                 "version_id"
-            ],
-
-        "status":
-            job[
-                "status"
-            ],
+            ),
 
         "total_pages":
             len(
@@ -1809,12 +1713,6 @@ async def get_review_pages(
             job.get(
                 "document_pages",
                 [],
-            ),
-
-        "document_text":
-            job.get(
-                "document_text",
-                "",
             ),
 
         "review_pages":
@@ -1840,11 +1738,18 @@ async def get_review_pages(
                 "paid",
                 False,
             ),
+
+        "error":
+            job.get(
+                "review_error"
+            ),
     }
 
 
 # ============================================================
 # CORRECTION
+#
+# Intelligence controls correction.
 # ============================================================
 
 @app.post("/api/correct")
@@ -1858,7 +1763,7 @@ async def correct(
 
     if not job:
 
-        return application_error(
+        return fail(
             "CORRECTION",
             "Job not found.",
             404,
@@ -1871,7 +1776,7 @@ async def correct(
 
     if not instruction:
 
-        return application_error(
+        return fail(
             "CORRECTION",
             "Correction instruction is empty.",
             400,
@@ -1885,11 +1790,22 @@ async def correct(
         "correcting",
     }:
 
-        return application_error(
+        return fail(
             "CORRECTION",
             "The document is still being processed.",
             409,
             "DOCUMENT_STILL_PROCESSING",
+        )
+
+    if not job.get(
+        "document_pages"
+    ):
+
+        return fail(
+            "CORRECTION",
+            "No document is available.",
+            409,
+            "NO_DOCUMENT",
         )
 
     job[
@@ -1905,7 +1821,6 @@ async def correct(
 
     job.update(
         {
-
             "status":
                 "correcting",
 
@@ -1924,26 +1839,20 @@ async def correct(
             "review_error":
                 None,
 
-            "correction_instruction":
-                instruction,
-
             "progress":
                 {
-                    "completed":
-                        0,
-
+                    "completed": 0,
                     "total":
                         len(
-                            job.get(
-                                "document_pages",
-                                [],
-                            )
+                            job[
+                                "document_pages"
+                            ]
                         ),
                 },
         }
     )
 
-    async def correction_worker():
+    async def worker():
 
         try:
 
@@ -1957,110 +1866,85 @@ async def correct(
                 ),
             )
 
-            correct_method = getattr(
+            method = getattr(
                 ada,
                 "correct_document",
                 None,
             )
 
-            if not callable(
-                correct_method
-            ):
+            if not callable(method):
 
                 raise AttributeError(
                     "AdaResponse does not expose "
                     "correct_document()."
                 )
 
+            correction_request = (
+                "Correct the document according to "
+                "the customer's instruction.\n\n"
+                "You are responsible for deciding the "
+                "appropriate corrected document structure. "
+                "Do not assume a fixed page count.\n\n"
+                "CUSTOMER CORRECTION:\n"
+                + instruction
+            )
+
             result = await asyncio.to_thread(
-                correct_method,
-
+                method,
                 document_pages=
-                    job.get(
-                        "document_pages",
-                        [],
-                    ),
-
+                    job[
+                        "document_pages"
+                    ],
                 correction=
-                    instruction,
-
+                    correction_request,
                 service=
                     job.get(
                         "service"
                     ),
-
                 context=
                     job.get(
                         "context"
                     ),
-
-                progress_callback=
-                    None,
+                progress_callback=None,
             )
 
-            corrected_result = (
-                extract_intelligence_result(
-                    result
-                )
+            corrected_pages = intelligence_pages(
+                result
             )
 
-            corrected_pages, corrected_text = (
-                work_from_result(
-                    corrected_result
-                )
-            )
-
-            if not corrected_pages and not corrected_text:
+            if not corrected_pages:
 
                 raise ValueError(
-                    "Intelligence returned no corrected work."
+                    "Intelligence completed the correction "
+                    "but did not return corrected document "
+                    "pages."
                 )
 
             job[
                 "intelligence_result"
-            ] = corrected_result
+            ] = intelligence_document(
+                result
+            )
 
             job[
                 "document_pages"
             ] = corrected_pages
 
             job[
-                "document_text"
-            ] = corrected_text
+                "review_pages"
+            ] = make_review_pages(
+                corrected_pages
+            )
 
             job[
-                "review_pages"
-            ] = [
-
-                {
-                    "page_number":
-                        page[
-                            "page_number"
-                        ],
-
-                    "position":
-                        page[
-                            "position"
-                        ],
-
-                    "status":
-                        "queued",
-
-                    "content":
-                        page.get(
-                            "content",
-                            "",
-                        ),
-
-                    "review":
-                        "",
-
-                    "error":
-                        None,
-                }
-
-                for page in corrected_pages
-            ]
+                "progress"
+            ] = {
+                "completed": 0,
+                "total":
+                    len(
+                        corrected_pages
+                    ),
+            }
 
             job[
                 "status"
@@ -2073,19 +1957,6 @@ async def correct(
             job[
                 "review_finished"
             ] = False
-
-            job[
-                "progress"
-            ] = {
-
-                "completed":
-                    0,
-
-                "total":
-                    len(
-                        corrected_pages
-                    ),
-            }
 
             start_review(
                 request.job_id
@@ -2100,16 +1971,11 @@ async def correct(
             job[
                 "review_error"
             ] = {
-
                 "type":
-                    type(
-                        error
-                    ).__name__,
+                    type(error).__name__,
 
                 "message":
-                    str(
-                        error
-                    ),
+                    str(error),
             }
 
             traceback.print_exc()
@@ -2127,13 +1993,11 @@ async def correct(
     _correction_tasks[
         request.job_id
     ] = asyncio.create_task(
-        correction_worker()
+        worker()
     )
 
     return {
-
-        "success":
-            True,
+        "success": True,
 
         "job_id":
             request.job_id,
@@ -2152,8 +2016,7 @@ async def correct(
             ],
 
         "message":
-            "Correction has started. "
-            "The corrected work will be reviewed again.",
+            "Correction has been sent to intelligence.",
     }
 
 
@@ -2172,7 +2035,7 @@ async def approve(
 
     if not job:
 
-        return application_error(
+        return fail(
             "APPROVAL",
             "Job not found.",
             404,
@@ -2186,23 +2049,23 @@ async def approve(
         ]
     ):
 
-        return application_error(
+        return fail(
             "APPROVAL",
-            "The supplied document version does not match.",
+            "Document version mismatch.",
             409,
             "VERSION_MISMATCH",
         )
 
     if (
-        job[
+        job.get(
             "status"
-        ]
+        )
         != "review_complete"
     ):
 
-        return application_error(
+        return fail(
             "APPROVAL",
-            "The document review is not complete.",
+            "Document review is not complete.",
             409,
             "REVIEW_NOT_COMPLETE",
         )
@@ -2216,20 +2079,13 @@ async def approve(
     ] = "approved"
 
     return {
-
-        "success":
-            True,
+        "success": True,
 
         "job_id":
             request.job_id,
 
         "version_id":
             request.version_id,
-
-        "current_version":
-            job[
-                "current_version"
-            ],
 
         "approved":
             True,
@@ -2239,22 +2095,22 @@ async def approve(
 
         "total_pages":
             len(
-                job.get(
-                    "document_pages",
-                    [],
-                )
+                job[
+                    "document_pages"
+                ]
             ),
 
         "pages":
-            job.get(
-                "document_pages",
-                [],
-            ),
+            job[
+                "document_pages"
+            ],
 
         "payment_url":
-            "/payment.html"
-            f"?job_id={request.job_id}"
-            f"&version_id={request.version_id}",
+            (
+                "/payment.html"
+                f"?job_id={request.job_id}"
+                f"&version_id={request.version_id}"
+            ),
     }
 
 
@@ -2268,13 +2124,11 @@ async def payment_complete(
     version_id: str,
 ):
 
-    job = _jobs.get(
-        job_id
-    )
+    job = _jobs.get(job_id)
 
     if not job:
 
-        return application_error(
+        return fail(
             "PAYMENT",
             "Job not found.",
             404,
@@ -2288,20 +2142,20 @@ async def payment_complete(
         ]
     ):
 
-        return application_error(
+        return fail(
             "PAYMENT",
             "Version mismatch.",
             409,
             "VERSION_MISMATCH",
         )
 
-    if not job[
+    if not job.get(
         "approved"
-    ]:
+    ):
 
-        return application_error(
+        return fail(
             "PAYMENT",
-            "The document must be approved before payment.",
+            "Document must be approved before payment.",
             409,
             "DOCUMENT_NOT_APPROVED",
         )
@@ -2315,9 +2169,7 @@ async def payment_complete(
     ] = "paid"
 
     return {
-
-        "success":
-            True,
+        "success": True,
 
         "job_id":
             job_id,
@@ -2333,27 +2185,26 @@ async def payment_complete(
 
         "total_pages":
             len(
-                job.get(
-                    "document_pages",
-                    [],
-                )
+                job[
+                    "document_pages"
+                ]
             ),
 
         "download_url":
-            "/download.html"
-            f"?job_id={job_id}"
-            f"&version_id={version_id}",
+            (
+                "/download.html"
+                f"?job_id={job_id}"
+                f"&version_id={version_id}"
+            ),
 
         "api_download_url":
-            "/api/download"
-            f"?job_id={job_id}"
-            f"&version_id={version_id}",
+            (
+                "/api/download"
+                f"?job_id={job_id}"
+                f"&version_id={version_id}"
+            ),
     }
 
-
-# ============================================================
-# PAYMENT STATE
-# ============================================================
 
 @app.get("/api/payment")
 async def payment_state(
@@ -2361,14 +2212,12 @@ async def payment_state(
     version_id: str,
 ):
 
-    job = _jobs.get(
-        job_id
-    )
+    job = _jobs.get(job_id)
 
     if not job:
 
-        return application_error(
-            "PAYMENT_STATE",
+        return fail(
+            "PAYMENT",
             "Job not found.",
             404,
             "JOB_NOT_FOUND",
@@ -2381,17 +2230,15 @@ async def payment_state(
         ]
     ):
 
-        return application_error(
-            "PAYMENT_STATE",
+        return fail(
+            "PAYMENT",
             "Version mismatch.",
             409,
             "VERSION_MISMATCH",
         )
 
     return {
-
-        "success":
-            True,
+        "success": True,
 
         "job_id":
             job_id,
@@ -2400,19 +2247,21 @@ async def payment_state(
             version_id,
 
         "status":
-            job[
+            job.get(
                 "status"
-            ],
+            ),
 
         "approved":
-            job[
-                "approved"
-            ],
+            job.get(
+                "approved",
+                False,
+            ),
 
         "paid":
-            job[
-                "paid"
-            ],
+            job.get(
+                "paid",
+                False,
+            ),
 
         "total_pages":
             len(
@@ -2423,9 +2272,10 @@ async def payment_state(
             ),
 
         "payment_complete":
-            job[
-                "paid"
-            ],
+            job.get(
+                "paid",
+                False,
+            ),
     }
 
 
@@ -2439,13 +2289,11 @@ async def download(
     version_id: str,
 ):
 
-    job = _jobs.get(
-        job_id
-    )
+    job = _jobs.get(job_id)
 
     if not job:
 
-        return application_error(
+        return fail(
             "DOWNLOAD",
             "Job not found.",
             404,
@@ -2459,41 +2307,37 @@ async def download(
         ]
     ):
 
-        return application_error(
+        return fail(
             "DOWNLOAD",
             "Version mismatch.",
             409,
             "VERSION_MISMATCH",
         )
 
-    if not job[
+    if not job.get(
         "approved"
-    ]:
+    ):
 
-        return application_error(
+        return fail(
             "DOWNLOAD",
-            "The current document version "
-            "has not been approved.",
+            "Document has not been approved.",
             409,
             "DOCUMENT_NOT_APPROVED",
         )
 
-    if not job[
+    if not job.get(
         "paid"
-    ]:
+    ):
 
-        return application_error(
+        return fail(
             "DOWNLOAD",
-            "Payment for the current document "
-            "version has not been completed.",
+            "Payment has not been completed.",
             409,
             "PAYMENT_NOT_COMPLETED",
         )
 
     return {
-
-        "success":
-            True,
+        "success": True,
 
         "job_id":
             job_id,
@@ -2506,33 +2350,26 @@ async def download(
 
         "total_pages":
             len(
-                job.get(
-                    "document_pages",
-                    [],
-                )
+                job[
+                    "document_pages"
+                ]
             ),
 
         "pages":
-            job.get(
-                "document_pages",
-                [],
-            ),
+            job[
+                "document_pages"
+            ],
 
         "document_pages":
-            job.get(
-                "document_pages",
-                [],
-            ),
-
-        "document_text":
-            job.get(
-                "document_text",
-                "",
-            ),
+            job[
+                "document_pages"
+            ],
 
         "message":
-            "The approved and paid work is ready "
-            "for final document generation.",
+            (
+                "The approved and paid document "
+                "is ready for final document generation."
+            ),
     }
 
 
@@ -2555,22 +2392,17 @@ async def clear_chat(
 
     if ada:
 
-        clear_method = getattr(
+        method = getattr(
             ada,
             "clear_history",
             None,
         )
 
-        if callable(
-            clear_method
-        ):
-            clear_method()
+        if callable(method):
+            method()
 
     return {
-
-        "success":
-            True,
-
+        "success": True,
         "message":
             "Conversation cleared.",
     }
@@ -2584,49 +2416,35 @@ async def clear_chat(
 async def startup():
 
     print("=" * 70)
-
     print(
         "NAIJA POCKET BUSINESS CENTER — FASTAPI"
     )
-
     print(
         "Architecture: INTELLIGENCE CONTROLLED"
     )
-
     print(
-        "Intelligence model:",
+        "Intelligence:",
         get_ada_model(),
     )
-
     print(
-        "Intelligence configured:",
+        "Configured:",
         is_configured(),
     )
-
     print(
-        "API document pagination: DISABLED"
+        "API pagination authority: DISABLED"
     )
-
     print(
-        "API service rules: DISABLED"
+        "API service-specific rules: DISABLED"
     )
-
     print(
-        "API keyword routing: DISABLED"
+        "Intelligence document authority: ENABLED"
     )
-
     print(
-        "Intelligence owns document creation: ENABLED"
+        "Intelligence review authority: ENABLED"
     )
-
     print(
-        "Intelligence owns service interpretation: ENABLED"
+        "Intelligence correction authority: ENABLED"
     )
-
-    print(
-        "Review workflow: ENABLED"
-    )
-
     print("=" * 70)
 
 
