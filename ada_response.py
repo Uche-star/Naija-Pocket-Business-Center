@@ -6,7 +6,6 @@ END-TO-END DOCUMENT INTELLIGENCE
 ================================
 
 ACTIVE ARCHITECTURE
--------------------
 
 Workspace
     ↓
@@ -20,74 +19,87 @@ FastAPI Review State
     ↓
 Review Page
 
-AdaResponse is the intelligence layer.
-
-IMPORTANT
+CORE RULE
 ---------
 
-AdaResponse does NOT own the customer's permanent document state.
+AdaResponse is the intelligence layer.
 
-The application owns the complete document.
+The application owns the customer's document.
 
-AdaResponse receives document content from the application,
-processes it intelligently, and returns structured results.
+AdaResponse does NOT own the permanent document state.
 
-A large document is NOT sent to Groq as one giant request.
+A document is never silently truncated because an individual
+Groq request has a character or token limit.
 
-Instead:
+LONG DOCUMENT PROCESSING
+------------------------
 
-    COMPLETE DOCUMENT
-          ↓
-    PAGE 1 → GROQ → REVIEW CARD 1
-          ↓
-    PAGE 2 → GROQ → REVIEW CARD 2
-          ↓
-    PAGE 3 → GROQ → REVIEW CARD 3
-          ↓
-          ...
-          ↓
-    LAST PAGE → GROQ → LAST REVIEW CARD
-          ↓
-    COMPLETE REVIEW
+A complete document may contain many pages.
 
-The customer document is never silently truncated,
-summarized, discarded, or replaced by an LLM summary.
+Each page is preserved in full by the application.
 
-Groq request limits apply to individual requests only.
+If an individual page is too large for one intelligence request,
+that page is divided into bounded review chunks:
 
-REVIEW INTELLIGENCE
--------------------
+    COMPLETE PAGE
+         ↓
+    CHUNK 1 → GROQ
+         ↓
+    CHUNK 2 → GROQ
+         ↓
+    CHUNK 3 → GROQ
+         ↓
+         ...
+         ↓
+    CHUNK N → GROQ
+         ↓
+    PAGE REVIEW
+         ↓
+    ONE REVIEW CARD
 
-Ada reasons about the actual customer request.
+The original page content is NEVER replaced by the chunks.
 
-No keyword-based workflow is used.
+The chunks exist only for intelligence processing.
 
-The selected service provides context.
+The returned review card contains the complete original page
+content plus the assembled review findings.
 
-The application event provides workflow context.
+DOCUMENT PRESERVATION
+---------------------
 
-The document provides the material being worked on.
+The application remains authoritative for:
 
-Ada remains available after the complete review so the customer
-can request corrections.
+    - complete document
+    - current document version
+    - page content
+    - page order
+    - review state
+    - approval state
+    - payment state
+    - delivery state
 
-CORRECTION
-----------
+AdaResponse only reasons over supplied information.
 
-The application sends the current document version plus the
-customer's correction instruction.
+CORRECTIONS
+-----------
 
-Ada returns corrected page content.
+The application supplies the current document version.
 
-The application remains responsible for storing the new version.
+AdaResponse processes the correction request.
+
+The application remains responsible for saving the corrected
+version.
+
+AdaResponse never restores an older document version.
 
 SECURITY
 --------
 
 Technical errors are logged server-side.
 
-Internal architecture is never exposed to customers unless
-ADA_EXPOSE_ERRORS=true is explicitly configured.
+Internal architecture is never exposed to customers unless:
+
+    ADA_EXPOSE_ERRORS=true
 """
 
 from __future__ import annotations
@@ -143,31 +155,64 @@ EXPOSE_ERRORS_TO_CLIENT = (
 # INTELLIGENCE LIMITS
 # ============================================================
 
-MAX_SYSTEM_PROMPT_CHARS = 16000
+MAX_SYSTEM_PROMPT_CHARS = 12000
 
 MAX_HISTORY_MESSAGES = 8
-MAX_HISTORY_MESSAGE_CHARS = 2000
+MAX_HISTORY_MESSAGE_CHARS = 1800
 
 MAX_USER_MESSAGE_CHARS = 5000
-MAX_CONTEXT_CHARS = 6000
+MAX_CONTEXT_CHARS = 5000
 
-# Maximum content placed into ONE review request.
-REVIEW_PAGE_INPUT_CHARS = 8000
-
-# Maximum continuity information carried forward.
-REVIEW_CONTINUITY_CHARS = 2500
-
-# Maximum number of review findings generated per request.
-REVIEW_OUTPUT_TOKENS = 700
-
-# Maximum number of actual pages accepted by the engine.
 MAX_DOCUMENT_PAGES = 1000
 
-# Correction request limits.
-CORRECTION_INPUT_CHARS = 8000
-CORRECTION_OUTPUT_TOKENS = 900
+# ------------------------------------------------------------
+# REVIEW CHUNKING
+# ------------------------------------------------------------
 
-# Normal conversational response.
+# Maximum raw document characters placed into one Groq
+# review request.
+#
+# IMPORTANT:
+# This is NOT a document limit.
+# It is only an individual intelligence-request limit.
+# Long pages are divided into multiple requests.
+# ------------------------------------------------------------
+
+REVIEW_CHUNK_CHARS = 6500
+
+# Small overlap allows a sentence/paragraph crossing a chunk
+# boundary to remain understandable to both requests.
+REVIEW_CHUNK_OVERLAP_CHARS = 500
+
+# Maximum amount of previous chunk review information passed
+# into the next chunk.
+REVIEW_CHUNK_CONTINUITY_CHARS = 1800
+
+# Maximum review output from one chunk.
+REVIEW_CHUNK_OUTPUT_TOKENS = 500
+
+# Final page-review assembly request.
+REVIEW_ASSEMBLY_INPUT_CHARS = 7000
+REVIEW_ASSEMBLY_OUTPUT_TOKENS = 700
+
+# Maximum review findings carried from previous pages.
+REVIEW_PAGE_CONTINUITY_CHARS = 2200
+
+# ------------------------------------------------------------
+# CORRECTION
+# ------------------------------------------------------------
+
+CORRECTION_INPUT_CHARS = 7000
+CORRECTION_OUTPUT_TOKENS = 1000
+
+# Maximum amount of a page used when deciding whether a
+# correction appears localized.
+CORRECTION_ANALYSIS_CHARS = 3500
+
+# ------------------------------------------------------------
+# NORMAL CHAT
+# ------------------------------------------------------------
+
 NORMAL_OUTPUT_TOKENS = 700
 
 
@@ -305,10 +350,12 @@ def compact_text(
     maximum: int,
 ) -> str:
     """
-    Compact internal context without silently using this
-    mechanism to destroy customer document pages.
+    Compact INTERNAL context only.
 
-    This helper is for prompts, history and continuity only.
+    This helper must never be used to replace the original
+    customer document content.
+
+    Long document pages are handled by chunking instead.
     """
 
     text = safe_text(text)
@@ -319,7 +366,7 @@ def compact_text(
     if len(text) <= maximum:
         return text
 
-    if maximum < 100:
+    if maximum <= 100:
         return text[:maximum]
 
     marker = (
@@ -343,6 +390,152 @@ def compact_text(
         + marker
         + text[-last:]
     )
+
+
+def split_text_into_chunks(
+    text: str,
+    *,
+    maximum: int = REVIEW_CHUNK_CHARS,
+    overlap: int = REVIEW_CHUNK_OVERLAP_CHARS,
+) -> list[str]:
+    """
+    Split long text into bounded intelligence chunks.
+
+    The original text is never modified.
+
+    The splitter attempts to break at:
+
+        1. paragraph boundaries
+        2. newline boundaries
+        3. sentence boundaries
+        4. whitespace
+        5. hard character boundary as final fallback
+
+    Overlap is used only for intelligence continuity.
+    """
+
+    text = safe_text(text)
+
+    if not text:
+        return []
+
+    if maximum <= 0:
+        return [text]
+
+    if overlap < 0:
+        overlap = 0
+
+    if overlap >= maximum:
+        overlap = maximum // 4
+
+    if len(text) <= maximum:
+        return [text]
+
+    chunks = []
+
+    start = 0
+    text_length = len(text)
+
+    while start < text_length:
+
+        remaining = text_length - start
+
+        if remaining <= maximum:
+            chunks.append(
+                text[start:].strip()
+            )
+            break
+
+        candidate_end = start + maximum
+
+        window = text[start:candidate_end]
+
+        # ----------------------------------------------------
+        # Prefer paragraph break.
+        # ----------------------------------------------------
+
+        break_position = window.rfind(
+            "\n\n"
+        )
+
+        # ----------------------------------------------------
+        # Then ordinary newline.
+        # ----------------------------------------------------
+
+        if break_position < int(
+            maximum * 0.55
+        ):
+            break_position = window.rfind(
+                "\n"
+            )
+
+        # ----------------------------------------------------
+        # Then sentence punctuation.
+        # ----------------------------------------------------
+
+        if break_position < int(
+            maximum * 0.55
+        ):
+            sentence_matches = list(
+                re.finditer(
+                    r"[.!?]\s+",
+                    window,
+                )
+            )
+
+            if sentence_matches:
+                break_position = (
+                    sentence_matches[-1].end()
+                )
+
+        # ----------------------------------------------------
+        # Then whitespace.
+        # ----------------------------------------------------
+
+        if break_position < int(
+            maximum * 0.55
+        ):
+            break_position = window.rfind(
+                " "
+            )
+
+        # ----------------------------------------------------
+        # Final hard boundary.
+        # ----------------------------------------------------
+
+        if break_position <= 0:
+            break_position = maximum
+
+        end = start + break_position
+
+        chunk = text[
+            start:end
+        ].strip()
+
+        if not chunk:
+            end = candidate_end
+
+            chunk = text[
+                start:end
+            ].strip()
+
+        if chunk:
+            chunks.append(
+                chunk
+            )
+
+        # ----------------------------------------------------
+        # Advance while retaining a small overlap.
+        # ----------------------------------------------------
+
+        next_start = end - overlap
+
+        if next_start <= start:
+            next_start = end
+
+        start = next_start
+
+    return chunks
 
 
 # ============================================================
@@ -430,6 +623,7 @@ def log_error(
     stage: str,
     category: str | None = None,
     page_number: int | None = None,
+    chunk_number: int | None = None,
     event: str | None = None,
 ):
     """
@@ -441,7 +635,10 @@ def log_error(
     print("ADA ERROR:", title)
     print("=" * 78)
 
-    print("Stage:", stage)
+    print(
+        "Stage:",
+        stage,
+    )
 
     print(
         "Category:",
@@ -453,6 +650,12 @@ def log_error(
         print(
             "Page:",
             page_number,
+        )
+
+    if chunk_number is not None:
+        print(
+            "Chunk:",
+            chunk_number,
         )
 
     if event:
@@ -524,12 +727,16 @@ def normalize_document_pages(
     pages: Any,
 ) -> list[dict[str, Any]]:
     """
-    Normalize all supported page formats.
+    Normalize supported page formats.
 
     IMPORTANT:
-    This function does NOT compact page content.
 
-    Customer document content is preserved exactly as supplied.
+    Page content is NOT compacted.
+
+    Page content is preserved exactly as supplied except for
+    outer whitespace normalization.
+
+    The original page content is returned in the page object.
     """
 
     if pages is None:
@@ -549,7 +756,7 @@ def normalize_document_pages(
     ):
 
         # ----------------------------------------------------
-        # Plain string page
+        # Plain string page.
         # ----------------------------------------------------
 
         if isinstance(
@@ -573,7 +780,7 @@ def normalize_document_pages(
             continue
 
         # ----------------------------------------------------
-        # Dictionary page
+        # Dictionary page.
         # ----------------------------------------------------
 
         if isinstance(
@@ -655,8 +862,10 @@ def document_text_to_pages(
 
     Explicit PAGE markers are respected.
 
-    If no markers exist, the complete document becomes one
-    logical page rather than being silently truncated.
+    Without markers, the complete document becomes one logical
+    page.
+
+    It is NOT truncated to fit a Groq request.
     """
 
     document = safe_text(
@@ -711,8 +920,10 @@ def document_text_to_pages(
                             int(
                                 match.group(1)
                             ),
+
                         "content":
                             content,
+
                         "title":
                             "",
                     }
@@ -736,26 +947,16 @@ def document_text_to_pages(
 
 class AdaResponse:
     """
-    End-to-end intelligence layer.
+    End-to-end document intelligence layer.
 
-    AdaResponse is deliberately independent of the old controller
-    architecture.
-
-    FastAPI can instantiate this class and call:
+    Public operations:
 
         respond()
-
-    for normal conversation,
-
+        review_page()
         review_document_pages()
-
-    for Send-for-Review,
-
-    and
-
         correct_document()
 
-    for customer corrections.
+    AdaResponse does not own permanent document state.
     """
 
     def __init__(
@@ -939,32 +1140,35 @@ class AdaResponse:
             "customer-facing assistant of "
             "Naija Pocket Business Center.\n\n"
 
-            "Your job is to understand the customer's "
-            "actual request and reason intelligently "
-            "about the work being performed.\n\n"
+            "Understand the customer's actual request "
+            "and reason intelligently about the work.\n\n"
 
             "Do NOT use keyword matching to determine "
             "customer intent.\n\n"
 
             "Use the selected service, customer request, "
-            "document content and application state as "
-            "context for reasoning.\n\n"
+            "document material and application state "
+            "as reasoning context.\n\n"
 
             "DOCUMENT REVIEW\n"
             "===============\n"
-            "A document may contain many pages.\n\n"
+            "A document can contain many pages.\n\n"
 
             "Every supplied page belongs to the same "
             "customer document unless the application "
             "explicitly says otherwise.\n\n"
 
-            "Review each page as part of the complete "
-            "document.\n\n"
+            "A page may also be divided into multiple "
+            "intelligence chunks because of request limits.\n\n"
 
-            "Maintain awareness of important information "
-            "from earlier pages when reviewing later pages.\n\n"
+            "A chunk is NOT a separate document.\n"
+            "A chunk is NOT a separate customer job.\n\n"
 
-            "Look for:\n"
+            "When reviewing chunks, reason about the "
+            "material supplied while preserving its "
+            "relationship to the complete page.\n\n"
+
+            "Look for genuine issues involving:\n"
             "- correctness\n"
             "- completeness\n"
             "- relevance\n"
@@ -976,30 +1180,27 @@ class AdaResponse:
             "- visible formatting problems\n"
             "- compliance with the customer's request\n\n"
 
-            "Do not invent facts.\n\n"
-
-            "Do not claim that a page is missing unless "
-            "the application actually says it is missing.\n\n"
-
-            "Do not treat each page as a separate job.\n\n"
+            "Do not invent facts.\n"
+            "Do not invent missing pages.\n"
+            "Do not claim that content is missing unless "
+            "the supplied material establishes that.\n\n"
 
             "DOCUMENT PRESERVATION\n"
             "=====================\n"
-            "The application owns the customer's complete "
-            "document.\n\n"
+            "The application owns the complete document.\n\n"
 
-            "Never delete document content.\n"
-            "Never silently summarize the document.\n"
-            "Never replace a page with a summary.\n"
+            "Never delete customer document content.\n"
+            "Never silently summarize a customer page "
+            "in place of its original content.\n"
+            "Never replace a page with a review.\n"
             "Never invent pages.\n\n"
 
-            "An LLM request limit is NOT a customer-document "
-            "limit.\n\n"
+            "An LLM request limit is NOT a document limit.\n\n"
 
             "CORRECTION MODE\n"
             "===============\n"
-            "When the customer requests a correction, work "
-            "from the current document version supplied by "
+            "When a correction is requested, work from "
+            "the current document version supplied by "
             "the application.\n\n"
 
             "Apply the requested correction without "
@@ -1040,7 +1241,7 @@ class AdaResponse:
         parts = []
 
         # ----------------------------------------------------
-        # Existing Ada prompt manager
+        # Existing prompt manager.
         # ----------------------------------------------------
 
         try:
@@ -1057,7 +1258,7 @@ class AdaResponse:
                 parts.append(
                     compact_text(
                         central,
-                        10000,
+                        7500,
                     )
                 )
 
@@ -1071,7 +1272,7 @@ class AdaResponse:
             )
 
         # ----------------------------------------------------
-        # Core intelligence rules
+        # Core intelligence rules.
         # ----------------------------------------------------
 
         parts.append(
@@ -1079,7 +1280,7 @@ class AdaResponse:
         )
 
         # ----------------------------------------------------
-        # Billing
+        # Billing.
         # ----------------------------------------------------
 
         billing = (
@@ -1094,7 +1295,7 @@ class AdaResponse:
             )
 
         # ----------------------------------------------------
-        # Application state
+        # Application state.
         # ----------------------------------------------------
 
         if context:
@@ -1108,7 +1309,7 @@ class AdaResponse:
             )
 
         # ----------------------------------------------------
-        # Selected service
+        # Selected service.
         # ----------------------------------------------------
 
         if active_service:
@@ -1171,6 +1372,7 @@ class AdaResponse:
         output_tokens: int,
         stage: str,
         page_number: int | None = None,
+        chunk_number: int | None = None,
         event: str | None = None,
     ) -> str:
 
@@ -1183,6 +1385,7 @@ class AdaResponse:
         print("Stage:", stage)
         print("Model:", MODEL)
         print("Page:", page_number)
+        print("Chunk:", chunk_number)
         print("Messages:", len(messages))
         print("Output tokens:", output_tokens)
         print("=" * 78)
@@ -1217,6 +1420,7 @@ class AdaResponse:
                 stage=stage,
                 category=category,
                 page_number=page_number,
+                chunk_number=chunk_number,
                 event=event,
             )
 
@@ -1305,64 +1509,139 @@ class AdaResponse:
         return content
 
     # ========================================================
-    # REVIEW PROMPT
+    # REVIEW CHUNK PROMPT
     # ========================================================
 
-    def build_page_review_prompt(
+    def build_review_chunk_prompt(
         self,
         *,
         page_number: int,
         total_pages: int,
-        page_content: str,
-        previous_reviews: str,
+        chunk_number: int,
+        total_chunks: int,
+        chunk_content: str,
+        previous_chunk_review: str,
+        previous_page_reviews: str,
         customer_request: str,
     ) -> str:
 
         return (
             "CUSTOMER DOCUMENT REVIEW\n\n"
 
-            "You are reviewing one page of one "
-            "complete customer document.\n\n"
+            "You are reviewing a portion of one page "
+            "of a complete customer document.\n\n"
 
-            f"CURRENT PAGE: {page_number} "
-            f"OF {total_pages}\n\n"
+            f"DOCUMENT PAGE: {page_number} OF {total_pages}\n"
+            f"PAGE REVIEW CHUNK: {chunk_number} "
+            f"OF {total_chunks}\n\n"
 
             "CUSTOMER'S REVIEW REQUEST:\n"
-            f"{compact_text(customer_request, 3000)}\n\n"
+            f"{compact_text(customer_request, 2600)}\n\n"
 
-            "CURRENT PAGE CONTENT:\n"
-            f"{compact_text(page_content, REVIEW_PAGE_INPUT_CHARS)}\n\n"
+            "CURRENT CHUNK CONTENT:\n"
+            f"{chunk_content}\n\n"
 
-            "EARLIER REVIEW CONTINUITY:\n"
-            f"{compact_text(previous_reviews, REVIEW_CONTINUITY_CHARS)}\n\n"
+            "PREVIOUS CHUNK REVIEW CONTINUITY:\n"
+            f"{compact_text(previous_chunk_review, 1600)}\n\n"
+
+            "PREVIOUS PAGE REVIEW CONTINUITY:\n"
+            f"{compact_text(previous_page_reviews, 1800)}\n\n"
 
             "TASK\n"
             "====\n"
 
-            "Review this page intelligently while treating "
-            "it as part of the complete document.\n\n"
+            "Review the supplied material intelligently.\n\n"
 
-            "Look for genuine issues only.\n\n"
+            "Treat this as part of the same document page, "
+            "not as a separate job.\n\n"
 
-            "Check correctness, completeness, relevance, "
-            "grammar, clarity, consistency, contradictions, "
-            "structure, visible formatting problems and "
-            "compliance with the customer's request.\n\n"
+            "Look for genuine issues involving:\n"
+            "- correctness\n"
+            "- completeness\n"
+            "- relevance\n"
+            "- grammar\n"
+            "- clarity\n"
+            "- consistency\n"
+            "- contradictions\n"
+            "- structure\n"
+            "- visible formatting problems\n"
+            "- compliance with the customer's request\n\n"
 
-            "Use earlier review continuity to identify "
-            "cross-page inconsistencies where possible.\n\n"
+            "Pay attention to information carried through "
+            "the previous chunk and previous pages.\n\n"
 
-            "If the page is satisfactory, say so clearly.\n\n"
+            "Do not invent facts.\n"
+            "Do not invent content outside the supplied material.\n"
+            "Do not assume that a chunk boundary means the "
+            "document has ended.\n\n"
 
-            "If there are problems, identify them precisely "
-            "and explain what needs attention.\n\n"
+            "Return concise review findings for this chunk.\n\n"
 
-            "Do not invent facts.\n\n"
+            "If there is no genuine issue in this chunk, "
+            "say that the supplied material is satisfactory."
+        )
 
-            "Do not rewrite the entire page unless the "
-            "customer explicitly asked for rewriting.\n\n"
+    # ========================================================
+    # REVIEW PAGE ASSEMBLY PROMPT
+    # ========================================================
 
-            "Do not mention internal processing."
+    def build_review_assembly_prompt(
+        self,
+        *,
+        page_number: int,
+        total_pages: int,
+        chunk_reviews: list[str],
+        customer_request: str,
+        previous_page_reviews: str,
+    ) -> str:
+
+        findings = []
+
+        for index, review in enumerate(
+            chunk_reviews,
+            start=1,
+        ):
+
+            findings.append(
+                f"CHUNK {index} REVIEW:\n"
+                f"{review}"
+            )
+
+        return (
+            "PAGE REVIEW ASSEMBLY\n\n"
+
+            f"PAGE {page_number} OF {total_pages}\n\n"
+
+            "CUSTOMER'S REVIEW REQUEST:\n"
+            f"{compact_text(customer_request, 2500)}\n\n"
+
+            "PREVIOUS PAGE CONTINUITY:\n"
+            f"{compact_text(previous_page_reviews, 1800)}\n\n"
+
+            "INDIVIDUAL CHUNK REVIEWS:\n"
+            f"{compact_text(chr(10).join(findings), REVIEW_ASSEMBLY_INPUT_CHARS)}\n\n"
+
+            "TASK\n"
+            "====\n"
+
+            "Combine the chunk-level review findings into "
+            "one coherent review for this complete page.\n\n"
+
+            "Remove duplicate findings caused by chunk overlap.\n\n"
+
+            "Do not invent new issues.\n\n"
+
+            "Keep genuine findings from all chunks.\n\n"
+
+            "Consider cross-chunk consistency when combining "
+            "the findings.\n\n"
+
+            "The result will become the review attached to "
+            "this page's review card.\n\n"
+
+            "Do not reproduce the page content.\n\n"
+
+            "Return the coherent page review only."
         )
 
     # ========================================================
@@ -1393,6 +1672,25 @@ class AdaResponse:
                 "for this page."
             )
 
+        # ----------------------------------------------------
+        # NEVER truncate page_content.
+        #
+        # Long content is chunked instead.
+        # ----------------------------------------------------
+
+        chunks = split_text_into_chunks(
+            page_content,
+            maximum=REVIEW_CHUNK_CHARS,
+            overlap=REVIEW_CHUNK_OVERLAP_CHARS,
+        )
+
+        if not chunks:
+
+            return (
+                "No reviewable text was supplied "
+                "for this page."
+            )
+
         system_prompt = (
             self.build_system_prompt(
                 service=service,
@@ -1400,17 +1698,106 @@ class AdaResponse:
             )
         )
 
-        prompt = (
-            self.build_page_review_prompt(
+        chunk_reviews = []
+
+        previous_chunk_review = ""
+
+        total_chunks = len(
+            chunks
+        )
+
+        for chunk_index, chunk in enumerate(
+            chunks,
+            start=1,
+        ):
+
+            prompt = (
+                self.build_review_chunk_prompt(
+                    page_number=page_number,
+                    total_pages=total_pages,
+                    chunk_number=chunk_index,
+                    total_chunks=total_chunks,
+                    chunk_content=chunk,
+                    previous_chunk_review=(
+                        previous_chunk_review
+                    ),
+                    previous_page_reviews=(
+                        previous_reviews
+                    ),
+                    customer_request=(
+                        customer_request
+                    ),
+                )
+            )
+
+            messages = [
+                {
+                    "role":
+                        "system",
+                    "content":
+                        system_prompt,
+                },
+                {
+                    "role":
+                        "user",
+                    "content":
+                        prompt,
+                },
+            ]
+
+            review = self.call_groq(
+                messages=messages,
+                output_tokens=(
+                    REVIEW_CHUNK_OUTPUT_TOKENS
+                ),
+                stage="REVIEW_CHUNK",
+                page_number=page_number,
+                chunk_number=chunk_index,
+                event=event,
+            )
+
+            review = safe_text(
+                review
+            )
+
+            chunk_reviews.append(
+                review
+            )
+
+            previous_chunk_review = (
+                compact_text(
+                    review,
+                    REVIEW_CHUNK_CONTINUITY_CHARS,
+                )
+            )
+
+        # ----------------------------------------------------
+        # One chunk does not need a second assembly request.
+        # ----------------------------------------------------
+
+        if len(chunk_reviews) == 1:
+
+            return chunk_reviews[0]
+
+        # ----------------------------------------------------
+        # Multiple chunks require intelligent assembly.
+        # ----------------------------------------------------
+
+        assembly_prompt = (
+            self.build_review_assembly_prompt(
                 page_number=page_number,
                 total_pages=total_pages,
-                page_content=page_content,
-                previous_reviews=previous_reviews,
-                customer_request=customer_request,
+                chunk_reviews=chunk_reviews,
+                customer_request=(
+                    customer_request
+                ),
+                previous_page_reviews=(
+                    previous_reviews
+                ),
             )
         )
 
-        messages = [
+        assembly_messages = [
             {
                 "role":
                     "system",
@@ -1421,16 +1808,22 @@ class AdaResponse:
                 "role":
                     "user",
                 "content":
-                    prompt,
+                    assembly_prompt,
             },
         ]
 
-        return self.call_groq(
-            messages=messages,
-            output_tokens=REVIEW_OUTPUT_TOKENS,
-            stage="REVIEW_PAGE",
+        assembled = self.call_groq(
+            messages=assembly_messages,
+            output_tokens=(
+                REVIEW_ASSEMBLY_OUTPUT_TOKENS
+            ),
+            stage="REVIEW_PAGE_ASSEMBLY",
             page_number=page_number,
             event=event,
+        )
+
+        return safe_text(
+            assembled
         )
 
     # ========================================================
@@ -1451,15 +1844,21 @@ class AdaResponse:
         ] | None = None,
     ) -> dict[str, Any]:
         """
-        Review every page individually.
+        Review every supplied document page.
 
-        The callback receives a page_started event before
-        each Groq call and page_completed immediately after
-        each Groq response.
+        Long pages are internally chunked.
 
-        This allows FastAPI to place review cards into the
-        review state progressively instead of waiting for the
-        complete document before receiving any result.
+        The application receives one final review card for each
+        actual document page.
+
+        The original page content is returned unchanged.
+
+        Progress callbacks:
+
+            page_started
+            page_completed
+            page_error
+            review_completed
         """
 
         normalized_pages = (
@@ -1482,14 +1881,6 @@ class AdaResponse:
 
         page_results = []
 
-        # ----------------------------------------------------
-        # This is continuity, NOT document content.
-        #
-        # Only review intelligence is carried forward.
-        # The actual page content is always supplied separately
-        # for the page currently being reviewed.
-        # ----------------------------------------------------
-
         continuity_items = []
 
         for position, page in enumerate(
@@ -1511,7 +1902,22 @@ class AdaResponse:
             )
 
             # ------------------------------------------------
-            # Notify application immediately.
+            # Count chunks for application visibility.
+            # ------------------------------------------------
+
+            chunks = split_text_into_chunks(
+                content,
+                maximum=REVIEW_CHUNK_CHARS,
+                overlap=REVIEW_CHUNK_OVERLAP_CHARS,
+            )
+
+            chunk_count = len(
+                chunks
+            )
+
+            # ------------------------------------------------
+            # Notify application that this actual page has
+            # entered review.
             # ------------------------------------------------
 
             if progress_callback:
@@ -1530,17 +1936,18 @@ class AdaResponse:
                         "total_pages":
                             total_pages,
 
+                        "chunk_count":
+                            chunk_count,
+
                         "status":
                             "processing",
 
+                        # IMPORTANT:
+                        # Complete original page content.
                         "content":
                             content,
                     }
                 )
-
-            # ------------------------------------------------
-            # Build continuity from previous findings.
-            # ------------------------------------------------
 
             previous_reviews = "\n\n".join(
                 continuity_items
@@ -1548,12 +1955,8 @@ class AdaResponse:
 
             previous_reviews = compact_text(
                 previous_reviews,
-                REVIEW_CONTINUITY_CHARS,
+                REVIEW_PAGE_CONTINUITY_CHARS,
             )
-
-            # ------------------------------------------------
-            # One page → one Groq request.
-            # ------------------------------------------------
 
             try:
 
@@ -1590,6 +1993,9 @@ class AdaResponse:
                             "total_pages":
                                 total_pages,
 
+                            "chunk_count":
+                                chunk_count,
+
                             "status":
                                 "error",
 
@@ -1607,7 +2013,9 @@ class AdaResponse:
             )
 
             # ------------------------------------------------
-            # Structured review card.
+            # ONE CARD PER ACTUAL PAGE.
+            #
+            # The original complete page content is retained.
             # ------------------------------------------------
 
             result = {
@@ -1622,6 +2030,9 @@ class AdaResponse:
 
                 "total_pages":
                     total_pages,
+
+                "chunk_count":
+                    chunk_count,
 
                 "content":
                     content,
@@ -1638,7 +2049,7 @@ class AdaResponse:
             )
 
             # ------------------------------------------------
-            # Preserve review continuity.
+            # Preserve only review intelligence for continuity.
             # ------------------------------------------------
 
             continuity_items.append(
@@ -1648,13 +2059,15 @@ class AdaResponse:
                 )
             )
 
-            # Prevent continuity from growing indefinitely.
-            continuity_items = continuity_items[
-                -6:
-            ]
+            continuity_items = (
+                continuity_items[
+                    -6:
+                ]
+            )
 
             # ------------------------------------------------
-            # Send completed card immediately.
+            # IMPORTANT:
+            # Send the completed actual page card immediately.
             # ------------------------------------------------
 
             if progress_callback:
@@ -1664,7 +2077,7 @@ class AdaResponse:
                 )
 
         # ----------------------------------------------------
-        # Complete assembled review.
+        # Assemble complete review.
         # ----------------------------------------------------
 
         assembled_review = (
@@ -1721,11 +2134,9 @@ class AdaResponse:
         ],
     ) -> str:
         """
-        Assemble review findings.
+        Assemble review findings only.
 
-        This assembles review results only.
-
-        It does NOT replace the customer's original document.
+        This does NOT assemble or replace the customer document.
         """
 
         ordered = sorted(
@@ -1775,10 +2186,10 @@ class AdaResponse:
         )
 
     # ========================================================
-    # CORRECTION PROMPT
+    # CORRECTION PAGE PROMPT
     # ========================================================
 
-    def build_correction_prompt(
+    def build_correction_page_prompt(
         self,
         *,
         page_number: int,
@@ -1790,8 +2201,8 @@ class AdaResponse:
         return (
             "CUSTOMER DOCUMENT CORRECTION\n\n"
 
-            "This page belongs to the customer's current "
-            "document version.\n\n"
+            "This is the CURRENT version of one page "
+            "of the customer's document.\n\n"
 
             f"PAGE {page_number} OF {total_pages}\n\n"
 
@@ -1799,23 +2210,474 @@ class AdaResponse:
             f"{compact_text(correction, 4000)}\n\n"
 
             "CURRENT PAGE CONTENT:\n"
-            f"{compact_text(page_content, CORRECTION_INPUT_CHARS)}\n\n"
+            f"{page_content}\n\n"
 
             "TASK\n"
             "====\n"
 
-            "Apply the customer's correction to this page.\n\n"
+            "Apply the customer's requested correction.\n\n"
 
             "Rules:\n"
             "- Preserve existing facts.\n"
             "- Do not invent facts.\n"
-            "- Apply the requested correction.\n"
-            "- Do not unnecessarily change unrelated content.\n"
-            "- Preserve the page's useful structure.\n"
-            "- Return the corrected page content only.\n"
+            "- Do not remove unrelated useful content.\n"
+            "- Do not revert to an older version.\n"
+            "- Preserve useful structure.\n"
+            "- Return corrected page content only.\n"
             "- Do not explain the correction process.\n"
             "- Do not mention internal processing."
         )
+
+    # ========================================================
+    # CORRECTION CHUNK PROMPT
+    # ========================================================
+
+    def build_correction_chunk_prompt(
+        self,
+        *,
+        page_number: int,
+        total_pages: int,
+        chunk_number: int,
+        total_chunks: int,
+        chunk_content: str,
+        correction: str,
+    ) -> str:
+
+        return (
+            "CUSTOMER DOCUMENT CORRECTION\n\n"
+
+            f"PAGE {page_number} OF {total_pages}\n"
+            f"CORRECTION CHUNK {chunk_number} "
+            f"OF {total_chunks}\n\n"
+
+            "CUSTOMER'S CORRECTION REQUEST:\n"
+            f"{compact_text(correction, 3500)}\n\n"
+
+            "CURRENT PAGE CHUNK:\n"
+            f"{chunk_content}\n\n"
+
+            "TASK\n"
+            "====\n"
+
+            "Determine whether this supplied chunk requires "
+            "a change to satisfy the customer's correction.\n\n"
+
+            "If the requested correction affects this chunk, "
+            "apply it while preserving unrelated content.\n\n"
+
+            "If the requested correction does not affect this "
+            "chunk, preserve the supplied content.\n\n"
+
+            "Do not invent facts.\n"
+            "Do not remove unrelated content.\n"
+            "Do not return an explanation.\n\n"
+
+            "Return the resulting chunk content only."
+        )
+
+    # ========================================================
+    # CORRECTION TARGET DETECTION
+    # ========================================================
+
+    def find_correction_target_pages(
+        self,
+        *,
+        pages: list[dict[str, Any]],
+        correction: str,
+    ) -> list[int]:
+        """
+        Use Ada intelligence to identify which pages are likely
+        affected by a correction.
+
+        IMPORTANT:
+
+        This is NOT keyword matching.
+
+        If the correction is ambiguous, all pages are returned
+        so that the application does not risk losing a required
+        correction.
+
+        This method is intentionally conservative.
+        """
+
+        if len(pages) <= 1:
+            return [0]
+
+        correction = safe_text(
+            correction
+        )
+
+        if not correction:
+            return list(
+                range(len(pages))
+            )
+
+        # ----------------------------------------------------
+        # Build a bounded page index for reasoning.
+        #
+        # This is metadata/context, not the permanent document.
+        # ----------------------------------------------------
+
+        page_index_parts = []
+
+        for index, page in enumerate(
+            pages
+        ):
+
+            page_number = page.get(
+                "page_number",
+                index + 1,
+            )
+
+            content = safe_text(
+                page.get(
+                    "content"
+                )
+            )
+
+            page_preview = compact_text(
+                content,
+                CORRECTION_ANALYSIS_CHARS,
+            )
+
+            page_index_parts.append(
+                (
+                    f"PAGE {page_number}\n"
+                    f"{page_preview}"
+                )
+            )
+
+        index_text = "\n\n".join(
+            page_index_parts
+        )
+
+        system_prompt = (
+            self.build_system_prompt()
+            + "\n\n"
+            "CORRECTION TARGET ANALYSIS\n"
+            "The application needs to determine which "
+            "document pages may be affected by a customer's "
+            "correction.\n\n"
+            "Do not use simple keyword matching.\n"
+            "Reason about the customer's actual request.\n"
+            "If uncertain, return ALL pages.\n"
+            "Never exclude a page merely because the correction "
+            "does not contain an exact word from that page."
+        )
+
+        prompt = (
+            "CUSTOMER CORRECTION:\n"
+            f"{compact_text(correction, 3500)}\n\n"
+
+            "DOCUMENT PAGE INDEX:\n"
+            f"{compact_text(index_text, 6500)}\n\n"
+
+            "Return the page numbers that may need correction.\n\n"
+
+            "Return ONLY a comma-separated list of page numbers.\n"
+            "Example: 1,3,4\n\n"
+
+            "If the correction could reasonably affect the "
+            "whole document, return ALL page numbers."
+        )
+
+        messages = [
+            {
+                "role":
+                    "system",
+                "content":
+                    system_prompt,
+            },
+            {
+                "role":
+                    "user",
+                "content":
+                    prompt,
+            },
+        ]
+
+        try:
+
+            result = self.call_groq(
+                messages=messages,
+                output_tokens=250,
+                stage="CORRECTION_TARGET_ANALYSIS",
+                event="document_correction",
+            )
+
+        except Exception:
+
+            # ------------------------------------------------
+            # Safety-first fallback:
+            # correct all pages rather than risking omission.
+            # ------------------------------------------------
+
+            return list(
+                range(len(pages))
+            )
+
+        numbers = []
+
+        for match in re.findall(
+            r"\b\d+\b",
+            result,
+        ):
+
+            try:
+                value = int(
+                    match
+                )
+            except Exception:
+                continue
+
+            if 1 <= value <= len(pages):
+                numbers.append(
+                    value - 1
+                )
+
+        numbers = sorted(
+            set(numbers)
+        )
+
+        # ----------------------------------------------------
+        # Ambiguous/invalid result:
+        # process every page.
+        # ----------------------------------------------------
+
+        if not numbers:
+            return list(
+                range(len(pages))
+            )
+
+        return numbers
+
+    # ========================================================
+    # CORRECT ONE PAGE
+    # ========================================================
+
+    def correct_page(
+        self,
+        *,
+        page_number: int,
+        total_pages: int,
+        page_content: str,
+        correction: str,
+        service: str | None,
+        context: str | None,
+    ) -> str:
+        """
+        Correct one complete page.
+
+        Long pages are chunked.
+
+        The complete original page is never silently truncated.
+        """
+
+        page_content = safe_text(
+            page_content
+        )
+
+        chunks = split_text_into_chunks(
+            page_content,
+            maximum=CORRECTION_INPUT_CHARS,
+            overlap=REVIEW_CHUNK_OVERLAP_CHARS,
+        )
+
+        if not chunks:
+            return page_content
+
+        system_prompt = (
+            self.build_system_prompt(
+                service=service,
+                context=context,
+            )
+        )
+
+        # ----------------------------------------------------
+        # One request for ordinary-size pages.
+        # ----------------------------------------------------
+
+        if len(chunks) == 1:
+
+            prompt = (
+                self.build_correction_page_prompt(
+                    page_number=page_number,
+                    total_pages=total_pages,
+                    page_content=chunks[0],
+                    correction=correction,
+                )
+            )
+
+            messages = [
+                {
+                    "role":
+                        "system",
+                    "content":
+                        system_prompt,
+                },
+                {
+                    "role":
+                        "user",
+                    "content":
+                        prompt,
+                },
+            ]
+
+            return safe_text(
+                self.call_groq(
+                    messages=messages,
+                    output_tokens=(
+                        CORRECTION_OUTPUT_TOKENS
+                    ),
+                    stage="CORRECTION_PAGE",
+                    page_number=page_number,
+                    event="document_correction",
+                )
+            )
+
+        # ----------------------------------------------------
+        # Long page:
+        # correct chunks independently.
+        # ----------------------------------------------------
+
+        corrected_chunks = []
+
+        total_chunks = len(
+            chunks
+        )
+
+        for chunk_index, chunk in enumerate(
+            chunks,
+            start=1,
+        ):
+
+            prompt = (
+                self.build_correction_chunk_prompt(
+                    page_number=page_number,
+                    total_pages=total_pages,
+                    chunk_number=chunk_index,
+                    total_chunks=total_chunks,
+                    chunk_content=chunk,
+                    correction=correction,
+                )
+            )
+
+            messages = [
+                {
+                    "role":
+                        "system",
+                    "content":
+                        system_prompt,
+                },
+                {
+                    "role":
+                        "user",
+                    "content":
+                        prompt,
+                },
+            ]
+
+            corrected = self.call_groq(
+                messages=messages,
+                output_tokens=(
+                    CORRECTION_OUTPUT_TOKENS
+                ),
+                stage="CORRECTION_CHUNK",
+                page_number=page_number,
+                chunk_number=chunk_index,
+                event="document_correction",
+            )
+
+            corrected_chunks.append(
+                safe_text(
+                    corrected
+                )
+            )
+
+        # ----------------------------------------------------
+        # Remove overlap duplication.
+        #
+        # Because correction chunks overlap, simply joining
+        # them would duplicate boundary text.
+        #
+        # A lightweight boundary merge is used here.
+        # ----------------------------------------------------
+
+        return self.merge_overlapping_chunks(
+            corrected_chunks
+        )
+
+    # ========================================================
+    # OVERLAPPING CHUNK MERGE
+    # ========================================================
+
+    @staticmethod
+    def merge_overlapping_chunks(
+        chunks: list[str],
+    ) -> str:
+        """
+        Merge corrected chunks while removing obvious repeated
+        boundary text.
+
+        This operates only on corrected intelligence output.
+        """
+
+        if not chunks:
+            return ""
+
+        merged = chunks[0].strip()
+
+        for current in chunks[1:]:
+
+            current = current.strip()
+
+            if not current:
+                continue
+
+            # ------------------------------------------------
+            # Find the largest suffix/prefix overlap.
+            # ------------------------------------------------
+
+            maximum = min(
+                len(merged),
+                len(current),
+                REVIEW_CHUNK_OVERLAP_CHARS,
+            )
+
+            overlap_found = 0
+
+            for size in range(
+                maximum,
+                99,
+                -1,
+            ):
+
+                suffix = merged[
+                    -size:
+                ]
+
+                prefix = current[
+                    :size
+                ]
+
+                if suffix == prefix:
+                    overlap_found = size
+                    break
+
+            if overlap_found:
+
+                merged += current[
+                    overlap_found:
+                ]
+
+            else:
+
+                merged += (
+                    "\n\n"
+                    + current
+                )
+
+        return merged.strip()
 
     # ========================================================
     # CORRECT DOCUMENT
@@ -1834,17 +2696,17 @@ class AdaResponse:
         ] | None = None,
     ) -> dict[str, Any]:
         """
-        Correct the current document version.
+        Correct the CURRENT document version.
 
-        IMPORTANT:
+        The application must provide the current version.
 
-        The application should pass the CURRENT document version.
+        AdaResponse never retrieves or restores an older version.
 
-        AdaResponse does not keep an older document and does not
-        restore an old version.
+        By default, correction targeting is intelligently
+        determined.
 
-        Each supplied page is processed individually so that a
-        large document does not have to fit inside one Groq request.
+        If targeting is ambiguous, every page is processed to
+        avoid silently missing a requested correction.
         """
 
         pages = normalize_document_pages(
@@ -1875,6 +2737,22 @@ class AdaResponse:
             pages
         )
 
+        # ----------------------------------------------------
+        # Determine potentially affected pages using Ada
+        # reasoning rather than keyword matching.
+        # ----------------------------------------------------
+
+        target_indexes = (
+            self.find_correction_target_pages(
+                pages=pages,
+                correction=correction,
+            )
+        )
+
+        target_indexes = set(
+            target_indexes
+        )
+
         corrected_pages = []
 
         for position, page in enumerate(
@@ -1889,15 +2767,63 @@ class AdaResponse:
                 )
             )
 
-            content = safe_text(
+            original_content = safe_text(
                 page.get(
                     "content"
                 )
             )
 
             # ------------------------------------------------
-            # Notify application.
+            # Page not selected:
+            # preserve it exactly.
             # ------------------------------------------------
+
+            if (
+                position - 1
+                not in target_indexes
+            ):
+
+                preserved_page = {
+                    "type":
+                        "corrected_page",
+
+                    "page_number":
+                        page_number,
+
+                    "position":
+                        position,
+
+                    "total_pages":
+                        total_pages,
+
+                    "content":
+                        original_content,
+
+                    "status":
+                        "unchanged",
+                }
+
+                corrected_pages.append(
+                    preserved_page
+                )
+
+                if progress_callback:
+
+                    progress_callback(
+                        preserved_page
+                    )
+
+                continue
+
+            # ------------------------------------------------
+            # Page selected for correction.
+            # ------------------------------------------------
+
+            chunks = split_text_into_chunks(
+                original_content,
+                maximum=CORRECTION_INPUT_CHARS,
+                overlap=REVIEW_CHUNK_OVERLAP_CHARS,
+            )
 
             if progress_callback:
 
@@ -1915,52 +2841,23 @@ class AdaResponse:
                         "total_pages":
                             total_pages,
 
+                        "chunk_count":
+                            len(chunks),
+
                         "status":
                             "processing",
                     }
                 )
 
-            system_prompt = (
-                self.build_system_prompt(
-                    service=service,
-                    context=context,
-                )
-            )
-
-            prompt = (
-                self.build_correction_prompt(
-                    page_number=page_number,
-                    total_pages=total_pages,
-                    page_content=content,
-                    correction=correction,
-                )
-            )
-
-            messages = [
-                {
-                    "role":
-                        "system",
-                    "content":
-                        system_prompt,
-                },
-                {
-                    "role":
-                        "user",
-                    "content":
-                        prompt,
-                },
-            ]
-
             try:
 
-                corrected = self.call_groq(
-                    messages=messages,
-                    output_tokens=(
-                        CORRECTION_OUTPUT_TOKENS
-                    ),
-                    stage="CORRECTION_PAGE",
+                corrected = self.correct_page(
                     page_number=page_number,
-                    event="document_correction",
+                    total_pages=total_pages,
+                    page_content=original_content,
+                    correction=correction,
+                    service=service,
+                    context=context,
                 )
 
             except Exception as error:
@@ -1997,6 +2894,16 @@ class AdaResponse:
                 corrected
             )
 
+            # ------------------------------------------------
+            # Safety check:
+            # if the intelligence layer somehow returns empty
+            # content, never destroy the original page.
+            # ------------------------------------------------
+
+            if not corrected:
+
+                corrected = original_content
+
             corrected_page = {
                 "type":
                     "corrected_page",
@@ -2026,6 +2933,10 @@ class AdaResponse:
                 progress_callback(
                     corrected_page
                 )
+
+        # ----------------------------------------------------
+        # Reassemble the CURRENT corrected document.
+        # ----------------------------------------------------
 
         document_text = (
             self.assemble_document(
@@ -2081,7 +2992,7 @@ class AdaResponse:
         ],
     ) -> str:
         """
-        Reassemble the complete current document.
+        Reassemble the complete document.
 
         No page is summarized here.
         No page is discarded here.
@@ -2130,8 +3041,7 @@ class AdaResponse:
         """
         Normal conversational intelligence.
 
-        This is used when the customer is talking to Ada
-        outside the page-by-page review operation.
+        Used outside the page-by-page document review operation.
         """
 
         message = safe_text(
@@ -2304,6 +3214,11 @@ if __name__ == "__main__":
     )
 
     print(
+        "Long-page chunking:",
+        "ENABLED",
+    )
+
+    print(
         "Progressive review cards:",
         "ENABLED",
     )
@@ -2329,8 +3244,8 @@ if __name__ == "__main__":
     )
 
     print(
-        "Old controller dependency:",
-        "NONE",
+        "Permanent document ownership:",
+        "APPLICATION",
     )
 
     print("=" * 78)
