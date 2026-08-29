@@ -1,10 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
 
-<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport"
-content="width=device-width,initial-scale=1,viewport-fit=cover">
 
-<title>Naija Pocket Business Center</title><style>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
+
+<title>Naija Pocket Business Center</title>
+
+<style>
 
 *{
     box-sizing:border-box;
@@ -167,8 +175,7 @@ button{
 
 .intro-card,
 .form-card,
-.review-header,
-.correction-card{
+.review-header{
     border-radius:15px;
 }
 
@@ -387,13 +394,6 @@ button{
     line-height:1.5;
 }
 
-/*
-* The workspace no longer attempts to display the complete
-* generated document here.
-*
-* This area is only the local review gateway/status.
-*/
-
 .workspace-review-gateway{
     width:100%;
 
@@ -441,333 +441,6 @@ button{
 
     font-size:12px;
     font-weight:900;
-}
-
-/* =========================================================
-   LEGACY WORK CONTENT HOLDER
-
-   Kept hidden from the workspace.
-   The complete document is stored and handed to review.html.
-   ========================================================= */
-
-.work-card{
-    display:none;
-}
-
-.work-content{
-    display:none;
-}
-
-/* =========================================================
-   CORRECTIONS
-   ========================================================= */
-
-.correction-card{
-    display:none;
-
-    margin-top:12px;
-
-    padding:14px;
-
-    background:#111;
-
-    border:1px solid rgba(255,255,255,.1);
-}
-
-.correction-title{
-    margin:0 0 4px;
-
-    font-size:14px;
-}
-
-.correction-help{
-    margin:0 0 9px;
-
-    color:#999;
-
-    font-size:10px;
-    line-height:1.45;
-}
-
-.correction-input{
-    width:100%;
-
-    min-height:100px;
-
-    resize:vertical;
-
-    padding:11px;
-
-    background:#191919;
-    color:#fff;
-
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:9px;
-
-    outline:0;
-}
-
-.review-actions,
-.payment-buttons{
-    display:grid;
-
-    grid-template-columns:
-        repeat(2,minmax(0,1fr));
-
-    gap:7px;
-
-    margin-top:10px;
-}
-
-.review-button,
-.payment-buttons button{
-    min-height:43px;
-
-    border-radius:8px;
-
-    font-size:11px;
-    font-weight:850;
-}
-
-.apply-button{
-    background:#252525;
-    color:#fff;
-
-    border:1px solid rgba(255,255,255,.14);
-}
-
-.approve-button,
-.payment-report{
-    background:var(--gold);
-    color:#000;
-
-    border:0;
-}
-
-.download-button{
-    display:none;
-
-    width:100%;
-
-    min-height:47px;
-
-    margin-top:8px;
-
-    border-radius:8px;
-
-    background:#242424;
-    color:#777;
-
-    border:1px solid rgba(255,255,255,.1);
-
-    font-size:11px;
-    font-weight:850;
-
-    cursor:not-allowed;
-}
-
-.download-button.active{
-    background:var(--green);
-    color:#fff;
-
-    border-color:var(--green);
-
-    cursor:pointer;
-}
-
-.payment-message{
-    display:none;
-
-    margin-top:8px;
-
-    color:#858585;
-
-    font-size:9px;
-
-    text-align:center;
-}
-
-.payment-panel{
-    display:none;
-
-    margin-top:11px;
-
-    padding:13px;
-
-    background:#121212;
-
-    border:1px solid rgba(212,175,55,.38);
-    border-radius:12px;
-}
-
-.payment-panel.show{
-    display:block;
-}
-
-.payment-title{
-    color:var(--gold2);
-
-    font-size:13px;
-    font-weight:900;
-
-    margin-bottom:6px;
-}
-
-.payment-details{
-    color:#ddd;
-
-    white-space:pre-wrap;
-
-    font-size:11px;
-    line-height:1.5;
-}
-
-.payment-check{
-    background:#282828;
-    color:#fff;
-
-    border:1px solid rgba(255,255,255,.13);
-}
-
-/* =========================================================
-   REVIEW POPUP GATEWAY
-   ========================================================= */
-
-.review-gateway-overlay{
-    position:fixed;
-
-    inset:0;
-
-    display:none;
-
-    align-items:center;
-    justify-content:center;
-
-    padding:20px;
-
-    background:rgba(0,0,0,.82);
-
-    z-index:1000;
-
-    backdrop-filter:blur(5px);
-    -webkit-backdrop-filter:blur(5px);
-}
-
-.review-gateway-overlay.show{
-    display:flex;
-}
-
-.review-gateway-card{
-    width:min(100%,420px);
-
-    padding:22px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #1b1b1b,
-            #0b0b0b
-        );
-
-    border:1px solid rgba(212,175,55,.55);
-
-    border-radius:17px;
-
-    box-shadow:
-        0 20px 70px rgba(0,0,0,.65);
-
-    text-align:center;
-}
-
-.review-gateway-icon{
-    width:58px;
-    height:58px;
-
-    margin:0 auto 13px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    border-radius:50%;
-
-    background:rgba(212,175,55,.12);
-
-    border:1px solid rgba(212,175,55,.45);
-
-    font-size:27px;
-}
-
-.review-gateway-title{
-    margin:0;
-
-    color:var(--gold2);
-
-    font-size:20px;
-    font-weight:900;
-}
-
-.review-gateway-message{
-    margin:9px 0 0;
-
-    color:#d0d0d0;
-
-    font-size:12px;
-    line-height:1.6;
-}
-
-.review-gateway-note{
-    margin:12px 0 0;
-
-    padding:9px;
-
-    background:#111;
-
-    border-radius:8px;
-
-    color:#999;
-
-    font-size:10px;
-    line-height:1.5;
-}
-
-.review-gateway-button{
-    width:100%;
-
-    min-height:50px;
-
-    margin-top:16px;
-
-    border:0;
-    border-radius:10px;
-
-    background:var(--gold);
-    color:#000;
-
-    font-size:13px;
-    font-weight:900;
-}
-
-.review-gateway-button:active{
-    transform:scale(.99);
-}
-
-.review-gateway-close{
-    width:100%;
-
-    min-height:42px;
-
-    margin-top:7px;
-
-    border-radius:9px;
-
-    background:#181818;
-    color:#fff;
-
-    border:1px solid rgba(255,255,255,.13);
-
-    font-size:11px;
-    font-weight:800;
 }
 
 /* =========================================================
@@ -935,19 +608,140 @@ button:disabled{
 }
 
 /* =========================================================
-   READ ONLY
+   REVIEW GATEWAY
    ========================================================= */
 
-#introText,
-.intro-card,
-.work-card{
-    user-select:none;
+.review-gateway-overlay{
+    position:fixed;
 
-    -webkit-user-select:none;
-    -moz-user-select:none;
-    -ms-user-select:none;
+    inset:0;
 
-    -webkit-touch-callout:none;
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,.82);
+
+    z-index:1000;
+
+    backdrop-filter:blur(5px);
+    -webkit-backdrop-filter:blur(5px);
+}
+
+.review-gateway-overlay.show{
+    display:flex;
+}
+
+.review-gateway-card{
+    width:min(100%,420px);
+
+    padding:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1b1b1b,
+            #0b0b0b
+        );
+
+    border:1px solid rgba(212,175,55,.55);
+
+    border-radius:17px;
+
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.65);
+
+    text-align:center;
+}
+
+.review-gateway-icon{
+    width:58px;
+    height:58px;
+
+    margin:0 auto 13px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:rgba(212,175,55,.12);
+
+    border:1px solid rgba(212,175,55,.45);
+
+    font-size:27px;
+}
+
+.review-gateway-title{
+    margin:0;
+
+    color:var(--gold2);
+
+    font-size:20px;
+    font-weight:900;
+}
+
+.review-gateway-message{
+    margin:9px 0 0;
+
+    color:#d0d0d0;
+
+    font-size:12px;
+    line-height:1.6;
+}
+
+.review-gateway-note{
+    margin:12px 0 0;
+
+    padding:9px;
+
+    background:#111;
+
+    border-radius:8px;
+
+    color:#999;
+
+    font-size:10px;
+    line-height:1.5;
+}
+
+.review-gateway-button{
+    width:100%;
+
+    min-height:50px;
+
+    margin-top:16px;
+
+    border:0;
+    border-radius:10px;
+
+    background:var(--gold);
+    color:#000;
+
+    font-size:13px;
+    font-weight:900;
+}
+
+.review-gateway-close{
+    width:100%;
+
+    min-height:42px;
+
+    margin-top:7px;
+
+    border-radius:9px;
+
+    background:#181818;
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.13);
+
+    font-size:11px;
+    font-weight:800;
 }
 
 /* =========================================================
@@ -966,10 +760,6 @@ button:disabled{
 
 }
 
-/* =========================================================
-   VERY SMALL SCREENS
-   ========================================================= */
-
 @media(max-height:650px){
 
     .review-gateway-card{
@@ -980,15 +770,25 @@ button:disabled{
 
 }
 
-</style></head><body><div class="app"><header class="header"><div class="brand">
+</style>
 
-    <h1 class="brand-title">
-        Naija Pocket Business Center
-    </h1>
+</head>
 
-    <div class="brand-subtitle">
-        Your Business Center
-    </div>
+<body>
+
+<div class="app">
+
+<header class="header">
+
+<div class="brand">
+
+<h1 class="brand-title">
+Naija Pocket Business Center
+</h1>
+
+<div class="brand-subtitle">
+Your Business Center
+</div>
 
 </div>
 
@@ -996,147 +796,171 @@ button:disabled{
     id="serviceBadge"
     class="service-badge"
 >
-    Service
+Service
 </div>
 
-</header><main class="main"><div class="main-inner"><section id="formView"><div
+</header>
+
+
+<main class="main">
+
+<div class="main-inner">
+
+<section id="formView">
+
+<div
     class="intro-card"
     id="introCard"
 >
 
-    <h2
-        id="introTitle"
-        class="intro-title"
-    >
-        Let's get started
-    </h2>
+<h2
+    id="introTitle"
+    class="intro-title"
+>
+Let's get started
+</h2>
 
-    <p
-        id="introText"
-        class="intro-text"
-    >
-        Please wait while we prepare useful information for this service.
-    </p>
+<p
+    id="introText"
+    class="intro-text"
+>
+Please wait while we prepare useful information for this service.
+</p>
 
-    <div
-        id="price"
-        class="price"
-    >
-        Service
-    </div>
+<div
+    id="price"
+    class="price"
+>
+Service
+</div>
 
 </div>
 
 
 <div class="form-card">
 
-    <h3 class="form-heading">
-        Your Service Information
-    </h3>
+<h3 class="form-heading">
+Your Service Information
+</h3>
 
-    <p class="form-description">
-        Fill in the information relevant to your request.
-        Optional fields can be left blank.
-    </p>
+<p class="form-description">
+Fill in the information relevant to your request.
+Optional fields can be left blank.
+</p>
 
-    <form id="serviceForm">
+<form id="serviceForm">
 
-        <div
-            id="fields"
-            class="fields"
-        ></div>
+<div
+    id="fields"
+    class="fields"
+></div>
 
-        <div class="form-note">
-            When you tap <strong>SEND</strong>, your information
-            will be sent for processing and your prepared work
-            will open immediately in the review area.
-        </div>
+<div class="form-note">
+When you tap <strong>SEND</strong>, your information
+will be sent for processing and your prepared work
+will open immediately in the review area.
+</div>
 
-        <button
-            id="formSubmit"
-            class="form-submit"
-            type="submit"
-        >
-            SEND
-        </button>
+<button
+    id="formSubmit"
+    class="form-submit"
+    type="submit"
+>
+SEND
+</button>
 
-    </form>
+</form>
 
 </div>
 
-</section><section
+</section>
+
+
+<section
     id="reviewView"
     class="review-view"
-><div class="review-header">
+>
 
-    <h2 class="review-title">
-        Your Work Is Ready
-    </h2>
+<div class="review-header">
 
-    <p class="review-subtitle">
-        Your complete prepared work has been received.
-        Open the full review page to read it, request corrections,
-        approve it and continue to payment.
-    </p>
+<h2 class="review-title">
+Your Work Is Ready
+</h2>
+
+<p class="review-subtitle">
+Your prepared work has been completed.
+Open the full review page to read it, request corrections,
+approve it and continue to payment.
+</p>
 
 </div>
 
 
 <div class="workspace-review-gateway">
 
-    <h3 class="workspace-review-gateway-title">
-        Full Review Available
-    </h3>
+<h3 class="workspace-review-gateway-title">
+Full Review Available
+</h3>
 
-    <p class="workspace-review-gateway-text">
-        Your complete document is kept separately from this
-        workspace so long documents are not forced into a
-        limited card.
-    </p>
+<p class="workspace-review-gateway-text">
+Your review is now handled by the dedicated review page.
+Open it to continue with the complete document workflow.
+</p>
 
-    <button
-        id="workspaceOpenReviewButton"
-        class="workspace-review-open"
-        type="button"
-    >
-        Open Full Review
-    </button>
+<button
+    id="workspaceOpenReviewButton"
+    class="workspace-review-open"
+    type="button"
+>
+Open Full Review
+</button>
 
 </div>
 
-</section></div></main><section class="bottom"><div class="bottom-inner"><div
+</section>
+
+</div>
+
+</main>
+
+
+<section class="bottom">
+
+<div class="bottom-inner">
+
+<div
     id="voiceRecording"
     class="voice-recording"
 >
-    🔴 Recording... tap Voice again to stop.
+🔴 Recording... tap Voice again to stop.
 </div>
 
 
 <div class="tools">
 
-    <button
-        id="uploadButton"
-        class="tool-button"
-        type="button"
-    >
-        📄 Upload Documents You Want To Give Us
-    </button>
+<button
+    id="uploadButton"
+    class="tool-button"
+    type="button"
+>
+📄 Upload Documents You Want To Give Us
+</button>
 
-    <button
-        id="voiceButton"
-        class="tool-button gold"
-        type="button"
-    >
-        🎤 Voice
-    </button>
+<button
+    id="voiceButton"
+    class="tool-button gold"
+    type="button"
+>
+🎤 Voice
+</button>
 
-    <button
-        id="customerServiceButton"
-        class="tool-button"
-        type="button"
-    >
-        Customer Service
-    </button>
+<button
+    id="customerServiceButton"
+    class="tool-button"
+    type="button"
+>
+Customer Service
+</button>
 
 </div>
 
@@ -1146,7 +970,7 @@ button:disabled{
     class="choose-service-button"
     type="button"
 >
-    Choose Another Service
+Choose Another Service
 </button>
 
 
@@ -1159,21 +983,21 @@ button:disabled{
 
 <div class="composer">
 
-    <textarea
-        id="messageInput"
-        class="message-input"
-        rows="1"
-        placeholder="Type your message..."
-        autocomplete="off"
-    ></textarea>
+<textarea
+    id="messageInput"
+    class="message-input"
+    rows="1"
+    placeholder="Type your message..."
+    autocomplete="off"
+></textarea>
 
-    <button
-        id="sendButton"
-        class="send-button"
-        type="button"
-    >
-        SEND
-    </button>
+<button
+    id="sendButton"
+    class="send-button"
+    type="button"
+>
+SEND
+</button>
 
 </div>
 
@@ -1183,65 +1007,73 @@ button:disabled{
     class="status"
 ></div>
 
-</div></section></div><!-- =======================================================
-     POPUP REVIEW GATEWAY
+</div>
 
-     This popup does NOT contain the document.
+</section>
 
-     It only opens review.html.
+</div>
 
-     The COMPLETE document is stored in localStorage first.
-     ======================================================= --><div
+
+<!-- =======================================================
+     REVIEW GATEWAY
+     ======================================================= -->
+
+<div
     id="reviewGatewayOverlay"
     class="review-gateway-overlay"
     role="dialog"
     aria-modal="true"
     aria-labelledby="reviewGatewayTitle"
-><div class="review-gateway-card">
+>
 
-    <div class="review-gateway-icon">
-        📄
-    </div>
+<div class="review-gateway-card">
 
-    <h2
-        id="reviewGatewayTitle"
-        class="review-gateway-title"
-    >
-        Your Work Is Ready
-    </h2>
+<div class="review-gateway-icon">
+📄
+</div>
 
-    <p class="review-gateway-message">
-        Your complete prepared document is ready for review.
-        Open the full review page to read everything without
-        the workspace card limiting the document.
-    </p>
+<h2
+    id="reviewGatewayTitle"
+    class="review-gateway-title"
+>
+Your Work Is Ready
+</h2>
 
-    <div class="review-gateway-note">
-        Your complete document will be carried into the review
-        page automatically.
-    </div>
+<p class="review-gateway-message">
+Your prepared work is ready for review.
+Open the dedicated review page to read the complete work,
+request corrections, approve it and continue to payment.
+</p>
 
-    <button
-        id="reviewGatewayOpenButton"
-        class="review-gateway-button"
-        type="button"
-    >
-        Open Full Review
-    </button>
+<div class="review-gateway-note">
+The review page will open using your active job.
+</div>
 
-    <button
-        id="reviewGatewayCloseButton"
-        class="review-gateway-close"
-        type="button"
-    >
-        Continue Here
-    </button>
+<button
+    id="reviewGatewayOpenButton"
+    class="review-gateway-button"
+    type="button"
+>
+Open Full Review
+</button>
+
+<button
+    id="reviewGatewayCloseButton"
+    class="review-gateway-close"
+    type="button"
+>
+Continue Here
+</button>
 
 </div>
 
-</div><script>
+</div>
+
+
+<script>
 
 "use strict";
+
 
 /* =========================================================
    API CONNECTION
@@ -1256,81 +1088,93 @@ const API_BASE = "";
 
    IMPORTANT:
 
-   review.html must read these storage keys.
+   The workspace does NOT create a separate review document.
 
-   The document itself is NOT put into the URL.
+   The API creates/maintains the active job.
 
-   This prevents long documents from becoming oversized URLs
-   and prevents the popup card from becoming the document
-   container.
+   Once the API returns job_id, that job_id is passed directly
+   to review.html.
+
+   review.html is responsible for obtaining and displaying
+   the complete review for that job.
+
+   WORKSPACE
+       ↓
+   /api/chat
+       ↓
+   job_id
+       ↓
+   review.html?job_id=...
+       ↓
+   /api/review?job_id=...
    ========================================================= */
 
 const REVIEW_PAGE =
     "review.html";
 
 
-const REVIEW_STORAGE_KEY =
-    "npbc_complete_review_document";
-
-
-const REVIEW_META_KEY =
-    "npbc_complete_review_metadata";
-
-
 /* =========================================================
    ELEMENTS
    ========================================================= */
 
-const $ = id => document.getElementById(id);
-
-const formView = $("formView");
-const reviewView = $("reviewView");
-
-const serviceForm = $("serviceForm");
-const fields = $("fields");
-const formSubmit = $("formSubmit");
-
-const serviceBadge = $("serviceBadge");
-
-const introTitle = $("introTitle");
-const introText = $("introText");
-const price = $("price");
-const introCard = $("introCard");
-
-const workCard = $("workCard");
-const workContent = $("workContent");
-
-const correctionInput = null;
-
-const applyBtn = null;
-const approveBtn = null;
-
-const downloadBtn = null;
-
-const uploadBtn = $("uploadButton");
-const voiceBtn = $("voiceButton");
-const customerBtn = $("customerServiceButton");
-const chooseBtn = $("chooseServiceButton");
-
-const fileInput = $("fileInput");
-
-const messageInput = $("messageInput");
-const sendBtn = $("sendButton");
-
-const status = $("status");
-
-const voiceRecording = $("voiceRecording");
-
-const paymentPanel = null;
-const paymentDetails = null;
-
-const paymentReport = null;
-const paymentCheck = null;
+const $ = id =>
+    document.getElementById(id);
 
 
-/* =========================================================
-   REVIEW GATEWAY ELEMENTS
-   ========================================================= */
+const formView =
+    $("formView");
+
+const reviewView =
+    $("reviewView");
+
+const serviceForm =
+    $("serviceForm");
+
+const fields =
+    $("fields");
+
+const formSubmit =
+    $("formSubmit");
+
+const serviceBadge =
+    $("serviceBadge");
+
+const introTitle =
+    $("introTitle");
+
+const introText =
+    $("introText");
+
+const price =
+    $("price");
+
+const uploadBtn =
+    $("uploadButton");
+
+const voiceBtn =
+    $("voiceButton");
+
+const customerBtn =
+    $("customerServiceButton");
+
+const chooseBtn =
+    $("chooseServiceButton");
+
+const fileInput =
+    $("fileInput");
+
+const messageInput =
+    $("messageInput");
+
+const sendBtn =
+    $("sendButton");
+
+const status =
+    $("status");
+
+const voiceRecording =
+    $("voiceRecording");
+
 
 const reviewGatewayOverlay =
     $("reviewGatewayOverlay");
@@ -1371,15 +1215,23 @@ function makeId(prefix){
         typeof crypto !== "undefined" &&
         typeof crypto.randomUUID === "function"
     ){
-        return prefix + crypto.randomUUID();
+
+        return (
+            prefix +
+            crypto.randomUUID()
+        );
+
     }
 
     return (
         prefix +
         Date.now() +
         "_" +
-        Math.random().toString(36).slice(2)
+        Math.random()
+            .toString(36)
+            .slice(2)
     );
+
 }
 
 
@@ -1387,9 +1239,11 @@ function get(key){
 
     try{
 
-        return localStorage.getItem(key);
+        return localStorage.getItem(
+            key
+        );
 
-    }catch(e){
+    }catch(error){
 
         return null;
 
@@ -1409,7 +1263,7 @@ function put(key,value){
 
         return true;
 
-    }catch(e){
+    }catch(error){
 
         return false;
 
@@ -1422,26 +1276,39 @@ let customerId =
     get("npbc_customer_id") ||
     makeId("customer_");
 
+
 put(
     "npbc_customer_id",
     customerId
 );
 
 
+/*
+ * This is only the existing client-side job reference.
+
+ * The server-created job_id returned by /api/chat is always
+ * preferred once work creation succeeds.
+ */
 let jobId =
     params.get("job_id") ||
     get("npbc_job_id") ||
-    makeId("job_");
+    "";
 
-put(
-    "npbc_job_id",
-    jobId
-);
+
+if(jobId){
+
+    put(
+        "npbc_job_id",
+        jobId
+    );
+
+}
 
 
 let requestId =
     get("npbc_client_request_id") ||
     makeId("request_");
+
 
 put(
     "npbc_client_request_id",
@@ -1453,13 +1320,20 @@ put(
    STATE
    ========================================================= */
 
-let busy = false;
+let busy =
+    false;
 
-let currentWork = "";
+let currentWork =
+    "";
 
-let mediaRecorder = null;
-let recordedChunks = [];
-let recordingStream = null;
+let mediaRecorder =
+    null;
+
+let recordedChunks =
+    [];
+
+let recordingStream =
+    null;
 
 
 /* =========================================================
@@ -1495,7 +1369,8 @@ function setStatus(
 
 function busyState(value){
 
-    busy = value;
+    busy =
+        value;
 
     [
         formSubmit,
@@ -1519,124 +1394,21 @@ function busyState(value){
 
 
 /* =========================================================
-   COMPLETE REVIEW HANDOFF
-   =========================================================
-
-   This is the critical connection.
-
-   The FULL generated response is stored.
-
-   No:
-       slice()
-       substring()
-       substr()
-       first section
-       preview extraction
-       character limit
-       page limit
-
-   The complete document goes into storage.
-   ========================================================= */
-
-function saveCompleteReviewDocument(work){
-
-    const completeWork =
-        String(work ?? "");
-
-    if(!completeWork){
-
-        throw new Error(
-            "The prepared document is empty."
-        );
-
-    }
-
-
-    /*
-     * Store the complete document as-is.
-     */
-    const stored =
-        put(
-            REVIEW_STORAGE_KEY,
-            completeWork
-        );
-
-
-    if(!stored){
-
-        throw new Error(
-            "The complete document could not be stored for review."
-        );
-
-    }
-
-
-    /*
-     * Store the identifiers and service separately.
-     */
-    const metadata = {
-
-        customer_id:
-            customerId,
-
-        job_id:
-            jobId,
-
-        client_request_id:
-            requestId,
-
-        service,
-
-        created_at:
-            new Date().toISOString(),
-
-        document_length:
-            completeWork.length
-
-    };
-
-
-    put(
-        REVIEW_META_KEY,
-        JSON.stringify(metadata)
-    );
-
-
-    /*
-     * Also maintain a current-work copy.
-
-     * This allows other pages in the workflow to find
-     * the latest complete document if required.
-     */
-    put(
-        "npbc_current_work",
-        completeWork
-    );
-
-
-    return true;
-
-}
-
-
-/* =========================================================
-   OPEN FULL REVIEW PAGE
+   REVIEW PAGE NAVIGATION
    ========================================================= */
 
 function openFullReview(){
 
     /*
-     * Verify that the complete document exists before
-     * navigating away.
+     * A real server-created job is required.
+
+     * Do not manufacture a job ID here because review.html
+     * needs the job that actually exists on the backend.
      */
-    const storedWork =
-        get(REVIEW_STORAGE_KEY);
-
-
-    if(!storedWork){
+    if(!jobId){
 
         setStatus(
-            "The prepared document is not available for review.",
+            "The review job is not ready yet. Please send your request again.",
             "error"
         );
 
@@ -1646,16 +1418,22 @@ function openFullReview(){
 
 
     /*
-     * Keep service/job information available to review.html.
+     * Preserve the active job locally so the review page and
+     * later workflow pages can continue using the same job.
      */
     put(
-        "npbc_review_service",
-        service
+        "npbc_job_id",
+        jobId
     );
 
     put(
         "npbc_review_job_id",
         jobId
+    );
+
+    put(
+        "npbc_review_service",
+        service
     );
 
     put(
@@ -1670,25 +1448,29 @@ function openFullReview(){
 
 
     /*
-     * review.html receives the document through storage,
-     * NOT through a URL parameter.
+     * IMPORTANT:
+
+     * The complete work is NOT put into the URL.
+
+     * The review page receives the server job ID and obtains
+     * the actual review through its own review API connection.
      */
     const reviewUrl =
         REVIEW_PAGE +
-        "?service=" +
-        encodeURIComponent(service) +
-        "&job_id=" +
-        encodeURIComponent(jobId);
+        "?job_id=" +
+        encodeURIComponent(
+            jobId
+        );
 
 
-    location.href =
+    window.location.href =
         reviewUrl;
 
 }
 
 
 /* =========================================================
-   SHOW REVIEW GATEWAY
+   REVIEW GATEWAY
    ========================================================= */
 
 function showReviewGateway(){
@@ -1710,56 +1492,27 @@ function closeReviewGateway(){
 
 
 /* =========================================================
-   DOCUMENT CLEANING
-   =========================================================
-
-   Kept here only for compatibility with any future workspace
-   rendering requirement.
-
-   The document itself is NOT rendered into the workspace.
+   WORKSPACE REVIEW STATE
    ========================================================= */
 
-function removeHtmlCodeFences(value){
-
-    let html =
-        String(value || "").trim();
-
-    html =
-        html.replace(
-            /^```(?:html|HTML)?\s*/i,
-            ""
-        );
-
-    html =
-        html.replace(
-            /\s*```$/i,
-            ""
-        );
-
-    return html.trim();
-
-}
-
-
-/* =========================================================
-   LEGACY RENDER FUNCTION
-
-   Deliberately does not render the complete document into the
-   workspace review card.
-
-   The complete document goes directly to review.html.
-   ========================================================= */
-
-function renderDocument(work){
-
-    currentWork =
-        String(work ?? "");
+function showReview(work){
 
     /*
-     * Intentionally no innerHTML assignment here.
-     *
-     * The complete document is stored and handed to review.html.
+     * Keep returned work only as temporary context.
+
+     * The actual review document belongs to review.html.
      */
+    currentWork =
+        String(work || "");
+
+
+    formView.style.display =
+        "none";
+
+    reviewView.classList.add(
+        "show"
+    );
+
 }
 
 
@@ -2026,7 +1779,8 @@ function definition(){
 
     const key =
         Object.keys(forms).find(
-            k => s.includes(k)
+            k =>
+                s.includes(k)
         );
 
     return key
@@ -2038,79 +1792,86 @@ function definition(){
 
 function renderForm(){
 
-    fields.innerHTML = "";
+    fields.innerHTML =
+        "";
+
+    definition().forEach(
+        field => {
+
+            const wrapper =
+                document.createElement(
+                    "div"
+                );
+
+            const label =
+                document.createElement(
+                    "label"
+                );
+
+            const input =
+                document.createElement(
+                    field.type === "textarea"
+                        ? "textarea"
+                        : "input"
+                );
 
 
-    definition().forEach(f => {
+            wrapper.className =
+                "field";
 
-        const wrapper =
-            document.createElement("div");
 
-        const label =
-            document.createElement("label");
+            label.htmlFor =
+                field.name;
 
-        const input =
-            document.createElement(
-                f.type === "textarea"
-                    ? "textarea"
-                    : "input"
+
+            label.innerHTML =
+                field.label +
+                (
+                    field.required
+                        ? ' <span class="required">*</span>'
+                        : ' <span class="optional">(optional)</span>'
+                );
+
+
+            input.id =
+                field.name;
+
+            input.name =
+                field.name;
+
+            input.placeholder =
+                field.placeholder || "";
+
+
+            if(field.required){
+
+                input.required =
+                    true;
+
+            }
+
+
+            if(field.type !== "textarea"){
+
+                input.type =
+                    field.type ||
+                    "text";
+
+            }
+
+
+            wrapper.append(
+                label,
+                input
             );
 
 
-        wrapper.className =
-            "field";
-
-
-        label.htmlFor =
-            f.name;
-
-
-        label.innerHTML =
-            f.label +
-            (
-                f.required
-                    ? ' <span class="required">*</span>'
-                    : ' <span class="optional">(optional)</span>'
+            fields.appendChild(
+                wrapper
             );
 
-
-        input.id =
-            f.name;
-
-        input.name =
-            f.name;
-
-        input.placeholder =
-            f.placeholder || "";
-
-
-        if(f.required){
-
-            input.required =
-                true;
-
         }
-
-
-        if(f.type !== "textarea"){
-
-            input.type =
-                f.type || "text";
-
-        }
-
-
-        wrapper.append(
-            label,
-            input
-        );
-
-
-        fields.appendChild(
-            wrapper
-        );
-
-    });
+    );
 
 }
 
@@ -2124,19 +1885,25 @@ function collect(){
         .querySelectorAll(
             "input,textarea,select"
         )
-        .forEach(element => {
+        .forEach(
+            element => {
 
-            const value =
-                clean(element.value);
+                const value =
+                    clean(
+                        element.value
+                    );
 
-            if(value){
+                if(value){
 
-                data[element.name] =
-                    value;
+                    data[
+                        element.name
+                    ] =
+                        value;
+
+                }
 
             }
-
-        });
+        );
 
 
     return data;
@@ -2152,7 +1919,8 @@ async function apiChat(body){
 
     const response =
         await fetch(
-            API_BASE + "/api/chat",
+            API_BASE +
+            "/api/chat",
             {
                 method:"POST",
 
@@ -2162,7 +1930,9 @@ async function apiChat(body){
                 },
 
                 body:
-                    JSON.stringify(body)
+                    JSON.stringify(
+                        body
+                    )
             }
         );
 
@@ -2269,7 +2039,9 @@ async function loadGuidance(){
 
 
         introText.textContent =
-            clean(data.reply) ||
+            clean(
+                data.reply
+            ) ||
             "Please provide the information requested below.";
 
 
@@ -2291,9 +2063,23 @@ async function loadGuidance(){
                 );
 
 
-            price.textContent =
-                "Service fee: ₦" +
-                numericAmount.toLocaleString();
+            if(
+                Number.isFinite(
+                    numericAmount
+                )
+            ){
+
+                price.textContent =
+                    "Service fee: ₦" +
+                    numericAmount.toLocaleString();
+
+            }else{
+
+                price.textContent =
+                    "Service fee: " +
+                    String(amount);
+
+            }
 
         }else if(
             /₦\s?[\d,]+/.test(
@@ -2321,7 +2107,8 @@ async function loadGuidance(){
         }else{
 
             price.textContent =
-                "Service: " + service;
+                "Service: " +
+                service;
 
         }
 
@@ -2334,7 +2121,8 @@ async function loadGuidance(){
             "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
 
         price.textContent =
-            "Service: " + service;
+            "Service: " +
+            service;
 
         setStatus(
             "You can still complete the form or ask a question below.",
@@ -2444,7 +2232,9 @@ async function createWork(data){
             await apiChat({
 
                 message:
-                    creationPrompt(data),
+                    creationPrompt(
+                        data
+                    ),
 
                 service,
 
@@ -2472,10 +2262,23 @@ async function createWork(data){
             });
 
 
-        if(result.job_id){
+        /*
+         * CRITICAL REVIEW CONNECTION:
+
+         * The API must return the real server-side job_id.
+
+         * That job_id is what review.html will use.
+         */
+        const returnedJobId =
+            clean(
+                result.job_id
+            );
+
+
+        if(returnedJobId){
 
             jobId =
-                result.job_id;
+                returnedJobId;
 
             put(
                 "npbc_job_id",
@@ -2485,36 +2288,33 @@ async function createWork(data){
         }
 
 
-        /*
-         * CRITICAL:
-
-         * Select the complete returned work.
-         *
-         * There is deliberately NO truncation.
-         */
-        currentWork =
-            clean(result.work) ||
-            clean(result.content) ||
-            clean(result.reply) ||
-            "";
-
-
-        if(!currentWork){
+        if(!jobId){
 
             throw new Error(
-                "The service completed without returning the prepared work."
+                "The service completed without returning a review job."
             );
 
         }
 
 
         /*
-         * Save the COMPLETE document before showing
-         * the gateway.
+         * Keep returned content only as temporary context.
+
+         * It is NOT placed into a URL.
+         * It is NOT truncated.
+         * It is NOT used as the review-page transport.
          */
-        saveCompleteReviewDocument(
-            currentWork
-        );
+        currentWork =
+            clean(
+                result.work
+            ) ||
+            clean(
+                result.content
+            ) ||
+            clean(
+                result.reply
+            ) ||
+            "";
 
 
         /*
@@ -2526,13 +2326,13 @@ async function createWork(data){
 
 
         /*
-         * Then show the popup gateway.
+         * Now offer the customer the actual review page.
          */
         showReviewGateway();
 
 
         setStatus(
-            "Your complete work is ready for review.",
+            "Your work is ready for review.",
             "success"
         );
 
@@ -2549,38 +2349,6 @@ async function createWork(data){
         busyState(false);
 
     }
-
-}
-
-
-/* =========================================================
-   REVIEW
-   ========================================================= */
-
-function showReview(work){
-
-    formView.style.display =
-        "none";
-
-    reviewView.classList.add(
-        "show"
-    );
-
-
-    /*
-     * Keep the complete document in memory.
-     */
-    currentWork =
-        String(work || "");
-
-
-    /*
-     * Persist the complete document again immediately
-     * before the review gateway is presented.
-     */
-    saveCompleteReviewDocument(
-        currentWork
-    );
 
 }
 
@@ -2612,7 +2380,7 @@ serviceForm.addEventListener(
 
 
 /* =========================================================
-   POPUP GATEWAY EVENTS
+   REVIEW GATEWAY EVENTS
    ========================================================= */
 
 reviewGatewayOpenButton.addEventListener(
@@ -2645,10 +2413,6 @@ workspaceOpenReviewButton.addEventListener(
 );
 
 
-/*
-* Tapping outside the popup closes the gateway,
-* but does NOT delete the document.
-*/
 reviewGatewayOverlay.addEventListener(
     "click",
     event => {
@@ -2666,16 +2430,13 @@ reviewGatewayOverlay.addEventListener(
 );
 
 
-/*
-* Escape closes the popup.
-* The complete document remains stored.
-*/
 document.addEventListener(
     "keydown",
     event => {
 
         if(
-            event.key === "Escape"
+            event.key ===
+            "Escape"
         ){
 
             closeReviewGateway();
@@ -2742,10 +2503,19 @@ async function sendMessage(
             });
 
 
-        if(data.job_id){
+        /*
+         * Always adopt the server's job ID if returned.
+         */
+        const returnedJobId =
+            clean(
+                data.job_id
+            );
+
+
+        if(returnedJobId){
 
             jobId =
-                data.job_id;
+                returnedJobId;
 
             put(
                 "npbc_job_id",
@@ -2756,15 +2526,20 @@ async function sendMessage(
 
 
         /*
-         * If Ada returns a new complete work document,
-         * replace the stored complete document.
+         * Returned work remains optional workspace context.
 
-         * Again, there is NO truncation.
+         * The review page itself is still opened by job_id.
          */
         const returnedWork =
-            clean(data.work) ||
-            clean(data.content) ||
-            clean(data.reply);
+            clean(
+                data.work
+            ) ||
+            clean(
+                data.content
+            ) ||
+            clean(
+                data.reply
+            );
 
 
         if(returnedWork){
@@ -2773,23 +2548,11 @@ async function sendMessage(
                 returnedWork;
 
 
-            /*
-             * Persist the COMPLETE updated document.
-             */
-            saveCompleteReviewDocument(
-                currentWork
-            );
-
-
-            /*
-             * If we are already in the review stage,
-             * reopen the gateway so the customer can enter
-             * review.html and see the updated complete work.
-             */
             if(
                 reviewView.classList.contains(
                     "show"
-                )
+                ) &&
+                jobId
             ){
 
                 showReviewGateway();
@@ -2816,7 +2579,6 @@ async function sendMessage(
         );
 
         return null;
-
 
     }finally{
 
@@ -2849,7 +2611,8 @@ sendBtn.addEventListener(
         }
 
 
-        messageInput.value = "";
+        messageInput.value =
+            "";
 
         messageInput.style.height =
             "auto";
@@ -3117,6 +2880,26 @@ fileInput.addEventListener(
             }
 
 
+            /*
+             * If upload creates/returns a job ID, retain it.
+             */
+            if(
+                clean(data.job_id)
+            ){
+
+                jobId =
+                    clean(
+                        data.job_id
+                    );
+
+                put(
+                    "npbc_job_id",
+                    jobId
+                );
+
+            }
+
+
             setStatus(
                 "Your document has been received successfully.",
                 "success"
@@ -3138,7 +2921,8 @@ fileInput.addEventListener(
 
         }finally{
 
-            fileInput.value = "";
+            fileInput.value =
+                "";
 
         }
 
@@ -3188,7 +2972,8 @@ voiceBtn.addEventListener(
                 });
 
 
-            recordedChunks = [];
+            recordedChunks =
+                [];
 
 
             mediaRecorder =
@@ -3224,7 +3009,8 @@ voiceBtn.addEventListener(
                         );
 
 
-                    recordingStream = null;
+                    recordingStream =
+                        null;
 
 
                     voiceRecording.classList.remove(
@@ -3322,6 +3108,23 @@ voiceBtn.addEventListener(
                         }
 
 
+                        if(
+                            clean(data.job_id)
+                        ){
+
+                            jobId =
+                                clean(
+                                    data.job_id
+                                );
+
+                            put(
+                                "npbc_job_id",
+                                jobId
+                            );
+
+                        }
+
+
                         await sendMessage(
                             "A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.",
                             "voice_uploaded"
@@ -3391,5 +3194,7 @@ async function init(){
 
 init();
 
-</script></body>
-</html> 
+</script>
+
+</body>
+</html>
