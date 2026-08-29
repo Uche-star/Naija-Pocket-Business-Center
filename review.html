@@ -1,19 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta
-    name="viewport"
-    content="width=device-width,initial-scale=1,viewport-fit=cover"
->
-<title>Review Your Service | Naija Pocket Business Center</title>
-
-<link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap"
-    rel="stylesheet"
->
-
-<style>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Review Your Service | Naija Pocket Business Center"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet"><style>
 *{
     box-sizing:border-box;
 }
@@ -56,19 +45,11 @@ button{
     --red:#d94747;
 }
 
-/* =========================================================
-   APP
-========================================================= */
-
 .app{
     min-height:100vh;
     display:flex;
     flex-direction:column;
 }
-
-/* =========================================================
-   HEADER
-========================================================= */
 
 .header{
     position:sticky;
@@ -78,6 +59,7 @@ button{
     display:flex;
     align-items:center;
     justify-content:space-between;
+    gap:12px;
     padding:11px 16px;
     background:#050505;
     border-bottom:1px solid var(--border);
@@ -107,19 +89,17 @@ button{
     background:#0c0c0c;
     color:#aaa;
     font-size:10px;
+    white-space:nowrap;
 }
 
 .job-dot{
     width:7px;
     height:7px;
+    flex:0 0 auto;
     border-radius:50%;
     background:var(--gold);
     box-shadow:0 0 12px rgba(224,189,85,.7);
 }
-
-/* =========================================================
-   MAIN
-========================================================= */
 
 .main{
     width:100%;
@@ -127,10 +107,6 @@ button{
     margin:auto;
     padding:20px 14px 50px;
 }
-
-/* =========================================================
-   HERO
-========================================================= */
 
 .hero{
     text-align:center;
@@ -156,10 +132,6 @@ button{
     font-size:13px;
     line-height:1.55;
 }
-
-/* =========================================================
-   MAGIC CREATION STAGE
-========================================================= */
 
 .magic{
     position:relative;
@@ -209,7 +181,6 @@ button{
     from{
         left:-45%;
     }
-
     to{
         left:110%;
     }
@@ -237,19 +208,11 @@ button{
     font-size:11px;
 }
 
-/* =========================================================
-   FLIGHT AREA
-========================================================= */
-
 .flight-area{
     position:relative;
     height:245px;
     overflow:hidden;
 }
-
-/* =========================================================
-   CENTRAL ASSEMBLY
-========================================================= */
 
 .assembly-core{
     position:absolute;
@@ -306,10 +269,6 @@ button{
     text-transform:uppercase;
     letter-spacing:1.3px;
 }
-
-/* =========================================================
-   FLYING DOCUMENTS
-========================================================= */
 
 .fly{
     position:absolute;
@@ -370,47 +329,35 @@ button{
 }
 
 .fly.left{
-    animation:
-        flyLeft 2.5s cubic-bezier(.18,.7,.22,1) forwards;
+    animation:flyLeft 2.5s cubic-bezier(.18,.7,.22,1) forwards;
 }
 
 .fly.right{
     left:auto;
     right:-150px;
-    animation:
-        flyRight 2.5s cubic-bezier(.18,.7,.22,1) forwards;
+    animation:flyRight 2.5s cubic-bezier(.18,.7,.22,1) forwards;
 }
 
 @keyframes flyLeft{
     0%{
         left:-150px;
         top:var(--top);
-        transform:
-            scale(.72)
-            rotate(-4deg);
+        transform:scale(.72) rotate(-4deg);
         opacity:0;
     }
-
     12%{
         opacity:1;
     }
-
     50%{
-        transform:
-            scale(1)
-            rotate(1deg);
+        transform:scale(1) rotate(1deg);
     }
-
     88%{
         opacity:1;
     }
-
     100%{
         left:calc(50% - 67px);
         top:calc(50% - 26px);
-        transform:
-            scale(.72)
-            rotate(0deg);
+        transform:scale(.72) rotate(0deg);
         opacity:0;
     }
 }
@@ -419,39 +366,25 @@ button{
     0%{
         right:-150px;
         top:var(--top);
-        transform:
-            scale(.72)
-            rotate(4deg);
+        transform:scale(.72) rotate(4deg);
         opacity:0;
     }
-
     12%{
         opacity:1;
     }
-
     50%{
-        transform:
-            scale(1)
-            rotate(-1deg);
+        transform:scale(1) rotate(-1deg);
     }
-
     88%{
         opacity:1;
     }
-
     100%{
         right:calc(50% - 67px);
         top:calc(50% - 26px);
-        transform:
-            scale(.72)
-            rotate(0deg);
+        transform:scale(.72) rotate(0deg);
         opacity:0;
     }
 }
-
-/* =========================================================
-   PROGRESS
-========================================================= */
 
 .progress-area{
     position:relative;
@@ -463,6 +396,7 @@ button{
     display:flex;
     align-items:center;
     justify-content:space-between;
+    gap:10px;
     margin-bottom:7px;
 }
 
@@ -499,10 +433,6 @@ button{
     transition:width .6s ease;
 }
 
-/* =========================================================
-   SECTIONS
-========================================================= */
-
 .sections{
     margin-top:17px;
     border:1px solid var(--border);
@@ -515,6 +445,7 @@ button{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:10px;
     padding:13px 15px;
     border-bottom:1px solid #242424;
 }
@@ -621,10 +552,6 @@ button{
     color:var(--green);
 }
 
-/* =========================================================
-   COMPLETE DOCUMENT
-========================================================= */
-
 .document-panel{
     margin-top:18px;
     border:1px solid var(--border);
@@ -698,10 +625,6 @@ button{
     content:"Your completed document will appear here.";
 }
 
-/* =========================================================
-   CORRECTION
-========================================================= */
-
 .correction{
     margin-top:18px;
     padding:16px;
@@ -744,10 +667,6 @@ textarea:focus{
 textarea::placeholder{
     color:#555;
 }
-
-/* =========================================================
-   ACTIONS
-========================================================= */
 
 .actions{
     display:grid;
@@ -807,10 +726,6 @@ textarea::placeholder{
     transform:none;
 }
 
-/* =========================================================
-   NOTICE
-========================================================= */
-
 .notice{
     display:none;
     margin-top:14px;
@@ -837,12 +752,7 @@ textarea::placeholder{
     color:#83e5ad;
 }
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
 @media(max-width:600px){
-
     .main{
         padding:15px 10px 35px;
     }
@@ -887,7 +797,6 @@ textarea::placeholder{
 }
 
 @media(prefers-reduced-motion:reduce){
-
     *,
     *::before,
     *::after{
@@ -897,328 +806,246 @@ textarea::placeholder{
         transition:none !important;
     }
 }
-</style>
-</head>
-
-<body>
-
-<div class="app">
-
-<header class="header">
-
+</style></head><body><div class="app"><header class="header">
     <div>
         <div class="brand-title">
             Naija Pocket Business Center
-        </div>
-
-        <div class="brand-subtitle">
-            Your service is being carefully prepared
-        </div>
+        </div>    <div class="brand-subtitle">
+        Your service is being carefully prepared
     </div>
+</div>
 
-    <div class="job-pill">
-        <span class="job-dot"></span>
+<div class="job-pill">
+    <span class="job-dot"></span>
+    <span id="jobState">CREATING</span>
+</div>
 
-        <span id="jobState">
-            CREATING
-        </span>
-    </div>
-
-</header>
-
-
-<main class="main">
-
-<section class="hero">
-
+</header><main class="main"><section class="hero">
     <h1>
         Watch the <span>Magic of Creation</span>
-    </h1>
+    </h1><p id="heroMessage">
+    Your service is being created one section at a time.
+    Each completed part is brought together into your
+    finished document.
+</p>
 
-    <p id="heroMessage">
-        Your service is being created one section at a time.
-        Each completed part is brought together into your
-        finished document.
+</section><section class="magic" id="magic"><div class="magic-head">
+    <h2 class="magic-title" id="magicTitle">
+        ✨ Creating Your Service ✨
+    </h2>
+
+    <p class="magic-message" id="magicMessage">
+        Please give us a moment while your document
+        comes to life.
     </p>
+</div>
 
-</section>
+<div class="flight-area" id="flightArea">
 
+    <div class="assembly-core">
+        <div class="core-ring"></div>
 
-<section
-    class="magic"
-    id="magic"
->
-
-    <div class="magic-head">
-
-        <h2
-            class="magic-title"
-            id="magicTitle"
-        >
-            ✨ Creating Your Service ✨
-        </h2>
-
-        <p
-            class="magic-message"
-            id="magicMessage"
-        >
-            Please give us a moment while your document
-            comes to life.
-        </p>
-
-    </div>
-
-
-    <div
-        class="flight-area"
-        id="flightArea"
-    >
-
-        <div class="assembly-core">
-
-            <div class="core-ring"></div>
-
-            <div class="core-content">
-
-                <div class="core-icon">
-                    ✨
-                </div>
-
-                <div class="core-label">
-                    Assembly
-                </div>
-
+        <div class="core-content">
+            <div class="core-icon">
+                ✨
             </div>
 
+            <div class="core-label">
+                Assembly
+            </div>
         </div>
-
     </div>
 
+</div>
 
-    <div class="progress-area">
+<div class="progress-area">
 
-        <div class="progress-top">
+    <div class="progress-top">
 
-            <span
-                class="progress-label"
-                id="progressLabel"
-            >
-                Preparing your document...
-            </span>
+        <span
+            class="progress-label"
+            id="progressLabel"
+        >
+            Preparing your document...
+        </span>
 
-            <span
-                class="progress-number"
-                id="progressNumber"
-            >
-                0%
-            </span>
-
-        </div>
-
-        <div class="progress-track">
-
-            <div
-                class="progress-bar"
-                id="progressBar"
-            ></div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="sections">
-
-    <div class="sections-head">
-
-        <strong>
-            Creation Progress
-        </strong>
-
-        <span id="sectionCount">
-            Preparing...
+        <span
+            class="progress-number"
+            id="progressNumber"
+        >
+            0%
         </span>
 
     </div>
 
-    <div
-        class="section-list"
-        id="sectionList"
-    ></div>
-
-</section>
-
-
-<section class="document-panel">
-
-    <div class="document-head">
-
-        <h2>
-            Your Complete Document
-        </h2>
+    <div class="progress-track">
 
         <div
-            class="document-status"
-            id="documentStatus"
-        >
-            BUILDING
-        </div>
+            class="progress-bar"
+            id="progressBar"
+        ></div>
 
     </div>
 
-    <article
-        class="document"
-        id="document"
-    ></article>
+</div>
 
-</section>
+</section><section class="sections"><div class="sections-head">
 
+    <strong>
+        Creation Progress
+    </strong>
 
-<section class="correction">
+    <span id="sectionCount">
+        Preparing...
+    </span>
 
-    <h3>
-        Want anything changed?
-    </h3>
+</div>
 
-    <p>
-        Tell us what you want improved. Only the affected
-        part of your document needs to be worked on again.
-    </p>
+<div
+    class="section-list"
+    id="sectionList"
+></div>
 
-    <textarea
-        id="correctionText"
-        placeholder="Example: Expand the methodology section and make the recommendations more detailed..."
-    ></textarea>
+</section><section class="document-panel"><div class="document-head">
 
-    <div class="actions">
+    <h2>
+        Your Complete Document
+    </h2>
 
-        <button
-            class="action"
-            id="correctionButton"
-            onclick="requestCorrection()"
-            disabled
-        >
-            Request Correction
-        </button>
-
-        <button
-            class="action green"
-            id="approveButton"
-            onclick="approveDocument()"
-            disabled
-        >
-            Approve Document
-        </button>
-
+    <div
+        class="document-status"
+        id="documentStatus"
+    >
+        BUILDING
     </div>
 
-</section>
+</div>
 
+<article
+    class="document"
+    id="document"
+></article>
+
+</section><section class="correction"><h3>
+    Want anything changed?
+</h3>
+
+<p>
+    Tell us what you want improved. Only the affected
+    part of your document needs to be worked on again.
+</p>
+
+<textarea
+    id="correctionText"
+    placeholder="Example: Expand the methodology section and make the recommendations more detailed..."
+></textarea>
 
 <div class="actions">
 
     <button
         class="action"
-        onclick="goBack()"
+        id="correctionButton"
+        onclick="requestCorrection()"
+        disabled
     >
-        ← Back
+        Request Correction
     </button>
 
     <button
-        class="action gold"
-        id="paymentButton"
-        onclick="continueToPayment()"
+        class="action green"
+        id="approveButton"
+        onclick="approveDocument()"
         disabled
     >
-        Payment
-    </button>
-
-    <button
-        class="action gold"
-        id="downloadButton"
-        onclick="downloadDocument()"
-        disabled
-    >
-        Download
+        Approve Document
     </button>
 
 </div>
 
+</section><div class="actions"><button
+    class="action"
+    onclick="goBack()"
+>
+    ← Back
+</button>
 
-<div
+<button
+    class="action gold"
+    id="paymentButton"
+    onclick="continueToPayment()"
+    disabled
+>
+    Payment
+</button>
+
+<button
+    class="action gold"
+    id="downloadButton"
+    onclick="downloadDocument()"
+    disabled
+>
+    Download
+</button>
+
+</div><div
     class="notice"
     id="notice"
-></div>
-
-</main>
-
-</div>
-
-
-<script>
+></div></main>
+</div><script>
 "use strict";
 
-/* ============================================================
-   REVIEW JOB ID HANDOFF
+/*
+============================================================
+ REVIEW / WORKSPACE CONTRACT
+============================================================
 
-   Workspace can hand the job to this page using:
+The Workspace creates a job and must send the customer to:
 
-       ?job_id=123
+    review.html?job_id=<JOB_ID>
 
-   We also accept ?id=123 for compatibility.
+This page NEVER invents a job ID.
 
-   The important part is that the review page uses the SAME
-   job_id created by Workspace.
+It accepts the job ID from:
+    1. job_id
+    2. id
+    3. stored job_id
 
-   We do NOT create a new job here.
-============================================================ */
+The review endpoint is then always queried with that same ID.
 
-const params =
-    new URLSearchParams(window.location.search);
+The response may contain the sections/document directly,
+inside "job", or inside "version".
 
-let jobId =
-    params.get("job_id") ||
-    params.get("id") ||
-    localStorage.getItem("job_id") ||
-    localStorage.getItem("review_job_id") ||
-    "";
-
-jobId = String(jobId).trim();
-
-
-/* ============================================================
-   SAVE THE SAME JOB ID FOR THE REVIEW FLOW
-============================================================ */
-
-if(jobId){
-
-    localStorage.setItem(
-        "job_id",
-        jobId
-    );
-
-    localStorage.setItem(
-        "review_job_id",
-        jobId
-    );
-}
+The UI normalizes those possible response shapes so the
+Workspace and Review page do not have to use identical
+internal JSON structures.
+============================================================
+*/
 
 
 /* ============================================================
    STATE
 ============================================================ */
 
+const params =
+    new URLSearchParams(window.location.search);
+
+let jobId =
+    cleanId(params.get("job_id")) ||
+    cleanId(params.get("id")) ||
+    cleanId(localStorage.getItem("job_id"));
+
 let latestData = null;
 
 let polling = false;
-
 let pollTimer = null;
 
 let animationCounter = 0;
 
 let knownDoneIds = new Set();
+
+let lastRenderedDocument = "";
+
+let consecutiveErrors = 0;
 
 
 /* ============================================================
@@ -1281,22 +1108,80 @@ const notice =
 
 
 /* ============================================================
-   INITIAL CHECK
+   INITIALIZATION
 ============================================================ */
 
 if(!jobId){
+
+    jobState.textContent = "NO JOB";
 
     showNotice(
         "No document job was supplied. Please return to your workspace and start the service again.",
         "error"
     );
 
-    jobState.textContent =
-        "NO JOB";
-
 }else{
 
+    /*
+        Store the exact job ID created by the Workspace.
+
+        This is important because the Review page must follow
+        the same job throughout the complete workflow.
+    */
+    try{
+        localStorage.setItem(
+            "job_id",
+            jobId
+        );
+    }catch(error){
+        console.warn(
+            "Could not save job_id locally.",
+            error
+        );
+    }
+
     startPolling();
+}
+
+
+/* ============================================================
+   ID NORMALIZATION
+============================================================ */
+
+function cleanId(value){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+        return "";
+    }
+
+    const result =
+        String(value).trim();
+
+    if(!result){
+        return "";
+    }
+
+    /*
+        Do not accept values such as:
+        null
+        undefined
+        false
+        [object Object]
+    */
+
+    if(
+        result === "null" ||
+        result === "undefined" ||
+        result === "false" ||
+        result === "[object Object]"
+    ){
+        return "";
+    }
+
+    return result;
 }
 
 
@@ -1310,9 +1195,7 @@ function startPolling(){
         return;
     }
 
-    if(polling){
-        return;
-    }
+    clearTimeout(pollTimer);
 
     polling = true;
 
@@ -1323,7 +1206,6 @@ function startPolling(){
 async function fetchReview(){
 
     if(!jobId){
-        polling = false;
         return;
     }
 
@@ -1345,32 +1227,25 @@ async function fetchReview(){
                 }
             );
 
-
         if(!response.ok){
 
             throw new Error(
                 "Review request failed: " +
                 response.status
             );
-
         }
-
 
         const data =
             await response.json();
 
+        consecutiveErrors = 0;
 
         latestData =
-            data;
-
+            normalizeResponse(data);
 
         renderReview(
-            data
+            latestData
         );
-
-
-        hideErrorNotice();
-
 
     }catch(error){
 
@@ -1379,25 +1254,32 @@ async function fetchReview(){
             error
         );
 
+        consecutiveErrors++;
 
-        showNotice(
-            "We are reconnecting to your document. Your work remains safe.",
-            "error"
-        );
+        /*
+            Do not destroy the existing document when one
+            request temporarily fails.
+        */
+
+        if(consecutiveErrors >= 2){
+
+            showNotice(
+                "We are reconnecting to your document. Your work remains safe.",
+                "error"
+            );
+        }
 
     }
 
-
-    clearTimeout(
-        pollTimer
-    );
-
+    clearTimeout(pollTimer);
 
     if(
         !isFinished(
             latestData
         )
     ){
+
+        polling = true;
 
         pollTimer =
             setTimeout(
@@ -1408,13 +1290,60 @@ async function fetchReview(){
     }else{
 
         polling = false;
-
     }
 }
 
 
 /* ============================================================
-   NORMALIZE BACKEND DATA
+   RESPONSE NORMALIZATION
+============================================================ */
+
+function normalizeResponse(data){
+
+    if(!data){
+        return {};
+    }
+
+    /*
+        Some backends return:
+
+            {
+                job_id: "...",
+                sections: [...]
+            }
+
+        Others return:
+
+            {
+                job: {
+                    id: "...",
+                    sections: [...]
+                }
+            }
+
+        Others return:
+
+            {
+                version: {
+                    sections: [...]
+                }
+            }
+
+        The Review page accepts all three.
+    */
+
+    if(
+        typeof data !== "object"
+    ){
+        return {};
+    }
+
+    return data;
+}
+
+
+/* ============================================================
+   SECTION EXTRACTION
 ============================================================ */
 
 function getSections(data){
@@ -1423,45 +1352,266 @@ function getSections(data){
         return [];
     }
 
+    const candidates = [
 
-    if(
-        Array.isArray(
-            data.sections
-        )
-    ){
+        data.sections,
 
-        return data.sections;
+        data.creation_sections,
 
-    }
+        data.document_sections,
 
-
-    if(
         data.version &&
-        Array.isArray(
-            data.version.sections
-        )
-    ){
+            data.version.sections,
 
-        return data.version.sections;
-
-    }
-
-
-    if(
         data.job &&
-        Array.isArray(
-            data.job.sections
-        )
+            data.job.sections,
+
+        data.job &&
+            data.job.creation_sections,
+
+        data.job &&
+            data.job.document_sections,
+
+        data.result &&
+            data.result.sections,
+
+        data.result &&
+            data.result.document_sections
+
+    ];
+
+    for(
+        const candidate of candidates
     ){
 
-        return data.job.sections;
+        if(
+            Array.isArray(candidate)
+        ){
 
+            return candidate;
+        }
     }
-
 
     return [];
 }
 
+
+/* ============================================================
+   DOCUMENT EXTRACTION
+============================================================ */
+
+function getDocumentHTML(data){
+
+    if(!data){
+        return "";
+    }
+
+    const candidates = [
+
+        data.document_html,
+
+        data.html,
+
+        data.document,
+
+        data.content_html,
+
+        data.version &&
+            data.version.document_html,
+
+        data.version &&
+            data.version.html,
+
+        data.version &&
+            data.version.document,
+
+        data.job &&
+            data.job.document_html,
+
+        data.job &&
+            data.job.html,
+
+        data.job &&
+            data.job.document,
+
+        data.result &&
+            data.result.document_html,
+
+        data.result &&
+            data.result.html,
+
+        data.result &&
+            data.result.document
+
+    ];
+
+    for(
+        const candidate of candidates
+    ){
+
+        if(
+            typeof candidate ===
+            "string" &&
+            candidate.trim()
+        ){
+
+            return candidate;
+        }
+    }
+
+    return "";
+}
+
+
+/* ============================================================
+   STATUS EXTRACTION
+============================================================ */
+
+function getStatus(data){
+
+    if(!data){
+        return "";
+    }
+
+    const value =
+
+        data.status ||
+
+        data.job_status ||
+
+        data.state ||
+
+        (
+            data.job &&
+            (
+                data.job.status ||
+                data.job.state
+            )
+        ) ||
+
+        (
+            data.version &&
+            (
+                data.version.status ||
+                data.version.state
+            )
+        ) ||
+
+        "";
+
+    return String(
+        value
+    ).toLowerCase().trim();
+}
+
+
+/* ============================================================
+   VERSION ID
+============================================================ */
+
+function getVersionId(data){
+
+    if(!data){
+        return "";
+    }
+
+    const candidates = [
+
+        data.version_id,
+
+        data.current_version_id,
+
+        data.current_version,
+
+        data.version &&
+            data.version.version_id,
+
+        data.version &&
+            data.version.id,
+
+        data.job &&
+            data.job.version_id,
+
+        data.job &&
+            data.job.current_version_id,
+
+        data.job &&
+            data.job.current_version,
+
+        data.job &&
+            data.job.version &&
+            data.job.version.version_id,
+
+        data.result &&
+            data.result.version_id
+
+    ];
+
+    for(
+        const candidate of candidates
+    ){
+
+        const value =
+            cleanId(candidate);
+
+        if(value){
+            return value;
+        }
+    }
+
+    return "";
+}
+
+
+/* ============================================================
+   JOB ID FROM RESPONSE
+============================================================ */
+
+function getResponseJobId(data){
+
+    if(!data){
+        return "";
+    }
+
+    const candidates = [
+
+        data.job_id,
+
+        data.id,
+
+        data.job &&
+            data.job.job_id,
+
+        data.job &&
+            data.job.id,
+
+        data.result &&
+            data.result.job_id,
+
+        data.result &&
+            data.result.id
+
+    ];
+
+    for(
+        const candidate of candidates
+    ){
+
+        const value =
+            cleanId(candidate);
+
+        if(value){
+            return value;
+        }
+    }
+
+    return "";
+}
+
+
+/* ============================================================
+   COMPLETION
+============================================================ */
 
 function getCompletedCount(
     data,
@@ -1478,21 +1628,44 @@ function getCompletedCount(
         )
     ){
 
-        return Number(
-            data.progress.completed
+        return Math.max(
+            0,
+            Number(
+                data.progress.completed
+            )
         );
-
     }
 
+    if(
+        data &&
+        Number.isFinite(
+            Number(
+                data.completed
+            )
+        )
+    ){
+
+        return Math.max(
+            0,
+            Number(
+                data.completed
+            )
+        );
+    }
 
     return sections.filter(
         section =>
             isDoneStatus(
+                section &&
                 section.status
             )
     ).length;
 }
 
+
+/* ============================================================
+   TOTAL
+============================================================ */
 
 function getTotalCount(
     data,
@@ -1509,76 +1682,32 @@ function getTotalCount(
         )
     ){
 
-        return Number(
-            data.progress.total
+        return Math.max(
+            0,
+            Number(
+                data.progress.total
+            )
         );
-
     }
 
+    if(
+        data &&
+        Number.isFinite(
+            Number(
+                data.total
+            )
+        )
+    ){
+
+        return Math.max(
+            0,
+            Number(
+                data.total
+            )
+        );
+    }
 
     return sections.length;
-}
-
-
-function getDocumentHTML(data){
-
-    if(!data){
-        return "";
-    }
-
-
-    if(
-        typeof data.document_html ===
-        "string"
-    ){
-
-        return data.document_html;
-
-    }
-
-
-    if(
-        data.version &&
-        typeof data.version.document_html ===
-        "string"
-    ){
-
-        return data.version.document_html;
-
-    }
-
-
-    if(
-        data.job &&
-        typeof data.job.document_html ===
-        "string"
-    ){
-
-        return data.job.document_html;
-
-    }
-
-
-    return "";
-}
-
-
-function getStatus(data){
-
-    if(!data){
-        return "";
-    }
-
-
-    return String(
-        data.status ||
-        data.job_status ||
-        (
-            data.job &&
-            data.job.status
-        ) ||
-        ""
-    ).toLowerCase();
 }
 
 
@@ -1591,19 +1720,21 @@ function isDoneStatus(status){
     const value =
         String(
             status || ""
-        ).toLowerCase();
-
+        ).toLowerCase().trim();
 
     return [
+
         "done",
         "complete",
         "completed",
         "ready",
         "assembled",
-        "approved"
-    ].includes(
-        value
-    );
+        "approved",
+        "finished",
+        "success",
+        "successful"
+
+    ].includes(value);
 }
 
 
@@ -1612,10 +1743,10 @@ function isActiveStatus(status){
     const value =
         String(
             status || ""
-        ).toLowerCase();
-
+        ).toLowerCase().trim();
 
     return [
+
         "generating",
         "processing",
         "active",
@@ -1624,12 +1755,36 @@ function isActiveStatus(status){
         "in-progress",
         "queued",
         "pending",
-        "creating"
-    ].includes(
-        value
-    );
+        "creating",
+        "writing",
+        "working"
+
+    ].includes(value);
 }
 
+
+function isFailedStatus(status){
+
+    const value =
+        String(
+            status || ""
+        ).toLowerCase().trim();
+
+    return [
+
+        "failed",
+        "failure",
+        "error",
+        "cancelled",
+        "canceled"
+
+    ].includes(value);
+}
+
+
+/* ============================================================
+   FINISHED
+============================================================ */
 
 function isFinished(data){
 
@@ -1637,34 +1792,27 @@ function isFinished(data){
         return false;
     }
 
-
     const status =
-        getStatus(
-            data
-        );
-
+        getStatus(data);
 
     if([
+
         "complete",
         "completed",
         "ready",
         "assembled",
         "approved",
-        "finished"
-    ].includes(
-        status
-    )){
+        "finished",
+        "success",
+        "successful"
+
+    ].includes(status)){
 
         return true;
-
     }
 
-
     const sections =
-        getSections(
-            data
-        );
-
+        getSections(data);
 
     const total =
         getTotalCount(
@@ -1672,37 +1820,37 @@ function isFinished(data){
             sections
         );
 
-
     const completed =
         getCompletedCount(
             data,
             sections
         );
 
+    const html =
+        getDocumentHTML(data);
 
     return (
+
         total > 0 &&
+
         completed >= total &&
+
         Boolean(
-            getDocumentHTML(
-                data
-            )
+            html
         )
+
     );
 }
 
 
 /* ============================================================
-   RENDER
+   MAIN RENDER
 ============================================================ */
 
 function renderReview(data){
 
     const sections =
-        getSections(
-            data
-        );
-
+        getSections(data);
 
     const completed =
         getCompletedCount(
@@ -1710,13 +1858,11 @@ function renderReview(data){
             sections
         );
 
-
     const total =
         getTotalCount(
             data,
             sections
         );
-
 
     renderProgress(
         completed,
@@ -1724,16 +1870,13 @@ function renderReview(data){
         data
     );
 
-
     renderSections(
         sections
     );
 
-
     renderDocument(
         data
     );
-
 
     updateMagic(
         completed,
@@ -1741,13 +1884,9 @@ function renderReview(data){
         data
     );
 
-
     updateActions(
-        data,
-        completed,
-        total
+        data
     );
-
 
     animateNewlyCompletedSections(
         sections
@@ -1767,7 +1906,6 @@ function renderProgress(
 
     let percent = 0;
 
-
     if(total > 0){
 
         percent =
@@ -1777,20 +1915,14 @@ function renderProgress(
                     total
                 ) * 100
             );
-
     }
 
-
     if(
-        isFinished(
-            data
-        )
+        isFinished(data)
     ){
 
         percent = 100;
-
     }
-
 
     percent =
         Math.max(
@@ -1801,44 +1933,18 @@ function renderProgress(
             )
         );
 
-
     progressBar.style.width =
         percent + "%";
-
 
     progressNumber.textContent =
         percent + "%";
 
-
     if(
-        isFinished(
-            data
-        )
+        isFinished(data)
     ){
 
         sectionCount.textContent =
             "Creation complete";
-
-    }else if(
-        completed > 0
-    ){
-
-        sectionCount.textContent =
-            "Creating your service";
-
-    }else{
-
-        sectionCount.textContent =
-            "Getting started";
-
-    }
-
-
-    if(
-        isFinished(
-            data
-        )
-    ){
 
         progressLabel.textContent =
             "Your document is complete.";
@@ -1847,15 +1953,101 @@ function renderProgress(
         completed > 0
     ){
 
+        sectionCount.textContent =
+            "Creating your service";
+
         progressLabel.textContent =
             "Creating your document...";
 
     }else{
 
+        sectionCount.textContent =
+            "Getting started";
+
         progressLabel.textContent =
             "Preparing your document...";
-
     }
+}
+
+
+/* ============================================================
+   SECTION ORDER
+============================================================ */
+
+function sectionOrder(
+    section,
+    fallback
+){
+
+    if(!section){
+        return fallback;
+    }
+
+    const candidates = [
+
+        section.section_order,
+        section.order,
+        section.position,
+        section.index
+
+    ];
+
+    for(
+        const value of candidates
+    ){
+
+        const number =
+            Number(value);
+
+        if(
+            Number.isFinite(number)
+        ){
+
+            return number;
+        }
+    }
+
+    return fallback;
+}
+
+
+/* ============================================================
+   SECTION TITLE
+============================================================ */
+
+function getSectionTitle(
+    section,
+    number
+){
+
+    if(!section){
+        return "Document Section " + number;
+    }
+
+    const candidates = [
+
+        section.title,
+        section.name,
+        section.heading,
+        section.section_title,
+        section.label
+
+    ];
+
+    for(
+        const value of candidates
+    ){
+
+        if(
+            typeof value === "string" &&
+            value.trim()
+        ){
+
+            return value.trim();
+        }
+    }
+
+    return "Document Section " + number;
 }
 
 
@@ -1869,7 +2061,6 @@ function renderSections(
 
     sectionList.innerHTML = "";
 
-
     if(!sections.length){
 
         const row =
@@ -1877,13 +2068,14 @@ function renderSections(
                 "div"
             );
 
-
         row.className =
             "section-row active";
 
-
         row.innerHTML = `
-            <div class="section-number">•</div>
+
+            <div class="section-number">
+                •
+            </div>
 
             <div class="section-info">
 
@@ -1902,31 +2094,17 @@ function renderSections(
             </div>
         `;
 
-
-        sectionList.appendChild(
-            row
-        );
-
+        sectionList.appendChild(row);
 
         return;
     }
 
-
     const sorted =
         [...sections].sort(
             (a,b) =>
-                Number(
-                    a.section_order ??
-                    a.order ??
-                    0
-                ) -
-                Number(
-                    b.section_order ??
-                    b.order ??
-                    0
-                )
+                sectionOrder(a,0) -
+                sectionOrder(b,0)
         );
-
 
     sorted.forEach(
         (
@@ -1936,28 +2114,38 @@ function renderSections(
 
             const status =
                 String(
+                    section &&
                     section.status ||
                     ""
                 ).toLowerCase();
 
-
             const done =
-                isDoneStatus(
-                    status
-                );
-
+                isDoneStatus(status);
 
             const active =
-                isActiveStatus(
-                    status
+                isActiveStatus(status);
+
+            const failed =
+                isFailedStatus(status);
+
+            const number =
+                sectionOrder(
+                    section,
+                    index + 1
                 );
 
+            const title =
+                escapeHTML(
+                    getSectionTitle(
+                        section,
+                        number
+                    )
+                );
 
             const row =
                 document.createElement(
                     "div"
                 );
-
 
             row.className =
                 "section-row" +
@@ -1969,65 +2157,41 @@ function renderSections(
                     : ""
                 );
 
-
-            const number =
-                Number(
-                    section.section_order ??
-                    section.order ??
-                    index + 1
-                );
-
-
-            /*
-                FIXED:
-                The previous file contained broken
-                markdown-style expressions here.
-
-                Correct JavaScript:
-                    section.name
-            */
-
-            const rawTitle =
-                section.title ||
-                section.name ||
-                "Document Section " +
-                number;
-
-
-            const title =
-                escapeHTML(
-                    rawTitle
-                );
-
-
             let stateText =
                 "Waiting";
 
+            let mark =
+                "•";
 
             if(done){
 
                 stateText =
                     "Completed ✓";
 
+                mark =
+                    "✓";
+
             }else if(active){
 
                 stateText =
                     "Creating now...";
 
-            }else if(
-                status === "failed" ||
-                status === "error"
-            ){
+                mark =
+                    "✦";
+
+            }else if(failed){
 
                 stateText =
                     "Needs attention";
 
+                mark =
+                    "!";
             }
 
-
             row.innerHTML = `
+
                 <div class="section-number">
-                    ${number}
+                    ${escapeHTML(number)}
                 </div>
 
                 <div class="section-info">
@@ -2043,21 +2207,13 @@ function renderSections(
                 </div>
 
                 <div class="section-mark">
-                    ${
-                        done
-                        ? "✓"
-                        : active
-                        ? "✦"
-                        : "•"
-                    }
+                    ${mark}
                 </div>
             `;
-
 
             sectionList.appendChild(
                 row
             );
-
         }
     );
 }
@@ -2067,32 +2223,25 @@ function renderSections(
    DOCUMENT
 ============================================================ */
 
-function renderDocument(
-    data
-){
+function renderDocument(data){
 
     const html =
-        getDocumentHTML(
-            data
-        );
-
+        getDocumentHTML(data);
 
     if(
         html &&
-        typeof html === "string"
+        html !== lastRenderedDocument
     ){
 
         documentBox.innerHTML =
             html;
 
+        lastRenderedDocument =
+            html;
     }
 
-
     const ready =
-        isFinished(
-            data
-        );
-
+        isFinished(data);
 
     if(ready){
 
@@ -2111,13 +2260,12 @@ function renderDocument(
         documentStatus.classList.remove(
             "ready"
         );
-
     }
 }
 
 
 /* ============================================================
-   MAGIC MESSAGES
+   MAGIC STATUS
 ============================================================ */
 
 function updateMagic(
@@ -2127,44 +2275,56 @@ function updateMagic(
 ){
 
     if(
-        isFinished(
-            data
-        )
+        isFinished(data)
     ){
 
         magicTitle.textContent =
             "✨ Your Service Has Come to Life ✨";
 
-
         magicMessage.textContent =
             "Every section has been created and assembled into your document.";
-
 
         heroMessage.textContent =
             "The creation is complete. Your finished service is now ready for you to review.";
 
-
         jobState.textContent =
             "READY";
-
 
         return;
     }
 
+    const status =
+        getStatus(data);
+
+    if(
+        isFailedStatus(status)
+    ){
+
+        magicTitle.textContent =
+            "Your Service Needs Attention";
+
+        magicMessage.textContent =
+            "We are checking the document so the work can continue safely.";
+
+        heroMessage.textContent =
+            "Something interrupted the creation process. We are checking your document.";
+
+        jobState.textContent =
+            "CHECKING";
+
+        return;
+    }
 
     magicTitle.textContent =
         "✨ The Magic of Creation ✨";
-
 
     if(total > 0){
 
         magicMessage.textContent =
             "We are creating your service one carefully prepared section at a time.";
 
-
         heroMessage.textContent =
             "Watch as each part of your service is created and brought together.";
-
 
         jobState.textContent =
             "CREATING";
@@ -2174,14 +2334,54 @@ function updateMagic(
         magicMessage.textContent =
             "Your service is being prepared...";
 
-
         heroMessage.textContent =
             "We are getting everything ready before the creation begins.";
-
 
         jobState.textContent =
             "PREPARING";
     }
+}
+
+
+/* ============================================================
+   SECTION IDENTIFIER
+============================================================ */
+
+function getSectionId(
+    section,
+    index
+){
+
+    if(!section){
+        return String(index + 1);
+    }
+
+    const candidates = [
+
+        section.section_id,
+        section.id,
+        section.uuid,
+        section.key,
+        section.section_order,
+        section.order
+
+    ];
+
+    for(
+        const candidate of candidates
+    ){
+
+        const value =
+            cleanId(candidate);
+
+        if(value){
+            return value;
+        }
+    }
+
+    return String(
+        index + 1
+    );
 }
 
 
@@ -2199,46 +2399,27 @@ function animateNewlyCompletedSections(
             index
         ) => {
 
-            /*
-                FIXED:
-                The previous file contained broken
-                markdown-style JavaScript.
-
-                Correct:
-                    section.id
-            */
-
             const id =
-                String(
-                    section.section_id ??
-                    section.id ??
-                    (
-                        section.section_order ??
-                        index + 1
-                    )
+                getSectionId(
+                    section,
+                    index
                 );
-
 
             if(
                 isDoneStatus(
+                    section &&
                     section.status
                 ) &&
-                !knownDoneIds.has(
-                    id
-                )
+                !knownDoneIds.has(id)
             ){
 
-                knownDoneIds.add(
-                    id
-                );
-
+                knownDoneIds.add(id);
 
                 createFlyingFile(
                     section,
                     index
                 );
             }
-
         }
     );
 }
@@ -2254,43 +2435,36 @@ function createFlyingFile(
             "div"
         );
 
-
     const direction =
         animationCounter % 2 === 0
         ? "left"
         : "right";
 
-
     animationCounter++;
-
 
     card.className =
         "fly " +
         direction +
         " visible";
 
-
-    const rawTitle =
-        section.title ||
-        section.name ||
-        "Document Section";
-
-
     const title =
         escapeHTML(
-            rawTitle
+            getSectionTitle(
+                section,
+                index + 1
+            )
         );
 
-
     const icons = [
+
         "📄",
         "📑",
         "📝",
         "📋",
         "✨",
         "📚"
-    ];
 
+    ];
 
     const icon =
         icons[
@@ -2298,8 +2472,8 @@ function createFlyingFile(
             icons.length
         ];
 
-
     card.innerHTML = `
+
         <div class="fly-icon">
             ${icon}
         </div>
@@ -2317,16 +2491,16 @@ function createFlyingFile(
         </div>
     `;
 
-
     const positions = [
+
         "15%",
         "28%",
         "42%",
         "56%",
         "68%",
         "31%"
-    ];
 
+    ];
 
     card.style.setProperty(
         "--top",
@@ -2336,15 +2510,17 @@ function createFlyingFile(
         ]
     );
 
-
     flightArea.appendChild(
         card
     );
 
-
     setTimeout(
         () => {
-            card.remove();
+
+            if(card.parentNode){
+                card.remove();
+            }
+
         },
         2800
     );
@@ -2352,61 +2528,68 @@ function createFlyingFile(
 
 
 /* ============================================================
-   ACTIONS
+   ACTION STATE
 ============================================================ */
 
 function updateActions(
-    data,
-    completed,
-    total
+    data
 ){
 
     const ready =
-        isFinished(
-            data
-        );
-
+        isFinished(data);
 
     correctionButton.disabled =
         !ready;
 
-
     approveButton.disabled =
         !ready;
-
 
     const approved =
         Boolean(
             data &&
             (
-                data.approved ||
-                data.is_approved ||
+                data.approved === true ||
+                data.is_approved === true ||
+                data.approval_status === "approved" ||
                 (
                     data.version &&
-                    data.version.is_approved
+                    (
+                        data.version.approved === true ||
+                        data.version.is_approved === true ||
+                        data.version.approval_status === "approved"
+                    )
+                ) ||
+                (
+                    data.job &&
+                    (
+                        data.job.approved === true ||
+                        data.job.is_approved === true ||
+                        data.job.approval_status === "approved"
+                    )
                 )
             )
         );
-
 
     const paid =
         Boolean(
             data &&
             (
-                data.paid ||
+                data.paid === true ||
                 data.payment_status === "paid" ||
                 (
                     data.payment &&
                     data.payment.status === "paid"
+                ) ||
+                (
+                    data.job &&
+                    data.job.payment_status === "paid"
                 )
             )
         );
 
-
     paymentButton.disabled =
         !ready ||
         !approved;
-
 
     downloadButton.disabled =
         !ready ||
@@ -2424,7 +2607,6 @@ async function requestCorrection(){
     const instruction =
         correctionText.value.trim();
 
-
     if(!instruction){
 
         showNotice(
@@ -2432,12 +2614,10 @@ async function requestCorrection(){
             "error"
         );
 
-
         correctionText.focus();
 
         return;
     }
-
 
     if(!jobId){
 
@@ -2449,16 +2629,13 @@ async function requestCorrection(){
         return;
     }
 
-
     correctionButton.disabled =
         true;
-
 
     showNotice(
         "Your correction is being prepared. Only the affected part of the document will be regenerated.",
         "success"
     );
-
 
     try{
 
@@ -2477,6 +2654,7 @@ async function requestCorrection(){
                     },
 
                     body:JSON.stringify({
+
                         job_id:
                             jobId,
 
@@ -2486,30 +2664,34 @@ async function requestCorrection(){
                 }
             );
 
-
         if(!response.ok){
 
             throw new Error(
-                "Correction request failed."
+                "Correction request failed: " +
+                response.status
             );
-
         }
-
 
         correctionText.value =
             "";
 
+        /*
+            Reset only the local visual completion memory.
+
+            This allows a regenerated section to enter the
+            creation animation again.
+        */
+        knownDoneIds.clear();
+
+        lastRenderedDocument =
+            "";
 
         showNotice(
             "Correction submitted. Watch the affected section return to the creation flow.",
             "success"
         );
 
-
-        polling = false;
-
         startPolling();
-
 
     }catch(error){
 
@@ -2517,12 +2699,10 @@ async function requestCorrection(){
             error
         );
 
-
         showNotice(
             "We could not submit that correction right now. Your current document has not been changed.",
             "error"
         );
-
 
         correctionButton.disabled =
             false;
@@ -2540,7 +2720,6 @@ async function approveDocument(){
         return;
     }
 
-
     if(!jobId){
 
         showNotice(
@@ -2551,19 +2730,10 @@ async function approveDocument(){
         return;
     }
 
-
     const versionId =
-        latestData.version_id ||
-        (
-            latestData.version &&
-            latestData.version.version_id
-        ) ||
-        latestData.current_version ||
-        (
-            latestData.job &&
-            latestData.job.current_version
+        getVersionId(
+            latestData
         );
-
 
     if(!versionId){
 
@@ -2575,10 +2745,8 @@ async function approveDocument(){
         return;
     }
 
-
     approveButton.disabled =
         true;
-
 
     try{
 
@@ -2603,29 +2771,24 @@ async function approveDocument(){
 
                         version_id:
                             versionId
-
                     })
                 }
             );
 
-
         if(!response.ok){
 
             throw new Error(
-                "Approval failed."
+                "Approval failed: " +
+                response.status
             );
-
         }
-
 
         showNotice(
             "Your document has been approved successfully.",
             "success"
         );
 
-
         await fetchReview();
-
 
     }catch(error){
 
@@ -2633,12 +2796,10 @@ async function approveDocument(){
             error
         );
 
-
         showNotice(
             "Approval could not be completed. Your document remains unchanged.",
             "error"
         );
-
 
         approveButton.disabled =
             false;
@@ -2655,7 +2816,6 @@ function continueToPayment(){
     if(!jobId){
         return;
     }
-
 
     window.location.href =
         "payment.html?job_id=" +
@@ -2675,18 +2835,10 @@ function downloadDocument(){
         return;
     }
 
-
     const versionId =
-        latestData &&
-        (
-            latestData.version_id ||
-            latestData.current_version ||
-            (
-                latestData.version &&
-                latestData.version.version_id
-            )
+        getVersionId(
+            latestData
         );
-
 
     if(!versionId){
 
@@ -2697,7 +2849,6 @@ function downloadDocument(){
 
         return;
     }
-
 
     window.location.href =
         "/api/download?job_id=" +
@@ -2728,11 +2879,6 @@ function goBack(){
         return;
     }
 
-
-    /*
-        Keep the Workspace fallback on the same site.
-    */
-
     window.location.href =
         "workspace.html";
 }
@@ -2750,28 +2896,12 @@ function showNotice(
     notice.textContent =
         message;
 
-
     notice.className =
         "notice show " +
         (
             type ||
             ""
         );
-}
-
-
-function hideErrorNotice(){
-
-    if(
-        notice.classList.contains(
-            "error"
-        )
-    ){
-
-        notice.className =
-            "notice";
-
-    }
 }
 
 
@@ -2820,11 +2950,7 @@ window.addEventListener(
         clearTimeout(
             pollTimer
         );
-
     }
 );
-
-</script>
-
-</body>
+</script></body>
 </html>
