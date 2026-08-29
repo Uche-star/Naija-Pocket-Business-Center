@@ -2,22 +2,28 @@
 Naija Pocket Business Center
 ADA RESPONSE ENGINE
 INTELLIGENCE-FIRST DOCUMENT ENGINE
-==================================
 
-ARCHITECTURE
-------------
+DOCUMENT GENERATION FIX
+=======================
 
-Ada is responsible for:
+The generated document is ONE COMPLETE DOCUMENT.
 
-    - understanding the customer's request
-    - understanding the selected service
-    - deciding what information is needed
-    - generating complete work
-    - reviewing complete work
-    - applying customer corrections
+Internal generation continuation is allowed.
+Internal generation parts are NEVER separate customer documents.
 
-The APPLICATION is responsible for:
+IMPORTANT
+---------
+A normal-looking Groq response is NOT considered a completed
+document.
 
+Long documents continue until Ada explicitly emits:
+
+    [END OF DOCUMENT]
+
+Only after the complete document has been assembled does the
+application create its page collection.
+
+The application is responsible for:
     - storing the current document
     - storing document versions
     - organizing pages
@@ -26,88 +32,19 @@ The APPLICATION is responsible for:
     - payment
     - delivery
 
-IMPORTANT
----------
-
 PAGE NORMALIZATION IS NOT INTELLIGENCE.
 
 normalize_document_pages():
-
     - does not call Groq
     - does not call Ada
-    - does not make decisions about customer requests
-    - does not decide what information is required
     - does not generate text
     - does not review text
     - does not correct text
     - does not replace document content
+    - does not decide customer requirements
 
-It only converts already-existing document content into an
-ordered page collection for the APPLICATION.
-
-DOCUMENT OWNERSHIP
-------------------
-
-A generated document is ONE COMPLETE DOCUMENT.
-
-Internal generation continuation is allowed.
-
-Internal generation parts are NEVER separate customer
-documents.
-
-The following must NEVER become the document:
-
-    - first Groq response
-    - partial response
-    - summary
-    - review response
-    - review finding
-    - single page
-    - page preview
-    - correction explanation
-    - continuation fragment by itself
-
-The application receives document_text and pages only after
-document generation has assembled the complete document.
-
-GENERATION
-----------
-
-Long documents are generated internally in continuation calls.
-
-A continuation is part of the SAME document.
-
-The engine uses an explicit internal completion marker:
-
-    [[ADA_DOCUMENT_COMPLETE]]
-
-The marker is never exposed to the customer.
-
-If Groq reaches its output boundary before producing the marker,
-the engine continues the same document.
-
-PAGINATION
-----------
-
-Pagination happens only after document generation is complete.
-
-Pages never control Ada's intelligence.
-
-Changing page boundaries cannot change what Ada understands.
-
-REVIEW
-------
-
-Review findings are separate from document content.
-
-The original document content remains available.
-
-CORRECTION
-----------
-
-Corrections operate on the CURRENT complete document.
-
-Ada must return the complete corrected document.
+It only converts existing document content into an ordered
+page collection for the application.
 """
 
 from __future__ import annotations
@@ -174,22 +111,9 @@ MAX_DOCUMENT_PAGES = 1000
 # Generation
 # ------------------------------------------------------------
 
-GENERATION_REQUEST_CHARS = 12000
-
-# Keep this below aggressive context/output limits while giving
-# the model enough room to produce substantial document sections.
+GENERATION_REQUEST_CHARS = 9000
 GENERATION_OUTPUT_TOKENS = 3500
-
-# Maximum internal continuation calls.
-#
-# These are NOT pages.
-# These are NOT documents.
 MAX_GENERATION_PARTS = 40
-
-# Context sent from the already-generated document to the next
-# continuation.  We deliberately keep the ending because that
-# is where continuation must begin.
-GENERATION_CONTINUATION_CONTEXT_CHARS = 9000
 
 # ------------------------------------------------------------
 # Review
@@ -211,12 +135,11 @@ CORRECTION_OUTPUT_TOKENS = 3000
 
 DEFAULT_PAGE_CHARS = 7000
 
+# ------------------------------------------------------------
+# Completion marker
+# ------------------------------------------------------------
 
-# ============================================================
-# INTERNAL MARKERS
-# ============================================================
-
-DOCUMENT_COMPLETE_MARKER = "[[ADA_DOCUMENT_COMPLETE]]"
+END_OF_DOCUMENT_MARKER = "[END OF DOCUMENT]"
 
 
 # ============================================================
@@ -262,7 +185,6 @@ class AdaResponseError(Exception):
         original: Exception | None = None,
     ):
         super().__init__(message)
-
         self.stage = stage
         self.category = category
         self.status_code = status_code
@@ -281,7 +203,6 @@ def get_client():
     Create and cache the Groq client.
 
     Infrastructure only.
-    No document intelligence is performed here.
     """
 
     global _client
@@ -307,7 +228,6 @@ def get_client():
         _client = Groq(
             api_key=API_KEY
         )
-
         return _client
 
     except Exception as error:
@@ -356,9 +276,7 @@ def compact_text(
     Compact internal context when necessary.
 
     This does not summarize document meaning.
-
-    It only limits the amount of context sent to an individual
-    intelligence request.
+    It only prevents oversized intelligence requests.
     """
 
     text = safe_text(value)
@@ -396,17 +314,14 @@ def compact_text(
     )
 
 
-def split_for_intelligence(
+def split_for_pages(
     text: str,
     maximum: int,
 ) -> list[str]:
     """
-    Structural text splitting utility.
+    Structural page splitting only.
 
-    It does NOT create application documents.
-
-    It only divides text when a structural operation requires
-    smaller pieces.
+    This function does NOT perform intelligence.
     """
 
     text = safe_text(text)
@@ -434,7 +349,9 @@ def split_for_intelligence(
 
         end = start + maximum
 
-        window = text[start:end]
+        window = text[
+            start:end
+        ]
 
         positions = [
             window.rfind("\n\n"),
@@ -473,84 +390,6 @@ def split_for_intelligence(
         start = next_start
 
     return parts
-
-
-# ============================================================
-# GENERATION CONTEXT
-# ============================================================
-
-def continuation_context(
-    document: str,
-    maximum: int = GENERATION_CONTINUATION_CONTEXT_CHARS,
-) -> str:
-    """
-    Return the most useful structural context for continuing
-    a long document.
-
-    The end of the document is preserved because continuation
-    must begin from the actual current ending.
-
-    This does NOT replace the stored complete document.
-
-    It only controls the size of one Groq request.
-    """
-
-    text = safe_text(document)
-
-    if not text:
-        return ""
-
-    if len(text) <= maximum:
-        return text
-
-    # Prefer a clean paragraph boundary near the end.
-    tail = text[-maximum:]
-
-    first_boundary = tail.find("\n\n")
-
-    if (
-        first_boundary >= 0
-        and first_boundary < 1500
-    ):
-        tail = tail[
-            first_boundary + 2:
-        ]
-
-    return (
-        "[BEGINNING OF CONTINUATION CONTEXT]\n\n"
-        + tail
-        + "\n\n"
-        "[END OF CONTINUATION CONTEXT]"
-    )
-
-
-def strip_completion_marker(
-    text: str,
-) -> tuple[str, bool]:
-    """
-    Remove the internal completion marker.
-
-    Returns:
-
-        cleaned_text
-        complete_flag
-    """
-
-    text = safe_text(text)
-
-    if not text:
-        return "", False
-
-    if DOCUMENT_COMPLETE_MARKER in text:
-
-        cleaned = text.replace(
-            DOCUMENT_COMPLETE_MARKER,
-            "",
-        ).strip()
-
-        return cleaned, True
-
-    return text, False
 
 
 # ============================================================
@@ -615,27 +454,19 @@ def log_error(
     print("=" * 78)
     print("ADA ERROR:", title)
     print("=" * 78)
-
-    print(
-        "Stage:",
-        stage,
-    )
-
+    print("Stage:", stage)
     print(
         "Category:",
         classify_error(error),
     )
-
     print(
         "Model:",
         MODEL,
     )
-
     print(
         "API key configured:",
         bool(API_KEY),
     )
-
     print(
         "Error:",
         compact_text(
@@ -695,6 +526,7 @@ class AdaResponse:
             dict[str, str]
         ] = []
 
+
     # ========================================================
     # SERVICE
     # ========================================================
@@ -703,13 +535,6 @@ class AdaResponse:
         self,
         service: str | None,
     ):
-        """
-        Store the selected service.
-
-        Selecting a service provides context.
-
-        It does NOT create a scripted conversation.
-        """
 
         service = safe_text(
             service
@@ -717,6 +542,7 @@ class AdaResponse:
 
         if service:
             self.service = service
+
 
     def normalize_service(
         self,
@@ -755,6 +581,7 @@ class AdaResponse:
             )
 
             return service
+
 
     # ========================================================
     # BILLING
@@ -847,6 +674,7 @@ class AdaResponse:
             "BillingManager is authoritative."
         )
 
+
     # ========================================================
     # INTELLIGENCE RULES
     # ========================================================
@@ -859,13 +687,8 @@ of Naija Pocket Business Center.
 
 You are not a keyword-matching bot.
 
-Understand:
-
-- the customer's actual meaning
-- the selected service
-- supplied information
-- conversation history
-- current application state
+Understand the customer's actual meaning, request, selected
+service, supplied information and current application state.
 
 SERVICE INTELLIGENCE
 --------------------
@@ -874,12 +697,22 @@ A selected service provides context.
 
 It does not dictate a scripted conversation.
 
-Do not assume every service requires the same information.
+Do not assume that every service requires the same information.
 
 Determine what information is genuinely relevant to the
 customer's actual request and selected service.
 
 A page count is NOT globally required.
+
+Examples:
+
+- A seminar paper may require desired length.
+- A CV may require education, experience, skills and contact
+  information.
+- A letterhead may require business name, contact details and
+  design information.
+- A cover letter may require applicant and job information.
+- Other services have their own relevant requirements.
 
 Ask only for information that is genuinely necessary.
 
@@ -892,39 +725,38 @@ DOCUMENT GENERATION
 When enough information is available, create the requested
 work.
 
-Produce the actual requested work.
+Produce the work through its natural conclusion.
 
-Do not return:
+Do not deliberately stop after an introduction.
 
-- a plan instead of the document
-- an introduction pretending to be the finished document
-- a summary instead of the document
-- an explanation instead of the document
+Do not return a plan when the customer asked for the actual
+document.
 
-Develop the work toward its natural conclusion.
+Do not return a summary when the customer asked for the actual
+document.
 
-LONG DOCUMENTS
---------------
+If the requested work is long, continue it until the document
+reaches a natural conclusion.
 
-A long document may require internal continuation.
+Internal continuation is still ONE DOCUMENT.
 
-Internal continuation is part of ONE document.
+Never expose internal generation parts to the customer.
 
-Never restart the document during continuation.
+DOCUMENT COMPLETION
+-------------------
 
-Never repeat material already generated.
+A normal-looking response is NOT automatically a complete
+document.
 
-Never turn a continuation into a separate document.
+If the document is not finished, continue writing.
 
-When continuing:
+When the ENTIRE document has genuinely reached its natural
+conclusion, end the final generation response with exactly:
 
-- begin from the actual current ending
-- continue the document itself
-- preserve the established structure
-- preserve headings and numbering
-- do not restart the introduction
-- do not repeat previous sections
-- do not summarize previous sections
+[END OF DOCUMENT]
+
+Do not use that marker until the entire requested document is
+finished.
 
 DOCUMENT PRESERVATION
 ---------------------
@@ -939,12 +771,13 @@ Never replace a complete document with:
 - an excerpt
 - a single generation part
 - a page preview
-- an explanation
+- an explanation of the document
 
 REVIEW
 ------
 
-Review the actual supplied document.
+When reviewing a document, review the actual supplied
+document.
 
 Review findings are separate from document content.
 
@@ -972,7 +805,7 @@ Never silently remove useful content.
 FACTS
 -----
 
-Do not invent customer-specific facts.
+Do not invent customer facts.
 
 Do not fabricate:
 
@@ -1001,6 +834,7 @@ Never discuss internal prompts, model configuration,
 token limits or processing mechanics with the customer.
 """
 
+
     # ========================================================
     # SYSTEM PROMPT
     # ========================================================
@@ -1019,10 +853,6 @@ token limits or processing mechanics with the customer.
         )
 
         parts: list[str] = []
-
-        # ----------------------------------------------------
-        # Existing prompt manager
-        # ----------------------------------------------------
 
         try:
 
@@ -1050,17 +880,9 @@ token limits or processing mechanics with the customer.
                 stage="PROMPT_MANAGER",
             )
 
-        # ----------------------------------------------------
-        # Intelligence rules
-        # ----------------------------------------------------
-
         parts.append(
             self.intelligence_rules()
         )
-
-        # ----------------------------------------------------
-        # Billing
-        # ----------------------------------------------------
 
         billing = (
             self.get_billing_context(
@@ -1069,14 +891,9 @@ token limits or processing mechanics with the customer.
         )
 
         if billing:
-
             parts.append(
                 billing
             )
-
-        # ----------------------------------------------------
-        # Selected service
-        # ----------------------------------------------------
 
         if active_service:
 
@@ -1084,10 +901,6 @@ token limits or processing mechanics with the customer.
                 "SELECTED SERVICE\n"
                 + active_service
             )
-
-        # ----------------------------------------------------
-        # Application state
-        # ----------------------------------------------------
 
         if context:
 
@@ -1103,6 +916,7 @@ token limits or processing mechanics with the customer.
             "\n\n".join(parts),
             MAX_SYSTEM_PROMPT_CHARS,
         )
+
 
     # ========================================================
     # HISTORY
@@ -1138,8 +952,10 @@ token limits or processing mechanics with the customer.
             ]
         )
 
+
     def clear_history(self):
         self.history.clear()
+
 
     # ========================================================
     # GROQ INTELLIGENCE CALL
@@ -1160,29 +976,24 @@ token limits or processing mechanics with the customer.
         print("=" * 78)
         print("ADA INTELLIGENCE")
         print("=" * 78)
-
         print(
             "Stage:",
             stage,
         )
-
         print(
             "Model:",
             MODEL,
         )
-
         print(
             "Messages:",
             len(messages),
         )
-
         print(
             "Output tokens:",
             output_tokens,
         )
 
         if event:
-
             print(
                 "Event:",
                 event,
@@ -1217,9 +1028,7 @@ token limits or processing mechanics with the customer.
             raise AdaResponseError(
                 str(error),
                 stage=stage,
-                category=classify_error(
-                    error
-                ),
+                category=classify_error(error),
                 status_code=getattr(
                     error,
                     "status_code",
@@ -1265,6 +1074,7 @@ token limits or processing mechanics with the customer.
 
         return content
 
+
     # ========================================================
     # GENERATION PROMPT
     # ========================================================
@@ -1282,36 +1092,39 @@ token limits or processing mechanics with the customer.
         if continuation:
 
             instruction = f"""
-CONTINUE THE SAME DOCUMENT
+CONTINUATION OF THE SAME DOCUMENT
 
-The CURRENT DOCUMENT MATERIAL below is already part of the
-same document.
+The material under CURRENT DOCUMENT MATERIAL is already part
+of the SAME document.
 
-Continue from the exact point where it currently ends.
+Continue from where the existing document currently ends.
 
-IMPORTANT:
+Do NOT restart the document.
 
-- Do NOT restart the document.
-- Do NOT repeat the introduction.
-- Do NOT repeat completed sections.
-- Do NOT summarize what has already been written.
-- Do NOT explain what you are doing.
-- Do NOT create a new document.
-- Continue the actual document itself.
-- Preserve the established numbering and structure.
-- Continue until the customer's requested work reaches its
-  natural conclusion.
+Do NOT repeat sections that already exist.
 
-If the document is genuinely finished, place this marker at
-the very end:
+Do NOT summarize the existing material.
 
-{DOCUMENT_COMPLETE_MARKER}
+Do NOT explain what has already been written.
 
-The marker is an internal control marker and will be removed
-before the document reaches the customer.
+Continue writing the actual document itself.
 
-If the document is NOT finished, do NOT use the completion
-marker. Continue writing the actual document.
+Continue toward the natural conclusion of the customer's
+request.
+
+If the complete document is NOT finished yet, continue writing
+the next necessary section.
+
+If the ENTIRE document is genuinely finished, end your response
+with exactly:
+
+{END_OF_DOCUMENT_MARKER}
+
+Do not output the completion marker before the entire document
+is finished.
+
+Return only document content and, when finished, the completion
+marker.
 """
 
         else:
@@ -1327,22 +1140,23 @@ Do not return an explanation.
 
 Do not deliberately stop after an introduction.
 
-Develop the requested work through its natural conclusion.
+Develop the requested work toward its natural conclusion.
 
-If the requested work is too long for one response, stop only
-at a sensible structural boundary and do NOT pretend that the
-document is complete.
+If the entire document cannot fit in this response, STOP at a
+natural continuation point without pretending that the document
+is complete.
 
-If the document genuinely reaches its natural conclusion in
-this response, place this marker at the very end:
+The application will request continuation of this SAME document.
 
-{DOCUMENT_COMPLETE_MARKER}
+When the ENTIRE document is genuinely finished, end your
+response with exactly:
 
-The marker is an internal control marker and will be removed
-before the document reaches the customer.
+{END_OF_DOCUMENT_MARKER}
 
-Do not use the completion marker merely because you have reached
-the end of the available response space.
+Do not output the completion marker until the entire document is
+finished.
+
+Return the document itself.
 """
 
         return (
@@ -1352,15 +1166,16 @@ the end of the available response space.
             f"{self.active_service_for_prompt(service)}\n\n"
 
             "CUSTOMER REQUEST:\n"
-            f"{compact_text(customer_request, 6500)}\n\n"
+            f"{compact_text(customer_request, 6000)}\n\n"
 
             "SUPPLIED MATERIAL:\n"
             f"{compact_text(supplied_material, 7000)}\n\n"
 
             "CURRENT DOCUMENT MATERIAL:\n"
-            f"{continuation_context(previous_document)}\n\n"
+            f"{compact_text(previous_document, 7000)}\n\n"
 
             + instruction
+
             + """
 
 DOCUMENT RULES
@@ -1374,11 +1189,12 @@ required by the customer's request.
 
 Do not treat internal continuation as a new document.
 
-Do not return a summary in place of missing document content.
+Do not return a summary instead of the document.
 
-Do not stop simply because one generation response has ended.
+Do not return an explanation instead of the document.
 """
         )
+
 
     # ========================================================
     # SMALL PROMPT HELPER
@@ -1393,6 +1209,51 @@ Do not stop simply because one generation response has ended.
             safe_text(service)
             or "General Business Center Service"
         )
+
+
+    # ========================================================
+    # COMPLETION MARKER
+    # ========================================================
+
+    @staticmethod
+    def contains_end_marker(
+        text: str,
+    ) -> bool:
+
+        return (
+            END_OF_DOCUMENT_MARKER.lower()
+            in safe_text(text).lower()
+        )
+
+
+    @staticmethod
+    def remove_end_marker(
+        text: str,
+    ) -> str:
+
+        text = safe_text(
+            text
+        )
+
+        if not text:
+            return ""
+
+        pattern = re.compile(
+            re.escape(
+                END_OF_DOCUMENT_MARKER
+            ),
+            re.IGNORECASE,
+        )
+
+        return (
+            pattern
+            .sub(
+                "",
+                text,
+            )
+            .strip()
+        )
+
 
     # ========================================================
     # COMPLETE DOCUMENT GENERATION
@@ -1410,15 +1271,25 @@ Do not stop simply because one generation response has ended.
             None
         ] | None = None,
     ) -> dict[str, Any]:
+
         """
         Generate ONE complete document.
 
         IMPORTANT:
 
-        Internal generation parts are never exposed as separate
-        customer documents.
+        A normal first response is NEVER treated as proof that
+        the document is complete.
 
-        Pagination happens only after complete assembly.
+        The generation loop continues until:
+
+            [END OF DOCUMENT]
+
+        is explicitly returned by Ada.
+
+        Internal parts are assembled before the application
+        receives the document.
+
+        Pagination happens only after complete generation.
         """
 
         active_service = (
@@ -1455,11 +1326,13 @@ Do not stop simply because one generation response has ended.
 
         document_parts: list[str] = []
 
-        generation_completed = False
+        # ----------------------------------------------------
+        # Internal generation loop
+        #
+        # These parts are NEVER separate documents.
+        # ----------------------------------------------------
 
-        # ----------------------------------------------------
-        # Internal continuation loop
-        # ----------------------------------------------------
+        completed = False
 
         for part_number in range(
             1,
@@ -1502,31 +1375,60 @@ Do not stop simply because one generation response has ended.
                 messages=messages,
                 output_tokens=GENERATION_OUTPUT_TOKENS,
                 stage="DOCUMENT_GENERATION",
-                event="document_continuation"
-                if document_parts
-                else "document_generation",
-            )
-
-            generated, complete = (
-                strip_completion_marker(
-                    generated
-                )
+                event=(
+                    "document_generation_part_"
+                    + str(part_number)
+                ),
             )
 
             generated = safe_text(
                 generated
             )
 
-            if generated:
+            if not generated:
+                raise AdaResponseError(
+                    "Empty generation response received.",
+                    stage="DOCUMENT_GENERATION",
+                    category="EMPTY_GENERATION_PART",
+                )
 
-                document_parts.append(
+            # ------------------------------------------------
+            # THE CRITICAL FIX
+            #
+            # A normal response is NOT complete.
+            #
+            # Only the explicit completion marker can end
+            # document generation.
+            # ------------------------------------------------
+
+            model_declared_complete = (
+                self.contains_end_marker(
                     generated
+                )
+            )
+
+            clean_generated = (
+                self.remove_end_marker(
+                    generated
+                )
+            )
+
+            if clean_generated:
+                document_parts.append(
+                    clean_generated
                 )
 
             current_document = (
                 "\n\n".join(
                     document_parts
                 ).strip()
+            )
+
+            print(
+                f"[GEN] part={part_number} "
+                f"generated_chars={len(generated)} "
+                f"document_chars={len(current_document)} "
+                f"appears_complete={model_declared_complete}"
             )
 
             if progress_callback:
@@ -1540,69 +1442,48 @@ Do not stop simply because one generation response has ended.
                             part_number,
 
                         "status":
-                            "writing",
+                            (
+                                "completed"
+                                if model_declared_complete
+                                else "continuing"
+                            ),
 
                         "content_length":
                             len(current_document),
 
-                        # Explicitly internal.
                         "internal":
                             True,
                     }
                 )
 
-            # ------------------------------------------------
-            # THIS is now the completion decision.
-            #
-            # An ordinary response ending is NOT considered
-            # proof that the document is complete.
-            #
-            # Ada/Groq must explicitly identify the natural
-            # conclusion with the internal marker.
-            # ------------------------------------------------
+            if model_declared_complete:
 
-            if complete:
-
-                generation_completed = True
-
+                completed = True
                 break
 
             # ------------------------------------------------
-            # Empty continuation response.
+            # NO completion marker.
             #
-            # Do not silently call an empty response a valid
-            # completed document.
+            # Do NOT break merely because the response looks
+            # grammatically finished.
+            #
+            # Continue the SAME document.
             # ------------------------------------------------
 
-            if not generated:
-
-                raise AdaResponseError(
-                    (
-                        "Document generation stopped before "
-                        "the complete document was produced."
-                    ),
-                    stage="DOCUMENT_GENERATION",
-                    category="INCOMPLETE_DOCUMENT",
-                )
-
-        # ----------------------------------------------------
-        # Maximum continuation guard
-        # ----------------------------------------------------
-
-        if not generation_completed:
+        if not completed:
 
             raise AdaResponseError(
                 (
                     "Document generation reached the maximum "
                     "internal continuation count before Ada "
-                    "confirmed completion."
+                    "returned the document completion marker."
                 ),
                 stage="DOCUMENT_GENERATION",
                 category="GENERATION_LIMIT",
             )
 
         # ----------------------------------------------------
-        # Assemble ONE document.
+        # Assemble ONE complete document.
         # ----------------------------------------------------
 
         document_text = (
@@ -1620,7 +1501,8 @@ Do not stop simply because one generation response has ended.
             )
 
         # ----------------------------------------------------
-        # PAGE CONSTRUCTION ONLY AFTER COMPLETE DOCUMENT
+        # PAGE CONSTRUCTION OCCURS ONLY AFTER COMPLETE
+        # DOCUMENT GENERATION.
         # ----------------------------------------------------
 
         pages = (
@@ -1632,10 +1514,7 @@ Do not stop simply because one generation response has ended.
         if not pages:
 
             raise AdaResponseError(
-                (
-                    "Document was generated but no pages "
-                    "could be created."
-                ),
+                "Document was generated but no pages could be created.",
                 stage="DOCUMENT_PAGINATION",
                 category="EMPTY_PAGE_COLLECTION",
             )
@@ -1643,13 +1522,16 @@ Do not stop simply because one generation response has ended.
         if len(pages) > MAX_DOCUMENT_PAGES:
 
             raise AdaResponseError(
-                (
-                    "Document exceeded the maximum supported "
-                    "page count."
-                ),
+                "Document exceeded the maximum supported page count.",
                 stage="DOCUMENT_PAGINATION",
                 category="PAGE_LIMIT",
             )
+
+        print(
+            f"[PAG] document_text_chars={len(document_text)} "
+            f"pages={len(pages)} "
+            f"total_pages={len(pages)}"
+        )
 
         result = {
             "type":
@@ -1679,6 +1561,7 @@ Do not stop simply because one generation response has ended.
 
         return result
 
+
     # ========================================================
     # DOCUMENT -> PAGES
     # ========================================================
@@ -1687,15 +1570,20 @@ Do not stop simply because one generation response has ended.
     def document_to_pages(
         document_text: str,
     ) -> list[dict[str, Any]]:
+
         """
         Convert ONE COMPLETE DOCUMENT into application pages.
 
-        Structural only.
+        THIS METHOD DOES NOT USE INTELLIGENCE.
 
-        No Groq.
-        No Ada reasoning.
-        No review.
-        No correction.
+        It does not call:
+            Groq
+            AdaResponse.respond()
+            generate_document()
+            review_document_pages()
+            correct_document()
+
+        It only constructs page records.
         """
 
         document_text = safe_text(
@@ -1706,7 +1594,7 @@ Do not stop simply because one generation response has ended.
             return []
 
         # ----------------------------------------------------
-        # Explicit PAGE markers
+        # Explicit PAGE markers.
         # ----------------------------------------------------
 
         pattern = re.compile(
@@ -1787,10 +1675,10 @@ Do not stop simply because one generation response has ended.
         # ----------------------------------------------------
         # No explicit page markers.
         #
-        # Structural pagination only.
+        # Structural splitting only.
         # ----------------------------------------------------
 
-        parts = split_for_intelligence(
+        parts = split_for_pages(
             document_text,
             DEFAULT_PAGE_CHARS,
         )
@@ -1820,6 +1708,7 @@ Do not stop simply because one generation response has ended.
 
         return pages
 
+
     # ========================================================
     # NORMALIZE EXISTING PAGES
     # ========================================================
@@ -1828,10 +1717,25 @@ Do not stop simply because one generation response has ended.
     def normalize_document_pages(
         pages: Any,
     ) -> list[dict[str, Any]]:
-        """
-        Structural normalization only.
 
-        This method MUST NOT perform intelligence.
+        """
+        NORMALIZE EXISTING DOCUMENT PAGES.
+
+        STRUCTURAL ONLY.
+
+        It cannot:
+
+            - call Groq
+            - call Ada
+            - perform intelligence
+            - review
+            - generate
+            - correct
+            - decide customer requirements
+            - rewrite content
+
+        Its only purpose is to ensure that the application's
+        page collection has a consistent structure.
         """
 
         if pages is None:
@@ -1866,7 +1770,7 @@ Do not stop simply because one generation response has ended.
         ] = []
 
         # ----------------------------------------------------
-        # Normalize each page.
+        # Normalize each existing page.
         # ----------------------------------------------------
 
         for index, item in enumerate(
@@ -1960,6 +1864,7 @@ Do not stop simply because one generation response has ended.
 
         return result
 
+
     # ========================================================
     # REVIEW
     # ========================================================
@@ -1977,6 +1882,7 @@ Do not stop simply because one generation response has ended.
             None
         ] | None = None,
     ) -> dict[str, Any]:
+
         """
         Review the COMPLETE CURRENT DOCUMENT.
 
@@ -2095,7 +2001,6 @@ Do not stop simply because one generation response has ended.
                 "considering the complete document.\n\n"
 
                 "Check for genuine problems in:\n"
-
                 "- correctness\n"
                 "- completeness\n"
                 "- relevance\n"
@@ -2150,11 +2055,9 @@ Do not stop simply because one generation response has ended.
                 "total_pages":
                     total_pages,
 
-                # Original content remains intact.
                 "content":
                     content,
 
-                # Review is separate.
                 "review":
                     safe_text(review),
 
@@ -2167,7 +2070,6 @@ Do not stop simply because one generation response has ended.
             )
 
             if progress_callback:
-
                 progress_callback(
                     card
                 )
@@ -2196,12 +2098,12 @@ Do not stop simply because one generation response has ended.
         }
 
         if progress_callback:
-
             progress_callback(
                 result
             )
 
         return result
+
 
     # ========================================================
     # REVIEW ASSEMBLY
@@ -2213,6 +2115,12 @@ Do not stop simply because one generation response has ended.
             dict[str, Any]
         ],
     ) -> str:
+
+        """
+        Assemble review findings only.
+
+        This does NOT assemble the document.
+        """
 
         ordered = sorted(
             pages,
@@ -2260,6 +2168,7 @@ Do not stop simply because one generation response has ended.
             + "\n\n".join(parts)
         )
 
+
     # ========================================================
     # CORRECTION
     # ========================================================
@@ -2276,14 +2185,14 @@ Do not stop simply because one generation response has ended.
             None
         ] | None = None,
     ) -> dict[str, Any]:
+
         """
         Correct the CURRENT COMPLETE DOCUMENT.
 
-        The complete current document is assembled first.
+        Ada receives the complete current document and the
+        customer's correction.
 
-        Ada returns a complete corrected document.
-
-        Only then is the new document paginated.
+        Ada must return the complete corrected document.
         """
 
         pages = (
@@ -2368,7 +2277,7 @@ Do not stop simply because one generation response has ended.
             "Do not remove unrelated useful content.\n"
             "Do not revert to an older document.\n"
             "Do not invent customer facts.\n"
-            "Preserve useful existing structure."
+            "Preserve useful existing structure.\n"
         )
 
         corrected = self.call_groq(
@@ -2400,19 +2309,13 @@ Do not stop simply because one generation response has ended.
             corrected
         )
 
-        # Remove accidental internal marker if Groq includes one.
-        corrected = corrected.replace(
-            DOCUMENT_COMPLETE_MARKER,
-            "",
-        ).strip()
-
-        # ----------------------------------------------------
-        # Never destroy a valid document because a response
-        # came back empty.
-        # ----------------------------------------------------
+        corrected = (
+            self.remove_end_marker(
+                corrected
+            )
+        )
 
         if not corrected:
-
             corrected = current_document
 
         corrected_pages = (
@@ -2447,12 +2350,12 @@ Do not stop simply because one generation response has ended.
         }
 
         if progress_callback:
-
             progress_callback(
                 result
             )
 
         return result
+
 
     # ========================================================
     # DOCUMENT ASSEMBLY
@@ -2464,6 +2367,7 @@ Do not stop simply because one generation response has ended.
             dict[str, Any]
         ],
     ) -> str:
+
         """
         Assemble ordered page content into ONE document.
 
@@ -2494,7 +2398,6 @@ Do not stop simply because one generation response has ended.
             )
 
             if content:
-
                 parts.append(
                     content
                 )
@@ -2502,6 +2405,7 @@ Do not stop simply because one generation response has ended.
         return "\n\n".join(
             parts
         ).strip()
+
 
     # ========================================================
     # NORMAL CHAT
@@ -2514,12 +2418,11 @@ Do not stop simply because one generation response has ended.
         event: str | None = None,
         context: str | None = None,
     ) -> str:
+
         """
         Normal conversational intelligence.
 
-        This remains the direct Ada reasoning path.
-
-        It is not controlled by keyword matching.
+        Not controlled by keyword matching.
         """
 
         message = safe_text(
@@ -2564,10 +2467,6 @@ Do not stop simply because one generation response has ended.
             }
         ]
 
-        # ----------------------------------------------------
-        # Conversational history
-        # ----------------------------------------------------
-
         for item in self.history[
             -MAX_HISTORY_MESSAGES:
         ]:
@@ -2584,10 +2483,6 @@ Do not stop simply because one generation response has ended.
                         ),
                 }
             )
-
-        # ----------------------------------------------------
-        # Application event is context only.
-        # ----------------------------------------------------
 
         if event:
 
@@ -2636,6 +2531,7 @@ Do not stop simply because one generation response has ended.
 
         return response
 
+
     # ========================================================
     # EVENT HELPERS
     # ========================================================
@@ -2651,6 +2547,7 @@ Do not stop simply because one generation response has ended.
             ).lower()
             in REVIEW_EVENTS
         )
+
 
     @staticmethod
     def is_correction_event(
@@ -2712,17 +2609,17 @@ if __name__ == "__main__":
     )
 
     print(
+        "Explicit completion marker:",
+        END_OF_DOCUMENT_MARKER,
+    )
+
+    print(
         "Internal generation continuation:",
         "ENABLED",
     )
 
     print(
-        "Explicit document completion marker:",
-        "ENABLED",
-    )
-
-    print(
-        "Automatic false completion heuristic:",
+        "Premature completion heuristic:",
         "DISABLED",
     )
 
