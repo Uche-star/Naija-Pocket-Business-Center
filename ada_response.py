@@ -1,26 +1,55 @@
 """
 Naija Pocket Business Center
-ADA RESPONSE ENGINE
 INTELLIGENCE-FIRST DOCUMENT ENGINE
 
-TOKEN-EFFICIENT COMPLETE DOCUMENT ENGINE
-=========================================
+TOKEN CONTROLLED COMPLETE DOCUMENT ENGINE
+==========================================
 
-IMPORTANT ARCHITECTURE
+CORE RULES
+----------
 
-1. Document generation produces ONE COMPLETE DOCUMENT.
-2. Long documents may use internal continuation.
-3. Pagination happens only AFTER complete generation.
-4. Pagination is structural and does NOT call Groq.
-5. Review uses ONE Groq request for the COMPLETE DOCUMENT.
-6. Review does NOT call Groq once per page.
-7. Corrections use the CURRENT complete document.
-8. Corrections return ONE COMPLETE corrected document.
+1. A customer's requested work is ONE document.
+2. Multi-page documents remain fully supported.
+3. Generation happens before pagination.
+4. Pagination NEVER calls Groq.
+5. Review NEVER calls Groq once per page.
+6. Review uses ONE intelligence request for the document.
+7. Corrections operate on the CURRENT complete document.
+8. Corrections return the COMPLETE corrected document.
+9. Document workflows do not make an unnecessary preliminary
+   conversational Groq request.
+10. Large repeated prompts are aggressively controlled.
 
-The customer-facing application remains responsible for
-displaying the resulting pages.
+TOKEN DESIGN
+------------
 
-No page is treated as a separate document.
+The previous implementation could repeatedly send:
+
+    large system prompt
+    + customer request
+    + supplied material
+    + previous document
+    + continuation request
+
+That becomes expensive when continuation occurs.
+
+This version therefore:
+
+- keeps system prompts compact
+- keeps ordinary chat prompts compact
+- avoids duplicated document material
+- sends only a document tail for continuation
+- uses one review request
+- keeps pagination completely local
+- does not use page count as a Groq-call multiplier
+
+IMPORTANT
+---------
+
+This file does NOT change the document ownership model.
+
+The application remains responsible for storing and displaying
+the complete document and its resulting pages.
 """
 
 from __future__ import annotations
@@ -43,7 +72,13 @@ from billing_manager import BillingManager
 # CONFIGURATION
 # ============================================================
 
-DEFAULT_MODEL = "openai/gpt-oss-20b"
+# Lower-token default model.
+#
+# Can still be overridden:
+#
+# GROQ_MODEL=openai/gpt-oss-20b
+#
+DEFAULT_MODEL = "llama-3.1-8b-instant"
 
 MODEL = (
     os.getenv("GROQ_MODEL")
@@ -73,57 +108,80 @@ EXPOSE_ERRORS_TO_CLIENT = (
 
 
 # ============================================================
-# LIMITS
+# TOKEN / CONTEXT CONTROL
 # ============================================================
 
-MAX_SYSTEM_PROMPT_CHARS = 12000
+# IMPORTANT:
+# Keep the system prompt small.
+#
+# The old implementation allowed a 12,000 character system
+# prompt before every request. That alone can consume thousands
+# of input tokens repeatedly.
 
-MAX_HISTORY_MESSAGES = 8
-MAX_HISTORY_MESSAGE_CHARS = 1800
+MAX_SYSTEM_PROMPT_CHARS = 6500
 
-MAX_USER_MESSAGE_CHARS = 7000
-MAX_CONTEXT_CHARS = 5000
+MAX_HISTORY_MESSAGES = 4
+MAX_HISTORY_MESSAGE_CHARS = 900
 
+MAX_USER_MESSAGE_CHARS = 4500
+MAX_CONTEXT_CHARS = 2200
+
+# Do not use page count as an intelligence limit.
 MAX_DOCUMENT_PAGES = 1000
+
 
 # ============================================================
 # GENERATION
 # ============================================================
 
+# Keep the request itself compact.
 GENERATION_REQUEST_CHARS = 8500
 
-# Reduced from 4000.
-# This does NOT remove continuation.
-# It simply prevents unnecessarily large output allocations.
-GENERATION_OUTPUT_TOKENS = 3000
+# A single generation can produce substantially more than the
+# previous 3000-token allocation.
+#
+# This reduces continuation frequency for normal documents.
+GENERATION_OUTPUT_TOKENS = 5000
 
 # Long documents remain supported.
-MAX_GENERATION_PARTS = 40
+#
+# This is NOT a page limit.
+# It is only a protection against an accidentally endless model
+# continuation loop.
+MAX_GENERATION_PARTS = 20
 
 END_OF_DOCUMENT_MARKER = "[END OF DOCUMENT]"
 CONTINUE_MARKER = "[CONTINUE]"
+
+# Only the tail is needed to continue a document.
+CONTINUATION_TAIL_CHARS = 3000
+
 
 # ============================================================
 # REVIEW
 # ============================================================
 
-# ONE complete-document review request.
-REVIEW_REQUEST_CHARS = 14000
+# Review remains one request.
+REVIEW_REQUEST_CHARS = 12000
+REVIEW_OUTPUT_TOKENS = 700
 
-# One review response for the entire document.
-REVIEW_OUTPUT_TOKENS = 1000
 
 # ============================================================
 # CORRECTION
 # ============================================================
 
-CORRECTION_REQUEST_CHARS = 9000
-CORRECTION_OUTPUT_TOKENS = 2800
+CORRECTION_REQUEST_CHARS = 10500
+CORRECTION_OUTPUT_TOKENS = 4500
+
 
 # ============================================================
 # PAGE CONSTRUCTION
 # ============================================================
 
+# Local structural pagination only.
+#
+# This does NOT mean "maximum document length".
+# It is simply the preferred visual page chunk size.
 DEFAULT_PAGE_CHARS = 7000
 
 
@@ -188,6 +246,7 @@ def get_client():
         return _client
 
     if Groq is None:
+
         raise AdaResponseError(
             "The groq package is not installed.",
             stage="CLIENT_INITIALIZATION",
@@ -195,6 +254,7 @@ def get_client():
         )
 
     if not API_KEY:
+
         raise AdaResponseError(
             "GROQ_API_KEY is missing.",
             stage="CLIENT_INITIALIZATION",
@@ -315,7 +375,6 @@ def split_for_intelligence(
             break
 
         end = start + maximum
-
         window = text[start:end]
 
         positions = [
@@ -476,7 +535,7 @@ def log_error(
         "Error:",
         compact_text(
             error,
-            1200,
+            1000,
         ),
     )
 
@@ -500,7 +559,7 @@ def client_error_message(
     return (
         "Technical error detected.\n\n"
         f"Category: {classify_error(error)}\n"
-        f"Error: {compact_text(error, 1000)}"
+        f"Error: {compact_text(error, 800)}"
     )
 
 
@@ -676,13 +735,12 @@ class AdaResponse:
         return (
             "OFFICIAL BILLING FACTS\n"
             f"Service: {service}\n"
-            f"{pricing}\n"
-            "BillingManager is authoritative."
+            f"{pricing}"
         )
 
 
     # ========================================================
-    # INTELLIGENCE RULES
+    # COMPACT INTELLIGENCE RULES
     # ========================================================
 
     def intelligence_rules(self) -> str:
@@ -691,98 +749,51 @@ class AdaResponse:
 You are the intelligent customer-facing assistant
 of Naija Pocket Business Center.
 
-You are not a keyword-matching bot.
+Understand meaning, not keywords.
 
-Understand the customer's actual meaning, request, selected
-service, supplied information and current application state.
+The selected service is context only.
+It does not force a scripted conversation.
 
-SERVICE INTELLIGENCE
---------------------
-A selected service provides context.
-It does not dictate a scripted conversation.
+Ask only for information genuinely needed.
 
-Do not assume every service requires the same information.
+DOCUMENTS
+---------
+When enough information exists, produce the requested work.
 
-Ask only for information genuinely necessary for the
-customer's actual request.
+Do not substitute:
+- a plan for a requested document
+- a summary for requested work
+- an introduction for a complete document
 
-A page count is NOT globally required.
+Long documents are ONE document even when internally continued.
 
-DOCUMENT GENERATION
--------------------
-When enough information is available, create the actual
-requested work.
-
-Do not return a plan when the customer requested the document.
-
-Do not return a summary when the customer requested the
-document.
-
-Do not deliberately stop after an introduction.
-
-If the work is long, continue it until its natural conclusion.
-
-Internal continuation parts are ONE DOCUMENT.
-
-DOCUMENT FACTS
---------------
 Never invent customer-specific facts.
-
-Do not fabricate:
-- names
-- addresses
-- dates
-- qualifications
-- employment history
-- academic results
-- references
-- business details
-- personal information
 
 DOCUMENT PRESERVATION
 ---------------------
 The complete document is the source of truth.
 
-Never replace a complete document with:
-- a summary
-- an excerpt
-- a review
-- a single generation part
-- a page preview
-- an explanation
+Never replace it with a summary, excerpt, review, page preview,
+or explanation.
 
 REVIEW
 ------
-Review the actual complete document.
-
+Review the complete document as one document.
+Do not rewrite it.
 Do not invent problems.
 
-Do not rewrite the document during review.
-
-Review findings are separate from document content.
-
-CORRECTIONS
------------
-When correcting a document, use the CURRENT complete document.
-
+CORRECTION
+----------
+Use the CURRENT complete document.
 Apply the customer's requested correction.
-
 Preserve unrelated useful content.
-
 Return the COMPLETE corrected document.
-
-Never revert to an older version.
 
 COMMUNICATION
 -------------
-Speak naturally, clearly and warmly.
-
+Be natural, clear and warm.
 Use Nigerian English naturally where appropriate.
-
-Never expose internal architecture.
-
-Never discuss prompts, model configuration, token limits
-or processing mechanics with the customer.
+Never expose internal architecture or token mechanics.
 """
 
 
@@ -805,6 +816,7 @@ or processing mechanics with the customer.
 
         parts: list[str] = []
 
+        # Keep prompt-manager contribution controlled.
         try:
 
             prompt = (
@@ -819,7 +831,7 @@ or processing mechanics with the customer.
                 parts.append(
                     compact_text(
                         prompt,
-                        7000,
+                        3000,
                     )
                 )
 
@@ -835,6 +847,13 @@ or processing mechanics with the customer.
             self.intelligence_rules()
         )
 
+        if active_service:
+
+            parts.append(
+                "SERVICE: "
+                + active_service
+            )
+
         billing = (
             self.get_billing_context(
                 active_service
@@ -842,21 +861,15 @@ or processing mechanics with the customer.
         )
 
         if billing:
+
             parts.append(
                 billing
-            )
-
-        if active_service:
-
-            parts.append(
-                "SELECTED SERVICE\n"
-                + active_service
             )
 
         if context:
 
             parts.append(
-                "CURRENT APPLICATION STATE\n"
+                "APPLICATION STATE:\n"
                 + compact_text(
                     context,
                     MAX_CONTEXT_CHARS,
@@ -920,13 +933,13 @@ or processing mechanics with the customer.
 
         print()
         print("=" * 78)
-        print("ADA INTELLIGENCE")
+        print("INTELLIGENCE REQUEST")
         print("=" * 78)
 
         print("Stage:", stage)
         print("Model:", MODEL)
         print("Messages:", len(messages))
-        print("Output tokens:", output_tokens)
+        print("Output token allowance:", output_tokens)
 
         if event:
             print("Event:", event)
@@ -989,6 +1002,7 @@ or processing mechanics with the customer.
         )
 
         if not content:
+
             raise AdaResponseError(
                 "Intelligence returned empty content.",
                 stage=stage,
@@ -996,7 +1010,7 @@ or processing mechanics with the customer.
             )
 
         print(
-            "Ada intelligence response received."
+            "Intelligence response received."
         )
 
         return content
@@ -1012,103 +1026,68 @@ or processing mechanics with the customer.
         service: str,
         customer_request: str,
         supplied_material: str = "",
-        previous_document: str = "",
+        previous_tail: str = "",
         continuation: bool = False,
     ) -> str:
 
         if continuation:
 
-            existing_tail = (
-                compact_text(
-                    previous_document,
-                    1800,
-                )
-            )
-
             instruction = f"""
-CONTINUE THE SAME DOCUMENT
+CONTINUE THE SAME DOCUMENT.
 
-The CURRENT DOCUMENT MATERIAL below is already part of the
-same document.
+Do not restart.
+Do not repeat previous sections.
+Continue naturally from the supplied ending.
 
-Do NOT restart it.
+DOCUMENT ENDING:
 
-Do NOT repeat material already written.
+{compact_text(
+    previous_tail,
+    CONTINUATION_TAIL_CHARS,
+)}
 
-Continue writing the actual document from its current point.
-
-CURRENT DOCUMENT END:
-
-{existing_tail}
-
-If the COMPLETE document is now genuinely finished, end with:
+If the document is now complete, end with:
 
 {END_OF_DOCUMENT_MARKER}
 
-If it is not finished, end with:
+If more document content is genuinely required, end with:
 
 {CONTINUE_MARKER}
 
-Return only document content followed by the marker.
+Return only document content and the marker.
 """
 
         else:
 
             instruction = f"""
-CREATE THE ACTUAL REQUESTED DOCUMENT
+CREATE THE REQUESTED DOCUMENT.
 
-Create the complete requested work.
+Produce the actual work, not a plan or explanation.
 
-Do not return a plan.
-Do not return an outline unless the customer explicitly asked
-for an outline.
-Do not return an explanation.
-Do not deliberately stop after an introduction.
-
-If the document cannot fit in this response, continue the same
-document and end with:
-
-{CONTINUE_MARKER}
-
-If the entire document genuinely fits, end with:
+If the document is complete, end with:
 
 {END_OF_DOCUMENT_MARKER}
 
-Return only the document followed by the marker.
+If the document genuinely needs continuation, end with:
+
+{CONTINUE_MARKER}
+
+Return only document content and the marker.
 """
 
         return (
-            "DOCUMENT GENERATION\n\n"
+            "CREATE DOCUMENT\n\n"
 
             "SERVICE:\n"
             f"{self.active_service_for_prompt(service)}\n\n"
 
             "CUSTOMER REQUEST:\n"
-            f"{compact_text(customer_request, 5500)}\n\n"
+            f"{compact_text(customer_request, 4000)}\n\n"
 
             "SUPPLIED MATERIAL:\n"
-            f"{compact_text(supplied_material, 4500)}\n\n"
-
-            "CURRENT DOCUMENT MATERIAL:\n"
-            f"{compact_text(previous_document, 5000)}\n\n"
+            f"{compact_text(supplied_material, 2500)}\n\n"
 
             + instruction
-
-            + """
-
-IMPORTANT
-
-The document is ONE COMPLETE WORK.
-
-Internal continuation parts are never separate documents.
-
-Do not invent customer-specific facts.
-
-Do not add a page count unless genuinely requested.
-
-Pagination happens only after the complete document has been
-assembled by the application.
-"""
         )
 
 
@@ -1181,10 +1160,26 @@ assembled by the application.
             MAX_GENERATION_PARTS + 1,
         ):
 
+            # IMPORTANT:
+            #
+            # We DO NOT resend the complete accumulated document.
+            #
+            # Only its ending is supplied for continuation.
+            #
+            # This is one of the major token-saving changes.
+
             current_document = (
                 "\n\n".join(
                     document_parts
                 ).strip()
+            )
+
+            previous_tail = (
+                current_document[
+                    -CONTINUATION_TAIL_CHARS:
+                ]
+                if current_document
+                else ""
             )
 
             prompt = (
@@ -1192,7 +1187,7 @@ assembled by the application.
                     service=active_service,
                     customer_request=customer_request,
                     supplied_material=supplied_material,
-                    previous_document=current_document,
+                    previous_tail=previous_tail,
                     continuation=bool(
                         document_parts
                     ),
@@ -1202,15 +1197,21 @@ assembled by the application.
             generated = self.call_groq(
                 messages=[
                     {
-                        "role": "system",
-                        "content": system_prompt,
+                        "role":
+                            "system",
+
+                        "content":
+                            system_prompt,
                     },
                     {
-                        "role": "user",
-                        "content": compact_text(
-                            prompt,
-                            GENERATION_REQUEST_CHARS,
-                        ),
+                        "role":
+                            "user",
+
+                        "content":
+                            compact_text(
+                                prompt,
+                                GENERATION_REQUEST_CHARS,
+                            ),
                     },
                 ],
                 output_tokens=GENERATION_OUTPUT_TOKENS,
@@ -1235,6 +1236,12 @@ assembled by the application.
                 )
             )
 
+            has_continue = (
+                contains_continue_marker(
+                    generated
+                )
+            )
+
             clean_generated = (
                 remove_generation_markers(
                     generated
@@ -1253,16 +1260,10 @@ assembled by the application.
                 ).strip()
             )
 
-            has_continue = (
-                contains_continue_marker(
-                    generated
-                )
-            )
-
             print(
                 "[GEN]"
                 f" part={part_number}"
-                f" generated_chars={len(generated)}"
+                f" response_chars={len(generated)}"
                 f" document_chars={len(current_document)}"
                 f" complete={model_declared_complete}"
             )
@@ -1292,26 +1293,21 @@ assembled by the application.
                     }
                 )
 
-            # ------------------------------------------------
-            # ONLY END MARKER FINISHES GENERATION
-            # ------------------------------------------------
-
             if model_declared_complete:
 
                 completed = True
                 break
 
-            # ------------------------------------------------
-            # No END marker means the document is not yet
-            # officially complete.
+            # A model that omits both markers is not trusted to
+            # have completed the document.
             #
-            # This preserves the multi-page protection.
-            # ------------------------------------------------
+            # Continue the SAME document rather than creating
+            # another document.
 
             if not has_continue:
 
                 print(
-                    "[GEN] No END marker received."
+                    "[GEN] No END marker."
                     " Continuing same document."
                 )
 
@@ -1319,8 +1315,8 @@ assembled by the application.
 
             raise AdaResponseError(
                 (
-                    "Document generation reached the maximum "
-                    "internal continuation count without receiving "
+                    "Document generation reached the internal "
+                    "continuation limit before receiving "
                     "[END OF DOCUMENT]."
                 ),
                 stage="DOCUMENT_GENERATION",
@@ -1341,9 +1337,13 @@ assembled by the application.
                 category="EMPTY_DOCUMENT",
             )
 
-        # ----------------------------------------------------
-        # PAGINATION AFTER COMPLETE GENERATION
-        # ----------------------------------------------------
+        # ====================================================
+        # PAGINATION
+        #
+        # LOCAL ONLY.
+        #
+        # ZERO GROQ CALLS.
+        # ====================================================
 
         pages = (
             self.document_to_pages(
@@ -1494,7 +1494,7 @@ assembled by the application.
         # ----------------------------------------------------
         # STRUCTURAL PAGINATION
         #
-        # NO GROQ CALL.
+        # STILL NO GROQ.
         # ----------------------------------------------------
 
         parts = split_for_intelligence(
@@ -1642,14 +1642,12 @@ assembled by the application.
                     }
                 )
 
-        result = sorted(
+        return sorted(
             result,
             key=lambda item: int(
                 item["page_number"]
             ),
         )
-
-        return result
 
 
     # ========================================================
@@ -1697,7 +1695,7 @@ assembled by the application.
 
 
     # ========================================================
-    # SINGLE-CALL COMPLETE DOCUMENT REVIEW
+    # COMPLETE DOCUMENT REVIEW
     # ========================================================
 
     def review_document_pages(
@@ -1762,85 +1760,40 @@ assembled by the application.
         )
 
         # ----------------------------------------------------
-        # IMPORTANT TOKEN FIX
+        # ONE REVIEW REQUEST.
         #
-        # ONE Groq CALL FOR THE ENTIRE DOCUMENT.
-        #
-        # Previously:
-        #
-        #     for each page:
-        #         call_groq(...)
-        #
-        # That caused:
-        #
-        #     2 pages  = 2 calls
-        #     10 pages = 10 calls
-        #     30 pages = 30 calls
-        #
-        # Now:
-        #
-        #     entire document = ONE call
-        #
-        # The number of display pages does NOT determine the
-        # number of intelligence requests.
+        # The UI may show many pages.
+        # That does NOT create many Groq requests.
         # ----------------------------------------------------
 
-        page_map = "\n\n".join(
-            (
-                f"PAGE {page['page_number']}\n"
-                f"{page['content']}"
-            )
-            for page in normalized
-        )
-
         review_prompt = (
-            "COMPLETE DOCUMENT REVIEW\n\n"
+            "REVIEW THE COMPLETE DOCUMENT.\n\n"
 
             "SERVICE:\n"
             f"{safe_text(service)}\n\n"
 
             "CUSTOMER REQUEST:\n"
-            f"{compact_text(customer_request, 3500)}\n\n"
+            f"{compact_text(customer_request, 3000)}\n\n"
 
-            f"TOTAL PAGES: {total_pages}\n\n"
+            "TOTAL DISPLAY PAGES:\n"
+            f"{total_pages}\n\n"
 
             "COMPLETE DOCUMENT:\n"
-            f"{compact_text(page_map, 10500)}\n\n"
+            f"{compact_text(complete_document, 8500)}\n\n"
 
-            "TASK\n"
-            "====\n"
+            "TASK:\n"
+            "Check the document as ONE complete work for genuine "
+            "correctness, completeness, relevance, grammar, clarity, "
+            "consistency, structure and compliance.\n\n"
 
-            "Review the COMPLETE document as ONE document.\n\n"
-
-            "Check for genuine problems involving:\n"
-            "- correctness\n"
-            "- completeness\n"
-            "- relevance\n"
-            "- grammar\n"
-            "- clarity\n"
-            "- consistency\n"
-            "- structure\n"
-            "- formatting\n"
-            "- compliance with the customer's request\n\n"
-
-            "Do not invent problems.\n"
             "Do not rewrite the document.\n"
             "Do not reproduce the document.\n"
-            "Do not return page content.\n\n"
+            "Do not invent problems.\n\n"
 
-            "IMPORTANT OUTPUT FORMAT\n"
-            "=======================\n"
-
-            "Return concise findings only.\n\n"
-
-            "If there are page-specific findings, use:\n\n"
-            "PAGE 1: finding\n"
-            "PAGE 3: finding\n\n"
-
-            "If a finding concerns the whole document, use:\n\n"
-            "DOCUMENT: finding\n\n"
-
-            "If there are no genuine problems, return exactly:\n\n"
+            "OUTPUT:\n"
+            "Use PAGE N: finding when a problem belongs to a page.\n"
+            "Use DOCUMENT: finding for document-wide problems.\n"
+            "If there are no genuine problems, return exactly:\n"
             "NO ISSUES FOUND"
         )
 
@@ -1858,10 +1811,6 @@ assembled by the application.
                         "processing",
                 }
             )
-
-        # ----------------------------------------------------
-        # THE ONLY REVIEW GROQ REQUEST
-        # ----------------------------------------------------
 
         review = self.call_groq(
             messages=[
@@ -1892,12 +1841,6 @@ assembled by the application.
             review
         )
 
-        # ----------------------------------------------------
-        # STRUCTURALLY ASSOCIATE REVIEW FINDINGS WITH PAGES.
-        #
-        # THIS DOES NOT CALL GROQ.
-        # ----------------------------------------------------
-
         page_reviews = (
             self._parse_review_by_page(
                 review,
@@ -1926,6 +1869,7 @@ assembled by the application.
             )
 
             if not findings:
+
                 findings = (
                     "No page-specific issues identified."
                 )
@@ -1958,7 +1902,6 @@ assembled by the application.
             )
 
             if progress_callback:
-
                 progress_callback(
                     card
                 )
@@ -1986,18 +1929,14 @@ assembled by the application.
             "assembled_review":
                 assembled_review,
 
-            # The original complete document remains intact.
             "document":
                 complete_document,
 
-            # Diagnostic confirmation that this review used
-            # one intelligence request.
             "review_calls":
                 1,
         }
 
         if progress_callback:
-
             progress_callback(
                 result
             )
@@ -2033,10 +1972,6 @@ assembled by the application.
         ):
             return results
 
-        # ----------------------------------------------------
-        # Capture PAGE N: ... blocks.
-        # ----------------------------------------------------
-
         pattern = re.compile(
             r"(?im)"
             r"^\s*PAGE\s+(\d+)\s*:\s*"
@@ -2054,9 +1989,11 @@ assembled by the application.
         ):
 
             try:
+
                 page_number = int(
                     match.group(1)
                 )
+
             except Exception:
                 continue
 
@@ -2071,15 +2008,10 @@ assembled by the application.
             )
 
             if finding:
+
                 results[
                     page_number
                 ] = finding
-
-        # ----------------------------------------------------
-        # A document-wide finding is attached structurally to
-        # every page so the existing review-page UI can still
-        # display it without another intelligence request.
-        # ----------------------------------------------------
 
         document_pattern = re.compile(
             r"(?is)"
@@ -2117,8 +2049,7 @@ assembled by the application.
                         ] = (
                             existing
                             + "\n\n"
-                            + "Document-wide:"
-                            + "\n"
+                            + "Document-wide:\n"
                             + document_finding
                         )
 
@@ -2127,8 +2058,7 @@ assembled by the application.
                         results[
                             page_number
                         ] = (
-                            "Document-wide:"
-                            "\n"
+                            "Document-wide:\n"
                             + document_finding
                         )
 
@@ -2279,32 +2209,25 @@ assembled by the application.
         )
 
         prompt = (
-            "CURRENT DOCUMENT CORRECTION\n\n"
+            "CORRECT THE CURRENT COMPLETE DOCUMENT.\n\n"
 
             "SERVICE:\n"
             f"{active_service}\n\n"
 
-            "CUSTOMER'S CORRECTION:\n"
-            f"{compact_text(correction, 5500)}\n\n"
+            "CUSTOMER CORRECTION:\n"
+            f"{compact_text(correction, 4500)}\n\n"
 
             "CURRENT COMPLETE DOCUMENT:\n"
-            f"{compact_text(current_document, 7500)}\n\n"
-
-            "TASK\n"
-            "====\n"
-
-            "Apply the customer's correction to the CURRENT "
-            "document.\n\n"
+            f"{compact_text(current_document, 7000)}\n\n"
 
             "Return the COMPLETE corrected document.\n\n"
 
             "Do not return only the changed section.\n"
             "Do not return a summary.\n"
-            "Do not return an explanation.\n"
+            "Do not explain the correction.\n"
             "Do not remove unrelated useful content.\n"
-            "Do not revert to an older document.\n"
-            "Do not invent customer facts.\n"
-            "Preserve useful existing structure."
+            "Do not revert to an older version.\n"
+            "Do not invent customer facts."
         )
 
         corrected = self.call_groq(
@@ -2338,6 +2261,10 @@ assembled by the application.
 
         if not corrected:
             corrected = current_document
+
+        corrected = remove_generation_markers(
+            corrected
+        )
 
         corrected_pages = (
             self.document_to_pages(
@@ -2457,7 +2384,7 @@ assembled by the application.
 
                     "content":
                         (
-                            "CURRENT APPLICATION EVENT\n"
+                            "APPLICATION EVENT: "
                             + safe_text(event)
                         ),
                 }
@@ -2478,7 +2405,7 @@ assembled by the application.
 
         response = self.call_groq(
             messages=messages,
-            output_tokens=600,
+            output_tokens=450,
             stage="NORMAL_RESPONSE",
             event=event,
         )
@@ -2535,7 +2462,7 @@ if __name__ == "__main__":
     print()
     print("=" * 78)
     print("NAIJA POCKET BUSINESS CENTER")
-    print("ADA RESPONSE INTELLIGENCE ENGINE")
+    print("TOKEN CONTROLLED DOCUMENT ENGINE")
     print("=" * 78)
 
     print("Model:", MODEL)
@@ -2555,33 +2482,58 @@ if __name__ == "__main__":
     )
 
     print(
-        "Intelligence-first service requirements:",
-        "ENABLED",
-    )
-
-    print(
-        "Global page-count requirement:",
-        "DISABLED",
-    )
-
-    print(
         "Complete document generation:",
         "ENABLED",
     )
 
     print(
-        "Internal generation continuation:",
+        "Multi-page documents:",
         "ENABLED",
     )
 
     print(
-        "Explicit END marker:",
-        END_OF_DOCUMENT_MARKER,
+        "Internal continuation:",
+        "ENABLED",
     )
 
     print(
-        "Explicit CONTINUE marker:",
-        CONTINUE_MARKER,
+        "Complete document before pagination:",
+        "ENABLED",
+    )
+
+    print(
+        "Pagination Groq calls:",
+        "0",
+    )
+
+    print(
+        "Review Groq calls per document:",
+        "1",
+    )
+
+    print(
+        "Page-by-page review calls:",
+        "DISABLED",
+    )
+
+    print(
+        "Whole-document correction:",
+        "ENABLED",
+    )
+
+    print(
+        "Complete-document preservation:",
+        "ENABLED",
+    )
+
+    print(
+        "Repeated full-document continuation prompt:",
+        "DISABLED",
+    )
+
+    print(
+        "Large system prompt:",
+        "REDUCED",
     )
 
     print(
@@ -2595,53 +2547,18 @@ if __name__ == "__main__":
     )
 
     print(
-        "Review intelligence calls per document:",
-        "1",
+        "Correction output tokens:",
+        CORRECTION_OUTPUT_TOKENS,
     )
 
     print(
-        "Page-by-page review Groq calls:",
+        "Global page-count requirement:",
         "DISABLED",
-    )
-
-    print(
-        "Completion-check heuristic:",
-        "DISABLED",
-    )
-
-    print(
-        "Document-to-page handoff:",
-        "ENABLED",
-    )
-
-    print(
-        "Page normalization intelligence:",
-        "DISABLED",
-    )
-
-    print(
-        "Original page preservation:",
-        "ENABLED",
-    )
-
-    print(
-        "Separate review findings:",
-        "ENABLED",
-    )
-
-    print(
-        "Complete-document correction:",
-        "ENABLED",
     )
 
     print(
         "Keyword-only service logic:",
         "DISABLED",
-    )
-
-    print(
-        "Permanent document ownership:",
-        "APPLICATION",
     )
 
     print("=" * 78)
