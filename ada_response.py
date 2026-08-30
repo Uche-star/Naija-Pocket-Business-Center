@@ -3,57 +3,18 @@ Naija Pocket Business Center
 INTELLIGENCE-FIRST DOCUMENT ENGINE
 
 TOKEN CONTROLLED COMPLETE DOCUMENT ENGINE
-==========================================
 
-CORE RULES
-----------
 
-1. A customer's requested work is ONE document.
-2. Multi-page documents remain fully supported.
-3. Generation happens before pagination.
-4. Pagination NEVER calls Groq.
-5. Review NEVER calls Groq once per page.
-6. Review uses ONE intelligence request for the document.
-7. Corrections operate on the CURRENT complete document.
-8. Corrections return the COMPLETE corrected document.
-9. Document workflows do not make an unnecessary preliminary
-   conversational Groq request.
-10. Large repeated prompts are aggressively controlled.
-
-TOKEN DESIGN
-------------
-
-The previous implementation could repeatedly send:
-
-    large system prompt
-    + customer request
-    + supplied material
-    + previous document
-    + continuation request
-
-That becomes expensive when continuation occurs.
-
-This version therefore:
-
-- keeps system prompts compact
-- keeps ordinary chat prompts compact
-- avoids duplicated document material
-- sends only a document tail for continuation
-- uses one review request
-- keeps pagination completely local
-- does not use page count as a Groq-call multiplier
-
-IMPORTANT
----------
-
-This file does NOT change the document ownership model.
-
-The application remains responsible for storing and displaying
-the complete document and its resulting pages.
+MODIFICATIONS v1.1: Token Efficiency Patch
+- System prompt cache keyed by service+context
+- History excluded for document/review/correction calls
+- Review deduplication by job+version+doc_hash
+- Supplied_material sent only on generation part 1
 """
 
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 import traceback
@@ -72,12 +33,6 @@ from billing_manager import BillingManager
 # CONFIGURATION
 # ============================================================
 
-# Lower-token default model.
-#
-# Can still be overridden:
-#
-# GROQ_MODEL=openai/gpt-oss-20b
-#
 DEFAULT_MODEL = "llama-3.1-8b-instant"
 
 MODEL = (
@@ -111,22 +66,11 @@ EXPOSE_ERRORS_TO_CLIENT = (
 # TOKEN / CONTEXT CONTROL
 # ============================================================
 
-# IMPORTANT:
-# Keep the system prompt small.
-#
-# The old implementation allowed a 12,000 character system
-# prompt before every request. That alone can consume thousands
-# of input tokens repeatedly.
-
 MAX_SYSTEM_PROMPT_CHARS = 6500
-
 MAX_HISTORY_MESSAGES = 4
 MAX_HISTORY_MESSAGE_CHARS = 900
-
 MAX_USER_MESSAGE_CHARS = 4500
 MAX_CONTEXT_CHARS = 2200
-
-# Do not use page count as an intelligence limit.
 MAX_DOCUMENT_PAGES = 1000
 
 
@@ -134,26 +78,12 @@ MAX_DOCUMENT_PAGES = 1000
 # GENERATION
 # ============================================================
 
-# Keep the request itself compact.
 GENERATION_REQUEST_CHARS = 8500
-
-# A single generation can produce substantially more than the
-# previous 3000-token allocation.
-#
-# This reduces continuation frequency for normal documents.
 GENERATION_OUTPUT_TOKENS = 5000
-
-# Long documents remain supported.
-#
-# This is NOT a page limit.
-# It is only a protection against an accidentally endless model
-# continuation loop.
 MAX_GENERATION_PARTS = 20
 
 END_OF_DOCUMENT_MARKER = "[END OF DOCUMENT]"
 CONTINUE_MARKER = "[CONTINUE]"
-
-# Only the tail is needed to continue a document.
 CONTINUATION_TAIL_CHARS = 3000
 
 
@@ -161,7 +91,6 @@ CONTINUATION_TAIL_CHARS = 3000
 # REVIEW
 # ============================================================
 
-# Review remains one request.
 REVIEW_REQUEST_CHARS = 12000
 REVIEW_OUTPUT_TOKENS = 700
 
@@ -178,10 +107,6 @@ CORRECTION_OUTPUT_TOKENS = 4500
 # PAGE CONSTRUCTION
 # ============================================================
 
-# Local structural pagination only.
-#
-# This does NOT mean "maximum document length".
-# It is simply the preferred visual page chunk size.
 DEFAULT_PAGE_CHARS = 7000
 
 
@@ -224,7 +149,6 @@ class AdaResponseError(Exception):
         original: Exception | None = None,
     ):
         super().__init__(message)
-
         self.stage = stage
         self.category = category
         self.status_code = status_code
@@ -239,14 +163,12 @@ _client = None
 
 
 def get_client():
-
     global _client
 
     if _client is not None:
         return _client
 
     if Groq is None:
-
         raise AdaResponseError(
             "The groq package is not installed.",
             stage="CLIENT_INITIALIZATION",
@@ -254,7 +176,6 @@ def get_client():
         )
 
     if not API_KEY:
-
         raise AdaResponseError(
             "GROQ_API_KEY is missing.",
             stage="CLIENT_INITIALIZATION",
@@ -262,15 +183,10 @@ def get_client():
         )
 
     try:
-
-        _client = Groq(
-            api_key=API_KEY
-        )
-
+        _client = Groq(api_key=API_KEY)
         return _client
 
     except Exception as error:
-
         raise AdaResponseError(
             "Groq client initialization failed.",
             stage="CLIENT_INITIALIZATION",
@@ -284,11 +200,7 @@ def get_ada_model() -> str:
 
 
 def is_configured() -> bool:
-
-    return (
-        Groq is not None
-        and bool(API_KEY)
-    )
+    return Groq is not None and bool(API_KEY)
 
 
 # ============================================================
@@ -322,20 +234,14 @@ def compact_text(
     if maximum < 100:
         return text[:maximum]
 
-    marker = (
-        "\n\n"
-        "[INTERNAL CONTEXT COMPACTED]\n\n"
-    )
+    marker = "\n\n[INTERNAL CONTEXT COMPACTED]\n\n"
 
     available = maximum - len(marker)
 
     if available <= 0:
         return text[:maximum]
 
-    first = int(
-        available * 0.65
-    )
-
+    first = int(available * 0.65)
     last = available - first
 
     return (
@@ -375,6 +281,7 @@ def split_for_intelligence(
             break
 
         end = start + maximum
+
         window = text[start:end]
 
         positions = [
@@ -389,15 +296,14 @@ def split_for_intelligence(
         usable = [
             position
             for position in positions
-            if position >= int(
-                maximum * 0.55
-            )
+            if position >= int(maximum * 0.55)
         ]
 
-        if usable:
-            boundary = max(usable)
-        else:
-            boundary = maximum
+        boundary = (
+            max(usable)
+            if usable
+            else maximum
+        )
 
         part = text[
             start:start + boundary
@@ -414,6 +320,13 @@ def split_for_intelligence(
         start = next_start
 
     return parts
+
+
+def sha256_text(text: str) -> str:
+
+    return hashlib.sha256(
+        safe_text(text).encode("utf-8")
+    ).hexdigest()
 
 
 # ============================================================
@@ -450,14 +363,18 @@ def remove_generation_markers(
         return ""
 
     cleaned = re.sub(
-        re.escape(END_OF_DOCUMENT_MARKER),
+        re.escape(
+            END_OF_DOCUMENT_MARKER
+        ),
         "",
         cleaned,
         flags=re.IGNORECASE,
     )
 
     cleaned = re.sub(
-        re.escape(CONTINUE_MARKER),
+        re.escape(
+            CONTINUE_MARKER
+        ),
         "",
         cleaned,
         flags=re.IGNORECASE,
@@ -525,18 +442,16 @@ def log_error(
     print("=" * 78)
     print("ADA ERROR:", title)
     print("=" * 78)
-
     print("Stage:", stage)
     print("Category:", classify_error(error))
     print("Model:", MODEL)
-    print("API key configured:", bool(API_KEY))
-
+    print(
+        "API key configured:",
+        bool(API_KEY),
+    )
     print(
         "Error:",
-        compact_text(
-            error,
-            1000,
-        ),
+        compact_text(error, 1000),
     )
 
     traceback.print_exc()
@@ -550,10 +465,9 @@ def client_error_message(
 ) -> str:
 
     if not EXPOSE_ERRORS_TO_CLIENT:
-
         return (
-            "I could not process your request right now. "
-            "Please try again."
+            "I could not process your request "
+            "right now. Please try again."
         )
 
     return (
@@ -583,13 +497,21 @@ class AdaResponse:
             AdaPromptManager()
         )
 
-        self.billing = (
-            BillingManager()
-        )
+        self.billing = BillingManager()
 
         self.history: list[
             dict[str, str]
         ] = []
+
+        self._system_prompt_cache: dict[
+            str,
+            str
+        ] = {}
+
+        self._review_cache: dict[
+            str,
+            dict
+        ] = {}
 
 
     # ========================================================
@@ -601,9 +523,7 @@ class AdaResponse:
         service: str | None,
     ):
 
-        service = safe_text(
-            service
-        )
+        service = safe_text(service)
 
         if service:
             self.service = service
@@ -614,9 +534,7 @@ class AdaResponse:
         service: str | None,
     ) -> str | None:
 
-        service = safe_text(
-            service
-        )
+        service = safe_text(service)
 
         if not service:
             return self.service
@@ -624,16 +542,13 @@ class AdaResponse:
         try:
 
             normalized = (
-                self.billing
-                .normalize_service(
+                self.billing.normalize_service(
                     service
                 )
             )
 
             return (
-                safe_text(
-                    normalized
-                )
+                safe_text(normalized)
                 or service
             )
 
@@ -657,8 +572,10 @@ class AdaResponse:
         service: str | None,
     ) -> str:
 
-        service = self.normalize_service(
-            service
+        service = (
+            self.normalize_service(
+                service
+            )
         )
 
         if not service:
@@ -667,8 +584,7 @@ class AdaResponse:
         try:
 
             item = (
-                self.billing
-                .get_service(
+                self.billing.get_service(
                     service
                 )
             )
@@ -743,54 +659,50 @@ class AdaResponse:
     # COMPACT INTELLIGENCE RULES
     # ========================================================
 
-    def intelligence_rules(self) -> str:
+    def intelligence_rules(
+        self,
+    ) -> str:
 
         return """
 You are the intelligent customer-facing assistant
 of Naija Pocket Business Center.
-
 Understand meaning, not keywords.
-
 The selected service is context only.
 It does not force a scripted conversation.
-
 Ask only for information genuinely needed.
 
 DOCUMENTS
----------
-When enough information exists, produce the requested work.
 
+When enough information exists, produce the requested work.
 Do not substitute:
 - a plan for a requested document
 - a summary for requested work
 - an introduction for a complete document
 
 Long documents are ONE document even when internally continued.
-
 Never invent customer-specific facts.
 
 DOCUMENT PRESERVATION
----------------------
-The complete document is the source of truth.
 
+The complete document is the source of truth.
 Never replace it with a summary, excerpt, review, page preview,
 or explanation.
 
 REVIEW
-------
+
 Review the complete document as one document.
 Do not rewrite it.
 Do not invent problems.
 
 CORRECTION
-----------
+
 Use the CURRENT complete document.
 Apply the customer's requested correction.
 Preserve unrelated useful content.
 Return the COMPLETE corrected document.
 
 COMMUNICATION
--------------
+
 Be natural, clear and warm.
 Use Nigerian English naturally where appropriate.
 Never expose internal architecture or token mechanics.
@@ -798,31 +710,21 @@ Never expose internal architecture or token mechanics.
 
 
     # ========================================================
-    # SYSTEM PROMPT
+    # SYSTEM PROMPT WITH CACHE
     # ========================================================
 
-    def build_system_prompt(
+    def _build_static_system_base(
         self,
-        *,
-        service: str | None = None,
-        context: str | None = None,
+        service: str | None,
     ) -> str:
-
-        active_service = (
-            self.normalize_service(
-                service
-            )
-        )
 
         parts: list[str] = []
 
-        # Keep prompt-manager contribution controlled.
         try:
 
             prompt = (
-                self.prompt_manager
-                .build_prompt(
-                    service=active_service
+                self.prompt_manager.build_prompt(
+                    service=service
                 )
             )
 
@@ -847,33 +749,89 @@ Never expose internal architecture or token mechanics.
             self.intelligence_rules()
         )
 
-        if active_service:
+        if service:
 
             parts.append(
-                "SERVICE: "
-                + active_service
+                "SERVICE: " + service
             )
 
         billing = (
             self.get_billing_context(
-                active_service
+                service
             )
         )
 
         if billing:
+            parts.append(billing)
 
-            parts.append(
-                billing
+        return "\n\n".join(parts)
+
+
+    def build_system_prompt(
+        self,
+        *,
+        service: str | None = None,
+        context: str | None = None,
+    ) -> str:
+
+        active_service = (
+            self.normalize_service(
+                service
             )
+        )
+
+        static_key = (
+            f"static:{active_service}"
+        )
+
+        if (
+            static_key
+            not in self._system_prompt_cache
+        ):
+
+            self._system_prompt_cache[
+                static_key
+            ] = (
+                self._build_static_system_base(
+                    active_service
+                )
+            )
+
+        static_part = (
+            self._system_prompt_cache[
+                static_key
+            ]
+        )
+
+        parts = [static_part]
 
         if context:
 
-            parts.append(
-                "APPLICATION STATE:\n"
-                + compact_text(
-                    context,
-                    MAX_CONTEXT_CHARS,
+            context_key = (
+                f"dynamic:"
+                f"{active_service}:"
+                f"{sha256_text(context)}"
+            )
+
+            if (
+                context_key
+                not in self._system_prompt_cache
+            ):
+
+                self._system_prompt_cache[
+                    context_key
+                ] = (
+                    "APPLICATION STATE:\n"
+                    + compact_text(
+                        context,
+                        MAX_CONTEXT_CHARS,
+                    )
                 )
+
+            parts.append(
+                self._system_prompt_cache[
+                    context_key
+                ]
             )
 
         return compact_text(
@@ -913,6 +871,7 @@ Never expose internal architecture or token mechanics.
 
 
     def clear_history(self):
+
         self.history.clear()
 
 
@@ -923,10 +882,13 @@ Never expose internal architecture or token mechanics.
     def call_groq(
         self,
         *,
-        messages: list[dict[str, str]],
+        messages: list[
+            dict[str, str]
+        ],
         output_tokens: int,
         stage: str,
         event: str | None = None,
+        include_history: bool = True,
     ) -> str:
 
         client = get_client()
@@ -935,11 +897,17 @@ Never expose internal architecture or token mechanics.
         print("=" * 78)
         print("INTELLIGENCE REQUEST")
         print("=" * 78)
-
         print("Stage:", stage)
         print("Model:", MODEL)
         print("Messages:", len(messages))
-        print("Output token allowance:", output_tokens)
+        print(
+            "Output token allowance:",
+            output_tokens,
+        )
+        print(
+            "Include history:",
+            include_history,
+        )
 
         if event:
             print("Event:", event)
@@ -949,10 +917,7 @@ Never expose internal architecture or token mechanics.
         try:
 
             response = (
-                client
-                .chat
-                .completions
-                .create(
+                client.chat.completions.create(
                     model=MODEL,
                     messages=messages,
                     temperature=0.2,
@@ -981,6 +946,7 @@ Never expose internal architecture or token mechanics.
             ) from error
 
         if not response:
+
             raise AdaResponseError(
                 "No intelligence response returned.",
                 stage=stage,
@@ -988,6 +954,7 @@ Never expose internal architecture or token mechanics.
             )
 
         if not response.choices:
+
             raise AdaResponseError(
                 "No intelligence choice returned.",
                 stage=stage,
@@ -995,10 +962,8 @@ Never expose internal architecture or token mechanics.
             )
 
         content = safe_text(
-            response
-            .choices[0]
-            .message
-            .content
+            response.choices[0]
+            .message.content
         )
 
         if not content:
@@ -1034,24 +999,17 @@ Never expose internal architecture or token mechanics.
 
             instruction = f"""
 CONTINUE THE SAME DOCUMENT.
-
 Do not restart.
 Do not repeat previous sections.
 Continue naturally from the supplied ending.
 
 DOCUMENT ENDING:
-
-{compact_text(
-    previous_tail,
-    CONTINUATION_TAIL_CHARS,
-)}
+{compact_text(previous_tail, CONTINUATION_TAIL_CHARS)}
 
 If the document is now complete, end with:
-
 {END_OF_DOCUMENT_MARKER}
 
 If more document content is genuinely required, end with:
-
 {CONTINUE_MARKER}
 
 Return only document content and the marker.
@@ -1061,15 +1019,12 @@ Return only document content and the marker.
 
             instruction = f"""
 CREATE THE REQUESTED DOCUMENT.
-
 Produce the actual work, not a plan or explanation.
 
 If the document is complete, end with:
-
 {END_OF_DOCUMENT_MARKER}
 
 If the document genuinely needs continuation, end with:
-
 {CONTINUE_MARKER}
 
 Return only document content and the marker.
@@ -1120,20 +1075,18 @@ Return only document content and the marker.
     ) -> dict[str, Any]:
 
         active_service = (
-            self.normalize_service(
-                service
-            )
+            self.normalize_service(service)
             or safe_text(service)
             or self.service
             or "General Business Center Service"
         )
 
-        customer_request = safe_text(
-            customer_request
+        customer_request = (
+            safe_text(customer_request)
         )
 
-        supplied_material = safe_text(
-            supplied_material
+        supplied_material = (
+            safe_text(supplied_material)
         )
 
         if not customer_request:
@@ -1160,14 +1113,6 @@ Return only document content and the marker.
             MAX_GENERATION_PARTS + 1,
         ):
 
-            # IMPORTANT:
-            #
-            # We DO NOT resend the complete accumulated document.
-            #
-            # Only its ending is supplied for continuation.
-            #
-            # This is one of the major token-saving changes.
-
             current_document = (
                 "\n\n".join(
                     document_parts
@@ -1182,11 +1127,17 @@ Return only document content and the marker.
                 else ""
             )
 
+            mat_for_this_part = (
+                supplied_material
+                if part_number == 1
+                else ""
+            )
+
             prompt = (
                 self.build_generation_prompt(
                     service=active_service,
                     customer_request=customer_request,
-                    supplied_material=supplied_material,
+                    supplied_material=mat_for_this_part,
                     previous_tail=previous_tail,
                     continuation=bool(
                         document_parts
@@ -1197,25 +1148,22 @@ Return only document content and the marker.
             generated = self.call_groq(
                 messages=[
                     {
-                        "role":
-                            "system",
-
-                        "content":
-                            system_prompt,
+                        "role": "system",
+                        "content": system_prompt,
                     },
                     {
-                        "role":
-                            "user",
-
-                        "content":
-                            compact_text(
-                                prompt,
-                                GENERATION_REQUEST_CHARS,
-                            ),
+                        "role": "user",
+                        "content": compact_text(
+                            prompt,
+                            GENERATION_REQUEST_CHARS,
+                        ),
                     },
                 ],
-                output_tokens=GENERATION_OUTPUT_TOKENS,
+                output_tokens=(
+                    GENERATION_OUTPUT_TOKENS
+                ),
                 stage="DOCUMENT_GENERATION",
+                include_history=False,
             )
 
             generated = safe_text(
@@ -1261,11 +1209,11 @@ Return only document content and the marker.
             )
 
             print(
-                "[GEN]"
-                f" part={part_number}"
-                f" response_chars={len(generated)}"
-                f" document_chars={len(current_document)}"
-                f" complete={model_declared_complete}"
+                f"[GEN] "
+                f"part={part_number} "
+                f"response_chars={len(generated)} "
+                f"document_chars={len(current_document)} "
+                f"complete={model_declared_complete}"
             )
 
             if progress_callback:
@@ -1298,27 +1246,19 @@ Return only document content and the marker.
                 completed = True
                 break
 
-            # A model that omits both markers is not trusted to
-            # have completed the document.
-            #
-            # Continue the SAME document rather than creating
-            # another document.
-
             if not has_continue:
 
                 print(
-                    "[GEN] No END marker."
-                    " Continuing same document."
+                    "[GEN] No END marker. "
+                    "Continuing same document."
                 )
 
         if not completed:
 
             raise AdaResponseError(
-                (
-                    "Document generation reached the internal "
-                    "continuation limit before receiving "
-                    "[END OF DOCUMENT]."
-                ),
+                "Document generation reached "
+                "the internal continuation limit "
+                "before receiving [END OF DOCUMENT].",
                 stage="DOCUMENT_GENERATION",
                 category="GENERATION_LIMIT",
             )
@@ -1337,14 +1277,6 @@ Return only document content and the marker.
                 category="EMPTY_DOCUMENT",
             )
 
-        # ====================================================
-        # PAGINATION
-        #
-        # LOCAL ONLY.
-        #
-        # ZERO GROQ CALLS.
-        # ====================================================
-
         pages = (
             self.document_to_pages(
                 document_text
@@ -1352,15 +1284,16 @@ Return only document content and the marker.
         )
 
         print(
-            "[PAG]"
-            f" document_chars={len(document_text)}"
-            f" pages={len(pages)}"
+            f"[PAG] "
+            f"document_chars={len(document_text)} "
+            f"pages={len(pages)}"
         )
 
         if not pages:
 
             raise AdaResponseError(
-                "Document was generated but no pages could be created.",
+                "Document was generated but no pages "
+                "could be created.",
                 stage="DOCUMENT_PAGINATION",
                 category="EMPTY_PAGE_COLLECTION",
             )
@@ -1368,7 +1301,8 @@ Return only document content and the marker.
         if len(pages) > MAX_DOCUMENT_PAGES:
 
             raise AdaResponseError(
-                "Document exceeded the maximum supported page count.",
+                "Document exceeded the maximum supported "
+                "page count.",
                 stage="DOCUMENT_PAGINATION",
                 category="PAGE_LIMIT",
             )
@@ -1394,7 +1328,10 @@ Return only document content and the marker.
         }
 
         if progress_callback:
-            progress_callback(result)
+
+            progress_callback(
+                result
+            )
 
         return result
 
@@ -1408,16 +1345,12 @@ Return only document content and the marker.
         document_text: str,
     ) -> list[dict[str, Any]]:
 
-        document_text = safe_text(
-            document_text
+        document_text = (
+            safe_text(document_text)
         )
 
         if not document_text:
             return []
-
-        # ----------------------------------------------------
-        # EXPLICIT PAGE MARKERS
-        # ----------------------------------------------------
 
         pattern = re.compile(
             r"(?:^|\n)"
@@ -1446,17 +1379,11 @@ Return only document content and the marker.
 
                 start = match.end()
 
-                if index + 1 < len(matches):
-
-                    end = matches[
-                        index + 1
-                    ].start()
-
-                else:
-
-                    end = len(
-                        document_text
-                    )
+                end = (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(document_text)
+                )
 
                 content = (
                     document_text[
@@ -1467,10 +1394,13 @@ Return only document content and the marker.
                 if content:
 
                     try:
+
                         page_number = int(
                             match.group(1)
                         )
+
                     except Exception:
+
                         page_number = (
                             len(pages) + 1
                         )
@@ -1491,15 +1421,11 @@ Return only document content and the marker.
             if pages:
                 return pages
 
-        # ----------------------------------------------------
-        # STRUCTURAL PAGINATION
-        #
-        # STILL NO GROQ.
-        # ----------------------------------------------------
-
-        parts = split_for_intelligence(
-            document_text,
-            DEFAULT_PAGE_CHARS,
+        parts = (
+            split_for_intelligence(
+                document_text,
+                DEFAULT_PAGE_CHARS,
+            )
         )
 
         pages = []
@@ -1619,15 +1545,15 @@ Return only document content and the marker.
 
                     page_number = index
 
-                status = safe_text(
-                    item.get(
-                        "status",
-                        "ready",
+                status = (
+                    safe_text(
+                        item.get(
+                            "status",
+                            "ready",
+                        )
                     )
+                    or "ready"
                 )
-
-                if not status:
-                    status = "ready"
 
                 result.append(
                     {
@@ -1644,9 +1570,8 @@ Return only document content and the marker.
 
         return sorted(
             result,
-            key=lambda item: int(
-                item["page_number"]
-            ),
+            key=lambda item:
+                int(item["page_number"]),
         )
 
 
@@ -1666,12 +1591,13 @@ Return only document content and the marker.
 
         ordered = sorted(
             pages,
-            key=lambda item: int(
-                item.get(
-                    "page_number",
-                    0,
-                )
-            ),
+            key=lambda item:
+                int(
+                    item.get(
+                        "page_number",
+                        0,
+                    )
+                ),
         )
 
         parts: list[str] = []
@@ -1679,19 +1605,70 @@ Return only document content and the marker.
         for page in ordered:
 
             content = safe_text(
-                page.get(
-                    "content"
-                )
+                page.get("content")
             )
 
             if content:
-                parts.append(
-                    content
-                )
+                parts.append(content)
 
         return "\n\n".join(
             parts
         ).strip()
+
+
+    # ========================================================
+    # REVIEW DEDUPLICATION KEY
+    # ========================================================
+
+    def _review_cache_key(
+        self,
+        *,
+        pages: list[dict],
+        service: str | None,
+        context: str | None,
+    ) -> str:
+
+        doc_text = (
+            self.assemble_document(
+                pages
+            )
+        )
+
+        doc_hash = (
+            sha256_text(
+                doc_text
+            )
+        )
+
+        job_id = ""
+        version = ""
+
+        if context:
+
+            m_job = re.search(
+                r"job_id[:=]\s*"
+                r"([a-zA-Z0-9\-_]+)",
+                context,
+            )
+
+            m_ver = re.search(
+                r"version[:=]\s*"
+                r"([a-zA-Z0-9\._-]+)",
+                context,
+            )
+
+            if m_job:
+                job_id = m_job.group(1)
+
+            if m_ver:
+                version = m_ver.group(1)
+
+        return sha256_text(
+            f"{job_id}|"
+            f"{version}|"
+            f"{doc_hash}|"
+            f"{safe_text(service)}"
+        )
 
 
     # ========================================================
@@ -1752,19 +1729,50 @@ Return only document content and the marker.
                 category="EMPTY_DOCUMENT",
             )
 
+        cache_key = (
+            self._review_cache_key(
+                pages=normalized,
+                service=service,
+                context=context,
+            )
+        )
+
+        if cache_key in self._review_cache:
+
+            print(
+                "[REVIEW] Cache hit. "
+                "Reusing previous review."
+            )
+
+            cached = (
+                self._review_cache[
+                    cache_key
+                ]
+            )
+
+            if progress_callback:
+
+                for card in cached.get(
+                    "pages",
+                    [],
+                ):
+
+                    progress_callback(
+                        card
+                    )
+
+                progress_callback(
+                    cached
+                )
+
+            return cached
+
         system_prompt = (
             self.build_system_prompt(
                 service=service,
                 context=context,
             )
         )
-
-        # ----------------------------------------------------
-        # ONE REVIEW REQUEST.
-        #
-        # The UI may show many pages.
-        # That does NOT create many Groq requests.
-        # ----------------------------------------------------
 
         review_prompt = (
             "REVIEW THE COMPLETE DOCUMENT.\n\n"
@@ -1782,16 +1790,18 @@ Return only document content and the marker.
             f"{compact_text(complete_document, 8500)}\n\n"
 
             "TASK:\n"
-            "Check the document as ONE complete work for genuine "
-            "correctness, completeness, relevance, grammar, clarity, "
-            "consistency, structure and compliance.\n\n"
+            "Check the document as ONE complete work "
+            "for genuine correctness, completeness, "
+            "relevance, grammar, clarity, consistency, "
+            "structure and compliance.\n\n"
 
             "Do not rewrite the document.\n"
             "Do not reproduce the document.\n"
             "Do not invent problems.\n\n"
 
             "OUTPUT:\n"
-            "Use PAGE N: finding when a problem belongs to a page.\n"
+            "Use PAGE N: finding when a problem belongs "
+            "to a page.\n"
             "Use DOCUMENT: finding for document-wide problems.\n"
             "If there are no genuine problems, return exactly:\n"
             "NO ISSUES FOUND"
@@ -1832,9 +1842,12 @@ Return only document content and the marker.
                         ),
                 },
             ],
-            output_tokens=REVIEW_OUTPUT_TOKENS,
+            output_tokens=(
+                REVIEW_OUTPUT_TOKENS
+            ),
             stage="DOCUMENT_REVIEW",
             event=event,
+            include_history=False,
         )
 
         review = safe_text(
@@ -1857,9 +1870,9 @@ Return only document content and the marker.
             start=1,
         ):
 
-            page_number = page[
-                "page_number"
-            ]
+            page_number = (
+                page["page_number"]
+            )
 
             findings = (
                 page_reviews.get(
@@ -1871,7 +1884,8 @@ Return only document content and the marker.
             if not findings:
 
                 findings = (
-                    "No page-specific issues identified."
+                    "No page-specific "
+                    "issues identified."
                 )
 
             card = {
@@ -1902,6 +1916,7 @@ Return only document content and the marker.
             )
 
             if progress_callback:
+
                 progress_callback(
                     card
                 )
@@ -1936,7 +1951,12 @@ Return only document content and the marker.
                 1,
         }
 
+        self._review_cache[
+            cache_key
+        ] = result
+
         if progress_callback:
+
             progress_callback(
                 result
             )
@@ -1973,15 +1993,10 @@ Return only document content and the marker.
             return results
 
         pattern = re.compile(
-            r"(?im)"
-            r"^\s*PAGE\s+(\d+)\s*:\s*"
-            r"(.*?)(?="
-            r"^\s*PAGE\s+\d+\s*:|"
-            r"^\s*DOCUMENT\s*:|"
-            r"\Z"
-            r")",
-            re.MULTILINE
-            | re.DOTALL,
+            r"(?im)^\s*PAGE\s+(\d+)\s*:"
+            r"\s*(.*?)(?=^\s*PAGE\s+\d+\s*:"
+            r"|^\s*DOCUMENT\s*:|\Z)",
+            re.MULTILINE | re.DOTALL,
         )
 
         for match in pattern.finditer(
@@ -1995,6 +2010,7 @@ Return only document content and the marker.
                 )
 
             except Exception:
+
                 continue
 
             if (
@@ -2014,9 +2030,8 @@ Return only document content and the marker.
                 ] = finding
 
         document_pattern = re.compile(
-            r"(?is)"
-            r"(?:^|\n)\s*DOCUMENT\s*:\s*"
-            r"(.*)$"
+            r"(?is)(?:^|\n)"
+            r"\s*DOCUMENT\s*:\s*(.*)$"
         )
 
         document_match = (
@@ -2038,8 +2053,10 @@ Return only document content and the marker.
                     total_pages + 1,
                 ):
 
-                    existing = results.get(
-                        page_number
+                    existing = (
+                        results.get(
+                            page_number
+                        )
                     )
 
                     if existing:
@@ -2077,8 +2094,10 @@ Return only document content and the marker.
         document_review: str = "",
     ) -> str:
 
-        document_review = safe_text(
-            document_review
+        document_review = (
+            safe_text(
+                document_review
+            )
         )
 
         if document_review:
@@ -2090,12 +2109,13 @@ Return only document content and the marker.
 
         ordered = sorted(
             pages,
-            key=lambda item: int(
-                item.get(
-                    "page_number",
-                    0,
-                )
-            ),
+            key=lambda item:
+                int(
+                    item.get(
+                        "page_number",
+                        0,
+                    )
+                ),
         )
 
         parts: list[str] = []
@@ -2103,9 +2123,7 @@ Return only document content and the marker.
         for page in ordered:
 
             review = safe_text(
-                page.get(
-                    "review"
-                )
+                page.get("review")
             )
 
             if not review:
@@ -2250,9 +2268,12 @@ Return only document content and the marker.
                         ),
                 },
             ],
-            output_tokens=CORRECTION_OUTPUT_TOKENS,
+            output_tokens=(
+                CORRECTION_OUTPUT_TOKENS
+            ),
             stage="DOCUMENT_CORRECTION",
             event="document_correction",
+            include_history=False,
         )
 
         corrected = safe_text(
@@ -2262,8 +2283,10 @@ Return only document content and the marker.
         if not corrected:
             corrected = current_document
 
-        corrected = remove_generation_markers(
-            corrected
+        corrected = (
+            remove_generation_markers(
+                corrected
+            )
         )
 
         corrected_pages = (
@@ -2298,6 +2321,7 @@ Return only document content and the marker.
         }
 
         if progress_callback:
+
             progress_callback(
                 result
             )
@@ -2329,6 +2353,7 @@ Return only document content and the marker.
             )
 
         if service:
+
             self.set_service(
                 service
             )
@@ -2357,6 +2382,8 @@ Return only document content and the marker.
                     system_prompt,
             }
         ]
+
+        # Only include history for normal chat
 
         for item in self.history[
             -MAX_HISTORY_MESSAGES:
@@ -2408,6 +2435,7 @@ Return only document content and the marker.
             output_tokens=450,
             stage="NORMAL_RESPONSE",
             event=event,
+            include_history=True,
         )
 
         self.add_history(
@@ -2462,10 +2490,13 @@ if __name__ == "__main__":
     print()
     print("=" * 78)
     print("NAIJA POCKET BUSINESS CENTER")
-    print("TOKEN CONTROLLED DOCUMENT ENGINE")
+    print("TOKEN CONTROLLED DOCUMENT ENGINE v1.1")
     print("=" * 78)
 
-    print("Model:", MODEL)
+    print(
+        "Model:",
+        MODEL,
+    )
 
     print(
         "Groq package:",
@@ -2508,7 +2539,7 @@ if __name__ == "__main__":
 
     print(
         "Review Groq calls per document:",
-        "1",
+        "1 with dedupe",
     )
 
     print(
@@ -2532,8 +2563,18 @@ if __name__ == "__main__":
     )
 
     print(
+        "Supplied material on continuation:",
+        "DISABLED",
+    )
+
+    print(
         "Large system prompt:",
-        "REDUCED",
+        "CACHED",
+    )
+
+    print(
+        "Chat history in doc flow:",
+        "DISABLED",
     )
 
     print(
