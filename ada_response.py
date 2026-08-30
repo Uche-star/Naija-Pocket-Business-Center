@@ -3,21 +3,78 @@ Naija Pocket Business Center
 INTELLIGENCE-FIRST DOCUMENT ENGINE
 
 TOKEN CONTROLLED COMPLETE DOCUMENT ENGINE
+==========================================
 
-MODIFICATIONS v1.4:
-- Existing token-control architecture preserved
-- Existing Groq consumption controls preserved
-- Existing generation/review/correction flow preserved
-- Existing multi-page document behavior preserved
-- Existing review deduplication preserved
-- Existing pagination remains local and uses 0 Groq calls
-- Document formatting is intelligence-first
-- Groq is allowed to determine appropriate document structure
-- Document line breaks are preserved
-- Generation and correction use higher creative temperature
-- Review remains ONE Groq call
-- No keyword-only service logic
-- No additional intelligence calls introduced
+PURPOSE
+-------
+This engine gives the LLM genuine authority to understand,
+create, format, review and correct customer documents.
+
+IMPORTANT ARCHITECTURE
+----------------------
+The selected service is CONTEXT.
+
+It is NOT a document template.
+
+The LLM decides the appropriate structure of the requested
+document from:
+
+    1. The customer's actual request
+    2. Supplied material
+    3. The meaning and purpose of the document
+    4. Appropriate professional document conventions
+    5. Any explicit customer formatting instruction
+
+The application does NOT hard-code document structures such
+as:
+
+    company name -> address -> date -> subject
+
+unless that structure is actually appropriate to the document.
+
+TOKEN CONTROL
+-------------
+Existing token-control architecture is preserved.
+
+Existing Groq consumption controls are preserved.
+
+Existing generation/review/correction flow is preserved.
+
+Existing multi-page document behavior is preserved.
+
+Existing review deduplication is preserved.
+
+Pagination remains local and uses 0 Groq calls.
+
+Review remains ONE Groq call.
+
+Correction remains ONE Groq call.
+
+No additional intelligence calls are introduced.
+
+INTELLIGENCE AUTHORITY
+----------------------
+The final intelligence-authority layer prevents service-specific
+prompt instructions from unintentionally becoming rigid templates.
+
+Service prompts can provide useful context.
+
+They cannot override the LLM's responsibility to determine the
+appropriate structure of the customer's actual document.
+
+The LLM must use judgment.
+
+It must not invent customer facts.
+
+It must not ask the customer to manually recreate information
+that is already available.
+
+It must not flatten professionally distinct document elements
+into a single paragraph.
+
+It must not turn a requested finished document into an outline,
+plan, explanation or instructions.
+
 """
 
 from __future__ import annotations
@@ -404,10 +461,10 @@ def normalize_document_formatting(
     """
     Lightweight document cleanup.
 
-    This function deliberately does NOT try to decide what
-    the document should look like.
+    This function deliberately does NOT decide what the
+    document should look like.
 
-    Groq is responsible for intelligent document formatting.
+    The LLM decides document structure.
 
     This function only:
     - normalizes line endings
@@ -434,14 +491,12 @@ def normalize_document_formatting(
         "\n",
     )
 
-    # Remove trailing horizontal whitespace only.
     text = re.sub(
         r"[ \t]+\n",
         "\n",
         text,
     )
 
-    # Keep a reasonable maximum of blank lines.
     text = re.sub(
         r"\n{4,}",
         "\n\n\n",
@@ -783,7 +838,7 @@ class AdaResponse:
 
 
     # ========================================================
-    # INTELLIGENCE RULES
+    # CORE INTELLIGENCE RULES
     # ========================================================
 
     def intelligence_rules(
@@ -854,6 +909,106 @@ document naturally.
 Do not restart the document.
 
 ==================================================
+DOCUMENT INTELLIGENCE
+==================================================
+
+You are responsible for understanding what type of
+document the customer is asking for.
+
+Do not wait for application code to tell you how the
+document should be structured.
+
+Infer the appropriate document form from the actual
+request and available material.
+
+The service name is not a template.
+
+The service name is not a mandatory field order.
+
+The service name is not permission to impose a
+predefined layout.
+
+Use normal professional document knowledge.
+
+For example, when appropriate, you may naturally
+recognise and structure elements such as:
+
+- organisation identity
+- company name
+- address
+- telephone
+- email
+- website
+- date
+- reference number
+- recipient
+- recipient address
+- salutation
+- subject
+- letter body
+- headings
+- subheadings
+- numbered sections
+- bullet points
+- tables
+- quotations
+- recommendations
+- references
+- closing
+- signature
+- signatory name
+- signatory position
+
+These are examples of possible document elements,
+NOT a fixed template.
+
+Do not force all of them into every document.
+
+Determine which elements belong in the document.
+
+If the customer provides several pieces of company
+information, organise them intelligently as a coherent
+professional document rather than treating each item
+as an isolated field.
+
+Do not make the customer manually decide obvious
+professional layout decisions that the document
+intelligence can reasonably make.
+
+==================================================
+INTELLIGENCE AUTHORITY
+==================================================
+
+The LLM has final authority over document structure,
+document hierarchy, wording, ordering and professional
+presentation.
+
+Application-level service prompts, service names,
+billing records, examples, historical templates or
+other contextual instructions must NOT be interpreted
+as mandatory document templates unless the customer
+explicitly requests that exact structure.
+
+If contextual instructions conflict with the actual
+meaning of the customer's request, use the customer's
+actual request and professional document judgment.
+
+Do not allow a service label to turn an intelligent
+document task into a rigid form-filling exercise.
+
+Do not mechanically place information according to
+field order merely because information arrived in that
+order.
+
+Do not deliberately degrade a document into a sequence
+of labelled fields when a professional document calls
+for a coherent layout.
+
+You are expected to know ordinary document conventions.
+
+Use those conventions intelligently.
+
+==================================================
 INTELLIGENT DOCUMENT FORMATTING
 ==================================================
 
@@ -861,8 +1016,6 @@ When producing or correcting a document, use your
 own judgment to make the result look like an
 appropriate professional document for the customer's
 request.
-
-Do not mechanically follow a fixed template.
 
 Determine naturally from the supplied content whether
 information should appear as:
@@ -1026,6 +1179,160 @@ to the customer.
 
 
     # ========================================================
+    # FINAL INTELLIGENCE AUTHORITY
+    # ========================================================
+    #
+    # IMPORTANT:
+    #
+    # This block is deliberately kept separate from
+    # intelligence_rules().
+    #
+    # It is appended LAST after service context and billing
+    # context, then the complete prompt is compacted in a way
+    # that reserves space for this block.
+    #
+    # This prevents a service prompt from accidentally
+    # becoming the final authority over document structure.
+    #
+
+    def intelligence_authority(
+        self,
+    ) -> str:
+
+        return """
+==================================================
+FINAL INTELLIGENCE AUTHORITY
+==================================================
+
+For document work, think like a competent professional
+document writer and editor.
+
+The application supplies context.
+The customer supplies the task.
+You supply the document intelligence.
+
+Do not behave like a rigid form renderer.
+
+Do not wait for application code to specify obvious
+document structure.
+
+Do not assume that the order in which information is
+provided is the order in which it should appear.
+
+Do not convert a professional document into a list of
+fields merely because the application knows individual
+pieces of information.
+
+Instead:
+
+1. Understand the customer's actual objective.
+2. Identify the type and purpose of the document.
+3. Identify the information that is actually available.
+4. Decide which document elements are appropriate.
+5. Arrange those elements using normal professional
+   document conventions.
+6. Preserve all useful customer information.
+7. Never invent unavailable customer facts.
+8. Produce the actual finished document.
+
+If the supplied information is sufficient to create a
+professional document, create it.
+
+Do not ask for additional information merely because
+the application did not provide a predefined field
+for it.
+
+If a professional document convention can reasonably
+be handled by your own knowledge, handle it yourself.
+
+Examples:
+
+A business letter is not merely a company name followed
+by a blank address field. It is a complete professional
+communication whose organisation identity, contact
+information, date, recipient, subject, salutation,
+body and closing should be arranged appropriately when
+those elements are available and relevant.
+
+A CV is not merely a collection of labels. It is a
+professionally structured representation of a person's
+qualifications and experience.
+
+A cover letter is not merely paragraphs under a heading.
+It is a professional letter with appropriate identity,
+recipient, date, subject or reference when appropriate,
+salutation, body and closing.
+
+A seminar paper is not merely a collection of paragraphs.
+It should have the academic structure appropriate to
+the actual topic and requested work.
+
+These examples illustrate intelligence, not templates.
+
+Do not force the examples onto unrelated documents.
+
+Use the same level of judgment for every document type.
+
+The customer's actual request takes priority over
+assumptions.
+
+Available source material takes priority over invented
+placeholders.
+
+Professional document judgment takes priority over
+mechanical field ordering.
+
+==================================================
+NON-NEGOTIABLE FACT RULE
+==================================================
+
+Intelligent formatting does NOT mean inventing facts.
+
+Never invent:
+
+- company addresses
+- phone numbers
+- email addresses
+- names
+- dates
+- job titles
+- registration numbers
+- academic facts
+- qualifications
+- employment history
+- prices
+- customer identity
+- signatures
+- other customer-specific information
+
+If information is unavailable, do not fabricate it.
+
+However, do not confuse "do not invent facts" with
+"do not know how to format."
+
+You can intelligently format everything that is
+actually available.
+
+==================================================
+FINAL OUTPUT STANDARD
+==================================================
+
+The finished document should look like the work of
+a competent human professional who understood the
+customer's request.
+
+Do not deliberately make the document primitive,
+mechanical, field-based or template-like merely
+because the application did not specify every layout
+decision.
+
+Use the LLM's document knowledge.
+
+That is part of the service.
+"""
+
+
+    # ========================================================
     # SYSTEM PROMPT WITH CACHE
     # ========================================================
 
@@ -1035,6 +1342,11 @@ to the customer.
     ) -> str:
 
         parts: list[str] = []
+
+        # ----------------------------------------------------
+        # Service prompt remains available as CONTEXT.
+        # It is not given final authority.
+        # ----------------------------------------------------
 
         try:
 
@@ -1068,7 +1380,8 @@ to the customer.
         if service:
 
             parts.append(
-                "SERVICE: " + service
+                "SERVICE CONTEXT:\n"
+                + service
             )
 
         billing = (
@@ -1081,6 +1394,102 @@ to the customer.
             parts.append(billing)
 
         return "\n\n".join(parts)
+
+
+    def _build_system_prompt_with_authority(
+        self,
+        *,
+        service: str | None,
+        context: str | None,
+    ) -> str:
+        """
+        Build the final system prompt while guaranteeing that
+        the final intelligence-authority instructions remain
+        present after prompt compaction.
+
+        This is important.
+
+        A simple:
+
+            compact_text(full_prompt, 6500)
+
+        could remove the final instructions if they were placed
+        near the end.
+
+        Instead, reserve a fixed portion of the system budget
+        for the authority layer.
+        """
+
+        static_base = (
+            self._build_static_system_base(
+                service
+            )
+        )
+
+        authority = (
+            self.intelligence_authority()
+        )
+
+        # Keep the authority block intact.
+        authority_budget = min(
+            len(authority),
+            2300,
+        )
+
+        authority = authority[
+            :authority_budget
+        ]
+
+        # Reserve room for the final authority block.
+        base_budget = max(
+            1000,
+            MAX_SYSTEM_PROMPT_CHARS
+            - len(authority)
+            - 20,
+        )
+
+        compacted_base = compact_text(
+            static_base,
+            base_budget,
+        )
+
+        parts = [
+            compacted_base,
+        ]
+
+        if context:
+
+            dynamic = (
+                "APPLICATION STATE:\n"
+                + compact_text(
+                    context,
+                    MAX_CONTEXT_CHARS,
+                )
+            )
+
+            dynamic_budget = max(
+                600,
+                MAX_SYSTEM_PROMPT_CHARS
+                - len(compacted_base)
+                - len(authority)
+                - 40,
+            )
+
+            parts.append(
+                compact_text(
+                    dynamic,
+                    dynamic_budget,
+                )
+            )
+
+        parts.append(
+            authority
+        )
+
+        return compact_text(
+            "\n\n".join(parts),
+            MAX_SYSTEM_PROMPT_CHARS,
+        )
 
 
     def build_system_prompt(
@@ -1100,6 +1509,14 @@ to the customer.
             f"static:{active_service}"
         )
 
+        # ----------------------------------------------------
+        # The static cache stores only the service-side base.
+        #
+        # The final authority layer is deliberately rebuilt
+        # through the authority-aware builder so it cannot be
+        # accidentally omitted from the final prompt.
+        # ----------------------------------------------------
+
         if (
             static_key
             not in self._system_prompt_cache
@@ -1113,42 +1530,71 @@ to the customer.
                 )
             )
 
-        static_part = (
+        static_base = (
             self._system_prompt_cache[
                 static_key
             ]
         )
 
-        parts = [static_part]
+        authority = (
+            self.intelligence_authority()
+        )
+
+        authority = authority[
+            :min(
+                len(authority),
+                2300,
+            )
+        ]
+
+        base_budget = max(
+            1000,
+            MAX_SYSTEM_PROMPT_CHARS
+            - len(authority)
+            - 20,
+        )
+
+        compacted_base = compact_text(
+            static_base,
+            base_budget,
+        )
+
+        parts = [
+            compacted_base,
+        ]
 
         if context:
 
-            context_key = (
-                f"dynamic:"
-                f"{active_service}:"
-                f"{sha256_text(context)}"
+            dynamic = (
+                "APPLICATION STATE:\n"
+                + compact_text(
+                    context,
+                    MAX_CONTEXT_CHARS,
+                )
             )
 
-            if (
-                context_key
-                not in self._system_prompt_cache
-            ):
-
-                self._system_prompt_cache[
-                    context_key
-                ] = (
-                    "APPLICATION STATE:\n"
-                    + compact_text(
-                        context,
-                        MAX_CONTEXT_CHARS,
-                    )
-                )
+            dynamic_budget = max(
+                600,
+                MAX_SYSTEM_PROMPT_CHARS
+                - len(compacted_base)
+                - len(authority)
+                - 40,
+            )
 
             parts.append(
-                self._system_prompt_cache[
-                    context_key
-                ]
+                compact_text(
+                    dynamic,
+                    dynamic_budget,
+                )
             )
+
+        # ----------------------------------------------------
+        # FINAL AUTHORITY ALWAYS COMES LAST.
+        # ----------------------------------------------------
+
+        parts.append(
+            authority
+        )
 
         return compact_text(
             "\n\n".join(parts),
@@ -1232,11 +1678,9 @@ to the customer.
         # CREATIVE DOCUMENT WORK
         # ----------------------------------------------------
         #
-        # Only generation and correction receive the higher
-        # temperature.
+        # Existing generation/correction temperature preserved.
         #
-        # Review and normal conversation retain the existing
-        # conservative temperature.
+        # Review/normal conversation remain conservative.
         #
         temperature = (
             0.6
@@ -1391,6 +1835,14 @@ Produce the actual finished work.
 Use your own judgment to determine the appropriate
 professional structure and formatting for the actual
 document and customer request.
+
+The service name is context, not a template.
+
+Do not assume a fixed field order.
+
+Determine intelligently which document elements
+belong in the requested document and how they should
+be arranged.
 
 Preserve the customer's facts and intended meaning.
 
@@ -2176,18 +2628,10 @@ Return only document content and the marker.
         )
 
         # ----------------------------------------------------
-        # IMPORTANT:
+        # ONE REVIEW CALL.
         #
-        # Review does NOT ask Groq to reproduce the entire
-        # document.
-        #
-        # The original complete document is already available
-        # locally and remains the source of truth for the
-        # review page.
-        #
-        # This preserves the ONE-call review architecture and
-        # avoids spending the review output budget reproducing
-        # thousands of document characters.
+        # The original complete document remains the source
+        # of truth for the review page.
         # ----------------------------------------------------
 
         review_prompt = (
@@ -2218,6 +2662,10 @@ Return only document content and the marker.
             "- consistency\n"
             "- structure\n"
             "- formatting\n\n"
+
+            "Use professional document judgment when deciding"
+            " whether a structural or formatting issue is"
+            " genuinely a problem.\n\n"
 
             "Do not rewrite the document.\n"
             "Do not reproduce the document.\n"
@@ -2281,16 +2729,6 @@ Return only document content and the marker.
             preserve_lines=True,
         )
 
-        # ----------------------------------------------------
-        # Defensive review handling.
-        #
-        # The original document is never dependent on Groq
-        # reproducing it. If a model response is unexpectedly
-        # blank after the API returns, preserve the document
-        # and provide a valid review state instead of allowing
-        # the entire review page to become unusable.
-        # ----------------------------------------------------
-
         if not review:
 
             review = (
@@ -2344,15 +2782,9 @@ Return only document content and the marker.
                 "total_pages":
                     total_pages,
 
-                # IMPORTANT:
-                # The original document content is always
-                # supplied to the frontend.
                 "content":
                     page["content"],
 
-                # Additional aliases improve compatibility
-                # with existing review renderers without
-                # changing the document flow.
                 "text":
                     page["content"],
 
@@ -2705,8 +3137,10 @@ Return only document content and the marker.
 
             "Return the COMPLETE corrected document.\n\n"
 
-            "Use your own judgment to format the corrected "
-            "document professionally.\n"
+            "Use your own document intelligence to determine "
+            "the appropriate professional structure.\n"
+
+            "The service name is context, not a fixed template.\n"
 
             "Preserve useful document structure and "
             "meaningful line breaks.\n"
@@ -2721,7 +3155,7 @@ Return only document content and the marker.
             "Do not explain the correction.\n"
             "Do not remove unrelated useful content.\n"
             "Do not revert to an older version.\n"
-            "Do not invent customer facts."
+            "Do not invent customer facts.\n"
         )
 
         corrected = self.call_groq(
@@ -2968,7 +3402,7 @@ if __name__ == "__main__":
     print()
     print("=" * 78)
     print("NAIJA POCKET BUSINESS CENTER")
-    print("TOKEN CONTROLLED DOCUMENT ENGINE v1.4")
+    print("TOKEN CONTROLLED DOCUMENT ENGINE v1.5")
     print("=" * 78)
 
     print(
@@ -3051,6 +3485,16 @@ if __name__ == "__main__":
     )
 
     print(
+        "Final intelligence authority:",
+        "ENABLED",
+    )
+
+    print(
+        "Service-as-rigid-template behavior:",
+        "DISABLED",
+    )
+
+    print(
         "Chat history in doc flow:",
         "DISABLED",
     )
@@ -3102,6 +3546,11 @@ if __name__ == "__main__":
 
     print(
         "Intelligence-first formatting:",
+        "ENABLED",
+    )
+
+    print(
+        "LLM document-structure authority:",
         "ENABLED",
     )
 
