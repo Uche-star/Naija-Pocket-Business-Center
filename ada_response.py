@@ -4,12 +4,17 @@ INTELLIGENCE-FIRST DOCUMENT ENGINE
 
 TOKEN CONTROLLED COMPLETE DOCUMENT ENGINE
 
-
-MODIFICATIONS v1.1: Token Efficiency Patch
-- System prompt cache keyed by service+context
-- History excluded for document/review/correction calls
-- Review deduplication by job+version+doc_hash
-- Supplied_material sent only on generation part 1
+MODIFICATIONS v1.2: Document Formatting / Pagination Patch
+- Preserves existing Groq/token-control architecture
+- Preserves existing generation/review/correction calls
+- Preserves system prompt cache
+- Preserves review deduplication
+- Preserves history exclusion from document flows
+- Preserves supplied-material-on-part-1 behavior
+- Improves local document structure preservation
+- Improves paragraph/heading/list-aware pagination
+- Avoids unnecessary hard character cuts where possible
+- No additional Groq calls for formatting or pagination
 """
 
 from __future__ import annotations
@@ -108,6 +113,34 @@ CORRECTION_OUTPUT_TOKENS = 4500
 # ============================================================
 
 DEFAULT_PAGE_CHARS = 7000
+
+# Formatting-aware pagination limits.
+#
+# DEFAULT_PAGE_CHARS remains the normal target size so the
+# existing document behavior is not radically changed.
+#
+# The values below only control LOCAL pagination. They do not
+# affect Groq requests or Groq output-token consumption.
+
+MIN_PAGE_CHARS = 4500
+MAX_PAGE_CHARS = 8500
+
+HEADING_MAX_CHARS = 180
+
+MAX_LIST_ITEM_CHARS = 1200
+
+PARAGRAPH_BREAK_PATTERN = re.compile(
+    r"\n\s*\n+"
+)
+
+EXPLICIT_PAGE_PATTERN = re.compile(
+    r"(?:^|\n)"
+    r"(?:={2,}\s*)?"
+    r"PAGE\s+(\d+)"
+    r"(?:\s*={2,})?"
+    r"\s*(?:\n|$)",
+    re.IGNORECASE,
+)
 
 
 # ============================================================
@@ -1277,6 +1310,12 @@ Return only document content and the marker.
                 category="EMPTY_DOCUMENT",
             )
 
+        # IMPORTANT:
+        # Pagination happens locally after the complete
+        # document has already been generated.
+        #
+        # This does NOT call Groq and therefore does not
+        # increase Groq token consumption.
         pages = (
             self.document_to_pages(
                 document_text
@@ -1337,6 +1376,793 @@ Return only document content and the marker.
 
 
     # ========================================================
+    # DOCUMENT FORMATTING HELPERS
+    # ========================================================
+
+    @staticmethod
+    def _normalize_document_whitespace(
+        document_text: str,
+    ) -> str:
+        """
+        Normalize only destructive whitespace problems.
+
+        This intentionally does NOT rewrite the document's words.
+        It does not send anything to Groq.
+        It only makes line/paragraph structure predictable for
+        local pagination.
+        """
+
+        text = safe_text(
+            document_text
+        )
+
+        if not text:
+            return ""
+
+        text = (
+            text.replace(
+                "\r\n",
+                "\n",
+            )
+            .replace(
+                "\r",
+                "\n",
+            )
+        )
+
+        # Remove trailing spaces without destroying indentation.
+        text = re.sub(
+            r"[ \t]+\n",
+            "\n",
+            text,
+        )
+
+        # Prevent huge runs of empty lines.
+        text = re.sub(
+            r"\n{4,}",
+            "\n\n\n",
+            text,
+        )
+
+        return text.strip()
+
+
+    @staticmethod
+    def _is_markdown_heading(
+        line: str,
+    ) -> bool:
+
+        line = safe_text(
+            line
+        )
+
+        if not line:
+            return False
+
+        if re.match(
+            r"^#{1,6}\s+\S+",
+            line,
+        ):
+            return True
+
+        return False
+
+
+    @staticmethod
+    def _is_numbered_heading(
+        line: str,
+    ) -> bool:
+
+        line = safe_text(
+            line
+        )
+
+        if not line:
+            return False
+
+        if len(line) > HEADING_MAX_CHARS:
+            return False
+
+        patterns = [
+            r"^\d+\.\s+[A-Z].*$",
+            r"^\d+\.\d+\s+[A-Z].*$",
+            r"^\d+\.\d+\.\d+\s+[A-Z].*$",
+            r"^CHAPTER\s+\w+",
+            r"^CHAPTER\s+\d+",
+            r"^SECTION\s+\w+",
+            r"^SECTION\s+\d+",
+        ]
+
+        for pattern in patterns:
+
+            if re.match(
+                pattern,
+                line,
+                flags=re.IGNORECASE,
+            ):
+                return True
+
+        return False
+
+
+    @staticmethod
+    def _is_all_caps_heading(
+        line: str,
+    ) -> bool:
+
+        line = safe_text(
+            line
+        )
+
+        if not line:
+            return False
+
+        if len(line) > HEADING_MAX_CHARS:
+            return False
+
+        letters = re.sub(
+            r"[^A-Za-z]+",
+            "",
+            line,
+        )
+
+        if len(letters) < 4:
+            return False
+
+        return letters.isupper()
+
+
+    @staticmethod
+    def _is_heading(
+        line: str,
+    ) -> bool:
+
+        return (
+            AdaResponse._is_markdown_heading(line)
+            or AdaResponse._is_numbered_heading(line)
+            or AdaResponse._is_all_caps_heading(line)
+        )
+
+
+    @staticmethod
+    def _is_list_line(
+        line: str,
+    ) -> bool:
+
+        line = line.rstrip()
+
+        if not line.strip():
+            return False
+
+        patterns = [
+            r"^\s*[-*•]\s+",
+            r"^\s*\d+[.)]\s+",
+            r"^\s*[A-Za-z][.)]\s+",
+        ]
+
+        return any(
+            re.match(
+                pattern,
+                line,
+            )
+            for pattern in patterns
+        )
+
+
+    @staticmethod
+    def _is_table_line(
+        line: str,
+    ) -> bool:
+
+        line = line.strip()
+
+        if not line:
+            return False
+
+        return (
+            line.startswith("|")
+            and line.endswith("|")
+            and line.count("|") >= 2
+        )
+
+
+    @staticmethod
+    def _split_large_block(
+        block: str,
+        maximum: int,
+    ) -> list[str]:
+        """
+        Last-resort local splitting for a paragraph/list block
+        that is larger than the maximum page target.
+
+        The split prefers sentence and word boundaries.
+        It never calls Groq.
+        """
+
+        block = block.strip()
+
+        if not block:
+            return []
+
+        if len(block) <= maximum:
+            return [block]
+
+        parts: list[str] = []
+
+        start = 0
+        length = len(block)
+
+        while start < length:
+
+            remaining = length - start
+
+            if remaining <= maximum:
+
+                tail = block[start:].strip()
+
+                if tail:
+                    parts.append(tail)
+
+                break
+
+            end = min(
+                start + maximum,
+                length,
+            )
+
+            window = block[
+                start:end
+            ]
+
+            boundary_candidates = [
+                window.rfind("\n\n"),
+                window.rfind("\n"),
+                window.rfind(". "),
+                window.rfind("? "),
+                window.rfind("! "),
+                window.rfind("; "),
+                window.rfind(", "),
+                window.rfind(" "),
+            ]
+
+            usable = [
+                position
+                for position in boundary_candidates
+                if position >= int(
+                    maximum * 0.55
+                )
+            ]
+
+            boundary = (
+                max(usable)
+                if usable
+                else maximum
+            )
+
+            part = block[
+                start:start + boundary
+            ].strip()
+
+            if part:
+                parts.append(part)
+
+            next_start = (
+                start + boundary
+            )
+
+            if next_start <= start:
+                next_start = end
+
+            start = next_start
+
+        return parts
+
+
+    @staticmethod
+    def _make_document_blocks(
+        document_text: str,
+    ) -> list[str]:
+        """
+        Convert the complete document into structural blocks.
+
+        A block normally represents a paragraph, heading, list group,
+        or table group.
+
+        This gives pagination enough structure to avoid cutting a
+        heading away from its following content.
+        """
+
+        text = (
+            AdaResponse._normalize_document_whitespace(
+                document_text
+            )
+        )
+
+        if not text:
+            return []
+
+        raw_blocks = re.split(
+            PARAGRAPH_BREAK_PATTERN,
+            text,
+        )
+
+        blocks: list[str] = []
+
+        current_list: list[str] = []
+        current_table: list[str] = []
+
+        def flush_list():
+
+            nonlocal current_list
+
+            if current_list:
+
+                block = "\n".join(
+                    current_list
+                ).strip()
+
+                if block:
+                    blocks.append(block)
+
+                current_list = []
+
+
+        def flush_table():
+
+            nonlocal current_table
+
+            if current_table:
+
+                block = "\n".join(
+                    current_table
+                ).strip()
+
+                if block:
+                    blocks.append(block)
+
+                current_table = []
+
+
+        for raw_block in raw_blocks:
+
+            block = raw_block.strip()
+
+            if not block:
+                continue
+
+            lines = block.splitlines()
+
+            # ------------------------------------------------
+            # Table blocks
+            # ------------------------------------------------
+
+            if all(
+                AdaResponse._is_table_line(line)
+                for line in lines
+                if line.strip()
+            ):
+
+                flush_list()
+
+                current_table.extend(
+                    lines
+                )
+
+                continue
+
+            flush_table()
+
+            # ------------------------------------------------
+            # List blocks
+            # ------------------------------------------------
+
+            if any(
+                AdaResponse._is_list_line(line)
+                for line in lines
+            ):
+
+                flush_list()
+
+                for line in lines:
+
+                    stripped = line.strip()
+
+                    if (
+                        AdaResponse._is_list_line(
+                            stripped
+                        )
+                    ):
+
+                        current_list.append(
+                            stripped
+                        )
+
+                    elif current_list:
+
+                        # Continuation text belonging to the
+                        # current list item.
+                        current_list.append(
+                            "  " + stripped
+                        )
+
+                    else:
+
+                        blocks.append(
+                            stripped
+                        )
+
+                continue
+
+            flush_list()
+
+            # ------------------------------------------------
+            # Heading + immediate content
+            # ------------------------------------------------
+
+            if len(lines) >= 2:
+
+                first = lines[0].strip()
+
+                if AdaResponse._is_heading(
+                    first
+                ):
+
+                    blocks.append(
+                        first
+                    )
+
+                    remaining = "\n".join(
+                        line.rstrip()
+                        for line in lines[1:]
+                    ).strip()
+
+                    if remaining:
+                        blocks.append(
+                            remaining
+                        )
+
+                    continue
+
+            # ------------------------------------------------
+            # Normal paragraph/block
+            # ------------------------------------------------
+
+            cleaned_lines = [
+                line.rstrip()
+                for line in lines
+            ]
+
+            cleaned = "\n".join(
+                cleaned_lines
+            ).strip()
+
+            if cleaned:
+                blocks.append(
+                    cleaned
+                )
+
+        flush_list()
+        flush_table()
+
+        return blocks
+
+
+    @staticmethod
+    def _paginate_structured_blocks(
+        blocks: list[str],
+    ) -> list[str]:
+        """
+        Assemble structural blocks into pages.
+
+        The algorithm is deliberately conservative:
+
+        1. Keep complete paragraphs together where possible.
+        2. Keep headings with following content where possible.
+        3. Keep list groups together where possible.
+        4. Keep tables together where possible.
+        5. Only split a block when it cannot reasonably fit.
+        6. Use a soft target rather than an absolute 7,000-character
+           cut.
+        """
+
+        if not blocks:
+            return []
+
+        pages: list[str] = []
+        current_blocks: list[str] = []
+        current_length = 0
+
+        def flush_page():
+
+            nonlocal current_blocks
+            nonlocal current_length
+
+            if not current_blocks:
+                return
+
+            page = "\n\n".join(
+                block.strip()
+                for block in current_blocks
+                if block.strip()
+            ).strip()
+
+            if page:
+                pages.append(page)
+
+            current_blocks = []
+            current_length = 0
+
+
+        index = 0
+
+        while index < len(blocks):
+
+            block = blocks[index].strip()
+
+            if not block:
+
+                index += 1
+                continue
+
+            block_length = len(block)
+
+            # ------------------------------------------------
+            # Heading handling
+            # ------------------------------------------------
+
+            if AdaResponse._is_heading(
+                block
+            ):
+
+                # If the heading plus the next block can fit,
+                # treat them as a unit.
+                if index + 1 < len(blocks):
+
+                    next_block = (
+                        blocks[index + 1].strip()
+                    )
+
+                    combined_length = (
+                        block_length
+                        + 2
+                        + len(next_block)
+                    )
+
+                    if (
+                        combined_length
+                        <= MAX_PAGE_CHARS
+                    ):
+
+                        if (
+                            current_blocks
+                            and
+                            current_length
+                            + 2
+                            + combined_length
+                            > DEFAULT_PAGE_CHARS
+                        ):
+
+                            flush_page()
+
+                        current_blocks.append(
+                            block
+                        )
+
+                        current_blocks.append(
+                            next_block
+                        )
+
+                        current_length += (
+                            combined_length
+                        )
+
+                        index += 2
+                        continue
+
+                # Otherwise put the heading on the current page
+                # only if there is enough room; otherwise start
+                # a fresh page.
+                if (
+                    current_blocks
+                    and
+                    current_length
+                    + 2
+                    + block_length
+                    > DEFAULT_PAGE_CHARS
+                ):
+
+                    flush_page()
+
+                current_blocks.append(
+                    block
+                )
+
+                current_length += (
+                    block_length
+                )
+
+                index += 1
+                continue
+
+            # ------------------------------------------------
+            # Normal block that fits the page target
+            # ------------------------------------------------
+
+            separator_length = (
+                2
+                if current_blocks
+                else 0
+            )
+
+            proposed_length = (
+                current_length
+                + separator_length
+                + block_length
+            )
+
+            if (
+                current_blocks
+                and
+                proposed_length
+                > DEFAULT_PAGE_CHARS
+            ):
+
+                # If the current page is already reasonably full,
+                # move the complete block to the next page.
+                if (
+                    current_length
+                    >= MIN_PAGE_CHARS
+                ):
+
+                    flush_page()
+
+                    current_blocks.append(
+                        block
+                    )
+
+                    current_length = (
+                        block_length
+                    )
+
+                    index += 1
+                    continue
+
+                # Otherwise allow the page to grow up to the
+                # hard local maximum so a paragraph is not split
+                # unnecessarily.
+                if (
+                    proposed_length
+                    <= MAX_PAGE_CHARS
+                ):
+
+                    current_blocks.append(
+                        block
+                    )
+
+                    current_length = (
+                        proposed_length
+                    )
+
+                    index += 1
+                    continue
+
+                # The block is too large for the current page.
+                flush_page()
+
+                # It may still be too large for a page by itself.
+                if block_length > MAX_PAGE_CHARS:
+
+                    pieces = (
+                        AdaResponse._split_large_block(
+                            block,
+                            MAX_PAGE_CHARS,
+                        )
+                    )
+
+                    for piece_index, piece in enumerate(
+                        pieces
+                    ):
+
+                        if piece_index < len(pieces) - 1:
+
+                            pages.append(
+                                piece
+                            )
+
+                        else:
+
+                            current_blocks = [
+                                piece
+                            ]
+
+                            current_length = (
+                                len(piece)
+                            )
+
+                    index += 1
+                    continue
+
+                current_blocks.append(
+                    block
+                )
+
+                current_length = (
+                    block_length
+                )
+
+                index += 1
+                continue
+
+            # ------------------------------------------------
+            # First block / ordinary fit
+            # ------------------------------------------------
+
+            if not current_blocks:
+
+                if block_length <= MAX_PAGE_CHARS:
+
+                    current_blocks.append(
+                        block
+                    )
+
+                    current_length = (
+                        block_length
+                    )
+
+                    index += 1
+                    continue
+
+                # Oversized standalone block.
+                pieces = (
+                    AdaResponse._split_large_block(
+                        block,
+                        MAX_PAGE_CHARS,
+                    )
+                )
+
+                for piece_index, piece in enumerate(
+                    pieces
+                ):
+
+                    if piece_index < len(pieces) - 1:
+
+                        pages.append(
+                            piece
+                        )
+
+                    else:
+
+                        current_blocks = [
+                            piece
+                        ]
+
+                        current_length = (
+                            len(piece)
+                        )
+
+                index += 1
+                continue
+
+            # ------------------------------------------------
+            # Ordinary fit
+            # ------------------------------------------------
+
+            current_blocks.append(
+                block
+            )
+
+            current_length = (
+                proposed_length
+            )
+
+            index += 1
+
+        flush_page()
+
+        return pages
+
+
+    # ========================================================
     # DOCUMENT -> PAGES
     # ========================================================
 
@@ -1346,23 +2172,23 @@ Return only document content and the marker.
     ) -> list[dict[str, Any]]:
 
         document_text = (
-            safe_text(document_text)
+            AdaResponse._normalize_document_whitespace(
+                document_text
+            )
         )
 
         if not document_text:
             return []
 
-        pattern = re.compile(
-            r"(?:^|\n)"
-            r"(?:={2,}\s*)?"
-            r"PAGE\s+(\d+)"
-            r"(?:\s*={2,})?"
-            r"\s*(?:\n|$)",
-            re.IGNORECASE,
-        )
+        # ----------------------------------------------------
+        # EXPLICIT PAGE MARKERS
+        #
+        # If the document deliberately contains PAGE 1,
+        # PAGE 2, etc., preserve those boundaries exactly.
+        # ----------------------------------------------------
 
         matches = list(
-            pattern.finditer(
+            EXPLICIT_PAGE_PATTERN.finditer(
                 document_text
             )
         )
@@ -1421,19 +2247,34 @@ Return only document content and the marker.
             if pages:
                 return pages
 
-        parts = (
-            split_for_intelligence(
-                document_text,
-                DEFAULT_PAGE_CHARS,
+        # ----------------------------------------------------
+        # STRUCTURE-AWARE LOCAL PAGINATION
+        # ----------------------------------------------------
+
+        blocks = (
+            AdaResponse._make_document_blocks(
+                document_text
             )
         )
 
-        pages = []
+        page_texts = (
+            AdaResponse._paginate_structured_blocks(
+                blocks
+            )
+        )
+
+        pages: list[
+            dict[str, Any]
+        ] = []
 
         for index, part in enumerate(
-            parts,
+            page_texts,
             start=1,
         ):
+
+            part = safe_text(
+                part
+            )
 
             if not part:
                 continue
@@ -1450,6 +2291,44 @@ Return only document content and the marker.
                         "ready",
                 }
             )
+
+        # ----------------------------------------------------
+        # SAFETY FALLBACK
+        #
+        # This should almost never be reached, but preserves
+        # the previous behavior if a malformed document somehow
+        # defeats structural pagination.
+        # ----------------------------------------------------
+
+        if not pages:
+
+            parts = (
+                split_for_intelligence(
+                    document_text,
+                    DEFAULT_PAGE_CHARS,
+                )
+            )
+
+            for index, part in enumerate(
+                parts,
+                start=1,
+            ):
+
+                if not part:
+                    continue
+
+                pages.append(
+                    {
+                        "page_number":
+                            index,
+
+                        "content":
+                            part,
+
+                        "status":
+                            "ready",
+                    }
+                )
 
         return pages
 
@@ -2490,7 +3369,7 @@ if __name__ == "__main__":
     print()
     print("=" * 78)
     print("NAIJA POCKET BUSINESS CENTER")
-    print("TOKEN CONTROLLED DOCUMENT ENGINE v1.1")
+    print("TOKEN CONTROLLED DOCUMENT ENGINE v1.2")
     print("=" * 78)
 
     print(
@@ -2600,6 +3479,21 @@ if __name__ == "__main__":
     print(
         "Keyword-only service logic:",
         "DISABLED",
+    )
+
+    print(
+        "Formatting-aware local pagination:",
+        "ENABLED",
+    )
+
+    print(
+        "Groq calls for formatting:",
+        "0",
+    )
+
+    print(
+        "Groq token increase from formatting:",
+        "0",
     )
 
     print("=" * 78)
