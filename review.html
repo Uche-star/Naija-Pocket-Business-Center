@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
-<title>Review Your Complete Service — Naija Pocket Business Center</title>
-
-<style>
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Review Your Complete Service — Naija Pocket Business Center</title><style>
 :root{
     --black:#050505;
     --panel:#111111;
@@ -266,13 +261,7 @@ button:disabled{
     font-family:"Times New Roman",Georgia,serif;
     font-size:14px;
     line-height:1.75;
-
-    /*
-       CRITICAL:
-       Preserve actual newlines coming from the review data.
-    */
     white-space:pre-wrap;
-
     overflow-wrap:anywhere;
     word-break:normal;
 }
@@ -724,240 +713,221 @@ button:disabled{
         line-height:1.8;
     }
 }
-</style>
-</head>
+</style></head><body><header class="header"><div class="header-inner">
 
-<body>
+    <div class="brand">
 
-<header class="header">
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
 
-    <div class="header-inner">
-
-        <div class="brand">
-
-            <h1 class="brand-title">
-                Naija Pocket Business Center
-            </h1>
-
-            <div class="brand-subtitle">
-                Your Business Center
-            </div>
-
-        </div>
-
-        <div id="serviceBadge" class="service-badge">
-            Service
+        <div class="brand-subtitle">
+            Your Business Center
         </div>
 
     </div>
 
-</header>
-
-<main class="main">
-
-<section class="top-panel">
-
-    <h2 class="review-title">
-        Review Your Complete Service
-    </h2>
-
-    <p class="review-subtitle">
-        Your complete document is shown one page at a time.
-        Use Previous Page and Next Page to go through the entire document.
-    </p>
-
-    <div class="status-row">
-        <span class="status-label">Review status</span>
-
-        <span id="statusValue" class="status-value">
-            Preparing...
-        </span>
+    <div id="serviceBadge" class="service-badge">
+        Service
     </div>
 
-    <div class="progress-shell">
-        <div id="progressBar" class="progress-bar"></div>
-    </div>
+</div>
 
-    <div id="progressText" class="progress-text">
-        Preparing the document...
-    </div>
+</header><main class="main"><section class="top-panel"><h2 class="review-title">
+    Review Your Complete Service
+</h2>
 
-</section>
+<p class="review-subtitle">
+    Your complete document is shown one page at a time.
+    Use Previous Page and Next Page to go through the entire document.
+</p>
 
-<section class="document-section">
+<div class="status-row">
 
-    <div class="document-heading">
+    <span class="status-label">
+        Review status
+    </span>
 
-        <h3>Your Complete Document</h3>
+    <span id="statusValue" class="status-value">
+        Preparing...
+    </span>
 
-        <div id="pageCount" class="page-count">
-            0 PAGES
-        </div>
+</div>
 
-    </div>
-
-    <div id="pageViewer" class="page-viewer">
-
-        <div class="loading">
-
-            <div class="spinner"></div>
-
-            <div>
-                Your service is being carefully prepared.
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="page-navigation">
-
-        <button
-            id="previousButton"
-            class="nav-button"
-            type="button"
-            disabled>
-            ← Previous Page
-        </button>
-
-        <div
-            id="pageIndicator"
-            class="page-indicator">
-            Page 0 of 0
-        </div>
-
-        <button
-            id="nextButton"
-            class="nav-button next"
-            type="button"
-            disabled>
-            Next Page →
-        </button>
-
-    </div>
-
-    <div class="go-row">
-
-        <input
-            id="pageNumberInput"
-            class="page-number-input"
-            type="number"
-            min="1"
-            placeholder="Enter page number">
-
-        <button
-            id="goButton"
-            class="go-button"
-            type="button">
-            GO
-        </button>
-
-    </div>
+<div class="progress-shell">
 
     <div
-        id="pageReview"
-        class="page-review"
-        style="display:none">
+        id="progressBar"
+        class="progress-bar">
+    </div>
 
-        <div class="page-review-title">
-            PAGE REVIEW
-        </div>
+</div>
 
-        <div
-            id="pageReviewText"
-            class="page-review-text">
+<div
+    id="progressText"
+    class="progress-text">
+    Preparing the document...
+</div>
+
+</section><section class="document-section"><div class="document-heading">
+
+    <h3>
+        Your Complete Document
+    </h3>
+
+    <div
+        id="pageCount"
+        class="page-count">
+        0 PAGES
+    </div>
+
+</div>
+
+<div
+    id="pageViewer"
+    class="page-viewer">
+
+    <div class="loading">
+
+        <div class="spinner"></div>
+
+        <div>
+            Your service is being carefully prepared.
         </div>
 
     </div>
 
-</section>
+</div>
 
-<section class="correction-section">
-
-    <h3 class="correction-title">
-        Want anything changed?
-    </h3>
-
-    <p class="correction-help">
-        Tell us exactly what you want changed. Your correction
-        will continue through the same document job.
-    </p>
-
-    <textarea
-        id="correctionInput"
-        class="correction-input"
-        placeholder="Example: Correct the introduction, add more detail to page 4, change the formatting..."
-    ></textarea>
+<div class="page-navigation">
 
     <button
-        id="correctionButton"
-        class="correction-button"
-        type="button">
-        Apply My Corrections
-    </button>
-
-</section>
-
-<section class="approval-section">
-
-    <h3 class="approval-title">
-        Approve Document
-    </h3>
-
-    <p class="approval-text">
-        Only approve after you have gone through every available page
-        and you are satisfied with the document.
-    </p>
-
-    <button
-        id="approveButton"
-        class="approve-button"
+        id="previousButton"
+        class="nav-button"
         type="button"
         disabled>
-        Approve Document
+        ← Previous Page
     </button>
-
-</section>
-
-<section
-    id="paymentSection"
-    class="payment-section">
-
-    <div class="payment-title">
-        Payment &amp; Download
-    </div>
 
     <div
-        id="paymentDetails"
-        class="payment-details">
-        Your approved document is ready for the payment step.
+        id="pageIndicator"
+        class="page-indicator">
+        Page 0 of 0
     </div>
 
     <button
-        id="paymentButton"
-        class="payment-button"
-        type="button">
-        Continue to Payment
-    </button>
-
-</section>
-
-<div id="message" class="message"></div>
-
-<div class="bottom">
-
-    <button
-        id="backButton"
-        class="back-button"
-        type="button">
-        ← Back
+        id="nextButton"
+        class="nav-button next"
+        type="button"
+        disabled>
+        Next Page →
     </button>
 
 </div>
 
-</main>
+<div class="go-row">
 
-<script>
+    <input
+        id="pageNumberInput"
+        class="page-number-input"
+        type="number"
+        min="1"
+        placeholder="Enter page number">
+
+    <button
+        id="goButton"
+        class="go-button"
+        type="button">
+        GO
+    </button>
+
+</div>
+
+<div
+    id="pageReview"
+    class="page-review"
+    style="display:none">
+
+    <div class="page-review-title">
+        PAGE REVIEW
+    </div>
+
+    <div
+        id="pageReviewText"
+        class="page-review-text">
+    </div>
+
+</div>
+
+</section><section class="correction-section"><h3 class="correction-title">
+    Want anything changed?
+</h3>
+
+<p class="correction-help">
+    Tell us exactly what you want changed. Your correction
+    will continue through the same document job.
+</p>
+
+<textarea
+    id="correctionInput"
+    class="correction-input"
+    placeholder="Example: Correct the introduction, add more detail to page 4, change the formatting..."
+></textarea>
+
+<button
+    id="correctionButton"
+    class="correction-button"
+    type="button">
+    Apply My Corrections
+</button>
+
+</section><section class="approval-section"><h3 class="approval-title">
+    Approve Document
+</h3>
+
+<p class="approval-text">
+    Only approve after you have gone through every available page
+    and you are satisfied with the document.
+</p>
+
+<button
+    id="approveButton"
+    class="approve-button"
+    type="button"
+    disabled>
+    Approve Document
+</button>
+
+</section><section
+    id="paymentSection"
+    class="payment-section"><div class="payment-title">
+    Payment &amp; Download
+</div>
+
+<div
+    id="paymentDetails"
+    class="payment-details">
+    Your approved document is ready for the payment step.
+</div>
+
+<button
+    id="paymentButton"
+    class="payment-button"
+    type="button">
+    Continue to Payment
+</button>
+
+</section><div
+    id="message"
+    class="message">
+</div><div class="bottom"><button
+    id="backButton"
+    class="back-button"
+    type="button">
+    ← Back
+</button>
+
+</div></main><script>
 "use strict";
 
 /* =========================================================
@@ -1125,8 +1095,28 @@ function setBusy(value){
 
 
 /* =========================================================
-   API
+   API GET
    ========================================================= */
+
+/*
+   IMPORTANT FIX:
+
+   The review endpoint may return useful document pages
+   together with an intelligence/review error.
+
+   Therefore this function does NOT automatically reject
+   simply because data.success is false.
+
+   The caller decides whether the returned document data
+   is usable.
+
+   This prevents:
+
+       "Intelligence returned empty content."
+
+   from destroying an already-generated document that
+   has valid pages.
+*/
 
 async function apiGet(url){
 
@@ -1139,15 +1129,14 @@ async function apiGet(url){
             }
         );
 
+
     const data =
         await response
             .json()
             .catch(()=>({}));
 
-    if(
-        !response.ok ||
-        !data.success
-    ){
+
+    if(!response.ok){
 
         throw new Error(
             data.error_message ||
@@ -1157,9 +1146,14 @@ async function apiGet(url){
         );
     }
 
+
     return data;
 }
 
+
+/* =========================================================
+   API POST
+   ========================================================= */
 
 async function apiPost(url,body){
 
@@ -1177,14 +1171,16 @@ async function apiPost(url,body){
             }
         );
 
+
     const data =
         await response
             .json()
             .catch(()=>({}));
 
+
     if(
         !response.ok ||
-        !data.success
+        data.success === false
     ){
 
         throw new Error(
@@ -1195,6 +1191,7 @@ async function apiPost(url,body){
         );
     }
 
+
     return data;
 }
 
@@ -1203,21 +1200,10 @@ async function apiPost(url,body){
    PAGE NORMALIZATION
    ========================================================= */
 
-/*
-   IMPORTANT:
-
-   Do NOT call clean() on document content.
-
-   clean() uses trim(), which can remove meaningful
-   leading/trailing line breaks.
-
-   Document content is therefore converted directly
-   to String and preserved.
-*/
-
 function normalizePages(data){
 
     let source = [];
+
 
     if(
         Array.isArray(data.review_pages) &&
@@ -1261,9 +1247,9 @@ function normalizePages(data){
                 "queued",
 
             /*
-               CRITICAL:
-               Preserve all newlines.
+               NEVER trim document content.
             */
+
             content:
                 String(
                     item.content === null ||
@@ -1288,17 +1274,59 @@ function normalizePages(data){
 
 
 /* =========================================================
-   REVIEW TEXT NORMALIZER
+   DETECT USABLE DOCUMENT
    ========================================================= */
 
-/*
-   The review endpoint may contain a document that has
-   already lost some visual line structure.
+function extractPages(data){
 
-   This function repairs ONLY common presentation artifacts.
+    const normalized =
+        normalizePages(data);
 
-   It does NOT rewrite the document's meaning.
-*/
+
+    if(normalized.length){
+        return normalized;
+    }
+
+
+    /*
+       Some backends may return the document itself
+       in a nested object.
+    */
+
+    const possibleDocuments = [
+        data.document,
+        data.result,
+        data.review,
+        data.output
+    ];
+
+
+    for(
+        const candidate of possibleDocuments
+    ){
+
+        if(
+            candidate &&
+            typeof candidate === "object"
+        ){
+
+            const nested =
+                normalizePages(candidate);
+
+            if(nested.length){
+                return nested;
+            }
+        }
+    }
+
+
+    return [];
+}
+
+
+/* =========================================================
+   REVIEW TEXT NORMALIZER
+   ========================================================= */
 
 function normalizeReviewText(value){
 
@@ -1311,34 +1339,15 @@ function normalizeReviewText(value){
         );
 
 
-    /*
-       Normalize line endings.
-    */
-
     text =
         text.replace(/\r\n/g,"\n");
 
     text =
         text.replace(/\r/g,"\n");
 
-
-    /*
-       Convert non-breaking spaces to ordinary spaces.
-    */
-
     text =
         text.replace(/\u00A0/g," ");
 
-
-    /*
-       Remove Markdown horizontal separators.
-
-       Example:
-       ---------------------------------------------------
-
-       The separator itself is not useful in the physical
-       document preview.
-    */
 
     text =
         text.replace(
@@ -1347,29 +1356,12 @@ function normalizeReviewText(value){
         );
 
 
-    /*
-       If a separator is embedded beside text, split it.
-    */
-
     text =
         text.replace(
             /[ \t]*-{10,}[ \t]*/g,
             "\n"
         );
 
-
-    /*
-       Repair the common business-center letterhead pattern.
-
-       Example:
-
-       Naija Pocket Business Center 8 Adeleke Crescent
-
-       becomes:
-
-       Naija Pocket Business Center
-       8 Adeleke Crescent
-    */
 
     text =
         text.replace(
@@ -1378,16 +1370,6 @@ function normalizeReviewText(value){
         );
 
 
-    /*
-       Repair Phone | Email when they were collapsed.
-
-       Keep the actual | between phone and email only if
-       it is genuinely being used as content.
-
-       Here we split the fields into separate lines because
-       this is the document header.
-    */
-
     text =
         text.replace(
             /(Phone\s*:\s*[0-9+\-\s()]{7,})[ \t]*\|[ \t]*(Email\s*:)/gi,
@@ -1395,21 +1377,12 @@ function normalizeReviewText(value){
         );
 
 
-    /*
-       Also handle a bare number followed by | Email.
-    */
-
     text =
         text.replace(
             /(\d{10,})[ \t]*\|[ \t]*(Email\s*:)/gi,
             "$1\n$2"
         );
 
-
-    /*
-       Repair the specific header sequence if the backend
-       supplied "Phone: number Email:" without a separator.
-    */
 
     text =
         text.replace(
@@ -1419,38 +1392,14 @@ function normalizeReviewText(value){
 
 
     /*
-       Remove Markdown bold markers while preserving the
-       text itself.
+       IMPORTANT:
 
-       **Naija Pocket Business Center**
-       becomes:
-       Naija Pocket Business Center
+       Do not remove ** markers here.
 
-       The renderer below will turn the recognised bold
-       line into a real <strong>.
+       The plain-text renderer below uses them to create
+       real bold elements.
     */
 
-    text =
-        text.replace(/\*\*(.*?)\*\*/gs,"$1");
-
-
-    /*
-       Remove single Markdown emphasis markers only when
-       they wrap ordinary text.
-
-       This prevents visible *Subject:* markers.
-    */
-
-    text =
-        text.replace(
-            /(^|[\s(])\*([^*\n]+)\*(?=$|[\s).,:;!?])/g,
-            "$1$2"
-        );
-
-
-    /*
-       Remove trailing spaces from each line.
-    */
 
     text =
         text.replace(
@@ -1458,10 +1407,6 @@ function normalizeReviewText(value){
             "\n"
         );
 
-
-    /*
-       Prevent excessive empty space.
-    */
 
     text =
         text.replace(
@@ -1471,7 +1416,6 @@ function normalizeReviewText(value){
 
 
     return text.trim();
-
 }
 
 
@@ -1586,6 +1530,7 @@ function safeStyleValue(value){
     const lower =
         text.toLowerCase();
 
+
     if(
         lower.includes("javascript:") ||
         lower.includes("expression(") ||
@@ -1595,6 +1540,7 @@ function safeStyleValue(value){
 
         return "";
     }
+
 
     return text;
 }
@@ -1608,6 +1554,7 @@ function sanitizeStyle(styleText){
         String(styleText || "")
             .split(";");
 
+
     for(
         const declaration of declarations
     ){
@@ -1615,9 +1562,11 @@ function sanitizeStyle(styleText){
         const separator =
             declaration.indexOf(":");
 
+
         if(separator < 0){
             continue;
         }
+
 
         const property =
             declaration
@@ -1625,25 +1574,31 @@ function sanitizeStyle(styleText){
                 .trim()
                 .toLowerCase();
 
+
         const value =
             declaration
                 .slice(separator + 1)
                 .trim();
+
 
         if(
             !ALLOWED_STYLE_PROPERTIES.has(
                 property
             )
         ){
+
             continue;
         }
+
 
         const safeValue =
             safeStyleValue(value);
 
+
         if(!safeValue){
             continue;
         }
+
 
         result.push(
             property +
@@ -1651,6 +1606,7 @@ function sanitizeStyle(styleText){
             safeValue
         );
     }
+
 
     return result.join(";");
 }
@@ -1660,28 +1616,15 @@ function sanitizeStyle(styleText){
    MARKDOWN-LIKE PLAIN TEXT RENDERER
    ========================================================= */
 
-/*
-   This is intentionally small.
-
-   We only need to repair the document formatting that is
-   actually visible in the review output.
-
-   It supports:
-
-   **bold**
-   *italic*
-   real line breaks
-
-   No external library is required.
-*/
-
 function renderPlainDocumentText(text){
 
     const fragment =
         document.createDocumentFragment();
 
+
     const normalized =
         normalizeReviewText(text);
+
 
     const lines =
         normalized.split("\n");
@@ -1689,10 +1632,6 @@ function renderPlainDocumentText(text){
 
     lines.forEach(
         (line,index)=>{
-
-            /*
-               Empty line = visual paragraph gap.
-            */
 
             if(line === ""){
 
@@ -1704,19 +1643,12 @@ function renderPlainDocumentText(text){
             }
 
 
-            let remaining =
-                line;
-
-
-            /*
-               Bold segments.
-            */
-
             const pattern =
                 /(\*\*[^*]+\*\*)/g;
 
+
             const parts =
-                remaining.split(pattern);
+                line.split(pattern);
 
 
             parts.forEach(
@@ -1737,19 +1669,16 @@ function renderPlainDocumentText(text){
                                 "strong"
                             );
 
+
                         strong.textContent =
                             part.slice(2,-2);
+
 
                         fragment.appendChild(
                             strong
                         );
 
                     }else{
-
-                        /*
-                           Also remove any stray Markdown
-                           markers left by malformed generation.
-                        */
 
                         const cleanPart =
                             part
@@ -1762,6 +1691,7 @@ function renderPlainDocumentText(text){
                                     ""
                                 );
 
+
                         fragment.appendChild(
                             document.createTextNode(
                                 cleanPart
@@ -1772,13 +1702,6 @@ function renderPlainDocumentText(text){
                 }
             );
 
-
-            /*
-               Add the actual line break.
-
-               This is the important part: every backend
-               newline becomes a browser line break.
-            */
 
             if(index < lines.length - 1){
 
@@ -1810,12 +1733,6 @@ function sanitizeDocumentHtml(html){
         );
 
 
-    /*
-       If there is no HTML markup, use the plain-text
-       document renderer. This is where backend \n values
-       become visible line breaks.
-    */
-
     if(
         !/<[a-z][\s\S]*>/i.test(source)
     ){
@@ -1829,11 +1746,13 @@ function sanitizeDocumentHtml(html){
     const parser =
         new DOMParser();
 
+
     const parsed =
         parser.parseFromString(
             source,
             "text/html"
         );
+
 
     const output =
         document.createDocumentFragment();
@@ -1847,24 +1766,13 @@ function sanitizeDocumentHtml(html){
         ){
 
             /*
-               Preserve all text node line breaks.
-            */
-
-            const text =
-                node.nodeValue || "";
-
-            const normalized =
-                normalizeReviewText(text);
-
-            /*
-               Do not normalize HTML text too aggressively.
-               Preserve the source text while allowing the
-               browser to respect whitespace through CSS.
+               For HTML content, preserve the source text
+               rather than trimming every text node.
             */
 
             parent.appendChild(
                 document.createTextNode(
-                    normalized
+                    node.nodeValue || ""
                 )
             );
 
@@ -1904,10 +1812,6 @@ function sanitizeDocumentHtml(html){
         }
 
 
-        /*
-           Unsupported tags are flattened.
-        */
-
         if(
             !ALLOWED_TAGS.has(tag)
         ){
@@ -1940,6 +1844,7 @@ function sanitizeDocumentHtml(html){
                 attribute.name
                     .toLowerCase();
 
+
             const value =
                 attribute.value || "";
 
@@ -1957,6 +1862,7 @@ function sanitizeDocumentHtml(html){
                 const safeStyle =
                     sanitizeStyle(value);
 
+
                 if(safeStyle){
 
                     element.setAttribute(
@@ -1964,6 +1870,7 @@ function sanitizeDocumentHtml(html){
                         safeStyle
                     );
                 }
+
 
                 continue;
             }
@@ -1998,6 +1905,7 @@ function sanitizeDocumentHtml(html){
                     );
                 }
 
+
                 continue;
             }
 
@@ -2025,9 +1933,8 @@ function sanitizeDocumentHtml(html){
                         String(number)
                     );
                 }
-
-                continue;
             }
+
         }
 
 
@@ -2064,6 +1971,42 @@ function sanitizeDocumentHtml(html){
 
 
 /* =========================================================
+   FIND SERVER ERROR
+   ========================================================= */
+
+function getServerError(data){
+
+    if(!data){
+        return "";
+    }
+
+
+    if(typeof data.error === "string"){
+        return clean(data.error);
+    }
+
+
+    if(
+        data.error &&
+        typeof data.error === "object"
+    ){
+
+        return clean(
+            data.error.message ||
+            data.error.error ||
+            data.error.detail
+        );
+    }
+
+
+    return clean(
+        data.error_message ||
+        data.message
+    );
+}
+
+
+/* =========================================================
    LOAD JOB
    ========================================================= */
 
@@ -2086,6 +2029,54 @@ async function loadJob(){
 
     applyJob(data);
 
+
+    /*
+       IMPORTANT:
+
+       A valid generated document is considered usable
+       when pages exist, even if the intelligence layer
+       returned an empty review message.
+
+       Therefore we do NOT throw the intelligence error
+       here when document pages are present.
+    */
+
+    const usablePages =
+        extractPages(data);
+
+
+    if(
+        usablePages.length
+    ){
+
+        return data;
+    }
+
+
+    /*
+       No pages means the document genuinely cannot yet
+       be displayed.
+
+       Only now do we surface the backend error.
+    */
+
+    if(
+        data.status === "review_error" ||
+        data.status === "error" ||
+        data.success === false
+    ){
+
+        const serverError =
+            getServerError(data);
+
+
+        throw new Error(
+            serverError ||
+            "The document is not available yet."
+        );
+    }
+
+
     return data;
 }
 
@@ -2096,45 +2087,68 @@ async function loadJob(){
 
 function applyJob(data){
 
-    currentStatus =
+    const incomingStatus =
         clean(data.status);
+
+
+    /*
+       Keep server status, but if usable document pages
+       already exist, an intelligence-only error does not
+       make the customer-facing document unusable.
+    */
+
+    const incomingPages =
+        extractPages(data);
+
+
+    const hasDocument =
+        incomingPages.length > 0;
+
+
+    if(
+        incomingStatus === "review_error" &&
+        hasDocument
+    ){
+
+        /*
+           The generated document exists.
+
+           Treat the document as review-ready from the
+           customer's point of view.
+
+           This is the critical protection against:
+
+           "Intelligence returned empty content."
+        */
+
+        currentStatus =
+            "review_complete";
+
+    }else{
+
+        currentStatus =
+            incomingStatus;
+    }
+
 
     currentVersion =
         Number(
             data.current_version
         ) || 1;
 
+
     versionId =
         clean(data.version_id);
+
 
     approved =
         !!data.approved;
 
 
-    const incomingPages =
-        normalizePages(data);
-
-
-    if(
-        incomingPages.length
-    ){
+    if(hasDocument){
 
         pages =
             incomingPages;
-
-        totalPages =
-            pages.length;
-
-    }else if(
-        Array.isArray(data.document_pages) &&
-        data.document_pages.length
-    ){
-
-        pages =
-            normalizePages({
-                document_pages:
-                    data.document_pages
-            });
 
         totalPages =
             pages.length;
@@ -2151,10 +2165,12 @@ function applyJob(data){
     const progress =
         data.progress || {};
 
+
     const completed =
         Number(
             progress.completed
         ) || 0;
+
 
     const progressTotal =
         Number(
@@ -2184,9 +2200,8 @@ function applyJob(data){
 
 
     if(
-        currentStatus ===
-            "review_complete" ||
-        data.review_finished === true
+        currentStatus === "review_complete" &&
+        totalPages > 0
     ){
 
         percent = 100;
@@ -2226,51 +2241,68 @@ function applyJob(data){
 
         setStatus("REVIEWING");
 
+
         progressText.textContent =
             completed +
             " of " +
             progressTotal +
             " pages reviewed.";
 
+
     }else if(
-        currentStatus ===
-        "review_complete"
+        currentStatus === "review_complete"
     ){
 
         setStatus("READY");
 
+
         progressText.textContent =
-            "Review complete.";
+            "Your document is ready for review.";
+
 
     }else if(
-        currentStatus ===
-        "review_error"
+        currentStatus === "review_error"
     ){
 
         setStatus("ERROR");
 
+
         progressText.textContent =
             "The document review encountered an error.";
 
+
     }else if(
-        currentStatus ===
-        "correcting"
+        currentStatus === "correcting"
     ){
 
         setStatus("CORRECTING");
 
+
         progressText.textContent =
             "Your correction is being applied.";
 
+
     }else if(
-        currentStatus ===
-        "correction_error"
+        currentStatus === "correction_error"
     ){
 
         setStatus("CORRECTION ERROR");
 
+
         progressText.textContent =
             "The correction could not be completed.";
+
+
+    }else if(
+        currentStatus === "approved"
+    ){
+
+        setStatus("APPROVED");
+
+
+        progressText.textContent =
+            "Your document has been approved.";
+
 
     }else{
 
@@ -2279,6 +2311,7 @@ function applyJob(data){
                 ? currentStatus.toUpperCase()
                 : "PREPARING"
         );
+
 
         progressText.textContent =
             "Preparing the document.";
@@ -2290,6 +2323,7 @@ function applyJob(data){
         if(currentPage > totalPages){
             currentPage = totalPages;
         }
+
 
         if(currentPage < 1){
             currentPage = 1;
@@ -2334,11 +2368,14 @@ function renderCurrentPage(){
             </div>
         `;
 
+
         pageIndicator.textContent =
             "Page 0 of 0";
 
+
         previousButton.disabled = true;
         nextButton.disabled = true;
+
 
         return;
     }
@@ -2356,11 +2393,13 @@ function renderCurrentPage(){
             </div>
         `;
 
+
         pageIndicator.textContent =
             "Page " +
             currentPage +
             " of " +
             totalPages;
+
 
         return;
     }
@@ -2369,8 +2408,10 @@ function renderCurrentPage(){
     const physicalPage =
         document.createElement("article");
 
+
     physicalPage.className =
         "document-page";
+
 
     physicalPage.setAttribute(
         "aria-readonly",
@@ -2381,8 +2422,10 @@ function renderCurrentPage(){
     const pageNumber =
         document.createElement("div");
 
+
     pageNumber.className =
         "page-number-inside";
+
 
     pageNumber.textContent =
         "PAGE " +
@@ -2392,6 +2435,7 @@ function renderCurrentPage(){
     const content =
         document.createElement("div");
 
+
     content.className =
         "page-content";
 
@@ -2400,18 +2444,6 @@ function renderCurrentPage(){
         page.content ||
         "This page is still being prepared.";
 
-
-    /*
-       IMPORTANT:
-
-       The renderer now receives the raw page content.
-
-       normalizePages() deliberately does NOT call trim()
-       on it.
-
-       normalizeReviewText() then restores the document's
-       visible structure and converts Markdown bold.
-    */
 
     const safeFragment =
         sanitizeDocumentHtml(
@@ -2428,9 +2460,11 @@ function renderCurrentPage(){
         pageNumber
     );
 
+
     physicalPage.appendChild(
         content
     );
+
 
     pageViewer.appendChild(
         physicalPage
@@ -2448,6 +2482,7 @@ function renderCurrentPage(){
         busy ||
         currentPage <= 1;
 
+
     nextButton.disabled =
         busy ||
         currentPage >= totalPages;
@@ -2458,6 +2493,7 @@ function renderCurrentPage(){
         pageReview.style.display =
             "block";
 
+
         pageReviewText.textContent =
             page.review;
 
@@ -2466,18 +2502,26 @@ function renderCurrentPage(){
         pageReview.style.display =
             "none";
 
+
         pageReviewText.textContent =
             "";
     }
 
+
+    /*
+       A page-level error should not hide the actual page.
+
+       Show it only as additional information.
+    */
 
     if(page.error){
 
         pageReview.style.display =
             "block";
 
+
         pageReviewText.textContent =
-            "Page review error:\n\n" +
+            "Page information:\n\n" +
             page.error;
     }
 }
@@ -2519,12 +2563,6 @@ function showPage(number){
 
     renderCurrentPage();
 
-
-    /*
-       Keep the existing review navigation behaviour,
-       but do not reload the document or make an
-       intelligence request.
-    */
 
     window.scrollTo({
         top:0,
@@ -2584,11 +2622,13 @@ goButton.addEventListener(
                 "error"
             );
 
+
             return;
         }
 
 
         setMessage("");
+
 
         showPage(value);
     }
@@ -2613,6 +2653,22 @@ pageNumberInput.addEventListener(
    POLLING
    ========================================================= */
 
+function stopPolling(){
+
+    polling = false;
+
+
+    if(pollTimer){
+
+        clearTimeout(
+            pollTimer
+        );
+
+        pollTimer = null;
+    }
+}
+
+
 function startPolling(){
 
     if(polling){
@@ -2632,12 +2688,58 @@ function startPolling(){
                     await loadJob();
 
 
+                /*
+                   If the document pages now exist, they are
+                   enough to stop polling when the server says
+                   review_error only because intelligence was
+                   empty.
+
+                   The document itself remains available.
+                */
+
+                const availablePages =
+                    extractPages(data);
+
+
+                if(
+                    availablePages.length &&
+                    (
+                        currentStatus ===
+                            "review_complete" ||
+                        data.status ===
+                            "review_error"
+                    )
+                ){
+
+                    stopPolling();
+
+
+                    /*
+                       If the document was already generated,
+                       clear the false intelligence error.
+                    */
+
+                    if(
+                        data.status ===
+                        "review_error"
+                    ){
+
+                        setMessage(
+                            ""
+                        );
+                    }
+
+
+                    return;
+                }
+
+
                 if(
                     data.status ===
                     "review_complete"
                 ){
 
-                    polling = false;
+                    stopPolling();
                     return;
                 }
 
@@ -2647,18 +2749,34 @@ function startPolling(){
                     "review_error"
                 ){
 
-                    polling = false;
+                    /*
+                       Only display the error when there is
+                       genuinely no document to show.
+                    */
 
-                    const error =
-                        data.error || {};
+                    if(
+                        !availablePages.length
+                    ){
+
+                        stopPolling();
 
 
-                    setMessage(
-                        error.message ||
-                        "The document review failed.",
-                        "error"
-                    );
+                        const error =
+                            getServerError(data);
 
+
+                        setMessage(
+                            error ||
+                            "The document review failed.",
+                            "error"
+                        );
+
+
+                        return;
+                    }
+
+
+                    stopPolling();
                     return;
                 }
 
@@ -2668,17 +2786,19 @@ function startPolling(){
                     "correction_error"
                 ){
 
-                    polling = false;
+                    stopPolling();
+
 
                     const error =
-                        data.error || {};
+                        getServerError(data);
 
 
                     setMessage(
-                        error.message ||
+                        error ||
                         "The correction failed.",
                         "error"
                     );
+
 
                     return;
                 }
@@ -2693,7 +2813,22 @@ function startPolling(){
 
             }catch(error){
 
-                polling = false;
+                /*
+                   A temporary polling error should not
+                   immediately erase an already displayed
+                   document.
+                */
+
+                if(pages.length){
+
+                    stopPolling();
+
+                    return;
+                }
+
+
+                stopPolling();
+
 
                 setMessage(
                     error.message,
@@ -2728,6 +2863,7 @@ correctionButton.addEventListener(
                 "error"
             );
 
+
             return;
         }
 
@@ -2738,6 +2874,7 @@ correctionButton.addEventListener(
                 "The document job could not be identified.",
                 "error"
             );
+
 
             return;
         }
@@ -2753,6 +2890,7 @@ correctionButton.addEventListener(
                 "error"
             );
 
+
             return;
         }
 
@@ -2760,6 +2898,7 @@ correctionButton.addEventListener(
         try{
 
             setBusy(true);
+
 
             setMessage(
                 "Applying your correction..."
@@ -2772,13 +2911,15 @@ correctionButton.addEventListener(
                     {
                         job_id:
                             jobId,
+
                         instruction:
                             instruction
                     }
                 );
 
 
-            correctionInput.value = "";
+            correctionInput.value =
+                "";
 
 
             currentVersion =
@@ -2822,12 +2963,14 @@ correctionButton.addEventListener(
 
             setBusy(false);
 
+
             startPolling();
 
 
         }catch(error){
 
             setBusy(false);
+
 
             setMessage(
                 error.message,
@@ -2861,6 +3004,7 @@ approveButton.addEventListener(
                 "error"
             );
 
+
             return;
         }
 
@@ -2872,6 +3016,7 @@ approveButton.addEventListener(
                 "error"
             );
 
+
             return;
         }
 
@@ -2879,6 +3024,7 @@ approveButton.addEventListener(
         try{
 
             setBusy(true);
+
 
             setMessage(
                 "Approving your document..."
@@ -2891,6 +3037,7 @@ approveButton.addEventListener(
                     {
                         job_id:
                             jobId,
+
                         version_id:
                             versionId
                     }
@@ -2898,6 +3045,7 @@ approveButton.addEventListener(
 
 
             approved = true;
+
 
             currentStatus =
                 "approved";
@@ -2916,12 +3064,14 @@ approveButton.addEventListener(
 
             showPayment(data);
 
+
             setBusy(false);
 
 
         }catch(error){
 
             setBusy(false);
+
 
             setMessage(
                 error.message,
@@ -3001,6 +3151,7 @@ paymentButton.addEventListener(
                 "error"
             );
 
+
             return;
         }
 
@@ -3009,6 +3160,7 @@ paymentButton.addEventListener(
             new URLSearchParams({
                 job_id:
                     jobId,
+
                 version_id:
                     versionId
             });
@@ -3078,8 +3230,52 @@ async function start(){
 
     try{
 
-        await loadJob();
+        const data =
+            await loadJob();
 
+
+        /*
+           If actual document pages exist, do not show
+           an intelligence-empty error.
+
+           The generated document is the customer's
+           reviewable result.
+        */
+
+        const availablePages =
+            extractPages(data);
+
+
+        if(availablePages.length){
+
+            setMessage("");
+
+
+            if(
+                currentStatus ===
+                    "review_complete" ||
+                data.status ===
+                    "review_error"
+            ){
+
+                stopPolling();
+
+            }else{
+
+                startPolling();
+            }
+
+
+            return;
+        }
+
+
+        /*
+           No pages yet.
+
+           Continue waiting unless the backend has given
+           a genuine terminal error.
+        */
 
         if(
             currentStatus !==
@@ -3087,7 +3283,9 @@ async function start(){
             currentStatus !==
                 "review_error" &&
             currentStatus !==
-                "approved"
+                "approved" &&
+            currentStatus !==
+                "correction_error"
         ){
 
             startPolling();
@@ -3095,6 +3293,16 @@ async function start(){
 
 
     }catch(error){
+
+        /*
+           Only show a fatal page error if there is no
+           document already available.
+        */
+
+        if(pages.length){
+            return;
+        }
+
 
         setStatus(
             "ERROR"
@@ -3137,7 +3345,5 @@ function escapeHtml(value){
 
 start();
 
-</script>
-
-</body>
+</script></body>
 </html>
