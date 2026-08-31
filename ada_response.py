@@ -915,7 +915,10 @@ Never repeat the opening merely because another generation
 request is required.
 
 For document review, review the complete supplied document.
-Do not rewrite it during review.
+
+During review, return the complete document inside the
+requested DOCUMENT_START and DOCUMENT_END boundaries, followed
+by findings inside FINDINGS_START and FINDINGS_END boundaries.
 
 For document correction, use the current supplied document,
 apply the customer's requested correction and return the
@@ -2009,54 +2012,55 @@ Your responsibility is to understand the work and complete it.
             )
         )
 
-        document_for_review = compact_document_text(
+        # ----------------------------------------------------
+        # REVIEW FIX 1
+        # ----------------------------------------------------
+        # The LLM must return the complete document as well
+        # as its findings. This prevents the frontend from
+        # receiving only "NO ISSUES FOUND" and then having
+        # nothing to render.
+        # ----------------------------------------------------
+
+        review_document_text = compact_document_text(
             complete_document,
             8500,
         )
 
-        customer_request_for_review = compact_text(
+        review_customer_request = compact_text(
             customer_request,
             3000,
         )
 
+        review_service = safe_text(
+            service
+        )
+
         review_prompt = (
-            "REVIEW THE COMPLETE DOCUMENT.\n\n"
+            "REVIEW THE COMPLETE DOCUMENT AND RETURN BOTH:\n\n"
+
+            "PART 1 - THE COMPLETE DOCUMENT:\n"
+            "Return the entire document exactly as provided. "
+            "Preserve all line breaks, addresses, subject, "
+            "paragraphs.\n"
+            "START WITH: DOCUMENT_START\n"
+            "END WITH: DOCUMENT_END\n\n"
+
+            "PART 2 - FINDINGS:\n"
+            "List any genuine issues. Use PAGE N: finding. "
+            "If none write NO ISSUES FOUND\n"
+            "START WITH: FINDINGS_START\n"
+            "END WITH: FINDINGS_END\n\n"
 
             "SERVICE CONTEXT:\n"
-            + safe_text(service)
+            + review_service
             + "\n\n"
 
             "CUSTOMER REQUEST:\n"
-            + customer_request_for_review
+            + review_customer_request
             + "\n\n"
 
             "COMPLETE DOCUMENT:\n"
-            + document_for_review
-            + "\n\n"
-
-            "Review the document as a complete piece of work.\n\n"
-
-            "Identify genuine problems only.\n\n"
-
-            "Consider correctness, completeness, relevance, "
-            "language, clarity, consistency and presentation "
-            "where applicable.\n\n"
-
-            "Do not invent problems.\n"
-
-            "Do not rewrite the document.\n"
-
-            "Do not reproduce the document.\n\n"
-
-            "If a finding clearly belongs to a displayed page, "
-            "use:\n"
-            "PAGE N: finding\n\n"
-
-            "For a document-wide finding, use:\n"
-            "DOCUMENT: finding\n\n"
-
-            "If there are no genuine problems, return exactly:\n"
-            "NO ISSUES FOUND"
+            + review_document_text
         )
 
         if progress_callback:
@@ -2115,9 +2119,66 @@ Your responsibility is to understand the work and complete it.
                 category="EMPTY_REVIEW",
             )
 
+        # ----------------------------------------------------
+        # REVIEW FIX 1 PARSER
+        # ----------------------------------------------------
+        # Always preserve the original complete document as
+        # the safe fallback. If Groq supplies the explicit
+        # document section, use that section instead.
+        # Findings are parsed separately.
+        # ----------------------------------------------------
+
+        doc_text = complete_document
+        findings_text = review
+
+        document_match = re.search(
+            r"DOCUMENT_START(.*?)DOCUMENT_END",
+            review,
+            re.DOTALL | re.IGNORECASE,
+        )
+
+        findings_match = re.search(
+            r"FINDINGS_START(.*?)FINDINGS_END",
+            review,
+            re.DOTALL | re.IGNORECASE,
+        )
+
+        if document_match:
+
+            extracted_document = (
+                document_match.group(1)
+                .strip()
+            )
+
+            if extracted_document:
+
+                doc_text = (
+                    extracted_document
+                )
+
+        if findings_match:
+
+            findings_text = (
+                findings_match.group(1)
+                .strip()
+            )
+
+        doc_text = normalize_document_formatting(
+            doc_text
+        )
+
+        findings_text = safe_text(
+            findings_text,
+            preserve_lines=True,
+        )
+
+        # ----------------------------------------------------
+        # Parse ONLY the findings.
+        # ----------------------------------------------------
+
         page_reviews = (
             self._parse_review_by_page(
-                review,
+                findings_text,
                 total_pages,
             )
         )
@@ -2161,6 +2222,9 @@ Your responsibility is to understand the work and complete it.
                 "total_pages":
                     total_pages,
 
+                # Keep the existing local pagination intact.
+                # The complete reviewed document is returned
+                # separately through document/document_text.
                 "content":
                     page["content"],
 
@@ -2202,17 +2266,20 @@ Your responsibility is to understand the work and complete it.
             "assembled_review":
                 self.assemble_review(
                     page_results,
-                    document_review=review,
+                    document_review=findings_text,
                 ),
 
+            # IMPORTANT:
+            # The frontend now receives the complete document
+            # regardless of whether findings exist.
             "document":
-                complete_document,
+                doc_text,
 
             "document_text":
-                complete_document,
+                doc_text,
 
             "review":
-                review,
+                findings_text,
 
             "review_calls":
                 1,
@@ -2501,8 +2568,16 @@ Your responsibility is to understand the work and complete it.
             7000,
         )
 
+        # ----------------------------------------------------
+        # CORRECTION FIX 2
+        # ----------------------------------------------------
+        # Explicitly force the model to return the COMPLETE
+        # corrected document rather than only the changed
+        # paragraph.
+        # ----------------------------------------------------
+
         prompt = (
-            "CORRECT THE CURRENT DOCUMENT.\n\n"
+            "APPLY THE CUSTOMER CORRECTION TO THE COMPLETE DOCUMENT.\n\n"
 
             "SERVICE CONTEXT:\n"
             + active_service
@@ -2516,26 +2591,13 @@ Your responsibility is to understand the work and complete it.
             + current_document_text
             + "\n\n"
 
-            "Apply the customer's correction.\n\n"
-
-            "Use your own intelligence to determine the "
-            "appropriate correction.\n\n"
-
-            "Preserve unrelated useful content.\n"
-
-            "Preserve information that does not need changing.\n"
-
-            "Do not replace the document with a generic template.\n"
-
-            "Do not invent facts.\n"
-
-            "Return the COMPLETE corrected document.\n\n"
-
-            "Do not return only the changed portion.\n"
-
-            "Do not return a summary.\n"
-
-            "Do not explain the correction."
+            "INSTRUCTIONS:\n"
+            "1. Apply the correction exactly.\n"
+            "2. Return the COMPLETE corrected document.\n"
+            "3. Preserve all original formatting: line breaks, "
+            "paragraphs, addresses, subject, bold, signature.\n"
+            "4. Do not return only the changed part. "
+            "Do not explain. Do not summarize."
         )
 
         corrected = self.call_groq(
