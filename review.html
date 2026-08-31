@@ -1,8 +1,13 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Review Your Complete Service — Naija Pocket Business Center</title><style>
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>Review Your Complete Service — Naija Pocket Business Center</title>
+
+<style>
 :root{
     --black:#050505;
     --panel:#111111;
@@ -713,7 +718,13 @@ button:disabled{
         line-height:1.8;
     }
 }
-</style></head><body><header class="header"><div class="header-inner">
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<div class="header-inner">
 
     <div class="brand">
 
@@ -732,8 +743,13 @@ button:disabled{
     </div>
 
 </div>
+</header>
 
-</header><main class="main"><section class="top-panel"><h2 class="review-title">
+<main class="main">
+
+<section class="top-panel">
+
+<h2 class="review-title">
     Review Your Complete Service
 </h2>
 
@@ -769,7 +785,11 @@ button:disabled{
     Preparing the document...
 </div>
 
-</section><section class="document-section"><div class="document-heading">
+</section>
+
+<section class="document-section">
+
+<div class="document-heading">
 
     <h3>
         Your Complete Document
@@ -859,7 +879,11 @@ button:disabled{
 
 </div>
 
-</section><section class="correction-section"><h3 class="correction-title">
+</section>
+
+<section class="correction-section">
+
+<h3 class="correction-title">
     Want anything changed?
 </h3>
 
@@ -881,7 +905,11 @@ button:disabled{
     Apply My Corrections
 </button>
 
-</section><section class="approval-section"><h3 class="approval-title">
+</section>
+
+<section class="approval-section">
+
+<h3 class="approval-title">
     Approve Document
 </h3>
 
@@ -898,9 +926,13 @@ button:disabled{
     Approve Document
 </button>
 
-</section><section
+</section>
+
+<section
     id="paymentSection"
-    class="payment-section"><div class="payment-title">
+    class="payment-section">
+
+<div class="payment-title">
     Payment &amp; Download
 </div>
 
@@ -917,17 +949,27 @@ button:disabled{
     Continue to Payment
 </button>
 
-</section><div
+</section>
+
+<div
     id="message"
     class="message">
-</div><div class="bottom"><button
+</div>
+
+<div class="bottom">
+
+<button
     id="backButton"
     class="back-button"
     type="button">
     ← Back
 </button>
 
-</div></main><script>
+</div>
+
+</main>
+
+<script>
 "use strict";
 
 /* =========================================================
@@ -1070,17 +1112,45 @@ function setStatus(text){
 }
 
 
+/* =========================================================
+   APPROVAL READINESS
+   ========================================================= */
+
+/*
+   The approval button is controlled from one place.
+
+   A real document must exist before approval can be offered.
+   The review must also be complete.
+
+   This prevents unrelated page/navigation state from
+   accidentally keeping the approval button disabled.
+*/
+
+function approvalReady(){
+
+    return (
+        !busy &&
+        !approved &&
+        pages.length > 0 &&
+        totalPages > 0 &&
+        currentStatus === "review_complete"
+    );
+}
+
+
+function updateApprovalButton(){
+
+    approveButton.disabled =
+        !approvalReady();
+}
+
+
 function setBusy(value){
 
     busy = !!value;
 
     correctionButton.disabled =
         busy;
-
-    approveButton.disabled =
-        busy ||
-        currentStatus !== "review_complete" ||
-        approved;
 
     previousButton.disabled =
         busy ||
@@ -1091,32 +1161,20 @@ function setBusy(value){
         busy ||
         currentPage >= totalPages ||
         totalPages <= 1;
+
+    /*
+       Approval state is always recalculated here.
+       It is no longer controlled by several competing
+       assignments.
+    */
+
+    updateApprovalButton();
 }
 
 
 /* =========================================================
    API GET
    ========================================================= */
-
-/*
-   IMPORTANT FIX:
-
-   The review endpoint may return useful document pages
-   together with an intelligence/review error.
-
-   Therefore this function does NOT automatically reject
-   simply because data.success is false.
-
-   The caller decides whether the returned document data
-   is usable.
-
-   This prevents:
-
-       "Intelligence returned empty content."
-
-   from destroying an already-generated document that
-   has valid pages.
-*/
 
 async function apiGet(url){
 
@@ -1246,10 +1304,6 @@ function normalizePages(data){
                 clean(item.status) ||
                 "queued",
 
-            /*
-               NEVER trim document content.
-            */
-
             content:
                 String(
                     item.content === null ||
@@ -1287,11 +1341,6 @@ function extractPages(data){
         return normalized;
     }
 
-
-    /*
-       Some backends may return the document itself
-       in a nested object.
-    */
 
     const possibleDocuments = [
         data.document,
@@ -1389,16 +1438,6 @@ function normalizeReviewText(value){
             /(Phone\s*:\s*[0-9+\-\s()]{7,})[ \t]+(Email\s*:)/gi,
             "$1\n$2"
         );
-
-
-    /*
-       IMPORTANT:
-
-       Do not remove ** markers here.
-
-       The plain-text renderer below uses them to create
-       real bold elements.
-    */
 
 
     text =
@@ -1765,11 +1804,6 @@ function sanitizeDocumentHtml(html){
             Node.TEXT_NODE
         ){
 
-            /*
-               For HTML content, preserve the source text
-               rather than trimming every text node.
-            */
-
             parent.appendChild(
                 document.createTextNode(
                     node.nodeValue || ""
@@ -2030,17 +2064,6 @@ async function loadJob(){
     applyJob(data);
 
 
-    /*
-       IMPORTANT:
-
-       A valid generated document is considered usable
-       when pages exist, even if the intelligence layer
-       returned an empty review message.
-
-       Therefore we do NOT throw the intelligence error
-       here when document pages are present.
-    */
-
     const usablePages =
         extractPages(data);
 
@@ -2052,13 +2075,6 @@ async function loadJob(){
         return data;
     }
 
-
-    /*
-       No pages means the document genuinely cannot yet
-       be displayed.
-
-       Only now do we surface the backend error.
-    */
 
     if(
         data.status === "review_error" ||
@@ -2091,12 +2107,6 @@ function applyJob(data){
         clean(data.status);
 
 
-    /*
-       Keep server status, but if usable document pages
-       already exist, an intelligence-only error does not
-       make the customer-facing document unusable.
-    */
-
     const incomingPages =
         extractPages(data);
 
@@ -2109,17 +2119,6 @@ function applyJob(data){
         incomingStatus === "review_error" &&
         hasDocument
     ){
-
-        /*
-           The generated document exists.
-
-           Treat the document as review-ready from the
-           customer's point of view.
-
-           This is the critical protection against:
-
-           "Intelligence returned empty content."
-        */
 
         currentStatus =
             "review_complete";
@@ -2241,7 +2240,6 @@ function applyJob(data){
 
         setStatus("REVIEWING");
 
-
         progressText.textContent =
             completed +
             " of " +
@@ -2255,7 +2253,6 @@ function applyJob(data){
 
         setStatus("READY");
 
-
         progressText.textContent =
             "Your document is ready for review.";
 
@@ -2265,7 +2262,6 @@ function applyJob(data){
     ){
 
         setStatus("ERROR");
-
 
         progressText.textContent =
             "The document review encountered an error.";
@@ -2277,7 +2273,6 @@ function applyJob(data){
 
         setStatus("CORRECTING");
 
-
         progressText.textContent =
             "Your correction is being applied.";
 
@@ -2288,7 +2283,6 @@ function applyJob(data){
 
         setStatus("CORRECTION ERROR");
 
-
         progressText.textContent =
             "The correction could not be completed.";
 
@@ -2298,7 +2292,6 @@ function applyJob(data){
     ){
 
         setStatus("APPROVED");
-
 
         progressText.textContent =
             "Your document has been approved.";
@@ -2311,7 +2304,6 @@ function applyJob(data){
                 ? currentStatus.toUpperCase()
                 : "PREPARING"
         );
-
 
         progressText.textContent =
             "Preparing the document.";
@@ -2334,11 +2326,14 @@ function applyJob(data){
     renderCurrentPage();
 
 
-    approveButton.disabled =
-        busy ||
-        currentStatus !==
-            "review_complete" ||
-        approved;
+    /*
+       SINGLE SOURCE OF TRUTH FOR APPROVAL BUTTON.
+
+       If the complete document is loaded and the review is
+       ready, the button becomes active.
+    */
+
+    updateApprovalButton();
 
 
     if(approved){
@@ -2377,6 +2372,8 @@ function renderCurrentPage(){
         nextButton.disabled = true;
 
 
+        updateApprovalButton();
+
         return;
     }
 
@@ -2400,6 +2397,8 @@ function renderCurrentPage(){
             " of " +
             totalPages;
 
+
+        updateApprovalButton();
 
         return;
     }
@@ -2508,12 +2507,6 @@ function renderCurrentPage(){
     }
 
 
-    /*
-       A page-level error should not hide the actual page.
-
-       Show it only as additional information.
-    */
-
     if(page.error){
 
         pageReview.style.display =
@@ -2524,6 +2517,9 @@ function renderCurrentPage(){
             "Page information:\n\n" +
             page.error;
     }
+
+
+    updateApprovalButton();
 }
 
 
@@ -2629,7 +2625,6 @@ goButton.addEventListener(
 
         setMessage("");
 
-
         showPage(value);
     }
 );
@@ -2688,15 +2683,6 @@ function startPolling(){
                     await loadJob();
 
 
-                /*
-                   If the document pages now exist, they are
-                   enough to stop polling when the server says
-                   review_error only because intelligence was
-                   empty.
-
-                   The document itself remains available.
-                */
-
                 const availablePages =
                     extractPages(data);
 
@@ -2714,19 +2700,12 @@ function startPolling(){
                     stopPolling();
 
 
-                    /*
-                       If the document was already generated,
-                       clear the false intelligence error.
-                    */
-
                     if(
                         data.status ===
                         "review_error"
                     ){
 
-                        setMessage(
-                            ""
-                        );
+                        setMessage("");
                     }
 
 
@@ -2748,11 +2727,6 @@ function startPolling(){
                     data.status ===
                     "review_error"
                 ){
-
-                    /*
-                       Only display the error when there is
-                       genuinely no document to show.
-                    */
 
                     if(
                         !availablePages.length
@@ -2812,12 +2786,6 @@ function startPolling(){
 
 
             }catch(error){
-
-                /*
-                   A temporary polling error should not
-                   immediately erase an already displayed
-                   document.
-                */
 
                 if(pages.length){
 
@@ -2989,18 +2957,28 @@ approveButton.addEventListener(
     "click",
     async()=>{
 
-        if(busy){
+        /*
+           The browser should never reach this handler while
+           approval is unavailable, but keep the guard here
+           as a second protection.
+        */
+
+        if(!approvalReady()){
+
+            setMessage(
+                "Please wait until the document is ready for approval.",
+                "error"
+            );
+
+
             return;
         }
 
 
-        if(
-            currentStatus !==
-            "review_complete"
-        ){
+        if(!jobId){
 
             setMessage(
-                "The document review is not complete yet.",
+                "The document job could not be identified.",
                 "error"
             );
 
@@ -3234,14 +3212,6 @@ async function start(){
             await loadJob();
 
 
-        /*
-           If actual document pages exist, do not show
-           an intelligence-empty error.
-
-           The generated document is the customer's
-           reviewable result.
-        */
-
         const availablePages =
             extractPages(data);
 
@@ -3266,16 +3236,15 @@ async function start(){
             }
 
 
+            /*
+               Recalculate one final time after loading.
+            */
+
+            updateApprovalButton();
+
             return;
         }
 
-
-        /*
-           No pages yet.
-
-           Continue waiting unless the backend has given
-           a genuine terminal error.
-        */
 
         if(
             currentStatus !==
@@ -3293,11 +3262,6 @@ async function start(){
 
 
     }catch(error){
-
-        /*
-           Only show a fatal page error if there is no
-           document already available.
-        */
 
         if(pages.length){
             return;
@@ -3345,5 +3309,7 @@ function escapeHtml(value){
 
 start();
 
-</script></body>
+</script>
+
+</body>
 </html>
