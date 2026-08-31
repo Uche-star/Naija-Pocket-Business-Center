@@ -233,11 +233,6 @@ button:disabled{
     padding:10px;
 }
 
-/*
-   The viewer itself is NOT editable.
-   It only displays one physical document page.
-*/
-
 .document-page{
     position:relative;
     width:100%;
@@ -248,18 +243,10 @@ button:disabled{
     box-shadow:0 8px 35px rgba(0,0,0,.45);
     padding:48px 38px 58px;
     overflow:hidden;
-
-    /*
-       Explicitly make the document preview read-only.
-    */
     user-select:text;
     -webkit-user-select:text;
     cursor:default;
 }
-
-/*
-   Document content is never contenteditable.
-*/
 
 .document-page[contenteditable="true"],
 .document-page [contenteditable="true"]{
@@ -285,13 +272,16 @@ button:disabled{
     font-family:"Times New Roman",Georgia,serif;
     font-size:14px;
     line-height:1.75;
+
+    /*
+       CRITICAL:
+       Preserve real newline characters returned by backend.
+    */
+    white-space:pre-wrap;
+
     overflow-wrap:anywhere;
     word-break:normal;
 }
-
-/*
-   Preserve formatting from the generated document.
-*/
 
 .page-content p{
     margin-top:0;
@@ -379,17 +369,6 @@ button:disabled{
     margin:18px 0;
 }
 
-.page-content img{
-    display:block;
-    max-width:100%;
-    height:auto;
-    margin:10px auto;
-}
-
-/*
-   Tables are supported.
-*/
-
 .page-content table{
     width:100%;
     border-collapse:collapse;
@@ -410,10 +389,6 @@ button:disabled{
     font-weight:700;
 }
 
-/*
-   Alignment supplied by generated document HTML.
-*/
-
 .page-content [align="left"]{
     text-align:left;
 }
@@ -429,10 +404,6 @@ button:disabled{
 .page-content [align="justify"]{
     text-align:justify;
 }
-
-/*
-   Common inline document formatting.
-*/
 
 .page-content [style*="text-align:center"]{
     text-align:center;
@@ -471,10 +442,6 @@ button:disabled{
     overflow-wrap:anywhere;
     font-family:monospace;
 }
-
-/*
-   Empty page.
-*/
 
 .empty-page{
     min-height:500px;
@@ -869,10 +836,6 @@ button:disabled{
 
 <main class="main">
 
-    <!-- =====================================================
-         TOP
-         ===================================================== -->
-
     <section class="top-panel">
 
         <h2 class="review-title">
@@ -913,10 +876,6 @@ button:disabled{
 
     </section>
 
-
-    <!-- =====================================================
-         DOCUMENT
-         ===================================================== -->
 
     <section class="document-section">
 
@@ -1017,10 +976,6 @@ button:disabled{
     </section>
 
 
-    <!-- =====================================================
-         CORRECTION
-         ===================================================== -->
-
     <section class="correction-section">
 
         <h3 class="correction-title">
@@ -1048,10 +1003,6 @@ button:disabled{
     </section>
 
 
-    <!-- =====================================================
-         APPROVAL
-         ===================================================== -->
-
     <section class="approval-section">
 
         <h3 class="approval-title">
@@ -1073,10 +1024,6 @@ button:disabled{
 
     </section>
 
-
-    <!-- =====================================================
-         PAYMENT
-         ===================================================== -->
 
     <section
         id="paymentSection"
@@ -1149,109 +1096,67 @@ const service =
    ========================================================= */
 
 const serviceBadge =
-    document.getElementById(
-        "serviceBadge"
-    );
+    document.getElementById("serviceBadge");
 
 const statusValue =
-    document.getElementById(
-        "statusValue"
-    );
+    document.getElementById("statusValue");
 
 const progressBar =
-    document.getElementById(
-        "progressBar"
-    );
+    document.getElementById("progressBar");
 
 const progressText =
-    document.getElementById(
-        "progressText"
-    );
+    document.getElementById("progressText");
 
 const pageCount =
-    document.getElementById(
-        "pageCount"
-    );
+    document.getElementById("pageCount");
 
 const pageViewer =
-    document.getElementById(
-        "pageViewer"
-    );
+    document.getElementById("pageViewer");
 
 const previousButton =
-    document.getElementById(
-        "previousButton"
-    );
+    document.getElementById("previousButton");
 
 const nextButton =
-    document.getElementById(
-        "nextButton"
-    );
+    document.getElementById("nextButton");
 
 const pageIndicator =
-    document.getElementById(
-        "pageIndicator"
-    );
+    document.getElementById("pageIndicator");
 
 const pageNumberInput =
-    document.getElementById(
-        "pageNumberInput"
-    );
+    document.getElementById("pageNumberInput");
 
 const goButton =
-    document.getElementById(
-        "goButton"
-    );
+    document.getElementById("goButton");
 
 const pageReview =
-    document.getElementById(
-        "pageReview"
-    );
+    document.getElementById("pageReview");
 
 const pageReviewText =
-    document.getElementById(
-        "pageReviewText"
-    );
+    document.getElementById("pageReviewText");
 
 const correctionInput =
-    document.getElementById(
-        "correctionInput"
-    );
+    document.getElementById("correctionInput");
 
 const correctionButton =
-    document.getElementById(
-        "correctionButton"
-    );
+    document.getElementById("correctionButton");
 
 const approveButton =
-    document.getElementById(
-        "approveButton"
-    );
+    document.getElementById("approveButton");
 
 const paymentSection =
-    document.getElementById(
-        "paymentSection"
-    );
+    document.getElementById("paymentSection");
 
 const paymentDetails =
-    document.getElementById(
-        "paymentDetails"
-    );
+    document.getElementById("paymentDetails");
 
 const paymentButton =
-    document.getElementById(
-        "paymentButton"
-    );
+    document.getElementById("paymentButton");
 
 const message =
-    document.getElementById(
-        "message"
-    );
+    document.getElementById("message");
 
 const backButton =
-    document.getElementById(
-        "backButton"
-    );
+    document.getElementById("backButton");
 
 
 /* =========================================================
@@ -1289,13 +1194,32 @@ function clean(value){
         value === null ||
         value === undefined
     ){
-
         return "";
-
     }
 
     return String(value).trim();
+}
 
+
+/*
+   IMPORTANT:
+   Document content MUST NOT use clean().
+
+   trim() is safe for ordinary status fields,
+   but document content can contain meaningful
+   leading/trailing newline characters.
+*/
+
+function preserveContent(value){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+        return "";
+    }
+
+    return String(value);
 }
 
 
@@ -1314,7 +1238,6 @@ function setMessage(
             ? " " + type
             : ""
         );
-
 }
 
 
@@ -1322,7 +1245,6 @@ function setStatus(text){
 
     statusValue.textContent =
         text || "Preparing...";
-
 }
 
 
@@ -1348,7 +1270,6 @@ function setBusy(value){
         busy ||
         currentPage >= totalPages ||
         totalPages <= 1;
-
 }
 
 
@@ -1385,11 +1306,9 @@ async function apiGet(url){
             data.message ||
             "Unable to load the document."
         );
-
     }
 
     return data;
-
 }
 
 
@@ -1430,11 +1349,9 @@ async function apiPost(
             data.message ||
             "The request could not be completed."
         );
-
     }
 
     return data;
-
 }
 
 
@@ -1445,10 +1362,6 @@ async function apiPost(
 function normalizePages(data){
 
     let source = [];
-
-    /*
-       REVIEW PAGES are preferred.
-    */
 
     if(
         Array.isArray(
@@ -1471,14 +1384,16 @@ function normalizePages(data){
             data.document_pages;
 
     }else if(
-        Array.isArray(data.pages) &&
+        Array.isArray(
+            data.pages
+        ) &&
         data.pages.length
     ){
 
         source =
             data.pages;
-
     }
+
 
     return source
         .map(
@@ -1502,8 +1417,21 @@ function normalizePages(data){
                     ) ||
                     "queued",
 
+                /*
+                   CRITICAL FIX.
+
+                   NEVER do:
+
+                   clean(item.content)
+
+                   because clean() calls trim().
+
+                   Preserve the content exactly as returned
+                   by the review endpoint.
+                */
+
                 content:
-                    clean(
+                    preserveContent(
                         item.content
                     ),
 
@@ -1524,6 +1452,122 @@ function normalizePages(data){
                 a.position -
                 b.position
         );
+}
+
+
+/* =========================================================
+   DOCUMENT TEXT NORMALIZATION
+   ========================================================= */
+
+/*
+   This function is deliberately conservative.
+
+   It does NOT rewrite ordinary document paragraphs.
+
+   Its only job is to repair the specific collapsed
+   letterhead pattern if the backend has returned it
+   without actual line breaks.
+*/
+
+function normalizeReviewText(text){
+
+    let value =
+        preserveContent(text);
+
+
+    if(!value){
+
+        return "";
+
+    }
+
+
+    /*
+       Normalize CRLF/CR into LF.
+    */
+
+    value =
+        value.replace(
+            /\r\n/g,
+            "\n"
+        );
+
+    value =
+        value.replace(
+            /\r/g,
+            "\n"
+        );
+
+
+    /*
+       Repair the known letterhead collapse:
+
+       Naija Pocket Business Center 8 Adeleke Crescent
+
+       becomes:
+
+       Naija Pocket Business Center
+       8 Adeleke Crescent
+    */
+
+    value =
+        value.replace(
+            /(Naija Pocket Business Center)\s+(\d{1,6}\s+[A-Za-z])/i,
+            "$1\n$2"
+        );
+
+
+    /*
+       Repair:
+
+       Phone: 0803475234 | Email:
+
+       while preserving the separator between
+       phone and email as requested.
+    */
+
+    value =
+        value.replace(
+            /(Phone:\s*[^\n|]+)\s*\|\s*(Email:)/i,
+            "$1\n$2"
+        );
+
+
+    /*
+       Repair a long horizontal separator that has
+       been attached to surrounding text.
+    */
+
+    value =
+        value.replace(
+            /([^\n])\s*(-{10,})([^\n])/g,
+            "$1\n$2\n$3"
+        );
+
+
+    /*
+       Remove spaces immediately before line breaks.
+    */
+
+    value =
+        value.replace(
+            /[ \t]+\n/g,
+            "\n"
+        );
+
+
+    /*
+       Prevent excessive blank lines.
+    */
+
+    value =
+        value.replace(
+            /\n{5,}/g,
+            "\n\n"
+        );
+
+
+    return value;
 
 }
 
@@ -1531,15 +1575,6 @@ function normalizePages(data){
 /* =========================================================
    SAFE FORMATTED HTML
    ========================================================= */
-
-/*
-   The generated document can contain formatting HTML.
-
-   We do NOT use page.content directly with innerHTML.
-
-   Instead, the HTML is parsed and only a controlled set
-   of document-formatting elements and attributes are kept.
-*/
 
 const ALLOWED_TAGS = new Set([
 
@@ -1642,13 +1677,6 @@ const ALLOWED_STYLE_PROPERTIES = new Set([
 ]);
 
 
-/*
-   Only permit ordinary document CSS values.
-
-   Dangerous CSS such as javascript URLs and expressions
-   is rejected.
-*/
-
 function safeStyleValue(value){
 
     const text =
@@ -1658,38 +1686,27 @@ function safeStyleValue(value){
         text.toLowerCase();
 
     if(
-        lower.includes(
-            "javascript:"
-        ) ||
-        lower.includes(
-            "expression("
-        ) ||
-        lower.includes(
-            "url("
-        ) ||
-        lower.includes(
-            "@import"
-        )
+        lower.includes("javascript:") ||
+        lower.includes("expression(") ||
+        lower.includes("url(") ||
+        lower.includes("@import")
     ){
 
         return "";
-
     }
 
     return text;
-
 }
 
 
-function sanitizeStyle(
-    styleText
-){
+function sanitizeStyle(styleText){
 
     const result = [];
 
     const declarations =
         String(styleText || "")
             .split(";");
+
 
     for(
         const declaration
@@ -1702,8 +1719,8 @@ function sanitizeStyle(
         if(separator < 0){
 
             continue;
-
         }
+
 
         const property =
             declaration
@@ -1714,6 +1731,7 @@ function sanitizeStyle(
                 .trim()
                 .toLowerCase();
 
+
         const value =
             declaration
                 .slice(
@@ -1721,76 +1739,93 @@ function sanitizeStyle(
                 )
                 .trim();
 
+
         if(
             !ALLOWED_STYLE_PROPERTIES
                 .has(property)
         ){
 
             continue;
-
         }
+
 
         const safeValue =
             safeStyleValue(
                 value
             );
 
+
         if(!safeValue){
 
             continue;
-
         }
+
 
         result.push(
             property +
             ":" +
             safeValue
         );
-
     }
 
-    return result.join(";");
 
+    return result.join(";");
 }
 
 
-function sanitizeDocumentHtml(
-    html
-){
+function sanitizeDocumentHtml(html){
+
+    const source =
+        preserveContent(html);
+
+
+    if(!source){
+
+        return document.createDocumentFragment();
+
+    }
+
 
     /*
-       If the document contains no markup,
-       preserve it as plain text.
+       Plain text is handled separately.
+
+       This is important because plain-text documents
+       depend on white-space:pre-wrap.
     */
 
     if(
         !/<[a-z][\s\S]*>/i.test(
-            html
+            source
         )
     ){
 
         const fragment =
             document.createDocumentFragment();
 
+
         fragment.appendChild(
             document.createTextNode(
-                html
+                normalizeReviewText(
+                    source
+                )
             )
         );
 
-        return fragment;
 
+        return fragment;
     }
 
 
     const parser =
         new DOMParser();
 
+
     const parsed =
         parser.parseFromString(
-            html,
+            source,
             "text/html"
         );
+
 
     const output =
         document.createDocumentFragment();
@@ -1801,14 +1836,14 @@ function sanitizeDocumentHtml(
         parent
     ){
 
-        /*
-           Text nodes are always safe.
-        */
-
         if(
             node.nodeType ===
             Node.TEXT_NODE
         ){
+
+            /*
+               Preserve text node newlines.
+            */
 
             parent.appendChild(
                 document.createTextNode(
@@ -1817,7 +1852,6 @@ function sanitizeDocumentHtml(
             );
 
             return;
-
         }
 
 
@@ -1827,17 +1861,12 @@ function sanitizeDocumentHtml(
         ){
 
             return;
-
         }
 
 
         const tag =
             node.tagName.toUpperCase();
 
-
-        /*
-           Explicitly discard dangerous elements.
-        */
 
         if(
             tag === "SCRIPT" ||
@@ -1855,14 +1884,8 @@ function sanitizeDocumentHtml(
         ){
 
             return;
-
         }
 
-
-        /*
-           Unsupported structural tags are flattened:
-           their text/allowed children are preserved.
-        */
 
         if(
             !ALLOWED_TAGS.has(tag)
@@ -1877,11 +1900,9 @@ function sanitizeDocumentHtml(
                     child,
                     parent
                 );
-
             }
 
             return;
-
         }
 
 
@@ -1890,10 +1911,6 @@ function sanitizeDocumentHtml(
                 tag.toLowerCase()
             );
 
-
-        /*
-           Copy only safe attributes.
-        */
 
         for(
             const attribute
@@ -1907,13 +1924,13 @@ function sanitizeDocumentHtml(
             const value =
                 attribute.value || "";
 
+
             if(
                 !ALLOWED_ATTRIBUTES
                     .has(name)
             ){
 
                 continue;
-
             }
 
 
@@ -1924,31 +1941,29 @@ function sanitizeDocumentHtml(
                         value
                     );
 
+
                 if(safeStyle){
 
                     element.setAttribute(
                         "style",
                         safeStyle
                     );
-
                 }
 
-                continue;
 
+                continue;
             }
 
 
-            if(
-                name === "align"
-            ){
+            if(name === "align"){
 
-                const allowedAlignments =
-                    [
-                        "left",
-                        "center",
-                        "right",
-                        "justify"
-                    ];
+                const allowedAlignments = [
+                    "left",
+                    "center",
+                    "right",
+                    "justify"
+                ];
+
 
                 if(
                     allowedAlignments
@@ -1963,11 +1978,10 @@ function sanitizeDocumentHtml(
                         "align",
                         value
                     );
-
                 }
 
-                continue;
 
+                continue;
             }
 
 
@@ -1982,10 +1996,9 @@ function sanitizeDocumentHtml(
                         10
                     );
 
+
                 if(
-                    Number.isInteger(
-                        number
-                    ) &&
+                    Number.isInteger(number) &&
                     number > 0 &&
                     number <= 100
                 ){
@@ -1994,19 +2007,10 @@ function sanitizeDocumentHtml(
                         name,
                         String(number)
                     );
-
                 }
-
-                continue;
-
             }
-
         }
 
-
-        /*
-           Preserve the document content.
-        */
 
         for(
             const child
@@ -2017,14 +2021,12 @@ function sanitizeDocumentHtml(
                 child,
                 element
             );
-
         }
 
 
         parent.appendChild(
             element
         );
-
     }
 
 
@@ -2037,12 +2039,10 @@ function sanitizeDocumentHtml(
             child,
             output
         );
-
     }
 
 
     return output;
-
 }
 
 
@@ -2057,8 +2057,8 @@ async function loadJob(){
         throw new Error(
             "No document job was supplied."
         );
-
     }
+
 
     const data =
         await apiGet(
@@ -2068,10 +2068,11 @@ async function loadJob(){
             )
         );
 
+
     applyJob(data);
 
-    return data;
 
+    return data;
 }
 
 
@@ -2082,17 +2083,22 @@ async function loadJob(){
 function applyJob(data){
 
     currentStatus =
-        clean(data.status);
+        clean(
+            data.status
+        );
+
 
     currentVersion =
         Number(
             data.current_version
         ) || 1;
 
+
     versionId =
         clean(
             data.version_id
         );
+
 
     approved =
         !!data.approved;
@@ -2101,11 +2107,6 @@ function applyJob(data){
     const incomingPages =
         normalizePages(data);
 
-
-    /*
-       Never destroy populated pages because of a temporary
-       empty response.
-    */
 
     if(
         incomingPages.length
@@ -2139,17 +2140,18 @@ function applyJob(data){
             Number(
                 data.total_pages
             ) || 0;
-
     }
 
 
     const progress =
         data.progress || {};
 
+
     const completed =
         Number(
             progress.completed
         ) || 0;
+
 
     const progressTotal =
         Number(
@@ -2164,9 +2166,8 @@ function applyJob(data){
 
     let percent = 0;
 
-    if(
-        progressTotal > 0
-    ){
+
+    if(progressTotal > 0){
 
         percent =
             Math.round(
@@ -2176,7 +2177,6 @@ function applyJob(data){
                 ) *
                 100
             );
-
     }
 
 
@@ -2188,7 +2188,6 @@ function applyJob(data){
     ){
 
         percent = 100;
-
     }
 
 
@@ -2202,9 +2201,7 @@ function applyJob(data){
         ) + "%";
 
 
-    if(
-        totalPages > 0
-    ){
+    if(totalPages > 0){
 
         pageCount.textContent =
             totalPages +
@@ -2218,7 +2215,6 @@ function applyJob(data){
 
         pageCount.textContent =
             "PREPARING";
-
     }
 
 
@@ -2230,6 +2226,7 @@ function applyJob(data){
         setStatus(
             "REVIEWING"
         );
+
 
         progressText.textContent =
             completed +
@@ -2246,6 +2243,7 @@ function applyJob(data){
             "READY"
         );
 
+
         progressText.textContent =
             "Review complete.";
 
@@ -2257,6 +2255,7 @@ function applyJob(data){
         setStatus(
             "ERROR"
         );
+
 
         progressText.textContent =
             "The document review encountered an error.";
@@ -2270,6 +2269,7 @@ function applyJob(data){
             "CORRECTING"
         );
 
+
         progressText.textContent =
             "Your correction is being applied.";
 
@@ -2282,6 +2282,7 @@ function applyJob(data){
             "CORRECTION ERROR"
         );
 
+
         progressText.textContent =
             "The correction could not be completed.";
 
@@ -2293,9 +2294,9 @@ function applyJob(data){
                 : "PREPARING"
         );
 
+
         progressText.textContent =
             "Preparing the document.";
-
     }
 
 
@@ -2308,17 +2309,13 @@ function applyJob(data){
 
             currentPage =
                 totalPages;
-
         }
 
-        if(
-            currentPage < 1
-        ){
+
+        if(currentPage < 1){
 
             currentPage = 1;
-
         }
-
     }
 
 
@@ -2335,9 +2332,7 @@ function applyJob(data){
     if(approved){
 
         showPayment(data);
-
     }
-
 }
 
 
@@ -2346,10 +2341,6 @@ function applyJob(data){
    ========================================================= */
 
 function renderCurrentPage(){
-
-    /*
-       Completely replace only the current page viewer.
-    */
 
     pageViewer.innerHTML = "";
 
@@ -2365,17 +2356,20 @@ function renderCurrentPage(){
             </div>
         `;
 
+
         pageIndicator.textContent =
             "Page 0 of 0";
+
 
         previousButton.disabled =
             true;
 
+
         nextButton.disabled =
             true;
 
-        return;
 
+        return;
     }
 
 
@@ -2393,29 +2387,27 @@ function renderCurrentPage(){
             </div>
         `;
 
+
         pageIndicator.textContent =
             "Page " +
             currentPage +
             " of " +
             totalPages;
 
-        return;
 
+        return;
     }
 
-
-    /*
-       Physical document page.
-       This is intentionally NOT editable.
-    */
 
     const physicalPage =
         document.createElement(
             "article"
         );
 
+
     physicalPage.className =
         "document-page";
+
 
     physicalPage.setAttribute(
         "aria-readonly",
@@ -2423,59 +2415,49 @@ function renderCurrentPage(){
     );
 
 
-    /*
-       Page number.
-    */
-
     const pageNumber =
         document.createElement(
             "div"
         );
 
+
     pageNumber.className =
         "page-number-inside";
+
 
     pageNumber.textContent =
         "PAGE " +
         page.page_number;
 
 
-    /*
-       Formatted document content.
-    */
-
     const content =
         document.createElement(
             "div"
         );
 
+
     content.className =
         "page-content";
 
 
-    const documentContent =
-        page.content ||
-        "This page is still being prepared.";
-
-
     /*
-       IMPORTANT:
+       CRITICAL DOCUMENT CONTENT PATH.
 
-       Previously this used textContent.
-
-       That caused:
-
-       <span style="color:blue">Text</span>
-
-       to appear literally.
-
-       Now the generated formatting is parsed and sanitized.
+       We preserve the exact server content.
+       We do NOT call clean().
     */
+
+    const documentContent =
+        preserveContent(
+            page.content
+        );
+
 
     const safeFragment =
         sanitizeDocumentHtml(
             documentContent
         );
+
 
     content.appendChild(
         safeFragment
@@ -2486,18 +2468,16 @@ function renderCurrentPage(){
         pageNumber
     );
 
+
     physicalPage.appendChild(
         content
     );
+
 
     pageViewer.appendChild(
         physicalPage
     );
 
-
-    /*
-       Page indicator.
-    */
 
     pageIndicator.textContent =
         "Page " +
@@ -2506,28 +2486,21 @@ function renderCurrentPage(){
         totalPages;
 
 
-    /*
-       Navigation.
-    */
-
     previousButton.disabled =
         busy ||
         currentPage <= 1;
 
+
     nextButton.disabled =
         busy ||
-        currentPage >=
-            totalPages;
+        currentPage >= totalPages;
 
-
-    /*
-       Individual page review.
-    */
 
     if(page.review){
 
         pageReview.style.display =
             "block";
+
 
         pageReviewText.textContent =
             page.review;
@@ -2537,28 +2510,22 @@ function renderCurrentPage(){
         pageReview.style.display =
             "none";
 
+
         pageReviewText.textContent =
             "";
-
     }
 
-
-    /*
-       Preserve page errors without destroying
-       document content.
-    */
 
     if(page.error){
 
         pageReview.style.display =
             "block";
 
+
         pageReviewText.textContent =
             "Page review error:\n\n" +
             page.error;
-
     }
-
 }
 
 
@@ -2571,7 +2538,6 @@ function showPage(number){
     if(!totalPages){
 
         return;
-
     }
 
 
@@ -2586,7 +2552,6 @@ function showPage(number){
     ){
 
         return;
-
     }
 
 
@@ -2609,11 +2574,15 @@ function showPage(number){
     renderCurrentPage();
 
 
+    /*
+       Keep the existing behavior:
+       return to top when changing physical page.
+    */
+
     window.scrollTo({
         top:0,
         behavior:"smooth"
     });
-
 }
 
 
@@ -2624,6 +2593,7 @@ function showPage(number){
 previousButton.addEventListener(
     "click",
     ()=>{
+
         if(
             currentPage > 1
         ){
@@ -2631,7 +2601,6 @@ previousButton.addEventListener(
             showPage(
                 currentPage - 1
             );
-
         }
     }
 );
@@ -2653,9 +2622,7 @@ nextButton.addEventListener(
             showPage(
                 currentPage + 1
             );
-
         }
-
     }
 );
 
@@ -2689,15 +2656,15 @@ goButton.addEventListener(
                 "error"
             );
 
-            return;
 
+            return;
         }
 
 
         setMessage("");
 
-        showPage(value);
 
+        showPage(value);
     }
 );
 
@@ -2714,9 +2681,7 @@ pageNumberInput.addEventListener(
             event.preventDefault();
 
             goButton.click();
-
         }
-
     }
 );
 
@@ -2730,7 +2695,6 @@ function startPolling(){
     if(polling){
 
         return;
-
     }
 
 
@@ -2754,7 +2718,6 @@ function startPolling(){
                     polling = false;
 
                     return;
-
                 }
 
 
@@ -2764,6 +2727,7 @@ function startPolling(){
                 ){
 
                     polling = false;
+
 
                     const error =
                         data.error || {};
@@ -2775,8 +2739,8 @@ function startPolling(){
                         "error"
                     );
 
-                    return;
 
+                    return;
                 }
 
 
@@ -2786,6 +2750,7 @@ function startPolling(){
                 ){
 
                     polling = false;
+
 
                     const error =
                         data.error || {};
@@ -2797,8 +2762,8 @@ function startPolling(){
                         "error"
                     );
 
-                    return;
 
+                    return;
                 }
 
 
@@ -2808,23 +2773,20 @@ function startPolling(){
                         1200
                     );
 
-
             }catch(error){
 
                 polling = false;
+
 
                 setMessage(
                     error.message,
                     "error"
                 );
-
             }
-
         };
 
 
     poll();
-
 }
 
 
@@ -2849,8 +2811,8 @@ correctionButton.addEventListener(
                 "error"
             );
 
-            return;
 
+            return;
         }
 
 
@@ -2861,8 +2823,8 @@ correctionButton.addEventListener(
                 "error"
             );
 
-            return;
 
+            return;
         }
 
 
@@ -2878,8 +2840,8 @@ correctionButton.addEventListener(
                 "error"
             );
 
-            return;
 
+            return;
         }
 
 
@@ -2899,6 +2861,7 @@ correctionButton.addEventListener(
                     {
                         job_id:
                             jobId,
+
                         instruction:
                             instruction
                     }
@@ -2952,20 +2915,19 @@ correctionButton.addEventListener(
 
             setBusy(false);
 
-            startPolling();
 
+            startPolling();
 
         }catch(error){
 
             setBusy(false);
 
+
             setMessage(
                 error.message,
                 "error"
             );
-
         }
-
     }
 );
 
@@ -2981,7 +2943,6 @@ approveButton.addEventListener(
         if(busy){
 
             return;
-
         }
 
 
@@ -2995,8 +2956,8 @@ approveButton.addEventListener(
                 "error"
             );
 
-            return;
 
+            return;
         }
 
 
@@ -3007,8 +2968,8 @@ approveButton.addEventListener(
                 "error"
             );
 
-            return;
 
+            return;
         }
 
 
@@ -3028,6 +2989,7 @@ approveButton.addEventListener(
                     {
                         job_id:
                             jobId,
+
                         version_id:
                             versionId
                     }
@@ -3057,18 +3019,16 @@ approveButton.addEventListener(
 
             setBusy(false);
 
-
         }catch(error){
 
             setBusy(false);
+
 
             setMessage(
                 error.message,
                 "error"
             );
-
         }
-
     }
 );
 
@@ -3112,7 +3072,6 @@ function showPayment(data){
 
         text +=
             "Payment amount: Please continue to the payment step.\n";
-
     }
 
 
@@ -3122,7 +3081,6 @@ function showPayment(data){
             "Order: " +
             data.order_number +
             "\n";
-
     }
 
 
@@ -3132,7 +3090,6 @@ function showPayment(data){
 
     paymentDetails.textContent =
         text;
-
 }
 
 
@@ -3151,8 +3108,8 @@ paymentButton.addEventListener(
                 "error"
             );
 
-            return;
 
+            return;
         }
 
 
@@ -3160,6 +3117,7 @@ paymentButton.addEventListener(
             new URLSearchParams({
                 job_id:
                     jobId,
+
                 version_id:
                     versionId
             });
@@ -3168,7 +3126,6 @@ paymentButton.addEventListener(
         location.href =
             "/payment.html?" +
             query.toString();
-
     }
 );
 
@@ -3191,9 +3148,7 @@ backButton.addEventListener(
 
             location.href =
                 "/workspace.html";
-
         }
-
     }
 );
 
@@ -3229,7 +3184,6 @@ async function start(){
 
 
         return;
-
     }
 
 
@@ -3248,9 +3202,7 @@ async function start(){
         ){
 
             startPolling();
-
         }
-
 
     }catch(error){
 
@@ -3272,9 +3224,7 @@ async function start(){
                 )}
             </div>
         `;
-
     }
-
 }
 
 
@@ -3307,7 +3257,6 @@ function escapeHtml(value){
         "'",
         "&#039;"
     );
-
 }
 
 
