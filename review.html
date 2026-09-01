@@ -1,8 +1,11 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Review Your Complete Service — Naija Pocket Business Center</title><style>
+<title>Review Your Complete Service — Naija Pocket Business Center</title>
+
+<style>
 :root{
     --black:#050505;
     --panel:#111;
@@ -32,7 +35,6 @@ html,body{
 body{overflow:hidden;}
 
 button,textarea,input{font:inherit;}
-
 button{cursor:pointer;}
 
 button:disabled{
@@ -369,7 +371,6 @@ button:disabled{
 }
 
 .nav-button.next{background:#252525;}
-
 .nav-button:active{transform:scale(.985);}
 
 .page-indicator{
@@ -614,13 +615,10 @@ button:disabled{
     }
 
     .correction-box{grid-template-columns:1fr;}
-
     .correction-button{width:100%;}
 
     .action-area{padding:7px 8px 8px;}
-
     .bottom{padding:5px 0 6px;}
-
     .back-button{min-height:36px;}
 }
 
@@ -638,16 +636,27 @@ button:disabled{
         line-height:1.8;
     }
 }
-</style></head><body><header class="header">
-<div class="header-inner"><div class="brand">
-    <h1 class="brand-title">Naija Pocket Business Center</h1>
-    <div class="brand-subtitle">Your Business Center</div>
-</div>
+</style>
+</head>
 
-<div id="serviceBadge" class="service-badge">Service</div>
+<body>
 
+<header class="header">
+<div class="header-inner">
+    <div class="brand">
+        <h1 class="brand-title">Naija Pocket Business Center</h1>
+        <div class="brand-subtitle">Your Business Center</div>
+    </div>
+
+    <div id="serviceBadge" class="service-badge">Service</div>
 </div>
-</header><main class="main"><section class="top-panel"><h2 class="review-title">Review Your Complete Service</h2>
+</header>
+
+<main class="main">
+
+<section class="top-panel">
+
+<h2 class="review-title">Review Your Complete Service</h2>
 
 <p class="review-subtitle">
     Go through your complete document. Use Previous Page
@@ -667,7 +676,11 @@ button:disabled{
     Preparing the document...
 </div>
 
-</section><section class="review-card"><div class="document-card-header">
+</section>
+
+<section class="review-card">
+
+<div class="document-card-header">
 
     <div class="document-heading">
         <h3>Your Complete Document</h3>
@@ -787,13 +800,21 @@ button:disabled{
 
 </div>
 
-</section><div id="message" class="message"></div><div class="bottom">
+</section>
+
+<div id="message" class="message"></div>
+
+<div class="bottom">
     <button id="backButton"
             class="back-button"
             type="button">
         ← Back
     </button>
-</div></main><script>
+</div>
+
+</main>
+
+<script>
 "use strict";
 
 const API_BASE = "";
@@ -878,14 +899,24 @@ const backButton =
 let pages = [];
 let currentPage = 1;
 let totalPages = 0;
+
 let currentVersion = 1;
 let versionId = "";
+
 let currentStatus = "";
+let reviewFinished = false;
+
 let approved = false;
 let polling = false;
 let pollTimer = null;
 let busy = false;
 
+
+/*
+=========================================================
+BASIC HELPERS
+=========================================================
+*/
 
 function clean(value){
     if(value === null || value === undefined){
@@ -898,38 +929,47 @@ function clean(value){
 
 function setMessage(text,type=""){
     message.textContent = text || "";
-    message.className = "message" + (type ? " " + type : "");
+    message.className =
+        "message" + (type ? " " + type : "");
 }
 
 
 function setStatus(text){
-    statusValue.textContent = text || "Preparing...";
+    statusValue.textContent =
+        text || "Preparing...";
 }
 
-
-/*
-=========================================================
-STATUS
-=========================================================
-*/
 
 function normalizedStatus(status){
     return clean(status).toLowerCase();
 }
 
 
-function isReadyStatus(status){
+/*
+=========================================================
+BACKEND REVIEW STATE
 
-    return [
-        "ready",
-        "review_complete",
-        "reviewed",
-        "complete",
-        "completed",
-        "document_ready",
-        "review_ready"
-    ].includes(
-        normalizedStatus(status)
+The backend marks the job:
+
+    status = "review_complete"
+    review_finished = true
+
+Only after that can /api/approve accept the job.
+=========================================================
+*/
+
+function isReviewComplete(data){
+
+    if(!data){
+        return false;
+    }
+
+    const state =
+        normalizedStatus(data.status);
+
+    return (
+        state === "review_complete" ||
+        data.review_finished === true
     );
 }
 
@@ -938,13 +978,10 @@ function isReadyStatus(status){
 =========================================================
 APPROVAL READINESS
 
-IMPORTANT:
-Approval is NOT blocked because versionId is empty.
+The button is based on the actual completed review state.
 
-The document itself is the primary requirement.
-If the backend provides version_id, we send it.
-If it does not, approval still goes to /api/approve
-with job_id only.
+The version_id is NOT used to disable the button because
+the latest version is fetched again when approval is pressed.
 =========================================================
 */
 
@@ -955,7 +992,7 @@ function approvalReady(){
         !approved &&
         pages.length > 0 &&
         totalPages > 0 &&
-        isReadyStatus(currentStatus)
+        reviewFinished
     );
 }
 
@@ -971,7 +1008,8 @@ function setBusy(value){
 
     busy = !!value;
 
-    correctionButton.disabled = busy;
+    correctionButton.disabled =
+        busy;
 
     previousButton.disabled =
         busy ||
@@ -1073,20 +1111,24 @@ function normalizePages(data){
         Array.isArray(data.review_pages) &&
         data.review_pages.length
     ){
+
         source = data.review_pages;
 
     }else if(
         Array.isArray(data.document_pages) &&
         data.document_pages.length
     ){
+
         source = data.document_pages;
 
     }else if(
         Array.isArray(data.pages) &&
         data.pages.length
     ){
+
         source = data.pages;
     }
+
 
     return source
         .map((item,index)=>({
@@ -1134,12 +1176,14 @@ function extractPages(data){
         return direct;
     }
 
+
     const candidates = [
         data.document,
         data.result,
         data.review,
         data.output
     ];
+
 
     for(const candidate of candidates){
 
@@ -1157,29 +1201,14 @@ function extractPages(data){
         }
     }
 
+
     return [];
 }
 
 
 /*
 =========================================================
-REMOVE MARKDOWN MARKERS
-
-This is the specific fix for:
-
-### Abstract
-### 1. Introduction
-## 2. Literature Review
-# Title
-
-The visible review page now shows:
-
-Abstract
-1. Introduction
-2. Literature Review
-Title
-
-without the Markdown ### / ## / # markers.
+TEXT NORMALIZATION
 =========================================================
 */
 
@@ -1193,16 +1222,12 @@ function normalizeReviewText(value){
             : value
         );
 
+
     text =
         text.replace(/\r\n/g,"\n")
             .replace(/\r/g,"\n")
             .replace(/\u00A0/g," ");
 
-
-    /*
-       Remove Markdown heading markers only when they
-       occur at the beginning of a line.
-    */
 
     text =
         text.replace(
@@ -1210,10 +1235,6 @@ function normalizeReviewText(value){
             ""
         );
 
-
-    /*
-       Remove Markdown horizontal separators.
-    */
 
     text =
         text.replace(
@@ -1228,10 +1249,6 @@ function normalizeReviewText(value){
             "\n"
         );
 
-
-    /*
-       Clean common compressed separators.
-    */
 
     text =
         text.replace(
@@ -1367,6 +1384,7 @@ function sanitizeStyle(styleText){
     const declarations =
         String(styleText || "").split(";");
 
+
     for(const declaration of declarations){
 
         const separator =
@@ -1375,6 +1393,7 @@ function sanitizeStyle(styleText){
         if(separator < 0){
             continue;
         }
+
 
         const property =
             declaration
@@ -1387,23 +1406,28 @@ function sanitizeStyle(styleText){
                 .slice(separator + 1)
                 .trim();
 
+
         if(
             !ALLOWED_STYLE_PROPERTIES.has(property)
         ){
             continue;
         }
 
+
         const safeValue =
             safeStyleValue(value);
+
 
         if(!safeValue){
             continue;
         }
 
+
         result.push(
             property + ":" + safeValue
         );
     }
+
 
     return result.join(";");
 }
@@ -1411,7 +1435,7 @@ function sanitizeStyle(styleText){
 
 /*
 =========================================================
-PLAIN TEXT
+PLAIN TEXT RENDERING
 =========================================================
 */
 
@@ -1425,6 +1449,7 @@ function renderPlainDocumentText(text){
 
     const lines =
         normalized.split("\n");
+
 
     lines.forEach((line,index)=>{
 
@@ -1451,6 +1476,7 @@ function renderPlainDocumentText(text){
                 return;
             }
 
+
             if(
                 part.startsWith("**") &&
                 part.endsWith("**")
@@ -1462,7 +1488,9 @@ function renderPlainDocumentText(text){
                 strong.textContent =
                     part.slice(2,-2);
 
-                fragment.appendChild(strong);
+                fragment.appendChild(
+                    strong
+                );
 
             }else{
 
@@ -1489,6 +1517,7 @@ function renderPlainDocumentText(text){
 
     });
 
+
     return fragment;
 }
 
@@ -1510,12 +1539,6 @@ function sanitizeDocumentHtml(html){
         );
 
 
-    /*
-       Plain text is normalized here first.
-       This guarantees ### is removed even when the backend
-       returns Markdown/plain text instead of HTML.
-    */
-
     if(
         !/<[a-z][\s\S]*>/i.test(source)
     ){
@@ -1526,11 +1549,13 @@ function sanitizeDocumentHtml(html){
     const parser =
         new DOMParser();
 
+
     const parsed =
         parser.parseFromString(
             source,
             "text/html"
         );
+
 
     const output =
         document.createDocumentFragment();
@@ -1542,17 +1567,11 @@ function sanitizeDocumentHtml(html){
             node.nodeType === Node.TEXT_NODE
         ){
 
-            /*
-               Text inside HTML is also passed through the
-               Markdown heading cleanup.
-            */
-
-            const text =
-                node.nodeValue || "";
-
             parent.appendChild(
                 document.createTextNode(
-                    normalizeReviewText(text)
+                    normalizeReviewText(
+                        node.nodeValue || ""
+                    )
                 )
             );
 
@@ -1651,8 +1670,10 @@ function sanitizeDocumentHtml(html){
                     "justify"
                 ];
 
+
                 const alignment =
                     value.toLowerCase().trim();
+
 
                 if(
                     allowed.includes(alignment)
@@ -1675,6 +1696,7 @@ function sanitizeDocumentHtml(html){
 
                 const number =
                     parseInt(value,10);
+
 
                 if(
                     Number.isInteger(number) &&
@@ -1729,9 +1751,11 @@ function getServerError(data){
         return "";
     }
 
+
     if(typeof data.error === "string"){
         return clean(data.error);
     }
+
 
     if(
         data.error &&
@@ -1744,6 +1768,7 @@ function getServerError(data){
             data.error.detail
         );
     }
+
 
     return clean(
         data.error_message ||
@@ -1788,8 +1813,10 @@ async function loadJob(){
 
 
     if(
-        normalizedStatus(data.status) === "review_error" ||
-        normalizedStatus(data.status) === "error" ||
+        normalizedStatus(data.status) ===
+            "review_error" ||
+        normalizedStatus(data.status) ===
+            "error" ||
         data.success === false
     ){
 
@@ -1815,8 +1842,14 @@ function applyJob(data){
     currentStatus =
         clean(data.status);
 
+
+    reviewFinished =
+        isReviewComplete(data);
+
+
     const incomingPages =
         extractPages(data);
+
 
     if(incomingPages.length){
 
@@ -1838,8 +1871,8 @@ function applyJob(data){
 
 
     /*
-       Version ID is OPTIONAL.
-       Never make approval readiness depend on it.
+       IMPORTANT:
+       Always preserve the backend's actual version_id.
     */
 
     versionId =
@@ -1853,14 +1886,17 @@ function applyJob(data){
     const progress =
         data.progress || {};
 
+
     const completed =
         Number(progress.completed) || 0;
+
 
     const progressTotal =
         Number(progress.total) ||
         totalPages ||
         Number(data.total_pages) ||
         0;
+
 
     let percent = 0;
 
@@ -1874,10 +1910,7 @@ function applyJob(data){
     }
 
 
-    if(
-        isReadyStatus(currentStatus) &&
-        totalPages > 0
-    ){
+    if(reviewFinished && totalPages > 0){
         percent = 100;
     }
 
@@ -1910,7 +1943,14 @@ function applyJob(data){
         normalizedStatus(currentStatus);
 
 
-    if(state === "reviewing"){
+    if(reviewFinished){
+
+        setStatus("READY");
+
+        progressText.textContent =
+            "Your document is ready for approval.";
+
+    }else if(state === "reviewing"){
 
         setStatus("REVIEWING");
 
@@ -1919,13 +1959,6 @@ function applyJob(data){
             " of " +
             progressTotal +
             " pages reviewed.";
-
-    }else if(isReadyStatus(currentStatus)){
-
-        setStatus("READY");
-
-        progressText.textContent =
-            "Your document is ready for review.";
 
     }else if(state === "review_error"){
 
@@ -2014,11 +2047,14 @@ function renderCurrentPage(){
             </div>
         `;
 
+
         pageIndicator.textContent =
             "Page 0 of 0";
 
+
         previousButton.disabled = true;
         nextButton.disabled = true;
+
 
         updateApprovalButton();
 
@@ -2038,11 +2074,13 @@ function renderCurrentPage(){
             </div>
         `;
 
+
         pageIndicator.textContent =
             "Page " +
             currentPage +
             " of " +
             totalPages;
+
 
         updateApprovalButton();
 
@@ -2053,8 +2091,10 @@ function renderCurrentPage(){
     const physicalPage =
         document.createElement("article");
 
+
     physicalPage.className =
         "document-page";
+
 
     physicalPage.setAttribute(
         "aria-readonly",
@@ -2065,8 +2105,10 @@ function renderCurrentPage(){
     const pageNumber =
         document.createElement("div");
 
+
     pageNumber.className =
         "page-number-inside";
+
 
     pageNumber.textContent =
         "PAGE " +
@@ -2075,6 +2117,7 @@ function renderCurrentPage(){
 
     const content =
         document.createElement("div");
+
 
     content.className =
         "page-content";
@@ -2100,9 +2143,11 @@ function renderCurrentPage(){
         pageNumber
     );
 
+
     physicalPage.appendChild(
         content
     );
+
 
     pageViewer.appendChild(
         physicalPage
@@ -2132,7 +2177,9 @@ function renderCurrentPage(){
             "block";
 
         pageReviewText.textContent =
-            normalizeReviewText(page.review);
+            normalizeReviewText(
+                page.review
+            );
 
     }else{
 
@@ -2151,7 +2198,9 @@ function renderCurrentPage(){
 
         pageReviewText.textContent =
             "Page information:\n\n" +
-            normalizeReviewText(page.error);
+            normalizeReviewText(
+                page.error
+            );
     }
 
 
@@ -2281,6 +2330,7 @@ function stopPolling(){
 
     polling = false;
 
+
     if(pollTimer){
 
         clearTimeout(pollTimer);
@@ -2309,13 +2359,9 @@ function startPolling(){
                     await loadJob();
 
 
-                const availablePages =
-                    extractPages(data);
-
-
                 if(
-                    availablePages.length &&
-                    isReadyStatus(data.status)
+                    isReviewComplete(data) &&
+                    extractPages(data).length
                 ){
 
                     stopPolling();
@@ -2333,20 +2379,13 @@ function startPolling(){
                     "review_error"
                 ){
 
-                    if(!availablePages.length){
-
-                        stopPolling();
-
-                        setMessage(
-                            getServerError(data) ||
-                            "The document review failed.",
-                            "error"
-                        );
-
-                        return;
-                    }
-
                     stopPolling();
+
+                    setMessage(
+                        getServerError(data) ||
+                        "The document review failed.",
+                        "error"
+                    );
 
                     return;
                 }
@@ -2384,7 +2423,9 @@ function startPolling(){
                     return;
                 }
 
+
                 stopPolling();
+
 
                 setMessage(
                     error.message,
@@ -2435,8 +2476,10 @@ correctionButton.addEventListener(
 
 
         if(
-            normalizedStatus(currentStatus) === "reviewing" ||
-            normalizedStatus(currentStatus) === "correcting"
+            normalizedStatus(currentStatus) ===
+                "reviewing" ||
+            normalizedStatus(currentStatus) ===
+                "correcting"
         ){
 
             setMessage(
@@ -2451,6 +2494,7 @@ correctionButton.addEventListener(
         try{
 
             setBusy(true);
+
 
             setMessage(
                 "Applying your correction..."
@@ -2475,15 +2519,12 @@ correctionButton.addEventListener(
                 currentVersion + 1;
 
 
-            /*
-               version_id is allowed to be empty.
-            */
-
             versionId =
                 clean(data.version_id);
 
 
             approved = false;
+            reviewFinished = false;
 
 
             paymentSection.classList.remove(
@@ -2530,18 +2571,28 @@ correctionButton.addEventListener(
 =========================================================
 APPROVAL
 
-CRITICAL FIX:
+IMPORTANT FIX
 
-OLD:
-    approvalReady() required versionId.
+The backend contract is:
 
-NEW:
-    approvalReady() only requires:
-    - document pages
-    - total pages
-    - READY state
+POST /api/approve
 
-The request sends version_id only when one exists.
+JSON:
+{
+    "job_id": "...",
+    "version_id": "..."
+}
+
+The backend also requires:
+status == "review_complete"
+
+Therefore, when the customer taps Approve:
+
+1. Fetch the latest /api/review state.
+2. Take the backend's CURRENT version_id.
+3. Confirm the review is actually complete.
+4. Send both job_id and version_id.
+5. Only then show payment.
 =========================================================
 */
 
@@ -2549,13 +2600,7 @@ approveButton.addEventListener(
     "click",
     async()=>{
 
-        if(!approvalReady()){
-
-            setMessage(
-                "Please wait until the document is ready for approval.",
-                "error"
-            );
-
+        if(busy){
             return;
         }
 
@@ -2575,41 +2620,143 @@ approveButton.addEventListener(
 
             setBusy(true);
 
+
+            setMessage(
+                "Checking the latest document status..."
+            );
+
+
+            /*
+               DO NOT trust an old version_id or old status.
+
+               Get the current backend state immediately before
+               approval.
+            */
+
+            const latest =
+                await apiGet(
+                    "/api/review?job_id=" +
+                    encodeURIComponent(jobId)
+                );
+
+
+            applyJob(latest);
+
+
+            const latestPages =
+                extractPages(latest);
+
+
+            const latestVersionId =
+                clean(latest.version_id);
+
+
+            const latestStatus =
+                normalizedStatus(
+                    latest.status
+                );
+
+
+            /*
+               The backend specifically requires
+               review_complete.
+            */
+
+            if(
+                latestStatus !==
+                    "review_complete"
+            ){
+
+                setBusy(false);
+
+                setMessage(
+                    "The document review is not complete yet. Please wait a moment and try again.",
+                    "error"
+                );
+
+
+                if(!polling){
+                    startPolling();
+                }
+
+
+                return;
+            }
+
+
+            if(!latestPages.length){
+
+                setBusy(false);
+
+                setMessage(
+                    "The complete document is not available yet.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if(!latestVersionId){
+
+                setBusy(false);
+
+                setMessage(
+                    "The current document version could not be identified. Please refresh the review and try again.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            /*
+               Store the exact backend version.
+            */
+
+            versionId =
+                latestVersionId;
+
+
+            currentVersion =
+                Number(
+                    latest.current_version
+                ) || currentVersion;
+
+
             setMessage(
                 "Approving your document..."
             );
 
 
             /*
-               Do NOT manufacture a version ID.
-
-               If the backend supplied one, preserve it.
-               If there is none, send job_id only.
+               CRITICAL:
+               Send the exact version_id required by
+               the backend Approval model.
             */
-
-            const approvalPayload = {
-                job_id:jobId
-            };
-
-
-            if(versionId){
-
-                approvalPayload.version_id =
-                    versionId;
-            }
-
 
             const data =
                 await apiPost(
                     "/api/approve",
-                    approvalPayload
+                    {
+                        job_id:jobId,
+                        version_id:versionId
+                    }
                 );
 
 
-            approved = true;
+            if(!data.success){
 
-            currentStatus =
-                "approved";
+                throw new Error(
+                    getServerError(data) ||
+                    "Approval could not be completed."
+                );
+            }
+
+
+            approved = true;
+            currentStatus = "approved";
+            reviewFinished = true;
 
 
             setStatus("APPROVED");
@@ -2630,6 +2777,7 @@ approveButton.addEventListener(
         }catch(error){
 
             setBusy(false);
+
 
             setMessage(
                 error.message,
@@ -2716,10 +2864,6 @@ paymentButton.addEventListener(
                 job_id:jobId
             });
 
-
-        /*
-           version_id is optional here too.
-        */
 
         if(versionId){
 
@@ -2810,7 +2954,7 @@ async function start(){
 
 
             if(
-                isReadyStatus(data.status)
+                isReviewComplete(data)
             ){
 
                 stopPolling();
@@ -2828,12 +2972,12 @@ async function start(){
 
 
         if(
-            !isReadyStatus(currentStatus) &&
-            normalizedStatus(currentStatus) !==
+            !isReviewComplete(data) &&
+            normalizedStatus(data.status) !==
                 "review_error" &&
-            normalizedStatus(currentStatus) !==
+            normalizedStatus(data.status) !==
                 "approved" &&
-            normalizedStatus(currentStatus) !==
+            normalizedStatus(data.status) !==
                 "correction_error"
         ){
 
@@ -2879,5 +3023,7 @@ function escapeHtml(value){
 
 start();
 
-</script></body>
+</script>
+
+</body>
 </html>
