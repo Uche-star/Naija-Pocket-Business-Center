@@ -1,10 +1,7 @@
 <!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    ><title>Naija Pocket Business Center</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><title>Naija Pocket Business Center</title>
 
 <style>
     * {
@@ -44,10 +41,6 @@
 
         overflow: hidden;
     }
-
-    /* =========================================================
-       WELCOME SECTION
-       ========================================================= */
 
     .welcome-half {
         position: relative;
@@ -313,6 +306,7 @@
     }
 
     @keyframes documentPeopleMove {
+
         0% {
             transform:
                 translateX(100%);
@@ -323,10 +317,6 @@
                 translateX(-100%);
         }
     }
-
-    /* =========================================================
-       SERVICES SECTION
-       ========================================================= */
 
     .services-half {
         width: 100%;
@@ -398,10 +388,6 @@
             0;
     }
 
-    /* =========================================================
-       SERVICE BUTTONS
-       ========================================================= */
-
     .service-button {
         position: relative;
 
@@ -463,7 +449,6 @@
 
         left: 18%;
         right: 18%;
-
         bottom: 2px;
 
         height: 1px;
@@ -496,28 +481,22 @@
         opacity: 0.45;
     }
 
-    /* =========================================================
-       LUXURY BRAND STATEMENT
-       LAST ROW — CENTER
-       ========================================================= */
+    /*
+     * FINAL ROW — LUXURY BRAND STATEMENT
+     */
 
     .luxury-tagline {
-        grid-column: 1 / 4;
+        grid-column: 1 / -1;
         grid-row: 10;
 
+        position: relative;
+
         width: 100%;
-        height: 100%;
-
-        display: flex;
-
-        align-items: center;
-        justify-content: center;
-
-        text-align: center;
+        min-width: 0;
 
         padding:
             2px
-            8px;
+            6px;
 
         color: #D4AF37;
 
@@ -527,52 +506,85 @@
             serif;
 
         font-size:
-            clamp(13px, 3.2vw, 21px);
+            clamp(9px, 2.4vw, 17px);
 
         font-weight: 700;
 
         line-height: 1.05;
 
         letter-spacing:
-            1.5px;
+            clamp(0.4px, 0.18vw, 1.5px);
 
-        text-transform: uppercase;
+        text-align: center;
 
-        text-shadow:
-            0 1px 10px
-            rgba(212, 175, 55, 0.20);
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
 
         white-space: nowrap;
 
         overflow: hidden;
+
+        text-transform: uppercase;
+
+        text-shadow:
+            0 1px 8px
+            rgba(212, 175, 55, 0.18);
     }
 
-    .luxury-tagline .tagline-main {
-        color: #1FA463;
+    .luxury-tagline::before,
+    .luxury-tagline::after {
+        content: "";
+
+        height: 1px;
+
+        flex: 1 1 auto;
+
+        min-width: 8px;
+
+        background:
+            linear-gradient(
+                to right,
+                transparent,
+                #D4AF37
+            );
+
+        opacity: 0.75;
+    }
+
+    .luxury-tagline::after {
+        background:
+            linear-gradient(
+                to left,
+                transparent,
+                #D4AF37
+            );
+    }
+
+    .luxury-tagline .brand-signature {
+        flex: 0 1 auto;
+
+        min-width: 0;
+
+        padding:
+            0
+            8px;
+    }
+
+    .luxury-tagline .brand-main {
+        font-weight: 800;
 
         letter-spacing:
-            1.3px;
+            clamp(0.5px, 0.2vw, 1.8px);
     }
 
-    .luxury-tagline .tagline-separator {
-        color: #D4AF37;
-
-        margin:
-            0 7px;
-    }
-
-    .luxury-tagline .tagline-next {
-        color: #FFFFFF;
-
-        font-style: italic;
+    .luxury-tagline .brand-sub {
+        font-weight: 400;
 
         letter-spacing:
-            1.1px;
+            clamp(0.4px, 0.16vw, 1.3px);
     }
-
-    /* =========================================================
-       MOBILE
-       ========================================================= */
 
     @media (max-width: 430px) {
 
@@ -674,26 +686,23 @@
         }
 
         .luxury-tagline {
+            padding:
+                2px
+                2px;
+
             font-size:
-                10.5px;
+                8.5px;
 
             letter-spacing:
-                0.8px;
-
-            padding:
-                1px
-                3px;
+                0.2px;
         }
 
-        .luxury-tagline .tagline-separator {
-            margin:
-                0 4px;
+        .luxury-tagline .brand-signature {
+            padding:
+                0
+                4px;
         }
     }
-
-    /* =========================================================
-       VERY SMALL PHONES
-       ========================================================= */
 
     @media (max-width: 360px) {
 
@@ -753,21 +762,18 @@
 
         .luxury-tagline {
             font-size:
-                8.5px;
+                7px;
 
             letter-spacing:
-                0.45px;
+                0.05px;
         }
 
-        .luxury-tagline .tagline-separator {
-            margin:
-                0 3px;
+        .luxury-tagline .brand-signature {
+            padding:
+                0
+                2px;
         }
     }
-
-    /* =========================================================
-       DESKTOP / TABLET
-       ========================================================= */
 
     @media (min-width: 700px) {
 
@@ -807,19 +813,12 @@
 
         .luxury-tagline {
             font-size:
-                clamp(16px, 2.3vw, 21px);
-
-            letter-spacing:
-                1.8px;
+                clamp(13px, 1.8vw, 17px);
         }
     }
 </style>
 
-</head><body><div class="page"><!-- =========================================================
-     WELCOME
-     ========================================================= -->
-
-<section class="welcome-half">
+</head><body><div class="page"><section class="welcome-half">
 
     <div class="welcome-content">
 
@@ -870,10 +869,6 @@
     </div>
 
 </section>
-
-<!-- =========================================================
-     SERVICES
-     ========================================================= -->
 
 <section class="services-half">
 
@@ -997,13 +992,7 @@
             PDF Conversion
         </button>
 
-        <!-- LETTERHEAD MOVED UP INTO THE SERVICE LIST -->
-
-        <button type="button"
-            class="service-button"
-            data-service="Business Letters & Letterhead">
-            Business Letters &amp; Letterhead
-        </button>
+        <!-- Voice To Text removed -->
 
         <button type="button"
             class="service-button"
@@ -1047,23 +1036,28 @@
             Document Summarization
         </button>
 
+        <!-- Letterhead moved up from the final row -->
 
-        <!-- =================================================
-             FINAL ROW — LUXURY BRAND STATEMENT
-             ================================================= -->
+        <button type="button"
+            class="service-button"
+            data-service="Business Letters & Letterhead">
+            Business Letters &amp; Letterhead
+        </button>
+
+        <!-- FINAL ROW -->
 
         <div class="luxury-tagline">
 
-            <span class="tagline-main">
-                NAIJA POCKET BUSINESS CENTER
-            </span>
+            <span class="brand-signature">
 
-            <span class="tagline-separator">
-                —
-            </span>
+                <span class="brand-main">
+                    NAIJA POCKET BUSINESS CENTER
+                </span>
 
-            <span class="tagline-next">
-                THE NEXT GEN. BUSINESS CENTER
+                <span class="brand-sub">
+                    — THE NEXT GEN. BUSINESS CENTER —
+                </span>
+
             </span>
 
         </div>
@@ -1082,7 +1076,6 @@ const serviceButtons =
 
 let requestInProgress = false;
 
-
 function releaseServiceButtons() {
 
     requestInProgress = false;
@@ -1100,7 +1093,6 @@ function releaseServiceButtons() {
     );
 }
 
-
 function cryptoRandomId() {
 
     if (
@@ -1117,7 +1109,6 @@ function cryptoRandomId() {
             .substring(2)
     );
 }
-
 
 function openWorkspace(
     service,
@@ -1150,12 +1141,10 @@ function openWorkspace(
         }
     );
 
-
     let customerId =
         localStorage.getItem(
             "npbc_customer_id"
         );
-
 
     if (!customerId) {
 
@@ -1169,12 +1158,10 @@ function openWorkspace(
         );
     }
 
-
     localStorage.setItem(
         "selectedService",
         service
     );
-
 
     const workspaceUrl =
         "workspace.html?service=" +
@@ -1186,12 +1173,10 @@ function openWorkspace(
             customerId
         );
 
-
     window.location.assign(
         workspaceUrl
     );
 }
-
 
 serviceButtons.forEach(
     function(button) {
@@ -1216,9 +1201,7 @@ serviceButtons.forEach(
     }
 );
 
-
 releaseServiceButtons();
-
 
 window.addEventListener(
     "pageshow",
@@ -1228,7 +1211,6 @@ window.addEventListener(
 
     }
 );
-
 
 document.addEventListener(
     "visibilitychange",
