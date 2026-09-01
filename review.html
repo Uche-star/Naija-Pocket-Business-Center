@@ -11,14 +11,13 @@
 :root{
     --black:#050505;
     --panel:#111111;
-    --panel2:#171717;
+    --panel2:#0c0c0c;
     --line:rgba(255,255,255,.12);
     --gold:#d4af37;
     --gold2:#f0cf62;
     --white:#ffffff;
     --muted:#a2a2a2;
     --red:#9d0000;
-    --green:#17853b;
 }
 
 *{
@@ -31,14 +30,14 @@ body{
     margin:0;
     padding:0;
     width:100%;
-    min-height:100%;
+    height:100%;
     background:var(--black);
     color:var(--white);
     font-family:Inter,Arial,sans-serif;
 }
 
 body{
-    overflow-x:hidden;
+    overflow:hidden;
 }
 
 button,
@@ -63,17 +62,21 @@ button:disabled{
 
 .header{
     width:100%;
+    height:66px;
     background:#000;
     border-bottom:1px solid var(--line);
-    padding:13px 12px 11px;
-    position:sticky;
+    padding:11px 12px;
+    position:fixed;
     top:0;
-    z-index:100;
+    left:0;
+    right:0;
+    z-index:200;
 }
 
 .header-inner{
     width:100%;
     max-width:950px;
+    height:100%;
     margin:auto;
     display:flex;
     align-items:center;
@@ -115,14 +118,26 @@ button:disabled{
 
 
 /* =========================================================
-   MAIN
+   MAIN SCREEN
    ========================================================= */
 
 .main{
+    position:fixed;
+    top:66px;
+    left:0;
+    right:0;
+    bottom:0;
+
     width:100%;
     max-width:950px;
     margin:auto;
-    padding:12px 9px 24px;
+
+    padding:10px 9px 0;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
 }
 
 
@@ -131,11 +146,13 @@ button:disabled{
    ========================================================= */
 
 .top-panel{
+    flex:0 0 auto;
+
     background:var(--panel);
     border:1px solid var(--line);
     border-radius:13px;
-    padding:13px;
-    margin-bottom:10px;
+    padding:11px 13px;
+    margin-bottom:8px;
 }
 
 .review-title{
@@ -147,10 +164,10 @@ button:disabled{
 }
 
 .review-subtitle{
-    margin:5px 0 0;
+    margin:4px 0 0;
     color:#aaa;
     font-size:10px;
-    line-height:1.5;
+    line-height:1.45;
 }
 
 .status-row{
@@ -158,7 +175,7 @@ button:disabled{
     align-items:center;
     justify-content:space-between;
     gap:8px;
-    margin-top:11px;
+    margin-top:8px;
 }
 
 .status-label{
@@ -173,9 +190,9 @@ button:disabled{
 }
 
 .progress-shell{
-    margin-top:8px;
+    margin-top:6px;
     width:100%;
-    height:7px;
+    height:6px;
     background:#242424;
     border-radius:20px;
     overflow:hidden;
@@ -189,7 +206,7 @@ button:disabled{
 }
 
 .progress-text{
-    margin-top:5px;
+    margin-top:4px;
     color:#888;
     font-size:9px;
     text-align:right;
@@ -197,52 +214,40 @@ button:disabled{
 
 
 /* =========================================================
-   REVIEW CARD
+   SCROLLABLE REVIEW CARD
    ========================================================= */
 
 .review-card{
-    width:100%;
-    background:#0b0b0b;
-    border:1px solid rgba(212,175,55,.28);
-    border-radius:15px;
-    overflow:hidden;
+    flex:1 1 auto;
+    min-height:0;
+
     display:flex;
     flex-direction:column;
+
+    background:#0b0b0b;
+    border:1px solid rgba(212,175,55,.22);
+    border-radius:13px;
+
+    overflow:hidden;
 }
 
 
 /* =========================================================
-   REVIEW CARD SCROLL AREA
+   DOCUMENT CARD HEADER
    ========================================================= */
 
-.review-scroll{
-    width:100%;
-    min-height:0;
-    overflow-y:auto;
-    overflow-x:hidden;
-    padding:11px 9px 12px;
-    overscroll-behavior:contain;
-    -webkit-overflow-scrolling:touch;
-}
+.document-card-header{
+    flex:0 0 auto;
 
+    padding:10px 11px 8px;
 
-/*
-   The document itself is allowed to grow naturally.
+    background:#111;
+    border-bottom:1px solid var(--line);
 
-   The scrolling belongs to the review card, not to the
-   document page. This prevents nested document scrolling.
-*/
-
-.document-section{
-    width:100%;
-}
-
-.document-heading{
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:8px;
-    margin-bottom:8px;
 }
 
 .document-heading h3{
@@ -260,28 +265,61 @@ button:disabled{
 
 
 /* =========================================================
-   DOCUMENT VIEWER
+   SCROLLABLE DOCUMENT AREA
+   ========================================================= */
+
+.document-scroll{
+    flex:1 1 auto;
+    min-height:0;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    padding:10px;
+
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+}
+
+.document-scroll::-webkit-scrollbar{
+    width:5px;
+}
+
+.document-scroll::-webkit-scrollbar-track{
+    background:#090909;
+}
+
+.document-scroll::-webkit-scrollbar-thumb{
+    background:#3a3a3a;
+    border-radius:20px;
+}
+
+
+/* =========================================================
+   PAGE VIEWER
    ========================================================= */
 
 .page-viewer{
     width:100%;
-    min-height:300px;
-    background:#080808;
-    border:1px solid rgba(212,175,55,.22);
-    border-radius:12px;
-    padding:10px;
 }
 
 .document-page{
     position:relative;
+
     width:100%;
     min-height:620px;
+
     background:#fff;
     color:#111;
+
     border-radius:2px;
+
     box-shadow:0 8px 35px rgba(0,0,0,.45);
+
     padding:48px 38px 58px;
+
     overflow:visible;
+
     user-select:text;
     -webkit-user-select:text;
     cursor:default;
@@ -303,10 +341,14 @@ button:disabled{
 .page-content{
     width:100%;
     color:#111;
+
     font-family:"Times New Roman",Georgia,serif;
+
     font-size:14px;
     line-height:1.75;
+
     white-space:pre-wrap;
+
     overflow-wrap:anywhere;
     word-break:normal;
 }
@@ -399,9 +441,11 @@ button:disabled{
 
 .empty-page{
     min-height:500px;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     color:#777;
     font-family:Arial,sans-serif;
     font-size:12px;
@@ -418,15 +462,19 @@ button:disabled{
     grid-template-columns:1fr auto 1fr;
     align-items:center;
     gap:7px;
+
     margin-top:9px;
 }
 
 .nav-button{
     min-height:43px;
+
     border:1px solid rgba(255,255,255,.14);
     border-radius:8px;
+
     background:#181818;
     color:#fff;
+
     font-size:10px;
     font-weight:900;
 }
@@ -441,8 +489,11 @@ button:disabled{
 
 .page-indicator{
     min-width:85px;
+
     color:var(--gold2);
+
     text-align:center;
+
     font-size:10px;
     font-weight:900;
 }
@@ -450,28 +501,38 @@ button:disabled{
 .go-row{
     display:flex;
     gap:7px;
+
     margin-top:7px;
 }
 
 .page-number-input{
     flex:1;
     min-width:0;
+
     height:39px;
+
     background:#151515;
     border:1px solid var(--line);
     border-radius:8px;
+
     color:#fff;
+
     padding:0 10px;
+
     outline:none;
+
     font-size:11px;
 }
 
 .go-button{
     width:75px;
+
     border:0;
     border-radius:8px;
+
     background:var(--gold);
     color:#000;
+
     font-size:10px;
     font-weight:900;
 }
@@ -484,6 +545,7 @@ button:disabled{
 .page-review{
     margin-top:8px;
     padding:11px;
+
     background:#101010;
     border:1px solid var(--line);
     border-radius:10px;
@@ -500,6 +562,7 @@ button:disabled{
     color:#bbb;
     font-size:10px;
     line-height:1.55;
+
     white-space:pre-wrap;
     overflow-wrap:anywhere;
 }
@@ -509,13 +572,19 @@ button:disabled{
    FIXED ACTION AREA
    ========================================================= */
 
-.review-actions{
+.action-area{
     flex:0 0 auto;
-    width:100%;
-    background:#0a0a0a;
-    border-top:1px solid rgba(255,255,255,.13);
-    padding:10px 9px calc(10px + env(safe-area-inset-bottom));
-    box-shadow:0 -8px 25px rgba(0,0,0,.38);
+
+    background:#080808;
+
+    border-top:1px solid var(--line);
+
+    padding:8px 10px 9px;
+
+    box-shadow:0 -8px 25px rgba(0,0,0,.45);
+
+    position:relative;
+    z-index:20;
 }
 
 
@@ -523,41 +592,34 @@ button:disabled{
    CORRECTION
    ========================================================= */
 
-.correction-section{
-    margin:0;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:11px;
-}
-
-.correction-title{
-    margin:0;
-    color:#fff;
-    font-size:12px;
-    font-weight:900;
-}
-
-.correction-help{
-    margin:4px 0 7px;
-    color:#999;
-    font-size:9px;
-    line-height:1.45;
+.correction-box{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:7px;
+    align-items:end;
 }
 
 .correction-input{
     width:100%;
-    min-height:70px;
-    max-height:150px;
-    resize:vertical;
-    padding:9px;
+    height:43px;
+    min-height:43px;
+    max-height:100px;
+
+    resize:none;
+
+    padding:11px;
+
     background:#171717;
+
     border:1px solid rgba(255,255,255,.14);
     border-radius:8px;
+
     color:#fff;
+
     outline:none;
-    font-size:10px;
-    line-height:1.5;
+
+    font-size:11px;
+    line-height:1.4;
 }
 
 .correction-input:focus{
@@ -565,13 +627,15 @@ button:disabled{
 }
 
 .correction-button{
-    width:100%;
-    min-height:41px;
-    margin-top:7px;
+    min-width:125px;
+    min-height:43px;
+
     border:1px solid rgba(212,175,55,.38);
     border-radius:8px;
+
     background:#171717;
     color:var(--gold2);
+
     font-size:10px;
     font-weight:900;
 }
@@ -581,51 +645,39 @@ button:disabled{
    APPROVAL
    ========================================================= */
 
-.approval-section{
-    margin-top:8px;
-    background:#101010;
-    border:1px solid rgba(212,175,55,.25);
-    border-radius:12px;
-    padding:10px;
-}
-
-.approval-title{
-    margin:0;
-    color:var(--gold2);
-    font-size:12px;
-    font-weight:900;
-}
-
-.approval-text{
-    margin:4px 0 7px;
-    color:#aaa;
-    font-size:9px;
-    line-height:1.45;
-}
-
 .approve-button{
     width:100%;
-    min-height:45px;
+
+    min-height:46px;
+
+    margin-top:7px;
+
     border:0;
     border-radius:9px;
+
     background:var(--gold);
     color:#000;
+
     font-size:11px;
     font-weight:900;
 }
 
 
 /* =========================================================
-   PAYMENT / DOWNLOAD
+   PAYMENT
    ========================================================= */
 
 .payment-section{
     display:none;
-    margin-top:8px;
-    background:#101010;
-    border:1px solid rgba(212,175,55,.35);
-    border-radius:12px;
-    padding:11px;
+
+    margin-top:7px;
+
+    padding:10px;
+
+    background:#111;
+
+    border:1px solid rgba(212,175,55,.4);
+    border-radius:10px;
 }
 
 .payment-section.show{
@@ -634,56 +686,77 @@ button:disabled{
 
 .payment-title{
     color:var(--gold2);
-    font-size:13px;
+    font-size:12px;
     font-weight:900;
 }
 
 .payment-details{
-    margin-top:6px;
-    color:#ccc;
+    margin-top:5px;
+
+    color:#ddd;
+
+    white-space:pre-wrap;
+
     font-size:10px;
     line-height:1.5;
-    white-space:pre-wrap;
 }
 
 .payment-button{
     width:100%;
-    min-height:44px;
-    margin-top:8px;
+
+    min-height:43px;
+
+    margin-top:7px;
+
     border:0;
-    border-radius:9px;
+    border-radius:8px;
+
     background:var(--gold);
     color:#000;
+
     font-size:10px;
     font-weight:900;
-}
-
-.download-button{
-    display:none;
-    width:100%;
-    min-height:44px;
-    margin-top:8px;
-    border:1px solid rgba(117,220,153,.35);
-    border-radius:9px;
-    background:#151515;
-    color:#75dc99;
-    font-size:10px;
-    font-weight:900;
-}
-
-.download-button.show{
-    display:block;
 }
 
 
 /* =========================================================
-   MESSAGE
+   BOTTOM BACK
+   ========================================================= */
+
+.bottom{
+    flex:0 0 auto;
+
+    padding:7px 0 8px;
+}
+
+.back-button{
+    width:100%;
+    min-height:38px;
+
+    border:0;
+    border-radius:8px;
+
+    background:var(--red);
+    color:#fff;
+
+    font-size:10px;
+    font-weight:900;
+}
+
+
+/* =========================================================
+   MESSAGES
    ========================================================= */
 
 .message{
-    min-height:18px;
-    margin-top:7px;
+    flex:0 0 auto;
+
+    min-height:17px;
+
+    margin-top:2px;
+
     color:#888;
+
     font-size:9px;
     text-align:center;
 }
@@ -698,38 +771,22 @@ button:disabled{
 
 
 /* =========================================================
-   BACK
-   ========================================================= */
-
-.bottom{
-    margin-top:10px;
-    padding-bottom:10px;
-}
-
-.back-button{
-    width:100%;
-    min-height:43px;
-    border:0;
-    border-radius:8px;
-    background:var(--red);
-    color:#fff;
-    font-size:10px;
-    font-weight:900;
-}
-
-
-/* =========================================================
    LOADING
    ========================================================= */
 
 .loading{
     min-height:500px;
+
     display:flex;
     flex-direction:column;
+
     align-items:center;
     justify-content:center;
+
     gap:10px;
+
     color:#999;
+
     font-size:11px;
     text-align:center;
 }
@@ -737,9 +794,12 @@ button:disabled{
 .spinner{
     width:29px;
     height:29px;
+
     border:3px solid #333;
     border-top-color:var(--gold);
+
     border-radius:50%;
+
     animation:spin .8s linear infinite;
 }
 
@@ -757,24 +817,24 @@ button:disabled{
 @media(max-width:600px){
 
     .main{
-        padding:9px 7px 18px;
+        padding:8px 7px 0;
     }
 
-    /*
-       The review card gets a real viewport on mobile.
-       Document content scrolls inside this card while the
-       bottom actions remain visible.
-    */
-
-    .review-card{
-        height:calc(100vh - 155px);
-        min-height:500px;
-        max-height:calc(100vh - 155px);
+    .top-panel{
+        padding:9px 11px;
+        margin-bottom:7px;
     }
 
-    .review-scroll{
-        flex:1 1 auto;
-        min-height:0;
+    .review-title{
+        font-size:15px;
+    }
+
+    .review-subtitle{
+        font-size:9px;
+    }
+
+    .document-scroll{
+        padding:6px;
     }
 
     .document-page{
@@ -787,10 +847,6 @@ button:disabled{
         line-height:1.65;
     }
 
-    .page-viewer{
-        padding:6px;
-    }
-
     .page-content table{
         font-size:11px;
     }
@@ -800,26 +856,24 @@ button:disabled{
         padding:4px 5px;
     }
 
-    .correction-input{
-        min-height:62px;
-    }
-}
-
-
-/* =========================================================
-   DESKTOP
-   ========================================================= */
-
-@media(min-width:601px){
-
-    .review-card{
-        max-height:calc(100vh - 150px);
-        min-height:620px;
+    .correction-box{
+        grid-template-columns:1fr;
     }
 
-    .review-scroll{
-        flex:1 1 auto;
-        min-height:0;
+    .correction-button{
+        width:100%;
+    }
+
+    .action-area{
+        padding:7px 8px 8px;
+    }
+
+    .bottom{
+        padding:5px 0 6px;
+    }
+
+    .back-button{
+        min-height:36px;
     }
 }
 
@@ -829,7 +883,9 @@ button:disabled{
     .document-page{
         max-width:820px;
         margin:auto;
+
         min-height:1050px;
+
         padding:65px 70px 75px;
     }
 
@@ -844,6 +900,7 @@ button:disabled{
 <body>
 
 <header class="header">
+
 <div class="header-inner">
 
     <div class="brand">
@@ -863,249 +920,224 @@ button:disabled{
     </div>
 
 </div>
+
 </header>
 
 
 <main class="main">
 
+
 <section class="top-panel">
 
-<h2 class="review-title">
-    Review Your Complete Service
-</h2>
+    <h2 class="review-title">
+        Review Your Complete Service
+    </h2>
 
-<p class="review-subtitle">
-    Your complete document is shown one page at a time.
-    Use Previous Page and Next Page to go through the entire document.
-</p>
+    <p class="review-subtitle">
+        Go through your complete document. Use Previous Page
+        and Next Page to review every page before approval.
+    </p>
 
-<div class="status-row">
+    <div class="status-row">
 
-    <span class="status-label">
-        Review status
-    </span>
+        <span class="status-label">
+            Review status
+        </span>
 
-    <span id="statusValue" class="status-value">
-        Preparing...
-    </span>
+        <span id="statusValue" class="status-value">
+            Preparing...
+        </span>
 
-</div>
-
-<div class="progress-shell">
-
-    <div
-        id="progressBar"
-        class="progress-bar">
     </div>
 
-</div>
+    <div class="progress-shell">
 
-<div
-    id="progressText"
-    class="progress-text">
-    Preparing the document...
-</div>
-
-</section>
-
-
-<!-- =======================================================
-     REVIEW CARD
-     ======================================================= -->
-
-<section class="review-card">
-
-
-<!-- =====================================================
-     SCROLLABLE REVIEW CONTENT
-     ===================================================== -->
-
-<div class="review-scroll">
-
-<section class="document-section">
-
-<div class="document-heading">
-
-    <h3>
-        Your Complete Document
-    </h3>
-
-    <div
-        id="pageCount"
-        class="page-count">
-        0 PAGES
-    </div>
-
-</div>
-
-
-<div
-    id="pageViewer"
-    class="page-viewer">
-
-    <div class="loading">
-
-        <div class="spinner"></div>
-
-        <div>
-            Your service is being carefully prepared.
+        <div
+            id="progressBar"
+            class="progress-bar">
         </div>
 
     </div>
 
-</div>
+    <div
+        id="progressText"
+        class="progress-text">
+        Preparing the document...
+    </div>
+
+</section>
 
 
-<div class="page-navigation">
+<section class="review-card">
 
-    <button
-        id="previousButton"
-        class="nav-button"
-        type="button"
-        disabled>
-        ← Previous Page
-    </button>
+
+    <div class="document-card-header">
+
+        <div class="document-heading">
+
+            <h3>
+                Your Complete Document
+            </h3>
+
+        </div>
+
+        <div
+            id="pageCount"
+            class="page-count">
+            0 PAGES
+        </div>
+
+    </div>
+
 
     <div
-        id="pageIndicator"
-        class="page-indicator">
-        Page 0 of 0
+        id="documentScroll"
+        class="document-scroll">
+
+
+        <div
+            id="pageViewer"
+            class="page-viewer">
+
+            <div class="loading">
+
+                <div class="spinner"></div>
+
+                <div>
+                    Your service is being carefully prepared.
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="page-navigation">
+
+            <button
+                id="previousButton"
+                class="nav-button"
+                type="button"
+                disabled>
+                ← Previous Page
+            </button>
+
+            <div
+                id="pageIndicator"
+                class="page-indicator">
+                Page 0 of 0
+            </div>
+
+            <button
+                id="nextButton"
+                class="nav-button next"
+                type="button"
+                disabled>
+                Next Page →
+            </button>
+
+        </div>
+
+
+        <div class="go-row">
+
+            <input
+                id="pageNumberInput"
+                class="page-number-input"
+                type="number"
+                min="1"
+                placeholder="Enter page number">
+
+            <button
+                id="goButton"
+                class="go-button"
+                type="button">
+                GO
+            </button>
+
+        </div>
+
+
+        <div
+            id="pageReview"
+            class="page-review"
+            style="display:none">
+
+            <div class="page-review-title">
+                PAGE REVIEW
+            </div>
+
+            <div
+                id="pageReviewText"
+                class="page-review-text">
+            </div>
+
+        </div>
+
+
     </div>
 
-    <button
-        id="nextButton"
-        class="nav-button next"
-        type="button"
-        disabled>
-        Next Page →
-    </button>
 
-</div>
+    <!-- =====================================================
+         FIXED ACTION AREA
+         ===================================================== -->
+
+    <div class="action-area">
 
 
-<div class="go-row">
+        <div class="correction-box">
 
-    <input
-        id="pageNumberInput"
-        class="page-number-input"
-        type="number"
-        min="1"
-        placeholder="Enter page number">
+            <textarea
+                id="correctionInput"
+                class="correction-input"
+                placeholder="Want anything changed? Tell us what to correct..."
+            ></textarea>
 
-    <button
-        id="goButton"
-        class="go-button"
-        type="button">
-        GO
-    </button>
+            <button
+                id="correctionButton"
+                class="correction-button"
+                type="button">
+                Apply Correction
+            </button>
 
-</div>
+        </div>
 
 
-<div
-    id="pageReview"
-    class="page-review"
-    style="display:none">
+        <button
+            id="approveButton"
+            class="approve-button"
+            type="button"
+            disabled>
+            Approve Document
+        </button>
 
-    <div class="page-review-title">
-        PAGE REVIEW
+
+        <section
+            id="paymentSection"
+            class="payment-section">
+
+            <div class="payment-title">
+                Payment &amp; Download
+            </div>
+
+            <div
+                id="paymentDetails"
+                class="payment-details">
+                Your approved document is ready.
+            </div>
+
+            <button
+                id="paymentButton"
+                class="payment-button"
+                type="button">
+                Continue to Payment
+            </button>
+
+        </section>
+
+
     </div>
 
-    <div
-        id="pageReviewText"
-        class="page-review-text">
-    </div>
-
-</div>
-
-</section>
-
-</div>
-
-
-<!-- =====================================================
-     FIXED ACTION AREA
-     ===================================================== -->
-
-<div class="review-actions">
-
-
-<section class="correction-section">
-
-<h3 class="correction-title">
-    Want anything changed?
-</h3>
-
-<p class="correction-help">
-    Tell us exactly what you want changed. Your correction
-    will continue through the same document job.
-</p>
-
-<textarea
-    id="correctionInput"
-    class="correction-input"
-    placeholder="Example: Correct the introduction, add more detail to page 4, change the formatting..."
-></textarea>
-
-<button
-    id="correctionButton"
-    class="correction-button"
-    type="button">
-    Apply My Corrections
-</button>
-
-</section>
-
-
-<section class="approval-section">
-
-<h3 class="approval-title">
-    Approve Document
-</h3>
-
-<p class="approval-text">
-    Only approve after you have gone through every available page
-    and you are satisfied with the document.
-</p>
-
-<button
-    id="approveButton"
-    class="approve-button"
-    type="button"
-    disabled>
-    Approve Document
-</button>
-
-</section>
-
-
-<section
-    id="paymentSection"
-    class="payment-section">
-
-<div class="payment-title">
-    Payment &amp; Download
-</div>
-
-<div
-    id="paymentDetails"
-    class="payment-details">
-    Your approved document is ready for the payment step.
-</div>
-
-<button
-    id="paymentButton"
-    class="payment-button"
-    type="button">
-    Continue to Payment
-</button>
-
-<button
-    id="downloadButton"
-    class="download-button"
-    type="button">
-    Download Your Document
-</button>
 
 </section>
 
@@ -1115,21 +1147,18 @@ button:disabled{
     class="message">
 </div>
 
-</div>
-
-</section>
-
 
 <div class="bottom">
 
-<button
-    id="backButton"
-    class="back-button"
-    type="button">
-    ← Back
-</button>
+    <button
+        id="backButton"
+        class="back-button"
+        type="button">
+        ← Back
+    </button>
 
 </div>
+
 
 </main>
 
@@ -1174,6 +1203,9 @@ const progressText =
 const pageCount =
     document.getElementById("pageCount");
 
+const documentScroll =
+    document.getElementById("documentScroll");
+
 const pageViewer =
     document.getElementById("pageViewer");
 
@@ -1216,9 +1248,6 @@ const paymentDetails =
 const paymentButton =
     document.getElementById("paymentButton");
 
-const downloadButton =
-    document.getElementById("downloadButton");
-
 const message =
     document.getElementById("message");
 
@@ -1231,14 +1260,23 @@ const backButton =
    ========================================================= */
 
 let pages = [];
+
 let currentPage = 1;
+
 let totalPages = 0;
+
 let currentVersion = 1;
+
 let versionId = "";
+
 let currentStatus = "";
+
 let approved = false;
+
 let polling = false;
+
 let pollTimer = null;
+
 let busy = false;
 
 
@@ -1282,39 +1320,69 @@ function setStatus(text){
 
 
 /* =========================================================
-   REVIEW COMPLETION
+   STATUS NORMALIZATION
    ========================================================= */
 
-function hasCompleteReview(){
+/*
+   IMPORTANT
 
-    return (
-        pages.length > 0 &&
-        totalPages > 0 &&
-        pages.length >= totalPages
-    );
+   Different backend stages can describe the same usable
+   review state.
+
+   The old approval check required exactly:
+
+       review_complete
+
+   That was too strict.
+
+   A document that is already loaded and displayed as READY
+   is also a completed review document from the customer's
+   point of view.
+
+   We therefore normalize the known ready states here.
+*/
+
+function isReadyStatus(status){
+
+    const value =
+        clean(status).toLowerCase();
+
+    return [
+        "ready",
+        "review_complete",
+        "reviewed",
+        "complete",
+        "completed",
+        "document_ready",
+        "review_ready"
+    ].includes(value);
 }
 
 
-/*
-   Keep the existing approval workflow intact.
-
-   READY is accepted as the server's completed review state.
-
-   We also accept the actual complete page set. This prevents
-   the UI from saying READY while unnecessarily blocking the
-   customer from continuing.
-*/
+/* =========================================================
+   APPROVAL READINESS
+   ========================================================= */
 
 function approvalReady(){
+
+    /*
+       A real document must exist.
+
+       The version must exist because the approval request
+       sends the version_id.
+
+       The document must be in a usable ready state.
+
+       This does NOT depend on the page navigation buttons.
+    */
 
     return (
         !busy &&
         !approved &&
-        hasCompleteReview() &&
-        (
-            currentStatus === "review_complete" ||
-            currentStatus === "ready"
-        )
+        pages.length > 0 &&
+        totalPages > 0 &&
+        !!versionId &&
+        isReadyStatus(currentStatus)
     );
 }
 
@@ -1330,18 +1398,22 @@ function setBusy(value){
 
     busy = !!value;
 
+
     correctionButton.disabled =
         busy;
+
 
     previousButton.disabled =
         busy ||
         currentPage <= 1 ||
         totalPages <= 1;
 
+
     nextButton.disabled =
         busy ||
         currentPage >= totalPages ||
         totalPages <= 1;
+
 
     updateApprovalButton();
 }
@@ -1503,7 +1575,7 @@ function normalizePages(data){
 
 
 /* =========================================================
-   DETECT USABLE DOCUMENT
+   EXTRACT PAGES
    ========================================================= */
 
 function extractPages(data){
@@ -1827,7 +1899,7 @@ function sanitizeStyle(styleText){
 
 
 /* =========================================================
-   MARKDOWN-LIKE PLAIN TEXT RENDERER
+   PLAIN TEXT RENDERER
    ========================================================= */
 
 function renderPlainDocumentText(text){
@@ -2180,7 +2252,7 @@ function sanitizeDocumentHtml(html){
 
 
 /* =========================================================
-   FIND SERVER ERROR
+   SERVER ERROR
    ========================================================= */
 
 function getServerError(data){
@@ -2290,19 +2362,15 @@ function applyJob(data){
         incomingPages.length > 0;
 
 
-    if(
-        incomingStatus === "review_error" &&
-        hasDocument
-    ){
+    /*
+       Preserve the actual server status.
 
-        currentStatus =
-            "review_complete";
+       The important difference from the old logic is that
+       READY is now accepted by isReadyStatus().
+    */
 
-    }else{
-
-        currentStatus =
-            incomingStatus;
-    }
+    currentStatus =
+        incomingStatus;
 
 
     currentVersion =
@@ -2374,91 +2442,11 @@ function applyJob(data){
 
 
     if(
-        (
-            currentStatus === "review_complete" ||
-            currentStatus === "ready"
-        ) &&
+        isReadyStatus(currentStatus) &&
         totalPages > 0
     ){
 
         percent = 100;
-    }
-
-
-    if(
-        currentStatus === "reviewing"
-    ){
-
-        setStatus("REVIEWING");
-
-        progressText.textContent =
-            completed +
-            " of " +
-            progressTotal +
-            " pages reviewed.";
-
-
-    }else if(
-        currentStatus === "review_complete" ||
-        currentStatus === "ready"
-    ){
-
-        setStatus("READY");
-
-        progressText.textContent =
-            "Your document is ready for review.";
-
-
-    }else if(
-        currentStatus === "review_error"
-    ){
-
-        setStatus("ERROR");
-
-        progressText.textContent =
-            "The document review encountered an error.";
-
-
-    }else if(
-        currentStatus === "correcting"
-    ){
-
-        setStatus("CORRECTING");
-
-        progressText.textContent =
-            "Your correction is being applied.";
-
-
-    }else if(
-        currentStatus === "correction_error"
-    ){
-
-        setStatus("CORRECTION ERROR");
-
-        progressText.textContent =
-            "The correction could not be completed.";
-
-
-    }else if(
-        currentStatus === "approved"
-    ){
-
-        setStatus("APPROVED");
-
-        progressText.textContent =
-            "Your document has been approved.";
-
-
-    }else{
-
-        setStatus(
-            currentStatus
-                ? currentStatus.toUpperCase()
-                : "PREPARING"
-        );
-
-        progressText.textContent =
-            "Preparing the document.";
     }
 
 
@@ -2486,6 +2474,87 @@ function applyJob(data){
 
         pageCount.textContent =
             "PREPARING";
+    }
+
+
+    if(
+        currentStatus.toLowerCase() ===
+        "reviewing"
+    ){
+
+        setStatus("REVIEWING");
+
+        progressText.textContent =
+            completed +
+            " of " +
+            progressTotal +
+            " pages reviewed.";
+
+
+    }else if(
+        isReadyStatus(currentStatus)
+    ){
+
+        setStatus("READY");
+
+        progressText.textContent =
+            "Your document is ready for review.";
+
+
+    }else if(
+        currentStatus.toLowerCase() ===
+        "review_error"
+    ){
+
+        setStatus("ERROR");
+
+        progressText.textContent =
+            "The document review encountered an error.";
+
+
+    }else if(
+        currentStatus.toLowerCase() ===
+        "correcting"
+    ){
+
+        setStatus("CORRECTING");
+
+        progressText.textContent =
+            "Your correction is being applied.";
+
+
+    }else if(
+        currentStatus.toLowerCase() ===
+        "correction_error"
+    ){
+
+        setStatus("CORRECTION ERROR");
+
+        progressText.textContent =
+            "The correction could not be completed.";
+
+
+    }else if(
+        currentStatus.toLowerCase() ===
+        "approved"
+    ){
+
+        setStatus("APPROVED");
+
+        progressText.textContent =
+            "Your document has been approved.";
+
+
+    }else{
+
+        setStatus(
+            currentStatus
+                ? currentStatus.toUpperCase()
+                : "PREPARING"
+        );
+
+        progressText.textContent =
+            "Preparing the document.";
     }
 
 
@@ -2733,19 +2802,15 @@ function showPage(number){
 
 
     /*
-       Scroll the review card to the beginning of the
-       selected page, rather than moving the entire window.
+       Scroll only the review/document card back to the
+       beginning.
+
+       The fixed action buttons remain in place.
     */
 
-    const reviewScroll =
-        document.querySelector(
-            ".review-scroll"
-        );
+    if(documentScroll){
 
-
-    if(reviewScroll){
-
-        reviewScroll.scrollTo({
+        documentScroll.scrollTo({
             top:0,
             behavior:"smooth"
         });
@@ -2875,40 +2940,15 @@ function startPolling(){
 
                 if(
                     availablePages.length &&
-                    (
-                        currentStatus ===
-                            "review_complete" ||
-                        currentStatus ===
-                            "ready" ||
-                        data.status ===
-                            "review_error"
-                    )
+                    isReadyStatus(data.status)
                 ){
 
                     stopPolling();
 
+                    setMessage("");
 
-                    if(
-                        data.status ===
-                        "review_error"
-                    ){
+                    updateApprovalButton();
 
-                        setMessage("");
-                    }
-
-
-                    return;
-                }
-
-
-                if(
-                    data.status ===
-                        "review_complete" ||
-                    data.status ===
-                        "ready"
-                ){
-
-                    stopPolling();
                     return;
                 }
 
@@ -2941,6 +2981,7 @@ function startPolling(){
 
 
                     stopPolling();
+
                     return;
                 }
 
@@ -3101,11 +3142,6 @@ correctionButton.addEventListener(
             );
 
 
-            downloadButton.classList.remove(
-                "show"
-            );
-
-
             setMessage(
                 "Your correction has started. The corrected document will be reviewed again.",
                 "success"
@@ -3117,7 +3153,9 @@ correctionButton.addEventListener(
 
 
             pages = [];
+
             totalPages = 0;
+
             currentPage = 1;
 
 
@@ -3154,36 +3192,10 @@ approveButton.addEventListener(
 
         if(!approvalReady()){
 
-            /*
-               Do not blindly say "review incomplete".
-
-               Tell the customer what is actually missing.
-            */
-
-            if(!pages.length){
-
-                setMessage(
-                    "The document is not available yet.",
-                    "error"
-                );
-
-            }else if(
-                currentStatus !== "review_complete" &&
-                currentStatus !== "ready"
-            ){
-
-                setMessage(
-                    "The document review is not complete.",
-                    "error"
-                );
-
-            }else{
-
-                setMessage(
-                    "Please wait until the complete document is ready.",
-                    "error"
-                );
-            }
+            setMessage(
+                "Please wait until the document is ready for approval.",
+                "error"
+            );
 
 
             return;
@@ -3249,14 +3261,6 @@ approveButton.addEventListener(
             );
 
 
-            progressBar.style.width =
-                "100%";
-
-
-            progressText.textContent =
-                "Your document has been approved.";
-
-
             setMessage(
                 "Your document has been approved. Payment is ready.",
                 "success"
@@ -3305,39 +3309,43 @@ function showPayment(data){
 
     let text =
         "Service: " +
-        serviceName +
-        "\n";
+        serviceName;
 
 
     if(amount > 0){
 
         text +=
-            "Amount: ₦" +
-            amount.toLocaleString() +
-            "\n";
+            "\nAmount: ₦" +
+            amount.toLocaleString();
 
-    }else{
-
-        text +=
-            "Payment amount: Please continue to the payment step.\n";
     }
 
 
     if(data.order_number){
 
         text +=
-            "Order: " +
-            data.order_number +
-            "\n";
+            "\nOrder: " +
+            data.order_number;
     }
 
 
     text +=
-        "\nYour approved document is ready for payment.";
+        "\n\nYour approved document is ready.";
 
 
     paymentDetails.textContent =
         text;
+
+
+    /*
+       Put the payment area into view without moving the
+       fixed action controls away.
+    */
+
+    paymentSection.scrollIntoView({
+        behavior:"smooth",
+        block:"nearest"
+    });
 }
 
 
@@ -3369,48 +3377,6 @@ paymentButton.addEventListener(
 
         location.href =
             "/payment.html?" +
-            query.toString();
-    }
-);
-
-
-/* =========================================================
-   DOWNLOAD
-   ========================================================= */
-
-downloadButton.addEventListener(
-    "click",
-    async()=>{
-
-        if(!jobId){
-
-            setMessage(
-                "The document job could not be identified.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        const query =
-            new URLSearchParams({
-                job_id:
-                    jobId,
-
-                version_id:
-                    versionId
-            });
-
-
-        /*
-           Keep download compatible with the existing backend.
-           The payment page remains responsible for the actual
-           payment confirmation before delivery.
-        */
-
-        location.href =
-            "/api/download?" +
             query.toString();
     }
 );
@@ -3487,12 +3453,7 @@ async function start(){
 
 
             if(
-                currentStatus ===
-                    "review_complete" ||
-                currentStatus ===
-                    "ready" ||
-                data.status ===
-                    "review_error"
+                isReadyStatus(data.status)
             ){
 
                 stopPolling();
@@ -3510,10 +3471,7 @@ async function start(){
 
 
         if(
-            currentStatus !==
-                "review_complete" &&
-            currentStatus !==
-                "ready" &&
+            !isReadyStatus(currentStatus) &&
             currentStatus !==
                 "review_error" &&
             currentStatus !==
