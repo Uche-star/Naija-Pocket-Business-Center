@@ -1,17 +1,24 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Review Your Complete Service — Naija Pocket Business Center</title><style>
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>Review Your Complete Service — Naija Pocket Business Center</title>
+
+<style>
 :root{
     --black:#050505;
     --panel:#111111;
+    --panel2:#171717;
     --line:rgba(255,255,255,.12);
     --gold:#d4af37;
     --gold2:#f0cf62;
     --white:#ffffff;
     --muted:#a2a2a2;
     --red:#9d0000;
+    --green:#17853b;
 }
 
 *{
@@ -24,14 +31,14 @@ body{
     margin:0;
     padding:0;
     width:100%;
-    height:100%;
+    min-height:100%;
     background:var(--black);
     color:var(--white);
     font-family:Inter,Arial,sans-serif;
 }
 
 body{
-    overflow:hidden;
+    overflow-x:hidden;
 }
 
 button,
@@ -51,29 +58,16 @@ button:disabled{
 
 
 /* =========================================================
-   APP SHELL
-   ========================================================= */
-
-.app{
-    width:100%;
-    height:100dvh;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-}
-
-
-/* =========================================================
    HEADER
    ========================================================= */
 
 .header{
     width:100%;
-    flex:0 0 auto;
     background:#000;
     border-bottom:1px solid var(--line);
     padding:13px 12px 11px;
+    position:sticky;
+    top:0;
     z-index:100;
 }
 
@@ -121,19 +115,14 @@ button:disabled{
 
 
 /* =========================================================
-   SCROLLABLE MAIN AREA
+   MAIN
    ========================================================= */
 
 .main{
     width:100%;
     max-width:950px;
     margin:auto;
-    flex:1 1 auto;
-    min-height:0;
-    overflow-y:auto;
-    overflow-x:hidden;
-    padding:12px 9px 125px;
-    -webkit-overflow-scrolling:touch;
+    padding:12px 9px 24px;
 }
 
 
@@ -208,12 +197,44 @@ button:disabled{
 
 
 /* =========================================================
-   DOCUMENT SECTION
+   REVIEW CARD
    ========================================================= */
+
+.review-card{
+    width:100%;
+    background:#0b0b0b;
+    border:1px solid rgba(212,175,55,.28);
+    border-radius:15px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+}
+
+
+/* =========================================================
+   REVIEW CARD SCROLL AREA
+   ========================================================= */
+
+.review-scroll{
+    width:100%;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:11px 9px 12px;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+}
+
+
+/*
+   The document itself is allowed to grow naturally.
+
+   The scrolling belongs to the review card, not to the
+   document page. This prevents nested document scrolling.
+*/
 
 .document-section{
     width:100%;
-    margin-top:10px;
 }
 
 .document-heading{
@@ -239,19 +260,6 @@ button:disabled{
 
 
 /* =========================================================
-   REVIEW CARD
-   ========================================================= */
-
-.review-card{
-    width:100%;
-    background:#0b0b0b;
-    border:1px solid rgba(212,175,55,.25);
-    border-radius:14px;
-    overflow:hidden;
-}
-
-
-/* =========================================================
    DOCUMENT VIEWER
    ========================================================= */
 
@@ -259,6 +267,8 @@ button:disabled{
     width:100%;
     min-height:300px;
     background:#080808;
+    border:1px solid rgba(212,175,55,.22);
+    border-radius:12px;
     padding:10px;
 }
 
@@ -271,7 +281,7 @@ button:disabled{
     border-radius:2px;
     box-shadow:0 8px 35px rgba(0,0,0,.45);
     padding:48px 38px 58px;
-    overflow:hidden;
+    overflow:visible;
     user-select:text;
     -webkit-user-select:text;
     cursor:default;
@@ -400,7 +410,7 @@ button:disabled{
 
 
 /* =========================================================
-   NAVIGATION
+   PAGE NAVIGATION
    ========================================================= */
 
 .page-navigation{
@@ -408,7 +418,7 @@ button:disabled{
     grid-template-columns:1fr auto 1fr;
     align-items:center;
     gap:7px;
-    padding:9px 10px 0;
+    margin-top:9px;
 }
 
 .nav-button{
@@ -440,7 +450,7 @@ button:disabled{
 .go-row{
     display:flex;
     gap:7px;
-    padding:7px 10px 10px;
+    margin-top:7px;
 }
 
 .page-number-input{
@@ -472,7 +482,7 @@ button:disabled{
    ========================================================= */
 
 .page-review{
-    margin:0 10px 10px;
+    margin-top:8px;
     padding:11px;
     background:#101010;
     border:1px solid var(--line);
@@ -496,43 +506,57 @@ button:disabled{
 
 
 /* =========================================================
-   CORRECTION SECTION
+   FIXED ACTION AREA
+   ========================================================= */
+
+.review-actions{
+    flex:0 0 auto;
+    width:100%;
+    background:#0a0a0a;
+    border-top:1px solid rgba(255,255,255,.13);
+    padding:10px 9px calc(10px + env(safe-area-inset-bottom));
+    box-shadow:0 -8px 25px rgba(0,0,0,.38);
+}
+
+
+/* =========================================================
+   CORRECTION
    ========================================================= */
 
 .correction-section{
-    margin-top:12px;
+    margin:0;
     background:var(--panel);
     border:1px solid var(--line);
-    border-radius:13px;
-    padding:13px;
+    border-radius:12px;
+    padding:11px;
 }
 
 .correction-title{
     margin:0;
     color:#fff;
-    font-size:13px;
+    font-size:12px;
     font-weight:900;
 }
 
 .correction-help{
-    margin:5px 0 8px;
+    margin:4px 0 7px;
     color:#999;
-    font-size:10px;
+    font-size:9px;
     line-height:1.45;
 }
 
 .correction-input{
     width:100%;
-    min-height:100px;
-    max-height:220px;
+    min-height:70px;
+    max-height:150px;
     resize:vertical;
-    padding:10px;
+    padding:9px;
     background:#171717;
     border:1px solid rgba(255,255,255,.14);
     border-radius:8px;
     color:#fff;
     outline:none;
-    font-size:11px;
+    font-size:10px;
     line-height:1.5;
 }
 
@@ -542,8 +566,8 @@ button:disabled{
 
 .correction-button{
     width:100%;
-    min-height:43px;
-    margin-top:8px;
+    min-height:41px;
+    margin-top:7px;
     border:1px solid rgba(212,175,55,.38);
     border-radius:8px;
     background:#171717;
@@ -554,34 +578,34 @@ button:disabled{
 
 
 /* =========================================================
-   APPROVAL SECTION
+   APPROVAL
    ========================================================= */
 
 .approval-section{
-    margin-top:10px;
+    margin-top:8px;
     background:#101010;
     border:1px solid rgba(212,175,55,.25);
-    border-radius:13px;
-    padding:13px;
+    border-radius:12px;
+    padding:10px;
 }
 
 .approval-title{
     margin:0;
     color:var(--gold2);
-    font-size:13px;
+    font-size:12px;
     font-weight:900;
 }
 
 .approval-text{
-    margin:5px 0 9px;
+    margin:4px 0 7px;
     color:#aaa;
-    font-size:10px;
-    line-height:1.5;
+    font-size:9px;
+    line-height:1.45;
 }
 
 .approve-button{
     width:100%;
-    min-height:46px;
+    min-height:45px;
     border:0;
     border-radius:9px;
     background:var(--gold);
@@ -592,16 +616,16 @@ button:disabled{
 
 
 /* =========================================================
-   PAYMENT
+   PAYMENT / DOWNLOAD
    ========================================================= */
 
 .payment-section{
     display:none;
-    margin-top:10px;
-    background:#111;
-    border:1px solid rgba(212,175,55,.4);
-    border-radius:13px;
-    padding:13px;
+    margin-top:8px;
+    background:#101010;
+    border:1px solid rgba(212,175,55,.35);
+    border-radius:12px;
+    padding:11px;
 }
 
 .payment-section.show{
@@ -615,107 +639,45 @@ button:disabled{
 }
 
 .payment-details{
-    margin-top:7px;
-    color:#ddd;
-    white-space:pre-wrap;
+    margin-top:6px;
+    color:#ccc;
     font-size:10px;
-    line-height:1.55;
+    line-height:1.5;
+    white-space:pre-wrap;
 }
 
 .payment-button{
     width:100%;
-    min-height:43px;
+    min-height:44px;
     margin-top:8px;
-    border:1px solid rgba(255,255,255,.13);
-    border-radius:8px;
-    background:#222;
-    color:#fff;
-    font-size:10px;
-    font-weight:900;
-}
-
-
-/* =========================================================
-   BOTTOM FIXED ACTION BAR
-   ========================================================= */
-
-.bottom-action-bar{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:0;
-    z-index:200;
-    padding:
-        9px
-        max(9px, env(safe-area-inset-right))
-        calc(9px + env(safe-area-inset-bottom))
-        max(9px, env(safe-area-inset-left));
-    background:rgba(5,5,5,.97);
-    border-top:1px solid rgba(212,175,55,.25);
-    box-shadow:0 -8px 30px rgba(0,0,0,.55);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-}
-
-.bottom-inner{
-    width:100%;
-    max-width:950px;
-    margin:auto;
-    display:grid;
-    grid-template-columns:1fr 1.25fr;
-    gap:8px;
-}
-
-.bottom-correction-button,
-.bottom-approve-button{
-    min-height:48px;
-    border-radius:9px;
-    font-size:10px;
-    font-weight:900;
-}
-
-.bottom-correction-button{
-    border:1px solid rgba(255,255,255,.16);
-    background:#181818;
-    color:#fff;
-}
-
-.bottom-approve-button{
     border:0;
+    border-radius:9px;
     background:var(--gold);
     color:#000;
-}
-
-.bottom-approve-button:disabled{
-    background:#3a3420;
-    color:#888;
-    opacity:1;
-}
-
-
-/* =========================================================
-   BACK BUTTON
-   ========================================================= */
-
-.bottom{
-    margin-top:12px;
-    padding-bottom:10px;
-}
-
-.back-button{
-    width:100%;
-    min-height:43px;
-    border:0;
-    border-radius:8px;
-    background:var(--red);
-    color:#fff;
     font-size:10px;
     font-weight:900;
 }
 
+.download-button{
+    display:none;
+    width:100%;
+    min-height:44px;
+    margin-top:8px;
+    border:1px solid rgba(117,220,153,.35);
+    border-radius:9px;
+    background:#151515;
+    color:#75dc99;
+    font-size:10px;
+    font-weight:900;
+}
+
+.download-button.show{
+    display:block;
+}
+
 
 /* =========================================================
-   MESSAGES
+   MESSAGE
    ========================================================= */
 
 .message{
@@ -732,6 +694,27 @@ button:disabled{
 
 .message.success{
     color:#75dc99;
+}
+
+
+/* =========================================================
+   BACK
+   ========================================================= */
+
+.bottom{
+    margin-top:10px;
+    padding-bottom:10px;
+}
+
+.back-button{
+    width:100%;
+    min-height:43px;
+    border:0;
+    border-radius:8px;
+    background:var(--red);
+    color:#fff;
+    font-size:10px;
+    font-weight:900;
 }
 
 
@@ -773,23 +756,25 @@ button:disabled{
 
 @media(max-width:600px){
 
-    .header{
-        padding:11px 9px 9px;
-    }
-
-    .brand-title{
-        font-size:16px;
-    }
-
     .main{
-        padding:
-            9px
-            7px
-            125px;
+        padding:9px 7px 18px;
     }
 
-    .top-panel{
-        padding:11px;
+    /*
+       The review card gets a real viewport on mobile.
+       Document content scrolls inside this card while the
+       bottom actions remain visible.
+    */
+
+    .review-card{
+        height:calc(100vh - 155px);
+        min-height:500px;
+        max-height:calc(100vh - 155px);
+    }
+
+    .review-scroll{
+        flex:1 1 auto;
+        min-height:0;
     }
 
     .document-page{
@@ -815,8 +800,8 @@ button:disabled{
         padding:4px 5px;
     }
 
-    .bottom-inner{
-        grid-template-columns:1fr 1.25fr;
+    .correction-input{
+        min-height:62px;
     }
 }
 
@@ -824,6 +809,20 @@ button:disabled{
 /* =========================================================
    DESKTOP
    ========================================================= */
+
+@media(min-width:601px){
+
+    .review-card{
+        max-height:calc(100vh - 150px);
+        min-height:620px;
+    }
+
+    .review-scroll{
+        flex:1 1 auto;
+        min-height:0;
+    }
+}
+
 
 @media(min-width:800px){
 
@@ -839,201 +838,305 @@ button:disabled{
         line-height:1.8;
     }
 }
-</style></head><body><div class="app"><!-- =======================================================
-     HEADER
-     ======================================================= --><header class="header">
-<div class="header-inner"><div class="brand">
+</style>
+</head>
 
-    <h1 class="brand-title">
-        Naija Pocket Business Center
-    </h1>
+<body>
 
-    <div class="brand-subtitle">
-        Your Business Center
+<header class="header">
+<div class="header-inner">
+
+    <div class="brand">
+
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
+
+        <div class="brand-subtitle">
+            Your Business Center
+        </div>
+
+    </div>
+
+    <div id="serviceBadge" class="service-badge">
+        Service
+    </div>
+
+</div>
+</header>
+
+
+<main class="main">
+
+<section class="top-panel">
+
+<h2 class="review-title">
+    Review Your Complete Service
+</h2>
+
+<p class="review-subtitle">
+    Your complete document is shown one page at a time.
+    Use Previous Page and Next Page to go through the entire document.
+</p>
+
+<div class="status-row">
+
+    <span class="status-label">
+        Review status
+    </span>
+
+    <span id="statusValue" class="status-value">
+        Preparing...
+    </span>
+
+</div>
+
+<div class="progress-shell">
+
+    <div
+        id="progressBar"
+        class="progress-bar">
     </div>
 
 </div>
 
-<div id="serviceBadge" class="service-badge">
-    Service
-</div>
-
-</div>
-</header><!-- =======================================================
-     SCROLLABLE CONTENT
-     ======================================================= --><main class="main"><section class="top-panel"><h2 class="review-title">
-    Review Your Complete Service
-</h2><p class="review-subtitle">
-    Your complete document is shown one page at a time.
-    Use Previous Page and Next Page to go through the entire document.
-</p><div class="status-row"><span class="status-label">
-    Review status
-</span>
-
-<span id="statusValue" class="status-value">
-    Preparing...
-</span>
-
-</div><div class="progress-shell"><div
-    id="progressBar"
-    class="progress-bar">
-</div>
-
-</div><div
+<div
     id="progressText"
     class="progress-text">
     Preparing the document...
-</div></section><!-- =======================================================
-     DOCUMENT
-     ======================================================= --><section class="document-section"><div class="document-heading"><h3>
-    Your Complete Document
-</h3>
-
-<div
-    id="pageCount"
-    class="page-count">
-    0 PAGES
 </div>
 
-</div><div class="review-card"><div
-    id="pageViewer"
-    class="page-viewer"><div class="loading">
+</section>
 
-    <div class="spinner"></div>
 
-    <div>
-        Your service is being carefully prepared.
+<!-- =======================================================
+     REVIEW CARD
+     ======================================================= -->
+
+<section class="review-card">
+
+
+<!-- =====================================================
+     SCROLLABLE REVIEW CONTENT
+     ===================================================== -->
+
+<div class="review-scroll">
+
+<section class="document-section">
+
+<div class="document-heading">
+
+    <h3>
+        Your Complete Document
+    </h3>
+
+    <div
+        id="pageCount"
+        class="page-count">
+        0 PAGES
     </div>
 
 </div>
 
-</div><div class="page-navigation"><button
-    id="previousButton"
-    class="nav-button"
-    type="button"
-    disabled>
-    ← Previous Page
-</button>
 
 <div
-    id="pageIndicator"
-    class="page-indicator">
-    Page 0 of 0
+    id="pageViewer"
+    class="page-viewer">
+
+    <div class="loading">
+
+        <div class="spinner"></div>
+
+        <div>
+            Your service is being carefully prepared.
+        </div>
+
+    </div>
+
 </div>
 
-<button
-    id="nextButton"
-    class="nav-button next"
-    type="button"
-    disabled>
-    Next Page →
-</button>
 
-</div><div class="go-row"><input
-    id="pageNumberInput"
-    class="page-number-input"
-    type="number"
-    min="1"
-    placeholder="Enter page number">
+<div class="page-navigation">
 
-<button
-    id="goButton"
-    class="go-button"
-    type="button">
-    GO
-</button>
+    <button
+        id="previousButton"
+        class="nav-button"
+        type="button"
+        disabled>
+        ← Previous Page
+    </button>
 
-</div><div
+    <div
+        id="pageIndicator"
+        class="page-indicator">
+        Page 0 of 0
+    </div>
+
+    <button
+        id="nextButton"
+        class="nav-button next"
+        type="button"
+        disabled>
+        Next Page →
+    </button>
+
+</div>
+
+
+<div class="go-row">
+
+    <input
+        id="pageNumberInput"
+        class="page-number-input"
+        type="number"
+        min="1"
+        placeholder="Enter page number">
+
+    <button
+        id="goButton"
+        class="go-button"
+        type="button">
+        GO
+    </button>
+
+</div>
+
+
+<div
     id="pageReview"
     class="page-review"
-    style="display:none"><div class="page-review-title">
-    PAGE REVIEW
+    style="display:none">
+
+    <div class="page-review-title">
+        PAGE REVIEW
+    </div>
+
+    <div
+        id="pageReviewText"
+        class="page-review-text">
+    </div>
+
 </div>
 
-<div
-    id="pageReviewText"
-    class="page-review-text">
+</section>
+
 </div>
 
-</div></div></section><!-- =======================================================
-     CORRECTION
-     ======================================================= --><section class="correction-section"><h3 class="correction-title">
+
+<!-- =====================================================
+     FIXED ACTION AREA
+     ===================================================== -->
+
+<div class="review-actions">
+
+
+<section class="correction-section">
+
+<h3 class="correction-title">
     Want anything changed?
-</h3><p class="correction-help">
+</h3>
+
+<p class="correction-help">
     Tell us exactly what you want changed. Your correction
     will continue through the same document job.
-</p><textarea
+</p>
+
+<textarea
     id="correctionInput"
     class="correction-input"
     placeholder="Example: Correct the introduction, add more detail to page 4, change the formatting..."
-></textarea><button
-id="correctionButton"
-class="correction-button"
-type="button">
-Apply My Corrections
-</button>
-
-</section><!-- =======================================================
-     APPROVAL
-     ======================================================= --><section class="approval-section"><h3 class="approval-title">
-    Approve Document
-</h3><p class="approval-text">
-    Only approve after you have gone through every available page
-    and you are satisfied with the document.
-</p><button
-id="approveButton"
-class="approve-button"
-type="button"
-disabled>
-Approve Document
-</button>
-
-</section><!-- =======================================================
-     PAYMENT
-     ======================================================= --><section
-    id="paymentSection"
-    class="payment-section"><div class="payment-title">
-    Payment &amp; Download
-</div><div
-    id="paymentDetails"
-    class="payment-details">
-    Your approved document is ready for the payment step.
-</div><button
-id="paymentButton"
-class="payment-button"
-type="button">
-Continue to Payment
-</button>
-
-</section><div
-    id="message"
-    class="message">
-</div><div class="bottom"><button
-id="backButton"
-class="back-button"
-type="button">
-← Back
-</button>
-
-</div></main><!-- =======================================================
-     FIXED BOTTOM ACTION BAR
-     ======================================================= --><div class="bottom-action-bar"><div class="bottom-inner"><button
-    id="fixedCorrectionButton"
-    class="bottom-correction-button"
-    type="button">
-    Correction
-</button>
+></textarea>
 
 <button
-    id="fixedApproveButton"
-    class="bottom-approve-button"
+    id="correctionButton"
+    class="correction-button"
+    type="button">
+    Apply My Corrections
+</button>
+
+</section>
+
+
+<section class="approval-section">
+
+<h3 class="approval-title">
+    Approve Document
+</h3>
+
+<p class="approval-text">
+    Only approve after you have gone through every available page
+    and you are satisfied with the document.
+</p>
+
+<button
+    id="approveButton"
+    class="approve-button"
     type="button"
     disabled>
     Approve Document
 </button>
 
-</div></div></div><script>
+</section>
+
+
+<section
+    id="paymentSection"
+    class="payment-section">
+
+<div class="payment-title">
+    Payment &amp; Download
+</div>
+
+<div
+    id="paymentDetails"
+    class="payment-details">
+    Your approved document is ready for the payment step.
+</div>
+
+<button
+    id="paymentButton"
+    class="payment-button"
+    type="button">
+    Continue to Payment
+</button>
+
+<button
+    id="downloadButton"
+    class="download-button"
+    type="button">
+    Download Your Document
+</button>
+
+</section>
+
+
+<div
+    id="message"
+    class="message">
+</div>
+
+</div>
+
+</section>
+
+
+<div class="bottom">
+
+<button
+    id="backButton"
+    class="back-button"
+    type="button">
+    ← Back
+</button>
+
+</div>
+
+</main>
+
+
+<script>
 "use strict";
+
 
 /* =========================================================
    CONFIGURATION
@@ -1113,17 +1216,14 @@ const paymentDetails =
 const paymentButton =
     document.getElementById("paymentButton");
 
+const downloadButton =
+    document.getElementById("downloadButton");
+
 const message =
     document.getElementById("message");
 
 const backButton =
     document.getElementById("backButton");
-
-const fixedCorrectionButton =
-    document.getElementById("fixedCorrectionButton");
-
-const fixedApproveButton =
-    document.getElementById("fixedApproveButton");
 
 
 /* =========================================================
@@ -1182,37 +1282,47 @@ function setStatus(text){
 
 
 /* =========================================================
-   APPROVAL READINESS
+   REVIEW COMPLETION
    ========================================================= */
+
+function hasCompleteReview(){
+
+    return (
+        pages.length > 0 &&
+        totalPages > 0 &&
+        pages.length >= totalPages
+    );
+}
+
+
+/*
+   Keep the existing approval workflow intact.
+
+   READY is accepted as the server's completed review state.
+
+   We also accept the actual complete page set. This prevents
+   the UI from saying READY while unnecessarily blocking the
+   customer from continuing.
+*/
 
 function approvalReady(){
 
     return (
         !busy &&
         !approved &&
-        pages.length > 0 &&
-        totalPages > 0 &&
-        currentStatus === "review_complete"
+        hasCompleteReview() &&
+        (
+            currentStatus === "review_complete" ||
+            currentStatus === "ready"
+        )
     );
 }
 
 
 function updateApprovalButton(){
 
-    const ready =
-        approvalReady();
-
     approveButton.disabled =
-        !ready;
-
-    /*
-       The fixed bottom button mirrors the existing
-       approval button. It does not create a second
-       approval API request.
-    */
-
-    fixedApproveButton.disabled =
-        !ready;
+        !approvalReady();
 }
 
 
@@ -2264,38 +2374,14 @@ function applyJob(data){
 
 
     if(
-        currentStatus === "review_complete" &&
+        (
+            currentStatus === "review_complete" ||
+            currentStatus === "ready"
+        ) &&
         totalPages > 0
     ){
 
         percent = 100;
-    }
-
-
-    progressBar.style.width =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                percent
-            )
-        ) + "%";
-
-
-    if(totalPages > 0){
-
-        pageCount.textContent =
-            totalPages +
-            (
-                totalPages === 1
-                ? " PAGE"
-                : " PAGES"
-            );
-
-    }else{
-
-        pageCount.textContent =
-            "PREPARING";
     }
 
 
@@ -2313,7 +2399,8 @@ function applyJob(data){
 
 
     }else if(
-        currentStatus === "review_complete"
+        currentStatus === "review_complete" ||
+        currentStatus === "ready"
     ){
 
         setStatus("READY");
@@ -2372,6 +2459,33 @@ function applyJob(data){
 
         progressText.textContent =
             "Preparing the document.";
+    }
+
+
+    progressBar.style.width =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                percent
+            )
+        ) + "%";
+
+
+    if(totalPages > 0){
+
+        pageCount.textContent =
+            totalPages +
+            (
+                totalPages === 1
+                ? " PAGE"
+                : " PAGES"
+            );
+
+    }else{
+
+        pageCount.textContent =
+            "PREPARING";
     }
 
 
@@ -2618,12 +2732,24 @@ function showPage(number){
     renderCurrentPage();
 
 
-    document
-        .querySelector(".document-section")
-        ?.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
+    /*
+       Scroll the review card to the beginning of the
+       selected page, rather than moving the entire window.
+    */
+
+    const reviewScroll =
+        document.querySelector(
+            ".review-scroll"
+        );
+
+
+    if(reviewScroll){
+
+        reviewScroll.scrollTo({
+            top:0,
+            behavior:"smooth"
         });
+    }
 }
 
 
@@ -2705,50 +2831,6 @@ pageNumberInput.addEventListener(
 
 
 /* =========================================================
-   FIXED CORRECTION BUTTON
-   ========================================================= */
-
-fixedCorrectionButton.addEventListener(
-    "click",
-    ()=>{
-
-        correctionInput.focus();
-
-        correctionInput.scrollIntoView({
-            behavior:"smooth",
-            block:"center"
-        });
-    }
-);
-
-
-/* =========================================================
-   FIXED APPROVAL BUTTON
-   ========================================================= */
-
-/*
-   This button does NOT contain a second approval workflow.
-
-   It simply activates the existing approval button.
-   Therefore the existing approval logic/API remains the
-   single approval mechanism.
-*/
-
-fixedApproveButton.addEventListener(
-    "click",
-    ()=>{
-
-        if(
-            !fixedApproveButton.disabled
-        ){
-
-            approveButton.click();
-        }
-    }
-);
-
-
-/* =========================================================
    POLLING
    ========================================================= */
 
@@ -2796,6 +2878,8 @@ function startPolling(){
                     (
                         currentStatus ===
                             "review_complete" ||
+                        currentStatus ===
+                            "ready" ||
                         data.status ===
                             "review_error"
                     )
@@ -2819,7 +2903,9 @@ function startPolling(){
 
                 if(
                     data.status ===
-                    "review_complete"
+                        "review_complete" ||
+                    data.status ===
+                        "ready"
                 ){
 
                     stopPolling();
@@ -3015,6 +3101,11 @@ correctionButton.addEventListener(
             );
 
 
+            downloadButton.classList.remove(
+                "show"
+            );
+
+
             setMessage(
                 "Your correction has started. The corrected document will be reviewed again.",
                 "success"
@@ -3063,10 +3154,36 @@ approveButton.addEventListener(
 
         if(!approvalReady()){
 
-            setMessage(
-                "Please wait until the document is ready for approval.",
-                "error"
-            );
+            /*
+               Do not blindly say "review incomplete".
+
+               Tell the customer what is actually missing.
+            */
+
+            if(!pages.length){
+
+                setMessage(
+                    "The document is not available yet.",
+                    "error"
+                );
+
+            }else if(
+                currentStatus !== "review_complete" &&
+                currentStatus !== "ready"
+            ){
+
+                setMessage(
+                    "The document review is not complete.",
+                    "error"
+                );
+
+            }else{
+
+                setMessage(
+                    "Please wait until the complete document is ready.",
+                    "error"
+                );
+            }
 
 
             return;
@@ -3130,6 +3247,14 @@ approveButton.addEventListener(
             setStatus(
                 "APPROVED"
             );
+
+
+            progressBar.style.width =
+                "100%";
+
+
+            progressText.textContent =
+                "Your document has been approved.";
 
 
             setMessage(
@@ -3250,6 +3375,48 @@ paymentButton.addEventListener(
 
 
 /* =========================================================
+   DOWNLOAD
+   ========================================================= */
+
+downloadButton.addEventListener(
+    "click",
+    async()=>{
+
+        if(!jobId){
+
+            setMessage(
+                "The document job could not be identified.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const query =
+            new URLSearchParams({
+                job_id:
+                    jobId,
+
+                version_id:
+                    versionId
+            });
+
+
+        /*
+           Keep download compatible with the existing backend.
+           The payment page remains responsible for the actual
+           payment confirmation before delivery.
+        */
+
+        location.href =
+            "/api/download?" +
+            query.toString();
+    }
+);
+
+
+/* =========================================================
    BACK
    ========================================================= */
 
@@ -3322,6 +3489,8 @@ async function start(){
             if(
                 currentStatus ===
                     "review_complete" ||
+                currentStatus ===
+                    "ready" ||
                 data.status ===
                     "review_error"
             ){
@@ -3343,6 +3512,8 @@ async function start(){
         if(
             currentStatus !==
                 "review_complete" &&
+            currentStatus !==
+                "ready" &&
             currentStatus !==
                 "review_error" &&
             currentStatus !==
@@ -3403,5 +3574,7 @@ function escapeHtml(value){
 
 start();
 
-</script></body>
+</script>
+
+</body>
 </html>
