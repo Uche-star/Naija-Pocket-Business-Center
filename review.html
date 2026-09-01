@@ -1,21 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
-<title>Review Your Complete Service — Naija Pocket Business Center</title>
-
-<style>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Review Your Complete Service — Naija Pocket Business Center</title><style>
 :root{
     --black:#050505;
-    --panel:#111111;
-    --panel2:#0c0c0c;
+    --panel:#111;
     --line:rgba(255,255,255,.12);
     --gold:#d4af37;
     --gold2:#f0cf62;
-    --white:#ffffff;
+    --white:#fff;
     --muted:#a2a2a2;
     --red:#9d0000;
 }
@@ -25,8 +19,7 @@
     -webkit-tap-highlight-color:transparent;
 }
 
-html,
-body{
+html,body{
     margin:0;
     padding:0;
     width:100%;
@@ -36,29 +29,16 @@ body{
     font-family:Inter,Arial,sans-serif;
 }
 
-body{
-    overflow:hidden;
-}
+body{overflow:hidden;}
 
-button,
-textarea,
-input{
-    font:inherit;
-}
+button,textarea,input{font:inherit;}
 
-button{
-    cursor:pointer;
-}
+button{cursor:pointer;}
 
 button:disabled{
     opacity:.45;
     cursor:not-allowed;
 }
-
-
-/* =========================================================
-   HEADER
-   ========================================================= */
 
 .header{
     width:100%;
@@ -84,9 +64,7 @@ button:disabled{
     gap:10px;
 }
 
-.brand{
-    min-width:0;
-}
+.brand{min-width:0;}
 
 .brand-title{
     margin:0;
@@ -116,38 +94,23 @@ button:disabled{
     text-align:center;
 }
 
-
-/* =========================================================
-   MAIN SCREEN
-   ========================================================= */
-
 .main{
     position:fixed;
     top:66px;
     left:0;
     right:0;
     bottom:0;
-
     width:100%;
     max-width:950px;
     margin:auto;
-
     padding:10px 9px 0;
-
     display:flex;
     flex-direction:column;
-
     overflow:hidden;
 }
 
-
-/* =========================================================
-   TOP PANEL
-   ========================================================= */
-
 .top-panel{
     flex:0 0 auto;
-
     background:var(--panel);
     border:1px solid var(--line);
     border-radius:13px;
@@ -212,38 +175,22 @@ button:disabled{
     text-align:right;
 }
 
-
-/* =========================================================
-   SCROLLABLE REVIEW CARD
-   ========================================================= */
-
 .review-card{
     flex:1 1 auto;
     min-height:0;
-
     display:flex;
     flex-direction:column;
-
     background:#0b0b0b;
     border:1px solid rgba(212,175,55,.22);
     border-radius:13px;
-
     overflow:hidden;
 }
 
-
-/* =========================================================
-   DOCUMENT CARD HEADER
-   ========================================================= */
-
 .document-card-header{
     flex:0 0 auto;
-
     padding:10px 11px 8px;
-
     background:#111;
     border-bottom:1px solid var(--line);
-
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -263,63 +210,35 @@ button:disabled{
     font-weight:800;
 }
 
-
-/* =========================================================
-   SCROLLABLE DOCUMENT AREA
-   ========================================================= */
-
 .document-scroll{
     flex:1 1 auto;
     min-height:0;
-
     overflow-y:auto;
     overflow-x:hidden;
-
     padding:10px;
-
     -webkit-overflow-scrolling:touch;
     overscroll-behavior:contain;
 }
 
-.document-scroll::-webkit-scrollbar{
-    width:5px;
-}
-
-.document-scroll::-webkit-scrollbar-track{
-    background:#090909;
-}
-
+.document-scroll::-webkit-scrollbar{width:5px;}
+.document-scroll::-webkit-scrollbar-track{background:#090909;}
 .document-scroll::-webkit-scrollbar-thumb{
     background:#3a3a3a;
     border-radius:20px;
 }
 
-
-/* =========================================================
-   PAGE VIEWER
-   ========================================================= */
-
-.page-viewer{
-    width:100%;
-}
+.page-viewer{width:100%;}
 
 .document-page{
     position:relative;
-
     width:100%;
     min-height:620px;
-
     background:#fff;
     color:#111;
-
     border-radius:2px;
-
     box-shadow:0 8px 35px rgba(0,0,0,.45);
-
     padding:48px 38px 58px;
-
     overflow:visible;
-
     user-select:text;
     -webkit-user-select:text;
     cursor:default;
@@ -333,22 +252,13 @@ button:disabled{
     margin-bottom:24px;
 }
 
-
-/* =========================================================
-   DOCUMENT CONTENT
-   ========================================================= */
-
 .page-content{
     width:100%;
     color:#111;
-
     font-family:"Times New Roman",Georgia,serif;
-
     font-size:14px;
     line-height:1.75;
-
     white-space:pre-wrap;
-
     overflow-wrap:anywhere;
     word-break:normal;
 }
@@ -377,18 +287,12 @@ button:disabled{
 .page-content h4{font-size:1.15em;}
 
 .page-content strong,
-.page-content b{
-    font-weight:700;
-}
+.page-content b{font-weight:700;}
 
 .page-content em,
-.page-content i{
-    font-style:italic;
-}
+.page-content i{font-style:italic;}
 
-.page-content u{
-    text-decoration:underline;
-}
+.page-content u{text-decoration:underline;}
 
 .page-content ul,
 .page-content ol{
@@ -397,9 +301,7 @@ button:disabled{
     padding-left:28px;
 }
 
-.page-content li{
-    margin-bottom:4px;
-}
+.page-content li{margin-bottom:4px;}
 
 .page-content blockquote{
     margin:12px 0;
@@ -429,9 +331,7 @@ button:disabled{
     text-align:left;
 }
 
-.page-content th{
-    font-weight:700;
-}
+.page-content th{font-weight:700;}
 
 .page-content pre{
     white-space:pre-wrap;
@@ -441,59 +341,41 @@ button:disabled{
 
 .empty-page{
     min-height:500px;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     color:#777;
     font-family:Arial,sans-serif;
     font-size:12px;
     text-align:center;
 }
 
-
-/* =========================================================
-   PAGE NAVIGATION
-   ========================================================= */
-
 .page-navigation{
     display:grid;
     grid-template-columns:1fr auto 1fr;
     align-items:center;
     gap:7px;
-
     margin-top:9px;
 }
 
 .nav-button{
     min-height:43px;
-
     border:1px solid rgba(255,255,255,.14);
     border-radius:8px;
-
     background:#181818;
     color:#fff;
-
     font-size:10px;
     font-weight:900;
 }
 
-.nav-button.next{
-    background:#252525;
-}
+.nav-button.next{background:#252525;}
 
-.nav-button:active{
-    transform:scale(.985);
-}
+.nav-button:active{transform:scale(.985);}
 
 .page-indicator{
     min-width:85px;
-
     color:var(--gold2);
-
     text-align:center;
-
     font-size:10px;
     font-weight:900;
 }
@@ -501,51 +383,35 @@ button:disabled{
 .go-row{
     display:flex;
     gap:7px;
-
     margin-top:7px;
 }
 
 .page-number-input{
     flex:1;
     min-width:0;
-
     height:39px;
-
     background:#151515;
     border:1px solid var(--line);
     border-radius:8px;
-
     color:#fff;
-
     padding:0 10px;
-
     outline:none;
-
     font-size:11px;
 }
 
 .go-button{
     width:75px;
-
     border:0;
     border-radius:8px;
-
     background:var(--gold);
     color:#000;
-
     font-size:10px;
     font-weight:900;
 }
 
-
-/* =========================================================
-   PAGE REVIEW
-   ========================================================= */
-
 .page-review{
     margin-top:8px;
     padding:11px;
-
     background:#101010;
     border:1px solid var(--line);
     border-radius:10px;
@@ -562,35 +428,19 @@ button:disabled{
     color:#bbb;
     font-size:10px;
     line-height:1.55;
-
     white-space:pre-wrap;
     overflow-wrap:anywhere;
 }
 
-
-/* =========================================================
-   FIXED ACTION AREA
-   ========================================================= */
-
 .action-area{
     flex:0 0 auto;
-
     background:#080808;
-
     border-top:1px solid var(--line);
-
     padding:8px 10px 9px;
-
     box-shadow:0 -8px 25px rgba(0,0,0,.45);
-
     position:relative;
     z-index:20;
 }
-
-
-/* =========================================================
-   CORRECTION
-   ========================================================= */
 
 .correction-box{
     display:grid;
@@ -604,20 +454,13 @@ button:disabled{
     height:43px;
     min-height:43px;
     max-height:100px;
-
     resize:none;
-
     padding:11px;
-
     background:#171717;
-
     border:1px solid rgba(255,255,255,.14);
     border-radius:8px;
-
     color:#fff;
-
     outline:none;
-
     font-size:11px;
     line-height:1.4;
 }
@@ -629,60 +472,36 @@ button:disabled{
 .correction-button{
     min-width:125px;
     min-height:43px;
-
     border:1px solid rgba(212,175,55,.38);
     border-radius:8px;
-
     background:#171717;
     color:var(--gold2);
-
     font-size:10px;
     font-weight:900;
 }
 
-
-/* =========================================================
-   APPROVAL
-   ========================================================= */
-
 .approve-button{
     width:100%;
-
     min-height:46px;
-
     margin-top:7px;
-
     border:0;
     border-radius:9px;
-
     background:var(--gold);
     color:#000;
-
     font-size:11px;
     font-weight:900;
 }
 
-
-/* =========================================================
-   PAYMENT
-   ========================================================= */
-
 .payment-section{
     display:none;
-
     margin-top:7px;
-
     padding:10px;
-
     background:#111;
-
     border:1px solid rgba(212,175,55,.4);
     border-radius:10px;
 }
 
-.payment-section.show{
-    display:block;
-}
+.payment-section.show{display:block;}
 
 .payment-title{
     color:var(--gold2);
@@ -692,101 +511,60 @@ button:disabled{
 
 .payment-details{
     margin-top:5px;
-
     color:#ddd;
-
     white-space:pre-wrap;
-
     font-size:10px;
     line-height:1.5;
 }
 
 .payment-button{
     width:100%;
-
     min-height:43px;
-
     margin-top:7px;
-
     border:0;
     border-radius:8px;
-
     background:var(--gold);
     color:#000;
-
     font-size:10px;
     font-weight:900;
 }
 
-
-/* =========================================================
-   BOTTOM BACK
-   ========================================================= */
-
 .bottom{
     flex:0 0 auto;
-
     padding:7px 0 8px;
 }
 
 .back-button{
     width:100%;
     min-height:38px;
-
     border:0;
     border-radius:8px;
-
     background:var(--red);
     color:#fff;
-
     font-size:10px;
     font-weight:900;
 }
 
-
-/* =========================================================
-   MESSAGES
-   ========================================================= */
-
 .message{
     flex:0 0 auto;
-
     min-height:17px;
-
     margin-top:2px;
-
     color:#888;
-
     font-size:9px;
     text-align:center;
 }
 
-.message.error{
-    color:#ff7777;
-}
-
-.message.success{
-    color:#75dc99;
-}
-
-
-/* =========================================================
-   LOADING
-   ========================================================= */
+.message.error{color:#ff7777;}
+.message.success{color:#75dc99;}
 
 .loading{
     min-height:500px;
-
     display:flex;
     flex-direction:column;
-
     align-items:center;
     justify-content:center;
-
     gap:10px;
-
     color:#999;
-
     font-size:11px;
     text-align:center;
 }
@@ -794,48 +572,29 @@ button:disabled{
 .spinner{
     width:29px;
     height:29px;
-
     border:3px solid #333;
     border-top-color:var(--gold);
-
     border-radius:50%;
-
     animation:spin .8s linear infinite;
 }
 
 @keyframes spin{
-    to{
-        transform:rotate(360deg)
-    }
+    to{transform:rotate(360deg);}
 }
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
 
 @media(max-width:600px){
 
-    .main{
-        padding:8px 7px 0;
-    }
+    .main{padding:8px 7px 0;}
 
     .top-panel{
         padding:9px 11px;
         margin-bottom:7px;
     }
 
-    .review-title{
-        font-size:15px;
-    }
+    .review-title{font-size:15px;}
+    .review-subtitle{font-size:9px;}
 
-    .review-subtitle{
-        font-size:9px;
-    }
-
-    .document-scroll{
-        padding:6px;
-    }
+    .document-scroll{padding:6px;}
 
     .document-page{
         min-height:560px;
@@ -847,45 +606,30 @@ button:disabled{
         line-height:1.65;
     }
 
-    .page-content table{
-        font-size:11px;
-    }
+    .page-content table{font-size:11px;}
 
     .page-content th,
     .page-content td{
         padding:4px 5px;
     }
 
-    .correction-box{
-        grid-template-columns:1fr;
-    }
+    .correction-box{grid-template-columns:1fr;}
 
-    .correction-button{
-        width:100%;
-    }
+    .correction-button{width:100%;}
 
-    .action-area{
-        padding:7px 8px 8px;
-    }
+    .action-area{padding:7px 8px 8px;}
 
-    .bottom{
-        padding:5px 0 6px;
-    }
+    .bottom{padding:5px 0 6px;}
 
-    .back-button{
-        min-height:36px;
-    }
+    .back-button{min-height:36px;}
 }
-
 
 @media(min-width:800px){
 
     .document-page{
         max-width:820px;
         margin:auto;
-
         min-height:1050px;
-
         padding:65px 70px 75px;
     }
 
@@ -894,287 +638,167 @@ button:disabled{
         line-height:1.8;
     }
 }
-</style>
-</head>
+</style></head><body><header class="header">
+<div class="header-inner"><div class="brand">
+    <h1 class="brand-title">Naija Pocket Business Center</h1>
+    <div class="brand-subtitle">Your Business Center</div>
+</div>
 
-<body>
+<div id="serviceBadge" class="service-badge">Service</div>
 
-<header class="header">
+</div>
+</header><main class="main"><section class="top-panel"><h2 class="review-title">Review Your Complete Service</h2>
 
-<div class="header-inner">
+<p class="review-subtitle">
+    Go through your complete document. Use Previous Page
+    and Next Page to review every page before approval.
+</p>
 
-    <div class="brand">
+<div class="status-row">
+    <span class="status-label">Review status</span>
+    <span id="statusValue" class="status-value">Preparing...</span>
+</div>
 
-        <h1 class="brand-title">
-            Naija Pocket Business Center
-        </h1>
+<div class="progress-shell">
+    <div id="progressBar" class="progress-bar"></div>
+</div>
 
-        <div class="brand-subtitle">
-            Your Business Center
-        </div>
+<div id="progressText" class="progress-text">
+    Preparing the document...
+</div>
 
+</section><section class="review-card"><div class="document-card-header">
+
+    <div class="document-heading">
+        <h3>Your Complete Document</h3>
     </div>
 
-    <div id="serviceBadge" class="service-badge">
-        Service
+    <div id="pageCount" class="page-count">
+        0 PAGES
     </div>
 
 </div>
 
-</header>
+<div id="documentScroll" class="document-scroll">
 
+    <div id="pageViewer" class="page-viewer">
 
-<main class="main">
-
-
-<section class="top-panel">
-
-    <h2 class="review-title">
-        Review Your Complete Service
-    </h2>
-
-    <p class="review-subtitle">
-        Go through your complete document. Use Previous Page
-        and Next Page to review every page before approval.
-    </p>
-
-    <div class="status-row">
-
-        <span class="status-label">
-            Review status
-        </span>
-
-        <span id="statusValue" class="status-value">
-            Preparing...
-        </span>
-
-    </div>
-
-    <div class="progress-shell">
-
-        <div
-            id="progressBar"
-            class="progress-bar">
+        <div class="loading">
+            <div class="spinner"></div>
+            <div>Your service is being carefully prepared.</div>
         </div>
 
     </div>
 
-    <div
-        id="progressText"
-        class="progress-text">
-        Preparing the document...
-    </div>
+    <div class="page-navigation">
 
-</section>
-
-
-<section class="review-card">
-
-
-    <div class="document-card-header">
-
-        <div class="document-heading">
-
-            <h3>
-                Your Complete Document
-            </h3>
-
-        </div>
-
-        <div
-            id="pageCount"
-            class="page-count">
-            0 PAGES
-        </div>
-
-    </div>
-
-
-    <div
-        id="documentScroll"
-        class="document-scroll">
-
-
-        <div
-            id="pageViewer"
-            class="page-viewer">
-
-            <div class="loading">
-
-                <div class="spinner"></div>
-
-                <div>
-                    Your service is being carefully prepared.
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="page-navigation">
-
-            <button
-                id="previousButton"
+        <button id="previousButton"
                 class="nav-button"
                 type="button"
                 disabled>
-                ← Previous Page
-            </button>
+            ← Previous Page
+        </button>
 
-            <div
-                id="pageIndicator"
-                class="page-indicator">
-                Page 0 of 0
-            </div>
+        <div id="pageIndicator" class="page-indicator">
+            Page 0 of 0
+        </div>
 
-            <button
-                id="nextButton"
+        <button id="nextButton"
                 class="nav-button next"
                 type="button"
                 disabled>
-                Next Page →
-            </button>
-
-        </div>
-
-
-        <div class="go-row">
-
-            <input
-                id="pageNumberInput"
-                class="page-number-input"
-                type="number"
-                min="1"
-                placeholder="Enter page number">
-
-            <button
-                id="goButton"
-                class="go-button"
-                type="button">
-                GO
-            </button>
-
-        </div>
-
-
-        <div
-            id="pageReview"
-            class="page-review"
-            style="display:none">
-
-            <div class="page-review-title">
-                PAGE REVIEW
-            </div>
-
-            <div
-                id="pageReviewText"
-                class="page-review-text">
-            </div>
-
-        </div>
-
+            Next Page →
+        </button>
 
     </div>
 
+    <div class="go-row">
 
-    <!-- =====================================================
-         FIXED ACTION AREA
-         ===================================================== -->
+        <input id="pageNumberInput"
+               class="page-number-input"
+               type="number"
+               min="1"
+               placeholder="Enter page number">
 
-    <div class="action-area">
-
-
-        <div class="correction-box">
-
-            <textarea
-                id="correctionInput"
-                class="correction-input"
-                placeholder="Want anything changed? Tell us what to correct..."
-            ></textarea>
-
-            <button
-                id="correctionButton"
-                class="correction-button"
+        <button id="goButton"
+                class="go-button"
                 type="button">
-                Apply Correction
-            </button>
+            GO
+        </button>
 
+    </div>
+
+    <div id="pageReview"
+         class="page-review"
+         style="display:none">
+
+        <div class="page-review-title">PAGE REVIEW</div>
+
+        <div id="pageReviewText"
+             class="page-review-text">
         </div>
 
+    </div>
 
-        <button
-            id="approveButton"
+</div>
+
+<div class="action-area">
+
+    <div class="correction-box">
+
+        <textarea id="correctionInput"
+                  class="correction-input"
+                  placeholder="Want anything changed? Tell us what to correct..."></textarea>
+
+        <button id="correctionButton"
+                class="correction-button"
+                type="button">
+            Apply Correction
+        </button>
+
+    </div>
+
+    <button id="approveButton"
             class="approve-button"
             type="button"
             disabled>
-            Approve Document
-        </button>
-
-
-        <section
-            id="paymentSection"
-            class="payment-section">
-
-            <div class="payment-title">
-                Payment &amp; Download
-            </div>
-
-            <div
-                id="paymentDetails"
-                class="payment-details">
-                Your approved document is ready.
-            </div>
-
-            <button
-                id="paymentButton"
-                class="payment-button"
-                type="button">
-                Continue to Payment
-            </button>
-
-        </section>
-
-
-    </div>
-
-
-</section>
-
-
-<div
-    id="message"
-    class="message">
-</div>
-
-
-<div class="bottom">
-
-    <button
-        id="backButton"
-        class="back-button"
-        type="button">
-        ← Back
+        Approve Document
     </button>
 
+    <section id="paymentSection"
+             class="payment-section">
+
+        <div class="payment-title">
+            Payment &amp; Download
+        </div>
+
+        <div id="paymentDetails"
+             class="payment-details">
+            Your approved document is ready.
+        </div>
+
+        <button id="paymentButton"
+                class="payment-button"
+                type="button">
+            Continue to Payment
+        </button>
+
+    </section>
+
 </div>
 
-
-</main>
-
-
-<script>
+</section><div id="message" class="message"></div><div class="bottom">
+    <button id="backButton"
+            class="back-button"
+            type="button">
+        ← Back
+    </button>
+</div></main><script>
 "use strict";
-
-
-/* =========================================================
-   CONFIGURATION
-   ========================================================= */
 
 const API_BASE = "";
 
-const params =
-    new URLSearchParams(location.search);
+const params = new URLSearchParams(location.search);
 
 const jobId =
     (params.get("job_id") || "").trim();
@@ -1183,10 +807,6 @@ const service =
     (params.get("service") ||
      "Business Center Service").trim();
 
-
-/* =========================================================
-   ELEMENTS
-   ========================================================= */
 
 const serviceBadge =
     document.getElementById("serviceBadge");
@@ -1255,41 +875,20 @@ const backButton =
     document.getElementById("backButton");
 
 
-/* =========================================================
-   STATE
-   ========================================================= */
-
 let pages = [];
-
 let currentPage = 1;
-
 let totalPages = 0;
-
 let currentVersion = 1;
-
 let versionId = "";
-
 let currentStatus = "";
-
 let approved = false;
-
 let polling = false;
-
 let pollTimer = null;
-
 let busy = false;
 
 
-/* =========================================================
-   HELPERS
-   ========================================================= */
-
 function clean(value){
-
-    if(
-        value === null ||
-        value === undefined
-    ){
+    if(value === null || value === undefined){
         return "";
     }
 
@@ -1298,54 +897,28 @@ function clean(value){
 
 
 function setMessage(text,type=""){
-
-    message.textContent =
-        text || "";
-
-    message.className =
-        "message" +
-        (
-            type
-            ? " " + type
-            : ""
-        );
+    message.textContent = text || "";
+    message.className = "message" + (type ? " " + type : "");
 }
 
 
 function setStatus(text){
-
-    statusValue.textContent =
-        text || "Preparing...";
+    statusValue.textContent = text || "Preparing...";
 }
 
 
-/* =========================================================
-   STATUS NORMALIZATION
-   ========================================================= */
-
 /*
-   IMPORTANT
-
-   Different backend stages can describe the same usable
-   review state.
-
-   The old approval check required exactly:
-
-       review_complete
-
-   That was too strict.
-
-   A document that is already loaded and displayed as READY
-   is also a completed review document from the customer's
-   point of view.
-
-   We therefore normalize the known ready states here.
+=========================================================
+STATUS
+=========================================================
 */
 
-function isReadyStatus(status){
+function normalizedStatus(status){
+    return clean(status).toLowerCase();
+}
 
-    const value =
-        clean(status).toLowerCase();
+
+function isReadyStatus(status){
 
     return [
         "ready",
@@ -1355,33 +928,33 @@ function isReadyStatus(status){
         "completed",
         "document_ready",
         "review_ready"
-    ].includes(value);
+    ].includes(
+        normalizedStatus(status)
+    );
 }
 
 
-/* =========================================================
-   APPROVAL READINESS
-   ========================================================= */
+/*
+=========================================================
+APPROVAL READINESS
+
+IMPORTANT:
+Approval is NOT blocked because versionId is empty.
+
+The document itself is the primary requirement.
+If the backend provides version_id, we send it.
+If it does not, approval still goes to /api/approve
+with job_id only.
+=========================================================
+*/
 
 function approvalReady(){
-
-    /*
-       A real document must exist.
-
-       The version must exist because the approval request
-       sends the version_id.
-
-       The document must be in a usable ready state.
-
-       This does NOT depend on the page navigation buttons.
-    */
 
     return (
         !busy &&
         !approved &&
         pages.length > 0 &&
         totalPages > 0 &&
-        !!versionId &&
         isReadyStatus(currentStatus)
     );
 }
@@ -1398,30 +971,27 @@ function setBusy(value){
 
     busy = !!value;
 
-
-    correctionButton.disabled =
-        busy;
-
+    correctionButton.disabled = busy;
 
     previousButton.disabled =
         busy ||
         currentPage <= 1 ||
         totalPages <= 1;
 
-
     nextButton.disabled =
         busy ||
         currentPage >= totalPages ||
         totalPages <= 1;
 
-
     updateApprovalButton();
 }
 
 
-/* =========================================================
-   API GET
-   ========================================================= */
+/*
+=========================================================
+API
+=========================================================
+*/
 
 async function apiGet(url){
 
@@ -1434,12 +1004,10 @@ async function apiGet(url){
             }
         );
 
-
     const data =
         await response
             .json()
             .catch(()=>({}));
-
 
     if(!response.ok){
 
@@ -1451,14 +1019,9 @@ async function apiGet(url){
         );
     }
 
-
     return data;
 }
 
-
-/* =========================================================
-   API POST
-   ========================================================= */
 
 async function apiPost(url,body){
 
@@ -1468,20 +1031,16 @@ async function apiPost(url,body){
             {
                 method:"POST",
                 headers:{
-                    "Content-Type":
-                        "application/json"
+                    "Content-Type":"application/json"
                 },
-                body:
-                    JSON.stringify(body)
+                body:JSON.stringify(body)
             }
         );
-
 
     const data =
         await response
             .json()
             .catch(()=>({}));
-
 
     if(
         !response.ok ||
@@ -1496,45 +1055,38 @@ async function apiPost(url,body){
         );
     }
 
-
     return data;
 }
 
 
-/* =========================================================
-   PAGE NORMALIZATION
-   ========================================================= */
+/*
+=========================================================
+PAGES
+=========================================================
+*/
 
 function normalizePages(data){
 
     let source = [];
 
-
     if(
         Array.isArray(data.review_pages) &&
         data.review_pages.length
     ){
-
-        source =
-            data.review_pages;
+        source = data.review_pages;
 
     }else if(
         Array.isArray(data.document_pages) &&
         data.document_pages.length
     ){
-
-        source =
-            data.document_pages;
+        source = data.document_pages;
 
     }else if(
         Array.isArray(data.pages) &&
         data.pages.length
     ){
-
-        source =
-            data.pages;
+        source = data.pages;
     }
-
 
     return source
         .map((item,index)=>({
@@ -1568,38 +1120,28 @@ function normalizePages(data){
         }))
         .sort(
             (a,b)=>
-                a.position -
-                b.position
+                a.position - b.position
         );
 }
 
 
-/* =========================================================
-   EXTRACT PAGES
-   ========================================================= */
-
 function extractPages(data){
 
-    const normalized =
+    const direct =
         normalizePages(data);
 
-
-    if(normalized.length){
-        return normalized;
+    if(direct.length){
+        return direct;
     }
 
-
-    const possibleDocuments = [
+    const candidates = [
         data.document,
         data.result,
         data.review,
         data.output
     ];
 
-
-    for(
-        const candidate of possibleDocuments
-    ){
+    for(const candidate of candidates){
 
         if(
             candidate &&
@@ -1615,14 +1157,31 @@ function extractPages(data){
         }
     }
 
-
     return [];
 }
 
 
-/* =========================================================
-   REVIEW TEXT NORMALIZER
-   ========================================================= */
+/*
+=========================================================
+REMOVE MARKDOWN MARKERS
+
+This is the specific fix for:
+
+### Abstract
+### 1. Introduction
+## 2. Literature Review
+# Title
+
+The visible review page now shows:
+
+Abstract
+1. Introduction
+2. Literature Review
+Title
+
+without the Markdown ### / ## / # markers.
+=========================================================
+*/
 
 function normalizeReviewText(value){
 
@@ -1634,16 +1193,27 @@ function normalizeReviewText(value){
             : value
         );
 
+    text =
+        text.replace(/\r\n/g,"\n")
+            .replace(/\r/g,"\n")
+            .replace(/\u00A0/g," ");
+
+
+    /*
+       Remove Markdown heading markers only when they
+       occur at the beginning of a line.
+    */
 
     text =
-        text.replace(/\r\n/g,"\n");
+        text.replace(
+            /^[ \t]*#{1,6}[ \t]+/gm,
+            ""
+        );
 
-    text =
-        text.replace(/\r/g,"\n");
 
-    text =
-        text.replace(/\u00A0/g," ");
-
+    /*
+       Remove Markdown horizontal separators.
+    */
 
     text =
         text.replace(
@@ -1658,6 +1228,10 @@ function normalizeReviewText(value){
             "\n"
         );
 
+
+    /*
+       Clean common compressed separators.
+    */
 
     text =
         text.replace(
@@ -1705,52 +1279,22 @@ function normalizeReviewText(value){
 }
 
 
-/* =========================================================
-   SAFE HTML SANITIZER
-   ========================================================= */
+/*
+=========================================================
+HTML SANITIZATION
+=========================================================
+*/
 
 const ALLOWED_TAGS =
     new Set([
-
-        "DIV",
-        "P",
-        "BR",
-        "SPAN",
-
-        "STRONG",
-        "B",
-        "EM",
-        "I",
-        "U",
-        "S",
-        "STRIKE",
-
-        "H1",
-        "H2",
-        "H3",
-        "H4",
-        "H5",
-        "H6",
-
-        "UL",
-        "OL",
-        "LI",
-
-        "BLOCKQUOTE",
-        "HR",
-
-        "TABLE",
-        "THEAD",
-        "TBODY",
-        "TFOOT",
-        "TR",
-        "TH",
-        "TD",
-
-        "PRE",
-
-        "SUP",
-        "SUB"
+        "DIV","P","BR","SPAN",
+        "STRONG","B","EM","I","U","S","STRIKE",
+        "H1","H2","H3","H4","H5","H6",
+        "UL","OL","LI",
+        "BLOCKQUOTE","HR",
+        "TABLE","THEAD","TBODY","TFOOT",
+        "TR","TH","TD",
+        "PRE","SUP","SUB"
     ]);
 
 
@@ -1765,57 +1309,43 @@ const ALLOWED_ATTRIBUTES =
 
 const ALLOWED_STYLE_PROPERTIES =
     new Set([
-
         "color",
         "background-color",
-
         "font-family",
         "font-size",
         "font-weight",
         "font-style",
-
         "text-decoration",
         "text-align",
         "text-indent",
-
         "line-height",
         "letter-spacing",
-
         "margin",
         "margin-top",
         "margin-right",
         "margin-bottom",
         "margin-left",
-
         "padding",
         "padding-top",
         "padding-right",
         "padding-bottom",
         "padding-left",
-
         "vertical-align",
-
         "width",
         "max-width",
-
         "border",
         "border-top",
         "border-right",
         "border-bottom",
         "border-left",
-
         "background"
     ]);
 
 
 function safeStyleValue(value){
 
-    const text =
-        String(value || "");
-
     const lower =
-        text.toLowerCase();
-
+        String(value || "").toLowerCase();
 
     if(
         lower.includes("javascript:") ||
@@ -1823,12 +1353,10 @@ function safeStyleValue(value){
         lower.includes("url(") ||
         lower.includes("@import")
     ){
-
         return "";
     }
 
-
-    return text;
+    return String(value || "");
 }
 
 
@@ -1837,22 +1365,16 @@ function sanitizeStyle(styleText){
     const result = [];
 
     const declarations =
-        String(styleText || "")
-            .split(";");
+        String(styleText || "").split(";");
 
-
-    for(
-        const declaration of declarations
-    ){
+    for(const declaration of declarations){
 
         const separator =
             declaration.indexOf(":");
 
-
         if(separator < 0){
             continue;
         }
-
 
         const property =
             declaration
@@ -1860,153 +1382,122 @@ function sanitizeStyle(styleText){
                 .trim()
                 .toLowerCase();
 
-
         const value =
             declaration
                 .slice(separator + 1)
                 .trim();
 
-
         if(
-            !ALLOWED_STYLE_PROPERTIES.has(
-                property
-            )
+            !ALLOWED_STYLE_PROPERTIES.has(property)
         ){
-
             continue;
         }
 
-
         const safeValue =
             safeStyleValue(value);
-
 
         if(!safeValue){
             continue;
         }
 
-
         result.push(
-            property +
-            ":" +
-            safeValue
+            property + ":" + safeValue
         );
     }
-
 
     return result.join(";");
 }
 
 
-/* =========================================================
-   PLAIN TEXT RENDERER
-   ========================================================= */
+/*
+=========================================================
+PLAIN TEXT
+=========================================================
+*/
 
 function renderPlainDocumentText(text){
 
     const fragment =
         document.createDocumentFragment();
 
-
     const normalized =
         normalizeReviewText(text);
-
 
     const lines =
         normalized.split("\n");
 
+    lines.forEach((line,index)=>{
 
-    lines.forEach(
-        (line,index)=>{
+        if(line === ""){
 
-            if(line === ""){
+            fragment.appendChild(
+                document.createElement("br")
+            );
 
-                fragment.appendChild(
-                    document.createElement("br")
-                );
+            return;
+        }
 
+
+        const pattern =
+            /(\*\*[^*]+\*\*)/g;
+
+        const parts =
+            line.split(pattern);
+
+
+        parts.forEach(part=>{
+
+            if(!part){
                 return;
             }
 
+            if(
+                part.startsWith("**") &&
+                part.endsWith("**")
+            ){
 
-            const pattern =
-                /(\*\*[^*]+\*\*)/g;
+                const strong =
+                    document.createElement("strong");
 
+                strong.textContent =
+                    part.slice(2,-2);
 
-            const parts =
-                line.split(pattern);
+                fragment.appendChild(strong);
 
+            }else{
 
-            parts.forEach(
-                part=>{
-
-                    if(!part){
-                        return;
-                    }
-
-
-                    if(
-                        part.startsWith("**") &&
-                        part.endsWith("**")
-                    ){
-
-                        const strong =
-                            document.createElement(
-                                "strong"
-                            );
-
-
-                        strong.textContent =
-                            part.slice(2,-2);
-
-
-                        fragment.appendChild(
-                            strong
-                        );
-
-                    }else{
-
-                        const cleanPart =
-                            part
-                                .replace(
-                                    /^\*+/,
-                                    ""
-                                )
-                                .replace(
-                                    /\*+$/,
-                                    ""
-                                );
-
-
-                        fragment.appendChild(
-                            document.createTextNode(
-                                cleanPart
-                            )
-                        );
-                    }
-
-                }
-            );
-
-
-            if(index < lines.length - 1){
+                const cleanPart =
+                    part
+                        .replace(/^\*+/,"")
+                        .replace(/\*+$/,"");
 
                 fragment.appendChild(
-                    document.createElement("br")
+                    document.createTextNode(
+                        cleanPart
+                    )
                 );
             }
+        });
 
+
+        if(index < lines.length - 1){
+
+            fragment.appendChild(
+                document.createElement("br")
+            );
         }
-    );
 
+    });
 
     return fragment;
 }
 
 
-/* =========================================================
-   SAFE DOCUMENT HTML
-   ========================================================= */
+/*
+=========================================================
+SAFE DOCUMENT HTML
+=========================================================
+*/
 
 function sanitizeDocumentHtml(html){
 
@@ -2019,26 +1510,27 @@ function sanitizeDocumentHtml(html){
         );
 
 
+    /*
+       Plain text is normalized here first.
+       This guarantees ### is removed even when the backend
+       returns Markdown/plain text instead of HTML.
+    */
+
     if(
         !/<[a-z][\s\S]*>/i.test(source)
     ){
-
-        return renderPlainDocumentText(
-            source
-        );
+        return renderPlainDocumentText(source);
     }
 
 
     const parser =
         new DOMParser();
 
-
     const parsed =
         parser.parseFromString(
             source,
             "text/html"
         );
-
 
     const output =
         document.createDocumentFragment();
@@ -2047,13 +1539,20 @@ function sanitizeDocumentHtml(html){
     function cleanNode(node,parent){
 
         if(
-            node.nodeType ===
-            Node.TEXT_NODE
+            node.nodeType === Node.TEXT_NODE
         ){
+
+            /*
+               Text inside HTML is also passed through the
+               Markdown heading cleanup.
+            */
+
+            const text =
+                node.nodeValue || "";
 
             parent.appendChild(
                 document.createTextNode(
-                    node.nodeValue || ""
+                    normalizeReviewText(text)
                 )
             );
 
@@ -2062,10 +1561,8 @@ function sanitizeDocumentHtml(html){
 
 
         if(
-            node.nodeType !==
-            Node.ELEMENT_NODE
+            node.nodeType !== Node.ELEMENT_NODE
         ){
-
             return;
         }
 
@@ -2074,32 +1571,27 @@ function sanitizeDocumentHtml(html){
             node.tagName.toUpperCase();
 
 
-        if(
-            tag === "SCRIPT" ||
-            tag === "STYLE" ||
-            tag === "IFRAME" ||
-            tag === "OBJECT" ||
-            tag === "EMBED" ||
-            tag === "FORM" ||
-            tag === "INPUT" ||
-            tag === "BUTTON" ||
-            tag === "TEXTAREA" ||
-            tag === "SELECT" ||
-            tag === "VIDEO" ||
-            tag === "AUDIO"
-        ){
-
+        if([
+            "SCRIPT",
+            "STYLE",
+            "IFRAME",
+            "OBJECT",
+            "EMBED",
+            "FORM",
+            "INPUT",
+            "BUTTON",
+            "TEXTAREA",
+            "SELECT",
+            "VIDEO",
+            "AUDIO"
+        ].includes(tag)){
             return;
         }
 
 
-        if(
-            !ALLOWED_TAGS.has(tag)
-        ){
+        if(!ALLOWED_TAGS.has(tag)){
 
-            for(
-                const child of node.childNodes
-            ){
+            for(const child of node.childNodes){
 
                 cleanNode(
                     child,
@@ -2117,14 +1609,10 @@ function sanitizeDocumentHtml(html){
             );
 
 
-        for(
-            const attribute of node.attributes
-        ){
+        for(const attribute of node.attributes){
 
             const name =
-                attribute.name
-                    .toLowerCase();
-
+                attribute.name.toLowerCase();
 
             const value =
                 attribute.value || "";
@@ -2133,7 +1621,6 @@ function sanitizeDocumentHtml(html){
             if(
                 !ALLOWED_ATTRIBUTES.has(name)
             ){
-
                 continue;
             }
 
@@ -2143,7 +1630,6 @@ function sanitizeDocumentHtml(html){
                 const safeStyle =
                     sanitizeStyle(value);
 
-
                 if(safeStyle){
 
                     element.setAttribute(
@@ -2152,32 +1638,24 @@ function sanitizeDocumentHtml(html){
                     );
                 }
 
-
                 continue;
             }
 
 
             if(name === "align"){
 
-                const allowed =
-                    [
-                        "left",
-                        "center",
-                        "right",
-                        "justify"
-                    ];
-
+                const allowed = [
+                    "left",
+                    "center",
+                    "right",
+                    "justify"
+                ];
 
                 const alignment =
-                    value
-                        .toLowerCase()
-                        .trim();
-
+                    value.toLowerCase().trim();
 
                 if(
-                    allowed.includes(
-                        alignment
-                    )
+                    allowed.includes(alignment)
                 ){
 
                     element.setAttribute(
@@ -2185,7 +1663,6 @@ function sanitizeDocumentHtml(html){
                         alignment
                     );
                 }
-
 
                 continue;
             }
@@ -2197,11 +1674,7 @@ function sanitizeDocumentHtml(html){
             ){
 
                 const number =
-                    parseInt(
-                        value,
-                        10
-                    );
-
+                    parseInt(value,10);
 
                 if(
                     Number.isInteger(number) &&
@@ -2215,13 +1688,10 @@ function sanitizeDocumentHtml(html){
                     );
                 }
             }
-
         }
 
 
-        for(
-            const child of node.childNodes
-        ){
+        for(const child of node.childNodes){
 
             cleanNode(
                 child,
@@ -2230,15 +1700,11 @@ function sanitizeDocumentHtml(html){
         }
 
 
-        parent.appendChild(
-            element
-        );
+        parent.appendChild(element);
     }
 
 
-    for(
-        const child of parsed.body.childNodes
-    ){
+    for(const child of parsed.body.childNodes){
 
         cleanNode(
             child,
@@ -2251,9 +1717,11 @@ function sanitizeDocumentHtml(html){
 }
 
 
-/* =========================================================
-   SERVER ERROR
-   ========================================================= */
+/*
+=========================================================
+SERVER ERROR
+=========================================================
+*/
 
 function getServerError(data){
 
@@ -2261,11 +1729,9 @@ function getServerError(data){
         return "";
     }
 
-
     if(typeof data.error === "string"){
         return clean(data.error);
     }
-
 
     if(
         data.error &&
@@ -2279,7 +1745,6 @@ function getServerError(data){
         );
     }
 
-
     return clean(
         data.error_message ||
         data.message
@@ -2287,9 +1752,11 @@ function getServerError(data){
 }
 
 
-/* =========================================================
-   LOAD JOB
-   ========================================================= */
+/*
+=========================================================
+LOAD JOB
+=========================================================
+*/
 
 async function loadJob(){
 
@@ -2315,26 +1782,19 @@ async function loadJob(){
         extractPages(data);
 
 
-    if(
-        usablePages.length
-    ){
-
+    if(usablePages.length){
         return data;
     }
 
 
     if(
-        data.status === "review_error" ||
-        data.status === "error" ||
+        normalizedStatus(data.status) === "review_error" ||
+        normalizedStatus(data.status) === "error" ||
         data.success === false
     ){
 
-        const serverError =
-            getServerError(data);
-
-
         throw new Error(
-            serverError ||
+            getServerError(data) ||
             "The document is not available yet."
         );
     }
@@ -2344,50 +1804,21 @@ async function loadJob(){
 }
 
 
-/* =========================================================
-   APPLY SERVER STATE
-   ========================================================= */
+/*
+=========================================================
+APPLY SERVER STATE
+=========================================================
+*/
 
 function applyJob(data){
 
-    const incomingStatus =
+    currentStatus =
         clean(data.status);
-
 
     const incomingPages =
         extractPages(data);
 
-
-    const hasDocument =
-        incomingPages.length > 0;
-
-
-    /*
-       Preserve the actual server status.
-
-       The important difference from the old logic is that
-       READY is now accepted by isReadyStatus().
-    */
-
-    currentStatus =
-        incomingStatus;
-
-
-    currentVersion =
-        Number(
-            data.current_version
-        ) || 1;
-
-
-    versionId =
-        clean(data.version_id);
-
-
-    approved =
-        !!data.approved;
-
-
-    if(hasDocument){
+    if(incomingPages.length){
 
         pages =
             incomingPages;
@@ -2398,32 +1829,38 @@ function applyJob(data){
     }else{
 
         totalPages =
-            Number(
-                data.total_pages
-            ) || 0;
+            Number(data.total_pages) || 0;
     }
+
+
+    currentVersion =
+        Number(data.current_version) || 1;
+
+
+    /*
+       Version ID is OPTIONAL.
+       Never make approval readiness depend on it.
+    */
+
+    versionId =
+        clean(data.version_id);
+
+
+    approved =
+        !!data.approved;
 
 
     const progress =
         data.progress || {};
 
-
     const completed =
-        Number(
-            progress.completed
-        ) || 0;
-
+        Number(progress.completed) || 0;
 
     const progressTotal =
-        Number(
-            progress.total
-        ) ||
+        Number(progress.total) ||
         totalPages ||
-        Number(
-            data.total_pages
-        ) ||
+        Number(data.total_pages) ||
         0;
-
 
     let percent = 0;
 
@@ -2432,11 +1869,7 @@ function applyJob(data){
 
         percent =
             Math.round(
-                (
-                    completed /
-                    progressTotal
-                ) *
-                100
+                (completed / progressTotal) * 100
             );
     }
 
@@ -2445,7 +1878,6 @@ function applyJob(data){
         isReadyStatus(currentStatus) &&
         totalPages > 0
     ){
-
         percent = 100;
     }
 
@@ -2453,10 +1885,7 @@ function applyJob(data){
     progressBar.style.width =
         Math.max(
             0,
-            Math.min(
-                100,
-                percent
-            )
+            Math.min(100,percent)
         ) + "%";
 
 
@@ -2477,10 +1906,11 @@ function applyJob(data){
     }
 
 
-    if(
-        currentStatus.toLowerCase() ===
-        "reviewing"
-    ){
+    const state =
+        normalizedStatus(currentStatus);
+
+
+    if(state === "reviewing"){
 
         setStatus("REVIEWING");
 
@@ -2490,67 +1920,47 @@ function applyJob(data){
             progressTotal +
             " pages reviewed.";
 
-
-    }else if(
-        isReadyStatus(currentStatus)
-    ){
+    }else if(isReadyStatus(currentStatus)){
 
         setStatus("READY");
 
         progressText.textContent =
             "Your document is ready for review.";
 
-
-    }else if(
-        currentStatus.toLowerCase() ===
-        "review_error"
-    ){
+    }else if(state === "review_error"){
 
         setStatus("ERROR");
 
         progressText.textContent =
             "The document review encountered an error.";
 
-
-    }else if(
-        currentStatus.toLowerCase() ===
-        "correcting"
-    ){
+    }else if(state === "correcting"){
 
         setStatus("CORRECTING");
 
         progressText.textContent =
             "Your correction is being applied.";
 
-
-    }else if(
-        currentStatus.toLowerCase() ===
-        "correction_error"
-    ){
+    }else if(state === "correction_error"){
 
         setStatus("CORRECTION ERROR");
 
         progressText.textContent =
             "The correction could not be completed.";
 
-
-    }else if(
-        currentStatus.toLowerCase() ===
-        "approved"
-    ){
+    }else if(state === "approved"){
 
         setStatus("APPROVED");
 
         progressText.textContent =
             "Your document has been approved.";
 
-
     }else{
 
         setStatus(
             currentStatus
-                ? currentStatus.toUpperCase()
-                : "PREPARING"
+            ? currentStatus.toUpperCase()
+            : "PREPARING"
         );
 
         progressText.textContent =
@@ -2560,33 +1970,33 @@ function applyJob(data){
 
     if(totalPages > 0){
 
-        if(currentPage > totalPages){
-            currentPage = totalPages;
-        }
-
-
-        if(currentPage < 1){
-            currentPage = 1;
-        }
+        currentPage =
+            Math.max(
+                1,
+                Math.min(
+                    currentPage,
+                    totalPages
+                )
+            );
     }
 
 
     renderCurrentPage();
 
-
     updateApprovalButton();
 
 
     if(approved){
-
         showPayment(data);
     }
 }
 
 
-/* =========================================================
-   RENDER CURRENT PAGE
-   ========================================================= */
+/*
+=========================================================
+RENDER PAGE
+=========================================================
+*/
 
 function renderCurrentPage(){
 
@@ -2604,14 +2014,11 @@ function renderCurrentPage(){
             </div>
         `;
 
-
         pageIndicator.textContent =
             "Page 0 of 0";
 
-
         previousButton.disabled = true;
         nextButton.disabled = true;
-
 
         updateApprovalButton();
 
@@ -2631,13 +2038,11 @@ function renderCurrentPage(){
             </div>
         `;
 
-
         pageIndicator.textContent =
             "Page " +
             currentPage +
             " of " +
             totalPages;
-
 
         updateApprovalButton();
 
@@ -2648,10 +2053,8 @@ function renderCurrentPage(){
     const physicalPage =
         document.createElement("article");
 
-
     physicalPage.className =
         "document-page";
-
 
     physicalPage.setAttribute(
         "aria-readonly",
@@ -2662,10 +2065,8 @@ function renderCurrentPage(){
     const pageNumber =
         document.createElement("div");
 
-
     pageNumber.className =
         "page-number-inside";
-
 
     pageNumber.textContent =
         "PAGE " +
@@ -2674,7 +2075,6 @@ function renderCurrentPage(){
 
     const content =
         document.createElement("div");
-
 
     content.className =
         "page-content";
@@ -2700,11 +2100,9 @@ function renderCurrentPage(){
         pageNumber
     );
 
-
     physicalPage.appendChild(
         content
     );
-
 
     pageViewer.appendChild(
         physicalPage
@@ -2733,15 +2131,13 @@ function renderCurrentPage(){
         pageReview.style.display =
             "block";
 
-
         pageReviewText.textContent =
-            page.review;
+            normalizeReviewText(page.review);
 
     }else{
 
         pageReview.style.display =
             "none";
-
 
         pageReviewText.textContent =
             "";
@@ -2753,10 +2149,9 @@ function renderCurrentPage(){
         pageReview.style.display =
             "block";
 
-
         pageReviewText.textContent =
             "Page information:\n\n" +
-            page.error;
+            normalizeReviewText(page.error);
     }
 
 
@@ -2764,9 +2159,11 @@ function renderCurrentPage(){
 }
 
 
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
+/*
+=========================================================
+NAVIGATION
+=========================================================
+*/
 
 function showPage(number){
 
@@ -2801,13 +2198,6 @@ function showPage(number){
     renderCurrentPage();
 
 
-    /*
-       Scroll only the review/document card back to the
-       beginning.
-
-       The fixed action buttons remain in place.
-    */
-
     if(documentScroll){
 
         documentScroll.scrollTo({
@@ -2821,12 +2211,8 @@ function showPage(number){
 previousButton.addEventListener(
     "click",
     ()=>{
-
         if(currentPage > 1){
-
-            showPage(
-                currentPage - 1
-            );
+            showPage(currentPage - 1);
         }
     }
 );
@@ -2835,12 +2221,8 @@ previousButton.addEventListener(
 nextButton.addEventListener(
     "click",
     ()=>{
-
         if(currentPage < totalPages){
-
-            showPage(
-                currentPage + 1
-            );
+            showPage(currentPage + 1);
         }
     }
 );
@@ -2851,9 +2233,7 @@ goButton.addEventListener(
     ()=>{
 
         const value =
-            Number(
-                pageNumberInput.value
-            );
+            Number(pageNumberInput.value);
 
 
         if(
@@ -2869,7 +2249,6 @@ goButton.addEventListener(
                 "error"
             );
 
-
             return;
         }
 
@@ -2884,31 +2263,27 @@ goButton.addEventListener(
 pageNumberInput.addEventListener(
     "keydown",
     event=>{
-
         if(event.key === "Enter"){
-
             event.preventDefault();
-
             goButton.click();
         }
     }
 );
 
 
-/* =========================================================
-   POLLING
-   ========================================================= */
+/*
+=========================================================
+POLLING
+=========================================================
+*/
 
 function stopPolling(){
 
     polling = false;
 
-
     if(pollTimer){
 
-        clearTimeout(
-            pollTimer
-        );
+        clearTimeout(pollTimer);
 
         pollTimer = null;
     }
@@ -2954,31 +2329,22 @@ function startPolling(){
 
 
                 if(
-                    data.status ===
+                    normalizedStatus(data.status) ===
                     "review_error"
                 ){
 
-                    if(
-                        !availablePages.length
-                    ){
+                    if(!availablePages.length){
 
                         stopPolling();
 
-
-                        const error =
-                            getServerError(data);
-
-
                         setMessage(
-                            error ||
+                            getServerError(data) ||
                             "The document review failed.",
                             "error"
                         );
 
-
                         return;
                     }
-
 
                     stopPolling();
 
@@ -2987,23 +2353,17 @@ function startPolling(){
 
 
                 if(
-                    data.status ===
+                    normalizedStatus(data.status) ===
                     "correction_error"
                 ){
 
                     stopPolling();
 
-
-                    const error =
-                        getServerError(data);
-
-
                     setMessage(
-                        error ||
+                        getServerError(data) ||
                         "The correction failed.",
                         "error"
                     );
-
 
                     return;
                 }
@@ -3015,7 +2375,6 @@ function startPolling(){
                         1200
                     );
 
-
             }catch(error){
 
                 if(pages.length){
@@ -3025,9 +2384,7 @@ function startPolling(){
                     return;
                 }
 
-
                 stopPolling();
-
 
                 setMessage(
                     error.message,
@@ -3041,18 +2398,18 @@ function startPolling(){
 }
 
 
-/* =========================================================
-   CORRECTIONS
-   ========================================================= */
+/*
+=========================================================
+CORRECTIONS
+=========================================================
+*/
 
 correctionButton.addEventListener(
     "click",
     async()=>{
 
         const instruction =
-            clean(
-                correctionInput.value
-            );
+            clean(correctionInput.value);
 
 
         if(!instruction){
@@ -3061,7 +2418,6 @@ correctionButton.addEventListener(
                 "Please write the correction or change you want.",
                 "error"
             );
-
 
             return;
         }
@@ -3074,21 +2430,19 @@ correctionButton.addEventListener(
                 "error"
             );
 
-
             return;
         }
 
 
         if(
-            currentStatus === "reviewing" ||
-            currentStatus === "correcting"
+            normalizedStatus(currentStatus) === "reviewing" ||
+            normalizedStatus(currentStatus) === "correcting"
         ){
 
             setMessage(
                 "Please wait until the current document processing is complete.",
                 "error"
             );
-
 
             return;
         }
@@ -3097,7 +2451,6 @@ correctionButton.addEventListener(
         try{
 
             setBusy(true);
-
 
             setMessage(
                 "Applying your correction..."
@@ -3108,30 +2461,26 @@ correctionButton.addEventListener(
                 await apiPost(
                     "/api/correct",
                     {
-                        job_id:
-                            jobId,
-
-                        instruction:
-                            instruction
+                        job_id:jobId,
+                        instruction:instruction
                     }
                 );
 
 
-            correctionInput.value =
-                "";
+            correctionInput.value = "";
 
 
             currentVersion =
-                Number(
-                    data.current_version
-                ) ||
+                Number(data.current_version) ||
                 currentVersion + 1;
 
 
+            /*
+               version_id is allowed to be empty.
+            */
+
             versionId =
-                clean(
-                    data.version_id
-                );
+                clean(data.version_id);
 
 
             approved = false;
@@ -3153,17 +2502,13 @@ correctionButton.addEventListener(
 
 
             pages = [];
-
             totalPages = 0;
-
             currentPage = 1;
 
 
             renderCurrentPage();
 
-
             setBusy(false);
-
 
             startPolling();
 
@@ -3171,7 +2516,6 @@ correctionButton.addEventListener(
         }catch(error){
 
             setBusy(false);
-
 
             setMessage(
                 error.message,
@@ -3182,9 +2526,24 @@ correctionButton.addEventListener(
 );
 
 
-/* =========================================================
-   APPROVAL
-   ========================================================= */
+/*
+=========================================================
+APPROVAL
+
+CRITICAL FIX:
+
+OLD:
+    approvalReady() required versionId.
+
+NEW:
+    approvalReady() only requires:
+    - document pages
+    - total pages
+    - READY state
+
+The request sends version_id only when one exists.
+=========================================================
+*/
 
 approveButton.addEventListener(
     "click",
@@ -3197,7 +2556,6 @@ approveButton.addEventListener(
                 "error"
             );
 
-
             return;
         }
 
@@ -3209,19 +2567,6 @@ approveButton.addEventListener(
                 "error"
             );
 
-
-            return;
-        }
-
-
-        if(!versionId){
-
-            setMessage(
-                "The document version could not be identified.",
-                "error"
-            );
-
-
             return;
         }
 
@@ -3230,35 +2575,44 @@ approveButton.addEventListener(
 
             setBusy(true);
 
-
             setMessage(
                 "Approving your document..."
             );
 
 
+            /*
+               Do NOT manufacture a version ID.
+
+               If the backend supplied one, preserve it.
+               If there is none, send job_id only.
+            */
+
+            const approvalPayload = {
+                job_id:jobId
+            };
+
+
+            if(versionId){
+
+                approvalPayload.version_id =
+                    versionId;
+            }
+
+
             const data =
                 await apiPost(
                     "/api/approve",
-                    {
-                        job_id:
-                            jobId,
-
-                        version_id:
-                            versionId
-                    }
+                    approvalPayload
                 );
 
 
             approved = true;
 
-
             currentStatus =
                 "approved";
 
 
-            setStatus(
-                "APPROVED"
-            );
+            setStatus("APPROVED");
 
 
             setMessage(
@@ -3277,7 +2631,6 @@ approveButton.addEventListener(
 
             setBusy(false);
 
-
             setMessage(
                 error.message,
                 "error"
@@ -3287,15 +2640,15 @@ approveButton.addEventListener(
 );
 
 
-/* =========================================================
-   PAYMENT
-   ========================================================= */
+/*
+=========================================================
+PAYMENT
+=========================================================
+*/
 
 function showPayment(data){
 
-    paymentSection.classList.add(
-        "show"
-    );
+    paymentSection.classList.add("show");
 
 
     const serviceName =
@@ -3317,7 +2670,6 @@ function showPayment(data){
         text +=
             "\nAmount: ₦" +
             amount.toLocaleString();
-
     }
 
 
@@ -3337,11 +2689,6 @@ function showPayment(data){
         text;
 
 
-    /*
-       Put the payment area into view without moving the
-       fixed action controls away.
-    */
-
     paymentSection.scrollIntoView({
         behavior:"smooth",
         block:"nearest"
@@ -3360,19 +2707,27 @@ paymentButton.addEventListener(
                 "error"
             );
 
-
             return;
         }
 
 
         const query =
             new URLSearchParams({
-                job_id:
-                    jobId,
-
-                version_id:
-                    versionId
+                job_id:jobId
             });
+
+
+        /*
+           version_id is optional here too.
+        */
+
+        if(versionId){
+
+            query.set(
+                "version_id",
+                versionId
+            );
+        }
 
 
         location.href =
@@ -3382,9 +2737,11 @@ paymentButton.addEventListener(
 );
 
 
-/* =========================================================
-   BACK
-   ========================================================= */
+/*
+=========================================================
+BACK
+=========================================================
+*/
 
 backButton.addEventListener(
     "click",
@@ -3403,9 +2760,11 @@ backButton.addEventListener(
 );
 
 
-/* =========================================================
-   START
-   ========================================================= */
+/*
+=========================================================
+START
+=========================================================
+*/
 
 async function start(){
 
@@ -3415,9 +2774,7 @@ async function start(){
 
     if(!jobId){
 
-        setStatus(
-            "NO DOCUMENT"
-        );
+        setStatus("NO DOCUMENT");
 
 
         pageViewer.innerHTML = `
@@ -3472,11 +2829,11 @@ async function start(){
 
         if(
             !isReadyStatus(currentStatus) &&
-            currentStatus !==
+            normalizedStatus(currentStatus) !==
                 "review_error" &&
-            currentStatus !==
+            normalizedStatus(currentStatus) !==
                 "approved" &&
-            currentStatus !==
+            normalizedStatus(currentStatus) !==
                 "correction_error"
         ){
 
@@ -3491,9 +2848,7 @@ async function start(){
         }
 
 
-        setStatus(
-            "ERROR"
-        );
+        setStatus("ERROR");
 
 
         setMessage(
@@ -3511,10 +2866,6 @@ async function start(){
 }
 
 
-/* =========================================================
-   ERROR ESCAPING
-   ========================================================= */
-
 function escapeHtml(value){
 
     return String(value || "")
@@ -3526,13 +2877,7 @@ function escapeHtml(value){
 }
 
 
-/* =========================================================
-   START APPLICATION
-   ========================================================= */
-
 start();
 
-</script>
-
-</body>
+</script></body>
 </html>
