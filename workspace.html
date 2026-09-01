@@ -730,51 +730,8 @@ button:disabled{
 <script>
 "use strict";
 
-/*
-============================================================
-WORKSPACE
-============================================================
-
-This page is intentionally a CLIENT.
-
-It does not generate the document itself.
-
-The flow is:
-
-conversation.html
-        ↓
-workspace.html?service=...
-        ↓
-/api/chat
-        ↓
-server intelligence
-        ↓
-server creates/updates job
-        ↓
-server returns job_id
-        ↓
-review.html?job_id=...
-
-The browser supplies:
-    - service
-    - customer information
-    - customer message
-    - uploaded files
-    - active job_id
-
-The browser does NOT attempt to manufacture a document
-or a review job.
-============================================================
-*/
-
-
 const API_BASE = "";
 const REVIEW_PAGE = "review.html";
-
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
 
 const $ = id => document.getElementById(id);
 
@@ -812,11 +769,6 @@ const reviewGatewayCloseButton =
 const workspaceOpenReviewButton =
     $("workspaceOpenReviewButton");
 
-
-/* =========================================================
-   SERVICE
-========================================================= */
-
 const params =
     new URLSearchParams(location.search);
 
@@ -825,11 +777,6 @@ const service =
         params.get("service") ||
         "Business Center Service"
     ).trim();
-
-
-/* =========================================================
-   IDs
-========================================================= */
 
 function makeId(prefix){
 
@@ -850,7 +797,6 @@ function makeId(prefix){
     );
 }
 
-
 function storageGet(key){
 
     try{
@@ -860,14 +806,12 @@ function storageGet(key){
     }
 }
 
-
 function storageSet(key,value){
 
     try{
         localStorage.setItem(key,value);
     }catch{}
 }
-
 
 let customerId =
     storageGet("npbc_customer_id") ||
@@ -878,31 +822,22 @@ storageSet(
     customerId
 );
 
-
 let jobId =
     params.get("job_id") ||
     storageGet("npbc_job_id") ||
     "";
 
-
 let requestId =
     makeId("request_");
-
 
 storageSet(
     "npbc_client_request_id",
     requestId
 );
 
-
 if(jobId){
     storageSet("npbc_job_id",jobId);
 }
-
-
-/* =========================================================
-   STATE
-========================================================= */
 
 let busy = false;
 let currentWork = "";
@@ -910,11 +845,6 @@ let currentWork = "";
 let mediaRecorder = null;
 let recordedChunks = [];
 let recordingStream = null;
-
-
-/* =========================================================
-   HELPERS
-========================================================= */
 
 function clean(value){
 
@@ -925,13 +855,11 @@ function clean(value){
     return String(value).trim();
 }
 
-
 function setStatus(message,type=""){
 
     status.textContent = message || "";
     status.className = "status " + type;
 }
-
 
 function setBusy(value){
 
@@ -953,11 +881,6 @@ function setBusy(value){
     });
 }
 
-
-/* =========================================================
-   SERVER RESPONSE NORMALISATION
-========================================================= */
-
 function serverJobId(data){
 
     return clean(
@@ -967,7 +890,6 @@ function serverJobId(data){
         data?.data?.job_id
     );
 }
-
 
 function serverReply(data){
 
@@ -979,7 +901,6 @@ function serverReply(data){
     );
 }
 
-
 function serverWork(data){
 
     return clean(
@@ -990,14 +911,6 @@ function serverWork(data){
     );
 }
 
-
-/*
- * The API can return different error fields depending on
- * which backend layer produced the error.
- *
- * Preserve the useful server message instead of replacing it
- * with the unhelpful generic WORK_CREATION_ERROR.
- */
 function serverError(data,response){
 
     return clean(
@@ -1013,11 +926,6 @@ function serverError(data,response){
         )
     );
 }
-
-
-/* =========================================================
-   API CHAT
-========================================================= */
 
 async function apiChat(payload){
 
@@ -1052,7 +960,6 @@ async function apiChat(payload){
 
     }
 
-
     let data = {};
 
     try{
@@ -1061,10 +968,6 @@ async function apiChat(payload){
         data = {};
     }
 
-
-    /*
-     * Do not assume that HTTP 200 means the operation worked.
-     */
     if(!response.ok){
 
         throw new Error(
@@ -1073,11 +976,6 @@ async function apiChat(payload){
 
     }
 
-
-    /*
-     * Some backend versions return HTTP 200 with
-     * success:false. Handle that explicitly.
-     */
     if(
         data &&
         data.success === false
@@ -1089,14 +987,8 @@ async function apiChat(payload){
 
     }
 
-
     return data;
 }
-
-
-/* =========================================================
-   REVIEW NAVIGATION
-========================================================= */
 
 function openFullReview(){
 
@@ -1109,7 +1001,6 @@ function openFullReview(){
 
         return;
     }
-
 
     storageSet(
         "npbc_job_id",
@@ -1136,25 +1027,21 @@ function openFullReview(){
         requestId
     );
 
-
     window.location.href =
         REVIEW_PAGE +
         "?job_id=" +
         encodeURIComponent(jobId);
 }
 
-
 function showReviewGateway(){
 
     reviewGatewayOverlay.classList.add("show");
 }
 
-
 function closeReviewGateway(){
 
     reviewGatewayOverlay.classList.remove("show");
 }
-
 
 function showReview(work){
 
@@ -1163,11 +1050,6 @@ function showReview(work){
     formView.style.display = "none";
     reviewView.classList.add("show");
 }
-
-
-/* =========================================================
-   SERVICE FORMS
-========================================================= */
 
 const generic = [
 
@@ -1197,7 +1079,6 @@ const generic = [
     }
 
 ];
-
 
 const forms = {
 
@@ -1247,7 +1128,6 @@ const forms = {
 
     ],
 
-
     "research assistance":[
 
         {
@@ -1284,7 +1164,6 @@ const forms = {
         }
 
     ],
-
 
     "seminar papers":[
 
@@ -1324,7 +1203,6 @@ const forms = {
 
     ],
 
-
     "essay writing":[
 
         {
@@ -1362,7 +1240,6 @@ const forms = {
         }
 
     ],
-
 
     "cv writing":[
 
@@ -1420,7 +1297,6 @@ const forms = {
 
 };
 
-
 function definition(){
 
     const lowerService =
@@ -1437,7 +1313,6 @@ function definition(){
         : generic;
 }
 
-
 function renderForm(){
 
     fields.innerHTML = "";
@@ -1448,7 +1323,6 @@ function renderForm(){
             document.createElement("div");
 
         wrapper.className = "field";
-
 
         const label =
             document.createElement("label");
@@ -1463,7 +1337,6 @@ function renderForm(){
                     ? ' <span class="required">*</span>'
                     : ' <span class="optional">(optional)</span>'
             );
-
 
         let input;
 
@@ -1481,7 +1354,6 @@ function renderForm(){
                 field.type || "text";
         }
 
-
         input.id =
             field.name;
 
@@ -1498,7 +1370,6 @@ function renderForm(){
             input.required = true;
         }
 
-
         wrapper.append(
             label,
             input
@@ -1508,7 +1379,6 @@ function renderForm(){
 
     });
 }
-
 
 function collectForm(){
 
@@ -1532,27 +1402,11 @@ function collectForm(){
     return data;
 }
 
-
-/* =========================================================
-   GUIDANCE
-========================================================= */
-
 async function loadGuidance(){
-
-    /*
-     * Guidance is informational only.
-
-     * Most importantly:
-     * create_work:false
-     *
-     * This request can never accidentally enter the
-     * document-creation path.
-     */
 
     setStatus(
         "Preparing useful information for this service..."
     );
-
 
     try{
 
@@ -1593,10 +1447,8 @@ Do not discuss internal systems.`,
 
             });
 
-
         const reply =
             serverReply(data);
-
 
         if(reply){
 
@@ -1604,10 +1456,8 @@ Do not discuss internal systems.`,
                 reply;
         }
 
-
         const returnedJob =
             serverJobId(data);
-
 
         if(returnedJob){
 
@@ -1621,12 +1471,10 @@ Do not discuss internal systems.`,
 
         }
 
-
         const amount =
             data.amount ??
             data.price ??
             data.service_amount;
-
 
         if(amount !== undefined && amount !== null){
 
@@ -1676,14 +1524,9 @@ Do not discuss internal systems.`,
             }
         }
 
-
         setStatus("");
 
     }catch(error){
-
-        /*
-         * Guidance failure must NOT block the service form.
-         */
 
         introText.textContent =
             "Internet issue. Please check your internet connection, go back, and try the service button again.";
@@ -1699,37 +1542,17 @@ Do not discuss internal systems.`,
     }
 }
 
-
-/* =========================================================
-   WORK CREATION
-========================================================= */
-
 async function createWork(formData){
 
     if(busy){
         return;
     }
 
-
     setBusy(true);
 
     setStatus(
         "Sending your request for processing..."
     );
-
-
-    /*
-     * IMPORTANT CHANGE:
-     *
-     * The browser no longer writes a giant "create the whole
-     * document" prompt.
-     *
-     * The service + structured customer information are sent
-     * to the API.
-     *
-     * The server-side intelligence decides how to create the
-     * work.
-     */
 
     const message =
         `The customer has submitted the information required
@@ -1750,7 +1573,6 @@ Please process the customer's request and create the requested
 work according to the active service workflow.
 
 The customer expects the completed work to proceed to review.`;
-
 
     try{
 
@@ -1780,10 +1602,8 @@ The customer expects the completed work to proceed to review.`;
 
             });
 
-
         const returnedJob =
             serverJobId(data);
-
 
         if(returnedJob){
 
@@ -1797,7 +1617,6 @@ The customer expects the completed work to proceed to review.`;
 
         }
 
-
         if(!jobId){
 
             throw new Error(
@@ -1806,10 +1625,8 @@ The customer expects the completed work to proceed to review.`;
 
         }
 
-
         currentWork =
             serverWork(data);
-
 
         showReview(currentWork);
 
@@ -1820,15 +1637,7 @@ The customer expects the completed work to proceed to review.`;
 
         showReviewGateway();
 
-
     }catch(error){
-
-        /*
-         * Display the actual server error.
-
-         * This is important for diagnosing the backend instead
-         * of hiding it behind WORK_CREATION_ERROR.
-         */
 
         setStatus(
             error.message ||
@@ -1841,11 +1650,6 @@ The customer expects the completed work to proceed to review.`;
         setBusy(false);
     }
 }
-
-
-/* =========================================================
-   FORM SUBMIT
-========================================================= */
 
 serviceForm.addEventListener(
     "submit",
@@ -1867,28 +1671,20 @@ serviceForm.addEventListener(
     }
 );
 
-
-/* =========================================================
-   REVIEW
-========================================================= */
-
 reviewGatewayOpenButton.addEventListener(
     "click",
     openFullReview
 );
-
 
 workspaceOpenReviewButton.addEventListener(
     "click",
     openFullReview
 );
 
-
 reviewGatewayCloseButton.addEventListener(
     "click",
     closeReviewGateway
 );
-
 
 reviewGatewayOverlay.addEventListener(
     "click",
@@ -1904,7 +1700,6 @@ reviewGatewayOverlay.addEventListener(
     }
 );
 
-
 document.addEventListener(
     "keydown",
     event => {
@@ -1916,11 +1711,6 @@ document.addEventListener(
     }
 );
 
-
-/* =========================================================
-   CUSTOMER MESSAGE
-========================================================= */
-
 async function sendMessage(
     message,
     eventName="customer_message"
@@ -1930,7 +1720,6 @@ async function sendMessage(
         return;
     }
 
-
     const text =
         clean(message);
 
@@ -1938,13 +1727,11 @@ async function sendMessage(
         return;
     }
 
-
     setBusy(true);
 
     setStatus(
         "Processing your message..."
     );
-
 
     try{
 
@@ -1974,10 +1761,8 @@ async function sendMessage(
 
             });
 
-
         const returnedJob =
             serverJobId(data);
-
 
         if(returnedJob){
 
@@ -1991,10 +1776,8 @@ async function sendMessage(
 
         }
 
-
         const work =
             serverWork(data);
-
 
         if(work){
 
@@ -2009,10 +1792,8 @@ async function sendMessage(
 
         }
 
-
         const reply =
             serverReply(data);
-
 
         if(
             reply &&
@@ -2032,7 +1813,6 @@ async function sendMessage(
             );
         }
 
-
     }catch(error){
 
         setStatus(
@@ -2046,11 +1826,6 @@ async function sendMessage(
         setBusy(false);
     }
 }
-
-
-/* =========================================================
-   SEND MESSAGE
-========================================================= */
 
 sendBtn.addEventListener(
     "click",
@@ -2069,10 +1844,8 @@ sendBtn.addEventListener(
             return;
         }
 
-
         messageInput.value = "";
         messageInput.style.height = "auto";
-
 
         sendMessage(
             text,
@@ -2081,7 +1854,6 @@ sendBtn.addEventListener(
 
     }
 );
-
 
 messageInput.addEventListener(
     "keydown",
@@ -2100,7 +1872,6 @@ messageInput.addEventListener(
     }
 );
 
-
 messageInput.addEventListener(
     "input",
     () => {
@@ -2115,11 +1886,6 @@ messageInput.addEventListener(
     }
 );
 
-
-/* =========================================================
-   CUSTOMER SERVICE
-========================================================= */
-
 customerBtn.addEventListener(
     "click",
     async () => {
@@ -2128,13 +1894,11 @@ customerBtn.addEventListener(
             return;
         }
 
-
         setBusy(true);
 
         setStatus(
             "Connecting you to Customer Service..."
         );
-
 
         try{
 
@@ -2148,7 +1912,6 @@ customerBtn.addEventListener(
 
                     service
                 });
-
 
             const response =
                 await fetch(
@@ -2164,14 +1927,12 @@ customerBtn.addEventListener(
                     }
                 );
 
-
             const data =
                 await response
                     .json()
                     .catch(
                         () => ({})
                     );
-
 
             if(!response.ok){
 
@@ -2180,7 +1941,6 @@ customerBtn.addEventListener(
                 );
             }
 
-
             if(data.success === false){
 
                 throw new Error(
@@ -2188,13 +1948,11 @@ customerBtn.addEventListener(
                 );
             }
 
-
             setStatus(
                 serverReply(data) ||
                 "Customer Service is available to help.",
                 "success"
             );
-
 
         }catch(error){
 
@@ -2222,7 +1980,7 @@ chooseBtn.addEventListener(
 
         if(!busy){
             location.href =
-                "conversation.html";
+                "welcome.html";
         }
 
     }
@@ -2244,7 +2002,6 @@ uploadBtn.addEventListener(
     }
 );
 
-
 fileInput.addEventListener(
     "change",
     async () => {
@@ -2255,7 +2012,6 @@ fileInput.addEventListener(
         if(!file){
             return;
         }
-
 
         const formData =
             new FormData();
@@ -2285,13 +2041,11 @@ fileInput.addEventListener(
             service
         );
 
-
         setBusy(true);
 
         setStatus(
             "Uploading the document..."
         );
-
 
         try{
 
@@ -2305,14 +2059,12 @@ fileInput.addEventListener(
                     }
                 );
 
-
             const data =
                 await response
                     .json()
                     .catch(
                         () => ({})
                     );
-
 
             if(!response.ok){
 
@@ -2321,7 +2073,6 @@ fileInput.addEventListener(
                 );
             }
 
-
             if(data.success === false){
 
                 throw new Error(
@@ -2329,10 +2080,8 @@ fileInput.addEventListener(
                 );
             }
 
-
             const returnedJob =
                 serverJobId(data);
-
 
             if(returnedJob){
 
@@ -2346,24 +2095,14 @@ fileInput.addEventListener(
 
             }
 
-
             setStatus(
                 "Your document has been received. Processing it now..."
             );
-
-
-            /*
-             * The upload itself is not the work-creation request.
-             *
-             * Tell the server that the document is now available
-             * in the active job.
-             */
 
             await sendMessage(
                 "The customer has uploaded a document for this active service. Use the uploaded document together with the current job context and continue the customer's request.",
                 "document_uploaded"
             );
-
 
         }catch(error){
 
@@ -2402,7 +2141,6 @@ voiceBtn.addEventListener(
             return;
         }
 
-
         if(
             !navigator.mediaDevices ||
             !navigator.mediaDevices.getUserMedia
@@ -2416,7 +2154,6 @@ voiceBtn.addEventListener(
             return;
         }
 
-
         try{
 
             recordingStream =
@@ -2424,15 +2161,12 @@ voiceBtn.addEventListener(
                     audio:true
                 });
 
-
             recordedChunks = [];
-
 
             mediaRecorder =
                 new MediaRecorder(
                     recordingStream
                 );
-
 
             mediaRecorder.ondataavailable =
                 event => {
@@ -2445,7 +2179,6 @@ voiceBtn.addEventListener(
 
                 };
 
-
             mediaRecorder.onstop =
                 async () => {
 
@@ -2456,9 +2189,7 @@ voiceBtn.addEventListener(
                                 track.stop()
                         );
 
-
                     recordingStream = null;
-
 
                     voiceRecording.classList.remove(
                         "show"
@@ -2466,7 +2197,6 @@ voiceBtn.addEventListener(
 
                     voiceBtn.textContent =
                         "🎤 Voice";
-
 
                     if(!recordedChunks.length){
 
@@ -2478,10 +2208,8 @@ voiceBtn.addEventListener(
                         return;
                     }
 
-
                     const formData =
                         new FormData();
-
 
                     formData.append(
                         "file",
@@ -2493,7 +2221,6 @@ voiceBtn.addEventListener(
                         ),
                         "voice_message.webm"
                     );
-
 
                     formData.append(
                         "customer_id",
@@ -2515,13 +2242,11 @@ voiceBtn.addEventListener(
                         service
                     );
 
-
                     setBusy(true);
 
                     setStatus(
                         "Processing your voice message..."
                     );
-
 
                     try{
 
@@ -2535,14 +2260,12 @@ voiceBtn.addEventListener(
                                 }
                             );
 
-
                         const data =
                             await response
                                 .json()
                                 .catch(
                                     () => ({})
                                 );
-
 
                         if(!response.ok){
 
@@ -2551,7 +2274,6 @@ voiceBtn.addEventListener(
                             );
                         }
 
-
                         if(data.success === false){
 
                             throw new Error(
@@ -2559,10 +2281,8 @@ voiceBtn.addEventListener(
                             );
                         }
 
-
                         const returnedJob =
                             serverJobId(data);
-
 
                         if(returnedJob){
 
@@ -2575,15 +2295,12 @@ voiceBtn.addEventListener(
                             );
                         }
 
-
                         setBusy(false);
-
 
                         await sendMessage(
                             "A voice instruction has been received for this active service. Use the customer's voice instruction and current job context to continue the request.",
                             "voice_uploaded"
                         );
-
 
                     }catch(error){
 
@@ -2598,9 +2315,7 @@ voiceBtn.addEventListener(
 
                 };
 
-
             mediaRecorder.start();
-
 
             voiceRecording.classList.add(
                 "show"
@@ -2609,11 +2324,9 @@ voiceBtn.addEventListener(
             voiceBtn.textContent =
                 "⏹ Stop Voice";
 
-
             setStatus(
                 "Recording your voice..."
             );
-
 
         }catch(error){
 
@@ -2644,7 +2357,6 @@ async function init(){
 
     await loadGuidance();
 }
-
 
 init();
 
