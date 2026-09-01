@@ -260,6 +260,17 @@
         flex: 0 0 auto;
     }
 
+    /*
+     * MOVING TAGLINE
+     *
+     * ONE SINGLE HORIZONTAL LINE.
+     *
+     * BETTER DOCUMENTS comes first.
+     * BETTER YOU follows much later.
+     *
+     * There is NO duplicate in the middle.
+     */
+
     .document-people-window {
         width: 100%;
 
@@ -275,7 +286,13 @@
     }
 
     .document-people-track {
-        display: inline-block;
+        display: inline-flex;
+
+        align-items: center;
+
+        flex-wrap: nowrap;
+
+        width: max-content;
 
         white-space: nowrap;
 
@@ -295,38 +312,50 @@
 
         animation:
             documentPeopleMove
-            18s linear infinite;
+            22s linear infinite;
+
+        will-change: transform;
     }
 
-    .document-people-track span {
+    .document-people-track .tagline-text {
         display: inline-block;
 
-        padding-right: 90px;
+        flex: 0 0 auto;
+
+        white-space: nowrap;
     }
 
     /*
-     * VERY WIDE GAP BETWEEN
-     * BETTER DOCUMENTS AND BETTER YOU
+     * THIS IS THE LARGE HORIZONTAL DISTANCE.
+     *
+     * It keeps BETTER YOU far behind
+     * BETTER DOCUMENTS on the SAME LINE.
      */
 
-    .tagline-gap {
+    .document-people-track .wide-gap {
         display: inline-block;
 
-        width: 180px;
+        width: 500px;
 
-        flex: 0 0 180px;
+        min-width: 500px;
+
+        height: 1px;
+
+        flex: 0 0 500px;
     }
 
     @keyframes documentPeopleMove {
 
         0% {
             transform:
-                translateX(100%);
+                translateX(100vw);
         }
 
         100% {
             transform:
-                translateX(-100%);
+                translateX(
+                    calc(-100% - 100vw)
+                );
         }
     }
 
@@ -664,10 +693,17 @@
                 1.5px;
         }
 
-        .tagline-gap {
-            width: 140px;
+        /*
+         * Still one horizontal line,
+         * but slightly smaller gap on phones.
+         */
 
-            flex-basis: 140px;
+        .document-people-track .wide-gap {
+            width: 300px;
+
+            min-width: 300px;
+
+            flex-basis: 300px;
         }
 
         .service-instruction {
@@ -761,10 +797,17 @@
             font-size: 10.5px;
         }
 
-        .tagline-gap {
-            width: 110px;
+        /*
+         * Large separation is retained
+         * even on smaller phones.
+         */
 
-            flex-basis: 110px;
+        .document-people-track .wide-gap {
+            width: 260px;
+
+            min-width: 260px;
+
+            flex-basis: 260px;
         }
 
         .service-instruction {
@@ -826,10 +869,12 @@
                 clamp(20px, 3vw, 27px);
         }
 
-        .tagline-gap {
-            width: 220px;
+        .document-people-track .wide-gap {
+            width: 650px;
 
-            flex-basis: 220px;
+            min-width: 650px;
+
+            flex-basis: 650px;
         }
 
         .service-button {
@@ -880,12 +925,14 @@
 
         <div class="document-people-track">
 
-            <span>
-                BETTER DOCUMENTS<span class="tagline-gap"></span>BETTER YOU
+            <span class="tagline-text">
+                BETTER DOCUMENTS
             </span>
 
-            <span>
-                BETTER DOCUMENTS<span class="tagline-gap"></span>BETTER YOU
+            <span class="wide-gap"></span>
+
+            <span class="tagline-text">
+                BETTER YOU
             </span>
 
         </div>
@@ -1014,8 +1061,6 @@
         PDF Conversion
     </button>
 
-    <!-- Voice To Text removed -->
-
     <button type="button"
         class="service-button"
         data-service="Topic Explanations">
@@ -1058,15 +1103,11 @@
         Document Summarization
     </button>
 
-    <!-- Letterhead moved up from the final row -->
-
     <button type="button"
         class="service-button"
         data-service="Business Letters & Letterhead">
         Business Letters &amp; Letterhead
     </button>
-
-    <!-- FINAL ROW -->
 
     <div class="luxury-tagline">
 
