@@ -59,6 +59,7 @@ REVIEW_MIN_CHARS = int(
 
 BASE = Path(__file__).resolve().parent
 
+
 # ============================================================
 # DATABASE DOCUMENT STORAGE
 # ============================================================
@@ -223,10 +224,6 @@ def save_document_to_storage(job_id_str: str) -> None:
 
     version = safe_int(job.get("current_version"), 1) or 1
 
-    # --------------------------------------------------------
-    # IDEMPOTENCY
-    # --------------------------------------------------------
-
     latest = get_latest_work(job_id)
 
     if latest:
@@ -248,10 +245,6 @@ def save_document_to_storage(job_id_str: str) -> None:
                 )
                 return
 
-    # --------------------------------------------------------
-    # FILE LOCATION
-    # --------------------------------------------------------
-
     job_folder = DOCUMENT_ROOT / job_id_str
     job_folder.mkdir(parents=True, exist_ok=True)
 
@@ -261,10 +254,6 @@ def save_document_to_storage(job_id_str: str) -> None:
         document_text,
         encoding="utf-8",
     )
-
-    # --------------------------------------------------------
-    # DATABASE WORK RECORD
-    # --------------------------------------------------------
 
     save_customer_work(
         job_id=job_id,
@@ -366,12 +355,6 @@ def normalize_document_pages(
 def text_to_review_pages(
     text: str,
 ) -> list[dict[str, Any]]:
-    """
-    Turn the COMPLETE returned document into review chunks.
-
-    This function never truncates the supplied text and never
-    limits the result to one page.
-    """
 
     text = clean_text(text)
 
@@ -1396,14 +1379,6 @@ async def run_review(
         job["review_finished"] = True
         job["review_error"] = None
 
-        # ====================================================
-        # PERSIST FINAL REVIEWED DOCUMENT
-        # ====================================================
-        #
-        # This happens only after review is successfully
-        # complete. Existing review/pagination logic above is
-        # untouched.
-        #
         save_document_to_storage(job_id)
 
         print(
@@ -1940,10 +1915,6 @@ async def chat(
             request.service,
         )
 
-        # ----------------------------------------------------
-        # GUIDANCE
-        # ----------------------------------------------------
-
         if request.guidance_only:
 
             if not request.message.strip():
@@ -1971,10 +1942,6 @@ async def chat(
                 "job_id": job_id,
                 "created_work": False,
             }
-
-        # ----------------------------------------------------
-        # CREATE WORK
-        # ----------------------------------------------------
 
         create_requested = (
             request.create_work
@@ -2078,10 +2045,6 @@ async def chat(
 
             return response
 
-        # ----------------------------------------------------
-        # EXISTING DOCUMENT
-        # ----------------------------------------------------
-
         if pages or document_text:
 
             complete_text = (
@@ -2183,10 +2146,6 @@ async def chat(
             )
 
             return response
-
-        # ----------------------------------------------------
-        # ORDINARY CHAT
-        # ----------------------------------------------------
 
         if not request.message.strip():
 
@@ -2570,11 +2529,135 @@ async def approve(
     request: Approval
 ):
 
+    supplied_job_id = str(
+        request.job_id or ""
+    ).strip()
+
+    supplied_version_id = str(
+        request.version_id or ""
+    ).strip()
+
+    # --------------------------------------------------------
+    # EXACT JOB LOOKUP
+    # --------------------------------------------------------
+
     job = _jobs.get(
-        request.job_id
+        supplied_job_id
     )
 
+    resolved_job_id = supplied_job_id
+
+    # --------------------------------------------------------
+    # RECOVER USING VERSION ID
+    #
+    # The review page already has the active document and its
+    # version. If the approval request carries a job_id that
+    # does not exactly match the in-memory key, use the
+    # document version to locate that same existing job.
+    #
+    # No review data is changed here.
+    # --------------------------------------------------------
+
+    if not job and supplied_version_id:
+
+        for candidate_job_id, candidate_job in _jobs.items():
+
+            candidate_version_id = str(
+                candidate_job.get(
+                    "version_id",
+                    ""
+                )
+            ).strip()
+
+            if (
+                candidate_version_id
+                == supplied_version_id
+            ):
+
+                job = candidate_job
+
+                resolved_job_id = str(
+                    candidate_job.get(
+                        "job_id",
+                        candidate_job_id
+                    )
+                ).strip()
+
+                print(
+                    "[APPROVAL] "
+                    f"Recovered active job by version_id: "
+                    f"supplied_job_id={supplied_job_id} "
+                    f"resolved_job_id={resolved_job_id} "
+                    f"version_id={supplied_version_id}"
+                )
+
+                break
+
+    # --------------------------------------------------------
+    # RECOVER JOB ID FROM VERSION ID
+    #
+    # Current versions are created as:
+    #
+    #     <job_id>:<version>
+    #
+    # This is only a fallback when the direct lookup and
+    # version scan did not find the job.
+    # --------------------------------------------------------
+
+    if not job and supplied_version_id:
+
+        if ":" in supplied_version_id:
+
+            possible_job_id = (
+                supplied_version_id
+                .split(":", 1)[0]
+                .strip()
+            )
+
+            if possible_job_id:
+
+                candidate_job = _jobs.get(
+                    possible_job_id
+                )
+
+                if candidate_job:
+
+                    candidate_version_id = str(
+                        candidate_job.get(
+                            "version_id",
+                            ""
+                        )
+                    ).strip()
+
+                    if (
+                        candidate_version_id
+                        == supplied_version_id
+                    ):
+
+                        job = candidate_job
+                        resolved_job_id = (
+                            possible_job_id
+                        )
+
+                        print(
+                            "[APPROVAL] "
+                            f"Recovered active job from version_id: "
+                            f"job_id={resolved_job_id} "
+                            f"version_id={supplied_version_id}"
+                        )
+
+    # --------------------------------------------------------
+    # JOB NOT FOUND
+    # --------------------------------------------------------
+
     if not job:
+
+        print(
+            "[APPROVAL] JOB_NOT_FOUND "
+            f"supplied_job_id={supplied_job_id} "
+            f"version_id={supplied_version_id} "
+            f"active_jobs={list(_jobs.keys())}"
+        )
 
         return application_error(
             "APPROVAL",
@@ -2583,9 +2666,21 @@ async def approve(
             "JOB_NOT_FOUND",
         )
 
+    # --------------------------------------------------------
+    # VERSION MUST STILL MATCH
+    # --------------------------------------------------------
+
+    current_version_id = str(
+        job.get(
+            "version_id",
+            ""
+        )
+    ).strip()
+
     if (
-        request.version_id
-        != job["version_id"]
+        not supplied_version_id
+        or supplied_version_id
+        != current_version_id
     ):
 
         return application_error(
@@ -2595,8 +2690,12 @@ async def approve(
             "VERSION_MISMATCH",
         )
 
+    # --------------------------------------------------------
+    # REVIEW MUST BE COMPLETE
+    # --------------------------------------------------------
+
     if (
-        job["status"]
+        job.get("status")
         != "review_complete"
     ):
 
@@ -2607,13 +2706,23 @@ async def approve(
             "REVIEW_NOT_COMPLETE",
         )
 
+    # --------------------------------------------------------
+    # APPROVE
+    # --------------------------------------------------------
+
     job["approved"] = True
     job["status"] = "approved"
 
+    print(
+        "[APPROVAL] APPROVED "
+        f"job_id={resolved_job_id} "
+        f"version_id={current_version_id}"
+    )
+
     return {
         "success": True,
-        "job_id": request.job_id,
-        "version_id": request.version_id,
+        "job_id": resolved_job_id,
+        "version_id": current_version_id,
         "current_version": job[
             "current_version"
         ],
@@ -2627,8 +2736,8 @@ async def approve(
         ],
         "payment_url": (
             f"/payment.html?"
-            f"job_id={request.job_id}"
-            f"&version_id={request.version_id}"
+            f"job_id={resolved_job_id}"
+            f"&version_id={current_version_id}"
         ),
     }
 
@@ -2784,10 +2893,6 @@ async def payment_complete(
             "INVALID_JOB_ID",
         )
 
-    # --------------------------------------------------------
-    # Check database first.
-    # --------------------------------------------------------
-
     existing = get_latest_payment(
         numeric_job_id
     )
@@ -2840,14 +2945,6 @@ async def payment_complete(
                 ),
             }
 
-    # --------------------------------------------------------
-    # Payment amount.
-    #
-    # Existing frontend may supply amount as a query
-    # parameter. If it does not, use an amount already stored
-    # on the in-memory job if available.
-    # --------------------------------------------------------
-
     if amount is None:
 
         possible_amount = (
@@ -2880,10 +2977,6 @@ async def payment_complete(
             "PAYMENT_AMOUNT_REQUIRED",
         )
 
-    # --------------------------------------------------------
-    # Create pending database payment.
-    # --------------------------------------------------------
-
     reference = (
         f"NPBC-{numeric_job_id}-"
         f"{int(datetime.now(timezone.utc).timestamp())}"
@@ -2906,13 +2999,6 @@ async def payment_complete(
             500,
             "PAYMENT_CREATE_FAILED",
         )
-
-    # IMPORTANT:
-    # Do NOT mark the job paid here.
-    #
-    # Customer saying "I HAVE MADE PAYMENT" is only a
-    # payment notification. Admin confirmation is what
-    # authorizes download.
 
     job["paid"] = False
     job["status"] = "approved"
@@ -3045,7 +3131,6 @@ async def payment_state(
             "INVALID_JOB_ID",
         )
 
-    # Database is the source of truth.
     payment = get_latest_payment(
         numeric_job_id
     )
@@ -3166,13 +3251,11 @@ async def api_confirm_payment(
 
     if payment_job_id is not None:
 
-        # Keep persistent jobs table synchronized.
         update_job_status(
             payment_job_id,
             "paid",
         )
 
-        # Keep active in-memory job synchronized too.
         for key, job in _jobs.items():
 
             if safe_int(
@@ -3214,11 +3297,6 @@ async def download(
             "INVALID_JOB_ID",
         )
 
-    # --------------------------------------------------------
-    # SECURITY 1:
-    # Database payment must be PAID.
-    # --------------------------------------------------------
-
     payment = get_latest_payment(
         numeric_job_id
     )
@@ -3237,11 +3315,6 @@ async def download(
             403,
             "PAYMENT_NOT_CONFIRMED",
         )
-
-    # --------------------------------------------------------
-    # SECURITY 2:
-    # If active job exists, supplied version must match.
-    # --------------------------------------------------------
 
     job = _jobs.get(
         job_id
@@ -3271,11 +3344,6 @@ async def download(
                 409,
                 "DOCUMENT_NOT_APPROVED",
             )
-
-    # --------------------------------------------------------
-    # SECURITY 3:
-    # Persistent work record must exist.
-    # --------------------------------------------------------
 
     work = get_latest_work(
         numeric_job_id
@@ -3310,11 +3378,6 @@ async def download(
         storage_reference
     )
 
-    # --------------------------------------------------------
-    # SECURITY 4:
-    # Prevent path traversal / arbitrary file download.
-    # --------------------------------------------------------
-
     try:
 
         document_root = (
@@ -3346,11 +3409,6 @@ async def download(
             403,
             "INVALID_FILE_PATH",
         )
-
-    # --------------------------------------------------------
-    # SECURITY 5:
-    # File must actually exist.
-    # --------------------------------------------------------
 
     if not filepath.exists():
 
