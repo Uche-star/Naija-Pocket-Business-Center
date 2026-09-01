@@ -304,6 +304,19 @@
         padding-right: 90px;
     }
 
+    /*
+     * VERY WIDE GAP BETWEEN
+     * BETTER DOCUMENTS AND BETTER YOU
+     */
+
+    .tagline-gap {
+        display: inline-block;
+
+        width: 180px;
+
+        flex: 0 0 180px;
+    }
+
     @keyframes documentPeopleMove {
 
         0% {
@@ -651,6 +664,12 @@
                 1.5px;
         }
 
+        .tagline-gap {
+            width: 140px;
+
+            flex-basis: 140px;
+        }
+
         .service-instruction {
             font-size: 12.5px;
 
@@ -742,6 +761,12 @@
             font-size: 10.5px;
         }
 
+        .tagline-gap {
+            width: 110px;
+
+            flex-basis: 110px;
+        }
+
         .service-instruction {
             font-size: 10px;
         }
@@ -801,6 +826,12 @@
                 clamp(20px, 3vw, 27px);
         }
 
+        .tagline-gap {
+            width: 220px;
+
+            flex-basis: 220px;
+        }
+
         .service-button {
             font-size:
                 15px;
@@ -850,11 +881,11 @@
         <div class="document-people-track">
 
             <span>
-                BETTER DOCUMENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BETTER YOU
+                BETTER DOCUMENTS<span class="tagline-gap"></span>BETTER YOU
             </span>
 
             <span>
-                BETTER DOCUMENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BETTER YOU
+                BETTER DOCUMENTS<span class="tagline-gap"></span>BETTER YOU
             </span>
 
         </div>
