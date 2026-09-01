@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-
-<title>Naija Pocket Business Center</title>
-
-<style>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Naija Pocket Business Center</title><style>
 *{box-sizing:border-box}
 
 html,body{
@@ -500,234 +495,184 @@ button:disabled{
         overflow-y:auto;
     }
 }
-</style>
-</head>
-
-<body>
-
-<div class="app">
-
-<header class="header">
+</style></head><body><div class="app"><header class="header">
     <div class="brand">
         <h1 class="brand-title">Naija Pocket Business Center</h1>
         <div class="brand-subtitle">Your Business Center</div>
+    </div><div id="serviceBadge" class="service-badge">Service</div>
+
+</header><main class="main">
+<div class="main-inner"><section id="formView"><div class="intro-card">
+
+    <h2 id="introTitle" class="intro-title">
+        Let's get started
+    </h2>
+
+    <p id="introText" class="intro-text">
+        Please wait while we prepare useful information for this service.
+    </p>
+
+    <div id="price" class="price">
+        Service
     </div>
-
-    <div id="serviceBadge" class="service-badge">Service</div>
-</header>
-
-
-<main class="main">
-<div class="main-inner">
-
-<section id="formView">
-
-    <div class="intro-card">
-
-        <h2 id="introTitle" class="intro-title">
-            Let's get started
-        </h2>
-
-        <p id="introText" class="intro-text">
-            Please wait while we prepare useful information for this service.
-        </p>
-
-        <div id="price" class="price">
-            Service
-        </div>
-
-    </div>
-
-
-    <div class="form-card">
-
-        <h3 class="form-heading">
-            Your Service Information
-        </h3>
-
-        <p class="form-description">
-            Fill in the information relevant to your request.
-            Optional fields can be left blank.
-        </p>
-
-        <form id="serviceForm">
-
-            <div id="fields" class="fields"></div>
-
-            <div class="form-note">
-                When you tap <strong>SEND</strong>, your prepared work will immediately
-                appear on the full review page, ready for you to read and review.
-            </div>
-
-            <button id="formSubmit" class="form-submit" type="submit">
-                SEND
-            </button>
-
-        </form>
-
-    </div>
-
-</section>
-
-
-<section id="reviewView" class="review-view">
-
-    <div class="review-header">
-
-        <h2 class="review-title">
-            Your Work Is Ready
-        </h2>
-
-        <p class="review-subtitle">
-            Your prepared work has been completed.
-            Open the full review page to read it, request corrections,
-            approve it and continue to payment.
-        </p>
-
-    </div>
-
-
-    <div class="workspace-review-gateway">
-
-        <h3 class="workspace-review-gateway-title">
-            Full Review Available
-        </h3>
-
-        <p class="workspace-review-gateway-text">
-            Your review is handled by the dedicated review page.
-            Open it to continue with the complete document workflow.
-        </p>
-
-        <button
-            id="workspaceOpenReviewButton"
-            class="workspace-review-open"
-            type="button"
-        >
-            Open Full Review
-        </button>
-
-    </div>
-
-</section>
 
 </div>
-</main>
 
 
-<section class="bottom">
+<div class="form-card">
 
-<div class="bottom-inner">
+    <h3 class="form-heading">
+        Your Service Information
+    </h3>
 
-    <div id="voiceRecording" class="voice-recording">
-        🔴 Recording... tap Voice again to stop.
-    </div>
+    <p class="form-description">
+        Fill in the information relevant to your request.
+        Optional fields can be left blank.
+    </p>
 
-    <div class="tools">
+    <form id="serviceForm">
 
-        <button id="uploadButton" class="tool-button" type="button">
-            📄 Upload Documents You Want To Give Us
-        </button>
+        <div id="fields" class="fields"></div>
 
-        <button id="voiceButton" class="tool-button gold" type="button">
-            🎤 Voice
-        </button>
+        <div class="form-note">
+            When you tap <strong>SEND</strong>, your prepared work will immediately
+            appear on the full review page, ready for you to read and review.
+        </div>
 
-        <button id="customerServiceButton" class="tool-button" type="button">
-            Customer Service
-        </button>
-
-    </div>
-
-
-    <button
-        id="chooseServiceButton"
-        class="choose-service-button"
-        type="button"
-    >
-        Choose Another Service
-    </button>
-
-
-    <input
-        id="fileInput"
-        type="file"
-        accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
-    >
-
-
-    <div class="composer">
-
-        <textarea
-            id="messageInput"
-            class="message-input"
-            rows="1"
-            placeholder="Type your message..."
-            autocomplete="off"
-        ></textarea>
-
-        <button id="sendButton" class="send-button" type="button">
+        <button id="formSubmit" class="form-submit" type="submit">
             SEND
         </button>
 
-    </div>
-
-
-    <div id="status" class="status"></div>
-
-</div>
-</section>
+    </form>
 
 </div>
 
+</section><section id="reviewView" class="review-view"><div class="review-header">
 
-<div
-    id="reviewGatewayOverlay"
-    class="review-gateway-overlay"
-    role="dialog"
-    aria-modal="true"
->
-
-<div class="review-gateway-card">
-
-    <div class="review-gateway-icon">
-        📄
-    </div>
-
-    <h2 class="review-gateway-title">
+    <h2 class="review-title">
         Your Work Is Ready
     </h2>
 
-    <p class="review-gateway-message">
-        Your prepared work is ready for review.
-        Open the dedicated review page to read the complete work,
-        request corrections, approve it and continue to payment.
+    <p class="review-subtitle">
+        Your prepared work has been completed.
+        Open the full review page to read it, request corrections,
+        approve it and continue to payment.
     </p>
 
-    <div class="review-gateway-note">
-        The review page will open using the active server job.
-    </div>
+</div>
+
+
+<div class="workspace-review-gateway">
+
+    <h3 class="workspace-review-gateway-title">
+        Full Review Available
+    </h3>
+
+    <p class="workspace-review-gateway-text">
+        Your review is handled by the dedicated review page.
+        Open it to continue with the complete document workflow.
+    </p>
 
     <button
-        id="reviewGatewayOpenButton"
-        class="review-gateway-button"
+        id="workspaceOpenReviewButton"
+        class="workspace-review-open"
         type="button"
     >
         Open Full Review
     </button>
 
-    <button
-        id="reviewGatewayCloseButton"
-        class="review-gateway-close"
-        type="button"
-    >
-        Continue Here
+</div>
+
+</section></div>
+</main><section class="bottom"><div class="bottom-inner"><div id="voiceRecording" class="voice-recording">
+    🔴 Recording... tap Voice again to stop.
+</div>
+
+<div class="tools">
+
+    <button id="uploadButton" class="tool-button" type="button">
+        📄 Upload Documents You Want To Give Us
+    </button>
+
+    <button id="voiceButton" class="tool-button gold" type="button">
+        🎤 Voice
+    </button>
+
+    <button id="customerServiceButton" class="tool-button" type="button">
+        Customer Service
     </button>
 
 </div>
+
+
+<input
+    id="fileInput"
+    type="file"
+    accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+>
+
+
+<div class="composer">
+
+    <textarea
+        id="messageInput"
+        class="message-input"
+        rows="1"
+        placeholder="Type your message..."
+        autocomplete="off"
+    ></textarea>
+
+    <button id="sendButton" class="send-button" type="button">
+        SEND
+    </button>
+
 </div>
 
 
-<script>
+<div id="status" class="status"></div>
+
+</div>
+</section></div><div
+    id="reviewGatewayOverlay"
+    class="review-gateway-overlay"
+    role="dialog"
+    aria-modal="true"
+><div class="review-gateway-card"><div class="review-gateway-icon">
+    📄
+</div>
+
+<h2 class="review-gateway-title">
+    Your Work Is Ready
+</h2>
+
+<p class="review-gateway-message">
+    Your prepared work is ready for review.
+    Open the dedicated review page to read the complete work,
+    request corrections, approve it and continue to payment.
+</p>
+
+<div class="review-gateway-note">
+    The review page will open using the active server job.
+</div>
+
+<button
+    id="reviewGatewayOpenButton"
+    class="review-gateway-button"
+    type="button"
+>
+    Open Full Review
+</button>
+
+<button
+    id="reviewGatewayCloseButton"
+    class="review-gateway-close"
+    type="button"
+>
+    Continue Here
+</button>
+
+</div>
+</div><script>
 "use strict";
 
 /*
@@ -792,7 +737,6 @@ const price = $("price");
 const uploadBtn = $("uploadButton");
 const voiceBtn = $("voiceButton");
 const customerBtn = $("customerServiceButton");
-const chooseBtn = $("chooseServiceButton");
 
 const fileInput = $("fileInput");
 const messageInput = $("messageInput");
@@ -942,8 +886,7 @@ function setBusy(value){
         sendBtn,
         uploadBtn,
         voiceBtn,
-        customerBtn,
-        chooseBtn
+        customerBtn
     ].forEach(button => {
 
         if(button){
@@ -2165,23 +2108,6 @@ customerBtn.addEventListener(
 
 
 /* =========================================================
-   CHOOSE SERVICE
-========================================================= */
-
-chooseBtn.addEventListener(
-    "click",
-    () => {
-
-        if(!busy){
-            location.href =
-                "welcome.html";
-        }
-
-    }
-);
-
-
-/* =========================================================
    UPLOAD
 ========================================================= */
 
@@ -2593,7 +2519,5 @@ async function init(){
 
 init();
 
-</script>
-
-</body>
+</script></body>
 </html>
