@@ -8,7 +8,7 @@ PURPOSE
 -------
 This file stores the business records for the entire system.
 
-It is SERVICE-NEUTRAL and can be used for:
+This database is SERVICE-NEUTRAL and can be used for:
 
 - CV writing
 - Cover letters
@@ -213,6 +213,10 @@ def initialize_database():
 
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
+            download_activated INTEGER DEFAULT 0,
+
+            download_activated_at DATETIME,
+
             FOREIGN KEY(job_id)
                 REFERENCES jobs(id)
                 ON DELETE CASCADE
@@ -313,6 +317,7 @@ def initialize_database():
             payment_created
             payment_confirmed
             completed
+            download_activated
         """
 
         cursor.execute("""
@@ -369,6 +374,12 @@ def initialize_database():
         CREATE INDEX IF NOT EXISTS
         idx_work_records_job_id
         ON work_records(job_id)
+        """)
+
+        cursor.execute("""
+        CREATE INDEX IF NOT EXISTS
+        idx_work_records_download
+        ON work_records(job_id, download_activated)
         """)
 
         cursor.execute("""
@@ -464,6 +475,41 @@ def migrate_existing_database(cursor):
             )
 
     # --------------------------------------------------------
+    # Existing work_records table
+    # --------------------------------------------------------
+
+    cursor.execute(
+        "PRAGMA table_info(work_records)"
+    )
+
+    work_columns = {
+        row["name"]
+        for row in cursor.fetchall()
+    }
+
+    work_columns_to_add = {
+
+        "download_activated":
+            "INTEGER DEFAULT 0",
+
+        "download_activated_at":
+            "DATETIME"
+
+    }
+
+    for column_name, definition in work_columns_to_add.items():
+
+        if column_name not in work_columns:
+
+            cursor.execute(
+                f"""
+                ALTER TABLE work_records
+                ADD COLUMN {column_name}
+                {definition}
+                """
+            )
+
+    # --------------------------------------------------------
     # Existing payments table
     # --------------------------------------------------------
 
@@ -531,6 +577,18 @@ def migrate_existing_database(cursor):
     )
 
     WHERE updated_at IS NULL
+    """)
+
+    # --------------------------------------------------------
+    # Existing work download activation values
+    # --------------------------------------------------------
+
+    cursor.execute("""
+    UPDATE work_records
+
+    SET download_activated = 0
+
+    WHERE download_activated IS NULL
     """)
 
 
@@ -1208,6 +1266,196 @@ def get_latest_work(
     )
 
 
+# ============================================================
+# DOWNLOAD ACTIVATION
+# ============================================================
+
+def activate_work_download(
+    work_id
+):
+
+    """
+    Activates customer download for ONE exact saved work record.
+
+    Only this saved version becomes download-authorized.
+
+    The actual file is not copied or regenerated.
+    """
+
+    work = get_work(
+        work_id
+    )
+
+    if work is None:
+        return False
+
+    conn = get_connection()
+
+    if conn is None:
+        return False
+
+    try:
+
+        # ----------------------------------------------------
+        # First deactivate any previously activated version
+        # for this job.
+        #
+        # This guarantees that only one saved version is the
+        # active customer-download version.
+        # ----------------------------------------------------
+
+        conn.execute(
+            """
+            UPDATE work_records
+
+            SET
+                download_activated = 0,
+                download_activated_at = NULL,
+                updated_at = CURRENT_TIMESTAMP
+
+            WHERE job_id = ?
+            """,
+            (
+                work["job_id"],
+            )
+        )
+
+        # ----------------------------------------------------
+        # Activate the exact selected work record.
+        # ----------------------------------------------------
+
+        conn.execute(
+            """
+            UPDATE work_records
+
+            SET
+                download_activated = 1,
+                download_activated_at = CURRENT_TIMESTAMP,
+                updated_at = CURRENT_TIMESTAMP
+
+            WHERE id = ?
+            """,
+            (
+                work_id,
+            )
+        )
+
+        conn.commit()
+
+    except sqlite3.Error as error:
+
+        print(
+            "Download activation error:",
+            error
+        )
+
+        return False
+
+    finally:
+
+        conn.close()
+
+    add_job_activity(
+        work["job_id"],
+        "download_activated",
+        (
+            f"Customer download activated for "
+            f"saved work Version {work['version']}."
+        )
+    )
+
+    return True
+
+
+def get_activated_work(
+    job_id
+):
+
+    """
+    Returns the exact saved work version that Back Office has
+    activated for customer download.
+
+    It does NOT automatically select the latest version.
+    """
+
+    return fetch_one(
+        """
+        SELECT *
+        FROM work_records
+
+        WHERE
+            job_id = ?
+            AND download_activated = 1
+
+        ORDER BY
+            version DESC,
+            id DESC
+
+        LIMIT 1
+        """,
+        (job_id,)
+    )
+
+
+def deactivate_work_download(
+    job_id
+):
+
+    """
+    Removes customer-download activation for a job.
+
+    It does not delete the saved document.
+    """
+
+    conn = get_connection()
+
+    if conn is None:
+        return False
+
+    try:
+
+        cursor = conn.execute(
+            """
+            UPDATE work_records
+
+            SET
+                download_activated = 0,
+                download_activated_at = NULL,
+                updated_at = CURRENT_TIMESTAMP
+
+            WHERE job_id = ?
+            """,
+            (job_id,)
+        )
+
+        conn.commit()
+
+        changed = cursor.rowcount > 0
+
+    except sqlite3.Error as error:
+
+        print(
+            "Download deactivation error:",
+            error
+        )
+
+        return False
+
+    finally:
+
+        conn.close()
+
+    if changed:
+
+        add_job_activity(
+            job_id,
+            "download_deactivated",
+            "Customer download activation removed."
+        )
+
+    return changed
+
+
 def update_work_status(
     work_id,
     work_status
@@ -1583,8 +1831,6 @@ def get_back_office_jobs():
     - latest work
     - latest customer file
     - latest payment
-
-    This is the main query the Back Office can use.
     """
 
     query = """
@@ -1602,6 +1848,8 @@ def get_back_office_jobs():
         work_records.storage_reference,
         work_records.version AS work_version,
         work_records.work_status,
+        work_records.download_activated,
+        work_records.download_activated_at,
 
         customer_files.id AS customer_file_id,
         customer_files.file_name,
@@ -1712,6 +1960,11 @@ def get_job_summary(
 
         "work":
             get_work_for_job(
+                job_id
+            ),
+
+        "activated_work":
+            get_activated_work(
                 job_id
             ),
 
