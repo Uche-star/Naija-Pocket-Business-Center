@@ -28,6 +28,9 @@ from database import (
     update_payment_status,
     save_customer_work,
     get_latest_work,
+    get_activated_work,
+    activate_work_download,
+    get_back_office_jobs,
     update_job_status,
 )
 
@@ -555,6 +558,11 @@ class PaymentCreate(BaseModel):
 
 class PaymentConfirm(BaseModel):
     payment_id: int
+    admin_key: str
+
+
+class DownloadActivation(BaseModel):
+    work_id: int
     admin_key: str
 
 
@@ -2537,26 +2545,11 @@ async def approve(
         request.version_id or ""
     ).strip()
 
-    # --------------------------------------------------------
-    # EXACT JOB LOOKUP
-    # --------------------------------------------------------
-
     job = _jobs.get(
         supplied_job_id
     )
 
     resolved_job_id = supplied_job_id
-
-    # --------------------------------------------------------
-    # RECOVER USING VERSION ID
-    #
-    # The review page already has the active document and its
-    # version. If the approval request carries a job_id that
-    # does not exactly match the in-memory key, use the
-    # document version to locate that same existing job.
-    #
-    # No review data is changed here.
-    # --------------------------------------------------------
 
     if not job and supplied_version_id:
 
@@ -2592,17 +2585,6 @@ async def approve(
                 )
 
                 break
-
-    # --------------------------------------------------------
-    # RECOVER JOB ID FROM VERSION ID
-    #
-    # Current versions are created as:
-    #
-    #     <job_id>:<version>
-    #
-    # This is only a fallback when the direct lookup and
-    # version scan did not find the job.
-    # --------------------------------------------------------
 
     if not job and supplied_version_id:
 
@@ -2646,10 +2628,6 @@ async def approve(
                             f"version_id={supplied_version_id}"
                         )
 
-    # --------------------------------------------------------
-    # JOB NOT FOUND
-    # --------------------------------------------------------
-
     if not job:
 
         print(
@@ -2665,10 +2643,6 @@ async def approve(
             404,
             "JOB_NOT_FOUND",
         )
-
-    # --------------------------------------------------------
-    # VERSION MUST STILL MATCH
-    # --------------------------------------------------------
 
     current_version_id = str(
         job.get(
@@ -2690,10 +2664,6 @@ async def approve(
             "VERSION_MISMATCH",
         )
 
-    # --------------------------------------------------------
-    # REVIEW MUST BE COMPLETE
-    # --------------------------------------------------------
-
     if (
         job.get("status")
         != "review_complete"
@@ -2705,10 +2675,6 @@ async def approve(
             409,
             "REVIEW_NOT_COMPLETE",
         )
-
-    # --------------------------------------------------------
-    # APPROVE
-    # --------------------------------------------------------
 
     job["approved"] = True
     job["status"] = "approved"
@@ -2908,7 +2874,11 @@ async def payment_complete(
             job["paid"] = True
             job["status"] = "paid"
 
-            return {
+            activated_work = get_activated_work(
+                numeric_job_id
+            )
+
+            response = {
                 "success": True,
                 "job_id": job_id,
                 "version_id": version_id,
@@ -2919,12 +2889,28 @@ async def payment_complete(
                 "total_pages": len(
                     job["document_pages"]
                 ),
-                "download_url": (
+                "download_activated": bool(
+                    activated_work
+                ),
+            }
+
+            if activated_work:
+
+                response["download_url"] = (
                     f"/api/download?"
                     f"job_id={job_id}"
                     f"&version_id={version_id}"
-                ),
-            }
+                )
+
+            else:
+
+                response["message"] = (
+                    "Payment is confirmed. "
+                    "The saved document is awaiting "
+                    "Back Office download activation."
+                )
+
+            return response
 
         if existing_status == "pending":
 
@@ -3075,11 +3061,18 @@ async def api_payment_status(
 
             job["paid"] = False
 
+    activated_work = get_activated_work(
+        numeric_job_id
+    )
+
     return {
         "success": True,
         "payment_id": payment["id"],
         "status": status,
         "payment_status": status,
+        "download_activated": bool(
+            activated_work
+        ),
     }
 
 
@@ -3155,6 +3148,10 @@ async def payment_state(
         if job["status"] == "paid":
             job["status"] = "approved"
 
+    activated_work = get_activated_work(
+        numeric_job_id
+    )
+
     return {
         "success": True,
         "job_id": job_id,
@@ -3180,7 +3177,123 @@ async def payment_state(
         "payment_complete": (
             payment_status == "paid"
         ),
+        "download_activated": bool(
+            activated_work
+        ),
     }
+
+
+# ============================================================
+# BACK OFFICE: JOBS
+# ============================================================
+
+@app.get("/api/back-office/jobs")
+async def back_office_jobs():
+
+    try:
+
+        jobs = get_back_office_jobs()
+
+        return {
+            "success": True,
+            "jobs": jobs,
+            "total": len(jobs),
+        }
+
+    except Exception as error:
+
+        return application_error(
+            "BACK_OFFICE",
+            error,
+            500,
+            "BACK_OFFICE_LOAD_FAILED",
+        )
+
+
+# ============================================================
+# BACK OFFICE: ACTIVATE DOWNLOAD
+# ============================================================
+
+@app.post("/api/back-office/activate-download")
+async def back_office_activate_download(
+    req: DownloadActivation
+):
+
+    if req.admin_key != ADMIN_KEY:
+
+        return application_error(
+            "BACK_OFFICE",
+            "Invalid admin key.",
+            403,
+            "INVALID_ADMIN_KEY",
+        )
+
+    work_id = safe_int(
+        req.work_id
+    )
+
+    if work_id is None:
+
+        return application_error(
+            "BACK_OFFICE",
+            "Invalid work record ID.",
+            400,
+            "INVALID_WORK_ID",
+        )
+
+    try:
+
+        success = activate_work_download(
+            work_id
+        )
+
+        if not success:
+
+            return application_error(
+                "BACK_OFFICE",
+                "The saved document could not be activated.",
+                404,
+                "WORK_RECORD_NOT_FOUND",
+            )
+
+        activated_work = None
+
+        jobs = get_back_office_jobs()
+
+        for item in jobs:
+
+            if safe_int(
+                item.get("work_id")
+                or item.get("id")
+            ) == work_id:
+
+                activated_work = item
+                break
+
+        print(
+            "[BACK_OFFICE] DOWNLOAD ACTIVATED "
+            f"work_id={work_id}"
+        )
+
+        return {
+            "success": True,
+            "work_id": work_id,
+            "download_activated": True,
+            "work": activated_work,
+            "message": (
+                "Download has been activated for "
+                "the selected saved document."
+            ),
+        }
+
+    except Exception as error:
+
+        return application_error(
+            "BACK_OFFICE",
+            error,
+            500,
+            "DOWNLOAD_ACTIVATION_FAILED",
+        )
 
 
 # ============================================================
@@ -3297,6 +3410,10 @@ async def download(
             "INVALID_JOB_ID",
         )
 
+    # --------------------------------------------------------
+    # PAYMENT MUST BE CONFIRMED
+    # --------------------------------------------------------
+
     payment = get_latest_payment(
         numeric_job_id
     )
@@ -3315,6 +3432,10 @@ async def download(
             403,
             "PAYMENT_NOT_CONFIRMED",
         )
+
+    # --------------------------------------------------------
+    # CURRENT JOB VERSION CHECK
+    # --------------------------------------------------------
 
     job = _jobs.get(
         job_id
@@ -3345,7 +3466,15 @@ async def download(
                 "DOCUMENT_NOT_APPROVED",
             )
 
-    work = get_latest_work(
+    # --------------------------------------------------------
+    # IMPORTANT:
+    # DOWNLOAD MUST USE THE EXACT SAVED AND ACTIVATED
+    # WORK RECORD.
+    #
+    # It must NOT use get_latest_work().
+    # --------------------------------------------------------
+
+    work = get_activated_work(
         numeric_job_id
     )
 
@@ -3353,10 +3482,56 @@ async def download(
 
         return application_error(
             "DOWNLOAD",
-            "No document found.",
-            404,
-            "DOCUMENT_NOT_FOUND",
+            (
+                "Payment is confirmed, but the saved document "
+                "has not yet been activated for download."
+            ),
+            403,
+            "DOWNLOAD_NOT_ACTIVATED",
         )
+
+    # --------------------------------------------------------
+    # ACTIVATED VERSION MUST MATCH REQUESTED VERSION
+    # --------------------------------------------------------
+
+    activated_version = safe_int(
+        work.get(
+            "version"
+        ),
+        1,
+    ) or 1
+
+    requested_version = None
+
+    if ":" in str(version_id):
+
+        requested_version = safe_int(
+            str(version_id).rsplit(
+                ":",
+                1
+            )[1],
+            None,
+        )
+
+    if (
+        requested_version is not None
+        and activated_version
+        != requested_version
+    ):
+
+        return application_error(
+            "DOWNLOAD",
+            (
+                "The activated saved document "
+                "does not match the requested version."
+            ),
+            409,
+            "ACTIVATED_VERSION_MISMATCH",
+        )
+
+    # --------------------------------------------------------
+    # STORAGE REFERENCE
+    # --------------------------------------------------------
 
     storage_reference = str(
         work.get(
@@ -3377,6 +3552,10 @@ async def download(
     filepath = Path(
         storage_reference
     )
+
+    # --------------------------------------------------------
+    # PATH SECURITY
+    # --------------------------------------------------------
 
     try:
 
@@ -3428,14 +3607,18 @@ async def download(
             "INVALID_STORAGE_OBJECT",
         )
 
-    version = (
-        safe_int(
-            work.get(
-                "version"
-            ),
-            1,
-        )
-        or 1
+    # --------------------------------------------------------
+    # FINAL DOWNLOAD
+    # --------------------------------------------------------
+
+    version = activated_version
+
+    print(
+        "[DOWNLOAD] SERVING "
+        f"job_id={job_id} "
+        f"version={version} "
+        f"work_id={work.get('id')} "
+        f"path={filepath}"
     )
 
     return FileResponse(
@@ -3521,6 +3704,9 @@ async def startup():
     )
     print(
         "Database payment confirmation: ENABLED"
+    )
+    print(
+        "Back Office document activation: ENABLED"
     )
     print(
         "Secure download: ENABLED"
