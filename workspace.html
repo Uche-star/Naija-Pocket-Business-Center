@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Naija Pocket Business Center</title>
-
-<style>
+<title>Naija Pocket Business Center</title><style>
 *{box-sizing:border-box}
 
 html,body{
@@ -73,8 +70,16 @@ button{cursor:pointer}
     font-size:10px;
 }
 
+.header-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:6px;
+    min-width:0;
+}
+
 .service-badge{
-    max-width:46%;
+    max-width:40%;
     padding:7px 10px;
     background:#171717;
     border:1px solid rgba(212,175,55,.55);
@@ -85,6 +90,24 @@ button{cursor:pointer}
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
+}
+
+.back-office-entry{
+    flex:0 0 auto;
+    min-height:30px;
+    padding:0 8px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:7px;
+    background:#101010;
+    color:#777;
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:.2px;
+}
+
+.back-office-entry:hover{
+    color:var(--gold2);
+    border-color:rgba(212,175,55,.35);
 }
 
 /* =========================================================
@@ -574,6 +597,23 @@ button{cursor:pointer}
     font-weight:900;
 }
 
+.back-office-exit{
+    width:100%;
+    min-height:45px;
+    margin-top:7px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:9px;
+    background:#111;
+    color:#aaa;
+    font-size:11px;
+    font-weight:900;
+}
+
+.back-office-exit:hover{
+    color:#fff;
+    border-color:rgba(212,175,55,.35);
+}
+
 /* =========================================================
    BOTTOM
 ========================================================= */
@@ -776,6 +816,26 @@ button:disabled{
 
 @media(max-width:600px){
 
+    .header{
+        padding-left:9px;
+        padding-right:9px;
+    }
+
+    .header-actions{
+        gap:4px;
+    }
+
+    .service-badge{
+        max-width:32%;
+        padding-left:8px;
+        padding-right:8px;
+    }
+
+    .back-office-entry{
+        padding:0 6px;
+        font-size:7px;
+    }
+
     .main-inner{
         padding:12px 9px 30px;
     }
@@ -794,400 +854,363 @@ button:disabled{
     }
 
 }
-</style>
-</head>
+</style></head><body><div class="app"><header class="header"><div class="brand">
 
-<body>
+    <h1 class="brand-title">
+        Naija Pocket Business Center
+    </h1>
 
-<div class="app">
-
-<header class="header">
-
-    <div class="brand">
-
-        <h1 class="brand-title">
-            Naija Pocket Business Center
-        </h1>
-
-        <div class="brand-subtitle">
-            Your Business Center
-        </div>
-
+    <div class="brand-subtitle">
+        Your Business Center
     </div>
+
+</div>
+
+<div class="header-actions">
+
+    <button
+        id="backOfficeEntryButton"
+        class="back-office-entry"
+        type="button"
+        aria-label="Open Back Office"
+    >
+        BACK OFFICE
+    </button>
 
     <div id="serviceBadge" class="service-badge">
         Service
     </div>
 
-</header>
+</div>
 
-
-<main class="main">
-
-<div class="main-inner">
-
-<!-- =====================================================
+</header><main class="main"><div class="main-inner"><!-- =====================================================
      CUSTOMER FORM
-====================================================== -->
+====================================================== --><section id="formView"><div class="intro-card">
 
-<section id="formView">
+    <h2 id="introTitle" class="intro-title">
+        Let's get started
+    </h2>
 
-    <div class="intro-card">
+    <p id="introText" class="intro-text">
+        Please wait while we prepare useful information for this service.
+    </p>
 
-        <h2 id="introTitle" class="intro-title">
-            Let's get started
-        </h2>
-
-        <p id="introText" class="intro-text">
-            Please wait while we prepare useful information for this service.
-        </p>
-
-        <div id="price" class="price">
-            Service
-        </div>
-
+    <div id="price" class="price">
+        Service
     </div>
-
-
-    <div class="form-card">
-
-        <h3 class="form-heading">
-            Your Service Information
-        </h3>
-
-        <p class="form-description">
-            Fill in the information relevant to your request.
-            Optional fields can be left blank.
-        </p>
-
-        <form id="serviceForm">
-
-            <div id="fields" class="fields"></div>
-
-            <div class="form-note">
-                When you tap <strong>SEND</strong>, your prepared work will immediately
-                appear on the full review page, ready for you to read and review.
-            </div>
-
-            <button id="formSubmit" class="form-submit" type="submit">
-                SEND
-            </button>
-
-        </form>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     CUSTOMER REVIEW GATEWAY
-====================================================== -->
-
-<section id="reviewView" class="review-view">
-
-    <div class="review-header">
-
-        <h2 class="review-title">
-            Your Work Is Ready
-        </h2>
-
-        <p class="review-subtitle">
-            Your prepared work has been completed.
-            Open the full review page to read it, request corrections,
-            approve it and continue to payment.
-        </p>
-
-    </div>
-
-
-    <div class="workspace-review-gateway">
-
-        <h3 class="workspace-review-gateway-title">
-            Full Review Available
-        </h3>
-
-        <p class="workspace-review-gateway-text">
-            Your review is handled by the dedicated review page.
-            Open it to continue with the complete document workflow.
-        </p>
-
-        <button
-            id="workspaceOpenReviewButton"
-            class="workspace-review-open"
-            type="button"
-        >
-            Open Full Review
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     BACK OFFICE
-====================================================== -->
-
-<section id="backOfficeView">
-
-    <div class="back-office-header">
-
-        <h2 class="back-office-title">
-            Back Office
-        </h2>
-
-        <p class="back-office-subtitle">
-            Manage completed jobs and activate the exact saved document
-            version that the customer is allowed to download.
-        </p>
-
-    </div>
-
-
-    <div class="back-office-key-card">
-
-        <label
-            class="back-office-key-label"
-            for="backOfficeKey"
-        >
-            Operator Key
-        </label>
-
-        <div class="back-office-key-row">
-
-            <input
-                id="backOfficeKey"
-                class="back-office-key-input"
-                type="password"
-                autocomplete="off"
-                placeholder="Enter Back Office key"
-            >
-
-            <button
-                id="backOfficeLoadButton"
-                class="back-office-load"
-                type="button"
-            >
-                LOAD JOBS
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <div class="back-office-summary">
-
-        <div class="back-office-stat">
-            <span
-                id="backOfficeTotal"
-                class="back-office-stat-value"
-            >
-                0
-            </span>
-
-            <span class="back-office-stat-label">
-                Jobs
-            </span>
-        </div>
-
-
-        <div class="back-office-stat">
-            <span
-                id="backOfficeApproved"
-                class="back-office-stat-value"
-            >
-                0
-            </span>
-
-            <span class="back-office-stat-label">
-                Approved
-            </span>
-        </div>
-
-
-        <div class="back-office-stat">
-            <span
-                id="backOfficeActivated"
-                class="back-office-stat-value"
-            >
-                0
-            </span>
-
-            <span class="back-office-stat-label">
-                Activated
-            </span>
-        </div>
-
-    </div>
-
-
-    <div
-        id="backOfficeJobs"
-        class="back-office-jobs"
-    >
-
-        <div class="back-office-empty">
-            Enter the operator key and tap LOAD JOBS.
-        </div>
-
-    </div>
-
-
-    <button
-        id="backOfficeRefreshButton"
-        class="back-office-refresh"
-        type="button"
-    >
-        REFRESH BACK OFFICE
-    </button>
-
-</section>
 
 </div>
 
-</main>
 
+<div class="form-card">
 
-<!-- =====================================================
-     CUSTOMER BOTTOM CONTROLS
-====================================================== -->
+    <h3 class="form-heading">
+        Your Service Information
+    </h3>
 
-<section
-    id="customerBottom"
-    class="bottom"
->
+    <p class="form-description">
+        Fill in the information relevant to your request.
+        Optional fields can be left blank.
+    </p>
 
-<div class="bottom-inner">
+    <form id="serviceForm">
 
-    <div
-        id="voiceRecording"
-        class="voice-recording"
-    >
-        🔴 Recording... tap Voice again to stop.
-    </div>
+        <div id="fields" class="fields"></div>
 
+        <div class="form-note">
+            When you tap <strong>SEND</strong>, your prepared work will immediately
+            appear on the full review page, ready for you to read and review.
+        </div>
 
-    <div class="tools">
-
-        <button
-            id="uploadButton"
-            class="tool-button"
-            type="button"
-        >
-            📄 Upload Documents You Want To Give Us
-        </button>
-
-
-        <button
-            id="voiceButton"
-            class="tool-button gold"
-            type="button"
-        >
-            🎤 Voice
-        </button>
-
-
-        <button
-            id="customerServiceButton"
-            class="tool-button"
-            type="button"
-        >
-            Customer Service
-        </button>
-
-    </div>
-
-
-    <input
-        id="fileInput"
-        type="file"
-        accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
-    >
-
-
-    <div class="composer">
-
-        <textarea
-            id="messageInput"
-            class="message-input"
-            rows="1"
-            placeholder="Type your message..."
-            autocomplete="off"
-        ></textarea>
-
-        <button
-            id="sendButton"
-            class="send-button"
-            type="button"
-        >
+        <button id="formSubmit" class="form-submit" type="submit">
             SEND
         </button>
 
-    </div>
-
-
-    <div id="status" class="status"></div>
+    </form>
 
 </div>
 
-</section>
+</section><!-- =====================================================
+     CUSTOMER REVIEW GATEWAY
+====================================================== --><section id="reviewView" class="review-view"><div class="review-header">
+
+    <h2 class="review-title">
+        Your Work Is Ready
+    </h2>
+
+    <p class="review-subtitle">
+        Your prepared work has been completed.
+        Open the full review page to read it, request corrections,
+        approve it and continue to payment.
+    </p>
+
+</div>
 
 
-<!-- =====================================================
-     REVIEW OVERLAY
-====================================================== -->
+<div class="workspace-review-gateway">
+
+    <h3 class="workspace-review-gateway-title">
+        Full Review Available
+    </h3>
+
+    <p class="workspace-review-gateway-text">
+        Your review is handled by the dedicated review page.
+        Open it to continue with the complete document workflow.
+    </p>
+
+    <button
+        id="workspaceOpenReviewButton"
+        class="workspace-review-open"
+        type="button"
+    >
+        Open Full Review
+    </button>
+
+</div>
+
+</section><!-- =====================================================
+     BACK OFFICE
+====================================================== --><section id="backOfficeView"><div class="back-office-header">
+
+    <h2 class="back-office-title">
+        Back Office
+    </h2>
+
+    <p class="back-office-subtitle">
+        Manage completed jobs and activate the exact saved document
+        version that the customer is allowed to download.
+    </p>
+
+</div>
+
+
+<div class="back-office-key-card">
+
+    <label
+        class="back-office-key-label"
+        for="backOfficeKey"
+    >
+        Operator Key
+    </label>
+
+    <div class="back-office-key-row">
+
+        <input
+            id="backOfficeKey"
+            class="back-office-key-input"
+            type="password"
+            autocomplete="off"
+            placeholder="Enter Back Office key"
+        >
+
+        <button
+            id="backOfficeLoadButton"
+            class="back-office-load"
+            type="button"
+        >
+            LOAD JOBS
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="back-office-summary">
+
+    <div class="back-office-stat">
+        <span
+            id="backOfficeTotal"
+            class="back-office-stat-value"
+        >
+            0
+        </span>
+
+        <span class="back-office-stat-label">
+            Jobs
+        </span>
+    </div>
+
+
+    <div class="back-office-stat">
+        <span
+            id="backOfficeApproved"
+            class="back-office-stat-value"
+        >
+            0
+        </span>
+
+        <span class="back-office-stat-label">
+            Approved
+        </span>
+    </div>
+
+
+    <div class="back-office-stat">
+        <span
+            id="backOfficeActivated"
+            class="back-office-stat-value"
+        >
+            0
+        </span>
+
+        <span class="back-office-stat-label">
+            Activated
+        </span>
+    </div>
+
+</div>
+
 
 <div
+    id="backOfficeJobs"
+    class="back-office-jobs"
+>
+
+    <div class="back-office-empty">
+        Enter the operator key and tap LOAD JOBS.
+    </div>
+
+</div>
+
+
+<button
+    id="backOfficeRefreshButton"
+    class="back-office-refresh"
+    type="button"
+>
+    REFRESH BACK OFFICE
+</button>
+
+
+<button
+    id="backOfficeExitButton"
+    class="back-office-exit"
+    type="button"
+>
+    EXIT BACK OFFICE
+</button>
+
+</section></div></main><!-- =====================================================
+     CUSTOMER BOTTOM CONTROLS
+====================================================== --><section
+    id="customerBottom"
+    class="bottom"
+><div class="bottom-inner"><div
+    id="voiceRecording"
+    class="voice-recording"
+>
+    🔴 Recording... tap Voice again to stop.
+</div>
+
+
+<div class="tools">
+
+    <button
+        id="uploadButton"
+        class="tool-button"
+        type="button"
+    >
+        📄 Upload Documents You Want To Give Us
+    </button>
+
+
+    <button
+        id="voiceButton"
+        class="tool-button gold"
+        type="button"
+    >
+        🎤 Voice
+    </button>
+
+
+    <button
+        id="customerServiceButton"
+        class="tool-button"
+        type="button"
+    >
+        Customer Service
+    </button>
+
+</div>
+
+
+<input
+    id="fileInput"
+    type="file"
+    accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+>
+
+
+<div class="composer">
+
+    <textarea
+        id="messageInput"
+        class="message-input"
+        rows="1"
+        placeholder="Type your message..."
+        autocomplete="off"
+    ></textarea>
+
+    <button
+        id="sendButton"
+        class="send-button"
+        type="button"
+    >
+        SEND
+    </button>
+
+</div>
+
+
+<div id="status" class="status"></div>
+
+</div></section><!-- =====================================================
+     REVIEW OVERLAY
+====================================================== --><div
     id="reviewGatewayOverlay"
     class="review-gateway-overlay"
     role="dialog"
     aria-modal="true"
->
+><div class="review-gateway-card">
 
-    <div class="review-gateway-card">
-
-        <div class="review-gateway-icon">
-            📄
-        </div>
-
-        <h2 class="review-gateway-title">
-            Your Work Is Ready
-        </h2>
-
-        <p class="review-gateway-message">
-            Your prepared work is ready for review.
-            Open the dedicated review page to read the complete work,
-            request corrections, approve it and continue to payment.
-        </p>
-
-        <div class="review-gateway-note">
-            The review page will open using the active server job.
-        </div>
-
-        <button
-            id="reviewGatewayOpenButton"
-            class="review-gateway-button"
-            type="button"
-        >
-            Open Full Review
-        </button>
-
-        <button
-            id="reviewGatewayCloseButton"
-            class="review-gateway-close"
-            type="button"
-        >
-            Continue Here
-        </button>
-
+    <div class="review-gateway-icon">
+        📄
     </div>
+
+    <h2 class="review-gateway-title">
+        Your Work Is Ready
+    </h2>
+
+    <p class="review-gateway-message">
+        Your prepared work is ready for review.
+        Open the dedicated review page to read the complete work,
+        request corrections, approve it and continue to payment.
+    </p>
+
+    <div class="review-gateway-note">
+        The review page will open using the active server job.
+    </div>
+
+    <button
+        id="reviewGatewayOpenButton"
+        class="review-gateway-button"
+        type="button"
+    >
+        Open Full Review
+    </button>
+
+    <button
+        id="reviewGatewayCloseButton"
+        class="review-gateway-close"
+        type="button"
+    >
+        Continue Here
+    </button>
 
 </div>
 
-
-<script>
+</div><script>
 "use strict";
 
 /*
@@ -1214,7 +1237,18 @@ review.html?job_id=...
 BACK OFFICE MODE
 ----------------
 
-workspace.html?back_office=1
+Back Office is opened directly from the Workspace header.
+
+The URL does NOT need to contain a special Back Office
+parameter for normal operator use.
+
+Existing URL support for:
+    ?back_office=1
+    ?mode=back_office
+
+is retained for testing/direct access.
+
+Back Office:
         ↓
 GET /api/back-office/jobs
         ↓
@@ -1290,6 +1324,12 @@ const workspaceOpenReviewButton =
 /* =========================================================
    BACK OFFICE ELEMENTS
 ========================================================= */
+
+const backOfficeEntryButton =
+    $("backOfficeEntryButton");
+
+const backOfficeExitButton =
+    $("backOfficeExitButton");
 
 const backOfficeKey =
     $("backOfficeKey");
@@ -4224,8 +4264,90 @@ async function activateSavedVersion(
 
 
 /* =========================================================
+   OPEN BACK OFFICE FROM WORKSPACE
+========================================================= */
+
+function openBackOffice(){
+
+    /*
+     * Do not navigate to another page.
+     *
+     * The Back Office is simply another view inside this
+     * same Workspace.
+     */
+
+    reviewGatewayOverlay
+        .classList
+        .remove("show");
+
+
+    formView.style.display =
+        "none";
+
+    reviewView.classList.remove(
+        "show"
+    );
+
+    customerBottom.style.display =
+        "none";
+
+    backOfficeView.classList.add(
+        "show"
+    );
+
+    serviceBadge.textContent =
+        "BACK OFFICE";
+
+    backOfficeEntryButton.style.display =
+        "none";
+
+    setStatus(
+        "Back Office ready."
+    );
+
+}
+
+
+function exitBackOffice(){
+
+    backOfficeView.classList.remove(
+        "show"
+    );
+
+    formView.style.display =
+        "";
+
+    customerBottom.style.display =
+        "";
+
+    serviceBadge.textContent =
+        service;
+
+    backOfficeEntryButton.style.display =
+        "";
+
+    setStatus(
+        ""
+    );
+
+}
+
+
+/* =========================================================
    BACK OFFICE EVENTS
 ========================================================= */
+
+backOfficeEntryButton.addEventListener(
+    "click",
+    openBackOffice
+);
+
+
+backOfficeExitButton.addEventListener(
+    "click",
+    exitBackOffice
+);
+
 
 backOfficeLoadButton.addEventListener(
     "click",
@@ -4280,6 +4402,10 @@ function initBackOffice(){
         "BACK OFFICE";
 
 
+    backOfficeEntryButton.style.display =
+        "none";
+
+
     /*
      * Do NOT call /api/chat here.
      *
@@ -4300,9 +4426,6 @@ function initBackOffice(){
 async function initCustomer(){
 
     serviceBadge.textContent =
-        service;
-
-    introTitle.textContent =
         service;
 
     renderForm();
@@ -4333,7 +4456,5 @@ async function init(){
 
 init();
 
-</script>
-
-</body>
+</script></body>
 </html>
