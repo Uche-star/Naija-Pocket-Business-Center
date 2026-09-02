@@ -2571,8 +2571,6 @@ correctionButton.addEventListener(
 =========================================================
 APPROVAL
 
-IMPORTANT FIX
-
 The backend contract is:
 
 POST /api/approve
@@ -2586,13 +2584,8 @@ JSON:
 The backend also requires:
 status == "review_complete"
 
-Therefore, when the customer taps Approve:
-
-1. Fetch the latest /api/review state.
-2. Take the backend's CURRENT version_id.
-3. Confirm the review is actually complete.
-4. Send both job_id and version_id.
-5. Only then show payment.
+After successful approval, the customer is sent
+directly to payment.html.
 =========================================================
 */
 
@@ -2754,6 +2747,13 @@ approveButton.addEventListener(
             }
 
 
+            /*
+               Approval succeeded.
+
+               Keep the exact approved version_id and go
+               directly to the payment/download page.
+            */
+
             approved = true;
             currentStatus = "approved";
             reviewFinished = true;
@@ -2763,15 +2763,48 @@ approveButton.addEventListener(
 
 
             setMessage(
-                "Your document has been approved. Payment is ready.",
+                "Your document has been approved. Opening payment...",
                 "success"
             );
 
 
-            showPayment(data);
+            /*
+               Use the approved backend version for payment.
+            */
+
+            const approvedVersionId =
+                clean(
+                    data.version_id
+                ) ||
+                versionId;
 
 
-            setBusy(false);
+            versionId =
+                approvedVersionId;
+
+
+            const paymentQuery =
+                new URLSearchParams({
+                    job_id:jobId
+                });
+
+
+            if(versionId){
+
+                paymentQuery.set(
+                    "version_id",
+                    versionId
+                );
+            }
+
+
+            /*
+               Direct navigation after successful approval.
+            */
+
+            location.href =
+                "/payment.html?" +
+                paymentQuery.toString();
 
 
         }catch(error){
