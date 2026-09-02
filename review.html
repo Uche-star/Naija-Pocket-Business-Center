@@ -945,19 +945,6 @@ function normalizedStatus(status){
 }
 
 
-/*
-=========================================================
-BACKEND REVIEW STATE
-
-The backend marks the job:
-
-    status = "review_complete"
-    review_finished = true
-
-Only after that can /api/approve accept the job.
-=========================================================
-*/
-
 function isReviewComplete(data){
 
     if(!data){
@@ -973,17 +960,6 @@ function isReviewComplete(data){
     );
 }
 
-
-/*
-=========================================================
-APPROVAL READINESS
-
-The button is based on the actual completed review state.
-
-The version_id is NOT used to disable the button because
-the latest version is fetched again when approval is pressed.
-=========================================================
-*/
 
 function approvalReady(){
 
@@ -1433,12 +1409,6 @@ function sanitizeStyle(styleText){
 }
 
 
-/*
-=========================================================
-PLAIN TEXT RENDERING
-=========================================================
-*/
-
 function renderPlainDocumentText(text){
 
     const fragment =
@@ -1521,12 +1491,6 @@ function renderPlainDocumentText(text){
     return fragment;
 }
 
-
-/*
-=========================================================
-SAFE DOCUMENT HTML
-=========================================================
-*/
 
 function sanitizeDocumentHtml(html){
 
@@ -1739,12 +1703,6 @@ function sanitizeDocumentHtml(html){
 }
 
 
-/*
-=========================================================
-SERVER ERROR
-=========================================================
-*/
-
 function getServerError(data){
 
     if(!data){
@@ -1776,12 +1734,6 @@ function getServerError(data){
     );
 }
 
-
-/*
-=========================================================
-LOAD JOB
-=========================================================
-*/
 
 async function loadJob(){
 
@@ -1831,12 +1783,6 @@ async function loadJob(){
 }
 
 
-/*
-=========================================================
-APPLY SERVER STATE
-=========================================================
-*/
-
 function applyJob(data){
 
     currentStatus =
@@ -1869,11 +1815,6 @@ function applyJob(data){
     currentVersion =
         Number(data.current_version) || 1;
 
-
-    /*
-       IMPORTANT:
-       Always preserve the backend's actual version_id.
-    */
 
     versionId =
         clean(data.version_id);
@@ -2024,12 +1965,6 @@ function applyJob(data){
     }
 }
 
-
-/*
-=========================================================
-RENDER PAGE
-=========================================================
-*/
 
 function renderCurrentPage(){
 
@@ -2208,12 +2143,6 @@ function renderCurrentPage(){
 }
 
 
-/*
-=========================================================
-NAVIGATION
-=========================================================
-*/
-
 function showPage(number){
 
     if(!totalPages){
@@ -2319,12 +2248,6 @@ pageNumberInput.addEventListener(
     }
 );
 
-
-/*
-=========================================================
-POLLING
-=========================================================
-*/
 
 function stopPolling(){
 
@@ -2438,12 +2361,6 @@ function startPolling(){
     poll();
 }
 
-
-/*
-=========================================================
-CORRECTIONS
-=========================================================
-*/
 
 correctionButton.addEventListener(
     "click",
@@ -2570,22 +2487,6 @@ correctionButton.addEventListener(
 /*
 =========================================================
 APPROVAL
-
-The backend contract is:
-
-POST /api/approve
-
-JSON:
-{
-    "job_id": "...",
-    "version_id": "..."
-}
-
-The backend also requires:
-status == "review_complete"
-
-After successful approval, the customer is sent
-directly to payment.html.
 =========================================================
 */
 
@@ -2619,13 +2520,6 @@ approveButton.addEventListener(
             );
 
 
-            /*
-               DO NOT trust an old version_id or old status.
-
-               Get the current backend state immediately before
-               approval.
-            */
-
             const latest =
                 await apiGet(
                     "/api/review?job_id=" +
@@ -2649,11 +2543,6 @@ approveButton.addEventListener(
                     latest.status
                 );
 
-
-            /*
-               The backend specifically requires
-               review_complete.
-            */
 
             if(
                 latestStatus !==
@@ -2703,10 +2592,6 @@ approveButton.addEventListener(
             }
 
 
-            /*
-               Store the exact backend version.
-            */
-
             versionId =
                 latestVersionId;
 
@@ -2721,12 +2606,6 @@ approveButton.addEventListener(
                 "Approving your document..."
             );
 
-
-            /*
-               CRITICAL:
-               Send the exact version_id required by
-               the backend Approval model.
-            */
 
             const data =
                 await apiPost(
@@ -2748,10 +2627,12 @@ approveButton.addEventListener(
 
 
             /*
-               Approval succeeded.
+               APPROVAL SUCCEEDED.
 
-               Keep the exact approved version_id and go
-               directly to the payment/download page.
+               The same job_id used for review and approval
+               is now passed directly to payment.html.
+
+               The approved version_id is also preserved.
             */
 
             approved = true;
@@ -2767,10 +2648,6 @@ approveButton.addEventListener(
                 "success"
             );
 
-
-            /*
-               Use the approved backend version for payment.
-            */
 
             const approvedVersionId =
                 clean(
@@ -2799,12 +2676,18 @@ approveButton.addEventListener(
 
 
             /*
-               Direct navigation after successful approval.
+               DIRECT PAYMENT/DOWNLOAD PAGE NAVIGATION.
+
+               This replaces the review page immediately after
+               successful approval.
             */
 
-            location.href =
+            window.location.replace(
                 "/payment.html?" +
-                paymentQuery.toString();
+                paymentQuery.toString()
+            );
+
+            return;
 
 
         }catch(error){
