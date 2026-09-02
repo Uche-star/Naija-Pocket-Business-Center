@@ -1,7 +1,11 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Naija Pocket Business Center</title><style>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Naija Pocket Business Center</title>
+
+<style>
 *{box-sizing:border-box}
 
 html,body{
@@ -83,6 +87,10 @@ button{cursor:pointer}
     text-overflow:ellipsis;
 }
 
+/* =========================================================
+   MAIN
+========================================================= */
+
 .main{
     flex:1 1 auto;
     min-height:0;
@@ -101,6 +109,10 @@ button{cursor:pointer}
     margin:0 auto;
     padding:14px 10px 35px;
 }
+
+/* =========================================================
+   CUSTOMER FORM
+========================================================= */
 
 .intro-card,
 .form-card,
@@ -228,6 +240,10 @@ button{cursor:pointer}
 
 .form-submit:disabled{opacity:.45}
 
+/* =========================================================
+   REVIEW GATEWAY
+========================================================= */
+
 .review-view{
     display:none;
     width:100%;
@@ -286,6 +302,281 @@ button{cursor:pointer}
     font-size:12px;
     font-weight:900;
 }
+
+/* =========================================================
+   BACK OFFICE
+========================================================= */
+
+#backOfficeView{
+    display:none;
+}
+
+#backOfficeView.show{
+    display:block;
+}
+
+.back-office-header{
+    padding:17px;
+    margin-bottom:12px;
+    background:linear-gradient(145deg,#191919,#0c0c0c);
+    border:1px solid rgba(212,175,55,.42);
+    border-radius:15px;
+}
+
+.back-office-title{
+    margin:0;
+    color:var(--gold2);
+    font-size:21px;
+    font-weight:900;
+}
+
+.back-office-subtitle{
+    margin:6px 0 0;
+    color:#aaa;
+    font-size:11px;
+    line-height:1.55;
+}
+
+.back-office-key-card{
+    padding:14px;
+    margin-bottom:12px;
+    background:#101010;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:13px;
+}
+
+.back-office-key-label{
+    display:block;
+    margin-bottom:6px;
+    color:#ddd;
+    font-size:11px;
+    font-weight:800;
+}
+
+.back-office-key-row{
+    display:flex;
+    gap:7px;
+}
+
+.back-office-key-input{
+    flex:1;
+    min-width:0;
+    padding:11px;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:9px;
+    background:#181818;
+    color:#fff;
+    outline:0;
+    font-size:12px;
+}
+
+.back-office-key-input:focus{
+    border-color:rgba(212,175,55,.65);
+}
+
+.back-office-load{
+    min-width:92px;
+    border:0;
+    border-radius:9px;
+    background:var(--gold);
+    color:#000;
+    font-size:11px;
+    font-weight:900;
+}
+
+.back-office-summary{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px;
+    margin-bottom:12px;
+}
+
+.back-office-stat{
+    padding:11px 8px;
+    background:#111;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:10px;
+    text-align:center;
+}
+
+.back-office-stat-value{
+    display:block;
+    color:var(--gold2);
+    font-size:17px;
+    font-weight:900;
+}
+
+.back-office-stat-label{
+    display:block;
+    margin-top:3px;
+    color:#888;
+    font-size:9px;
+}
+
+.back-office-jobs{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.back-office-empty{
+    padding:28px 15px;
+    background:#101010;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:13px;
+    color:#888;
+    font-size:11px;
+    line-height:1.6;
+    text-align:center;
+}
+
+.back-office-job{
+    padding:14px;
+    background:#101010;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:13px;
+}
+
+.back-office-job.approved{
+    border-color:rgba(22,128,71,.55);
+}
+
+.back-office-job-title{
+    margin:0;
+    color:#fff;
+    font-size:14px;
+    font-weight:900;
+    word-break:break-word;
+}
+
+.back-office-job-meta{
+    margin-top:5px;
+    color:#888;
+    font-size:9px;
+    line-height:1.5;
+}
+
+.back-office-status-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    margin-top:9px;
+}
+
+.back-office-status{
+    display:inline-flex;
+    align-items:center;
+    padding:5px 7px;
+    border-radius:999px;
+    background:#191919;
+    border:1px solid rgba(255,255,255,.10);
+    color:#aaa;
+    font-size:9px;
+    font-weight:800;
+}
+
+.back-office-status.good{
+    color:#7bd99a;
+    border-color:rgba(22,128,71,.45);
+}
+
+.back-office-status.waiting{
+    color:var(--gold2);
+    border-color:rgba(212,175,55,.35);
+}
+
+.back-office-versions{
+    margin-top:11px;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.back-office-version{
+    padding:10px;
+    background:#151515;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:9px;
+}
+
+.back-office-version.active{
+    border-color:rgba(22,128,71,.65);
+    background:rgba(22,128,71,.07);
+}
+
+.back-office-version-title{
+    color:#ddd;
+    font-size:11px;
+    font-weight:900;
+}
+
+.back-office-version-meta{
+    margin-top:4px;
+    color:#888;
+    font-size:9px;
+    line-height:1.5;
+}
+
+.back-office-version-actions{
+    display:flex;
+    gap:6px;
+    margin-top:8px;
+}
+
+.back-office-activate{
+    flex:1;
+    min-height:40px;
+    border:0;
+    border-radius:8px;
+    background:var(--gold);
+    color:#000;
+    font-size:10px;
+    font-weight:900;
+}
+
+.back-office-activate:disabled{
+    background:#254b35;
+    color:#9fe0b4;
+    opacity:1;
+}
+
+.back-office-view-version{
+    min-height:40px;
+    padding:0 10px;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:8px;
+    background:#181818;
+    color:#fff;
+    font-size:10px;
+    font-weight:800;
+}
+
+.back-office-note{
+    margin-top:10px;
+    padding:9px;
+    background:#0d0d0d;
+    border-left:3px solid var(--gold);
+    border-radius:6px;
+    color:#888;
+    font-size:9px;
+    line-height:1.5;
+}
+
+.back-office-refresh{
+    width:100%;
+    min-height:45px;
+    margin-top:12px;
+    border:1px solid rgba(212,175,55,.35);
+    border-radius:9px;
+    background:#171717;
+    color:var(--gold2);
+    font-size:11px;
+    font-weight:900;
+}
+
+/* =========================================================
+   BOTTOM
+========================================================= */
 
 .bottom{
     flex:0 0 auto;
@@ -393,6 +684,10 @@ button:disabled{
     cursor:not-allowed;
 }
 
+/* =========================================================
+   REVIEW OVERLAY
+========================================================= */
+
 .review-gateway-overlay{
     position:fixed;
     inset:0;
@@ -480,6 +775,7 @@ button:disabled{
 }
 
 @media(max-width:600px){
+
     .main-inner{
         padding:12px 9px 30px;
     }
@@ -487,192 +783,411 @@ button:disabled{
     .review-gateway-card{
         padding:20px 16px;
     }
+
 }
 
 @media(max-height:650px){
+
     .review-gateway-card{
         max-height:calc(100dvh - 30px);
         overflow-y:auto;
     }
+
 }
-</style></head><body><div class="app"><header class="header">
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="header">
+
     <div class="brand">
-        <h1 class="brand-title">Naija Pocket Business Center</h1>
-        <div class="brand-subtitle">Your Business Center</div>
-    </div><div id="serviceBadge" class="service-badge">Service</div>
 
-</header><main class="main">
-<div class="main-inner"><section id="formView"><div class="intro-card">
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
 
-    <h2 id="introTitle" class="intro-title">
-        Let's get started
-    </h2>
+        <div class="brand-subtitle">
+            Your Business Center
+        </div>
 
-    <p id="introText" class="intro-text">
-        Please wait while we prepare useful information for this service.
-    </p>
+    </div>
 
-    <div id="price" class="price">
+    <div id="serviceBadge" class="service-badge">
         Service
+    </div>
+
+</header>
+
+
+<main class="main">
+
+<div class="main-inner">
+
+<!-- =====================================================
+     CUSTOMER FORM
+====================================================== -->
+
+<section id="formView">
+
+    <div class="intro-card">
+
+        <h2 id="introTitle" class="intro-title">
+            Let's get started
+        </h2>
+
+        <p id="introText" class="intro-text">
+            Please wait while we prepare useful information for this service.
+        </p>
+
+        <div id="price" class="price">
+            Service
+        </div>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <h3 class="form-heading">
+            Your Service Information
+        </h3>
+
+        <p class="form-description">
+            Fill in the information relevant to your request.
+            Optional fields can be left blank.
+        </p>
+
+        <form id="serviceForm">
+
+            <div id="fields" class="fields"></div>
+
+            <div class="form-note">
+                When you tap <strong>SEND</strong>, your prepared work will immediately
+                appear on the full review page, ready for you to read and review.
+            </div>
+
+            <button id="formSubmit" class="form-submit" type="submit">
+                SEND
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CUSTOMER REVIEW GATEWAY
+====================================================== -->
+
+<section id="reviewView" class="review-view">
+
+    <div class="review-header">
+
+        <h2 class="review-title">
+            Your Work Is Ready
+        </h2>
+
+        <p class="review-subtitle">
+            Your prepared work has been completed.
+            Open the full review page to read it, request corrections,
+            approve it and continue to payment.
+        </p>
+
+    </div>
+
+
+    <div class="workspace-review-gateway">
+
+        <h3 class="workspace-review-gateway-title">
+            Full Review Available
+        </h3>
+
+        <p class="workspace-review-gateway-text">
+            Your review is handled by the dedicated review page.
+            Open it to continue with the complete document workflow.
+        </p>
+
+        <button
+            id="workspaceOpenReviewButton"
+            class="workspace-review-open"
+            type="button"
+        >
+            Open Full Review
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     BACK OFFICE
+====================================================== -->
+
+<section id="backOfficeView">
+
+    <div class="back-office-header">
+
+        <h2 class="back-office-title">
+            Back Office
+        </h2>
+
+        <p class="back-office-subtitle">
+            Manage completed jobs and activate the exact saved document
+            version that the customer is allowed to download.
+        </p>
+
+    </div>
+
+
+    <div class="back-office-key-card">
+
+        <label
+            class="back-office-key-label"
+            for="backOfficeKey"
+        >
+            Operator Key
+        </label>
+
+        <div class="back-office-key-row">
+
+            <input
+                id="backOfficeKey"
+                class="back-office-key-input"
+                type="password"
+                autocomplete="off"
+                placeholder="Enter Back Office key"
+            >
+
+            <button
+                id="backOfficeLoadButton"
+                class="back-office-load"
+                type="button"
+            >
+                LOAD JOBS
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="back-office-summary">
+
+        <div class="back-office-stat">
+            <span
+                id="backOfficeTotal"
+                class="back-office-stat-value"
+            >
+                0
+            </span>
+
+            <span class="back-office-stat-label">
+                Jobs
+            </span>
+        </div>
+
+
+        <div class="back-office-stat">
+            <span
+                id="backOfficeApproved"
+                class="back-office-stat-value"
+            >
+                0
+            </span>
+
+            <span class="back-office-stat-label">
+                Approved
+            </span>
+        </div>
+
+
+        <div class="back-office-stat">
+            <span
+                id="backOfficeActivated"
+                class="back-office-stat-value"
+            >
+                0
+            </span>
+
+            <span class="back-office-stat-label">
+                Activated
+            </span>
+        </div>
+
+    </div>
+
+
+    <div
+        id="backOfficeJobs"
+        class="back-office-jobs"
+    >
+
+        <div class="back-office-empty">
+            Enter the operator key and tap LOAD JOBS.
+        </div>
+
+    </div>
+
+
+    <button
+        id="backOfficeRefreshButton"
+        class="back-office-refresh"
+        type="button"
+    >
+        REFRESH BACK OFFICE
+    </button>
+
+</section>
+
+</div>
+
+</main>
+
+
+<!-- =====================================================
+     CUSTOMER BOTTOM CONTROLS
+====================================================== -->
+
+<section
+    id="customerBottom"
+    class="bottom"
+>
+
+<div class="bottom-inner">
+
+    <div
+        id="voiceRecording"
+        class="voice-recording"
+    >
+        🔴 Recording... tap Voice again to stop.
+    </div>
+
+
+    <div class="tools">
+
+        <button
+            id="uploadButton"
+            class="tool-button"
+            type="button"
+        >
+            📄 Upload Documents You Want To Give Us
+        </button>
+
+
+        <button
+            id="voiceButton"
+            class="tool-button gold"
+            type="button"
+        >
+            🎤 Voice
+        </button>
+
+
+        <button
+            id="customerServiceButton"
+            class="tool-button"
+            type="button"
+        >
+            Customer Service
+        </button>
+
+    </div>
+
+
+    <input
+        id="fileInput"
+        type="file"
+        accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+    >
+
+
+    <div class="composer">
+
+        <textarea
+            id="messageInput"
+            class="message-input"
+            rows="1"
+            placeholder="Type your message..."
+            autocomplete="off"
+        ></textarea>
+
+        <button
+            id="sendButton"
+            class="send-button"
+            type="button"
+        >
+            SEND
+        </button>
+
+    </div>
+
+
+    <div id="status" class="status"></div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     REVIEW OVERLAY
+====================================================== -->
+
+<div
+    id="reviewGatewayOverlay"
+    class="review-gateway-overlay"
+    role="dialog"
+    aria-modal="true"
+>
+
+    <div class="review-gateway-card">
+
+        <div class="review-gateway-icon">
+            📄
+        </div>
+
+        <h2 class="review-gateway-title">
+            Your Work Is Ready
+        </h2>
+
+        <p class="review-gateway-message">
+            Your prepared work is ready for review.
+            Open the dedicated review page to read the complete work,
+            request corrections, approve it and continue to payment.
+        </p>
+
+        <div class="review-gateway-note">
+            The review page will open using the active server job.
+        </div>
+
+        <button
+            id="reviewGatewayOpenButton"
+            class="review-gateway-button"
+            type="button"
+        >
+            Open Full Review
+        </button>
+
+        <button
+            id="reviewGatewayCloseButton"
+            class="review-gateway-close"
+            type="button"
+        >
+            Continue Here
+        </button>
+
     </div>
 
 </div>
 
 
-<div class="form-card">
-
-    <h3 class="form-heading">
-        Your Service Information
-    </h3>
-
-    <p class="form-description">
-        Fill in the information relevant to your request.
-        Optional fields can be left blank.
-    </p>
-
-    <form id="serviceForm">
-
-        <div id="fields" class="fields"></div>
-
-        <div class="form-note">
-            When you tap <strong>SEND</strong>, your prepared work will immediately
-            appear on the full review page, ready for you to read and review.
-        </div>
-
-        <button id="formSubmit" class="form-submit" type="submit">
-            SEND
-        </button>
-
-    </form>
-
-</div>
-
-</section><section id="reviewView" class="review-view"><div class="review-header">
-
-    <h2 class="review-title">
-        Your Work Is Ready
-    </h2>
-
-    <p class="review-subtitle">
-        Your prepared work has been completed.
-        Open the full review page to read it, request corrections,
-        approve it and continue to payment.
-    </p>
-
-</div>
-
-
-<div class="workspace-review-gateway">
-
-    <h3 class="workspace-review-gateway-title">
-        Full Review Available
-    </h3>
-
-    <p class="workspace-review-gateway-text">
-        Your review is handled by the dedicated review page.
-        Open it to continue with the complete document workflow.
-    </p>
-
-    <button
-        id="workspaceOpenReviewButton"
-        class="workspace-review-open"
-        type="button"
-    >
-        Open Full Review
-    </button>
-
-</div>
-
-</section></div>
-</main><section class="bottom"><div class="bottom-inner"><div id="voiceRecording" class="voice-recording">
-    🔴 Recording... tap Voice again to stop.
-</div>
-
-<div class="tools">
-
-    <button id="uploadButton" class="tool-button" type="button">
-        📄 Upload Documents You Want To Give Us
-    </button>
-
-    <button id="voiceButton" class="tool-button gold" type="button">
-        🎤 Voice
-    </button>
-
-    <button id="customerServiceButton" class="tool-button" type="button">
-        Customer Service
-    </button>
-
-</div>
-
-
-<input
-    id="fileInput"
-    type="file"
-    accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
->
-
-
-<div class="composer">
-
-    <textarea
-        id="messageInput"
-        class="message-input"
-        rows="1"
-        placeholder="Type your message..."
-        autocomplete="off"
-    ></textarea>
-
-    <button id="sendButton" class="send-button" type="button">
-        SEND
-    </button>
-
-</div>
-
-
-<div id="status" class="status"></div>
-
-</div>
-</section></div><div
-    id="reviewGatewayOverlay"
-    class="review-gateway-overlay"
-    role="dialog"
-    aria-modal="true"
-><div class="review-gateway-card"><div class="review-gateway-icon">
-    📄
-</div>
-
-<h2 class="review-gateway-title">
-    Your Work Is Ready
-</h2>
-
-<p class="review-gateway-message">
-    Your prepared work is ready for review.
-    Open the dedicated review page to read the complete work,
-    request corrections, approve it and continue to payment.
-</p>
-
-<div class="review-gateway-note">
-    The review page will open using the active server job.
-</div>
-
-<button
-    id="reviewGatewayOpenButton"
-    class="review-gateway-button"
-    type="button"
->
-    Open Full Review
-</button>
-
-<button
-    id="reviewGatewayCloseButton"
-    class="review-gateway-close"
-    type="button"
->
-    Continue Here
-</button>
-
-</div>
-</div><script>
+<script>
 "use strict";
 
 /*
@@ -680,11 +1195,8 @@ button:disabled{
 WORKSPACE
 ============================================================
 
-This page is intentionally a CLIENT.
-
-It does not generate the document itself.
-
-The flow is:
+NORMAL CUSTOMER MODE
+--------------------
 
 conversation.html
         ↓
@@ -692,23 +1204,38 @@ workspace.html?service=...
         ↓
 /api/chat
         ↓
-server intelligence
+server workflow
         ↓
 server creates/updates job
         ↓
-server returns job_id
-        ↓
 review.html?job_id=...
 
-The browser supplies:
-    - service
-    - customer information
-    - customer message
-    - uploaded files
-    - active job_id
 
-The browser does NOT attempt to manufacture a document
-or a review job.
+BACK OFFICE MODE
+----------------
+
+workspace.html?back_office=1
+        ↓
+GET /api/back-office/jobs
+        ↓
+operator selects exact saved work_id
+        ↓
+POST /api/back-office/activate-download
+        ↓
+saved work record becomes downloadable
+        ↓
+customer payment/download workflow uses that
+        exact activated saved version
+
+IMPORTANT
+---------
+Back Office does NOT regenerate documents.
+
+Back Office does NOT call /api/chat.
+
+Back Office does NOT create another document.
+
+It only activates the exact saved work record.
 ============================================================
 */
 
@@ -725,6 +1252,9 @@ const $ = id => document.getElementById(id);
 
 const formView = $("formView");
 const reviewView = $("reviewView");
+const backOfficeView = $("backOfficeView");
+const customerBottom = $("customerBottom");
+
 const serviceForm = $("serviceForm");
 const fields = $("fields");
 const formSubmit = $("formSubmit");
@@ -758,7 +1288,33 @@ const workspaceOpenReviewButton =
 
 
 /* =========================================================
-   SERVICE
+   BACK OFFICE ELEMENTS
+========================================================= */
+
+const backOfficeKey =
+    $("backOfficeKey");
+
+const backOfficeLoadButton =
+    $("backOfficeLoadButton");
+
+const backOfficeRefreshButton =
+    $("backOfficeRefreshButton");
+
+const backOfficeJobs =
+    $("backOfficeJobs");
+
+const backOfficeTotal =
+    $("backOfficeTotal");
+
+const backOfficeApproved =
+    $("backOfficeApproved");
+
+const backOfficeActivated =
+    $("backOfficeActivated");
+
+
+/* =========================================================
+   URL STATE
 ========================================================= */
 
 const params =
@@ -771,8 +1327,13 @@ const service =
     ).trim();
 
 
+const isBackOfficeMode =
+    params.get("back_office") === "1" ||
+    params.get("mode") === "back_office";
+
+
 /* =========================================================
-   IDs
+   IDS
 ========================================================= */
 
 function makeId(prefix){
@@ -781,7 +1342,9 @@ function makeId(prefix){
         typeof crypto !== "undefined" &&
         typeof crypto.randomUUID === "function"
     ){
+
         return prefix + crypto.randomUUID();
+
     }
 
     return (
@@ -817,6 +1380,7 @@ let customerId =
     storageGet("npbc_customer_id") ||
     makeId("customer_");
 
+
 storageSet(
     "npbc_customer_id",
     customerId
@@ -840,7 +1404,12 @@ storageSet(
 
 
 if(jobId){
-    storageSet("npbc_job_id",jobId);
+
+    storageSet(
+        "npbc_job_id",
+        jobId
+    );
+
 }
 
 
@@ -855,6 +1424,8 @@ let mediaRecorder = null;
 let recordedChunks = [];
 let recordingStream = null;
 
+let backOfficeJobsData = [];
+
 
 /* =========================================================
    HELPERS
@@ -862,7 +1433,10 @@ let recordingStream = null;
 
 function clean(value){
 
-    if(value === undefined || value === null){
+    if(
+        value === undefined ||
+        value === null
+    ){
         return "";
     }
 
@@ -870,10 +1444,24 @@ function clean(value){
 }
 
 
+function escapeHtml(value){
+
+    return clean(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
 function setStatus(message,type=""){
 
-    status.textContent = message || "";
-    status.className = "status " + type;
+    status.textContent =
+        message || "";
+
+    status.className =
+        "status " + type;
 }
 
 
@@ -894,6 +1482,51 @@ function setBusy(value){
         }
 
     });
+}
+
+
+function formatDate(value){
+
+    if(!value){
+        return "Date unavailable";
+    }
+
+    const date =
+        new Date(value);
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+        return clean(value);
+    }
+
+    return date.toLocaleString();
+}
+
+
+function valueFrom(object,keys){
+
+    if(!object){
+        return "";
+    }
+
+    for(const key of keys){
+
+        if(
+            object[key] !== undefined &&
+            object[key] !== null &&
+            object[key] !== ""
+        ){
+
+            return object[key];
+
+        }
+
+    }
+
+    return "";
 }
 
 
@@ -1075,22 +1708,34 @@ function openFullReview(){
 
 function showReviewGateway(){
 
-    reviewGatewayOverlay.classList.add("show");
+    reviewGatewayOverlay
+        .classList
+        .add("show");
+
 }
 
 
 function closeReviewGateway(){
 
-    reviewGatewayOverlay.classList.remove("show");
+    reviewGatewayOverlay
+        .classList
+        .remove("show");
+
 }
 
 
 function showReview(work){
 
-    currentWork = clean(work);
+    currentWork =
+        clean(work);
 
-    formView.style.display = "none";
-    reviewView.classList.add("show");
+    formView.style.display =
+        "none";
+
+    reviewView.classList.add(
+        "show"
+    );
+
 }
 
 
@@ -1376,7 +2021,8 @@ function renderForm(){
         const wrapper =
             document.createElement("div");
 
-        wrapper.className = "field";
+        wrapper.className =
+            "field";
 
 
         const label =
@@ -1386,7 +2032,7 @@ function renderForm(){
             field.name;
 
         label.innerHTML =
-            field.label +
+            escapeHtml(field.label) +
             (
                 field.required
                     ? ' <span class="required">*</span>'
@@ -1408,6 +2054,7 @@ function renderForm(){
 
             input.type =
                 field.type || "text";
+
         }
 
 
@@ -1433,9 +2080,12 @@ function renderForm(){
             input
         );
 
-        fields.appendChild(wrapper);
+        fields.appendChild(
+            wrapper
+        );
 
     });
+
 }
 
 
@@ -1453,7 +2103,8 @@ function collectForm(){
                 clean(element.value);
 
             if(value){
-                data[element.name] = value;
+                data[element.name] =
+                    value;
             }
 
         });
@@ -1521,6 +2172,7 @@ Do not discuss internal systems.`,
 
             introText.textContent =
                 reply;
+
         }
 
 
@@ -1547,13 +2199,17 @@ Do not discuss internal systems.`,
             data.service_amount;
 
 
-        if(amount !== undefined && amount !== null){
+        if(
+            amount !== undefined &&
+            amount !== null
+        ){
 
             const numeric =
                 Number(
                     String(amount)
                         .replace(/[^0-9.]/g,"")
                 );
+
 
             if(Number.isFinite(numeric)){
 
@@ -1566,6 +2222,7 @@ Do not discuss internal systems.`,
                 price.textContent =
                     "Service fee: " +
                     String(amount);
+
             }
 
         }else{
@@ -1574,6 +2231,7 @@ Do not discuss internal systems.`,
                 (reply || "")
                     .match(/₦\s?[\d,]+/);
 
+
             if(match){
 
                 price.textContent =
@@ -1581,7 +2239,9 @@ Do not discuss internal systems.`,
                     match[0];
 
             }else if(
-                /quotation/i.test(reply || "")
+                /quotation/i.test(
+                    reply || ""
+                )
             ){
 
                 price.textContent =
@@ -1592,7 +2252,9 @@ Do not discuss internal systems.`,
                 price.textContent =
                     "Service: " +
                     service;
+
             }
+
         }
 
 
@@ -1611,7 +2273,9 @@ Do not discuss internal systems.`,
             "",
             ""
         );
+
     }
+
 }
 
 
@@ -1734,7 +2398,9 @@ The customer expects the completed work to proceed to review.`;
     }finally{
 
         setBusy(false);
+
     }
+
 }
 
 
@@ -1759,6 +2425,7 @@ serviceForm.addEventListener(
         createWork(
             collectForm()
         );
+
     }
 );
 
@@ -1793,7 +2460,9 @@ reviewGatewayOverlay.addEventListener(
             event.target ===
             reviewGatewayOverlay
         ){
+
             closeReviewGateway();
+
         }
 
     }
@@ -1805,7 +2474,9 @@ document.addEventListener(
     event => {
 
         if(event.key === "Escape"){
+
             closeReviewGateway();
+
         }
 
     }
@@ -1828,6 +2499,7 @@ async function sendMessage(
 
     const text =
         clean(message);
+
 
     if(!text){
         return;
@@ -1925,6 +2597,7 @@ async function sendMessage(
                 "Ready for your next instruction.",
                 "success"
             );
+
         }
 
 
@@ -1939,7 +2612,9 @@ async function sendMessage(
     }finally{
 
         setBusy(false);
+
     }
+
 }
 
 
@@ -1954,6 +2629,7 @@ sendBtn.addEventListener(
         const text =
             clean(messageInput.value);
 
+
         if(!text){
 
             setStatus(
@@ -1966,7 +2642,8 @@ sendBtn.addEventListener(
 
 
         messageInput.value = "";
-        messageInput.style.height = "auto";
+        messageInput.style.height =
+            "auto";
 
 
         sendMessage(
@@ -1990,6 +2667,7 @@ messageInput.addEventListener(
             event.preventDefault();
 
             sendBtn.click();
+
         }
 
     }
@@ -2000,13 +2678,15 @@ messageInput.addEventListener(
     "input",
     () => {
 
-        messageInput.style.height = "auto";
+        messageInput.style.height =
+            "auto";
 
         messageInput.style.height =
             Math.min(
                 messageInput.scrollHeight,
                 105
             ) + "px";
+
     }
 );
 
@@ -2035,6 +2715,7 @@ customerBtn.addEventListener(
 
             const query =
                 new URLSearchParams({
+
                     customer_id:
                         customerId,
 
@@ -2042,6 +2723,7 @@ customerBtn.addEventListener(
                         jobId,
 
                     service
+
                 });
 
 
@@ -2071,16 +2753,24 @@ customerBtn.addEventListener(
             if(!response.ok){
 
                 throw new Error(
-                    serverError(data,response)
+                    serverError(
+                        data,
+                        response
+                    )
                 );
+
             }
 
 
             if(data.success === false){
 
                 throw new Error(
-                    serverError(data,response)
+                    serverError(
+                        data,
+                        response
+                    )
                 );
+
             }
 
 
@@ -2101,6 +2791,7 @@ customerBtn.addEventListener(
         }finally{
 
             setBusy(false);
+
         }
 
     }
@@ -2130,6 +2821,7 @@ fileInput.addEventListener(
         const file =
             fileInput.files?.[0];
 
+
         if(!file){
             return;
         }
@@ -2138,25 +2830,30 @@ fileInput.addEventListener(
         const formData =
             new FormData();
 
+
         formData.append(
             "file",
             file
         );
+
 
         formData.append(
             "customer_id",
             customerId
         );
 
+
         formData.append(
             "job_id",
             jobId
         );
 
+
         formData.append(
             "client_request_id",
             requestId
         );
+
 
         formData.append(
             "service",
@@ -2195,16 +2892,24 @@ fileInput.addEventListener(
             if(!response.ok){
 
                 throw new Error(
-                    serverError(data,response)
+                    serverError(
+                        data,
+                        response
+                    )
                 );
+
             }
 
 
             if(data.success === false){
 
                 throw new Error(
-                    serverError(data,response)
+                    serverError(
+                        data,
+                        response
+                    )
                 );
+
             }
 
 
@@ -2270,6 +2975,7 @@ voiceBtn.addEventListener(
         ){
 
             mediaRecorder.stop();
+
             return;
         }
 
@@ -2309,9 +3015,11 @@ voiceBtn.addEventListener(
                 event => {
 
                     if(event.data?.size){
+
                         recordedChunks.push(
                             event.data
                         );
+
                     }
 
                 };
@@ -2331,9 +3039,10 @@ voiceBtn.addEventListener(
                     recordingStream = null;
 
 
-                    voiceRecording.classList.remove(
-                        "show"
-                    );
+                    voiceRecording
+                        .classList
+                        .remove("show");
+
 
                     voiceBtn.textContent =
                         "🎤 Voice";
@@ -2371,15 +3080,18 @@ voiceBtn.addEventListener(
                         customerId
                     );
 
+
                     formData.append(
                         "job_id",
                         jobId
                     );
 
+
                     formData.append(
                         "client_request_id",
                         requestId
                     );
+
 
                     formData.append(
                         "service",
@@ -2418,16 +3130,26 @@ voiceBtn.addEventListener(
                         if(!response.ok){
 
                             throw new Error(
-                                serverError(data,response)
+                                serverError(
+                                    data,
+                                    response
+                                )
                             );
+
                         }
 
 
-                        if(data.success === false){
+                        if(
+                            data.success === false
+                        ){
 
                             throw new Error(
-                                serverError(data,response)
+                                serverError(
+                                    data,
+                                    response
+                                )
                             );
+
                         }
 
 
@@ -2444,6 +3166,7 @@ voiceBtn.addEventListener(
                                 "npbc_job_id",
                                 jobId
                             );
+
                         }
 
 
@@ -2465,6 +3188,7 @@ voiceBtn.addEventListener(
                         );
 
                         setBusy(false);
+
                     }
 
                 };
@@ -2473,9 +3197,10 @@ voiceBtn.addEventListener(
             mediaRecorder.start();
 
 
-            voiceRecording.classList.add(
-                "show"
-            );
+            voiceRecording
+                .classList
+                .add("show");
+
 
             voiceBtn.textContent =
                 "⏹ Stop Voice";
@@ -2500,10 +3225,1079 @@ voiceBtn.addEventListener(
 
 
 /* =========================================================
-   INITIALISE
+   BACK OFFICE HELPERS
 ========================================================= */
 
-async function init(){
+function normaliseBackOfficeJobs(data){
+
+    if(
+        Array.isArray(data)
+    ){
+        return data;
+    }
+
+
+    if(
+        Array.isArray(data?.jobs)
+    ){
+        return data.jobs;
+    }
+
+
+    if(
+        Array.isArray(data?.data?.jobs)
+    ){
+        return data.data.jobs;
+    }
+
+
+    return [];
+
+}
+
+
+function getJobIdFromBackOffice(job){
+
+    return valueFrom(
+        job,
+        [
+            "job_id",
+            "jobId",
+            "id"
+        ]
+    );
+
+}
+
+
+function getWorkId(work){
+
+    return valueFrom(
+        work,
+        [
+            "work_id",
+            "workId",
+            "id"
+        ]
+    );
+
+}
+
+
+function getVersions(job){
+
+    const possible =
+        [
+            job?.work_records,
+            job?.workRecords,
+            job?.versions,
+            job?.works,
+            job?.saved_work,
+            job?.savedWork
+        ];
+
+
+    for(const value of possible){
+
+        if(Array.isArray(value)){
+            return value;
+        }
+
+    }
+
+
+    const single =
+        job?.activated_work ||
+        job?.activatedWork;
+
+
+    if(single){
+
+        return [single];
+
+    }
+
+
+    return [];
+
+}
+
+
+function isActivatedWork(work){
+
+    const value =
+        valueFrom(
+            work,
+            [
+                "download_activated",
+                "downloadActivated",
+                "activated"
+            ]
+        );
+
+
+    return (
+        value === true ||
+        value === 1 ||
+        value === "1" ||
+        value === "true"
+    );
+
+}
+
+
+function isApprovedJob(job){
+
+    const statusValue =
+        clean(
+            valueFrom(
+                job,
+                [
+                    "status",
+                    "job_status",
+                    "jobStatus"
+                ]
+            )
+        ).toLowerCase();
+
+
+    return (
+        statusValue === "approved" ||
+        statusValue === "payment_pending" ||
+        statusValue === "payment_confirmed" ||
+        statusValue === "delivery" ||
+        statusValue === "completed"
+    );
+
+}
+
+
+function paymentIsPaid(job){
+
+    const paymentStatus =
+        clean(
+            valueFrom(
+                job,
+                [
+                    "payment_status",
+                    "paymentStatus",
+                    "latest_payment_status"
+                ]
+            )
+        ).toLowerCase();
+
+
+    return (
+        paymentStatus === "paid" ||
+        paymentStatus === "completed" ||
+        paymentStatus === "confirmed"
+    );
+
+}
+
+
+/* =========================================================
+   BACK OFFICE LOAD
+========================================================= */
+
+async function loadBackOfficeJobs(){
+
+    const key =
+        clean(
+            backOfficeKey.value
+        );
+
+
+    if(!key){
+
+        backOfficeJobs.innerHTML =
+            `
+            <div class="back-office-empty">
+                Enter the Back Office operator key first.
+            </div>
+            `;
+
+        return;
+    }
+
+
+    backOfficeLoadButton.disabled =
+        true;
+
+    backOfficeLoadButton.textContent =
+        "LOADING...";
+
+
+    backOfficeJobs.innerHTML =
+        `
+        <div class="back-office-empty">
+            Loading completed jobs...
+        </div>
+        `;
+
+
+    try{
+
+        const response =
+            await fetch(
+                API_BASE +
+                "/api/back-office/jobs",
+                {
+                    method:"GET",
+                    headers:{
+                        "Accept":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        const data =
+            await response
+                .json()
+                .catch(
+                    () => ({})
+                );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                serverError(
+                    data,
+                    response
+                )
+            );
+
+        }
+
+
+        if(data.success === false){
+
+            throw new Error(
+                serverError(
+                    data,
+                    response
+                )
+            );
+
+        }
+
+
+        backOfficeJobsData =
+            normaliseBackOfficeJobs(data);
+
+
+        renderBackOfficeJobs();
+
+
+        setStatus(
+            `${backOfficeJobsData.length} job(s) loaded.`,
+            "success"
+        );
+
+
+    }catch(error){
+
+        backOfficeJobs.innerHTML =
+            `
+            <div class="back-office-empty">
+                ${escapeHtml(
+                    error.message ||
+                    "Could not load Back Office jobs."
+                )}
+            </div>
+            `;
+
+        setStatus(
+            error.message ||
+            "Could not load Back Office jobs.",
+            "error"
+        );
+
+    }finally{
+
+        backOfficeLoadButton.disabled =
+            false;
+
+        backOfficeLoadButton.textContent =
+            "LOAD JOBS";
+
+    }
+
+}
+
+
+/* =========================================================
+   BACK OFFICE RENDER
+========================================================= */
+
+function renderBackOfficeJobs(){
+
+    backOfficeTotal.textContent =
+        backOfficeJobsData.length;
+
+
+    let approvedCount = 0;
+    let activatedCount = 0;
+
+
+    backOfficeJobs.innerHTML = "";
+
+
+    if(!backOfficeJobsData.length){
+
+        backOfficeJobs.innerHTML =
+            `
+            <div class="back-office-empty">
+                No completed jobs were returned by the Back Office.
+            </div>
+            `;
+
+        backOfficeApproved.textContent =
+            "0";
+
+        backOfficeActivated.textContent =
+            "0";
+
+        return;
+    }
+
+
+    backOfficeJobsData.forEach(
+        (job,index) => {
+
+            const jobIdValue =
+                getJobIdFromBackOffice(job);
+
+
+            const customerName =
+                clean(
+                    valueFrom(
+                        job,
+                        [
+                            "customer_name",
+                            "customerName",
+                            "name"
+                        ]
+                    )
+                ) ||
+                "Customer";
+
+
+            const serviceName =
+                clean(
+                    valueFrom(
+                        job,
+                        [
+                            "service",
+                            "service_name",
+                            "serviceName"
+                        ]
+                    )
+                ) ||
+                "Service";
+
+
+            const jobStatus =
+                clean(
+                    valueFrom(
+                        job,
+                        [
+                            "status",
+                            "job_status",
+                            "jobStatus"
+                        ]
+                    )
+                ) ||
+                "Status unavailable";
+
+
+            const createdAt =
+                valueFrom(
+                    job,
+                    [
+                        "created_at",
+                        "createdAt",
+                        "created"
+                    ]
+                );
+
+
+            const approved =
+                isApprovedJob(job);
+
+
+            const paid =
+                paymentIsPaid(job);
+
+
+            if(approved){
+                approvedCount++;
+            }
+
+
+            const versions =
+                getVersions(job);
+
+
+            versions.forEach(
+                version => {
+
+                    if(
+                        isActivatedWork(
+                            version
+                        )
+                    ){
+                        activatedCount++;
+                    }
+
+                }
+            );
+
+
+            const card =
+                document.createElement("article");
+
+
+            card.className =
+                "back-office-job" +
+                (
+                    approved
+                        ? " approved"
+                        : ""
+                );
+
+
+            const title =
+                document.createElement("h3");
+
+
+            title.className =
+                "back-office-job-title";
+
+
+            title.textContent =
+                serviceName;
+
+
+            const meta =
+                document.createElement("div");
+
+
+            meta.className =
+                "back-office-job-meta";
+
+
+            meta.textContent =
+                `${customerName} • Job #${jobIdValue || "—"}` +
+                (
+                    createdAt
+                        ? ` • ${formatDate(createdAt)}`
+                        : ""
+                );
+
+
+            const statuses =
+                document.createElement("div");
+
+
+            statuses.className =
+                "back-office-status-row";
+
+
+            statuses.innerHTML =
+                `
+                <span class="back-office-status ${approved ? "good" : "waiting"}">
+                    ${escapeHtml(jobStatus)}
+                </span>
+
+                <span class="back-office-status ${paid ? "good" : "waiting"}">
+                    Payment: ${paid ? "PAID" : "NOT PAID"}
+                </span>
+
+                <span class="back-office-status">
+                    Saved versions: ${versions.length}
+                </span>
+                `;
+
+
+            card.append(
+                title,
+                meta,
+                statuses
+            );
+
+
+            const versionsBox =
+                document.createElement("div");
+
+
+            versionsBox.className =
+                "back-office-versions";
+
+
+            if(!versions.length){
+
+                versionsBox.innerHTML =
+                    `
+                    <div class="back-office-empty">
+                        No saved work version was returned for this job.
+                    </div>
+                    `;
+
+            }else{
+
+                versions.forEach(
+                    (version,versionIndex) => {
+
+                        renderBackOfficeVersion(
+                            version,
+                            job,
+                            versionsBox,
+                            versionIndex
+                        );
+
+                    }
+                );
+
+            }
+
+
+            card.appendChild(
+                versionsBox
+            );
+
+
+            const note =
+                document.createElement("div");
+
+
+            note.className =
+                "back-office-note";
+
+
+            note.textContent =
+                "Activation applies to the selected saved work record only. It does not regenerate the document.";
+
+
+            card.appendChild(
+                note
+            );
+
+
+            backOfficeJobs.appendChild(
+                card
+            );
+
+        }
+    );
+
+
+    backOfficeApproved.textContent =
+        approvedCount;
+
+
+    backOfficeActivated.textContent =
+        activatedCount;
+
+}
+
+
+/* =========================================================
+   BACK OFFICE VERSION
+========================================================= */
+
+function renderBackOfficeVersion(
+    version,
+    job,
+    container,
+    versionIndex
+){
+
+    const workId =
+        getWorkId(version);
+
+
+    const activated =
+        isActivatedWork(version);
+
+
+    const versionNumber =
+        valueFrom(
+            version,
+            [
+                "version",
+                "version_number",
+                "versionNumber"
+            ]
+        );
+
+
+    const createdAt =
+        valueFrom(
+            version,
+            [
+                "created_at",
+                "createdAt",
+                "saved_at",
+                "savedAt"
+            ]
+        );
+
+
+    const workStatus =
+        clean(
+            valueFrom(
+                version,
+                [
+                    "status",
+                    "work_status",
+                    "workStatus"
+                ]
+            )
+        ) ||
+        "Saved";
+
+
+    const storageReference =
+        clean(
+            valueFrom(
+                version,
+                [
+                    "storage_reference",
+                    "storageReference"
+                ]
+            )
+        );
+
+
+    const box =
+        document.createElement("div");
+
+
+    box.className =
+        "back-office-version" +
+        (
+            activated
+                ? " active"
+                : ""
+        );
+
+
+    const title =
+        document.createElement("div");
+
+
+    title.className =
+        "back-office-version-title";
+
+
+    title.textContent =
+        activated
+            ? "✓ Activated saved version"
+            : (
+                versionNumber
+                    ? `Saved Version ${versionNumber}`
+                    : `Saved Version ${versionIndex + 1}`
+            );
+
+
+    const meta =
+        document.createElement("div");
+
+
+    meta.className =
+        "back-office-version-meta";
+
+
+    meta.textContent =
+        `Work ID: ${workId || "—"} • ${workStatus}` +
+        (
+            createdAt
+                ? ` • ${formatDate(createdAt)}`
+                : ""
+        );
+
+
+    if(storageReference){
+
+        meta.textContent +=
+            ` • Saved file available`;
+
+    }
+
+
+    const actions =
+        document.createElement("div");
+
+
+    actions.className =
+        "back-office-version-actions";
+
+
+    const activateButton =
+        document.createElement("button");
+
+
+    activateButton.type =
+        "button";
+
+
+    activateButton.className =
+        "back-office-activate";
+
+
+    if(activated){
+
+        activateButton.textContent =
+            "DOWNLOAD ACTIVATED";
+
+        activateButton.disabled =
+            true;
+
+    }else{
+
+        activateButton.textContent =
+            "ACTIVATE THIS SAVED VERSION";
+
+    }
+
+
+    const viewButton =
+        document.createElement("button");
+
+
+    viewButton.type =
+        "button";
+
+
+    viewButton.className =
+        "back-office-view-version";
+
+
+    viewButton.textContent =
+        "VIEW INFO";
+
+
+    viewButton.addEventListener(
+        "click",
+        () => {
+
+            const jobNumber =
+                getJobIdFromBackOffice(
+                    job
+                );
+
+
+            const details =
+                [
+                    `Job ID: ${jobNumber || "—"}`,
+                    `Work ID: ${workId || "—"}`,
+                    `Version: ${versionNumber || "—"}`,
+                    `Status: ${workStatus}`,
+                    `Saved: ${createdAt ? formatDate(createdAt) : "—"}`,
+                    `Activated: ${activated ? "YES" : "NO"}`,
+                    `Storage: ${storageReference || "Available on server"}`
+                ].join("\n");
+
+
+            window.alert(
+                details
+            );
+
+        }
+    );
+
+
+    activateButton.addEventListener(
+        "click",
+        () => {
+
+            activateSavedVersion(
+                workId,
+                activateButton,
+                box
+            );
+
+        }
+    );
+
+
+    actions.append(
+        activateButton,
+        viewButton
+    );
+
+
+    box.append(
+        title,
+        meta,
+        actions
+    );
+
+
+    container.appendChild(
+        box
+    );
+
+}
+
+
+/* =========================================================
+   ACTIVATE EXACT SAVED VERSION
+========================================================= */
+
+async function activateSavedVersion(
+    workId,
+    button,
+    versionBox
+){
+
+    const key =
+        clean(
+            backOfficeKey.value
+        );
+
+
+    if(!key){
+
+        setStatus(
+            "Enter the Back Office operator key first.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const numericWorkId =
+        Number(workId);
+
+
+    if(
+        !Number.isInteger(
+            numericWorkId
+        ) ||
+        numericWorkId <= 0
+    ){
+
+        setStatus(
+            "This saved version does not have a valid work ID.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const confirmed =
+        window.confirm(
+            "Activate this exact saved document version for customer download?\n\nThe document will not be regenerated."
+        );
+
+
+    if(!confirmed){
+        return;
+    }
+
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "ACTIVATING...";
+
+
+    setStatus(
+        "Activating the selected saved document..."
+    );
+
+
+    try{
+
+        const response =
+            await fetch(
+                API_BASE +
+                "/api/back-office/activate-download",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            work_id:
+                                numericWorkId,
+
+                            admin_key:
+                                key
+
+                        })
+                }
+            );
+
+
+        const data =
+            await response
+                .json()
+                .catch(
+                    () => ({})
+                );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                serverError(
+                    data,
+                    response
+                )
+            );
+
+        }
+
+
+        if(data.success === false){
+
+            throw new Error(
+                serverError(
+                    data,
+                    response
+                )
+            );
+
+        }
+
+
+        button.textContent =
+            "DOWNLOAD ACTIVATED";
+
+
+        button.disabled =
+            true;
+
+
+        versionBox.classList.add(
+            "active"
+        );
+
+
+        setStatus(
+            "The exact saved document version is now activated for customer download.",
+            "success"
+        );
+
+
+        /*
+         * Reload from the persistent database so the UI reflects
+         * the actual server-side activation state.
+         */
+        await loadBackOfficeJobs();
+
+
+    }catch(error){
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            "ACTIVATE THIS SAVED VERSION";
+
+
+        setStatus(
+            error.message ||
+            "Could not activate the saved document.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BACK OFFICE EVENTS
+========================================================= */
+
+backOfficeLoadButton.addEventListener(
+    "click",
+    loadBackOfficeJobs
+);
+
+
+backOfficeRefreshButton.addEventListener(
+    "click",
+    loadBackOfficeJobs
+);
+
+
+backOfficeKey.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "Enter"){
+
+            event.preventDefault();
+
+            loadBackOfficeJobs();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   BACK OFFICE INITIALISE
+========================================================= */
+
+function initBackOffice(){
+
+    formView.style.display =
+        "none";
+
+    reviewView.classList.remove(
+        "show"
+    );
+
+    customerBottom.style.display =
+        "none";
+
+    backOfficeView.classList.add(
+        "show"
+    );
+
+
+    serviceBadge.textContent =
+        "BACK OFFICE";
+
+
+    /*
+     * Do NOT call /api/chat here.
+     *
+     * Back Office reads only from the persistent
+     * Back Office API.
+     */
+    setStatus(
+        "Back Office ready."
+    );
+
+}
+
+
+/* =========================================================
+   NORMAL CUSTOMER INITIALISE
+========================================================= */
+
+async function initCustomer(){
 
     serviceBadge.textContent =
         service;
@@ -2514,10 +4308,32 @@ async function init(){
     renderForm();
 
     await loadGuidance();
+
+}
+
+
+/* =========================================================
+   INITIALISE
+========================================================= */
+
+async function init(){
+
+    if(isBackOfficeMode){
+
+        initBackOffice();
+
+        return;
+    }
+
+
+    await initCustomer();
+
 }
 
 
 init();
 
-</script></body>
+</script>
+
+</body>
 </html>
