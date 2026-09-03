@@ -32,10 +32,17 @@ html,body{
     font-family:Inter,Arial,sans-serif;
 }
 
-body{overflow:hidden;}
+body{
+    overflow:hidden;
+}
 
-button,textarea,input{font:inherit;}
-button{cursor:pointer;}
+button,textarea,input{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
 
 button:disabled{
     opacity:.45;
@@ -66,7 +73,9 @@ button:disabled{
     gap:10px;
 }
 
-.brand{min-width:0;}
+.brand{
+    min-width:0;
+}
 
 .brand-title{
     margin:0;
@@ -222,14 +231,22 @@ button:disabled{
     overscroll-behavior:contain;
 }
 
-.document-scroll::-webkit-scrollbar{width:5px;}
-.document-scroll::-webkit-scrollbar-track{background:#090909;}
+.document-scroll::-webkit-scrollbar{
+    width:5px;
+}
+
+.document-scroll::-webkit-scrollbar-track{
+    background:#090909;
+}
+
 .document-scroll::-webkit-scrollbar-thumb{
     background:#3a3a3a;
     border-radius:20px;
 }
 
-.page-viewer{width:100%;}
+.page-viewer{
+    width:100%;
+}
 
 .document-page{
     position:relative;
@@ -260,7 +277,6 @@ button:disabled{
     font-family:"Times New Roman",Georgia,serif;
     font-size:14px;
     line-height:1.75;
-    white-space:pre-wrap;
     overflow-wrap:anywhere;
     word-break:normal;
 }
@@ -283,18 +299,35 @@ button:disabled{
     margin-bottom:10px;
 }
 
-.page-content h1{font-size:2em;}
-.page-content h2{font-size:1.6em;}
-.page-content h3{font-size:1.35em;}
-.page-content h4{font-size:1.15em;}
+.page-content h1{
+    font-size:2em;
+}
+
+.page-content h2{
+    font-size:1.6em;
+}
+
+.page-content h3{
+    font-size:1.35em;
+}
+
+.page-content h4{
+    font-size:1.15em;
+}
 
 .page-content strong,
-.page-content b{font-weight:700;}
+.page-content b{
+    font-weight:700;
+}
 
 .page-content em,
-.page-content i{font-style:italic;}
+.page-content i{
+    font-style:italic;
+}
 
-.page-content u{text-decoration:underline;}
+.page-content u{
+    text-decoration:underline;
+}
 
 .page-content ul,
 .page-content ol{
@@ -303,7 +336,9 @@ button:disabled{
     padding-left:28px;
 }
 
-.page-content li{margin-bottom:4px;}
+.page-content li{
+    margin-bottom:4px;
+}
 
 .page-content blockquote{
     margin:12px 0;
@@ -333,7 +368,9 @@ button:disabled{
     text-align:left;
 }
 
-.page-content th{font-weight:700;}
+.page-content th{
+    font-weight:700;
+}
 
 .page-content pre{
     white-space:pre-wrap;
@@ -370,8 +407,13 @@ button:disabled{
     font-weight:900;
 }
 
-.nav-button.next{background:#252525;}
-.nav-button:active{transform:scale(.985);}
+.nav-button.next{
+    background:#252525;
+}
+
+.nav-button:active{
+    transform:scale(.985);
+}
 
 .page-indicator{
     min-width:85px;
@@ -502,7 +544,9 @@ button:disabled{
     border-radius:10px;
 }
 
-.payment-section.show{display:block;}
+.payment-section.show{
+    display:block;
+}
 
 .payment-title{
     color:var(--gold2);
@@ -555,8 +599,13 @@ button:disabled{
     text-align:center;
 }
 
-.message.error{color:#ff7777;}
-.message.success{color:#75dc99;}
+.message.error{
+    color:#ff7777;
+}
+
+.message.success{
+    color:#75dc99;
+}
 
 .loading{
     min-height:500px;
@@ -580,22 +629,33 @@ button:disabled{
 }
 
 @keyframes spin{
-    to{transform:rotate(360deg);}
+    to{
+        transform:rotate(360deg);
+    }
 }
 
 @media(max-width:600px){
 
-    .main{padding:8px 7px 0;}
+    .main{
+        padding:8px 7px 0;
+    }
 
     .top-panel{
         padding:9px 11px;
         margin-bottom:7px;
     }
 
-    .review-title{font-size:15px;}
-    .review-subtitle{font-size:9px;}
+    .review-title{
+        font-size:15px;
+    }
 
-    .document-scroll{padding:6px;}
+    .review-subtitle{
+        font-size:9px;
+    }
+
+    .document-scroll{
+        padding:6px;
+    }
 
     .document-page{
         min-height:560px;
@@ -607,19 +667,34 @@ button:disabled{
         line-height:1.65;
     }
 
-    .page-content table{font-size:11px;}
+    .page-content table{
+        font-size:11px;
+    }
 
     .page-content th,
     .page-content td{
         padding:4px 5px;
     }
 
-    .correction-box{grid-template-columns:1fr;}
-    .correction-button{width:100%;}
+    .correction-box{
+        grid-template-columns:1fr;
+    }
 
-    .action-area{padding:7px 8px 8px;}
-    .bottom{padding:5px 0 6px;}
-    .back-button{min-height:36px;}
+    .correction-button{
+        width:100%;
+    }
+
+    .action-area{
+        padding:7px 8px 8px;
+    }
+
+    .bottom{
+        padding:5px 0 6px;
+    }
+
+    .back-button{
+        min-height:36px;
+    }
 }
 
 @media(min-width:800px){
@@ -643,12 +718,22 @@ button:disabled{
 
 <header class="header">
 <div class="header-inner">
+
     <div class="brand">
-        <h1 class="brand-title">Naija Pocket Business Center</h1>
-        <div class="brand-subtitle">Your Business Center</div>
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
+
+        <div class="brand-subtitle">
+            Your Business Center
+        </div>
     </div>
 
-    <div id="serviceBadge" class="service-badge">Service</div>
+    <div id="serviceBadge"
+         class="service-badge">
+        Service
+    </div>
+
 </div>
 </header>
 
@@ -656,160 +741,188 @@ button:disabled{
 
 <section class="top-panel">
 
-<h2 class="review-title">Review Your Complete Service</h2>
+    <h2 class="review-title">
+        Review Your Complete Service
+    </h2>
 
-<p class="review-subtitle">
-    Go through your complete document. Use Previous Page
-    and Next Page to review every page before approval.
-</p>
+    <p class="review-subtitle">
+        Go through your complete document. Use Previous Page
+        and Next Page to review every page before approval.
+    </p>
 
-<div class="status-row">
-    <span class="status-label">Review status</span>
-    <span id="statusValue" class="status-value">Preparing...</span>
-</div>
+    <div class="status-row">
 
-<div class="progress-shell">
-    <div id="progressBar" class="progress-bar"></div>
-</div>
+        <span class="status-label">
+            Review status
+        </span>
 
-<div id="progressText" class="progress-text">
-    Preparing the document...
-</div>
+        <span id="statusValue"
+              class="status-value">
+            Preparing...
+        </span>
+
+    </div>
+
+    <div class="progress-shell">
+        <div id="progressBar"
+             class="progress-bar">
+        </div>
+    </div>
+
+    <div id="progressText"
+         class="progress-text">
+        Preparing the document...
+    </div>
 
 </section>
 
 <section class="review-card">
 
-<div class="document-card-header">
+    <div class="document-card-header">
 
-    <div class="document-heading">
-        <h3>Your Complete Document</h3>
-    </div>
+        <div class="document-heading">
+            <h3>
+                Your Complete Document
+            </h3>
+        </div>
 
-    <div id="pageCount" class="page-count">
-        0 PAGES
-    </div>
-
-</div>
-
-<div id="documentScroll" class="document-scroll">
-
-    <div id="pageViewer" class="page-viewer">
-
-        <div class="loading">
-            <div class="spinner"></div>
-            <div>Your service is being carefully prepared.</div>
+        <div id="pageCount"
+             class="page-count">
+            0 PAGES
         </div>
 
     </div>
 
-    <div class="page-navigation">
+    <div id="documentScroll"
+         class="document-scroll">
 
-        <button id="previousButton"
-                class="nav-button"
+        <div id="pageViewer"
+             class="page-viewer">
+
+            <div class="loading">
+                <div class="spinner"></div>
+
+                <div>
+                    Your service is being carefully prepared.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="page-navigation">
+
+            <button id="previousButton"
+                    class="nav-button"
+                    type="button"
+                    disabled>
+                ← Previous Page
+            </button>
+
+            <div id="pageIndicator"
+                 class="page-indicator">
+                Page 0 of 0
+            </div>
+
+            <button id="nextButton"
+                    class="nav-button next"
+                    type="button"
+                    disabled>
+                Next Page →
+            </button>
+
+        </div>
+
+        <div class="go-row">
+
+            <input id="pageNumberInput"
+                   class="page-number-input"
+                   type="number"
+                   min="1"
+                   placeholder="Enter page number">
+
+            <button id="goButton"
+                    class="go-button"
+                    type="button">
+                GO
+            </button>
+
+        </div>
+
+        <div id="pageReview"
+             class="page-review"
+             style="display:none">
+
+            <div class="page-review-title">
+                PAGE REVIEW
+            </div>
+
+            <div id="pageReviewText"
+                 class="page-review-text">
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="action-area">
+
+        <div class="correction-box">
+
+            <textarea id="correctionInput"
+                      class="correction-input"
+                      placeholder="Want anything changed? Tell us what to correct..."></textarea>
+
+            <button id="correctionButton"
+                    class="correction-button"
+                    type="button">
+                Apply Correction
+            </button>
+
+        </div>
+
+        <button id="approveButton"
+                class="approve-button"
                 type="button"
                 disabled>
-            ← Previous Page
+            Approve Document
         </button>
 
-        <div id="pageIndicator" class="page-indicator">
-            Page 0 of 0
-        </div>
+        <section id="paymentSection"
+                 class="payment-section">
 
-        <button id="nextButton"
-                class="nav-button next"
-                type="button"
-                disabled>
-            Next Page →
-        </button>
+            <div class="payment-title">
+                Payment &amp; Download
+            </div>
+
+            <div id="paymentDetails"
+                 class="payment-details">
+                Your approved document is ready.
+            </div>
+
+            <button id="paymentButton"
+                    class="payment-button"
+                    type="button">
+                Continue to Payment
+            </button>
+
+        </section>
 
     </div>
-
-    <div class="go-row">
-
-        <input id="pageNumberInput"
-               class="page-number-input"
-               type="number"
-               min="1"
-               placeholder="Enter page number">
-
-        <button id="goButton"
-                class="go-button"
-                type="button">
-            GO
-        </button>
-
-    </div>
-
-    <div id="pageReview"
-         class="page-review"
-         style="display:none">
-
-        <div class="page-review-title">PAGE REVIEW</div>
-
-        <div id="pageReviewText"
-             class="page-review-text">
-        </div>
-
-    </div>
-
-</div>
-
-<div class="action-area">
-
-    <div class="correction-box">
-
-        <textarea id="correctionInput"
-                  class="correction-input"
-                  placeholder="Want anything changed? Tell us what to correct..."></textarea>
-
-        <button id="correctionButton"
-                class="correction-button"
-                type="button">
-            Apply Correction
-        </button>
-
-    </div>
-
-    <button id="approveButton"
-            class="approve-button"
-            type="button"
-            disabled>
-        Approve Document
-    </button>
-
-    <section id="paymentSection"
-             class="payment-section">
-
-        <div class="payment-title">
-            Payment &amp; Download
-        </div>
-
-        <div id="paymentDetails"
-             class="payment-details">
-            Your approved document is ready.
-        </div>
-
-        <button id="paymentButton"
-                class="payment-button"
-                type="button">
-            Continue to Payment
-        </button>
-
-    </section>
-
-</div>
 
 </section>
 
-<div id="message" class="message"></div>
+<div id="message"
+     class="message">
+</div>
 
 <div class="bottom">
+
     <button id="backButton"
             class="back-button"
             type="button">
         ← Back
     </button>
+
 </div>
 
 </main>
@@ -819,7 +932,8 @@ button:disabled{
 
 const API_BASE = "";
 
-const params = new URLSearchParams(location.search);
+const params =
+    new URLSearchParams(location.search);
 
 const jobId =
     (params.get("job_id") || "").trim();
@@ -919,7 +1033,10 @@ BASIC HELPERS
 */
 
 function clean(value){
-    if(value === null || value === undefined){
+
+    if(value === null ||
+       value === undefined){
+
         return "";
     }
 
@@ -928,20 +1045,57 @@ function clean(value){
 
 
 function setMessage(text,type=""){
-    message.textContent = text || "";
+
+    message.textContent =
+        text || "";
+
     message.className =
-        "message" + (type ? " " + type : "");
+        "message" +
+        (type ? " " + type : "");
 }
 
 
 function setStatus(text){
+
     statusValue.textContent =
         text || "Preparing...";
 }
 
 
 function normalizedStatus(status){
-    return clean(status).toLowerCase();
+
+    return clean(status)
+        .toLowerCase()
+        .replace(/[\s-]+/g,"_");
+}
+
+
+/*
+=========================================================
+REVIEW COMPLETION
+=========================================================
+
+The document can be fully available even when the backend
+uses a slightly different successful status.
+
+The presence of complete pages is therefore also accepted
+as evidence that the review is ready, provided the server
+has not explicitly returned an error state.
+=========================================================
+*/
+
+function isExplicitErrorStatus(status){
+
+    const state =
+        normalizedStatus(status);
+
+    return (
+        state === "review_error" ||
+        state === "correction_error" ||
+        state === "error" ||
+        state === "failed" ||
+        state === "failure"
+    );
 }
 
 
@@ -954,10 +1108,62 @@ function isReviewComplete(data){
     const state =
         normalizedStatus(data.status);
 
-    return (
+
+    if(
         state === "review_complete" ||
-        data.review_finished === true
-    );
+        state === "reviewcompleted" ||
+        state === "completed" ||
+        state === "complete" ||
+        state === "ready" ||
+        state === "approved"
+    ){
+        return true;
+    }
+
+
+    if(
+        data.review_finished === true ||
+        data.review_complete === true ||
+        data.ready_for_approval === true ||
+        data.ready === true
+    ){
+        return true;
+    }
+
+
+    const availablePages =
+        extractPages(data);
+
+
+    /*
+       If the API has supplied all pages and there is no
+       explicit error, the document is usable for review.
+    */
+
+    if(
+        availablePages.length > 0 &&
+        !isExplicitErrorStatus(state)
+    ){
+
+        const expected =
+            Number(data.total_pages) ||
+            Number(
+                data.progress &&
+                data.progress.total
+            ) ||
+            0;
+
+
+        if(
+            expected === 0 ||
+            availablePages.length >= expected
+        ){
+            return true;
+        }
+    }
+
+
+    return false;
 }
 
 
@@ -1018,20 +1224,21 @@ async function apiGet(url){
             }
         );
 
+
     const data =
         await response
             .json()
             .catch(()=>({}));
 
+
     if(!response.ok){
 
         throw new Error(
-            data.error_message ||
-            data.error ||
-            data.message ||
+            getServerError(data) ||
             "Unable to load the document."
         );
     }
+
 
     return data;
 }
@@ -1051,10 +1258,12 @@ async function apiPost(url,body){
             }
         );
 
+
     const data =
         await response
             .json()
             .catch(()=>({}));
+
 
     if(
         !response.ok ||
@@ -1062,12 +1271,11 @@ async function apiPost(url,body){
     ){
 
         throw new Error(
-            data.error_message ||
-            data.error ||
-            data.message ||
+            getServerError(data) ||
             "The request could not be completed."
         );
     }
+
 
     return data;
 }
@@ -1083,59 +1291,89 @@ function normalizePages(data){
 
     let source = [];
 
+
     if(
         Array.isArray(data.review_pages) &&
         data.review_pages.length
     ){
 
-        source = data.review_pages;
+        source =
+            data.review_pages;
 
     }else if(
         Array.isArray(data.document_pages) &&
         data.document_pages.length
     ){
 
-        source = data.document_pages;
+        source =
+            data.document_pages;
 
     }else if(
         Array.isArray(data.pages) &&
         data.pages.length
     ){
 
-        source = data.pages;
+        source =
+            data.pages;
     }
 
 
     return source
-        .map((item,index)=>({
+        .map((item,index)=>{
 
-            page_number:
-                Number(item.page_number) ||
-                index + 1,
+            if(
+                typeof item === "string"
+            ){
 
-            position:
-                Number(item.position) ||
-                index + 1,
+                return {
+                    page_number:index + 1,
+                    position:index + 1,
+                    status:"ready",
+                    content:item,
+                    review:"",
+                    error:""
+                };
+            }
 
-            status:
-                clean(item.status) ||
-                "queued",
 
-            content:
-                String(
-                    item.content === null ||
-                    item.content === undefined
-                    ? ""
-                    : item.content
-                ),
+            item =
+                item || {};
 
-            review:
-                clean(item.review),
 
-            error:
-                clean(item.error)
+            return {
 
-        }))
+                page_number:
+                    Number(item.page_number) ||
+                    Number(item.page) ||
+                    index + 1,
+
+                position:
+                    Number(item.position) ||
+                    Number(item.page_number) ||
+                    Number(item.page) ||
+                    index + 1,
+
+                status:
+                    clean(item.status) ||
+                    "ready",
+
+                content:
+                    item.content !== undefined
+                    ? String(item.content ?? "")
+                    : item.html !== undefined
+                    ? String(item.html ?? "")
+                    : item.text !== undefined
+                    ? String(item.text ?? "")
+                    : "",
+
+                review:
+                    clean(item.review),
+
+                error:
+                    clean(item.error)
+
+            };
+        })
         .sort(
             (a,b)=>
                 a.position - b.position
@@ -1145,8 +1383,14 @@ function normalizePages(data){
 
 function extractPages(data){
 
+    if(!data){
+        return [];
+    }
+
+
     const direct =
         normalizePages(data);
+
 
     if(direct.length){
         return direct;
@@ -1154,14 +1398,19 @@ function extractPages(data){
 
 
     const candidates = [
+
         data.document,
         data.result,
         data.review,
-        data.output
+        data.output,
+        data.data
+
     ];
 
 
-    for(const candidate of candidates){
+    for(
+        const candidate of candidates
+    ){
 
         if(
             candidate &&
@@ -1170,6 +1419,7 @@ function extractPages(data){
 
             const nested =
                 normalizePages(candidate);
+
 
             if(nested.length){
                 return nested;
@@ -1338,7 +1588,9 @@ const ALLOWED_STYLE_PROPERTIES =
 function safeStyleValue(value){
 
     const lower =
-        String(value || "").toLowerCase();
+        String(value || "")
+            .toLowerCase();
+
 
     if(
         lower.includes("javascript:") ||
@@ -1349,6 +1601,7 @@ function safeStyleValue(value){
         return "";
     }
 
+
     return String(value || "");
 }
 
@@ -1357,14 +1610,19 @@ function sanitizeStyle(styleText){
 
     const result = [];
 
+
     const declarations =
-        String(styleText || "").split(";");
+        String(styleText || "")
+            .split(";");
 
 
-    for(const declaration of declarations){
+    for(
+        const declaration of declarations
+    ){
 
         const separator =
             declaration.indexOf(":");
+
 
         if(separator < 0){
             continue;
@@ -1376,6 +1634,7 @@ function sanitizeStyle(styleText){
                 .slice(0,separator)
                 .trim()
                 .toLowerCase();
+
 
         const value =
             declaration
@@ -1400,7 +1659,9 @@ function sanitizeStyle(styleText){
 
 
         result.push(
-            property + ":" + safeValue
+            property +
+            ":" +
+            safeValue
         );
     }
 
@@ -1409,88 +1670,132 @@ function sanitizeStyle(styleText){
 }
 
 
+/*
+=========================================================
+MARKDOWN-LIKE TEXT RENDERER
+=========================================================
+*/
+
 function renderPlainDocumentText(text){
 
     const fragment =
         document.createDocumentFragment();
 
+
     const normalized =
         normalizeReviewText(text);
+
 
     const lines =
         normalized.split("\n");
 
 
-    lines.forEach((line,index)=>{
+    lines.forEach(
+        (line,index)=>{
 
-        if(line === ""){
+            if(line === ""){
 
-            fragment.appendChild(
-                document.createElement("br")
-            );
+                fragment.appendChild(
+                    document.createElement("br")
+                );
 
-            return;
-        }
-
-
-        const pattern =
-            /(\*\*[^*]+\*\*)/g;
-
-        const parts =
-            line.split(pattern);
-
-
-        parts.forEach(part=>{
-
-            if(!part){
                 return;
             }
 
 
+            /*
+               Bold markdown.
+            */
+
+            const pattern =
+                /(\*\*[^*]+\*\*)/g;
+
+
+            const parts =
+                line.split(pattern);
+
+
+            parts.forEach(
+                part=>{
+
+                    if(!part){
+                        return;
+                    }
+
+
+                    if(
+                        part.startsWith("**") &&
+                        part.endsWith("**")
+                    ){
+
+                        const strong =
+                            document.createElement(
+                                "strong"
+                            );
+
+
+                        strong.textContent =
+                            part.slice(2,-2);
+
+
+                        fragment.appendChild(
+                            strong
+                        );
+
+
+                    }else{
+
+                        /*
+                           Remove leftover single markdown
+                           emphasis markers without destroying
+                           normal text.
+                        */
+
+                        const cleanPart =
+                            part
+                                .replace(
+                                    /^\*+/,
+                                    ""
+                                )
+                                .replace(
+                                    /\*+$/,
+                                    ""
+                                );
+
+
+                        fragment.appendChild(
+                            document.createTextNode(
+                                cleanPart
+                            )
+                        );
+                    }
+                }
+            );
+
+
             if(
-                part.startsWith("**") &&
-                part.endsWith("**")
+                index <
+                lines.length - 1
             ){
 
-                const strong =
-                    document.createElement("strong");
-
-                strong.textContent =
-                    part.slice(2,-2);
-
                 fragment.appendChild(
-                    strong
-                );
-
-            }else{
-
-                const cleanPart =
-                    part
-                        .replace(/^\*+/,"")
-                        .replace(/\*+$/,"");
-
-                fragment.appendChild(
-                    document.createTextNode(
-                        cleanPart
-                    )
+                    document.createElement("br")
                 );
             }
-        });
 
-
-        if(index < lines.length - 1){
-
-            fragment.appendChild(
-                document.createElement("br")
-            );
         }
-
-    });
+    );
 
 
     return fragment;
 }
 
+
+/*
+=========================================================
+SAFE HTML RENDERING
+=========================================================
+*/
 
 function sanitizeDocumentHtml(html){
 
@@ -1503,10 +1808,23 @@ function sanitizeDocumentHtml(html){
         );
 
 
+    /*
+       Important:
+
+       If the backend supplied ordinary document text,
+       do not parse it as HTML.
+
+       This preserves the text while converting basic
+       markdown-style formatting.
+    */
+
     if(
         !/<[a-z][\s\S]*>/i.test(source)
     ){
-        return renderPlainDocumentText(source);
+
+        return renderPlainDocumentText(
+            source
+        );
     }
 
 
@@ -1528,7 +1846,8 @@ function sanitizeDocumentHtml(html){
     function cleanNode(node,parent){
 
         if(
-            node.nodeType === Node.TEXT_NODE
+            node.nodeType ===
+            Node.TEXT_NODE
         ){
 
             parent.appendChild(
@@ -1544,7 +1863,8 @@ function sanitizeDocumentHtml(html){
 
 
         if(
-            node.nodeType !== Node.ELEMENT_NODE
+            node.nodeType !==
+            Node.ELEMENT_NODE
         ){
             return;
         }
@@ -1568,13 +1888,18 @@ function sanitizeDocumentHtml(html){
             "VIDEO",
             "AUDIO"
         ].includes(tag)){
+
             return;
         }
 
 
-        if(!ALLOWED_TAGS.has(tag)){
+        if(
+            !ALLOWED_TAGS.has(tag)
+        ){
 
-            for(const child of node.childNodes){
+            for(
+                const child of node.childNodes
+            ){
 
                 cleanNode(
                     child,
@@ -1592,10 +1917,13 @@ function sanitizeDocumentHtml(html){
             );
 
 
-        for(const attribute of node.attributes){
+        for(
+            const attribute of node.attributes
+        ){
 
             const name =
                 attribute.name.toLowerCase();
+
 
             const value =
                 attribute.value || "";
@@ -1612,6 +1940,7 @@ function sanitizeDocumentHtml(html){
 
                 const safeStyle =
                     sanitizeStyle(value);
+
 
                 if(safeStyle){
 
@@ -1636,11 +1965,15 @@ function sanitizeDocumentHtml(html){
 
 
                 const alignment =
-                    value.toLowerCase().trim();
+                    value
+                        .toLowerCase()
+                        .trim();
 
 
                 if(
-                    allowed.includes(alignment)
+                    allowed.includes(
+                        alignment
+                    )
                 ){
 
                     element.setAttribute(
@@ -1659,7 +1992,10 @@ function sanitizeDocumentHtml(html){
             ){
 
                 const number =
-                    parseInt(value,10);
+                    parseInt(
+                        value,
+                        10
+                    );
 
 
                 if(
@@ -1677,7 +2013,9 @@ function sanitizeDocumentHtml(html){
         }
 
 
-        for(const child of node.childNodes){
+        for(
+            const child of node.childNodes
+        ){
 
             cleanNode(
                 child,
@@ -1686,11 +2024,15 @@ function sanitizeDocumentHtml(html){
         }
 
 
-        parent.appendChild(element);
+        parent.appendChild(
+            element
+        );
     }
 
 
-    for(const child of parsed.body.childNodes){
+    for(
+        const child of parsed.body.childNodes
+    ){
 
         cleanNode(
             child,
@@ -1703,6 +2045,12 @@ function sanitizeDocumentHtml(html){
 }
 
 
+/*
+=========================================================
+SERVER ERROR
+=========================================================
+*/
+
 function getServerError(data){
 
     if(!data){
@@ -1710,7 +2058,10 @@ function getServerError(data){
     }
 
 
-    if(typeof data.error === "string"){
+    if(
+        typeof data.error === "string"
+    ){
+
         return clean(data.error);
     }
 
@@ -1730,10 +2081,17 @@ function getServerError(data){
 
     return clean(
         data.error_message ||
-        data.message
+        data.message ||
+        data.detail
     );
 }
 
+
+/*
+=========================================================
+LOAD JOB
+=========================================================
+*/
 
 async function loadJob(){
 
@@ -1759,22 +2117,32 @@ async function loadJob(){
         extractPages(data);
 
 
-    if(usablePages.length){
+    /*
+       A document containing pages is usable even if the
+       status text is not exactly "review_complete".
+    */
+
+    if(
+        usablePages.length &&
+        !isExplicitErrorStatus(
+            data.status
+        )
+    ){
+
         return data;
     }
 
 
     if(
-        normalizedStatus(data.status) ===
-            "review_error" ||
-        normalizedStatus(data.status) ===
-            "error" ||
+        isExplicitErrorStatus(
+            data.status
+        ) ||
         data.success === false
     ){
 
         throw new Error(
             getServerError(data) ||
-            "The document is not available yet."
+            "The document review failed."
         );
     }
 
@@ -1783,14 +2151,16 @@ async function loadJob(){
 }
 
 
+/*
+=========================================================
+APPLY JOB
+=========================================================
+*/
+
 function applyJob(data){
 
     currentStatus =
         clean(data.status);
-
-
-    reviewFinished =
-        isReviewComplete(data);
 
 
     const incomingPages =
@@ -1812,6 +2182,10 @@ function applyJob(data){
     }
 
 
+    reviewFinished =
+        isReviewComplete(data);
+
+
     currentVersion =
         Number(data.current_version) || 1;
 
@@ -1821,7 +2195,9 @@ function applyJob(data){
 
 
     approved =
-        !!data.approved;
+        !!data.approved ||
+        normalizedStatus(data.status) ===
+        "approved";
 
 
     const progress =
@@ -1846,12 +2222,18 @@ function applyJob(data){
 
         percent =
             Math.round(
-                (completed / progressTotal) * 100
+                (completed /
+                 progressTotal) *
+                100
             );
     }
 
 
-    if(reviewFinished && totalPages > 0){
+    if(
+        reviewFinished &&
+        totalPages > 0
+    ){
+
         percent = 100;
     }
 
@@ -1859,7 +2241,10 @@ function applyJob(data){
     progressBar.style.width =
         Math.max(
             0,
-            Math.min(100,percent)
+            Math.min(
+                100,
+                percent
+            )
         ) + "%";
 
 
@@ -1881,7 +2266,9 @@ function applyJob(data){
 
 
     const state =
-        normalizedStatus(currentStatus);
+        normalizedStatus(
+            currentStatus
+        );
 
 
     if(reviewFinished){
@@ -1891,7 +2278,9 @@ function applyJob(data){
         progressText.textContent =
             "Your document is ready for approval.";
 
-    }else if(state === "reviewing"){
+    }else if(
+        state === "reviewing"
+    ){
 
         setStatus("REVIEWING");
 
@@ -1901,44 +2290,58 @@ function applyJob(data){
             progressTotal +
             " pages reviewed.";
 
-    }else if(state === "review_error"){
+    }else if(
+        isExplicitErrorStatus(state)
+    ){
 
         setStatus("ERROR");
 
         progressText.textContent =
             "The document review encountered an error.";
 
-    }else if(state === "correcting"){
+    }else if(
+        state === "correcting"
+    ){
 
         setStatus("CORRECTING");
 
         progressText.textContent =
             "Your correction is being applied.";
 
-    }else if(state === "correction_error"){
-
-        setStatus("CORRECTION ERROR");
-
-        progressText.textContent =
-            "The correction could not be completed.";
-
-    }else if(state === "approved"){
-
-        setStatus("APPROVED");
-
-        progressText.textContent =
-            "Your document has been approved.";
-
     }else{
 
-        setStatus(
-            currentStatus
-            ? currentStatus.toUpperCase()
-            : "PREPARING"
-        );
+        /*
+           If actual pages are already available, don't tell
+           the customer that the document failed simply because
+           the backend status uses another label.
+        */
 
-        progressText.textContent =
-            "Preparing the document.";
+        if(
+            totalPages > 0 &&
+            !isExplicitErrorStatus(state)
+        ){
+
+            reviewFinished = true;
+
+            setStatus("READY");
+
+            progressBar.style.width =
+                "100%";
+
+            progressText.textContent =
+                "Your document is ready for approval.";
+
+        }else{
+
+            setStatus(
+                currentStatus
+                ? currentStatus.toUpperCase()
+                : "PREPARING"
+            );
+
+            progressText.textContent =
+                "Preparing the document.";
+        }
     }
 
 
@@ -1961,10 +2364,17 @@ function applyJob(data){
 
 
     if(approved){
+
         showPayment(data);
     }
 }
 
+
+/*
+=========================================================
+RENDER CURRENT PAGE
+=========================================================
+*/
 
 function renderCurrentPage(){
 
@@ -2024,7 +2434,9 @@ function renderCurrentPage(){
 
 
     const physicalPage =
-        document.createElement("article");
+        document.createElement(
+            "article"
+        );
 
 
     physicalPage.className =
@@ -2038,7 +2450,9 @@ function renderCurrentPage(){
 
 
     const pageNumber =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     pageNumber.className =
@@ -2051,7 +2465,9 @@ function renderCurrentPage(){
 
 
     const content =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     content.className =
@@ -2143,6 +2559,12 @@ function renderCurrentPage(){
 }
 
 
+/*
+=========================================================
+PAGE NAVIGATION
+=========================================================
+*/
+
 function showPage(number){
 
     if(!totalPages){
@@ -2189,8 +2611,12 @@ function showPage(number){
 previousButton.addEventListener(
     "click",
     ()=>{
+
         if(currentPage > 1){
-            showPage(currentPage - 1);
+
+            showPage(
+                currentPage - 1
+            );
         }
     }
 );
@@ -2199,8 +2625,15 @@ previousButton.addEventListener(
 nextButton.addEventListener(
     "click",
     ()=>{
-        if(currentPage < totalPages){
-            showPage(currentPage + 1);
+
+        if(
+            currentPage <
+            totalPages
+        ){
+
+            showPage(
+                currentPage + 1
+            );
         }
     }
 );
@@ -2211,7 +2644,9 @@ goButton.addEventListener(
     ()=>{
 
         const value =
-            Number(pageNumberInput.value);
+            Number(
+                pageNumberInput.value
+            );
 
 
         if(
@@ -2241,13 +2676,22 @@ goButton.addEventListener(
 pageNumberInput.addEventListener(
     "keydown",
     event=>{
+
         if(event.key === "Enter"){
+
             event.preventDefault();
+
             goButton.click();
         }
     }
 );
 
+
+/*
+=========================================================
+POLLING
+=========================================================
+*/
 
 function stopPolling(){
 
@@ -2256,7 +2700,9 @@ function stopPolling(){
 
     if(pollTimer){
 
-        clearTimeout(pollTimer);
+        clearTimeout(
+            pollTimer
+        );
 
         pollTimer = null;
     }
@@ -2298,8 +2744,9 @@ function startPolling(){
 
 
                 if(
-                    normalizedStatus(data.status) ===
-                    "review_error"
+                    isExplicitErrorStatus(
+                        data.status
+                    )
                 ){
 
                     stopPolling();
@@ -2307,23 +2754,6 @@ function startPolling(){
                     setMessage(
                         getServerError(data) ||
                         "The document review failed.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                if(
-                    normalizedStatus(data.status) ===
-                    "correction_error"
-                ){
-
-                    stopPolling();
-
-                    setMessage(
-                        getServerError(data) ||
-                        "The correction failed.",
                         "error"
                     );
 
@@ -2339,9 +2769,18 @@ function startPolling(){
 
             }catch(error){
 
+                /*
+                   If pages already exist, don't replace the
+                   working document with an error.
+                */
+
                 if(pages.length){
 
                     stopPolling();
+
+                    reviewFinished = true;
+
+                    updateApprovalButton();
 
                     return;
                 }
@@ -2362,12 +2801,20 @@ function startPolling(){
 }
 
 
+/*
+=========================================================
+CORRECTION
+=========================================================
+*/
+
 correctionButton.addEventListener(
     "click",
     async()=>{
 
         const instruction =
-            clean(correctionInput.value);
+            clean(
+                correctionInput.value
+            );
 
 
         if(!instruction){
@@ -2393,10 +2840,12 @@ correctionButton.addEventListener(
 
 
         if(
-            normalizedStatus(currentStatus) ===
-                "reviewing" ||
-            normalizedStatus(currentStatus) ===
-                "correcting"
+            normalizedStatus(
+                currentStatus
+            ) === "reviewing" ||
+            normalizedStatus(
+                currentStatus
+            ) === "correcting"
         ){
 
             setMessage(
@@ -2432,12 +2881,16 @@ correctionButton.addEventListener(
 
 
             currentVersion =
-                Number(data.current_version) ||
+                Number(
+                    data.current_version
+                ) ||
                 currentVersion + 1;
 
 
             versionId =
-                clean(data.version_id);
+                clean(
+                    data.version_id
+                );
 
 
             approved = false;
@@ -2535,7 +2988,9 @@ approveButton.addEventListener(
 
 
             const latestVersionId =
-                clean(latest.version_id);
+                clean(
+                    latest.version_id
+                );
 
 
             const latestStatus =
@@ -2544,10 +2999,21 @@ approveButton.addEventListener(
                 );
 
 
-            if(
-                latestStatus !==
-                    "review_complete"
-            ){
+            /*
+               Do not require the backend to use only one
+               exact status string. The review is valid when
+               pages are present and no explicit error exists.
+            */
+
+            const latestReviewReady =
+                isReviewComplete(latest) &&
+                latestPages.length > 0 &&
+                !isExplicitErrorStatus(
+                    latestStatus
+                );
+
+
+            if(!latestReviewReady){
 
                 setBusy(false);
 
@@ -2558,22 +3024,10 @@ approveButton.addEventListener(
 
 
                 if(!polling){
+
                     startPolling();
                 }
 
-
-                return;
-            }
-
-
-            if(!latestPages.length){
-
-                setBusy(false);
-
-                setMessage(
-                    "The complete document is not available yet.",
-                    "error"
-                );
 
                 return;
             }
@@ -2599,7 +3053,8 @@ approveButton.addEventListener(
             currentVersion =
                 Number(
                     latest.current_version
-                ) || currentVersion;
+                ) ||
+                currentVersion;
 
 
             setMessage(
@@ -2626,21 +3081,17 @@ approveButton.addEventListener(
             }
 
 
-            /*
-               APPROVAL SUCCEEDED.
-
-               The same job_id used for review and approval
-               is now passed directly to payment.html.
-
-               The approved version_id is also preserved.
-            */
-
             approved = true;
-            currentStatus = "approved";
+
+            currentStatus =
+                "approved";
+
             reviewFinished = true;
 
 
-            setStatus("APPROVED");
+            setStatus(
+                "APPROVED"
+            );
 
 
             setMessage(
@@ -2676,10 +3127,8 @@ approveButton.addEventListener(
 
 
             /*
-               DIRECT PAYMENT/DOWNLOAD PAGE NAVIGATION.
-
-               This replaces the review page immediately after
-               successful approval.
+               Successful approval continues directly to the
+               existing payment page.
             */
 
             window.location.replace(
@@ -2712,7 +3161,9 @@ PAYMENT
 
 function showPayment(data){
 
-    paymentSection.classList.add("show");
+    paymentSection.classList.add(
+        "show"
+    );
 
 
     const serviceName =
@@ -2834,7 +3285,9 @@ async function start(){
 
     if(!jobId){
 
-        setStatus("NO DOCUMENT");
+        setStatus(
+            "NO DOCUMENT"
+        );
 
 
         pageViewer.innerHTML = `
@@ -2869,6 +3322,11 @@ async function start(){
             setMessage("");
 
 
+            /*
+               If complete pages have arrived and there is no
+               explicit server error, the document is ready.
+            */
+
             if(
                 isReviewComplete(data)
             ){
@@ -2889,12 +3347,9 @@ async function start(){
 
         if(
             !isReviewComplete(data) &&
-            normalizedStatus(data.status) !==
-                "review_error" &&
-            normalizedStatus(data.status) !==
-                "approved" &&
-            normalizedStatus(data.status) !==
-                "correction_error"
+            !isExplicitErrorStatus(
+                data.status
+            )
         ){
 
             startPolling();
@@ -2903,12 +3358,20 @@ async function start(){
 
     }catch(error){
 
+        /*
+           Never replace an already-rendered document with
+           an error merely because a later poll failed.
+        */
+
         if(pages.length){
+
             return;
         }
 
 
-        setStatus("ERROR");
+        setStatus(
+            "ERROR"
+        );
 
 
         setMessage(
@@ -2929,11 +3392,26 @@ async function start(){
 function escapeHtml(value){
 
     return String(value || "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 }
 
 
