@@ -282,6 +282,278 @@ def save_document_to_storage(job_id_str: str) -> None:
 
 
 # ============================================================
+# PERSISTENT APPROVAL RECOVERY
+# ============================================================
+
+def recover_saved_job_for_approval(
+    supplied_job_id: str,
+    supplied_version_id: str,
+) -> dict[str, Any] | None:
+    """
+    Recover the exact reviewed/saved document when the runtime
+    job dictionary no longer contains it.
+
+    Approval is tied to job_id + version_id.
+
+    The saved work record is used only as persistent recovery
+    data. The service name is never used to identify a job.
+    """
+
+    numeric_job_id = safe_int(
+        supplied_job_id,
+        None,
+    )
+
+    if numeric_job_id is None:
+        print(
+            "[APPROVAL] Persistent recovery skipped: "
+            f"job_id={supplied_job_id!r} is not numeric"
+        )
+        return None
+
+    try:
+        persisted_job = get_job(
+            numeric_job_id
+        )
+
+    except Exception as error:
+        print(
+            "[APPROVAL] Could not read persisted job "
+            f"job_id={numeric_job_id}: {error}"
+        )
+        persisted_job = None
+
+    try:
+        work = get_latest_work(
+            numeric_job_id
+        )
+
+    except Exception as error:
+        print(
+            "[APPROVAL] Could not read saved work "
+            f"job_id={numeric_job_id}: {error}"
+        )
+        work = None
+
+    if not work:
+        print(
+            "[APPROVAL] No saved work record available for "
+            f"job_id={numeric_job_id}"
+        )
+        return None
+
+    saved_version = (
+        safe_int(
+            work.get("version"),
+            1,
+        )
+        or 1
+    )
+
+    expected_version_id = (
+        f"{supplied_job_id}:{saved_version}"
+    )
+
+    if supplied_version_id:
+        if supplied_version_id != expected_version_id:
+            print(
+                "[APPROVAL] Saved work version mismatch: "
+                f"requested={supplied_version_id} "
+                f"saved={expected_version_id}"
+            )
+            return None
+
+    storage_reference = str(
+        work.get("storage_reference")
+        or ""
+    ).strip()
+
+    if not storage_reference:
+        print(
+            "[APPROVAL] Saved work has no storage reference: "
+            f"job_id={numeric_job_id}"
+        )
+        return None
+
+    filepath = Path(
+        storage_reference
+    )
+
+    try:
+        document_root = DOCUMENT_ROOT.resolve()
+        resolved_filepath = filepath.resolve()
+
+        if not resolved_filepath.is_relative_to(
+            document_root
+        ):
+            print(
+                "[APPROVAL] Saved work path rejected: "
+                f"path={resolved_filepath}"
+            )
+            return None
+
+        filepath = resolved_filepath
+
+    except Exception as error:
+        print(
+            "[APPROVAL] Saved work path could not be resolved: "
+            f"{error}"
+        )
+        return None
+
+    if not filepath.exists() or not filepath.is_file():
+        print(
+            "[APPROVAL] Saved document file is missing: "
+            f"path={filepath}"
+        )
+        return None
+
+    try:
+        document_text = clean_text(
+            filepath.read_text(
+                encoding="utf-8"
+            )
+        )
+
+    except Exception as error:
+        print(
+            "[APPROVAL] Could not read saved document: "
+            f"{error}"
+        )
+        return None
+
+    if not document_text:
+        print(
+            "[APPROVAL] Saved document is empty: "
+            f"job_id={numeric_job_id}"
+        )
+        return None
+
+    pages = text_to_review_pages(
+        document_text
+    )
+
+    if not pages:
+        print(
+            "[APPROVAL] Saved document has no review pages: "
+            f"job_id={numeric_job_id}"
+        )
+        return None
+
+    service = None
+    customer_id = None
+    original_request = ""
+    context = None
+
+    if isinstance(persisted_job, dict):
+        service = (
+            persisted_job.get("service")
+            or persisted_job.get("work_title")
+        )
+
+        customer_id = (
+            persisted_job.get("customer_id")
+        )
+
+        original_request = clean_text(
+            persisted_job.get(
+                "original_request",
+                "",
+            )
+        )
+
+        context_value = persisted_job.get(
+            "context"
+        )
+
+        if context_value:
+            context = str(
+                context_value
+            ).strip()
+
+    if not service:
+        service = (
+            work.get("work_title")
+            or "Business Document"
+        )
+
+    job = {
+        "job_id": supplied_job_id,
+        "customer_id": customer_id,
+        "service": service,
+        "original_request": original_request,
+        "context": context,
+        "status": "review_complete",
+        "review_started": True,
+        "review_finished": True,
+        "review_error": None,
+        "progress": {
+            "completed": len(pages),
+            "total": len(pages),
+        },
+        "document_text": document_text,
+        "document_pages": pages,
+        "review_pages": make_review_pages(
+            pages
+        ),
+        "assembled_review": "",
+        "current_version": saved_version,
+        "version_id": expected_version_id,
+        "approved": False,
+        "paid": False,
+    }
+
+    if isinstance(persisted_job, dict):
+
+        persisted_version = safe_int(
+            persisted_job.get(
+                "current_version"
+            ),
+            saved_version,
+        ) or saved_version
+
+        if persisted_version == saved_version:
+            job["current_version"] = (
+                persisted_version
+            )
+
+        persisted_version_id = str(
+            persisted_job.get(
+                "version_id",
+                "",
+            )
+        ).strip()
+
+        if persisted_version_id:
+            if persisted_version_id == expected_version_id:
+                job["version_id"] = (
+                    persisted_version_id
+                )
+
+        if persisted_job.get(
+            "approved"
+        ):
+            job["approved"] = True
+
+        if persisted_job.get(
+            "paid"
+        ):
+            job["paid"] = True
+
+    print(
+        "[APPROVAL] PERSISTENT RECOVERY SUCCESS "
+        f"job_id={supplied_job_id} "
+        f"version_id={job['version_id']} "
+        f"work_id={work.get('id')} "
+        f"pages={len(pages)}"
+    )
+
+    _jobs[supplied_job_id] = job
+
+    return job
+
+
+# ============================================================
 # PAGE NORMALIZATION
 # ============================================================
 
@@ -2545,13 +2817,44 @@ async def approve(
         request.version_id or ""
     ).strip()
 
+    if not supplied_job_id:
+
+        return application_error(
+            "APPROVAL",
+            "Job ID is required.",
+            400,
+            "JOB_ID_REQUIRED",
+        )
+
+    if not supplied_version_id:
+
+        return application_error(
+            "APPROVAL",
+            "Document version ID is required.",
+            400,
+            "VERSION_ID_REQUIRED",
+        )
+
+    # --------------------------------------------------------
+    # FIRST:
+    # Resolve the exact active runtime job by job_id.
+    # --------------------------------------------------------
+
     job = _jobs.get(
         supplied_job_id
     )
 
     resolved_job_id = supplied_job_id
 
-    if not job and supplied_version_id:
+    # --------------------------------------------------------
+    # SECOND:
+    # If the job ID is not present in memory, try the exact
+    # version_id against the active runtime jobs.
+    #
+    # This does NOT identify a job by service name.
+    # --------------------------------------------------------
+
+    if not job:
 
         for candidate_job_id, candidate_job in _jobs.items():
 
@@ -2586,7 +2889,13 @@ async def approve(
 
                 break
 
-    if not job and supplied_version_id:
+    # --------------------------------------------------------
+    # THIRD:
+    # If the version_id contains job_id:version, try the job
+    # portion directly in the active runtime dictionary.
+    # --------------------------------------------------------
+
+    if not job:
 
         if ":" in supplied_version_id:
 
@@ -2628,6 +2937,36 @@ async def approve(
                             f"version_id={supplied_version_id}"
                         )
 
+    # --------------------------------------------------------
+    # FOURTH — NEW PERSISTENT RECOVERY:
+    #
+    # The reviewed document was already saved after review.
+    # If the runtime process no longer has the job, recover the
+    # exact saved version from the database/storage.
+    #
+    # This is the important repair.
+    # --------------------------------------------------------
+
+    if not job:
+
+        job = recover_saved_job_for_approval(
+            supplied_job_id,
+            supplied_version_id,
+        )
+
+        if job:
+
+            resolved_job_id = str(
+                job.get(
+                    "job_id",
+                    supplied_job_id,
+                )
+            ).strip()
+
+    # --------------------------------------------------------
+    # FINAL JOB NOT FOUND
+    # --------------------------------------------------------
+
     if not job:
 
         print(
@@ -2639,10 +2978,14 @@ async def approve(
 
         return application_error(
             "APPROVAL",
-            "Job not found.",
+            "The exact reviewed document could not be recovered.",
             404,
             "JOB_NOT_FOUND",
         )
+
+    # --------------------------------------------------------
+    # EXACT VERSION CHECK
+    # --------------------------------------------------------
 
     current_version_id = str(
         job.get(
@@ -2652,7 +2995,7 @@ async def approve(
     ).strip()
 
     if (
-        not supplied_version_id
+        not current_version_id
         or supplied_version_id
         != current_version_id
     ):
@@ -2664,9 +3007,17 @@ async def approve(
             "VERSION_MISMATCH",
         )
 
+    # --------------------------------------------------------
+    # REVIEW MUST BE COMPLETE
+    # --------------------------------------------------------
+
     if (
         job.get("status")
-        != "review_complete"
+        not in {
+            "review_complete",
+            "approved",
+            "paid",
+        }
     ):
 
         return application_error(
@@ -2675,6 +3026,29 @@ async def approve(
             409,
             "REVIEW_NOT_COMPLETE",
         )
+
+    # --------------------------------------------------------
+    # DOCUMENT MUST EXIST
+    # --------------------------------------------------------
+
+    synchronize_job_document(
+        job
+    )
+
+    if not job.get(
+        "document_pages"
+    ):
+
+        return application_error(
+            "APPROVAL",
+            "The reviewed document contains no usable pages.",
+            409,
+            "DOCUMENT_NOT_AVAILABLE",
+        )
+
+    # --------------------------------------------------------
+    # APPROVE THE EXACT CURRENT VERSION
+    # --------------------------------------------------------
 
     job["approved"] = True
     job["status"] = "approved"
