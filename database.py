@@ -2,13 +2,13 @@
 database.py
 
 Naija Pocket Business Center
-SQLite Database Layer
+Simple SQLite Database
 
 PURPOSE
 -------
 This file stores the business records for the entire system.
 
-The database is SERVICE-NEUTRAL and can be used for:
+This database is SERVICE-NEUTRAL and can be used for:
 
 - CV writing
 - Cover letters
@@ -22,18 +22,28 @@ The database is SERVICE-NEUTRAL and can be used for:
 - Business documents
 - Academic documents
 - Printing-related jobs
-- Other document-center services
+- Other services
 
 IMPORTANT
 ---------
-The database is automatically initialized when this module is imported.
+This database does NOT store customer files.
 
-This is important because the API imports database functions instead of
-running database.py directly.
+The VPS stores only the SQLite database and application data.
 
-The database file is stored beside this file using an absolute path so
-the application does not accidentally create different database files
-depending on the current working directory.
+Actual customer files/work should be handled by the application's
+chosen file-storage system separately.
+
+The database stores information ABOUT the work, such as:
+
+- customer
+- job
+- service
+- request/description
+- work status
+- work reference
+- payment
+- dates
+- back-office information
 """
 
 import sqlite3
@@ -42,26 +52,15 @@ from pathlib import Path
 
 
 # ============================================================
-# DATABASE LOCATION
+# DATABASE CONFIGURATION
 # ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent
 
 DATABASE_PATH = BASE_DIR / "naija_pocket_business.db"
 
-# Kept for compatibility with code that may reference DATABASE_NAME.
+# Keep this name for compatibility with existing code.
 DATABASE_NAME = str(DATABASE_PATH)
-
-
-# ============================================================
-# TIME
-# ============================================================
-
-def now():
-    """
-    Return the current local timestamp as a string.
-    """
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 # ============================================================
@@ -70,14 +69,18 @@ def now():
 
 def get_connection():
     """
-    Open a SQLite connection.
+    Open a connection to the application's SQLite database.
 
-    The database uses an absolute path and foreign-key enforcement.
+    The database path is absolute so that Render/API startup
+    cannot accidentally create another database in a different
+    working directory.
     """
 
     try:
-        # Make sure the parent directory exists.
-        DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        DATABASE_PATH.parent.mkdir(
+            parents=True,
+            exist_ok=True
+        )
 
         conn = sqlite3.connect(
             str(DATABASE_PATH),
@@ -87,137 +90,70 @@ def get_connection():
         conn.row_factory = sqlite3.Row
 
         # Enforce foreign-key relationships.
-        conn.execute("PRAGMA foreign_keys = ON")
+        conn.execute(
+            "PRAGMA foreign_keys = ON"
+        )
 
         return conn
 
     except sqlite3.Error as error:
-        print("Database connection error:", error)
-        print("Database path:", DATABASE_PATH)
+
+        print(
+            "Database connection error:",
+            error
+        )
+
+        print(
+            "Database path:",
+            DATABASE_PATH
+        )
+
         return None
 
     except Exception as error:
-        print("Unexpected database connection error:", error)
-        print("Database path:", DATABASE_PATH)
+
+        print(
+            "Unexpected database connection error:",
+            error
+        )
+
+        print(
+            "Database path:",
+            DATABASE_PATH
+        )
+
         return None
 
 
 # ============================================================
-# TABLE / COLUMN HELPERS
-# ============================================================
-
-def table_exists(conn, table_name):
-    """
-    Check whether a table exists.
-    """
-
-    try:
-        row = conn.execute(
-            """
-            SELECT name
-            FROM sqlite_master
-            WHERE type = 'table'
-            AND name = ?
-            """,
-            (table_name,)
-        ).fetchone()
-
-        return row is not None
-
-    except sqlite3.Error as error:
-        print(f"Table check error for {table_name}:", error)
-        return False
-
-
-def column_exists(conn, table_name, column_name):
-    """
-    Check whether a column exists in a table.
-    """
-
-    try:
-        rows = conn.execute(
-            f"PRAGMA table_info({table_name})"
-        ).fetchall()
-
-        return any(row["name"] == column_name for row in rows)
-
-    except sqlite3.Error as error:
-        print(
-            f"Column check error for {table_name}.{column_name}:",
-            error
-        )
-        return False
-
-
-def add_column_if_missing(
-    conn,
-    table_name,
-    column_name,
-    column_definition
-):
-    """
-    Add a column only when it does not already exist.
-    """
-
-    if not table_exists(conn, table_name):
-        return
-
-    if column_exists(conn, table_name, column_name):
-        return
-
-    try:
-        conn.execute(
-            f"""
-            ALTER TABLE {table_name}
-            ADD COLUMN {column_name} {column_definition}
-            """
-        )
-
-        print(
-            f"Database migration: added "
-            f"{table_name}.{column_name}"
-        )
-
-    except sqlite3.Error as error:
-        print(
-            f"Migration error adding "
-            f"{table_name}.{column_name}:",
-            error
-        )
-        raise
-
-
-# ============================================================
-# DATABASE INITIALIZATION
+# INITIALIZE DATABASE
 # ============================================================
 
 def initialize_database():
-    """
-    Create the complete database structure.
-
-    Safe to run repeatedly.
-
-    Existing databases are preserved and missing columns are migrated.
-    """
 
     conn = get_connection()
 
     if conn is None:
-        print("Database initialization failed: no connection.")
+        print(
+            "Database initialization failed: "
+            "unable to open database connection."
+        )
         return False
 
     try:
+
+        cursor = conn.cursor()
 
         # ====================================================
         # CUSTOMERS
         # ====================================================
 
-        conn.execute(
+        cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS customers (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-                customer_name TEXT NOT NULL,
+                customer_name TEXT,
 
                 phone TEXT,
 
@@ -225,19 +161,20 @@ def initialize_database():
 
                 customer_reference TEXT UNIQUE,
 
-                created_at TEXT NOT NULL,
+                created_at DATETIME
+                    DEFAULT CURRENT_TIMESTAMP,
 
-                updated_at TEXT NOT NULL
+                updated_at DATETIME
+                    DEFAULT CURRENT_TIMESTAMP
             )
             """
         )
-
 
         # ====================================================
         # JOBS
         # ====================================================
 
-        conn.execute(
+        cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS jobs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -262,23 +199,24 @@ def initialize_database():
 
                 work_reference TEXT,
 
-                created_at TEXT NOT NULL,
+                created_at DATETIME
+                    DEFAULT CURRENT_TIMESTAMP,
 
-                updated_at TEXT NOT NULL,
+                updated_at DATETIME
+                    DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (customer_id)
+                FOREIGN KEY(customer_id)
                     REFERENCES customers(id)
                     ON DELETE SET NULL
             )
             """
         )
 
-
         # ====================================================
         # WORK RECORDS
         # ====================================================
 
-        conn.execute(
+        cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS work_records (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -295,38 +233,39 @@ def initialize_database():
 
                 version INTEGER DEFAULT 1,
 
-                work_status TEXT DEFAULT 'draft',
+                work_status TEXT DEFAULT 'working',
 
                 notes TEXT,
 
-                created_at TEXT NOT NULL,
+                created_at DATETIME
+                    DEFAULT CURRENT_TIMESTAMP,
 
-                updated_at TEXT NOT NULL,
+                updated_at DATETIME
+                    DEFAULT CURRENT_TIMESTAMP,
 
                 download_activated INTEGER DEFAULT 0,
 
-                download_activated_at TEXT,
+                download_activated_at DATETIME,
 
-                FOREIGN KEY (job_id)
+                FOREIGN KEY(job_id)
                     REFERENCES jobs(id)
                     ON DELETE CASCADE
             )
             """
         )
 
-
         # ====================================================
-        # CUSTOMER FILES
+        # CUSTOMER FILE REFERENCES
         # ====================================================
 
-        conn.execute(
+        cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS customer_files (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
                 job_id INTEGER NOT NULL,
 
-                file_name TEXT,
+                file_name TEXT NOT NULL,
 
                 file_type TEXT,
 
@@ -334,32 +273,33 @@ def initialize_database():
 
                 storage_reference TEXT,
 
-                file_status TEXT DEFAULT 'uploaded',
+                file_status TEXT DEFAULT 'received',
 
-                created_at TEXT NOT NULL,
+                created_at DATETIME
+                    DEFAULT CURRENT_TIMESTAMP,
 
-                updated_at TEXT NOT NULL,
+                updated_at DATETIME
+                    DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (job_id)
+                FOREIGN KEY(job_id)
                     REFERENCES jobs(id)
                     ON DELETE CASCADE
             )
             """
         )
 
-
         # ====================================================
         # PAYMENTS
         # ====================================================
 
-        conn.execute(
+        cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS payments (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
                 job_id INTEGER NOT NULL,
 
-                amount REAL NOT NULL DEFAULT 0,
+                amount REAL NOT NULL,
 
                 currency TEXT DEFAULT 'NGN',
 
@@ -369,224 +309,134 @@ def initialize_database():
 
                 payment_reference TEXT,
 
-                payment_date TEXT,
+                payment_date DATETIME
+                    DEFAULT CURRENT_TIMESTAMP,
 
-                updated_at TEXT NOT NULL,
+                updated_at DATETIME
+                    DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (job_id)
+                FOREIGN KEY(job_id)
                     REFERENCES jobs(id)
                     ON DELETE CASCADE
             )
             """
         )
 
-
         # ====================================================
         # JOB ACTIVITY
         # ====================================================
 
-        conn.execute(
+        cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS job_activity (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
                 job_id INTEGER NOT NULL,
 
-                activity_type TEXT,
+                activity_type TEXT NOT NULL,
 
                 description TEXT,
 
-                created_at TEXT NOT NULL,
+                created_at DATETIME
+                    DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (job_id)
+                FOREIGN KEY(job_id)
                     REFERENCES jobs(id)
                     ON DELETE CASCADE
             )
             """
         )
 
-
         # ====================================================
-        # MIGRATIONS
+        # SAFE MIGRATION
         # ====================================================
 
-        # Existing jobs table migrations.
-
-        add_column_if_missing(
-            conn,
-            "jobs",
-            "customer_id",
-            "INTEGER"
+        migrate_existing_database(
+            cursor
         )
-
-        add_column_if_missing(
-            conn,
-            "jobs",
-            "customer_request",
-            "TEXT"
-        )
-
-        add_column_if_missing(
-            conn,
-            "jobs",
-            "currency",
-            "TEXT DEFAULT 'NGN'"
-        )
-
-        add_column_if_missing(
-            conn,
-            "jobs",
-            "work_reference",
-            "TEXT"
-        )
-
-        add_column_if_missing(
-            conn,
-            "jobs",
-            "updated_at",
-            "TEXT"
-        )
-
-
-        # Existing work_records migrations.
-
-        add_column_if_missing(
-            conn,
-            "work_records",
-            "download_activated",
-            "INTEGER DEFAULT 0"
-        )
-
-        add_column_if_missing(
-            conn,
-            "work_records",
-            "download_activated_at",
-            "TEXT"
-        )
-
-
-        # Existing payments migrations.
-
-        add_column_if_missing(
-            conn,
-            "payments",
-            "currency",
-            "TEXT DEFAULT 'NGN'"
-        )
-
-        add_column_if_missing(
-            conn,
-            "payments",
-            "payment_reference",
-            "TEXT"
-        )
-
-        add_column_if_missing(
-            conn,
-            "payments",
-            "updated_at",
-            "TEXT"
-        )
-
 
         # ====================================================
         # INDEXES
         # ====================================================
 
-        conn.execute(
+        cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_jobs_customer_id
+            CREATE INDEX IF NOT EXISTS
+            idx_jobs_customer_id
             ON jobs(customer_id)
             """
         )
 
-        conn.execute(
+        cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_jobs_status
+            CREATE INDEX IF NOT EXISTS
+            idx_jobs_status
             ON jobs(status)
             """
         )
 
-        conn.execute(
+        cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_jobs_updated_at
+            CREATE INDEX IF NOT EXISTS
+            idx_jobs_updated_at
             ON jobs(updated_at)
             """
         )
 
-        conn.execute(
+        cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_work_records_job_id
+            CREATE INDEX IF NOT EXISTS
+            idx_work_records_job_id
             ON work_records(job_id)
             """
         )
 
-        conn.execute(
+        cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_work_records_download
-            ON work_records(download_activated)
+            CREATE INDEX IF NOT EXISTS
+            idx_work_records_download
+            ON work_records(job_id, download_activated)
             """
         )
 
-        conn.execute(
+        cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_customer_files_job_id
+            CREATE INDEX IF NOT EXISTS
+            idx_customer_files_job_id
             ON customer_files(job_id)
             """
         )
 
-        conn.execute(
+        cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_payments_job_id
+            CREATE INDEX IF NOT EXISTS
+            idx_payments_job_id
             ON payments(job_id)
             """
         )
 
-        conn.execute(
+        cursor.execute(
             """
-            CREATE INDEX IF NOT EXISTS idx_job_activity_job_id
+            CREATE INDEX IF NOT EXISTS
+            idx_job_activity_job_id
             ON job_activity(job_id)
             """
         )
 
-
         # ====================================================
-        # FILL NULL TIMESTAMPS IN OLD DATABASES
-        # ====================================================
-
-        current_time = now()
-
-        if table_exists(conn, "jobs"):
-
-            conn.execute(
-                """
-                UPDATE jobs
-                SET updated_at = COALESCE(updated_at, created_at, ?)
-                WHERE updated_at IS NULL
-                """,
-                (current_time,)
-            )
-
-        if table_exists(conn, "payments"):
-
-            conn.execute(
-                """
-                UPDATE payments
-                SET updated_at = COALESCE(updated_at, payment_date, ?)
-                WHERE updated_at IS NULL
-                """,
-                (current_time,)
-            )
-
-
-        # ====================================================
-        # COMMIT EVERYTHING
+        # COMMIT
         # ====================================================
 
         conn.commit()
 
-        print("Database initialized successfully.")
-        print("Database path:", DATABASE_PATH)
+        print(
+            "Database initialized successfully."
+        )
+
+        print(
+            "Database path:",
+            DATABASE_PATH
+        )
 
         return True
 
@@ -597,8 +447,15 @@ def initialize_database():
         except Exception:
             pass
 
-        print("Database initialization error:", error)
-        print("Database path:", DATABASE_PATH)
+        print(
+            "Database setup error:",
+            error
+        )
+
+        print(
+            "Database path:",
+            DATABASE_PATH
+        )
 
         return False
 
@@ -609,39 +466,217 @@ def initialize_database():
         except Exception:
             pass
 
-        print("Unexpected database initialization error:", error)
-        print("Database path:", DATABASE_PATH)
+        print(
+            "Unexpected database setup error:",
+            error
+        )
+
+        print(
+            "Database path:",
+            DATABASE_PATH
+        )
 
         return False
 
     finally:
 
-        try:
-            conn.close()
-        except Exception:
-            pass
+        conn.close()
 
 
 # ============================================================
-# GENERIC QUERY EXECUTION
+# SAFE DATABASE MIGRATION
+# ============================================================
+
+def migrate_existing_database(cursor):
+    """
+    Keeps older versions of the database usable.
+
+    Existing information is never deleted.
+    Missing columns are added safely.
+    """
+
+    # --------------------------------------------------------
+    # Existing jobs table
+    # --------------------------------------------------------
+
+    cursor.execute(
+        "PRAGMA table_info(jobs)"
+    )
+
+    job_columns = {
+        row["name"]
+        for row in cursor.fetchall()
+    }
+
+    job_columns_to_add = {
+
+        "customer_id":
+            "INTEGER",
+
+        "customer_request":
+            "TEXT",
+
+        "currency":
+            "TEXT DEFAULT 'NGN'",
+
+        "work_reference":
+            "TEXT",
+
+        "updated_at":
+            "DATETIME"
+    }
+
+    for column_name, definition in job_columns_to_add.items():
+
+        if column_name not in job_columns:
+
+            cursor.execute(
+                f"""
+                ALTER TABLE jobs
+                ADD COLUMN {column_name}
+                {definition}
+                """
+            )
+
+            print(
+                f"Database migration: "
+                f"added jobs.{column_name}"
+            )
+
+    # --------------------------------------------------------
+    # Existing work_records table
+    # --------------------------------------------------------
+
+    cursor.execute(
+        "PRAGMA table_info(work_records)"
+    )
+
+    work_columns = {
+        row["name"]
+        for row in cursor.fetchall()
+    }
+
+    work_columns_to_add = {
+
+        "download_activated":
+            "INTEGER DEFAULT 0",
+
+        "download_activated_at":
+            "DATETIME"
+    }
+
+    for column_name, definition in work_columns_to_add.items():
+
+        if column_name not in work_columns:
+
+            cursor.execute(
+                f"""
+                ALTER TABLE work_records
+                ADD COLUMN {column_name}
+                {definition}
+                """
+            )
+
+            print(
+                f"Database migration: "
+                f"added work_records.{column_name}"
+            )
+
+    # --------------------------------------------------------
+    # Existing payments table
+    # --------------------------------------------------------
+
+    cursor.execute(
+        "PRAGMA table_info(payments)"
+    )
+
+    payment_columns = {
+        row["name"]
+        for row in cursor.fetchall()
+    }
+
+    payment_columns_to_add = {
+
+        "currency":
+            "TEXT DEFAULT 'NGN'",
+
+        "payment_reference":
+            "TEXT",
+
+        "updated_at":
+            "DATETIME"
+    }
+
+    for column_name, definition in payment_columns_to_add.items():
+
+        if column_name not in payment_columns:
+
+            cursor.execute(
+                f"""
+                ALTER TABLE payments
+                ADD COLUMN {column_name}
+                {definition}
+                """
+            )
+
+            print(
+                f"Database migration: "
+                f"added payments.{column_name}"
+            )
+
+    # --------------------------------------------------------
+    # Existing jobs updated_at values
+    # --------------------------------------------------------
+
+    cursor.execute(
+        """
+        UPDATE jobs
+        SET updated_at = COALESCE(
+            updated_at,
+            created_at,
+            CURRENT_TIMESTAMP
+        )
+        WHERE updated_at IS NULL
+        """
+    )
+
+    # --------------------------------------------------------
+    # Existing payments updated_at values
+    # --------------------------------------------------------
+
+    cursor.execute(
+        """
+        UPDATE payments
+        SET updated_at = COALESCE(
+            updated_at,
+            payment_date,
+            CURRENT_TIMESTAMP
+        )
+        WHERE updated_at IS NULL
+        """
+    )
+
+    # --------------------------------------------------------
+    # Existing work download activation values
+    # --------------------------------------------------------
+
+    cursor.execute(
+        """
+        UPDATE work_records
+        SET download_activated = 0
+        WHERE download_activated IS NULL
+        """
+    )
+
+
+# ============================================================
+# GENERAL QUERY HELPERS
 # ============================================================
 
 def execute_query(
     query,
-    parameters=(),
-    fetch=False,
-    fetchone=False,
-    commit=True
+    params=()
 ):
-    """
-    Execute a database query safely.
-
-    Returns:
-        - fetched rows when fetch=True
-        - one row when fetchone=True
-        - lastrowid for write operations
-        - None when an error occurs
-    """
 
     conn = get_connection()
 
@@ -650,33 +685,16 @@ def execute_query(
 
     try:
 
-        cursor = conn.execute(
+        cursor = conn.cursor()
+
+        cursor.execute(
             query,
-            parameters
+            params
         )
 
-        if fetchone:
-            result = cursor.fetchone()
+        conn.commit()
 
-            if commit:
-                conn.commit()
-
-            return result
-
-        if fetch:
-            result = cursor.fetchall()
-
-            if commit:
-                conn.commit()
-
-            return result
-
-        result = cursor.lastrowid
-
-        if commit:
-            conn.commit()
-
-        return result
+        return cursor.lastrowid
 
     except sqlite3.Error as error:
 
@@ -685,9 +703,20 @@ def execute_query(
         except Exception:
             pass
 
-        print("Database query error:", error)
-        print("Query:", query)
-        print("Parameters:", parameters)
+        print(
+            "Query error:",
+            error
+        )
+
+        print(
+            "Query:",
+            query
+        )
+
+        print(
+            "Parameters:",
+            params
+        )
 
         return None
 
@@ -698,17 +727,114 @@ def execute_query(
         except Exception:
             pass
 
-        print("Unexpected query error:", error)
-        print("Query:", query)
+        print(
+            "Unexpected query error:",
+            error
+        )
 
         return None
 
     finally:
 
-        try:
-            conn.close()
-        except Exception:
-            pass
+        conn.close()
+
+
+def fetch_all(
+    query,
+    params=()
+):
+
+    conn = get_connection()
+
+    if conn is None:
+        return []
+
+    try:
+
+        cursor = conn.cursor()
+
+        cursor.execute(
+            query,
+            params
+        )
+
+        return cursor.fetchall()
+
+    except sqlite3.Error as error:
+
+        print(
+            "Fetch error:",
+            error
+        )
+
+        print(
+            "Query:",
+            query
+        )
+
+        return []
+
+    except Exception as error:
+
+        print(
+            "Unexpected fetch error:",
+            error
+        )
+
+        return []
+
+    finally:
+
+        conn.close()
+
+
+def fetch_one(
+    query,
+    params=()
+):
+
+    conn = get_connection()
+
+    if conn is None:
+        return None
+
+    try:
+
+        cursor = conn.cursor()
+
+        cursor.execute(
+            query,
+            params
+        )
+
+        return cursor.fetchone()
+
+    except sqlite3.Error as error:
+
+        print(
+            "Fetch error:",
+            error
+        )
+
+        print(
+            "Query:",
+            query
+        )
+
+        return None
+
+    except Exception as error:
+
+        print(
+            "Unexpected fetch error:",
+            error
+        )
+
+        return None
+
+    finally:
+
+        conn.close()
 
 
 # ============================================================
@@ -721,108 +847,140 @@ def create_customer(
     email=None,
     customer_reference=None
 ):
-    """
-    Create a customer and return the new customer ID.
-    """
 
-    timestamp = now()
+    query = """
+    INSERT INTO customers (
+        customer_name,
+        phone,
+        email,
+        customer_reference
+    )
+    VALUES (?, ?, ?, ?)
+    """
 
     return execute_query(
-        """
-        INSERT INTO customers (
-            customer_name,
-            phone,
-            email,
-            customer_reference,
-            created_at,
-            updated_at
-        )
-        VALUES (?, ?, ?, ?, ?, ?)
-        """,
+        query,
         (
             customer_name,
             phone,
             email,
-            customer_reference,
-            timestamp,
-            timestamp
+            customer_reference
         )
     )
 
 
-def get_customer(customer_id):
-    """
-    Get a customer by ID.
-    """
+def get_customer(
+    customer_id
+):
 
-    return execute_query(
+    return fetch_one(
         """
         SELECT *
         FROM customers
         WHERE id = ?
         """,
-        (customer_id,),
-        fetchone=True
+        (customer_id,)
     )
 
 
-def get_customer_by_reference(customer_reference):
-    """
-    Get a customer using customer reference.
-    """
+def get_customer_by_reference(
+    customer_reference
+):
 
-    return execute_query(
+    return fetch_one(
         """
         SELECT *
         FROM customers
         WHERE customer_reference = ?
         """,
-        (customer_reference,),
-        fetchone=True
+        (customer_reference,)
     )
 
 
-def update_customer(customer_id, **fields):
-    """
-    Update customer fields.
-    """
+def get_all_customers():
 
-    allowed_fields = {
-        "customer_name",
-        "phone",
-        "email",
-        "customer_reference"
-    }
+    return fetch_all(
+        """
+        SELECT *
+        FROM customers
+        ORDER BY updated_at DESC, id DESC
+        """
+    )
 
-    updates = []
-    values = []
 
-    for field, value in fields.items():
+def update_customer(
+    customer_id,
+    customer_name=None,
+    phone=None,
+    email=None
+):
 
-        if field not in allowed_fields:
-            continue
+    current = get_customer(
+        customer_id
+    )
 
-        updates.append(f"{field} = ?")
-        values.append(value)
-
-    if not updates:
+    if current is None:
         return False
 
-    updates.append("updated_at = ?")
-    values.append(now())
-
-    values.append(customer_id)
-
-    result = execute_query(
-        f"""
-        UPDATE customers
-        SET {", ".join(updates)}
-        WHERE id = ?
-        """,
-        tuple(values)
+    new_name = (
+        customer_name
+        if customer_name is not None
+        else current["customer_name"]
     )
 
-    return result is not None
+    new_phone = (
+        phone
+        if phone is not None
+        else current["phone"]
+    )
+
+    new_email = (
+        email
+        if email is not None
+        else current["email"]
+    )
+
+    conn = get_connection()
+
+    if conn is None:
+        return False
+
+    try:
+
+        conn.execute(
+            """
+            UPDATE customers
+            SET
+                customer_name = ?,
+                phone = ?,
+                email = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """,
+            (
+                new_name,
+                new_phone,
+                new_email,
+                customer_id
+            )
+        )
+
+        conn.commit()
+
+        return True
+
+    except sqlite3.Error as error:
+
+        print(
+            "Customer update error:",
+            error
+        )
+
+        return False
+
+    finally:
+
+        conn.close()
 
 
 # ============================================================
@@ -841,34 +999,29 @@ def create_job(
     currency="NGN",
     work_reference=None
 ):
+
+    query = """
+    INSERT INTO jobs (
+        customer_id,
+        customer_name,
+        phone,
+        service_type,
+        description,
+        customer_request,
+        status,
+        amount,
+        currency,
+        work_reference,
+        updated_at
+    )
+    VALUES (
+        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, CURRENT_TIMESTAMP
+    )
     """
-    Create a business job.
 
-    Returns:
-        New job ID
-        None if creation fails.
-    """
-
-    timestamp = now()
-
-    result = execute_query(
-        """
-        INSERT INTO jobs (
-            customer_id,
-            customer_name,
-            phone,
-            service_type,
-            description,
-            customer_request,
-            status,
-            amount,
-            currency,
-            work_reference,
-            created_at,
-            updated_at
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
+    job_id = execute_query(
+        query,
         (
             customer_id,
             customer_name,
@@ -879,88 +1032,200 @@ def create_job(
             status,
             amount,
             currency,
-            work_reference,
-            timestamp,
-            timestamp
+            work_reference
         )
     )
 
-    if result is None:
-        print(
-            "Failed to create job.",
-            "customer_id=", customer_id,
-            "customer_name=", customer_name,
-            "service_type=", service_type
+    if job_id is not None:
+
+        add_job_activity(
+            job_id,
+            "job_created",
+            "Customer job created."
         )
 
-    return result
+    return job_id
 
 
-def get_job(job_id):
-    """
-    Get a job by ID.
-    """
+def get_job(
+    job_id
+):
 
-    return execute_query(
+    return fetch_one(
         """
         SELECT *
         FROM jobs
         WHERE id = ?
         """,
-        (job_id,),
-        fetchone=True
+        (job_id,)
     )
 
 
-def get_jobs(limit=100):
-    """
-    Get recent jobs.
-    """
+def get_all_jobs():
 
-    return execute_query(
+    return fetch_all(
         """
         SELECT *
         FROM jobs
-        ORDER BY id DESC
-        LIMIT ?
-        """,
-        (limit,),
-        fetch=True
+        ORDER BY updated_at DESC, id DESC
+        """
     )
 
 
-def get_customer_jobs(customer_id):
-    """
-    Get all jobs belonging to a customer.
-    """
+def get_jobs_by_status(
+    status
+):
 
-    return execute_query(
+    return fetch_all(
+        """
+        SELECT *
+        FROM jobs
+        WHERE status = ?
+        ORDER BY updated_at DESC, id DESC
+        """,
+        (status,)
+    )
+
+
+def get_jobs_by_customer(
+    customer_id
+):
+
+    return fetch_all(
         """
         SELECT *
         FROM jobs
         WHERE customer_id = ?
-        ORDER BY id DESC
+        ORDER BY updated_at DESC, id DESC
         """,
-        (customer_id,),
-        fetch=True
+        (customer_id,)
     )
 
 
-def update_job_status(job_id, status):
-    """
-    Update the status of a job.
-    """
+def update_job_status(
+    job_id,
+    status
+):
 
     result = execute_query(
         """
         UPDATE jobs
-        SET status = ?,
-            updated_at = ?
+        SET
+            status = ?,
+            updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
         """,
         (
             status,
-            now(),
+            job_id
+        )
+    )
+
+    if result is not None:
+
+        add_job_activity(
+            job_id,
+            "status_changed",
+            f"Job status changed to {status}."
+        )
+
+    return result is not None
+
+
+def update_job(
+    job_id,
+    customer_name=None,
+    phone=None,
+    service_type=None,
+    description=None,
+    amount=None,
+    status=None,
+    customer_request=None,
+    currency=None,
+    work_reference=None
+):
+
+    current = get_job(
+        job_id
+    )
+
+    if current is None:
+        return False
+
+    values = {
+
+        "customer_name":
+            customer_name
+            if customer_name is not None
+            else current["customer_name"],
+
+        "phone":
+            phone
+            if phone is not None
+            else current["phone"],
+
+        "service_type":
+            service_type
+            if service_type is not None
+            else current["service_type"],
+
+        "description":
+            description
+            if description is not None
+            else current["description"],
+
+        "amount":
+            amount
+            if amount is not None
+            else current["amount"],
+
+        "status":
+            status
+            if status is not None
+            else current["status"],
+
+        "customer_request":
+            customer_request
+            if customer_request is not None
+            else current["customer_request"],
+
+        "currency":
+            currency
+            if currency is not None
+            else current["currency"],
+
+        "work_reference":
+            work_reference
+            if work_reference is not None
+            else current["work_reference"]
+    }
+
+    result = execute_query(
+        """
+        UPDATE jobs
+        SET
+            customer_name = ?,
+            phone = ?,
+            service_type = ?,
+            description = ?,
+            amount = ?,
+            status = ?,
+            customer_request = ?,
+            currency = ?,
+            work_reference = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        """,
+        (
+            values["customer_name"],
+            values["phone"],
+            values["service_type"],
+            values["description"],
+            values["amount"],
+            values["status"],
+            values["customer_request"],
+            values["currency"],
+            values["work_reference"],
             job_id
         )
     )
@@ -968,59 +1233,897 @@ def update_job_status(job_id, status):
     return result is not None
 
 
-def update_job(job_id, **fields):
+# ============================================================
+# WORK RECORD FUNCTIONS
+# ============================================================
+
+def save_customer_work(
+    job_id,
+    work_title=None,
+    work_type=None,
+    storage_type=None,
+    storage_reference=None,
+    work_status="working",
+    notes=None
+):
     """
-    Update allowed job fields.
+    Save a RECORD of customer work.
+
+    This function does NOT upload or store the actual file.
+
+    It only stores the reference to wherever the actual work
+    is kept.
     """
 
-    allowed_fields = {
-        "customer_id",
-        "customer_name",
-        "phone",
-        "service_type",
-        "description",
-        "customer_request",
-        "status",
-        "amount",
-        "currency",
-        "work_reference"
-    }
+    job = get_job(
+        job_id
+    )
 
-    updates = []
-    values = []
+    if job is None:
+        return None
 
-    for field, value in fields.items():
+    latest = get_latest_work(
+        job_id
+    )
 
-        if field not in allowed_fields:
-            continue
+    version = 1
 
-        updates.append(f"{field} = ?")
-        values.append(value)
+    if latest is not None:
 
-    if not updates:
-        return False
+        version = (
+            int(latest["version"] or 0)
+            + 1
+        )
 
-    updates.append("updated_at = ?")
-    values.append(now())
+    work_id = execute_query(
+        """
+        INSERT INTO work_records (
+            job_id,
+            work_title,
+            work_type,
+            storage_type,
+            storage_reference,
+            version,
+            work_status,
+            notes,
+            updated_at
+        )
+        VALUES (
+            ?, ?, ?, ?, ?,
+            ?, ?, ?, CURRENT_TIMESTAMP
+        )
+        """,
+        (
+            job_id,
+            work_title,
+            work_type,
+            storage_type,
+            storage_reference,
+            version,
+            work_status,
+            notes
+        )
+    )
 
-    values.append(job_id)
+    if work_id is not None:
 
-    result = execute_query(
-        f"""
-        UPDATE jobs
-        SET {", ".join(updates)}
+        execute_query(
+            """
+            UPDATE jobs
+            SET
+                work_reference = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """,
+            (
+                storage_reference,
+                job_id
+            )
+        )
+
+        add_job_activity(
+            job_id,
+            "work_saved",
+            f"Customer work saved. Version {version}."
+        )
+
+    return work_id
+
+
+def get_work(
+    work_id
+):
+    """
+    Get one exact work record by its ID.
+
+    This function is required by the API.
+    """
+
+    return fetch_one(
+        """
+        SELECT *
+        FROM work_records
         WHERE id = ?
         """,
-        tuple(values)
+        (work_id,)
+    )
+
+
+def get_work_for_job(
+    job_id
+):
+
+    return fetch_all(
+        """
+        SELECT *
+        FROM work_records
+        WHERE job_id = ?
+        ORDER BY version DESC, id DESC
+        """,
+        (job_id,)
+    )
+
+
+def get_latest_work(
+    job_id
+):
+
+    return fetch_one(
+        """
+        SELECT *
+        FROM work_records
+        WHERE job_id = ?
+        ORDER BY version DESC, id DESC
+        LIMIT 1
+        """,
+        (job_id,)
+    )
+
+
+# ============================================================
+# DOWNLOAD ACTIVATION
+# ============================================================
+
+def activate_work_download(
+    work_id
+):
+    """
+    Activates customer download for ONE exact saved work record.
+
+    Only this saved version becomes download-authorized.
+
+    The actual file is not copied or regenerated.
+    """
+
+    work = get_work(
+        work_id
+    )
+
+    if work is None:
+        return False
+
+    conn = get_connection()
+
+    if conn is None:
+        return False
+
+    try:
+
+        # ----------------------------------------------------
+        # Deactivate any previously activated version
+        # for this job.
+        # ----------------------------------------------------
+
+        conn.execute(
+            """
+            UPDATE work_records
+            SET
+                download_activated = 0,
+                download_activated_at = NULL,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE job_id = ?
+            """,
+            (
+                work["job_id"],
+            )
+        )
+
+        # ----------------------------------------------------
+        # Activate the exact selected work record.
+        # ----------------------------------------------------
+
+        conn.execute(
+            """
+            UPDATE work_records
+            SET
+                download_activated = 1,
+                download_activated_at = CURRENT_TIMESTAMP,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """,
+            (
+                work_id,
+            )
+        )
+
+        conn.commit()
+
+    except sqlite3.Error as error:
+
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+
+        print(
+            "Download activation error:",
+            error
+        )
+
+        return False
+
+    finally:
+
+        conn.close()
+
+    add_job_activity(
+        work["job_id"],
+        "download_activated",
+        (
+            f"Customer download activated for "
+            f"saved work Version {work['version']}."
+        )
+    )
+
+    return True
+
+
+def get_activated_work(
+    job_id
+):
+    """
+    Returns the exact saved work version that Back Office has
+    activated for customer download.
+
+    It does NOT automatically select the latest version.
+    """
+
+    return fetch_one(
+        """
+        SELECT *
+        FROM work_records
+        WHERE
+            job_id = ?
+            AND download_activated = 1
+        ORDER BY
+            version DESC,
+            id DESC
+        LIMIT 1
+        """,
+        (job_id,)
+    )
+
+
+def deactivate_work_download(
+    job_id
+):
+    """
+    Removes customer-download activation for a job.
+
+    It does not delete the saved document.
+    """
+
+    conn = get_connection()
+
+    if conn is None:
+        return False
+
+    try:
+
+        cursor = conn.execute(
+            """
+            UPDATE work_records
+            SET
+                download_activated = 0,
+                download_activated_at = NULL,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE job_id = ?
+            """,
+            (job_id,)
+        )
+
+        conn.commit()
+
+        changed = cursor.rowcount > 0
+
+    except sqlite3.Error as error:
+
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+
+        print(
+            "Download deactivation error:",
+            error
+        )
+
+        return False
+
+    finally:
+
+        conn.close()
+
+    if changed:
+
+        add_job_activity(
+            job_id,
+            "download_deactivated",
+            "Customer download activation removed."
+        )
+
+    return changed
+
+
+def update_work_status(
+    work_id,
+    work_status
+):
+
+    work = get_work(
+        work_id
+    )
+
+    if work is None:
+        return False
+
+    result = execute_query(
+        """
+        UPDATE work_records
+        SET
+            work_status = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        """,
+        (
+            work_status,
+            work_id
+        )
+    )
+
+    if result is not None:
+
+        add_job_activity(
+            work["job_id"],
+            "work_status_changed",
+            f"Work status changed to {work_status}."
+        )
+
+    return result is not None
+
+
+# ============================================================
+# CUSTOMER FILE REFERENCE FUNCTIONS
+# ============================================================
+
+def save_customer_file(
+    job_id,
+    file_name,
+    file_type=None,
+    storage_type=None,
+    storage_reference=None,
+    file_status="received"
+):
+
+    job = get_job(
+        job_id
+    )
+
+    if job is None:
+        return None
+
+    file_id = execute_query(
+        """
+        INSERT INTO customer_files (
+            job_id,
+            file_name,
+            file_type,
+            storage_type,
+            storage_reference,
+            file_status,
+            updated_at
+        )
+        VALUES (
+            ?, ?, ?, ?, ?, ?,
+            CURRENT_TIMESTAMP
+        )
+        """,
+        (
+            job_id,
+            file_name,
+            file_type,
+            storage_type,
+            storage_reference,
+            file_status
+        )
+    )
+
+    if file_id is not None:
+
+        execute_query(
+            """
+            UPDATE jobs
+            SET updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """,
+            (job_id,)
+        )
+
+        add_job_activity(
+            job_id,
+            "customer_file_received",
+            f"Customer file received: {file_name}"
+        )
+
+    return file_id
+
+
+def get_customer_file(
+    file_id
+):
+
+    return fetch_one(
+        """
+        SELECT *
+        FROM customer_files
+        WHERE id = ?
+        """,
+        (file_id,)
+    )
+
+
+def get_customer_files(
+    job_id
+):
+
+    return fetch_all(
+        """
+        SELECT *
+        FROM customer_files
+        WHERE job_id = ?
+        ORDER BY created_at DESC, id DESC
+        """,
+        (job_id,)
+    )
+
+
+def update_customer_file_status(
+    file_id,
+    file_status
+):
+
+    result = execute_query(
+        """
+        UPDATE customer_files
+        SET
+            file_status = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        """,
+        (
+            file_status,
+            file_id
+        )
     )
 
     return result is not None
 
 
-def delete_job(job_id):
+# ============================================================
+# PAYMENT FUNCTIONS
+# ============================================================
+
+def create_payment(
+    job_id,
+    amount,
+    payment_method=None,
+    payment_status="pending",
+    currency="NGN",
+    payment_reference=None
+):
+
+    job = get_job(
+        job_id
+    )
+
+    if job is None:
+        return None
+
+    payment_id = execute_query(
+        """
+        INSERT INTO payments (
+            job_id,
+            amount,
+            currency,
+            payment_method,
+            payment_status,
+            payment_reference,
+            updated_at
+        )
+        VALUES (
+            ?, ?, ?, ?, ?, ?,
+            CURRENT_TIMESTAMP
+        )
+        """,
+        (
+            job_id,
+            amount,
+            currency,
+            payment_method,
+            payment_status,
+            payment_reference
+        )
+    )
+
+    if payment_id is not None:
+
+        add_job_activity(
+            job_id,
+            "payment_created",
+            (
+                f"Payment record created for "
+                f"{amount} {currency}."
+            )
+        )
+
+    return payment_id
+
+
+def get_payment(
+    payment_id
+):
+
+    return fetch_one(
+        """
+        SELECT *
+        FROM payments
+        WHERE id = ?
+        """,
+        (payment_id,)
+    )
+
+
+def get_payments_for_job(
+    job_id
+):
+
+    return fetch_all(
+        """
+        SELECT *
+        FROM payments
+        WHERE job_id = ?
+        ORDER BY payment_date DESC, id DESC
+        """,
+        (job_id,)
+    )
+
+
+def get_latest_payment(
+    job_id
+):
+
+    return fetch_one(
+        """
+        SELECT *
+        FROM payments
+        WHERE job_id = ?
+        ORDER BY payment_date DESC, id DESC
+        LIMIT 1
+        """,
+        (job_id,)
+    )
+
+
+def update_payment_status(
+    payment_id,
+    payment_status
+):
+
+    payment = get_payment(
+        payment_id
+    )
+
+    if payment is None:
+        return False
+
+    result = execute_query(
+        """
+        UPDATE payments
+        SET
+            payment_status = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        """,
+        (
+            payment_status,
+            payment_id
+        )
+    )
+
+    if result is not None:
+
+        add_job_activity(
+            payment["job_id"],
+            "payment_status_changed",
+            (
+                f"Payment status changed to "
+                f"{payment_status}."
+            )
+        )
+
+    return result is not None
+
+
+# ============================================================
+# JOB ACTIVITY
+# ============================================================
+
+def add_job_activity(
+    job_id,
+    activity_type,
+    description=None
+):
+
+    job = get_job(
+        job_id
+    )
+
+    if job is None:
+        return None
+
+    return execute_query(
+        """
+        INSERT INTO job_activity (
+            job_id,
+            activity_type,
+            description
+        )
+        VALUES (?, ?, ?)
+        """,
+        (
+            job_id,
+            activity_type,
+            description
+        )
+    )
+
+
+def get_job_activity(
+    job_id
+):
+
+    return fetch_all(
+        """
+        SELECT *
+        FROM job_activity
+        WHERE job_id = ?
+        ORDER BY created_at DESC, id DESC
+        """,
+        (job_id,)
+    )
+
+
+# ============================================================
+# BACK OFFICE
+# ============================================================
+
+def get_back_office_jobs():
     """
-    Delete a job and related records through cascade rules.
+    Returns each job with:
+
+    - customer information
+    - latest work
+    - latest customer file
+    - latest payment
     """
+
+    query = """
+    SELECT
+
+        jobs.*,
+
+        customers.email AS customer_email,
+
+        customers.customer_reference,
+
+        work_records.id AS work_id,
+
+        work_records.work_title,
+
+        work_records.work_type,
+
+        work_records.storage_type,
+
+        work_records.storage_reference,
+
+        work_records.version AS work_version,
+
+        work_records.work_status,
+
+        work_records.download_activated,
+
+        work_records.download_activated_at,
+
+        customer_files.id AS customer_file_id,
+
+        customer_files.file_name,
+
+        customer_files.file_type,
+
+        customer_files.storage_type
+            AS file_storage_type,
+
+        customer_files.storage_reference
+            AS file_storage_reference,
+
+        customer_files.file_status,
+
+        payments.id AS payment_id,
+
+        payments.amount
+            AS payment_amount,
+
+        payments.currency
+            AS payment_currency,
+
+        payments.payment_method,
+
+        payments.payment_status,
+
+        payments.payment_reference,
+
+        payments.payment_date
+
+    FROM jobs
+
+    LEFT JOIN customers
+        ON customers.id = jobs.customer_id
+
+    LEFT JOIN work_records
+        ON work_records.id = (
+
+            SELECT w.id
+
+            FROM work_records w
+
+            WHERE w.job_id = jobs.id
+
+            ORDER BY
+                w.version DESC,
+                w.id DESC
+
+            LIMIT 1
+        )
+
+    LEFT JOIN customer_files
+        ON customer_files.id = (
+
+            SELECT f.id
+
+            FROM customer_files f
+
+            WHERE f.job_id = jobs.id
+
+            ORDER BY
+                f.created_at DESC,
+                f.id DESC
+
+            LIMIT 1
+        )
+
+    LEFT JOIN payments
+        ON payments.id = (
+
+            SELECT p.id
+
+            FROM payments p
+
+            WHERE p.job_id = jobs.id
+
+            ORDER BY
+                p.payment_date DESC,
+                p.id DESC
+
+            LIMIT 1
+        )
+
+    ORDER BY
+        jobs.updated_at DESC,
+        jobs.id DESC
+    """
+
+    return fetch_all(
+        query
+    )
+
+
+# ============================================================
+# JOB SUMMARY
+# ============================================================
+
+def get_job_summary(
+    job_id
+):
+
+    job = get_job(
+        job_id
+    )
+
+    if job is None:
+        return None
+
+    return {
+
+        "job":
+            job,
+
+        "customer":
+            get_customer(
+                job["customer_id"]
+            )
+            if job["customer_id"]
+            else None,
+
+        "work":
+            get_work_for_job(
+                job_id
+            ),
+
+        "activated_work":
+            get_activated_work(
+                job_id
+            ),
+
+        "customer_files":
+            get_customer_files(
+                job_id
+            ),
+
+        "payments":
+            get_payments_for_job(
+                job_id
+            ),
+
+        "activity":
+            get_job_activity(
+                job_id
+            )
+    }
+
+
+# ============================================================
+# DELETE JOB
+# ============================================================
+
+def delete_job(
+    job_id
+):
+    """
+    Deletes the database records associated with a job.
+
+    IMPORTANT:
+    This does NOT delete any actual external customer files.
+
+    Actual file deletion should be an explicit Back Office
+    operation after a proper storage system is in place.
+    """
+
+    job = get_job(
+        job_id
+    )
+
+    if job is None:
+        return False
 
     result = execute_query(
         """
@@ -1034,818 +2137,194 @@ def delete_job(job_id):
 
 
 # ============================================================
-# WORK RECORD FUNCTIONS
-# ============================================================
-
-def create_work_record(
-    job_id,
-    work_title=None,
-    work_type=None,
-    storage_type=None,
-    storage_reference=None,
-    version=1,
-    work_status="draft",
-    notes=None
-):
-    """
-    Create a work record.
-    """
-
-    timestamp = now()
-
-    return execute_query(
-        """
-        INSERT INTO work_records (
-            job_id,
-            work_title,
-            work_type,
-            storage_type,
-            storage_reference,
-            version,
-            work_status,
-            notes,
-            created_at,
-            updated_at,
-            download_activated,
-            download_activated_at
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NULL)
-        """,
-        (
-            job_id,
-            work_title,
-            work_type,
-            storage_type,
-            storage_reference,
-            version,
-            work_status,
-            notes,
-            timestamp,
-            timestamp
-        )
-    )
-
-
-def get_work_record(work_id):
-    """
-    Get a work record by ID.
-    """
-
-    return execute_query(
-        """
-        SELECT *
-        FROM work_records
-        WHERE id = ?
-        """,
-        (work_id,),
-        fetchone=True
-    )
-
-
-def get_job_work_records(job_id):
-    """
-    Get all work records for a job.
-    """
-
-    return execute_query(
-        """
-        SELECT *
-        FROM work_records
-        WHERE job_id = ?
-        ORDER BY version ASC, id ASC
-        """,
-        (job_id,),
-        fetch=True
-    )
-
-
-def get_latest_work_record(job_id):
-    """
-    Get the latest work record for a job.
-    """
-
-    return execute_query(
-        """
-        SELECT *
-        FROM work_records
-        WHERE job_id = ?
-        ORDER BY version DESC, id DESC
-        LIMIT 1
-        """,
-        (job_id,),
-        fetchone=True
-    )
-
-
-def update_work_status(work_id, work_status):
-    """
-    Update work status.
-    """
-
-    result = execute_query(
-        """
-        UPDATE work_records
-        SET work_status = ?,
-            updated_at = ?
-        WHERE id = ?
-        """,
-        (
-            work_status,
-            now(),
-            work_id
-        )
-    )
-
-    return result is not None
-
-
-def update_work_record(work_id, **fields):
-    """
-    Update allowed work record fields.
-    """
-
-    allowed_fields = {
-        "work_title",
-        "work_type",
-        "storage_type",
-        "storage_reference",
-        "version",
-        "work_status",
-        "notes"
-    }
-
-    updates = []
-    values = []
-
-    for field, value in fields.items():
-
-        if field not in allowed_fields:
-            continue
-
-        updates.append(f"{field} = ?")
-        values.append(value)
-
-    if not updates:
-        return False
-
-    updates.append("updated_at = ?")
-    values.append(now())
-
-    values.append(work_id)
-
-    result = execute_query(
-        f"""
-        UPDATE work_records
-        SET {", ".join(updates)}
-        WHERE id = ?
-        """,
-        tuple(values)
-    )
-
-    return result is not None
-
-
-def activate_download(work_id):
-    """
-    Activate customer download for a work record.
-    """
-
-    timestamp = now()
-
-    result = execute_query(
-        """
-        UPDATE work_records
-        SET download_activated = 1,
-            download_activated_at = ?,
-            updated_at = ?
-        WHERE id = ?
-        """,
-        (
-            timestamp,
-            timestamp,
-            work_id
-        )
-    )
-
-    return result is not None
-
-
-# ============================================================
-# CUSTOMER FILE FUNCTIONS
-# ============================================================
-
-def add_customer_file(
-    job_id,
-    file_name,
-    file_type=None,
-    storage_type=None,
-    storage_reference=None,
-    file_status="uploaded"
-):
-    """
-    Add a customer file.
-    """
-
-    timestamp = now()
-
-    return execute_query(
-        """
-        INSERT INTO customer_files (
-            job_id,
-            file_name,
-            file_type,
-            storage_type,
-            storage_reference,
-            file_status,
-            created_at,
-            updated_at
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            job_id,
-            file_name,
-            file_type,
-            storage_type,
-            storage_reference,
-            file_status,
-            timestamp,
-            timestamp
-        )
-    )
-
-
-def get_customer_file(file_id):
-    """
-    Get a customer file.
-    """
-
-    return execute_query(
-        """
-        SELECT *
-        FROM customer_files
-        WHERE id = ?
-        """,
-        (file_id,),
-        fetchone=True
-    )
-
-
-def get_job_files(job_id):
-    """
-    Get all files belonging to a job.
-    """
-
-    return execute_query(
-        """
-        SELECT *
-        FROM customer_files
-        WHERE job_id = ?
-        ORDER BY id ASC
-        """,
-        (job_id,),
-        fetch=True
-    )
-
-
-def update_customer_file(file_id, **fields):
-    """
-    Update allowed customer-file fields.
-    """
-
-    allowed_fields = {
-        "file_name",
-        "file_type",
-        "storage_type",
-        "storage_reference",
-        "file_status"
-    }
-
-    updates = []
-    values = []
-
-    for field, value in fields.items():
-
-        if field not in allowed_fields:
-            continue
-
-        updates.append(f"{field} = ?")
-        values.append(value)
-
-    if not updates:
-        return False
-
-    updates.append("updated_at = ?")
-    values.append(now())
-
-    values.append(file_id)
-
-    result = execute_query(
-        f"""
-        UPDATE customer_files
-        SET {", ".join(updates)}
-        WHERE id = ?
-        """,
-        tuple(values)
-    )
-
-    return result is not None
-
-
-# ============================================================
-# PAYMENT FUNCTIONS
-# ============================================================
-
-def create_payment(
-    job_id,
-    amount,
-    currency="NGN",
-    payment_method=None,
-    payment_status="pending",
-    payment_reference=None,
-    payment_date=None
-):
-    """
-    Create a payment record.
-    """
-
-    timestamp = now()
-
-    if payment_date is None:
-        payment_date = timestamp
-
-    return execute_query(
-        """
-        INSERT INTO payments (
-            job_id,
-            amount,
-            currency,
-            payment_method,
-            payment_status,
-            payment_reference,
-            payment_date,
-            updated_at
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            job_id,
-            amount,
-            currency,
-            payment_method,
-            payment_status,
-            payment_reference,
-            payment_date,
-            timestamp
-        )
-    )
-
-
-def get_payment(payment_id):
-    """
-    Get a payment by ID.
-    """
-
-    return execute_query(
-        """
-        SELECT *
-        FROM payments
-        WHERE id = ?
-        """,
-        (payment_id,),
-        fetchone=True
-    )
-
-
-def get_job_payments(job_id):
-    """
-    Get payments belonging to a job.
-    """
-
-    return execute_query(
-        """
-        SELECT *
-        FROM payments
-        WHERE job_id = ?
-        ORDER BY id DESC
-        """,
-        (job_id,),
-        fetch=True
-    )
-
-
-def get_latest_payment(job_id):
-    """
-    Get the latest payment for a job.
-    """
-
-    return execute_query(
-        """
-        SELECT *
-        FROM payments
-        WHERE job_id = ?
-        ORDER BY id DESC
-        LIMIT 1
-        """,
-        (job_id,),
-        fetchone=True
-    )
-
-
-def update_payment_status(
-    payment_id,
-    payment_status,
-    payment_reference=None,
-    payment_method=None
-):
-    """
-    Update payment status and related information.
-    """
-
-    updates = [
-        "payment_status = ?",
-        "updated_at = ?"
-    ]
-
-    values = [
-        payment_status,
-        now()
-    ]
-
-    if payment_reference is not None:
-        updates.append("payment_reference = ?")
-        values.append(payment_reference)
-
-    if payment_method is not None:
-        updates.append("payment_method = ?")
-        values.append(payment_method)
-
-    values.append(payment_id)
-
-    result = execute_query(
-        f"""
-        UPDATE payments
-        SET {", ".join(updates)}
-        WHERE id = ?
-        """,
-        tuple(values)
-    )
-
-    return result is not None
-
-
-# ============================================================
-# JOB ACTIVITY
-# ============================================================
-
-def add_job_activity(
-    job_id,
-    activity_type,
-    description
-):
-    """
-    Add an activity entry for a job.
-    """
-
-    # Verify that the job exists before inserting activity.
-    job = get_job(job_id)
-
-    if job is None:
-        print(
-            "Cannot add job activity: "
-            f"job {job_id} does not exist."
-        )
-        return None
-
-    return execute_query(
-        """
-        INSERT INTO job_activity (
-            job_id,
-            activity_type,
-            description,
-            created_at
-        )
-        VALUES (?, ?, ?, ?)
-        """,
-        (
-            job_id,
-            activity_type,
-            description,
-            now()
-        )
-    )
-
-
-def get_job_activity(job_id):
-    """
-    Get activity history for a job.
-    """
-
-    return execute_query(
-        """
-        SELECT *
-        FROM job_activity
-        WHERE job_id = ?
-        ORDER BY id ASC
-        """,
-        (job_id,),
-        fetch=True
-    )
-
-
-# ============================================================
-# SAVE CUSTOMER WORK
-# ============================================================
-
-def save_customer_work(
-    job_id,
-    work_title=None,
-    work_type=None,
-    storage_type=None,
-    storage_reference=None,
-    version=1,
-    work_status="completed",
-    notes=None
-):
-    """
-    Save a customer's completed work and record the activity.
-    """
-
-    work_id = create_work_record(
-        job_id=job_id,
-        work_title=work_title,
-        work_type=work_type,
-        storage_type=storage_type,
-        storage_reference=storage_reference,
-        version=version,
-        work_status=work_status,
-        notes=notes
-    )
-
-    if work_id is None:
-        return None
-
-    add_job_activity(
-        job_id,
-        "work_saved",
-        f"Customer work saved. Work record ID: {work_id}"
-    )
-
-    return work_id
-
-
-# ============================================================
-# BACK-OFFICE JOBS
-# ============================================================
-
-def get_back_office_jobs(
-    status=None,
-    limit=100
-):
-    """
-    Return jobs with their latest work, file and payment information.
-
-    Used by the back-office side of the system.
-    """
-
-    if status:
-
-        return execute_query(
-            """
-            SELECT
-                j.*,
-
-                wr.id AS work_id,
-                wr.work_title,
-                wr.work_type,
-                wr.storage_type,
-                wr.storage_reference,
-                wr.version AS work_version,
-                wr.work_status,
-                wr.download_activated,
-                wr.download_activated_at,
-
-                cf.id AS file_id,
-                cf.file_name,
-                cf.file_type,
-                cf.storage_type AS file_storage_type,
-                cf.storage_reference AS file_storage_reference,
-                cf.file_status,
-
-                p.id AS payment_id,
-                p.amount AS payment_amount,
-                p.currency AS payment_currency,
-                p.payment_method,
-                p.payment_status,
-                p.payment_reference,
-                p.payment_date
-
-            FROM jobs j
-
-            LEFT JOIN work_records wr
-                ON wr.id = (
-                    SELECT wr2.id
-                    FROM work_records wr2
-                    WHERE wr2.job_id = j.id
-                    ORDER BY wr2.version DESC, wr2.id DESC
-                    LIMIT 1
-                )
-
-            LEFT JOIN customer_files cf
-                ON cf.id = (
-                    SELECT cf2.id
-                    FROM customer_files cf2
-                    WHERE cf2.job_id = j.id
-                    ORDER BY cf2.id DESC
-                    LIMIT 1
-                )
-
-            LEFT JOIN payments p
-                ON p.id = (
-                    SELECT p2.id
-                    FROM payments p2
-                    WHERE p2.job_id = j.id
-                    ORDER BY p2.id DESC
-                    LIMIT 1
-                )
-
-            WHERE j.status = ?
-
-            ORDER BY j.updated_at DESC, j.id DESC
-
-            LIMIT ?
-            """,
-            (
-                status,
-                limit
-            ),
-            fetch=True
-        )
-
-
-    return execute_query(
-        """
-        SELECT
-            j.*,
-
-            wr.id AS work_id,
-            wr.work_title,
-            wr.work_type,
-            wr.storage_type,
-            wr.storage_reference,
-            wr.version AS work_version,
-            wr.work_status,
-            wr.download_activated,
-            wr.download_activated_at,
-
-            cf.id AS file_id,
-            cf.file_name,
-            cf.file_type,
-            cf.storage_type AS file_storage_type,
-            cf.storage_reference AS file_storage_reference,
-            cf.file_status,
-
-            p.id AS payment_id,
-            p.amount AS payment_amount,
-            p.currency AS payment_currency,
-            p.payment_method,
-            p.payment_status,
-            p.payment_reference,
-            p.payment_date
-
-        FROM jobs j
-
-        LEFT JOIN work_records wr
-            ON wr.id = (
-                SELECT wr2.id
-                FROM work_records wr2
-                WHERE wr2.job_id = j.id
-                ORDER BY wr2.version DESC, wr2.id DESC
-                LIMIT 1
-            )
-
-        LEFT JOIN customer_files cf
-            ON cf.id = (
-                SELECT cf2.id
-                FROM customer_files cf2
-                WHERE cf2.job_id = j.id
-                ORDER BY cf2.id DESC
-                LIMIT 1
-            )
-
-        LEFT JOIN payments p
-            ON p.id = (
-                SELECT p2.id
-                FROM payments p2
-                WHERE p2.job_id = j.id
-                ORDER BY p2.id DESC
-                LIMIT 1
-            )
-
-        ORDER BY j.updated_at DESC, j.id DESC
-
-        LIMIT ?
-        """,
-        (limit,),
-        fetch=True
-    )
-
-
-# ============================================================
 # DATABASE STATISTICS
 # ============================================================
 
-def get_database_stats():
-    """
-    Return basic database statistics.
-    """
+def get_database_statistics():
 
-    stats = {}
+    jobs = fetch_one(
+        """
+        SELECT COUNT(*) AS total
+        FROM jobs
+        """
+    )
 
-    tables = [
-        "customers",
-        "jobs",
-        "work_records",
-        "customer_files",
-        "payments",
-        "job_activity"
-    ]
+    customers = fetch_one(
+        """
+        SELECT COUNT(*) AS total
+        FROM customers
+        """
+    )
 
-    conn = get_connection()
+    work = fetch_one(
+        """
+        SELECT COUNT(*) AS total
+        FROM work_records
+        """
+    )
 
-    if conn is None:
-        return stats
+    files = fetch_one(
+        """
+        SELECT COUNT(*) AS total
+        FROM customer_files
+        """
+    )
 
-    try:
+    payments = fetch_one(
+        """
+        SELECT COUNT(*) AS total
+        FROM payments
+        """
+    )
 
-        for table in tables:
+    return {
 
-            row = conn.execute(
-                f"SELECT COUNT(*) AS count FROM {table}"
-            ).fetchone()
+        "customers":
+            int(customers["total"])
+            if customers
+            else 0,
 
-            stats[table] = row["count"] if row else 0
+        "jobs":
+            int(jobs["total"])
+            if jobs
+            else 0,
 
-        return stats
+        "work_records":
+            int(work["total"])
+            if work
+            else 0,
 
-    except sqlite3.Error as error:
+        "customer_files":
+            int(files["total"])
+            if files
+            else 0,
 
-        print("Database statistics error:", error)
-        return stats
-
-    finally:
-
-        try:
-            conn.close()
-        except Exception:
-            pass
+        "payments":
+            int(payments["total"])
+            if payments
+            else 0
+    }
 
 
 # ============================================================
-# AUTOMATIC INITIALIZATION
+# AUTOMATIC DATABASE INITIALIZATION
 # ============================================================
 #
 # IMPORTANT:
 #
-# Do NOT put database initialization only inside:
+# This MUST be after migrate_existing_database() and all
+# function definitions required during initialization.
 #
-#     if __name__ == "__main__":
-#
-# because ada_api.py imports this module.
-#
-# The initialization below runs automatically when the module
-# is imported by the API.
+# It means importing database.py from the API automatically
+# prepares the SQLite database.
 # ============================================================
 
 DATABASE_READY = initialize_database()
 
 
 # ============================================================
-# DIRECT DATABASE TEST
+# DATABASE TEST
 # ============================================================
 
 if __name__ == "__main__":
 
     print()
-    print("=" * 60)
-    print("Naija Pocket Business Center - Database Test")
-    print("=" * 60)
+
+    print("=" * 70)
+
+    print(
+        "NAIJA POCKET BUSINESS CENTER"
+    )
+
+    print(
+        "DATABASE TEST"
+    )
+
+    print("=" * 70)
 
     print()
-    print("Database path:")
-    print(DATABASE_PATH)
+
+    print(
+        "Database:",
+        DATABASE_NAME
+    )
 
     print()
-    print("Database ready:")
-    print(DATABASE_READY)
+
+    print(
+        "Database ready:",
+        DATABASE_READY
+    )
 
     print()
-    print("Database statistics:")
 
-    stats = get_database_stats()
+    if DATABASE_READY:
 
-    for table, count in stats.items():
-        print(f"  {table}: {count}")
+        stats = get_database_statistics()
+
+        print(
+            "Customers:",
+            stats["customers"]
+        )
+
+        print(
+            "Jobs:",
+            stats["jobs"]
+        )
+
+        print(
+            "Work records:",
+            stats["work_records"]
+        )
+
+        print(
+            "Customer file records:",
+            stats["customer_files"]
+        )
+
+        print(
+            "Payments:",
+            stats["payments"]
+        )
+
+        print()
+
+        print(
+            "Database:",
+            "READY"
+        )
+
+        print(
+            "Customer records:",
+            "READY"
+        )
+
+        print(
+            "Job records:",
+            "READY"
+        )
+
+        print(
+            "Work records:",
+            "READY"
+        )
+
+        print(
+            "Payment records:",
+            "READY"
+        )
+
+        print(
+            "Back Office data:",
+            "READY"
+        )
+
+    else:
+
+        print(
+            "Database initialization failed."
+        )
 
     print()
-    print("=" * 60)
+
+    print("=" * 70)
