@@ -187,82 +187,233 @@ def safe_int(value: Any, default: int | None = None) -> int | None:
 
 
 # ============================================================
+# TARGETED PERSISTENCE HELPER
+# ============================================================
+
+def persisted_record_to_dict(
+    record: Any,
+) -> dict[str, Any]:
+    """
+    Convert a database record such as sqlite3.Row into a normal
+    dictionary.
+
+    This is used only by the Review -> Approve persistence and
+    recovery flow so persisted records can be read safely without
+    changing database.py.
+    """
+
+    if record is None:
+        return {}
+
+    if isinstance(record, dict):
+        return dict(record)
+
+    try:
+        return dict(record)
+    except Exception:
+        pass
+
+    try:
+        keys = record.keys()
+        return {
+            key: record[key]
+            for key in keys
+        }
+    except Exception:
+        return {}
+
+
+# ============================================================
 # DOCUMENT STORAGE
 # ============================================================
 
-def save_document_to_storage(job_id_str: str) -> None:
+def save_document_to_storage(
+    job_id_str: str,
+) -> dict[str, Any]:
     """
-    Save the final reviewed document to local storage and create
-    a work_records row.
+    Persist the final reviewed document before the review is
+    considered complete.
 
-    This is deliberately called only after review completes.
+    This uses the existing local document storage and the existing
+    save_customer_work() database workflow. No second storage
+    system is created.
 
-    The current in-memory job remains the source for the exact
-    final reviewed text. The database work record becomes the
-    persistent storage reference.
+    The returned metadata is also recorded in the runtime job so
+    approval can continue using the exact persisted version.
     """
 
     job_id_str = str(job_id_str).strip()
 
     if not job_id_str:
-        return
+        raise ValueError(
+            "Cannot save a document without a job ID."
+        )
 
     job = _jobs.get(job_id_str)
 
     if not job:
-        print(f"[STORAGE] job={job_id_str} not found")
-        return
+        raise RuntimeError(
+            f"Job {job_id_str} is not available for persistence."
+        )
 
     job_id = safe_int(job_id_str)
 
     if job_id is None:
-        print(f"[STORAGE] invalid job id={job_id_str}")
-        return
+        raise ValueError(
+            f"Invalid job ID: {job_id_str}"
+        )
 
-    document_text = clean_text(job.get("document_text", ""))
+    document_text = clean_text(
+        job.get("document_text", "")
+    )
 
     if not document_text:
-        print(f"[STORAGE] job={job_id_str} has no document text")
-        return
+        raise ValueError(
+            f"Job {job_id_str} has no document text to save."
+        )
 
-    version = safe_int(job.get("current_version"), 1) or 1
+    version = (
+        safe_int(
+            job.get("current_version"),
+            1,
+        )
+        or 1
+    )
 
-    latest = get_latest_work(job_id)
+    try:
+        latest_record = get_latest_work(
+            job_id
+        )
+    except Exception as error:
+        raise RuntimeError(
+            "Could not read the existing saved work record "
+            f"for job {job_id_str}: {error}"
+        ) from error
+
+    latest = persisted_record_to_dict(
+        latest_record
+    )
+
+    # --------------------------------------------------------
+    # If this exact version has already been persisted and its
+    # storage reference still exists, reuse it.
+    # --------------------------------------------------------
 
     if latest:
-        latest_version = safe_int(latest.get("version"), 0) or 0
+
+        latest_version = (
+            safe_int(
+                latest.get("version"),
+                0,
+            )
+            or 0
+        )
+
         latest_reference = str(
-            latest.get("storage_reference") or ""
+            latest.get(
+                "storage_reference"
+            )
+            or ""
         ).strip()
 
         if (
             latest_version >= version
             and latest_reference
         ):
-            existing_path = Path(latest_reference)
 
-            if existing_path.exists():
-                print(
-                    f"[STORAGE] job={job_id_str} "
-                    f"version={version} already saved"
+            existing_path = Path(
+                latest_reference
+            )
+
+            if existing_path.exists() and existing_path.is_file():
+
+                saved_version = latest_version
+                storage_reference = str(
+                    existing_path
                 )
-                return
+                work_id = safe_int(
+                    latest.get("id"),
+                    None,
+                )
 
-    job_folder = DOCUMENT_ROOT / job_id_str
-    job_folder.mkdir(parents=True, exist_ok=True)
+                version_id = (
+                    f"{job_id_str}:{saved_version}"
+                )
 
-    filepath = job_folder / f"v{version}.txt"
+                job["current_version"] = (
+                    saved_version
+                )
+                job["version_id"] = (
+                    version_id
+                )
+                job["saved_version"] = (
+                    saved_version
+                )
+                job["storage_reference"] = (
+                    storage_reference
+                )
+                job["work_id"] = work_id
+
+                print(
+                    "[STORAGE] Existing saved version reused "
+                    f"job={job_id_str} "
+                    f"version={saved_version} "
+                    f"work_id={work_id} "
+                    f"path={storage_reference}"
+                )
+
+                return {
+                    "success": True,
+                    "job_id": job_id_str,
+                    "version": saved_version,
+                    "version_id": version_id,
+                    "storage_reference": storage_reference,
+                    "work_id": work_id,
+                }
+
+    # --------------------------------------------------------
+    # Create/use the existing document storage directory.
+    # --------------------------------------------------------
+
+    job_folder = (
+        DOCUMENT_ROOT
+        / job_id_str
+    )
+
+    job_folder.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    filepath = (
+        job_folder
+        / f"v{version}.txt"
+    )
 
     filepath.write_text(
         document_text,
         encoding="utf-8",
     )
 
-    save_customer_work(
+    if not filepath.exists() or not filepath.is_file():
+        raise RuntimeError(
+            "The reviewed document was not successfully written "
+            f"to storage: {filepath}"
+        )
+
+    # --------------------------------------------------------
+    # Existing database persistence mechanism.
+    # Do NOT create another storage system.
+    # --------------------------------------------------------
+
+    work_id = save_customer_work(
         job_id=job_id,
-        work_title=job.get(
-            "service",
-            "Business Document",
+        work_title=(
+            job.get(
+                "service",
+                "Business Document",
+            )
+            or "Business Document"
         ),
         work_type="document",
         storage_type="local_file",
@@ -273,12 +424,119 @@ def save_document_to_storage(job_id_str: str) -> None:
         ),
     )
 
-    print(
-        f"[STORAGE] saved job={job_id_str} "
-        f"version={version} "
-        f"chars={len(document_text)} "
-        f"path={filepath}"
+    if not work_id:
+        raise RuntimeError(
+            "The reviewed document was written to storage, "
+            "but the persistent work record could not be created."
+        )
+
+    # --------------------------------------------------------
+    # Read the actual persisted work record back.
+    #
+    # save_customer_work() determines the database version, so
+    # the persisted record is the authoritative version.
+    # --------------------------------------------------------
+
+    try:
+        persisted_record = get_latest_work(
+            job_id
+        )
+    except Exception as error:
+        raise RuntimeError(
+            "The document was saved, but the persisted work "
+            f"record could not be verified: {error}"
+        ) from error
+
+    persisted = persisted_record_to_dict(
+        persisted_record
     )
+
+    if not persisted:
+        raise RuntimeError(
+            "The document was saved, but no persisted work "
+            "record could be verified."
+        )
+
+    saved_version = (
+        safe_int(
+            persisted.get("version"),
+            version,
+        )
+        or version
+    )
+
+    storage_reference = str(
+        persisted.get(
+            "storage_reference"
+        )
+        or filepath
+    ).strip()
+
+    persisted_work_id = safe_int(
+        persisted.get("id"),
+        work_id,
+    )
+
+    if not storage_reference:
+        raise RuntimeError(
+            "The persisted work record has no storage reference."
+        )
+
+    persisted_path = Path(
+        storage_reference
+    )
+
+    if not persisted_path.exists() or not persisted_path.is_file():
+        raise RuntimeError(
+            "The persisted storage reference does not point to "
+            f"a valid document: {storage_reference}"
+        )
+
+    version_id = (
+        f"{job_id_str}:{saved_version}"
+    )
+
+    # --------------------------------------------------------
+    # Record the authoritative persistent state in _jobs.
+    # --------------------------------------------------------
+
+    job["current_version"] = (
+        saved_version
+    )
+
+    job["version_id"] = (
+        version_id
+    )
+
+    job["saved_version"] = (
+        saved_version
+    )
+
+    job["storage_reference"] = (
+        storage_reference
+    )
+
+    job["work_id"] = (
+        persisted_work_id
+    )
+
+    print(
+        "[STORAGE] saved and verified "
+        f"job={job_id_str} "
+        f"version={saved_version} "
+        f"work_id={persisted_work_id} "
+        f"chars={len(document_text)} "
+        f"path={storage_reference}"
+    )
+
+    return {
+        "success": True,
+        "job_id": job_id_str,
+        "version": saved_version,
+        "version_id": version_id,
+        "storage_reference": storage_reference,
+        "work_id": persisted_work_id,
+    }
 
 
 # ============================================================
@@ -295,8 +553,10 @@ def recover_saved_job_for_approval(
 
     Approval is tied to job_id + version_id.
 
-    The saved work record is used only as persistent recovery
-    data. The service name is never used to identify a job.
+    The saved work record is used as persistent recovery data.
+    The recovered document, review pages, current version,
+    version ID, storage reference and work ID are restored into
+    _jobs before the normal approval flow continues.
     """
 
     numeric_job_id = safe_int(
@@ -311,29 +571,43 @@ def recover_saved_job_for_approval(
         )
         return None
 
+    # --------------------------------------------------------
+    # Recover the persisted job record.
+    # --------------------------------------------------------
+
     try:
-        persisted_job = get_job(
+        persisted_job_record = get_job(
             numeric_job_id
         )
-
     except Exception as error:
         print(
             "[APPROVAL] Could not read persisted job "
             f"job_id={numeric_job_id}: {error}"
         )
-        persisted_job = None
+        persisted_job_record = None
+
+    persisted_job = persisted_record_to_dict(
+        persisted_job_record
+    )
+
+    # --------------------------------------------------------
+    # Recover the persisted work record.
+    # --------------------------------------------------------
 
     try:
-        work = get_latest_work(
+        work_record = get_latest_work(
             numeric_job_id
         )
-
     except Exception as error:
         print(
             "[APPROVAL] Could not read saved work "
             f"job_id={numeric_job_id}: {error}"
         )
-        work = None
+        work_record = None
+
+    work = persisted_record_to_dict(
+        work_record
+    )
 
     if not work:
         print(
@@ -354,6 +628,11 @@ def recover_saved_job_for_approval(
         f"{supplied_job_id}:{saved_version}"
     )
 
+    # --------------------------------------------------------
+    # The approval request must identify the exact persisted
+    # version.
+    # --------------------------------------------------------
+
     if supplied_version_id:
         if supplied_version_id != expected_version_id:
             print(
@@ -364,7 +643,9 @@ def recover_saved_job_for_approval(
             return None
 
     storage_reference = str(
-        work.get("storage_reference")
+        work.get(
+            "storage_reference"
+        )
         or ""
     ).strip()
 
@@ -375,13 +656,23 @@ def recover_saved_job_for_approval(
         )
         return None
 
+    # --------------------------------------------------------
+    # Resolve and secure the persisted document path.
+    # --------------------------------------------------------
+
     filepath = Path(
         storage_reference
     )
 
     try:
-        document_root = DOCUMENT_ROOT.resolve()
-        resolved_filepath = filepath.resolve()
+
+        document_root = (
+            DOCUMENT_ROOT.resolve()
+        )
+
+        resolved_filepath = (
+            filepath.resolve()
+        )
 
         if not resolved_filepath.is_relative_to(
             document_root
@@ -408,13 +699,16 @@ def recover_saved_job_for_approval(
         )
         return None
 
+    # --------------------------------------------------------
+    # Restore the exact saved document.
+    # --------------------------------------------------------
+
     try:
         document_text = clean_text(
             filepath.read_text(
                 encoding="utf-8"
             )
         )
-
     except Exception as error:
         print(
             "[APPROVAL] Could not read saved document: "
@@ -429,6 +723,10 @@ def recover_saved_job_for_approval(
         )
         return None
 
+    # --------------------------------------------------------
+    # Rebuild the review pages from the exact saved document.
+    # --------------------------------------------------------
+
     pages = text_to_review_pages(
         document_text
     )
@@ -440,25 +738,39 @@ def recover_saved_job_for_approval(
         )
         return None
 
+    # --------------------------------------------------------
+    # Recover metadata from the persisted job/work records.
+    #
+    # database.py returns sqlite3.Row records, so these values
+    # are read from the converted dictionaries.
+    # --------------------------------------------------------
+
     service = None
     customer_id = None
     original_request = ""
     context = None
 
-    if isinstance(persisted_job, dict):
+    if persisted_job:
+
         service = (
             persisted_job.get("service")
+            or persisted_job.get("service_type")
             or persisted_job.get("work_title")
         )
 
         customer_id = (
-            persisted_job.get("customer_id")
+            persisted_job.get(
+                "customer_id"
+            )
         )
 
         original_request = clean_text(
             persisted_job.get(
                 "original_request",
-                "",
+                persisted_job.get(
+                    "customer_request",
+                    "",
+                ),
             )
         )
 
@@ -473,9 +785,20 @@ def recover_saved_job_for_approval(
 
     if not service:
         service = (
-            work.get("work_title")
+            work.get(
+                "work_title"
+            )
             or "Business Document"
         )
+
+    work_id = safe_int(
+        work.get("id"),
+        None,
+    )
+
+    # --------------------------------------------------------
+    # Restore the complete approval-ready runtime job.
+    # --------------------------------------------------------
 
     job = {
         "job_id": supplied_job_id,
@@ -483,72 +806,103 @@ def recover_saved_job_for_approval(
         "service": service,
         "original_request": original_request,
         "context": context,
+
         "status": "review_complete",
+
         "review_started": True,
         "review_finished": True,
         "review_error": None,
+
         "progress": {
             "completed": len(pages),
             "total": len(pages),
         },
+
         "document_text": document_text,
+
         "document_pages": pages,
+
         "review_pages": make_review_pages(
             pages
         ),
+
         "assembled_review": "",
+
         "current_version": saved_version,
         "version_id": expected_version_id,
+
+        "saved_version": saved_version,
+        "storage_reference": str(filepath),
+        "work_id": work_id,
+
         "approved": False,
         "paid": False,
     }
 
-    if isinstance(persisted_job, dict):
+    # --------------------------------------------------------
+    # If persisted job data contains matching version state,
+    # retain it.
+    # --------------------------------------------------------
 
-        persisted_version = safe_int(
-            persisted_job.get(
-                "current_version"
-            ),
-            saved_version,
-        ) or saved_version
+    persisted_version = safe_int(
+        persisted_job.get(
+            "current_version"
+        ),
+        saved_version,
+    )
 
-        if persisted_version == saved_version:
-            job["current_version"] = (
-                persisted_version
-            )
+    if (
+        persisted_version is not None
+        and persisted_version == saved_version
+    ):
+        job["current_version"] = (
+            persisted_version
+        )
 
-        persisted_version_id = str(
-            persisted_job.get(
-                "version_id",
-                "",
-            )
-        ).strip()
+    persisted_version_id = str(
+        persisted_job.get(
+            "version_id",
+            "",
+        )
+        or ""
+    ).strip()
 
-        if persisted_version_id:
-            if persisted_version_id == expected_version_id:
-                job["version_id"] = (
-                    persisted_version_id
-                )
+    if (
+        persisted_version_id
+        == expected_version_id
+    ):
+        job["version_id"] = (
+            persisted_version_id
+        )
 
-        if persisted_job.get(
-            "approved"
-        ):
-            job["approved"] = True
+    if persisted_job.get(
+        "approved"
+    ):
+        job["approved"] = True
 
-        if persisted_job.get(
-            "paid"
-        ):
-            job["paid"] = True
+    if persisted_job.get(
+        "paid"
+    ):
+        job["paid"] = True
+
+    # --------------------------------------------------------
+    # IMPORTANT:
+    # Restore the recovered job into the runtime dictionary
+    # before returning so the existing approval flow continues
+    # normally.
+    # --------------------------------------------------------
+
+    _jobs[supplied_job_id] = job
 
     print(
         "[APPROVAL] PERSISTENT RECOVERY SUCCESS "
         f"job_id={supplied_job_id} "
         f"version_id={job['version_id']} "
-        f"work_id={work.get('id')} "
+        f"version={job['current_version']} "
+        f"work_id={job.get('work_id')} "
+        f"storage_reference={job.get('storage_reference')} "
         f"pages={len(pages)}"
     )
-
-    _jobs[supplied_job_id] = job
 
     return job
 
@@ -1510,11 +1864,16 @@ def review_callback(
                 job["document_pages"]
             )
 
-            job["status"] = (
-                "review_complete"
-            )
-
-            job["review_finished"] = True
+            # ------------------------------------------------
+            # IMPORTANT:
+            # The intelligence callback only reports that its
+            # review operation has completed.
+            #
+            # The document is NOT considered application-level
+            # review_complete here.
+            #
+            # run_review() must persist the final document first.
+            # ------------------------------------------------
 
             job["progress"] = {
                 "completed": total,
@@ -1529,6 +1888,10 @@ def review_callback(
                     )
                 )
             )
+
+            job["status"] = "reviewing"
+            job["review_finished"] = False
+            job["review_error"] = None
 
     return callback
 
@@ -1651,6 +2014,50 @@ async def run_review(
             "total": total,
         }
 
+        # ----------------------------------------------------
+        # IMPORTANT:
+        # Persist the final reviewed document FIRST.
+        #
+        # If persistence fails, review does NOT become
+        # review_complete and approval cannot proceed.
+        # ----------------------------------------------------
+
+        saved = save_document_to_storage(
+            job_id
+        )
+
+        if not saved.get(
+            "success"
+        ):
+            raise RuntimeError(
+                "The reviewed document could not be persisted."
+            )
+
+        # ----------------------------------------------------
+        # Only after successful persistence do we mark the
+        # review as complete.
+        # ----------------------------------------------------
+
+        job["current_version"] = (
+            saved["version"]
+        )
+
+        job["version_id"] = (
+            saved["version_id"]
+        )
+
+        job["saved_version"] = (
+            saved["version"]
+        )
+
+        job["storage_reference"] = (
+            saved["storage_reference"]
+        )
+
+        job["work_id"] = (
+            saved["work_id"]
+        )
+
         job["status"] = (
             "review_complete"
         )
@@ -1659,11 +2066,12 @@ async def run_review(
         job["review_finished"] = True
         job["review_error"] = None
 
-        save_document_to_storage(job_id)
-
         print(
             f"[REVIEW] job={job_id} "
-            f"total_pages={total}"
+            f"total_pages={total} "
+            f"persisted_version={saved['version']} "
+            f"version_id={saved['version_id']} "
+            f"work_id={saved['work_id']}"
         )
 
     except asyncio.CancelledError:
@@ -2938,13 +3346,11 @@ async def approve(
                         )
 
     # --------------------------------------------------------
-    # FOURTH — NEW PERSISTENT RECOVERY:
+    # FOURTH — PERSISTENT RECOVERY:
     #
     # The reviewed document was already saved after review.
     # If the runtime process no longer has the job, recover the
     # exact saved version from the database/storage.
-    #
-    # This is the important repair.
     # --------------------------------------------------------
 
     if not job:
@@ -4106,4 +4512,4 @@ if __name__ == "__main__":
             )
         ),
         reload=False,
-    ) 
+    )
