@@ -1,0 +1,702 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Download Document — Naija Pocket Business Center</title><style>
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    min-height:100%;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f7f0df;
+    color:#111;
+}
+
+body{
+    display:flex;
+    justify-content:center;
+    padding:24px 14px;
+}
+
+.container{
+    width:100%;
+    max-width:560px;
+}
+
+.header{
+    background:#008000;
+    color:#fff;
+    border-radius:18px;
+    padding:22px 18px;
+    text-align:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.12);
+}
+
+.header h1{
+    margin:0;
+    font-size:24px;
+    font-weight:800;
+}
+
+.header p{
+    margin:8px 0 0;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.card{
+    margin-top:16px;
+    background:#fff;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 5px 18px rgba(0,0,0,.10);
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 0;
+    border-bottom:1px solid #eee;
+}
+
+.row:last-child{
+    border-bottom:0;
+}
+
+.label{
+    color:#666;
+    font-size:13px;
+}
+
+.value{
+    font-weight:700;
+    text-align:right;
+    word-break:break-word;
+}
+
+.status{
+    margin-top:18px;
+    padding:15px;
+    border-radius:12px;
+    background:#f2f2f2;
+    line-height:1.5;
+    font-size:14px;
+    text-align:center;
+}
+
+.error{
+    display:none;
+    margin-top:14px;
+    padding:13px;
+    border-radius:10px;
+    background:#fff0f0;
+    color:#b00020;
+    font-size:14px;
+    line-height:1.5;
+}
+
+button{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:15px;
+    margin-top:16px;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.download-btn{
+    background:#008000;
+    color:#fff;
+}
+
+.download-btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.refresh-btn{
+    background:#222;
+    color:#fff;
+}
+
+.hidden{
+    display:none;
+}
+
+.small{
+    margin-top:14px;
+    text-align:center;
+    color:#666;
+    font-size:12px;
+    line-height:1.5;
+}
+</style></head><body><div class="container"><div class="header">
+    <h1>Your Document</h1>
+    <p>Naija Pocket Business Center</p>
+</div>
+
+<div class="card">
+
+    <div class="row">
+        <div class="label">Job ID</div>
+        <div class="value" id="jobIdDisplay">—</div>
+    </div>
+
+    <div class="row">
+        <div class="label">Document Version</div>
+        <div class="value" id="versionDisplay">—</div>
+    </div>
+
+    <div class="row">
+        <div class="label">Service</div>
+        <div class="value" id="serviceDisplay">—</div>
+    </div>
+
+    <div id="statusBox" class="status">
+        Checking document availability...
+    </div>
+
+    <div id="errorBox" class="error"></div>
+
+    <button
+        id="downloadButton"
+        class="download-btn hidden"
+        type="button"
+        onclick="downloadDocument()"
+    >
+        Download Document
+    </button>
+
+    <button
+        id="refreshButton"
+        class="refresh-btn"
+        type="button"
+        onclick="checkDownloadStatus()"
+    >
+        Check Again
+    </button>
+
+    <div class="small">
+        Your document can only be downloaded after payment
+        has been confirmed and the saved document has been
+        activated for download.
+    </div>
+
+</div>
+
+</div><script>
+"use strict";
+
+const params = new URLSearchParams(window.location.search);
+
+const jobId =
+    (params.get("job_id") || localStorage.getItem("job_id") || "")
+    .trim();
+
+const versionId =
+    (params.get("version_id") || localStorage.getItem("version_id") || "")
+    .trim();
+
+const service =
+    (params.get("service") || localStorage.getItem("service") || "")
+    .trim();
+
+const jobIdDisplay =
+    document.getElementById("jobIdDisplay");
+
+const versionDisplay =
+    document.getElementById("versionDisplay");
+
+const serviceDisplay =
+    document.getElementById("serviceDisplay");
+
+const statusBox =
+    document.getElementById("statusBox");
+
+const errorBox =
+    document.getElementById("errorBox");
+
+const downloadButton =
+    document.getElementById("downloadButton");
+
+const refreshButton =
+    document.getElementById("refreshButton");
+
+
+jobIdDisplay.textContent =
+    jobId || "Not available";
+
+versionDisplay.textContent =
+    versionId || "Not available";
+
+serviceDisplay.textContent =
+    service || "Document";
+
+
+if(jobId){
+    localStorage.setItem(
+        "job_id",
+        jobId
+    );
+}
+
+if(versionId){
+    localStorage.setItem(
+        "version_id",
+        versionId
+    );
+}
+
+if(service){
+    localStorage.setItem(
+        "service",
+        service
+    );
+}
+
+
+function clean(value){
+    return String(
+        value === undefined ||
+        value === null
+            ? ""
+            : value
+    ).trim();
+}
+
+
+function showError(message){
+
+    errorBox.textContent =
+        clean(message) ||
+        "Unable to check document status.";
+
+    errorBox.style.display =
+        "block";
+}
+
+
+function clearError(){
+
+    errorBox.textContent =
+        "";
+
+    errorBox.style.display =
+        "none";
+}
+
+
+function setStatus(message){
+
+    statusBox.textContent =
+        message;
+}
+
+
+function showDownloadButton(){
+
+    downloadButton.classList.remove(
+        "hidden"
+    );
+}
+
+
+function hideDownloadButton(){
+
+    downloadButton.classList.add(
+        "hidden"
+    );
+}
+
+
+function validContext(){
+
+    if(!jobId){
+
+        setStatus(
+            "This download link is missing the Job ID."
+        );
+
+        showError(
+            "Please return to the payment page and try again."
+        );
+
+        return false;
+    }
+
+    if(!versionId){
+
+        setStatus(
+            "This download link is missing the document version."
+        );
+
+        showError(
+            "The document version could not be identified."
+        );
+
+        return false;
+    }
+
+    return true;
+}
+
+
+async function checkDownloadStatus(){
+
+    clearError();
+    hideDownloadButton();
+
+    if(!validContext()){
+        return;
+    }
+
+    refreshButton.disabled =
+        true;
+
+    refreshButton.textContent =
+        "Checking...";
+
+    setStatus(
+        "Checking payment and document activation..."
+    );
+
+    try{
+
+        const paymentResponse =
+            await fetch(
+                "/api/payment/status?job_id=" +
+                encodeURIComponent(jobId),
+                {
+                    method:"GET",
+                    cache:"no-store"
+                }
+            );
+
+        let paymentData = {};
+
+        try{
+            paymentData =
+                await paymentResponse.json();
+        }catch(_){
+            paymentData = {};
+        }
+
+        if(!paymentResponse.ok){
+
+            if(paymentResponse.status === 404){
+
+                setStatus(
+                    "Payment has not been created yet."
+                );
+
+                showError(
+                    "Please return to the payment page and submit your payment."
+                );
+
+                return;
+            }
+
+            throw new Error(
+                clean(paymentData.detail) ||
+                "Unable to check payment status."
+            );
+        }
+
+        const paymentStatus =
+            clean(
+                paymentData.payment_status ||
+                paymentData.status
+            ).toLowerCase();
+
+        if(
+            paymentStatus !== "paid" &&
+            paymentStatus !== "completed" &&
+            paymentStatus !== "success"
+        ){
+
+            setStatus(
+                "Payment is still awaiting confirmation."
+            );
+
+            showError(
+                "The document will become available after payment is confirmed."
+            );
+
+            return;
+        }
+
+        /*
+         * Payment is confirmed.
+         *
+         * The actual /api/download endpoint is the final
+         * authorization check. We deliberately do not assume
+         * that payment alone means the document is ready,
+         * because the backend requires Back Office activation.
+         */
+
+        const downloadResponse =
+            await fetch(
+                "/api/download?job_id=" +
+                encodeURIComponent(jobId) +
+                "&version_id=" +
+                encodeURIComponent(versionId),
+                {
+                    method:"GET",
+                    cache:"no-store"
+                }
+            );
+
+        if(downloadResponse.ok){
+
+            setStatus(
+                "Payment confirmed. Your document is ready for download."
+            );
+
+            showDownloadButton();
+
+            return;
+        }
+
+        if(downloadResponse.status === 403){
+
+            setStatus(
+                "Payment confirmed. Your document is awaiting download activation."
+            );
+
+            showError(
+                "Payment has been confirmed, but the saved document has not yet been activated for customer download."
+            );
+
+            return;
+        }
+
+        if(downloadResponse.status === 404){
+
+            setStatus(
+                "The saved document could not be found."
+            );
+
+            showError(
+                "The document version requested is not currently available."
+            );
+
+            return;
+        }
+
+        let detail = "";
+
+        try{
+
+            const data =
+                await downloadResponse.json();
+
+            detail =
+                clean(data.detail);
+
+        }catch(_){}
+
+        throw new Error(
+            detail ||
+            "Unable to verify document availability."
+        );
+
+    }catch(error){
+
+        console.error(
+            "Download status error:",
+            error
+        );
+
+        setStatus(
+            "Unable to check document availability."
+        );
+
+        showError(
+            error && error.message
+                ? error.message
+                : "Please try again."
+        );
+
+    }finally{
+
+        refreshButton.disabled =
+            false;
+
+        refreshButton.textContent =
+            "Check Again";
+    }
+}
+
+
+async function downloadDocument(){
+
+    clearError();
+
+    if(!validContext()){
+        return;
+    }
+
+    downloadButton.disabled =
+        true;
+
+    downloadButton.textContent =
+        "Preparing Download...";
+
+    setStatus(
+        "Preparing your document..."
+    );
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/download?job_id=" +
+                encodeURIComponent(jobId) +
+                "&version_id=" +
+                encodeURIComponent(versionId),
+                {
+                    method:"GET",
+                    cache:"no-store"
+                }
+            );
+
+        if(!response.ok){
+
+            let detail = "";
+
+            try{
+
+                const data =
+                    await response.json();
+
+                detail =
+                    clean(data.detail);
+
+            }catch(_){}
+
+            if(response.status === 403){
+
+                throw new Error(
+                    detail ||
+                    "Your document has not yet been activated for download."
+                );
+            }
+
+            if(response.status === 404){
+
+                throw new Error(
+                    detail ||
+                    "The requested document could not be found."
+                );
+            }
+
+            throw new Error(
+                detail ||
+                "The document could not be downloaded."
+            );
+        }
+
+        const blob =
+            await response.blob();
+
+        if(!blob || blob.size === 0){
+
+            throw new Error(
+                "The server returned an empty document."
+            );
+        }
+
+        let filename =
+            "Naija_Pocket_Document.txt";
+
+        const disposition =
+            response.headers.get(
+                "Content-Disposition"
+            );
+
+        if(disposition){
+
+            const match =
+                disposition.match(
+                    /filename="?([^"]+)"?/i
+                );
+
+            if(match && match[1]){
+                filename =
+                    match[1];
+            }
+        }
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+        const link =
+            document.createElement("a");
+
+        link.href =
+            url;
+
+        link.download =
+            filename;
+
+        document.body.appendChild(
+            link
+        );
+
+        link.click();
+
+        link.remove();
+
+        setTimeout(
+            function(){
+                URL.revokeObjectURL(
+                    url
+                );
+            },
+            1000
+        );
+
+        setStatus(
+            "Your document download has started."
+        );
+
+    }catch(error){
+
+        console.error(
+            "Document download error:",
+            error
+        );
+
+        setStatus(
+            "Document download failed."
+        );
+
+        showError(
+            error && error.message
+                ? error.message
+                : "Please try again."
+        );
+
+    }finally{
+
+        downloadButton.disabled =
+            false;
+
+        downloadButton.textContent =
+            "Download Document";
+    }
+}
+
+
+checkDownloadStatus();
+</script></body>
+</html>
