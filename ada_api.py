@@ -18,7 +18,6 @@ from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
 from ada_response import AdaResponse, get_ada_model, is_configured
-from billing_manager import BillingManager
 
 
 # ============================================================
@@ -37,50 +36,6 @@ REVIEW_CHUNK_CHARS = int(os.getenv("ADA_REVIEW_CHUNK_CHARS", "7000"))
 REVIEW_MIN_CHARS = int(os.getenv("ADA_REVIEW_MIN_CHARS", "2500"))
 
 BASE = Path(__file__).resolve().parent
-
-BILLING = BillingManager()
-DOWNLOAD_DIR = BASE / "generated_documents"
-DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def get_service_bill(service: Any, total_pages: int = 1) -> dict[str, Any]:
-    """Return the official amount for a service from BillingManager."""
-    pages = max(1, int(total_pages or 1))
-    bill = BILLING.generate_bill(str(service or "").strip())
-    unit_price = int(bill.get("price") or 0)
-    billing_type = bill.get("billing") or "quotation"
-    amount = unit_price * pages if billing_type == "per_page" else unit_price if billing_type == "fixed" else 0
-    return {"service": bill.get("service") or service, "price": unit_price, "billing": billing_type, "total_pages": pages, "amount": amount, "quotation_required": billing_type == "quotation"}
-
-
-def make_download_docx(job: dict[str, Any]) -> Path:
-    """Create a real DOCX containing the already-reviewed document."""
-    job_id = re.sub(r"[^A-Za-z0-9_-]", "_", str(job.get("job_id") or "job"))
-    version = re.sub(r"[^A-Za-z0-9_-]", "_", str(job.get("current_version") or 1))
-    path = DOWNLOAD_DIR / f"naija_pocket_business_{job_id}_v{version}.docx"
-    pages = normalize_pages(job.get("document_pages") or [])
-    if not pages:
-        text = clean_text(job.get("document_text", ""))
-        pages = text_to_review_pages(text) if text else []
-    if not pages:
-        raise RuntimeError("There is no document content available for download.")
-    def esc(value: Any) -> str:
-        return (str(value or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('\"', "&quot;").replace("'", "&apos;"))
-    body=[]
-    for i,page in enumerate(pages):
-        content=str(page.get("content", "") if isinstance(page,dict) else page)
-        paras=[x.strip() for x in content.splitlines() if x.strip()] or [content.strip()]
-        for para in paras:
-            body.append('<w:p><w:r><w:t xml:space="preserve">'+esc(para)+'</w:t></w:r></w:p>')
-        if i < len(pages)-1:
-            body.append('<w:p><w:r><w:br w:type="page"/></w:r></w:p>')
-    document_xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+''.join(body)+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>' 
-    content_types='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>' 
-    rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>' 
-    doc_rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"/>' 
-    with zipfile.ZipFile(path,"w",zipfile.ZIP_DEFLATED) as z:
-        z.writestr("[Content_Types].xml",content_types); z.writestr("_rels/.rels",rels); z.writestr("word/document.xml",document_xml); z.writestr("word/_rels/document.xml.rels",doc_rels)
-    return path
 
 
 # ============================================================
@@ -561,8 +516,6 @@ def create_job(job_id: str, request: Chat, original_request: str, document_text:
         "version_id": f"{job_id}:1",
         "approved": False,
         "paid": False,
-        "payment_pending": False,
-        "payment_id": None,
     }
     _jobs[job_id] = job
     print(f"[JOB] created job={job_id} document_chars={len(document_text)} total_pages={len(normalized)}")
@@ -835,9 +788,6 @@ def make_job_response(job: dict[str, Any]) -> dict[str, Any]:
         "review_pages": job.get("review_pages", []),
         "document_text": job.get("document_text", ""),
         "assembled_review": job.get("assembled_review", ""),
-        "amount": get_service_bill(job.get("service"), len(pages))["amount"],
-        "billing": get_service_bill(job.get("service"), len(pages))["billing"],
-        "quotation_required": get_service_bill(job.get("service"), len(pages))["quotation_required"],
         "error": job.get("review_error"),
         "review_url": f"/review.html?job_id={job['job_id']}",
     }
@@ -1144,7 +1094,7 @@ async def correct(request: Correction):
     job["current_version"] += 1
     job["version_id"] = f"{request.job_id}:{job['current_version']}"
     job.update({
-        "status": "correcting", "approved": False, "paid": False, "payment_pending": False, "payment_id": None,
+        "status": "correcting", "approved": False, "paid": False,
         "review_started": False, "review_finished": False, "review_error": None,
         "correction_instruction": instruction,
         "progress": {"completed": 0, "total": len(job["document_pages"])},
@@ -1203,69 +1153,73 @@ async def correct(request: Correction):
 
 @app.post("/api/approve")
 async def approve(request: Approval):
-    job=_jobs.get(request.job_id)
-    if not job: return application_error("APPROVAL","Job not found.",404,"JOB_NOT_FOUND")
-    if request.version_id != job["version_id"]: return application_error("APPROVAL","The supplied document version does not match.",409,"VERSION_MISMATCH")
-    if job["status"] != "review_complete": return application_error("APPROVAL","The document review is not complete.",409,"REVIEW_NOT_COMPLETE")
-    job["approved"]=True; job["status"]="approved"
-    bill=get_service_bill(job.get("service"),len(job["document_pages"]))
-    return {"success":True,"job_id":request.job_id,"version_id":request.version_id,"current_version":job["current_version"],"approved":True,"paid":job.get("paid",False),"status":"approved","service":bill["service"],"amount":bill["amount"],"billing":bill["billing"],"quotation_required":bill["quotation_required"],"total_pages":len(job["document_pages"]),"pages":job["document_pages"],"message":"Document approved. Payment can now be confirmed on this review page."}
-
-
-@app.post("/api/payment/create")
-async def payment_create(job_id:str,customer_id:str|None=None,service:str|None=None,amount:float|None=None,payment_method:str|None=None):
-    job=_jobs.get(job_id)
-    if not job: return application_error("PAYMENT","Job not found.",404,"JOB_NOT_FOUND")
-    if customer_id and job.get("customer_id") and customer_id!=job.get("customer_id"): return application_error("PAYMENT","Customer mismatch.",409,"CUSTOMER_MISMATCH")
-    if not job.get("approved"): return application_error("PAYMENT","Approve the document before reporting payment.",409,"DOCUMENT_NOT_APPROVED")
-    bill=get_service_bill(job.get("service"),len(job["document_pages"]))
-    if bill["quotation_required"]: return application_error("PAYMENT","This service requires a quotation before payment.",409,"QUOTATION_REQUIRED")
-    job["payment_pending"]=True; job["payment_method"]=payment_method or "bank_transfer"; job["payment_amount_reported"]=amount; job["payment_id"]=job.get("payment_id") or ("PAY-"+uuid.uuid4().hex[:10].upper())
-    return {"success":True,"job_id":job_id,"version_id":job["version_id"],"payment_id":job["payment_id"],"status":"pending","service":bill["service"],"amount":bill["amount"],"billing":bill["billing"],"message":"Payment report recorded. Confirm payment to enable download."}
+    job = _jobs.get(request.job_id)
+    if not job:
+        return application_error("APPROVAL", "Job not found.", 404, "JOB_NOT_FOUND")
+    if request.version_id != job["version_id"]:
+        return application_error("APPROVAL", "The supplied document version does not match.", 409, "VERSION_MISMATCH")
+    if job["status"] != "review_complete":
+        return application_error("APPROVAL", "The document review is not complete.", 409, "REVIEW_NOT_COMPLETE")
+    job["approved"] = True
+    job["status"] = "approved"
+    return {
+        "success": True, "job_id": request.job_id, "version_id": request.version_id,
+        "current_version": job["current_version"], "approved": True, "status": "approved",
+        "total_pages": len(job["document_pages"]), "pages": job["document_pages"],
+        "payment_url": f"/payment.html?job_id={request.job_id}&version_id={request.version_id}",
+    }
 
 
 @app.post("/api/payment/complete")
-async def payment_complete(job_id:str,version_id:str):
-    job=_jobs.get(job_id)
-    if not job: return application_error("PAYMENT","Job not found.",404,"JOB_NOT_FOUND")
-    if version_id!=job["version_id"]: return application_error("PAYMENT","Version mismatch.",409,"VERSION_MISMATCH")
-    if not job["approved"]: return application_error("PAYMENT","The document must be approved before payment.",409,"DOCUMENT_NOT_APPROVED")
-    bill=get_service_bill(job.get("service"),len(job["document_pages"]))
-    if bill["quotation_required"]: return application_error("PAYMENT","This service requires a quotation before payment.",409,"QUOTATION_REQUIRED")
-    job["paid"]=True; job["payment_pending"]=False; job["status"]="paid"
-    return {"success":True,"job_id":job_id,"version_id":version_id,"paid":True,"status":"paid","service":bill["service"],"amount":bill["amount"],"billing":bill["billing"],"total_pages":len(job["document_pages"]),"api_download_url":f"/api/download?job_id={job_id}&version_id={version_id}","message":"Payment confirmed. Download is now available on the review page."}
+async def payment_complete(job_id: str, version_id: str):
+    job = _jobs.get(job_id)
+    if not job:
+        return application_error("PAYMENT", "Job not found.", 404, "JOB_NOT_FOUND")
+    if version_id != job["version_id"]:
+        return application_error("PAYMENT", "Version mismatch.", 409, "VERSION_MISMATCH")
+    if not job["approved"]:
+        return application_error("PAYMENT", "The document must be approved before payment.", 409, "DOCUMENT_NOT_APPROVED")
+    job["paid"] = True
+    job["status"] = "paid"
+    return {
+        "success": True, "job_id": job_id, "version_id": version_id, "paid": True, "status": "paid",
+        "total_pages": len(job["document_pages"]),
+        "download_url": f"/download.html?job_id={job_id}&version_id={version_id}",
+        "api_download_url": f"/api/download?job_id={job_id}&version_id={version_id}",
+    }
 
 
 @app.get("/api/payment")
-async def payment_state(job_id:str,version_id:str):
-    job=_jobs.get(job_id)
-    if not job: return application_error("PAYMENT_STATE","Job not found.",404,"JOB_NOT_FOUND")
-    if version_id!=job["version_id"]: return application_error("PAYMENT_STATE","Version mismatch.",409,"VERSION_MISMATCH")
-    bill=get_service_bill(job.get("service"),len(job["document_pages"]))
-    return {"success":True,"job_id":job_id,"version_id":version_id,"status":job["status"],"approved":job["approved"],"paid":job["paid"],"payment_pending":job.get("payment_pending",False),"payment_id":job.get("payment_id"),"service":bill["service"],"amount":bill["amount"],"billing":bill["billing"],"total_pages":len(job["document_pages"]),"payment_complete":job["paid"]}
-
-
-@app.get("/api/payment/status")
-async def payment_status(job_id:str,version_id:str|None=None):
-    job=_jobs.get(job_id)
-    if not job: return application_error("PAYMENT_STATUS","Job not found.",404,"JOB_NOT_FOUND")
-    if version_id and version_id!=job["version_id"]: return application_error("PAYMENT_STATUS","Version mismatch.",409,"VERSION_MISMATCH")
-    bill=get_service_bill(job.get("service"),len(job["document_pages"]))
-    state="paid" if job.get("paid") else ("pending" if job.get("payment_pending") else "unpaid")
-    return {"success":True,"job_id":job_id,"version_id":job["version_id"],"status":state,"approved":job.get("approved",False),"paid":job.get("paid",False),"payment_id":job.get("payment_id"),"service":bill["service"],"amount":bill["amount"],"billing":bill["billing"]}
+async def payment_state(job_id: str, version_id: str):
+    job = _jobs.get(job_id)
+    if not job:
+        return application_error("PAYMENT_STATE", "Job not found.", 404, "JOB_NOT_FOUND")
+    if version_id != job["version_id"]:
+        return application_error("PAYMENT_STATE", "Version mismatch.", 409, "VERSION_MISMATCH")
+    return {
+        "success": True, "job_id": job_id, "version_id": version_id,
+        "status": job["status"], "approved": job["approved"], "paid": job["paid"],
+        "total_pages": len(job["document_pages"]), "payment_complete": job["paid"],
+    }
 
 
 @app.get("/api/download")
-async def download(job_id:str,version_id:str):
-    job=_jobs.get(job_id)
-    if not job: return application_error("DOWNLOAD","Job not found.",404,"JOB_NOT_FOUND")
-    if version_id!=job["version_id"]: return application_error("DOWNLOAD","Version mismatch.",409,"VERSION_MISMATCH")
-    if not job["approved"]: return application_error("DOWNLOAD","Approve the current document before downloading.",409,"DOCUMENT_NOT_APPROVED")
-    if not job["paid"]: return application_error("DOWNLOAD","Payment required before download.",402,"PAYMENT_NOT_COMPLETED")
-    try: path=make_download_docx(job)
-    except Exception as error:
-        traceback.print_exc(); return application_error("DOWNLOAD",f"The document could not be prepared for download: {error}",500,"DOWNLOAD_BUILD_FAILED")
-    return FileResponse(path,media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",filename=path.name)
+async def download(job_id: str, version_id: str):
+    job = _jobs.get(job_id)
+    if not job:
+        return application_error("DOWNLOAD", "Job not found.", 404, "JOB_NOT_FOUND")
+    if version_id != job["version_id"]:
+        return application_error("DOWNLOAD", "Version mismatch.", 409, "VERSION_MISMATCH")
+    if not job["approved"]:
+        return application_error("DOWNLOAD", "The current document version has not been approved.", 409, "DOCUMENT_NOT_APPROVED")
+    if not job["paid"]:
+        return application_error("DOWNLOAD", "Payment for the current document version has not been completed.", 409, "PAYMENT_NOT_COMPLETED")
+    return {
+        "success": True, "job_id": job_id, "version_id": version_id, "status": "paid",
+        "total_pages": len(job["document_pages"]), "pages": job["document_pages"],
+        "document_pages": job["document_pages"], "document_text": job.get("document_text", ""),
+        "message": "The approved and paid document is ready for final document generation.",
+    }
 
 
 # ============================================================
