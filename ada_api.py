@@ -557,6 +557,10 @@ def recover_saved_job_for_approval(
     The recovered document, review pages, current version,
     version ID, storage reference and work ID are restored into
     _jobs before the normal approval flow continues.
+
+    If the physical saved document file is missing but the
+    document text still exists in the database, the file is
+    rebuilt automatically from the database record.
     """
 
     numeric_job_id = safe_int(
@@ -692,12 +696,66 @@ def recover_saved_job_for_approval(
         )
         return None
 
+    # --------------------------------------------------------
+    # IMPORTANT:
+    # If the physical document file is missing, rebuild it
+    # from document_text already stored in the database.
+    # --------------------------------------------------------
+
     if not filepath.exists() or not filepath.is_file():
         print(
-            "[APPROVAL] Saved document file is missing: "
-            f"path={filepath}"
+            "[APPROVAL] Saved document file missing on disk, "
+            f"rebuilding from DB: path={filepath}"
         )
-        return None
+
+        # First get document text from the saved work record.
+        document_text = clean_text(
+            work.get(
+                "document_text",
+                ""
+            )
+        )
+
+        # If the work record does not contain document_text,
+        # try the persisted job record.
+        if not document_text:
+            document_text = clean_text(
+                persisted_job.get(
+                    "document_text",
+                    ""
+                )
+            )
+
+        # Nothing available in the database to rebuild the file.
+        if not document_text:
+            print(
+                "[APPROVAL] No document_text in DB to rebuild from"
+            )
+            return None
+
+        try:
+            # Recreate the directory if necessary.
+            filepath.parent.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
+
+            # Rebuild the saved document file.
+            filepath.write_text(
+                document_text,
+                encoding="utf-8",
+            )
+
+            print(
+                f"[APPROVAL] Rebuilt file from DB: {filepath}"
+            )
+
+        except Exception as error:
+            print(
+                "[APPROVAL] Failed to rebuild document file: "
+                f"path={filepath}, error={error}"
+            )
+            return None
 
     # --------------------------------------------------------
     # Restore the exact saved document.
@@ -1863,17 +1921,6 @@ def review_callback(
             total = len(
                 job["document_pages"]
             )
-
-            # ------------------------------------------------
-            # IMPORTANT:
-            # The intelligence callback only reports that its
-            # review operation has completed.
-            #
-            # The document is NOT considered application-level
-            # review_complete here.
-            #
-            # run_review() must persist the final document first.
-            # ------------------------------------------------
 
             job["progress"] = {
                 "completed": total,
