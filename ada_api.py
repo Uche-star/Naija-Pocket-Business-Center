@@ -506,9 +506,10 @@ async def create_document_with_intelligence(
     customer_request: str,
     context: str | None,
 ) -> tuple[str, list[dict[str, Any]], dict[str, Any]]:
+    resolved_service = resolve_request_service(request, ada)
     kwargs = {
         "customer_request": customer_request,
-        "service": service,
+        "service": resolved_service or request.service,
         "form_data": request.form_data,
         "context": context,
         "event": request.event,
@@ -593,7 +594,7 @@ def create_job(job_id: str, request: Chat, original_request: str, document_text:
     job = {
         "job_id": job_id,
         "customer_id": request.customer_id,
-        "service": request.service,
+        "service": service,
         "original_request": original_request,
         "context": build_context(request),
         "status": "reviewing",
