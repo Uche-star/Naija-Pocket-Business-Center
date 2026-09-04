@@ -7,328 +7,318 @@
 
 <style>
 :root{
-  --black:#050505;
-  --panel:#111;
-  --line:rgba(255,255,255,.12);
-  --gold:#d4af37;
-  --gold2:#f0cf62;
-  --white:#fff;
-  --muted:#a2a2a2;
-  --green:#008000;
-  --blue:#007bff;
+ --black:#050505;
+ --panel:#111;
+ --line:rgba(255,255,255,.12);
+ --gold:#d4af37;
+ --gold2:#f0cf62;
+ --white:#fff;
+ --green:#008000;
+ --blue:#007bff
 }
 
 *{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent
+ box-sizing:border-box;
+ -webkit-tap-highlight-color:transparent
 }
 
 html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  height:100%;
-  background:var(--black);
-  color:var(--white);
-  font-family:Inter,Arial,sans-serif
+ margin:0;
+ padding:0;
+ width:100%;
+ min-height:100%;
+ background:var(--black);
+ color:#fff;
+ font-family:Inter,Arial,sans-serif
 }
 
 body{
-  overflow:hidden
+ overflow-x:hidden;
+ overflow-y:auto
 }
 
 button,textarea,input{
-  font:inherit
+ font:inherit
 }
 
 button{
-  cursor:pointer
-}
-
-button:disabled{
-  cursor:not-allowed
+ cursor:pointer
 }
 
 /* HEADER */
 
 .header{
-  width:100%;
-  height:66px;
-  background:#000;
-  border-bottom:1px solid var(--line);
-  padding:11px 12px;
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:200
+ width:100%;
+ height:66px;
+ background:#000;
+ border-bottom:1px solid var(--line);
+ padding:11px 10px;
+ position:fixed;
+ top:0;
+ left:0;
+ right:0;
+ z-index:200
 }
 
 .header-inner{
-  width:100%;
-  max-width:1100px;
-  height:100%;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px
+ width:100%;
+ max-width:1100px;
+ height:100%;
+ margin:auto;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px
 }
 
 .brand{
-  min-width:0
+ min-width:0
 }
 
 .brand-title{
-  margin:0;
-  color:var(--gold2);
-  font-family:Montserrat,Arial,sans-serif;
-  font-size:18px;
-  line-height:1.15;
-  font-weight:900
+ margin:0;
+ color:var(--gold2);
+ font-family:Montserrat,Arial,sans-serif;
+ font-size:18px;
+ line-height:1.15;
+ font-weight:900
 }
 
 .brand-subtitle{
-  margin-top:3px;
-  color:#aaa;
-  font-size:10px
+ margin-top:3px;
+ color:#aaa;
+ font-size:10px
 }
 
 .service-badge{
-  flex:0 0 auto;
-  max-width:45%;
-  padding:7px 9px;
-  border:1px solid rgba(212,175,55,.4);
-  border-radius:8px;
-  color:var(--gold2);
-  background:#111;
-  font-size:9px;
-  font-weight:800;
-  text-align:center
+ flex:0 0 auto;
+ max-width:45%;
+ padding:7px 9px;
+ border:1px solid rgba(212,175,55,.4);
+ border-radius:8px;
+ color:var(--gold2);
+ background:#111;
+ font-size:9px;
+ font-weight:800;
+ text-align:center
 }
 
-/* MAIN */
+/* MAIN PAGE */
 
 .main{
-  position:fixed;
-  top:66px;
-  left:0;
-  right:0;
-  bottom:0;
-  width:100%;
-  max-width:1200px;
-  margin:auto;
-  padding:8px 3px 0;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden
+ width:100%;
+ max-width:1200px;
+ margin:0 auto;
+ padding:76px 3px 20px;
+ overflow:visible
 }
 
 /* AMOUNT */
 
 .top-amount-card{
-  flex:0 0 auto;
-  margin:0 0 7px;
-  padding:9px;
-  background:#111;
-  border:1px solid rgba(212,175,55,.45);
-  border-radius:12px;
-  text-align:center
+ width:100%;
+ margin:0 0 7px;
+ padding:9px;
+ background:#111;
+ border:1px solid rgba(212,175,55,.45);
+ border-radius:12px;
+ text-align:center
 }
 
 .top-amount-label{
-  color:#aaa;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.8px
+ color:#aaa;
+ font-size:10px;
+ font-weight:900;
+ letter-spacing:.8px
 }
 
 .top-amount-value{
-  margin-top:2px;
-  color:var(--gold2);
-  font-size:27px;
-  font-weight:900
+ margin-top:2px;
+ color:var(--gold2);
+ font-size:27px;
+ font-weight:900
 }
 
 /* STATUS */
 
 .top-panel{
-  flex:0 0 auto;
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:9px 12px;
-  margin-bottom:7px
+ width:100%;
+ background:var(--panel);
+ border:1px solid var(--line);
+ border-radius:12px;
+ padding:9px 11px;
+ margin-bottom:7px
 }
 
 .review-title{
-  margin:0;
-  color:#fff;
-  font-family:Montserrat,Arial,sans-serif;
-  font-size:16px;
-  font-weight:900
+ margin:0;
+ color:#fff;
+ font-family:Montserrat,Arial,sans-serif;
+ font-size:16px;
+ font-weight:900
 }
 
 .review-subtitle{
-  margin:4px 0 0;
-  color:#aaa;
-  font-size:9px;
-  line-height:1.45
+ margin:4px 0 0;
+ color:#aaa;
+ font-size:9px;
+ line-height:1.45
 }
 
 .status-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  margin-top:7px
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:8px;
+ margin-top:7px
 }
 
 .status-label{
-  color:#aaa;
-  font-size:9px
+ color:#aaa;
+ font-size:9px
 }
 
 .status-value{
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900
+ color:var(--gold2);
+ font-size:10px;
+ font-weight:900
 }
 
 .progress-shell{
-  margin-top:5px;
-  width:100%;
-  height:6px;
-  background:#242424;
-  border-radius:20px;
-  overflow:hidden
+ margin-top:5px;
+ width:100%;
+ height:6px;
+ background:#242424;
+ border-radius:20px;
+ overflow:hidden
 }
 
 .progress-bar{
-  width:0%;
-  height:100%;
-  background:var(--gold);
-  transition:width .25s ease
+ width:0%;
+ height:100%;
+ background:var(--gold);
+ transition:width .25s ease
 }
 
 .progress-text{
-  margin-top:4px;
-  color:#888;
-  font-size:9px;
-  text-align:right
+ margin-top:4px;
+ color:#888;
+ font-size:9px;
+ text-align:right
 }
 
-/* REVIEW WINDOW */
+/* =========================================================
+   LARGE DOCUMENT REVIEW WINDOW
+   ========================================================= */
 
 .review-card{
-  flex:1 1 auto;
-  min-height:0;
-  display:flex;
-  flex-direction:column;
-  background:#0b0b0b;
-  border:1px solid rgba(212,175,55,.22);
-  border-radius:12px;
-  overflow:hidden
+ width:100%;
+ background:#0b0b0b;
+ border:1px solid rgba(212,175,55,.22);
+ border-radius:12px;
+ overflow:visible
 }
 
 .document-card-header{
-  flex:0 0 auto;
-  padding:10px 11px 8px;
-  background:#111;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px
+ width:100%;
+ padding:10px 11px 8px;
+ background:#111;
+ border-bottom:1px solid var(--line);
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:8px
 }
 
 .document-heading h3{
-  margin:0;
-  color:var(--gold2);
-  font-size:13px;
-  font-weight:900
+ margin:0;
+ color:var(--gold2);
+ font-size:13px;
+ font-weight:900
 }
 
 .page-count{
-  color:#aaa;
-  font-size:10px;
-  font-weight:800
+ color:#aaa;
+ font-size:10px;
+ font-weight:800
 }
 
 /*
-  THIS IS THE MAIN READING WINDOW.
-  It remains large and scrollable.
+ THIS IS THE CUSTOMER'S DOCUMENT WINDOW.
+ IT IS LARGE.
+ THE DOCUMENT ITSELF SCROLLS INSIDE IT.
 */
 
 .document-scroll{
-  flex:1 1 auto;
-  min-height:0;
-  overflow-y:auto;
-  overflow-x:hidden;
-  padding:4px;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain
+ width:100%;
+ height:46vh;
+ min-height:300px;
+ max-height:560px;
+ overflow-y:auto;
+ overflow-x:hidden;
+ padding:4px;
+ background:#080808;
+ -webkit-overflow-scrolling:touch;
+ overscroll-behavior:contain
 }
 
 .document-scroll::-webkit-scrollbar{
-  width:5px
+ width:6px
 }
 
 .document-scroll::-webkit-scrollbar-track{
-  background:#090909
+ background:#090909
 }
 
 .document-scroll::-webkit-scrollbar-thumb{
-  background:#3a3a3a;
-  border-radius:20px
+ background:#3a3a3a;
+ border-radius:20px
 }
 
 .page-viewer{
-  width:100%
+ width:100%
 }
 
 /*
-  LARGE WHITE DOCUMENT.
-  It uses almost the entire available width.
+ LARGE WHITE DOCUMENT PAGE
 */
 
 .document-page{
-  position:relative;
-  width:100%;
-  min-height:620px;
-  background:#fff;
-  color:#111;
-  border-radius:2px;
-  box-shadow:0 8px 35px rgba(0,0,0,.45);
-  padding:42px 30px 58px;
-  overflow:visible;
-  user-select:text;
-  -webkit-user-select:text;
-  cursor:default
+ position:relative;
+ width:100%;
+ min-height:620px;
+ background:#fff;
+ color:#111;
+ border-radius:2px;
+ box-shadow:0 8px 35px rgba(0,0,0,.45);
+ padding:42px 30px 58px;
+ overflow:visible;
+ user-select:text;
+ -webkit-user-select:text
 }
 
 .page-number-inside{
-  color:#777;
-  font-family:Arial,sans-serif;
-  font-size:9px;
-  text-align:center;
-  margin-bottom:24px
+ color:#777;
+ font-family:Arial,sans-serif;
+ font-size:9px;
+ text-align:center;
+ margin-bottom:24px
 }
 
 .page-content{
-  width:100%;
-  color:#111;
-  font-family:"Times New Roman",Georgia,serif;
-  font-size:14px;
-  line-height:1.75;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  word-break:normal
+ width:100%;
+ color:#111;
+ font-family:"Times New Roman",Georgia,serif;
+ font-size:14px;
+ line-height:1.75;
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+ word-break:normal
 }
 
 .page-content p{
-  margin-top:0;
-  margin-bottom:12px
+ margin-top:0;
+ margin-bottom:12px
 }
 
 .page-content h1,
@@ -337,11 +327,11 @@ button:disabled{
 .page-content h4,
 .page-content h5,
 .page-content h6{
-  color:inherit;
-  font-family:inherit;
-  line-height:1.25;
-  margin-top:16px;
-  margin-bottom:10px
+ color:inherit;
+ font-family:inherit;
+ line-height:1.25;
+ margin-top:16px;
+ margin-bottom:10px
 }
 
 .page-content h1{font-size:2em}
@@ -351,460 +341,466 @@ button:disabled{
 
 .page-content strong,
 .page-content b{
-  font-weight:700
+ font-weight:700
 }
 
 .page-content em,
 .page-content i{
-  font-style:italic
+ font-style:italic
 }
 
 .page-content u{
-  text-decoration:underline
+ text-decoration:underline
 }
 
 .page-content ul,
 .page-content ol{
-  margin-top:8px;
-  margin-bottom:12px;
-  padding-left:28px
+ margin-top:8px;
+ margin-bottom:12px;
+ padding-left:28px
 }
 
 .page-content li{
-  margin-bottom:4px
+ margin-bottom:4px
 }
 
 .page-content blockquote{
-  margin:12px 0;
-  padding-left:14px;
-  border-left:3px solid #aaa
+ margin:12px 0;
+ padding-left:14px;
+ border-left:3px solid #aaa
 }
 
 .page-content hr{
-  border:0;
-  border-top:1px solid #999;
-  margin:18px 0
+ border:0;
+ border-top:1px solid #999;
+ margin:18px 0
 }
 
 .page-content table{
-  width:100%;
-  border-collapse:collapse;
-  margin:14px 0;
-  font-family:inherit;
-  font-size:inherit
+ width:100%;
+ border-collapse:collapse;
+ margin:14px 0;
+ font-family:inherit;
+ font-size:inherit
 }
 
 .page-content th,
 .page-content td{
-  border:1px solid #555;
-  padding:6px 8px;
-  vertical-align:top;
-  text-align:left
+ border:1px solid #555;
+ padding:6px 8px;
+ vertical-align:top;
+ text-align:left
 }
 
 .page-content th{
-  font-weight:700
+ font-weight:700
 }
 
 .page-content pre{
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  font-family:monospace
+ white-space:pre-wrap;
+ overflow-wrap:anywhere;
+ font-family:monospace
 }
 
 .empty-page{
-  min-height:500px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#777;
-  font-family:Arial,sans-serif;
-  font-size:12px;
-  text-align:center
+ min-height:300px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ color:#777;
+ font-family:Arial,sans-serif;
+ font-size:12px;
+ text-align:center
 }
 
 .loading{
-  min-height:500px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  color:#999;
-  font-size:11px;
-  text-align:center
+ min-height:300px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:10px;
+ color:#999;
+ font-size:11px;
+ text-align:center
 }
 
 .spinner{
-  width:29px;
-  height:29px;
-  border:3px solid #333;
-  border-top-color:var(--gold);
-  border-radius:50%;
-  animation:spin .8s linear infinite
+ width:29px;
+ height:29px;
+ border:3px solid #333;
+ border-top-color:var(--gold);
+ border-radius:50%;
+ animation:spin .8s linear infinite
 }
 
 @keyframes spin{
-  to{transform:rotate(360deg)}
+ to{transform:rotate(360deg)}
 }
 
 /* PAGE NAVIGATION */
 
 .page-navigation{
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  gap:7px;
-  margin-top:9px
+ display:grid;
+ grid-template-columns:1fr auto 1fr;
+ align-items:center;
+ gap:7px;
+ margin-top:9px
 }
 
 .nav-button{
-  min-height:43px;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
-  background:#181818;
-  color:#fff;
-  font-size:10px;
-  font-weight:900
+ min-height:43px;
+ border:1px solid rgba(255,255,255,.14);
+ border-radius:8px;
+ background:#181818;
+ color:#fff;
+ font-size:10px;
+ font-weight:900
 }
 
 .nav-button.next{
-  background:#252525
+ background:#252525
 }
 
 .page-indicator{
-  min-width:85px;
-  color:var(--gold2);
-  text-align:center;
-  font-size:10px;
-  font-weight:900
+ min-width:85px;
+ color:var(--gold2);
+ text-align:center;
+ font-size:10px;
+ font-weight:900
 }
 
 .go-row{
-  display:flex;
-  gap:7px;
-  margin-top:7px
+ display:flex;
+ gap:7px;
+ margin-top:7px
 }
 
 .page-number-input{
-  flex:1;
-  min-width:0;
-  height:39px;
-  background:#151515;
-  border:1px solid var(--line);
-  border-radius:8px;
-  color:#fff;
-  padding:0 10px;
-  outline:none;
-  font-size:11px
+ flex:1;
+ min-width:0;
+ height:39px;
+ background:#151515;
+ border:1px solid var(--line);
+ border-radius:8px;
+ color:#fff;
+ padding:0 10px;
+ outline:none;
+ font-size:11px
 }
 
 .go-button{
-  width:75px;
-  border:0;
-  border-radius:8px;
-  background:var(--gold);
-  color:#000;
-  font-size:10px;
-  font-weight:900
+ width:75px;
+ border:0;
+ border-radius:8px;
+ background:var(--gold);
+ color:#000;
+ font-size:10px;
+ font-weight:900
 }
 
 .page-review{
-  margin-top:8px;
-  padding:11px;
-  background:#101010;
-  border:1px solid var(--line);
-  border-radius:10px
+ margin-top:8px;
+ padding:11px;
+ background:#101010;
+ border:1px solid var(--line);
+ border-radius:10px;
+ margin-bottom:8px
 }
 
 .page-review-title{
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900;
-  margin-bottom:5px
+ color:var(--gold2);
+ font-size:10px;
+ font-weight:900;
+ margin-bottom:5px
 }
 
 .page-review-text{
-  color:#bbb;
-  font-size:10px;
-  line-height:1.55;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere
+ color:#bbb;
+ font-size:10px;
+ line-height:1.55;
+ white-space:pre-wrap;
+ overflow-wrap:anywhere
 }
 
 /* ACTION AREA */
 
 .action-area{
-  flex:0 0 auto;
-  background:#080808;
-  border-top:1px solid var(--line);
-  padding:8px 8px 9px;
-  box-shadow:0 -8px 25px rgba(0,0,0,.45);
-  position:relative;
-  z-index:20
+ width:100%;
+ background:#080808;
+ border-top:1px solid var(--line);
+ padding:8px 7px 12px;
+ box-shadow:0 -8px 25px rgba(0,0,0,.45)
 }
 
+/* CORRECTION */
+
 .correction-box{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:7px;
-  align-items:end
+ display:grid;
+ grid-template-columns:1fr auto;
+ gap:7px;
+ align-items:end
 }
 
 .correction-input{
-  width:100%;
-  height:43px;
-  min-height:43px;
-  max-height:100px;
-  resize:none;
-  padding:11px;
-  background:#171717;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
-  color:#fff;
-  outline:none;
-  font-size:11px;
-  line-height:1.4
+ width:100%;
+ height:43px;
+ min-height:43px;
+ max-height:100px;
+ resize:none;
+ padding:11px;
+ background:#171717;
+ border:1px solid rgba(255,255,255,.14);
+ border-radius:8px;
+ color:#fff;
+ outline:none;
+ font-size:11px;
+ line-height:1.4
 }
 
 .correction-button{
-  min-width:125px;
-  min-height:43px;
-  border:1px solid rgba(212,175,55,.38);
-  border-radius:8px;
-  background:#171717;
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900
+ min-width:125px;
+ min-height:43px;
+ border:1px solid rgba(212,175,55,.38);
+ border-radius:8px;
+ background:#171717;
+ color:var(--gold2);
+ font-size:10px;
+ font-weight:900
 }
 
 /* PAYMENT */
 
 .payment-section{
-  display:block;
-  margin-top:7px;
-  padding:9px;
-  background:#111;
-  border:1px solid rgba(212,175,55,.4);
-  border-radius:10px
+ display:block;
+ width:100%;
+ margin-top:7px;
+ padding:9px;
+ background:#111;
+ border:1px solid rgba(212,175,55,.4);
+ border-radius:10px
 }
 
 .payment-title{
-  color:var(--gold2);
-  font-size:12px;
-  font-weight:900
+ color:var(--gold2);
+ font-size:12px;
+ font-weight:900
 }
 
 .payment-subtitle{
-  margin-top:3px;
-  color:#888;
-  font-size:9px;
-  line-height:1.4
+ margin-top:3px;
+ color:#888;
+ font-size:9px;
+ line-height:1.4
 }
 
 .payment-details{
-  margin-top:6px;
-  color:#ddd;
-  white-space:pre-wrap;
-  font-size:10px;
-  line-height:1.45
+ margin-top:6px;
+ color:#ddd;
+ white-space:pre-wrap;
+ font-size:10px;
+ line-height:1.45
 }
 
 .payment-id{
-  margin-top:6px;
-  color:#aaa;
-  font-size:9px;
-  word-break:break-all
+ margin-top:6px;
+ color:#aaa;
+ font-size:9px;
+ word-break:break-all
 }
 
-/*
-  ALL THREE BUTTONS ARE ALWAYS VISIBLE.
-*/
+/* THREE BUTTONS — ALWAYS VISIBLE */
 
 .action-buttons{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-  margin-top:7px;
-  width:100%
+ display:flex;
+ flex-direction:column;
+ gap:7px;
+ width:100%;
+ margin-top:8px
 }
 
 .action-buttons button{
-  width:100%;
-  min-height:46px;
-  border-radius:9px;
-  font-size:11px;
-  font-weight:900
+ display:block !important;
+ width:100%;
+ min-height:48px;
+ border-radius:9px;
+ font-size:11px;
+ font-weight:900
 }
 
 /* GOLD */
 
 .make-payment-button{
-  background:#d4af37;
-  color:#000;
-  border:0
+ background:#d4af37 !important;
+ color:#000 !important;
+ border:0
 }
 
 .make-payment-button:disabled{
-  background:#d4af37;
-  color:#000;
-  opacity:1
+ background:#d4af37 !important;
+ color:#000 !important;
+ opacity:1 !important
 }
 
 /* GREEN */
 
 .confirm-payment-button{
-  background:#008000;
-  color:#fff;
-  border:0
+ background:#008000 !important;
+ color:#fff !important;
+ border:0
 }
 
 .confirm-payment-button:disabled{
-  background:#008000;
-  color:#fff;
-  opacity:1
+ background:#008000 !important;
+ color:#fff !important;
+ opacity:1 !important
 }
 
-/* BLUE / GREY */
+/* DOWNLOAD */
 
 .download-button{
-  background:#007bff;
-  color:#fff;
-  border:0
+ background:#007bff !important;
+ color:#fff !important;
+ border:0
 }
 
 .download-button:disabled{
-  background:#666;
-  color:#fff;
-  opacity:1
+ background:#666 !important;
+ color:#fff !important;
+ opacity:1 !important
 }
 
 .download-button.active{
-  background:#007bff;
-  color:#fff;
-  cursor:pointer
+ background:#007bff !important;
+ color:#fff !important;
+ opacity:1 !important
 }
 
 .payment-message{
-  margin-top:7px;
-  color:#888;
-  font-size:9px;
-  text-align:center;
-  line-height:1.45
+ margin-top:7px;
+ color:#888;
+ font-size:9px;
+ text-align:center;
+ line-height:1.45
 }
 
 .message{
-  flex:0 0 auto;
-  min-height:17px;
-  margin-top:2px;
-  color:#888;
-  font-size:9px;
-  text-align:center
+ min-height:17px;
+ margin-top:4px;
+ color:#888;
+ font-size:9px;
+ text-align:center
 }
 
 .message.error{
-  color:#ff7777
+ color:#ff7777
 }
 
 .message.success{
-  color:#75dc99
+ color:#75dc99
 }
 
 /* MOBILE */
 
 @media(max-width:600px){
 
-  .main{
-    padding:6px 2px 0
-  }
+ .main{
+  padding:74px 2px 20px
+ }
 
-  .top-amount-card{
-    margin-bottom:5px;
-    padding:7px
-  }
+ .top-amount-card{
+  padding:7px;
+  margin-bottom:5px
+ }
 
-  .top-amount-value{
-    font-size:25px
-  }
+ .top-amount-value{
+  font-size:25px
+ }
 
-  .top-panel{
-    padding:8px 10px;
-    margin-bottom:5px
-  }
+ .top-panel{
+  padding:8px 10px;
+  margin-bottom:5px
+ }
 
-  .review-title{
-    font-size:15px
-  }
+ .review-title{
+  font-size:15px
+ }
 
-  .review-subtitle{
-    font-size:9px
-  }
+ .review-subtitle{
+  font-size:9px
+ }
 
-  /*
-    Keep the reading window wide.
-    Only tiny outer padding is used.
-  */
+ /*
+   STILL LARGE.
+   The customer gets a real reading window,
+   not a tiny box.
+ */
 
-  .document-scroll{
-    padding:2px
-  }
+ .document-scroll{
+  height:45vh;
+  min-height:300px;
+  max-height:none;
+  padding:2px
+ }
 
-  .document-page{
-    width:100%;
-    min-height:560px;
-    padding:28px 16px 40px
-  }
+ .document-page{
+  width:100%;
+  min-height:560px;
+  padding:28px 16px 40px
+ }
 
-  .page-content{
-    font-size:13px;
-    line-height:1.65
-  }
+ .page-content{
+  font-size:13px;
+  line-height:1.65
+ }
 
-  .page-content table{
-    font-size:11px
-  }
+ .page-content table{
+  font-size:11px
+ }
 
-  .page-content th,
-  .page-content td{
-    padding:4px 5px
-  }
+ .page-content th,
+ .page-content td{
+  padding:4px 5px
+ }
 
-  .correction-box{
-    grid-template-columns:1fr
-  }
+ .correction-box{
+  grid-template-columns:1fr
+ }
 
-  .correction-button{
-    width:100%
-  }
+ .correction-button{
+  width:100%
+ }
 
-  .action-area{
-    padding:6px 6px 7px
-  }
+ .action-area{
+  padding:7px 6px 12px
+ }
 
-  .payment-section{
-    padding:8px
-  }
+ .payment-section{
+  padding:8px
+ }
 }
 
-/* DESKTOP */
+/* LARGER SCREENS */
 
 @media(min-width:800px){
 
-  .document-scroll{
-    padding:5px
-  }
+ .document-scroll{
+  height:58vh;
+  max-height:700px;
+  padding:5px
+ }
 
-  .document-page{
-    max-width:1000px;
-    margin:auto;
-    min-height:1050px;
-    padding:65px 70px 75px
-  }
+ .document-page{
+  max-width:1000px;
+  margin:auto;
+  min-height:1050px;
+  padding:65px 70px 75px
+ }
 
-  .page-content{
-    font-size:15px;
-    line-height:1.8
-  }
+ .page-content{
+  font-size:15px;
+  line-height:1.8
+ }
 }
 </style>
 </head>
@@ -812,243 +808,228 @@ button:disabled{
 <body>
 
 <header class="header">
-  <div class="header-inner">
+<div class="header-inner">
 
-    <div class="brand">
-      <h1 class="brand-title">Naija Pocket Business Center</h1>
-      <div class="brand-subtitle">Your Business Center</div>
-    </div>
+<div class="brand">
+<h1 class="brand-title">Naija Pocket Business Center</h1>
+<div class="brand-subtitle">Your Business Center</div>
+</div>
 
-    <div id="serviceBadge" class="service-badge">
-      Service
-    </div>
+<div id="serviceBadge" class="service-badge">
+Service
+</div>
 
-  </div>
+</div>
 </header>
 
 <main class="main">
 
-  <!-- AMOUNT IS VISIBLE FROM THE TOP -->
-  <section class="top-amount-card">
-    <div class="top-amount-label">AMOUNT TO PAY</div>
-    <div id="amountValueTop" class="top-amount-value">₦0</div>
-  </section>
+<section class="top-amount-card">
+<div class="top-amount-label">AMOUNT TO PAY</div>
+<div id="amountValueTop" class="top-amount-value">₦0</div>
+</section>
 
-  <!-- REVIEW STATUS -->
-  <section class="top-panel">
+<section class="top-panel">
 
-    <h2 class="review-title">
-      Review Your Complete Service
-    </h2>
+<h2 class="review-title">
+Review Your Complete Service
+</h2>
 
-    <p class="review-subtitle">
-      Go through your complete document. Make any necessary correction, then pay and download after Customer Care verifies your payment.
-    </p>
+<p class="review-subtitle">
+Go through your complete document. Make any necessary correction, then pay and download after Customer Care verifies your payment.
+</p>
 
-    <div class="status-row">
-      <span class="status-label">Review status</span>
-      <span id="statusValue" class="status-value">Preparing...</span>
-    </div>
+<div class="status-row">
+<span class="status-label">Review status</span>
+<span id="statusValue" class="status-value">Preparing...</span>
+</div>
 
-    <div class="progress-shell">
-      <div id="progressBar" class="progress-bar"></div>
-    </div>
+<div class="progress-shell">
+<div id="progressBar" class="progress-bar"></div>
+</div>
 
-    <div id="progressText" class="progress-text">
-      Preparing the document...
-    </div>
+<div id="progressText" class="progress-text">
+Preparing the document...
+</div>
 
-  </section>
+</section>
 
-  <!-- LARGE WORKING DOCUMENT REVIEW WINDOW -->
-  <section class="review-card">
+<!-- =====================================================
+     COMPLETE DOCUMENT REVIEW WINDOW
+     ===================================================== -->
 
-    <div class="document-card-header">
+<section class="review-card">
 
-      <div class="document-heading">
-        <h3>Your Complete Document</h3>
-      </div>
+<div class="document-card-header">
 
-      <div id="pageCount" class="page-count">
-        0 PAGES
-      </div>
+<div class="document-heading">
+<h3>Your Complete Document</h3>
+</div>
 
-    </div>
+<div id="pageCount" class="page-count">
+0 PAGES
+</div>
 
-    <div id="documentScroll" class="document-scroll">
+</div>
 
-      <div id="pageViewer" class="page-viewer">
+<!-- THIS IS THE LARGE READING WINDOW -->
 
-        <div class="loading">
-          <div class="spinner"></div>
-          <div>Your service is being carefully prepared.</div>
-        </div>
+<div id="documentScroll" class="document-scroll">
 
-      </div>
+<div id="pageViewer" class="page-viewer">
 
-      <!-- PAGE NAVIGATION -->
+<div class="loading">
+<div class="spinner"></div>
+<div>Your service is being carefully prepared.</div>
+</div>
 
-      <div class="page-navigation">
+</div>
 
-        <button
-          id="previousButton"
-          class="nav-button"
-          type="button"
-          disabled
-        >
-          ← Previous Page
-        </button>
+<div class="page-navigation">
 
-        <div id="pageIndicator" class="page-indicator">
-          Page 0 of 0
-        </div>
+<button
+id="previousButton"
+class="nav-button"
+type="button"
+disabled>
+← Previous Page
+</button>
 
-        <button
-          id="nextButton"
-          class="nav-button next"
-          type="button"
-          disabled
-        >
-          Next Page →
-        </button>
+<div id="pageIndicator" class="page-indicator">
+Page 0 of 0
+</div>
 
-      </div>
+<button
+id="nextButton"
+class="nav-button next"
+type="button"
+disabled>
+Next Page →
+</button>
 
-      <div class="go-row">
+</div>
 
-        <input
-          id="pageNumberInput"
-          class="page-number-input"
-          type="number"
-          min="1"
-          placeholder="Enter page number"
-        >
+<div class="go-row">
 
-        <button
-          id="goButton"
-          class="go-button"
-          type="button"
-        >
-          GO
-        </button>
+<input
+id="pageNumberInput"
+class="page-number-input"
+type="number"
+min="1"
+placeholder="Enter page number">
 
-      </div>
+<button
+id="goButton"
+class="go-button"
+type="button">
+GO
+</button>
 
-      <div
-        id="pageReview"
-        class="page-review"
-        style="display:none"
-      >
-        <div class="page-review-title">
-          PAGE REVIEW
-        </div>
+</div>
 
-        <div
-          id="pageReviewText"
-          class="page-review-text"
-        ></div>
-      </div>
+<div
+id="pageReview"
+class="page-review"
+style="display:none">
 
-    </div>
+<div class="page-review-title">
+PAGE REVIEW
+</div>
 
-    <!-- ACTIONS BELOW THE DOCUMENT -->
+<div
+id="pageReviewText"
+class="page-review-text">
+</div>
 
-    <div class="action-area">
+</div>
 
-      <!-- CORRECTION -->
+</div>
 
-      <div class="correction-box">
+<!-- ACTIONS ARE BELOW THE READING WINDOW -->
 
-        <textarea
-          id="correctionInput"
-          class="correction-input"
-          placeholder="Want anything changed? Tell us what to correct..."
-        ></textarea>
+<div class="action-area">
 
-        <button
-          id="correctionButton"
-          class="correction-button"
-          type="button"
-        >
-          Apply Correction
-        </button>
+<div class="correction-box">
 
-      </div>
+<textarea
+id="correctionInput"
+class="correction-input"
+placeholder="Want anything changed? Tell us what to correct...">
+</textarea>
 
-      <!-- PAYMENT -->
+<button
+id="correctionButton"
+class="correction-button"
+type="button">
+Apply Correction
+</button>
 
-      <section
-        id="paymentSection"
-        class="payment-section"
-      >
+</div>
 
-        <div class="payment-title">
-          PAYMENT
-        </div>
+<section
+id="paymentSection"
+class="payment-section">
 
-        <div class="payment-subtitle">
-          Pay the amount shown above. After you have paid, tap I HAVE MADE PAYMENT. Customer Care will verify the payment before download is unlocked.
-        </div>
+<div class="payment-title">
+PAYMENT
+</div>
 
-        <div
-          id="paymentDetails"
-          class="payment-details"
-        >
-          Payment has not been started.
-        </div>
+<div class="payment-subtitle">
+Pay the amount shown above. After you have paid, tap I HAVE MADE PAYMENT. Customer Care will verify the payment before download is unlocked.
+</div>
 
-        <div
-          id="paymentId"
-          class="payment-id"
-          style="display:none"
-        ></div>
+<div
+id="paymentDetails"
+class="payment-details">
+Payment has not been started.
+</div>
 
-        <!-- THESE THREE BUTTONS MUST ALWAYS BE VISIBLE -->
+<div
+id="paymentId"
+class="payment-id"
+style="display:none">
+</div>
 
-        <div class="action-buttons">
+<div class="action-buttons">
 
-          <button
-            id="makePaymentButton"
-            class="make-payment-button"
-            type="button"
-          >
-            💳 MAKE PAYMENT
-          </button>
+<button
+id="makePaymentButton"
+class="make-payment-button"
+type="button">
+💳 MAKE PAYMENT
+</button>
 
-          <button
-            id="paymentButton"
-            class="confirm-payment-button"
-            type="button"
-            disabled
-          >
-            ✓ I HAVE MADE PAYMENT
-          </button>
+<button
+id="paymentButton"
+class="confirm-payment-button"
+type="button"
+disabled>
+✓ I HAVE MADE PAYMENT
+</button>
 
-          <button
-            id="downloadButton"
-            class="download-button"
-            type="button"
-            disabled
-          >
-            🔒 DOWNLOAD DOCUMENT
-          </button>
+<button
+id="downloadButton"
+class="download-button"
+type="button"
+disabled>
+🔒 DOWNLOAD DOCUMENT
+</button>
 
-        </div>
+</div>
 
-        <div
-          id="paymentMessage"
-          class="payment-message"
-        >
-          Download remains locked until Customer Care verifies your payment.
-        </div>
+<div
+id="paymentMessage"
+class="payment-message">
+Download remains locked until Customer Care verifies your payment.
+</div>
 
-      </section>
+</section>
 
-    </div>
+</div>
 
-  </section>
+</section>
 
-  <div id="message" class="message"></div>
+<div id="message" class="message"></div>
 
 </main>
 
@@ -1102,6 +1083,7 @@ let reviewFinished=false;
 let paid=false;
 let paymentStarted=false;
 let paymentPending=false;
+
 let busy=false;
 
 let pollTimer=null;
@@ -1114,1560 +1096,1448 @@ let billing="";
 
 let paymentIdentifier="";
 
-/* HELPERS */
-
 function clean(v){
-  return v==null ? "" : String(v).trim();
+ return v==null ? "" : String(v).trim();
 }
 
 function setMessage(t,type=""){
-  message.textContent=t||"";
-  message.className="message"+(type?" "+type:"");
+ message.textContent=t||"";
+ message.className="message"+(type?" "+type:"");
 }
 
 function setStatus(t){
-  statusValue.textContent=t||"Preparing...";
+ statusValue.textContent=t||"Preparing...";
 }
 
 function state(){
-  return clean(currentStatus).toLowerCase();
+ return clean(currentStatus).toLowerCase();
 }
 
 function complete(d){
-  return !!d && (
-    state()==="review_complete" ||
-    d.review_finished===true
-  );
+ return !!d && (
+  state()==="review_complete" ||
+  d.review_finished===true
+ );
 }
 
 /* API */
 
 async function apiGet(url){
 
-  const r=await fetch(
-    API_BASE+url,
-    {
-      cache:"no-store"
-    }
+ const r=await fetch(
+  API_BASE+url,
+  {cache:"no-store"}
+ );
+
+ const d=await r.json().catch(()=>({}));
+
+ if(!r.ok){
+  throw Error(
+   d.error_message||
+   d.error||
+   d.message||
+   "Unable to load the document."
   );
+ }
 
-  const d=await r.json().catch(()=>({}));
-
-  if(!r.ok){
-    throw Error(
-      d.error_message ||
-      d.error ||
-      d.message ||
-      "Unable to load the document."
-    );
-  }
-
-  return d;
+ return d;
 }
 
 async function apiPost(url,body){
 
-  const r=await fetch(
-    API_BASE+url,
-    {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify(body||{})
-    }
-  );
-
-  const d=await r.json().catch(()=>({}));
-
-  if(!r.ok || d.success===false){
-    throw Error(
-      d.error_message ||
-      d.error ||
-      d.message ||
-      "The request could not be completed."
-    );
+ const r=await fetch(
+  API_BASE+url,
+  {
+   method:"POST",
+   headers:{
+    "Content-Type":"application/json"
+   },
+   body:JSON.stringify(body||{})
   }
+ );
 
-  return d;
+ const d=await r.json().catch(()=>({}));
+
+ if(!r.ok||d.success===false){
+  throw Error(
+   d.error_message||
+   d.error||
+   d.message||
+   "The request could not be completed."
+  );
+ }
+
+ return d;
 }
 
-/* PAGE EXTRACTION */
+/* PAGES */
 
 function normalizePages(d){
 
-  let s=[];
+ let s=[];
 
-  if(
-    Array.isArray(d?.review_pages) &&
-    d.review_pages.length
-  ){
-    s=d.review_pages;
+ if(
+  Array.isArray(d?.review_pages)&&
+  d.review_pages.length
+ ){
+  s=d.review_pages;
+ }
+ else if(
+  Array.isArray(d?.document_pages)&&
+  d.document_pages.length
+ ){
+  s=d.document_pages;
+ }
+ else if(
+  Array.isArray(d?.pages)&&
+  d.pages.length
+ ){
+  s=d.pages;
+ }
 
-  }else if(
-    Array.isArray(d?.document_pages) &&
-    d.document_pages.length
-  ){
-    s=d.document_pages;
-
-  }else if(
-    Array.isArray(d?.pages) &&
-    d.pages.length
-  ){
-    s=d.pages;
-  }
-
-  return s
-    .map((x,i)=>({
-      page_number:Number(x.page_number)||i+1,
-      position:Number(x.position)||i+1,
-      status:clean(x.status)||"queued",
-      content:x.content==null ? "" : String(x.content),
-      review:clean(x.review),
-      error:clean(x.error)
-    }))
-    .sort((a,b)=>a.position-b.position);
+ return s
+ .map((x,i)=>({
+  page_number:Number(x.page_number)||i+1,
+  position:Number(x.position)||i+1,
+  status:clean(x.status)||"queued",
+  content:x.content==null?"":String(x.content),
+  review:clean(x.review),
+  error:clean(x.error)
+ }))
+ .sort((a,b)=>a.position-b.position);
 }
 
 function extractPages(d){
 
-  let x=normalizePages(d);
+ let x=normalizePages(d);
 
-  if(x.length){
+ if(x.length){
+  return x;
+ }
+
+ for(
+  const c of [
+   d?.document,
+   d?.result,
+   d?.review,
+   d?.output
+  ]
+ ){
+
+  if(c&&typeof c==="object"){
+
+   x=normalizePages(c);
+
+   if(x.length){
     return x;
+   }
   }
+ }
 
-  for(
-    const c of [
-      d?.document,
-      d?.result,
-      d?.review,
-      d?.output
-    ]
-  ){
-
-    if(c && typeof c==="object"){
-
-      x=normalizePages(c);
-
-      if(x.length){
-        return x;
-      }
-    }
-  }
-
-  return [];
+ return [];
 }
 
-/* DOCUMENT SANITIZER */
+/* SANITIZATION */
 
 const allowedTags=new Set([
-  "DIV","P","BR","SPAN",
-  "STRONG","B","EM","I","U",
-  "S","STRIKE",
-  "H1","H2","H3","H4","H5","H6",
-  "UL","OL","LI",
-  "BLOCKQUOTE","HR",
-  "TABLE","THEAD","TBODY","TFOOT",
-  "TR","TH","TD",
-  "PRE","SUP","SUB"
+ "DIV","P","BR","SPAN",
+ "STRONG","B","EM","I","U",
+ "S","STRIKE",
+ "H1","H2","H3","H4","H5","H6",
+ "UL","OL","LI",
+ "BLOCKQUOTE","HR",
+ "TABLE","THEAD","TBODY","TFOOT",
+ "TR","TH","TD",
+ "PRE","SUP","SUB"
 ]);
 
 const allowedAttrs=new Set([
-  "style",
-  "align",
-  "colspan",
-  "rowspan"
+ "style",
+ "align",
+ "colspan",
+ "rowspan"
 ]);
 
 const allowedStyles=new Set([
-  "color",
-  "background-color",
-  "font-family",
-  "font-size",
-  "font-weight",
-  "font-style",
-  "text-decoration",
-  "text-align",
-  "text-indent",
-  "line-height",
-  "letter-spacing",
-  "margin",
-  "margin-top",
-  "margin-right",
-  "margin-bottom",
-  "margin-left",
-  "padding",
-  "padding-top",
-  "padding-right",
-  "padding-bottom",
-  "padding-left",
-  "vertical-align",
-  "width",
-  "max-width",
-  "border",
-  "border-top",
-  "border-right",
-  "border-bottom",
-  "border-left",
-  "background"
+ "color",
+ "background-color",
+ "font-family",
+ "font-size",
+ "font-weight",
+ "font-style",
+ "text-decoration",
+ "text-align",
+ "text-indent",
+ "line-height",
+ "letter-spacing",
+ "margin",
+ "margin-top",
+ "margin-right",
+ "margin-bottom",
+ "margin-left",
+ "padding",
+ "padding-top",
+ "padding-right",
+ "padding-bottom",
+ "padding-left",
+ "vertical-align",
+ "width",
+ "max-width",
+ "border",
+ "border-top",
+ "border-right",
+ "border-bottom",
+ "border-left",
+ "background"
 ]);
 
 function normText(v){
 
-  return String(v==null?"":v)
-    .replace(/\r\n/g,"\n")
-    .replace(/\r/g,"\n")
-    .replace(/\u00a0/g," ")
-    .replace(/^\s*#{1,6}\s+/gm,"")
-    .replace(/\n{5,}/g,"\n\n")
-    .trim();
+ return String(v==null?"":v)
+ .replace(/\r\n/g,"\n")
+ .replace(/\r/g,"\n")
+ .replace(/\u00a0/g," ")
+ .replace(/^\s*#{1,6}\s+/gm,"")
+ .replace(/\n{5,}/g,"\n\n")
+ .trim();
 }
 
 function safeStyle(s){
 
-  let out=[];
+ let out=[];
 
-  for(
-    const d of String(s||"").split(";")
-  ){
+ for(
+  const d of String(s||"").split(";")
+ ){
 
-    const i=d.indexOf(":");
+  const i=d.indexOf(":");
 
-    if(i<0){
-      continue;
-    }
-
-    const p=d.slice(0,i).trim().toLowerCase();
-    const v=d.slice(i+1).trim();
-
-    if(
-      allowedStyles.has(p) &&
-      !/javascript:|expression\(|url\(|@import/i.test(v)
-    ){
-      out.push(p+":"+v);
-    }
+  if(i<0){
+   continue;
   }
 
-  return out.join(";");
+  const p=d.slice(0,i).trim().toLowerCase();
+  const v=d.slice(i+1).trim();
+
+  if(
+   allowedStyles.has(p)&&
+   !/javascript:|expression\(|url\(|@import/i.test(v)
+  ){
+   out.push(p+":"+v);
+  }
+ }
+
+ return out.join(";");
 }
 
 function renderPlain(t){
 
-  const f=document.createDocumentFragment();
+ const f=document.createDocumentFragment();
 
-  const lines=normText(t).split("\n");
+ const lines=normText(t).split("\n");
 
-  lines.forEach((line,i)=>{
+ lines.forEach((line,i)=>{
 
-    if(line===""){
+  if(line===""){
 
-      f.appendChild(
-        document.createElement("br")
-      );
+   f.appendChild(
+    document.createElement("br")
+   );
 
-      return;
-    }
+   return;
+  }
 
-    const parts=line.split(
-      /(\*\*[^*]+\*\*)/g
+  const parts=line.split(
+   /(\*\*[^*]+\*\*)/g
+  );
+
+  parts.forEach(p=>{
+
+   if(!p){
+    return;
+   }
+
+   if(
+    p.startsWith("**")&&
+    p.endsWith("**")
+   ){
+
+    const e=document.createElement("strong");
+
+    e.textContent=p.slice(2,-2);
+
+    f.appendChild(e);
+
+   }else{
+
+    f.appendChild(
+     document.createTextNode(
+      p.replace(/^\*+|\*+$/g,"")
+     )
     );
-
-    parts.forEach(p=>{
-
-      if(!p){
-        return;
-      }
-
-      if(
-        p.startsWith("**") &&
-        p.endsWith("**")
-      ){
-
-        const e=document.createElement("strong");
-
-        e.textContent=p.slice(2,-2);
-
-        f.appendChild(e);
-
-      }else{
-
-        f.appendChild(
-          document.createTextNode(
-            p.replace(/^\*+|\*+$/g,"")
-          )
-        );
-      }
-    });
-
-    if(i<lines.length-1){
-
-      f.appendChild(
-        document.createElement("br")
-      );
-    }
+   }
   });
 
-  return f;
+  if(i<lines.length-1){
+
+   f.appendChild(
+    document.createElement("br")
+   );
+  }
+ });
+
+ return f;
 }
 
 function sanitizeHtml(src){
 
-  if(
-    !/<[a-z][\s\S]*>/i.test(
-      String(src||"")
+ if(
+  !/<[a-z][\s\S]*>/i.test(
+   String(src||"")
+  )
+ ){
+  return renderPlain(src);
+ }
+
+ const doc=
+  new DOMParser().parseFromString(
+   String(src),
+   "text/html"
+  );
+
+ const out=
+  document.createDocumentFragment();
+
+ function walk(n,parent){
+
+  if(n.nodeType===Node.TEXT_NODE){
+
+   parent.appendChild(
+    document.createTextNode(
+     normText(n.nodeValue||"")
     )
-  ){
-    return renderPlain(src);
+   );
+
+   return;
   }
 
-  const doc=
-    new DOMParser().parseFromString(
-      String(src),
-      "text/html"
+  if(n.nodeType!==Node.ELEMENT_NODE){
+   return;
+  }
+
+  const tag=n.tagName.toUpperCase();
+
+  if([
+   "SCRIPT","STYLE","IFRAME",
+   "OBJECT","EMBED","FORM",
+   "INPUT","BUTTON","TEXTAREA",
+   "SELECT","VIDEO","AUDIO"
+  ].includes(tag)){
+   return;
+  }
+
+  if(!allowedTags.has(tag)){
+
+   for(const c of n.childNodes){
+    walk(c,parent);
+   }
+
+   return;
+  }
+
+  const e=
+   document.createElement(
+    tag.toLowerCase()
+   );
+
+  for(const a of n.attributes){
+
+   const name=a.name.toLowerCase();
+   const v=a.value||"";
+
+   if(!allowedAttrs.has(name)){
+    continue;
+   }
+
+   if(name==="style"){
+
+    const st=safeStyle(v);
+
+    if(st){
+     e.setAttribute("style",st);
+    }
+
+   }else if(
+    name==="align"&&
+    ["left","center","right","justify"]
+    .includes(v.toLowerCase().trim())
+   ){
+
+    e.setAttribute(
+     "align",
+     v.toLowerCase().trim()
     );
 
-  const out=
-    document.createDocumentFragment();
+   }else if(
+    (name==="colspan"||name==="rowspan")&&
+    /^\d+$/.test(v)&&
+    +v>0&&
+    +v<=100
+   ){
 
-  function walk(n,parent){
-
-    if(n.nodeType===Node.TEXT_NODE){
-
-      parent.appendChild(
-        document.createTextNode(
-          normText(n.nodeValue||"")
-        )
-      );
-
-      return;
-    }
-
-    if(n.nodeType!==Node.ELEMENT_NODE){
-      return;
-    }
-
-    const tag=n.tagName.toUpperCase();
-
-    if([
-      "SCRIPT",
-      "STYLE",
-      "IFRAME",
-      "OBJECT",
-      "EMBED",
-      "FORM",
-      "INPUT",
-      "BUTTON",
-      "TEXTAREA",
-      "SELECT",
-      "VIDEO",
-      "AUDIO"
-    ].includes(tag)){
-      return;
-    }
-
-    if(!allowedTags.has(tag)){
-
-      for(
-        const c of n.childNodes
-      ){
-        walk(c,parent);
-      }
-
-      return;
-    }
-
-    const e=
-      document.createElement(
-        tag.toLowerCase()
-      );
-
-    for(const a of n.attributes){
-
-      const name=a.name.toLowerCase();
-      const v=a.value||"";
-
-      if(!allowedAttrs.has(name)){
-        continue;
-      }
-
-      if(name==="style"){
-
-        const st=safeStyle(v);
-
-        if(st){
-          e.setAttribute(
-            "style",
-            st
-          );
-        }
-
-      }else if(
-        name==="align" &&
-        [
-          "left",
-          "center",
-          "right",
-          "justify"
-        ].includes(
-          v.toLowerCase().trim()
-        )
-      ){
-
-        e.setAttribute(
-          "align",
-          v.toLowerCase().trim()
-        );
-
-      }else if(
-        (name==="colspan" ||
-         name==="rowspan") &&
-        /^\d+$/.test(v) &&
-        +v>0 &&
-        +v<=100
-      ){
-
-        e.setAttribute(
-          name,
-          v
-        );
-      }
-    }
-
-    for(
-      const c of n.childNodes
-    ){
-      walk(c,e);
-    }
-
-    parent.appendChild(e);
+    e.setAttribute(name,v);
+   }
   }
 
-  for(
-    const c of doc.body.childNodes
-  ){
-    walk(c,out);
+  for(const c of n.childNodes){
+   walk(c,e);
   }
 
-  return out;
+  parent.appendChild(e);
+ }
+
+ for(const c of doc.body.childNodes){
+  walk(c,out);
+ }
+
+ return out;
 }
 
 /* BUTTON STATE */
 
 function updateButtons(){
 
-  previousButton.disabled=
-    busy ||
-    currentPage<=1;
+ previousButton.disabled=
+  busy||currentPage<=1;
 
-  nextButton.disabled=
-    busy ||
-    currentPage>=totalPages ||
-    !totalPages;
+ nextButton.disabled=
+  busy||
+  currentPage>=totalPages||
+  !totalPages;
 
-  correctionButton.disabled=
-    busy;
+ correctionButton.disabled=
+  busy;
 
-  /*
-    MAKE PAYMENT is available only after
-    the complete document is ready.
-  */
+ makePaymentButton.disabled=
+  busy||
+  paymentStarted||
+  amount<=0||
+  !reviewFinished;
 
-  makePaymentButton.disabled=
-    busy ||
-    paymentStarted ||
-    amount<=0 ||
-    !reviewFinished;
+ paymentButton.disabled=
+  busy||
+  !paymentStarted||
+  !paymentPending||
+  paid;
 
-  /*
-    I HAVE MADE PAYMENT is visible always.
-    It becomes active after payment starts.
-  */
+ downloadButton.disabled=
+  busy||
+  !paid;
 
-  paymentButton.disabled=
-    busy ||
-    !paymentStarted ||
-    !paymentPending ||
-    paid;
-
-  /*
-    DOWNLOAD is visible always.
-    It is locked until verified.
-  */
-
-  downloadButton.disabled=
-    busy ||
-    !paid;
-
-  downloadButton.classList.toggle(
-    "active",
-    paid
-  );
+ downloadButton.classList.toggle(
+  "active",
+  paid
+ );
 }
 
-/* RENDER DOCUMENT */
+/* RENDER */
 
 function renderPage(){
 
-  pageViewer.innerHTML="";
+ pageViewer.innerHTML="";
 
-  if(!pages.length){
+ if(!pages.length){
 
-    pageViewer.innerHTML=
-      '<div class="loading">' +
-      '<div class="spinner"></div>' +
-      '<div>Your service is being carefully prepared.</div>' +
-      '</div>';
-
-    pageIndicator.textContent=
-      "Page 0 of 0";
-
-    updateButtons();
-
-    return;
-  }
-
-  const p=pages[currentPage-1];
-
-  if(!p){
-
-    pageViewer.innerHTML=
-      '<div class="empty-page">' +
-      'This document page is not available yet.' +
-      '</div>';
-
-    return;
-  }
-
-  const a=
-    document.createElement("article");
-
-  a.className="document-page";
-
-  const n=
-    document.createElement("div");
-
-  n.className="page-number-inside";
-
-  n.textContent=
-    "PAGE "+p.page_number;
-
-  const c=
-    document.createElement("div");
-
-  c.className="page-content";
-
-  c.appendChild(
-    sanitizeHtml(
-      p.content ||
-      "This page is still being prepared."
-    )
-  );
-
-  a.append(
-    n,
-    c
-  );
-
-  pageViewer.appendChild(a);
+  pageViewer.innerHTML=
+   '<div class="loading">'+
+   '<div class="spinner"></div>'+
+   '<div>Your service is being carefully prepared.</div>'+
+   '</div>';
 
   pageIndicator.textContent=
-    `Page ${currentPage} of ${totalPages}`;
-
-  if(p.review || p.error){
-
-    pageReview.style.display=
-      "block";
-
-    pageReviewText.textContent=
-      p.error
-        ? "Page information:\n\n"+normText(p.error)
-        : normText(p.review);
-
-  }else{
-
-    pageReview.style.display=
-      "none";
-  }
+   "Page 0 of 0";
 
   updateButtons();
+
+  return;
+ }
+
+ const p=pages[currentPage-1];
+
+ if(!p){
+
+  pageViewer.innerHTML=
+   '<div class="empty-page">'+
+   'This document page is not available yet.'+
+   '</div>';
+
+  return;
+ }
+
+ const a=
+  document.createElement("article");
+
+ a.className="document-page";
+
+ const n=
+  document.createElement("div");
+
+ n.className="page-number-inside";
+
+ n.textContent=
+  "PAGE "+p.page_number;
+
+ const c=
+  document.createElement("div");
+
+ c.className="page-content";
+
+ c.appendChild(
+  sanitizeHtml(
+   p.content||
+   "This page is still being prepared."
+  )
+ );
+
+ a.append(n,c);
+
+ pageViewer.appendChild(a);
+
+ pageIndicator.textContent=
+  `Page ${currentPage} of ${totalPages}`;
+
+ if(p.review||p.error){
+
+  pageReview.style.display="block";
+
+  pageReviewText.textContent=
+   p.error
+    ? "Page information:\n\n"+
+      normText(p.error)
+    : normText(p.review);
+
+ }else{
+
+  pageReview.style.display="none";
+ }
+
+ updateButtons();
 }
 
 function showPage(n){
 
-  if(!totalPages){
-    return;
-  }
+ if(!totalPages){
+  return;
+ }
 
-  currentPage=
-    Math.max(
-      1,
-      Math.min(
-        totalPages,
-        Math.floor(
-          Number(n)||1
-        )
-      )
-    );
+ currentPage=
+  Math.max(
+   1,
+   Math.min(
+    totalPages,
+    Math.floor(Number(n)||1)
+   )
+  );
 
-  renderPage();
+ renderPage();
 
-  documentScroll.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
+ documentScroll.scrollTo({
+  top:0,
+  behavior:"smooth"
+ });
 }
 
 previousButton.onclick=()=>{
-  showPage(currentPage-1);
+ showPage(currentPage-1);
 };
 
 nextButton.onclick=()=>{
-  showPage(currentPage+1);
+ showPage(currentPage+1);
 };
 
 goButton.onclick=()=>{
 
-  const n=
-    Number(
-      pageNumberInput.value
-    );
+ const n=
+  Number(pageNumberInput.value);
 
-  if(
-    !Number.isInteger(n) ||
-    n<1 ||
-    n>totalPages
-  ){
+ if(
+  !Number.isInteger(n)||
+  n<1||
+  n>totalPages
+ ){
 
-    return setMessage(
-      "Enter a page number from 1 to "+
-      totalPages+".",
-      "error"
-    );
-  }
+  return setMessage(
+   "Enter a page number from 1 to "+
+   totalPages+".",
+   "error"
+  );
+ }
 
-  setMessage("");
+ setMessage("");
 
-  showPage(n);
+ showPage(n);
 };
 
 pageNumberInput.onkeydown=e=>{
 
-  if(e.key==="Enter"){
+ if(e.key==="Enter"){
 
-    e.preventDefault();
+  e.preventDefault();
 
-    goButton.click();
-  }
+  goButton.click();
+ }
 };
 
 /* AMOUNT */
 
 function extractAmount(d){
 
-  const seen=new Set();
+ const seen=new Set();
 
-  function find(x){
+ function find(x){
 
-    if(x==null){
-      return 0;
-    }
-
-    if(
-      typeof x==="number" &&
-      isFinite(x) &&
-      x>0
-    ){
-      return x;
-    }
-
-    if(typeof x==="string"){
-
-      const n=
-        Number(
-          x.replace(
-            /[^0-9.]/g,
-            ""
-          )
-        );
-
-      return isFinite(n) && n>0
-        ? n
-        : 0;
-    }
-
-    if(
-      typeof x!=="object" ||
-      seen.has(x)
-    ){
-      return 0;
-    }
-
-    seen.add(x);
-
-    for(
-      const k of [
-        "amount",
-        "price"
-      ]
-    ){
-
-      const n=find(x[k]);
-
-      if(n>0){
-        return n;
-      }
-    }
-
-    for(
-      const k of [
-        "billing",
-        "bill",
-        "payment",
-        "job",
-        "result",
-        "document",
-        "review",
-        "output"
-      ]
-    ){
-
-      const n=find(x[k]);
-
-      if(n>0){
-        return n;
-      }
-    }
-
-    return 0;
+  if(x==null){
+   return 0;
   }
 
-  return find(d);
+  if(
+   typeof x==="number"&&
+   isFinite(x)&&
+   x>0
+  ){
+   return x;
+  }
+
+  if(typeof x==="string"){
+
+   const n=
+    Number(
+     x.replace(/[^0-9.]/g,"")
+    );
+
+   return isFinite(n)&&n>0?n:0;
+  }
+
+  if(
+   typeof x!=="object"||
+   seen.has(x)
+  ){
+   return 0;
+  }
+
+  seen.add(x);
+
+  for(
+   const k of [
+    "amount",
+    "price"
+   ]
+  ){
+
+   const n=find(x[k]);
+
+   if(n>0){
+    return n;
+   }
+  }
+
+  for(
+   const k of [
+    "billing",
+    "bill",
+    "payment",
+    "job",
+    "result",
+    "document",
+    "review",
+    "output"
+   ]
+  ){
+
+   const n=find(x[k]);
+
+   if(n>0){
+    return n;
+   }
+  }
+
+  return 0;
+ }
+
+ return find(d);
 }
 
 function extractBilling(d){
 
-  const seen=new Set();
+ const seen=new Set();
 
-  function find(x){
+ function find(x){
 
-    if(x==null){
-      return "";
-    }
-
-    if(typeof x==="string"){
-      return x.trim();
-    }
-
-    if(
-      typeof x!=="object" ||
-      seen.has(x)
-    ){
-      return "";
-    }
-
-    seen.add(x);
-
-    if(
-      typeof x.billing==="string" &&
-      x.billing.trim()
-    ){
-      return x.billing.trim();
-    }
-
-    for(
-      const k of [
-        "billing",
-        "bill",
-        "payment",
-        "job",
-        "result",
-        "document",
-        "review",
-        "output"
-      ]
-    ){
-
-      const v=find(x[k]);
-
-      if(v){
-        return v;
-      }
-    }
-
-    return "";
+  if(x==null){
+   return "";
   }
 
-  return find(d);
+  if(typeof x==="string"){
+   return x.trim();
+  }
+
+  if(
+   typeof x!=="object"||
+   seen.has(x)
+  ){
+   return "";
+  }
+
+  seen.add(x);
+
+  if(
+   typeof x.billing==="string"&&
+   x.billing.trim()
+  ){
+   return x.billing.trim();
+  }
+
+  for(
+   const k of [
+    "billing",
+    "bill",
+    "payment",
+    "job",
+    "result",
+    "document",
+    "review",
+    "output"
+   ]
+  ){
+
+   const v=find(x[k]);
+
+   if(v){
+    return v;
+   }
+  }
+
+  return "";
+ }
+
+ return find(d);
 }
 
 /* PAYMENT PANEL */
 
 function updatePaymentPanel(){
 
-  amountValueTop.textContent=
-    amount>0
-      ? "₦"+amount.toLocaleString()
-      : "Quotation required";
+ amountValueTop.textContent=
+  amount>0
+   ? "₦"+amount.toLocaleString()
+   : "Quotation required";
 
-  paymentDetails.textContent=
-    "Service: "+
-    (service||"Business Center Service")+
-    "\nBilling: "+
-    (billing||"Fixed price")+
-    "\n\nPay the amount shown above. After paying, tap I HAVE MADE PAYMENT. Customer Care verification is required before download.";
+ paymentDetails.textContent=
+  "Service: "+
+  (service||"Business Center Service")+
+  "\nBilling: "+
+  (billing||"Fixed price")+
+  "\n\nPay the amount shown above. After paying, tap I HAVE MADE PAYMENT. Customer Care verification is required before download.";
 
-  if(paymentIdentifier){
+ if(paymentIdentifier){
 
-    paymentId.style.display=
-      "block";
+  paymentId.style.display="block";
 
-    paymentId.textContent=
-      "Payment ID: "+
-      paymentIdentifier;
+  paymentId.textContent=
+   "Payment ID: "+paymentIdentifier;
 
-  }else{
+ }else{
 
-    paymentId.style.display=
-      "none";
+  paymentId.style.display="none";
 
-    paymentId.textContent="";
-  }
+  paymentId.textContent="";
+ }
 
-  /*
-    NEVER HIDE THESE BUTTONS.
-  */
+ /* NEVER HIDE THE BUTTONS */
 
-  makePaymentButton.style.display=
-    "block";
+ makePaymentButton.style.display="block";
+ paymentButton.style.display="block";
+ downloadButton.style.display="block";
 
-  paymentButton.style.display=
-    "block";
+ makePaymentButton.textContent=
+  paymentStarted
+   ? "✓ PAYMENT STARTED"
+   : "💳 MAKE PAYMENT";
 
-  downloadButton.style.display=
-    "block";
+ paymentButton.textContent=
+  paid
+   ? "✓ PAYMENT VERIFIED"
+   : "✓ I HAVE MADE PAYMENT";
 
-  makePaymentButton.textContent=
-    paymentStarted
-      ? "✓ PAYMENT STARTED"
-      : "💳 MAKE PAYMENT";
+ if(paid){
 
-  paymentButton.textContent=
-    paid
-      ? "✓ PAYMENT VERIFIED"
-      : "✓ I HAVE MADE PAYMENT";
+  downloadButton.disabled=false;
 
-  if(paid){
+  downloadButton.classList.add("active");
 
-    downloadButton.disabled=false;
+  downloadButton.textContent=
+   "⬇ DOWNLOAD DOCUMENT";
 
-    downloadButton.classList.add(
-      "active"
-    );
+  paymentMessage.textContent=
+   "Payment verified by Customer Care. Download is now available.";
 
-    downloadButton.textContent=
-      "⬇ DOWNLOAD DOCUMENT";
+ }else if(paymentPending){
 
-    paymentMessage.textContent=
-      "Payment verified by Customer Care. Download is now available.";
+  downloadButton.disabled=true;
 
-  }else if(paymentPending){
+  downloadButton.classList.remove("active");
 
-    downloadButton.disabled=true;
+  downloadButton.textContent=
+   "🔒 DOWNLOAD DOCUMENT";
 
-    downloadButton.classList.remove(
-      "active"
-    );
+  paymentMessage.textContent=
+   "Payment reported. Please wait for Customer Care to verify your payment.";
 
-    downloadButton.textContent=
-      "🔒 DOWNLOAD DOCUMENT";
+ }else{
 
-    paymentMessage.textContent=
-      "Payment reported. Please wait for Customer Care to verify your payment.";
+  downloadButton.disabled=true;
 
-  }else{
+  downloadButton.classList.remove("active");
 
-    downloadButton.disabled=true;
+  downloadButton.textContent=
+   "🔒 DOWNLOAD DOCUMENT";
 
-    downloadButton.classList.remove(
-      "active"
-    );
+  paymentMessage.textContent=
+   amount>0
+    ? "Download remains locked until Customer Care verifies your payment."
+    : "This service requires a quotation before payment.";
+ }
 
-    downloadButton.textContent=
-      "🔒 DOWNLOAD DOCUMENT";
-
-    paymentMessage.textContent=
-      amount>0
-        ? "Download remains locked until Customer Care verifies your payment."
-        : "This service requires a quotation before payment.";
-  }
-
-  updateButtons();
+ updateButtons();
 }
 
 /* APPLY JOB */
 
 function applyJob(d){
 
-  currentStatus=
-    clean(d.status);
+ currentStatus=
+  clean(d.status);
 
-  reviewFinished=
-    complete(d);
+ reviewFinished=
+  complete(d);
 
-  const p=
-    extractPages(d);
+ const p=
+  extractPages(d);
 
-  if(p.length){
+ if(p.length){
 
-    pages=p;
+  pages=p;
+  totalPages=p.length;
 
-    totalPages=p.length;
+ }else{
 
-  }else{
+  totalPages=
+   Number(d.total_pages)||0;
+ }
 
-    totalPages=
-      Number(d.total_pages)||0;
-  }
+ currentVersion=
+  Number(d.current_version)||1;
 
-  currentVersion=
-    Number(d.current_version)||1;
+ versionId=
+  clean(d.version_id);
 
-  versionId=
-    clean(d.version_id);
+ paid=
+  !!d.paid;
 
-  paid=
-    !!d.paid;
+ paymentPending=
+  !!d.payment_pending;
 
-  paymentPending=
-    !!d.payment_pending;
+ paymentStarted=
+  paymentPending||
+  !!d.payment_id;
 
-  paymentStarted=
-    paymentPending ||
-    !!d.payment_id;
+ amount=
+  extractAmount(d)||
+  amount;
 
-  amount=
-    extractAmount(d) ||
-    amount;
+ billing=
+  clean(d.billing)||
+  extractBilling(d)||
+  billing;
 
-  billing=
-    clean(d.billing) ||
-    extractBilling(d) ||
-    billing;
+ paymentIdentifier=
+  clean(d.payment_id)||
+  paymentIdentifier;
 
-  paymentIdentifier=
-    clean(d.payment_id) ||
-    paymentIdentifier;
+ if(totalPages){
 
-  if(totalPages){
+  currentPage=
+   Math.max(
+    1,
+    Math.min(
+     currentPage,
+     totalPages
+    )
+   );
+ }
 
-    currentPage=
-      Math.max(
-        1,
-        Math.min(
-          currentPage,
-          totalPages
-        )
-      );
-  }
+ const pr=d.progress||{};
 
-  const pr=
-    d.progress||{};
+ const done=
+  Number(pr.completed)||0;
 
-  const done=
-    Number(pr.completed)||0;
+ const tot=
+  Number(pr.total)||
+  totalPages||
+  0;
 
-  const tot=
-    Number(pr.total) ||
-    totalPages ||
-    0;
+ let pct=
+  tot
+   ? Math.round(done/tot*100)
+   : 0;
 
-  let pct=
-    tot
-      ? Math.round(done/tot*100)
-      : 0;
+ if(reviewFinished&&totalPages){
+  pct=100;
+ }
 
-  if(
-    reviewFinished &&
-    totalPages
-  ){
-    pct=100;
-  }
+ progressBar.style.width=
+  Math.max(
+   0,
+   Math.min(100,pct)
+  )+"%";
 
-  progressBar.style.width=
-    Math.max(
-      0,
-      Math.min(
-        100,
-        pct
-      )
-    )+"%";
+ pageCount.textContent=
+  totalPages+
+  (totalPages===1
+   ? " PAGE"
+   : " PAGES");
 
-  pageCount.textContent=
-    totalPages+
-    (totalPages===1
-      ? " PAGE"
-      : " PAGES");
+ if(reviewFinished){
 
-  if(reviewFinished){
+  setStatus("READY");
 
-    setStatus("READY");
+  progressText.textContent=
+   "Your document is ready to review and download after payment.";
 
-    progressText.textContent=
-      "Your document is ready to review and download after payment.";
+ }else if(state()==="reviewing"){
 
-  }else if(state()==="reviewing"){
+  setStatus("REVIEWING");
 
-    setStatus("REVIEWING");
+  progressText.textContent=
+   done+" of "+tot+" pages reviewed.";
 
-    progressText.textContent=
-      done+
-      " of "+
-      tot+
-      " pages reviewed.";
+ }else if(state()==="correcting"){
 
-  }else if(state()==="correcting"){
+  setStatus("CORRECTING");
 
-    setStatus("CORRECTING");
+  progressText.textContent=
+   "Your correction is being applied.";
 
-    progressText.textContent=
-      "Your correction is being applied.";
+ }else if(
+  state()==="review_error"||
+  state()==="correction_error"
+ ){
 
-  }else if(
-    state()==="review_error" ||
-    state()==="correction_error"
-  ){
+  setStatus("ERROR");
 
-    setStatus("ERROR");
+  progressText.textContent=
+   "The document review encountered an error.";
 
-    progressText.textContent=
-      "The document review encountered an error.";
+ }else{
 
-  }else{
+  setStatus(
+   currentStatus
+    ? currentStatus.toUpperCase()
+    : "PREPARING"
+  );
+ }
 
-    setStatus(
-      currentStatus
-        ? currentStatus.toUpperCase()
-        : "PREPARING"
-    );
-  }
+ renderPage();
 
-  renderPage();
-
-  updatePaymentPanel();
+ updatePaymentPanel();
 }
 
 /* PAYMENT STATUS */
 
 async function loadPaymentState(){
 
-  if(!versionId){
-    return null;
+ if(!versionId){
+  return null;
+ }
+
+ try{
+
+  const d=
+   await apiGet(
+    "/api/payment/status?job_id="+
+    encodeURIComponent(jobId)+
+    "&version_id="+
+    encodeURIComponent(versionId)
+   );
+
+  if(d.success){
+
+   paid=!!d.paid;
+
+   paymentPending=
+    !!d.payment_pending||
+    d.status==="pending";
+
+   paymentStarted=
+    paymentPending||
+    !!d.payment_id||
+    paid;
+
+   amount=
+    Number(d.amount)||
+    amount;
+
+   billing=
+    clean(d.billing)||
+    billing;
+
+   paymentIdentifier=
+    clean(d.payment_id)||
+    paymentIdentifier;
+
+   updatePaymentPanel();
+
+   return d;
   }
 
-  try{
+ }catch(_e){}
 
-    const d=
-      await apiGet(
-        "/api/payment/status?job_id="+
-        encodeURIComponent(jobId)+
-        "&version_id="+
-        encodeURIComponent(versionId)
-      );
-
-    if(d.success){
-
-      paid=
-        !!d.paid;
-
-      paymentPending=
-        !!d.payment_pending ||
-        d.status==="pending";
-
-      paymentStarted=
-        paymentPending ||
-        !!d.payment_id ||
-        paid;
-
-      amount=
-        Number(d.amount) ||
-        amount;
-
-      billing=
-        clean(d.billing) ||
-        billing;
-
-      paymentIdentifier=
-        clean(d.payment_id) ||
-        paymentIdentifier;
-
-      updatePaymentPanel();
-
-      return d;
-    }
-
-  }catch(_e){}
-
-  return null;
+ return null;
 }
 
-/* LOAD REVIEW */
+/* LOAD JOB */
 
 async function loadJob(){
 
-  const d=
-    await apiGet(
-      "/api/review?job_id="+
-      encodeURIComponent(jobId)
-    );
+ const d=
+  await apiGet(
+   "/api/review?job_id="+
+   encodeURIComponent(jobId)
+  );
 
-  applyJob(d);
+ applyJob(d);
 
-  await loadPaymentState();
+ await loadPaymentState();
 
-  return d;
+ return d;
 }
 
 /* PAYMENT POLLING */
 
 function startPaymentPolling(){
 
-  if(paymentPollTimer){
-    return;
+ if(paymentPollTimer){
+  return;
+ }
+
+ const poll=async()=>{
+
+  paymentPollTimer=null;
+
+  if(
+   !paymentStarted||
+   paid
+  ){
+   return;
   }
 
-  const poll=async()=>{
+  await loadPaymentState();
 
-    paymentPollTimer=null;
+  if(!paid){
 
-    if(
-      !paymentStarted ||
-      paid
-    ){
-      return;
-    }
-
-    await loadPaymentState();
-
-    if(!paid){
-
-      paymentPollTimer=
-        setTimeout(
-          poll,
-          2000
-        );
-    }
-  };
-
-  paymentPollTimer=
+   paymentPollTimer=
     setTimeout(
-      poll,
-      2000
+     poll,
+     2000
     );
+  }
+ };
+
+ paymentPollTimer=
+  setTimeout(
+   poll,
+   2000
+  );
 }
 
 /* REVIEW POLLING */
 
 function startPolling(){
 
-  if(polling){
+ if(polling){
+  return;
+ }
+
+ polling=true;
+
+ const poll=async()=>{
+
+  try{
+
+   const d=
+    await loadJob();
+
+   if(
+    complete(d)&&
+    extractPages(d).length
+   ){
+
+    polling=false;
     return;
+   }
+
+   if(
+    [
+     "review_error",
+     "correction_error"
+    ].includes(state())
+   ){
+
+    polling=false;
+    return;
+   }
+
+   pollTimer=
+    setTimeout(
+     poll,
+     1200
+    );
+
+  }catch(e){
+
+   polling=false;
+
+   if(!pages.length){
+
+    setMessage(
+     e.message,
+     "error"
+    );
+   }
   }
+ };
 
-  polling=true;
-
-  const poll=async()=>{
-
-    try{
-
-      const d=
-        await loadJob();
-
-      if(
-        complete(d) &&
-        extractPages(d).length
-      ){
-
-        polling=false;
-
-        return;
-      }
-
-      if(
-        [
-          "review_error",
-          "correction_error"
-        ].includes(state())
-      ){
-
-        polling=false;
-
-        return;
-      }
-
-      pollTimer=
-        setTimeout(
-          poll,
-          1200
-        );
-
-    }catch(e){
-
-      polling=false;
-
-      if(!pages.length){
-
-        setMessage(
-          e.message,
-          "error"
-        );
-      }
-    }
-  };
-
-  poll();
+ poll();
 }
 
 /* CORRECTION */
 
 correctionButton.onclick=async()=>{
 
-  const instruction=
-    clean(
-      correctionInput.value
-    );
+ const instruction=
+  clean(correctionInput.value);
 
-  if(!instruction){
+ if(!instruction){
 
-    return setMessage(
-      "Please write the correction or change you want.",
-      "error"
-    );
+  return setMessage(
+   "Please write the correction or change you want.",
+   "error"
+  );
+ }
+
+ try{
+
+  busy=true;
+
+  updateButtons();
+
+  setMessage(
+   "Applying your correction..."
+  );
+
+  await apiPost(
+   "/api/correct",
+   {
+    job_id:jobId,
+    instruction
+   }
+  );
+
+  correctionInput.value="";
+
+  paid=false;
+  paymentStarted=false;
+  paymentPending=false;
+  paymentIdentifier="";
+
+  amount=0;
+  billing="";
+
+  if(paymentPollTimer){
+
+   clearTimeout(paymentPollTimer);
+
+   paymentPollTimer=null;
   }
 
-  try{
+  currentStatus="correcting";
 
-    busy=true;
+  pages=[];
+  totalPages=0;
+  currentPage=1;
 
-    updateButtons();
+  renderPage();
 
-    setMessage(
-      "Applying your correction..."
-    );
+  updatePaymentPanel();
 
-    await apiPost(
-      "/api/correct",
-      {
-        job_id:jobId,
-        instruction
-      }
-    );
+  setMessage(
+   "Your correction has started.",
+   "success"
+  );
 
-    correctionInput.value="";
+  startPolling();
 
-    paid=false;
-    paymentStarted=false;
-    paymentPending=false;
-    paymentIdentifier="";
+ }catch(e){
 
-    amount=0;
-    billing="";
+  setMessage(
+   e.message,
+   "error"
+  );
 
-    if(paymentPollTimer){
+ }finally{
 
-      clearTimeout(
-        paymentPollTimer
-      );
+  busy=false;
 
-      paymentPollTimer=null;
-    }
-
-    currentStatus=
-      "correcting";
-
-    pages=[];
-    totalPages=0;
-    currentPage=1;
-
-    renderPage();
-
-    /*
-      KEEP PAYMENT CONTROLS VISIBLE.
-    */
-
-    updatePaymentPanel();
-
-    setMessage(
-      "Your correction has started.",
-      "success"
-    );
-
-    startPolling();
-
-  }catch(e){
-
-    setMessage(
-      e.message,
-      "error"
-    );
-
-  }finally{
-
-    busy=false;
-
-    updateButtons();
-  }
+  updateButtons();
+ }
 };
 
 /* MAKE PAYMENT */
 
 makePaymentButton.onclick=async()=>{
 
-  if(!reviewFinished){
+ if(!reviewFinished){
 
-    return setMessage(
-      "Please wait until the complete document review is ready.",
-      "error"
-    );
-  }
+  return setMessage(
+   "Please wait until the complete document review is ready.",
+   "error"
+  );
+ }
 
-  if(amount<=0){
+ if(amount<=0){
 
-    return setMessage(
-      "This service requires a quotation before payment.",
-      "error"
-    );
-  }
+  return setMessage(
+   "This service requires a quotation before payment.",
+   "error"
+  );
+ }
 
-  try{
+ try{
 
-    busy=true;
+  busy=true;
 
-    updateButtons();
-
-    setMessage(
-      "Starting payment..."
-    );
-
-    const d=
-      await apiPost(
-        "/api/payment/create?job_id="+
-        encodeURIComponent(jobId)+
-        "&amount="+
-        encodeURIComponent(amount)+
-        "&payment_method=bank_transfer",
-        {}
-      );
-
-    paymentStarted=true;
-    paymentPending=true;
-
-    paymentIdentifier=
-      clean(d.payment_id) ||
-      clean(d.order_number) ||
-      clean(d.reference);
-
-    amount=
-      Number(d.amount) ||
-      amount;
-
-    billing=
-      clean(d.billing) ||
-      billing;
-
-    updatePaymentPanel();
-
-    setMessage(
-      "Payment started. Complete the payment, then tap I HAVE MADE PAYMENT. Customer Care must verify it before download.",
-      "success"
-    );
-
-    startPaymentPolling();
-
-  }catch(e){
-
-    setMessage(
-      e.message,
-      "error"
-    );
-
-  }finally{
-
-    busy=false;
-
-    updateButtons();
-  }
-};
-
-/*
-  CUSTOMER REPORTS PAYMENT.
-  THIS DOES NOT SET paid=true.
-  CUSTOMER CARE VERIFICATION IS REQUIRED.
-*/
-
-paymentButton.onclick=async()=>{
-
-  if(!paymentStarted){
-
-    return setMessage(
-      "Tap MAKE PAYMENT first, then complete your payment.",
-      "error"
-    );
-  }
-
-  if(!paymentPending && !paid){
-
-    return setMessage(
-      "Your payment report is not pending. Please contact Customer Care.",
-      "error"
-    );
-  }
-
-  if(paid){
-
-    return setMessage(
-      "Payment has already been verified.",
-      "success"
-    );
-  }
-
-  paymentMessage.textContent=
-    "Payment reported. Customer Care will verify the payment before download is unlocked.";
+  updateButtons();
 
   setMessage(
-    "Your payment has been reported. Please wait for Customer Care verification.",
-    "success"
+   "Starting payment..."
   );
+
+  const d=
+   await apiPost(
+    "/api/payment/create?job_id="+
+    encodeURIComponent(jobId)+
+    "&amount="+
+    encodeURIComponent(amount)+
+    "&payment_method=bank_transfer",
+    {}
+   );
+
+  paymentStarted=true;
+  paymentPending=true;
+
+  paymentIdentifier=
+   clean(d.payment_id)||
+   clean(d.order_number)||
+   clean(d.reference);
+
+  amount=
+   Number(d.amount)||
+   amount;
+
+  billing=
+   clean(d.billing)||
+   billing;
 
   updatePaymentPanel();
 
+  setMessage(
+   "Payment started. Complete the payment, then tap I HAVE MADE PAYMENT. Customer Care must verify it before download.",
+   "success"
+  );
+
   startPaymentPolling();
+
+ }catch(e){
+
+  setMessage(
+   e.message,
+   "error"
+  );
+
+ }finally{
+
+  busy=false;
+
+  updateButtons();
+ }
+};
+
+/* CUSTOMER REPORTS PAYMENT */
+
+paymentButton.onclick=async()=>{
+
+ if(!paymentStarted){
+
+  return setMessage(
+   "Tap MAKE PAYMENT first, then complete your payment.",
+   "error"
+  );
+ }
+
+ if(!paymentPending&&!paid){
+
+  return setMessage(
+   "Your payment report is not pending. Please contact Customer Care.",
+   "error"
+  );
+ }
+
+ if(paid){
+
+  return setMessage(
+   "Payment has already been verified.",
+   "success"
+  );
+ }
+
+ paymentMessage.textContent=
+  "Payment reported. Customer Care will verify the payment before download is unlocked.";
+
+ setMessage(
+  "Your payment has been reported. Please wait for Customer Care verification.",
+  "success"
+ );
+
+ updatePaymentPanel();
+
+ startPaymentPolling();
 };
 
 /* DOWNLOAD */
 
 downloadButton.onclick=()=>{
 
-  if(!paid){
+ if(!paid){
 
-    return setMessage(
-      "Download is locked until Customer Care verifies your payment.",
-      "error"
-    );
-  }
+  return setMessage(
+   "Download is locked until Customer Care verifies your payment.",
+   "error"
+  );
+ }
 
-  if(!versionId){
+ if(!versionId){
 
-    return setMessage(
-      "The current document version could not be identified.",
-      "error"
-    );
-  }
+  return setMessage(
+   "The current document version could not be identified.",
+   "error"
+  );
+ }
 
-  const u=
-    "/api/download?job_id="+
-    encodeURIComponent(jobId)+
-    "&version_id="+
-    encodeURIComponent(versionId);
+ const u=
+  "/api/download?job_id="+
+  encodeURIComponent(jobId)+
+  "&version_id="+
+  encodeURIComponent(versionId);
 
-  const a=
-    document.createElement("a");
+ const a=
+  document.createElement("a");
 
-  a.href=u;
-  a.download="";
-  a.rel="noopener";
+ a.href=u;
+ a.download="";
+ a.rel="noopener";
 
-  document.body.appendChild(a);
+ document.body.appendChild(a);
 
-  a.click();
+ a.click();
 
-  a.remove();
+ a.remove();
 };
 
 /* START */
 
 async function start(){
 
-  serviceBadge.textContent=
-    service;
+ serviceBadge.textContent=
+  service;
 
-  /*
-    DOWNLOAD BUTTON IS MADE VISIBLE
-    IMMEDIATELY — BEFORE THE API LOADS.
-  */
+ /*
+   FORCE ALL THREE CONTROLS TO EXIST
+   AND REMAIN VISIBLE.
+ */
 
-  downloadButton.style.display=
-    "block";
+ makePaymentButton.style.display="block";
+ paymentButton.style.display="block";
+ downloadButton.style.display="block";
 
-  paymentButton.style.display=
-    "block";
+ updatePaymentPanel();
 
-  makePaymentButton.style.display=
-    "block";
+ if(!jobId){
 
-  updatePaymentPanel();
+  setStatus("NO DOCUMENT");
 
-  if(!jobId){
+  pageViewer.innerHTML=
+   '<div class="empty-page">'+
+   'No document job was supplied.'+
+   '</div>';
 
-    setStatus(
-      "NO DOCUMENT"
-    );
+  setMessage(
+   "This review page needs a document job.",
+   "error"
+  );
 
-    pageViewer.innerHTML=
-      '<div class="empty-page">' +
-      'No document job was supplied.' +
-      '</div>';
+  return;
+ }
 
-    setMessage(
-      "This review page needs a document job.",
-      "error"
-    );
+ try{
 
-    return;
+  const d=
+   await loadJob();
+
+  if(
+   !complete(d)&&
+   ![
+    "review_error",
+    "correction_error"
+   ].includes(state())
+  ){
+
+   startPolling();
   }
 
-  try{
+  if(
+   paymentStarted&&
+   !paid
+  ){
 
-    const d=
-      await loadJob();
-
-    if(
-      !complete(d) &&
-      ![
-        "review_error",
-        "correction_error"
-      ].includes(state())
-    ){
-
-      startPolling();
-    }
-
-    if(
-      paymentStarted &&
-      !paid
-    ){
-
-      startPaymentPolling();
-    }
-
-  }catch(e){
-
-    setStatus(
-      "ERROR"
-    );
-
-    setMessage(
-      e.message,
-      "error"
-    );
-
-    pageViewer.innerHTML=
-      '<div class="empty-page">'+
-      String(e.message)
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")+
-      '</div>';
+   startPaymentPolling();
   }
+
+ }catch(e){
+
+  setStatus("ERROR");
+
+  setMessage(
+   e.message,
+   "error"
+  );
+
+  pageViewer.innerHTML=
+   '<div class="empty-page">'+
+   String(e.message)
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")+
+   '</div>';
+ }
 }
 
 start();
