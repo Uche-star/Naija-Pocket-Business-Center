@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Naija Pocket Business Center</title>
 
 <style>
@@ -11,530 +10,1097 @@
     box-sizing:border-box;
 }
 
-html,
-body{
+html,body{
     margin:0;
     padding:0;
     width:100%;
-    min-height:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
     background:#050505;
     color:#fff;
     font-family:Arial,Helvetica,sans-serif;
 }
 
-body{
-    overflow-x:hidden;
-}
-
-button{
-    font:inherit;
-}
+/* =========================================================
+   MAIN PAGE
+========================================================= */
 
 .page{
     width:100%;
-    min-height:100vh;
-    display:flex;
-    background:#050505;
-}
+    height:100vh;
+    height:100dvh;
 
-/* =========================================================
-   WELCOME SIDE
-   ========================================================= */
+    padding:
+        max(4px,env(safe-area-inset-top))
+        4px
+        max(4px,env(safe-area-inset-bottom))
+        4px;
 
-.welcome-half{
-    width:50%;
-    min-height:100vh;
-    position:relative;
     display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:55px;
-    overflow:hidden;
+    flex-direction:column;
 
     background:
         radial-gradient(
-            circle at 50% 35%,
-            rgba(255,255,255,.055),
-            transparent 35%
+            circle at 50% -20%,
+            rgba(31,164,99,.13),
+            transparent 38%
         ),
-        radial-gradient(
-            circle at 50% 100%,
-            rgba(0,128,0,.08),
-            transparent 45%
-        ),
-        #050505;
+        linear-gradient(
+            145deg,
+            #020202 0%,
+            #090909 45%,
+            #000 100%
+        );
 
-    border-right:1px solid rgba(212,175,106,.35);
+    overflow:hidden;
 }
+
+/* =========================================================
+   LUXURY WELCOME PANEL
+========================================================= */
+
+.welcome-half{
+    position:relative;
+    width:100%;
+    height:50%;
+    flex:0 0 50%;
+
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+
+    overflow:hidden;
+
+    padding:
+        10px
+        14px
+        10px;
+
+    text-align:center;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 35%,
+            #242424 0%,
+            #101010 42%,
+            #050505 78%,
+            #000 100%
+        );
+
+    border:
+        1px solid
+        rgba(212,175,55,.30);
+
+    border-bottom:
+        2px solid
+        #d4af37;
+
+    border-radius:10px;
+
+    box-shadow:
+        inset 0 0 45px rgba(255,255,255,.025),
+        0 8px 35px rgba(0,0,0,.65);
+}
+
+/* Luxury inner frame */
 
 .welcome-half::before{
     content:"";
     position:absolute;
-    inset:22px;
-    border:1px solid rgba(212,175,106,.35);
+
+    top:7px;
+    left:7px;
+    right:7px;
+    bottom:7px;
+
+    border:
+        1px solid
+        rgba(212,175,55,.22);
+
+    border-radius:7px;
+
     pointer-events:none;
 }
+
+/* Corner ornaments */
 
 .welcome-half::after{
     content:"";
     position:absolute;
-    width:420px;
-    height:420px;
+
+    width:80px;
+    height:80px;
+
+    top:-45px;
+    right:-45px;
+
+    border:
+        1px solid
+        rgba(212,175,55,.25);
+
     border-radius:50%;
-    background:rgba(212,175,106,.025);
-    filter:blur(20px);
+
+    box-shadow:
+        0 0 0 12px rgba(212,175,55,.025),
+        0 0 0 24px rgba(212,175,55,.018);
+
     pointer-events:none;
 }
 
-/* =========================================================
-   WELCOME CONTENT
-   ========================================================= */
-
 .welcome-content{
-    width:100%;
-    max-width:650px;
     position:relative;
     z-index:2;
-    text-align:center;
+
+    width:100%;
+    height:100%;
+    max-width:1200px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-evenly;
+
+    overflow:hidden;
+
+    padding:
+        4px 0;
 }
 
-.brand-kicker{
-    margin-bottom:18px;
+/* =========================================================
+   BRAND
+========================================================= */
 
-    color:#D4AF6A;
-    font-size:12px;
-    font-weight:700;
-    letter-spacing:5px;
+.brand-kicker{
+    margin:0;
+
+    color:#d4af37;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(8px,2vw,13px);
+
+    font-weight:400;
+
+    letter-spacing:
+        clamp(3px,1vw,7px);
+
     text-transform:uppercase;
+
+    opacity:.9;
 }
 
 .brand-name{
+    width:100%;
     margin:0;
 
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(38px,5vw,72px);
-    line-height:.94;
-    letter-spacing:3px;
+    color:#fff;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(27px,8vw,64px);
+
     font-weight:700;
+
+    line-height:.93;
+
+    letter-spacing:
+        clamp(1px,.5vw,4px);
+
+    text-transform:uppercase;
+
+    text-shadow:
+        0 2px 25px rgba(0,0,0,.8);
+
+    flex:0 0 auto;
 }
 
 .brand-name .green{
-    color:#008000;
+    color:#1fa463;
 }
 
 .brand-name .gold{
-    color:#D4AF6A;
+    color:#d4af37;
 }
 
-.gold-line{
-    width:110px;
+/* =========================================================
+   GOLD ORNAMENT
+========================================================= */
+
+.gold-divider{
+    width:
+        clamp(75px,22vw,150px);
+
     height:1px;
-    margin:30px auto 27px;
 
-    background:#D4AF6A;
-    box-shadow:0 0 12px rgba(212,175,106,.25);
-}
-
-.brand-values{
     margin:0;
 
-    color:#d8d8d8;
-    font-size:13px;
-    font-weight:600;
-    letter-spacing:3px;
-    text-transform:uppercase;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37 25%,
+            #f4d878 50%,
+            #d4af37 75%,
+            transparent
+        );
+
+    position:relative;
+
+    flex:0 0 auto;
 }
 
-.brand-subtitle{
-    margin:18px 0 0;
+.gold-divider::before,
+.gold-divider::after{
+    content:"";
 
-    color:#fff;
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(19px,2.2vw,28px);
-    line-height:1.35;
-    letter-spacing:1px;
+    position:absolute;
+
+    top:50%;
+
+    width:6px;
+    height:6px;
+
+    border:
+        1px solid
+        #d4af37;
+
+    transform:
+        translateY(-50%)
+        rotate(45deg);
+}
+
+.gold-divider::before{
+    left:8%;
+}
+
+.gold-divider::after{
+    right:8%;
+}
+
+/* =========================================================
+   BRAND PROMISE
+========================================================= */
+
+.value{
+    width:100%;
+    margin:0;
+
+    color:#f4f1e8;
+
+    font-size:
+        clamp(11px,3vw,21px);
+
+    font-weight:600;
+
+    line-height:1.15;
+
+    letter-spacing:
+        clamp(.2px,.15vw,1px);
+
+    flex:0 0 auto;
+}
+
+.value:first-of-type{
+    color:#d4af37;
+
+    font-weight:700;
+
+    letter-spacing:
+        clamp(.5px,.2vw,1.5px);
 }
 
 /* =========================================================
    LUXURY STATEMENT
-   ========================================================= */
+========================================================= */
 
-.luxury-statement{
-    margin:48px auto 0;
-    max-width:560px;
-}
+.value.luxury-value{
+    display:flex;
 
-.luxury-title{
-    margin:0;
+    flex-direction:column;
 
-    color:#D4AF6A;
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(22px,2.7vw,36px);
-    line-height:1.2;
-    letter-spacing:2px;
-    font-weight:700;
-}
+    align-items:center;
+    justify-content:center;
 
-.luxury-copy{
-    margin:14px 0 0;
+    gap:3px;
 
-    color:#aaa;
-    font-size:13px;
-    line-height:1.8;
-    letter-spacing:1.5px;
-}
+    padding:
+        2px 8px;
 
-.brand-footer{
-    margin-top:52px;
+    color:#f5f1e6;
 
-    color:#666;
-    font-size:10px;
-    letter-spacing:3px;
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(10px,3vw,21px);
+
+    font-weight:400;
+
+    line-height:1.08;
+
+    letter-spacing:
+        clamp(.8px,.25vw,2.5px);
+
     text-transform:uppercase;
+
+    text-shadow:
+        0 2px 12px
+        rgba(212,175,55,.12);
 }
 
-/* =========================================================
-   SERVICES SIDE
-   ========================================================= */
+.value.luxury-value::before{
+    content:"";
 
-.services-half{
-    width:50%;
-    min-height:100vh;
-    padding:48px 42px 42px;
-    position:relative;
-    overflow:hidden;
+    width:
+        clamp(30px,9vw,70px);
+
+    height:1px;
+
+    margin-bottom:1px;
 
     background:
         linear-gradient(
-            180deg,
-            #090909 0%,
-            #050505 100%
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
         );
 }
 
-.services-header{
-    text-align:center;
-    margin-bottom:30px;
+.value.luxury-value .luxury-main{
+    display:block;
+
+    color:#fff;
+
+    font-weight:600;
+
+    letter-spacing:
+        clamp(.7px,.22vw,2px);
 }
 
-.services-kicker{
-    color:#D4AF6A;
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:4px;
+.value.luxury-value .luxury-sub{
+    display:block;
+
+    color:#d4af37;
+
+    font-size:1em;
+
+    font-weight:400;
+
+    letter-spacing:
+        clamp(1px,.3vw,3px);
+
     text-transform:uppercase;
-    margin-bottom:10px;
 }
+
+.value.luxury-value::after{
+    content:"";
+
+    width:
+        clamp(45px,13vw,95px);
+
+    height:1px;
+
+    margin-top:1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
+        );
+
+    opacity:.55;
+}
+
+/* =========================================================
+   DOCUMENT HUB TITLE
+========================================================= */
 
 .services-title{
+    width:100%;
     margin:0;
 
     color:#fff;
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(24px,3vw,38px);
-    line-height:1.15;
-    letter-spacing:2px;
-}
 
-.services-description{
-    margin:12px auto 0;
-    max-width:520px;
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
 
-    color:#777;
-    font-size:12px;
-    line-height:1.6;
-    letter-spacing:1px;
-}
+    font-size:
+        clamp(11px,3vw,22px);
 
-/* =========================================================
-   LUXURY SERVICE SIGNATURE
-   ========================================================= */
-
-.service-signature{
-    display:flex;
-    align-items:center;
-    gap:15px;
-    margin:0 auto 27px;
-    max-width:700px;
-}
-
-.service-signature::before,
-.service-signature::after{
-    content:"";
-    flex:1;
-    height:1px;
-    background:linear-gradient(
-        90deg,
-        transparent,
-        rgba(212,175,106,.55)
-    );
-}
-
-.service-signature::after{
-    background:linear-gradient(
-        90deg,
-        rgba(212,175,106,.55),
-        transparent
-    );
-}
-
-.service-signature-text{
-    white-space:nowrap;
-    text-align:center;
-    color:#D4AF6A;
-    font-size:11px;
     font-weight:700;
-    letter-spacing:2.5px;
+
+    line-height:1.1;
+
+    letter-spacing:
+        clamp(.8px,.25vw,2px);
+
     text-transform:uppercase;
 }
 
 /* =========================================================
-   SERVICES GRID
-   ========================================================= */
+   MOVING BRAND LINE
+========================================================= */
 
-.services-grid{
+.document-people-window{
     width:100%;
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
+
+    overflow:hidden;
+
+    margin:0;
+
+    padding:2px 0;
+
+    flex:0 0 auto;
 }
 
-.service-button{
-    min-height:54px;
-    padding:11px 10px;
+.document-people-track{
+    display:inline-flex;
 
-    border:1px solid rgba(255,255,255,.09);
-    border-radius:3px;
+    align-items:center;
+
+    flex-wrap:nowrap;
+
+    width:max-content;
+
+    white-space:nowrap;
+
+    /*
+       ONLY CHANGE:
+       Moving tagline is now champagne gold.
+    */
+    color:#D4AF6A;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(11px,3vw,22px);
+
+    font-weight:700;
+
+    letter-spacing:
+        clamp(1px,.35vw,3px);
+
+    animation:
+        documentPeopleMove
+        22s linear infinite;
+
+    will-change:transform;
+}
+
+.document-people-track .tagline-text{
+    display:inline-block;
+
+    flex:0 0 auto;
+
+    white-space:nowrap;
+}
+
+.document-people-track .wide-gap{
+    display:inline-block;
+
+    width:360px;
+    min-width:360px;
+
+    height:1px;
+
+    flex:0 0 360px;
+}
+
+@keyframes documentPeopleMove{
+
+    0%{
+        transform:
+            translateX(100vw);
+    }
+
+    100%{
+        transform:
+            translateX(
+                calc(-100% - 100vw)
+            );
+    }
+}
+
+/* =========================================================
+   SERVICES SECTION
+========================================================= */
+
+.services-half{
+    width:100%;
+    height:50%;
+    flex:0 0 50%;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+
+    padding-top:5px;
+}
+
+.service-instruction{
+    width:100%;
+    flex:0 0 auto;
+
+    margin:
+        0
+        0
+        5px;
+
+    padding:
+        3px 5px 5px;
+
+    color:#e9e6dc;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(10px,2.8vw,18px);
+
+    font-weight:400;
+
+    line-height:1.1;
+
+    text-align:center;
+
+    letter-spacing:
+        clamp(.2px,.1vw,.8px);
+}
+
+/* =========================================================
+   SERVICE GRID
+========================================================= */
+
+.services{
+    width:100%;
+
+    flex:1 1 auto;
+
+    min-height:0;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    grid-template-rows:
+        repeat(10,minmax(0,1fr));
+
+    gap:4px;
+
+    overflow:hidden;
+
+    padding:
+        1px
+        1px
+        0;
+}
+
+/* =========================================================
+   SERVICE BUTTON
+========================================================= */
+
+.service-button{
+    position:relative;
+
+    width:100%;
+    min-width:0;
+    min-height:0;
+
+    padding:
+        3px 5px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(255,255,255,.045),
-            rgba(255,255,255,.012)
+            rgba(255,255,255,.035),
+            rgba(255,255,255,.008)
         );
 
-    color:#e7e7e7;
+    color:#f4f2eb;
 
-    font-size:11px;
-    font-weight:600;
-    line-height:1.25;
-    letter-spacing:.5px;
+    border:
+        1px solid
+        rgba(255,255,255,.055);
+
+    border-radius:5px;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size:
+        clamp(9px,2.5vw,16px);
+
+    font-weight:700;
+
+    line-height:1.02;
+
+    letter-spacing:
+        clamp(.05px,.08vw,.5px);
+
+    text-align:center;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    white-space:normal;
+
+    overflow:hidden;
 
     cursor:pointer;
 
-    position:relative;
-    overflow:hidden;
+    -webkit-tap-highlight-color:
+        transparent;
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255,255,255,.025);
 
     transition:
-        transform .2s ease,
-        border-color .2s ease,
-        background .2s ease,
-        color .2s ease,
-        box-shadow .2s ease;
+        color .18s ease,
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease;
 }
+
+/* Gold micro-line */
 
 .service-button::after{
     content:"";
+
     position:absolute;
-    left:18%;
-    right:18%;
-    bottom:0;
 
-    height:2px;
+    left:25%;
+    right:25%;
 
-    background:#D4AF6A;
+    bottom:1px;
 
-    transform:scaleX(0);
-    transform-origin:center;
+    height:1px;
 
-    transition:transform .2s ease;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
+        );
+
+    opacity:.65;
+
+    pointer-events:none;
+
+    transition:
+        left .18s ease,
+        right .18s ease,
+        opacity .18s ease;
 }
 
 .service-button:hover{
-    transform:translateY(-2px);
-
-    border-color:rgba(212,175,106,.55);
+    color:#d4af37;
 
     background:
         linear-gradient(
             145deg,
-            rgba(212,175,106,.10),
-            rgba(255,255,255,.025)
+            rgba(212,175,55,.09),
+            rgba(31,164,99,.035)
         );
 
-    color:#fff;
+    border-color:
+        rgba(212,175,55,.28);
 
     box-shadow:
-        0 8px 25px rgba(0,0,0,.35);
+        0 0 15px
+        rgba(212,175,55,.06);
+
+    transform:
+        translateY(-1px);
 }
 
 .service-button:hover::after{
-    transform:scaleX(1);
+    left:12%;
+    right:12%;
+
+    opacity:1;
 }
 
 .service-button:active{
-    transform:translateY(0);
+    color:#d4af37;
+
+    transform:
+        scale(.96);
+}
+
+.service-button.working{
+    color:#d4af37;
+
+    border-color:
+        rgba(212,175,55,.55);
+
+    background:
+        rgba(212,175,55,.06);
 }
 
 .service-button:disabled{
-    opacity:.55;
     cursor:wait;
-    transform:none;
+    opacity:.42;
 }
 
 /* =========================================================
    FINAL BRAND SIGNATURE
-   ========================================================= */
+========================================================= */
 
 .luxury-tagline{
     grid-column:1 / -1;
 
-    margin-top:16px;
-    padding:24px 10px;
+    grid-row:10;
+
+    position:relative;
+
+    width:100%;
+    min-width:0;
+
+    padding:
+        2px 6px;
+
+    color:#d4af37;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(7px,2.1vw,16px);
+
+    font-weight:700;
+
+    line-height:1.05;
+
+    letter-spacing:
+        clamp(.3px,.15vw,1.4px);
 
     text-align:center;
 
-    color:#777;
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:11px;
-    letter-spacing:3px;
-    line-height:1.8;
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
     text-transform:uppercase;
-
-    border-top:1px solid rgba(212,175,106,.18);
 }
 
-.luxury-tagline strong{
-    display:block;
-    margin-bottom:5px;
+.luxury-tagline::before,
+.luxury-tagline::after{
+    content:"";
 
-    color:#D4AF6A;
-    font-size:12px;
-    letter-spacing:3px;
+    height:1px;
+
+    flex:1 1 auto;
+
+    min-width:8px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37
+        );
+
+    opacity:.65;
 }
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
+.luxury-tagline::after{
+    background:
+        linear-gradient(
+            90deg,
+            #d4af37,
+            transparent
+        );
+}
 
-@media(max-width:900px){
+.luxury-tagline .brand-signature{
+    flex:
+        0 1 auto;
 
-    .page{
-        display:block;
-    }
+    min-width:0;
 
-    .welcome-half,
-    .services-half{
-        width:100%;
-        min-height:auto;
-    }
+    padding:
+        0 8px;
+}
 
-    .welcome-half{
-        min-height:100vh;
-        padding:70px 25px 55px;
+.luxury-tagline .brand-main{
+    font-weight:800;
 
-        border-right:none;
-        border-bottom:1px solid rgba(212,175,106,.35);
-    }
+    letter-spacing:
+        clamp(.4px,.18vw,1.8px);
+}
 
-    .welcome-half::before{
-        inset:14px;
-    }
+.luxury-tagline .brand-sub{
+    font-weight:400;
 
-    .brand-kicker{
-        font-size:10px;
-        letter-spacing:4px;
-    }
-
-    .brand-name{
-        font-size:clamp(39px,11vw,62px);
-    }
-
-    .brand-values{
-        font-size:10px;
-        letter-spacing:2px;
-    }
-
-    .brand-subtitle{
-        font-size:20px;
-    }
-
-    .luxury-statement{
-        margin-top:42px;
-    }
-
-    .luxury-title{
-        font-size:27px;
-    }
-
-    .luxury-copy{
-        font-size:12px;
-    }
-
-    .brand-footer{
-        margin-top:45px;
-    }
-
-    .services-half{
-        padding:45px 16px 30px;
-    }
-
-    .services-grid{
-        grid-template-columns:repeat(2,1fr);
-        gap:9px;
-    }
-
-    .service-button{
-        min-height:58px;
-        font-size:10px;
-    }
-
-    .service-signature-text{
-        font-size:9px;
-        letter-spacing:2px;
-    }
-
-    .luxury-tagline{
-        padding:20px 5px;
-    }
+    letter-spacing:
+        clamp(.3px,.15vw,1.3px);
 }
 
 /* =========================================================
    SMALL PHONES
-   ========================================================= */
+========================================================= */
 
-@media(max-width:420px){
+@media(max-width:430px){
+
+    .page{
+        padding-left:3px;
+        padding-right:3px;
+    }
 
     .welcome-half{
-        padding-left:20px;
-        padding-right:20px;
+        padding:
+            6px
+            8px
+            7px;
+
+        border-radius:8px;
+    }
+
+    .welcome-half::before{
+        top:5px;
+        left:5px;
+        right:5px;
+        bottom:5px;
+    }
+
+    .brand-kicker{
+        font-size:7px;
+        letter-spacing:3px;
     }
 
     .brand-name{
-        font-size:38px;
-        letter-spacing:2px;
+        font-size:27px;
+        letter-spacing:1px;
     }
 
-    .brand-subtitle{
-        font-size:18px;
+    .gold-divider{
+        width:82px;
     }
 
-    .luxury-title{
-        font-size:24px;
+    .value{
+        font-size:11px;
+        line-height:1.12;
+    }
+
+    .value.luxury-value{
+        font-size:10.5px;
+        gap:2px;
+        padding:1px 5px;
+    }
+
+    .value.luxury-value .luxury-sub{
+        letter-spacing:1px;
     }
 
     .services-title{
-        font-size:26px;
-    }
-
-    .services-description{
         font-size:11px;
     }
 
+    .document-people-track{
+        font-size:11px;
+        letter-spacing:1.4px;
+    }
+
+    .document-people-track .wide-gap{
+        width:270px;
+        min-width:270px;
+        flex-basis:270px;
+    }
+
+    .service-instruction{
+        font-size:10px;
+
+        padding:
+            2px 3px 4px;
+
+        margin-bottom:3px;
+    }
+
+    .services{
+        gap:3px;
+    }
+
     .service-button{
-        min-height:60px;
-        padding:9px 7px;
+        padding:
+            2px 3px;
+
+        font-size:10px;
+    }
+
+    .luxury-tagline{
+        font-size:7.5px;
+
+        padding:
+            2px 2px;
+    }
+
+    .luxury-tagline .brand-signature{
+        padding:
+            0 4px;
+    }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media(max-width:360px){
+
+    .welcome-half{
+        padding:
+            5px
+            6px
+            6px;
+    }
+
+    .brand-kicker{
+        font-size:6px;
+        letter-spacing:2.5px;
+    }
+
+    .brand-name{
+        font-size:23px;
+        letter-spacing:.8px;
+    }
+
+    .gold-divider{
+        width:68px;
+    }
+
+    .value{
+        font-size:9px;
+    }
+
+    .value.luxury-value{
+        font-size:8.8px;
+    }
+
+    .services-title{
         font-size:9.5px;
+    }
+
+    .document-people-track{
+        font-size:9.5px;
+    }
+
+    .document-people-track .wide-gap{
+        width:230px;
+        min-width:230px;
+        flex-basis:230px;
+    }
+
+    .service-instruction{
+        font-size:9px;
+    }
+
+    .services{
+        gap:2px;
+    }
+
+    .service-button{
+        padding:
+            1px 2px;
+
+        font-size:9px;
+    }
+
+    .luxury-tagline{
+        font-size:6.5px;
+    }
+
+    .luxury-tagline .brand-signature{
+        padding:
+            0 2px;
+    }
+}
+
+/* =========================================================
+   TABLET / DESKTOP
+========================================================= */
+
+@media(min-width:700px){
+
+    .brand-name{
+        font-size:
+            clamp(42px,6vw,66px);
+    }
+
+    .value{
+        font-size:
+            clamp(17px,2.5vw,23px);
+    }
+
+    .value.luxury-value{
+        font-size:
+            clamp(17px,2.35vw,22px);
+    }
+
+    .services-title{
+        font-size:
+            clamp(18px,2.6vw,24px);
+    }
+
+    .document-people-track{
+        font-size:
+            clamp(19px,3vw,26px);
+    }
+
+    .document-people-track .wide-gap{
+        width:620px;
+        min-width:620px;
+        flex-basis:620px;
+    }
+
+    .service-button{
+        font-size:15px;
+    }
+
+    .services{
+        gap:5px;
+    }
+
+    .luxury-tagline{
+        font-size:
+            clamp(12px,1.8vw,16px);
     }
 }
 </style>
@@ -544,308 +1110,399 @@ button{
 
 <div class="page">
 
-    <!-- =====================================================
-         WELCOME
-         ===================================================== -->
+<!-- =======================================================
+     LUXURY BRAND HERO
+======================================================= -->
 
-    <section class="welcome-half">
+<section class="welcome-half">
 
-        <div class="welcome-content">
+    <div class="welcome-content">
 
-            <div class="brand-kicker">
-                Your Digital Document Concierge
-            </div>
+        <div class="brand-kicker">
+            YOUR DIGITAL DOCUMENT CONCIERGE
+        </div>
 
-            <h1 class="brand-name">
-                <span class="green">NAIJA POCKET</span><br>
-                <span class="gold">BUSINESS CENTER</span>
-            </h1>
+        <h1 class="brand-name">
+            <span class="green">NAIJA POCKET</span><br>
+            BUSINESS <span class="gold">CENTER</span>
+        </h1>
 
-            <div class="gold-line"></div>
+        <div class="gold-divider"></div>
 
-            <p class="brand-values">
-                Fast • Convenient • Open 24/7
-            </p>
+        <div class="value">
+            FAST • CONVENIENT • OPEN 24/7
+        </div>
 
-            <p class="brand-subtitle">
-                Prepare Your Documents In Minutes
-            </p>
+        <div class="value">
+            PREPARE YOUR DOCUMENTS IN MINUTES
+        </div>
 
-            <div class="luxury-statement">
+        <div class="value luxury-value">
 
-                <h2 class="luxury-title">
-                    DOCUMENTS, PERFECTED.
-                </h2>
+            <span class="luxury-main">
+                DO EVERYTHING CONCERNING YOUR DOCUMENTS
+            </span>
 
-                <p class="luxury-copy">
-                    Professional document services designed around
-                    your time, your convenience, and your standards.
-                </p>
+            <span class="luxury-sub">
+                FROM YOUR PHONE, WHEREVER YOU ARE
+            </span>
 
-            </div>
+        </div>
 
-            <div class="brand-footer">
-                From your phone • Wherever you are
+        <div class="services-title">
+            ENJOY THE BEST IN DOCUMENT PROCESSING
+        </div>
+
+        <div class="document-people-window">
+
+            <div class="document-people-track">
+
+                <span class="tagline-text">
+                    PROFESSIONAL DOCUMENT SERVICES, WHEREVER YOU ARE
+                </span>
+
+                <span class="wide-gap"></span>
+
             </div>
 
         </div>
 
-    </section>
+    </div>
 
+</section>
 
-    <!-- =====================================================
-         SERVICES
-         ===================================================== -->
+<!-- =======================================================
+     SERVICES
+======================================================= -->
 
-    <section class="services-half">
+<section class="services-half">
 
-        <div class="services-header">
+    <div class="service-instruction">
+        TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
+    </div>
 
-            <div class="services-kicker">
-                Our Services
-            </div>
+    <div class="services">
 
-            <h2 class="services-title">
-                DOCUMENT SERVICES
-            </h2>
+        <button type="button" class="service-button" data-service="Document Typing">
+            Document Typing
+        </button>
 
-            <p class="services-description">
-                Everything you need to prepare, create, refine
-                and manage your documents professionally.
-            </p>
+        <button type="button" class="service-button" data-service="Document Formatting">
+            Document Formatting
+        </button>
 
-        </div>
+        <button type="button" class="service-button" data-service="Document Editing">
+            Document Editing
+        </button>
 
+        <button type="button" class="service-button" data-service="Grammar Correction">
+            Grammar Correction
+        </button>
 
-        <div class="service-signature">
-            <div class="service-signature-text">
-                Professional Document Services, Wherever You Are
-            </div>
-        </div>
+        <button type="button" class="service-button" data-service="Assignments">
+            Assignments
+        </button>
 
+        <button type="button" class="service-button" data-service="Projects">
+            Projects
+        </button>
 
-        <div class="services-grid">
+        <button type="button" class="service-button" data-service="Research Assistance">
+            Research Assistance
+        </button>
 
-            <button class="service-button" data-service="Document Typing">
-                Document Typing
-            </button>
+        <button type="button" class="service-button" data-service="Seminar Papers">
+            Seminar Papers
+        </button>
 
-            <button class="service-button" data-service="Document Formatting">
-                Document Formatting
-            </button>
+        <button type="button" class="service-button" data-service="CVs & Résumés">
+            CVs & Résumés
+        </button>
 
-            <button class="service-button" data-service="Document Editing">
-                Document Editing
-            </button>
+        <button type="button" class="service-button" data-service="Cover Letters">
+            Cover Letters
+        </button>
 
-            <button class="service-button" data-service="Grammar Correction">
-                Grammar Correction
-            </button>
+        <button type="button" class="service-button" data-service="Business Proposals">
+            Business Proposals
+        </button>
 
-            <button class="service-button" data-service="Assignments">
-                Assignments
-            </button>
+        <button type="button" class="service-button" data-service="Company Profiles">
+            Company Profiles
+        </button>
 
-            <button class="service-button" data-service="Projects">
-                Projects
-            </button>
+        <button type="button" class="service-button" data-service="Invoices">
+            Invoices
+        </button>
 
-            <button class="service-button" data-service="Research Assistance">
-                Research Assistance
-            </button>
+        <button type="button" class="service-button" data-service="Quotations">
+            Quotations
+        </button>
 
-            <button class="service-button" data-service="Seminar Papers">
-                Seminar Papers
-            </button>
+        <button type="button" class="service-button" data-service="Meeting Minutes">
+            Meeting Minutes
+        </button>
 
-            <button class="service-button" data-service="CVs & Résumés">
-                CVs &amp; Résumés
-            </button>
+        <button type="button" class="service-button" data-service="AI Writing Assistance">
+            AI Writing Assistance
+        </button>
 
-            <button class="service-button" data-service="Cover Letters">
-                Cover Letters
-            </button>
+        <button type="button" class="service-button" data-service="Document Rewriting">
+            Document Rewriting
+        </button>
 
-            <button class="service-button" data-service="Business Proposals">
-                Business Proposals
-            </button>
+        <button type="button" class="service-button" data-service="Translation">
+            Translation
+        </button>
 
-            <button class="service-button" data-service="Company Profiles">
-                Company Profiles
-            </button>
+        <button type="button" class="service-button" data-service="PDF Conversion">
+            PDF Conversion
+        </button>
 
-            <button class="service-button" data-service="Invoices">
-                Invoices
-            </button>
+        <button type="button" class="service-button" data-service="Topic Explanations">
+            Topic Explanations
+        </button>
 
-            <button class="service-button" data-service="Quotations">
-                Quotations
-            </button>
+        <button type="button" class="service-button" data-service="Printing Preparation">
+            Printing Preparation
+        </button>
 
-            <button class="service-button" data-service="Meeting Minutes">
-                Meeting Minutes
-            </button>
+        <button type="button" class="service-button" data-service="Excel Spreadsheets">
+            Excel Spreadsheets
+        </button>
 
-            <button class="service-button" data-service="AI Writing Assistance">
-                AI Writing Assistance
-            </button>
+        <button type="button" class="service-button" data-service="Data Entry">
+            Data Entry
+        </button>
 
-            <button class="service-button" data-service="Document Rewriting">
-                Document Rewriting
-            </button>
+        <button type="button" class="service-button" data-service="Data Analysis">
+            Data Analysis
+        </button>
 
-            <button class="service-button" data-service="Translation">
-                Translation
-            </button>
+        <button type="button" class="service-button" data-service="Presentations">
+            Presentations
+        </button>
 
-            <button class="service-button" data-service="PDF Conversion">
-                PDF Conversion
-            </button>
+        <button type="button" class="service-button" data-service="Document Summarization">
+            Document Summarization
+        </button>
 
-            <button class="service-button" data-service="Topic Explanations">
-                Topic Explanations
-            </button>
+        <button type="button" class="service-button" data-service="Business Letters & Letterhead">
+            Business Letters & Letterhead
+        </button>
 
-            <button class="service-button" data-service="Printing Preparation">
-                Printing Preparation
-            </button>
+        <div class="luxury-tagline">
 
-            <button class="service-button" data-service="Excel Spreadsheets">
-                Excel Spreadsheets
-            </button>
+            <span class="brand-signature">
 
-            <button class="service-button" data-service="Data Entry">
-                Data Entry
-            </button>
-
-            <button class="service-button" data-service="Data Analysis">
-                Data Analysis
-            </button>
-
-            <button class="service-button" data-service="Presentations">
-                Presentations
-            </button>
-
-            <button class="service-button" data-service="Document Summarization">
-                Document Summarization
-            </button>
-
-            <button class="service-button" data-service="Business Letters & Letterhead">
-                Business Letters &amp; Letterhead
-            </button>
-
-            <div class="luxury-tagline">
-                <strong>
+                <span class="brand-main">
                     NAIJA POCKET BUSINESS CENTER
-                </strong>
-                Your Business Center In Your Pocket
-            </div>
+                </span>
+
+                <span class="brand-sub">
+                    — YOUR BUSINESS CENTER IN YOUR POCKET —
+                </span>
+
+            </span>
 
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 </div>
 
-
 <script>
-(function(){
+"use strict";
 
-    const buttons = document.querySelectorAll(".service-button");
+const serviceButtons =
+    document.querySelectorAll(
+        ".service-button"
+    );
 
-    function getCustomerId(){
+let requestInProgress = false;
 
-        let customerId =
-            localStorage.getItem("npbc_customer_id");
+/* =========================================================
+   BUTTON STATE
+========================================================= */
 
-        if(!customerId){
+function releaseServiceButtons(){
 
-            if(
-                typeof crypto !== "undefined" &&
-                crypto.randomUUID
-            ){
-                customerId = crypto.randomUUID();
-            }else{
-                customerId =
-                    "customer-" +
-                    Date.now() +
-                    "-" +
-                    Math.random()
-                        .toString(36)
-                        .substring(2,10);
-            }
+    requestInProgress = false;
 
-            localStorage.setItem(
-                "npbc_customer_id",
-                customerId
+    serviceButtons.forEach(
+        function(button){
+
+            button.disabled = false;
+
+            button.classList.remove(
+                "working"
             );
-        }
 
-        return customerId;
+        }
+    );
+}
+
+/* =========================================================
+   CUSTOMER ID
+========================================================= */
+
+function cryptoRandomId(){
+
+    if(
+        window.crypto &&
+        window.crypto.randomUUID
+    ){
+
+        return window.crypto.randomUUID();
+
     }
 
+    return(
+        Date.now().toString(36) +
+        Math.random()
+            .toString(36)
+            .substring(2)
+    );
+}
 
-    buttons.forEach(function(button){
+/* =========================================================
+   OPEN WORKSPACE
+   EXISTING FUNCTIONALITY PRESERVED
+========================================================= */
 
-        button.addEventListener("click",function(){
+function openWorkspace(
+    service,
+    button
+){
 
-            const service =
-                button.getAttribute("data-service");
+    if(
+        requestInProgress ||
+        !service
+    ){
 
-            if(!service){
-                return;
-            }
+        return;
+    }
 
-            buttons.forEach(function(item){
-                item.disabled = true;
-            });
+    requestInProgress = true;
 
-            localStorage.setItem(
-                "selectedService",
-                service
-            );
-
-            const customerId =
-                getCustomerId();
-
-            const url =
-                "workspace.html?service=" +
-                encodeURIComponent(service) +
-                "&customer_id=" +
-                encodeURIComponent(customerId);
-
-            window.location.href = url;
-        });
-
-    });
-
-
-    window.addEventListener(
-        "pageshow",
-        function(){
-            buttons.forEach(function(button){
-                button.disabled = false;
-            });
-        }
+    button.classList.add(
+        "working"
     );
 
-
-    document.addEventListener(
-        "visibilitychange",
-        function(){
+    serviceButtons.forEach(
+        function(otherButton){
 
             if(
-                document.visibilityState === "visible"
+                otherButton !== button
             ){
-                buttons.forEach(function(button){
-                    button.disabled = false;
-                });
+
+                otherButton.disabled =
+                    true;
             }
 
         }
     );
 
-})();
+    let customerId =
+        localStorage.getItem(
+            "npbc_customer_id"
+        );
+
+    if(!customerId){
+
+        customerId =
+            "customer_" +
+            cryptoRandomId();
+
+        localStorage.setItem(
+            "npbc_customer_id",
+            customerId
+        );
+    }
+
+    localStorage.setItem(
+        "selectedService",
+        service
+    );
+
+    const workspaceUrl =
+        "workspace.html?service=" +
+        encodeURIComponent(
+            service
+        ) +
+        "&customer_id=" +
+        encodeURIComponent(
+            customerId
+        );
+
+    window.location.assign(
+        workspaceUrl
+    );
+}
+
+/* =========================================================
+   SERVICE BUTTON EVENTS
+========================================================= */
+
+serviceButtons.forEach(
+    function(button){
+
+        button.addEventListener(
+            "click",
+            function(){
+
+                const service =
+                    button.getAttribute(
+                        "data-service"
+                    );
+
+                openWorkspace(
+                    service,
+                    button
+                );
+
+            }
+        );
+
+    }
+);
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+releaseServiceButtons();
+
+/* =========================================================
+   PAGE RETURN HANDLING
+========================================================= */
+
+window.addEventListener(
+    "pageshow",
+    function(){
+
+        releaseServiceButtons();
+
+    }
+);
+
+document.addEventListener(
+    "visibilitychange",
+    function(){
+
+        if(
+            document.visibilityState ===
+            "visible"
+        ){
+
+            releaseServiceButtons();
+
+        }
+
+    }
+);
 </script>
 
 </body>
