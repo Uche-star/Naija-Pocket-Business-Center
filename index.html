@@ -1,8 +1,11 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Naija Pocket Business Center</title><style>
+<title>Naija Pocket Business Center</title>
+
+<style>
 *{
     box-sizing:border-box;
 }
@@ -34,8 +37,10 @@ body{
         4px
         max(4px,env(safe-area-inset-bottom))
         4px;
+
     display:flex;
     flex-direction:column;
+
     background:
         radial-gradient(
             circle at 50% -20%,
@@ -48,6 +53,7 @@ body{
             #090909 45%,
             #000 100%
         );
+
     overflow:hidden;
 }
 
@@ -60,15 +66,20 @@ body{
     width:100%;
     height:50%;
     flex:0 0 50%;
+
     display:flex;
     align-items:stretch;
     justify-content:center;
+
     overflow:hidden;
+
     padding:
         10px
         14px
         10px;
+
     text-align:center;
+
     background:
         radial-gradient(
             ellipse at 50% 35%,
@@ -77,13 +88,17 @@ body{
             #050505 78%,
             #000 100%
         );
+
     border:
         1px solid
         rgba(212,175,55,.30);
+
     border-bottom:
         2px solid
         #d4af37;
+
     border-radius:10px;
+
     box-shadow:
         inset 0 0 45px rgba(255,255,255,.025),
         0 8px 35px rgba(0,0,0,.65);
@@ -93,15 +108,20 @@ body{
 
 .welcome-half::before{
     content:"";
+
     position:absolute;
+
     top:7px;
     left:7px;
     right:7px;
     bottom:7px;
+
     border:
         1px solid
         rgba(212,175,55,.22);
+
     border-radius:7px;
+
     pointer-events:none;
 }
 
@@ -109,32 +129,43 @@ body{
 
 .welcome-half::after{
     content:"";
+
     position:absolute;
+
     width:80px;
     height:80px;
+
     top:-45px;
     right:-45px;
+
     border:
         1px solid
         rgba(212,175,55,.25);
+
     border-radius:50%;
+
     box-shadow:
         0 0 0 12px rgba(212,175,55,.025),
         0 0 0 24px rgba(212,175,55,.018);
+
     pointer-events:none;
 }
 
 .welcome-content{
     position:relative;
     z-index:2;
+
     width:100%;
     height:100%;
     max-width:1200px;
+
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:space-evenly;
+
     overflow:hidden;
+
     padding:
         4px 0;
 }
@@ -145,53 +176,59 @@ body{
 
 .brand-kicker{
     margin:0;
+
     color:#d4af37;
+
     font-family:
         Georgia,
         "Times New Roman",
         serif;
+
     font-size:
         clamp(8px,2vw,13px);
+
     font-weight:400;
+
     letter-spacing:
         clamp(3px,1vw,7px);
+
     text-transform:uppercase;
+
     opacity:.9;
 }
 
 .brand-name{
     width:100%;
     margin:0;
-    padding:0 4px;
+
     color:#fff;
+
     font-family:
         Georgia,
         "Times New Roman",
         serif;
+
     font-size:
         clamp(27px,8vw,64px);
+
     font-weight:700;
 
-    /* FIX:
-       Gives NAIJA POCKET and BUSINESS CENTER
-       enough vertical separation so BUSINESS
-       cannot cut into the J in NAIJA.
-    */
     line-height:1.08;
 
     letter-spacing:
         clamp(1px,.5vw,4px);
+
     text-transform:uppercase;
+
     text-shadow:
         0 2px 25px rgba(0,0,0,.8);
+
     flex:0 0 auto;
 }
 
 .brand-name .green{
     color:#1fa463;
 }
-
-/* CENTER = CHAMPAGNE */
 
 .brand-name .gold{
     color:#D4AF6A;
@@ -204,8 +241,11 @@ body{
 .gold-divider{
     width:
         clamp(75px,22vw,150px);
+
     height:1px;
+
     margin:0;
+
     background:
         linear-gradient(
             90deg,
@@ -215,20 +255,27 @@ body{
             #d4af37 75%,
             transparent
         );
+
     position:relative;
+
     flex:0 0 auto;
 }
 
 .gold-divider::before,
 .gold-divider::after{
     content:"";
+
     position:absolute;
+
     top:50%;
+
     width:6px;
     height:6px;
+
     border:
         1px solid
         #d4af37;
+
     transform:
         translateY(-50%)
         rotate(45deg);
@@ -249,19 +296,27 @@ body{
 .value{
     width:100%;
     margin:0;
+
     color:#f4f1e8;
+
     font-size:
         clamp(11px,3vw,21px);
+
     font-weight:600;
+
     line-height:1.15;
+
     letter-spacing:
         clamp(.2px,.15vw,1px);
+
     flex:0 0 auto;
 }
 
 .value:first-of-type{
     color:#d4af37;
+
     font-weight:700;
+
     letter-spacing:
         clamp(.5px,.2vw,1.5px);
 }
@@ -272,35 +327,51 @@ body{
 
 .value.luxury-value{
     display:flex;
+
     flex-direction:column;
+
     align-items:center;
+
     justify-content:center;
+
     gap:3px;
+
     padding:
         2px 8px;
+
     color:#f5f1e6;
+
     font-family:
         Georgia,
         "Times New Roman",
         serif;
+
     font-size:
         clamp(10px,3vw,21px);
+
     font-weight:400;
+
     line-height:1.08;
+
     letter-spacing:
         clamp(.8px,.25vw,2.5px);
+
     text-transform:uppercase;
+
     text-shadow:
-        0 2px 12px
-        rgba(212,175,55,.12);
+        0 2px 12px rgba(212,175,55,.12);
 }
 
 .value.luxury-value::before{
     content:"";
+
     width:
         clamp(30px,9vw,70px);
+
     height:1px;
+
     margin-bottom:1px;
+
     background:
         linear-gradient(
             90deg,
@@ -312,28 +383,40 @@ body{
 
 .value.luxury-value .luxury-main{
     display:block;
+
     color:#fff;
+
     font-weight:600;
+
     letter-spacing:
         clamp(.7px,.22vw,2px);
 }
 
 .value.luxury-value .luxury-sub{
     display:block;
+
     color:#d4af37;
+
     font-size:1em;
+
     font-weight:400;
+
     letter-spacing:
         clamp(1px,.3vw,3px);
+
     text-transform:uppercase;
 }
 
 .value.luxury-value::after{
     content:"";
+
     width:
         clamp(45px,13vw,95px);
+
     height:1px;
+
     margin-top:1px;
+
     background:
         linear-gradient(
             90deg,
@@ -341,6 +424,7 @@ body{
             #d4af37,
             transparent
         );
+
     opacity:.55;
 }
 
@@ -351,17 +435,24 @@ body{
 .services-title{
     width:100%;
     margin:0;
+
     color:#fff;
+
     font-family:
         Georgia,
         "Times New Roman",
         serif;
+
     font-size:
         clamp(11px,3vw,22px);
+
     font-weight:700;
+
     line-height:1.1;
+
     letter-spacing:
         clamp(.8px,.25vw,2px);
+
     text-transform:uppercase;
 }
 
@@ -371,20 +462,27 @@ body{
 
 .document-people-window{
     width:100%;
+
     overflow:hidden;
+
     margin:0;
-    padding:2px 0;
+
+    padding:
+        2px 0;
+
     flex:0 0 auto;
 }
 
 .document-people-track{
     display:inline-flex;
-    align-items:center;
-    flex-wrap:nowrap;
-    width:max-content;
-    white-space:nowrap;
 
-    /* CHAMPAGNE */
+    align-items:center;
+
+    flex-wrap:nowrap;
+
+    width:max-content;
+
+    white-space:nowrap;
 
     color:#D4AF6A;
 
@@ -392,35 +490,46 @@ body{
         Georgia,
         "Times New Roman",
         serif;
+
     font-size:
         clamp(11px,3vw,22px);
+
     font-weight:700;
+
     letter-spacing:
         clamp(1px,.35vw,3px);
+
     animation:
         documentPeopleMove
-        22s linear infinite;
+        22s
+        linear
+        infinite;
+
     will-change:transform;
 }
 
 .document-people-track .tagline-text{
     display:inline-block;
+
     flex:0 0 auto;
+
     white-space:nowrap;
 }
 
 .document-people-track .wide-gap{
     display:inline-block;
+
     width:360px;
     min-width:360px;
+
     height:1px;
+
     flex:0 0 360px;
 }
 
 @keyframes documentPeopleMove{
     0%{
-        transform:
-            translateX(100vw);
+        transform:translateX(100vw);
     }
 
     100%{
@@ -437,35 +546,69 @@ body{
 
 .services-half{
     width:100%;
+
     height:50%;
+
     flex:0 0 50%;
+
     display:flex;
+
     flex-direction:column;
+
     overflow:hidden;
+
     padding-top:5px;
 }
 
+/* =========================================================
+   IMPORTANT SERVICE INSTRUCTION
+========================================================= */
+
 .service-instruction{
     width:100%;
+
     flex:0 0 auto;
+
     margin:
         0
         0
         5px;
+
     padding:
-        3px 5px 5px;
-    color:#e9e6dc;
+        5px 8px 7px;
+
+    color:#FFFDF5;
+
     font-family:
         Georgia,
         "Times New Roman",
         serif;
+
     font-size:
-        clamp(10px,2.8vw,18px);
-    font-weight:400;
-    line-height:1.1;
+        clamp(11px,3vw,19px);
+
+    font-weight:700;
+
+    line-height:1.15;
+
     text-align:center;
+
     letter-spacing:
-        clamp(.2px,.1vw,.8px);
+        clamp(.4px,.16vw,1.2px);
+
+    text-transform:uppercase;
+
+    text-shadow:
+        0 1px 8px
+        rgba(212,175,106,.30);
+
+    border-top:
+        1px solid
+        rgba(212,175,106,.70);
+
+    border-bottom:
+        1px solid
+        rgba(212,175,106,.45);
 }
 
 /* =========================================================
@@ -474,19 +617,25 @@ body{
 
 .services{
     width:100%;
+
     flex:1 1 auto;
+
     min-height:0;
+
     display:grid;
+
     grid-template-columns:
         repeat(3,minmax(0,1fr));
+
     grid-template-rows:
         repeat(10,minmax(0,1fr));
+
     gap:4px;
+
     overflow:hidden;
+
     padding:
-        1px
-        1px
-        0;
+        1px 1px 0;
 }
 
 /* =========================================================
@@ -495,44 +644,66 @@ body{
 
 .service-button{
     position:relative;
+
     width:100%;
+
     min-width:0;
     min-height:0;
+
     padding:
         3px 5px;
+
     background:
         linear-gradient(
             145deg,
             rgba(255,255,255,.035),
             rgba(255,255,255,.008)
         );
+
     color:#f4f2eb;
+
     border:
         1px solid
         rgba(255,255,255,.055);
+
     border-radius:5px;
+
     font-family:
         Arial,
         Helvetica,
         sans-serif;
+
     font-size:
         clamp(9px,2.5vw,16px);
+
     font-weight:700;
+
     line-height:1.02;
+
     letter-spacing:
         clamp(.05px,.08vw,.5px);
+
     text-align:center;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
     white-space:normal;
+
     overflow:hidden;
+
     cursor:pointer;
+
     -webkit-tap-highlight-color:
         transparent;
+
     box-shadow:
         inset 0 1px 0
         rgba(255,255,255,.025);
+
     transition:
         color .18s ease,
         background .18s ease,
@@ -543,11 +714,16 @@ body{
 
 .service-button::after{
     content:"";
+
     position:absolute;
+
     left:25%;
     right:25%;
+
     bottom:1px;
+
     height:1px;
+
     background:
         linear-gradient(
             90deg,
@@ -555,8 +731,11 @@ body{
             #d4af37,
             transparent
         );
+
     opacity:.65;
+
     pointer-events:none;
+
     transition:
         left .18s ease,
         right .18s ease,
@@ -565,17 +744,21 @@ body{
 
 .service-button:hover{
     color:#d4af37;
+
     background:
         linear-gradient(
             145deg,
             rgba(212,175,55,.09),
             rgba(31,164,99,.035)
         );
+
     border-color:
         rgba(212,175,55,.28);
+
     box-shadow:
         0 0 15px
         rgba(212,175,55,.06);
+
     transform:
         translateY(-1px);
 }
@@ -588,14 +771,17 @@ body{
 
 .service-button:active{
     color:#d4af37;
+
     transform:
         scale(.96);
 }
 
 .service-button.working{
     color:#d4af37;
+
     border-color:
         rgba(212,175,55,.55);
+
     background:
         rgba(212,175,55,.06);
 }
@@ -611,44 +797,67 @@ body{
 
 .luxury-tagline{
     grid-column:1 / -1;
+
     grid-row:10;
+
     position:relative;
+
     width:100%;
+
     min-width:0;
+
     padding:
         2px 6px;
+
     color:#d4af37;
+
     font-family:
         Georgia,
         "Times New Roman",
         serif;
+
     font-size:
         clamp(7px,2.1vw,16px);
+
     font-weight:700;
+
     line-height:1.05;
+
     letter-spacing:
         clamp(.3px,.15vw,1.4px);
+
     text-align:center;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
     white-space:nowrap;
+
     overflow:hidden;
+
     text-transform:uppercase;
 }
 
 .luxury-tagline::before,
 .luxury-tagline::after{
     content:"";
+
     height:1px;
+
     flex:1 1 auto;
+
     min-width:8px;
+
     background:
         linear-gradient(
             90deg,
             transparent,
             #d4af37
         );
+
     opacity:.65;
 }
 
@@ -662,21 +871,24 @@ body{
 }
 
 .luxury-tagline .brand-signature{
-    flex:
-        0 1 auto;
+    flex:0 1 auto;
+
     min-width:0;
+
     padding:
         0 8px;
 }
 
 .luxury-tagline .brand-main{
     font-weight:800;
+
     letter-spacing:
         clamp(.4px,.18vw,1.8px);
 }
 
 .luxury-tagline .brand-sub{
     font-weight:400;
+
     letter-spacing:
         clamp(.3px,.15vw,1.3px);
 }
@@ -694,9 +906,8 @@ body{
 
     .welcome-half{
         padding:
-            6px
-            8px
-            7px;
+            6px 8px 7px;
+
         border-radius:8px;
     }
 
@@ -714,13 +925,8 @@ body{
 
     .brand-name{
         font-size:27px;
-
-        /* FIXED LINE SEPARATION */
-        line-height:1.08;
-
         letter-spacing:1px;
-        padding-left:4px;
-        padding-right:4px;
+        line-height:1.08;
     }
 
     .gold-divider{
@@ -757,10 +963,20 @@ body{
         flex-basis:270px;
     }
 
+    /* IMPORTANT SERVICE INSTRUCTION — SMALL PHONE */
+
     .service-instruction{
-        font-size:10px;
+        font-size:10.5px;
+
+        font-weight:700;
+
+        line-height:1.15;
+
+        letter-spacing:.45px;
+
         padding:
-            2px 3px 4px;
+            4px 4px 5px;
+
         margin-bottom:3px;
     }
 
@@ -771,18 +987,17 @@ body{
     .service-button{
         padding:
             2px 3px;
+
         font-size:10px;
     }
 
     .luxury-tagline{
         font-size:7.5px;
-        padding:
-            2px 2px;
+        padding:2px 2px;
     }
 
     .luxury-tagline .brand-signature{
-        padding:
-            0 4px;
+        padding:0 4px;
     }
 }
 
@@ -794,9 +1009,7 @@ body{
 
     .welcome-half{
         padding:
-            5px
-            6px
-            6px;
+            5px 6px 6px;
     }
 
     .brand-kicker{
@@ -806,13 +1019,8 @@ body{
 
     .brand-name{
         font-size:23px;
-
-        /* FIXED LINE SEPARATION */
-        line-height:1.08;
-
         letter-spacing:.8px;
-        padding-left:4px;
-        padding-right:4px;
+        line-height:1.08;
     }
 
     .gold-divider{
@@ -852,6 +1060,7 @@ body{
     .service-button{
         padding:
             1px 2px;
+
         font-size:9px;
     }
 
@@ -860,8 +1069,7 @@ body{
     }
 
     .luxury-tagline .brand-signature{
-        padding:
-            0 2px;
+        padding:0 2px;
     }
 }
 
@@ -874,9 +1082,6 @@ body{
     .brand-name{
         font-size:
             clamp(42px,6vw,66px);
-
-        /* FIXED LINE SEPARATION */
-        line-height:1.08;
     }
 
     .value{
@@ -918,229 +1123,228 @@ body{
             clamp(12px,1.8vw,16px);
     }
 }
-</style></head><body><div class="page"><!-- =======================================================
-     LUXURY BRAND HERO
-======================================================= --><section class="welcome-half"><div class="welcome-content">
+</style>
+</head>
 
-    <div class="brand-kicker">
-        YOUR DIGITAL DOCUMENT CONCIERGE
-    </div>
+<body>
 
-    <h1 class="brand-name">
-        <span class="green">NAIJA POCKET</span><br>
-        BUSINESS <span class="gold">CENTER</span>
-    </h1>
+<div class="page">
 
-    <div class="gold-divider"></div>
+    <section class="welcome-half">
 
-    <div class="value">
-        FAST • CONVENIENT • OPEN 24/7
-    </div>
+        <div class="welcome-content">
 
-    <div class="value">
-        PREPARE YOUR DOCUMENTS IN MINUTES
-    </div>
+            <div class="brand-kicker">
+                YOUR DIGITAL DOCUMENT CONCIERGE
+            </div>
 
-    <div class="value luxury-value">
+            <h1 class="brand-name">
+                <span class="green">NAIJA POCKET</span>
+                <br>
+                BUSINESS
+                <span class="gold">CENTER</span>
+            </h1>
 
-        <span class="luxury-main">
-            DO EVERYTHING CONCERNING YOUR DOCUMENTS
-        </span>
+            <div class="gold-divider"></div>
 
-        <span class="luxury-sub">
-            FROM YOUR PHONE, WHEREVER YOU ARE
-        </span>
+            <div class="value">
+                FAST • CONVENIENT • OPEN 24/7
+            </div>
 
-    </div>
+            <div class="value">
+                PREPARE YOUR DOCUMENTS IN MINUTES
+            </div>
 
-    <div class="services-title">
-        ENJOY THE BEST IN DOCUMENT PROCESSING
-    </div>
+            <div class="value luxury-value">
+                <span class="luxury-main">
+                    DO EVERYTHING CONCERNING YOUR DOCUMENTS
+                </span>
 
-    <div class="document-people-window">
+                <span class="luxury-sub">
+                    FROM YOUR PHONE, WHEREVER YOU ARE
+                </span>
+            </div>
 
-        <div class="document-people-track">
+            <div class="services-title">
+                ENJOY THE BEST IN DOCUMENT PROCESSING
+            </div>
 
-            <span class="tagline-text">
-                PROFESSIONAL DOCUMENT SERVICES, WHEREVER YOU ARE
-            </span>
+            <div class="document-people-window">
 
-            <span class="wide-gap"></span>
+                <div class="document-people-track">
+
+                    <span class="tagline-text">
+                        PROFESSIONAL DOCUMENT SERVICES, WHEREVER YOU ARE
+                    </span>
+
+                    <span class="wide-gap"></span>
+
+                </div>
+
+            </div>
 
         </div>
 
-    </div>
+    </section>
+
+    <section class="services-half">
+
+        <div class="service-instruction">
+            TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
+        </div>
+
+        <div class="services">
+
+            <button type="button" class="service-button" data-service="Document Typing">
+                Document Typing
+            </button>
+
+            <button type="button" class="service-button" data-service="Document Formatting">
+                Document Formatting
+            </button>
+
+            <button type="button" class="service-button" data-service="Document Editing">
+                Document Editing
+            </button>
+
+            <button type="button" class="service-button" data-service="Grammar Correction">
+                Grammar Correction
+            </button>
+
+            <button type="button" class="service-button" data-service="Assignments">
+                Assignments
+            </button>
+
+            <button type="button" class="service-button" data-service="Projects">
+                Projects
+            </button>
+
+            <button type="button" class="service-button" data-service="Research Assistance">
+                Research Assistance
+            </button>
+
+            <button type="button" class="service-button" data-service="Seminar Papers">
+                Seminar Papers
+            </button>
+
+            <button type="button" class="service-button" data-service="CVs & Résumés">
+                CVs & Résumés
+            </button>
+
+            <button type="button" class="service-button" data-service="Cover Letters">
+                Cover Letters
+            </button>
+
+            <button type="button" class="service-button" data-service="Business Proposals">
+                Business Proposals
+            </button>
+
+            <button type="button" class="service-button" data-service="Company Profiles">
+                Company Profiles
+            </button>
+
+            <button type="button" class="service-button" data-service="Invoices">
+                Invoices
+            </button>
+
+            <button type="button" class="service-button" data-service="Quotations">
+                Quotations
+            </button>
+
+            <button type="button" class="service-button" data-service="Meeting Minutes">
+                Meeting Minutes
+            </button>
+
+            <button type="button" class="service-button" data-service="AI Writing Assistance">
+                AI Writing Assistance
+            </button>
+
+            <button type="button" class="service-button" data-service="Document Rewriting">
+                Document Rewriting
+            </button>
+
+            <button type="button" class="service-button" data-service="Translation">
+                Translation
+            </button>
+
+            <button type="button" class="service-button" data-service="PDF Conversion">
+                PDF Conversion
+            </button>
+
+            <button type="button" class="service-button" data-service="Topic Explanations">
+                Topic Explanations
+            </button>
+
+            <button type="button" class="service-button" data-service="Printing Preparation">
+                Printing Preparation
+            </button>
+
+            <button type="button" class="service-button" data-service="Excel Spreadsheets">
+                Excel Spreadsheets
+            </button>
+
+            <button type="button" class="service-button" data-service="Data Entry">
+                Data Entry
+            </button>
+
+            <button type="button" class="service-button" data-service="Data Analysis">
+                Data Analysis
+            </button>
+
+            <button type="button" class="service-button" data-service="Presentations">
+                Presentations
+            </button>
+
+            <button type="button" class="service-button" data-service="Document Summarization">
+                Document Summarization
+            </button>
+
+            <button type="button" class="service-button" data-service="Business Letters & Letterhead">
+                Business Letters & Letterhead
+            </button>
+
+            <div class="luxury-tagline">
+
+                <span class="brand-signature">
+
+                    <span class="brand-main">
+                        NAIJA POCKET BUSINESS CENTER
+                    </span>
+
+                    <span class="brand-sub">
+                        — YOUR BUSINESS CENTER IN YOUR POCKET —
+                    </span>
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
 
 </div>
 
-</section><!-- =======================================================
-     SERVICES
-======================================================= --><section class="services-half"><div class="service-instruction">
-    TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
-</div>
-
-<div class="services">
-
-    <button type="button" class="service-button" data-service="Document Typing">
-        Document Typing
-    </button>
-
-    <button type="button" class="service-button" data-service="Document Formatting">
-        Document Formatting
-    </button>
-
-    <button type="button" class="service-button" data-service="Document Editing">
-        Document Editing
-    </button>
-
-    <button type="button" class="service-button" data-service="Grammar Correction">
-        Grammar Correction
-    </button>
-
-    <button type="button" class="service-button" data-service="Assignments">
-        Assignments
-    </button>
-
-    <button type="button" class="service-button" data-service="Projects">
-        Projects
-    </button>
-
-    <button type="button" class="service-button" data-service="Research Assistance">
-        Research Assistance
-    </button>
-
-    <button type="button" class="service-button" data-service="Seminar Papers">
-        Seminar Papers
-    </button>
-
-    <button type="button" class="service-button" data-service="CVs & Résumés">
-        CVs & Résumés
-    </button>
-
-    <button type="button" class="service-button" data-service="Cover Letters">
-        Cover Letters
-    </button>
-
-    <button type="button" class="service-button" data-service="Business Proposals">
-        Business Proposals
-    </button>
-
-    <button type="button" class="service-button" data-service="Company Profiles">
-        Company Profiles
-    </button>
-
-    <button type="button" class="service-button" data-service="Invoices">
-        Invoices
-    </button>
-
-    <button type="button" class="service-button" data-service="Quotations">
-        Quotations
-    </button>
-
-    <button type="button" class="service-button" data-service="Meeting Minutes">
-        Meeting Minutes
-    </button>
-
-    <button type="button" class="service-button" data-service="AI Writing Assistance">
-        AI Writing Assistance
-    </button>
-
-    <button type="button" class="service-button" data-service="Document Rewriting">
-        Document Rewriting
-    </button>
-
-    <button type="button" class="service-button" data-service="Translation">
-        Translation
-    </button>
-
-    <button type="button" class="service-button" data-service="PDF Conversion">
-        PDF Conversion
-    </button>
-
-    <button type="button" class="service-button" data-service="Topic Explanations">
-        Topic Explanations
-    </button>
-
-    <button type="button" class="service-button" data-service="Printing Preparation">
-        Printing Preparation
-    </button>
-
-    <button type="button" class="service-button" data-service="Excel Spreadsheets">
-        Excel Spreadsheets
-    </button>
-
-    <button type="button" class="service-button" data-service="Data Entry">
-        Data Entry
-    </button>
-
-    <button type="button" class="service-button" data-service="Data Analysis">
-        Data Analysis
-    </button>
-
-    <button type="button" class="service-button" data-service="Presentations">
-        Presentations
-    </button>
-
-    <button type="button" class="service-button" data-service="Document Summarization">
-        Document Summarization
-    </button>
-
-    <button type="button" class="service-button" data-service="Business Letters & Letterhead">
-        Business Letters & Letterhead
-    </button>
-
-    <div class="luxury-tagline">
-
-        <span class="brand-signature">
-
-            <span class="brand-main">
-                NAIJA POCKET BUSINESS CENTER
-            </span>
-
-            <span class="brand-sub">
-                — YOUR BUSINESS CENTER IN YOUR POCKET —
-            </span>
-
-        </span>
-
-    </div>
-
-</div>
-
-</section></div><script>
+<script>
 "use strict";
 
 const serviceButtons =
-    document.querySelectorAll(
-        ".service-button"
-    );
+    document.querySelectorAll(".service-button");
 
 let requestInProgress = false;
-
-/* =========================================================
-   BUTTON STATE
-========================================================= */
 
 function releaseServiceButtons(){
 
     requestInProgress = false;
 
-    serviceButtons.forEach(
-        function(button){
+    serviceButtons.forEach(function(button){
 
-            button.disabled = false;
+        button.disabled = false;
 
-            button.classList.remove(
-                "working"
-            );
+        button.classList.remove("working");
 
-        }
-    );
+    });
 }
-
-/* =========================================================
-   CUSTOMER ID
-========================================================= */
 
 function cryptoRandomId(){
 
@@ -1148,7 +1352,9 @@ function cryptoRandomId(){
         window.crypto &&
         window.crypto.randomUUID
     ){
+
         return window.crypto.randomUUID();
+
     }
 
     return(
@@ -1159,41 +1365,29 @@ function cryptoRandomId(){
     );
 }
 
-/* =========================================================
-   OPEN WORKSPACE
-   EXISTING FUNCTIONALITY PRESERVED
-========================================================= */
-
-function openWorkspace(
-    service,
-    button
-){
+function openWorkspace(service,button){
 
     if(
         requestInProgress ||
         !service
     ){
+
         return;
     }
 
     requestInProgress = true;
 
-    button.classList.add(
-        "working"
-    );
+    button.classList.add("working");
 
-    serviceButtons.forEach(
-        function(otherButton){
+    serviceButtons.forEach(function(otherButton){
 
-            if(
-                otherButton !== button
-            ){
-                otherButton.disabled =
-                    true;
-            }
+        if(otherButton !== button){
+
+            otherButton.disabled = true;
 
         }
-    );
+
+    });
 
     let customerId =
         localStorage.getItem(
@@ -1219,55 +1413,35 @@ function openWorkspace(
 
     const workspaceUrl =
         "workspace.html?service=" +
-        encodeURIComponent(
-            service
-        ) +
+        encodeURIComponent(service) +
         "&customer_id=" +
-        encodeURIComponent(
-            customerId
-        );
+        encodeURIComponent(customerId);
 
     window.location.assign(
         workspaceUrl
     );
 }
 
-/* =========================================================
-   SERVICE BUTTON EVENTS
-========================================================= */
+serviceButtons.forEach(function(button){
 
-serviceButtons.forEach(
-    function(button){
+    button.addEventListener(
+        "click",
+        function(){
 
-        button.addEventListener(
-            "click",
-            function(){
-
-                const service =
-                    button.getAttribute(
-                        "data-service"
-                    );
-
-                openWorkspace(
-                    service,
-                    button
+            const service =
+                button.getAttribute(
+                    "data-service"
                 );
 
-            }
-        );
-
-    }
-);
-
-/* =========================================================
-   INITIAL STATE
-========================================================= */
+            openWorkspace(
+                service,
+                button
+            );
+        }
+    );
+});
 
 releaseServiceButtons();
-
-/* =========================================================
-   PAGE RETURN HANDLING
-========================================================= */
 
 window.addEventListener(
     "pageshow",
@@ -1286,10 +1460,14 @@ document.addEventListener(
             document.visibilityState ===
             "visible"
         ){
+
             releaseServiceButtons();
+
         }
 
     }
 );
-</script></body>
+</script>
+
+</body>
 </html>
