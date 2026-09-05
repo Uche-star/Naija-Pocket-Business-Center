@@ -858,11 +858,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
 ===========================================================
 MAIN REVIEW API
 ===========================================================
-
-Review/document/correction requests remain on the existing
-API that is already serving this page.
-
-===========================================================
 */
 
 const API_BASE = "";
@@ -873,9 +868,9 @@ const API_BASE = "";
 SEPARATE PAYMENT API
 ===========================================================
 
-ONLY PAYMENT REQUESTS use this URL.
+Payment creation/reporting happens on payment.html.
 
-Do not put payment logic back into the main review API.
+The Review page only checks payment status.
 ===========================================================
 */
 
@@ -1127,10 +1122,6 @@ async function apiPost(url,body){
 ===========================================================
 PAYMENT API REQUESTS
 ===========================================================
-
-These go DIRECTLY to payment_api.py.
-
-===========================================================
 */
 
 async function paymentGet(url){
@@ -1156,48 +1147,6 @@ async function paymentGet(url){
             data.error ||
             data.message ||
             "Unable to load payment status."
-        );
-    }
-
-    return data;
-}
-
-
-async function paymentPost(url,body){
-
-    const response =
-        await fetch(
-            PAYMENT_API_BASE + url,
-            {
-                method:"POST",
-                headers:{
-                    "Content-Type":
-                        "application/json",
-                    "Accept":
-                        "application/json"
-                },
-                body:
-                    JSON.stringify(
-                        body || {}
-                    )
-            }
-        );
-
-    const data =
-        await response
-            .json()
-            .catch(() => ({}));
-
-    if(
-        !response.ok ||
-        data.success === false
-    ){
-
-        throw Error(
-            data.error_message ||
-            data.error ||
-            data.message ||
-            "The payment request could not be completed."
         );
     }
 
@@ -1749,17 +1698,20 @@ function updateButtons(){
     correctionButton.disabled =
         busy;
 
+    /*
+    MAKE PAYMENT remains available until the customer
+    actually enters the payment page.
+
+    It is NOT a payment creation button anymore.
+    */
+
     makePaymentButton.disabled =
         busy ||
-        paymentStarted ||
         amount <= 0 ||
         !reviewFinished;
 
     paymentButton.disabled =
-        busy ||
-        !paymentStarted ||
-        !paymentPending ||
-        paid;
+        true;
 
     downloadButton.disabled =
         busy ||
@@ -2153,8 +2105,7 @@ function updatePaymentPanel(){
             billing ||
             "Fixed price"
         ) +
-        "\n\nPay the amount shown above. " +
-        "After paying, tap I HAVE MADE PAYMENT.\n" +
+        "\n\nTap MAKE PAYMENT to open the payment page.\n" +
         "Customer Care verification is required before download.";
 
 
@@ -2181,19 +2132,13 @@ function updatePaymentPanel(){
         "block";
 
     paymentButton.style.display =
-        "block";
+        "none";
 
 
     makePaymentButton.textContent =
         paymentStarted
         ? "✓ PAYMENT STARTED"
         : "💳 MAKE PAYMENT";
-
-
-    paymentButton.textContent =
-        paid
-        ? "✓ PAYMENT VERIFIED"
-        : "✓ I HAVE MADE PAYMENT";
 
 
     if(paid){
@@ -2518,8 +2463,6 @@ async function loadPaymentState(){
 /*
 ===========================================================
 LOAD REVIEW JOB
-
-This still goes to the existing review API.
 ===========================================================
 */
 
@@ -2542,8 +2485,6 @@ async function loadJob(){
 /*
 ===========================================================
 PAYMENT POLLING
-
-Directly checks payment_api.py.
 ===========================================================
 */
 
@@ -2664,8 +2605,6 @@ function startPolling(){
 /*
 ===========================================================
 CORRECTION
-
-This remains on the existing review API.
 ===========================================================
 */
 
@@ -2770,107 +2709,82 @@ correctionButton.onclick =
 ===========================================================
 MAKE PAYMENT
 
-DIRECTLY TO payment_api.py
+IMPORTANT:
+THIS DOES NOT CREATE A PAYMENT.
+
+It opens the actual payment.html page and passes the
+current document context to it.
+
 ===========================================================
 */
 
 makePaymentButton.onclick =
-    async () => {
+    () => {
 
         if(!reviewFinished){
 
-            return setMessage(
+            setMessage(
                 "Please wait until the complete document review is ready.",
                 "error"
             );
+
+            return;
         }
 
 
         if(amount <= 0){
 
-            return setMessage(
+            setMessage(
                 "This service requires a quotation before payment.",
                 "error"
             );
+
+            return;
         }
 
 
-        try{
-
-            busy = true;
-
-            updateButtons();
+        if(!jobId){
 
             setMessage(
-                "Starting payment..."
-            );
-
-
-            const data =
-                await paymentPost(
-                    "/api/payment/create" +
-                    "?job_id=" +
-                    encodeURIComponent(jobId) +
-                    "&amount=" +
-                    encodeURIComponent(amount) +
-                    "&payment_method=bank_transfer",
-                    {}
-                );
-
-
-            paymentStarted =
-                true;
-
-            paymentPending =
-                true;
-
-
-            paymentIdentifier =
-                clean(
-                    data.payment_id
-                ) ||
-                clean(
-                    data.order_number
-                ) ||
-                clean(
-                    data.reference
-                );
-
-
-            amount =
-                Number(data.amount) ||
-                amount;
-
-
-            billing =
-                clean(data.billing) ||
-                billing;
-
-
-            updatePaymentPanel();
-
-
-            setMessage(
-                "Payment started. Complete the payment, then tap I HAVE MADE PAYMENT. Customer Care must verify it before download.",
-                "success"
-            );
-
-
-            startPaymentPolling();
-
-        }catch(error){
-
-            setMessage(
-                error.message,
+                "The document job could not be identified.",
                 "error"
             );
 
-        }finally{
-
-            busy = false;
-
-            updateButtons();
+            return;
         }
+
+
+        /*
+        ---------------------------------------------------
+        PRESERVE THE EXACT CURRENT JOB/VERSION
+        ---------------------------------------------------
+        */
+
+        const paymentUrl =
+            "payment.html" +
+            "?job_id=" +
+            encodeURIComponent(jobId) +
+            "&version_id=" +
+            encodeURIComponent(versionId || "") +
+            "&service=" +
+            encodeURIComponent(
+                service ||
+                "Business Center Service"
+            ) +
+            "&amount=" +
+            encodeURIComponent(
+                amount
+            );
+
+
+        /*
+        ---------------------------------------------------
+        OPEN THE ACTUAL PAYMENT PAGE
+        ---------------------------------------------------
+        */
+
+        window.location.href =
+            paymentUrl;
     };
 
 
@@ -2878,60 +2792,21 @@ makePaymentButton.onclick =
 ===========================================================
 I HAVE MADE PAYMENT
 
-The payment_api.py creates the payment as "reported",
-so this button only confirms that the customer wants
-the page to keep checking the payment status.
+This button is intentionally not active on Review.
 
-No fake verification happens here.
+The actual I HAVE MADE PAYMENT button is now on
+payment.html, where the customer completes the payment
+flow through payment_api.py.
 ===========================================================
 */
 
 paymentButton.onclick =
-    async () => {
-
-        if(!paymentStarted){
-
-            return setMessage(
-                "Tap MAKE PAYMENT first, then complete your payment.",
-                "error"
-            );
-        }
-
-
-        if(
-            !paymentPending &&
-            !paid
-        ){
-
-            return setMessage(
-                "Your payment report is not pending. Please contact Customer Care.",
-                "error"
-            );
-        }
-
-
-        if(paid){
-
-            return setMessage(
-                "Payment has already been verified.",
-                "success"
-            );
-        }
-
-
-        paymentMessage.textContent =
-            "Payment reported. Customer Care will verify the payment before download is unlocked.";
-
+    () => {
 
         setMessage(
-            "Your payment has been reported. Please wait for Customer Care verification.",
-            "success"
+            "Please use the payment page to complete your payment.",
+            "error"
         );
-
-
-        updatePaymentPanel();
-
-        startPaymentPolling();
     };
 
 
