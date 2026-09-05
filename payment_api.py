@@ -19,7 +19,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 
 
-APP_VERSION = "payment-download-v4"
+# ============================================================
+# APPLICATION
+# ============================================================
+
+APP_VERSION = "payment-download-v5"
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -125,19 +129,6 @@ def is_review_ready(
     review_finished: Any = None,
     review_complete: Any = None,
 ) -> bool:
-    """
-    Determine whether the document has completed review.
-
-    The review system may expose readiness as:
-      - review_finished=True
-      - review_complete=True
-      - status=READY
-      - status=review_complete
-      - status=completed
-
-    This helper deliberately accepts all of those forms.
-    """
-
     if bool(review_finished):
         return True
 
@@ -241,6 +232,14 @@ def initialize_database() -> None:
             """
         )
 
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_payment_orders_job_version
+            ON payment_orders(job_id, document_version)
+            """
+        )
+
         connection.commit()
 
 
@@ -258,8 +257,10 @@ def get_payment_by_id(
     payment_id: str,
 ) -> dict[str, Any] | None:
 
-    with get_db() as connection:
+    if not payment_id:
+        return None
 
+    with get_db() as connection:
         row = connection.execute(
             """
             SELECT *
@@ -276,8 +277,10 @@ def get_latest_payment(
     job_id: str,
 ) -> dict[str, Any] | None:
 
-    with get_db() as connection:
+    if not job_id:
+        return None
 
+    with get_db() as connection:
         row = connection.execute(
             """
             SELECT *
@@ -292,10 +295,36 @@ def get_latest_payment(
     return row_to_dict(row)
 
 
+def get_payment_for_job_version(
+    job_id: str,
+    version_id: str,
+) -> dict[str, Any] | None:
+
+    if not job_id or not version_id:
+        return None
+
+    with get_db() as connection:
+        row = connection.execute(
+            """
+            SELECT *
+            FROM payment_orders
+            WHERE job_id = ?
+              AND document_version = ?
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (
+                job_id,
+                version_id,
+            ),
+        ).fetchone()
+
+    return row_to_dict(row)
+
+
 def get_customer_care_queue() -> list[dict[str, Any]]:
 
     with get_db() as connection:
-
         rows = connection.execute(
             """
             SELECT *
@@ -379,9 +408,7 @@ def insert_payment(
         connection.commit()
 
     return (
-        get_payment_by_id(
-            payment_id
-        )
+        get_payment_by_id(payment_id)
         or {}
     )
 
@@ -474,7 +501,7 @@ def record_download(
 
 
 # ============================================================
-# OLD API COMMUNICATION
+# OLD / MAIN API COMMUNICATION
 # ============================================================
 
 def call_old_api(
@@ -483,7 +510,6 @@ def call_old_api(
 ) -> Any:
 
     if not OLD_API_BASE_URL:
-
         raise RuntimeError(
             "OLD_API_BASE_URL is not configured."
         )
@@ -504,12 +530,11 @@ def call_old_api(
     headers = {
         "Accept": "application/json",
         "User-Agent": (
-            "NaijaPocketPaymentAPI/4.0"
+            "NaijaPocketPaymentAPI/5.0"
         ),
     }
 
     if INTERNAL_API_KEY:
-
         headers[
             "X-Internal-API-Key"
         ] = INTERNAL_API_KEY
@@ -545,26 +570,27 @@ def call_old_api(
         )
 
         raise RuntimeError(
-            f"Old API returned HTTP "
+            f"Main API returned HTTP "
             f"{exc.code}: {raw[:500]}"
         ) from exc
 
     except urllib.error.URLError as exc:
 
         raise RuntimeError(
-            "Could not connect to old API: "
+            "Could not connect to main API: "
             f"{exc}"
         ) from exc
 
+
+# ============================================================
+# DOCUMENT EXTRACTION
+# ============================================================
 
 def find_document_payload(
     value: Any,
 ) -> dict[str, Any] | None:
 
-    if not isinstance(
-        value,
-        dict,
-    ):
+    if not isinstance(value, dict):
         return None
 
     for key in (
@@ -577,10 +603,7 @@ def find_document_payload(
 
         nested = value.get(key)
 
-        if isinstance(
-            nested,
-            dict,
-        ):
+        if isinstance(nested, dict):
 
             result = find_document_payload(
                 nested
@@ -601,7 +624,6 @@ def find_document_payload(
         "status",
         "review_finished",
         "review_complete",
-        "review_complete",
         "version_id",
     }
 
@@ -618,10 +640,7 @@ def normalize_document_pages(
     value: Any,
 ) -> list[str]:
 
-    if isinstance(
-        value,
-        str,
-    ):
+    if isinstance(value, str):
 
         text = value.strip()
 
@@ -631,10 +650,7 @@ def normalize_document_pages(
             else []
         )
 
-    if isinstance(
-        value,
-        dict,
-    ):
+    if isinstance(value, dict):
 
         text = (
             value.get("text")
@@ -673,7 +689,6 @@ def normalize_document_pages(
                 )
 
             else:
-
                 text = item
 
             text = clean(text)
@@ -701,16 +716,16 @@ def get_first_payload_value(
 
         value = payload.get(key)
 
-        if value is not None:
+        if value is None:
+            continue
 
-            if isinstance(
-                value,
-                str,
-            ) and not value.strip():
+        if isinstance(
+            value,
+            str,
+        ) and not value.strip():
+            continue
 
-                continue
-
-            return value
+        return value
 
     return None
 
@@ -734,10 +749,9 @@ def merge_document_metadata(
 
     merged: dict[str, Any] = {}
 
-    keys = set(
-        primary.keys()
-    ) | set(
-        secondary.keys()
+    keys = (
+        set(primary.keys())
+        | set(secondary.keys())
     )
 
     for key in keys:
@@ -754,12 +768,19 @@ def merge_document_metadata(
             ):
 
                 if primary_value.strip():
-                    merged[key] = primary_value
+
+                    merged[key] = (
+                        primary_value
+                    )
+
                     continue
 
             elif primary_value != {}:
 
-                merged[key] = primary_value
+                merged[key] = (
+                    primary_value
+                )
+
                 continue
 
             elif primary_value not in (
@@ -767,7 +788,10 @@ def merge_document_metadata(
                 "",
             ):
 
-                merged[key] = primary_value
+                merged[key] = (
+                    primary_value
+                )
+
                 continue
 
         if secondary.get(key) is not None:
@@ -783,38 +807,13 @@ def extract_document(
     job_id: str,
 ) -> dict[str, Any]:
 
-    """
-    Retrieve the current reviewed document.
+    pages_payload = None
+    review_payload = None
 
-    IMPORTANT:
-    /api/review/pages and /api/review do not
-    necessarily return the same metadata.
-
-    The pages endpoint is used primarily for
-    the actual document pages.
-
-    The review endpoint is also checked for
-    authoritative review state and billing
-    metadata.
-
-    This prevents a valid READY document from
-    being incorrectly rejected as
-    DOCUMENT_NOT_READY merely because the
-    pages endpoint does not include
-    review_finished/status.
-    """
-
-    pages_payload: dict[str, Any] | None = None
-    review_payload: dict[str, Any] | None = None
-
-    pages_response: Any = None
-    review_response: Any = None
+    pages_response = None
+    review_response = None
 
     errors: list[str] = []
-
-    # --------------------------------------------------------
-    # FIRST: GET THE DOCUMENT PAGES
-    # --------------------------------------------------------
 
     try:
 
@@ -830,7 +829,6 @@ def extract_document(
         )
 
         if not pages_payload:
-
             errors.append(
                 "/api/review/pages: "
                 "no document payload"
@@ -841,10 +839,6 @@ def extract_document(
         errors.append(
             f"/api/review/pages: {exc}"
         )
-
-    # --------------------------------------------------------
-    # SECOND: GET THE REVIEW STATE
-    # --------------------------------------------------------
 
     try:
 
@@ -860,7 +854,6 @@ def extract_document(
         )
 
         if not review_payload:
-
             errors.append(
                 "/api/review: "
                 "no review payload"
@@ -872,10 +865,6 @@ def extract_document(
             f"/api/review: {exc}"
         )
 
-    # --------------------------------------------------------
-    # WE NEED AT LEAST ONE VALID PAYLOAD
-    # --------------------------------------------------------
-
     if (
         not pages_payload
         and not review_payload
@@ -883,26 +872,14 @@ def extract_document(
 
         raise RuntimeError(
             "Unable to retrieve the document "
-            "from the old API. "
+            "from the main API. "
             + " | ".join(errors)
         )
-
-    # --------------------------------------------------------
-    # MERGE METADATA
-    # --------------------------------------------------------
 
     payload = merge_document_metadata(
         pages_payload,
         review_payload,
     )
-
-    # --------------------------------------------------------
-    # PAGES
-    #
-    # Prefer /api/review/pages because that
-    # endpoint is specifically responsible for
-    # the complete paginated document.
-    # --------------------------------------------------------
 
     pages = normalize_document_pages(
         get_first_payload_value(
@@ -955,27 +932,15 @@ def extract_document(
         )
 
     if not pages and document_text:
-
-        pages = [
-            document_text
-        ]
+        pages = [document_text]
 
     if not pages:
 
         raise RuntimeError(
-            "The review API responded, but "
-            "no document pages were found. "
+            "The review API responded, "
+            "but no document pages were found. "
             + " | ".join(errors)
         )
-
-    # --------------------------------------------------------
-    # STATUS
-    #
-    # IMPORTANT:
-    # Prefer the review endpoint's state.
-    # /api/review/pages may contain pages but
-    # omit status/review_finished.
-    # --------------------------------------------------------
 
     review_status = clean(
         get_first_payload_value(
@@ -1028,7 +993,9 @@ def extract_document(
 
     review_finished = is_review_ready(
         status=current_status,
-        review_finished=review_finished_value,
+        review_finished=(
+            review_finished_value
+        ),
         review_complete=(
             get_first_payload_value(
                 review_payload,
@@ -1058,10 +1025,6 @@ def extract_document(
             ),
         )
 
-    # --------------------------------------------------------
-    # VERSION
-    # --------------------------------------------------------
-
     version_id = clean(
         get_first_payload_value(
             pages_payload,
@@ -1086,10 +1049,6 @@ def extract_document(
             )
         )
 
-    # --------------------------------------------------------
-    # FALLBACK VERSION FINGERPRINT
-    # --------------------------------------------------------
-
     if not version_id:
 
         fingerprint = json.dumps(
@@ -1100,23 +1059,15 @@ def extract_document(
             },
             sort_keys=True,
             ensure_ascii=False,
-        ).encode(
-            "utf-8"
-        )
+        ).encode("utf-8")
 
         version_id = hashlib.sha256(
             fingerprint
         ).hexdigest()[:24]
 
-    # --------------------------------------------------------
-    # BILLING
-    # --------------------------------------------------------
-
     billing = get_first_payload_value(
         review_payload,
-        (
-            "billing",
-        ),
+        ("billing",),
     )
 
     if not isinstance(
@@ -1126,21 +1077,14 @@ def extract_document(
 
         billing = get_first_payload_value(
             pages_payload,
-            (
-                "billing",
-            ),
+            ("billing",),
         )
 
     if not isinstance(
         billing,
         dict,
     ):
-
         billing = {}
-
-    # --------------------------------------------------------
-    # AMOUNT
-    # --------------------------------------------------------
 
     amount = 0.0
 
@@ -1191,10 +1135,6 @@ def extract_document(
                 amount = candidate
                 break
 
-    # --------------------------------------------------------
-    # FILENAME
-    # --------------------------------------------------------
-
     filename = clean(
         get_first_payload_value(
             pages_payload,
@@ -1227,19 +1167,12 @@ def extract_document(
     if not filename.lower().endswith(
         ".docx"
     ):
-
         filename += ".docx"
-
-    # --------------------------------------------------------
-    # SERVICE
-    # --------------------------------------------------------
 
     service = clean(
         get_first_payload_value(
             review_payload,
-            (
-                "service",
-            ),
+            ("service",),
         )
     )
 
@@ -1248,22 +1181,14 @@ def extract_document(
         service = clean(
             get_first_payload_value(
                 pages_payload,
-                (
-                    "service",
-                ),
+                ("service",),
             )
         )
-
-    # --------------------------------------------------------
-    # CUSTOMER ID
-    # --------------------------------------------------------
 
     customer_id = clean(
         get_first_payload_value(
             review_payload,
-            (
-                "customer_id",
-            ),
+            ("customer_id",),
         )
     )
 
@@ -1272,15 +1197,9 @@ def extract_document(
         customer_id = clean(
             get_first_payload_value(
                 pages_payload,
-                (
-                    "customer_id",
-                ),
+                ("customer_id",),
             )
         )
-
-    # --------------------------------------------------------
-    # RETURN NORMALIZED DOCUMENT
-    # --------------------------------------------------------
 
     return {
         "job_id": job_id,
@@ -1318,9 +1237,7 @@ def current_document(
     try:
 
         return (
-            extract_document(
-                job_id
-            ),
+            extract_document(job_id),
             None,
         )
 
@@ -1331,6 +1248,10 @@ def current_document(
             str(exc),
         )
 
+
+# ============================================================
+# PAYMENT / DOCUMENT VERSION PROTECTION
+# ============================================================
 
 def versions_match(
     payment: dict[str, Any],
@@ -1356,15 +1277,35 @@ def versions_match(
     )
 
 
+def requested_version_matches_payment(
+    payment: dict[str, Any],
+    version_id: str | None,
+) -> bool:
+
+    requested = clean(version_id)
+
+    if not requested:
+        return True
+
+    stored = clean(
+        payment.get(
+            "document_version"
+        )
+    )
+
+    return bool(
+        stored
+        and stored == requested
+    )
+
+
 def has_document(
     document: dict[str, Any],
 ) -> bool:
 
     return bool(
         normalize_document_pages(
-            document.get(
-                "pages"
-            )
+            document.get("pages")
         )
         or clean(
             document.get(
@@ -1379,12 +1320,14 @@ def snapshot_document(
 ) -> dict[str, Any]:
 
     return {
-        "job_id": document[
-            "job_id"
-        ],
-        "pages": document[
-            "pages"
-        ],
+        "job_id": document.get(
+            "job_id",
+            "",
+        ),
+        "pages": document.get(
+            "pages",
+            [],
+        ),
         "document_text": document.get(
             "document_text",
             "",
@@ -1400,6 +1343,14 @@ def snapshot_document(
         "version_id": document.get(
             "version_id",
             "",
+        ),
+        "amount": document.get(
+            "amount",
+            0,
+        ),
+        "billing": document.get(
+            "billing",
+            {},
         ),
     }
 
@@ -1461,6 +1412,9 @@ def public_payment(
         "document_version": payment.get(
             "document_version"
         ),
+        "version_id": payment.get(
+            "document_version"
+        ),
         "document_filename": payment.get(
             "document_filename"
         ),
@@ -1499,20 +1453,14 @@ def make_docx_paragraph(
 
     pieces: list[str] = []
 
-    lines = (
-        str(text)
-        .splitlines()
-    )
+    lines = str(text).splitlines()
 
     if not lines:
         lines = [""]
 
-    for index, line in enumerate(
-        lines
-    ):
+    for index, line in enumerate(lines):
 
         if index:
-
             pieces.append(
                 "<w:br/>"
             )
@@ -1522,9 +1470,9 @@ def make_docx_paragraph(
             "<w:rPr>"
             '<w:sz w:val="24"/>'
             "</w:rPr>"
-            f'<w:t xml:space="preserve">'
-            f'{escape(str(line))}'
-            f"</w:t>"
+            '<w:t xml:space="preserve">'
+            f"{escape(str(line))}"
+            "</w:t>"
             "</w:r>"
         )
 
@@ -1547,7 +1495,6 @@ def create_docx(
     if not safe_filename.lower().endswith(
         ".docx"
     ):
-
         safe_filename += ".docx"
 
     output = (
@@ -1561,9 +1508,7 @@ def create_docx(
 
     body: list[str] = []
 
-    for index, page in enumerate(
-        pages
-    ):
+    for index, page in enumerate(pages):
 
         if index:
 
@@ -1590,8 +1535,7 @@ def create_docx(
         'wordprocessingml/2006/main">'
         "<w:body>"
         + "".join(body)
-        +
-        "<w:sectPr>"
+        + "<w:sectPr>"
         '<w:pgSz w:w="11906" w:h="16838"/>'
         '<w:pgMar '
         'w:top="1134" '
@@ -1630,15 +1574,16 @@ def create_docx(
         '<Types xmlns="http://schemas.openxmlformats.org/'
         'package/2006/content-types">'
         '<Default Extension="rels" '
-        'ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+        'ContentType="application/vnd.openxmlformats-'
+        'package.relationships+xml"/>'
         '<Default Extension="xml" '
         'ContentType="application/xml"/>'
-        '<Override '
-        'PartName="/word/document.xml" '
-        'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
-        '<Override '
-        'PartName="/word/styles.xml" '
-        'ContentType="application/xml"/>'
+        '<Override PartName="/word/document.xml" '
+        'ContentType="application/vnd.openxmlformats-'
+        'officedocument.wordprocessingml.document.main+xml"/>'
+        '<Override PartName="/word/styles.xml" '
+        'ContentType="application/vnd.openxmlformats-'
+        'officedocument.wordprocessingml.styles+xml"/>'
         "</Types>"
     )
 
@@ -1648,8 +1593,7 @@ def create_docx(
         'standalone="yes"?>'
         '<Relationships xmlns="http://schemas.openxmlformats.org/'
         'package/2006/relationships">'
-        '<Relationship '
-        'Id="rId1" '
+        '<Relationship Id="rId1" '
         'Type="http://schemas.openxmlformats.org/'
         'officeDocument/2006/relationships/officeDocument" '
         'Target="word/document.xml"/>'
@@ -1662,8 +1606,7 @@ def create_docx(
         'standalone="yes"?>'
         '<Relationships xmlns="http://schemas.openxmlformats.org/'
         'package/2006/relationships">'
-        '<Relationship '
-        'Id="rId1" '
+        '<Relationship Id="rId1" '
         'Type="http://schemas.openxmlformats.org/'
         'officeDocument/2006/relationships/styles" '
         'Target="styles.xml"/>'
@@ -1720,13 +1663,64 @@ async def read_json_body(
             value,
             dict,
         ):
-
             return value
 
     except Exception:
         pass
 
     return {}
+
+
+# ============================================================
+# PAYMENT SELECTION
+# ============================================================
+
+def select_payment(
+    payment_id: str | None,
+    job_id: str | None,
+    version_id: str | None,
+) -> dict[str, Any] | None:
+
+    payment_id = clean(payment_id)
+    job_id = clean(job_id)
+    version_id = clean(version_id)
+
+    if payment_id:
+
+        payment = get_payment_by_id(
+            payment_id
+        )
+
+        if not payment:
+            return None
+
+        if job_id and clean(
+            payment.get("job_id")
+        ) != job_id:
+            return None
+
+        if version_id and not requested_version_matches_payment(
+            payment,
+            version_id,
+        ):
+            return None
+
+        return payment
+
+    if job_id and version_id:
+
+        return get_payment_for_job_version(
+            job_id,
+            version_id,
+        )
+
+    if job_id:
+
+        return get_latest_payment(
+            job_id
+        )
+
+    return None
 
 
 # ============================================================
@@ -1797,13 +1791,11 @@ async def payment_diagnostic():
         )
 
         if not parsed.scheme:
-
             raise RuntimeError(
                 "OLD_API_BASE_URL has no URL scheme."
             )
 
         if not parsed.netloc:
-
             raise RuntimeError(
                 "OLD_API_BASE_URL has no hostname."
             )
@@ -1814,7 +1806,7 @@ async def payment_diagnostic():
             headers={
                 "Accept": "application/json",
                 "User-Agent": (
-                    "NaijaPocketPaymentDiagnostic/4.0"
+                    "NaijaPocketPaymentDiagnostic/5.0"
                 ),
             },
             method="GET",
@@ -1853,7 +1845,7 @@ async def payment_diagnostic():
             result["old_api"][
                 "message"
             ] = (
-                "Old API health endpoint "
+                "Main API health endpoint "
                 "is reachable."
             )
 
@@ -1880,6 +1872,7 @@ async def create_payment(
     payment_method: str | None = None,
     customer_id: str | None = None,
     service: str | None = None,
+    version_id: str | None = None,
 ):
 
     body = await read_json_body(
@@ -1900,39 +1893,29 @@ async def create_payment(
 
     customer_id = clean(
         customer_id
-        or body.get(
-            "customer_id"
-        )
+        or body.get("customer_id")
     )
 
     service = clean(
         service
-        or body.get(
-            "service"
-        )
+        or body.get("service")
     )
 
     payment_method = clean(
         payment_method
-        or body.get(
-            "payment_method"
-        )
+        or body.get("payment_method")
     ) or DEFAULT_PAYMENT_METHOD
 
+    version_id = clean(
+        version_id
+        or body.get("version_id")
+    )
+
     if amount is None:
-
-        amount = body.get(
-            "amount"
-        )
-
-    # --------------------------------------------------------
-    # RETRIEVE CURRENT REVIEWED DOCUMENT
-    # --------------------------------------------------------
+        amount = body.get("amount")
 
     document, lookup_error = (
-        current_document(
-            job_id
-        )
+        current_document(job_id)
     )
 
     if lookup_error or not document:
@@ -1947,31 +1930,16 @@ async def create_payment(
             detail=lookup_error,
         )
 
-    # --------------------------------------------------------
-    # DOCUMENT MUST EXIST
-    # --------------------------------------------------------
-
-    if not has_document(
-        document
-    ):
+    if not has_document(document):
 
         return api_error(
             "DOCUMENT_EMPTY",
             (
                 "There is no completed "
-                "document available "
-                "for payment."
+                "document available for payment."
             ),
             409,
         )
-
-    # --------------------------------------------------------
-    # DOCUMENT MUST HAVE FINISHED REVIEW
-    #
-    # This is now based on the combined
-    # /api/review/pages + /api/review
-    # response.
-    # --------------------------------------------------------
 
     if not document.get(
         "review_finished"
@@ -1992,9 +1960,28 @@ async def create_payment(
             ),
         )
 
-    # --------------------------------------------------------
-    # AMOUNT
-    # --------------------------------------------------------
+    current_version = clean(
+        document.get(
+            "version_id"
+        )
+    )
+
+    if (
+        version_id
+        and version_id != current_version
+    ):
+
+        return api_error(
+            "VERSION_NOT_CURRENT",
+            (
+                "The requested document "
+                "version is not the current "
+                "reviewed version."
+            ),
+            409,
+            requested_version=version_id,
+            current_version=current_version,
+        )
 
     final_amount = (
         as_money(
@@ -2002,36 +1989,28 @@ async def create_payment(
                 "amount"
             )
         )
-        or as_money(
-            amount
-        )
+        or as_money(amount)
     )
 
     if final_amount <= 0:
 
         return api_error(
             "AMOUNT_NOT_AVAILABLE",
-            (
-                "No payment amount "
-                "was supplied."
-            ),
+            "No payment amount was supplied.",
             409,
         )
 
-    # --------------------------------------------------------
-    # EXISTING PAYMENT
-    # --------------------------------------------------------
-
-    existing = get_latest_payment(
-        job_id
+    existing = (
+        get_payment_for_job_version(
+            job_id,
+            current_version,
+        )
+        if current_version
+        else get_latest_payment(job_id)
     )
 
     if (
         existing
-        and versions_match(
-            existing,
-            document,
-        )
         and normalized_status(
             existing.get(
                 "payment_status"
@@ -2059,8 +2038,7 @@ async def create_payment(
             "ok": True,
             "success": True,
             "message": (
-                "Existing payment record "
-                "returned."
+                "Existing payment record returned."
             ),
             "payment": public_payment(
                 existing
@@ -2069,9 +2047,7 @@ async def create_payment(
                 "payment_id"
             ],
             "amount": as_money(
-                existing[
-                    "amount"
-                ]
+                existing["amount"]
             ),
             "currency": "NGN",
             "payment_status": existing[
@@ -2081,9 +2057,7 @@ async def create_payment(
                 not payment_verified
             ),
             "status": (
-                existing[
-                    "payment_status"
-                ]
+                existing["payment_status"]
             ),
             "paid": payment_verified,
             "payment_verified": (
@@ -2092,14 +2066,8 @@ async def create_payment(
             "download_unlocked": (
                 payment_verified
             ),
-            "version_id": document[
-                "version_id"
-            ],
+            "version_id": current_version,
         }
-
-    # --------------------------------------------------------
-    # CREATE NEW PAYMENT
-    # --------------------------------------------------------
 
     payment_id = (
         "NPB-"
@@ -2125,9 +2093,7 @@ async def create_payment(
         ),
         amount=final_amount,
         payment_method=payment_method,
-        document_version=document[
-            "version_id"
-        ],
+        document_version=current_version,
         document_filename=document[
             "filename"
         ],
@@ -2156,9 +2122,7 @@ async def create_payment(
         "paid": False,
         "payment_verified": False,
         "download_unlocked": False,
-        "version_id": document[
-            "version_id"
-        ],
+        "version_id": current_version,
     }
 
 
@@ -2175,6 +2139,7 @@ async def report_payment(
     job_id: str | None = None,
     payment_reference: str | None = None,
     note: str | None = None,
+    version_id: str | None = None,
 ):
 
     body = await read_json_body(
@@ -2183,16 +2148,17 @@ async def report_payment(
 
     payment_id = clean(
         payment_id
-        or body.get(
-            "payment_id"
-        )
+        or body.get("payment_id")
     )
 
     job_id = clean(
         job_id
-        or body.get(
-            "job_id"
-        )
+        or body.get("job_id")
+    )
+
+    version_id = clean(
+        version_id
+        or body.get("version_id")
     )
 
     payment_reference = clean(
@@ -2207,26 +2173,14 @@ async def report_payment(
 
     note = clean(
         note
-        or body.get(
-            "note"
-        )
-        or body.get(
-            "message"
-        )
+        or body.get("note")
+        or body.get("message")
     )
 
-    payment = (
-        get_payment_by_id(
-            payment_id
-        )
-        if payment_id
-        else (
-            get_latest_payment(
-                job_id
-            )
-            if job_id
-            else None
-        )
+    payment = select_payment(
+        payment_id,
+        job_id,
+        version_id,
     )
 
     if not payment:
@@ -2235,6 +2189,23 @@ async def report_payment(
             "PAYMENT_NOT_FOUND",
             "Payment record not found.",
             404,
+        )
+
+    if (
+        version_id
+        and not requested_version_matches_payment(
+            payment,
+            version_id,
+        )
+    ):
+
+        return api_error(
+            "PAYMENT_VERSION_MISMATCH",
+            (
+                "This payment does not belong "
+                "to the requested document version."
+            ),
+            409,
         )
 
     document, lookup_error = (
@@ -2263,18 +2234,15 @@ async def report_payment(
         return api_error(
             "PAYMENT_DOCUMENT_CHANGED",
             (
-                "The document changed "
-                "after this payment was "
-                "created. A new payment "
-                "is required."
+                "The document changed after "
+                "this payment was created. "
+                "A new payment is required."
             ),
             409,
         )
 
     if is_verified(
-        payment[
-            "payment_status"
-        ]
+        payment["payment_status"]
     ):
 
         return {
@@ -2292,9 +2260,7 @@ async def report_payment(
         }
 
     payment = update_payment(
-        payment[
-            "payment_id"
-        ],
+        payment["payment_id"],
         payment_status="reported",
         payment_reference=(
             payment_reference
@@ -2321,6 +2287,9 @@ async def report_payment(
         "paid": False,
         "payment_verified": False,
         "download_unlocked": False,
+        "version_id": payment.get(
+            "document_version"
+        ),
     }
 
 
@@ -2337,21 +2306,28 @@ async def payment_status(
     version_id: str | None = None,
 ):
 
-    payment = (
-        get_payment_by_id(
-            clean(payment_id)
-        )
-        if clean(payment_id)
-        else (
-            get_latest_payment(
-                clean(job_id)
-            )
-            if clean(job_id)
-            else None
-        )
+    payment = select_payment(
+        payment_id,
+        job_id,
+        version_id,
     )
 
     if not payment:
+
+        if version_id and job_id:
+
+            return {
+                "ok": True,
+                "success": True,
+                "payment": None,
+                "payment_status": "none",
+                "payment_pending": False,
+                "status": "none",
+                "paid": False,
+                "payment_verified": False,
+                "download_unlocked": False,
+                "version_id": version_id,
+            }
 
         return {
             "ok": True,
@@ -2370,6 +2346,37 @@ async def payment_status(
             payment["job_id"]
         )
     )
+
+    if version_id and not requested_version_matches_payment(
+        payment,
+        version_id,
+    ):
+
+        return {
+            "ok": True,
+            "success": True,
+            "payment": public_payment(
+                payment
+            ),
+            "payment_id": payment[
+                "payment_id"
+            ],
+            "amount": as_money(
+                payment["amount"]
+            ),
+            "payment_status": (
+                "invalid_for_requested_version"
+            ),
+            "payment_pending": False,
+            "status": (
+                "invalid_for_requested_version"
+            ),
+            "paid": False,
+            "payment_verified": False,
+            "download_unlocked": False,
+            "document_check": "version_mismatch",
+            "version_id": version_id,
+        }
 
     if (
         document
@@ -2402,18 +2409,18 @@ async def payment_status(
             "payment_verified": False,
             "download_unlocked": False,
             "document_check": "changed",
+            "version_id": payment.get(
+                "document_version"
+            ),
         }
 
     payment_verified = is_verified(
-        payment[
-            "payment_status"
-        ]
+        payment["payment_status"]
     )
 
     billing = ""
 
     if document:
-
         billing = document.get(
             "billing",
             "",
@@ -2429,9 +2436,7 @@ async def payment_status(
             "payment_id"
         ],
         "amount": as_money(
-            payment[
-                "amount"
-            ]
+            payment["amount"]
         ),
         "billing": billing,
         "payment_status": payment[
@@ -2439,9 +2444,7 @@ async def payment_status(
         ],
         "payment_pending": (
             is_pending(
-                payment[
-                    "payment_status"
-                ]
+                payment["payment_status"]
             )
             and not payment_verified
         ),
@@ -2449,9 +2452,7 @@ async def payment_status(
             "pending"
             if (
                 is_pending(
-                    payment[
-                        "payment_status"
-                    ]
+                    payment["payment_status"]
                 )
                 and not payment_verified
             )
@@ -2510,6 +2511,9 @@ async def payment_complete(
 @app.get(
     "/api/customer-care/payments"
 )
+@app.get(
+    "/api/back-office/payments"
+)
 async def customer_care_payments():
 
     payments = get_customer_care_queue()
@@ -2517,30 +2521,31 @@ async def customer_care_payments():
     return {
         "ok": True,
         "success": True,
-        "count": len(
-            payments
-        ),
+        "count": len(payments),
         "payments": [
-            public_payment(
-                payment
-            )
+            public_payment(payment)
             for payment in payments
         ],
     }
 
 
 # ============================================================
-# CUSTOMER CARE VERIFICATION
+# CUSTOMER CARE / BACK OFFICE VERIFICATION
 # ============================================================
 
 @app.post(
     "/api/customer-care/payment/verify"
+)
+@app.post(
+    "/api/back-office/payment/verify"
 )
 async def customer_care_verify(
     request: Request,
     payment_id: str | None = None,
     verified: bool = True,
     note: str | None = None,
+    job_id: str | None = None,
+    version_id: str | None = None,
 ):
 
     body = await read_json_body(
@@ -2549,38 +2554,45 @@ async def customer_care_verify(
 
     payment_id = clean(
         payment_id
-        or body.get(
-            "payment_id"
-        )
+        or body.get("payment_id")
+    )
+
+    job_id = clean(
+        job_id
+        or body.get("job_id")
+    )
+
+    version_id = clean(
+        version_id
+        or body.get("version_id")
     )
 
     if "verified" in body:
 
         verified = bool(
-            body.get(
-                "verified"
-            )
+            body.get("verified")
         )
 
     note = clean(
         note
-        or body.get(
-            "note"
-        )
-        or body.get(
-            "admin_note"
-        )
+        or body.get("note")
+        or body.get("admin_note")
     )
 
-    if not payment_id:
+    if not payment_id and not job_id:
 
         return api_error(
             "PAYMENT_ID_REQUIRED",
-            "payment_id is required.",
+            (
+                "payment_id or job_id "
+                "is required."
+            ),
         )
 
-    payment = get_payment_by_id(
-        payment_id
+    payment = select_payment(
+        payment_id,
+        job_id,
+        version_id,
     )
 
     if not payment:
@@ -2591,10 +2603,24 @@ async def customer_care_verify(
             404,
         )
 
+    if version_id and not requested_version_matches_payment(
+        payment,
+        version_id,
+    ):
+
+        return api_error(
+            "PAYMENT_VERSION_MISMATCH",
+            (
+                "The payment does not belong "
+                "to the requested document version."
+            ),
+            409,
+        )
+
     if not verified:
 
         payment = update_payment(
-            payment_id,
+            payment["payment_id"],
             payment_status="rejected",
             admin_note=(
                 note
@@ -2649,10 +2675,16 @@ async def customer_care_verify(
                 "document."
             ),
             409,
+            payment_version=payment.get(
+                "document_version"
+            ),
+            current_version=document.get(
+                "version_id"
+            ),
         )
 
     payment = update_payment(
-        payment_id,
+        payment["payment_id"],
         payment_status="verified",
         admin_note=(
             note
@@ -2671,6 +2703,15 @@ async def customer_care_verify(
         "payment": public_payment(
             payment
         ),
+        "payment_id": payment[
+            "payment_id"
+        ],
+        "job_id": payment[
+            "job_id"
+        ],
+        "version_id": payment[
+            "document_version"
+        ],
         "paid": True,
         "payment_verified": True,
         "download_unlocked": True,
@@ -2690,26 +2731,49 @@ async def download_document(
     version_id: str | None = None,
 ):
 
-    payment = (
-        get_payment_by_id(
-            clean(payment_id)
-        )
-        if clean(payment_id)
-        else (
-            get_latest_payment(
-                clean(job_id)
-            )
-            if clean(job_id)
-            else None
-        )
+    payment = select_payment(
+        payment_id,
+        job_id,
+        version_id,
     )
 
     if not payment:
 
         return api_error(
             "PAYMENT_NOT_FOUND",
-            "Payment record not found.",
+            (
+                "No payment exists for "
+                "the requested job/version."
+            ),
             404,
+        )
+
+    requested_version = clean(
+        version_id
+    )
+
+    stored_version = clean(
+        payment.get(
+            "document_version"
+        )
+    )
+
+    if (
+        requested_version
+        and requested_version != stored_version
+    ):
+
+        return api_error(
+            "PAYMENT_VERSION_MISMATCH",
+            (
+                "This payment does not "
+                "belong to the requested "
+                "document version."
+            ),
+            409,
+            payment_version=stored_version,
+            requested_version=requested_version,
+            download_unlocked=False,
         )
 
     # --------------------------------------------------------
@@ -2717,9 +2781,7 @@ async def download_document(
     # --------------------------------------------------------
 
     if not is_verified(
-        payment[
-            "payment_status"
-        ]
+        payment["payment_status"]
     ):
 
         return api_error(
@@ -2736,6 +2798,10 @@ async def download_document(
             payment_id=payment[
                 "payment_id"
             ],
+            job_id=payment[
+                "job_id"
+            ],
+            version_id=stored_version,
             download_unlocked=False,
         )
 
@@ -2762,7 +2828,7 @@ async def download_document(
         )
 
     # --------------------------------------------------------
-    # VERSION PROTECTION
+    # EXACT VERSION PROTECTION
     # --------------------------------------------------------
 
     if not versions_match(
@@ -2779,6 +2845,35 @@ async def download_document(
                 "the changed document."
             ),
             409,
+            payment_version=stored_version,
+            current_version=document.get(
+                "version_id"
+            ),
+            download_unlocked=False,
+        )
+
+    if (
+        requested_version
+        and clean(
+            document.get(
+                "version_id"
+            )
+        ) != requested_version
+    ):
+
+        return api_error(
+            "DOCUMENT_VERSION_MISMATCH",
+            (
+                "The requested document "
+                "version is not the current "
+                "verified document version."
+            ),
+            409,
+            requested_version=requested_version,
+            current_version=document.get(
+                "version_id"
+            ),
+            download_unlocked=False,
         )
 
     # --------------------------------------------------------
@@ -2800,10 +2895,7 @@ async def download_document(
         )
 
         if text:
-
-            pages = [
-                text
-            ]
+            pages = [text]
 
     if not pages:
 
@@ -2855,8 +2947,8 @@ async def download_document(
     return FileResponse(
         str(output),
         media_type=(
-            "application/vnd.openxmlformats-officedocument."
-            "wordprocessingml.document"
+            "application/vnd.openxmlformats-"
+            "officedocument.wordprocessingml.document"
         ),
         filename=Path(
             document[
@@ -2867,6 +2959,10 @@ async def download_document(
             "X-Payment-ID": payment[
                 "payment_id"
             ],
+            "X-Job-ID": payment[
+                "job_id"
+            ],
+            "X-Version-ID": stored_version,
             "X-Download-Unlocked": "true",
         },
     )
@@ -2890,7 +2986,7 @@ async def startup():
 
     print(
         "[PAYMENT API] "
-        "Old API configured="
+        "Main API configured="
         f"{bool(OLD_API_BASE_URL)}"
     )
 
