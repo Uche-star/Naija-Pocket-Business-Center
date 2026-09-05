@@ -3,15 +3,15 @@ from __future__ import annotations
 import asyncio
 import inspect
 import io
+import json
 import os
 import re
 import traceback
-import uuid
-import zipfile
-import json
 import urllib.error
 import urllib.parse
 import urllib.request
+import uuid
+import zipfile
 from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree as ET
@@ -30,29 +30,52 @@ from billing_manager import BillingManager
 # ============================================================
 
 DEBUG = os.getenv("ADA_DEBUG_ERRORS", "true").lower() in {
-    "1", "true", "yes", "on"
+    "1",
+    "true",
+    "yes",
+    "on",
 }
 
 MAX_UPLOAD = int(
-    os.getenv("ADA_MAX_UPLOAD_BYTES", str(25 * 1024 * 1024))
+    os.getenv(
+        "ADA_MAX_UPLOAD_BYTES",
+        str(25 * 1024 * 1024),
+    )
 )
 
-# Separate payment service. Payment state is owned by payment_api.py.
+# Separate payment service.
+# Payment state is owned by payment_api.py.
 PAYMENT_API_BASE_URL = os.getenv(
     "PAYMENT_API_BASE_URL",
     "https://naija-pocket-payment-api.onrender.com",
 ).strip().rstrip("/")
 
-PAYMENT_API_KEY = os.getenv("PAYMENT_API_KEY", "").strip()
-PAYMENT_API_TIMEOUT = int(os.getenv("PAYMENT_API_TIMEOUT", "30"))
+PAYMENT_API_KEY = os.getenv(
+    "PAYMENT_API_KEY",
+    "",
+).strip()
 
-# This is REVIEW DISPLAY chunking only. It is deliberately not
-# used as a customer page-count requirement.
-REVIEW_CHUNK_CHARS = int(
-    os.getenv("ADA_REVIEW_CHUNK_CHARS", "7000")
+PAYMENT_API_TIMEOUT = int(
+    os.getenv(
+        "PAYMENT_API_TIMEOUT",
+        "30",
+    )
 )
+
+# Review display chunking only.
+# It is NOT a customer page-count requirement.
+REVIEW_CHUNK_CHARS = int(
+    os.getenv(
+        "ADA_REVIEW_CHUNK_CHARS",
+        "7000",
+    )
+)
+
 REVIEW_MIN_CHARS = int(
-    os.getenv("ADA_REVIEW_MIN_CHARS", "2500")
+    os.getenv(
+        "ADA_REVIEW_MIN_CHARS",
+        "2500",
+    )
 )
 
 BASE = Path(__file__).resolve().parent
@@ -60,69 +83,102 @@ BASE = Path(__file__).resolve().parent
 BILLING = BillingManager()
 
 DOWNLOAD_DIR = BASE / "generated_documents"
-DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
+DOWNLOAD_DIR.mkdir(
+    parents=True,
+    exist_ok=True,
+)
 
 
 def get_service_bill(
     service: Any,
     total_pages: int = 1,
 ) -> dict[str, Any]:
-    """Return the official amount for a service from BillingManager."""
-    pages = max(1, int(total_pages or 1))
+    """Return the official amount for a service."""
+
+    pages = max(
+        1,
+        int(total_pages or 1),
+    )
 
     bill = BILLING.generate_bill(
         str(service or "").strip()
     )
 
-    unit_price = int(bill.get("price") or 0)
-    billing_type = bill.get("billing") or "quotation"
-
-    amount = (
-        unit_price * pages
-        if billing_type == "per_page"
-        else unit_price
-        if billing_type == "fixed"
-        else 0
+    unit_price = int(
+        bill.get("price") or 0
     )
 
+    billing_type = (
+        bill.get("billing")
+        or "quotation"
+    )
+
+    if billing_type == "per_page":
+        amount = unit_price * pages
+    elif billing_type == "fixed":
+        amount = unit_price
+    else:
+        amount = 0
+
     return {
-        "service": bill.get("service") or service,
+        "service": (
+            bill.get("service")
+            or service
+        ),
         "price": unit_price,
         "billing": billing_type,
         "total_pages": pages,
         "amount": amount,
-        "quotation_required": billing_type == "quotation",
+        "quotation_required": (
+            billing_type == "quotation"
+        ),
     }
 
 
-def make_download_docx(job: dict[str, Any]) -> Path:
-    """Create a real DOCX containing the already-reviewed document."""
+def make_download_docx(
+    job: dict[str, Any],
+) -> Path:
+    """Create a real DOCX containing the reviewed document."""
 
     job_id = re.sub(
         r"[^A-Za-z0-9_-]",
         "",
-        str(job.get("job_id") or "job"),
+        str(
+            job.get("job_id")
+            or "job"
+        ),
     )
 
     version = re.sub(
         r"[^A-Za-z0-9-]",
         "",
-        str(job.get("current_version") or 1),
+        str(
+            job.get("current_version")
+            or 1
+        ),
     )
 
     path = (
         DOWNLOAD_DIR
-        / f"naija_pocket_business_{job_id}_v{version}.docx"
+        / (
+            "naija_pocket_business_"
+            f"{job_id}_v{version}.docx"
+        )
     )
 
     pages = normalize_pages(
-        job.get("document_pages") or []
+        job.get("document_pages")
+        or []
     )
 
     if not pages:
         text = clean_text(
-            job.get("document_text", "")
+            job.get(
+                "document_text",
+                "",
+            )
         )
+
         pages = (
             text_to_review_pages(text)
             if text
@@ -137,27 +193,56 @@ def make_download_docx(job: dict[str, Any]) -> Path:
     def esc(value: Any) -> str:
         return (
             str(value or "")
-            .replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace('"', "&quot;")
-            .replace("'", "&apos;")
+            .replace(
+                "&",
+                "&amp;",
+            )
+            .replace(
+                "<",
+                "&lt;",
+            )
+            .replace(
+                ">",
+                "&gt;",
+            )
+            .replace(
+                '"',
+                "&quot;",
+            )
+            .replace(
+                "'",
+                "&apos;",
+            )
         )
 
     body: list[str] = []
 
-    for i, page in enumerate(pages):
-        content = str(
-            page.get("content", "")
-            if isinstance(page, dict)
-            else page
-        )
+    for index, page in enumerate(
+        pages
+    ):
+        if isinstance(
+            page,
+            dict,
+        ):
+            content = str(
+                page.get(
+                    "content",
+                    "",
+                )
+            )
+        else:
+            content = str(page)
 
         paras = [
-            x.strip()
-            for x in content.splitlines()
-            if x.strip()
-        ] or [content.strip()]
+            item.strip()
+            for item in content.splitlines()
+            if item.strip()
+        ]
+
+        if not paras:
+            paras = [
+                content.strip()
+            ]
 
         for para in paras:
             body.append(
@@ -166,7 +251,7 @@ def make_download_docx(job: dict[str, Any]) -> Path:
                 + "</w:t></w:r></w:p>"
             )
 
-        if i < len(pages) - 1:
+        if index < len(pages) - 1:
             body.append(
                 '<w:p><w:r><w:br w:type="page"/>'
                 "</w:r></w:p>"
@@ -219,20 +304,23 @@ def make_download_docx(job: dict[str, Any]) -> Path:
         path,
         "w",
         zipfile.ZIP_DEFLATED,
-    ) as z:
-        z.writestr(
+    ) as archive:
+        archive.writestr(
             "[Content_Types].xml",
             content_types,
         )
-        z.writestr(
+
+        archive.writestr(
             "_rels/.rels",
             rels,
         )
-        z.writestr(
+
+        archive.writestr(
             "word/document.xml",
             document_xml,
         )
-        z.writestr(
+
+        archive.writestr(
             "word/_rels/document.xml.rels",
             doc_rels,
         )
@@ -287,31 +375,50 @@ def find_file(name: str):
 
 
 def event_value(value: Any) -> str:
-    return str(value or "").strip().lower()
+    return str(
+        value or ""
+    ).strip().lower()
 
 
-def job_key(customer_id: Any, job_id: Any) -> str:
+def job_key(
+    customer_id: Any,
+    job_id: Any,
+) -> str:
     customer = (
-        str(customer_id or "anonymous").strip()
+        str(
+            customer_id
+            or "anonymous"
+        ).strip()
         or "anonymous"
     )
 
     job = (
-        str(job_id or "default").strip()
+        str(
+            job_id
+            or "default"
+        ).strip()
         or "default"
     )
 
     return f"{customer}:{job}"
 
 
-def clean_text(value: Any) -> str:
+def clean_text(
+    value: Any,
+) -> str:
     if value is None:
         return ""
 
     text = (
         str(value)
-        .replace("\r\n", "\n")
-        .replace("\r", "\n")
+        .replace(
+            "\r\n",
+            "\n",
+        )
+        .replace(
+            "\r",
+            "\n",
+        )
     )
 
     text = re.sub(
@@ -321,7 +428,10 @@ def clean_text(value: Any) -> str:
         flags=re.I,
     )
 
-    text = text.replace("```", "")
+    text = text.replace(
+        "```",
+        "",
+    )
 
     return text.strip()
 
@@ -334,7 +444,10 @@ def application_error(
 ):
     error_type = (
         type(error).__name__
-        if isinstance(error, Exception)
+        if isinstance(
+            error,
+            Exception,
+        )
         else "ApplicationError"
     )
 
@@ -342,7 +455,10 @@ def application_error(
         f"[{stage}] {error_type}: {error}"
     )
 
-    if isinstance(error, Exception):
+    if isinstance(
+        error,
+        Exception,
+    ):
         traceback.print_exc()
 
     return JSONResponse(
@@ -355,7 +471,10 @@ def application_error(
             "error_message": (
                 str(error)
                 if DEBUG
-                else "An internal application error occurred."
+                else (
+                    "An internal application "
+                    "error occurred."
+                )
             ),
         },
     )
@@ -371,8 +490,13 @@ def normalize_document_pages(
     if pages is None:
         return []
 
-    if isinstance(pages, str):
-        text = clean_text(pages)
+    if isinstance(
+        pages,
+        str,
+    ):
+        text = clean_text(
+            pages
+        )
 
         return (
             [
@@ -386,13 +510,24 @@ def normalize_document_pages(
             else []
         )
 
-    if not isinstance(pages, list):
+    if not isinstance(
+        pages,
+        list,
+    ):
         return []
 
-    output: list[dict[str, Any]] = []
+    output: list[
+        dict[str, Any]
+    ] = []
 
-    for index, item in enumerate(pages, 1):
-        if isinstance(item, dict):
+    for index, item in enumerate(
+        pages,
+        1,
+    ):
+        if isinstance(
+            item,
+            dict,
+        ):
             content = clean_text(
                 item.get(
                     "content",
@@ -410,14 +545,28 @@ def normalize_document_pages(
                 continue
 
             page = dict(item)
-            page["page_number"] = index
-            page["position"] = index
-            page["content"] = content
+
+            page[
+                "page_number"
+            ] = index
+
+            page[
+                "position"
+            ] = index
+
+            page[
+                "content"
+            ] = content
 
             output.append(page)
 
-        elif isinstance(item, str):
-            content = clean_text(item)
+        elif isinstance(
+            item,
+            str,
+        ):
+            content = clean_text(
+                item
+            )
 
             if content:
                 output.append(
@@ -436,23 +585,24 @@ def text_to_review_pages(
 ) -> list[dict[str, Any]]:
     """Turn the COMPLETE returned document into review chunks.
 
-    This function never truncates the supplied text and never limits
-    the result to one page. If more text exists, more review pages
-    are produced.
+    This never truncates supplied text and never forces
+    the customer into one page.
     """
 
-    text = clean_text(text)
+    text = clean_text(
+        text
+    )
 
     if not text:
         return []
 
     paragraphs = [
-        p.strip()
-        for p in re.split(
+        paragraph.strip()
+        for paragraph in re.split(
             r"\n\s*\n",
             text,
         )
-        if p.strip()
+        if paragraph.strip()
     ]
 
     chunks: list[str] = []
@@ -460,34 +610,51 @@ def text_to_review_pages(
     current_length = 0
 
     def flush() -> None:
-        nonlocal current, current_length
+        nonlocal current
+        nonlocal current_length
 
         if current:
             chunks.append(
-                "\n\n".join(current).strip()
+                "\n\n".join(
+                    current
+                ).strip()
             )
+
             current = []
             current_length = 0
 
     for paragraph in paragraphs:
-        if len(paragraph) <= REVIEW_CHUNK_CHARS:
+        if len(
+            paragraph
+        ) <= REVIEW_CHUNK_CHARS:
             if (
                 current
-                and current_length
-                + len(paragraph)
-                + 2
-                > REVIEW_CHUNK_CHARS
+                and (
+                    current_length
+                    + len(paragraph)
+                    + 2
+                    > REVIEW_CHUNK_CHARS
+                )
             ):
                 flush()
 
-            current.append(paragraph)
-            current_length += len(paragraph) + 2
+            current.append(
+                paragraph
+            )
+
+            current_length += (
+                len(paragraph)
+                + 2
+            )
+
             continue
 
-        for sentence in re.split(
+        sentences = re.split(
             r"(?<=[.!?])\s+",
             paragraph,
-        ):
+        )
+
+        for sentence in sentences:
             sentence = sentence.strip()
 
             if not sentence:
@@ -495,21 +662,30 @@ def text_to_review_pages(
 
             if (
                 current
-                and current_length
-                + len(sentence)
-                + 1
-                > REVIEW_CHUNK_CHARS
+                and (
+                    current_length
+                    + len(sentence)
+                    + 1
+                    > REVIEW_CHUNK_CHARS
+                )
             ):
                 flush()
 
-            current.append(sentence)
-            current_length += len(sentence) + 1
+            current.append(
+                sentence
+            )
+
+            current_length += (
+                len(sentence)
+                + 1
+            )
 
     flush()
 
     if (
         len(chunks) >= 2
-        and len(chunks[-1]) < REVIEW_MIN_CHARS
+        and len(chunks[-1])
+        < REVIEW_MIN_CHARS
     ):
         if (
             len(chunks[-2])
@@ -518,17 +694,22 @@ def text_to_review_pages(
             <= REVIEW_CHUNK_CHARS
         ):
             chunks[-2] += (
-                "\n\n" + chunks[-1]
+                "\n\n"
+                + chunks[-1]
             )
+
             chunks.pop()
 
     return [
         {
-            "page_number": i,
-            "position": i,
+            "page_number": index,
+            "position": index,
             "content": chunk,
         }
-        for i, chunk in enumerate(chunks, 1)
+        for index, chunk in enumerate(
+            chunks,
+            1,
+        )
         if chunk.strip()
     ]
 
@@ -537,17 +718,14 @@ def normalize_pages_for_review(
     text: str,
     supplied_pages: Any = None,
 ) -> list[dict[str, Any]]:
-    """Use all available document text and never collapse it to page 1.
-
-    If a full document string is available, it is the authoritative
-    source for review pagination. Returned page objects are only used
-    when no usable full text can be assembled.
-    """
-
-    text = clean_text(text)
+    text = clean_text(
+        text
+    )
 
     if text:
-        return text_to_review_pages(text)
+        return text_to_review_pages(
+            text
+        )
 
     return normalize_document_pages(
         supplied_pages
@@ -557,7 +735,9 @@ def normalize_pages_for_review(
 def normalize_pages(
     pages: Any,
 ) -> list[dict[str, Any]]:
-    return normalize_document_pages(pages)
+    return normalize_document_pages(
+        pages
+    )
 
 
 # ============================================================
@@ -574,12 +754,15 @@ def get_session(
         job_id,
     )
 
-    ada = _sessions.get(key)
+    ada = _sessions.get(
+        key
+    )
 
     if ada is None:
         ada = AdaResponse(
             service=service
         )
+
         _sessions[key] = ada
 
     elif service:
@@ -643,15 +826,22 @@ def build_customer_request(
     if request.form_data:
         information: list[str] = []
 
-        for key, value in request.form_data.items():
-            value_text = str(value or "").strip()
+        for key, value in (
+            request.form_data.items()
+        ):
+            value_text = str(
+                value or ""
+            ).strip()
 
             if not value_text:
                 continue
 
             label = (
                 str(key)
-                .replace("_", " ")
+                .replace(
+                    "_",
+                    " ",
+                )
                 .strip()
                 .title()
             )
@@ -663,22 +853,32 @@ def build_customer_request(
         if information:
             parts.append(
                 "CUSTOMER PROVIDED SERVICE INFORMATION:\n"
-                + "\n".join(information)
+                + "\n".join(
+                    information
+                )
             )
 
-    if request.context and request.context.strip():
+    if (
+        request.context
+        and request.context.strip()
+    ):
         parts.append(
             "ADDITIONAL CUSTOMER CONTEXT:\n"
             + request.context.strip()
         )
 
-    if request.message and request.message.strip():
+    if (
+        request.message
+        and request.message.strip()
+    ):
         parts.append(
             "CUSTOMER REQUEST:\n"
             + request.message.strip()
         )
 
-    return "\n\n".join(parts).strip()
+    return "\n\n".join(
+        parts
+    ).strip()
 
 
 def build_context(
@@ -686,7 +886,10 @@ def build_context(
 ) -> str | None:
     parts: list[str] = []
 
-    if request.context and request.context.strip():
+    if (
+        request.context
+        and request.context.strip()
+    ):
         parts.append(
             request.context.strip()
         )
@@ -703,7 +906,9 @@ def build_context(
             + request.client_request_id
         )
 
-    result = "\n\n".join(parts).strip()
+    result = "\n\n".join(
+        parts
+    ).strip()
 
     return result or None
 
@@ -739,73 +944,116 @@ _PAGE_KEYS = (
 def _extract_from_value(
     value: Any,
     depth: int = 0,
-) -> tuple[str, list[dict[str, Any]]]:
-    if depth > 4 or value is None:
+) -> tuple[
+    str,
+    list[dict[str, Any]],
+]:
+    if (
+        depth > 4
+        or value is None
+    ):
         return "", []
 
-    if isinstance(value, str):
-        text = clean_text(value)
+    if isinstance(
+        value,
+        str,
+    ):
+        text = clean_text(
+            value
+        )
 
         return (
             text,
-            text_to_review_pages(text)
-            if text
-            else [],
+            (
+                text_to_review_pages(
+                    text
+                )
+                if text
+                else []
+            ),
         )
 
-    if isinstance(value, list):
-        pages = normalize_pages(value)
+    if isinstance(
+        value,
+        list,
+    ):
+        pages = normalize_pages(
+            value
+        )
 
         if pages:
             text = "\n\n".join(
-                p["content"]
-                for p in pages
+                page["content"]
+                for page in pages
             )
 
             return (
                 text,
-                text_to_review_pages(text),
+                text_to_review_pages(
+                    text
+                ),
             )
 
         return "", []
 
-    if isinstance(value, dict):
-        # Prefer explicit full-document fields before generic reply fields.
+    if isinstance(
+        value,
+        dict,
+    ):
         for key in _TEXT_KEYS:
-            candidate = value.get(key)
+            candidate = value.get(
+                key
+            )
 
             if (
-                isinstance(candidate, str)
-                and clean_text(candidate)
+                isinstance(
+                    candidate,
+                    str,
+                )
+                and clean_text(
+                    candidate
+                )
             ):
-                text = clean_text(candidate)
+                text = clean_text(
+                    candidate
+                )
 
                 return (
                     text,
-                    text_to_review_pages(text),
+                    text_to_review_pages(
+                        text
+                    ),
                 )
 
         for key in _PAGE_KEYS:
-            candidate = value.get(key)
+            candidate = value.get(
+                key
+            )
 
-            text, pages = _extract_from_value(
-                candidate,
-                depth + 1,
+            text, pages = (
+                _extract_from_value(
+                    candidate,
+                    depth + 1,
+                )
             )
 
             if text or pages:
                 return text, pages
 
-        for key, candidate in value.items():
+        for key, candidate in (
+            value.items()
+        ):
             if (
                 key in _TEXT_KEYS
                 or key in _PAGE_KEYS
             ):
                 continue
 
-            text, pages = _extract_from_value(
-                candidate,
-                depth + 1,
+            text, pages = (
+                _extract_from_value(
+                    candidate,
+                    depth + 1,
+                )
             )
 
             if text or pages:
@@ -813,20 +1061,24 @@ def _extract_from_value(
 
         return "", []
 
-    # Handle Pydantic/dataclass/custom result objects without requiring
-    # one rigid response schema.
     try:
         data = vars(value)
     except Exception:
         data = None
 
-    if isinstance(data, dict):
+    if isinstance(
+        data,
+        dict,
+    ):
         return _extract_from_value(
             data,
             depth + 1,
         )
 
-    for key in _TEXT_KEYS + _PAGE_KEYS:
+    for key in (
+        _TEXT_KEYS
+        + _PAGE_KEYS
+    ):
         try:
             candidate = getattr(
                 value,
@@ -836,9 +1088,11 @@ def _extract_from_value(
         except Exception:
             candidate = None
 
-        text, pages = _extract_from_value(
-            candidate,
-            depth + 1,
+        text, pages = (
+            _extract_from_value(
+                candidate,
+                depth + 1,
+            )
         )
 
         if text or pages:
@@ -854,7 +1108,9 @@ def extract_complete_document(
     list[dict[str, Any]],
     dict[str, Any],
 ]:
-    text, pages = _extract_from_value(result)
+    text, pages = _extract_from_value(
+        result
+    )
 
     if not text:
         raise ValueError(
@@ -862,9 +1118,10 @@ def extract_complete_document(
             "but returned no usable document content."
         )
 
-    # IMPORTANT: the text is authoritative. Rebuild review pages from
-    # the complete text instead of trusting a single page object.
-    pages = text_to_review_pages(text)
+    # The complete text is authoritative.
+    pages = text_to_review_pages(
+        text
+    )
 
     if not pages:
         raise ValueError(
@@ -874,14 +1131,24 @@ def extract_complete_document(
 
     metadata: dict[str, Any] = {}
 
-    if isinstance(result, dict):
+    if isinstance(
+        result,
+        dict,
+    ):
         metadata = {
-            k: v
-            for k, v in result.items()
-            if k not in _TEXT_KEYS + _PAGE_KEYS
+            key: value
+            for key, value in result.items()
+            if (
+                key not in _TEXT_KEYS
+                + _PAGE_KEYS
+            )
         }
 
-    return text, pages, metadata
+    return (
+        text,
+        pages,
+        metadata,
+    )
 
 
 # ============================================================
@@ -892,13 +1159,14 @@ async def _call_method_flexibly(
     method: Any,
     kwargs: dict[str, Any],
 ) -> Any:
-    """Call an intelligence method without throwing away a valid result
-    because its signature uses fewer parameters.
-    """
-
     try:
-        signature = inspect.signature(method)
-    except (TypeError, ValueError):
+        signature = inspect.signature(
+            method
+        )
+    except (
+        TypeError,
+        ValueError,
+    ):
         return await asyncio.to_thread(
             method,
             **kwargs,
@@ -907,17 +1175,18 @@ async def _call_method_flexibly(
     parameters = signature.parameters
 
     accepts_kwargs = any(
-        p.kind == inspect.Parameter.VAR_KEYWORD
-        for p in parameters.values()
+        parameter.kind
+        == inspect.Parameter.VAR_KEYWORD
+        for parameter in parameters.values()
     )
 
     if accepts_kwargs:
         call_kwargs = kwargs
     else:
         call_kwargs = {
-            k: v
-            for k, v in kwargs.items()
-            if k in parameters
+            key: value
+            for key, value in kwargs.items()
+            if key in parameters
         }
 
     return await asyncio.to_thread(
@@ -964,7 +1233,9 @@ async def create_document_with_intelligence(
         if not callable(method):
             continue
 
-        attempted.append(method_name)
+        attempted.append(
+            method_name
+        )
 
         result = await _call_method_flexibly(
             method,
@@ -976,9 +1247,6 @@ async def create_document_with_intelligence(
                 result
             )
         except ValueError:
-            # A method exists but did not return a document. Continue to
-            # another explicit document-generation method before falling back
-            # to ordinary chat.
             continue
 
     respond = getattr(
@@ -1016,18 +1284,20 @@ async def create_document_with_intelligence(
 def make_review_pages(
     pages: Any,
 ) -> list[dict[str, Any]]:
-    normalized = normalize_pages(pages)
+    normalized = normalize_pages(
+        pages
+    )
 
     return [
         {
-            "page_number": i,
-            "position": i,
+            "page_number": index,
+            "position": index,
             "status": "queued",
             "content": page["content"],
             "review": "",
             "error": None,
         }
-        for i, page in enumerate(
+        for index, page in enumerate(
             normalized,
             1,
         )
@@ -1038,19 +1308,29 @@ def synchronize_job_document(
     job: dict[str, Any],
 ) -> None:
     pages = normalize_pages(
-        job.get("document_pages", [])
+        job.get(
+            "document_pages",
+            [],
+        )
     )
 
     job["document_pages"] = pages
 
     if len(
-        job.get("review_pages", [])
+        job.get(
+            "review_pages",
+            [],
+        )
     ) != len(pages):
-        job["review_pages"] = make_review_pages(
-            pages
+        job["review_pages"] = (
+            make_review_pages(
+                pages
+            )
         )
 
-    job["total_pages"] = len(pages)
+    job["total_pages"] = len(
+        pages
+    )
 
 
 def create_job(
@@ -1060,10 +1340,6 @@ def create_job(
     document_text: str,
     pages: Any,
 ) -> dict[str, Any]:
-    # Rebuild pages from the complete text. This is the critical API-side
-    # protection against a valid multi-page document being represented as
-    # one page merely because the intelligence returned one page object.
-
     document_text = clean_text(
         document_text
     )
@@ -1073,7 +1349,9 @@ def create_job(
     )
 
     if not normalized:
-        normalized = normalize_pages(pages)
+        normalized = normalize_pages(
+            pages
+        )
 
     if not normalized:
         raise ValueError(
@@ -1085,7 +1363,9 @@ def create_job(
         "customer_id": request.customer_id,
         "service": request.service,
         "original_request": original_request,
-        "context": build_context(request),
+        "context": build_context(
+            request
+        ),
         "status": "reviewing",
         "review_started": True,
         "review_finished": False,
@@ -1101,11 +1381,16 @@ def create_job(
         ),
         "assembled_review": "",
         "current_version": 1,
-        "version_id": f"{job_id}:1",
+        "version_id": (
+            f"{job_id}:1"
+        ),
         "approved": False,
         "paid": False,
         "payment_pending": False,
+        "payment_verified": False,
         "payment_id": None,
+        "payment_method": None,
+        "payment_amount_reported": None,
     }
 
     _jobs[job_id] = job
@@ -1119,69 +1404,84 @@ def create_job(
     return job
 
 
-def review_callback(job_id: str):
-    """Return a deliberately flexible, non-fatal review progress callback.
-
-    Different review implementations can call the callback with different
-    positional/keyword shapes. The callback must never be able to turn a
-    successful document review into a review_error merely because its
-    progress payload differs.
-    """
-
-    def callback(*args, **kwargs):
+def review_callback(
+    job_id: str,
+):
+    def callback(
+        *args,
+        **kwargs,
+    ):
         try:
-            job = _jobs.get(job_id)
+            job = _jobs.get(
+                job_id
+            )
 
             if not job:
                 return
 
             update: dict[str, Any] = {}
 
-            # Most recent reviewer implementations send one update dict.
             if (
                 args
-                and isinstance(args[0], dict)
+                and isinstance(
+                    args[0],
+                    dict,
+                )
             ):
-                update.update(args[0])
+                update.update(
+                    args[0]
+                )
 
-            # Some implementations may send named fields instead.
             update.update(
                 {
-                    k: v
-                    for k, v in kwargs.items()
-                    if v is not None
+                    key: value
+                    for key, value in kwargs.items()
+                    if value is not None
                 }
             )
 
-            # Support positional callback forms without requiring any one
-            # exact signature.
             if (
                 args
-                and not isinstance(args[0], dict)
+                and not isinstance(
+                    args[0],
+                    dict,
+                )
             ):
                 if (
                     len(args) >= 1
-                    and "page_number" not in update
+                    and "page_number"
+                    not in update
                 ):
-                    update["page_number"] = args[0]
+                    update[
+                        "page_number"
+                    ] = args[0]
 
                 if (
                     len(args) >= 2
-                    and "status" not in update
+                    and "status"
+                    not in update
                 ):
-                    update["status"] = args[1]
+                    update[
+                        "status"
+                    ] = args[1]
 
                 if (
                     len(args) >= 3
-                    and "review" not in update
+                    and "review"
+                    not in update
                 ):
-                    update["review"] = args[2]
+                    update[
+                        "review"
+                    ] = args[2]
 
                 if (
                     len(args) >= 4
-                    and "error" not in update
+                    and "error"
+                    not in update
                 ):
-                    update["error"] = args[3]
+                    update[
+                        "error"
+                    ] = args[3]
 
             update_type = event_value(
                 update.get(
@@ -1201,7 +1501,9 @@ def review_callback(job_id: str):
             )
 
             if page_number is None:
-                page_number = update.get("page")
+                page_number = update.get(
+                    "page"
+                )
 
             if page_number is None:
                 page_number = update.get(
@@ -1222,9 +1524,6 @@ def review_callback(job_id: str):
             ):
                 review_pages = []
 
-            # --------------------------------------------------------
-            # Page started
-            # --------------------------------------------------------
             if update_type in {
                 "page_started",
                 "page_start",
@@ -1241,11 +1540,10 @@ def review_callback(job_id: str):
                             )
                             == page_number_text
                         ):
-                            page["status"] = "reviewing"
+                            page["status"] = (
+                                "reviewing"
+                            )
 
-            # --------------------------------------------------------
-            # Page completed
-            # --------------------------------------------------------
             elif update_type in {
                 "page_completed",
                 "page_complete",
@@ -1265,7 +1563,9 @@ def review_callback(job_id: str):
                     ):
                         continue
 
-                    page["status"] = "reviewed"
+                    page["status"] = (
+                        "reviewed"
+                    )
 
                     page["review"] = clean_text(
                         update.get(
@@ -1277,8 +1577,12 @@ def review_callback(job_id: str):
                     if update.get(
                         "content"
                     ) is not None:
-                        page["content"] = clean_text(
-                            update.get("content")
+                        page["content"] = (
+                            clean_text(
+                                update.get(
+                                    "content"
+                                )
+                            )
                         )
 
                     page["error"] = None
@@ -1327,9 +1631,6 @@ def review_callback(job_id: str):
                             "total": total,
                         }
 
-            # --------------------------------------------------------
-            # Page error
-            # --------------------------------------------------------
             elif update_type in {
                 "page_error",
                 "error",
@@ -1355,15 +1656,17 @@ def review_callback(job_id: str):
                     ):
                         continue
 
-                    page["status"] = "error"
-                    page["error"] = error_text
+                    page["status"] = (
+                        "error"
+                    )
+
+                    page["error"] = (
+                        error_text
+                    )
 
                     if page_number_text:
                         break
 
-            # --------------------------------------------------------
-            # Review completed
-            # --------------------------------------------------------
             elif update_type in {
                 "review_completed",
                 "review_complete",
@@ -1381,7 +1684,10 @@ def review_callback(job_id: str):
                     "review_complete"
                 )
 
-                job["review_finished"] = True
+                job["review_finished"] = (
+                    True
+                )
+
                 job["review_error"] = None
 
                 job["progress"] = {
@@ -1389,16 +1695,15 @@ def review_callback(job_id: str):
                     "total": total,
                 }
 
-                job["assembled_review"] = clean_text(
-                    update.get(
-                        "assembled_review",
-                        "",
+                job["assembled_review"] = (
+                    clean_text(
+                        update.get(
+                            "assembled_review",
+                            "",
+                        )
                     )
                 )
 
-            # --------------------------------------------------------
-            # Generic progress update.
-            # --------------------------------------------------------
             else:
                 completed = update.get(
                     "completed"
@@ -1422,12 +1727,15 @@ def review_callback(job_id: str):
                     completed = int(
                         completed
                     )
-                    total = int(total)
+                    total = int(
+                        total
+                    )
                 except (
                     TypeError,
                     ValueError,
                 ):
-                    completed = total = 0
+                    completed = 0
+                    total = 0
 
                 if completed and total:
                     job["progress"] = {
@@ -1439,8 +1747,6 @@ def review_callback(job_id: str):
                     }
 
         except Exception as callback_error:
-            # Progress callbacks are informational. They must NEVER crash
-            # the real review task.
             if DEBUG:
                 print(
                     "[REVIEW CALLBACK] "
@@ -1448,24 +1754,28 @@ def review_callback(job_id: str):
                     callback_error,
                 )
 
-            return
-
     return callback
 
 
 async def run_review(
     job_id: str,
 ):
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if not job:
         return
 
     try:
         ada = get_session(
-            job.get("customer_id"),
+            job.get(
+                "customer_id"
+            ),
             job_id,
-            job.get("service"),
+            job.get(
+                "service"
+            ),
         )
 
         pages = normalize_pages(
@@ -1504,17 +1814,21 @@ async def run_review(
             },
         )
 
-        if isinstance(result, dict):
+        if isinstance(
+            result,
+            dict,
+        ):
             returned_pages = normalize_pages(
-                result.get("pages", [])
+                result.get(
+                    "pages",
+                    [],
+                )
             )
 
             if returned_pages:
-                # Review may update content, but do not permit it to collapse
-                # a complete multi-page document to a single page.
                 returned_text = "\n\n".join(
-                    p["content"]
-                    for p in returned_pages
+                    page["content"]
+                    for page in returned_pages
                 )
 
                 if returned_text:
@@ -1534,13 +1848,15 @@ async def run_review(
                         )
                     )
 
-            job["assembled_review"] = clean_text(
-                result.get(
-                    "assembled_review",
-                    job.get(
+            job["assembled_review"] = (
+                clean_text(
+                    result.get(
                         "assembled_review",
-                        "",
-                    ),
+                        job.get(
+                            "assembled_review",
+                            "",
+                        ),
+                    )
                 )
             )
 
@@ -1587,12 +1903,18 @@ async def run_review(
 def start_review(
     job_id: str,
 ) -> bool:
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if (
         not job
-        or not job.get("document_pages")
-        or job.get("status") != "reviewing"
+        or not job.get(
+            "document_pages"
+        )
+        or job.get(
+            "status"
+        ) != "reviewing"
     ):
         return False
 
@@ -1608,7 +1930,9 @@ def start_review(
 
     _review_tasks[job_id] = (
         asyncio.create_task(
-            run_review(job_id)
+            run_review(
+                job_id
+            )
         )
     )
 
@@ -1618,22 +1942,61 @@ def start_review(
 def make_job_response(
     job: dict[str, Any],
 ) -> dict[str, Any]:
-    synchronize_job_document(job)
+    synchronize_job_document(
+        job
+    )
 
-    pages = job["document_pages"]
+    pages = job[
+        "document_pages"
+    ]
+
     progress = job.get(
         "progress",
         {},
     )
 
     bill = get_service_bill(
-        job.get("service"),
+        job.get(
+            "service"
+        ),
         len(pages),
+    )
+
+    review_ready = (
+        job.get(
+            "status"
+        )
+        == "review_complete"
+        and job.get(
+            "review_finished",
+            False,
+        )
+        and bool(
+            job.get(
+                "document_text"
+            )
+            or pages
+        )
+    )
+
+    # IMPORTANT:
+    # Payment is allowed directly after review completion.
+    # Approval is NOT required.
+    payment_ready = (
+        review_ready
+        and not bill[
+            "quotation_required"
+        ]
+        and bill[
+            "amount"
+        ] > 0
     )
 
     return {
         "success": True,
-        "job_id": job["job_id"],
+        "job_id": job[
+            "job_id"
+        ],
         "customer_id": job.get(
             "customer_id"
         ),
@@ -1658,6 +2021,8 @@ def make_job_response(
             "review_finished",
             False,
         ),
+        "review_ready": review_ready,
+        "payment_ready": payment_ready,
         "approved": job.get(
             "approved",
             False,
@@ -1665,6 +2030,17 @@ def make_job_response(
         "paid": job.get(
             "paid",
             False,
+        ),
+        "payment_verified": job.get(
+            "payment_verified",
+            False,
+        ),
+        "payment_pending": job.get(
+            "payment_pending",
+            False,
+        ),
+        "payment_id": job.get(
+            "payment_id"
         ),
         "progress": {
             "completed": int(
@@ -1675,7 +2051,9 @@ def make_job_response(
             ),
             "total": len(pages),
         },
-        "total_pages": len(pages),
+        "total_pages": len(
+            pages
+        ),
         "document_pages": pages,
         "pages": pages,
         "review_pages": job.get(
@@ -1690,8 +2068,15 @@ def make_job_response(
             "assembled_review",
             "",
         ),
-        "amount": bill["amount"],
-        "billing": bill["billing"],
+        "amount": bill[
+            "amount"
+        ],
+        "price": bill[
+            "price"
+        ],
+        "billing": bill[
+            "billing"
+        ],
         "quotation_required": bill[
             "quotation_required"
         ],
@@ -1750,35 +2135,41 @@ def extract_document(
 
             if suffix == ".docx":
                 names = (
-                    ["word/document.xml"]
-                    if "word/document.xml"
-                    in names
+                    [
+                        "word/document.xml"
+                    ]
+                    if (
+                        "word/document.xml"
+                        in names
+                    )
                     else []
                 )
 
             elif suffix == ".pptx":
                 names = [
-                    n
-                    for n in names
+                    name
+                    for name in names
                     if re.match(
                         r"ppt/slides/slide\d+\.xml",
-                        n,
+                        name,
                     )
                 ]
 
             else:
                 names = [
-                    n
-                    for n in names
+                    name
+                    for name in names
                     if re.match(
                         r"xl/worksheets/sheet\d+\.xml",
-                        n,
+                        name,
                     )
                 ]
 
             texts: list[str] = []
 
-            for name in sorted(names):
+            for name in sorted(
+                names
+            ):
                 root = ET.fromstring(
                     archive.read(name)
                 )
@@ -1804,10 +2195,12 @@ def extract_document(
                         " ".join(values)
                     )
 
-            return "\n\n".join(texts)
+            return "\n\n".join(
+                texts
+            )
 
     raise RuntimeError(
-        f"Unsupported document type: "
+        "Unsupported document type: "
         f"{suffix or 'unknown'}"
     )
 
@@ -1841,7 +2234,9 @@ def uploaded_document_pages(
 def serve_html(
     filename: str,
 ):
-    path = find_file(filename)
+    path = find_file(
+        filename
+    )
 
     if not path:
         return application_error(
@@ -1915,7 +2310,12 @@ async def health():
         "intelligence": "AdaResponse",
         "model": get_ada_model(),
         "configured": is_configured(),
-        "architecture": "intelligence-first",
+        "payment_api": (
+            PAYMENT_API_BASE_URL
+        ),
+        "architecture": (
+            "intelligence-first"
+        ),
     }
 
 
@@ -1927,13 +2327,18 @@ async def api_status():
         "intelligence": "AdaResponse",
         "model": get_ada_model(),
         "configured": is_configured(),
+        "payment_api": (
+            PAYMENT_API_BASE_URL
+        ),
         "active_sessions": len(
             _sessions
         ),
         "active_jobs": len(
             _jobs
         ),
-        "architecture": "intelligence-first",
+        "architecture": (
+            "intelligence-first"
+        ),
     }
 
 
@@ -1980,13 +2385,18 @@ async def upload(
         )
 
         job_id_value = (
-            str(job_id or "").strip()
-            or str(uuid.uuid4())
+            str(
+                job_id
+                or ""
+            ).strip()
+            or str(
+                uuid.uuid4()
+            )
         )
 
         text = "\n\n".join(
-            p["content"]
-            for p in pages
+            page["content"]
+            for page in pages
         )
 
         return {
@@ -1994,10 +2404,14 @@ async def upload(
             "filename": filename,
             "job_id": job_id_value,
             "customer_id": customer_id,
-            "client_request_id": client_request_id,
+            "client_request_id": (
+                client_request_id
+            ),
             "service": service,
             "document_text": text,
-            "total_pages": len(pages),
+            "total_pages": len(
+                pages
+            ),
             "document_pages": pages,
             "pages": pages,
         }
@@ -2036,14 +2450,23 @@ async def chat(
         )
 
     job_id = (
-        str(request.job_id or "").strip()
-        or str(uuid.uuid4())
+        str(
+            request.job_id
+            or ""
+        ).strip()
+        or str(
+            uuid.uuid4()
+        )
     )
 
-    context = build_context(request)
+    context = build_context(
+        request
+    )
 
     customer_request = (
-        build_customer_request(request)
+        build_customer_request(
+            request
+        )
     )
 
     pages = normalize_pages(
@@ -2056,8 +2479,8 @@ async def chat(
 
     if not document_text and pages:
         document_text = "\n\n".join(
-            p["content"]
-            for p in pages
+            page["content"]
+            for page in pages
         )
 
     try:
@@ -2079,7 +2502,9 @@ async def chat(
             reply = await _call_method_flexibly(
                 ada.respond,
                 {
-                    "message": request.message.strip(),
+                    "message": (
+                        request.message.strip()
+                    ),
                     "service": request.service,
                     "event": request.event,
                     "context": context,
@@ -2088,7 +2513,9 @@ async def chat(
 
             return {
                 "success": True,
-                "reply": clean_text(reply),
+                "reply": clean_text(
+                    reply
+                ),
                 "job_id": job_id,
                 "created_work": False,
             }
@@ -2112,8 +2539,8 @@ async def chat(
                 complete_text = (
                     document_text
                     or "\n\n".join(
-                        p["content"]
-                        for p in pages
+                        page["content"]
+                        for page in pages
                     )
                 )
 
@@ -2129,8 +2556,10 @@ async def chat(
                 if not customer_request:
                     return application_error(
                         "WORK_CREATION",
-                        "The customer request contains "
-                        "no usable information.",
+                        (
+                            "The customer request contains "
+                            "no usable information."
+                        ),
                         400,
                         "EMPTY_WORK_REQUEST",
                     )
@@ -2147,14 +2576,14 @@ async def chat(
                 )
 
                 print(
-                    f"[PAG-INPUT] "
-                    f"document_text_chars="
+                    "[PAG-INPUT] "
+                    "document_text_chars="
                     f"{len(complete_text)}"
                 )
 
                 print(
-                    f"[PAG-INPUT] "
-                    f"generated_pages="
+                    "[PAG-INPUT] "
+                    "generated_pages="
                     f"{len(created_pages)}"
                 )
 
@@ -2196,8 +2625,8 @@ async def chat(
             complete_text = (
                 document_text
                 or "\n\n".join(
-                    p["content"]
-                    for p in pages
+                    page["content"]
+                    for page in pages
                 )
             )
 
@@ -2259,6 +2688,18 @@ async def chat(
                     "paid"
                 ] = False
 
+                existing_job[
+                    "payment_pending"
+                ] = False
+
+                existing_job[
+                    "payment_verified"
+                ] = False
+
+                existing_job[
+                    "payment_id"
+                ] = None
+
                 job = existing_job
 
             else:
@@ -2302,7 +2743,9 @@ async def chat(
         reply = await _call_method_flexibly(
             ada.respond,
             {
-                "message": request.message.strip(),
+                "message": (
+                    request.message.strip()
+                ),
                 "service": request.service,
                 "event": request.event,
                 "context": context,
@@ -2311,7 +2754,9 @@ async def chat(
 
         return {
             "success": True,
-            "reply": clean_text(reply),
+            "reply": clean_text(
+                reply
+            ),
             "job_id": job_id,
             "service": (
                 request.service
@@ -2341,7 +2786,9 @@ async def chat(
 async def get_review(
     job_id: str,
 ):
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if not job:
         return application_error(
@@ -2351,7 +2798,9 @@ async def get_review(
             "JOB_NOT_FOUND",
         )
 
-    start_review(job_id)
+    start_review(
+        job_id
+    )
 
     return make_job_response(
         job
@@ -2362,7 +2811,9 @@ async def get_review(
 async def get_review_pages(
     job_id: str,
 ):
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if not job:
         return application_error(
@@ -2372,10 +2823,44 @@ async def get_review_pages(
             "JOB_NOT_FOUND",
         )
 
-    start_review(job_id)
+    start_review(
+        job_id
+    )
 
     synchronize_job_document(
         job
+    )
+
+    bill = get_service_bill(
+        job.get(
+            "service"
+        ),
+        len(
+            job[
+                "document_pages"
+            ]
+        ),
+    )
+
+    review_ready = (
+        job.get(
+            "status"
+        )
+        == "review_complete"
+        and job.get(
+            "review_finished",
+            False,
+        )
+    )
+
+    payment_ready = (
+        review_ready
+        and not bill[
+            "quotation_required"
+        ]
+        and bill[
+            "amount"
+        ] > 0
     )
 
     return {
@@ -2390,8 +2875,12 @@ async def get_review_pages(
         "status": job[
             "status"
         ],
+        "review_ready": review_ready,
+        "payment_ready": payment_ready,
         "total_pages": len(
-            job["document_pages"]
+            job[
+                "document_pages"
+            ]
         ),
         "document_text": job.get(
             "document_text",
@@ -2414,6 +2903,26 @@ async def get_review_pages(
         ],
         "paid": job[
             "paid"
+        ],
+        "payment_verified": job.get(
+            "payment_verified",
+            False,
+        ),
+        "payment_pending": job.get(
+            "payment_pending",
+            False,
+        ),
+        "payment_id": job.get(
+            "payment_id"
+        ),
+        "amount": bill[
+            "amount"
+        ],
+        "billing": bill[
+            "billing"
+        ],
+        "quotation_required": bill[
+            "quotation_required"
         ],
     }
 
@@ -2450,7 +2959,9 @@ async def correct(
             "EMPTY_CORRECTION",
         )
 
-    if job.get("status") in {
+    if job.get(
+        "status"
+    ) in {
         "reviewing",
         "correcting",
     }:
@@ -2484,7 +2995,10 @@ async def correct(
             "approved": False,
             "paid": False,
             "payment_pending": False,
+            "payment_verified": False,
             "payment_id": None,
+            "payment_method": None,
+            "payment_amount_reported": None,
             "review_started": False,
             "review_finished": False,
             "review_error": None,
@@ -2492,7 +3006,9 @@ async def correct(
             "progress": {
                 "completed": 0,
                 "total": len(
-                    job["document_pages"]
+                    job[
+                        "document_pages"
+                    ]
                 ),
             },
         }
@@ -2501,9 +3017,13 @@ async def correct(
     async def correction_worker():
         try:
             ada = get_session(
-                job.get("customer_id"),
+                job.get(
+                    "customer_id"
+                ),
                 request.job_id,
-                job.get("service"),
+                job.get(
+                    "service"
+                ),
             )
 
             method = getattr(
@@ -2522,7 +3042,9 @@ async def correct(
                 method,
                 {
                     "document_pages": normalize_pages(
-                        job["document_pages"]
+                        job[
+                            "document_pages"
+                        ]
                     ),
                     "correction": instruction,
                     "service": job.get(
@@ -2608,7 +3130,10 @@ async def correct(
         request.job_id
     )
 
-    if old_task and not old_task.done():
+    if (
+        old_task
+        and not old_task.done()
+    ):
         old_task.cancel()
 
     _correction_tasks[
@@ -2657,7 +3182,9 @@ async def approve(
 
     if (
         request.version_id
-        != job["version_id"]
+        != job[
+            "version_id"
+        ]
     ):
         return application_error(
             "APPROVAL",
@@ -2666,7 +3193,9 @@ async def approve(
             "VERSION_MISMATCH",
         )
 
-    if job["status"] != "review_complete":
+    if job[
+        "status"
+    ] != "review_complete":
         return application_error(
             "APPROVAL",
             "The document review is not complete.",
@@ -2674,13 +3203,24 @@ async def approve(
             "REVIEW_NOT_COMPLETE",
         )
 
-    job["approved"] = True
-    job["status"] = "approved"
+    job[
+        "approved"
+    ] = True
+
+    # Approval is retained for compatibility/UI state.
+    # It is NOT required before payment.
+    job[
+        "status"
+    ] = "approved"
 
     bill = get_service_bill(
-        job.get("service"),
+        job.get(
+            "service"
+        ),
         len(
-            job["document_pages"]
+            job[
+                "document_pages"
+            ]
         ),
     )
 
@@ -2692,6 +3232,14 @@ async def approve(
             "current_version"
         ],
         "approved": True,
+        "payment_ready": (
+            not bill[
+                "quotation_required"
+            ]
+            and bill[
+                "amount"
+            ] > 0
+        ),
         "paid": job.get(
             "paid",
             False,
@@ -2710,7 +3258,9 @@ async def approve(
             "quotation_required"
         ],
         "total_pages": len(
-            job["document_pages"]
+            job[
+                "document_pages"
+            ]
         ),
         "pages": job[
             "document_pages"
@@ -2728,8 +3278,12 @@ def _payment_api_request(
     *,
     query: dict[str, Any] | None = None,
     body: dict[str, Any] | None = None,
-) -> tuple[int, str, bytes]:
-    """Call the separate payment_api.py without changing the document API logic."""
+) -> tuple[
+    int,
+    str,
+    bytes,
+]:
+    """Call the separate payment API."""
 
     if not PAYMENT_API_BASE_URL:
         raise RuntimeError(
@@ -2743,10 +3297,15 @@ def _payment_api_request(
     )
 
     if query:
-        parts = []
+        parts: list[str] = []
 
-        for key, value in query.items():
-            if value is None or value == "":
+        for key, value in (
+            query.items()
+        ):
+            if (
+                value is None
+                or value == ""
+            ):
                 continue
 
             parts.append(
@@ -2762,7 +3321,10 @@ def _payment_api_request(
             )
 
         if parts:
-            url += "?" + "&".join(parts)
+            url += (
+                "?"
+                + "&".join(parts)
+            )
 
     headers = {
         "Accept": "application/json",
@@ -2783,7 +3345,9 @@ def _payment_api_request(
         data = json.dumps(
             body,
             ensure_ascii=False,
-        ).encode("utf-8")
+        ).encode(
+            "utf-8"
+        )
 
         headers[
             "Content-Type"
@@ -2829,7 +3393,9 @@ def _payment_api_json(
     try:
         value = (
             json.loads(
-                raw.decode("utf-8")
+                raw.decode(
+                    "utf-8"
+                )
             )
             if raw
             else {}
@@ -2862,7 +3428,11 @@ async def _payment_call(
     *,
     query: dict[str, Any] | None = None,
     body: dict[str, Any] | None = None,
-) -> tuple[int, str, bytes]:
+) -> tuple[
+    int,
+    str,
+    bytes,
+]:
     return await asyncio.to_thread(
         _payment_api_request,
         method,
@@ -2923,18 +3493,28 @@ def _payment_result(
     fallback_status: str = "pending",
 ) -> dict[str, Any]:
     payment = (
-        payload.get("payment")
+        payload.get(
+            "payment"
+        )
         if isinstance(
-            payload.get("payment"),
+            payload.get(
+                "payment"
+            ),
             dict,
         )
         else {}
     )
 
     payment_id = (
-        payload.get("payment_id")
-        or payment.get("payment_id")
-        or job.get("payment_id")
+        payload.get(
+            "payment_id"
+        )
+        or payment.get(
+            "payment_id"
+        )
+        or job.get(
+            "payment_id"
+        )
     )
 
     status = str(
@@ -3006,40 +3586,69 @@ def _payment_result(
             )
         ),
         "service": (
-            payload.get("service")
-            or payment.get("service")
-            or job.get("service")
+            payload.get(
+                "service"
+            )
+            or payment.get(
+                "service"
+            )
+            or job.get(
+                "service"
+            )
         ),
         "amount": (
-            payload.get("amount")
-            if payload.get("amount")
-            is not None
-            else payment.get("amount")
+            payload.get(
+                "amount"
+            )
+            if payload.get(
+                "amount"
+            ) is not None
+            else payment.get(
+                "amount"
+            )
         ),
         "currency": (
-            payload.get("currency")
-            or payment.get("currency")
+            payload.get(
+                "currency"
+            )
+            or payment.get(
+                "currency"
+            )
             or "NGN"
         ),
         "payment_method": (
-            payload.get("payment_method")
-            or payment.get("payment_method")
-            or job.get("payment_method")
+            payload.get(
+                "payment_method"
+            )
+            or payment.get(
+                "payment_method"
+            )
+            or job.get(
+                "payment_method"
+            )
         ),
         "billing": (
-            job.get("billing")
+            job.get(
+                "billing"
+            )
             or (
                 "quotation"
-                if not job.get("service")
+                if not job.get(
+                    "service"
+                )
                 else get_service_bill(
-                    job.get("service"),
+                    job.get(
+                        "service"
+                    ),
                     len(
                         job.get(
                             "document_pages"
                         )
-                        or [],
+                        or []
                     ),
-                )["billing"]
+                )[
+                    "billing"
+                ]
             )
         ),
         "total_pages": len(
@@ -3049,7 +3658,9 @@ def _payment_result(
             or []
         ),
         "message": (
-            payload.get("message")
+            payload.get(
+                "message"
+            )
             or "Payment state updated."
         ),
     }
@@ -3070,29 +3681,41 @@ async def payment_create(
         except Exception:
             body = {}
 
-        if isinstance(body, dict):
+        if isinstance(
+            body,
+            dict,
+        ):
             job_id = (
                 str(
-                    body.get("job_id")
+                    body.get(
+                        "job_id"
+                    )
                     or ""
                 ).strip()
                 or None
             )
 
             customer_id = (
-                body.get("customer_id")
+                body.get(
+                    "customer_id"
+                )
                 or customer_id
             )
 
             service = (
-                body.get("service")
+                body.get(
+                    "service"
+                )
                 or service
             )
 
             amount = (
-                body.get("amount")
-                if body.get("amount")
-                is not None
+                body.get(
+                    "amount"
+                )
+                if body.get(
+                    "amount"
+                ) is not None
                 else amount
             )
 
@@ -3111,7 +3734,9 @@ async def payment_create(
             "JOB_ID_REQUIRED",
         )
 
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if not job:
         return application_error(
@@ -3123,9 +3748,13 @@ async def payment_create(
 
     if (
         customer_id
-        and job.get("customer_id")
+        and job.get(
+            "customer_id"
+        )
         and customer_id
-        != job.get("customer_id")
+        != job.get(
+            "customer_id"
+        )
     ):
         return application_error(
             "PAYMENT",
@@ -3134,30 +3763,41 @@ async def payment_create(
             "CUSTOMER_MISMATCH",
         )
 
+    # ========================================================
+    # PAYMENT READINESS
+    #
     # IMPORTANT:
-    # There is deliberately NO document-approval requirement here.
-    # Payment is allowed once review is complete/finished.
-    if (
-        job.get("status")
-        not in {
-            "review_complete",
-            "payment_pending",
-            "paid",
-            "approved",
-        }
-        and not job.get(
-            "review_finished"
+    # Approval is NOT required.
+    #
+    # A completed review is enough to proceed to payment.
+    # ========================================================
+
+    review_complete = (
+        job.get(
+            "status"
         )
-    ):
+        == "review_complete"
+        or job.get(
+            "review_finished",
+            False,
+        )
+    )
+
+    if not review_complete:
         return application_error(
             "PAYMENT",
-            "The complete document review is not ready for payment.",
+            (
+                "The complete document review "
+                "is not ready for payment."
+            ),
             409,
             "REVIEW_NOT_COMPLETE",
         )
 
     bill = get_service_bill(
-        job.get("service")
+        job.get(
+            "service"
+        )
         or service,
         len(
             job.get(
@@ -3167,13 +3807,41 @@ async def payment_create(
         ),
     )
 
-    if bill["quotation_required"]:
+    if bill[
+        "quotation_required"
+    ]:
         return application_error(
             "PAYMENT",
-            "This service requires a quotation before payment.",
+            (
+                "This service requires a "
+                "quotation before payment."
+            ),
             409,
             "QUOTATION_REQUIRED",
         )
+
+    if bill[
+        "amount"
+    ] <= 0:
+        return application_error(
+            "PAYMENT",
+            (
+                "The service does not have "
+                "a valid payment amount."
+            ),
+            409,
+            "INVALID_PAYMENT_AMOUNT",
+        )
+
+    # Use the official BillingManager amount unless a valid
+    # amount was explicitly supplied.
+    payment_amount = (
+        amount
+        if amount is not None
+        else bill[
+            "amount"
+        ]
+    )
 
     try:
         (
@@ -3188,13 +3856,11 @@ async def payment_create(
                 "customer_id": customer_id,
                 "service": (
                     service
-                    or job.get("service")
+                    or job.get(
+                        "service"
+                    )
                 ),
-                "amount": (
-                    amount
-                    if amount is not None
-                    else bill["amount"]
-                ),
+                "amount": payment_amount,
                 "payment_method": (
                     payment_method
                     or "bank_transfer"
@@ -3221,7 +3887,9 @@ async def payment_create(
 
     if (
         status_code >= 400
-        or payload.get("ok") is False
+        or payload.get(
+            "ok"
+        ) is False
     ):
         return _payment_error(
             status_code,
@@ -3235,29 +3903,41 @@ async def payment_create(
         job,
     )
 
-    job["payment_id"] = (
-        result["payment_id"]
-    )
+    job[
+        "payment_id"
+    ] = result[
+        "payment_id"
+    ]
 
-    job["payment_pending"] = (
-        result["payment_pending"]
-    )
+    job[
+        "payment_pending"
+    ] = result[
+        "payment_pending"
+    ]
 
-    job["paid"] = (
-        result["paid"]
-    )
+    job[
+        "paid"
+    ] = result[
+        "paid"
+    ]
 
-    job["payment_verified"] = (
-        result["payment_verified"]
-    )
+    job[
+        "payment_verified"
+    ] = result[
+        "payment_verified"
+    ]
 
-    job["payment_method"] = (
-        result["payment_method"]
-    )
+    job[
+        "payment_method"
+    ] = result[
+        "payment_method"
+    ]
 
-    job["payment_amount_reported"] = (
-        result["amount"]
-    )
+    job[
+        "payment_amount_reported"
+    ] = result[
+        "amount"
+    ]
 
     return result
 
@@ -3275,15 +3955,22 @@ async def payment_report(
     except Exception:
         body = {}
 
-    if isinstance(body, dict):
+    if isinstance(
+        body,
+        dict,
+    ):
         payment_id = (
             payment_id
-            or body.get("payment_id")
+            or body.get(
+                "payment_id"
+            )
         )
 
         job_id = (
             job_id
-            or body.get("job_id")
+            or body.get(
+                "job_id"
+            )
         )
 
         payment_reference = (
@@ -3298,12 +3985,18 @@ async def payment_report(
 
         note = (
             note
-            or body.get("note")
-            or body.get("message")
+            or body.get(
+                "note"
+            )
+            or body.get(
+                "message"
+            )
         )
 
     job = (
-        _jobs.get(job_id)
+        _jobs.get(
+            job_id
+        )
         if job_id
         else None
     )
@@ -3313,7 +4006,10 @@ async def payment_report(
             "payment_id"
         )
 
-    if not payment_id and not job:
+    if (
+        not payment_id
+        and not job
+    ):
         return application_error(
             "PAYMENT",
             "Payment ID or job ID is required.",
@@ -3321,7 +4017,10 @@ async def payment_report(
             "PAYMENT_ID_REQUIRED",
         )
 
-    if job is None and job_id:
+    if (
+        job is None
+        and job_id
+    ):
         return application_error(
             "PAYMENT",
             "Job not found.",
@@ -3340,7 +4039,9 @@ async def payment_report(
             query={
                 "payment_id": payment_id,
                 "job_id": job_id,
-                "payment_reference": payment_reference,
+                "payment_reference": (
+                    payment_reference
+                ),
                 "note": note,
             },
         )
@@ -3364,13 +4065,18 @@ async def payment_report(
 
     if (
         status_code >= 400
-        or payload.get("ok") is False
+        or payload.get(
+            "ok"
+        ) is False
     ):
         return _payment_error(
             status_code,
             content_type,
             raw,
-            "Payment report could not be recorded.",
+            (
+                "Payment report could not "
+                "be recorded."
+            ),
         )
 
     if job:
@@ -3380,21 +4086,29 @@ async def payment_report(
             fallback_status="reported",
         )
 
-        job["payment_id"] = (
-            result["payment_id"]
-        )
+        job[
+            "payment_id"
+        ] = result[
+            "payment_id"
+        ]
 
-        job["payment_pending"] = (
-            result["payment_pending"]
-        )
+        job[
+            "payment_pending"
+        ] = result[
+            "payment_pending"
+        ]
 
-        job["paid"] = (
-            result["paid"]
-        )
+        job[
+            "paid"
+        ] = result[
+            "paid"
+        ]
 
-        job["payment_verified"] = (
-            result["payment_verified"]
-        )
+        job[
+            "payment_verified"
+        ] = result[
+            "payment_verified"
+        ]
 
         return result
 
@@ -3410,8 +4124,8 @@ async def payment_complete(
     payment_reference: str | None = None,
     note: str | None = None,
 ):
-    # Compatibility only:
-    # reporting payment never unlocks download.
+    # Compatibility endpoint only.
+    # Reporting payment NEVER unlocks download.
     return await payment_report(
         request,
         payment_id=payment_id,
@@ -3438,7 +4152,9 @@ async def payment_status(
     version_id: str | None = None,
     payment_id: str | None = None,
 ):
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if not job:
         return application_error(
@@ -3451,7 +4167,9 @@ async def payment_status(
     if (
         version_id
         and version_id
-        != job.get("version_id")
+        != job.get(
+            "version_id"
+        )
     ):
         return application_error(
             "PAYMENT_STATUS",
@@ -3462,8 +4180,40 @@ async def payment_status(
 
     lookup_payment_id = (
         payment_id
-        or job.get("payment_id")
+        or job.get(
+            "payment_id"
+        )
     )
+
+    if not lookup_payment_id:
+        return {
+            "success": True,
+            "ok": True,
+            "job_id": job_id,
+            "version_id": job.get(
+                "version_id"
+            ),
+            "payment_id": None,
+            "status": "none",
+            "payment_status": "none",
+            "payment_pending": False,
+            "paid": False,
+            "payment_verified": False,
+            "download_unlocked": False,
+            "payment_ready": (
+                job.get(
+                    "status"
+                )
+                == "review_complete"
+                and job.get(
+                    "review_finished",
+                    False,
+                )
+            ),
+            "message": (
+                "No payment has been created yet."
+            ),
+        }
 
     try:
         (
@@ -3498,7 +4248,9 @@ async def payment_status(
 
     if (
         status_code >= 400
-        or payload.get("ok") is False
+        or payload.get(
+            "ok"
+        ) is False
     ):
         return _payment_error(
             status_code,
@@ -3518,27 +4270,39 @@ async def payment_status(
         ),
     )
 
-    if result["payment_id"]:
-        job["payment_id"] = (
-            result["payment_id"]
-        )
+    if result[
+        "payment_id"
+    ]:
+        job[
+            "payment_id"
+        ] = result[
+            "payment_id"
+        ]
 
-    job["payment_pending"] = (
-        result["payment_pending"]
-    )
+    job[
+        "payment_pending"
+    ] = result[
+        "payment_pending"
+    ]
 
-    job["paid"] = (
-        result["paid"]
-    )
+    job[
+        "paid"
+    ] = result[
+        "paid"
+    ]
 
-    job["payment_verified"] = (
-        result["payment_verified"]
-    )
+    job[
+        "payment_verified"
+    ] = result[
+        "payment_verified"
+    ]
 
     return result
 
 
-@app.get("/api/customer-care/payments")
+@app.get(
+    "/api/customer-care/payments"
+)
 async def customer_care_payments():
     try:
         (
@@ -3566,7 +4330,10 @@ async def customer_care_payments():
             status_code,
             content_type,
             raw,
-            "Customer Care payment list could not be loaded.",
+            (
+                "Customer Care payment list "
+                "could not be loaded."
+            ),
         )
 
     return _payment_api_json(
@@ -3590,21 +4357,32 @@ async def customer_care_verify(
     except Exception:
         body = {}
 
-    if isinstance(body, dict):
+    if isinstance(
+        body,
+        dict,
+    ):
         payment_id = (
             payment_id
-            or body.get("payment_id")
+            or body.get(
+                "payment_id"
+            )
         )
 
         if "verified" in body:
             verified = bool(
-                body.get("verified")
+                body.get(
+                    "verified"
+                )
             )
 
         note = (
             note
-            or body.get("note")
-            or body.get("admin_note")
+            or body.get(
+                "note"
+            )
+            or body.get(
+                "admin_note"
+            )
         )
 
     if not payment_id:
@@ -3626,7 +4404,9 @@ async def customer_care_verify(
             query={
                 "payment_id": payment_id,
                 "verified": str(
-                    bool(verified)
+                    bool(
+                        verified
+                    )
                 ).lower(),
                 "note": note,
             },
@@ -3651,7 +4431,9 @@ async def customer_care_verify(
 
     if (
         status_code >= 400
-        or payload.get("ok") is False
+        or payload.get(
+            "ok"
+        ) is False
     ):
         return _payment_error(
             status_code,
@@ -3660,20 +4442,27 @@ async def customer_care_verify(
             "Customer Care verification failed.",
         )
 
+    payment = payload.get(
+        "payment"
+    )
+
     job_id = (
-        payload.get(
-            "payment",
-            {},
-        ).get("job_id")
+        payment.get(
+            "job_id"
+        )
         if isinstance(
-            payload.get("payment"),
+            payment,
             dict,
         )
-        else None
+        else payload.get(
+            "job_id"
+        )
     )
 
     job = (
-        _jobs.get(job_id)
+        _jobs.get(
+            job_id
+        )
         if job_id
         else None
     )
@@ -3689,25 +4478,39 @@ async def customer_care_verify(
             ),
         )
 
-        job["payment_id"] = (
-            result["payment_id"]
+        job[
+            "payment_id"
+        ] = (
+            result[
+                "payment_id"
+            ]
             or payment_id
         )
 
-        job["payment_pending"] = (
-            result["payment_pending"]
-        )
+        job[
+            "payment_pending"
+        ] = result[
+            "payment_pending"
+        ]
 
-        job["paid"] = (
-            result["paid"]
-        )
+        job[
+            "paid"
+        ] = result[
+            "paid"
+        ]
 
-        job["payment_verified"] = (
-            result["payment_verified"]
-        )
+        job[
+            "payment_verified"
+        ] = result[
+            "payment_verified"
+        ]
 
-        if result["paid"]:
-            job["status"] = "paid"
+        if result[
+            "paid"
+        ]:
+            job[
+                "status"
+            ] = "paid"
 
         return result
 
@@ -3720,7 +4523,9 @@ async def download(
     version_id: str,
     payment_id: str | None = None,
 ):
-    job = _jobs.get(job_id)
+    job = _jobs.get(
+        job_id
+    )
 
     if not job:
         return application_error(
@@ -3732,7 +4537,9 @@ async def download(
 
     if (
         version_id
-        != job.get("version_id")
+        != job.get(
+            "version_id"
+        )
     ):
         return application_error(
             "DOWNLOAD",
@@ -3743,13 +4550,18 @@ async def download(
 
     lookup_payment_id = (
         payment_id
-        or job.get("payment_id")
+        or job.get(
+            "payment_id"
+        )
     )
 
     if not lookup_payment_id:
         return application_error(
             "DOWNLOAD",
-            "Payment verification is required before download.",
+            (
+                "Payment verification is required "
+                "before download."
+            ),
             402,
             "PAYMENT_NOT_VERIFIED",
         )
@@ -3781,7 +4593,8 @@ async def download(
 
     if (
         status_code >= 400
-        or "json" in content_type.lower()
+        or "json"
+        in content_type.lower()
     ):
         return _payment_error(
             status_code,
@@ -3795,7 +4608,7 @@ async def download(
         )
 
     filename = (
-        f"naija_pocket_business_"
+        "naija_pocket_business_"
         f"{job_id}.docx"
     )
 
@@ -3803,8 +4616,10 @@ async def download(
         content=raw,
         media_type=(
             content_type
-            or "application/vnd.openxmlformats-"
-            "officedocument.wordprocessingml.document"
+            or (
+                "application/vnd.openxmlformats-"
+                "officedocument.wordprocessingml.document"
+            )
         ),
         headers={
             "Content-Disposition": (
@@ -3848,41 +4663,60 @@ async def clear_chat(
 
 @app.on_event("startup")
 async def startup():
-    print("=" * 70)
+    print(
+        "=" * 70
+    )
+
     print(
         "NAIJA POCKET BUSINESS CENTER — FASTAPI"
     )
+
     print(
         "Architecture: INTELLIGENCE-FIRST"
     )
+
     print(
         "Intelligence:",
         get_ada_model(),
     )
+
     print(
         "Configured:",
         is_configured(),
     )
+
     print(
         "Customer page-count requirement: DISABLED"
     )
+
     print(
         "Global page assumption: DISABLED"
     )
+
     print(
         "Complete document preservation: ENABLED"
     )
+
     print(
         "Review workflow: ENABLED"
     )
+
     print(
         "Review pagination source: COMPLETE DOCUMENT TEXT"
     )
+
     print(
         "Payment API:",
         PAYMENT_API_BASE_URL,
     )
-    print("=" * 70)
+
+    print(
+        "Payment approval gate: DISABLED"
+    )
+
+    print(
+        "=" * 70
+    )
 
 
 if __name__ == "__main__":
