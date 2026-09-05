@@ -19,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 
 
-APP_VERSION = "payment-download-v3"
+APP_VERSION = "payment-download-v4"
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -117,6 +117,40 @@ def is_pending(value: Any) -> bool:
         "reported",
         "verification_pending",
         "awaiting_verification",
+    }
+
+
+def is_review_ready(
+    status: Any = None,
+    review_finished: Any = None,
+    review_complete: Any = None,
+) -> bool:
+    """
+    Determine whether the document has completed review.
+
+    The review system may expose readiness as:
+      - review_finished=True
+      - review_complete=True
+      - status=READY
+      - status=review_complete
+      - status=completed
+
+    This helper deliberately accepts all of those forms.
+    """
+
+    if bool(review_finished):
+        return True
+
+    if bool(review_complete):
+        return True
+
+    return normalized_status(status) in {
+        "ready",
+        "review_complete",
+        "review_completed",
+        "completed",
+        "complete",
+        "approved",
     }
 
 
@@ -372,6 +406,7 @@ def update_payment(
     for field in allowed_fields:
 
         if field in changes:
+
             assignments.append(
                 f"{field} = ?"
             )
@@ -469,11 +504,12 @@ def call_old_api(
     headers = {
         "Accept": "application/json",
         "User-Agent": (
-            "NaijaPocketPaymentAPI/3.0"
+            "NaijaPocketPaymentAPI/4.0"
         ),
     }
 
     if INTERNAL_API_KEY:
+
         headers[
             "X-Internal-API-Key"
         ] = INTERNAL_API_KEY
@@ -558,10 +594,14 @@ def find_document_payload(
         "pages",
         "document_pages",
         "review_pages",
+        "page_texts",
         "document_text",
         "text",
+        "content",
         "status",
         "review_finished",
+        "review_complete",
+        "review_complete",
         "version_id",
     }
 
@@ -633,6 +673,7 @@ def normalize_document_pages(
                 )
 
             else:
+
                 text = item
 
             text = clean(text)
@@ -645,222 +686,626 @@ def normalize_document_pages(
     return []
 
 
+def get_first_payload_value(
+    payload: dict[str, Any] | None,
+    keys: tuple[str, ...],
+) -> Any:
+
+    if not isinstance(
+        payload,
+        dict,
+    ):
+        return None
+
+    for key in keys:
+
+        value = payload.get(key)
+
+        if value is not None:
+
+            if isinstance(
+                value,
+                str,
+            ) and not value.strip():
+
+                continue
+
+            return value
+
+    return None
+
+
+def merge_document_metadata(
+    primary: dict[str, Any] | None,
+    secondary: dict[str, Any] | None,
+) -> dict[str, Any]:
+
+    primary = (
+        primary
+        if isinstance(primary, dict)
+        else {}
+    )
+
+    secondary = (
+        secondary
+        if isinstance(secondary, dict)
+        else {}
+    )
+
+    merged: dict[str, Any] = {}
+
+    keys = set(
+        primary.keys()
+    ) | set(
+        secondary.keys()
+    )
+
+    for key in keys:
+
+        primary_value = primary.get(
+            key
+        )
+
+        if primary_value is not None:
+
+            if isinstance(
+                primary_value,
+                str,
+            ):
+
+                if primary_value.strip():
+                    merged[key] = primary_value
+                    continue
+
+            elif primary_value != {}:
+
+                merged[key] = primary_value
+                continue
+
+            elif primary_value not in (
+                None,
+                "",
+            ):
+
+                merged[key] = primary_value
+                continue
+
+        if secondary.get(key) is not None:
+
+            merged[key] = secondary.get(
+                key
+            )
+
+    return merged
+
+
 def extract_document(
     job_id: str,
 ) -> dict[str, Any]:
 
+    """
+    Retrieve the current reviewed document.
+
+    IMPORTANT:
+    /api/review/pages and /api/review do not
+    necessarily return the same metadata.
+
+    The pages endpoint is used primarily for
+    the actual document pages.
+
+    The review endpoint is also checked for
+    authoritative review state and billing
+    metadata.
+
+    This prevents a valid READY document from
+    being incorrectly rejected as
+    DOCUMENT_NOT_READY merely because the
+    pages endpoint does not include
+    review_finished/status.
+    """
+
+    pages_payload: dict[str, Any] | None = None
+    review_payload: dict[str, Any] | None = None
+
+    pages_response: Any = None
+    review_response: Any = None
+
     errors: list[str] = []
 
-    for endpoint in (
-        "/api/review/pages",
-        "/api/review",
-    ):
+    # --------------------------------------------------------
+    # FIRST: GET THE DOCUMENT PAGES
+    # --------------------------------------------------------
 
-        try:
+    try:
 
-            response = call_old_api(
-                endpoint,
-                job_id,
+        pages_response = call_old_api(
+            "/api/review/pages",
+            job_id,
+        )
+
+        pages_payload = (
+            find_document_payload(
+                pages_response
             )
+        )
 
-            payload = (
-                find_document_payload(
-                    response
-                )
-            )
-
-            if not payload:
-                errors.append(
-                    f"{endpoint}: no document payload"
-                )
-                continue
-
-            pages = normalize_document_pages(
-                payload.get("pages")
-                or payload.get(
-                    "document_pages"
-                )
-                or payload.get(
-                    "review_pages"
-                )
-                or payload.get(
-                    "page_texts"
-                )
-            )
-
-            document_text = clean(
-                payload.get(
-                    "document_text"
-                )
-                or payload.get("text")
-                or payload.get("content")
-            )
-
-            if not pages and document_text:
-                pages = [
-                    document_text
-                ]
-
-            if not pages:
-
-                errors.append(
-                    f"{endpoint}: no pages"
-                )
-
-                continue
-
-            version_id = clean(
-                payload.get(
-                    "version_id"
-                )
-                or payload.get(
-                    "document_version"
-                )
-                or payload.get(
-                    "version"
-                )
-            )
-
-            if not version_id:
-
-                fingerprint = json.dumps(
-                    {
-                        "job_id": job_id,
-                        "pages": pages,
-                        "text": document_text,
-                    },
-                    sort_keys=True,
-                    ensure_ascii=False,
-                ).encode(
-                    "utf-8"
-                )
-
-                version_id = hashlib.sha256(
-                    fingerprint
-                ).hexdigest()[:24]
-
-            billing = payload.get(
-                "billing"
-            )
-
-            if not isinstance(
-                billing,
-                dict,
-            ):
-                billing = {}
-
-            amount = as_money(
-                payload.get(
-                    "amount"
-                )
-            )
-
-            if amount <= 0:
-                amount = as_money(
-                    payload.get(
-                        "total_amount"
-                    )
-                )
-
-            if amount <= 0:
-                amount = as_money(
-                    payload.get(
-                        "price"
-                    )
-                )
-
-            if amount <= 0:
-                amount = as_money(
-                    billing.get(
-                        "amount"
-                    )
-                )
-
-            if amount <= 0:
-                amount = as_money(
-                    billing.get(
-                        "total"
-                    )
-                )
-
-            filename = clean(
-                payload.get(
-                    "filename"
-                )
-                or payload.get(
-                    "document_filename"
-                )
-            )
-
-            if not filename:
-                filename = (
-                    f"naija_pocket_"
-                    f"{job_id}.docx"
-                )
-
-            if not filename.lower().endswith(
-                ".docx"
-            ):
-                filename += ".docx"
-
-            current_status = (
-                normalized_status(
-                    payload.get(
-                        "status"
-                    )
-                )
-            )
-
-            review_finished = bool(
-                payload.get(
-                    "review_finished"
-                )
-                or payload.get(
-                    "review_complete"
-                )
-                or current_status
-                in {
-                    "review_complete",
-                    "ready",
-                    "completed",
-                }
-            )
-
-            return {
-                "job_id": job_id,
-                "pages": pages,
-                "document_text": document_text,
-                "version_id": version_id,
-                "amount": amount,
-                "filename": filename,
-                "service": clean(
-                    payload.get(
-                        "service"
-                    )
-                ),
-                "customer_id": clean(
-                    payload.get(
-                        "customer_id"
-                    )
-                ),
-                "status": current_status,
-                "review_finished": review_finished,
-                "billing": billing,
-                "raw": payload,
-                "source_endpoint": endpoint,
-            }
-
-        except Exception as exc:
+        if not pages_payload:
 
             errors.append(
-                f"{endpoint}: {exc}"
+                "/api/review/pages: "
+                "no document payload"
             )
 
-    raise RuntimeError(
-        "Unable to retrieve the document "
-        "from the old API. "
-        + " | ".join(errors)
+    except Exception as exc:
+
+        errors.append(
+            f"/api/review/pages: {exc}"
+        )
+
+    # --------------------------------------------------------
+    # SECOND: GET THE REVIEW STATE
+    # --------------------------------------------------------
+
+    try:
+
+        review_response = call_old_api(
+            "/api/review",
+            job_id,
+        )
+
+        review_payload = (
+            find_document_payload(
+                review_response
+            )
+        )
+
+        if not review_payload:
+
+            errors.append(
+                "/api/review: "
+                "no review payload"
+            )
+
+    except Exception as exc:
+
+        errors.append(
+            f"/api/review: {exc}"
+        )
+
+    # --------------------------------------------------------
+    # WE NEED AT LEAST ONE VALID PAYLOAD
+    # --------------------------------------------------------
+
+    if (
+        not pages_payload
+        and not review_payload
+    ):
+
+        raise RuntimeError(
+            "Unable to retrieve the document "
+            "from the old API. "
+            + " | ".join(errors)
+        )
+
+    # --------------------------------------------------------
+    # MERGE METADATA
+    # --------------------------------------------------------
+
+    payload = merge_document_metadata(
+        pages_payload,
+        review_payload,
     )
+
+    # --------------------------------------------------------
+    # PAGES
+    #
+    # Prefer /api/review/pages because that
+    # endpoint is specifically responsible for
+    # the complete paginated document.
+    # --------------------------------------------------------
+
+    pages = normalize_document_pages(
+        get_first_payload_value(
+            pages_payload,
+            (
+                "pages",
+                "document_pages",
+                "review_pages",
+                "page_texts",
+            ),
+        )
+    )
+
+    if not pages:
+
+        pages = normalize_document_pages(
+            get_first_payload_value(
+                review_payload,
+                (
+                    "pages",
+                    "document_pages",
+                    "review_pages",
+                    "page_texts",
+                ),
+            )
+        )
+
+    document_text = clean(
+        get_first_payload_value(
+            pages_payload,
+            (
+                "document_text",
+                "text",
+                "content",
+            ),
+        )
+    )
+
+    if not document_text:
+
+        document_text = clean(
+            get_first_payload_value(
+                review_payload,
+                (
+                    "document_text",
+                    "text",
+                    "content",
+                ),
+            )
+        )
+
+    if not pages and document_text:
+
+        pages = [
+            document_text
+        ]
+
+    if not pages:
+
+        raise RuntimeError(
+            "The review API responded, but "
+            "no document pages were found. "
+            + " | ".join(errors)
+        )
+
+    # --------------------------------------------------------
+    # STATUS
+    #
+    # IMPORTANT:
+    # Prefer the review endpoint's state.
+    # /api/review/pages may contain pages but
+    # omit status/review_finished.
+    # --------------------------------------------------------
+
+    review_status = clean(
+        get_first_payload_value(
+            review_payload,
+            (
+                "status",
+                "review_status",
+                "state",
+            ),
+        )
+    )
+
+    pages_status = clean(
+        get_first_payload_value(
+            pages_payload,
+            (
+                "status",
+                "review_status",
+                "state",
+            ),
+        )
+    )
+
+    current_status = (
+        review_status
+        or pages_status
+    )
+
+    review_finished_value = (
+        get_first_payload_value(
+            review_payload,
+            (
+                "review_finished",
+                "review_complete",
+                "review_completed",
+            ),
+        )
+    )
+
+    pages_review_finished_value = (
+        get_first_payload_value(
+            pages_payload,
+            (
+                "review_finished",
+                "review_complete",
+                "review_completed",
+            ),
+        )
+    )
+
+    review_finished = is_review_ready(
+        status=current_status,
+        review_finished=review_finished_value,
+        review_complete=(
+            get_first_payload_value(
+                review_payload,
+                (
+                    "review_complete",
+                    "review_completed",
+                ),
+            )
+        ),
+    )
+
+    if not review_finished:
+
+        review_finished = is_review_ready(
+            status=pages_status,
+            review_finished=(
+                pages_review_finished_value
+            ),
+            review_complete=(
+                get_first_payload_value(
+                    pages_payload,
+                    (
+                        "review_complete",
+                        "review_completed",
+                    ),
+                )
+            ),
+        )
+
+    # --------------------------------------------------------
+    # VERSION
+    # --------------------------------------------------------
+
+    version_id = clean(
+        get_first_payload_value(
+            pages_payload,
+            (
+                "version_id",
+                "document_version",
+                "version",
+            ),
+        )
+    )
+
+    if not version_id:
+
+        version_id = clean(
+            get_first_payload_value(
+                review_payload,
+                (
+                    "version_id",
+                    "document_version",
+                    "version",
+                ),
+            )
+        )
+
+    # --------------------------------------------------------
+    # FALLBACK VERSION FINGERPRINT
+    # --------------------------------------------------------
+
+    if not version_id:
+
+        fingerprint = json.dumps(
+            {
+                "job_id": job_id,
+                "pages": pages,
+                "text": document_text,
+            },
+            sort_keys=True,
+            ensure_ascii=False,
+        ).encode(
+            "utf-8"
+        )
+
+        version_id = hashlib.sha256(
+            fingerprint
+        ).hexdigest()[:24]
+
+    # --------------------------------------------------------
+    # BILLING
+    # --------------------------------------------------------
+
+    billing = get_first_payload_value(
+        review_payload,
+        (
+            "billing",
+        ),
+    )
+
+    if not isinstance(
+        billing,
+        dict,
+    ):
+
+        billing = get_first_payload_value(
+            pages_payload,
+            (
+                "billing",
+            ),
+        )
+
+    if not isinstance(
+        billing,
+        dict,
+    ):
+
+        billing = {}
+
+    # --------------------------------------------------------
+    # AMOUNT
+    # --------------------------------------------------------
+
+    amount = 0.0
+
+    for source in (
+        review_payload,
+        pages_payload,
+        payload,
+    ):
+
+        if not isinstance(
+            source,
+            dict,
+        ):
+            continue
+
+        for key in (
+            "amount",
+            "total_amount",
+            "price",
+        ):
+
+            candidate = as_money(
+                source.get(key)
+            )
+
+            if candidate > 0:
+
+                amount = candidate
+                break
+
+        if amount > 0:
+            break
+
+    if amount <= 0:
+
+        for key in (
+            "amount",
+            "total",
+            "price",
+        ):
+
+            candidate = as_money(
+                billing.get(key)
+            )
+
+            if candidate > 0:
+
+                amount = candidate
+                break
+
+    # --------------------------------------------------------
+    # FILENAME
+    # --------------------------------------------------------
+
+    filename = clean(
+        get_first_payload_value(
+            pages_payload,
+            (
+                "filename",
+                "document_filename",
+            ),
+        )
+    )
+
+    if not filename:
+
+        filename = clean(
+            get_first_payload_value(
+                review_payload,
+                (
+                    "filename",
+                    "document_filename",
+                ),
+            )
+        )
+
+    if not filename:
+
+        filename = (
+            f"naija_pocket_"
+            f"{job_id}.docx"
+        )
+
+    if not filename.lower().endswith(
+        ".docx"
+    ):
+
+        filename += ".docx"
+
+    # --------------------------------------------------------
+    # SERVICE
+    # --------------------------------------------------------
+
+    service = clean(
+        get_first_payload_value(
+            review_payload,
+            (
+                "service",
+            ),
+        )
+    )
+
+    if not service:
+
+        service = clean(
+            get_first_payload_value(
+                pages_payload,
+                (
+                    "service",
+                ),
+            )
+        )
+
+    # --------------------------------------------------------
+    # CUSTOMER ID
+    # --------------------------------------------------------
+
+    customer_id = clean(
+        get_first_payload_value(
+            review_payload,
+            (
+                "customer_id",
+            ),
+        )
+    )
+
+    if not customer_id:
+
+        customer_id = clean(
+            get_first_payload_value(
+                pages_payload,
+                (
+                    "customer_id",
+                ),
+            )
+        )
+
+    # --------------------------------------------------------
+    # RETURN NORMALIZED DOCUMENT
+    # --------------------------------------------------------
+
+    return {
+        "job_id": job_id,
+        "pages": pages,
+        "document_text": document_text,
+        "version_id": version_id,
+        "amount": amount,
+        "filename": filename,
+        "service": service,
+        "customer_id": customer_id,
+        "status": normalized_status(
+            current_status
+        ),
+        "review_finished": review_finished,
+        "billing": billing,
+        "raw": payload,
+        "raw_pages": pages_payload,
+        "raw_review": review_payload,
+        "source_endpoint": (
+            "/api/review/pages"
+            if pages_payload
+            else "/api/review"
+        ),
+        "lookup_errors": errors,
+    }
 
 
 def current_document(
@@ -1067,6 +1512,7 @@ def make_docx_paragraph(
     ):
 
         if index:
+
             pieces.append(
                 "<w:br/>"
             )
@@ -1101,6 +1547,7 @@ def create_docx(
     if not safe_filename.lower().endswith(
         ".docx"
     ):
+
         safe_filename += ".docx"
 
     output = (
@@ -1119,6 +1566,7 @@ def create_docx(
     ):
 
         if index:
+
             body.append(
                 "<w:p>"
                 "<w:r>"
@@ -1190,7 +1638,7 @@ def create_docx(
         'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
         '<Override '
         'PartName="/word/styles.xml" '
-        'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>'
+        'ContentType="application/xml"/>'
         "</Types>"
     )
 
@@ -1272,6 +1720,7 @@ async def read_json_body(
             value,
             dict,
         ):
+
             return value
 
     except Exception:
@@ -1348,11 +1797,13 @@ async def payment_diagnostic():
         )
 
         if not parsed.scheme:
+
             raise RuntimeError(
                 "OLD_API_BASE_URL has no URL scheme."
             )
 
         if not parsed.netloc:
+
             raise RuntimeError(
                 "OLD_API_BASE_URL has no hostname."
             )
@@ -1363,7 +1814,7 @@ async def payment_diagnostic():
             headers={
                 "Accept": "application/json",
                 "User-Agent": (
-                    "NaijaPocketPaymentDiagnostic/3.0"
+                    "NaijaPocketPaymentDiagnostic/4.0"
                 ),
             },
             method="GET",
@@ -1388,10 +1839,13 @@ async def payment_diagnostic():
             ] = response.status
 
             try:
+
                 result["old_api"][
                     "response"
                 ] = json.loads(raw)
+
             except Exception:
+
                 result["old_api"][
                     "response"
                 ] = raw[:1000]
@@ -1466,9 +1920,14 @@ async def create_payment(
     ) or DEFAULT_PAYMENT_METHOD
 
     if amount is None:
+
         amount = body.get(
             "amount"
         )
+
+    # --------------------------------------------------------
+    # RETRIEVE CURRENT REVIEWED DOCUMENT
+    # --------------------------------------------------------
 
     document, lookup_error = (
         current_document(
@@ -1488,6 +1947,10 @@ async def create_payment(
             detail=lookup_error,
         )
 
+    # --------------------------------------------------------
+    # DOCUMENT MUST EXIST
+    # --------------------------------------------------------
+
     if not has_document(
         document
     ):
@@ -1502,10 +1965,16 @@ async def create_payment(
             409,
         )
 
-    if (
-        not document.get(
-            "review_finished"
-        )
+    # --------------------------------------------------------
+    # DOCUMENT MUST HAVE FINISHED REVIEW
+    #
+    # This is now based on the combined
+    # /api/review/pages + /api/review
+    # response.
+    # --------------------------------------------------------
+
+    if not document.get(
+        "review_finished"
     ):
 
         return api_error(
@@ -1518,7 +1987,14 @@ async def create_payment(
             status=document.get(
                 "status"
             ),
+            review_finished=document.get(
+                "review_finished"
+            ),
         )
+
+    # --------------------------------------------------------
+    # AMOUNT
+    # --------------------------------------------------------
 
     final_amount = (
         as_money(
@@ -1541,6 +2017,10 @@ async def create_payment(
             ),
             409,
         )
+
+    # --------------------------------------------------------
+    # EXISTING PAYMENT
+    # --------------------------------------------------------
 
     existing = get_latest_payment(
         job_id
@@ -1616,6 +2096,10 @@ async def create_payment(
                 "version_id"
             ],
         }
+
+    # --------------------------------------------------------
+    # CREATE NEW PAYMENT
+    # --------------------------------------------------------
 
     payment_id = (
         "NPB-"
@@ -2071,6 +2555,7 @@ async def customer_care_verify(
     )
 
     if "verified" in body:
+
         verified = bool(
             body.get(
                 "verified"
@@ -2227,6 +2712,10 @@ async def download_document(
             404,
         )
 
+    # --------------------------------------------------------
+    # PAYMENT MUST BE VERIFIED
+    # --------------------------------------------------------
+
     if not is_verified(
         payment[
             "payment_status"
@@ -2250,6 +2739,10 @@ async def download_document(
             download_unlocked=False,
         )
 
+    # --------------------------------------------------------
+    # GET CURRENT DOCUMENT
+    # --------------------------------------------------------
+
     document, lookup_error = (
         current_document(
             payment["job_id"]
@@ -2268,6 +2761,10 @@ async def download_document(
             detail=lookup_error,
         )
 
+    # --------------------------------------------------------
+    # VERSION PROTECTION
+    # --------------------------------------------------------
+
     if not versions_match(
         payment,
         document,
@@ -2284,6 +2781,10 @@ async def download_document(
             409,
         )
 
+    # --------------------------------------------------------
+    # GET PAGES
+    # --------------------------------------------------------
+
     pages = normalize_document_pages(
         document.get(
             "pages"
@@ -2299,6 +2800,7 @@ async def download_document(
         )
 
         if text:
+
             pages = [
                 text
             ]
@@ -2313,6 +2815,10 @@ async def download_document(
             ),
             409,
         )
+
+    # --------------------------------------------------------
+    # BUILD DOCX
+    # --------------------------------------------------------
 
     try:
 
@@ -2335,6 +2841,10 @@ async def download_document(
             500,
             detail=str(exc),
         )
+
+    # --------------------------------------------------------
+    # RECORD DOWNLOAD
+    # --------------------------------------------------------
 
     record_download(
         payment[
