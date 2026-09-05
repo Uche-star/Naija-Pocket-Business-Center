@@ -162,8 +162,7 @@ body{
 .brand-name{
     width:100%;
     margin:0;
-    padding-left:2px;
-    padding-right:2px;
+    padding:0 4px;
     color:#fff;
     font-family:
         Georgia,
@@ -172,7 +171,14 @@ body{
     font-size:
         clamp(27px,8vw,64px);
     font-weight:700;
-    line-height:.93;
+
+    /* FIX:
+       Gives NAIJA POCKET and BUSINESS CENTER
+       enough vertical separation so BUSINESS
+       cannot cut into the J in NAIJA.
+    */
+    line-height:1.08;
+
     letter-spacing:
         clamp(1px,.5vw,4px);
     text-transform:uppercase;
@@ -184,6 +190,8 @@ body{
 .brand-name .green{
     color:#1fa463;
 }
+
+/* CENTER = CHAMPAGNE */
 
 .brand-name .gold{
     color:#D4AF6A;
@@ -375,7 +383,11 @@ body{
     flex-wrap:nowrap;
     width:max-content;
     white-space:nowrap;
+
+    /* CHAMPAGNE */
+
     color:#D4AF6A;
+
     font-family:
         Georgia,
         "Times New Roman",
@@ -701,10 +713,14 @@ body{
     }
 
     .brand-name{
-        font-size:26px;
-        letter-spacing:.5px;
-        padding-left:3px;
-        padding-right:3px;
+        font-size:27px;
+
+        /* FIXED LINE SEPARATION */
+        line-height:1.08;
+
+        letter-spacing:1px;
+        padding-left:4px;
+        padding-right:4px;
     }
 
     .gold-divider{
@@ -789,10 +805,14 @@ body{
     }
 
     .brand-name{
-        font-size:22px;
-        letter-spacing:.5px;
-        padding-left:3px;
-        padding-right:3px;
+        font-size:23px;
+
+        /* FIXED LINE SEPARATION */
+        line-height:1.08;
+
+        letter-spacing:.8px;
+        padding-left:4px;
+        padding-right:4px;
     }
 
     .gold-divider{
@@ -854,6 +874,9 @@ body{
     .brand-name{
         font-size:
             clamp(42px,6vw,66px);
+
+        /* FIXED LINE SEPARATION */
+        line-height:1.08;
     }
 
     .value{
