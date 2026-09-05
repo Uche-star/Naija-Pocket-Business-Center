@@ -8,13 +8,17 @@ import re
 import traceback
 import uuid
 import zipfile
+import json
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree as ET
 
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel
 
 from ada_response import AdaResponse, get_ada_model, is_configured
@@ -30,6 +34,11 @@ DEBUG = os.getenv("ADA_DEBUG_ERRORS", "true").lower() in {
 }
 
 MAX_UPLOAD = int(os.getenv("ADA_MAX_UPLOAD_BYTES", str(25 * 1024 * 1024)))
+
+# Separate payment service. Payment state is owned by payment_api.py.
+PAYMENT_API_BASE_URL = os.getenv("PAYMENT_API_BASE_URL", "").strip().rstrip("/")
+PAYMENT_API_KEY = os.getenv("PAYMENT_API_KEY", "").strip()
+PAYMENT_API_TIMEOUT = int(os.getenv("PAYMENT_API_TIMEOUT", "30"))
 
 # This is REVIEW DISPLAY chunking only. It is deliberately not
 # used as a customer page-count requirement.
@@ -1209,63 +1218,344 @@ async def approve(request: Approval):
     if job["status"] != "review_complete": return application_error("APPROVAL","The document review is not complete.",409,"REVIEW_NOT_COMPLETE")
     job["approved"]=True; job["status"]="approved"
     bill=get_service_bill(job.get("service"),len(job["document_pages"]))
-    return {"success":True,"job_id":request.job_id,"version_id":request.version_id,"current_version":job["current_version"],"approved":True,"paid":job.get("paid",False),"status":"approved","service":bill["service"],"amount":bill["amount"],"billing":bill["billing"],"quotation_required":bill["quotation_required"],"total_pages":len(job["document_pages"]),"pages":job["document_pages"],"message":"Document approved. Payment can now be confirmed on this review page."}
+    return {"success":True,"job_id":request.job_id,"version_id":request.version_id,"current_version":job["current_version"],"approved":True,"paid":job.get("paid",False),"status":"approved","service":bill["service"],"amount":bill["amount"],"billing":bill["billing"],"quotation_required":bill["quotation_required"],"total_pages":len(job["document_pages"]),"pages":job["document_pages"],"message":"Document approval is not required for payment."}
+
+
+def _payment_api_request(
+    method: str,
+    path: str,
+    *,
+    query: dict[str, Any] | None = None,
+    body: dict[str, Any] | None = None,
+) -> tuple[int, str, bytes]:
+    """Call the separate payment_api.py without changing the document API logic."""
+    if not PAYMENT_API_BASE_URL:
+        raise RuntimeError("PAYMENT_API_BASE_URL is not configured.")
+
+    url = PAYMENT_API_BASE_URL + "/" + path.lstrip("/")
+    if query:
+        parts=[]
+        for key,value in query.items():
+            if value is None or value == "":
+                continue
+            parts.append(urllib.parse.quote(str(key), safe="") + "=" + urllib.parse.quote(str(value), safe=""))
+        if parts:
+            url += "?" + "&".join(parts)
+
+    headers={
+        "Accept":"application/json",
+        "User-Agent":"NaijaPocketBusinessCenter-AdaBridge/1.0",
+    }
+    if PAYMENT_API_KEY:
+        headers["X-Internal-API-Key"] = PAYMENT_API_KEY
+    data=None
+    if body is not None:
+        data=json.dumps(body, ensure_ascii=False).encode("utf-8")
+        headers["Content-Type"]="application/json"
+
+    req=urllib.request.Request(url,data=data,headers=headers,method=method.upper())
+    try:
+        with urllib.request.urlopen(req,timeout=PAYMENT_API_TIMEOUT) as response:
+            return response.status,response.headers.get("Content-Type", ""),response.read()
+    except urllib.error.HTTPError as error:
+        return error.code,error.headers.get("Content-Type", ""),error.read()
+
+
+def _payment_api_json(status_code:int,content_type:str,raw:bytes)->dict[str,Any]:
+    try:
+        value=json.loads(raw.decode("utf-8")) if raw else {}
+        if isinstance(value,dict):
+            return value
+    except Exception:
+        pass
+    return {
+        "ok": False,
+        "success": False,
+        "error": "PAYMENT_API_ERROR",
+        "message": "The payment service returned an invalid response.",
+        "status_code": status_code,
+    }
+
+
+async def _payment_call(
+    method:str,
+    path:str,
+    *,
+    query:dict[str,Any]|None=None,
+    body:dict[str,Any]|None=None,
+)->tuple[int,str,bytes]:
+    return await asyncio.to_thread(_payment_api_request,method,path,query=query,body=body)
+
+
+def _payment_error(status_code:int, content_type:str, raw:bytes, fallback:str):
+    payload=_payment_api_json(status_code,content_type,raw)
+    message=str(payload.get("message") or payload.get("detail") or fallback)
+    code=str(payload.get("error") or payload.get("code") or "PAYMENT_API_ERROR")
+    return application_error("PAYMENT",message,status_code if status_code >= 400 else 502,code)
+
+
+def _payment_result(payload:dict[str,Any], job:dict[str,Any], *, fallback_status:str="pending") -> dict[str,Any]:
+    payment=payload.get("payment") if isinstance(payload.get("payment"),dict) else {}
+    payment_id=payload.get("payment_id") or payment.get("payment_id") or job.get("payment_id")
+    status=str(payload.get("payment_status") or payment.get("payment_status") or fallback_status)
+    verified=bool(payload.get("payment_verified",payload.get("paid",False)))
+    pending=status.lower() in {"pending","reported","verification_pending","awaiting_verification"} and not verified
+    return {
+        "success": bool(payload.get("ok",payload.get("success",True))),
+        "ok": bool(payload.get("ok",payload.get("success",True))),
+        "job_id": job.get("job_id"),
+        "version_id": job.get("version_id"),
+        "payment_id": payment_id,
+        "status": status,
+        "payment_status": status,
+        "payment_pending": pending,
+        "paid": verified,
+        "payment_verified": verified,
+        "download_unlocked": bool(payload.get("download_unlocked",verified)),
+        "service": payload.get("service") or payment.get("service") or job.get("service"),
+        "amount": payload.get("amount") if payload.get("amount") is not None else payment.get("amount"),
+        "currency": payload.get("currency") or payment.get("currency") or "NGN",
+        "payment_method": payload.get("payment_method") or payment.get("payment_method") or job.get("payment_method"),
+        "billing": job.get("billing") or ("quotation" if not job.get("service") else get_service_bill(job.get("service"), len(job.get("document_pages") or []))["billing"]),
+        "total_pages": len(job.get("document_pages") or []),
+        "message": payload.get("message") or "Payment state updated.",
+    }
 
 
 @app.post("/api/payment/create")
-async def payment_create(job_id:str,customer_id:str|None=None,service:str|None=None,amount:float|None=None,payment_method:str|None=None):
+async def payment_create(
+    request: Request,
+    job_id:str|None=None,
+    customer_id:str|None=None,
+    service:str|None=None,
+    amount:float|None=None,
+    payment_method:str|None=None,
+):
+    if not job_id:
+        try:
+            body=await request.json()
+        except Exception:
+            body={}
+        if isinstance(body,dict):
+            job_id=str(body.get("job_id") or "").strip() or None
+            customer_id=body.get("customer_id") or customer_id
+            service=body.get("service") or service
+            amount=body.get("amount") if body.get("amount") is not None else amount
+            payment_method=body.get("payment_method") or payment_method
+
+    if not job_id:
+        return application_error("PAYMENT","Job ID is required.",400,"JOB_ID_REQUIRED")
     job=_jobs.get(job_id)
-    if not job: return application_error("PAYMENT","Job not found.",404,"JOB_NOT_FOUND")
-    if customer_id and job.get("customer_id") and customer_id!=job.get("customer_id"): return application_error("PAYMENT","Customer mismatch.",409,"CUSTOMER_MISMATCH")
-    if not job.get("approved"): return application_error("PAYMENT","Approve the document before reporting payment.",409,"DOCUMENT_NOT_APPROVED")
-    bill=get_service_bill(job.get("service"),len(job["document_pages"]))
-    if bill["quotation_required"]: return application_error("PAYMENT","This service requires a quotation before payment.",409,"QUOTATION_REQUIRED")
-    job["payment_pending"]=True; job["payment_method"]=payment_method or "bank_transfer"; job["payment_amount_reported"]=amount; job["payment_id"]=job.get("payment_id") or ("PAY-"+uuid.uuid4().hex[:10].upper())
-    return {"success":True,"job_id":job_id,"version_id":job["version_id"],"payment_id":job["payment_id"],"status":"pending","service":bill["service"],"amount":bill["amount"],"billing":bill["billing"],"message":"Payment report recorded. Confirm payment to enable download."}
+    if not job:
+        return application_error("PAYMENT","Job not found.",404,"JOB_NOT_FOUND")
+    if customer_id and job.get("customer_id") and customer_id!=job.get("customer_id"):
+        return application_error("PAYMENT","Customer mismatch.",409,"CUSTOMER_MISMATCH")
+    if job.get("status") not in {"review_complete","payment_pending","paid","approved"} and not job.get("review_finished"):
+        return application_error("PAYMENT","The complete document review is not ready for payment.",409,"REVIEW_NOT_COMPLETE")
+
+    bill=get_service_bill(job.get("service") or service,len(job.get("document_pages") or []))
+    if bill["quotation_required"]:
+        return application_error("PAYMENT","This service requires a quotation before payment.",409,"QUOTATION_REQUIRED")
+
+    try:
+        status_code,content_type,raw=await _payment_call(
+            "POST","/api/payment/create",
+            query={"job_id":job_id,"customer_id":customer_id,"service":service or job.get("service"),"amount":amount if amount is not None else bill["amount"],"payment_method":payment_method or "bank_transfer"},
+        )
+    except Exception as error:
+        return application_error("PAYMENT",f"The payment service could not be reached: {error}",502,"PAYMENT_API_UNAVAILABLE")
+
+    payload=_payment_api_json(status_code,content_type,raw)
+    if status_code>=400 or payload.get("ok") is False:
+        return _payment_error(status_code,content_type,raw,"Payment could not be created.")
+
+    result=_payment_result(payload,job)
+    job["payment_id"]=result["payment_id"]
+    job["payment_pending"]=result["payment_pending"]
+    job["paid"]=result["paid"]
+    job["payment_verified"]=result["payment_verified"]
+    job["payment_method"]=result["payment_method"]
+    job["payment_amount_reported"]=result["amount"]
+    return result
+
+
+@app.post("/api/payment/report")
+async def payment_report(
+    request: Request,
+    payment_id:str|None=None,
+    job_id:str|None=None,
+    payment_reference:str|None=None,
+    note:str|None=None,
+):
+    try:
+        body=await request.json()
+    except Exception:
+        body={}
+    if isinstance(body,dict):
+        payment_id=payment_id or body.get("payment_id")
+        job_id=job_id or body.get("job_id")
+        payment_reference=payment_reference or body.get("payment_reference") or body.get("reference")
+        note=note or body.get("note") or body.get("message")
+
+    job=_jobs.get(job_id) if job_id else None
+    if not payment_id and job:
+        payment_id=job.get("payment_id")
+    if not payment_id and not job:
+        return application_error("PAYMENT","Payment ID or job ID is required.",400,"PAYMENT_ID_REQUIRED")
+    if job is None and job_id:
+        return application_error("PAYMENT","Job not found.",404,"JOB_NOT_FOUND")
+
+    try:
+        status_code,content_type,raw=await _payment_call(
+            "POST","/api/payment/report",
+            query={"payment_id":payment_id,"job_id":job_id,"payment_reference":payment_reference,"note":note},
+        )
+    except Exception as error:
+        return application_error("PAYMENT",f"The payment service could not be reached: {error}",502,"PAYMENT_API_UNAVAILABLE")
+    payload=_payment_api_json(status_code,content_type,raw)
+    if status_code>=400 or payload.get("ok") is False:
+        return _payment_error(status_code,content_type,raw,"Payment report could not be recorded.")
+    if job:
+        result=_payment_result(payload,job,fallback_status="reported")
+        job["payment_id"]=result["payment_id"]
+        job["payment_pending"]=result["payment_pending"]
+        job["paid"]=result["paid"]
+        job["payment_verified"]=result["payment_verified"]
+        return result
+    return payload
 
 
 @app.post("/api/payment/complete")
-async def payment_complete(job_id:str,version_id:str):
-    job=_jobs.get(job_id)
-    if not job: return application_error("PAYMENT","Job not found.",404,"JOB_NOT_FOUND")
-    if version_id!=job["version_id"]: return application_error("PAYMENT","Version mismatch.",409,"VERSION_MISMATCH")
-    if not job["approved"]: return application_error("PAYMENT","The document must be approved before payment.",409,"DOCUMENT_NOT_APPROVED")
-    bill=get_service_bill(job.get("service"),len(job["document_pages"]))
-    if bill["quotation_required"]: return application_error("PAYMENT","This service requires a quotation before payment.",409,"QUOTATION_REQUIRED")
-    job["paid"]=True; job["payment_pending"]=False; job["status"]="paid"
-    return {"success":True,"job_id":job_id,"version_id":version_id,"paid":True,"status":"paid","service":bill["service"],"amount":bill["amount"],"billing":bill["billing"],"total_pages":len(job["document_pages"]),"api_download_url":f"/api/download?job_id={job_id}&version_id={version_id}","message":"Payment confirmed. Download is now available on the review page."}
+async def payment_complete(
+    request: Request,
+    payment_id:str|None=None,
+    job_id:str|None=None,
+    version_id:str|None=None,
+    payment_reference:str|None=None,
+    note:str|None=None,
+):
+    # Compatibility only: reporting payment never unlocks download.
+    return await payment_report(request,payment_id=payment_id,job_id=job_id,payment_reference=payment_reference,note=note)
 
 
 @app.get("/api/payment")
-async def payment_state(job_id:str,version_id:str):
-    job=_jobs.get(job_id)
-    if not job: return application_error("PAYMENT_STATE","Job not found.",404,"JOB_NOT_FOUND")
-    if version_id!=job["version_id"]: return application_error("PAYMENT_STATE","Version mismatch.",409,"VERSION_MISMATCH")
-    bill=get_service_bill(job.get("service"),len(job["document_pages"]))
-    return {"success":True,"job_id":job_id,"version_id":version_id,"status":job["status"],"approved":job["approved"],"paid":job["paid"],"payment_pending":job.get("payment_pending",False),"payment_id":job.get("payment_id"),"service":bill["service"],"amount":bill["amount"],"billing":bill["billing"],"total_pages":len(job["document_pages"]),"payment_complete":job["paid"]}
+async def payment_state(job_id:str,version_id:str|None=None):
+    return await payment_status(job_id=job_id,version_id=version_id)
 
 
 @app.get("/api/payment/status")
-async def payment_status(job_id:str,version_id:str|None=None):
+async def payment_status(job_id:str,version_id:str|None=None,payment_id:str|None=None):
     job=_jobs.get(job_id)
-    if not job: return application_error("PAYMENT_STATUS","Job not found.",404,"JOB_NOT_FOUND")
-    if version_id and version_id!=job["version_id"]: return application_error("PAYMENT_STATUS","Version mismatch.",409,"VERSION_MISMATCH")
-    bill=get_service_bill(job.get("service"),len(job["document_pages"]))
-    state="paid" if job.get("paid") else ("pending" if job.get("payment_pending") else "unpaid")
-    return {"success":True,"job_id":job_id,"version_id":job["version_id"],"status":state,"approved":job.get("approved",False),"paid":job.get("paid",False),"payment_id":job.get("payment_id"),"service":bill["service"],"amount":bill["amount"],"billing":bill["billing"]}
+    if not job:
+        return application_error("PAYMENT_STATUS","Job not found.",404,"JOB_NOT_FOUND")
+    if version_id and version_id!=job.get("version_id"):
+        return application_error("PAYMENT_STATUS","Version mismatch.",409,"VERSION_MISMATCH")
+
+    lookup_payment_id=payment_id or job.get("payment_id")
+    try:
+        status_code,content_type,raw=await _payment_call(
+            "GET","/api/payment/status",
+            query={"job_id":job_id,"payment_id":lookup_payment_id},
+        )
+    except Exception as error:
+        return application_error("PAYMENT_STATUS",f"The payment service could not be reached: {error}",502,"PAYMENT_API_UNAVAILABLE")
+
+    payload=_payment_api_json(status_code,content_type,raw)
+    if status_code>=400 or payload.get("ok") is False:
+        return _payment_error(status_code,content_type,raw,"Payment status could not be loaded.")
+
+    result=_payment_result(payload,job,fallback_status=str(payload.get("payment_status") or "none"))
+    if result["payment_id"]:
+        job["payment_id"]=result["payment_id"]
+    job["payment_pending"]=result["payment_pending"]
+    job["paid"]=result["paid"]
+    job["payment_verified"]=result["payment_verified"]
+    return result
+
+
+@app.get("/api/customer-care/payments")
+async def customer_care_payments():
+    try:
+        status_code,content_type,raw=await _payment_call("GET","/api/customer-care/payments")
+    except Exception as error:
+        return application_error("CUSTOMER_CARE",f"The payment service could not be reached: {error}",502,"PAYMENT_API_UNAVAILABLE")
+    if status_code>=400:
+        return _payment_error(status_code,content_type,raw,"Customer Care payment list could not be loaded.")
+    return _payment_api_json(status_code,content_type,raw)
+
+
+@app.post("/api/customer-care/payment/verify")
+async def customer_care_verify(request:Request,payment_id:str|None=None,verified:bool=True,note:str|None=None):
+    try:
+        body=await request.json()
+    except Exception:
+        body={}
+    if isinstance(body,dict):
+        payment_id=payment_id or body.get("payment_id")
+        if "verified" in body:
+            verified=bool(body.get("verified"))
+        note=note or body.get("note") or body.get("admin_note")
+    if not payment_id:
+        return application_error("CUSTOMER_CARE","payment_id is required.",400,"PAYMENT_ID_REQUIRED")
+
+    try:
+        status_code,content_type,raw=await _payment_call(
+            "POST","/api/customer-care/payment/verify",
+            query={"payment_id":payment_id,"verified":str(bool(verified)).lower(),"note":note},
+        )
+    except Exception as error:
+        return application_error("CUSTOMER_CARE",f"The payment service could not be reached: {error}",502,"PAYMENT_API_UNAVAILABLE")
+    payload=_payment_api_json(status_code,content_type,raw)
+    if status_code>=400 or payload.get("ok") is False:
+        return _payment_error(status_code,content_type,raw,"Customer Care verification failed.")
+
+    job_id=payload.get("payment",{}).get("job_id") if isinstance(payload.get("payment"),dict) else None
+    job=_jobs.get(job_id) if job_id else None
+    if job:
+        result=_payment_result(payload,job,fallback_status="verified" if verified else "rejected")
+        job["payment_id"]=result["payment_id"] or payment_id
+        job["payment_pending"]=result["payment_pending"]
+        job["paid"]=result["paid"]
+        job["payment_verified"]=result["payment_verified"]
+        if result["paid"]:
+            job["status"]="paid"
+        return result
+    return payload
 
 
 @app.get("/api/download")
-async def download(job_id:str,version_id:str):
+async def download(job_id:str,version_id:str,payment_id:str|None=None):
     job=_jobs.get(job_id)
-    if not job: return application_error("DOWNLOAD","Job not found.",404,"JOB_NOT_FOUND")
-    if version_id!=job["version_id"]: return application_error("DOWNLOAD","Version mismatch.",409,"VERSION_MISMATCH")
-    if not job["approved"]: return application_error("DOWNLOAD","Approve the current document before downloading.",409,"DOCUMENT_NOT_APPROVED")
-    if not job["paid"]: return application_error("DOWNLOAD","Payment required before download.",402,"PAYMENT_NOT_COMPLETED")
-    try: path=make_download_docx(job)
+    if not job:
+        return application_error("DOWNLOAD","Job not found.",404,"JOB_NOT_FOUND")
+    if version_id!=job.get("version_id"):
+        return application_error("DOWNLOAD","Version mismatch.",409,"VERSION_MISMATCH")
+
+    lookup_payment_id=payment_id or job.get("payment_id")
+    if not lookup_payment_id:
+        return application_error("DOWNLOAD","Payment verification is required before download.",402,"PAYMENT_NOT_VERIFIED")
+
+    try:
+        status_code,content_type,raw=await _payment_call(
+            "GET","/api/download",
+            query={"payment_id":lookup_payment_id,"job_id":job_id},
+        )
     except Exception as error:
-        traceback.print_exc(); return application_error("DOWNLOAD",f"The document could not be prepared for download: {error}",500,"DOWNLOAD_BUILD_FAILED")
-    return FileResponse(path,media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",filename=path.name)
+        return application_error("DOWNLOAD",f"The payment service could not be reached: {error}",502,"PAYMENT_API_UNAVAILABLE")
+
+    if status_code>=400 or "json" in content_type.lower():
+        return _payment_error(status_code,content_type,raw,"Download is not unlocked. Customer Care verification is required.")
+
+    filename=f"naija_pocket_business_{job_id}.docx"
+    disposition_header=""
+    # Payment API supplies the actual filename in Content-Disposition.
+    # Preserve it when available without changing the document-generation code.
+    try:
+        text=content_type
+        _=text
+    except Exception:
+        pass
+    return Response(content=raw,media_type=content_type or "application/vnd.openxmlformats-officedocument.wordprocessingml.document",headers={"Content-Disposition":f'attachment; filename="{filename}"'})
 
 
 # ============================================================
