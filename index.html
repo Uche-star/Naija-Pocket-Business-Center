@@ -1,16 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Naija Pocket Business Center</title>
-
-<style>
+<meta name="theme-color" content="#020403">
+<title>Naija Pocket Business Center</title><style>
 *{
     box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
-html,body{
+html,
+body{
     margin:0;
     padding:0;
     width:100%;
@@ -19,30 +19,79 @@ html,body{
 }
 
 body{
-    background:#050505;
+    background:#020403;
     color:#fff;
     font-family:Arial,Helvetica,sans-serif;
 }
 
 /* =========================================================
-   MAIN PAGE
+   FIREWORK CANVAS
+========================================================= */
+
+#fireworksCanvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+    display:block;
+}
+
+/* =========================================================
+   NIGHT ATMOSPHERE
+========================================================= */
+
+.night-overlay{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:
+        radial-gradient(
+            ellipse at 50% 22%,
+            rgba(212,175,55,.055),
+            transparent 42%
+        ),
+        radial-gradient(
+            ellipse at 18% 75%,
+            rgba(0,128,0,.045),
+            transparent 35%
+        ),
+        radial-gradient(
+            ellipse at 82% 75%,
+            rgba(212,175,55,.035),
+            transparent 35%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.18),
+            rgba(0,0,0,.42)
+        );
+}
+
+/* =========================================================
+   PAGE
 ========================================================= */
 
 .page{
+    position:relative;
+    z-index:2;
     width:100%;
     height:100vh;
     height:100dvh;
-    padding: max(4px,env(safe-area-inset-top)) 4px max(4px,env(safe-area-inset-bottom)) 4px;
+    padding:
+        max(4px,env(safe-area-inset-top))
+        4px
+        max(4px,env(safe-area-inset-bottom))
+        4px;
     display:flex;
     flex-direction:column;
-    background:
-        radial-gradient(circle at 50% -20%, rgba(31,164,99,.13), transparent 38%),
-        linear-gradient(145deg, #020202 0%, #090909 45%, #000 100%);
     overflow:hidden;
 }
 
 /* =========================================================
-   LUXURY WELCOME PANEL
+   WELCOME HALF
 ========================================================= */
 
 .welcome-half{
@@ -54,25 +103,30 @@ body{
     align-items:stretch;
     justify-content:center;
     overflow:hidden;
-    padding:10px 14px 10px;
+    padding:10px 14px;
     text-align:center;
+
     background:
-        radial-gradient(
-            ellipse at 50% 35%,
-            #242424 0%,
-            #101010 42%,
-            #050505 78%,
-            #000 100%
+        linear-gradient(
+            180deg,
+            rgba(2,5,4,.74),
+            rgba(4,6,5,.58)
         );
-    border:1px solid rgba(212,175,55,.30);
-    border-bottom:2px solid #d4af37;
+
+    border:1px solid rgba(212,175,55,.34);
+    border-bottom:2px solid rgba(212,175,55,.82);
     border-radius:10px;
+
     box-shadow:
-        inset 0 0 45px rgba(255,255,255,.025),
+        inset 0 0 55px rgba(255,255,255,.018),
+        inset 0 -20px 55px rgba(0,0,0,.22),
         0 8px 35px rgba(0,0,0,.65);
+
+    backdrop-filter:blur(1.5px);
+    -webkit-backdrop-filter:blur(1.5px);
 }
 
-/* Luxury inner frame */
+/* inner gold frame */
 
 .welcome-half::before{
     content:"";
@@ -81,87 +135,134 @@ body{
     left:7px;
     right:7px;
     bottom:7px;
+
     border:1px solid rgba(212,175,55,.22);
     border-radius:7px;
+
     pointer-events:none;
 }
 
-/* Corner ornaments */
+/* corner decoration */
 
 .welcome-half::after{
     content:"";
     position:absolute;
-    width:80px;
-    height:80px;
-    top:-45px;
-    right:-45px;
-    border:1px solid rgba(212,175,55,.25);
+    width:105px;
+    height:105px;
+    top:-58px;
+    right:-58px;
+
+    border:1px solid rgba(212,175,55,.26);
     border-radius:50%;
+
     box-shadow:
-        0 0 0 12px rgba(212,175,55,.025),
-        0 0 0 24px rgba(212,175,55,.018);
+        0 0 0 13px rgba(212,175,55,.025),
+        0 0 0 27px rgba(212,175,55,.015);
+
     pointer-events:none;
 }
 
+/* =========================================================
+   WELCOME CONTENT
+========================================================= */
+
 .welcome-content{
     position:relative;
-    z-index:2;
+    z-index:3;
+
     width:100%;
     height:100%;
     max-width:1200px;
+
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:space-evenly;
+
     overflow:hidden;
     padding:4px 0;
 }
 
 /* =========================================================
-   BRAND
+   BRAND KICKER
 ========================================================= */
 
 .brand-kicker{
     margin:0;
+
     color:#d4af37;
+
     font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(9px,2vw,14px);
+    font-size:clamp(8px,2vw,14px);
     font-weight:400;
-    letter-spacing:clamp(3px,1vw,7px);
+
+    letter-spacing:clamp(2.5px,1vw,7px);
     text-transform:uppercase;
-    opacity:.9;
+
+    opacity:.94;
+
+    text-shadow:
+        0 0 14px rgba(212,175,55,.18);
+
+    animation:
+        welcomeFade .9s ease both;
 }
+
+/* =========================================================
+   BRAND NAME
+========================================================= */
 
 .brand-name{
     width:100%;
     margin:0;
+
     color:#fff;
+
     font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(28px,8vw,65px);
+    font-size:clamp(27px,8vw,65px);
     font-weight:700;
-    line-height:1.08;
+
+    line-height:1.04;
     letter-spacing:clamp(1px,.5vw,4px);
+
     text-transform:uppercase;
-    text-shadow:0 2px 25px rgba(0,0,0,.8);
+
+    text-shadow:
+        0 2px 25px rgba(0,0,0,.92),
+        0 0 20px rgba(255,255,255,.025);
+
     flex:0 0 auto;
+
+    animation:
+        brandReveal 1.15s cubic-bezier(.2,.7,.2,1) both;
 }
 
 .brand-name .green{
     color:#1fa463;
+
+    text-shadow:
+        0 0 22px rgba(31,164,99,.16);
 }
 
 .brand-name .gold{
-    color:#D4AF6A;
+    color:#d4af6a;
+
+    text-shadow:
+        0 0 22px rgba(212,175,55,.17);
 }
 
 /* =========================================================
-   GOLD ORNAMENT
+   GOLD DIVIDER
 ========================================================= */
 
 .gold-divider{
     width:clamp(76px,22vw,151px);
     height:1px;
     margin:0;
+
+    position:relative;
+    flex:0 0 auto;
+
     background:
         linear-gradient(
             90deg,
@@ -171,19 +272,29 @@ body{
             #d4af37 75%,
             transparent
         );
-    position:relative;
-    flex:0 0 auto;
+
+    box-shadow:
+        0 0 8px rgba(212,175,55,.28);
+
+    animation:
+        dividerReveal 1.4s ease both;
 }
 
 .gold-divider::before,
 .gold-divider::after{
     content:"";
+
     position:absolute;
     top:50%;
+
     width:6px;
     height:6px;
+
     border:1px solid #d4af37;
-    transform:translateY(-50%) rotate(45deg);
+
+    transform:
+        translateY(-50%)
+        rotate(45deg);
 }
 
 .gold-divider::before{
@@ -195,24 +306,36 @@ body{
 }
 
 /* =========================================================
-   BRAND PROMISE
+   VALUE LINES
 ========================================================= */
 
 .value{
     width:100%;
     margin:0;
+
     color:#f4f1e8;
-    font-size:clamp(12px,3vw,22px);
+
+    font-size:clamp(11px,3vw,22px);
     font-weight:600;
-    line-height:1.15;
+
+    line-height:1.12;
     letter-spacing:clamp(.2px,.15vw,1px);
+
     flex:0 0 auto;
+
+    text-shadow:
+        0 2px 12px rgba(0,0,0,.7);
+
+    animation:
+        contentRise 1s ease both;
 }
 
 .value:first-of-type{
     color:#d4af37;
     font-weight:700;
-    letter-spacing:clamp(.5px,.2vw,1.5px);
+
+    letter-spacing:
+        clamp(.5px,.2vw,1.5px);
 }
 
 /* =========================================================
@@ -224,48 +347,87 @@ body{
     flex-direction:column;
     align-items:center;
     justify-content:center;
+
     gap:3px;
+
     padding:2px 8px;
+
     color:#f5f1e6;
+
     font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(11px,3vw,22px);
+    font-size:clamp(10.5px,3vw,22px);
     font-weight:400;
+
     line-height:1.08;
-    letter-spacing:clamp(.8px,.25vw,2.5px);
+
+    letter-spacing:
+        clamp(.7px,.25vw,2.5px);
+
     text-transform:uppercase;
-    text-shadow:0 2px 12px rgba(212,175,55,.12);
+
+    text-shadow:
+        0 2px 12px rgba(0,0,0,.8),
+        0 0 15px rgba(212,175,55,.08);
 }
 
 .value.luxury-value::before{
     content:"";
+
     width:clamp(31px,9vw,71px);
     height:1px;
+
     margin-bottom:1px;
-    background:linear-gradient(90deg,transparent,#d4af37,transparent);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
+        );
 }
 
 .value.luxury-value .luxury-main{
     display:block;
+
     color:#fff;
+
     font-weight:600;
-    letter-spacing:clamp(.7px,.22vw,2px);
+
+    letter-spacing:
+        clamp(.7px,.22vw,2px);
 }
 
 .value.luxury-value .luxury-sub{
     display:block;
+
     color:#d4af37;
+
     font-size:1em;
     font-weight:400;
-    letter-spacing:clamp(1px,.3vw,3px);
+
+    letter-spacing:
+        clamp(1px,.3vw,3px);
+
     text-transform:uppercase;
 }
 
 .value.luxury-value::after{
     content:"";
+
     width:clamp(46px,13vw,96px);
     height:1px;
+
     margin-top:1px;
-    background:linear-gradient(90deg,transparent,#d4af37,transparent);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
+        );
+
     opacity:.55;
 }
 
@@ -276,13 +438,22 @@ body{
 .services-title{
     width:100%;
     margin:0;
+
     color:#fff;
+
     font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(12px,3vw,23px);
+    font-size:clamp(11px,3vw,23px);
     font-weight:700;
+
     line-height:1.1;
-    letter-spacing:clamp(.8px,.25vw,2px);
+
+    letter-spacing:
+        clamp(.8px,.25vw,2px);
+
     text-transform:uppercase;
+
+    text-shadow:
+        0 2px 12px rgba(0,0,0,.85);
 }
 
 /* =========================================================
@@ -292,24 +463,42 @@ body{
 .document-people-window{
     width:100%;
     overflow:hidden;
+
     margin:0;
     padding:2px 0;
+
     flex:0 0 auto;
+
+    border-top:1px solid rgba(212,175,55,.08);
+    border-bottom:1px solid rgba(212,175,55,.08);
 }
 
 .document-people-track{
     display:inline-flex;
     align-items:center;
+
     flex-wrap:nowrap;
+
     width:max-content;
+
     white-space:nowrap;
-    color:#D4AF6A;
+
+    color:#d4af6a;
+
     font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(12px,3vw,23px);
+    font-size:clamp(11px,3vw,23px);
     font-weight:700;
-    letter-spacing:clamp(1px,.35vw,3px);
-    animation:documentPeopleMove 22s linear infinite;
+
+    letter-spacing:
+        clamp(1px,.35vw,3px);
+
+    animation:
+        documentPeopleMove 22s linear infinite;
+
     will-change:transform;
+
+    text-shadow:
+        0 0 13px rgba(212,175,55,.12);
 }
 
 .document-people-track .tagline-text{
@@ -320,9 +509,12 @@ body{
 
 .document-people-track .wide-gap{
     display:inline-block;
+
     width:360px;
     min-width:360px;
+
     height:1px;
+
     flex:0 0 360px;
 }
 
@@ -332,44 +524,66 @@ body{
     }
 
     100%{
-        transform:translateX(calc(-100% - 100vw));
+        transform:
+            translateX(
+                calc(-100% - 100vw)
+            );
     }
 }
 
 /* =========================================================
-   SERVICES SECTION
+   SERVICES HALF
 ========================================================= */
 
 .services-half{
     width:100%;
     height:50%;
     flex:0 0 50%;
+
     display:flex;
     flex-direction:column;
+
     overflow:hidden;
+
     padding-top:5px;
 }
 
 /* =========================================================
-   IMPORTANT SERVICE INSTRUCTION
+   SERVICE INSTRUCTION
 ========================================================= */
 
 .service-instruction{
     width:100%;
+
     flex:0 0 auto;
+
     margin:0 0 5px;
+
     padding:5px 8px 7px;
-    color:#FFFDF5;
+
+    color:#fffdf5;
+
     font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(12px,3vw,20px);
+    font-size:clamp(11px,3vw,20px);
     font-weight:700;
+
     line-height:1.15;
+
     text-align:center;
-    letter-spacing:clamp(.4px,.16vw,1.2px);
+
+    letter-spacing:
+        clamp(.4px,.16vw,1.2px);
+
     text-transform:uppercase;
-    text-shadow:0 1px 8px rgba(212,175,106,.30);
-    border-top:1px solid rgba(212,175,106,.70);
-    border-bottom:1px solid rgba(212,175,106,.45);
+
+    text-shadow:
+        0 1px 10px rgba(212,175,106,.22);
+
+    border-top:
+        1px solid rgba(212,175,106,.70);
+
+    border-bottom:
+        1px solid rgba(212,175,106,.45);
 }
 
 /* =========================================================
@@ -378,13 +592,22 @@ body{
 
 .services{
     width:100%;
+
     flex:1 1 auto;
     min-height:0;
+
     display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    grid-template-rows:repeat(10,minmax(0,1fr));
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    grid-template-rows:
+        repeat(10,minmax(0,1fr));
+
     gap:4px;
+
     overflow:hidden;
+
     padding:1px 1px 0;
 }
 
@@ -394,33 +617,53 @@ body{
 
 .service-button{
     position:relative;
+
     width:100%;
     min-width:0;
     min-height:0;
+
     padding:3px 5px;
+
     background:
         linear-gradient(
             145deg,
-            rgba(255,255,255,.035),
-            rgba(255,255,255,.008)
+            rgba(14,18,16,.91),
+            rgba(3,6,5,.80)
         );
+
     color:#f4f2eb;
-    border:1px solid rgba(255,255,255,.055);
+
+    border:
+        1px solid rgba(255,255,255,.075);
+
     border-radius:5px;
+
     font-family:Arial,Helvetica,sans-serif;
     font-size:clamp(10px,2.5vw,17px);
     font-weight:700;
+
     line-height:1.02;
-    letter-spacing:clamp(.05px,.08vw,.5px);
+
+    letter-spacing:
+        clamp(.05px,.08vw,.5px);
+
     text-align:center;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     white-space:normal;
+
     overflow:hidden;
+
     cursor:pointer;
-    -webkit-tap-highlight-color:transparent;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.035),
+        inset 0 -1px 0 rgba(0,0,0,.35),
+        0 2px 5px rgba(0,0,0,.24);
+
     transition:
         color .18s ease,
         background .18s ease,
@@ -431,11 +674,15 @@ body{
 
 .service-button::after{
     content:"";
+
     position:absolute;
+
     left:25%;
     right:25%;
     bottom:1px;
+
     height:1px;
+
     background:
         linear-gradient(
             90deg,
@@ -443,21 +690,34 @@ body{
             #d4af37,
             transparent
         );
+
     opacity:.65;
+
     pointer-events:none;
-    transition:left .18s ease,right .18s ease,opacity .18s ease;
+
+    transition:
+        left .18s ease,
+        right .18s ease,
+        opacity .18s ease;
 }
 
 .service-button:hover{
     color:#d4af37;
+
     background:
         linear-gradient(
             145deg,
-            rgba(212,175,55,.09),
-            rgba(31,164,99,.035)
+            rgba(212,175,55,.105),
+            rgba(31,164,99,.055)
         );
-    border-color:rgba(212,175,55,.28);
-    box-shadow:0 0 15px rgba(212,175,55,.06);
+
+    border-color:
+        rgba(212,175,55,.35);
+
+    box-shadow:
+        0 0 17px rgba(212,175,55,.08),
+        inset 0 1px 0 rgba(255,255,255,.045);
+
     transform:translateY(-1px);
 }
 
@@ -474,8 +734,15 @@ body{
 
 .service-button.working{
     color:#d4af37;
-    border-color:rgba(212,175,55,.55);
-    background:rgba(212,175,55,.06);
+
+    border-color:
+        rgba(212,175,55,.55);
+
+    background:
+        rgba(212,175,55,.075);
+
+    box-shadow:
+        0 0 15px rgba(212,175,55,.09);
 }
 
 .service-button:disabled{
@@ -490,37 +757,53 @@ body{
 .luxury-tagline{
     grid-column:1 / -1;
     grid-row:10;
+
     position:relative;
+
     width:100%;
     min-width:0;
+
     padding:2px 6px;
+
     color:#d4af37;
+
     font-family:Georgia,"Times New Roman",serif;
     font-size:clamp(8px,2.1vw,17px);
     font-weight:700;
+
     line-height:1.05;
-    letter-spacing:clamp(.3px,.15vw,1.4px);
+
+    letter-spacing:
+        clamp(.3px,.15vw,1.4px);
+
     text-align:center;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     white-space:nowrap;
     overflow:hidden;
+
     text-transform:uppercase;
 }
 
 .luxury-tagline::before,
 .luxury-tagline::after{
     content:"";
+
     height:1px;
+
     flex:1 1 auto;
     min-width:8px;
+
     background:
         linear-gradient(
             90deg,
             transparent,
             #d4af37
         );
+
     opacity:.65;
 }
 
@@ -536,17 +819,78 @@ body{
 .luxury-tagline .brand-signature{
     flex:0 1 auto;
     min-width:0;
+
     padding:0 8px;
 }
 
 .luxury-tagline .brand-main{
     font-weight:800;
-    letter-spacing:clamp(.4px,.18vw,1.8px);
+
+    letter-spacing:
+        clamp(.4px,.18vw,1.8px);
 }
 
 .luxury-tagline .brand-sub{
     font-weight:400;
-    letter-spacing:clamp(.3px,.15vw,1.3px);
+
+    letter-spacing:
+        clamp(.3px,.15vw,1.3px);
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes welcomeFade{
+    from{
+        opacity:0;
+        transform:translateY(7px);
+    }
+
+    to{
+        opacity:.94;
+        transform:translateY(0);
+    }
+}
+
+@keyframes brandReveal{
+    from{
+        opacity:0;
+        transform:
+            translateY(13px)
+            scale(.985);
+    }
+
+    to{
+        opacity:1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+@keyframes dividerReveal{
+    from{
+        opacity:0;
+        transform:scaleX(.25);
+    }
+
+    to{
+        opacity:1;
+        transform:scaleX(1);
+    }
+}
+
+@keyframes contentRise{
+    from{
+        opacity:0;
+        transform:translateY(7px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
 /* =========================================================
@@ -758,210 +1102,237 @@ body{
         font-size:clamp(13px,1.8vw,17px);
     }
 }
-</style>
-</head>
 
-<body>
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
 
-<div class="page">
+@media(prefers-reduced-motion:reduce){
 
-    <section class="welcome-half">
+    *,
+    *::before,
+    *::after{
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        scroll-behavior:auto !important;
+    }
 
-        <div class="welcome-content">
+    #fireworksCanvas{
+        display:none;
+    }
+}
+</style></head><body><canvas id="fireworksCanvas"></canvas>
 
-            <div class="brand-kicker">
-                YOUR DIGITAL DOCUMENT CONCIERGE
-            </div>
+<div class="night-overlay"></div><div class="page"><!-- =====================================================
+     PREMIUM WELCOME AREA
+====================================================== -->
 
-            <h1 class="brand-name">
-                <span class="green">NAIJA POCKET</span>
-                <br>
-                BUSINESS
-                <span class="gold">CENTER</span>
-            </h1>
+<section class="welcome-half">
 
-            <div class="gold-divider"></div>
+    <div class="welcome-content">
 
-            <div class="value">
-                FAST • CONVENIENT • OPEN 24/7
-            </div>
+        <div class="brand-kicker">
+            YOUR DIGITAL DOCUMENT CONCIERGE
+        </div>
 
-            <div class="value">
-                PREPARE YOUR DOCUMENTS IN MINUTES
-            </div>
+        <h1 class="brand-name">
+            <span class="green">NAIJA POCKET</span>
+            <br>
+            BUSINESS
+            <span class="gold">CENTER</span>
+        </h1>
 
-            <div class="value luxury-value">
-                <span class="luxury-main">
-                    DO EVERYTHING CONCERNING YOUR DOCUMENTS
+        <div class="gold-divider"></div>
+
+        <div class="value">
+            FAST • CONVENIENT • OPEN 24/7
+        </div>
+
+        <div class="value">
+            PREPARE YOUR DOCUMENTS IN MINUTES
+        </div>
+
+        <div class="value luxury-value">
+
+            <span class="luxury-main">
+                DO EVERYTHING CONCERNING YOUR DOCUMENTS
+            </span>
+
+            <span class="luxury-sub">
+                FROM YOUR PHONE, WHEREVER YOU ARE
+            </span>
+
+        </div>
+
+        <div class="services-title">
+            ENJOY THE BEST IN DOCUMENT PROCESSING
+        </div>
+
+        <div class="document-people-window">
+
+            <div class="document-people-track">
+
+                <span class="tagline-text">
+                    PREPARE YOUR DOCUMENTS IN MINUTES
                 </span>
 
-                <span class="luxury-sub">
-                    FROM YOUR PHONE, WHEREVER YOU ARE
-                </span>
-            </div>
-
-            <div class="services-title">
-                ENJOY THE BEST IN DOCUMENT PROCESSING
-            </div>
-
-            <div class="document-people-window">
-
-                <div class="document-people-track">
-
-                    <span class="tagline-text">
-                        PREPARE YOUR DOCUMENTS IN MINUTES
-                    </span>
-
-                    <span class="wide-gap"></span>
-
-                </div>
+                <span class="wide-gap"></span>
 
             </div>
 
         </div>
 
-    </section>
+    </div>
 
-    <section class="services-half">
+</section>
 
-        <div class="service-instruction">
-            TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
-        </div>
+<!-- =====================================================
+     SERVICES
+====================================================== -->
 
-        <div class="services">
+<section class="services-half">
 
-            <button type="button" class="service-button" data-service="Document Typing">
-                Document Typing
-            </button>
+    <div class="service-instruction">
+        TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
+    </div>
 
-            <button type="button" class="service-button" data-service="Document Formatting">
-                Document Formatting
-            </button>
+    <div class="services">
 
-            <button type="button" class="service-button" data-service="Document Editing">
-                Document Editing
-            </button>
+        <button type="button" class="service-button" data-service="Document Typing">
+            Document Typing
+        </button>
 
-            <button type="button" class="service-button" data-service="Grammar Correction">
-                Grammar Correction
-            </button>
+        <button type="button" class="service-button" data-service="Document Formatting">
+            Document Formatting
+        </button>
 
-            <button type="button" class="service-button" data-service="Assignments">
-                Assignments
-            </button>
+        <button type="button" class="service-button" data-service="Document Editing">
+            Document Editing
+        </button>
 
-            <button type="button" class="service-button" data-service="Projects">
-                Projects
-            </button>
+        <button type="button" class="service-button" data-service="Grammar Correction">
+            Grammar Correction
+        </button>
 
-            <button type="button" class="service-button" data-service="Research Assistance">
-                Research Assistance
-            </button>
+        <button type="button" class="service-button" data-service="Assignments">
+            Assignments
+        </button>
 
-            <button type="button" class="service-button" data-service="Seminar Papers">
-                Seminar Papers
-            </button>
+        <button type="button" class="service-button" data-service="Projects">
+            Projects
+        </button>
 
-            <button type="button" class="service-button" data-service="CVs & Résumés">
-                CVs & Résumés
-            </button>
+        <button type="button" class="service-button" data-service="Research Assistance">
+            Research Assistance
+        </button>
 
-            <button type="button" class="service-button" data-service="Cover Letters">
-                Cover Letters
-            </button>
+        <button type="button" class="service-button" data-service="Seminar Papers">
+            Seminar Papers
+        </button>
 
-            <button type="button" class="service-button" data-service="Business Proposals">
-                Business Proposals
-            </button>
+        <button type="button" class="service-button" data-service="CVs & Résumés">
+            CVs & Résumés
+        </button>
 
-            <button type="button" class="service-button" data-service="Company Profiles">
-                Company Profiles
-            </button>
+        <button type="button" class="service-button" data-service="Cover Letters">
+            Cover Letters
+        </button>
 
-            <button type="button" class="service-button" data-service="Invoices">
-                Invoices
-            </button>
+        <button type="button" class="service-button" data-service="Business Proposals">
+            Business Proposals
+        </button>
 
-            <button type="button" class="service-button" data-service="Quotations">
-                Quotations
-            </button>
+        <button type="button" class="service-button" data-service="Company Profiles">
+            Company Profiles
+        </button>
 
-            <button type="button" class="service-button" data-service="Meeting Minutes">
-                Meeting Minutes
-            </button>
+        <button type="button" class="service-button" data-service="Invoices">
+            Invoices
+        </button>
 
-            <button type="button" class="service-button" data-service="AI Writing Assistance">
-                AI Writing Assistance
-            </button>
+        <button type="button" class="service-button" data-service="Quotations">
+            Quotations
+        </button>
 
-            <button type="button" class="service-button" data-service="Document Rewriting">
-                Document Rewriting
-            </button>
+        <button type="button" class="service-button" data-service="Meeting Minutes">
+            Meeting Minutes
+        </button>
 
-            <button type="button" class="service-button" data-service="Translation">
-                Translation
-            </button>
+        <button type="button" class="service-button" data-service="AI Writing Assistance">
+            AI Writing Assistance
+        </button>
 
-            <button type="button" class="service-button" data-service="PDF Conversion">
-                PDF Conversion
-            </button>
+        <button type="button" class="service-button" data-service="Document Rewriting">
+            Document Rewriting
+        </button>
 
-            <button type="button" class="service-button" data-service="Topic Explanations">
-                Topic Explanations
-            </button>
+        <button type="button" class="service-button" data-service="Translation">
+            Translation
+        </button>
 
-            <button type="button" class="service-button" data-service="Printing Preparation">
-                Printing Preparation
-            </button>
+        <button type="button" class="service-button" data-service="PDF Conversion">
+            PDF Conversion
+        </button>
 
-            <button type="button" class="service-button" data-service="Excel Spreadsheets">
-                Excel Spreadsheets
-            </button>
+        <button type="button" class="service-button" data-service="Topic Explanations">
+            Topic Explanations
+        </button>
 
-            <button type="button" class="service-button" data-service="Data Entry">
-                Data Entry
-            </button>
+        <button type="button" class="service-button" data-service="Printing Preparation">
+            Printing Preparation
+        </button>
 
-            <button type="button" class="service-button" data-service="Data Analysis">
-                Data Analysis
-            </button>
+        <button type="button" class="service-button" data-service="Excel Spreadsheets">
+            Excel Spreadsheets
+        </button>
 
-            <button type="button" class="service-button" data-service="Presentations">
-                Presentations
-            </button>
+        <button type="button" class="service-button" data-service="Data Entry">
+            Data Entry
+        </button>
 
-            <button type="button" class="service-button" data-service="Document Summarization">
-                Document Summarization
-            </button>
+        <button type="button" class="service-button" data-service="Data Analysis">
+            Data Analysis
+        </button>
 
-            <button type="button" class="service-button" data-service="Business Letters & Letterhead">
-                Business Letters & Letterhead
-            </button>
+        <button type="button" class="service-button" data-service="Presentations">
+            Presentations
+        </button>
 
-            <div class="luxury-tagline">
+        <button type="button" class="service-button" data-service="Document Summarization">
+            Document Summarization
+        </button>
 
-                <span class="brand-signature">
+        <button type="button" class="service-button" data-service="Business Letters & Letterhead">
+            Business Letters & Letterhead
+        </button>
 
-                    <span class="brand-main">
-                        NAIJA POCKET BUSINESS CENTER
-                    </span>
+        <div class="luxury-tagline">
 
-                    <span class="brand-sub">
-                        — YOUR BUSINESS CENTER IN YOUR POCKET —
-                    </span>
+            <span class="brand-signature">
 
+                <span class="brand-main">
+                    NAIJA POCKET BUSINESS CENTER
                 </span>
 
-            </div>
+                <span class="brand-sub">
+                    — YOUR BUSINESS CENTER IN YOUR POCKET —
+                </span>
+
+            </span>
 
         </div>
 
-    </section>
+    </div>
 
-</div>
+</section>
 
-<script>
+</div><script>
 "use strict";
+
+/* =========================================================
+   EXISTING SERVICE NAVIGATION
+   PRESERVED
+========================================================= */
 
 const serviceButtons =
     document.querySelectorAll(".service-button");
@@ -1071,8 +1442,10 @@ serviceButtons.forEach(function(button){
                 service,
                 button
             );
+
         }
     );
+
 });
 
 releaseServiceButtons();
@@ -1101,7 +1474,755 @@ document.addEventListener(
 
     }
 );
-</script>
 
-</body>
+
+/* =========================================================
+   LIGHTWEIGHT LIVE FIREWORKS ENGINE
+========================================================= */
+
+(function(){
+
+    const canvas =
+        document.getElementById(
+            "fireworksCanvas"
+        );
+
+    if(!canvas){
+
+        return;
+    }
+
+    const ctx =
+        canvas.getContext(
+            "2d",
+            {
+                alpha:true
+            }
+        );
+
+    if(!ctx){
+
+        return;
+    }
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+
+    let fireworks = [];
+    let particles = [];
+    let stars = [];
+
+    let lastTime = 0;
+    let launchTimer = 0;
+
+    let animationFrame = null;
+
+    const isSmallScreen =
+        window.innerWidth <= 430;
+
+    const MAX_FIREWORKS =
+        isSmallScreen ? 4 : 6;
+
+    const MAX_PARTICLES =
+        isSmallScreen ? 280 : 480;
+
+    function resize(){
+
+        dpr =
+            Math.min(
+                window.devicePixelRatio || 1,
+                1.5
+            );
+
+        width =
+            window.innerWidth;
+
+        height =
+            window.innerHeight;
+
+        canvas.width =
+            Math.floor(width * dpr);
+
+        canvas.height =
+            Math.floor(height * dpr);
+
+        canvas.style.width =
+            width + "px";
+
+        canvas.style.height =
+            height + "px";
+
+        ctx.setTransform(
+            dpr,
+            0,
+            0,
+            dpr,
+            0,
+            0
+        );
+
+        createStars();
+    }
+
+    function random(min,max){
+
+        return (
+            Math.random() *
+            (max - min)
+        ) + min;
+    }
+
+    function createStars(){
+
+        stars = [];
+
+        const count =
+            width <= 430 ? 28 : 50;
+
+        for(
+            let i = 0;
+            i < count;
+            i++
+        ){
+
+            stars.push({
+
+                x:random(0,width),
+
+                y:random(
+                    0,
+                    height * .72
+                ),
+
+                radius:random(.25,.9),
+
+                alpha:random(.12,.45),
+
+                phase:random(0,Math.PI * 2),
+
+                speed:random(.0007,.0018)
+
+            });
+
+        }
+    }
+
+    class Firework{
+
+        constructor(){
+
+            this.x =
+                random(
+                    width * .15,
+                    width * .85
+                );
+
+            this.y =
+                height + random(5,25);
+
+            this.targetY =
+                random(
+                    height * .10,
+                    height * .47
+                );
+
+            this.speed =
+                random(
+                    4.2,
+                    6.8
+                );
+
+            this.acceleration =
+                .045;
+
+            this.trail = [];
+
+            this.hue =
+                Math.random() < .78
+                ? "gold"
+                : "green";
+
+            this.alive = true;
+        }
+
+        update(){
+
+            this.trail.push({
+                x:this.x,
+                y:this.y
+            });
+
+            if(this.trail.length > 7){
+
+                this.trail.shift();
+
+            }
+
+            this.speed -=
+                this.acceleration;
+
+            this.y -=
+                this.speed;
+
+            if(
+                this.y <=
+                this.targetY
+            ){
+
+                this.explode();
+
+                this.alive = false;
+
+            }
+
+        }
+
+        draw(){
+
+            ctx.save();
+
+            ctx.lineWidth = 1.3;
+
+            ctx.lineCap = "round";
+
+            for(
+                let i = 1;
+                i < this.trail.length;
+                i++
+            ){
+
+                const p =
+                    this.trail[i - 1];
+
+                const q =
+                    this.trail[i];
+
+                const alpha =
+                    i /
+                    this.trail.length;
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    p.x,
+                    p.y
+                );
+
+                ctx.lineTo(
+                    q.x,
+                    q.y
+                );
+
+                ctx.strokeStyle =
+                    this.hue === "gold"
+                    ? "rgba(244,216,120," +
+                      (alpha * .48) +
+                      ")"
+                    : "rgba(31,164,99," +
+                      (alpha * .38) +
+                      ")";
+
+                ctx.stroke();
+
+            }
+
+            ctx.beginPath();
+
+            ctx.arc(
+                this.x,
+                this.y,
+                1.7,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle =
+                this.hue === "gold"
+                ? "rgba(255,225,130,.95)"
+                : "rgba(80,210,135,.9)";
+
+            ctx.shadowBlur = 9;
+
+            ctx.shadowColor =
+                this.hue === "gold"
+                ? "rgba(212,175,55,.9)"
+                : "rgba(31,164,99,.8)";
+
+            ctx.fill();
+
+            ctx.restore();
+
+        }
+
+        explode(){
+
+            const particleCount =
+                isSmallScreen
+                ? Math.floor(random(30,44))
+                : Math.floor(random(42,68));
+
+            for(
+                let i = 0;
+                i < particleCount;
+                i++
+            ){
+
+                if(
+                    particles.length >=
+                    MAX_PARTICLES
+                ){
+
+                    break;
+                }
+
+                const angle =
+                    (
+                        Math.PI * 2 *
+                        i /
+                        particleCount
+                    ) +
+                    random(-.08,.08);
+
+                const speed =
+                    random(
+                        1.25,
+                        4.2
+                    );
+
+                particles.push(
+                    new Particle(
+                        this.x,
+                        this.y,
+                        Math.cos(angle) * speed,
+                        Math.sin(angle) * speed,
+                        this.hue
+                    )
+                );
+
+            }
+
+            /* small secondary glitter */
+
+            const glitterCount =
+                isSmallScreen ? 7 : 11;
+
+            for(
+                let i = 0;
+                i < glitterCount;
+                i++
+            ){
+
+                if(
+                    particles.length >=
+                    MAX_PARTICLES
+                ){
+
+                    break;
+                }
+
+                particles.push(
+                    new Particle(
+                        this.x,
+                        this.y,
+                        random(-2.2,2.2),
+                        random(-2.2,2.2),
+                        "glitter",
+                        true
+                    )
+                );
+
+            }
+
+        }
+
+    }
+
+    class Particle{
+
+        constructor(
+            x,
+            y,
+            vx,
+            vy,
+            hue,
+            glitter
+        ){
+
+            this.x = x;
+            this.y = y;
+
+            this.vx = vx;
+            this.vy = vy;
+
+            this.gravity =
+                glitter ? .018 : .028;
+
+            this.friction =
+                glitter ? .986 : .978;
+
+            this.life =
+                glitter
+                ? random(24,44)
+                : random(38,68);
+
+            this.maxLife =
+                this.life;
+
+            this.hue = hue;
+
+            this.glitter =
+                !!glitter;
+
+            this.size =
+                glitter
+                ? random(.45,1.1)
+                : random(.7,1.5);
+        }
+
+        update(){
+
+            this.vx *=
+                this.friction;
+
+            this.vy *=
+                this.friction;
+
+            this.vy +=
+                this.gravity;
+
+            this.x +=
+                this.vx;
+
+            this.y +=
+                this.vy;
+
+            this.life--;
+
+            return this.life > 0;
+
+        }
+
+        draw(){
+
+            const alpha =
+                Math.max(
+                    0,
+                    this.life /
+                    this.maxLife
+                );
+
+            let fill;
+
+            if(
+                this.hue ===
+                "green"
+            ){
+
+                fill =
+                    "rgba(55,190,115," +
+                    alpha +
+                    ")";
+
+            }
+            else if(
+                this.hue ===
+                "glitter"
+            ){
+
+                fill =
+                    "rgba(255,246,200," +
+                    alpha +
+                    ")";
+
+            }
+            else{
+
+                fill =
+                    "rgba(245,210,105," +
+                    alpha +
+                    ")";
+
+            }
+
+            ctx.save();
+
+            ctx.beginPath();
+
+            ctx.arc(
+                this.x,
+                this.y,
+                this.size,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle = fill;
+
+            ctx.shadowBlur =
+                this.glitter ? 5 : 7;
+
+            ctx.shadowColor =
+                fill;
+
+            ctx.fill();
+
+            ctx.restore();
+
+        }
+
+    }
+
+    function launch(){
+
+        if(
+            fireworks.length >=
+            MAX_FIREWORKS
+        ){
+
+            return;
+        }
+
+        fireworks.push(
+            new Firework()
+        );
+
+    }
+
+    function drawStars(time){
+
+        for(
+            let i = 0;
+            i < stars.length;
+            i++
+        ){
+
+            const star =
+                stars[i];
+
+            const pulse =
+                (
+                    Math.sin(
+                        time *
+                        star.speed +
+                        star.phase
+                    ) + 1
+                ) / 2;
+
+            const alpha =
+                star.alpha *
+                (.55 + pulse * .45);
+
+            ctx.beginPath();
+
+            ctx.arc(
+                star.x,
+                star.y,
+                star.radius,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle =
+                "rgba(255,238,175," +
+                alpha +
+                ")";
+
+            ctx.fill();
+
+        }
+
+    }
+
+    function animate(time){
+
+        if(!lastTime){
+
+            lastTime = time;
+
+        }
+
+        const elapsed =
+            time - lastTime;
+
+        lastTime = time;
+
+        ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+        drawStars(time);
+
+        launchTimer += elapsed;
+
+        const launchDelay =
+            isSmallScreen
+            ? 1250
+            : 950;
+
+        if(
+            launchTimer >=
+            launchDelay
+        ){
+
+            launchTimer = 0;
+
+            launch();
+
+            if(
+                Math.random() < .22 &&
+                fireworks.length <
+                MAX_FIREWORKS
+            ){
+
+                setTimeout(
+                    launch,
+                    random(180,380)
+                );
+
+            }
+
+        }
+
+        for(
+            let i = fireworks.length - 1;
+            i >= 0;
+            i--
+        ){
+
+            const firework =
+                fireworks[i];
+
+            firework.update();
+            firework.draw();
+
+            if(
+                !firework.alive
+            ){
+
+                fireworks.splice(
+                    i,
+                    1
+                );
+
+            }
+
+        }
+
+        for(
+            let i = particles.length - 1;
+            i >= 0;
+            i--
+        ){
+
+            const particle =
+                particles[i];
+
+            if(
+                !particle.update()
+            ){
+
+                particles.splice(
+                    i,
+                    1
+                );
+
+                continue;
+            }
+
+            particle.draw();
+
+        }
+
+        animationFrame =
+            requestAnimationFrame(
+                animate
+            );
+
+    }
+
+    function start(){
+
+        resize();
+
+        /*
+         * A few initial launches create
+         * an active sky immediately.
+         */
+
+        launch();
+
+        setTimeout(
+            launch,
+            500
+        );
+
+        setTimeout(
+            launch,
+            950
+        );
+
+        animationFrame =
+            requestAnimationFrame(
+                animate
+            );
+
+    }
+
+    window.addEventListener(
+        "resize",
+        resize,
+        {
+            passive:true
+        }
+    );
+
+    document.addEventListener(
+        "visibilitychange",
+        function(){
+
+            if(
+                document.hidden
+            ){
+
+                if(
+                    animationFrame
+                ){
+
+                    cancelAnimationFrame(
+                        animationFrame
+                    );
+
+                    animationFrame = null;
+
+                }
+
+            }
+            else{
+
+                lastTime = 0;
+
+                if(
+                    !animationFrame
+                ){
+
+                    animationFrame =
+                        requestAnimationFrame(
+                            animate
+                        );
+
+                }
+
+            }
+
+        }
+    );
+
+    start();
+
+})();
+</script></body>
 </html>
