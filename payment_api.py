@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import hmac
-import io
 import json
 import os
 import sqlite3
 import urllib.error
+import urllib.parse
 import urllib.request
 import uuid
 import zipfile
@@ -20,45 +19,39 @@ from fastapi.responses import FileResponse, JSONResponse
 
 
 # ============================================================
-# Naija Pocket Business Center
+# NAIJA POCKET BUSINESS CENTER
 # payment_api.py
 #
-# COMPLETE REPLACEMENT
-#
-# This file handles:
-#   - Payment creation
-#   - Customer payment reporting
-#   - Payment status
-#   - Customer Care verification
-#   - Verified document download
-#   - Back Office job synchronization
+# PAYMENT + DOWNLOAD + BACK OFFICE DATABASE SYNC
 #
 # IMPORTANT:
-#   The document/intelligence API remains separate.
-#   This file does NOT generate documents.
+# - Does NOT handle /api/chat.
+# - Does NOT generate documents.
+# - Does NOT modify workspace.html.
+# - Does NOT modify review.html.
+# - Keeps payment verification required before download.
 #
-# BACK OFFICE FIX:
-#   A reported payment is now exposed through:
-#
-#       GET /api/back-office/jobs
-#
-#   as:
-#
-#       Payment Reported — Awaiting Verification
-#
-#   It does NOT unlock download.
-#   Customer Care verification is still required.
+# Main purpose of this version:
+# Make the Back Office read the actual persistent business
+# database and payment database instead of depending on one
+# incomplete data source.
 # ============================================================
 
-
-APP_VERSION = "payment-download-v2-backoffice-sync"
+APP_VERSION = "payment-download-v8-business-db-backoffice"
 
 BASE_DIR = Path(__file__).resolve().parent
 
-DB_PATH = Path(
+PAYMENT_DB_PATH = Path(
     os.getenv(
         "PAYMENT_DB_PATH",
         str(BASE_DIR / "payment_gateway.db"),
+    )
+)
+
+MAIN_DB_PATH = Path(
+    os.getenv(
+        "DATABASE_PATH",
+        str(BASE_DIR / "naija_pocket_business.db"),
     )
 )
 
@@ -75,37 +68,30 @@ DOWNLOAD_DIR.mkdir(
 )
 
 
-# ============================================================
-# EXISTING DOCUMENT API BRIDGE
-# ============================================================
-
-OLD_API_BASE_URL = (
-    os.getenv("OLD_API_BASE_URL", "")
-    .strip()
-    .rstrip("/")
+# Existing document/review API.
+# The payment API only reads from it when necessary.
+DOCUMENT_API_BASE_URL = (
+    os.getenv("DOCUMENT_API_BASE_URL", "").strip().rstrip("/")
+    or os.getenv("OLD_API_BASE_URL", "").strip().rstrip("/")
 )
 
-INTERNAL_API_KEY = (
-    os.getenv("INTERNAL_API_KEY", "")
-    .strip()
-)
+INTERNAL_API_KEY = os.getenv(
+    "INTERNAL_API_KEY",
+    "",
+).strip()
 
 
-# ============================================================
-# BACK OFFICE OPERATOR KEY
-# ============================================================
-
+# Back-office activation key.
+# GET /api/back-office/jobs does NOT require this key because
+# workspace.html does not send one for that GET request.
 BACK_OFFICE_KEY = (
-    os.getenv("BACK_OFFICE_KEY", "").strip()
-    or os.getenv("BACK_OFFICE_OPERATOR_KEY", "").strip()
-    or os.getenv("OPERATOR_KEY", "").strip()
+    os.getenv("BACK_OFFICE_ADMIN_KEY", "").strip()
+    or os.getenv("BACK_OFFICE_KEY", "").strip()
     or os.getenv("ADMIN_KEY", "").strip()
-    or INTERNAL_API_KEY
 )
 
 
 DEFAULT_CURRENCY = "NGN"
-
 DEFAULT_PAYMENT_METHOD = "bank_transfer"
 
 
@@ -117,7 +103,6 @@ app = FastAPI(
     title="Naija Pocket Business Center Payment API",
     version=APP_VERSION,
 )
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -139,7 +124,6 @@ def now_iso() -> str:
 def clean(value: Any) -> str:
     if value is None:
         return ""
-
     return str(value).strip()
 
 
@@ -150,16 +134,52 @@ def money(value: Any) -> float:
         return 0.0
 
 
-def json_response_error(
+def normalize_status(value: Any) -> str:
+    return (
+        clean(value)
+        .lower()
+        .replace("-", "_")
+        .replace(" ", "_")
+    )
+
+
+def payment_is_verified(status: Any) -> bool:
+    return normalize_status(status) in {
+        "verified",
+        "completed",
+        "complete",
+        "paid",
+        "payment_confirmed",
+    }
+
+
+def payment_is_reported(status: Any) -> bool:
+    return normalize_status(status) in {
+        "reported",
+        "verification_pending",
+        "awaiting_verification",
+    }
+
+
+def payment_is_pending(status: Any) -> bool:
+    return normalize_status(status) in {
+        "pending",
+        "created",
+        "initiated",
+        "reported",
+        "verification_pending",
+        "awaiting_verification",
+    }
+
+
+def json_error(
     code: str,
     message: str,
     status_code: int = 400,
     **extra: Any,
 ) -> JSONResponse:
-
     payload = {
         "ok": False,
-        "success": False,
         "error": code,
         "message": message,
     }
@@ -172,56 +192,18 @@ def json_response_error(
     )
 
 
-def normalize_status(status: Any) -> str:
-    return (
-        clean(status)
-        .lower()
-        .replace("-", "_")
-        .replace(" ", "_")
-    )
-
-
-def payment_is_reported(status: str) -> bool:
-    return normalize_status(status) in {
-        "reported",
-        "verification_pending",
-        "awaiting_verification",
-    }
-
-
-def payment_is_verified(status: str) -> bool:
-    return normalize_status(status) in {
-        "verified",
-        "completed",
-        "complete",
-        "paid",
-    }
-
-
-def payment_is_pending(status: str) -> bool:
-    return normalize_status(status) in {
-        "pending",
-        "created",
-        "initiated",
-        "reported",
-        "verification_pending",
-        "awaiting_verification",
-    }
-
-
 # ============================================================
-# SQLITE PAYMENT STORE
+# DATABASE CONNECTIONS
 # ============================================================
 
-def connect_db() -> sqlite3.Connection:
-
-    DB_PATH.parent.mkdir(
+def connect_payment_db() -> sqlite3.Connection:
+    PAYMENT_DB_PATH.parent.mkdir(
         parents=True,
         exist_ok=True,
     )
 
     conn = sqlite3.connect(
-        str(DB_PATH)
+        str(PAYMENT_DB_PATH)
     )
 
     conn.row_factory = sqlite3.Row
@@ -229,9 +211,27 @@ def connect_db() -> sqlite3.Connection:
     return conn
 
 
-def init_db() -> None:
+def connect_main_db() -> sqlite3.Connection:
+    MAIN_DB_PATH.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
-    with connect_db() as conn:
+    conn = sqlite3.connect(
+        str(MAIN_DB_PATH)
+    )
+
+    conn.row_factory = sqlite3.Row
+
+    return conn
+
+
+# ============================================================
+# PAYMENT DATABASE INITIALIZATION
+# ============================================================
+
+def init_db() -> None:
+    with connect_payment_db() as conn:
 
         conn.execute(
             """
@@ -297,43 +297,14 @@ def init_db() -> None:
             """
         )
 
-        # ----------------------------------------------------
-        # Back Office activation fields.
-        #
-        # Added with ALTER TABLE so an existing
-        # payment_gateway.db is preserved.
-        # ----------------------------------------------------
-
-        existing_columns = {
-            row[1]
-            for row in conn.execute(
-                "PRAGMA table_info(payment_orders)"
-            ).fetchall()
-        }
-
-        if "back_office_activated" not in existing_columns:
-
-            conn.execute(
-                """
-                ALTER TABLE payment_orders
-                ADD COLUMN back_office_activated
-                INTEGER NOT NULL DEFAULT 0
-                """
-            )
-
-        if "back_office_activated_at" not in existing_columns:
-
-            conn.execute(
-                """
-                ALTER TABLE payment_orders
-                ADD COLUMN back_office_activated_at TEXT
-                """
-            )
-
         conn.commit()
 
 
-def row_to_dict(
+# ============================================================
+# PAYMENT RECORD HELPERS
+# ============================================================
+
+def row_dict(
     row: sqlite3.Row | None,
 ) -> dict[str, Any] | None:
 
@@ -347,7 +318,12 @@ def get_payment(
     payment_id: str,
 ) -> dict[str, Any] | None:
 
-    with connect_db() as conn:
+    payment_id = clean(payment_id)
+
+    if not payment_id:
+        return None
+
+    with connect_payment_db() as conn:
 
         row = conn.execute(
             """
@@ -358,43 +334,44 @@ def get_payment(
             (payment_id,),
         ).fetchone()
 
-    return row_to_dict(row)
+    return row_dict(row)
 
 
 def get_latest_payment_for_job(
     job_id: str,
 ) -> dict[str, Any] | None:
 
-    with connect_db() as conn:
+    job_id = clean(job_id)
+
+    if not job_id:
+        return None
+
+    with connect_payment_db() as conn:
 
         row = conn.execute(
             """
             SELECT *
             FROM payment_orders
-            WHERE job_id = ?
+            WHERE CAST(job_id AS TEXT) = ?
             ORDER BY id DESC
             LIMIT 1
             """,
             (job_id,),
         ).fetchone()
 
-    return row_to_dict(row)
+    return row_dict(row)
 
 
-def get_payments_for_job(
-    job_id: str,
-) -> list[dict[str, Any]]:
+def list_all_gateway_payments() -> list[dict[str, Any]]:
 
-    with connect_db() as conn:
+    with connect_payment_db() as conn:
 
         rows = conn.execute(
             """
             SELECT *
             FROM payment_orders
-            WHERE job_id = ?
             ORDER BY id DESC
-            """,
-            (job_id,),
+            """
         ).fetchall()
 
     return [
@@ -405,17 +382,19 @@ def get_payments_for_job(
 
 def list_pending_payments() -> list[dict[str, Any]]:
 
-    with connect_db() as conn:
+    with connect_payment_db() as conn:
 
         rows = conn.execute(
             """
             SELECT *
             FROM payment_orders
+
             WHERE payment_status IN (
                 'reported',
                 'verification_pending',
                 'awaiting_verification'
             )
+
             ORDER BY id DESC
             """
         ).fetchall()
@@ -442,7 +421,7 @@ def create_payment_record(
 
     timestamp = now_iso()
 
-    with connect_db() as conn:
+    with connect_payment_db() as conn:
 
         conn.execute(
             """
@@ -461,14 +440,26 @@ def create_payment_record(
                 created_at,
                 updated_at
             )
+
             VALUES (
-                ?, ?, ?, ?, ?, ?, ?, 'pending',
-                ?, ?, ?, ?, ?
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                'pending',
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
             )
             """,
             (
                 payment_id,
-                job_id,
+                str(job_id),
                 customer_id,
                 service,
                 amount,
@@ -507,66 +498,26 @@ def update_payment_record(
         return None
 
     fields: list[str] = []
-
     values: list[Any] = []
 
-    if status is not None:
+    updates = (
+        ("payment_status", status),
+        ("payment_reference", payment_reference),
+        ("customer_note", customer_note),
+        ("admin_note", admin_note),
+        ("verified_at", verified_at),
+        ("reported_at", reported_at),
+    )
 
-        fields.append(
-            "payment_status = ?"
-        )
+    for field, value in updates:
 
-        values.append(status)
+        if value is not None:
 
-    if payment_reference is not None:
+            fields.append(
+                f"{field} = ?"
+            )
 
-        fields.append(
-            "payment_reference = ?"
-        )
-
-        values.append(
-            payment_reference
-        )
-
-    if customer_note is not None:
-
-        fields.append(
-            "customer_note = ?"
-        )
-
-        values.append(
-            customer_note
-        )
-
-    if admin_note is not None:
-
-        fields.append(
-            "admin_note = ?"
-        )
-
-        values.append(
-            admin_note
-        )
-
-    if verified_at is not None:
-
-        fields.append(
-            "verified_at = ?"
-        )
-
-        values.append(
-            verified_at
-        )
-
-    if reported_at is not None:
-
-        fields.append(
-            "reported_at = ?"
-        )
-
-        values.append(
-            reported_at
-        )
+            values.append(value)
 
     fields.append(
         "updated_at = ?"
@@ -580,12 +531,12 @@ def update_payment_record(
         payment_id
     )
 
-    with connect_db() as conn:
+    with connect_payment_db() as conn:
 
         conn.execute(
             f"""
             UPDATE payment_orders
-            SET {', '.join(fields)}
+            SET {", ".join(fields)}
             WHERE payment_id = ?
             """,
             tuple(values),
@@ -598,21 +549,19 @@ def update_payment_record(
 
 def increment_download(
     payment_id: str,
-) -> dict[str, Any] | None:
+) -> None:
 
     timestamp = now_iso()
 
-    with connect_db() as conn:
+    with connect_payment_db() as conn:
 
         conn.execute(
             """
             UPDATE payment_orders
 
-            SET download_count =
-                    download_count + 1,
-
+            SET
+                download_count = download_count + 1,
                 downloaded_at = ?,
-
                 updated_at = ?
 
             WHERE payment_id = ?
@@ -626,67 +575,1183 @@ def increment_download(
 
         conn.commit()
 
-    return get_payment(payment_id)
-
 
 # ============================================================
-# OLD / EXISTING API BRIDGE
+# MAIN BUSINESS DATABASE HELPERS
 # ============================================================
 
-def old_api_configured() -> bool:
-    return bool(
-        OLD_API_BASE_URL
-    )
+try:
+    import database as business_database
+except Exception:
+    business_database = None
 
 
-def old_api_request(
-    method: str,
-    path: str,
-    *,
-    query: dict[str, Any] | None = None,
-    body: dict[str, Any] | None = None,
-    timeout: int = 25,
-) -> Any:
+def main_table_exists(
+    table: str,
+) -> bool:
 
-    if not OLD_API_BASE_URL:
+    try:
 
-        raise RuntimeError(
-            "OLD_API_BASE_URL is not configured"
+        with connect_main_db() as conn:
+
+            row = conn.execute(
+                """
+                SELECT 1
+                FROM sqlite_master
+                WHERE type = 'table'
+                AND name = ?
+                """,
+                (table,),
+            ).fetchone()
+
+        return row is not None
+
+    except Exception as exc:
+
+        print(
+            f"[PAYMENT API][MAIN DB TABLE] {exc}"
         )
 
-    clean_path = (
-        "/" + path.lstrip("/")
+        return False
+
+
+def main_columns(
+    table: str,
+) -> list[str]:
+
+    if not main_table_exists(table):
+        return []
+
+    try:
+
+        with connect_main_db() as conn:
+
+            rows = conn.execute(
+                f'PRAGMA table_info("{table}")'
+            ).fetchall()
+
+        return [
+            str(row["name"])
+            for row in rows
+        ]
+
+    except Exception as exc:
+
+        print(
+            f"[PAYMENT API][MAIN DB COLUMNS] {exc}"
+        )
+
+        return []
+
+
+def main_rows(
+    sql: str,
+    params: tuple[Any, ...] = (),
+) -> list[dict[str, Any]]:
+
+    try:
+
+        with connect_main_db() as conn:
+
+            rows = conn.execute(
+                sql,
+                params,
+            ).fetchall()
+
+        return [
+            dict(row)
+            for row in rows
+        ]
+
+    except Exception as exc:
+
+        print(
+            f"[PAYMENT API][MAIN DB READ] {exc}"
+        )
+
+        return []
+
+
+def main_one(
+    sql: str,
+    params: tuple[Any, ...] = (),
+) -> dict[str, Any] | None:
+
+    try:
+
+        with connect_main_db() as conn:
+
+            row = conn.execute(
+                sql,
+                params,
+            ).fetchone()
+
+        return row_dict(row)
+
+    except Exception as exc:
+
+        print(
+            f"[PAYMENT API][MAIN DB ONE] {exc}"
+        )
+
+        return None
+
+
+def business_call(
+    name: str,
+    *args: Any,
+    **kwargs: Any,
+) -> Any:
+
+    if business_database is None:
+        return None
+
+    function = getattr(
+        business_database,
+        name,
+        None,
     )
 
+    if not callable(function):
+        return None
+
+    try:
+
+        return function(
+            *args,
+            **kwargs,
+        )
+
+    except Exception as exc:
+
+        print(
+            f"[PAYMENT API][database.{name}] {exc}"
+        )
+
+        return None
+
+
+def get_business_job(
+    job_id: str,
+) -> dict[str, Any] | None:
+
+    job_id = clean(job_id)
+
+    if not job_id:
+        return None
+
+    result = business_call(
+        "get_job",
+        job_id,
+    )
+
+    if isinstance(result, dict):
+        return dict(result)
+
+    rows = main_rows(
+        """
+        SELECT *
+        FROM jobs
+        WHERE CAST(id AS TEXT) = ?
+        LIMIT 1
+        """,
+        (job_id,),
+    )
+
+    if rows:
+        return rows[0]
+
+    return None
+
+
+def get_business_payment(
+    job_id: str,
+) -> dict[str, Any] | None:
+
+    job_id = clean(job_id)
+
+    result = business_call(
+        "get_latest_payment",
+        job_id,
+    )
+
+    if isinstance(result, dict):
+        return dict(result)
+
+    if not main_table_exists("payments"):
+        return None
+
+    columns = main_columns(
+        "payments"
+    )
+
+    if "job_id" not in columns:
+        return None
+
+    order_column = (
+        "id"
+        if "id" in columns
+        else "rowid"
+    )
+
+    return main_one(
+        f"""
+        SELECT *
+        FROM payments
+        WHERE CAST(job_id AS TEXT) = ?
+        ORDER BY {order_column} DESC
+        LIMIT 1
+        """,
+        (job_id,),
+    )
+
+
+def get_main_jobs_direct() -> list[dict[str, Any]]:
+
+    if not main_table_exists("jobs"):
+        return []
+
+    columns = main_columns(
+        "jobs"
+    )
+
+    order_parts = []
+
+    for column in (
+        "updated_at",
+        "created_at",
+        "id",
+    ):
+
+        if column in columns:
+
+            order_parts.append(
+                f'"{column}" DESC'
+            )
+
+    order_sql = (
+        ", ".join(order_parts)
+        if order_parts
+        else "rowid DESC"
+    )
+
+    return main_rows(
+        f"""
+        SELECT *
+        FROM jobs
+        ORDER BY {order_sql}
+        """
+    )
+
+
+def get_main_payment_rows() -> list[dict[str, Any]]:
+
+    if not main_table_exists("payments"):
+        return []
+
+    columns = main_columns(
+        "payments"
+    )
+
+    if "job_id" not in columns:
+        return []
+
+    order_column = (
+        "id"
+        if "id" in columns
+        else "rowid"
+    )
+
+    return main_rows(
+        f"""
+        SELECT *
+        FROM payments
+        ORDER BY {order_column} DESC
+        """
+    )
+
+
+# ============================================================
+# WORK RECORDS
+# ============================================================
+
+def normalize_work_record(
+    row: dict[str, Any],
+) -> dict[str, Any]:
+
+    work_id = row.get(
+        "work_id",
+        row.get("id"),
+    )
+
+    version = row.get(
+        "version",
+        row.get(
+            "version_id",
+            row.get(
+                "work_version",
+                1,
+            ),
+        ),
+    )
+
+    activated = row.get(
+        "download_activated",
+        row.get(
+            "downloadActivated",
+            row.get(
+                "activated",
+                False,
+            ),
+        ),
+    )
+
+    if isinstance(
+        activated,
+        str,
+    ):
+
+        activated = (
+            activated.lower()
+            in {
+                "1",
+                "true",
+                "yes",
+                "on",
+            }
+        )
+
+    result = dict(row)
+
+    result.update(
+        {
+            "work_id": work_id,
+            "workId": work_id,
+            "id": work_id,
+
+            "version": version,
+            "version_id": version,
+
+            "work_status": row.get(
+                "work_status",
+                row.get(
+                    "status",
+                    "",
+                ),
+            ),
+
+            "status": row.get(
+                "status",
+                row.get(
+                    "work_status",
+                    "",
+                ),
+            ),
+
+            "download_activated": bool(
+                activated
+            ),
+
+            "downloadActivated": bool(
+                activated
+            ),
+
+            "activated": bool(
+                activated
+            ),
+        }
+    )
+
+    return result
+
+
+def get_main_work_records(
+    job_id: str,
+) -> list[dict[str, Any]]:
+
+    if not main_table_exists(
+        "work_records"
+    ):
+        return []
+
+    columns = main_columns(
+        "work_records"
+    )
+
+    if "job_id" not in columns:
+        return []
+
+    order_column = (
+        "id"
+        if "id" in columns
+        else "rowid"
+    )
+
+    rows = main_rows(
+        f"""
+        SELECT *
+        FROM work_records
+
+        WHERE CAST(job_id AS TEXT) = ?
+
+        ORDER BY {order_column} ASC
+        """,
+        (str(job_id),),
+    )
+
+    return [
+        normalize_work_record(row)
+        for row in rows
+    ]
+
+
+# ============================================================
+# BUSINESS DATABASE JOB FALLBACKS
+# ============================================================
+
+def get_business_job_lists() -> list[dict[str, Any]]:
+
+    output: list[dict[str, Any]] = []
+
+    for function_name in (
+        "get_back_office_jobs",
+        "get_all_jobs",
+    ):
+
+        result = business_call(
+            function_name
+        )
+
+        if isinstance(
+            result,
+            list,
+        ):
+
+            for item in result:
+
+                if isinstance(
+                    item,
+                    dict,
+                ):
+
+                    output.append(
+                        dict(item)
+                    )
+
+    return output
+
+
+# ============================================================
+# ENSURE MAIN BUSINESS JOB EXISTS
+# ============================================================
+
+def ensure_business_job(
+    job_id: str,
+    *,
+    customer_id: str = "",
+    service: str = "",
+    amount: float = 0.0,
+    status: str = "payment_pending",
+    current: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+
+    existing = get_business_job(
+        job_id
+    )
+
+    if existing:
+        return existing
+
+    service_name = (
+        service
+        or "Business Center Service"
+    )
+
+    # First use the project's existing database function.
+    created = business_call(
+        "create_job",
+        customer_id=customer_id,
+        service_type=service_name,
+        description=service_name,
+        customer_request="",
+        status=status,
+        amount=amount,
+        currency=DEFAULT_CURRENCY,
+        work_reference=clean(
+            (current or {}).get(
+                "filename"
+            )
+        ),
+    )
+
+    if isinstance(
+        created,
+        dict,
+    ):
+
+        return created
+
+    # Direct SQL fallback.
+    if not main_table_exists(
+        "jobs"
+    ):
+        return None
+
+    columns = main_columns(
+        "jobs"
+    )
+
+    candidates: dict[str, Any] = {
+        "customer_id": customer_id,
+        "customer_name": "",
+        "phone": "",
+        "service_type": service_name,
+        "service": service_name,
+        "job_type": service_name,
+        "description": service_name,
+        "customer_request": "",
+        "status": status,
+        "amount": amount,
+        "currency": DEFAULT_CURRENCY,
+        "work_reference": clean(
+            (current or {}).get(
+                "filename"
+            )
+        ),
+        "created_at": now_iso(),
+        "updated_at": now_iso(),
+    }
+
+    values: dict[str, Any] = {}
+
+    for column in columns:
+
+        if column in candidates:
+            values[column] = candidates[column]
+
+    # Handle additional NOT NULL columns
+    # dynamically so schema differences do not
+    # cause the synchronization to fail.
+    try:
+
+        with connect_main_db() as conn:
+
+            info = conn.execute(
+                'PRAGMA table_info("jobs")'
+            ).fetchall()
+
+            for row in info:
+
+                name = row["name"]
+
+                if name == "id":
+                    continue
+
+                if name in values:
+                    continue
+
+                if row["notnull"] != 1:
+                    continue
+
+                if row["dflt_value"] is not None:
+                    continue
+
+                lower = name.lower()
+
+                if "customer" in lower:
+
+                    values[name] = (
+                        customer_id
+                    )
+
+                elif "status" in lower:
+
+                    values[name] = (
+                        status
+                    )
+
+                elif (
+                    "amount" in lower
+                    or "price" in lower
+                ):
+
+                    values[name] = (
+                        amount
+                    )
+
+                elif (
+                    "service" in lower
+                    or "type" in lower
+                    or "title" in lower
+                ):
+
+                    values[name] = (
+                        service_name
+                    )
+
+                else:
+
+                    values[name] = ""
+
+            if not values:
+                return None
+
+            names = list(
+                values.keys()
+            )
+
+            quoted_names = ",".join(
+                f'"{name}"'
+                for name in names
+            )
+
+            placeholders = ",".join(
+                "?"
+                for _ in names
+            )
+
+            cursor = conn.execute(
+                f"""
+                INSERT INTO jobs (
+                    {quoted_names}
+                )
+
+                VALUES (
+                    {placeholders}
+                )
+                """,
+                tuple(
+                    values[name]
+                    for name in names
+                ),
+            )
+
+            conn.commit()
+
+            new_id = cursor.lastrowid
+
+        return (
+            get_business_job(
+                str(new_id)
+            )
+            or {
+                "id": new_id,
+                "job_id": new_id,
+                **values,
+            }
+        )
+
+    except Exception as exc:
+
+        print(
+            "[PAYMENT API]"
+            "[ensure_business_job] "
+            f"{exc}"
+        )
+
+        return None
+
+
+# ============================================================
+# PAYMENT → BUSINESS DATABASE SYNCHRONIZATION
+# ============================================================
+
+def synchronize_payment_to_business(
+    payment: dict[str, Any],
+    current: dict[str, Any] | None = None,
+) -> None:
+
+    job_id = clean(
+        payment.get(
+            "job_id"
+        )
+    )
+
+    if not job_id:
+        return
+
+    verified = payment_is_verified(
+        payment.get(
+            "payment_status"
+        )
+    )
+
+    if verified:
+        job_status = (
+            "payment_confirmed"
+        )
+    else:
+        job_status = (
+            "payment_pending"
+        )
+
+    job = ensure_business_job(
+        job_id,
+        customer_id=clean(
+            payment.get(
+                "customer_id"
+            )
+        ),
+        service=(
+            clean(
+                payment.get(
+                    "service"
+                )
+            )
+            or clean(
+                (current or {}).get(
+                    "service"
+                )
+            )
+        ),
+        amount=money(
+            payment.get(
+                "amount"
+            )
+            or (current or {}).get(
+                "amount"
+            )
+        ),
+        status=job_status,
+        current=current,
+    )
+
+    if job is not None:
+
+        business_call(
+            "update_job_status",
+            job_id,
+            job_status,
+        )
+
+    # Synchronize payment record in the
+    # main business database where the
+    # existing payment functions are available.
+    if business_database is not None:
+
+        try:
+
+            existing_payment = business_call(
+                "get_latest_payment",
+                job_id,
+            )
+
+            business_payment_id = None
+
+            if isinstance(
+                existing_payment,
+                dict,
+            ):
+
+                business_payment_id = (
+                    existing_payment.get(
+                        "id"
+                    )
+                    or existing_payment.get(
+                        "payment_id"
+                    )
+                )
+
+            if not existing_payment:
+
+                created_payment = business_call(
+                    "create_payment",
+                    job_id,
+                    money(
+                        payment.get(
+                            "amount"
+                        )
+                    ),
+                    clean(
+                        payment.get(
+                            "payment_method"
+                        )
+                    )
+                    or DEFAULT_PAYMENT_METHOD,
+                )
+
+                if isinstance(
+                    created_payment,
+                    dict,
+                ):
+
+                    business_payment_id = (
+                        created_payment.get(
+                            "id"
+                        )
+                        or created_payment.get(
+                            "payment_id"
+                        )
+                    )
+
+                elif created_payment is not None:
+
+                    business_payment_id = (
+                        created_payment
+                    )
+
+            if business_payment_id is not None:
+
+                if verified:
+
+                    business_call(
+                        "update_payment_status",
+                        business_payment_id,
+                        "paid",
+                    )
+
+                elif payment_is_reported(
+                    payment.get(
+                        "payment_status"
+                    )
+                ):
+
+                    business_call(
+                        "update_payment_status",
+                        business_payment_id,
+                        "reported",
+                    )
+
+        except Exception as exc:
+
+            print(
+                "[PAYMENT API]"
+                "[business payment sync] "
+                f"{exc}"
+            )
+
+
+# ============================================================
+# DOCUMENT HELPERS
+# ============================================================
+
+def normalize_pages(
+    value: Any,
+) -> list[str]:
+
+    if value is None:
+        return []
+
+    if isinstance(
+        value,
+        str,
+    ):
+
+        return (
+            [value.strip()]
+            if value.strip()
+            else []
+        )
+
+    if isinstance(
+        value,
+        dict,
+    ):
+
+        text = (
+            value.get("content")
+            or value.get("text")
+            or value.get("body")
+            or value.get("page_text")
+            or ""
+        )
+
+        return (
+            [str(text).strip()]
+            if str(text).strip()
+            else []
+        )
+
+    if isinstance(
+        value,
+        (list, tuple),
+    ):
+
+        output: list[str] = []
+
+        for item in value:
+
+            if isinstance(
+                item,
+                dict,
+            ):
+
+                text = (
+                    item.get(
+                        "content"
+                    )
+                    or item.get(
+                        "text"
+                    )
+                    or item.get(
+                        "body"
+                    )
+                    or item.get(
+                        "page_text"
+                    )
+                    or ""
+                )
+
+            else:
+
+                text = item
+
+            if str(text).strip():
+
+                output.append(
+                    str(text).strip()
+                )
+
+        return output
+
+    text = str(value).strip()
+
+    return (
+        [text]
+        if text
+        else []
+    )
+
+
+def safe_json(
+    value: Any,
+) -> Any:
+
+    if value is None:
+        return None
+
+    if isinstance(
+        value,
+        (dict, list, int, float, bool),
+    ):
+
+        return value
+
+    text = clean(value)
+
+    if not text:
+        return None
+
+    try:
+
+        return json.loads(
+            text
+        )
+
+    except Exception:
+
+        return text
+
+
+def get_current_document_from_main_db(
+    job_id: str,
+) -> dict[str, Any] | None:
+
+    records = get_main_work_records(
+        job_id
+    )
+
+    if not records:
+        return None
+
+    work = records[-1]
+
+    payload: dict[str, Any] = {}
+
+    for key in (
+        "document_payload",
+        "payload",
+        "data",
+        "content",
+        "document_text",
+        "text",
+        "work_content",
+    ):
+
+        if key not in work:
+            continue
+
+        value = safe_json(
+            work.get(key)
+        )
+
+        if isinstance(
+            value,
+            dict,
+        ):
+
+            payload.update(
+                value
+            )
+
+        elif isinstance(
+            value,
+            str,
+        ) and value:
+
+            payload.setdefault(
+                "document_text",
+                value,
+            )
+
+    pages = normalize_pages(
+        payload.get("pages")
+        or work.get("pages")
+        or work.get("document_pages")
+    )
+
+    text = clean(
+        payload.get(
+            "document_text"
+        )
+        or work.get(
+            "document_text"
+        )
+        or work.get(
+            "content"
+        )
+        or work.get(
+            "text"
+        )
+    )
+
+    if not pages and text:
+        pages = [text]
+
+    version = clean(
+        payload.get(
+            "version_id"
+        )
+        or work.get(
+            "version_id"
+        )
+        or work.get(
+            "version"
+        )
+    )
+
+    if not version:
+
+        version = clean(
+            work.get(
+                "id"
+            )
+            or work.get(
+                "work_id"
+            )
+        )
+
+    filename = clean(
+        payload.get(
+            "filename"
+        )
+        or work.get(
+            "filename"
+        )
+        or work.get(
+            "storage_reference"
+        )
+    )
+
+    if not filename:
+
+        filename = (
+            f"naija_pocket_{job_id}.docx"
+        )
+
+    if not filename.lower().endswith(
+        ".docx"
+    ):
+
+        filename += ".docx"
+
+    if not pages and not text:
+        return None
+
+    job = get_business_job(
+        job_id
+    ) or {}
+
+    return {
+        "job_id": job_id,
+        "status": clean(
+            work.get(
+                "work_status"
+            )
+            or work.get(
+                "status"
+            )
+        ),
+        "review_finished": True,
+        "pages": pages,
+        "document_text": text,
+        "amount": money(
+            job.get(
+                "amount"
+            )
+        ),
+        "version_id": version,
+        "filename": filename,
+        "service": clean(
+            job.get(
+                "service_type"
+            )
+            or job.get(
+                "service"
+            )
+        ),
+        "customer_id": clean(
+            job.get(
+                "customer_id"
+            )
+        ),
+    }
+
+
+def document_api_request(
+    method: str,
+    path: str,
+    query: dict[str, Any] | None = None,
+    body: dict[str, Any] | None = None,
+) -> Any:
+
+    if not DOCUMENT_API_BASE_URL:
+
+        raise RuntimeError(
+            "Document API URL is not configured."
+        )
+
     url = (
-        OLD_API_BASE_URL
-        + clean_path
+        DOCUMENT_API_BASE_URL
+        + "/"
+        + path.lstrip("/")
     )
 
     if query:
 
-        parts: list[str] = []
+        encoded = urllib.parse.urlencode(
+            {
+                key: value
+                for key, value in query.items()
+                if value not in (
+                    None,
+                    "",
+                )
+            }
+        )
 
-        from urllib.parse import quote
+        if encoded:
 
-        for key, value in query.items():
-
-            if value is None or value == "":
-                continue
-
-            parts.append(
-                f"{quote(str(key))}="
-                f"{quote(str(value))}"
+            url += (
+                "?"
+                + encoded
             )
-
-        if parts:
-
-            url += "?" + "&".join(parts)
 
     headers = {
         "Accept": "application/json",
-        "User-Agent":
-            "NaijaPocketPaymentAPI/2.0",
+        "User-Agent": (
+            "NaijaPocketPaymentAPI/8"
+        ),
     }
 
     if INTERNAL_API_KEY:
@@ -695,14 +1760,16 @@ def old_api_request(
             "X-Internal-API-Key"
         ] = INTERNAL_API_KEY
 
-    data: bytes | None = None
+    data = None
 
     if body is not None:
 
         data = json.dumps(
             body,
             ensure_ascii=False,
-        ).encode("utf-8")
+        ).encode(
+            "utf-8"
+        )
 
         headers[
             "Content-Type"
@@ -719,31 +1786,17 @@ def old_api_request(
 
         with urllib.request.urlopen(
             request,
-            timeout=timeout,
+            timeout=25,
         ) as response:
 
             raw = response.read()
 
-            content_type = (
-                response.headers.get(
-                    "Content-Type",
-                    "",
-                )
-            )
-
-            if (
-                "json"
-                in content_type.lower()
-            ):
-
-                return json.loads(
-                    raw.decode("utf-8")
-                )
-
             try:
 
                 return json.loads(
-                    raw.decode("utf-8")
+                    raw.decode(
+                        "utf-8"
+                    )
                 )
 
             except Exception:
@@ -760,7 +1813,9 @@ def old_api_request(
         try:
 
             detail = json.loads(
-                raw.decode("utf-8")
+                raw.decode(
+                    "utf-8"
+                )
             )
 
         except Exception:
@@ -771,189 +1826,15 @@ def old_api_request(
             )
 
         raise RuntimeError(
-            f"Existing API returned HTTP "
+            f"Document API returned HTTP "
             f"{exc.code}: {detail}"
         ) from exc
 
     except urllib.error.URLError as exc:
 
         raise RuntimeError(
-            f"Could not reach existing API: {exc}"
+            f"Could not reach document API: {exc}"
         ) from exc
-
-
-def extract_job_payload(
-    response: Any,
-) -> dict[str, Any] | None:
-
-    if not isinstance(response, dict):
-        return None
-
-    candidates: list[Any] = [
-        response
-    ]
-
-    for key in (
-        "data",
-        "job",
-        "result",
-        "document",
-    ):
-
-        value = response.get(key)
-
-        if isinstance(value, dict):
-
-            candidates.append(
-                value
-            )
-
-    for candidate in candidates:
-
-        if any(
-            key in candidate
-            for key in (
-                "job_id",
-                "pages",
-                "document_pages",
-                "document_text",
-                "text",
-                "content",
-            )
-        ):
-
-            return candidate
-
-    return None
-
-
-def normalize_pages(
-    value: Any,
-) -> list[str]:
-
-    if value is None:
-        return []
-
-    if isinstance(value, str):
-
-        return (
-            [value]
-            if value.strip()
-            else []
-        )
-
-    if isinstance(
-        value,
-        (tuple, list),
-    ):
-
-        output: list[str] = []
-
-        for item in value:
-
-            if isinstance(
-                item,
-                dict,
-            ):
-
-                text = (
-                    item.get("text")
-                    or item.get("content")
-                    or item.get("body")
-                    or item.get("page_text")
-                    or ""
-                )
-
-                if str(text).strip():
-
-                    output.append(
-                        str(text).strip()
-                    )
-
-            elif str(item).strip():
-
-                output.append(
-                    str(item).strip()
-                )
-
-        return output
-
-    if isinstance(value, dict):
-
-        text = (
-            value.get("text")
-            or value.get("content")
-            or value.get("body")
-            or value.get("page_text")
-            or ""
-        )
-
-        return (
-            [str(text).strip()]
-            if str(text).strip()
-            else []
-        )
-
-    return (
-        [str(value).strip()]
-        if str(value).strip()
-        else []
-    )
-
-
-def fetch_current_document(
-    job_id: str,
-) -> dict[str, Any]:
-
-    if not OLD_API_BASE_URL:
-
-        raise RuntimeError(
-            "OLD_API_BASE_URL is not configured. "
-            "Set it to the base URL of the existing API."
-        )
-
-    last_error: Exception | None = None
-
-    paths = [
-        "/api/review/pages",
-        "/api/review",
-    ]
-
-    for path in paths:
-
-        try:
-
-            response = old_api_request(
-                "GET",
-                path,
-                query={
-                    "job_id": job_id
-                },
-            )
-
-            payload = extract_job_payload(
-                response
-            )
-
-            if payload:
-
-                return normalize_document_payload(
-                    payload,
-                    job_id,
-                )
-
-        except Exception as exc:
-
-            last_error = exc
-
-    if last_error:
-
-        raise last_error
-
-    raise RuntimeError(
-        "The existing API returned no usable "
-        "document for this job."
-    )
 
 
 def normalize_document_payload(
@@ -962,7 +1843,9 @@ def normalize_document_payload(
 ) -> dict[str, Any]:
 
     pages = normalize_pages(
-        payload.get("pages")
+        payload.get(
+            "pages"
+        )
         or payload.get(
             "document_pages"
         )
@@ -975,10 +1858,18 @@ def normalize_document_payload(
     )
 
     document_text = clean(
-        payload.get("document_text")
-        or payload.get("text")
-        or payload.get("content")
-        or payload.get("document")
+        payload.get(
+            "document_text"
+        )
+        or payload.get(
+            "text"
+        )
+        or payload.get(
+            "content"
+        )
+        or payload.get(
+            "document"
+        )
     )
 
     if not pages and document_text:
@@ -987,87 +1878,22 @@ def normalize_document_payload(
             document_text
         ]
 
-    status = clean(
-        payload.get("status")
-    )
-
-    review_finished = bool(
-        payload.get(
-            "review_finished"
-        )
-        or payload.get(
-            "review_complete"
-        )
-        or normalize_status(status)
-        == "review_complete"
-    )
-
-    billing_value = payload.get(
-        "billing"
-    )
-
-    amount = money(
-        payload.get("amount")
-        or payload.get("total_amount")
-        or payload.get("price")
-        or (
-            billing_value.get("total")
-            if isinstance(
-                billing_value,
-                dict,
-            )
-            else 0
-        )
-    )
-
-    if (
-        amount <= 0
-        and isinstance(
-            billing_value,
-            dict,
-        )
-    ):
-
-        amount = money(
-            billing_value.get(
-                "amount"
-            )
-            or billing_value.get(
-                "total_amount"
-            )
-            or billing_value.get(
-                "price"
-            )
-        )
-
     version = clean(
-        payload.get("version_id")
+        payload.get(
+            "version_id"
+        )
         or payload.get(
             "document_version"
         )
-        or payload.get("version")
+        or payload.get(
+            "version"
+        )
     )
 
-    if not version:
-
-        import hashlib
-
-        digest_source = json.dumps(
-            {
-                "job_id": job_id,
-                "pages": pages,
-                "text": document_text,
-            },
-            ensure_ascii=False,
-            sort_keys=True,
-        ).encode("utf-8")
-
-        version = hashlib.sha256(
-            digest_source
-        ).hexdigest()[:24]
-
     filename = clean(
-        payload.get("filename")
+        payload.get(
+            "filename"
+        )
         or payload.get(
             "document_filename"
         )
@@ -1082,21 +1908,168 @@ def normalize_document_payload(
 
     return {
         "job_id": job_id,
-        "status": status,
-        "review_finished": review_finished,
+        "status": clean(
+            payload.get(
+                "status"
+            )
+        ),
+        "review_finished": bool(
+            payload.get(
+                "review_finished"
+            )
+            or payload.get(
+                "review_complete"
+            )
+            or normalize_status(
+                payload.get(
+                    "status"
+                )
+            )
+            == "review_complete"
+        ),
         "pages": pages,
         "document_text": document_text,
-        "amount": amount,
+        "amount": money(
+            payload.get(
+                "amount"
+            )
+            or payload.get(
+                "total_amount"
+            )
+            or payload.get(
+                "price"
+            )
+        ),
         "version_id": version,
         "filename": filename,
         "service": clean(
-            payload.get("service")
+            payload.get(
+                "service"
+            )
         ),
         "customer_id": clean(
-            payload.get("customer_id")
+            payload.get(
+                "customer_id"
+            )
         ),
         "raw": payload,
     }
+
+
+def fetch_current_document(
+    job_id: str,
+) -> dict[str, Any]:
+
+    # First choice: persistent business database.
+    local = get_current_document_from_main_db(
+        job_id
+    )
+
+    if local and local.get(
+        "pages"
+    ):
+
+        return local
+
+    last_error: Exception | None = None
+
+    for path in (
+        "/api/review/pages",
+        "/api/review",
+        "/api/job",
+    ):
+
+        try:
+
+            response = document_api_request(
+                "GET",
+                path,
+                {
+                    "job_id": job_id
+                },
+            )
+
+            if not isinstance(
+                response,
+                dict,
+            ):
+                continue
+
+            candidates = [
+                response
+            ]
+
+            for key in (
+                "data",
+                "job",
+                "result",
+                "document",
+                "review",
+            ):
+
+                if isinstance(
+                    response.get(
+                        key
+                    ),
+                    dict,
+                ):
+
+                    candidates.append(
+                        response[key]
+                    )
+
+            for candidate in candidates:
+
+                if any(
+                    key in candidate
+                    for key in (
+                        "pages",
+                        "document_pages",
+                        "document_text",
+                        "text",
+                        "content",
+                    )
+                ):
+
+                    return normalize_document_payload(
+                        candidate,
+                        job_id,
+                    )
+
+        except Exception as exc:
+
+            last_error = exc
+
+    # Last persistent fallback:
+    # the document snapshot saved with the payment.
+    payment = get_latest_payment_for_job(
+        job_id
+    )
+
+    if payment:
+
+        snapshot = payment_document(
+            payment
+        )
+
+        if snapshot:
+
+            return normalize_document_payload(
+                snapshot,
+                job_id,
+            )
+
+    if local:
+        return local
+
+    raise RuntimeError(
+        str(last_error)
+        if last_error
+        else (
+            "No document was found "
+            "for this job."
+        )
+    )
 
 
 def safe_current_document(
@@ -1123,67 +2096,18 @@ def safe_current_document(
         )
 
 
-# ============================================================
-# DOCUMENT SNAPSHOT HELPERS
-# ============================================================
-
-def snapshot_payload(
-    document: dict[str, Any],
-) -> dict[str, Any]:
-
-    return {
-        "job_id":
-            document.get("job_id"),
-
-        "pages":
-            document.get("pages", []),
-
-        "document_text":
-            document.get(
-                "document_text",
-                "",
-            ),
-
-        "service":
-            document.get(
-                "service",
-                "",
-            ),
-
-        "filename":
-            document.get(
-                "filename",
-                "",
-            ),
-
-        "version_id":
-            document.get(
-                "version_id",
-                "",
-            ),
-
-        "customer_id":
-            document.get(
-                "customer_id",
-                "",
-            ),
-    }
-
-
 def payment_document(
     payment: dict[str, Any],
 ) -> dict[str, Any]:
 
-    raw = (
-        payment.get(
-            "document_payload"
-        )
-        or "{}"
-    )
-
     try:
 
-        data = json.loads(raw)
+        data = json.loads(
+            payment.get(
+                "document_payload"
+            )
+            or "{}"
+        )
 
         if isinstance(
             data,
@@ -1196,24 +2120,6 @@ def payment_document(
         pass
 
     return {}
-
-
-def document_has_content(
-    document: dict[str, Any],
-) -> bool:
-
-    pages = normalize_pages(
-        document.get("pages")
-    )
-
-    return bool(
-        pages
-        or clean(
-            document.get(
-                "document_text"
-            )
-        )
-    )
 
 
 def document_version_is_current(
@@ -1244,26 +2150,608 @@ def current_document_is_ready(
     document: dict[str, Any],
 ) -> bool:
 
-    if not document_has_content(
-        document
-    ):
-
-        return False
-
-    if document.get(
-        "review_finished"
-    ):
-
-        return True
-
-    return (
-        normalize_status(
+    return bool(
+        normalize_pages(
             document.get(
-                "status"
+                "pages"
             )
         )
-        == "review_complete"
+        or clean(
+            document.get(
+                "document_text"
+            )
+        )
     )
+
+
+# ============================================================
+# BACK OFFICE JOB MERGER
+# ============================================================
+
+def normalize_back_office_job(
+    raw: dict[str, Any],
+    payment: dict[str, Any] | None,
+    work_records: list[dict[str, Any]],
+) -> dict[str, Any]:
+
+    job_id = raw.get(
+        "job_id",
+        raw.get(
+            "id"
+        ),
+    )
+
+    payment_status = clean(
+        (payment or {}).get(
+            "payment_status"
+        )
+        or raw.get(
+            "payment_status"
+        )
+        or raw.get(
+            "paymentStatus"
+        )
+    )
+
+    status = clean(
+        raw.get(
+            "status"
+        )
+        or raw.get(
+            "job_status"
+        )
+    )
+
+    paid = payment_is_verified(
+        payment_status
+    )
+
+    reported = payment_is_reported(
+        payment_status
+    )
+
+    pending = payment_is_pending(
+        payment_status
+    )
+
+    # IMPORTANT:
+    # These statuses match the logic already used
+    # by workspace.html.
+    if paid:
+
+        if normalize_status(
+            status
+        ) in {
+            "",
+            "review_complete",
+            "approved",
+            "payment_pending",
+            "paid",
+        }:
+
+            status = (
+                "payment_confirmed"
+            )
+
+    elif reported:
+
+        status = (
+            "payment_pending"
+        )
+
+    elif pending:
+
+        if normalize_status(
+            status
+        ) in {
+            "",
+            "review_complete",
+        }:
+
+            status = (
+                "payment_pending"
+            )
+
+    service = clean(
+        raw.get(
+            "service"
+        )
+        or raw.get(
+            "service_name"
+        )
+        or raw.get(
+            "service_type"
+        )
+        or (payment or {}).get(
+            "service"
+        )
+        or "Business Center Service"
+    )
+
+    approved = (
+        normalize_status(
+            status
+        )
+        in {
+            "approved",
+            "payment_pending",
+            "payment_confirmed",
+            "completed",
+            "paid",
+            "delivery",
+        }
+        or paid
+    )
+
+    result = dict(
+        raw
+    )
+
+    result.update(
+        {
+            "id": job_id,
+
+            "job_id": job_id,
+
+            "jobId": job_id,
+
+            "status": (
+                status
+                or (
+                    "payment_confirmed"
+                    if paid
+                    else "payment_pending"
+                    if payment
+                    else "review_complete"
+                )
+            ),
+
+            "service": service,
+
+            "service_name": service,
+
+            "serviceName": service,
+
+            "payment_status": payment_status,
+
+            "paymentStatus": payment_status,
+
+            "paid": paid,
+
+            "payment_verified": paid,
+
+            "download_unlocked": (
+                paid
+                and any(
+                    bool(
+                        work.get(
+                            "download_activated"
+                        )
+                    )
+                    for work in work_records
+                )
+            ),
+
+            "approved": approved,
+
+            "work_records": work_records,
+
+            "workRecords": work_records,
+
+            "versions": work_records,
+
+            "works": work_records,
+
+            "activated_work": next(
+                (
+                    work
+                    for work in reversed(
+                        work_records
+                    )
+                    if work.get(
+                        "download_activated"
+                    )
+                ),
+                None,
+            ),
+
+            "payment": (
+                payment_public(
+                    payment
+                )
+                if payment
+                else None
+            ),
+
+            "payment_id": (
+                (payment or {}).get(
+                    "payment_id"
+                )
+                or raw.get(
+                    "payment_id"
+                )
+            ),
+
+            "amount": money(
+                (payment or {}).get(
+                    "amount"
+                )
+                or raw.get(
+                    "amount"
+                )
+            ),
+
+            "currency": (
+                (payment or {}).get(
+                    "currency"
+                )
+                or raw.get(
+                    "currency"
+                )
+                or DEFAULT_CURRENCY
+            ),
+
+            "created_at": (
+                raw.get(
+                    "created_at"
+                )
+                or (payment or {}).get(
+                    "created_at"
+                )
+            ),
+
+            "updated_at": (
+                raw.get(
+                    "updated_at"
+                )
+                or (payment or {}).get(
+                    "updated_at"
+                )
+            ),
+        }
+    )
+
+    return result
+
+
+def get_back_office_jobs_combined() -> list[dict[str, Any]]:
+
+    sources: dict[
+        str,
+        dict[str, Any],
+    ] = {}
+
+    def add_job(
+        raw: Any,
+    ) -> None:
+
+        if not isinstance(
+            raw,
+            dict,
+        ):
+            return
+
+        job_id = clean(
+            raw.get(
+                "job_id",
+                raw.get(
+                    "id"
+                ),
+            )
+        )
+
+        if not job_id:
+            return
+
+        existing = sources.get(
+            job_id,
+            {},
+        )
+
+        merged = dict(
+            existing
+        )
+
+        for key, value in raw.items():
+
+            if value not in (
+                None,
+                "",
+                [],
+                {},
+            ):
+
+                merged[key] = value
+
+        sources[job_id] = merged
+
+    # 1. Existing project database functions.
+    for raw in get_business_job_lists():
+
+        add_job(
+            raw
+        )
+
+    # 2. Direct persistent jobs table.
+    for raw in get_main_jobs_direct():
+
+        add_job(
+            raw
+        )
+
+    # 3. Gateway payment records.
+    # This guarantees that a payment-created job is visible
+    # even if the business job query failed to expose it.
+    gateway_payments = (
+        list_all_gateway_payments()
+    )
+
+    for payment in gateway_payments:
+
+        job_id = clean(
+            payment.get(
+                "job_id"
+            )
+        )
+
+        if not job_id:
+            continue
+
+        if job_id not in sources:
+
+            sources[job_id] = {
+                "job_id": job_id,
+                "id": job_id,
+                "customer_id": payment.get(
+                    "customer_id"
+                ),
+                "service": payment.get(
+                    "service"
+                ),
+                "status": (
+                    "payment_confirmed"
+                    if payment_is_verified(
+                        payment.get(
+                            "payment_status"
+                        )
+                    )
+                    else "payment_pending"
+                ),
+            }
+
+    # Main database payment rows.
+    main_payment_rows = (
+        get_main_payment_rows()
+    )
+
+    payments_by_job: dict[
+        str,
+        dict[str, Any],
+    ] = {}
+
+    for payment in main_payment_rows:
+
+        job_id = clean(
+            payment.get(
+                "job_id"
+            )
+        )
+
+        if job_id and job_id not in payments_by_job:
+
+            payments_by_job[
+                job_id
+            ] = payment
+
+    output: list[
+        dict[str, Any]
+    ] = []
+
+    for job_id, raw in sources.items():
+
+        gateway_payment = (
+            get_latest_payment_for_job(
+                job_id
+            )
+        )
+
+        business_payment = (
+            payments_by_job.get(
+                job_id
+            )
+        )
+
+        payment = (
+            gateway_payment
+            or business_payment
+        )
+
+        if (
+            gateway_payment
+            and business_payment
+        ):
+
+            payment = dict(
+                business_payment
+            )
+
+            payment.update(
+                gateway_payment
+            )
+
+        work_records = (
+            get_main_work_records(
+                job_id
+            )
+        )
+
+        # Compatibility fallback if the database function
+        # already returned work records.
+        if not work_records:
+
+            supplied = (
+                raw.get(
+                    "work_records"
+                )
+                or raw.get(
+                    "workRecords"
+                )
+                or raw.get(
+                    "versions"
+                )
+                or raw.get(
+                    "works"
+                )
+                or []
+            )
+
+            if isinstance(
+                supplied,
+                list,
+            ):
+
+                work_records = [
+                    normalize_work_record(
+                        item
+                    )
+                    for item in supplied
+                    if isinstance(
+                        item,
+                        dict,
+                    )
+                ]
+
+        output.append(
+            normalize_back_office_job(
+                raw,
+                payment,
+                work_records,
+            )
+        )
+
+    # Newest jobs first.
+    output.sort(
+        key=lambda item: clean(
+            item.get(
+                "updated_at"
+            )
+            or item.get(
+                "created_at"
+            )
+            or ""
+        ),
+        reverse=True,
+    )
+
+    return output
+
+
+# ============================================================
+# PAYMENT PUBLIC FORMAT
+# ============================================================
+
+def payment_public(
+    payment: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+
+    if not payment:
+        return None
+
+    verified = payment_is_verified(
+        payment.get(
+            "payment_status"
+        )
+    )
+
+    return {
+        "payment_id": payment.get(
+            "payment_id"
+        ),
+
+        "job_id": payment.get(
+            "job_id"
+        ),
+
+        "customer_id": payment.get(
+            "customer_id"
+        ),
+
+        "service": payment.get(
+            "service"
+        ),
+
+        "amount": money(
+            payment.get(
+                "amount"
+            )
+        ),
+
+        "currency": (
+            payment.get(
+                "currency"
+            )
+            or DEFAULT_CURRENCY
+        ),
+
+        "payment_method": payment.get(
+            "payment_method"
+        ),
+
+        "payment_status": payment.get(
+            "payment_status"
+        ),
+
+        "payment_reference": payment.get(
+            "payment_reference"
+        ),
+
+        "customer_note": payment.get(
+            "customer_note"
+        ),
+
+        "admin_note": payment.get(
+            "admin_note"
+        ),
+
+        "document_version": payment.get(
+            "document_version"
+        ),
+
+        "document_filename": payment.get(
+            "document_filename"
+        ),
+
+        "created_at": payment.get(
+            "created_at"
+        ),
+
+        "updated_at": payment.get(
+            "updated_at"
+        ),
+
+        "reported_at": payment.get(
+            "reported_at"
+        ),
+
+        "verified_at": payment.get(
+            "verified_at"
+        ),
+
+        "downloaded_at": payment.get(
+            "downloaded_at"
+        ),
+
+        "download_count": payment.get(
+            "download_count",
+            0,
+        ),
+
+        "paid": verified,
+
+        "payment_verified": verified,
+
+        "download_unlocked": verified,
+    }
 
 
 # ============================================================
@@ -1275,50 +2763,11 @@ def xml_escape(
 ) -> str:
 
     return escape(
-        value,
+        str(value),
         {
             '"': "&quot;",
             "'": "&apos;",
         },
-    )
-
-
-def paragraph_xml(
-    text: str,
-) -> str:
-
-    lines = (
-        str(text).splitlines()
-        or [""]
-    )
-
-    runs: list[str] = []
-
-    for index, line in enumerate(
-        lines
-    ):
-
-        if index:
-
-            runs.append(
-                "<w:br/>"
-            )
-
-        runs.append(
-            '<w:r>'
-            '<w:rPr>'
-            '<w:sz w:val="24"/>'
-            '</w:rPr>'
-            f'<w:t xml:space="preserve">'
-            f'{xml_escape(line)}'
-            f'</w:t>'
-            '</w:r>'
-        )
-
-    return (
-        "<w:p>"
-        + "".join(runs)
-        + "</w:p>"
     )
 
 
@@ -1351,57 +2800,103 @@ def make_docx(
         if index:
 
             body_parts.append(
-                '<w:p>'
+                '<w:p><w:r><w:br w:type="page"/></w:r></w:p>'
+            )
+
+        runs: list[str] = []
+
+        lines = (
+            str(page)
+            .splitlines()
+            or [""]
+        )
+
+        for line_index, line in enumerate(
+            lines
+        ):
+
+            if line_index:
+
+                runs.append(
+                    "<w:br/>"
+                )
+
+            runs.append(
                 '<w:r>'
-                '<w:br w:type="page"/>'
+                '<w:rPr>'
+                '<w:sz w:val="24"/>'
+                '</w:rPr>'
+                f'<w:t xml:space="preserve">'
+                f'{xml_escape(line)}'
+                f'</w:t>'
                 '</w:r>'
-                '</w:p>'
             )
 
         body_parts.append(
-            paragraph_xml(page)
+            "<w:p>"
+            + "".join(runs)
+            + "</w:p>"
         )
 
-    document_xml = f'''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:body>
-    {''.join(body_parts)}
-    <w:sectPr>
-      <w:pgSz w:w="11906" w:h="16838"/>
-      <w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/>
-    </w:sectPr>
-  </w:body>
-</w:document>'''
+    document_xml = (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+        '<w:body>'
+        + "".join(body_parts)
+        + '<w:sectPr>'
+        '<w:pgSz w:w="11906" w:h="16838"/>'
+        '<w:pgMar w:top="1134" w:right="1134" '
+        'w:bottom="1134" w:left="1134"/>'
+        '</w:sectPr>'
+        '</w:body>'
+        '</w:document>'
+    )
 
-    styles_xml = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:docDefaults>
-    <w:rPrDefault>
-      <w:rPr>
-        <w:rFonts w:ascii="Arial" w:hAnsi="Arial"/>
-        <w:sz w:val="24"/>
-      </w:rPr>
-    </w:rPrDefault>
-  </w:docDefaults>
-</w:styles>'''
+    styles_xml = (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+        '<w:docDefaults>'
+        '<w:rPrDefault>'
+        '<w:rPr>'
+        '<w:rFonts w:ascii="Arial" w:hAnsi="Arial"/>'
+        '<w:sz w:val="24"/>'
+        '</w:rPr>'
+        '</w:rPrDefault>'
+        '</w:docDefaults>'
+        '</w:styles>'
+    )
 
-    content_types = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
-  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
-  <Default Extension="xml" ContentType="application/xml"/>
-  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
-  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
-</Types>'''
+    content_types = (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+        '<Default Extension="rels" '
+        'ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+        '<Default Extension="xml" '
+        'ContentType="application/xml"/>'
+        '<Override PartName="/word/document.xml" '
+        'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
+        '<Override PartName="/word/styles.xml" '
+        'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>'
+        '</Types>'
+    )
 
-    rels = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
-</Relationships>'''
+    rels = (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        '<Relationship Id="rId1" '
+        'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" '
+        'Target="word/document.xml"/>'
+        '</Relationships>'
+    )
 
-    document_rels = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
-</Relationships>'''
+    document_rels = (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        '<Relationship Id="rId1" '
+        'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" '
+        'Target="styles.xml"/>'
+        '</Relationships>'
+    )
 
     with zipfile.ZipFile(
         output_path,
@@ -1438,941 +2933,6 @@ def make_docx(
 
 
 # ============================================================
-# PAYMENT RESPONSE
-# ============================================================
-
-def payment_public(
-    payment: dict[str, Any] | None,
-) -> dict[str, Any] | None:
-
-    if not payment:
-        return None
-
-    status = normalize_status(
-        payment.get(
-            "payment_status"
-        )
-    )
-
-    verified = payment_is_verified(
-        status
-    )
-
-    reported = payment_is_reported(
-        status
-    )
-
-    pending = payment_is_pending(
-        status
-    )
-
-    return {
-        "id":
-            payment.get("id"),
-
-        "payment_id":
-            payment.get("payment_id"),
-
-        "job_id":
-            payment.get("job_id"),
-
-        "customer_id":
-            payment.get("customer_id"),
-
-        "service":
-            payment.get("service"),
-
-        "amount":
-            money(
-                payment.get("amount")
-            ),
-
-        "currency":
-            payment.get(
-                "currency",
-                DEFAULT_CURRENCY,
-            ),
-
-        "payment_method":
-            payment.get(
-                "payment_method"
-            ),
-
-        "payment_status":
-            payment.get(
-                "payment_status"
-            ),
-
-        "payment_reference":
-            payment.get(
-                "payment_reference"
-            ),
-
-        "customer_note":
-            payment.get(
-                "customer_note"
-            ),
-
-        "admin_note":
-            payment.get(
-                "admin_note"
-            ),
-
-        "document_version":
-            payment.get(
-                "document_version"
-            ),
-
-        "document_filename":
-            payment.get(
-                "document_filename"
-            ),
-
-        "created_at":
-            payment.get(
-                "created_at"
-            ),
-
-        "updated_at":
-            payment.get(
-                "updated_at"
-            ),
-
-        "reported_at":
-            payment.get(
-                "reported_at"
-            ),
-
-        "verified_at":
-            payment.get(
-                "verified_at"
-            ),
-
-        "downloaded_at":
-            payment.get(
-                "downloaded_at"
-            ),
-
-        "download_count":
-            payment.get(
-                "download_count",
-                0,
-            ),
-
-        "paid":
-            verified,
-
-        "payment_verified":
-            verified,
-
-        "payment_pending":
-            pending
-            and not verified,
-
-        "payment_reported":
-            reported
-            or verified,
-
-        "download_unlocked":
-            verified,
-
-        "back_office_activated":
-            bool(
-                payment.get(
-                    "back_office_activated"
-                )
-            ),
-
-        "back_office_activated_at":
-            payment.get(
-                "back_office_activated_at"
-            ),
-    }
-
-
-# ============================================================
-# BACK OFFICE SYNCHRONIZATION
-# ============================================================
-
-def payment_backoffice_state(
-    payment: dict[str, Any],
-) -> tuple[str, str]:
-
-    status = normalize_status(
-        payment.get(
-            "payment_status"
-        )
-    )
-
-    if payment_is_verified(
-        status
-    ):
-
-        return (
-            "Payment Verified",
-            "verified",
-        )
-
-    if payment_is_reported(
-        status
-    ):
-
-        return (
-            "Payment Reported — Awaiting Verification",
-            "payment_reported",
-        )
-
-    if payment_is_pending(
-        status
-    ):
-
-        return (
-            "Payment Started — Awaiting Customer Report",
-            "payment_pending",
-        )
-
-    if status == "rejected":
-
-        return (
-            "Payment Rejected",
-            "rejected",
-        )
-
-    return (
-        "Payment Required",
-        "unpaid",
-    )
-
-
-def build_work_record(
-    payment: dict[str, Any],
-) -> dict[str, Any]:
-
-    snapshot = payment_document(
-        payment
-    )
-
-    pages = normalize_pages(
-        snapshot.get(
-            "pages"
-        )
-        or snapshot.get(
-            "document_pages"
-        )
-    )
-
-    text = clean(
-        snapshot.get(
-            "document_text"
-        )
-        or snapshot.get(
-            "text"
-        )
-        or ""
-    )
-
-    if not pages and text:
-
-        pages = [text]
-
-    label, workflow_status = (
-        payment_backoffice_state(
-            payment
-        )
-    )
-
-    version_id = clean(
-        payment.get(
-            "document_version"
-        )
-    )
-
-    payment_id = clean(
-        payment.get(
-            "payment_id"
-        )
-    )
-
-    job_id = clean(
-        payment.get(
-            "job_id"
-        )
-    )
-
-    activated = bool(
-        payment.get(
-            "back_office_activated"
-        )
-    )
-
-    verified = payment_is_verified(
-        payment.get(
-            "payment_status",
-            "",
-        )
-    )
-
-    pending = payment_is_pending(
-        payment.get(
-            "payment_status",
-            "",
-        )
-    )
-
-    reported = payment_is_reported(
-        payment.get(
-            "payment_status",
-            "",
-        )
-    )
-
-    filename = (
-        clean(
-            payment.get(
-                "document_filename"
-            )
-        )
-        or f"naija_pocket_{job_id}.docx"
-    )
-
-    record: dict[str, Any] = {
-
-        # ----------------------------------------------------
-        # Main identifiers
-        # ----------------------------------------------------
-
-        "work_id":
-            payment_id,
-
-        "workId":
-            payment_id,
-
-        "job_id":
-            job_id,
-
-        "jobId":
-            job_id,
-
-        "customer_id":
-            clean(
-                payment.get(
-                    "customer_id"
-                )
-            ),
-
-        "customerId":
-            clean(
-                payment.get(
-                    "customer_id"
-                )
-            ),
-
-        # ----------------------------------------------------
-        # Service
-        # ----------------------------------------------------
-
-        "service":
-            clean(
-                payment.get(
-                    "service"
-                )
-            ),
-
-        # ----------------------------------------------------
-        # Payment
-        # ----------------------------------------------------
-
-        "amount":
-            money(
-                payment.get(
-                    "amount"
-                )
-            ),
-
-        "currency":
-            payment.get(
-                "currency"
-            )
-            or DEFAULT_CURRENCY,
-
-        "payment_id":
-            payment_id,
-
-        "paymentId":
-            payment_id,
-
-        "payment_status":
-            payment.get(
-                "payment_status"
-            ),
-
-        "paymentStatus":
-            payment.get(
-                "payment_status"
-            ),
-
-        "payment_pending":
-            pending
-            and not verified,
-
-        "payment_reported":
-            reported
-            or verified,
-
-        "payment_verified":
-            verified,
-
-        "paid":
-            verified,
-
-        # ----------------------------------------------------
-        # Human-readable Back Office state
-        # ----------------------------------------------------
-
-        "status":
-            label,
-
-        "workflow_status":
-            workflow_status,
-
-        "back_office_status":
-            label,
-
-        "backOfficeStatus":
-            label,
-
-        # ----------------------------------------------------
-        # Review / approval
-        # ----------------------------------------------------
-
-        "review_finished":
-            True,
-
-        "review_complete":
-            True,
-
-        "approved":
-            True,
-
-        "current_version":
-            1,
-
-        "version_id":
-            version_id,
-
-        "document_version":
-            version_id,
-
-        # ----------------------------------------------------
-        # Document
-        # ----------------------------------------------------
-
-        "filename":
-            filename,
-
-        "document_filename":
-            filename,
-
-        "document_text":
-            text,
-
-        "document_pages":
-            pages,
-
-        "pages":
-            pages,
-
-        "total_pages":
-            len(pages),
-
-        # ----------------------------------------------------
-        # Activation
-        # ----------------------------------------------------
-
-        "activated":
-            activated,
-
-        "download_activated":
-            activated,
-
-        "back_office_activated":
-            activated,
-
-        "back_office_activated_at":
-            payment.get(
-                "back_office_activated_at"
-            ),
-
-        # ----------------------------------------------------
-        # Download
-        # ----------------------------------------------------
-
-        "download_unlocked":
-            verified,
-
-        # ----------------------------------------------------
-        # Dates
-        # ----------------------------------------------------
-
-        "created_at":
-            payment.get(
-                "created_at"
-            ),
-
-        "updated_at":
-            payment.get(
-                "updated_at"
-            ),
-
-        "reported_at":
-            payment.get(
-                "reported_at"
-            ),
-
-        "verified_at":
-            payment.get(
-                "verified_at"
-            ),
-    }
-
-    # ========================================================
-    # SAVED VERSION RECORD
-    # ========================================================
-
-    version_record = dict(
-        record
-    )
-
-    version_record.update(
-        {
-            "id":
-                payment_id,
-
-            "work_id":
-                payment_id,
-
-            "workId":
-                payment_id,
-
-            "version_id":
-                version_id,
-
-            "versionId":
-                version_id,
-
-            "saved":
-                True,
-
-            "approved":
-                True,
-
-            "activated":
-                activated,
-
-            "download_unlocked":
-                verified,
-
-            "content":
-                pages,
-        }
-    )
-
-    # ========================================================
-    # Multiple compatibility names.
-    #
-    # The unchanged Back Office can use whichever historical
-    # field name it already expects.
-    # ========================================================
-
-    record[
-        "work_records"
-    ] = [
-        version_record
-    ]
-
-    record[
-        "workRecords"
-    ] = [
-        version_record
-    ]
-
-    record[
-        "versions"
-    ] = [
-        version_record
-    ]
-
-    record[
-        "works"
-    ] = [
-        version_record
-    ]
-
-    record[
-        "saved_work"
-    ] = [
-        version_record
-    ]
-
-    record[
-        "savedWork"
-    ] = [
-        version_record
-    ]
-
-    return record
-
-
-def list_backoffice_jobs() -> list[
-    dict[str, Any]
-]:
-
-    with connect_db() as conn:
-
-        rows = conn.execute(
-            """
-            SELECT *
-            FROM payment_orders
-            ORDER BY id DESC
-            """
-        ).fetchall()
-
-    return [
-        build_work_record(
-            dict(row)
-        )
-        for row in rows
-    ]
-
-
-def valid_operator_key(
-    supplied: str | None,
-) -> bool:
-
-    supplied = clean(
-        supplied
-    )
-
-    if not supplied:
-        return False
-
-    if BACK_OFFICE_KEY:
-
-        return hmac.compare_digest(
-            supplied,
-            BACK_OFFICE_KEY,
-        )
-
-    # Compatibility fallback.
-    #
-    # A production deployment should define
-    # BACK_OFFICE_KEY.
-    #
-    # This keeps the existing operator-key
-    # frontend from being broken if no separate
-    # key was configured in the payment service.
-    return True
-
-
-# ============================================================
-# BACK OFFICE JOB LIST
-# ============================================================
-
-@app.get(
-    "/api/back-office/jobs"
-)
-async def back_office_jobs(
-    operator_key: str | None = None,
-    admin_key: str | None = None,
-):
-
-    supplied = (
-        clean(operator_key)
-        or clean(admin_key)
-    )
-
-    if not valid_operator_key(
-        supplied
-    ):
-
-        return json_response_error(
-            "BACK_OFFICE_UNAUTHORIZED",
-            "A valid operator key is required to load Back Office jobs.",
-            401,
-        )
-
-    jobs = list_backoffice_jobs()
-
-    approved_count = sum(
-        1
-        for job in jobs
-        if job.get(
-            "approved"
-        )
-    )
-
-    activated_count = sum(
-        1
-        for job in jobs
-        if job.get(
-            "activated"
-        )
-    )
-
-    reported_count = sum(
-        1
-        for job in jobs
-        if job.get(
-            "payment_reported"
-        )
-        and not job.get(
-            "payment_verified"
-        )
-    )
-
-    return {
-
-        "ok":
-            True,
-
-        "success":
-            True,
-
-        "count":
-            len(jobs),
-
-        "jobs":
-            jobs,
-
-        "items":
-            jobs,
-
-        "work_records":
-            jobs,
-
-        "workRecords":
-            jobs,
-
-        "approved":
-            approved_count,
-
-        "activated":
-            activated_count,
-
-        "payment_reported":
-            reported_count,
-
-        "awaiting_verification":
-            reported_count,
-
-        "total_jobs":
-            len(jobs),
-
-        "total_approved":
-            approved_count,
-
-        "total_activated":
-            activated_count,
-
-        "total_payment_reported":
-            reported_count,
-    }
-
-
-# ============================================================
-# BACK OFFICE ACTIVATE EXACT SAVED VERSION
-# ============================================================
-
-@app.post(
-    "/api/back-office/activate-download"
-)
-async def back_office_activate_download(
-    request: Request,
-):
-
-    try:
-
-        body = await request.json()
-
-    except Exception:
-
-        body = {}
-
-    if not isinstance(
-        body,
-        dict,
-    ):
-
-        body = {}
-
-    supplied_key = clean(
-        body.get(
-            "admin_key"
-        )
-        or body.get(
-            "operator_key"
-        )
-        or body.get(
-            "operatorKey"
-        )
-        or body.get(
-            "key"
-        )
-    )
-
-    if not valid_operator_key(
-        supplied_key
-    ):
-
-        return json_response_error(
-            "BACK_OFFICE_UNAUTHORIZED",
-            "A valid operator key is required.",
-            401,
-        )
-
-    work_id = clean(
-        body.get(
-            "work_id"
-        )
-        or body.get(
-            "workId"
-        )
-        or body.get(
-            "payment_id"
-        )
-        or body.get(
-            "paymentId"
-        )
-    )
-
-    job_id = clean(
-        body.get(
-            "job_id"
-        )
-        or body.get(
-            "jobId"
-        )
-    )
-
-    version_id = clean(
-        body.get(
-            "version_id"
-        )
-        or body.get(
-            "versionId"
-        )
-        or body.get(
-            "document_version"
-        )
-    )
-
-    payment = (
-        get_payment(work_id)
-        if work_id
-        else None
-    )
-
-    if not payment and job_id:
-
-        payment = (
-            get_latest_payment_for_job(
-                job_id
-            )
-        )
-
-    if not payment:
-
-        return json_response_error(
-            "WORK_NOT_FOUND",
-            "The saved work could not be found.",
-            404,
-        )
-
-    stored_version = clean(
-        payment.get(
-            "document_version"
-        )
-    )
-
-    if (
-        version_id
-        and stored_version
-        and version_id != stored_version
-    ):
-
-        return json_response_error(
-            "VERSION_MISMATCH",
-            "The requested document version does not match the saved payment version.",
-            409,
-        )
-
-    timestamp = now_iso()
-
-    with connect_db() as conn:
-
-        conn.execute(
-            """
-            UPDATE payment_orders
-
-            SET
-                back_office_activated = 1,
-                back_office_activated_at = ?,
-                updated_at = ?
-
-            WHERE payment_id = ?
-            """,
-            (
-                timestamp,
-                timestamp,
-                payment["payment_id"],
-            ),
-        )
-
-        conn.commit()
-
-    updated = (
-        get_payment(
-            payment["payment_id"]
-        )
-        or payment
-    )
-
-    record = build_work_record(
-        updated
-    )
-
-    return {
-
-        "ok":
-            True,
-
-        "success":
-            True,
-
-        "activated":
-            True,
-
-        "download_activated":
-            True,
-
-        "work_id":
-            record["work_id"],
-
-        "job_id":
-            record["job_id"],
-
-        "version_id":
-            record["version_id"],
-
-        "work":
-            record,
-
-        "message":
-            "The exact saved work version has been activated in Back Office.",
-    }
-
-
-# ============================================================
 # ROOT / HEALTH
 # ============================================================
 
@@ -2380,24 +2940,12 @@ async def back_office_activate_download(
 async def root() -> dict[str, Any]:
 
     return {
-
-        "ok":
-            True,
-
-        "success":
-            True,
-
-        "service":
-            "Naija Pocket Business Center Payment API",
-
-        "version":
-            APP_VERSION,
-
-        "old_api_configured":
-            old_api_configured(),
-
-        "back_office_sync":
-            True,
+        "ok": True,
+        "service": (
+            "Naija Pocket Business Center "
+            "Payment API"
+        ),
+        "version": APP_VERSION,
     }
 
 
@@ -2406,37 +2954,94 @@ async def root() -> dict[str, Any]:
 async def health() -> dict[str, Any]:
 
     return {
-
-        "ok":
-            True,
-
-        "success":
-            True,
-
-        "service":
-            "payment_api",
-
-        "version":
-            APP_VERSION,
-
-        "old_api_configured":
-            old_api_configured(),
-
-        "back_office_sync":
-            True,
-
-        "database":
-            str(DB_PATH),
+        "ok": True,
+        "service": "payment_api",
+        "version": APP_VERSION,
+        "payment_database": str(
+            PAYMENT_DB_PATH
+        ),
+        "main_database": str(
+            MAIN_DB_PATH
+        ),
+        "document_api_configured": bool(
+            DOCUMENT_API_BASE_URL
+        ),
     }
 
 
 # ============================================================
-# PAYMENT CREATE
+# DIAGNOSTIC
 # ============================================================
 
-@app.post(
-    "/api/payment/create"
-)
+@app.get("/api/payment/diagnostic")
+async def payment_diagnostic() -> dict[str, Any]:
+
+    gateway_count = len(
+        list_all_gateway_payments()
+    )
+
+    main_jobs = len(
+        get_main_jobs_direct()
+    )
+
+    main_work_records = 0
+
+    if main_table_exists(
+        "work_records"
+    ):
+
+        main_work_records = len(
+            main_rows(
+                "SELECT * FROM work_records"
+            )
+        )
+
+    main_payments = len(
+        get_main_payment_rows()
+    )
+
+    merged_jobs = (
+        get_back_office_jobs_combined()
+    )
+
+    return {
+        "ok": True,
+
+        "version": APP_VERSION,
+
+        "payment_database": str(
+            PAYMENT_DB_PATH
+        ),
+
+        "main_database": str(
+            MAIN_DB_PATH
+        ),
+
+        "gateway_payment_orders_count":
+            gateway_count,
+
+        "main_jobs_count":
+            main_jobs,
+
+        "main_work_records_count":
+            main_work_records,
+
+        "main_payments_count":
+            main_payments,
+
+        "merged_back_office_jobs_count":
+            len(merged_jobs),
+
+        "jobs":
+            merged_jobs[:20],
+    }
+
+
+# ============================================================
+# CREATE PAYMENT
+# ============================================================
+
+@app.post("/api/payment/create")
 async def payment_create(
     request: Request,
     job_id: str | None = None,
@@ -2445,10 +3050,6 @@ async def payment_create(
     amount: float | None = None,
     payment_method: str | None = None,
 ):
-
-    # --------------------------------------------------------
-    # Accept query parameters AND JSON.
-    # --------------------------------------------------------
 
     try:
 
@@ -2508,17 +3109,11 @@ async def payment_create(
         service
     )
 
-    method = (
-        clean(payment_method)
-        or DEFAULT_PAYMENT_METHOD
-    )
-
     if not job_id:
 
-        return json_response_error(
+        return json_error(
             "JOB_ID_REQUIRED",
             "job_id is required.",
-            400,
         )
 
     current, error = (
@@ -2527,59 +3122,43 @@ async def payment_create(
         )
     )
 
-    if error:
+    if error or current is None:
 
-        return json_response_error(
+        return json_error(
             "DOCUMENT_LOOKUP_FAILED",
-            "The existing document service could not be reached for this job.",
+            "The current document could not be retrieved.",
             502,
             detail=error,
         )
-
-    assert current is not None
 
     if not current_document_is_ready(
         current
     ):
 
-        return json_response_error(
+        return json_error(
             "DOCUMENT_NOT_READY",
-            "The document is not ready for payment yet.",
+            "The document is not ready for payment.",
             409,
-            job_id=job_id,
-            status=current.get(
-                "status"
-            ),
         )
-
-    document_amount = money(
-        current.get(
-            "amount"
-        )
-    )
-
-    requested_amount = money(
-        amount
-    )
 
     final_amount = (
-        document_amount
-        if document_amount > 0
-        else requested_amount
+        money(
+            current.get(
+                "amount"
+            )
+        )
+        or money(
+            amount
+        )
     )
 
     if final_amount <= 0:
 
-        return json_response_error(
+        return json_error(
             "AMOUNT_NOT_AVAILABLE",
-            "The document service did not provide an amount to pay.",
+            "The amount to pay is not available.",
             409,
-            job_id=job_id,
         )
-
-    # --------------------------------------------------------
-    # Reuse the current payment for this exact document version.
-    # --------------------------------------------------------
 
     latest = (
         get_latest_payment_for_job(
@@ -2616,20 +3195,17 @@ async def payment_create(
             }
         ):
 
-            public = payment_public(
-                latest
+            synchronize_payment_to_business(
+                latest,
+                current,
             )
 
             return {
+                "ok": True,
 
-                "ok":
-                    True,
-
-                "success":
-                    True,
-
-                "payment":
-                    public,
+                "payment": payment_public(
+                    latest
+                ),
 
                 "payment_id":
                     latest.get(
@@ -2656,27 +3232,23 @@ async def payment_create(
 
                 "paid":
                     payment_is_verified(
-                        latest_status
+                        latest.get(
+                            "payment_status"
+                        )
                     ),
 
                 "payment_verified":
                     payment_is_verified(
-                        latest_status
-                    ),
-
-                "payment_pending":
-                    payment_is_pending(
-                        latest_status
-                    ),
-
-                "payment_reported":
-                    payment_is_reported(
-                        latest_status
+                        latest.get(
+                            "payment_status"
+                        )
                     ),
 
                 "download_unlocked":
                     payment_is_verified(
-                        latest_status
+                        latest.get(
+                            "payment_status"
+                        )
                     ),
 
                 "document_version":
@@ -2685,16 +3257,11 @@ async def payment_create(
                     ),
             }
 
-    # --------------------------------------------------------
-    # Create new payment.
-    # --------------------------------------------------------
-
     payment_id = (
         f"NPB-{uuid.uuid4().hex[:12].upper()}"
     )
 
     record = create_payment_record(
-
         payment_id=payment_id,
 
         job_id=job_id,
@@ -2715,13 +3282,19 @@ async def payment_create(
                     "service"
                 )
             )
+            or "Business Center Service"
         ),
 
         amount=final_amount,
 
         currency=DEFAULT_CURRENCY,
 
-        payment_method=method,
+        payment_method=(
+            clean(
+                payment_method
+            )
+            or DEFAULT_PAYMENT_METHOD
+        ),
 
         document_version=clean(
             current.get(
@@ -2738,22 +3311,49 @@ async def payment_create(
             or f"naija_pocket_{job_id}.docx"
         ),
 
-        document_payload=
-            snapshot_payload(
-                current
-            ),
+        document_payload={
+            "job_id":
+                job_id,
+
+            "pages":
+                current.get(
+                    "pages",
+                    [],
+                ),
+
+            "document_text":
+                current.get(
+                    "document_text",
+                    "",
+                ),
+
+            "service":
+                current.get(
+                    "service",
+                    "",
+                ),
+
+            "filename":
+                current.get(
+                    "filename",
+                    "",
+                ),
+        },
+    )
+
+    # THIS IS THE IMPORTANT SYNC.
+    synchronize_payment_to_business(
+        record,
+        current,
     )
 
     return {
-
-        "ok":
-            True,
-
-        "success":
-            True,
+        "ok": True,
 
         "message":
-            "Payment created. Complete the payment, then report it for Customer Care verification.",
+            "Payment created. "
+            "Complete payment, then report it "
+            "for verification.",
 
         "payment":
             payment_public(
@@ -2778,12 +3378,6 @@ async def payment_create(
         "payment_verified":
             False,
 
-        "payment_pending":
-            True,
-
-        "payment_reported":
-            False,
-
         "download_unlocked":
             False,
 
@@ -2795,27 +3389,14 @@ async def payment_create(
 
 
 # ============================================================
-# PAYMENT REPORT
-#
-# THIS IS THE IMPORTANT FIX.
-#
-# When the customer reports payment:
-#
-#   payment_status = reported
-#
-# and the Back Office endpoint immediately sees it.
-#
-# It does NOT unlock download.
+# REPORT PAYMENT
 # ============================================================
 
-@app.post(
-    "/api/payment/report"
-)
+@app.post("/api/payment/report")
 async def payment_report(
     request: Request,
     payment_id: str | None = None,
     job_id: str | None = None,
-    version_id: str | None = None,
     payment_reference: str | None = None,
     note: str | None = None,
 ):
@@ -2840,16 +3421,6 @@ async def payment_report(
                 job_id
                 or body.get(
                     "job_id"
-                )
-            )
-
-            version_id = (
-                version_id
-                or body.get(
-                    "version_id"
-                )
-                or body.get(
-                    "document_version"
                 )
             )
 
@@ -2884,10 +3455,6 @@ async def payment_report(
         job_id
     )
 
-    version_id = clean(
-        version_id
-    )
-
     payment = (
         get_payment(
             payment_id
@@ -2906,50 +3473,25 @@ async def payment_report(
 
     if not payment:
 
-        return json_response_error(
+        return json_error(
             "PAYMENT_NOT_FOUND",
-            "No payment record was found for this request.",
+            "No payment record was found.",
             404,
         )
 
-    # --------------------------------------------------------
-    # Validate the exact document version.
-    # --------------------------------------------------------
-
-    stored_version = clean(
-        payment.get(
-            "document_version"
-        )
-    )
-
-    if (
-        version_id
-        and stored_version
-        and version_id != stored_version
-    ):
-
-        return json_response_error(
-            "PAYMENT_DOCUMENT_CHANGED",
-            "The payment report does not match the saved document version.",
-            409,
-        )
-
-    current, current_error = (
+    current, error = (
         safe_current_document(
             payment["job_id"]
         )
     )
 
-    if (
-        current_error
-        or current is None
-    ):
+    if error or current is None:
 
-        return json_response_error(
+        return json_error(
             "DOCUMENT_LOOKUP_FAILED",
-            "The current document could not be checked before recording the payment report.",
+            "The document could not be checked.",
             502,
-            detail=current_error,
+            detail=error,
         )
 
     if not document_version_is_current(
@@ -2957,33 +3499,25 @@ async def payment_report(
         current,
     ):
 
-        return json_response_error(
+        return json_error(
             "PAYMENT_DOCUMENT_CHANGED",
-            "The document was changed after this payment was created. A new payment record is required for the current document.",
+            "This payment belongs to an older document version.",
             409,
         )
 
-    status = normalize_status(
+    if payment_is_verified(
         payment.get(
             "payment_status"
         )
-    )
-
-    # --------------------------------------------------------
-    # Already verified.
-    # --------------------------------------------------------
-
-    if payment_is_verified(
-        status
     ):
 
+        synchronize_payment_to_business(
+            payment,
+            current,
+        )
+
         return {
-
-            "ok":
-                True,
-
-            "success":
-                True,
+            "ok": True,
 
             "message":
                 "Payment has already been verified.",
@@ -2993,42 +3527,37 @@ async def payment_report(
                     payment
                 ),
 
+            "payment_id":
+                payment.get(
+                    "payment_id"
+                ),
+
+            "job_id":
+                payment.get(
+                    "job_id"
+                ),
+
+            "status":
+                payment.get(
+                    "payment_status"
+                ),
+
+            "payment_status":
+                payment.get(
+                    "payment_status"
+                ),
+
             "paid":
                 True,
 
             "payment_verified":
                 True,
 
-            "payment_pending":
-                False,
-
-            "payment_reported":
-                True,
-
             "download_unlocked":
-                True,
-
-            "back_office_status":
-                "Payment Verified",
-
-            "back_office_visible":
                 True,
         }
 
-    # --------------------------------------------------------
-    # IMPORTANT:
-    #
-    # Do NOT set this to paid.
-    #
-    # "reported" means:
-    #
-    # Customer says payment was made.
-    #
-    # Customer Care still has to verify it.
-    # --------------------------------------------------------
-
     updated = update_payment_record(
-
         payment["payment_id"],
 
         status="reported",
@@ -3041,53 +3570,41 @@ async def payment_report(
         ),
 
         customer_note=(
-            clean(note)
+            clean(
+                note
+            )
             or None
         ),
 
         reported_at=now_iso(),
     )
 
-    if not updated:
-
-        return json_response_error(
-            "PAYMENT_REPORT_FAILED",
-            "The payment report could not be saved.",
-            500,
-        )
-
-    public = payment_public(
-        updated
+    synchronize_payment_to_business(
+        updated or payment,
+        current,
     )
 
     return {
-
-        "ok":
-            True,
-
-        "success":
-            True,
+        "ok": True,
 
         "message":
-            "Payment report received. The job is now visible in Back Office as Payment Reported — Awaiting Verification. Customer Care must verify the payment before download is unlocked.",
+            "Payment reported. "
+            "Please wait for Customer Care "
+            "to verify your payment.",
 
         "payment":
-            public,
-
-        "job_id":
-            updated.get(
-                "job_id"
-            ),
-
-        "version_id":
-            updated.get(
-                "document_version"
+            payment_public(
+                updated
             ),
 
         "payment_id":
-            updated.get(
-                "payment_id"
-            ),
+            payment["payment_id"],
+
+        "job_id":
+            payment["job_id"],
+
+        "status":
+            "reported",
 
         "payment_status":
             "reported",
@@ -3098,20 +3615,8 @@ async def payment_report(
         "payment_verified":
             False,
 
-        "payment_pending":
-            True,
-
-        "payment_reported":
-            True,
-
         "download_unlocked":
             False,
-
-        "back_office_status":
-            "Payment Reported — Awaiting Verification",
-
-        "back_office_visible":
-            True,
     }
 
 
@@ -3119,114 +3624,37 @@ async def payment_report(
 # PAYMENT STATUS
 # ============================================================
 
-@app.get(
-    "/api/payment/status"
-)
+@app.get("/api/payment/status")
 async def payment_status(
+    job_id: str,
     payment_id: str | None = None,
-    job_id: str | None = None,
-    version_id: str | None = None,
 ):
 
     payment = (
         get_payment(
-            clean(payment_id)
-        )
-        if clean(payment_id)
-        else None
-    )
-
-    if not payment and clean(
-        job_id
-    ):
-
-        payment = (
-            get_latest_payment_for_job(
-                clean(job_id)
+            clean(
+                payment_id
             )
         )
+        if clean(
+            payment_id
+        )
+        else get_latest_payment_for_job(
+            clean(
+                job_id
+            )
+        )
+    )
 
     if not payment:
 
         return {
-
-            "ok":
-                True,
-
-            "success":
-                True,
-
-            "payment":
-                None,
-
-            "payment_status":
-                "none",
-
-            "paid":
-                False,
-
-            "payment_verified":
-                False,
-
-            "payment_pending":
-                False,
-
-            "payment_reported":
-                False,
-
-            "download_unlocked":
-                False,
-        }
-
-    stored_version = clean(
-        payment.get(
-            "document_version"
-        )
-    )
-
-    if (
-        version_id
-        and stored_version
-        and clean(version_id)
-        != stored_version
-    ):
-
-        return {
-
-            "ok":
-                True,
-
-            "success":
-                True,
-
-            "payment":
-                payment_public(
-                    payment
-                ),
-
-            "payment_status":
-                "invalid_for_current_document",
-
-            "paid":
-                False,
-
-            "payment_verified":
-                False,
-
-            "payment_pending":
-                False,
-
-            "payment_reported":
-                False,
-
-            "download_unlocked":
-                False,
-
-            "document_check":
-                "changed",
-
-            "message":
-                "The payment belongs to a different document version.",
+            "ok": True,
+            "payment": None,
+            "payment_status": "none",
+            "paid": False,
+            "payment_verified": False,
+            "download_unlocked": False,
         }
 
     current, error = (
@@ -3235,80 +3663,22 @@ async def payment_status(
         )
     )
 
+    verified = payment_is_verified(
+        payment.get(
+            "payment_status"
+        )
+    )
+
     if (
-        error
-        or current is None
-    ):
-
-        status = normalize_status(
-            payment.get(
-                "payment_status"
-            )
+        current
+        and not document_version_is_current(
+            payment,
+            current,
         )
-
-        verified = payment_is_verified(
-            status
-        )
-
-        reported = payment_is_reported(
-            status
-        )
-
-        pending = payment_is_pending(
-            status
-        )
-
-        return {
-
-            "ok":
-                True,
-
-            "success":
-                True,
-
-            "payment":
-                payment_public(
-                    payment
-                ),
-
-            "payment_status":
-                payment.get(
-                    "payment_status"
-                ),
-
-            "paid":
-                verified,
-
-            "payment_verified":
-                verified,
-
-            "payment_pending":
-                pending
-                and not verified,
-
-            "payment_reported":
-                reported
-                or verified,
-
-            "download_unlocked":
-                verified,
-
-            "document_check":
-                "unavailable",
-        }
-
-    if not document_version_is_current(
-        payment,
-        current,
     ):
 
         return {
-
-            "ok":
-                True,
-
-            "success":
-                True,
+            "ok": True,
 
             "payment":
                 payment_public(
@@ -3324,72 +3694,24 @@ async def payment_status(
             "payment_verified":
                 False,
 
-            "payment_pending":
-                False,
-
-            "payment_reported":
-                False,
-
             "download_unlocked":
                 False,
 
             "document_check":
                 "changed",
-
-            "message":
-                "The document changed after payment creation. Payment cannot unlock the changed document.",
         }
 
-    status = normalize_status(
-        payment.get(
-            "payment_status"
-        )
-    )
-
-    verified = payment_is_verified(
-        status
-    )
-
-    reported = payment_is_reported(
-        status
-    )
-
-    pending = payment_is_pending(
-        status
-    )
-
-    backoffice_label, _ = (
-        payment_backoffice_state(
-            payment
-        )
+    synchronize_payment_to_business(
+        payment,
+        current,
     )
 
     return {
-
-        "ok":
-            True,
-
-        "success":
-            True,
+        "ok": True,
 
         "payment":
             payment_public(
                 payment
-            ),
-
-        "job_id":
-            payment.get(
-                "job_id"
-            ),
-
-        "version_id":
-            payment.get(
-                "document_version"
-            ),
-
-        "payment_id":
-            payment.get(
-                "payment_id"
             ),
 
         "payment_status":
@@ -3403,89 +3725,50 @@ async def payment_status(
         "payment_verified":
             verified,
 
-        "payment_pending":
-            pending
-            and not verified,
-
-        "payment_reported":
-            reported
-            or verified,
-
         "download_unlocked":
             verified,
 
-        "back_office_status":
-            backoffice_label,
-
-        "back_office_visible":
-            bool(
-                reported
-                or verified
+        "document_check":
+            (
+                "current"
+                if current
+                else "unavailable"
             ),
 
-        "document_check":
-            "current",
+        "detail":
+            error,
     }
 
 
 # ============================================================
-# PAYMENT COMPATIBILITY ENDPOINT
-#
-# Older clients may call /api/payment/complete
-# when they actually mean "I HAVE MADE PAYMENT".
-#
-# It therefore remains a REPORT operation.
-#
-# Customer Care verification is handled separately below.
+# PAYMENT COMPLETE COMPATIBILITY ROUTE
 # ============================================================
 
-@app.post(
-    "/api/payment/complete"
-)
-async def payment_complete_compat(
+@app.post("/api/payment/complete")
+async def payment_complete(
     request: Request,
     payment_id: str | None = None,
     job_id: str | None = None,
-    version_id: str | None = None,
     payment_reference: str | None = None,
     note: str | None = None,
 ):
 
+    # "I HAVE MADE PAYMENT" reports payment.
+    # It does NOT verify payment.
     return await payment_report(
         request=request,
         payment_id=payment_id,
         job_id=job_id,
-        version_id=version_id,
         payment_reference=payment_reference,
         note=note,
     )
 
 
 # ============================================================
-# LEGACY PAYMENT ALIAS
+# CUSTOMER CARE PAYMENTS
 # ============================================================
 
-@app.get(
-    "/api/payment"
-)
-async def payment_state(
-    job_id: str,
-    version_id: str,
-):
-
-    return await payment_status(
-        job_id=job_id,
-        version_id=version_id,
-    )
-
-
-# ============================================================
-# CUSTOMER CARE PAYMENT LIST
-# ============================================================
-
-@app.get(
-    "/api/customer-care/payments"
-)
+@app.get("/api/customer-care/payments")
 async def customer_care_payments():
 
     records = (
@@ -3493,558 +3776,182 @@ async def customer_care_payments():
     )
 
     return {
-
-        "ok":
-            True,
-
-        "success":
-            True,
-
-        "count":
-            len(records),
-
-        "payments":
-            [
-                payment_public(
-                    record
-                )
-                for record in records
-            ],
+        "ok": True,
+        "count": len(records),
+        "payments": [
+            payment_public(
+                record
+            )
+            for record in records
+        ],
     }
 
 
-# ============================================================
-# CUSTOMER CARE VERIFICATION
-#
-# THIS is the operation that changes:
-#
-#     reported
-#
-# into:
-#
-#     verified
-#
-# Only after this:
-#
-#     paid = true
-#     payment_verified = true
-#     download_unlocked = true
-# ============================================================
+@app.get("/api/back-office/payments")
+async def back_office_payments():
 
-@app.post(
-    "/api/customer-care/payment/verify"
-)
-async def customer_care_verify(
-    request: Request,
-    payment_id: str | None = None,
-    verified: bool = True,
-    note: str | None = None,
-):
-
-    try:
-
-        body = await request.json()
-
-        if isinstance(
-            body,
-            dict,
-        ):
-
-            payment_id = (
-                payment_id
-                or body.get(
-                    "payment_id"
-                )
-            )
-
-            if "verified" in body:
-
-                verified = bool(
-                    body.get(
-                        "verified"
-                    )
-                )
-
-            note = (
-                note
-                or body.get(
-                    "note"
-                )
-                or body.get(
-                    "admin_note"
-                )
-            )
-
-    except Exception:
-        pass
-
-    payment_id = clean(
-        payment_id
+    records = (
+        list_all_gateway_payments()
     )
-
-    if not payment_id:
-
-        return json_response_error(
-            "PAYMENT_ID_REQUIRED",
-            "payment_id is required.",
-            400,
-        )
-
-    payment = get_payment(
-        payment_id
-    )
-
-    if not payment:
-
-        return json_response_error(
-            "PAYMENT_NOT_FOUND",
-            "Payment record not found.",
-            404,
-        )
-
-    # --------------------------------------------------------
-    # Customer Care rejects the payment.
-    # --------------------------------------------------------
-
-    if not verified:
-
-        updated = update_payment_record(
-
-            payment_id,
-
-            status="rejected",
-
-            admin_note=(
-                clean(note)
-                or None
-            ),
-        )
-
-        return {
-
-            "ok":
-                True,
-
-            "success":
-                True,
-
-            "message":
-                "Payment marked as rejected.",
-
-            "payment":
-                payment_public(
-                    updated
-                ),
-
-            "paid":
-                False,
-
-            "payment_verified":
-                False,
-
-            "payment_pending":
-                False,
-
-            "payment_reported":
-                False,
-
-            "download_unlocked":
-                False,
-
-            "back_office_status":
-                "Payment Rejected",
-        }
-
-    # --------------------------------------------------------
-    # Verify current document version.
-    # --------------------------------------------------------
-
-    current, error = (
-        safe_current_document(
-            payment["job_id"]
-        )
-    )
-
-    if (
-        error
-        or current is None
-    ):
-
-        return json_response_error(
-            "DOCUMENT_LOOKUP_FAILED",
-            "Customer Care verification cannot be completed because the current document could not be checked.",
-            502,
-            detail=error,
-        )
-
-    if not document_version_is_current(
-        payment,
-        current,
-    ):
-
-        return json_response_error(
-            "PAYMENT_DOCUMENT_CHANGED",
-            "This payment belongs to an older version of the document and cannot unlock the current document.",
-            409,
-        )
-
-    # --------------------------------------------------------
-    # VERIFIED.
-    # --------------------------------------------------------
-
-    updated = update_payment_record(
-
-        payment_id,
-
-        status="verified",
-
-        admin_note=(
-            clean(note)
-            or None
-        ),
-
-        verified_at=now_iso(),
-    )
-
-    if not updated:
-
-        return json_response_error(
-            "PAYMENT_VERIFY_FAILED",
-            "Payment verification could not be saved.",
-            500,
-        )
 
     return {
-
-        "ok":
-            True,
-
-        "success":
-            True,
-
-        "message":
-            "Payment verified. Download is now unlocked for this document version.",
-
-        "payment":
+        "ok": True,
+        "count": len(records),
+        "payments": [
             payment_public(
-                updated
-            ),
-
-        "job_id":
-            updated.get(
-                "job_id"
-            ),
-
-        "version_id":
-            updated.get(
-                "document_version"
-            ),
-
-        "payment_id":
-            updated.get(
-                "payment_id"
-            ),
-
-        "paid":
-            True,
-
-        "payment_verified":
-            True,
-
-        "payment_pending":
-            False,
-
-        "payment_reported":
-            True,
-
-        "download_unlocked":
-            True,
-
-        "back_office_status":
-            "Payment Verified",
+                record
+            )
+            for record in records
+        ],
     }
 
 
 # ============================================================
-# DOWNLOAD
-#
-# Download is still locked unless Customer Care has verified.
+# BACK OFFICE JOBS
 # ============================================================
 
-@app.get(
-    "/api/download"
-)
-async def download_document(
-    payment_id: str | None = None,
-    job_id: str | None = None,
-    version_id: str | None = None,
-):
+@app.get("/api/customer-care/jobs")
+async def customer_care_jobs():
 
-    payment = (
-        get_payment(
-            clean(payment_id)
-        )
-        if clean(payment_id)
-        else None
+    jobs = (
+        get_back_office_jobs_combined()
     )
 
-    if not payment and clean(
-        job_id
-    ):
+    return {
+        "ok": True,
+        "success": True,
+        "count": len(jobs),
+        "jobs": jobs,
+    }
 
-        payment = (
-            get_latest_payment_for_job(
-                clean(job_id)
-            )
-        )
 
-    if not payment:
+@app.get("/api/back-office/jobs")
+async def back_office_jobs():
 
-        return json_response_error(
-            "PAYMENT_NOT_FOUND",
-            "Payment record not found.",
-            404,
-        )
-
-    stored_version = clean(
-        payment.get(
-            "document_version"
-        )
-    )
-
-    if (
-        version_id
-        and stored_version
-        and version_id != stored_version
-    ):
-
-        return json_response_error(
-            "VERSION_MISMATCH",
-            "The requested document version does not match the payment version.",
-            409,
-            download_unlocked=False,
-        )
-
-    status = normalize_status(
-        payment.get(
-            "payment_status"
-        )
-    )
-
-    # --------------------------------------------------------
-    # FINAL SECURITY CHECK.
+    # IMPORTANT:
     #
-    # Reported is NOT enough.
-    # Pending is NOT enough.
-    # Only verified/paid is enough.
-    # --------------------------------------------------------
+    # workspace.html calls this GET without admin_key.
+    #
+    # Therefore this route deliberately does NOT require
+    # an operator key.
+    #
+    # The operator key remains required for activation.
 
-    if not payment_is_verified(
-        status
-    ):
+    jobs = (
+        get_back_office_jobs_combined()
+    )
 
-        return json_response_error(
-            "DOWNLOAD_LOCKED",
-            "Download remains locked until Customer Care verifies the payment.",
-            403,
-            payment_status=payment.get(
+    approved_count = sum(
+        1
+        for job in jobs
+        if job.get(
+            "approved"
+        )
+    )
+
+    activated_count = sum(
+        1
+        for job in jobs
+        if any(
+            work.get(
+                "download_activated"
+            )
+            for work in job.get(
+                "work_records",
+                [],
+            )
+        )
+    )
+
+    paid_count = sum(
+        1
+        for job in jobs
+        if job.get(
+            "paid"
+        )
+    )
+
+    pending_count = sum(
+        1
+        for job in jobs
+        if normalize_status(
+            job.get(
                 "payment_status"
-            ),
-            payment_id=payment.get(
-                "payment_id"
-            ),
-            download_unlocked=False,
-        )
-
-    current, error = (
-        safe_current_document(
-            payment["job_id"]
-        )
-    )
-
-    if (
-        error
-        or current is None
-    ):
-
-        return json_response_error(
-            "DOCUMENT_LOOKUP_FAILED",
-            "The current document could not be retrieved.",
-            502,
-            detail=error,
-        )
-
-    if not document_version_is_current(
-        payment,
-        current,
-    ):
-
-        return json_response_error(
-            "DOCUMENT_CHANGED",
-            "The document changed after payment verification. This payment no longer unlocks the changed document.",
-            409,
-            download_unlocked=False,
-        )
-
-    if not document_has_content(
-        current
-    ):
-
-        return json_response_error(
-            "DOCUMENT_EMPTY",
-            "There is no document available for download.",
-            409,
-        )
-
-    pages = normalize_pages(
-        current.get(
-            "pages"
-        )
-    )
-
-    if (
-        not pages
-        and clean(
-            current.get(
-                "document_text"
             )
         )
-    ):
-
-        pages = [
-            clean(
-                current.get(
-                    "document_text"
-                )
-            )
-        ]
-
-    filename = (
-        clean(
-            current.get(
-                "filename"
-            )
-        )
-        or clean(
-            payment.get(
-                "document_filename"
-            )
-        )
+        in {
+            "pending",
+            "reported",
+            "verification_pending",
+            "awaiting_verification",
+        }
     )
 
-    if not filename:
+    return {
+        "ok": True,
 
-        filename = (
-            f"naija_pocket_"
-            f"{payment['job_id']}.docx"
-        )
+        "success": True,
 
-    if not filename.lower().endswith(
-        ".docx"
-    ):
+        "count":
+            len(jobs),
 
-        filename += ".docx"
+        "total":
+            len(jobs),
 
-    try:
+        "job_count":
+            len(jobs),
 
-        output_path = make_docx(
-            pages,
-            filename,
-        )
+        "total_jobs":
+            len(jobs),
 
-    except Exception as exc:
+        "approved_count":
+            approved_count,
 
-        return json_response_error(
-            "DOWNLOAD_BUILD_FAILED",
-            "The document could not be prepared for download.",
-            500,
-            detail=str(exc),
-        )
+        "approved_jobs":
+            approved_count,
 
-    increment_download(
-        payment["payment_id"]
-    )
+        "activated_count":
+            activated_count,
 
-    return FileResponse(
+        "activated_jobs":
+            activated_count,
 
-        path=str(
-            output_path
-        ),
+        "paid_count":
+            paid_count,
 
-        media_type=(
-            "application/"
-            "vnd.openxmlformats-officedocument."
-            "wordprocessingml.document"
-        ),
+        "paid_jobs":
+            paid_count,
 
-        filename=Path(
-            filename
-        ).name,
+        "pending_count":
+            pending_count,
 
-        headers={
+        "pending_jobs":
+            pending_count,
 
-            "X-Payment-ID":
-                payment[
-                    "payment_id"
-                ],
+        "stats": {
+            "total":
+                len(jobs),
 
-            "X-Download-Unlocked":
-                "true",
+            "approved":
+                approved_count,
+
+            "activated":
+                activated_count,
+
+            "paid":
+                paid_count,
+
+            "pending":
+                pending_count,
         },
-    )
+
+        "jobs":
+            jobs,
+    }
 
 
-# ============================================================
-# STARTUP
-# ============================================================
+@app.get("/api/back-office/stats")
+async def back_office_stats():
 
-@app.on_event(
-    "startup"
-)
-async def startup() -> None:
-
-    init_db()
-
-    print(
-        "[PAYMENT API] Startup complete."
-    )
-
-    print(
-        f"[PAYMENT API] Version: "
-        f"{APP_VERSION}"
-    )
-
-    print(
-        f"[PAYMENT API] Database: "
-        f"{DB_PATH}"
-    )
-
-    print(
-        "[PAYMENT API] Old API configured: "
-        f"{bool(OLD_API_BASE_URL)}"
-    )
-
-    print(
-        "[PAYMENT API] Back Office "
-        "synchronization: ENABLED"
-    )
-
-
-# ============================================================
-# DIRECT EXECUTION
-# ============================================================
-
-if __name__ == "__main__":
-
-    import uvicorn
-
-    uvicorn.run(
-        "payment_api:app",
-        host="0.0.0.0",
-        port=int(
-            os.getenv(
-                "PORT",
-                "8000",
-            )
-        ),
-    )
+    jobs = (
+        get_back_office_jobs_
