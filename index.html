@@ -1,12 +1,14 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#020403">
-<title>Naija Pocket Business Center</title><style>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<title>Naija Pocket Business Center</title>
+
+<style>
 *{
     box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
 }
 
 html,
@@ -14,19 +16,16 @@ body{
     margin:0;
     padding:0;
     width:100%;
-    height:100%;
-    overflow:hidden;
-}
-
-body{
-    background:#020403;
-    color:#fff;
+    min-height:100%;
     font-family:Arial,Helvetica,sans-serif;
+    background:#030303;
+    color:#fff;
+    overflow-x:hidden;
 }
 
 /* =========================================================
-   FIREWORK CANVAS
-========================================================= */
+   FIREWORKS BACKGROUND
+   ========================================================= */
 
 #fireworksCanvas{
     position:fixed;
@@ -36,1368 +35,772 @@ body{
     z-index:0;
     pointer-events:none;
     display:block;
+    background:
+        radial-gradient(circle at 50% 20%,rgba(30,30,30,.35),transparent 45%),
+        #030303;
 }
 
-/* =========================================================
-   NIGHT ATMOSPHERE
-========================================================= */
-
-.night-overlay{
+.firework-vignette{
     position:fixed;
     inset:0;
     z-index:1;
     pointer-events:none;
     background:
         radial-gradient(
-            ellipse at 50% 22%,
-            rgba(212,175,55,.055),
-            transparent 42%
-        ),
-        radial-gradient(
-            ellipse at 18% 75%,
-            rgba(0,128,0,.045),
-            transparent 35%
-        ),
-        radial-gradient(
-            ellipse at 82% 75%,
-            rgba(212,175,55,.035),
-            transparent 35%
-        ),
-        linear-gradient(
-            180deg,
-            rgba(0,0,0,.18),
-            rgba(0,0,0,.42)
+            ellipse at center,
+            rgba(0,0,0,.02) 0%,
+            rgba(0,0,0,.18) 55%,
+            rgba(0,0,0,.58) 100%
         );
 }
 
+.star-layer{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    opacity:.8;
+    background-image:
+        radial-gradient(circle,rgba(255,215,120,.8) 0 1px,transparent 1.5px),
+        radial-gradient(circle,rgba(255,255,255,.65) 0 1px,transparent 1.5px),
+        radial-gradient(circle,rgba(0,128,0,.7) 0 1px,transparent 1.5px);
+    background-size:
+        97px 113px,
+        151px 137px,
+        211px 173px;
+    background-position:
+        11px 7px,
+        42px 31px,
+        77px 53px;
+}
+
 /* =========================================================
-   PAGE
-========================================================= */
+   MAIN PAGE
+   ========================================================= */
 
 .page{
     position:relative;
     z-index:2;
     width:100%;
-    height:100vh;
-    height:100dvh;
-    padding:
-        max(4px,env(safe-area-inset-top))
-        4px
-        max(4px,env(safe-area-inset-bottom))
-        4px;
+    min-height:100vh;
     display:flex;
-    flex-direction:column;
-    overflow:hidden;
+    align-items:stretch;
+    justify-content:center;
 }
 
 /* =========================================================
    WELCOME HALF
-========================================================= */
+   ========================================================= */
 
 .welcome-half{
     position:relative;
-    width:100%;
-    height:50%;
-    flex:0 0 50%;
+    width:50%;
+    min-height:100vh;
     display:flex;
-    align-items:stretch;
+    align-items:center;
     justify-content:center;
-    overflow:hidden;
-    padding:10px 14px;
+    padding:28px;
+    border-right:1px solid rgba(212,175,55,.5);
+}
+
+.welcome-panel{
+    width:min(720px,100%);
+    padding:48px 42px;
+    border:1px solid rgba(212,175,55,.7);
+    border-radius:28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(4,4,4,.82),
+            rgba(15,15,15,.67)
+        );
+
+    box-shadow:
+        0 0 0 1px rgba(255,215,120,.08) inset,
+        0 20px 70px rgba(0,0,0,.7),
+        0 0 45px rgba(212,175,55,.08);
+
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+
     text-align:center;
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(2,5,4,.74),
-            rgba(4,6,5,.58)
-        );
-
-    border:1px solid rgba(212,175,55,.34);
-    border-bottom:2px solid rgba(212,175,55,.82);
-    border-radius:10px;
-
-    box-shadow:
-        inset 0 0 55px rgba(255,255,255,.018),
-        inset 0 -20px 55px rgba(0,0,0,.22),
-        0 8px 35px rgba(0,0,0,.65);
-
-    backdrop-filter:blur(1.5px);
-    -webkit-backdrop-filter:blur(1.5px);
 }
 
-/* inner gold frame */
-
-.welcome-half::before{
-    content:"";
-    position:absolute;
-    top:7px;
-    left:7px;
-    right:7px;
-    bottom:7px;
-
-    border:1px solid rgba(212,175,55,.22);
-    border-radius:7px;
-
-    pointer-events:none;
-}
-
-/* corner decoration */
-
-.welcome-half::after{
-    content:"";
-    position:absolute;
-    width:105px;
-    height:105px;
-    top:-58px;
-    right:-58px;
-
-    border:1px solid rgba(212,175,55,.26);
-    border-radius:50%;
-
-    box-shadow:
-        0 0 0 13px rgba(212,175,55,.025),
-        0 0 0 27px rgba(212,175,55,.015);
-
-    pointer-events:none;
-}
-
-/* =========================================================
-   WELCOME CONTENT
-========================================================= */
-
-.welcome-content{
-    position:relative;
-    z-index:3;
-
-    width:100%;
-    height:100%;
-    max-width:1200px;
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:space-evenly;
-
-    overflow:hidden;
-    padding:4px 0;
-}
-
-/* =========================================================
-   BRAND KICKER
-========================================================= */
-
-.brand-kicker{
-    margin:0;
-
+.concierge{
+    margin:0 0 14px;
     color:#d4af37;
-
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(8px,2vw,14px);
-    font-weight:400;
-
-    letter-spacing:clamp(2.5px,1vw,7px);
+    font-size:clamp(11px,1.2vw,15px);
+    font-weight:700;
+    letter-spacing:4px;
     text-transform:uppercase;
-
-    opacity:.94;
-
-    text-shadow:
-        0 0 14px rgba(212,175,55,.18);
-
-    animation:
-        welcomeFade .9s ease both;
 }
 
-/* =========================================================
-   BRAND NAME
-========================================================= */
-
-.brand-name{
-    width:100%;
+.brand{
     margin:0;
-
     color:#fff;
-
     font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(27px,8vw,65px);
-    font-weight:700;
-
+    font-size:clamp(30px,4vw,58px);
     line-height:1.04;
-    letter-spacing:clamp(1px,.5vw,4px);
-
-    text-transform:uppercase;
-
+    letter-spacing:1px;
     text-shadow:
-        0 2px 25px rgba(0,0,0,.92),
-        0 0 20px rgba(255,255,255,.025);
-
-    flex:0 0 auto;
-
-    animation:
-        brandReveal 1.15s cubic-bezier(.2,.7,.2,1) both;
+        0 0 8px rgba(255,255,255,.2),
+        0 0 28px rgba(212,175,55,.15);
 }
 
-.brand-name .green{
-    color:#1fa463;
-
-    text-shadow:
-        0 0 22px rgba(31,164,99,.16);
-}
-
-.brand-name .gold{
-    color:#d4af6a;
-
-    text-shadow:
-        0 0 22px rgba(212,175,55,.17);
-}
-
-/* =========================================================
-   GOLD DIVIDER
-========================================================= */
-
-.gold-divider{
-    width:clamp(76px,22vw,151px);
-    height:1px;
-    margin:0;
-
-    position:relative;
-    flex:0 0 auto;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            #d4af37 25%,
-            #f4d878 50%,
-            #d4af37 75%,
-            transparent
-        );
-
-    box-shadow:
-        0 0 8px rgba(212,175,55,.28);
-
-    animation:
-        dividerReveal 1.4s ease both;
-}
-
-.gold-divider::before,
-.gold-divider::after{
-    content:"";
-
-    position:absolute;
-    top:50%;
-
-    width:6px;
-    height:6px;
-
-    border:1px solid #d4af37;
-
-    transform:
-        translateY(-50%)
-        rotate(45deg);
-}
-
-.gold-divider::before{
-    left:8%;
-}
-
-.gold-divider::after{
-    right:8%;
-}
-
-/* =========================================================
-   VALUE LINES
-========================================================= */
-
-.value{
-    width:100%;
-    margin:0;
-
-    color:#f4f1e8;
-
-    font-size:clamp(11px,3vw,22px);
-    font-weight:600;
-
-    line-height:1.12;
-    letter-spacing:clamp(.2px,.15vw,1px);
-
-    flex:0 0 auto;
-
-    text-shadow:
-        0 2px 12px rgba(0,0,0,.7);
-
-    animation:
-        contentRise 1s ease both;
-}
-
-.value:first-of-type{
+.brand span{
     color:#d4af37;
-    font-weight:700;
-
-    letter-spacing:
-        clamp(.5px,.2vw,1.5px);
 }
 
-/* =========================================================
-   LUXURY STATEMENT
-========================================================= */
-
-.value.luxury-value{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-
-    gap:3px;
-
-    padding:2px 8px;
-
-    color:#f5f1e6;
-
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(10.5px,3vw,22px);
-    font-weight:400;
-
-    line-height:1.08;
-
-    letter-spacing:
-        clamp(.7px,.25vw,2.5px);
-
-    text-transform:uppercase;
-
-    text-shadow:
-        0 2px 12px rgba(0,0,0,.8),
-        0 0 15px rgba(212,175,55,.08);
+.fast-line{
+    margin:18px 0 30px;
+    color:#008000;
+    font-size:clamp(12px,1.3vw,17px);
+    font-weight:800;
+    letter-spacing:2px;
 }
 
-.value.luxury-value::before{
-    content:"";
-
-    width:clamp(31px,9vw,71px);
-    height:1px;
-
-    margin-bottom:1px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            #d4af37,
-            transparent
-        );
+.main-message{
+    margin:0 auto;
+    max-width:620px;
+    color:#f6f6f6;
+    font-size:clamp(18px,2vw,29px);
+    line-height:1.35;
+    font-weight:800;
 }
 
-.value.luxury-value .luxury-main{
-    display:block;
-
-    color:#fff;
-
-    font-weight:600;
-
-    letter-spacing:
-        clamp(.7px,.22vw,2px);
+.sub-message{
+    margin:25px auto 0;
+    max-width:590px;
+    color:#ddd;
+    font-size:clamp(13px,1.4vw,18px);
+    line-height:1.65;
 }
 
-.value.luxury-value .luxury-sub{
-    display:block;
-
+.sub-message strong{
     color:#d4af37;
+}
 
-    font-size:1em;
-    font-weight:400;
-
-    letter-spacing:
-        clamp(1px,.3vw,3px);
-
+.moving-line{
+    margin-top:30px;
+    color:#d4af37;
+    font-size:clamp(12px,1.2vw,16px);
+    font-weight:800;
+    letter-spacing:1.5px;
     text-transform:uppercase;
+    animation:pulseGold 1.8s ease-in-out infinite;
 }
 
-.value.luxury-value::after{
-    content:"";
-
-    width:clamp(46px,13vw,96px);
-    height:1px;
-
-    margin-top:1px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            #d4af37,
-            transparent
-        );
-
-    opacity:.55;
-}
-
-/* =========================================================
-   DOCUMENT HUB TITLE
-========================================================= */
-
-.services-title{
-    width:100%;
-    margin:0;
-
-    color:#fff;
-
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(11px,3vw,23px);
-    font-weight:700;
-
-    line-height:1.1;
-
-    letter-spacing:
-        clamp(.8px,.25vw,2px);
-
-    text-transform:uppercase;
-
-    text-shadow:
-        0 2px 12px rgba(0,0,0,.85);
-}
-
-/* =========================================================
-   MOVING BRAND LINE
-========================================================= */
-
-.document-people-window{
-    width:100%;
-    overflow:hidden;
-
-    margin:0;
-    padding:2px 0;
-
-    flex:0 0 auto;
-
-    border-top:1px solid rgba(212,175,55,.08);
-    border-bottom:1px solid rgba(212,175,55,.08);
-}
-
-.document-people-track{
-    display:inline-flex;
-    align-items:center;
-
-    flex-wrap:nowrap;
-
-    width:max-content;
-
-    white-space:nowrap;
-
-    color:#d4af6a;
-
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(11px,3vw,23px);
-    font-weight:700;
-
-    letter-spacing:
-        clamp(1px,.35vw,3px);
-
-    animation:
-        documentPeopleMove 22s linear infinite;
-
-    will-change:transform;
-
-    text-shadow:
-        0 0 13px rgba(212,175,55,.12);
-}
-
-.document-people-track .tagline-text{
-    display:inline-block;
-    flex:0 0 auto;
-    white-space:nowrap;
-}
-
-.document-people-track .wide-gap{
-    display:inline-block;
-
-    width:360px;
-    min-width:360px;
-
-    height:1px;
-
-    flex:0 0 360px;
-}
-
-@keyframes documentPeopleMove{
-    0%{
-        transform:translateX(100vw);
+@keyframes pulseGold{
+    0%,100%{
+        opacity:.55;
+        text-shadow:0 0 4px rgba(212,175,55,.2);
     }
-
-    100%{
-        transform:
-            translateX(
-                calc(-100% - 100vw)
-            );
+    50%{
+        opacity:1;
+        text-shadow:
+            0 0 8px rgba(212,175,55,.8),
+            0 0 20px rgba(212,175,55,.35);
     }
 }
 
 /* =========================================================
    SERVICES HALF
-========================================================= */
+   ========================================================= */
 
 .services-half{
-    width:100%;
-    height:50%;
-    flex:0 0 50%;
-
+    position:relative;
+    width:50%;
+    min-height:100vh;
+    padding:28px;
     display:flex;
     flex-direction:column;
-
-    overflow:hidden;
-
-    padding-top:5px;
+    justify-content:center;
 }
 
-/* =========================================================
-   SERVICE INSTRUCTION
-========================================================= */
-
-.service-instruction{
-    width:100%;
-
-    flex:0 0 auto;
-
-    margin:0 0 5px;
-
-    padding:5px 8px 7px;
-
-    color:#fffdf5;
-
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(11px,3vw,20px);
-    font-weight:700;
-
-    line-height:1.15;
-
+.services-header{
     text-align:center;
-
-    letter-spacing:
-        clamp(.4px,.16vw,1.2px);
-
-    text-transform:uppercase;
-
-    text-shadow:
-        0 1px 10px rgba(212,175,106,.22);
-
-    border-top:
-        1px solid rgba(212,175,106,.70);
-
-    border-bottom:
-        1px solid rgba(212,175,106,.45);
+    margin-bottom:18px;
 }
 
-/* =========================================================
-   SERVICE GRID
-========================================================= */
+.services-header h2{
+    margin:0;
+    color:#d4af37;
+    font-size:clamp(17px,2vw,27px);
+    line-height:1.25;
+    font-weight:900;
+    letter-spacing:1px;
+}
 
-.services{
+.services-header p{
+    margin:8px auto 0;
+    max-width:650px;
+    color:#eee;
+    font-size:clamp(11px,1.1vw,14px);
+    line-height:1.5;
+}
+
+.services-grid{
     width:100%;
-
-    flex:1 1 auto;
-    min-height:0;
-
     display:grid;
-
-    grid-template-columns:
-        repeat(3,minmax(0,1fr));
-
-    grid-template-rows:
-        repeat(10,minmax(0,1fr));
-
-    gap:4px;
-
-    overflow:hidden;
-
-    padding:1px 1px 0;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:9px;
 }
-
-/* =========================================================
-   SERVICE BUTTON
-========================================================= */
 
 .service-button{
     position:relative;
-
-    width:100%;
-    min-width:0;
-    min-height:0;
-
-    padding:3px 5px;
+    min-height:54px;
+    border:1px solid rgba(212,175,55,.42);
+    border-radius:10px;
+    padding:8px 7px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(14,18,16,.91),
-            rgba(3,6,5,.80)
+            rgba(25,25,25,.94),
+            rgba(8,8,8,.9)
         );
 
-    color:#f4f2eb;
-
-    border:
-        1px solid rgba(255,255,255,.075);
-
-    border-radius:5px;
-
+    color:#fff;
     font-family:Arial,Helvetica,sans-serif;
-    font-size:clamp(10px,2.5vw,17px);
+    font-size:clamp(9px,.9vw,12px);
+    line-height:1.2;
     font-weight:700;
 
-    line-height:1.02;
-
-    letter-spacing:
-        clamp(.05px,.08vw,.5px);
-
-    text-align:center;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    white-space:normal;
-
-    overflow:hidden;
-
     cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
 
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.035),
-        inset 0 -1px 0 rgba(0,0,0,.35),
-        0 2px 5px rgba(0,0,0,.24);
+        0 4px 12px rgba(0,0,0,.45),
+        0 0 0 1px rgba(255,255,255,.025) inset;
 
     transition:
-        color .18s ease,
-        background .18s ease,
-        border-color .18s ease,
-        transform .18s ease,
-        box-shadow .18s ease;
+        transform .16s ease,
+        border-color .16s ease,
+        box-shadow .16s ease,
+        background .16s ease;
 }
 
 .service-button::after{
     content:"";
-
     position:absolute;
-
-    left:25%;
-    right:25%;
-    bottom:1px;
-
-    height:1px;
-
+    inset:0;
+    border-radius:10px;
+    pointer-events:none;
     background:
         linear-gradient(
-            90deg,
-            transparent,
-            #d4af37,
-            transparent
+            120deg,
+            transparent 20%,
+            rgba(212,175,55,.12),
+            transparent 80%
         );
-
-    opacity:.65;
-
-    pointer-events:none;
-
-    transition:
-        left .18s ease,
-        right .18s ease,
-        opacity .18s ease;
+    opacity:0;
+    transition:opacity .16s ease;
 }
 
 .service-button:hover{
-    color:#d4af37;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(212,175,55,.105),
-            rgba(31,164,99,.055)
-        );
-
-    border-color:
-        rgba(212,175,55,.35);
-
+    transform:translateY(-2px);
+    border-color:#d4af37;
     box-shadow:
-        0 0 17px rgba(212,175,55,.08),
-        inset 0 1px 0 rgba(255,255,255,.045);
-
-    transform:translateY(-1px);
+        0 7px 18px rgba(0,0,0,.6),
+        0 0 18px rgba(212,175,55,.18);
 }
 
 .service-button:hover::after{
-    left:12%;
-    right:12%;
     opacity:1;
 }
 
 .service-button:active{
-    color:#d4af37;
-    transform:scale(.96);
+    transform:scale(.97);
 }
 
-.service-button.working{
-    color:#d4af37;
-
-    border-color:
-        rgba(212,175,55,.55);
-
-    background:
-        rgba(212,175,55,.075);
-
-    box-shadow:
-        0 0 15px rgba(212,175,55,.09);
+.service-button:focus-visible{
+    outline:2px solid #d4af37;
+    outline-offset:2px;
 }
-
-.service-button:disabled{
-    cursor:wait;
-    opacity:.42;
-}
-
-/* =========================================================
-   FINAL BRAND SIGNATURE
-========================================================= */
 
 .luxury-tagline{
     grid-column:1 / -1;
-    grid-row:10;
-
-    position:relative;
-
-    width:100%;
-    min-width:0;
-
-    padding:2px 6px;
-
-    color:#d4af37;
-
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(8px,2.1vw,17px);
-    font-weight:700;
-
-    line-height:1.05;
-
-    letter-spacing:
-        clamp(.3px,.15vw,1.4px);
-
-    text-align:center;
-
+    min-height:48px;
     display:flex;
     align-items:center;
     justify-content:center;
+    text-align:center;
 
-    white-space:nowrap;
-    overflow:hidden;
+    border:1px solid rgba(0,128,0,.55);
+    border-radius:10px;
 
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,128,0,.13),
+            rgba(212,175,55,.09),
+            rgba(0,128,0,.13)
+        );
+
+    color:#d4af37;
+    font-size:clamp(9px,1vw,13px);
+    font-weight:900;
+    letter-spacing:1.5px;
     text-transform:uppercase;
 }
 
-.luxury-tagline::before,
-.luxury-tagline::after{
-    content:"";
-
-    height:1px;
-
-    flex:1 1 auto;
-    min-width:8px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            #d4af37
-        );
-
-    opacity:.65;
+.footer{
+    margin-top:18px;
+    text-align:center;
+    color:#aaa;
+    font-size:clamp(9px,1vw,12px);
+    letter-spacing:1px;
 }
 
-.luxury-tagline::after{
-    background:
-        linear-gradient(
-            90deg,
-            #d4af37,
-            transparent
-        );
-}
-
-.luxury-tagline .brand-signature{
-    flex:0 1 auto;
-    min-width:0;
-
-    padding:0 8px;
-}
-
-.luxury-tagline .brand-main{
-    font-weight:800;
-
-    letter-spacing:
-        clamp(.4px,.18vw,1.8px);
-}
-
-.luxury-tagline .brand-sub{
-    font-weight:400;
-
-    letter-spacing:
-        clamp(.3px,.15vw,1.3px);
+.footer span{
+    color:#d4af37;
 }
 
 /* =========================================================
-   ANIMATIONS
-========================================================= */
+   FIREWORKS STATUS GLOW
+   ========================================================= */
 
-@keyframes welcomeFade{
-    from{
-        opacity:0;
-        transform:translateY(7px);
-    }
-
-    to{
-        opacity:.94;
-        transform:translateY(0);
-    }
+.corner-glow{
+    position:fixed;
+    width:260px;
+    height:260px;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:1;
+    filter:blur(45px);
+    opacity:.08;
 }
 
-@keyframes brandReveal{
-    from{
-        opacity:0;
-        transform:
-            translateY(13px)
-            scale(.985);
-    }
-
-    to{
-        opacity:1;
-        transform:
-            translateY(0)
-            scale(1);
-    }
+.corner-glow.one{
+    left:-100px;
+    top:-80px;
+    background:#d4af37;
 }
 
-@keyframes dividerReveal{
-    from{
-        opacity:0;
-        transform:scaleX(.25);
-    }
-
-    to{
-        opacity:1;
-        transform:scaleX(1);
-    }
+.corner-glow.two{
+    right:-100px;
+    top:25%;
+    background:#008000;
 }
 
-@keyframes contentRise{
-    from{
-        opacity:0;
-        transform:translateY(7px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+.corner-glow.three{
+    left:20%;
+    bottom:-130px;
+    background:#d4af37;
 }
 
 /* =========================================================
-   SMALL PHONES
-========================================================= */
+   TABLET
+   ========================================================= */
 
-@media(max-width:430px){
+@media(max-width:1050px){
 
     .page{
-        padding-left:3px;
-        padding-right:3px;
+        flex-direction:column;
+    }
+
+    .welcome-half,
+    .services-half{
+        width:100%;
+        min-height:auto;
     }
 
     .welcome-half{
-        padding:6px 8px 7px;
-        border-radius:8px;
+        min-height:48vh;
+        border-right:0;
+        border-bottom:1px solid rgba(212,175,55,.5);
     }
 
-    .welcome-half::before{
-        top:5px;
-        left:5px;
-        right:5px;
-        bottom:5px;
+    .services-half{
+        min-height:52vh;
     }
 
-    .brand-kicker{
-        font-size:8px;
-        letter-spacing:3px;
+    .welcome-panel{
+        padding:38px 28px;
     }
 
-    .brand-name{
-        font-size:28px;
-        letter-spacing:1px;
-        line-height:1.08;
-    }
-
-    .gold-divider{
-        width:83px;
-    }
-
-    .value{
-        font-size:12px;
-        line-height:1.12;
-    }
-
-    .value.luxury-value{
-        font-size:11.5px;
-        gap:2px;
-        padding:1px 5px;
-    }
-
-    .value.luxury-value .luxury-sub{
-        letter-spacing:1px;
-    }
-
-    .services-title{
-        font-size:12px;
-    }
-
-    .document-people-track{
-        font-size:12px;
-        letter-spacing:1.4px;
-    }
-
-    .document-people-track .wide-gap{
-        width:270px;
-        min-width:270px;
-        flex-basis:270px;
-    }
-
-    .service-instruction{
-        font-size:11.5px;
-        font-weight:700;
-        line-height:1.15;
-        letter-spacing:.45px;
-        padding:4px 4px 5px;
-        margin-bottom:3px;
-    }
-
-    .services{
-        gap:3px;
+    .services-grid{
+        gap:8px;
     }
 
     .service-button{
-        padding:2px 3px;
-        font-size:11px;
+        min-height:52px;
+    }
+}
+
+/* =========================================================
+   PHONE
+   ========================================================= */
+
+@media(max-width:650px){
+
+    .welcome-half{
+        padding:16px;
+        min-height:auto;
+    }
+
+    .welcome-panel{
+        padding:28px 18px;
+        border-radius:20px;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(3,3,3,.72),
+                rgba(12,12,12,.62)
+            );
+    }
+
+    .concierge{
+        font-size:9px;
+        letter-spacing:2px;
+        margin-bottom:10px;
+    }
+
+    .brand{
+        font-size:31px;
+        line-height:1.05;
+    }
+
+    .fast-line{
+        margin:13px 0 21px;
+        font-size:10px;
+        letter-spacing:1px;
+    }
+
+    .main-message{
+        font-size:17px;
+        line-height:1.35;
+    }
+
+    .sub-message{
+        margin-top:17px;
+        font-size:12px;
+        line-height:1.5;
+    }
+
+    .moving-line{
+        margin-top:20px;
+        font-size:10px;
+        letter-spacing:1px;
+    }
+
+    .services-half{
+        padding:16px;
+    }
+
+    .services-header{
+        margin-bottom:13px;
+    }
+
+    .services-header h2{
+        font-size:17px;
+    }
+
+    .services-header p{
+        font-size:10px;
+    }
+
+    .services-grid{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:6px;
+    }
+
+    .service-button{
+        min-height:48px;
+        padding:6px 4px;
+        border-radius:8px;
+        font-size:9px;
     }
 
     .luxury-tagline{
-        font-size:8.5px;
-        padding:2px 2px;
+        min-height:44px;
+        font-size:8px;
+        letter-spacing:.8px;
+        padding:5px;
     }
 
-    .luxury-tagline .brand-signature{
-        padding:0 4px;
+    .footer{
+        margin-top:12px;
+        font-size:8px;
     }
 }
 
 /* =========================================================
    VERY SMALL PHONES
-========================================================= */
+   ========================================================= */
 
-@media(max-width:360px){
+@media(max-width:380px){
 
-    .welcome-half{
-        padding:5px 6px 6px;
+    .welcome-panel{
+        padding:24px 14px;
     }
 
-    .brand-kicker{
-        font-size:7px;
-        letter-spacing:2.5px;
+    .brand{
+        font-size:27px;
     }
 
-    .brand-name{
-        font-size:24px;
-        letter-spacing:.8px;
-        line-height:1.08;
+    .main-message{
+        font-size:15px;
     }
 
-    .gold-divider{
-        width:69px;
+    .services-half{
+        padding:12px;
     }
 
-    .value{
-        font-size:10px;
-    }
-
-    .value.luxury-value{
-        font-size:9.8px;
-    }
-
-    .services-title{
-        font-size:10.5px;
-    }
-
-    .document-people-track{
-        font-size:10.5px;
-    }
-
-    .document-people-track .wide-gap{
-        width:230px;
-        min-width:230px;
-        flex-basis:230px;
-    }
-
-    .service-instruction{
-        font-size:10px;
-    }
-
-    .services{
-        gap:2px;
-    }
-
-    .service-button{
-        padding:1px 2px;
-        font-size:10px;
-    }
-
-    .luxury-tagline{
-        font-size:7.5px;
-    }
-
-    .luxury-tagline .brand-signature{
-        padding:0 2px;
-    }
-}
-
-/* =========================================================
-   TABLET / DESKTOP
-========================================================= */
-
-@media(min-width:700px){
-
-    .brand-name{
-        font-size:clamp(43px,6vw,67px);
-    }
-
-    .value{
-        font-size:clamp(18px,2.5vw,24px);
-    }
-
-    .value.luxury-value{
-        font-size:clamp(18px,2.35vw,23px);
-    }
-
-    .services-title{
-        font-size:clamp(19px,2.6vw,25px);
-    }
-
-    .document-people-track{
-        font-size:clamp(20px,3vw,27px);
-    }
-
-    .document-people-track .wide-gap{
-        width:620px;
-        min-width:620px;
-        flex-basis:620px;
-    }
-
-    .service-button{
-        font-size:16px;
-    }
-
-    .services{
+    .services-grid{
         gap:5px;
     }
 
-    .luxury-tagline{
-        font-size:clamp(13px,1.8vw,17px);
+    .service-button{
+        min-height:46px;
+        font-size:8px;
     }
 }
 
 /* =========================================================
-   REDUCE MOTION
-========================================================= */
+   REDUCED MOTION
+   ========================================================= */
 
 @media(prefers-reduced-motion:reduce){
 
-    *,
-    *::before,
-    *::after{
-        animation-duration:.01ms !important;
-        animation-iteration-count:1 !important;
-        scroll-behavior:auto !important;
+    .moving-line{
+        animation:none;
     }
 
-    #fireworksCanvas{
-        display:none;
+    .service-button{
+        transition:none;
     }
 }
-</style></head><body><canvas id="fireworksCanvas"></canvas>
+</style>
+</head>
 
-<div class="night-overlay"></div><div class="page"><!-- =====================================================
-     PREMIUM WELCOME AREA
-====================================================== -->
+<body>
 
-<section class="welcome-half">
+<canvas id="fireworksCanvas"></canvas>
 
-    <div class="welcome-content">
+<div class="firework-vignette"></div>
+<div class="star-layer"></div>
 
-        <div class="brand-kicker">
-            YOUR DIGITAL DOCUMENT CONCIERGE
-        </div>
+<div class="corner-glow one"></div>
+<div class="corner-glow two"></div>
+<div class="corner-glow three"></div>
 
-        <h1 class="brand-name">
-            <span class="green">NAIJA POCKET</span>
-            <br>
-            BUSINESS
-            <span class="gold">CENTER</span>
-        </h1>
+<div class="page">
 
-        <div class="gold-divider"></div>
+    <!-- =====================================================
+         WELCOME
+         ===================================================== -->
 
-        <div class="value">
-            FAST • CONVENIENT • OPEN 24/7
-        </div>
+    <section class="welcome-half">
 
-        <div class="value">
-            PREPARE YOUR DOCUMENTS IN MINUTES
-        </div>
+        <div class="welcome-panel">
 
-        <div class="value luxury-value">
+            <p class="concierge">
+                YOUR DIGITAL DOCUMENT CONCIERGE
+            </p>
 
-            <span class="luxury-main">
+            <h1 class="brand">
+                NAIJA POCKET <span>BUSINESS CENTER</span>
+            </h1>
+
+            <div class="fast-line">
+                FAST • CONVENIENT • OPEN 24/7
+            </div>
+
+            <p class="main-message">
+                PREPARE YOUR DOCUMENTS IN MINUTES
+            </p>
+
+            <p class="sub-message">
                 DO EVERYTHING CONCERNING YOUR DOCUMENTS
-            </span>
+                <br>
+                <strong>FROM YOUR PHONE, WHEREVER YOU ARE</strong>
+                <br><br>
+                ENJOY THE BEST IN DOCUMENT PROCESSING
+            </p>
 
-            <span class="luxury-sub">
-                FROM YOUR PHONE, WHEREVER YOU ARE
-            </span>
-
-        </div>
-
-        <div class="services-title">
-            ENJOY THE BEST IN DOCUMENT PROCESSING
-        </div>
-
-        <div class="document-people-window">
-
-            <div class="document-people-track">
-
-                <span class="tagline-text">
-                    PREPARE YOUR DOCUMENTS IN MINUTES
-                </span>
-
-                <span class="wide-gap"></span>
-
+            <div class="moving-line">
+                PREPARE YOUR DOCUMENTS IN MINUTES
             </div>
 
         </div>
 
-    </div>
+    </section>
 
-</section>
 
-<!-- =====================================================
-     SERVICES
-====================================================== -->
+    <!-- =====================================================
+         SERVICES
+         ===================================================== -->
 
-<section class="services-half">
+    <section class="services-half">
 
-    <div class="service-instruction">
-        TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
-    </div>
+        <div class="services-header">
+            <h2>
+                CHOOSE THE SERVICE YOU NEED
+            </h2>
 
-    <div class="services">
+            <p>
+                TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
+            </p>
+        </div>
 
-        <button type="button" class="service-button" data-service="Document Typing">
-            Document Typing
-        </button>
 
-        <button type="button" class="service-button" data-service="Document Formatting">
-            Document Formatting
-        </button>
+        <div class="services-grid">
 
-        <button type="button" class="service-button" data-service="Document Editing">
-            Document Editing
-        </button>
+            <button class="service-button" data-service="Document Typing">
+                Document Typing
+            </button>
 
-        <button type="button" class="service-button" data-service="Grammar Correction">
-            Grammar Correction
-        </button>
+            <button class="service-button" data-service="Document Formatting">
+                Document Formatting
+            </button>
 
-        <button type="button" class="service-button" data-service="Assignments">
-            Assignments
-        </button>
+            <button class="service-button" data-service="Document Editing">
+                Document Editing
+            </button>
 
-        <button type="button" class="service-button" data-service="Projects">
-            Projects
-        </button>
+            <button class="service-button" data-service="Grammar Correction">
+                Grammar Correction
+            </button>
 
-        <button type="button" class="service-button" data-service="Research Assistance">
-            Research Assistance
-        </button>
+            <button class="service-button" data-service="Assignments">
+                Assignments
+            </button>
 
-        <button type="button" class="service-button" data-service="Seminar Papers">
-            Seminar Papers
-        </button>
+            <button class="service-button" data-service="Projects">
+                Projects
+            </button>
 
-        <button type="button" class="service-button" data-service="CVs & Résumés">
-            CVs & Résumés
-        </button>
+            <button class="service-button" data-service="Research Assistance">
+                Research Assistance
+            </button>
 
-        <button type="button" class="service-button" data-service="Cover Letters">
-            Cover Letters
-        </button>
+            <button class="service-button" data-service="Seminar Papers">
+                Seminar Papers
+            </button>
 
-        <button type="button" class="service-button" data-service="Business Proposals">
-            Business Proposals
-        </button>
+            <button class="service-button" data-service="CVs & Résumés">
+                CVs &amp; Résumés
+            </button>
 
-        <button type="button" class="service-button" data-service="Company Profiles">
-            Company Profiles
-        </button>
+            <button class="service-button" data-service="Cover Letters">
+                Cover Letters
+            </button>
 
-        <button type="button" class="service-button" data-service="Invoices">
-            Invoices
-        </button>
+            <button class="service-button" data-service="Business Proposals">
+                Business Proposals
+            </button>
 
-        <button type="button" class="service-button" data-service="Quotations">
-            Quotations
-        </button>
+            <button class="service-button" data-service="Company Profiles">
+                Company Profiles
+            </button>
 
-        <button type="button" class="service-button" data-service="Meeting Minutes">
-            Meeting Minutes
-        </button>
+            <button class="service-button" data-service="Invoices">
+                Invoices
+            </button>
 
-        <button type="button" class="service-button" data-service="AI Writing Assistance">
-            AI Writing Assistance
-        </button>
+            <button class="service-button" data-service="Quotations">
+                Quotations
+            </button>
 
-        <button type="button" class="service-button" data-service="Document Rewriting">
-            Document Rewriting
-        </button>
+            <button class="service-button" data-service="Meeting Minutes">
+                Meeting Minutes
+            </button>
 
-        <button type="button" class="service-button" data-service="Translation">
-            Translation
-        </button>
+            <button class="service-button" data-service="AI Writing Assistance">
+                AI Writing Assistance
+            </button>
 
-        <button type="button" class="service-button" data-service="PDF Conversion">
-            PDF Conversion
-        </button>
+            <button class="service-button" data-service="Document Rewriting">
+                Document Rewriting
+            </button>
 
-        <button type="button" class="service-button" data-service="Topic Explanations">
-            Topic Explanations
-        </button>
+            <button class="service-button" data-service="Translation">
+                Translation
+            </button>
 
-        <button type="button" class="service-button" data-service="Printing Preparation">
-            Printing Preparation
-        </button>
+            <button class="service-button" data-service="PDF Conversion">
+                PDF Conversion
+            </button>
 
-        <button type="button" class="service-button" data-service="Excel Spreadsheets">
-            Excel Spreadsheets
-        </button>
+            <button class="service-button" data-service="Topic Explanations">
+                Topic Explanations
+            </button>
 
-        <button type="button" class="service-button" data-service="Data Entry">
-            Data Entry
-        </button>
+            <button class="service-button" data-service="Printing Preparation">
+                Printing Preparation
+            </button>
 
-        <button type="button" class="service-button" data-service="Data Analysis">
-            Data Analysis
-        </button>
+            <button class="service-button" data-service="Excel Spreadsheets">
+                Excel Spreadsheets
+            </button>
 
-        <button type="button" class="service-button" data-service="Presentations">
-            Presentations
-        </button>
+            <button class="service-button" data-service="Data Entry">
+                Data Entry
+            </button>
 
-        <button type="button" class="service-button" data-service="Document Summarization">
-            Document Summarization
-        </button>
+            <button class="service-button" data-service="Data Analysis">
+                Data Analysis
+            </button>
 
-        <button type="button" class="service-button" data-service="Business Letters & Letterhead">
-            Business Letters & Letterhead
-        </button>
+            <button class="service-button" data-service="Presentations">
+                Presentations
+            </button>
 
-        <div class="luxury-tagline">
+            <button class="service-button" data-service="Document Summarization">
+                Document Summarization
+            </button>
 
-            <span class="brand-signature">
+            <button class="service-button" data-service="Business Letters & Letterhead">
+                Business Letters &amp; Letterhead
+            </button>
 
-                <span class="brand-main">
-                    NAIJA POCKET BUSINESS CENTER
-                </span>
-
-                <span class="brand-sub">
-                    — YOUR BUSINESS CENTER IN YOUR POCKET —
-                </span>
-
-            </span>
+            <div class="luxury-tagline">
+                YOUR BUSINESS CENTER IN YOUR POCKET
+            </div>
 
         </div>
 
-    </div>
 
-</section>
+        <div class="footer">
+            NAIJA POCKET BUSINESS CENTER
+            <span>— YOUR BUSINESS CENTER IN YOUR POCKET —</span>
+        </div>
 
-</div><script>
-"use strict";
+    </section>
 
+</div>
+
+
+<script>
 /* =========================================================
-   EXISTING SERVICE NAVIGATION
-   PRESERVED
-========================================================= */
-
-const serviceButtons =
-    document.querySelectorAll(".service-button");
-
-let requestInProgress = false;
-
-function releaseServiceButtons(){
-
-    requestInProgress = false;
-
-    serviceButtons.forEach(function(button){
-
-        button.disabled = false;
-        button.classList.remove("working");
-
-    });
-}
+   SERVICE NAVIGATION
+   ========================================================= */
 
 function cryptoRandomId(){
+    if(window.crypto && crypto.getRandomValues){
+        const array = new Uint32Array(3);
+        crypto.getRandomValues(array);
 
-    if(
-        window.crypto &&
-        window.crypto.randomUUID
-    ){
-
-        return window.crypto.randomUUID();
-
+        return Array.from(array)
+            .map(value => value.toString(36))
+            .join("")
+            .slice(0,18);
     }
 
-    return(
-        Date.now().toString(36) +
-        Math.random()
-            .toString(36)
-            .substring(2)
-    );
+    return Math.random()
+        .toString(36)
+        .slice(2) +
+        Date.now().toString(36);
 }
 
-function openWorkspace(service,button){
 
-    if(
-        requestInProgress ||
-        !service
-    ){
-
-        return;
-    }
-
-    requestInProgress = true;
-
-    button.classList.add("working");
-
-    serviceButtons.forEach(function(otherButton){
-
-        if(otherButton !== button){
-
-            otherButton.disabled = true;
-
-        }
-
-    });
+function getCustomerId(){
 
     let customerId =
-        localStorage.getItem(
-            "npbc_customer_id"
-        );
+        localStorage.getItem("npbc_customer_id");
 
     if(!customerId){
 
@@ -1411,65 +814,95 @@ function openWorkspace(service,button){
         );
     }
 
+    return customerId;
+}
+
+
+const serviceButtons =
+    document.querySelectorAll(".service-button");
+
+
+let navigating = false;
+
+
+function releaseButtons(){
+
+    navigating = false;
+
+    serviceButtons.forEach(button => {
+        button.disabled = false;
+        button.style.pointerEvents = "auto";
+        button.style.opacity = "1";
+    });
+}
+
+
+function openService(service){
+
+    if(navigating){
+        return;
+    }
+
+    navigating = true;
+
+    serviceButtons.forEach(button => {
+        button.disabled = true;
+        button.style.pointerEvents = "none";
+    });
+
+
+    const customerId =
+        getCustomerId();
+
+
     localStorage.setItem(
         "selectedService",
         service
     );
 
-    const workspaceUrl =
+
+    const target =
         "workspace.html?service=" +
         encodeURIComponent(service) +
         "&customer_id=" +
         encodeURIComponent(customerId);
 
-    window.location.assign(
-        workspaceUrl
-    );
+
+    window.location.href = target;
 }
 
-serviceButtons.forEach(function(button){
 
-    button.addEventListener(
-        "click",
-        function(){
+serviceButtons.forEach(button => {
 
-            const service =
-                button.getAttribute(
-                    "data-service"
-                );
+    button.addEventListener("click", () => {
 
-            openWorkspace(
-                service,
-                button
-            );
+        const service =
+            button.getAttribute("data-service");
 
+        if(service){
+            openService(service);
         }
-    );
+
+    });
 
 });
 
-releaseServiceButtons();
 
 window.addEventListener(
     "pageshow",
-    function(){
-
-        releaseServiceButtons();
-
-    }
+    releaseButtons
 );
+
 
 document.addEventListener(
     "visibilitychange",
-    function(){
+    () => {
 
         if(
             document.visibilityState ===
             "visible"
         ){
-
-            releaseServiceButtons();
-
+            releaseButtons();
         }
 
     }
@@ -1477,8 +910,8 @@ document.addEventListener(
 
 
 /* =========================================================
-   LIGHTWEIGHT LIVE FIREWORKS ENGINE
-========================================================= */
+   HIGH-VISIBILITY LIVE FIREWORKS ENGINE
+   ========================================================= */
 
 (function(){
 
@@ -1487,45 +920,35 @@ document.addEventListener(
             "fireworksCanvas"
         );
 
-    if(!canvas){
-
-        return;
-    }
-
     const ctx =
-        canvas.getContext(
-            "2d",
-            {
-                alpha:true
-            }
-        );
+        canvas.getContext("2d", {
+            alpha:true
+        });
+
 
     if(!ctx){
-
         return;
     }
+
 
     let width = 0;
     let height = 0;
     let dpr = 1;
 
-    let fireworks = [];
+    let rockets = [];
     let particles = [];
+
     let stars = [];
 
-    let lastTime = 0;
-    let launchTimer = 0;
+    let lastTime = performance.now();
+    let lastLaunch = 0;
 
-    let animationFrame = null;
+    const reducedMotion =
+        window.matchMedia &&
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
 
-    const isSmallScreen =
-        window.innerWidth <= 430;
-
-    const MAX_FIREWORKS =
-        isSmallScreen ? 4 : 6;
-
-    const MAX_PARTICLES =
-        isSmallScreen ? 280 : 480;
 
     function resize(){
 
@@ -1541,17 +964,20 @@ document.addEventListener(
         height =
             window.innerHeight;
 
+
         canvas.width =
             Math.floor(width * dpr);
 
         canvas.height =
             Math.floor(height * dpr);
 
+
         canvas.style.width =
             width + "px";
 
         canvas.style.height =
             height + "px";
+
 
         ctx.setTransform(
             dpr,
@@ -1562,108 +988,117 @@ document.addEventListener(
             0
         );
 
+
         createStars();
     }
 
-    function random(min,max){
-
-        return (
-            Math.random() *
-            (max - min)
-        ) + min;
-    }
 
     function createStars(){
 
         stars = [];
 
         const count =
-            width <= 430 ? 28 : 50;
+            width < 600 ? 55 : 90;
 
-        for(
-            let i = 0;
-            i < count;
-            i++
-        ){
+
+        for(let i = 0; i < count; i++){
 
             stars.push({
 
-                x:random(0,width),
+                x:Math.random() * width,
 
-                y:random(
-                    0,
-                    height * .72
-                ),
+                y:Math.random() * height,
 
-                radius:random(.25,.9),
+                radius:
+                    Math.random() * 1.1 + .25,
 
-                alpha:random(.12,.45),
+                alpha:
+                    Math.random() * .65 + .2,
 
-                phase:random(0,Math.PI * 2),
+                phase:
+                    Math.random() * Math.PI * 2,
 
-                speed:random(.0007,.0018)
+                speed:
+                    Math.random() * 1.5 + .5
 
             });
-
         }
     }
 
-    class Firework{
+
+    class Rocket{
 
         constructor(){
 
             this.x =
-                random(
-                    width * .15,
-                    width * .85
+                width *
+                (
+                    .08 +
+                    Math.random() * .84
                 );
 
-            this.y =
-                height + random(5,25);
+
+            this.startY =
+                height +
+                15;
+
+
+            /*
+             * Keep explosions mainly around
+             * the visible upper and side areas.
+             */
 
             this.targetY =
-                random(
-                    height * .10,
-                    height * .47
+                height *
+                (
+                    .12 +
+                    Math.random() * .48
                 );
 
+
+            this.y =
+                this.startY;
+
+
+            this.previousY =
+                this.y;
+
+
             this.speed =
-                random(
-                    4.2,
-                    6.8
+                Math.max(
+                    5,
+                    height / 115
                 );
+
 
             this.acceleration =
                 .045;
 
-            this.trail = [];
 
             this.hue =
-                Math.random() < .78
-                ? "gold"
-                : "green";
+                Math.random() < .82
+                    ? "gold"
+                    : "green";
 
-            this.alive = true;
+
+            this.dead = false;
+
         }
+
 
         update(){
 
-            this.trail.push({
-                x:this.x,
-                y:this.y
-            });
+            this.previousY =
+                this.y;
 
-            if(this.trail.length > 7){
 
-                this.trail.shift();
-
-            }
-
-            this.speed -=
+            this.speed +=
                 this.acceleration;
+
 
             this.y -=
                 this.speed;
+
 
             if(
                 this.y <=
@@ -1672,224 +1107,287 @@ document.addEventListener(
 
                 this.explode();
 
-                this.alive = false;
-
+                this.dead = true;
             }
 
         }
+
 
         draw(){
 
             ctx.save();
 
-            ctx.lineWidth = 1.3;
+            ctx.globalCompositeOperation =
+                "lighter";
 
-            ctx.lineCap = "round";
 
-            for(
-                let i = 1;
-                i < this.trail.length;
-                i++
-            ){
+            /*
+             * Long bright rocket trail.
+             */
 
-                const p =
-                    this.trail[i - 1];
-
-                const q =
-                    this.trail[i];
-
-                const alpha =
-                    i /
-                    this.trail.length;
-
-                ctx.beginPath();
-
-                ctx.moveTo(
-                    p.x,
-                    p.y
+            const gradient =
+                ctx.createLinearGradient(
+                    this.x,
+                    this.y + 32,
+                    this.x,
+                    this.y - 5
                 );
 
-                ctx.lineTo(
-                    q.x,
-                    q.y
-                );
 
-                ctx.strokeStyle =
-                    this.hue === "gold"
-                    ? "rgba(244,216,120," +
-                      (alpha * .48) +
-                      ")"
-                    : "rgba(31,164,99," +
-                      (alpha * .38) +
-                      ")";
+            gradient.addColorStop(
+                0,
+                "rgba(255,180,40,0)"
+            );
 
-                ctx.stroke();
+            gradient.addColorStop(
+                .35,
+                "rgba(255,200,70,.35)"
+            );
 
-            }
+            gradient.addColorStop(
+                .75,
+                "rgba(255,225,130,.9)"
+            );
+
+            gradient.addColorStop(
+                1,
+                "rgba(255,255,230,1)"
+            );
+
+
+            ctx.strokeStyle =
+                gradient;
+
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                this.x,
+                this.y + 35
+            );
+
+            ctx.lineTo(
+                this.x,
+                this.y
+            );
+
+            ctx.stroke();
+
+
+            /*
+             * Bright rocket head.
+             */
+
+            ctx.fillStyle =
+                "#fff7c7";
+
+            ctx.shadowBlur = 18;
+
+            ctx.shadowColor =
+                this.hue === "green"
+                    ? "#00ff66"
+                    : "#ffd84d";
+
 
             ctx.beginPath();
 
             ctx.arc(
                 this.x,
                 this.y,
-                1.7,
+                3.2,
                 0,
                 Math.PI * 2
             );
 
-            ctx.fillStyle =
-                this.hue === "gold"
-                ? "rgba(255,225,130,.95)"
-                : "rgba(80,210,135,.9)";
-
-            ctx.shadowBlur = 9;
-
-            ctx.shadowColor =
-                this.hue === "gold"
-                ? "rgba(212,175,55,.9)"
-                : "rgba(31,164,99,.8)";
-
             ctx.fill();
+
 
             ctx.restore();
 
         }
 
+
         explode(){
 
-            const particleCount =
-                isSmallScreen
-                ? Math.floor(random(30,44))
-                : Math.floor(random(42,68));
+            const baseCount =
+                width < 600 ? 62 : 88;
+
+
+            /*
+             * Main radial explosion.
+             */
 
             for(
                 let i = 0;
-                i < particleCount;
+                i < baseCount;
                 i++
             ){
-
-                if(
-                    particles.length >=
-                    MAX_PARTICLES
-                ){
-
-                    break;
-                }
 
                 const angle =
                     (
                         Math.PI * 2 *
                         i /
-                        particleCount
+                        baseCount
                     ) +
-                    random(-.08,.08);
+                    (
+                        Math.random() *
+                        .12
+                    );
+
 
                 const speed =
-                    random(
-                        1.25,
-                        4.2
-                    );
+                    1.5 +
+                    Math.random() * 4.9;
+
 
                 particles.push(
                     new Particle(
                         this.x,
                         this.y,
-                        Math.cos(angle) * speed,
-                        Math.sin(angle) * speed,
+                        angle,
+                        speed,
                         this.hue
                     )
                 );
 
             }
 
-            /* small secondary glitter */
 
-            const glitterCount =
-                isSmallScreen ? 7 : 11;
+            /*
+             * Secondary smaller sparks
+             * make the explosion fuller.
+             */
+
+            const secondary =
+                width < 600 ? 18 : 28;
+
 
             for(
                 let i = 0;
-                i < glitterCount;
+                i < secondary;
                 i++
             ){
 
-                if(
-                    particles.length >=
-                    MAX_PARTICLES
-                ){
+                const angle =
+                    Math.random() *
+                    Math.PI * 2;
 
-                    break;
-                }
+
+                const speed =
+                    4.5 +
+                    Math.random() * 2.5;
+
 
                 particles.push(
                     new Particle(
                         this.x,
                         this.y,
-                        random(-2.2,2.2),
-                        random(-2.2,2.2),
-                        "glitter",
+                        angle,
+                        speed,
+                        this.hue,
                         true
                     )
                 );
 
             }
 
+
+            /*
+             * Bright flash at the center.
+             */
+
+            particles.push(
+                new Flash(
+                    this.x,
+                    this.y,
+                    this.hue
+                )
+            );
+
         }
 
     }
+
 
     class Particle{
 
         constructor(
             x,
             y,
-            vx,
-            vy,
+            angle,
+            speed,
             hue,
-            glitter
+            secondary=false
         ){
 
             this.x = x;
             this.y = y;
 
-            this.vx = vx;
-            this.vy = vy;
+            this.previousX = x;
+            this.previousY = y;
 
-            this.gravity =
-                glitter ? .018 : .028;
+            this.vx =
+                Math.cos(angle) *
+                speed;
+
+            this.vy =
+                Math.sin(angle) *
+                speed;
+
 
             this.friction =
-                glitter ? .986 : .978;
+                secondary ? .978 : .982;
+
+
+            this.gravity =
+                .055 +
+                Math.random() * .025;
+
 
             this.life =
-                glitter
-                ? random(24,44)
-                : random(38,68);
+                secondary
+                    ? 52 + Math.random() * 24
+                    : 70 + Math.random() * 38;
+
 
             this.maxLife =
                 this.life;
 
-            this.hue = hue;
-
-            this.glitter =
-                !!glitter;
 
             this.size =
-                glitter
-                ? random(.45,1.1)
-                : random(.7,1.5);
+                secondary
+                    ? 1.5 + Math.random() * 1.3
+                    : 1.8 + Math.random() * 1.8;
+
+
+            this.hue =
+                hue;
+
+
+            this.twinkle =
+                Math.random() * 2;
+
         }
 
+
         update(){
+
+            this.previousX =
+                this.x;
+
+            this.previousY =
+                this.y;
+
 
             this.vx *=
                 this.friction;
 
-            this.vy *=
-                this.friction;
-
-            this.vy +=
+            this.vy =
+                this.vy *
+                this.friction +
                 this.gravity;
+
 
             this.x +=
                 this.vx;
@@ -1897,11 +1395,11 @@ document.addEventListener(
             this.y +=
                 this.vy;
 
+
             this.life--;
 
-            return this.life > 0;
-
         }
+
 
         draw(){
 
@@ -1912,40 +1410,84 @@ document.addEventListener(
                     this.maxLife
                 );
 
-            let fill;
 
-            if(
-                this.hue ===
-                "green"
-            ){
+            const twinkle =
+                Math.sin(
+                    this.life *
+                    .35 +
+                    this.twinkle
+                );
 
-                fill =
-                    "rgba(55,190,115," +
-                    alpha +
-                    ")";
 
-            }
-            else if(
-                this.hue ===
-                "glitter"
-            ){
+            const glowAlpha =
+                alpha *
+                (
+                    .55 +
+                    .35 *
+                    Math.abs(twinkle)
+                );
 
-                fill =
-                    "rgba(255,246,200," +
-                    alpha +
-                    ")";
 
-            }
-            else{
+            const color =
+                this.hue === "green"
+                    ? `rgba(0,255,95,${glowAlpha})`
+                    : `rgba(255,205,70,${glowAlpha})`;
 
-                fill =
-                    "rgba(245,210,105," +
-                    alpha +
-                    ")";
-
-            }
 
             ctx.save();
+
+            ctx.globalCompositeOperation =
+                "lighter";
+
+
+            /*
+             * Long glowing trail.
+             */
+
+            ctx.strokeStyle =
+                color;
+
+            ctx.lineWidth =
+                Math.max(
+                    1,
+                    this.size *
+                    .9
+                );
+
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                this.previousX,
+                this.previousY
+            );
+
+            ctx.lineTo(
+                this.x,
+                this.y
+            );
+
+            ctx.stroke();
+
+
+            /*
+             * Bright particle core.
+             */
+
+            ctx.fillStyle =
+                this.hue === "green"
+                    ? "#baffd2"
+                    : "#fff4bb";
+
+
+            ctx.shadowBlur =
+                12;
+
+            ctx.shadowColor =
+                this.hue === "green"
+                    ? "#00ff55"
+                    : "#ffd84d";
+
 
             ctx.beginPath();
 
@@ -1957,15 +1499,8 @@ document.addEventListener(
                 Math.PI * 2
             );
 
-            ctx.fillStyle = fill;
-
-            ctx.shadowBlur =
-                this.glitter ? 5 : 7;
-
-            ctx.shadowColor =
-                fill;
-
             ctx.fill();
+
 
             ctx.restore();
 
@@ -1973,45 +1508,163 @@ document.addEventListener(
 
     }
 
-    function launch(){
+
+    class Flash{
+
+        constructor(x,y,hue){
+
+            this.x = x;
+            this.y = y;
+
+            this.life = 12;
+
+            this.maxLife = 12;
+
+            this.hue = hue;
+
+        }
+
+
+        update(){
+
+            this.life--;
+
+        }
+
+
+        draw(){
+
+            const progress =
+                1 -
+                this.life /
+                this.maxLife;
+
+
+            const radius =
+                8 +
+                progress * 46;
+
+
+            const alpha =
+                (
+                    1 -
+                    progress
+                ) *
+                .85;
+
+
+            const color =
+                this.hue === "green"
+                    ? `rgba(0,255,90,${alpha})`
+                    : `rgba(255,225,130,${alpha})`;
+
+
+            ctx.save();
+
+            ctx.globalCompositeOperation =
+                "lighter";
+
+
+            const gradient =
+                ctx.createRadialGradient(
+                    this.x,
+                    this.y,
+                    0,
+                    this.x,
+                    this.y,
+                    radius
+                );
+
+
+            gradient.addColorStop(
+                0,
+                "rgba(255,255,255," +
+                alpha +
+                ")"
+            );
+
+            gradient.addColorStop(
+                .2,
+                color
+            );
+
+            gradient.addColorStop(
+                1,
+                "rgba(255,210,80,0)"
+            );
+
+
+            ctx.fillStyle =
+                gradient;
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                this.x,
+                this.y,
+                radius,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+
+            ctx.restore();
+
+        }
+
+    }
+
+
+    function launchFirework(){
+
+        const maxRockets =
+            width < 600 ? 4 : 6;
+
 
         if(
-            fireworks.length >=
-            MAX_FIREWORKS
+            rockets.length >=
+            maxRockets
         ){
-
             return;
         }
 
-        fireworks.push(
-            new Firework()
+
+        rockets.push(
+            new Rocket()
         );
 
     }
 
+
     function drawStars(time){
 
+        ctx.save();
+
         for(
-            let i = 0;
-            i < stars.length;
-            i++
+            const star of stars
         ){
 
-            const star =
-                stars[i];
-
             const pulse =
-                (
-                    Math.sin(
-                        time *
-                        star.speed +
-                        star.phase
-                    ) + 1
-                ) / 2;
+                .55 +
+                .45 *
+                Math.sin(
+                    time * .001 *
+                    star.speed +
+                    star.phase
+                );
 
-            const alpha =
+
+            ctx.globalAlpha =
                 star.alpha *
-                (.55 + pulse * .45);
+                pulse;
+
+
+            ctx.fillStyle =
+                "#fff1bd";
+
 
             ctx.beginPath();
 
@@ -2023,29 +1676,70 @@ document.addEventListener(
                 Math.PI * 2
             );
 
-            ctx.fillStyle =
-                "rgba(255,238,175," +
-                alpha +
-                ")";
-
             ctx.fill();
+
+        }
+
+        ctx.restore();
+
+    }
+
+
+    function cleanup(){
+
+        rockets =
+            rockets.filter(
+                rocket =>
+                    !rocket.dead
+            );
+
+
+        particles =
+            particles.filter(
+                particle =>
+                    particle.life > 0
+            );
+
+
+        /*
+         * Safety cap for very slow phones.
+         */
+
+        const maximumParticles =
+            width < 600
+                ? 480
+                : 720;
+
+
+        if(
+            particles.length >
+            maximumParticles
+        ){
+
+            particles.splice(
+                0,
+                particles.length -
+                maximumParticles
+            );
 
         }
 
     }
 
+
     function animate(time){
 
-        if(!lastTime){
+        const delta =
+            Math.min(
+                32,
+                time -
+                lastTime
+            );
 
-            lastTime = time;
 
-        }
+        lastTime =
+            time;
 
-        const elapsed =
-            time - lastTime;
-
-        lastTime = time;
 
         ctx.clearRect(
             0,
@@ -2054,175 +1748,170 @@ document.addEventListener(
             height
         );
 
+
         drawStars(time);
 
-        launchTimer += elapsed;
+
+        /*
+         * Firework launch frequency.
+         * Very visible, but still controlled.
+         */
 
         const launchDelay =
-            isSmallScreen
-            ? 1250
-            : 950;
+            width < 600
+                ? 820
+                : 690;
+
 
         if(
-            launchTimer >=
+            !reducedMotion &&
+            time - lastLaunch >
             launchDelay
         ){
 
-            launchTimer = 0;
+            launchFirework();
 
-            launch();
+            /*
+             * Occasionally launch a second
+             * firework almost together.
+             */
 
             if(
-                Math.random() < .22 &&
-                fireworks.length <
-                MAX_FIREWORKS
+                Math.random() < .32
             ){
 
                 setTimeout(
-                    launch,
-                    random(180,380)
+                    launchFirework,
+                    180
                 );
 
             }
+
+
+            lastLaunch =
+                time;
+        }
+
+
+        /*
+         * Keep a firework immediately visible
+         * when the page first opens.
+         */
+
+        if(
+            time < 900 &&
+            rockets.length === 0
+        ){
+
+            launchFirework();
+
+            lastLaunch =
+                time;
 
         }
 
+
         for(
-            let i = fireworks.length - 1;
-            i >= 0;
-            i--
+            const rocket of rockets
         ){
 
-            const firework =
-                fireworks[i];
-
-            firework.update();
-            firework.draw();
-
-            if(
-                !firework.alive
-            ){
-
-                fireworks.splice(
-                    i,
-                    1
-                );
-
-            }
+            rocket.update();
+            rocket.draw();
 
         }
 
+
         for(
-            let i = particles.length - 1;
-            i >= 0;
-            i--
+            const particle of particles
         ){
 
-            const particle =
-                particles[i];
-
-            if(
-                !particle.update()
-            ){
-
-                particles.splice(
-                    i,
-                    1
-                );
-
-                continue;
-            }
-
+            particle.update();
             particle.draw();
 
         }
 
-        animationFrame =
-            requestAnimationFrame(
-                animate
-            );
+
+        cleanup();
+
+
+        requestAnimationFrame(
+            animate
+        );
 
     }
 
-    function start(){
-
-        resize();
-
-        /*
-         * A few initial launches create
-         * an active sky immediately.
-         */
-
-        launch();
-
-        setTimeout(
-            launch,
-            500
-        );
-
-        setTimeout(
-            launch,
-            950
-        );
-
-        animationFrame =
-            requestAnimationFrame(
-                animate
-            );
-
-    }
 
     window.addEventListener(
         "resize",
         resize,
-        {
-            passive:true
-        }
+        {passive:true}
     );
+
 
     document.addEventListener(
         "visibilitychange",
-        function(){
+        () => {
 
             if(
-                document.hidden
+                document.visibilityState ===
+                "hidden"
             ){
 
-                if(
-                    animationFrame
-                ){
-
-                    cancelAnimationFrame(
-                        animationFrame
-                    );
-
-                    animationFrame = null;
-
-                }
+                rockets = [];
+                particles = [];
 
             }
             else{
 
-                lastTime = 0;
+                lastTime =
+                    performance.now();
 
-                if(
-                    !animationFrame
-                ){
-
-                    animationFrame =
-                        requestAnimationFrame(
-                            animate
-                        );
-
-                }
+                lastLaunch =
+                    0;
 
             }
 
         }
     );
 
-    start();
+
+    resize();
+
+
+    /*
+     * Start with several clearly visible
+     * fireworks rather than waiting for the
+     * normal launch interval.
+     */
+
+    if(!reducedMotion){
+
+        setTimeout(
+            launchFirework,
+            250
+        );
+
+        setTimeout(
+            launchFirework,
+            650
+        );
+
+        setTimeout(
+            launchFirework,
+            1050
+        );
+
+    }
+
+
+    requestAnimationFrame(
+        animate
+    );
 
 })();
-</script></body>
+</script>
+
+</body>
 </html>
+
+This replacement makes the fireworks large, bright, and unmistakable, with visible rocket trails, bright explosion flashes, long gold/green sparks, multiple simultaneous bursts, and a star field. The service buttons and existing "workspace.html?service=...&customer_id=..." navigation are preserved.
