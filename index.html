@@ -2,234 +2,440 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover">
-
-<meta name="theme-color" content="#050505">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Naija Pocket Business Center</title>
 
 <style>
-
-/* =========================================================
-   RESET
-   ========================================================= */
-
 *{
     box-sizing:border-box;
 }
 
-html,
-body{
+html,body{
     margin:0;
     padding:0;
     width:100%;
-    min-height:100%;
+    height:100%;
+    overflow:hidden;
 }
 
 body{
-    font-family:
-        Inter,
-        Arial,
-        Helvetica,
-        sans-serif;
-
     background:#050505;
-    color:#ffffff;
-
-    overflow:hidden;
-
-    -webkit-font-smoothing:antialiased;
-    text-rendering:optimizeLegibility;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
 }
-
 
 /* =========================================================
-   LIVE FIREWORKS CANVAS
-   ========================================================= */
+   MAIN PAGE
+========================================================= */
 
-#fireworksCanvas{
-
-    position:fixed;
-
-    inset:0;
-
+.page{
     width:100%;
-    height:100%;
-
-    z-index:0;
-
-    pointer-events:none;
-
-    display:block;
-
-    opacity:.48;
+    height:100vh;
+    height:100dvh;
+    padding: max(4px,env(safe-area-inset-top)) 4px max(4px,env(safe-area-inset-bottom)) 4px;
+    display:flex;
+    flex-direction:column;
+    background:
+        radial-gradient(circle at 50% -20%, rgba(31,164,99,.13), transparent 38%),
+        linear-gradient(145deg, #020202 0%, #090909 45%, #000 100%);
+    overflow:hidden;
 }
 
+/* =========================================================
+   LUXURY WELCOME PANEL
+========================================================= */
 
-/*
-   This layer deliberately darkens the fireworks
-   so they remain atmospheric and never compete
-   with the customer's text.
-*/
-
-.fireworks-shade{
-
-    position:fixed;
-
-    inset:0;
-
-    z-index:1;
-
-    pointer-events:none;
-
+.welcome-half{
+    position:relative;
+    width:100%;
+    height:50%;
+    flex:0 0 50%;
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+    overflow:hidden;
+    padding:10px 14px 10px;
+    text-align:center;
     background:
         radial-gradient(
-            ellipse at center,
-            rgba(0,0,0,.28) 0%,
-            rgba(0,0,0,.48) 48%,
-            rgba(0,0,0,.78) 100%
+            ellipse at 50% 35%,
+            #242424 0%,
+            #101010 42%,
+            #050505 78%,
+            #000 100%
         );
+    border:1px solid rgba(212,175,55,.30);
+    border-bottom:2px solid #d4af37;
+    border-radius:10px;
+    box-shadow:
+        inset 0 0 45px rgba(255,255,255,.025),
+        0 8px 35px rgba(0,0,0,.65);
 }
 
+/* Luxury inner frame */
 
-/*
-   Soft luxury vignette.
-*/
-
-.luxury-vignette{
-
-    position:fixed;
-
-    inset:0;
-
-    z-index:1;
-
+.welcome-half::before{
+    content:"";
+    position:absolute;
+    top:7px;
+    left:7px;
+    right:7px;
+    bottom:7px;
+    border:1px solid rgba(212,175,55,.22);
+    border-radius:7px;
     pointer-events:none;
+}
 
+/* Corner ornaments */
+
+.welcome-half::after{
+    content:"";
+    position:absolute;
+    width:80px;
+    height:80px;
+    top:-45px;
+    right:-45px;
+    border:1px solid rgba(212,175,55,.25);
+    border-radius:50%;
+    box-shadow:
+        0 0 0 12px rgba(212,175,55,.025),
+        0 0 0 24px rgba(212,175,55,.018);
+    pointer-events:none;
+}
+
+.welcome-content{
+    position:relative;
+    z-index:2;
+    width:100%;
+    height:100%;
+    max-width:1200px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-evenly;
+    overflow:hidden;
+    padding:4px 0;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand-kicker{
+    margin:0;
+    color:#d4af37;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(9px,2vw,14px);
+    font-weight:400;
+    letter-spacing:clamp(3px,1vw,7px);
+    text-transform:uppercase;
+    opacity:.9;
+}
+
+.brand-name{
+    width:100%;
+    margin:0;
+    color:#fff;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(28px,8vw,65px);
+    font-weight:700;
+    line-height:1.08;
+    letter-spacing:clamp(1px,.5vw,4px);
+    text-transform:uppercase;
+    text-shadow:0 2px 25px rgba(0,0,0,.8);
+    flex:0 0 auto;
+}
+
+.brand-name .green{
+    color:#1fa463;
+}
+
+.brand-name .gold{
+    color:#D4AF6A;
+}
+
+/* =========================================================
+   GOLD ORNAMENT
+========================================================= */
+
+.gold-divider{
+    width:clamp(76px,22vw,151px);
+    height:1px;
+    margin:0;
     background:
         linear-gradient(
             90deg,
-            rgba(0,0,0,.38),
-            transparent 24%,
-            transparent 76%,
-            rgba(0,0,0,.38)
+            transparent,
+            #d4af37 25%,
+            #f4d878 50%,
+            #d4af37 75%,
+            transparent
         );
+    position:relative;
+    flex:0 0 auto;
 }
 
+.gold-divider::before,
+.gold-divider::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:6px;
+    height:6px;
+    border:1px solid #d4af37;
+    transform:translateY(-50%) rotate(45deg);
+}
+
+.gold-divider::before{
+    left:8%;
+}
+
+.gold-divider::after{
+    right:8%;
+}
 
 /* =========================================================
-   MAIN ARCHITECTURE
-   ========================================================= */
+   BRAND PROMISE
+========================================================= */
 
-.page{
-
-    position:relative;
-
-    z-index:2;
-
+.value{
     width:100%;
-    height:100vh;
-
-    display:grid;
-
-    grid-template-columns:
-        minmax(0, 1fr)
-        minmax(0, 1fr);
-
-    gap:0;
-
-    overflow:hidden;
+    margin:0;
+    color:#f4f1e8;
+    font-size:clamp(12px,3vw,22px);
+    font-weight:600;
+    line-height:1.15;
+    letter-spacing:clamp(.2px,.15vw,1px);
+    flex:0 0 auto;
 }
 
+.value:first-of-type{
+    color:#d4af37;
+    font-weight:700;
+    letter-spacing:clamp(.5px,.2vw,1.5px);
+}
 
 /* =========================================================
-   LEFT — BRAND EXPERIENCE
-   ========================================================= */
+   LUXURY STATEMENT
+========================================================= */
 
-.welcome-half{
-
-    position:relative;
-
-    min-width:0;
-    min-height:0;
-
+.value.luxury-value{
     display:flex;
-
+    flex-direction:column;
     align-items:center;
     justify-content:center;
-
-    padding:
-        clamp(18px,3vw,42px);
-
-    border-right:
-        1px solid
-        rgba(212,175,55,.34);
+    gap:3px;
+    padding:2px 8px;
+    color:#f5f1e6;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(11px,3vw,22px);
+    font-weight:400;
+    line-height:1.08;
+    letter-spacing:clamp(.8px,.25vw,2.5px);
+    text-transform:uppercase;
+    text-shadow:0 2px 12px rgba(212,175,55,.12);
 }
 
+.value.luxury-value::before{
+    content:"";
+    width:clamp(31px,9vw,71px);
+    height:1px;
+    margin-bottom:1px;
+    background:linear-gradient(90deg,transparent,#d4af37,transparent);
+}
 
-/*
-   Elegant transparent luxury card.
-*/
+.value.luxury-value .luxury-main{
+    display:block;
+    color:#fff;
+    font-weight:600;
+    letter-spacing:clamp(.7px,.22vw,2px);
+}
 
-.welcome-panel{
+.value.luxury-value .luxury-sub{
+    display:block;
+    color:#d4af37;
+    font-size:1em;
+    font-weight:400;
+    letter-spacing:clamp(1px,.3vw,3px);
+    text-transform:uppercase;
+}
 
-    position:relative;
+.value.luxury-value::after{
+    content:"";
+    width:clamp(46px,13vw,96px);
+    height:1px;
+    margin-top:1px;
+    background:linear-gradient(90deg,transparent,#d4af37,transparent);
+    opacity:.55;
+}
 
+/* =========================================================
+   DOCUMENT HUB TITLE
+========================================================= */
+
+.services-title{
     width:100%;
-    max-width:700px;
+    margin:0;
+    color:#fff;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(12px,3vw,23px);
+    font-weight:700;
+    line-height:1.1;
+    letter-spacing:clamp(.8px,.25vw,2px);
+    text-transform:uppercase;
+}
 
-    padding:
-        clamp(28px,4vw,58px)
-        clamp(22px,4vw,54px);
+/* =========================================================
+   MOVING BRAND LINE
+========================================================= */
 
+.document-people-window{
+    width:100%;
+    overflow:hidden;
+    margin:0;
+    padding:2px 0;
+    flex:0 0 auto;
+}
+
+.document-people-track{
+    display:inline-flex;
+    align-items:center;
+    flex-wrap:nowrap;
+    width:max-content;
+    white-space:nowrap;
+    color:#D4AF6A;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(12px,3vw,23px);
+    font-weight:700;
+    letter-spacing:clamp(1px,.35vw,3px);
+    animation:documentPeopleMove 22s linear infinite;
+    will-change:transform;
+}
+
+.document-people-track .tagline-text{
+    display:inline-block;
+    flex:0 0 auto;
+    white-space:nowrap;
+}
+
+.document-people-track .wide-gap{
+    display:inline-block;
+    width:360px;
+    min-width:360px;
+    height:1px;
+    flex:0 0 360px;
+}
+
+@keyframes documentPeopleMove{
+    0%{
+        transform:translateX(100vw);
+    }
+
+    100%{
+        transform:translateX(calc(-100% - 100vw));
+    }
+}
+
+/* =========================================================
+   SERVICES SECTION
+========================================================= */
+
+.services-half{
+    width:100%;
+    height:50%;
+    flex:0 0 50%;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    padding-top:5px;
+}
+
+/* =========================================================
+   IMPORTANT SERVICE INSTRUCTION
+========================================================= */
+
+.service-instruction{
+    width:100%;
+    flex:0 0 auto;
+    margin:0 0 5px;
+    padding:5px 8px 7px;
+    color:#FFFDF5;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(12px,3vw,20px);
+    font-weight:700;
+    line-height:1.15;
     text-align:center;
+    letter-spacing:clamp(.4px,.16vw,1.2px);
+    text-transform:uppercase;
+    text-shadow:0 1px 8px rgba(212,175,106,.30);
+    border-top:1px solid rgba(212,175,106,.70);
+    border-bottom:1px solid rgba(212,175,106,.45);
+}
 
-    border:
-        1px solid
-        rgba(212,175,55,.48);
+/* =========================================================
+   SERVICE GRID
+========================================================= */
 
-    border-radius:24px;
+.services{
+    width:100%;
+    flex:1 1 auto;
+    min-height:0;
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-template-rows:repeat(10,minmax(0,1fr));
+    gap:4px;
+    overflow:hidden;
+    padding:1px 1px 0;
+}
 
+/* =========================================================
+   SERVICE BUTTON
+========================================================= */
+
+.service-button{
+    position:relative;
+    width:100%;
+    min-width:0;
+    min-height:0;
+    padding:3px 5px;
     background:
         linear-gradient(
             145deg,
-            rgba(10,10,10,.82),
-            rgba(18,18,18,.68)
+            rgba(255,255,255,.035),
+            rgba(255,255,255,.008)
         );
-
-    box-shadow:
-
-        0 24px 70px
-        rgba(0,0,0,.62),
-
-        inset 0 1px 0
-        rgba(255,255,255,.045),
-
-        inset 0 0 50px
-        rgba(212,175,55,.025);
-
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
+    color:#f4f2eb;
+    border:1px solid rgba(255,255,255,.055);
+    border-radius:5px;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:clamp(10px,2.5vw,17px);
+    font-weight:700;
+    line-height:1.02;
+    letter-spacing:clamp(.05px,.08vw,.5px);
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    white-space:normal;
+    overflow:hidden;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+    transition:
+        color .18s ease,
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease;
 }
 
-
-/*
-   Fine gold line above the brand.
-*/
-
-.welcome-panel::before{
-
+.service-button::after{
     content:"";
-
-    display:block;
-
-    width:76px;
+    position:absolute;
+    left:25%;
+    right:25%;
+    bottom:1px;
     height:1px;
-
-    margin:
-        0 auto 22px;
-
     background:
         linear-gradient(
             90deg,
@@ -237,1366 +443,516 @@ body{
             #d4af37,
             transparent
         );
+    opacity:.65;
+    pointer-events:none;
+    transition:left .18s ease,right .18s ease,opacity .18s ease;
 }
 
-
-/* =========================================================
-   BRAND TYPOGRAPHY
-   ========================================================= */
-
-.concierge{
-
-    margin:0 0 12px;
-
-    color:
-        rgba(212,175,55,.9);
-
-    font-size:
-        clamp(8px,1vw,12px);
-
-    font-weight:700;
-
-    letter-spacing:
-        clamp(2px,.45vw,4px);
-
-    text-transform:uppercase;
-}
-
-
-.brand{
-
-    margin:0;
-
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
-
-    font-size:
-        clamp(30px,4.3vw,62px);
-
-    line-height:
-        .98;
-
-    font-weight:700;
-
-    letter-spacing:
-        clamp(.5px,.15vw,2px);
-
-    color:#ffffff;
-
-    text-shadow:
-        0 2px 18px
-        rgba(0,0,0,.75);
-}
-
-
-.brand span{
-
-    display:block;
-
-    margin-top:5px;
-
+.service-button:hover{
     color:#d4af37;
-
-    text-shadow:
-        0 0 24px
-        rgba(212,175,55,.14);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(212,175,55,.09),
+            rgba(31,164,99,.035)
+        );
+    border-color:rgba(212,175,55,.28);
+    box-shadow:0 0 15px rgba(212,175,55,.06);
+    transform:translateY(-1px);
 }
 
-
-.fast-line{
-
-    margin:
-        20px 0 27px;
-
-    color:
-        rgba(0,128,0,.95);
-
-    font-size:
-        clamp(9px,1vw,13px);
-
-    font-weight:800;
-
-    letter-spacing:
-        clamp(1px,.3vw,3px);
+.service-button:hover::after{
+    left:12%;
+    right:12%;
+    opacity:1;
 }
 
-
-.main-message{
-
-    margin:0;
-
-    color:#ffffff;
-
-    font-size:
-        clamp(17px,2vw,28px);
-
-    line-height:1.28;
-
-    font-weight:800;
-
-    letter-spacing:.2px;
+.service-button:active{
+    color:#d4af37;
+    transform:scale(.96);
 }
 
-
-.sub-message{
-
-    margin:
-        19px auto 0;
-
-    max-width:570px;
-
-    color:
-        rgba(255,255,255,.76);
-
-    font-size:
-        clamp(11px,1.15vw,16px);
-
-    line-height:1.58;
-
-    font-weight:400;
+.service-button.working{
+    color:#d4af37;
+    border-color:rgba(212,175,55,.55);
+    background:rgba(212,175,55,.06);
 }
 
-
-.sub-message strong{
-
-    color:
-        rgba(212,175,55,.95);
-
-    font-weight:700;
+.service-button:disabled{
+    cursor:wait;
+    opacity:.42;
 }
-
-
-.moving-line{
-
-    margin-top:23px;
-
-    color:
-        rgba(255,255,255,.52);
-
-    font-size:
-        clamp(8px,.9vw,11px);
-
-    font-weight:700;
-
-    letter-spacing:
-        clamp(1px,.25vw,2px);
-
-    text-transform:uppercase;
-
-    animation:
-        luxuryPulse
-        3.5s
-        ease-in-out
-        infinite;
-}
-
-
-@keyframes luxuryPulse{
-
-    0%,
-    100%{
-        opacity:.48;
-    }
-
-    50%{
-        opacity:.9;
-    }
-}
-
 
 /* =========================================================
-   RIGHT — SERVICE COLLECTION
-   ========================================================= */
+   FINAL BRAND SIGNATURE
+========================================================= */
 
-.services-half{
-
+.luxury-tagline{
+    grid-column:1 / -1;
+    grid-row:10;
     position:relative;
-
-    min-width:0;
-    min-height:0;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    padding:
-        clamp(18px,3vw,42px);
-
-    overflow:hidden;
-}
-
-
-.services-inner{
-
     width:100%;
-    max-width:760px;
-
-    margin:0 auto;
-}
-
-
-/* =========================================================
-   SERVICE HEADER
-   ========================================================= */
-
-.services-header{
-
+    min-width:0;
+    padding:2px 6px;
+    color:#d4af37;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(8px,2.1vw,17px);
+    font-weight:700;
+    line-height:1.05;
+    letter-spacing:clamp(.3px,.15vw,1.4px);
     text-align:center;
-
-    margin-bottom:
-        clamp(10px,1.5vh,18px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-transform:uppercase;
 }
 
-
-.services-header::before{
-
+.luxury-tagline::before,
+.luxury-tagline::after{
     content:"";
-
-    display:block;
-
-    width:55px;
     height:1px;
-
-    margin:
-        0 auto 12px;
-
+    flex:1 1 auto;
+    min-width:8px;
     background:
         linear-gradient(
             90deg,
             transparent,
-            rgba(212,175,55,.85),
+            #d4af37
+        );
+    opacity:.65;
+}
+
+.luxury-tagline::after{
+    background:
+        linear-gradient(
+            90deg,
+            #d4af37,
             transparent
         );
 }
 
-
-.services-header h2{
-
-    margin:0;
-
-    color:#d4af37;
-
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
-
-    font-size:
-        clamp(18px,2vw,27px);
-
-    line-height:1.1;
-
-    font-weight:700;
-
-    letter-spacing:
-        .5px;
-}
-
-
-.services-header p{
-
-    margin:
-        7px auto 0;
-
-    color:
-        rgba(255,255,255,.62);
-
-    font-size:
-        clamp(8px,.9vw,11px);
-
-    line-height:1.4;
-
-    letter-spacing:
-        .3px;
-}
-
-
-/* =========================================================
-   SERVICE GRID
-   ========================================================= */
-
-.services-grid{
-
-    width:100%;
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(3,minmax(0,1fr));
-
-    gap:
-        clamp(5px,.55vw,9px);
-}
-
-
-/*
-   Refined luxury service button.
-*/
-
-.service-button{
-
-    position:relative;
-
+.luxury-tagline .brand-signature{
+    flex:0 1 auto;
     min-width:0;
-
-    height:
-        clamp(39px,5.1vh,55px);
-
-    padding:
-        5px 7px;
-
-    border:
-        1px solid
-        rgba(212,175,55,.28);
-
-    border-radius:
-        clamp(7px,1vw,10px);
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(27,27,27,.84),
-            rgba(8,8,8,.78)
-        );
-
-    color:
-        rgba(255,255,255,.9);
-
-    font-family:
-        Inter,
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    font-size:
-        clamp(8px,.78vw,11px);
-
-    line-height:1.15;
-
-    font-weight:600;
-
-    letter-spacing:.05px;
-
-    cursor:pointer;
-
-    user-select:none;
-
-    -webkit-tap-highlight-color:
-        transparent;
-
-    box-shadow:
-        inset 0 1px 0
-        rgba(255,255,255,.035),
-
-        0 5px 14px
-        rgba(0,0,0,.35);
-
-    transition:
-        border-color .18s ease,
-        background .18s ease,
-        transform .18s ease,
-        box-shadow .18s ease;
+    padding:0 8px;
 }
 
-
-.service-button:hover{
-
-    transform:
-        translateY(-1px);
-
-    border-color:
-        rgba(212,175,55,.72);
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(36,36,36,.9),
-            rgba(12,12,12,.86)
-        );
-
-    box-shadow:
-        0 8px 20px
-        rgba(0,0,0,.5),
-
-        0 0 18px
-        rgba(212,175,55,.08);
+.luxury-tagline .brand-main{
+    font-weight:800;
+    letter-spacing:clamp(.4px,.18vw,1.8px);
 }
 
-
-.service-button:active{
-
-    transform:
-        scale(.975);
+.luxury-tagline .brand-sub{
+    font-weight:400;
+    letter-spacing:clamp(.3px,.15vw,1.3px);
 }
-
-
-.service-button:focus-visible{
-
-    outline:
-        1px solid
-        #d4af37;
-
-    outline-offset:2px;
-}
-
-
-/*
-   Tiny gold accent at the bottom of each button.
-*/
-
-.service-button::after{
-
-    content:"";
-
-    position:absolute;
-
-    left:50%;
-
-    bottom:4px;
-
-    transform:
-        translateX(-50%);
-
-    width:18px;
-    height:1px;
-
-    background:
-        rgba(212,175,55,.3);
-
-    border-radius:10px;
-}
-
-
-/* =========================================================
-   FINAL LUXURY TAGLINE
-   ========================================================= */
-
-.luxury-tagline{
-
-    grid-column:
-        1 / -1;
-
-    height:
-        clamp(38px,4.8vh,51px);
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    text-align:center;
-
-    border:
-        1px solid
-        rgba(0,128,0,.36);
-
-    border-radius:
-        clamp(7px,1vw,10px);
-
-    background:
-        linear-gradient(
-            90deg,
-            rgba(0,128,0,.075),
-            rgba(212,175,55,.045),
-            rgba(0,128,0,.075)
-        );
-
-    color:
-        rgba(212,175,55,.86);
-
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
-
-    font-size:
-        clamp(8px,.85vw,11px);
-
-    font-weight:700;
-
-    letter-spacing:
-        clamp(.8px,.2vw,2px);
-
-    text-transform:uppercase;
-}
-
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-.footer{
-
-    margin-top:
-        clamp(8px,1.2vh,14px);
-
-    text-align:center;
-
-    color:
-        rgba(255,255,255,.38);
-
-    font-size:
-        clamp(7px,.7vw,9px);
-
-    letter-spacing:
-        .8px;
-}
-
-
-.footer span{
-
-    color:
-        rgba(212,175,55,.65);
-}
-
-
-/* =========================================================
-   MEDIUM LAPTOP / TABLET LANDSCAPE
-   ========================================================= */
-
-@media(
-    max-width:1100px
-) and (
-    min-height:600px
-){
-
-    .welcome-panel{
-
-        padding:
-            30px 25px;
-    }
-
-    .services-half{
-
-        padding:
-            22px;
-    }
-
-    .service-button{
-
-        height:48px;
-    }
-}
-
-
-/* =========================================================
-   TABLET PORTRAIT
-   ========================================================= */
-
-@media(
-    max-width:800px
-) and (
-    orientation:portrait
-){
-
-    body{
-
-        overflow:auto;
-    }
-
-    .page{
-
-        height:auto;
-        min-height:100vh;
-
-        grid-template-columns:1fr;
-
-        overflow:visible;
-    }
-
-    .welcome-half{
-
-        min-height:auto;
-
-        padding:
-            18px 16px 12px;
-
-        border-right:0;
-
-        border-bottom:
-            1px solid
-            rgba(212,175,55,.3);
-    }
-
-    .welcome-panel{
-
-        max-width:650px;
-
-        padding:
-            25px 18px;
-    }
-
-    .brand{
-
-        font-size:
-            clamp(29px,8vw,43px);
-    }
-
-    .main-message{
-
-        font-size:
-            clamp(16px,4.2vw,22px);
-    }
-
-    .sub-message{
-
-        font-size:
-            11px;
-    }
-
-    .services-half{
-
-        min-height:auto;
-
-        padding:
-            13px 16px 16px;
-
-        overflow:visible;
-    }
-
-    .services-inner{
-
-        max-width:650px;
-    }
-
-    .services-header{
-
-        margin-bottom:10px;
-    }
-
-    .services-grid{
-
-        gap:5px;
-    }
-
-    .service-button{
-
-        height:44px;
-
-        font-size:9px;
-
-        border-radius:7px;
-    }
-
-    .luxury-tagline{
-
-        height:39px;
-    }
-
-    .footer{
-
-        margin-top:9px;
-    }
-}
-
-
-/* =========================================================
-   NORMAL MOBILE PHONES
-   ========================================================= */
-
-@media(max-width:600px){
-
-    .welcome-half{
-
-        padding:
-            12px 12px 8px;
-    }
-
-    .welcome-panel{
-
-        padding:
-            19px 13px 18px;
-
-        border-radius:17px;
-
-        backdrop-filter:
-            blur(12px);
-
-        -webkit-backdrop-filter:
-            blur(12px);
-    }
-
-    .welcome-panel::before{
-
-        width:48px;
-
-        margin-bottom:13px;
-    }
-
-    .concierge{
-
-        font-size:7px;
-
-        letter-spacing:1.8px;
-
-        margin-bottom:7px;
-    }
-
-    .brand{
-
-        font-size:
-            clamp(25px,8.2vw,37px);
-
-        line-height:.98;
-    }
-
-    .brand span{
-
-        margin-top:3px;
-    }
-
-    .fast-line{
-
-        margin:
-            12px 0 15px;
-
-        font-size:8px;
-
-        letter-spacing:1px;
-    }
-
-    .main-message{
-
-        font-size:
-            clamp(14px,4.2vw,18px);
-    }
-
-    .sub-message{
-
-        margin-top:12px;
-
-        font-size:9px;
-
-        line-height:1.45;
-    }
-
-    .moving-line{
-
-        margin-top:13px;
-
-        font-size:7px;
-
-        letter-spacing:.8px;
-    }
-
-    .services-half{
-
-        padding:
-            10px 11px 12px;
-    }
-
-    .services-header::before{
-
-        width:38px;
-
-        margin-bottom:7px;
-    }
-
-    .services-header h2{
-
-        font-size:15px;
-    }
-
-    .services-header p{
-
-        margin-top:4px;
-
-        font-size:7px;
-    }
-
-    .services-grid{
-
-        gap:4px;
-    }
-
-    .service-button{
-
-        height:40px;
-
-        padding:
-            4px 3px;
-
-        border-radius:6px;
-
-        font-size:7.5px;
-
-        line-height:1.08;
-    }
-
-    .service-button::after{
-
-        bottom:2px;
-
-        width:13px;
-    }
-
-    .luxury-tagline{
-
-        height:35px;
-
-        font-size:7px;
-
-        letter-spacing:.7px;
-
-        padding:4px;
-    }
-
-    .footer{
-
-        margin-top:7px;
-
-        font-size:6.5px;
-    }
-}
-
 
 /* =========================================================
    SMALL PHONES
-   ========================================================= */
+========================================================= */
 
-@media(max-width:380px){
+@media(max-width:430px){
+
+    .page{
+        padding-left:3px;
+        padding-right:3px;
+    }
 
     .welcome-half{
-
-        padding:
-            9px 9px 6px;
+        padding:6px 8px 7px;
+        border-radius:8px;
     }
 
-    .welcome-panel{
-
-        padding:
-            16px 10px 15px;
-
-        border-radius:14px;
+    .welcome-half::before{
+        top:5px;
+        left:5px;
+        right:5px;
+        bottom:5px;
     }
 
-    .brand{
-
-        font-size:25px;
-    }
-
-    .fast-line{
-
-        margin:
-            9px 0 11px;
-
-        font-size:7px;
-    }
-
-    .main-message{
-
-        font-size:13px;
-    }
-
-    .sub-message{
-
+    .brand-kicker{
         font-size:8px;
-
-        line-height:1.35;
+        letter-spacing:3px;
     }
 
-    .moving-line{
-
-        margin-top:10px;
-
-        font-size:6.5px;
+    .brand-name{
+        font-size:28px;
+        letter-spacing:1px;
+        line-height:1.08;
     }
 
-    .services-half{
-
-        padding:
-            8px 8px 10px;
+    .gold-divider{
+        width:83px;
     }
 
-    .services-header{
-
-        margin-bottom:7px;
+    .value{
+        font-size:12px;
+        line-height:1.12;
     }
 
-    .services-header h2{
-
-        font-size:13px;
+    .value.luxury-value{
+        font-size:11.5px;
+        gap:2px;
+        padding:1px 5px;
     }
 
-    .services-header p{
-
-        font-size:6.5px;
+    .value.luxury-value .luxury-sub{
+        letter-spacing:1px;
     }
 
-    .services-grid{
+    .services-title{
+        font-size:12px;
+    }
 
+    .document-people-track{
+        font-size:12px;
+        letter-spacing:1.4px;
+    }
+
+    .document-people-track .wide-gap{
+        width:270px;
+        min-width:270px;
+        flex-basis:270px;
+    }
+
+    .service-instruction{
+        font-size:11.5px;
+        font-weight:700;
+        line-height:1.15;
+        letter-spacing:.45px;
+        padding:4px 4px 5px;
+        margin-bottom:3px;
+    }
+
+    .services{
         gap:3px;
     }
 
     .service-button{
-
-        height:36px;
-
-        font-size:6.8px;
-
-        padding:
-            3px 2px;
+        padding:2px 3px;
+        font-size:11px;
     }
 
     .luxury-tagline{
-
-        height:31px;
-
-        font-size:6.5px;
+        font-size:8.5px;
+        padding:2px 2px;
     }
 
-    .footer{
-
-        font-size:5.8px;
-
-        margin-top:5px;
+    .luxury-tagline .brand-signature{
+        padding:0 4px;
     }
 }
 
-
 /* =========================================================
-   VERY SHORT PHONES
-   ========================================================= */
+   VERY SMALL PHONES
+========================================================= */
 
-@media(
-    max-height:700px
-) and (
-    max-width:800px
-){
+@media(max-width:360px){
 
     .welcome-half{
-
-        padding-top:7px;
-        padding-bottom:5px;
+        padding:5px 6px 6px;
     }
 
-    .welcome-panel{
-
-        padding:
-            14px 12px;
+    .brand-kicker{
+        font-size:7px;
+        letter-spacing:2.5px;
     }
 
-    .welcome-panel::before{
-
-        margin-bottom:8px;
+    .brand-name{
+        font-size:24px;
+        letter-spacing:.8px;
+        line-height:1.08;
     }
 
-    .concierge{
-
-        margin-bottom:5px;
+    .gold-divider{
+        width:69px;
     }
 
-    .fast-line{
-
-        margin:
-            7px 0 9px;
+    .value{
+        font-size:10px;
     }
 
-    .sub-message{
-
-        margin-top:8px;
+    .value.luxury-value{
+        font-size:9.8px;
     }
 
-    .moving-line{
-
-        margin-top:8px;
+    .services-title{
+        font-size:10.5px;
     }
 
-    .services-half{
-
-        padding-top:7px;
-        padding-bottom:8px;
+    .document-people-track{
+        font-size:10.5px;
     }
 
-    .services-header{
-
-        margin-bottom:6px;
+    .document-people-track .wide-gap{
+        width:230px;
+        min-width:230px;
+        flex-basis:230px;
     }
 
-    .services-grid{
+    .service-instruction{
+        font-size:10px;
+    }
 
-        gap:3px;
+    .services{
+        gap:2px;
     }
 
     .service-button{
-
-        height:34px;
+        padding:1px 2px;
+        font-size:10px;
     }
 
     .luxury-tagline{
-
-        height:29px;
+        font-size:7.5px;
     }
 
-    .footer{
-
-        margin-top:4px;
+    .luxury-tagline .brand-signature{
+        padding:0 2px;
     }
 }
 
-
 /* =========================================================
-   REDUCED MOTION
-   ========================================================= */
+   TABLET / DESKTOP
+========================================================= */
 
-@media(prefers-reduced-motion:reduce){
+@media(min-width:700px){
 
-    .moving-line{
+    .brand-name{
+        font-size:clamp(43px,6vw,67px);
+    }
 
-        animation:none;
+    .value{
+        font-size:clamp(18px,2.5vw,24px);
+    }
+
+    .value.luxury-value{
+        font-size:clamp(18px,2.35vw,23px);
+    }
+
+    .services-title{
+        font-size:clamp(19px,2.6vw,25px);
+    }
+
+    .document-people-track{
+        font-size:clamp(20px,3vw,27px);
+    }
+
+    .document-people-track .wide-gap{
+        width:620px;
+        min-width:620px;
+        flex-basis:620px;
     }
 
     .service-button{
-
-        transition:none;
+        font-size:16px;
     }
 
-}
+    .services{
+        gap:5px;
+    }
 
+    .luxury-tagline{
+        font-size:clamp(13px,1.8vw,17px);
+    }
+}
 </style>
 </head>
 
-
 <body>
-
-
-<!-- =======================================================
-     LIVE FIREWORKS
-     ======================================================= -->
-
-<canvas id="fireworksCanvas"></canvas>
-
-<div class="fireworks-shade"></div>
-<div class="luxury-vignette"></div>
-
-
-<!-- =======================================================
-     MAIN PAGE
-     ======================================================= -->
 
 <div class="page">
 
-
-    <!-- ===================================================
-         WELCOME / BRAND
-         =================================================== -->
-
     <section class="welcome-half">
 
-        <div class="welcome-panel">
+        <div class="welcome-content">
 
-            <p class="concierge">
+            <div class="brand-kicker">
                 YOUR DIGITAL DOCUMENT CONCIERGE
-            </p>
+            </div>
 
-
-            <h1 class="brand">
-                NAIJA POCKET
-                <span>BUSINESS CENTER</span>
+            <h1 class="brand-name">
+                <span class="green">NAIJA POCKET</span>
+                <br>
+                BUSINESS
+                <span class="gold">CENTER</span>
             </h1>
 
+            <div class="gold-divider"></div>
 
-            <div class="fast-line">
+            <div class="value">
                 FAST • CONVENIENT • OPEN 24/7
             </div>
 
-
-            <p class="main-message">
+            <div class="value">
                 PREPARE YOUR DOCUMENTS IN MINUTES
-            </p>
+            </div>
 
+            <div class="value luxury-value">
+                <span class="luxury-main">
+                    DO EVERYTHING CONCERNING YOUR DOCUMENTS
+                </span>
 
-            <p class="sub-message">
-
-                DO EVERYTHING CONCERNING YOUR DOCUMENTS
-
-                <br>
-
-                <strong>
+                <span class="luxury-sub">
                     FROM YOUR PHONE, WHEREVER YOU ARE
-                </strong>
+                </span>
+            </div>
 
-                <br><br>
-
+            <div class="services-title">
                 ENJOY THE BEST IN DOCUMENT PROCESSING
+            </div>
 
-            </p>
+            <div class="document-people-window">
 
+                <div class="document-people-track">
 
-            <div class="moving-line">
-                PREPARE YOUR DOCUMENTS IN MINUTES
+                    <span class="tagline-text">
+                        PREPARE YOUR DOCUMENTS IN MINUTES
+                    </span>
+
+                    <span class="wide-gap"></span>
+
+                </div>
+
             </div>
 
         </div>
 
     </section>
 
-
-
-    <!-- ===================================================
-         SERVICES
-         =================================================== -->
-
     <section class="services-half">
 
-        <div class="services-inner">
+        <div class="service-instruction">
+            TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
+        </div>
 
+        <div class="services">
+
+            <button type="button" class="service-button" data-service="Document Typing">
+                Document Typing
+            </button>
+
+            <button type="button" class="service-button" data-service="Document Formatting">
+                Document Formatting
+            </button>
+
+            <button type="button" class="service-button" data-service="Document Editing">
+                Document Editing
+            </button>
 
-            <div class="services-header">
+            <button type="button" class="service-button" data-service="Grammar Correction">
+                Grammar Correction
+            </button>
 
-                <h2>
-                    OUR DOCUMENT SERVICES
-                </h2>
+            <button type="button" class="service-button" data-service="Assignments">
+                Assignments
+            </button>
 
-                <p>
-                    SELECT A SERVICE AND GET YOUR DOCUMENT PROCESSED IN MINUTES
-                </p>
+            <button type="button" class="service-button" data-service="Projects">
+                Projects
+            </button>
 
-            </div>
+            <button type="button" class="service-button" data-service="Research Assistance">
+                Research Assistance
+            </button>
 
+            <button type="button" class="service-button" data-service="Seminar Papers">
+                Seminar Papers
+            </button>
 
-            <div class="services-grid">
+            <button type="button" class="service-button" data-service="CVs & Résumés">
+                CVs & Résumés
+            </button>
 
+            <button type="button" class="service-button" data-service="Cover Letters">
+                Cover Letters
+            </button>
 
-                <!-- 1 -->
-                <button
-                    class="service-button"
-                    data-service="Document Typing">
-                    Document Typing
-                </button>
+            <button type="button" class="service-button" data-service="Business Proposals">
+                Business Proposals
+            </button>
 
+            <button type="button" class="service-button" data-service="Company Profiles">
+                Company Profiles
+            </button>
 
-                <!-- 2 -->
-                <button
-                    class="service-button"
-                    data-service="Document Formatting">
-                    Document Formatting
-                </button>
+            <button type="button" class="service-button" data-service="Invoices">
+                Invoices
+            </button>
 
+            <button type="button" class="service-button" data-service="Quotations">
+                Quotations
+            </button>
 
-                <!-- 3 -->
-                <button
-                    class="service-button"
-                    data-service="Document Editing">
-                    Document Editing
-                </button>
+            <button type="button" class="service-button" data-service="Meeting Minutes">
+                Meeting Minutes
+            </button>
 
+            <button type="button" class="service-button" data-service="AI Writing Assistance">
+                AI Writing Assistance
+            </button>
 
-                <!-- 4 -->
-                <button
-                    class="service-button"
-                    data-service="Grammar Correction">
-                    Grammar Correction
-                </button>
+            <button type="button" class="service-button" data-service="Document Rewriting">
+                Document Rewriting
+            </button>
 
+            <button type="button" class="service-button" data-service="Translation">
+                Translation
+            </button>
 
-                <!-- 5 -->
-                <button
-                    class="service-button"
-                    data-service="Assignments">
-                    Assignments
-                </button>
+            <button type="button" class="service-button" data-service="PDF Conversion">
+                PDF Conversion
+            </button>
 
+            <button type="button" class="service-button" data-service="Topic Explanations">
+                Topic Explanations
+            </button>
 
-                <!-- 6 -->
-                <button
-                    class="service-button"
-                    data-service="Projects">
-                    Projects
-                </button>
+            <button type="button" class="service-button" data-service="Printing Preparation">
+                Printing Preparation
+            </button>
 
+            <button type="button" class="service-button" data-service="Excel Spreadsheets">
+                Excel Spreadsheets
+            </button>
 
-                <!-- 7 -->
-                <button
-                    class="service-button"
-                    data-service="Research Assistance">
-                    Research Assistance
-                </button>
+            <button type="button" class="service-button" data-service="Data Entry">
+                Data Entry
+            </button>
 
+            <button type="button" class="service-button" data-service="Data Analysis">
+                Data Analysis
+            </button>
 
-                <!-- 8 -->
-                <button
-                    class="service-button"
-                    data-service="Seminar Papers">
-                    Seminar Papers
-                </button>
+            <button type="button" class="service-button" data-service="Presentations">
+                Presentations
+            </button>
 
+            <button type="button" class="service-button" data-service="Document Summarization">
+                Document Summarization
+            </button>
 
-                <!-- 9 -->
-                <button
-                    class="service-button"
-                    data-service="CVs & Résumés">
-                    CVs &amp; Résumés
-                </button>
+            <button type="button" class="service-button" data-service="Business Letters & Letterhead">
+                Business Letters & Letterhead
+            </button>
 
+            <div class="luxury-tagline">
 
-                <!-- 10 -->
-                <button
-                    class="service-button"
-                    data-service="Cover Letters">
-                    Cover Letters
-                </button>
+                <span class="brand-signature">
 
+                    <span class="brand-main">
+                        NAIJA POCKET BUSINESS CENTER
+                    </span>
 
-                <!-- 11 -->
-                <button
-                    class="service-button"
-                    data-service="Business Proposals">
-                    Business Proposals
-                </button>
-
-
-                <!-- 12 -->
-                <button
-                    class="service-button"
-                    data-service="Company Profiles">
-                    Company Profiles
-                </button>
-
-
-                <!-- 13 -->
-                <button
-                    class="service-button"
-                    data-service="Invoices">
-                    Invoices
-                </button>
-
-
-                <!-- 14 -->
-                <button
-                    class="service-button"
-                    data-service="Quotations">
-                    Quotations
-                </button>
-
-
-                <!-- 15 -->
-                <button
-                    class="service-button"
-                    data-service="Meeting Minutes">
-                    Meeting Minutes
-                </button>
-
-
-                <!-- 16 -->
-                <button
-                    class="service-button"
-                    data-service="AI Writing Assistance">
-                    AI Writing Assistance
-                </button>
+                    <span class="brand-sub">
+                        — YOUR BUSINESS CENTER IN YOUR POCKET —
+                    </span>
 
-
-                <!-- 17 -->
-                <button
-                    class="service-button"
-                    data-service="Document Rewriting">
-                    Document Rewriting
-                </button>
-
-
-                <!-- 18 -->
-                <button
-                    class="service-button"
-                    data-service="Translation">
-                    Translation
-                </button>
-
-
-                <!-- 19 -->
-                <button
-                    class="service-button"
-                    data-service="PDF Conversion">
-                    PDF Conversion
-                </button>
-
-
-                <!-- 20 -->
-                <button
-                    class="service-button"
-                    data-service="Topic Explanations">
-                    Topic Explanations
-                </button>
-
-
-                <!-- 21 -->
-                <button
-                    class="service-button"
-                    data-service="Printing Preparation">
-                    Printing Preparation
-                </button>
-
-
-                <!-- 22 -->
-                <button
-                    class="service-button"
-                    data-service="Excel Spreadsheets">
-                    Excel Spreadsheets
-                </button>
-
-
-                <!-- 23 -->
-                <button
-                    class="service-button"
-                    data-service="Data Entry">
-                    Data Entry
-                </button>
-
-
-                <!-- 24 -->
-                <button
-                    class="service-button"
-                    data-service="Data Analysis">
-                    Data Analysis
-                </button>
-
-
-                <!-- 25 -->
-                <button
-                    class="service-button"
-                    data-service="Presentations">
-                    Presentations
-                </button>
-
-
-                <!-- 26 -->
-                <button
-                    class="service-button"
-                    data-service="Document Summarization">
-                    Document Summarization
-                </button>
-
-
-                <!-- 27 -->
-                <button
-                    class="service-button"
-                    data-service="Business Letters & Letterhead">
-                    Business Letters &amp; Letterhead
-                </button>
-
-
-                <!-- 28 / LUXURY BRAND TAGLINE -->
-                <div class="luxury-tagline">
-                    YOUR BUSINESS CENTER IN YOUR POCKET
-                </div>
-
-
-            </div>
-
-
-            <div class="footer">
-
-                NAIJA POCKET BUSINESS CENTER
-
-                <span>
-                    — YOUR BUSINESS CENTER IN YOUR POCKET —
                 </span>
 
             </div>
-
 
         </div>
 
@@ -1604,59 +960,73 @@ body{
 
 </div>
 
-
-
 <script>
+"use strict";
 
-/* =========================================================
-   SERVICE NAVIGATION
-   ========================================================= */
+const serviceButtons =
+    document.querySelectorAll(".service-button");
 
+let requestInProgress = false;
+
+function releaseServiceButtons(){
+
+    requestInProgress = false;
+
+    serviceButtons.forEach(function(button){
+
+        button.disabled = false;
+        button.classList.remove("working");
+
+    });
+}
 
 function cryptoRandomId(){
 
     if(
         window.crypto &&
-        crypto.getRandomValues
+        window.crypto.randomUUID
     ){
 
-        const array =
-            new Uint32Array(3);
+        return window.crypto.randomUUID();
 
-        crypto.getRandomValues(
-            array
-        );
-
-        return Array
-            .from(array)
-            .map(
-                value =>
-                    value.toString(36)
-            )
-            .join("")
-            .slice(0,18);
     }
 
-
-    return (
+    return(
+        Date.now().toString(36) +
         Math.random()
             .toString(36)
-            .slice(2)
-        +
-        Date.now()
-            .toString(36)
+            .substring(2)
     );
 }
 
+function openWorkspace(service,button){
 
+    if(
+        requestInProgress ||
+        !service
+    ){
 
-function getCustomerId(){
+        return;
+    }
+
+    requestInProgress = true;
+
+    button.classList.add("working");
+
+    serviceButtons.forEach(function(otherButton){
+
+        if(otherButton !== button){
+
+            otherButton.disabled = true;
+
+        }
+
+    });
 
     let customerId =
         localStorage.getItem(
             "npbc_customer_id"
         );
-
 
     if(!customerId){
 
@@ -1664,971 +1034,74 @@ function getCustomerId(){
             "customer_" +
             cryptoRandomId();
 
-
         localStorage.setItem(
             "npbc_customer_id",
             customerId
         );
     }
 
-
-    return customerId;
-}
-
-
-
-const serviceButtons =
-    document.querySelectorAll(
-        ".service-button"
-    );
-
-
-let navigating = false;
-
-
-
-function releaseButtons(){
-
-    navigating = false;
-
-
-    serviceButtons.forEach(
-        button => {
-
-            button.disabled = false;
-
-            button.style.pointerEvents =
-                "auto";
-
-            button.style.opacity =
-                "1";
-
-        }
-    );
-}
-
-
-
-function openService(service){
-
-    if(navigating){
-
-        return;
-    }
-
-
-    navigating = true;
-
-
-    serviceButtons.forEach(
-        button => {
-
-            button.disabled = true;
-
-            button.style.pointerEvents =
-                "none";
-
-        }
-    );
-
-
-    const customerId =
-        getCustomerId();
-
-
     localStorage.setItem(
         "selectedService",
         service
     );
 
-
-    const target =
+    const workspaceUrl =
         "workspace.html?service=" +
         encodeURIComponent(service) +
         "&customer_id=" +
         encodeURIComponent(customerId);
 
-
-    window.location.href =
-        target;
+    window.location.assign(
+        workspaceUrl
+    );
 }
 
+serviceButtons.forEach(function(button){
 
+    button.addEventListener(
+        "click",
+        function(){
 
-serviceButtons.forEach(
-    button => {
+            const service =
+                button.getAttribute(
+                    "data-service"
+                );
 
-        button.addEventListener(
-            "click",
-            () => {
+            openWorkspace(
+                service,
+                button
+            );
+        }
+    );
+});
 
-                const service =
-                    button.getAttribute(
-                        "data-service"
-                    );
+releaseServiceButtons();
 
+window.addEventListener(
+    "pageshow",
+    function(){
 
-                if(service){
-
-                    openService(
-                        service
-                    );
-
-                }
-
-            }
-        );
+        releaseServiceButtons();
 
     }
 );
 
-
-
-window.addEventListener(
-    "pageshow",
-    releaseButtons
-);
-
-
-
 document.addEventListener(
     "visibilitychange",
-    () => {
+    function(){
 
         if(
             document.visibilityState ===
             "visible"
         ){
 
-            releaseButtons();
+            releaseServiceButtons();
 
         }
 
     }
 );
-
-
-/* =========================================================
-   ELEGANT BACKGROUND FIREWORKS
-   ========================================================= */
-
-(function(){
-
-    const canvas =
-        document.getElementById(
-            "fireworksCanvas"
-        );
-
-
-    const ctx =
-        canvas.getContext(
-            "2d"
-        );
-
-
-    if(!ctx){
-
-        return;
-
-    }
-
-
-    let width = 0;
-    let height = 0;
-    let dpr = 1;
-
-
-    let rockets = [];
-    let particles = [];
-
-
-    let stars = [];
-
-
-    let lastTime =
-        performance.now();
-
-
-    let lastLaunch =
-        0;
-
-
-    let pageHidden =
-        false;
-
-
-    const reduceMotion =
-        window.matchMedia &&
-        window.matchMedia(
-            "(prefers-reduced-motion: reduce)"
-        ).matches;
-
-
-
-    function resize(){
-
-        width =
-            window.innerWidth;
-
-        height =
-            window.innerHeight;
-
-
-        dpr =
-            Math.min(
-                window.devicePixelRatio || 1,
-                1.25
-            );
-
-
-        canvas.width =
-            Math.floor(
-                width * dpr
-            );
-
-
-        canvas.height =
-            Math.floor(
-                height * dpr
-            );
-
-
-        ctx.setTransform(
-            dpr,
-            0,
-            0,
-            dpr,
-            0,
-            0
-        );
-
-
-        createStars();
-
-    }
-
-
-
-    function createStars(){
-
-        stars = [];
-
-
-        const count =
-            width < 600
-                ? 35
-                : 60;
-
-
-        for(
-            let i = 0;
-            i < count;
-            i++
-        ){
-
-            stars.push({
-
-                x:
-                    Math.random() *
-                    width,
-
-                y:
-                    Math.random() *
-                    height,
-
-                radius:
-                    .25 +
-                    Math.random() *
-                    .65,
-
-                alpha:
-                    .12 +
-                    Math.random() *
-                    .25,
-
-                phase:
-                    Math.random() *
-                    Math.PI *
-                    2
-
-            });
-
-        }
-
-    }
-
-
-
-    class Rocket{
-
-        constructor(){
-
-            /*
-             * Fireworks are deliberately
-             * launched toward the upper
-             * perimeter rather than directly
-             * behind the text.
-             */
-
-            const side =
-                Math.random();
-
-
-            if(side < .34){
-
-                this.x =
-                    width *
-                    (
-                        .03 +
-                        Math.random() *
-                        .25
-                    );
-
-            }
-            else if(side < .68){
-
-                this.x =
-                    width *
-                    (
-                        .72 +
-                        Math.random() *
-                        .25
-                    );
-
-            }
-            else{
-
-                this.x =
-                    width *
-                    (
-                        .22 +
-                        Math.random() *
-                        .56
-                    );
-
-            }
-
-
-            this.y =
-                height + 12;
-
-
-            this.targetY =
-                height *
-                (
-                    .10 +
-                    Math.random() *
-                    .23
-                );
-
-
-            this.speed =
-                4.3 +
-                Math.random() *
-                1.7;
-
-
-            this.hue =
-                Math.random() < .88
-                    ? "gold"
-                    : "green";
-
-
-            this.dead = false;
-
-        }
-
-
-
-        update(){
-
-            this.y -=
-                this.speed;
-
-
-            this.speed +=
-                .035;
-
-
-            if(
-                this.y <=
-                this.targetY
-            ){
-
-                this.explode();
-
-                this.dead = true;
-
-            }
-
-        }
-
-
-
-        draw(){
-
-            ctx.save();
-
-
-            ctx.globalCompositeOperation =
-                "lighter";
-
-
-            /*
-             * Restrained rocket trail.
-             */
-
-            const gradient =
-                ctx.createLinearGradient(
-                    this.x,
-                    this.y + 26,
-                    this.x,
-                    this.y
-                );
-
-
-            gradient.addColorStop(
-                0,
-                "rgba(212,175,55,0)"
-            );
-
-
-            gradient.addColorStop(
-                .7,
-                "rgba(212,175,55,.32)"
-            );
-
-
-            gradient.addColorStop(
-                1,
-                "rgba(255,240,170,.85)"
-            );
-
-
-            ctx.strokeStyle =
-                gradient;
-
-
-            ctx.lineWidth =
-                1.4;
-
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                this.x,
-                this.y + 27
-            );
-
-            ctx.lineTo(
-                this.x,
-                this.y
-            );
-
-            ctx.stroke();
-
-
-            ctx.fillStyle =
-                "#fff3bd";
-
-
-            ctx.shadowBlur =
-                8;
-
-
-            ctx.shadowColor =
-                "#d4af37";
-
-
-            ctx.beginPath();
-
-            ctx.arc(
-                this.x,
-                this.y,
-                1.7,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-
-
-            ctx.restore();
-
-        }
-
-
-
-        explode(){
-
-            /*
-             * Small, elegant bursts.
-             * Enough to be clearly visible,
-             * never enough to dominate text.
-             */
-
-            const count =
-                width < 600
-                    ? 30
-                    : 43;
-
-
-            for(
-                let i = 0;
-                i < count;
-                i++
-            ){
-
-                const angle =
-                    (
-                        Math.PI * 2 *
-                        i /
-                        count
-                    );
-
-
-                const speed =
-                    .8 +
-                    Math.random() *
-                    2.5;
-
-
-                particles.push(
-                    new Particle(
-                        this.x,
-                        this.y,
-                        angle,
-                        speed,
-                        this.hue
-                    )
-                );
-
-            }
-
-        }
-
-    }
-
-
-
-    class Particle{
-
-        constructor(
-            x,
-            y,
-            angle,
-            speed,
-            hue
-        ){
-
-            this.x = x;
-            this.y = y;
-
-            this.oldX = x;
-            this.oldY = y;
-
-
-            this.vx =
-                Math.cos(angle) *
-                speed;
-
-
-            this.vy =
-                Math.sin(angle) *
-                speed;
-
-
-            this.gravity =
-                .025;
-
-
-            this.friction =
-                .986;
-
-
-            this.life =
-                55 +
-                Math.random() *
-                35;
-
-
-            this.maxLife =
-                this.life;
-
-
-            this.size =
-                .75 +
-                Math.random() *
-                .9;
-
-
-            this.hue =
-                hue;
-
-        }
-
-
-
-        update(){
-
-            this.oldX =
-                this.x;
-
-            this.oldY =
-                this.y;
-
-
-            this.vx *=
-                this.friction;
-
-
-            this.vy =
-                this.vy *
-                this.friction +
-                this.gravity;
-
-
-            this.x +=
-                this.vx;
-
-            this.y +=
-                this.vy;
-
-
-            this.life--;
-
-        }
-
-
-
-        draw(){
-
-            const alpha =
-                Math.max(
-                    0,
-                    this.life /
-                    this.maxLife
-                );
-
-
-            ctx.save();
-
-
-            ctx.globalCompositeOperation =
-                "lighter";
-
-
-            ctx.strokeStyle =
-                this.hue === "green"
-
-                    ? `rgba(0,190,70,${alpha * .62})`
-
-                    : `rgba(212,175,55,${alpha * .68})`;
-
-
-            ctx.lineWidth =
-                this.size;
-
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                this.oldX,
-                this.oldY
-            );
-
-            ctx.lineTo(
-                this.x,
-                this.y
-            );
-
-            ctx.stroke();
-
-
-            ctx.fillStyle =
-                this.hue === "green"
-
-                    ? `rgba(140,255,180,${alpha * .75})`
-
-                    : `rgba(255,225,140,${alpha * .8})`;
-
-
-            ctx.beginPath();
-
-            ctx.arc(
-                this.x,
-                this.y,
-                this.size,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-
-
-            ctx.restore();
-
-        }
-
-    }
-
-
-
-    function drawStars(time){
-
-        ctx.save();
-
-
-        for(
-            const star of stars
-        ){
-
-            const pulse =
-                .65 +
-                Math.sin(
-                    time * .001 +
-                    star.phase
-                ) *
-                .25;
-
-
-            ctx.globalAlpha =
-                star.alpha *
-                pulse;
-
-
-            ctx.fillStyle =
-                "#d4af37";
-
-
-            ctx.beginPath();
-
-            ctx.arc(
-                star.x,
-                star.y,
-                star.radius,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-
-        }
-
-
-        ctx.restore();
-
-    }
-
-
-
-    function launch(){
-
-        if(
-            rockets.length >=
-            (
-                width < 600
-                    ? 2
-                    : 3
-            )
-        ){
-
-            return;
-
-        }
-
-
-        rockets.push(
-            new Rocket()
-        );
-
-    }
-
-
-
-    function animate(time){
-
-        if(pageHidden){
-
-            requestAnimationFrame(
-                animate
-            );
-
-            return;
-
-        }
-
-
-        ctx.clearRect(
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        drawStars(time);
-
-
-        /*
-         * Slow, luxurious rhythm.
-         */
-
-        const interval =
-            width < 600
-                ? 1450
-                : 1250;
-
-
-        if(
-            !reduceMotion &&
-            time -
-            lastLaunch >
-            interval
-        ){
-
-            launch();
-
-            lastLaunch =
-                time;
-
-        }
-
-
-        for(
-            const rocket of rockets
-        ){
-
-            rocket.update();
-
-            if(!rocket.dead){
-
-                rocket.draw();
-
-            }
-
-        }
-
-
-        for(
-            const particle of particles
-        ){
-
-            particle.update();
-
-            particle.draw();
-
-        }
-
-
-        rockets =
-            rockets.filter(
-                rocket =>
-                    !rocket.dead
-            );
-
-
-        particles =
-            particles.filter(
-                particle =>
-                    particle.life > 0
-            );
-
-
-        /*
-         * Hard safety limit for phones.
-         */
-
-        const maxParticles =
-            width < 600
-                ? 150
-                : 230;
-
-
-        if(
-            particles.length >
-            maxParticles
-        ){
-
-            particles.splice(
-                0,
-                particles.length -
-                maxParticles
-            );
-
-        }
-
-
-        lastTime =
-            time;
-
-
-        requestAnimationFrame(
-            animate
-        );
-
-    }
-
-
-
-    document.addEventListener(
-        "visibilitychange",
-        () => {
-
-            pageHidden =
-                document.visibilityState ===
-                "hidden";
-
-
-            if(pageHidden){
-
-                rockets = [];
-                particles = [];
-
-            }
-
-        }
-    );
-
-
-    window.addEventListener(
-        "resize",
-        resize,
-        {passive:true}
-    );
-
-
-    resize();
-
-
-    /*
-     * One restrained opening firework.
-     */
-
-    if(!reduceMotion){
-
-        setTimeout(
-            launch,
-            700
-        );
-
-        setTimeout(
-            launch,
-            1800
-        );
-
-    }
-
-
-    requestAnimationFrame(
-        animate
-    );
-
-})();
-
 </script>
 
 </body>
-</html>
-
-This version specifically fixes the three problems: all services are contained within the responsive layout, the fireworks are dimmed and pushed toward the visual perimeter, and the overall composition is intentionally restrained and luxury-oriented rather than crowded.
+</html> 
