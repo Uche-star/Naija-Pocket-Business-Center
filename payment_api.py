@@ -117,17 +117,25 @@ def normalize_status(status: Any) -> str:
 def payment_is_reported(status: str) -> bool:
     return normalize_status(status) in {
         "reported",
+        "payment_reported",
         "verification_pending",
         "awaiting_verification",
+        "pending_verification",
+        "payment_pending",
     }
 
 
 def payment_is_verified(status: str) -> bool:
     return normalize_status(status) in {
         "verified",
+        "approved",
+        "paid",
+        "payment_verified",
+        "payment_confirmed",
+        "confirmed",
+        "activated",
         "completed",
         "complete",
-        "paid",
     }
 
 
@@ -867,6 +875,151 @@ def payment_public(payment: dict[str, Any] | None) -> dict[str, Any] | None:
 
 
 # ============================================================
+# BACK OFFICE / JOB SYNCHRONIZATION
+# ============================================================
+
+def payment_display_status(payment: dict[str, Any]) -> str:
+    status = normalize_status(payment.get("payment_status"))
+    if payment_is_verified(status):
+        return "Payment Verified — Download Unlocked"
+    if payment_is_reported(status):
+        return "Payment Reported — Awaiting Verification"
+    if status in {"rejected", "declined", "failed"}:
+        return "Payment Rejected"
+    return "Payment Pending"
+
+
+def back_office_payment_record(payment: dict[str, Any]) -> dict[str, Any]:
+    public = payment_public(payment) or {}
+    public.update({
+        "status": payment.get("payment_status"),
+        "display_status": payment_display_status(payment),
+        "payment_reported": payment_is_reported(payment.get("payment_status", "")),
+        "awaiting_verification": payment_is_reported(payment.get("payment_status", "")),
+        "verified": payment_is_verified(payment.get("payment_status", "")),
+        "unlocked": payment_is_verified(payment.get("payment_status", "")),
+    })
+    return public
+
+
+def get_all_payments() -> list[dict[str, Any]]:
+    with connect_db() as conn:
+        rows = conn.execute("SELECT * FROM payment_orders ORDER BY id DESC").fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_back_office_jobs_combined() -> list[dict[str, Any]]:
+    payments = get_all_payments()
+    grouped: dict[str, dict[str, Any]] = {}
+    for payment in payments:
+        job_id = clean(payment.get("job_id"))
+        if not job_id:
+            continue
+        item = grouped.setdefault(job_id, {
+            "job_id": job_id,
+            "customer_id": clean(payment.get("customer_id")),
+            "service": clean(payment.get("service")),
+            "amount": money(payment.get("amount")),
+            "currency": payment.get("currency", DEFAULT_CURRENCY),
+            "payment_status": payment.get("payment_status"),
+            "status": payment_display_status(payment),
+            "display_status": payment_display_status(payment),
+            "payment_id": payment.get("payment_id"),
+            "payment_reference": payment.get("payment_reference"),
+            "document_version": payment.get("document_version"),
+            "version_id": payment.get("document_version"),
+            "document_saved": saved_document_exists(payment),
+            "payment_reported": payment_is_reported(payment.get("payment_status", "")),
+            "awaiting_verification": payment_is_reported(payment.get("payment_status", "")),
+            "payment_verified": payment_is_verified(payment.get("payment_status", "")),
+            "download_unlocked": payment_is_verified(payment.get("payment_status", "")),
+            "created_at": payment.get("created_at"),
+            "reported_at": payment.get("reported_at"),
+            "verified_at": payment.get("verified_at"),
+        })
+        # Latest record for the job is authoritative.
+        if payment.get("id", 0) > 0:
+            item.update({
+                "customer_id": clean(payment.get("customer_id")) or item.get("customer_id"),
+                "service": clean(payment.get("service")) or item.get("service"),
+                "amount": money(payment.get("amount")) or item.get("amount"),
+                "currency": payment.get("currency", DEFAULT_CURRENCY),
+                "payment_status": payment.get("payment_status"),
+                "status": payment_display_status(payment),
+                "display_status": payment_display_status(payment),
+                "payment_id": payment.get("payment_id"),
+                "payment_reference": payment.get("payment_reference"),
+                "document_version": payment.get("document_version"),
+                "version_id": payment.get("document_version"),
+                "document_saved": saved_document_exists(payment),
+                "payment_reported": payment_is_reported(payment.get("payment_status", "")),
+                "awaiting_verification": payment_is_reported(payment.get("payment_status", "")),
+                "payment_verified": payment_is_verified(payment.get("payment_status", "")),
+                "download_unlocked": payment_is_verified(payment.get("payment_status", "")),
+                "created_at": payment.get("created_at"),
+                "reported_at": payment.get("reported_at"),
+                "verified_at": payment.get("verified_at"),
+            })
+    return list(grouped.values())
+
+
+def back_office_stats() -> dict[str, Any]:
+    payments = get_all_payments()
+    jobs = get_back_office_jobs_combined()
+    reported = sum(1 for p in payments if payment_is_reported(p.get("payment_status", "")))
+    verified = sum(1 for p in payments if payment_is_verified(p.get("payment_status", "")))
+    pending = sum(1 for p in payments if payment_is_pending(p.get("payment_status", "")) and not payment_is_reported(p.get("payment_status", "")))
+    return {
+        "ok": True,
+        "total": len(payments),
+        "total_payments": len(payments),
+        "total_jobs": len(jobs),
+        "pending": pending,
+        "reported": reported,
+        "payment_reported": reported,
+        "awaiting_verification": reported,
+        "verified": verified,
+        "completed": verified,
+        "unlocked": verified,
+        "revenue": round(sum(money(p.get("amount")) for p in payments if payment_is_verified(p.get("payment_status", ""))), 2),
+    }
+
+
+def synchronize_report_to_old_api(payment: dict[str, Any]) -> dict[str, Any]:
+    """Best-effort synchronization with the main API when OLD_API_BASE_URL is configured."""
+    if not old_api_configured():
+        return {"ok": False, "configured": False, "message": "OLD_API_BASE_URL is not configured"}
+    payload = {
+        "payment_id": payment.get("payment_id"),
+        "job_id": payment.get("job_id"),
+        "customer_id": payment.get("customer_id"),
+        "service": payment.get("service"),
+        "amount": money(payment.get("amount")),
+        "currency": payment.get("currency", DEFAULT_CURRENCY),
+        "payment_method": payment.get("payment_method"),
+        "payment_reference": payment.get("payment_reference"),
+        "payment_status": payment.get("payment_status"),
+        "status": payment_display_status(payment),
+        "reported_at": payment.get("reported_at"),
+        "document_version": payment.get("document_version"),
+        "version_id": payment.get("document_version"),
+    }
+    # Try compatibility endpoints; a failed optional bridge must never erase the local report.
+    candidates = [
+        "/api/payment/report-sync",
+        "/api/back-office/payment-sync",
+        "/api/payment/sync",
+    ]
+    errors=[]
+    for path in candidates:
+        try:
+            return {"ok": True, "configured": True, "path": path, "response": old_api_request("POST", path, body=payload)}
+        except Exception as exc:
+            errors.append(str(exc))
+    return {"ok": False, "configured": True, "errors": errors}
+
+
+# ============================================================
 # ROUTES
 # ============================================================
 
@@ -990,6 +1143,14 @@ async def payment_report(
             "download_unlocked": True,
         }
 
+    if not saved_document_exists(payment):
+        return json_response_error(
+            "DOCUMENT_SNAPSHOT_MISSING",
+            "The exact reviewed document was not saved. Payment cannot be reported until the snapshot exists.",
+            409,
+            payment_id=payment.get("payment_id"),
+        )
+
     updated = update_payment_record(
         payment["payment_id"],
         status="reported",
@@ -997,11 +1158,14 @@ async def payment_report(
         customer_note=clean(note) or None,
         reported_at=now_iso(),
     )
+    sync = synchronize_report_to_old_api(updated or payment)
 
     return {
         "ok": True,
-        "message": "Payment report received. Customer Care must verify the payment before download is unlocked.",
+        "message": "Payment Reported — Awaiting Verification",
         "payment": payment_public(updated),
+        "back_office": back_office_payment_record(updated or payment),
+        "sync": sync,
         "paid": False,
         "payment_verified": False,
         "download_unlocked": False,
@@ -1170,10 +1334,52 @@ async def customer_care_verify(
         "ok": True,
         "message": "Payment verified. Download is now unlocked for this document version.",
         "payment": payment_public(updated),
+        "back_office": back_office_payment_record(updated or payment),
         "paid": True,
         "payment_verified": True,
         "download_unlocked": True,
     }
+
+
+@app.get("/api/back-office/payments")
+@app.get("/api/customer-care/payments/all")
+async def back_office_payments():
+    records = get_all_payments()
+    return {
+        "ok": True,
+        "count": len(records),
+        "total": len(records),
+        "payments": [back_office_payment_record(p) for p in records],
+        "stats": back_office_stats(),
+    }
+
+
+@app.get("/api/back-office/jobs")
+@app.get("/api/customer-care/jobs")
+async def back_office_jobs():
+    jobs = get_back_office_jobs_combined()
+    return {
+        "ok": True,
+        "count": len(jobs),
+        "total": len(jobs),
+        "jobs": jobs,
+        "records": jobs,
+        "stats": back_office_stats(),
+    }
+
+
+@app.get("/api/back-office/stats")
+@app.get("/api/customer-care/stats")
+async def back_office_statistics():
+    return back_office_stats()
+
+
+@app.get("/api/back-office/payment/{payment_id}")
+async def back_office_payment(payment_id: str):
+    payment = get_payment(clean(payment_id))
+    if not payment:
+        return json_response_error("PAYMENT_NOT_FOUND", "Payment record not found.", 404)
+    return {"ok": True, "payment": back_office_payment_record(payment)}
 
 
 @app.get("/api/download")
