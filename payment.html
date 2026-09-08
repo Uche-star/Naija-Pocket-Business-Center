@@ -2,1907 +2,2223 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta
-    name="viewport"
-    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
->
-<title>Payment — Naija Pocket Business Center</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Make Payment — Naija Pocket Business Center</title>
 
 <style>
+:root{
+  --black:#050505;
+  --panel:#101010;
+  --panel2:#171717;
+  --gold:#d4af37;
+  --gold2:#f0cf63;
+  --green:#008000;
+  --green2:#00a000;
+  --red:#b00020;
+  --white:#fff;
+  --muted:#999;
+  --line:rgba(212,175,55,.25);
+}
+
 *{
-    box-sizing:border-box;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
 }
 
-html,
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  background:var(--black);
+  color:var(--white);
+  font-family:Inter,Arial,sans-serif;
+}
+
 body{
-    margin:0;
-    padding:0;
-    width:100%;
-    min-height:100%;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#f5f0e6;
-    color:#111;
+  min-height:100vh;
 }
 
-body{
-    padding:20px;
-}
-
-.container{
-    width:100%;
-    max-width:620px;
-    margin:0 auto;
-}
-
-.header{
-    text-align:center;
-    margin-bottom:20px;
-}
-
-.logo{
-    font-size:28px;
-    font-weight:800;
-    color:#008000;
-}
-
-.subtitle{
-    margin-top:6px;
-    color:#555;
-    font-size:14px;
-}
-
-.card{
-    background:#fff;
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:16px;
-    box-shadow:0 4px 18px rgba(0,0,0,.08);
-}
-
-.card h2{
-    margin:0 0 16px;
-    font-size:20px;
-}
-
-.row{
-    display:flex;
-    justify-content:space-between;
-    gap:15px;
-    padding:11px 0;
-    border-bottom:1px solid #eee;
-}
-
-.row:last-child{
-    border-bottom:none;
-}
-
-.label{
-    color:#666;
-}
-
-.value{
-    font-weight:700;
-    text-align:right;
-    word-break:break-word;
-}
-
-.amount{
-    font-size:26px;
-    color:#008000;
-}
-
-.bank{
-    background:#f7f7f7;
-    border-radius:12px;
-    padding:15px;
-    line-height:1.8;
-}
-
-.bank strong{
-    color:#222;
-}
-
-.status{
-    padding:13px;
-    border-radius:10px;
-    background:#fff7df;
-    color:#795800;
-    font-weight:700;
-    text-align:center;
-    margin-top:15px;
-    line-height:1.5;
-}
-
-.status.success{
-    background:#e9f8ed;
-    color:#08752b;
-}
-
-.status.error{
-    background:#fdecec;
-    color:#a40000;
+button,
+input,
+textarea{
+  font:inherit;
 }
 
 button{
-    width:100%;
-    border:none;
-    border-radius:12px;
-    padding:15px;
-    margin-top:12px;
-    font-size:16px;
-    font-weight:700;
-    cursor:pointer;
+  cursor:pointer;
 }
 
-.primary{
-    background:#008000;
-    color:#fff;
+.header{
+  background:#080808;
+  border-bottom:1px solid var(--line);
+  padding:10px 12px;
 }
 
-.primary:disabled{
-    opacity:.55;
-    cursor:not-allowed;
+.header-inner{
+  max-width:900px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
 }
 
-.secondary{
-    background:#222;
-    color:#fff;
+.brand-title{
+  margin:0;
+  color:var(--gold2);
+  font-size:16px;
+  font-weight:900;
 }
 
-.secondary:disabled{
-    opacity:.55;
-    cursor:not-allowed;
+.brand-subtitle{
+  margin-top:2px;
+  color:#777;
+  font-size:9px;
 }
 
-.small{
-    font-size:13px;
-    color:#666;
-    line-height:1.6;
-    margin-top:12px;
+.service-badge{
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:6px 9px;
+  color:var(--gold2);
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap;
 }
 
-.hidden{
-    display:none !important;
+.main{
+  width:100%;
+  max-width:900px;
+  margin:auto;
+  padding:10px;
 }
 
-.error-box{
-    background:#fdecec;
-    color:#a40000;
-    border-radius:10px;
-    padding:12px;
-    margin-top:12px;
-    line-height:1.5;
-    font-size:14px;
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:12px;
+  margin-bottom:9px;
+}
+
+.title{
+  margin:0;
+  color:var(--gold2);
+  font-size:18px;
+  font-weight:900;
+}
+
+.subtitle{
+  margin:5px 0 0;
+  color:#999;
+  font-size:10px;
+  line-height:1.5;
+}
+
+.status-card{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  align-items:center;
+}
+
+.status-label{
+  color:#777;
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.status-value{
+  color:var(--gold2);
+  font-size:11px;
+  font-weight:900;
+  text-align:right;
+}
+
+.status-message{
+  grid-column:1/-1;
+  color:#aaa;
+  font-size:9px;
+  line-height:1.45;
+}
+
+.amount-card{
+  text-align:center;
+  background:#070707;
+  border:1px solid rgba(212,175,55,.35);
+}
+
+.amount-label{
+  color:#888;
+  font-size:9px;
+  font-weight:800;
+}
+
+.amount-value{
+  margin-top:3px;
+  color:var(--gold2);
+  font-size:30px;
+  font-weight:900;
+}
+
+.details-card{
+  background:var(--panel);
+}
+
+.section-title{
+  color:var(--gold2);
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:7px;
+}
+
+.details{
+  color:#ddd;
+  font-size:10px;
+  line-height:1.65;
+  white-space:pre-wrap;
 }
 
 .payment-id-box{
-    background:#f7f7f7;
-    border-radius:10px;
-    padding:12px;
-    margin-top:12px;
-    font-size:13px;
-    word-break:break-all;
+  margin-top:9px;
+  padding:9px;
+  border-radius:8px;
+  background:#050505;
+  border:1px solid rgba(212,175,55,.25);
 }
 
-.payment-id-box strong{
-    display:block;
-    margin-bottom:5px;
+.payment-id-label{
+  color:#777;
+  font-size:8px;
+  font-weight:800;
 }
 
-.footer{
-    text-align:center;
-    color:#777;
-    font-size:13px;
-    padding:10px 0 20px;
+.payment-id-value{
+  margin-top:3px;
+  color:var(--gold2);
+  font-size:11px;
+  font-weight:900;
+  word-break:break-all;
 }
 
-.notice{
-    background:#eef8ef;
-    border-left:4px solid #008000;
-    border-radius:8px;
-    padding:12px;
-    font-size:14px;
-    line-height:1.6;
-    margin-top:14px;
+.bank-card{
+  background:#0b0b0b;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.bank-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.bank-row:last-child{
+  border-bottom:0;
+}
+
+.bank-label{
+  color:#777;
+  font-size:9px;
+  font-weight:800;
+}
+
+.bank-value{
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  text-align:right;
+  word-break:break-word;
+}
+
+.reference-card{
+  background:#0d0d0d;
 }
 
 .reference-input{
-    width:100%;
-    border:1px solid #ddd;
-    border-radius:10px;
-    padding:14px;
-    font-size:16px;
-    margin-top:12px;
-    outline:none;
+  width:100%;
+  min-height:42px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;
+  background:#050505;
+  color:#fff;
+  outline:none;
+  padding:10px;
+  font-size:11px;
 }
 
 .reference-input:focus{
-    border-color:#008000;
+  border-color:var(--gold);
 }
 
-.loading{
-    text-align:center;
-    padding:10px;
-    color:#666;
+.note-input{
+  width:100%;
+  min-height:65px;
+  resize:vertical;
+  margin-top:7px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;
+  background:#050505;
+  color:#fff;
+  outline:none;
+  padding:10px;
+  font-size:10px;
+}
+
+.note-input:focus{
+  border-color:var(--gold);
+}
+
+.primary-button,
+.report-button,
+.download-button,
+.back-button{
+  width:100%;
+  min-height:46px;
+  border:0;
+  border-radius:9px;
+  margin-top:8px;
+  font-size:10px;
+  font-weight:900;
+}
+
+.primary-button{
+  background:var(--gold);
+  color:#000;
+}
+
+.primary-button:disabled,
+.report-button:disabled,
+.download-button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.report-button{
+  background:var(--green);
+  color:#fff;
+}
+
+.download-button{
+  background:#242424;
+  color:#777;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.download-button.active{
+  background:var(--green2);
+  color:#fff;
+  border-color:var(--green2);
+  cursor:pointer;
+}
+
+.back-button{
+  background:var(--red);
+  color:#fff;
+}
+
+.message{
+  min-height:20px;
+  margin:8px 0;
+  color:#888;
+  text-align:center;
+  font-size:9px;
+  line-height:1.45;
+}
+
+.message.error{
+  color:#ff7777;
+}
+
+.message.success{
+  color:#75dc99;
+}
+
+.message.warning{
+  color:#f0cf63;
+}
+
+.progress{
+  height:5px;
+  margin-top:8px;
+  border-radius:10px;
+  overflow:hidden;
+  background:#222;
+}
+
+.progress-bar{
+  width:0%;
+  height:100%;
+  background:var(--gold);
+  transition:width .25s ease;
+}
+
+.download-area{
+  display:none;
+}
+
+.download-area.show{
+  display:block;
+}
+
+.locked-note{
+  padding:9px;
+  border-radius:8px;
+  background:#080808;
+  border:1px solid rgba(255,255,255,.07);
+  color:#888;
+  font-size:9px;
+  line-height:1.5;
+}
+
+.saved-note{
+  padding:9px;
+  border-radius:8px;
+  background:rgba(0,128,0,.08);
+  border:1px solid rgba(0,128,0,.35);
+  color:#9ddd9d;
+  font-size:9px;
+  line-height:1.5;
+}
+
+.hidden{
+  display:none!important;
+}
+
+@media(max-width:600px){
+  .main{
+    padding:8px 7px 14px;
+  }
+
+  .header{
+    padding:9px 8px;
+  }
+
+  .brand-title{
     font-size:14px;
+  }
+
+  .title{
+    font-size:16px;
+  }
+
+  .amount-value{
+    font-size:27px;
+  }
+
+  .card{
+    padding:10px;
+  }
+
+  .primary-button,
+  .report-button,
+  .download-button,
+  .back-button{
+    min-height:44px;
+  }
+}
+
+@media(min-width:800px){
+  .main{
+    padding:18px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <h1 class="brand-title">Naija Pocket Business Center</h1>
+      <div class="brand-subtitle">Secure payment and document delivery</div>
+    </div>
+    <div id="serviceBadge" class="service-badge">Service</div>
+  </div>
+</header>
 
-    <div class="header">
-        <div class="logo">
-            Naija Pocket Business Center
-        </div>
+<main class="main">
 
-        <div class="subtitle">
-            Secure payment and document delivery
-        </div>
+  <section class="card">
+    <h2 class="title">Payment Details</h2>
+    <p class="subtitle">
+      Your exact reviewed document is connected to this payment.
+      Once payment is created, the document is saved securely for download.
+    </p>
+  </section>
+
+  <section class="card status-card">
+    <div class="status-label">Payment Status</div>
+    <div id="statusValue" class="status-value">Preparing...</div>
+
+    <div id="statusMessage" class="status-message">
+      Preparing your secure payment.
     </div>
 
+    <div class="progress">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+  </section>
 
-    <!-- =========================================================
-         PAYMENT DETAILS
-    ========================================================== -->
+  <section class="card amount-card">
+    <div class="amount-label">AMOUNT TO PAY</div>
+    <div id="amountValue" class="amount-value">₦0</div>
+  </section>
 
-    <div class="card">
+  <section class="card details-card">
 
-        <h2>Payment Details</h2>
+    <div class="section-title">ORDER INFORMATION</div>
 
-        <div class="row">
-            <div class="label">
-                Service
-            </div>
-
-            <div
-                class="value"
-                id="serviceValue"
-            >
-                Business Center Service
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="label">
-                Order Number
-            </div>
-
-            <div
-                class="value"
-                id="orderValue"
-            >
-                —
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="label">
-                Job ID
-            </div>
-
-            <div
-                class="value"
-                id="jobValue"
-            >
-                —
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="label">
-                Document Version
-            </div>
-
-            <div
-                class="value"
-                id="versionValue"
-            >
-                —
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="label">
-                Amount
-            </div>
-
-            <div
-                class="value amount"
-                id="amountValue"
-            >
-                ₦0.00
-            </div>
-        </div>
-
+    <div id="orderDetails" class="details">
+      Preparing order details...
     </div>
 
-
-    <!-- =========================================================
-         BANK PAYMENT
-    ========================================================== -->
-
-    <div class="card">
-
-        <h2>
-            Make Your Payment
-        </h2>
-
-        <div class="bank">
-
-            <strong>Bank:</strong>
-            Your Business Bank
-            <br>
-
-            <strong>Account Name:</strong>
-            Naija Pocket Business Center
-            <br>
-
-            <strong>Account Number:</strong>
-            0000000000
-
-        </div>
-
-        <div class="notice">
-
-            Transfer exactly the amount shown above.
-
-            <br>
-
-            After completing your bank transfer,
-            enter your payment reference below
-            if one was provided by your bank,
-            then tap
-            <strong>I HAVE MADE PAYMENT</strong>.
-
-        </div>
-
-        <input
-            id="referenceInput"
-            class="reference-input"
-            type="text"
-            maxlength="120"
-            placeholder="Payment reference (optional)"
-        >
-
+    <div id="paymentIdBox" class="payment-id-box hidden">
+      <div class="payment-id-label">PAYMENT ID</div>
+      <div id="paymentIdValue" class="payment-id-value"></div>
     </div>
 
+  </section>
 
-    <!-- =========================================================
-         PAYMENT STATUS
-    ========================================================== -->
+  <section class="card bank-card">
 
-    <div class="card">
+    <div class="section-title">MAKE YOUR PAYMENT</div>
 
-        <h2>
-            Payment Status
-        </h2>
-
-        <div
-            id="loadingBox"
-            class="loading"
-        >
-            Connecting to Payment Service...
-        </div>
-
-        <div
-            id="statusBox"
-            class="status"
-        >
-            Preparing your payment...
-        </div>
-
-        <div
-            id="errorBox"
-            class="error-box hidden"
-        ></div>
-
-        <div
-            id="paymentIdBox"
-            class="payment-id-box hidden"
-        >
-            <strong>
-                Payment ID
-            </strong>
-
-            <span id="paymentIdValue"></span>
-        </div>
-
-
-        <!-- Customer confirms transfer -->
-
-        <button
-            id="madePaymentButton"
-            class="primary"
-            type="button"
-            onclick="reportPayment()"
-            disabled
-        >
-            I HAVE MADE PAYMENT
-        </button>
-
-
-        <!-- Download remains hidden until verified -->
-
-        <button
-            id="downloadButton"
-            class="secondary hidden"
-            type="button"
-            onclick="downloadDocument()"
-        >
-            🔒 DOWNLOAD DOCUMENT
-        </button>
-
+    <div class="details" style="margin-bottom:6px;">
+      Transfer exactly the amount shown above.
+      After completing your bank transfer, enter your payment reference below.
     </div>
 
-
-    <!-- =========================================================
-         CUSTOMER SERVICE
-    ========================================================== -->
-
-    <div class="card">
-
-        <h2>
-            Customer Service
-        </h2>
-
-        <div class="small">
-
-            If you have completed your payment
-            and your status has not changed,
-            please contact Customer Care with
-            your Payment ID and Job ID.
-
-        </div>
-
+    <div class="bank-row">
+      <div class="bank-label">Bank</div>
+      <div id="bankName" class="bank-value">Your Business Bank</div>
     </div>
 
-
-    <div class="footer">
-        Naija Pocket Business Center
+    <div class="bank-row">
+      <div class="bank-label">Account Name</div>
+      <div id="accountName" class="bank-value">Naija Pocket Business Center</div>
     </div>
 
-</div>
+    <div class="bank-row">
+      <div class="bank-label">Account Number</div>
+      <div id="accountNumber" class="bank-value">0000000000</div>
+    </div>
 
+  </section>
+
+  <section class="card reference-card">
+
+    <div class="section-title">PAYMENT REFERENCE</div>
+
+    <input
+      id="paymentReference"
+      class="reference-input"
+      type="text"
+      autocomplete="off"
+      placeholder="Enter your bank transfer reference"
+    >
+
+    <textarea
+      id="paymentNote"
+      class="note-input"
+      placeholder="Optional note for Customer Care"
+    ></textarea>
+
+    <button
+      id="reportButton"
+      class="report-button"
+      type="button"
+      disabled
+    >
+      ✓ I HAVE MADE PAYMENT
+    </button>
+
+  </section>
+
+  <section id="downloadArea" class="card download-area">
+
+    <div class="section-title">DOWNLOAD</div>
+
+    <div id="downloadNote" class="locked-note">
+      Customer Care must verify your payment before the saved document can be downloaded.
+    </div>
+
+    <button
+      id="downloadButton"
+      class="download-button"
+      type="button"
+      disabled
+    >
+      🔒 DOWNLOAD DOCUMENT
+    </button>
+
+  </section>
+
+  <div id="message" class="message"></div>
+
+  <button
+    id="backButton"
+    class="back-button"
+    type="button"
+  >
+    ← BACK TO REVIEW
+  </button>
+
+</main>
 
 <script>
 "use strict";
 
+/*
+============================================================
+Naija Pocket Business Center
+payment.html
 
-/* ==============================================================
-   PAYMENT API
-   ==============================================================
+CORRECT PAYMENT FLOW
+------------------------------------------------------------
+1. Review page opens this page.
+2. Review page places the exact reviewed document snapshot
+   in sessionStorage.
+3. This page creates the real payment record.
+4. /api/payment/create saves the exact reviewed document.
+5. Payment ID is returned and displayed.
+6. Back Office can see the payment record.
+7. Customer transfers money.
+8. Customer taps I HAVE MADE PAYMENT.
+9. /api/payment/report changes the payment to:
+      Payment Reported — Awaiting Verification
+10. Customer Care verifies payment.
+11. Only verification unlocks /api/download.
+12. Download uses the already-saved snapshot.
 
-   This is the separate Payment API.
-
-   Payment creation,
-   payment reporting,
-   payment status,
-   and download
-   all use this service.
-
-============================================================== */
+THIS PAGE NEVER REGENERATES THE DOCUMENT.
+============================================================
+*/
 
 const PAYMENT_API_BASE =
-    "https://naija-pocket-payment-api.onrender.com";
+  "https://naija-pocket-business-center-1.onrender.com";
 
-
-/* ==============================================================
-   URL PARAMETERS
-============================================================== */
-
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
-
+const params = new URLSearchParams(location.search);
 
 const jobId =
-    clean(
-        params.get("job_id") ||
-        localStorage.getItem("job_id") ||
-        ""
-    );
+  clean(params.get("job_id"));
 
+const queryVersionId =
+  clean(
+    params.get("version_id") ||
+    params.get("versionId") ||
+    params.get("document_version")
+  );
 
-const versionId =
-    clean(
-        params.get("version_id") ||
-        localStorage.getItem("version_id") ||
-        ""
-    );
+const queryPaymentId =
+  clean(
+    params.get("payment_id") ||
+    params.get("paymentId")
+  );
 
+const queryService =
+  clean(params.get("service")) ||
+  "Business Center Service";
 
-const service =
-    clean(
-        params.get("service") ||
-        localStorage.getItem("selectedService") ||
-        "Business Center Service"
-    );
+const queryAmount =
+  parseMoney(params.get("amount"));
 
+const SNAPSHOT_KEYS = [
+  "npb_payment_review_snapshot_" + jobId,
+  "npb_payment_review_snapshot",
+  "payment_review_snapshot_" + jobId,
+  "payment_review_snapshot"
+];
 
-const orderNumber =
-    clean(
-        params.get("order_number") ||
-        localStorage.getItem("orderNumber") ||
-        ""
-    );
+const $ = id => document.getElementById(id);
 
+const serviceBadge = $("serviceBadge");
+const statusValue = $("statusValue");
+const statusMessage = $("statusMessage");
+const progressBar = $("progressBar");
+const amountValue = $("amountValue");
+const orderDetails = $("orderDetails");
 
-const customerId =
-    clean(
-        params.get("customer_id") ||
-        localStorage.getItem("customerId") ||
-        ""
-    );
+const paymentIdBox = $("paymentIdBox");
+const paymentIdValue = $("paymentIdValue");
 
+const bankName = $("bankName");
+const accountName = $("accountName");
+const accountNumber = $("accountNumber");
 
-let amount =
-    Number(
-        params.get("amount") ||
-        localStorage.getItem("amount") ||
-        0
-    ) || 0;
+const paymentReference = $("paymentReference");
+const paymentNote = $("paymentNote");
 
+const reportButton = $("reportButton");
 
-let paymentId = "";
+const downloadArea = $("downloadArea");
+const downloadNote = $("downloadNote");
+const downloadButton = $("downloadButton");
 
-let paymentStatus = "";
+const message = $("message");
+const backButton = $("backButton");
+
+let snapshot = null;
+
+let paymentId = queryPaymentId;
+let versionId = queryVersionId;
+
+let service = queryService;
+let amount = queryAmount;
+
+let customerId = "";
+
+let filename = "";
+let pages = [];
+let documentText = "";
+
+let paymentStatus = "none";
+let paymentStarted = false;
+let paymentReported = false;
+let paymentVerified = false;
+let downloadUnlocked = false;
+
+let createInProgress = false;
+let reportInProgress = false;
 
 let statusTimer = null;
 
-let creatingPayment = false;
 
-let reportingPayment = false;
-
-let downloading = false;
-
-
-/* ==============================================================
-   HELPERS
-============================================================== */
+/* ==========================================================
+   BASIC HELPERS
+========================================================== */
 
 function clean(value){
+  if(value === null || value === undefined){
+    return "";
+  }
 
-    return String(
-        value == null
-            ? ""
-            : value
-    ).trim();
+  return String(value).trim();
+}
+
+function parseMoney(value){
+  if(value === null || value === undefined){
+    return 0;
+  }
+
+  if(typeof value === "number"){
+    return Number.isFinite(value) && value > 0
+      ? value
+      : 0;
+  }
+
+  const number = Number(
+    String(value).replace(/[^0-9.]/g,"")
+  );
+
+  return Number.isFinite(number) && number > 0
+    ? number
+    : 0;
+}
+
+function formatMoney(value){
+  const n = parseMoney(value);
+
+  if(!n){
+    return "₦0";
+  }
+
+  return "₦" + n.toLocaleString(
+    "en-NG",
+    {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }
+  );
+}
+
+function setMessage(text,type=""){
+  message.textContent = text || "";
+
+  message.className =
+    "message" +
+    (type ? " " + type : "");
+}
+
+function setStatus(text){
+  statusValue.textContent =
+    text || "Preparing...";
+}
+
+function setProgress(percent){
+  const n = Math.max(
+    0,
+    Math.min(
+      100,
+      Number(percent) || 0
+    )
+  );
+
+  progressBar.style.width = n + "%";
+}
+
+function normalizeStatus(status){
+  return clean(status)
+    .toLowerCase()
+    .replace(/-/g,"_")
+    .replace(/\s+/g,"_");
+}
+
+function isReported(status){
+  return [
+    "reported",
+    "payment_reported",
+    "verification_pending",
+    "awaiting_verification",
+    "pending_verification",
+    "payment_pending"
+  ].includes(
+    normalizeStatus(status)
+  );
+}
+
+function isVerified(status){
+  return [
+    "verified",
+    "approved",
+    "paid",
+    "payment_verified",
+    "payment_confirmed",
+    "confirmed",
+    "activated",
+    "completed",
+    "complete"
+  ].includes(
+    normalizeStatus(status)
+  );
 }
 
 
-function formatAmount(value){
+/* ==========================================================
+   API HELPERS
+========================================================== */
 
-    const number =
-        Number(value) || 0;
+async function paymentGet(path){
 
-    return (
-        "₦" +
-        number.toLocaleString(
-            "en-NG",
-            {
-                minimumFractionDigits:2,
-                maximumFractionDigits:2
-            }
-        )
+  const response = await fetch(
+    PAYMENT_API_BASE + path,
+    {
+      method:"GET",
+      cache:"no-store",
+      headers:{
+        "Accept":"application/json"
+      }
+    }
+  );
+
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
+
+  if(!response.ok){
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "The payment service could not complete the request."
     );
+  }
+
+  return data;
 }
 
+async function paymentPost(path,body){
 
-function setStatus(
-    message,
-    type="pending"
-){
-
-    const box =
-        document.getElementById(
-            "statusBox"
-        );
-
-    box.textContent =
-        clean(message);
-
-    box.className =
-        "status";
-
-    if(type === "success"){
-
-        box.classList.add(
-            "success"
-        );
+  const response = await fetch(
+    PAYMENT_API_BASE + path,
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Accept":"application/json"
+      },
+      body:JSON.stringify(body || {})
     }
+  );
 
-    if(type === "error"){
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
 
-        box.classList.add(
-            "error"
-        );
-    }
-}
-
-
-function showError(message){
-
-    const box =
-        document.getElementById(
-            "errorBox"
-        );
-
-    box.textContent =
-        clean(message) ||
-        "An unexpected error occurred.";
-
-    box.classList.remove(
-        "hidden"
+  if(!response.ok || data.ok === false){
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "The payment request could not be completed."
     );
+  }
+
+  return data;
 }
 
 
-function clearError(){
+/* ==========================================================
+   SNAPSHOT HANDOFF FROM REVIEW
+========================================================== */
 
-    document
-        .getElementById(
-            "errorBox"
-        )
-        .classList.add(
-            "hidden"
-        );
+function readReviewSnapshot(){
+
+  for(const key of SNAPSHOT_KEYS){
+
+    try{
+
+      const raw =
+        sessionStorage.getItem(key);
+
+      if(!raw){
+        continue;
+      }
+
+      const data =
+        JSON.parse(raw);
+
+      if(
+        data &&
+        typeof data === "object"
+      ){
+
+        if(
+          !jobId ||
+          !data.job_id ||
+          clean(data.job_id) === jobId
+        ){
+
+          return data;
+        }
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Could not read payment snapshot:",
+        error
+      );
+
+    }
+  }
+
+  return null;
+}
+
+function normalizePages(value){
+
+  if(!Array.isArray(value)){
+    return [];
+  }
+
+  return value
+    .map((page,index) => {
+
+      if(typeof page === "string"){
+
+        return {
+          page_number:index + 1,
+          position:index + 1,
+          content:page
+        };
+
+      }
+
+      if(
+        page &&
+        typeof page === "object"
+      ){
+
+        return {
+          ...page,
+          page_number:
+            Number(
+              page.page_number ||
+              page.page ||
+              page.position ||
+              index + 1
+            ),
+          position:
+            Number(
+              page.position ||
+              page.page_number ||
+              page.page ||
+              index + 1
+            ),
+          content:
+            clean(
+              page.content ||
+              page.text ||
+              page.html ||
+              page.body ||
+              ""
+            )
+        };
+
+      }
+
+      return null;
+
+    })
+    .filter(Boolean)
+    .filter(page => clean(page.content));
+
+}
+
+function applySnapshot(){
+
+  snapshot =
+    readReviewSnapshot();
+
+  if(!snapshot){
+
+    orderDetails.textContent =
+      "No Review snapshot was found for this payment.";
+
+    return false;
+  }
+
+  const snapshotJobId =
+    clean(snapshot.job_id);
+
+  if(
+    jobId &&
+    snapshotJobId &&
+    snapshotJobId !== jobId
+  ){
+
+    orderDetails.textContent =
+      "The Review document does not match this job.";
+
+    return false;
+  }
+
+  if(!jobId && snapshotJobId){
+    window.jobId = snapshotJobId;
+  }
+
+  if(
+    !versionId &&
+    clean(snapshot.version_id)
+  ){
+    versionId =
+      clean(snapshot.version_id);
+  }
+
+  if(
+    !versionId &&
+    clean(snapshot.document_version)
+  ){
+    versionId =
+      clean(snapshot.document_version);
+  }
+
+  if(
+    !service &&
+    clean(snapshot.service)
+  ){
+    service =
+      clean(snapshot.service);
+  }
+
+  if(
+    !amount &&
+    parseMoney(snapshot.amount)
+  ){
+    amount =
+      parseMoney(snapshot.amount);
+  }
+
+  customerId =
+    clean(
+      snapshot.customer_id
+    );
+
+  filename =
+    clean(
+      snapshot.filename ||
+      snapshot.document_filename
+    );
+
+  pages =
+    normalizePages(
+      snapshot.pages ||
+      snapshot.document_pages
+    );
+
+  documentText =
+    clean(
+      snapshot.document_text ||
+      snapshot.text ||
+      snapshot.content
+    );
+
+  if(!pages && documentText){
+    pages = [
+      {
+        page_number:1,
+        position:1,
+        content:documentText
+      }
+    ];
+  }
+
+  serviceBadge.textContent =
+    service || "Service";
+
+  amountValue.textContent =
+    formatMoney(amount);
+
+  orderDetails.textContent =
+    "Service: " +
+    (service || "Business Center Service") +
+    "\n\n" +
+    "Job ID: " +
+    (jobId || snapshotJobId || "—") +
+    "\n\n" +
+    "Document Version: " +
+    (versionId || "—") +
+    "\n\n" +
+    "Pages: " +
+    pages.length;
+
+  return true;
 }
 
 
-function showPaymentId(id){
+/* ==========================================================
+   PAYMENT DISPLAY
+========================================================== */
 
-    const cleanId =
-        clean(id);
+function showPaymentId(){
 
-    if(!cleanId){
-        return;
-    }
+  if(!paymentId){
 
-    document
-        .getElementById(
-            "paymentIdValue"
-        )
-        .textContent =
-        cleanId;
+    paymentIdBox.classList.add("hidden");
+    paymentIdValue.textContent = "";
 
-    document
-        .getElementById(
-            "paymentIdBox"
-        )
-        .classList.remove(
-            "hidden"
-        );
+    return;
+  }
+
+  paymentIdBox.classList.remove("hidden");
+
+  paymentIdValue.textContent =
+    paymentId;
+}
+
+function updatePaymentDisplay(){
+
+  showPaymentId();
+
+  amountValue.textContent =
+    formatMoney(amount);
+
+  if(
+    paymentVerified ||
+    isVerified(paymentStatus)
+  ){
+
+    paymentVerified = true;
+    downloadUnlocked = true;
+    paymentStarted = true;
+    paymentReported = true;
+
+    setStatus(
+      "Payment Verified — Download Unlocked"
+    );
+
+    statusMessage.textContent =
+      "Customer Care has verified this payment. Your already-saved document is ready for download.";
+
+    setProgress(100);
+
+    downloadArea.classList.add("show");
+
+    downloadNote.className =
+      "saved-note";
+
+    downloadNote.textContent =
+      "Payment verified. The exact document saved when payment was created is now available. No document will be regenerated.";
+
+    downloadButton.disabled = false;
+    downloadButton.classList.add("active");
+    downloadButton.textContent =
+      "⬇ DOWNLOAD DOCUMENT";
+
+    reportButton.disabled = true;
+
+    return;
+  }
+
+  if(
+    paymentReported ||
+    isReported(paymentStatus)
+  ){
+
+    paymentReported = true;
+    paymentStarted = true;
+
+    setStatus(
+      "Payment Reported — Awaiting Verification"
+    );
+
+    statusMessage.textContent =
+      "Your payment report has been sent to Customer Care. Download will unlock after verification.";
+
+    setProgress(75);
+
+    downloadArea.classList.add("show");
+
+    downloadNote.className =
+      "locked-note";
+
+    downloadNote.textContent =
+      "Payment Reported — Awaiting Verification. The exact reviewed document is already saved and waiting for Customer Care verification.";
+
+    downloadButton.disabled = true;
+    downloadButton.classList.remove("active");
+    downloadButton.textContent =
+      "🔒 DOWNLOAD DOCUMENT";
+
+    reportButton.disabled = true;
+
+    return;
+  }
+
+  if(paymentStarted){
+
+    setStatus(
+      "Payment Ready"
+    );
+
+    statusMessage.textContent =
+      "Your Payment ID has been created and the exact reviewed document has been saved.";
+
+    setProgress(45);
+
+    downloadArea.classList.add("show");
+
+    downloadNote.className =
+      "locked-note";
+
+    downloadNote.textContent =
+      "The exact Review document has been saved. Complete your bank transfer, then tap I HAVE MADE PAYMENT.";
+
+    downloadButton.disabled = true;
+    downloadButton.classList.remove("active");
+    downloadButton.textContent =
+      "🔒 DOWNLOAD DOCUMENT";
+
+    reportButton.disabled = false;
+
+    return;
+  }
+
+  setStatus(
+    "Preparing Payment"
+  );
+
+  statusMessage.textContent =
+    "Creating your secure payment record and saving the exact Review document.";
+
+  setProgress(15);
+
+  reportButton.disabled = true;
+
 }
 
 
-function saveContext(){
+/* ==========================================================
+   CREATE PAYMENT
+========================================================== */
 
-    if(jobId){
+async function createPayment(){
 
-        localStorage.setItem(
-            "job_id",
-            jobId
-        );
+  if(createInProgress){
+    return;
+  }
+
+  createInProgress = true;
+
+  try{
+
+    if(!snapshot){
+
+      snapshot =
+        readReviewSnapshot();
     }
 
-    if(versionId){
+    if(!snapshot){
 
-        localStorage.setItem(
-            "version_id",
-            versionId
-        );
+      throw new Error(
+        "The exact Review document could not be found. Please return to Review and tap MAKE PAYMENT again."
+      );
     }
-
-    if(service){
-
-        localStorage.setItem(
-            "selectedService",
-            service
-        );
-    }
-
-    if(orderNumber){
-
-        localStorage.setItem(
-            "orderNumber",
-            orderNumber
-        );
-    }
-
-    if(customerId){
-
-        localStorage.setItem(
-            "customerId",
-            customerId
-        );
-    }
-
-    if(amount > 0){
-
-        localStorage.setItem(
-            "amount",
-            String(amount)
-        );
-    }
-}
-
-
-/* ==============================================================
-   DISPLAY
-============================================================== */
-
-function renderDetails(){
-
-    document
-        .getElementById(
-            "serviceValue"
-        )
-        .textContent =
-        service ||
-        "Business Center Service";
-
-
-    document
-        .getElementById(
-            "orderValue"
-        )
-        .textContent =
-        orderNumber ||
-        "—";
-
-
-    document
-        .getElementById(
-            "jobValue"
-        )
-        .textContent =
-        jobId ||
-        "—";
-
-
-    document
-        .getElementById(
-            "versionValue"
-        )
-        .textContent =
-        versionId ||
-        "—";
-
-
-    document
-        .getElementById(
-            "amountValue"
-        )
-        .textContent =
-        formatAmount(amount);
-}
-
-
-/* ==============================================================
-   VALIDATE REVIEW → PAYMENT
-============================================================== */
-
-function validateContext(){
-
-    clearError();
 
     if(!jobId){
 
-        showError(
-            "No Job ID was received. Please return to Review and tap MAKE PAYMENT again."
-        );
-
-        return false;
+      throw new Error(
+        "The job ID is missing from this payment request."
+      );
     }
-
 
     if(!versionId){
 
-        showError(
-            "No approved document version was received. Please return to Review and tap MAKE PAYMENT again."
-        );
-
-        return false;
+      throw new Error(
+        "The document version is missing. Please return to Review and try again."
+      );
     }
 
+    if(!pages.length && !documentText){
 
-    return true;
-}
-
-
-/* ==============================================================
-   GENERIC PAYMENT API GET
-============================================================== */
-
-async function paymentGet(
-    path
-){
-
-    const response =
-        await fetch(
-            PAYMENT_API_BASE +
-            path,
-            {
-                method:"GET",
-                cache:"no-store",
-                headers:{
-                    "Accept":
-                        "application/json"
-                }
-            }
-        );
-
-
-    let data = {};
-
-    try{
-
-        data =
-            await response.json();
-
-    }catch(error){
-
-        data = {};
+      throw new Error(
+        "The exact reviewed document is empty. Payment cannot be started."
+      );
     }
 
+    if(!amount || amount <= 0){
 
-    if(!response.ok){
-
-        throw new Error(
-            data.detail ||
-            data.message ||
-            data.error ||
-            "Payment service request failed."
-        );
+      throw new Error(
+        "The amount to pay is not available."
+      );
     }
-
-
-    return data;
-}
-
-
-/* ==============================================================
-   GENERIC PAYMENT API POST
-============================================================== */
-
-async function paymentPost(
-    path,
-    body
-){
-
-    const response =
-        await fetch(
-            PAYMENT_API_BASE +
-            path,
-            {
-                method:"POST",
-
-                headers:{
-                    "Content-Type":
-                        "application/json",
-
-                    "Accept":
-                        "application/json"
-                },
-
-                body:
-                    JSON.stringify(
-                        body || {}
-                    )
-            }
-        );
-
-
-    let data = {};
-
-    try{
-
-        data =
-            await response.json();
-
-    }catch(error){
-
-        data = {};
-    }
-
-
-    if(!response.ok){
-
-        throw new Error(
-            data.detail ||
-            data.message ||
-            data.error ||
-            "Payment service request failed."
-        );
-    }
-
-
-    return data;
-}
-
-
-/* ==============================================================
-   CREATE / LOAD PAYMENT
-============================================================== */
-
-async function initializePayment(){
-
-    if(creatingPayment){
-        return;
-    }
-
-    creatingPayment = true;
-
-    clearError();
-
-    const button =
-        document.getElementById(
-            "madePaymentButton"
-        );
-
-    button.disabled = true;
-
-
-    try{
-
-        if(!validateContext()){
-            return;
-        }
-
-
-        setStatus(
-            "Connecting to Payment Service..."
-        );
-
-
-        /*
-         * First check whether a payment already exists
-         * for this job.
-         */
-
-        let existing = null;
-
-        try{
-
-            existing =
-                await paymentGet(
-                    "/api/payment/status?job_id=" +
-                    encodeURIComponent(jobId) +
-                    "&version_id=" +
-                    encodeURIComponent(versionId)
-                );
-
-        }catch(error){
-
-            existing = null;
-        }
-
-
-        /*
-         * If there is already a payment for this
-         * exact document, reuse it.
-         */
-
-        if(
-            existing &&
-            existing.payment_id &&
-            existing.payment_status &&
-            existing.payment_status !== "none"
-        ){
-
-            const existingVersion =
-                clean(
-                    existing.version_id ||
-                    (
-                        existing.payment &&
-                        existing.payment.document_version
-                    ) ||
-                    ""
-                );
-
-
-            /*
-             * Never reuse a payment belonging
-             * to another document version.
-             */
-
-            if(
-                !existingVersion ||
-                existingVersion === versionId
-            ){
-
-                paymentId =
-                    clean(
-                        existing.payment_id
-                    );
-
-                paymentStatus =
-                    clean(
-                        existing.payment_status ||
-                        existing.status
-                    ).toLowerCase();
-
-
-                if(
-                    Number(existing.amount) > 0
-                ){
-
-                    amount =
-                        Number(
-                            existing.amount
-                        );
-                }
-
-
-                showPaymentId(
-                    paymentId
-                );
-
-
-                renderDetails();
-
-
-                handlePaymentStatus(
-                    existing
-                );
-
-
-                return;
-            }
-        }
-
-
-        /*
-         * No current payment exists.
-         *
-         * Create one through the separate
-         * Payment API.
-         */
-
-        setStatus(
-            "Preparing your payment..."
-        );
-
-
-        const created =
-            await paymentPost(
-                "/api/payment/create",
-                {
-                    job_id:
-                        jobId,
-
-                    customer_id:
-                        customerId ||
-                        null,
-
-                    service:
-                        service ||
-                        null,
-
-                    amount:
-                        amount > 0
-                            ? amount
-                            : null,
-
-                    payment_method:
-                        "bank_transfer"
-                }
-            );
-
-
-        paymentId =
-            clean(
-                created.payment_id ||
-                (
-                    created.payment &&
-                    created.payment.payment_id
-                ) ||
-                ""
-            );
-
-
-        paymentStatus =
-            clean(
-                created.payment_status ||
-                created.status ||
-                "reported"
-            ).toLowerCase();
-
-
-        if(
-            Number(created.amount) > 0
-        ){
-
-            amount =
-                Number(
-                    created.amount
-                );
-        }
-
-
-        showPaymentId(
-            paymentId
-        );
-
-
-        renderDetails();
-
-
-        setStatus(
-            "Payment order is ready. Make your bank transfer, then tap I HAVE MADE PAYMENT."
-        );
-
-
-        button.disabled = false;
-
-
-    }catch(error){
-
-        setStatus(
-            "Unable to prepare payment.",
-            "error"
-        );
-
-        showError(
-            error.message
-        );
-
-        button.disabled = true;
-
-    }finally{
-
-        creatingPayment = false;
-
-        document
-            .getElementById(
-                "loadingBox"
-            )
-            .classList.add(
-                "hidden"
-            );
-    }
-}
-
-
-/* ==============================================================
-   PAYMENT STATUS HANDLER
-============================================================== */
-
-function handlePaymentStatus(
-    data
-){
-
-    const status =
-        clean(
-            data.payment_status ||
-            data.status ||
-            ""
-        ).toLowerCase();
-
-
-    paymentStatus =
-        status;
-
-
-    if(
-        data.payment_id
-    ){
-
-        paymentId =
-            clean(
-                data.payment_id
-            );
-
-        showPaymentId(
-            paymentId
-        );
-    }
-
-
-    if(
-        Number(data.amount) > 0
-    ){
-
-        amount =
-            Number(
-                data.amount
-            );
-
-        renderDetails();
-    }
-
-
-    /*
-     * VERIFIED
-     */
-
-    const verified =
-        data.paid === true ||
-        data.payment_verified === true ||
-        data.download_unlocked === true ||
-        status === "verified" ||
-        status === "paid" ||
-        status === "completed" ||
-        status === "complete";
-
-
-    if(verified){
-
-        setStatus(
-            "Payment verified. Your document is ready for download.",
-            "success"
-        );
-
-
-        document
-            .getElementById(
-                "madePaymentButton"
-            )
-            .classList.add(
-                "hidden"
-            );
-
-
-        document
-            .getElementById(
-                "downloadButton"
-            )
-            .classList.remove(
-                "hidden"
-            );
-
-
-        return;
-    }
-
-
-    /*
-     * PAYMENT REPORTED / PENDING
-     */
-
-    if(
-        status === "reported" ||
-        status === "pending" ||
-        status === "verification_pending" ||
-        status === "awaiting_verification" ||
-        data.payment_pending === true
-    ){
-
-        setStatus(
-            "Payment reported. Please wait for Customer Care to verify your payment."
-        );
-
-
-        document
-            .getElementById(
-                "madePaymentButton"
-            )
-            .classList.remove(
-                "hidden"
-            );
-
-
-        document
-            .getElementById(
-                "madePaymentButton"
-            )
-            .disabled =
-            false;
-
-
-        document
-            .getElementById(
-                "downloadButton"
-            )
-            .classList.add(
-                "hidden"
-            );
-
-
-        return;
-    }
-
-
-    /*
-     * NO PAYMENT
-     */
 
     setStatus(
-        "Payment order is ready. Make your bank transfer, then tap I HAVE MADE PAYMENT."
+      "Creating Payment"
     );
 
+    statusMessage.textContent =
+      "Saving the exact Review document and creating your unique Payment ID.";
 
-    document
-        .getElementById(
-            "madePaymentButton"
+    setProgress(25);
+
+    const payload = {
+
+      job_id:jobId,
+
+      customer_id:
+        customerId || undefined,
+
+      service:
+        service || "Business Center Service",
+
+      amount:
+
+        amount,
+
+      payment_method:
+        "bank_transfer",
+
+      version_id:
+        versionId,
+
+      document_version:
+        versionId,
+
+      pages:
+        pages,
+
+      document_pages:
+        pages,
+
+      document_text:
+        documentText,
+
+      filename:
+        filename ||
+
+        (
+          "naija_pocket_" +
+          jobId +
+          ".docx"
+        ),
+
+      document_filename:
+        filename ||
+
+        (
+          "naija_pocket_" +
+          jobId +
+          ".docx"
         )
-        .classList.remove(
-            "hidden"
-        );
 
+    };
 
-    document
-        .getElementById(
-            "madePaymentButton"
-        )
-        .disabled =
-        false;
+    const data =
+      await paymentPost(
+        "/api/payment/create",
+        payload
+      );
 
+    const returnedPayment =
+      data.payment || {};
 
-    document
-        .getElementById(
-            "downloadButton"
-        )
-        .classList.add(
-            "hidden"
-        );
-}
+    paymentId =
+      clean(
+        data.payment_id ||
+        returnedPayment.payment_id ||
+        data.order_number ||
+        data.reference
+      );
 
+    if(!paymentId){
 
-/* ==============================================================
-   CHECK PAYMENT STATUS
-============================================================== */
-
-async function checkPaymentStatus(){
-
-    if(
-        !jobId ||
-        !versionId
-    ){
-
-        return;
+      throw new Error(
+        "The payment service created no Payment ID."
+      );
     }
 
+    paymentStatus =
+      clean(
+        data.payment_status ||
+        returnedPayment.payment_status ||
+        "pending"
+      );
+
+    paymentStarted = true;
+
+    paymentReported =
+      isReported(paymentStatus);
+
+    paymentVerified =
+      !!(
+        data.payment_verified ||
+        data.paid ||
+        data.download_unlocked ||
+        isVerified(paymentStatus)
+      );
+
+    downloadUnlocked =
+      !!(
+        data.download_unlocked ||
+        paymentVerified
+      );
+
+    if(
+      data.amount &&
+      parseMoney(data.amount)
+    ){
+
+      amount =
+        parseMoney(data.amount);
+
+    }
+
+    /*
+      Keep the real Payment ID locally so that returning
+      to this page does not create another payment record.
+    */
 
     try{
 
-        const data =
-            await paymentGet(
-                "/api/payment/status?job_id=" +
-                encodeURIComponent(jobId) +
-                "&version_id=" +
-                encodeURIComponent(versionId)
-            );
+      const savedState = {
 
+        payment_id:paymentId,
 
-        handlePaymentStatus(
-            data
-        );
+        job_id:jobId,
 
+        version_id:versionId,
+
+        amount:amount,
+
+        service:service,
+
+        created_at:
+          new Date().toISOString()
+
+      };
+
+      sessionStorage.setItem(
+        "npb_payment_state_" + jobId,
+        JSON.stringify(savedState)
+      );
 
     }catch(error){
 
-        /*
-         * Do not erase a previously created payment
-         * simply because one status poll failed.
-         */
+      console.warn(
+        "Could not save local payment state:",
+        error
+      );
 
-        if(!paymentId){
-
-            setStatus(
-                "Unable to check payment status.",
-                "error"
-            );
-
-            showError(
-                error.message
-            );
-        }
     }
+
+    /*
+      The server has now performed the critical operation:
+      exact reviewed document snapshot saved.
+    */
+
+    setProgress(55);
+
+    updatePaymentDisplay();
+
+    if(data.document_saved === false){
+
+      throw new Error(
+        "Payment was returned without confirmation that the exact document was saved."
+      );
+
+    }
+
+    setMessage(
+      "Payment created successfully. Payment ID: " +
+      paymentId +
+      ". The exact Review document has been saved for download.",
+      "success"
+    );
+
+    startStatusPolling();
+
+  }catch(error){
+
+    console.error(
+      "PAYMENT CREATE ERROR:",
+      error
+    );
+
+    setStatus(
+      "Payment Setup Failed"
+    );
+
+    statusMessage.textContent =
+      error.message ||
+      "Unable to prepare payment.";
+
+    setProgress(0);
+
+    setMessage(
+      error.message ||
+      "Unable to prepare payment.",
+      "error"
+    );
+
+  }finally{
+
+    createInProgress = false;
+
+  }
+
 }
 
 
-/* ==============================================================
-   I HAVE MADE PAYMENT
-============================================================== */
+/* ==========================================================
+   FIND EXISTING PAYMENT
+========================================================== */
+
+async function loadExistingPayment(){
+
+  if(!jobId){
+    return false;
+  }
+
+  try{
+
+    const query =
+      paymentId
+        ? (
+            "?payment_id=" +
+            encodeURIComponent(paymentId)
+          )
+        : (
+            "?job_id=" +
+            encodeURIComponent(jobId)
+          );
+
+    const data =
+      await paymentGet(
+        "/api/payment/status" +
+        query
+      );
+
+    const payment =
+      data.payment || {};
+
+    if(!payment){
+      return false;
+    }
+
+    const existingId =
+      clean(
+        data.payment_id ||
+        payment.payment_id
+      );
+
+    if(existingId){
+
+      paymentId =
+        existingId;
+
+    }
+
+    const existingVersion =
+      clean(
+        data.version_id ||
+        payment.version_id ||
+        payment.document_version
+      );
+
+    if(
+      existingVersion &&
+      !versionId
+    ){
+
+      versionId =
+        existingVersion;
+
+    }
+
+    const existingAmount =
+      parseMoney(
+        data.amount ||
+        payment.amount
+      );
+
+    if(existingAmount){
+
+      amount =
+        existingAmount;
+
+    }
+
+    const existingService =
+      clean(
+        payment.service
+      );
+
+    if(existingService){
+
+      service =
+        existingService;
+
+    }
+
+    paymentStatus =
+      clean(
+        data.payment_status ||
+        payment.payment_status
+      );
+
+    paymentStarted =
+      !!paymentId;
+
+    paymentReported =
+      !!(
+        data.payment_reported ||
+        isReported(paymentStatus)
+      );
+
+    paymentVerified =
+      !!(
+        data.payment_verified ||
+        data.paid ||
+        isVerified(paymentStatus)
+      );
+
+    downloadUnlocked =
+      !!(
+        data.download_unlocked ||
+        paymentVerified
+      );
+
+    updatePaymentDisplay();
+
+    return !!paymentId;
+
+  }catch(error){
+
+    console.warn(
+      "Existing payment lookup failed:",
+      error
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* ==========================================================
+   REPORT PAYMENT
+========================================================== */
 
 async function reportPayment(){
 
-    if(reportingPayment){
-        return;
+  if(reportInProgress){
+    return;
+  }
+
+  if(!paymentId){
+
+    setMessage(
+      "Payment has not been started yet. Please wait for the Payment ID to be created.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(paymentReported){
+
+    updatePaymentDisplay();
+
+    return;
+
+  }
+
+  reportInProgress = true;
+
+  try{
+
+    const reference =
+      clean(
+        paymentReference.value
+      );
+
+    const note =
+      clean(
+        paymentNote.value
+      );
+
+    if(!reference){
+
+      setMessage(
+        "Please enter your bank transfer payment reference first.",
+        "error"
+      );
+
+      paymentReference.focus();
+
+      return;
+
     }
 
+    reportButton.disabled = true;
 
-    reportingPayment = true;
+    setStatus(
+      "Reporting Payment"
+    );
 
-    clearError();
+    statusMessage.textContent =
+      "Sending your Payment ID and payment report to Customer Care.";
 
+    setProgress(65);
 
-    const button =
-        document.getElementById(
-            "madePaymentButton"
-        );
+    const data =
+      await paymentPost(
+        "/api/payment/report",
+        {
+          payment_id:
+            paymentId,
 
+          job_id:
+            jobId,
 
-    button.disabled = true;
+          payment_reference:
+            reference,
 
-    button.textContent =
-        "Reporting Payment...";
+          note:
+            note
 
+        }
+      );
+
+    paymentStatus =
+      clean(
+        data.payment_status ||
+        (
+          data.payment &&
+          data.payment.payment_status
+        ) ||
+        "reported"
+      );
+
+    paymentReported = true;
+
+    paymentVerified =
+      !!(
+        data.payment_verified ||
+        data.paid ||
+        data.download_unlocked
+      );
+
+    downloadUnlocked =
+      !!(
+        data.download_unlocked ||
+        paymentVerified
+      );
+
+    updatePaymentDisplay();
+
+    setMessage(
+      data.message ||
+      "Payment Reported — Awaiting Verification",
+      "success"
+    );
+
+    /*
+      Keep the reference locally so it remains available
+      if the customer refreshes the page.
+    */
 
     try{
 
-        if(!validateContext()){
-            return;
-        }
-
-
-        /*
-         * If payment ID is missing, make sure the
-         * payment order exists first.
-         */
-
-        if(!paymentId){
-
-            await initializePayment();
-
-        }
-
-
-        if(!paymentId){
-
-            throw new Error(
-                "No Payment ID is available. Please try again."
-            );
-        }
-
-
-        const reference =
-            clean(
-                document
-                    .getElementById(
-                        "referenceInput"
-                    )
-                    .value
-            );
-
-
-        const result =
-            await paymentPost(
-                "/api/payment/report",
-                {
-                    payment_id:
-                        paymentId,
-
-                    job_id:
-                        jobId,
-
-                    payment_reference:
-                        reference ||
-                        null,
-
-                    note:
-                        "Customer reports that payment has been made."
-                }
-            );
-
-
-        paymentStatus =
-            clean(
-                result.payment_status ||
-                result.status ||
-                "reported"
-            ).toLowerCase();
-
-
-        handlePaymentStatus(
-            result
-        );
-
-
-        if(
-            !(
-                result.paid === true ||
-                result.payment_verified === true ||
-                result.download_unlocked === true
-            )
-        ){
-
-            setStatus(
-                "Payment reported successfully. Customer Care verification is required before download."
-            );
-        }
-
+      sessionStorage.setItem(
+        "npb_payment_reference_" + jobId,
+        reference
+      );
 
     }catch(error){
 
-        setStatus(
-            "Payment could not be reported.",
-            "error"
-        );
+      console.warn(
+        "Could not save payment reference:",
+        error
+      );
 
-        showError(
-            error.message
-        );
-
-
-        button.disabled =
-            false;
-
-        button.textContent =
-            "I HAVE MADE PAYMENT";
-
-    }finally{
-
-        reportingPayment = false;
-
-
-        if(
-            !document
-                .getElementById(
-                    "madePaymentButton"
-                )
-                .classList.contains(
-                    "hidden"
-                )
-        ){
-
-            button.textContent =
-                "I HAVE MADE PAYMENT";
-        }
     }
+
+    startStatusPolling();
+
+  }catch(error){
+
+    console.error(
+      "PAYMENT REPORT ERROR:",
+      error
+    );
+
+    reportButton.disabled = false;
+
+    setMessage(
+      error.message ||
+      "The payment report could not be completed.",
+      "error"
+    );
+
+    updatePaymentDisplay();
+
+  }finally{
+
+    reportInProgress = false;
+
+  }
+
 }
 
 
-/* ==============================================================
+/* ==========================================================
+   PAYMENT STATUS POLLING
+========================================================== */
+
+async function checkPaymentStatus(){
+
+  if(!paymentId && !jobId){
+    return;
+  }
+
+  try{
+
+    const query =
+      paymentId
+        ? (
+            "?payment_id=" +
+            encodeURIComponent(paymentId)
+          )
+        : (
+            "?job_id=" +
+            encodeURIComponent(jobId)
+          );
+
+    const data =
+      await paymentGet(
+        "/api/payment/status" +
+        query
+      );
+
+    const payment =
+      data.payment || {};
+
+    if(payment){
+
+      const returnedId =
+        clean(
+          data.payment_id ||
+          payment.payment_id
+        );
+
+      if(returnedId){
+
+        paymentId =
+          returnedId;
+
+      }
+
+      const returnedStatus =
+        clean(
+          data.payment_status ||
+          payment.payment_status
+        );
+
+      if(returnedStatus){
+
+        paymentStatus =
+          returnedStatus;
+
+      }
+
+      const returnedAmount =
+        parseMoney(
+          data.amount ||
+          payment.amount
+        );
+
+      if(returnedAmount){
+
+        amount =
+          returnedAmount;
+
+      }
+
+      paymentReported =
+        !!(
+          data.payment_reported ||
+          isReported(paymentStatus)
+        );
+
+      paymentVerified =
+        !!(
+          data.payment_verified ||
+          data.paid ||
+          isVerified(paymentStatus)
+        );
+
+      downloadUnlocked =
+        !!(
+          data.download_unlocked ||
+          paymentVerified
+        );
+
+      if(
+        paymentId
+      ){
+
+        paymentStarted = true;
+
+      }
+
+    }
+
+    updatePaymentDisplay();
+
+  }catch(error){
+
+    console.warn(
+      "Payment status check failed:",
+      error
+    );
+
+  }
+
+}
+
+function startStatusPolling(){
+
+  if(statusTimer){
+    return;
+  }
+
+  statusTimer =
+    setInterval(
+      async () => {
+
+        await checkPaymentStatus();
+
+        if(
+          paymentVerified ||
+          downloadUnlocked
+        ){
+
+          clearInterval(statusTimer);
+          statusTimer = null;
+
+        }
+
+      },
+      5000
+    );
+
+}
+
+
+/* ==========================================================
    DOWNLOAD
-============================================================== */
+========================================================== */
 
 async function downloadDocument(){
 
-    if(downloading){
-        return;
-    }
+  if(!paymentId){
+
+    setMessage(
+      "No Payment ID is available.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(!paymentVerified && !downloadUnlocked){
+
+    setMessage(
+      "Download remains locked until Customer Care verifies your payment.",
+      "warning"
+    );
+
+    return;
+  }
+
+  try{
+
+    downloadButton.disabled = true;
+
+    downloadButton.textContent =
+      "Preparing Download...";
+
+    setMessage(
+      "Opening your already-saved document...",
+      ""
+    );
+
+    /*
+      IMPORTANT:
+      This endpoint serves the saved snapshot.
+      It does NOT generate another document.
+    */
+
+    const url =
+      PAYMENT_API_BASE +
+      "/api/download?payment_id=" +
+      encodeURIComponent(paymentId);
+
+    /*
+      Use a normal browser navigation so the server's
+      FileResponse downloads with the correct filename.
+    */
+
+    window.location.href = url;
+
+  }catch(error){
+
+    console.error(
+      "DOWNLOAD ERROR:",
+      error
+    );
+
+    downloadButton.disabled = false;
+
+    downloadButton.classList.add(
+      "active"
+    );
+
+    downloadButton.textContent =
+      "⬇ DOWNLOAD DOCUMENT";
+
+    setMessage(
+      error.message ||
+      "Unable to open the saved document.",
+      "error"
+    );
+
+  }
+
+}
 
 
-    downloading = true;
+/* ==========================================================
+   BACK TO REVIEW
+========================================================== */
 
-    clearError();
+function backToReview(){
+
+  const target =
+    "review.html" +
+    "?job_id=" +
+    encodeURIComponent(jobId) +
+    "&service=" +
+    encodeURIComponent(service);
+
+  window.location.href =
+    target;
+
+}
 
 
-    const button =
-        document.getElementById(
-            "downloadButton"
-        );
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+reportButton.addEventListener(
+  "click",
+  reportPayment
+);
+
+downloadButton.addEventListener(
+  "click",
+  downloadDocument
+);
+
+backButton.addEventListener(
+  "click",
+  backToReview
+);
 
 
-    button.disabled = true;
+/* ==========================================================
+   INITIALIZATION
+========================================================== */
 
-    button.textContent =
-        "Preparing document...";
+async function start(){
 
+  serviceBadge.textContent =
+    service || "Service";
+
+  amountValue.textContent =
+    formatMoney(amount);
+
+  /*
+    First recover the exact Review snapshot.
+  */
+
+  const snapshotFound =
+    applySnapshot();
+
+  if(!snapshotFound){
+
+    setStatus(
+      "Review Snapshot Missing"
+    );
+
+    statusMessage.textContent =
+      "This payment page did not receive the exact document from Review.";
+
+    setMessage(
+      "Return to Review and tap MAKE PAYMENT again so the exact reviewed document can be transferred to Payment.",
+      "error"
+    );
+
+    return;
+  }
+
+  /*
+    Restore a locally remembered Payment ID if present.
+    This prevents unnecessary duplicate payment creation.
+  */
+
+  if(!paymentId && jobId){
 
     try{
 
-        if(!jobId){
+      const raw =
+        sessionStorage.getItem(
+          "npb_payment_state_" + jobId
+        );
 
-            throw new Error(
-                "Missing Job ID."
-            );
-        }
+      if(raw){
 
-
-        if(!versionId){
-
-            throw new Error(
-                "Missing document version."
-            );
-        }
-
-
-        /*
-         * ALWAYS confirm payment with the Payment API
-         * before downloading.
-         */
-
-        const statusData =
-            await paymentGet(
-                "/api/payment/status?job_id=" +
-                encodeURIComponent(jobId) +
-                "&version_id=" +
-                encodeURIComponent(versionId)
-            );
-
-
-        const verified =
-            statusData.paid === true ||
-            statusData.payment_verified === true ||
-            statusData.download_unlocked === true ||
-            clean(
-                statusData.payment_status ||
-                statusData.status
-            ).toLowerCase() === "verified" ||
-            clean(
-                statusData.payment_status ||
-                statusData.status
-            ).toLowerCase() === "paid" ||
-            clean(
-                statusData.payment_status ||
-                statusData.status
-            ).toLowerCase() === "completed";
-
-
-        if(!verified){
-
-            throw new Error(
-                "Download remains locked until Customer Care verifies the payment."
-            );
-        }
-
-
-        /*
-         * Exact payment API download endpoint.
-         */
-
-        const downloadUrl =
-            PAYMENT_API_BASE +
-            "/api/download?job_id=" +
-            encodeURIComponent(jobId) +
-            "&version_id=" +
-            encodeURIComponent(versionId);
-
-
-        const response =
-            await fetch(
-                downloadUrl,
-                {
-                    method:"GET",
-                    cache:"no-store",
-                    headers:{
-                        "Accept":
-                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    }
-                }
-            );
-
-
-        if(!response.ok){
-
-            let message =
-                "Unable to download the document.";
-
-
-            try{
-
-                const data =
-                    await response.json();
-
-
-                message =
-                    data.detail ||
-                    data.message ||
-                    data.error ||
-                    message;
-
-            }catch(error){}
-
-
-            throw new Error(
-                message
-            );
-        }
-
-
-        const blob =
-            await response.blob();
-
+        const saved =
+          JSON.parse(raw);
 
         if(
-            !blob ||
-            blob.size === 0
+          saved &&
+          clean(saved.payment_id)
         ){
 
-            throw new Error(
-                "The Payment API returned an empty document."
-            );
+          paymentId =
+            clean(saved.payment_id);
+
         }
 
-
-        /*
-         * Try to preserve the server filename.
-         */
-
-        const disposition =
-            response.headers.get(
-                "Content-Disposition"
-            ) || "";
-
-
-        let filename =
-            "Naija-Pocket-Business-Center-Document.docx";
-
-
-        const match =
-            disposition.match(
-                /filename\*?=(?:UTF-8''|")?([^";]+)/i
-            );
-
-
-        if(
-            match &&
-            match[1]
-        ){
-
-            try{
-
-                filename =
-                    decodeURIComponent(
-                        match[1]
-                            .replace(
-                                /"/g,
-                                ""
-                            )
-                            .trim()
-                    );
-
-            }catch(error){
-
-                filename =
-                    match[1]
-                        .replace(
-                            /"/g,
-                            ""
-                        )
-                        .trim();
-            }
-        }
-
-
-        const objectUrl =
-            URL.createObjectURL(
-                blob
-            );
-
-
-        const link =
-            document.createElement(
-                "a"
-            );
-
-
-        link.href =
-            objectUrl;
-
-        link.download =
-            filename;
-
-
-        document.body.appendChild(
-            link
-        );
-
-
-        link.click();
-
-
-        link.remove();
-
-
-        setTimeout(
-            function(){
-
-                URL.revokeObjectURL(
-                    objectUrl
-                );
-
-            },
-            1500
-        );
-
-
-        setStatus(
-            "Document downloaded successfully.",
-            "success"
-        );
-
+      }
 
     }catch(error){
 
-        setStatus(
-            "Download could not be completed.",
-            "error"
-        );
+      console.warn(
+        "Could not restore payment state:",
+        error
+      );
 
-        showError(
-            error.message
-        );
-
-
-    }finally{
-
-        downloading = false;
-
-        button.disabled = false;
-
-        button.textContent =
-            "🔒 DOWNLOAD DOCUMENT";
     }
+
+  }
+
+  /*
+    If Review supplied a payment ID through the URL,
+    respect it.
+  */
+
+  if(paymentId){
+
+    await loadExistingPayment();
+
+    if(paymentId){
+
+      paymentStarted = true;
+
+      updatePaymentDisplay();
+
+      startStatusPolling();
+
+      return;
+    }
+
+  }
+
+  /*
+    Before creating a new payment, ask the payment server
+    whether a payment already exists for this job.
+    The backend itself also protects against duplicates.
+  */
+
+  const existing =
+    await loadExistingPayment();
+
+  if(existing && paymentId){
+
+    paymentStarted = true;
+
+    updatePaymentDisplay();
+
+    startStatusPolling();
+
+    return;
+  }
+
+  /*
+    No existing payment:
+    THIS is where the payment workflow is activated.
+
+    It creates the unique Payment ID and saves the exact
+    Review snapshot through /api/payment/create.
+  */
+
+  await createPayment();
+
 }
 
 
-/* ==============================================================
-   POLLING
-============================================================== */
+/* ==========================================================
+   START
+========================================================== */
 
-function startPolling(){
-
-    if(statusTimer){
-
-        clearInterval(
-            statusTimer
-        );
-    }
-
-
-    statusTimer =
-        setInterval(
-            checkPaymentStatus,
-            10000
-        );
-}
-
-
-/* ==============================================================
-   PAGE STARTUP
-============================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    async function(){
-
-        saveContext();
-
-        renderDetails();
-
-
-        if(!validateContext()){
-
-            document
-                .getElementById(
-                    "loadingBox"
-                )
-                .classList.add(
-                    "hidden"
-                );
-
-            return;
-        }
-
-
-        /*
-         * The payment page now immediately connects
-         * to the separate Payment API and prepares
-         * the payment order.
-         */
-
-        await initializePayment();
-
-
-        startPolling();
-    }
-);
-
-
-/* ==============================================================
-   CLEANUP
-============================================================== */
-
-window.addEventListener(
-    "beforeunload",
-    function(){
-
-        if(statusTimer){
-
-            clearInterval(
-                statusTimer
-            );
-        }
-    }
-);
+start();
 
 </script>
 
