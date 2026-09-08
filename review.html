@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -788,19 +787,24 @@ button:disabled{
       <h3>Your Complete Document</h3>
     </div>
 
-    <div id="pageCount" class="page-count">0 PAGES</div>
+    <div id="pageCount" class="page-count">
+      0 PAGES
+    </div>
   </div>
 
   <div id="documentScroll" class="document-scroll">
 
     <div id="pageViewer" class="page-viewer">
+
       <div class="loading">
         <div class="spinner"></div>
         <div>Your service is being carefully prepared.</div>
       </div>
+
     </div>
 
     <div class="page-navigation">
+
       <button
         id="previousButton"
         class="nav-button"
@@ -820,9 +824,11 @@ button:disabled{
         disabled>
         Next Page →
       </button>
+
     </div>
 
     <div class="go-row">
+
       <input
         id="pageNumberInput"
         class="page-number-input"
@@ -836,6 +842,7 @@ button:disabled{
         type="button">
         GO
       </button>
+
     </div>
 
     <div
@@ -855,8 +862,8 @@ button:disabled{
     </div>
 
   </div>
-</section>
 
+</section>
 
 <section class="action-area">
 
@@ -871,6 +878,7 @@ button:disabled{
     </p>
 
     <div class="status-row">
+
       <span class="status-label">
         Review status
       </span>
@@ -880,13 +888,16 @@ button:disabled{
         class="status-value">
         Preparing...
       </span>
+
     </div>
 
     <div class="progress-shell">
+
       <div
         id="progressBar"
         class="progress-bar">
       </div>
+
     </div>
 
     <div
@@ -896,7 +907,6 @@ button:disabled{
     </div>
 
   </section>
-
 
   <section class="top-amount-card">
 
@@ -915,7 +925,6 @@ button:disabled{
         </div>
 
       </div>
-
 
       <div class="top-action-buttons">
 
@@ -948,7 +957,6 @@ button:disabled{
 
   </section>
 
-
   <div class="correction-box">
 
     <textarea
@@ -965,7 +973,6 @@ button:disabled{
 
   </div>
 
-
   <section
     id="paymentSection"
     class="payment-section">
@@ -975,7 +982,7 @@ button:disabled{
     </div>
 
     <div class="payment-subtitle">
-      Pay the amount shown above. After you have paid, tap I HAVE MADE PAYMENT. Customer Care will verify the payment before download is unlocked.
+      Your exact reviewed document will be handed to the payment page. Payment will be created there and the document will be saved for download. Customer Care will verify your payment before download is unlocked.
     </div>
 
     <div
@@ -1007,10 +1014,8 @@ button:disabled{
 
 </main>
 
-
 <script>
 "use strict";
-
 
 /* ===========================================================
    MAIN REVIEW API
@@ -1020,23 +1025,7 @@ const API_BASE = "";
 
 
 /* ===========================================================
-   SEPARATE PAYMENT API
-
-   Payment creation is performed BEFORE leaving Review.
-
-   The exact reviewed document is sent to the payment API.
-   The payment API saves the document snapshot and returns
-   the real payment ID.
-
-   Only after that succeeds do we open payment.html.
-   =========================================================== */
-
-const PAYMENT_API_BASE =
-  "https://naija-pocket-payment-api.onrender.com";
-
-
-/* ===========================================================
-   URL / STORAGE
+   URL PARAMETERS
    =========================================================== */
 
 const params =
@@ -1046,19 +1035,25 @@ const jobId =
   (params.get("job_id") || "").trim();
 
 const service =
-  (params.get("service") ||
-   "Business Center Service").trim();
+  (
+    params.get("service") ||
+    "Business Center Service"
+  ).trim();
 
 const customerId =
-  (params.get("customer_id") ||
-   localStorage.getItem("customer_id") ||
-   localStorage.getItem("customerId") ||
-   "").trim();
+  (
+    params.get("customer_id") ||
+    localStorage.getItem("customer_id") ||
+    localStorage.getItem("customerId") ||
+    ""
+  ).trim();
 
 const incomingPaymentId =
-  (params.get("payment_id") ||
-   localStorage.getItem("payment_id") ||
-   "").trim();
+  (
+    params.get("payment_id") ||
+    localStorage.getItem("payment_id") ||
+    ""
+  ).trim();
 
 
 /* ===========================================================
@@ -1174,8 +1169,6 @@ let pollTimer = null;
 
 let polling = false;
 
-let paymentPollTimer = null;
-
 let amount = 0;
 
 let billing = "";
@@ -1189,6 +1182,7 @@ let paymentIdentifier =
    =========================================================== */
 
 function clean(value){
+
   if(
     value === null ||
     value === undefined
@@ -1200,23 +1194,34 @@ function clean(value){
 }
 
 
-function setMessage(text,type=""){
+function setMessage(
+  text,
+  type = ""
+){
+
   message.textContent =
     text || "";
 
   message.className =
     "message" +
-    (type ? " " + type : "");
+    (
+      type
+        ? " " + type
+        : ""
+    );
 }
 
 
 function setStatus(text){
+
   statusValue.textContent =
-    text || "Preparing...";
+    text ||
+    "Preparing...";
 }
 
 
 function state(){
+
   return clean(
     currentStatus
   ).toLowerCase();
@@ -1224,43 +1229,55 @@ function state(){
 
 
 function complete(data){
+
   return !!data &&
     (
-      state() === "review_complete" ||
-      data.review_finished === true
+      state() ===
+        "review_complete" ||
+      data.review_finished ===
+        true
     );
 }
 
 
 /* ===========================================================
-   STORAGE HELPERS
+   LOCAL PAYMENT CONTEXT
    =========================================================== */
 
 function savePaymentContext(){
+
   if(paymentIdentifier){
+
     localStorage.setItem(
       "payment_id",
       paymentIdentifier
     );
+
   }
 
   if(jobId){
+
     localStorage.setItem(
       "payment_job_id",
       jobId
     );
+
   }
 
   if(versionId){
+
     localStorage.setItem(
       "payment_version_id",
       versionId
     );
+
   }
+
 }
 
 
 function clearPaymentContext(){
+
   localStorage.removeItem(
     "payment_id"
   );
@@ -1272,11 +1289,12 @@ function clearPaymentContext(){
   localStorage.removeItem(
     "payment_version_id"
   );
+
 }
 
 
 /* ===========================================================
-   NORMAL REVIEW API REQUESTS
+   NORMAL REVIEW API
    =========================================================== */
 
 async function apiGet(url){
@@ -1292,7 +1310,9 @@ async function apiGet(url){
   const data =
     await response
       .json()
-      .catch(() => ({}));
+      .catch(
+        () => ({})
+      );
 
   if(!response.ok){
 
@@ -1309,7 +1329,10 @@ async function apiGet(url){
 }
 
 
-async function apiPost(url,body){
+async function apiPost(
+  url,
+  body
+){
 
   const response =
     await fetch(
@@ -1335,7 +1358,9 @@ async function apiPost(url,body){
   const data =
     await response
       .json()
-      .catch(() => ({}));
+      .catch(
+        () => ({})
+      );
 
   if(
     !response.ok ||
@@ -1349,94 +1374,6 @@ async function apiPost(url,body){
       data.message ||
       data.detail ||
       "The request could not be completed."
-    );
-
-  }
-
-  return data;
-}
-
-
-/* ===========================================================
-   PAYMENT API REQUESTS
-   =========================================================== */
-
-async function paymentGet(url){
-
-  const response =
-    await fetch(
-      PAYMENT_API_BASE + url,
-      {
-        method:"GET",
-        cache:"no-store",
-        headers:{
-          "Accept":
-            "application/json"
-        }
-      }
-    );
-
-  const data =
-    await response
-      .json()
-      .catch(() => ({}));
-
-  if(!response.ok){
-
-    throw Error(
-      data.error_message ||
-      data.error ||
-      data.message ||
-      data.detail ||
-      "Unable to load payment status."
-    );
-
-  }
-
-  return data;
-}
-
-
-async function paymentPost(url,body){
-
-  const response =
-    await fetch(
-      PAYMENT_API_BASE + url,
-      {
-        method:"POST",
-
-        headers:{
-          "Content-Type":
-            "application/json",
-
-          "Accept":
-            "application/json"
-        },
-
-        body:
-          JSON.stringify(
-            body || {}
-          )
-      }
-    );
-
-  const data =
-    await response
-      .json()
-      .catch(() => ({}));
-
-  if(
-    !response.ok ||
-    data.ok === false ||
-    data.success === false
-  ){
-
-    throw Error(
-      data.error_message ||
-      data.error ||
-      data.message ||
-      data.detail ||
-      "The payment request could not be completed."
     );
 
   }
@@ -1488,7 +1425,6 @@ function normalizePages(data){
       data.pages;
 
   }
-
 
   return source
     .map(
@@ -1547,9 +1483,10 @@ function extractPages(data){
     );
 
   if(result.length){
-    return result;
-  }
 
+    return result;
+
+  }
 
   for(
     const child of [
@@ -1571,7 +1508,9 @@ function extractPages(data){
         );
 
       if(result.length){
+
         return result;
+
       }
 
     }
@@ -1674,9 +1613,18 @@ function normText(value){
       ? ""
       : value
   )
-    .replace(/\r\n/g,"\n")
-    .replace(/\r/g,"\n")
-    .replace(/\u00a0/g," ")
+    .replace(
+      /\r\n/g,
+      "\n"
+    )
+    .replace(
+      /\r/g,
+      "\n"
+    )
+    .replace(
+      /\u00a0/g,
+      " "
+    )
     .replace(
       /^\s*#{1,6}\s+/gm,
       ""
@@ -1702,7 +1650,9 @@ function safeStyle(value){
       definition.indexOf(":");
 
     if(index < 0){
+
       continue;
+
     }
 
     const property =
@@ -1747,33 +1697,34 @@ function renderPlain(text){
   const lines =
     normText(text).split("\n");
 
-
   lines.forEach(
     (line,index) => {
 
       if(line === ""){
 
         fragment.appendChild(
-          document.createElement("br")
+          document.createElement(
+            "br"
+          )
         );
 
         return;
-      }
 
+      }
 
       const parts =
         line.split(
           /(\*\*[^*]+\*\*)/g
         );
 
-
       parts.forEach(
         part => {
 
           if(!part){
-            return;
-          }
 
+            return;
+
+          }
 
           if(
             part.startsWith("**") &&
@@ -1810,21 +1761,21 @@ function renderPlain(text){
         }
       );
 
-
       if(
         index <
         lines.length - 1
       ){
 
         fragment.appendChild(
-          document.createElement("br")
+          document.createElement(
+            "br"
+          )
         );
 
       }
 
     }
   );
-
 
   return fragment;
 }
@@ -1844,7 +1795,6 @@ function sanitizeHtml(source){
 
   }
 
-
   const documentObject =
     new DOMParser()
       .parseFromString(
@@ -1852,12 +1802,14 @@ function sanitizeHtml(source){
         "text/html"
       );
 
-
   const output =
     document.createDocumentFragment();
 
 
-  function walk(node,parent){
+  function walk(
+    node,
+    parent
+  ){
 
     if(
       node.nodeType ===
@@ -1873,8 +1825,8 @@ function sanitizeHtml(source){
       );
 
       return;
-    }
 
+    }
 
     if(
       node.nodeType !==
@@ -1882,12 +1834,11 @@ function sanitizeHtml(source){
     ){
 
       return;
-    }
 
+    }
 
     const tag =
       node.tagName.toUpperCase();
-
 
     if([
       "SCRIPT",
@@ -1905,8 +1856,8 @@ function sanitizeHtml(source){
     ].includes(tag)){
 
       return;
-    }
 
+    }
 
     if(
       !allowedTags.has(tag)
@@ -1925,8 +1876,8 @@ function sanitizeHtml(source){
       }
 
       return;
-    }
 
+    }
 
     const element =
       document.createElement(
@@ -1939,31 +1890,24 @@ function sanitizeHtml(source){
       node.attributes
     ){
 
-      /*
-       * IMPORTANT:
-       * The previous file contained a malformed
-       * [attribute.name](...) expression here.
-       * That syntax could break the entire Review script.
-       */
-
       const name =
-        attribute.name.toLowerCase();
+        attribute.name
+          .toLowerCase();
 
       const value =
         attribute.value || "";
 
-
       if(
-        !allowedAttrs.has(
-          name
-        )
+        !allowedAttrs.has(name)
       ){
 
         continue;
+
       }
 
-
-      if(name === "style"){
+      if(
+        name === "style"
+      ){
 
         const style =
           safeStyle(
@@ -1989,13 +1933,17 @@ function sanitizeHtml(source){
           "right",
           "justify"
         ].includes(
-          value.toLowerCase().trim()
+          value
+            .toLowerCase()
+            .trim()
         )
       ){
 
         element.setAttribute(
           "align",
-          value.toLowerCase().trim()
+          value
+            .toLowerCase()
+            .trim()
         );
 
       }
@@ -2032,7 +1980,6 @@ function sanitizeHtml(source){
 
     }
 
-
     parent.appendChild(
       element
     );
@@ -2052,7 +1999,6 @@ function sanitizeHtml(source){
 
   }
 
-
   return output;
 }
 
@@ -2067,23 +2013,22 @@ function updateButtons(){
     busy ||
     currentPage <= 1;
 
-
   nextButton.disabled =
     busy ||
     currentPage >= totalPages ||
     !totalPages;
 
-
   correctionButton.disabled =
     busy;
 
-
   /*
-   * Payment creation requires:
-   * - completed review
-   * - valid amount
-   * - actual document pages
-   * - identifiable document version
+   * MAKE PAYMENT is enabled only when the exact Review
+   * document is ready.
+   *
+   * IMPORTANT:
+   * Review does NOT create the payment.
+   * It only prepares the exact snapshot and opens
+   * payment.html.
    */
 
   makePaymentButton.disabled =
@@ -2093,20 +2038,21 @@ function updateButtons(){
     !pages.length ||
     !versionId;
 
-
   /*
-   * The actual I HAVE MADE PAYMENT action is performed
-   * on payment.html.
+   * The payment reporting action belongs to payment.html.
    */
 
   paymentButton.disabled =
     true;
 
+  /*
+   * Review download remains locked unless payment status
+   * has been verified.
+   */
 
   downloadButton.disabled =
     busy ||
     !paid;
-
 
   downloadButton.classList.toggle(
     "active",
@@ -2123,7 +2069,6 @@ function renderPage(){
 
   pageViewer.innerHTML = "";
 
-
   if(!pages.length){
 
     pageViewer.innerHTML =
@@ -2138,14 +2083,13 @@ function renderPage(){
     updateButtons();
 
     return;
-  }
 
+  }
 
   const page =
     pages[
       currentPage - 1
     ];
-
 
   if(!page){
 
@@ -2155,8 +2099,8 @@ function renderPage(){
       '</div>';
 
     return;
-  }
 
+  }
 
   const article =
     document.createElement(
@@ -2188,7 +2132,6 @@ function renderPage(){
   content.className =
     "page-content";
 
-
   content.appendChild(
     sanitizeHtml(
       page.content ||
@@ -2201,7 +2144,6 @@ function renderPage(){
     number,
     content
   );
-
 
   pageViewer.appendChild(
     article
@@ -2226,7 +2168,9 @@ function renderPage(){
     pageReviewText.textContent =
       page.error
         ? "Page information:\n\n" +
-          normText(page.error)
+          normText(
+            page.error
+          )
         : normText(
             page.review
           );
@@ -2240,7 +2184,6 @@ function renderPage(){
 
   }
 
-
   updateButtons();
 }
 
@@ -2248,9 +2191,10 @@ function renderPage(){
 function showPage(number){
 
   if(!totalPages){
-    return;
-  }
 
+    return;
+
+  }
 
   currentPage =
     Math.max(
@@ -2263,9 +2207,7 @@ function showPage(number){
       )
     );
 
-
   renderPage();
-
 
   documentScroll.scrollTo({
     top:0,
@@ -2295,7 +2237,6 @@ goButton.onclick = () => {
       pageNumberInput.value
     );
 
-
   if(
     !Number.isInteger(number) ||
     number < 1 ||
@@ -2311,19 +2252,21 @@ goButton.onclick = () => {
 
   }
 
-
   setMessage("");
 
   showPage(
     number
   );
+
 };
 
 
 pageNumberInput.onkeydown =
   event => {
 
-    if(event.key === "Enter"){
+    if(
+      event.key === "Enter"
+    ){
 
       event.preventDefault();
 
@@ -2347,9 +2290,10 @@ function extractAmount(data){
   function find(value){
 
     if(value == null){
-      return 0;
-    }
 
+      return 0;
+
+    }
 
     if(
       typeof value === "number" &&
@@ -2358,8 +2302,8 @@ function extractAmount(data){
     ){
 
       return value;
-    }
 
+    }
 
     if(
       typeof value === "string"
@@ -2373,13 +2317,12 @@ function extractAmount(data){
           )
         );
 
-
       return isFinite(number) &&
         number > 0
         ? number
         : 0;
-    }
 
+    }
 
     if(
       typeof value !== "object" ||
@@ -2387,15 +2330,17 @@ function extractAmount(data){
     ){
 
       return 0;
-    }
 
+    }
 
     seen.add(value);
 
 
     for(
-      const key of
-      ["amount","price"]
+      const key of [
+        "amount",
+        "price"
+      ]
     ){
 
       const number =
@@ -2404,7 +2349,9 @@ function extractAmount(data){
         );
 
       if(number > 0){
+
         return number;
+
       }
 
     }
@@ -2429,11 +2376,12 @@ function extractAmount(data){
         );
 
       if(number > 0){
+
         return number;
+
       }
 
     }
-
 
     return 0;
   }
@@ -2452,17 +2400,18 @@ function extractBilling(data){
   function find(value){
 
     if(value == null){
-      return "";
-    }
 
+      return "";
+
+    }
 
     if(
       typeof value === "string"
     ){
 
       return value.trim();
-    }
 
+    }
 
     if(
       typeof value !== "object" ||
@@ -2470,8 +2419,8 @@ function extractBilling(data){
     ){
 
       return "";
-    }
 
+    }
 
     seen.add(value);
 
@@ -2483,6 +2432,7 @@ function extractBilling(data){
     ){
 
       return value.billing.trim();
+
     }
 
 
@@ -2505,11 +2455,12 @@ function extractBilling(data){
         );
 
       if(result){
+
         return result;
+
       }
 
     }
-
 
     return "";
   }
@@ -2518,6 +2469,10 @@ function extractBilling(data){
   return find(data);
 }
 
+
+/* ===========================================================
+   PAYMENT PANEL
+   =========================================================== */
 
 function updatePaymentPanel(){
 
@@ -2542,8 +2497,8 @@ function updatePaymentPanel(){
     "\n\n" +
     (
       paymentIdentifier
-        ? "Payment record created and document snapshot saved."
-        : "Tap MAKE PAYMENT to securely create your payment record and save the exact reviewed document."
+        ? "Payment workflow already has a payment record."
+        : "Tap MAKE PAYMENT to hand the exact reviewed document to the payment page."
     ) +
     "\nCustomer Care verification is required before download.";
 
@@ -2570,44 +2525,10 @@ function updatePaymentPanel(){
   }
 
 
-  makePaymentButton.style.display =
-    "block";
-
-
-  paymentButton.style.display =
-    "none";
-
-
   if(paid){
 
     makePaymentButton.textContent =
       "✓ PAYMENT VERIFIED";
-
-  }
-
-  else if(paymentPending){
-
-    makePaymentButton.textContent =
-      "✓ PAYMENT CREATED";
-
-  }
-
-  else if(paymentStarted){
-
-    makePaymentButton.textContent =
-      "✓ PAYMENT STARTED";
-
-  }
-
-  else{
-
-    makePaymentButton.textContent =
-      "💳 MAKE PAYMENT";
-
-  }
-
-
-  if(paid){
 
     downloadButton.disabled =
       false;
@@ -2619,7 +2540,6 @@ function updatePaymentPanel(){
     downloadButton.textContent =
       "⬇ DOWNLOAD DOCUMENT";
 
-
     paymentMessage.textContent =
       "Payment verified by Customer Care.\n" +
       "Download is now available.";
@@ -2627,6 +2547,9 @@ function updatePaymentPanel(){
   }
 
   else if(paymentPending){
+
+    makePaymentButton.textContent =
+      "✓ PAYMENT REPORTED";
 
     downloadButton.disabled =
       true;
@@ -2637,7 +2560,6 @@ function updatePaymentPanel(){
 
     downloadButton.textContent =
       "🔒 DOWNLOAD DOCUMENT";
-
 
     paymentMessage.textContent =
       "Payment reported.\n" +
@@ -2647,6 +2569,9 @@ function updatePaymentPanel(){
 
   else if(paymentStarted){
 
+    makePaymentButton.textContent =
+      "✓ PAYMENT CREATED";
+
     downloadButton.disabled =
       true;
 
@@ -2657,15 +2582,17 @@ function updatePaymentPanel(){
     downloadButton.textContent =
       "🔒 DOWNLOAD DOCUMENT";
 
-
     paymentMessage.textContent =
-      "Payment record created and document snapshot saved.\n" +
-      "Continue on the payment page to make payment.";
+      "Payment workflow has started.\n" +
+      "Continue on the payment page.";
 
   }
 
   else{
 
+    makePaymentButton.textContent =
+      "💳 MAKE PAYMENT";
+
     downloadButton.disabled =
       true;
 
@@ -2675,7 +2602,6 @@ function updatePaymentPanel(){
 
     downloadButton.textContent =
       "🔒 DOWNLOAD DOCUMENT";
-
 
     paymentMessage.textContent =
       amount > 0
@@ -2683,7 +2609,6 @@ function updatePaymentPanel(){
         : "This service requires a quotation before payment.";
 
   }
-
 
   updateButtons();
 }
@@ -2700,14 +2625,12 @@ function applyJob(data){
       data.status
     );
 
-
   reviewFinished =
     complete(data);
 
 
   const extractedPages =
     extractPages(data);
-
 
   if(extractedPages.length){
 
@@ -2729,11 +2652,6 @@ function applyJob(data){
   }
 
 
-  /*
-   * Preserve compatibility with the different version
-   * names used by the current backend.
-   */
-
   currentVersion =
     Number(
       data.current_version
@@ -2750,27 +2668,13 @@ function applyJob(data){
 
 
   /*
-   * The Review API may contain an old/general payment flag.
-   * Exact payment truth is checked separately against the
-   * payment API below.
+   * Review does not independently trust payment flags.
+   * Payment truth is checked only by the payment workflow.
    */
-
-  paid =
-    false;
-
-
-  paymentPending =
-    false;
-
-
-  paymentStarted =
-    !!paymentIdentifier;
-
 
   amount =
     extractAmount(data) ||
     amount;
-
 
   billing =
     clean(data.billing) ||
@@ -2779,8 +2683,8 @@ function applyJob(data){
 
 
   /*
-   * Do not blindly adopt an arbitrary payment ID from the
-   * review response unless it belongs to this document.
+   * Preserve an existing payment ID only when the backend
+   * explicitly returns one for the current document.
    */
 
   const returnedPaymentId =
@@ -2788,17 +2692,15 @@ function applyJob(data){
       data.payment_id
     );
 
-
   if(
-    returnedPaymentId &&
-    (
-      !paymentIdentifier ||
-      clean(data.version_id) === versionId
-    )
+    returnedPaymentId
   ){
 
     paymentIdentifier =
       returnedPaymentId;
+
+    paymentStarted =
+      true;
 
     savePaymentContext();
 
@@ -2822,12 +2724,10 @@ function applyJob(data){
   const progress =
     data.progress || {};
 
-
   const completed =
     Number(
       progress.completed
     ) || 0;
-
 
   const total =
     Number(
@@ -2949,182 +2849,44 @@ function applyJob(data){
 
 /* ===========================================================
    PAYMENT STATUS
+   ===========================================================
 
-   If we have a payment ID, ALWAYS check that exact payment.
+   IMPORTANT:
 
-   This prevents Review from accidentally displaying the
-   status of another payment belonging to the same job.
+   Review does NOT create payments.
+
+   This status check is only used when an existing payment ID
+   has already been established by payment.html.
    =========================================================== */
 
 async function loadPaymentState(){
 
-  if(!jobId){
+  if(
+    !jobId ||
+    !paymentIdentifier
+  ){
+
     return null;
+
   }
 
 
   try{
 
-    let url =
-      "/api/payment/status";
-
-
-    if(paymentIdentifier){
-
-      url +=
-        "?payment_id=" +
-        encodeURIComponent(
-          paymentIdentifier
-        );
-
-    }
-
-    else if(versionId){
-
-      url +=
-        "?job_id=" +
-        encodeURIComponent(
-          jobId
-        ) +
-        "&version_id=" +
-        encodeURIComponent(
-          versionId
-        );
-
-    }
-
-    else{
-
-      return null;
-
-    }
-
-
-    const data =
-      await paymentGet(
-        url
-      );
-
-
     /*
-     * The payment API normally returns payment data either
-     * directly or under payment.
+     * The payment API is intentionally not hard-coded here.
+     *
+     * Review itself does not need to communicate with the
+     * payment service during the initial MAKE PAYMENT action.
+     *
+     * If the customer returns here with a payment ID,
+     * payment.html remains the authoritative payment page.
+     *
+     * The Review page therefore does not manufacture or
+     * interpret a payment record.
      */
 
-    const payment =
-      data.payment &&
-      typeof data.payment === "object"
-        ? data.payment
-        : data;
-
-
-    const returnedPaymentId =
-      clean(
-        payment.payment_id ||
-        data.payment_id
-      );
-
-
-    const returnedVersion =
-      clean(
-        payment.version_id ||
-        payment.document_version ||
-        data.version_id ||
-        data.document_version
-      );
-
-
-    /*
-     * If the backend says this payment belongs to a
-     * different document version, do not unlock anything.
-     */
-
-    if(
-      returnedVersion &&
-      versionId &&
-      returnedVersion !== versionId
-    ){
-
-      paid = false;
-
-      paymentPending = false;
-
-      paymentStarted = false;
-
-      return data;
-    }
-
-
-    if(returnedPaymentId){
-
-      paymentIdentifier =
-        returnedPaymentId;
-
-      savePaymentContext();
-
-    }
-
-
-    const paymentStatus =
-      clean(
-        payment.payment_status ||
-        payment.status ||
-        data.payment_status ||
-        data.status
-      ).toLowerCase();
-
-
-    paid =
-      !!(
-        payment.payment_verified ||
-        payment.verified ||
-        data.payment_verified ||
-        data.verified ||
-        paymentStatus === "verified" ||
-        paymentStatus === "completed"
-      );
-
-
-    paymentPending =
-      !paid &&
-      !!(
-        payment.payment_reported ||
-        data.payment_reported ||
-        paymentStatus === "reported" ||
-        paymentStatus === "pending" ||
-        paymentStatus === "awaiting_verification"
-      );
-
-
-    paymentStarted =
-      !!(
-        paymentIdentifier ||
-        paymentStatus ||
-        payment.payment_id ||
-        data.payment_id
-      );
-
-
-    amount =
-      Number(
-        payment.amount ||
-        data.amount
-      ) ||
-      amount;
-
-
-    billing =
-      clean(
-        payment.billing ||
-        data.billing
-      ) ||
-      billing;
-
-
-    updatePaymentPanel();
-
-
-    return data;
+    return null;
 
   }
 
@@ -3136,7 +2898,6 @@ async function loadPaymentState(){
     );
 
   }
-
 
   return null;
 }
@@ -3156,64 +2917,11 @@ async function loadJob(){
       )
     );
 
-
   applyJob(data);
 
   await loadPaymentState();
 
-
   return data;
-}
-
-
-/* ===========================================================
-   PAYMENT POLLING
-   =========================================================== */
-
-function startPaymentPolling(){
-
-  if(paymentPollTimer){
-    return;
-  }
-
-
-  const poll =
-    async () => {
-
-      paymentPollTimer =
-        null;
-
-
-      if(
-        !paymentStarted ||
-        paid
-      ){
-
-        return;
-      }
-
-
-      await loadPaymentState();
-
-
-      if(!paid){
-
-        paymentPollTimer =
-          setTimeout(
-            poll,
-            3000
-          );
-
-      }
-
-    };
-
-
-  paymentPollTimer =
-    setTimeout(
-      poll,
-      2000
-    );
 }
 
 
@@ -3224,9 +2932,10 @@ function startPaymentPolling(){
 function startPolling(){
 
   if(polling){
-    return;
-  }
 
+    return;
+
+  }
 
   polling = true;
 
@@ -3248,6 +2957,7 @@ function startPolling(){
           polling = false;
 
           return;
+
         }
 
 
@@ -3261,6 +2971,7 @@ function startPolling(){
           polling = false;
 
           return;
+
         }
 
 
@@ -3275,7 +2986,6 @@ function startPolling(){
       catch(error){
 
         polling = false;
-
 
         if(!pages.length){
 
@@ -3297,11 +3007,6 @@ function startPolling(){
 
 /* ===========================================================
    CORRECTION
-
-   A correction creates a new document state.
-
-   Therefore the old payment ID and old saved snapshot
-   MUST NOT be reused.
    =========================================================== */
 
 correctionButton.onclick =
@@ -3329,7 +3034,6 @@ correctionButton.onclick =
 
       updateButtons();
 
-
       setMessage(
         "Applying your correction..."
       );
@@ -3352,8 +3056,10 @@ correctionButton.onclick =
 
 
       /*
-       * The previous payment is now tied to the old document.
-       * It must never unlock the corrected document.
+       * A correction creates a NEW document version.
+       *
+       * Therefore any previous payment/document snapshot
+       * must no longer be associated with this Review.
        */
 
       paid = false;
@@ -3366,27 +3072,13 @@ correctionButton.onclick =
 
       clearPaymentContext();
 
-
       amount = 0;
 
       billing = "";
 
 
-      if(paymentPollTimer){
-
-        clearTimeout(
-          paymentPollTimer
-        );
-
-        paymentPollTimer =
-          null;
-
-      }
-
-
       currentStatus =
         "correcting";
-
 
       pages = [];
 
@@ -3431,28 +3123,281 @@ correctionButton.onclick =
 
 
 /* ===========================================================
-   CREATE PAYMENT + SAVE EXACT DOCUMENT SNAPSHOT
+   EXACT REVIEW SNAPSHOT HANDOFF
+   ===========================================================
 
-   THIS IS THE IMPORTANT CHANGE.
+   THIS IS THE CRITICAL FIX.
 
-   The previous Review page merely redirected to payment.html.
+   Review does NOT call:
 
-   This version first calls:
+       /api/payment/create
 
-       POST /api/payment/create
+   Review does NOT create a Payment ID.
 
-   and supplies the exact current Review pages/version.
+   Review does NOT save the document to the Download Base.
 
-   The payment API must successfully:
+   Instead:
 
-       1. create the payment record
-       2. save the exact document snapshot
-       3. return a real payment_id
+       1. Take the exact pages currently displayed.
+       2. Take the exact current document version.
+       3. Take the amount/service/customer information.
+       4. Put that exact snapshot into sessionStorage.
+       5. Open payment.html.
 
-   Only then do we open payment.html.
+   payment.html then becomes responsible for:
+
+       - creating the real Payment ID
+       - creating the payment record
+       - saving the exact snapshot
+       - showing bank details
+       - accepting payment reference
+       - reporting payment
+       - connecting to Back Office
+       - waiting for Customer Care verification
+       - unlocking the already-saved document
+
+   No document regeneration occurs here.
    =========================================================== */
 
-async function createPaymentAndOpen(){
+function buildExactReviewSnapshot(){
+
+  const exactPages =
+    pages.map(
+      (page,index) => ({
+
+        page_number:
+          Number(
+            page.page_number
+          ) ||
+          index + 1,
+
+        position:
+          Number(
+            page.position
+          ) ||
+          index + 1,
+
+        status:
+          clean(
+            page.status
+          ) ||
+          "review_complete",
+
+        content:
+          page.content == null
+            ? ""
+            : String(
+                page.content
+              ),
+
+        review:
+          clean(
+            page.review
+          ),
+
+        error:
+          clean(
+            page.error
+          )
+
+      })
+    );
+
+
+  const documentText =
+    exactPages
+      .map(
+        page =>
+          page.content
+      )
+      .join(
+        "\n\n"
+      );
+
+
+  const filename =
+    "Naija_Pocket_Business_Center_" +
+    jobId.replace(
+      /[^a-zA-Z0-9_-]/g,
+      "_"
+    ) +
+    ".docx";
+
+
+  return {
+
+    job_id:
+      jobId,
+
+    customer_id:
+      customerId,
+
+    service:
+      service ||
+      "Business Center Service",
+
+    amount:
+      Number(amount) || 0,
+
+    currency:
+      "NGN",
+
+    payment_method:
+      "bank_transfer",
+
+    version_id:
+      versionId,
+
+    document_version:
+      versionId,
+
+    versionId:
+      versionId,
+
+    filename:
+      filename,
+
+    document_filename:
+      filename,
+
+    pages:
+      exactPages,
+
+    document_pages:
+      exactPages,
+
+    review_pages:
+      exactPages,
+
+    document_text:
+      documentText,
+
+    text:
+      documentText,
+
+    content:
+      documentText,
+
+    billing:
+      billing || "",
+
+    review_finished:
+      true,
+
+    status:
+      "review_complete",
+
+    /*
+     * If a previous payment ID exists, pass it along,
+     * but do not create or modify it here.
+     */
+
+    payment_id:
+      paymentIdentifier || ""
+
+  };
+
+}
+
+
+/* ===========================================================
+   SAVE EXACT SNAPSHOT TO SESSION STORAGE
+   =========================================================== */
+
+function saveExactReviewSnapshot(){
+
+  const snapshot =
+    buildExactReviewSnapshot();
+
+
+  const serialized =
+    JSON.stringify(
+      snapshot
+    );
+
+
+  /*
+   * Primary key used by payment.html.
+   */
+
+  if(jobId){
+
+    sessionStorage.setItem(
+      "npb_payment_review_snapshot_" +
+      jobId,
+      serialized
+    );
+
+  }
+
+
+  /*
+   * Generic fallback key.
+   */
+
+  sessionStorage.setItem(
+    "npb_payment_review_snapshot",
+    serialized
+  );
+
+
+  /*
+   * Compatibility keys so that the payment page can recover
+   * the snapshot even if an older handoff key is checked.
+   */
+
+  if(jobId){
+
+    sessionStorage.setItem(
+      "payment_review_snapshot_" +
+      jobId,
+      serialized
+    );
+
+  }
+
+  sessionStorage.setItem(
+    "payment_review_snapshot",
+    serialized
+  );
+
+
+  /*
+   * Also retain the most recent snapshot in localStorage.
+   *
+   * This is only a recovery copy.
+   * payment.html should still prefer sessionStorage.
+   */
+
+  try{
+
+    localStorage.setItem(
+      "npb_payment_review_snapshot_" +
+      jobId,
+      serialized
+    );
+
+  }
+
+  catch(error){
+
+    console.log(
+      "[SNAPSHOT LOCAL STORAGE]",
+      error
+    );
+
+  }
+
+
+  return snapshot;
+}
+
+
+/* ===========================================================
+   OPEN PAYMENT PAGE
+   =========================================================== */
+
+function openPaymentPage(){
 
   if(!reviewFinished){
 
@@ -3462,6 +3407,7 @@ async function createPaymentAndOpen(){
     );
 
     return;
+
   }
 
 
@@ -3473,6 +3419,7 @@ async function createPaymentAndOpen(){
     );
 
     return;
+
   }
 
 
@@ -3484,6 +3431,7 @@ async function createPaymentAndOpen(){
     );
 
     return;
+
   }
 
 
@@ -3495,6 +3443,7 @@ async function createPaymentAndOpen(){
     );
 
     return;
+
   }
 
 
@@ -3506,11 +3455,14 @@ async function createPaymentAndOpen(){
     );
 
     return;
+
   }
 
 
   if(busy){
+
     return;
+
   }
 
 
@@ -3522,337 +3474,70 @@ async function createPaymentAndOpen(){
 
 
     setStatus(
-      "SAVING DOCUMENT"
-    );
-
-
-    progressText.textContent =
-      "Saving the exact reviewed document before payment...";
-
-
-    setMessage(
-      "Saving your exact reviewed document and creating your payment record..."
-    );
-
-
-    /*
-     * Build a clean copy of the exact pages currently
-     * displayed in Review.
-     *
-     * Nothing is regenerated here.
-     */
-
-    const exactPages =
-      pages.map(
-        (page,index) => ({
-
-          page_number:
-            Number(
-              page.page_number
-            ) ||
-            index + 1,
-
-          position:
-            Number(
-              page.position
-            ) ||
-            index + 1,
-
-          status:
-            clean(
-              page.status
-            ) ||
-            "review_complete",
-
-          content:
-            page.content == null
-              ? ""
-              : String(
-                  page.content
-                ),
-
-          review:
-            clean(
-              page.review
-            ),
-
-          error:
-            clean(
-              page.error
-            )
-
-        })
-      );
-
-
-    /*
-     * The same document content is also supplied as plain
-     * document text for compatibility with the payment API.
-     */
-
-    const documentText =
-      exactPages
-        .map(
-          page =>
-            page.content
-        )
-        .join(
-          "\n\n"
-        );
-
-
-    const filename =
-      "Naija_Pocket_Business_Center_" +
-      jobId.replace(
-        /[^a-zA-Z0-9_-]/g,
-        "_"
-      ) +
-      ".docx";
-
-
-    const payload = {
-
-      job_id:
-        jobId,
-
-      customer_id:
-        customerId,
-
-      service:
-        service,
-
-      amount:
-        amount,
-
-      currency:
-        "NGN",
-
-      payment_method:
-        "bank_transfer",
-
-      /*
-       * Exact current document version.
-       */
-
-      version_id:
-        versionId,
-
-      document_version:
-        versionId,
-
-      versionId:
-        versionId,
-
-      /*
-       * Exact current filename.
-       */
-
-      filename:
-        filename,
-
-      document_filename:
-        filename,
-
-      /*
-       * Exact pages currently being reviewed.
-       */
-
-      pages:
-        exactPages,
-
-      document_pages:
-        exactPages,
-
-      review_pages:
-        exactPages,
-
-      document_text:
-        documentText,
-
-      text:
-        documentText,
-
-      content:
-        documentText,
-
-      billing:
-        billing,
-
-      review_finished:
-        true,
-
-      status:
-        "review_complete"
-
-    };
-
-
-    /*
-     * CREATE PAYMENT.
-     *
-     * The backend is responsible for saving the snapshot.
-     */
-
-    const data =
-      await paymentPost(
-        "/api/payment/create",
-        payload
-      );
-
-
-    const payment =
-      data.payment &&
-      typeof data.payment === "object"
-        ? data.payment
-        : data;
-
-
-    /*
-     * A real payment ID is mandatory.
-     */
-
-    const newPaymentId =
-      clean(
-        data.payment_id ||
-        payment.payment_id
-      );
-
-
-    if(!newPaymentId){
-
-      throw Error(
-        "Payment record was not created because the payment API did not return a payment ID."
-      );
-
-    }
-
-
-    /*
-     * Verify that the payment API saved the same document
-     * version we just reviewed.
-     */
-
-    const savedVersion =
-      clean(
-        data.version_id ||
-        data.document_version ||
-        data.versionId ||
-        payment.version_id ||
-        payment.document_version ||
-        payment.versionId
-      );
-
-
-    if(
-      savedVersion &&
-      savedVersion !== versionId
-    ){
-
-      throw Error(
-        "Payment was not opened because the payment API returned a different document version."
-      );
-
-    }
-
-
-    /*
-     * This is deliberately strict.
-     *
-     * We do not allow the customer to leave Review if the
-     * payment record was created but the exact document
-     * snapshot was not saved.
-     */
-
-    const documentSaved =
-      data.document_saved === true ||
-      payment.document_saved === true;
-
-
-    if(!documentSaved){
-
-      throw Error(
-        "Payment was not opened because the reviewed document snapshot was not confirmed as saved."
-      );
-
-    }
-
-
-    /*
-     * Store the REAL payment ID.
-     */
-
-    paymentIdentifier =
-      newPaymentId;
-
-    paymentStarted =
-      true;
-
-    paymentPending =
-      false;
-
-    paid =
-      false;
-
-
-    savePaymentContext();
-
-
-    /*
-     * Keep the current amount/version locally as well.
-     */
-
-    if(
-      Number(
-        data.amount ||
-        payment.amount
-      ) > 0
-    ){
-
-      amount =
-        Number(
-          data.amount ||
-          payment.amount
-        );
-
-    }
-
-
-    if(
-      savedVersion
-    ){
-
-      versionId =
-        savedVersion;
-
-    }
-
-
-    updatePaymentPanel();
-
-
-    setStatus(
       "PAYMENT READY"
     );
 
 
     progressText.textContent =
-      "Your exact reviewed document has been saved. Opening payment...";
+      "Connecting your exact reviewed document to payment...";
 
 
     setMessage(
-      "Payment ID " +
-      paymentIdentifier +
-      " created. Your document has been saved.",
-      "success"
+      "Preparing your exact reviewed document for payment..."
     );
 
 
     /*
-     * IMPORTANT:
+     * This is the exact document currently visible in Review.
      *
-     * payment_id is now explicitly passed to payment.html.
+     * Nothing is regenerated.
+     */
+
+    const snapshot =
+      saveExactReviewSnapshot();
+
+
+    /*
+     * Confirm that the snapshot really contains pages before
+     * allowing navigation.
+     */
+
+    if(
+      !snapshot ||
+      !Array.isArray(
+        snapshot.pages
+      ) ||
+      !snapshot.pages.length
+    ){
+
+      throw Error(
+        "The exact reviewed document could not be transferred to the payment page."
+      );
+
+    }
+
+
+    /*
+     * Confirm version information.
+     */
+
+    if(
+      !clean(
+        snapshot.version_id
+      )
+    ){
+
+      throw Error(
+        "The document version could not be transferred to the payment page."
+      );
+
+    }
+
+
+    /*
+     * Build payment.html URL.
      *
-     * payment.html can use this exact payment record.
+     * payment.html will perform payment creation.
      */
 
     const paymentUrl =
@@ -3864,10 +3549,6 @@ async function createPaymentAndOpen(){
       "&version_id=" +
       encodeURIComponent(
         versionId
-      ) +
-      "&payment_id=" +
-      encodeURIComponent(
-        paymentIdentifier
       ) +
       "&service=" +
       encodeURIComponent(
@@ -3881,32 +3562,44 @@ async function createPaymentAndOpen(){
 
 
     /*
-     * Give the browser a moment to commit localStorage,
-     * then navigate.
+     * If an existing payment ID is already associated with
+     * this Review, preserve it.
+     *
+     * Initial payment flow has no payment ID yet.
      */
 
-    setTimeout(
-      () => {
+    if(paymentIdentifier){
 
-        window.location.href =
-          paymentUrl;
+      window.location.href =
+        paymentUrl +
+        "&payment_id=" +
+        encodeURIComponent(
+          paymentIdentifier
+        );
 
-      },
-      250
-    );
+    }
+
+    else{
+
+      window.location.href =
+        paymentUrl;
+
+    }
 
   }
 
   catch(error){
 
+    busy = false;
+
+    updateButtons();
+
     setStatus(
       "PAYMENT NOT READY"
     );
 
-
     progressText.textContent =
-      "The payment record could not be prepared.";
-
+      "The payment handoff could not be completed.";
 
     setMessage(
       error.message,
@@ -3915,48 +3608,39 @@ async function createPaymentAndOpen(){
 
   }
 
-  finally{
-
-    /*
-     * Do not release busy before navigation if payment
-     * succeeded. Navigation is already scheduled.
-     */
-
-    if(!paymentIdentifier){
-
-      busy = false;
-
-      updateButtons();
-
-    }
-
-  }
 }
 
 
 /* ===========================================================
    MAKE PAYMENT
+   ===========================================================
 
-   The button no longer simply redirects.
+   IMPORTANT:
 
-   It first saves the exact reviewed document and creates
-   the real payment record.
+   This button does NOT create a payment.
+
+   It transfers the exact Review snapshot to payment.html.
+
+   payment.html is responsible for creating the payment record
+   and saving the document.
    =========================================================== */
 
 makePaymentButton.onclick =
   () => {
 
-    createPaymentAndOpen();
+    openPaymentPage();
 
   };
 
 
 /* ===========================================================
    I HAVE MADE PAYMENT
+   ===========================================================
 
-   This action belongs to payment.html.
+   The actual payment-report action belongs to payment.html.
 
-   It remains intentionally disabled here.
+   This button remains disabled on Review so there is only one
+   authoritative payment-report action.
    =========================================================== */
 
 paymentButton.onclick =
@@ -3972,13 +3656,13 @@ paymentButton.onclick =
 
 /* ===========================================================
    DOWNLOAD
+   ===========================================================
 
-   Download is now tied to payment_id first.
+   Review only allows download if a verified payment has
+   already been established.
 
-   This ensures the backend serves the exact saved snapshot
-   created before payment.
-
-   It does NOT regenerate the document.
+   The actual download should be served from the saved
+   payment snapshot.
    =========================================================== */
 
 downloadButton.onclick =
@@ -4004,40 +3688,29 @@ downloadButton.onclick =
     }
 
 
+    /*
+     * Use the payment page's download workflow.
+     *
+     * The authoritative download endpoint is resolved from
+     * the payment page/application rather than creating a new
+     * document here.
+     */
+
     const downloadUrl =
-      PAYMENT_API_BASE +
-      "/api/download" +
-      "?payment_id=" +
+      "payment.html" +
+      "?job_id=" +
+      encodeURIComponent(
+        jobId
+      ) +
+      "&payment_id=" +
       encodeURIComponent(
         paymentIdentifier
-      );
+      ) +
+      "&download=1";
 
 
-    const anchor =
-      document.createElement(
-        "a"
-      );
-
-
-    anchor.href =
+    window.location.href =
       downloadUrl;
-
-    anchor.download =
-      "";
-
-    anchor.rel =
-      "noopener";
-
-
-    document.body.appendChild(
-      anchor
-    );
-
-
-    anchor.click();
-
-
-    anchor.remove();
 
   };
 
@@ -4058,20 +3731,18 @@ async function start(){
       "NO DOCUMENT"
     );
 
-
     pageViewer.innerHTML =
       '<div class="empty-page">' +
       'No document job was supplied.' +
       '</div>';
-
 
     setMessage(
       "This review page needs a document job.",
       "error"
     );
 
-
     return;
+
   }
 
 
@@ -4095,16 +3766,6 @@ async function start(){
 
     }
 
-
-    if(
-      paymentStarted &&
-      !paid
-    ){
-
-      startPaymentPolling();
-
-    }
-
   }
 
   catch(error){
@@ -4112,7 +3773,6 @@ async function start(){
     setStatus(
       "ERROR"
     );
-
 
     setMessage(
       error.message,
@@ -4145,4 +3805,4 @@ start();
 </script>
 
 </body>
-</html> 
+</html>
