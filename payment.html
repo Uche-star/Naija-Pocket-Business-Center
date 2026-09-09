@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Make Payment — Naija Pocket Business Center</title>
-
-<style>
+<title>Make Payment — Naija Pocket Business Center</title><style>
 :root{
   --black:#050505;
   --panel:#101010;
@@ -290,7 +287,8 @@ button{
 
 .primary-button:disabled,
 .report-button:disabled,
-.download-button:disabled{
+.download-button:disabled,
+.bo-button:disabled{
   opacity:.55;
   cursor:not-allowed;
 }
@@ -386,7 +384,281 @@ button{
   display:none!important;
 }
 
+
+/* ==========================================================
+   BACK OFFICE
+========================================================== */
+
+#backOfficeView{
+  display:none;
+}
+
+#backOfficeView.show{
+  display:block;
+}
+
+.bo-login-card{
+  background:#0b0b0b;
+  border:1px solid rgba(212,175,55,.35);
+}
+
+.bo-lock-title{
+  margin:0;
+  color:var(--gold2);
+  font-size:18px;
+  font-weight:900;
+}
+
+.bo-lock-text{
+  margin:6px 0 0;
+  color:#999;
+  font-size:10px;
+  line-height:1.5;
+}
+
+.bo-key-input{
+  width:100%;
+  min-height:46px;
+  margin-top:10px;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.12);
+  outline:none;
+  background:#050505;
+  color:#fff;
+  font-size:11px;
+}
+
+.bo-key-input:focus{
+  border-color:var(--gold);
+}
+
+.bo-button{
+  width:100%;
+  min-height:44px;
+  margin-top:8px;
+  border-radius:9px;
+  border:0;
+  font-size:10px;
+  font-weight:900;
+}
+
+.bo-login-button{
+  background:var(--gold);
+  color:#000;
+}
+
+.bo-refresh-button{
+  background:#252525;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.bo-exit-button{
+  background:var(--red);
+  color:#fff;
+}
+
+.bo-status{
+  min-height:20px;
+  margin-top:8px;
+  text-align:center;
+  color:#999;
+  font-size:9px;
+}
+
+.bo-status.error{
+  color:#ff7777;
+}
+
+.bo-status.success{
+  color:#75dc99;
+}
+
+.bo-status.warning{
+  color:var(--gold2);
+}
+
+.bo-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+
+.bo-summary-box{
+  padding:10px 7px;
+  border-radius:8px;
+  background:#070707;
+  border:1px solid rgba(255,255,255,.07);
+  text-align:center;
+}
+
+.bo-summary-label{
+  color:#777;
+  font-size:8px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.bo-summary-value{
+  margin-top:4px;
+  color:var(--gold2);
+  font-size:18px;
+  font-weight:900;
+}
+
+.bo-payment-card{
+  background:#0b0b0b;
+  border:1px solid rgba(212,175,55,.2);
+}
+
+.bo-payment-status{
+  padding:8px;
+  border-radius:7px;
+  background:rgba(212,175,55,.08);
+  border:1px solid rgba(212,175,55,.2);
+  color:var(--gold2);
+  font-size:10px;
+  font-weight:900;
+}
+
+.bo-payment-status.verified{
+  background:rgba(0,128,0,.08);
+  border-color:rgba(0,128,0,.35);
+  color:#9ddd9d;
+}
+
+.bo-payment-status.reported{
+  background:rgba(212,175,55,.08);
+  color:var(--gold2);
+}
+
+.bo-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  padding:7px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.bo-row:last-child{
+  border-bottom:0;
+}
+
+.bo-label{
+  color:#777;
+  font-size:8px;
+  font-weight:800;
+}
+
+.bo-value{
+  color:#fff;
+  font-size:10px;
+  font-weight:800;
+  text-align:right;
+  word-break:break-word;
+  max-width:65%;
+}
+
+.bo-document-note{
+  margin-top:8px;
+  padding:9px;
+  border-radius:8px;
+  background:rgba(0,128,0,.06);
+  border:1px solid rgba(0,128,0,.25);
+  color:#9ddd9d;
+  font-size:9px;
+  line-height:1.5;
+}
+
+.bo-action-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:8px;
+}
+
+.bo-action{
+  width:100%;
+  min-height:42px;
+  border:0;
+  border-radius:8px;
+  font-size:9px;
+  font-weight:900;
+}
+
+.bo-view-button{
+  background:#252525;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.bo-verify-button{
+  background:var(--gold);
+  color:#000;
+}
+
+.bo-unlock-button{
+  background:var(--green);
+  color:#fff;
+  grid-column:1/-1;
+}
+
+.bo-unlock-button.active{
+  background:var(--green2);
+}
+
+.bo-empty{
+  padding:18px 10px;
+  text-align:center;
+  color:#777;
+  font-size:10px;
+}
+
+.bo-document-view{
+  display:none;
+}
+
+.bo-document-view.show{
+  display:block;
+}
+
+.bo-document-pages{
+  max-height:55vh;
+  overflow:auto;
+}
+
+.bo-page{
+  margin-bottom:9px;
+  padding:11px;
+  background:#050505;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;
+}
+
+.bo-page-title{
+  margin-bottom:7px;
+  color:var(--gold2);
+  font-size:9px;
+  font-weight:900;
+}
+
+.bo-page-content{
+  color:#ddd;
+  font-size:10px;
+  line-height:1.6;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+.bo-close-document{
+  background:#252525;
+  color:#fff;
+}
+
 @media(max-width:600px){
+
   .main{
     padding:8px 7px 14px;
   }
@@ -417,250 +689,445 @@ button{
   .back-button{
     min-height:44px;
   }
+
+  .bo-summary{
+    grid-template-columns:1fr 1fr 1fr;
+  }
+
+  .bo-summary-value{
+    font-size:15px;
+  }
+
+  .bo-action-row{
+    grid-template-columns:1fr;
+  }
+
+  .bo-unlock-button{
+    grid-column:auto;
+  }
 }
 
 @media(min-width:800px){
+
   .main{
     padding:18px;
   }
 }
-</style>
-</head>
+</style></head><body><header class="header">
+  <div class="header-inner"><div>
+  <h1 class="brand-title">
+    Naija Pocket Business Center
+  </h1>
 
-<body>
-
-<header class="header">
-  <div class="header-inner">
-    <div>
-      <h1 class="brand-title">Naija Pocket Business Center</h1>
-      <div class="brand-subtitle">Secure payment and document delivery</div>
-    </div>
-
-    <div id="serviceBadge" class="service-badge">
-      Service
-    </div>
+  <div class="brand-subtitle">
+    Secure payment and document delivery
   </div>
-</header>
+</div>
 
-<main class="main">
+<div id="serviceBadge" class="service-badge">
+  Service
+</div>
 
-  <section class="card">
-    <h2 class="title">Payment Details</h2>
+  </div>
+</header><!-- ========================================================
+     CUSTOMER PAYMENT MODE
+========================================================= --><main id="customerPaymentView" class="main">  <section class="card">
+    <h2 class="title">
+      Payment Details
+    </h2><p class="subtitle">
+  Your exact reviewed document is connected to this payment.
+  Once payment is created, the document is saved securely for download.
+</p>
 
-    <p class="subtitle">
-      Your exact reviewed document is connected to this payment.
-      Once payment is created, the document is saved securely for download.
-    </p>
-  </section>
+  </section>  <section class="card status-card"><div class="status-label">
+  Payment Status
+</div>
 
-  <section class="card status-card">
+<div id="statusValue" class="status-value">
+  Preparing...
+</div>
 
-    <div class="status-label">
-      Payment Status
-    </div>
+<div id="statusMessage" class="status-message">
+  Preparing your secure payment.
+</div>
 
-    <div id="statusValue" class="status-value">
-      Preparing...
-    </div>
+<div class="progress">
+  <div id="progressBar" class="progress-bar"></div>
+</div>
 
-    <div id="statusMessage" class="status-message">
-      Preparing your secure payment.
-    </div>
+  </section>  <section class="card amount-card"><div class="amount-label">
+  AMOUNT TO PAY
+</div>
 
-    <div class="progress">
-      <div id="progressBar" class="progress-bar"></div>
-    </div>
+<div id="amountValue" class="amount-value">
+  ₦0
+</div>
 
-  </section>
+  </section>  <section class="card details-card"><div class="section-title">
+  ORDER INFORMATION
+</div>
 
-  <section class="card amount-card">
+<div id="orderDetails" class="details">
+  Preparing order details...
+</div>
 
-    <div class="amount-label">
-      AMOUNT TO PAY
-    </div>
+<div id="paymentIdBox" class="payment-id-box hidden">
 
-    <div id="amountValue" class="amount-value">
-      ₦0
-    </div>
+  <div class="payment-id-label">
+    PAYMENT ID
+  </div>
 
-  </section>
+  <div id="paymentIdValue" class="payment-id-value"></div>
 
-  <section class="card details-card">
+</div>
 
-    <div class="section-title">
-      ORDER INFORMATION
-    </div>
+  </section>  <section class="card bank-card"><div class="section-title">
+  MAKE YOUR PAYMENT
+</div>
 
-    <div id="orderDetails" class="details">
-      Preparing order details...
-    </div>
+<div class="details" style="margin-bottom:6px;">
+  Transfer exactly the amount shown above.
+  After completing your bank transfer, enter your payment reference below.
+</div>
 
-    <div id="paymentIdBox" class="payment-id-box hidden">
+<div class="bank-row">
 
-      <div class="payment-id-label">
-        PAYMENT ID
+  <div class="bank-label">
+    Bank
+  </div>
+
+  <div id="bankName" class="bank-value">
+    Your Business Bank
+  </div>
+
+</div>
+
+<div class="bank-row">
+
+  <div class="bank-label">
+    Account Name
+  </div>
+
+  <div id="accountName" class="bank-value">
+    Naija Pocket Business Center
+  </div>
+
+</div>
+
+<div class="bank-row">
+
+  <div class="bank-label">
+    Account Number
+  </div>
+
+  <div id="accountNumber" class="bank-value">
+    0000000000
+  </div>
+
+</div>
+
+  </section>  <section class="card reference-card"><div class="section-title">
+  PAYMENT REFERENCE
+</div>
+
+<input
+  id="paymentReference"
+  class="reference-input"
+  type="text"
+  autocomplete="off"
+  placeholder="Enter your bank transfer reference"
+>
+
+<textarea
+  id="paymentNote"
+  class="note-input"
+  placeholder="Optional note for Customer Care"
+></textarea>
+
+<button
+  id="reportButton"
+  class="report-button"
+  type="button"
+  disabled
+>
+  ✓ I HAVE MADE PAYMENT
+</button>
+
+  </section>  <section id="downloadArea" class="card download-area"><div class="section-title">
+  DOWNLOAD
+</div>
+
+<div id="downloadNote" class="locked-note">
+  Customer Care must verify your payment before the saved document can be downloaded.
+</div>
+
+<button
+  id="downloadButton"
+  class="download-button"
+  type="button"
+  disabled
+>
+  🔒 DOWNLOAD DOCUMENT
+</button>
+
+  </section>  <div id="message" class="message"></div><button
+id="backButton"
+class="back-button"
+type="button"
+
+«»
+
+← BACK TO REVIEW
+
+  </button></main><!-- ========================================================
+     BACK OFFICE MODE
+     
+     This belongs to Payment HTML.
+     It is NOT the old Workspace Back Office.
+========================================================= --><main id="backOfficeView" class="main">  <section id="boLoginSection" class="card bo-login-card"><h2 class="bo-lock-title">
+  Customer Care Back Office
+</h2>
+
+<p class="bo-lock-text">
+  Secure payment verification and document release.
+  Only an authorized operator can access payment reports
+  and unlock an already-saved document.
+</p>
+
+<input
+  id="boAdminKey"
+  class="bo-key-input"
+  type="password"
+  autocomplete="off"
+  placeholder="Enter Back Office access key"
+>
+
+<button
+  id="boLoginButton"
+  class="bo-button bo-login-button"
+  type="button"
+>
+  🔐 OPEN BACK OFFICE
+</button>
+
+<div
+  id="boLoginStatus"
+  class="bo-status"
+></div>
+
+  </section>  <section
+    id="boDashboard"
+    class="hidden"
+  ><section class="card">
+
+  <h2 class="title">
+    Payment Verification
+  </h2>
+
+  <p class="subtitle">
+    Review reported payments, verify the payment, and unlock
+    the exact document snapshot already saved by the Payment API.
+    Back Office does not regenerate documents.
+  </p>
+
+</section>
+
+
+<section class="card">
+
+  <div class="bo-summary">
+
+    <div class="bo-summary-box">
+
+      <div class="bo-summary-label">
+        Reports
       </div>
 
-      <div id="paymentIdValue" class="payment-id-value"></div>
-
-    </div>
-
-  </section>
-
-  <section class="card bank-card">
-
-    <div class="section-title">
-      MAKE YOUR PAYMENT
-    </div>
-
-    <div class="details" style="margin-bottom:6px;">
-      Transfer exactly the amount shown above.
-      After completing your bank transfer, enter your payment reference below.
-    </div>
-
-    <div class="bank-row">
-
-      <div class="bank-label">
-        Bank
-      </div>
-
-      <div id="bankName" class="bank-value">
-        Your Business Bank
+      <div
+        id="boReportCount"
+        class="bo-summary-value"
+      >
+        0
       </div>
 
     </div>
 
-    <div class="bank-row">
+    <div class="bo-summary-box">
 
-      <div class="bank-label">
-        Account Name
+      <div class="bo-summary-label">
+        Awaiting
       </div>
 
-      <div id="accountName" class="bank-value">
-        Naija Pocket Business Center
-      </div>
-
-    </div>
-
-    <div class="bank-row">
-
-      <div class="bank-label">
-        Account Number
-      </div>
-
-      <div id="accountNumber" class="bank-value">
-        0000000000
+      <div
+        id="boPendingCount"
+        class="bo-summary-value"
+      >
+        0
       </div>
 
     </div>
 
-  </section>
+    <div class="bo-summary-box">
 
-  <section class="card reference-card">
+      <div class="bo-summary-label">
+        Verified
+      </div>
 
-    <div class="section-title">
-      PAYMENT REFERENCE
+      <div
+        id="boVerifiedCount"
+        class="bo-summary-value"
+      >
+        0
+      </div>
+
     </div>
 
-    <input
-      id="paymentReference"
-      class="reference-input"
-      type="text"
-      autocomplete="off"
-      placeholder="Enter your bank transfer reference"
-    >
+  </div>
 
-    <textarea
-      id="paymentNote"
-      class="note-input"
-      placeholder="Optional note for Customer Care"
-    ></textarea>
+</section>
 
-    <button
-      id="reportButton"
-      class="report-button"
-      type="button"
-      disabled
-    >
-      ✓ I HAVE MADE PAYMENT
-    </button>
 
-  </section>
+<section class="card">
 
-  <section id="downloadArea" class="card download-area">
+  <div class="section-title">
+    PAYMENT REPORTS
+  </div>
 
-    <div class="section-title">
-      DOWNLOAD
+  <div id="boPaymentsList">
+
+    <div class="bo-empty">
+      Loading payment reports...
     </div>
 
-    <div id="downloadNote" class="locked-note">
-      Customer Care must verify your payment before the saved document can be downloaded.
-    </div>
+  </div>
 
-    <button
-      id="downloadButton"
-      class="download-button"
-      type="button"
-      disabled
-    >
-      🔒 DOWNLOAD DOCUMENT
-    </button>
+</section>
 
-  </section>
 
-  <div id="message" class="message"></div>
+<section
+  id="boDocumentSection"
+  class="card bo-document-view"
+>
+
+  <div class="section-title">
+    SAVED DOCUMENT
+  </div>
+
+  <div
+    id="boDocumentInfo"
+    class="bo-document-note"
+  ></div>
+
+  <div
+    id="boDocumentPages"
+    class="bo-document-pages"
+  ></div>
 
   <button
-    id="backButton"
-    class="back-button"
+    id="boCloseDocumentButton"
+    class="bo-button bo-close-document"
     type="button"
   >
-    ← BACK TO REVIEW
+    ← CLOSE DOCUMENT VIEW
   </button>
 
-</main>
+</section>
 
-<script>
+
+<section class="card">
+
+  <button
+    id="boRefreshButton"
+    class="bo-button bo-refresh-button"
+    type="button"
+  >
+    ↻ REFRESH PAYMENT REPORTS
+  </button>
+
+  <button
+    id="boExitButton"
+    class="bo-button bo-exit-button"
+    type="button"
+  >
+    EXIT BACK OFFICE
+  </button>
+
+  <div
+    id="boActionStatus"
+    class="bo-status"
+  ></div>
+
+</section>
+
+  </section></main><script>
 "use strict";
 
 /*============================================================
 Naija Pocket Business Center
 payment.html
 
-PAYMENT FLOW
+CUSTOMER PAYMENT MODE
+---------------------
 
-1. Review page opens this page.
-2. Review page places the exact reviewed document snapshot
-   in sessionStorage.
-3. This page creates the real payment record.
-4. /api/payment/create saves the exact reviewed document.
-5. Payment ID is returned and displayed.
-6. Back Office can see the payment record.
-7. Customer transfers money.
-8. Customer taps I HAVE MADE PAYMENT.
-9. /api/payment/report changes the payment to:
+The original customer payment flow remains intact.
+
+BACK OFFICE MODE
+----------------
+
+Activated by:
+
+    ?mode=back_office
+
+or:
+
+    ?back_office=1
+
+The Back Office belongs to this Payment HTML.
+
+It does NOT use the old Workspace Back Office.
+
+It does NOT use the old Ada API.
+
+It does NOT regenerate documents.
+
+The intended lifecycle is:
+
+1. Customer creates payment.
+2. Payment API saves exact reviewed document snapshot.
+3. Customer reports payment.
+4. Payment becomes:
       Payment Reported — Awaiting Verification
-10. Customer Care verifies payment.
-11. Only verification unlocks /api/download.
-12. Download uses the already-saved snapshot.
+5. Back Office retrieves payment report.
+6. Customer Care verifies payment.
+7. Customer Care unlocks download.
+8. Customer downloads the SAME saved document snapshot.
 
-THIS PAGE NEVER REGENERATES THE DOCUMENT.
+The Back Office API endpoints are intentionally separate
+from the existing customer payment endpoints.
 ============================================================*/
+
 
 /*
  * CONFIRMED LIVE PAYMENT API
- *
- * Do not use the old:
- * naija-pocket-business-center-1.onrender.com
- *
- * The Payment HTML now connects to:
- * naija-pocket-payment-api.onrender.com
  */
 const PAYMENT_API_BASE =
   "https://naija-pocket-payment-api.onrender.com";
 
 
-const params = new URLSearchParams(location.search);
+const params =
+  new URLSearchParams(
+    location.search
+  );
+
+
+const isBackOfficeMode =
+  params.get("back_office") === "1" ||
+  params.get("mode") === "back_office";
+
+
+/* ==========================================================
+   CUSTOMER STATE
+========================================================== */
 
 const jobId =
   clean(params.get("job_id"));
@@ -685,6 +1152,7 @@ const queryService =
 const queryAmount =
   parseMoney(params.get("amount"));
 
+
 const SNAPSHOT_KEYS = [
   "npb_payment_review_snapshot_" + jobId,
   "npb_payment_review_snapshot",
@@ -692,65 +1160,14 @@ const SNAPSHOT_KEYS = [
   "payment_review_snapshot"
 ];
 
-const $ = id =>
-  document.getElementById(id);
+
+const $ =
+  id =>
+    document.getElementById(id);
+
 
 const serviceBadge =
   $("serviceBadge");
-
-const statusValue =
-  $("statusValue");
-
-const statusMessage =
-  $("statusMessage");
-
-const progressBar =
-  $("progressBar");
-
-const amountValue =
-  $("amountValue");
-
-const orderDetails =
-  $("orderDetails");
-
-const paymentIdBox =
-  $("paymentIdBox");
-
-const paymentIdValue =
-  $("paymentIdValue");
-
-const bankName =
-  $("bankName");
-
-const accountName =
-  $("accountName");
-
-const accountNumber =
-  $("accountNumber");
-
-const paymentReference =
-  $("paymentReference");
-
-const paymentNote =
-  $("paymentNote");
-
-const reportButton =
-  $("reportButton");
-
-const downloadArea =
-  $("downloadArea");
-
-const downloadNote =
-  $("downloadNote");
-
-const downloadButton =
-  $("downloadButton");
-
-const message =
-  $("message");
-
-const backButton =
-  $("backButton");
 
 
 let snapshot = null;
@@ -867,47 +1284,6 @@ function formatMoney(value){
 }
 
 
-function setMessage(
-  text,
-  type=""
-){
-
-  message.textContent =
-    text || "";
-
-  message.className =
-    "message" +
-    (
-      type
-        ? " " + type
-        : ""
-    );
-}
-
-
-function setStatus(text){
-
-  statusValue.textContent =
-    text || "Preparing...";
-}
-
-
-function setProgress(percent){
-
-  const n =
-    Math.max(
-      0,
-      Math.min(
-        100,
-        Number(percent) || 0
-      )
-    );
-
-  progressBar.style.width =
-    n + "%";
-}
-
-
 function normalizeStatus(status){
 
   return clean(status)
@@ -951,7 +1327,57 @@ function isVerified(status){
 
 
 /* ==========================================================
-   API HELPERS
+   CUSTOMER ELEMENTS
+========================================================== */
+
+const statusValue =
+  $("statusValue");
+
+const statusMessage =
+  $("statusMessage");
+
+const progressBar =
+  $("progressBar");
+
+const amountValue =
+  $("amountValue");
+
+const orderDetails =
+  $("orderDetails");
+
+const paymentIdBox =
+  $("paymentIdBox");
+
+const paymentIdValue =
+  $("paymentIdValue");
+
+const paymentReference =
+  $("paymentReference");
+
+const paymentNote =
+  $("paymentNote");
+
+const reportButton =
+  $("reportButton");
+
+const downloadArea =
+  $("downloadArea");
+
+const downloadNote =
+  $("downloadNote");
+
+const downloadButton =
+  $("downloadButton");
+
+const message =
+  $("message");
+
+const backButton =
+  $("backButton");
+
+
+/* ==========================================================
+   CUSTOMER API HELPERS
 ========================================================== */
 
 async function paymentGet(path){
@@ -1049,7 +1475,7 @@ async function paymentPost(
 
 
 /* ==========================================================
-   SNAPSHOT HANDOFF FROM REVIEW
+   CUSTOMER SNAPSHOT
 ========================================================== */
 
 function readReviewSnapshot(){
@@ -1304,8 +1730,49 @@ function applySnapshot(){
 
 
 /* ==========================================================
-   PAYMENT DISPLAY
+   CUSTOMER DISPLAY
 ========================================================== */
+
+function setMessage(
+  text,
+  type=""
+){
+
+  message.textContent =
+    text || "";
+
+  message.className =
+    "message" +
+    (
+      type
+        ? " " + type
+        : ""
+    );
+}
+
+
+function setStatus(text){
+
+  statusValue.textContent =
+    text || "Preparing...";
+}
+
+
+function setProgress(percent){
+
+  const n =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(percent) || 0
+      )
+    );
+
+  progressBar.style.width =
+    n + "%";
+}
+
 
 function showPaymentId(){
 
@@ -1487,7 +1954,7 @@ function updatePaymentDisplay(){
 
 
 /* ==========================================================
-   CREATE PAYMENT
+   CUSTOMER CREATE PAYMENT
 ========================================================== */
 
 async function createPayment(){
@@ -1762,7 +2229,7 @@ async function createPayment(){
 
 
 /* ==========================================================
-   FIND EXISTING PAYMENT
+   CUSTOMER EXISTING PAYMENT
 ========================================================== */
 
 async function loadExistingPayment(){
@@ -1897,7 +2364,7 @@ async function loadExistingPayment(){
 
 
 /* ==========================================================
-   REPORT PAYMENT
+   CUSTOMER REPORT PAYMENT
 ========================================================== */
 
 async function reportPayment(){
@@ -2059,7 +2526,7 @@ async function reportPayment(){
 
 
 /* ==========================================================
-   PAYMENT STATUS POLLING
+   CUSTOMER STATUS POLLING
 ========================================================== */
 
 async function checkPaymentStatus(){
@@ -2206,7 +2673,7 @@ function startStatusPolling(){
 
 
 /* ==========================================================
-   DOWNLOAD
+   CUSTOMER DOWNLOAD
 ========================================================== */
 
 async function downloadDocument(){
@@ -2247,23 +2714,12 @@ async function downloadDocument(){
       ""
     );
 
-    /*
-     * IMPORTANT:
-     * This endpoint serves the saved snapshot.
-     * It does NOT generate another document.
-     */
-
     const url =
       PAYMENT_API_BASE +
       "/api/download?payment_id=" +
       encodeURIComponent(
         paymentId
       );
-
-    /*
-     * Normal browser navigation allows the server's
-     * FileResponse to download using the correct filename.
-     */
 
     window.location.href =
       url;
@@ -2295,7 +2751,7 @@ async function downloadDocument(){
 
 
 /* ==========================================================
-   BACK TO REVIEW
+   CUSTOMER BACK TO REVIEW
 ========================================================== */
 
 function backToReview(){
@@ -2317,7 +2773,1259 @@ function backToReview(){
 
 
 /* ==========================================================
-   BUTTONS
+   BACK OFFICE STATE
+========================================================== */
+
+let boAdminKey = "";
+
+let boPayments = [];
+
+let boAuthenticated =
+  false;
+
+
+/*
+ * These are the NEW Payment API Back Office routes.
+
+ * They are deliberately separate from the customer's
+ * existing payment routes.
+
+ * The server must authenticate X-Admin-Key.
+ */
+
+const BO_API = {
+
+  list:
+    "/api/back-office/payments",
+
+  verify:
+    "/api/back-office/payment/verify",
+
+  unlock:
+    "/api/back-office/payment/unlock",
+
+  document:
+    "/api/back-office/payment/document"
+};
+
+
+/* ==========================================================
+   BACK OFFICE ELEMENTS
+========================================================== */
+
+const customerPaymentView =
+  $("customerPaymentView");
+
+const backOfficeView =
+  $("backOfficeView");
+
+const boLoginSection =
+  $("boLoginSection");
+
+const boAdminKeyInput =
+  $("boAdminKey");
+
+const boLoginButton =
+  $("boLoginButton");
+
+const boLoginStatus =
+  $("boLoginStatus");
+
+const boDashboard =
+  $("boDashboard");
+
+const boReportCount =
+  $("boReportCount");
+
+const boPendingCount =
+  $("boPendingCount");
+
+const boVerifiedCount =
+  $("boVerifiedCount");
+
+const boPaymentsList =
+  $("boPaymentsList");
+
+const boDocumentSection =
+  $("boDocumentSection");
+
+const boDocumentInfo =
+  $("boDocumentInfo");
+
+const boDocumentPages =
+  $("boDocumentPages");
+
+const boCloseDocumentButton =
+  $("boCloseDocumentButton");
+
+const boRefreshButton =
+  $("boRefreshButton");
+
+const boExitButton =
+  $("boExitButton");
+
+const boActionStatus =
+  $("boActionStatus");
+
+
+/* ==========================================================
+   BACK OFFICE HELPERS
+========================================================== */
+
+function setBOLoginStatus(
+  text,
+  type=""
+){
+
+  boLoginStatus.textContent =
+    text || "";
+
+  boLoginStatus.className =
+    "bo-status" +
+    (
+      type
+        ? " " + type
+        : ""
+    );
+}
+
+
+function setBOActionStatus(
+  text,
+  type=""
+){
+
+  boActionStatus.textContent =
+    text || "";
+
+  boActionStatus.className =
+    "bo-status" +
+    (
+      type
+        ? " " + type
+        : ""
+    );
+}
+
+
+function boHeaders(){
+
+  return {
+    "Accept":
+      "application/json",
+
+    "Content-Type":
+      "application/json",
+
+    "X-Admin-Key":
+      boAdminKey
+  };
+}
+
+
+async function boGet(path){
+
+  let response;
+
+  try{
+
+    response =
+      await fetch(
+        PAYMENT_API_BASE + path,
+        {
+          method:"GET",
+          cache:"no-store",
+          headers:{
+            "Accept":
+              "application/json",
+
+            "X-Admin-Key":
+              boAdminKey
+          }
+        }
+      );
+
+  }catch(error){
+
+    throw new Error(
+      "The Payment API could not be reached."
+    );
+  }
+
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
+
+  if(!response.ok){
+
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "Back Office request failed."
+    );
+  }
+
+  return data;
+}
+
+
+async function boPost(
+  path,
+  body
+){
+
+  let response;
+
+  try{
+
+    response =
+      await fetch(
+        PAYMENT_API_BASE + path,
+        {
+          method:"POST",
+          headers:
+            boHeaders(),
+          body:
+            JSON.stringify(
+              body || {}
+            )
+        }
+      );
+
+  }catch(error){
+
+    throw new Error(
+      "The Payment API could not be reached."
+    );
+  }
+
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
+
+  if(
+    !response.ok ||
+    data.ok === false
+  ){
+
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "Back Office action failed."
+    );
+  }
+
+  return data;
+}
+
+
+function boPaymentId(payment){
+
+  return clean(
+    payment.payment_id ||
+    payment.id
+  );
+}
+
+
+function boJobId(payment){
+
+  return clean(
+    payment.job_id ||
+    payment.work_id
+  );
+}
+
+
+function boStatus(payment){
+
+  return clean(
+    payment.payment_status ||
+    payment.status ||
+    "unknown"
+  );
+}
+
+
+function boStatusLabel(payment){
+
+  const status =
+    normalizeStatus(
+      boStatus(payment)
+    );
+
+  if(isVerified(status)){
+
+    return "PAYMENT VERIFIED";
+  }
+
+  if(isReported(status)){
+
+    return "PAYMENT REPORTED — AWAITING VERIFICATION";
+  }
+
+  return (
+    boStatus(payment) ||
+    "UNKNOWN"
+  ).replace(
+    /_/g,
+    " "
+  ).toUpperCase();
+}
+
+
+function boDocumentSaved(payment){
+
+  return !!(
+    payment.document_saved ||
+    payment.saved_document ||
+    payment.document_snapshot_saved ||
+    payment.snapshot_saved ||
+    payment.document_version ||
+    payment.version_id
+  );
+}
+
+
+function boVersion(payment){
+
+  return clean(
+    payment.version_id ||
+    payment.document_version ||
+    payment.document_version_id
+  );
+}
+
+
+/* ==========================================================
+   BACK OFFICE RENDER
+========================================================== */
+
+function renderBackOffice(){
+
+  const payments =
+    Array.isArray(boPayments)
+      ? boPayments
+      : [];
+
+  const pending =
+    payments.filter(
+      payment =>
+        isReported(
+          boStatus(payment)
+        )
+    ).length;
+
+  const verified =
+    payments.filter(
+      payment =>
+        isVerified(
+          boStatus(payment)
+        )
+    ).length;
+
+  boReportCount.textContent =
+    payments.length;
+
+  boPendingCount.textContent =
+    pending;
+
+  boVerifiedCount.textContent =
+    verified;
+
+  if(!payments.length){
+
+    boPaymentsList.innerHTML =
+      `
+        <div class="bo-empty">
+          No payment reports are currently available.
+        </div>
+      `;
+
+    return;
+  }
+
+  boPaymentsList.innerHTML =
+    payments.map(
+      (payment,index) => {
+
+        const id =
+          boPaymentId(payment);
+
+        const job =
+          boJobId(payment);
+
+        const status =
+          boStatus(payment);
+
+        const verified =
+          isVerified(status);
+
+        const reported =
+          isReported(status);
+
+        const saved =
+          boDocumentSaved(payment);
+
+        const version =
+          boVersion(payment);
+
+        const amountText =
+          formatMoney(
+            payment.amount
+          );
+
+        const reference =
+          clean(
+            payment.payment_reference ||
+            payment.reference ||
+            payment.transfer_reference
+          );
+
+        const serviceName =
+          clean(
+            payment.service
+          ) ||
+          "Business Center Service";
+
+        return `
+          <article
+            class="bo-payment-card card"
+            data-bo-index="${index}"
+          >
+
+            <div class="
+              bo-payment-status
+              ${verified ? "verified" : ""}
+              ${reported ? "reported" : ""}
+            ">
+              ${escapeHTML(
+                boStatusLabel(payment)
+              )}
+            </div>
+
+            <div class="bo-row">
+              <div class="bo-label">
+                PAYMENT ID
+              </div>
+              <div class="bo-value">
+                ${escapeHTML(id || "—")}
+              </div>
+            </div>
+
+            <div class="bo-row">
+              <div class="bo-label">
+                JOB ID
+              </div>
+              <div class="bo-value">
+                ${escapeHTML(job || "—")}
+              </div>
+            </div>
+
+            <div class="bo-row">
+              <div class="bo-label">
+                AMOUNT
+              </div>
+              <div class="bo-value">
+                ${escapeHTML(amountText)}
+              </div>
+            </div>
+
+            <div class="bo-row">
+              <div class="bo-label">
+                PAYMENT REFERENCE
+              </div>
+              <div class="bo-value">
+                ${escapeHTML(reference || "—")}
+              </div>
+            </div>
+
+            <div class="bo-row">
+              <div class="bo-label">
+                SERVICE
+              </div>
+              <div class="bo-value">
+                ${escapeHTML(serviceName)}
+              </div>
+            </div>
+
+            <div class="bo-row">
+              <div class="bo-label">
+                DOCUMENT VERSION
+              </div>
+              <div class="bo-value">
+                ${escapeHTML(version || "—")}
+              </div>
+            </div>
+
+            <div class="bo-document-note">
+              ${
+                saved
+                  ? "✓ Exact document snapshot is saved and available to this payment."
+                  : "⚠ The Payment API has not confirmed a saved document snapshot."
+              }
+            </div>
+
+            <div class="bo-action-row">
+
+              <button
+                class="bo-action bo-view-button"
+                type="button"
+                onclick="boViewDocument(${index})"
+              >
+                VIEW DOCUMENT
+              </button>
+
+              ${
+                verified
+                  ? `
+                    <button
+                      class="bo-action bo-verify-button"
+                      type="button"
+                      disabled
+                    >
+                      ✓ VERIFIED
+                    </button>
+                  `
+                  : `
+                    <button
+                      class="bo-action bo-verify-button"
+                      type="button"
+                      onclick="boVerifyPayment(${index})"
+                    >
+                      VERIFY PAYMENT
+                    </button>
+                  `
+              }
+
+              ${
+                verified
+                  ? `
+                    <button
+                      class="bo-action bo-unlock-button active"
+                      type="button"
+                      onclick="boUnlockDownload(${index})"
+                    >
+                      🔓 UNLOCK DOWNLOAD
+                    </button>
+                  `
+                  : `
+                    <button
+                      class="bo-action bo-unlock-button"
+                      type="button"
+                      disabled
+                    >
+                      🔒 VERIFY PAYMENT FIRST
+                    </button>
+                  `
+              }
+
+            </div>
+
+          </article>
+        `;
+      }
+    ).join("");
+}
+
+
+function escapeHTML(value){
+
+  return String(
+    value === undefined ||
+    value === null
+      ? ""
+      : value
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+}
+
+
+/* ==========================================================
+   BACK OFFICE LOAD
+========================================================== */
+
+async function loadBackOffice(){
+
+  if(!boAuthenticated){
+
+    return;
+  }
+
+  setBOActionStatus(
+    "Loading payment reports..."
+  );
+
+  boRefreshButton.disabled =
+    true;
+
+  try{
+
+    const data =
+      await boGet(
+        BO_API.list
+      );
+
+    boPayments =
+      Array.isArray(
+        data.payments
+      )
+        ? data.payments
+        : (
+            Array.isArray(data)
+              ? data
+              : []
+          );
+
+    renderBackOffice();
+
+    setBOActionStatus(
+      "Payment reports refreshed.",
+      "success"
+    );
+
+  }catch(error){
+
+    console.error(
+      "BACK OFFICE LOAD ERROR:",
+      error
+    );
+
+    boPayments =
+      [];
+
+    renderBackOffice();
+
+    setBOActionStatus(
+      error.message ||
+      "Unable to load payment reports.",
+      "error"
+    );
+
+  }finally{
+
+    boRefreshButton.disabled =
+      false;
+  }
+}
+
+
+/* ==========================================================
+   BACK OFFICE LOGIN
+========================================================== */
+
+async function openBackOffice(){
+
+  const key =
+    clean(
+      boAdminKeyInput.value
+    );
+
+  if(!key){
+
+    setBOLoginStatus(
+      "Enter the Back Office access key.",
+      "error"
+    );
+
+    boAdminKeyInput.focus();
+
+    return;
+  }
+
+  boLoginButton.disabled =
+    true;
+
+  setBOLoginStatus(
+    "Authenticating..."
+  );
+
+  try{
+
+    /*
+     * Authentication is performed by the Payment API.
+     *
+     * The key is NEVER considered valid merely because
+     * it exists in this page.
+     */
+
+    await boGet(
+      BO_API.list
+    );
+
+    boAdminKey =
+      key;
+
+    boAuthenticated =
+      true;
+
+    boLoginSection
+      .classList
+      .add("hidden");
+
+    boDashboard
+      .classList
+      .remove("hidden");
+
+    setBOLoginStatus(
+      ""
+    );
+
+    await loadBackOffice();
+
+  }catch(error){
+
+    boAuthenticated =
+      false;
+
+    boAdminKey =
+      "";
+
+    setBOLoginStatus(
+      error.message ||
+      "Back Office authentication failed.",
+      "error"
+    );
+
+  }finally{
+
+    boLoginButton.disabled =
+      false;
+  }
+}
+
+
+/* ==========================================================
+   BACK OFFICE VERIFY PAYMENT
+========================================================== */
+
+async function boVerifyPayment(index){
+
+  if(!boAuthenticated){
+    return;
+  }
+
+  const payment =
+    boPayments[index];
+
+  if(!payment){
+
+    setBOActionStatus(
+      "Payment report no longer exists.",
+      "error"
+    );
+
+    return;
+  }
+
+  const paymentId =
+    boPaymentId(payment);
+
+  if(!paymentId){
+
+    setBOActionStatus(
+      "This payment has no Payment ID.",
+      "error"
+    );
+
+    return;
+  }
+
+  setBOActionStatus(
+    "Verifying payment..."
+  );
+
+  try{
+
+    const data =
+      await boPost(
+        BO_API.verify,
+        {
+          payment_id:
+            paymentId,
+
+          job_id:
+            boJobId(payment),
+
+          action:
+            "verify_payment"
+        }
+      );
+
+    setBOActionStatus(
+      data.message ||
+      "Payment verified successfully.",
+      "success"
+    );
+
+    await loadBackOffice();
+
+  }catch(error){
+
+    console.error(
+      "BACK OFFICE VERIFY ERROR:",
+      error
+    );
+
+    setBOActionStatus(
+      error.message ||
+      "Payment verification failed.",
+      "error"
+    );
+  }
+}
+
+
+/* ==========================================================
+   BACK OFFICE UNLOCK DOWNLOAD
+========================================================== */
+
+async function boUnlockDownload(index){
+
+  if(!boAuthenticated){
+    return;
+  }
+
+  const payment =
+    boPayments[index];
+
+  if(!payment){
+
+    setBOActionStatus(
+      "Payment report no longer exists.",
+      "error"
+    );
+
+    return;
+  }
+
+  const paymentId =
+    boPaymentId(payment);
+
+  if(!paymentId){
+
+    setBOActionStatus(
+      "This payment has no Payment ID.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(
+    !isVerified(
+      boStatus(payment)
+    )
+  ){
+
+    setBOActionStatus(
+      "Payment must be verified before download can be unlocked.",
+      "warning"
+    );
+
+    return;
+  }
+
+  setBOActionStatus(
+    "Unlocking the already-saved document..."
+  );
+
+  try{
+
+    const data =
+      await boPost(
+        BO_API.unlock,
+        {
+          payment_id:
+            paymentId,
+
+          job_id:
+            boJobId(payment),
+
+          version_id:
+            boVersion(payment),
+
+          action:
+            "unlock_download"
+        }
+      );
+
+    setBOActionStatus(
+      data.message ||
+      "Download unlocked. The existing saved document remains unchanged.",
+      "success"
+    );
+
+    await loadBackOffice();
+
+  }catch(error){
+
+    console.error(
+      "BACK OFFICE UNLOCK ERROR:",
+      error
+    );
+
+    setBOActionStatus(
+      error.message ||
+      "Download unlock failed.",
+      "error"
+    );
+  }
+}
+
+
+/* ==========================================================
+   BACK OFFICE VIEW SAVED DOCUMENT
+========================================================== */
+
+async function boViewDocument(index){
+
+  if(!boAuthenticated){
+    return;
+  }
+
+  const payment =
+    boPayments[index];
+
+  if(!payment){
+
+    setBOActionStatus(
+      "Payment report no longer exists.",
+      "error"
+    );
+
+    return;
+  }
+
+  const paymentId =
+    boPaymentId(payment);
+
+  if(!paymentId){
+
+    setBOActionStatus(
+      "This payment has no Payment ID.",
+      "error"
+    );
+
+    return;
+  }
+
+  setBOActionStatus(
+    "Opening the saved document..."
+  );
+
+  try{
+
+    const query =
+      "?payment_id=" +
+      encodeURIComponent(
+        paymentId
+      );
+
+    const data =
+      await boGet(
+        BO_API.document +
+        query
+      );
+
+    const document =
+      data.document ||
+      data;
+
+    const saved =
+      !!(
+        document.document_saved ||
+        document.saved ||
+        document.snapshot_saved ||
+        document.version_id ||
+        document.document_version
+      );
+
+    const documentVersion =
+      clean(
+        document.version_id ||
+        document.document_version ||
+        boVersion(payment)
+      );
+
+    const documentFilename =
+      clean(
+        document.filename ||
+        document.document_filename ||
+        payment.filename
+      );
+
+    const documentPages =
+      normalizePages(
+        document.pages ||
+        document.document_pages
+      );
+
+    const documentText =
+      clean(
+        document.document_text ||
+        document.text ||
+        document.content
+      );
+
+    boDocumentInfo.innerHTML =
+      `
+        <strong>
+          ${saved ? "✓ EXACT SAVED SNAPSHOT" : "DOCUMENT"}
+        </strong>
+
+        <br><br>
+
+        Payment ID:
+        ${escapeHTML(paymentId)}
+
+        <br>
+
+        Job ID:
+        ${escapeHTML(
+          boJobId(payment) || "—"
+        )}
+
+        <br>
+
+        Document Version:
+        ${escapeHTML(
+          documentVersion || "—"
+        )}
+
+        <br>
+
+        Filename:
+        ${escapeHTML(
+          documentFilename || "—"
+        )}
+
+        <br>
+
+        Pages:
+        ${documentPages.length}
+
+        <br><br>
+
+        This viewer displays the document already saved for
+        this payment. It does not generate a new document.
+      `;
+
+    const pagesToShow =
+      documentPages.length
+        ? documentPages
+        : (
+            documentText
+              ? [
+                  {
+                    page_number:1,
+                    content:documentText
+                  }
+                ]
+              : []
+          );
+
+    if(!pagesToShow.length){
+
+      boDocumentPages.innerHTML =
+        `
+          <div class="bo-empty">
+            The Payment API did not return the saved document content.
+          </div>
+        `;
+
+    }else{
+
+      boDocumentPages.innerHTML =
+        pagesToShow
+          .map(
+            (page,index) =>
+              `
+                <div class="bo-page">
+
+                  <div class="bo-page-title">
+                    PAGE ${
+                      Number(
+                        page.page_number ||
+                        page.position ||
+                        index + 1
+                      )
+                    }
+                  </div>
+
+                  <div class="bo-page-content">
+                    ${escapeHTML(
+                      page.content
+                    )}
+                  </div>
+
+                </div>
+              `
+          )
+          .join("");
+    }
+
+    boDocumentSection
+      .classList
+      .add("show");
+
+    boDocumentSection
+      .scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+
+    setBOActionStatus(
+      "Saved document opened.",
+      "success"
+    );
+
+  }catch(error){
+
+    console.error(
+      "BACK OFFICE DOCUMENT ERROR:",
+      error
+    );
+
+    setBOActionStatus(
+      error.message ||
+      "Unable to open the saved document.",
+      "error"
+    );
+  }
+}
+
+
+/* ==========================================================
+   BACK OFFICE EXIT
+========================================================== */
+
+function exitBackOffice(){
+
+  boAuthenticated =
+    false;
+
+  boAdminKey =
+    "";
+
+  boPayments =
+    [];
+
+  boAdminKeyInput.value =
+    "";
+
+  boDashboard
+    .classList
+    .add("hidden");
+
+  boLoginSection
+    .classList
+    .remove("hidden");
+
+  boDocumentSection
+    .classList
+    .remove("show");
+
+  boDocumentPages.innerHTML =
+    "";
+
+  setBOLoginStatus(
+    ""
+  );
+
+  setBOActionStatus(
+    ""
+  );
+
+  if(
+    window.history.length > 1
+  ){
+
+    window.history.back();
+
+  }else{
+
+    window.location.href =
+      "review.html";
+  }
+}
+
+
+function closeDocumentView(){
+
+  boDocumentSection
+    .classList
+    .remove("show");
+}
+
+
+/* ==========================================================
+   BACK OFFICE BUTTONS
+========================================================== */
+
+boLoginButton.addEventListener(
+  "click",
+  openBackOffice
+);
+
+boRefreshButton.addEventListener(
+  "click",
+  loadBackOffice
+);
+
+boExitButton.addEventListener(
+  "click",
+  exitBackOffice
+);
+
+boCloseDocumentButton.addEventListener(
+  "click",
+  closeDocumentView
+);
+
+boAdminKeyInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key === "Enter"
+    ){
+
+      openBackOffice();
+    }
+  }
+);
+
+
+/* ==========================================================
+   CUSTOMER BUTTONS
 ========================================================== */
 
 reportButton.addEventListener(
@@ -2337,20 +4045,40 @@ backButton.addEventListener(
 
 
 /* ==========================================================
-   INITIALIZATION
+   BACK OFFICE MODE INITIALIZATION
 ========================================================== */
 
-async function start(){
+function initializeBackOfficeMode(){
+
+  customerPaymentView
+    .classList
+    .add("hidden");
+
+  backOfficeView
+    .classList
+    .add("show");
+
+  serviceBadge.textContent =
+    "BACK OFFICE";
+
+  document.title =
+    "Back Office — Naija Pocket Business Center";
+
+  boAdminKeyInput.focus();
+}
+
+
+/* ==========================================================
+   CUSTOMER MODE INITIALIZATION
+========================================================== */
+
+async function startCustomerPayment(){
 
   serviceBadge.textContent =
     service || "Service";
 
   amountValue.textContent =
     formatMoney(amount);
-
-  /*
-   * First recover the exact Review snapshot.
-   */
 
   const snapshotFound =
     applySnapshot();
@@ -2371,11 +4099,6 @@ async function start(){
 
     return;
   }
-
-  /*
-   * Restore a locally remembered Payment ID if present.
-   * This prevents unnecessary duplicate payment creation.
-   */
 
   if(
     !paymentId &&
@@ -2416,11 +4139,6 @@ async function start(){
     }
   }
 
-  /*
-   * If Review supplied a Payment ID through the URL,
-   * respect it.
-   */
-
   if(paymentId){
 
     await loadExistingPayment();
@@ -2437,13 +4155,6 @@ async function start(){
       return;
     }
   }
-
-  /*
-   * Before creating a new payment, ask the payment server
-   * whether a payment already exists for this job.
-   *
-   * The backend itself also protects against duplicates.
-   */
 
   const existing =
     await loadExistingPayment();
@@ -2463,15 +4174,6 @@ async function start(){
     return;
   }
 
-  /*
-   * No existing payment:
-   *
-   * THIS is where the payment workflow is activated.
-   *
-   * It creates the unique Payment ID and saves the exact
-   * Review snapshot through /api/payment/create.
-   */
-
   await createPayment();
 }
 
@@ -2480,9 +4182,14 @@ async function start(){
    START
 ========================================================== */
 
-start();
+if(isBackOfficeMode){
 
-</script>
+  initializeBackOfficeMode();
 
-</body>
+}else{
+
+  startCustomerPayment();
+
+}
+</script></body>
 </html>
