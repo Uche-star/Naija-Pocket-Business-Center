@@ -1,1482 +1,4416 @@
-from __future__ import annotations
 
-import io
-import json
-import re
-import xml.etree.ElementTree as ET
-import os
-import sqlite3
-import urllib.error
-import urllib.request
-import uuid
-import zipfile
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any
-from xml.sax.saxutils import escape
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+<title>Make Payment — Naija Pocket Business Center</title>
+
+<style>
+:root{
+  --black:#050505;
+  --panel:#101010;
+  --panel2:#171717;
+  --gold:#d4af37;
+  --gold2:#f0cf63;
+  --green:#008000;
+  --green2:#00a000;
+  --red:#b00020;
+  --white:#fff;
+  --muted:#999;
+  --line:rgba(212,175,55,.25);
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  background:var(--black);
+  color:var(--white);
+  font-family:Inter,Arial,sans-serif;
+}
+
+body{
+  min-height:100vh;
+}
+
+button,input,textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.header{
+  background:#080808;
+  border-bottom:1px solid var(--line);
+  padding:10px 12px;
+}
+
+.header-inner{
+  max-width:900px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.brand-title{
+  margin:0;
+  color:var(--gold2);
+  font-size:16px;
+  font-weight:900;
+}
+
+.brand-subtitle{
+  margin-top:2px;
+  color:#777;
+  font-size:9px;
+}
+
+.service-badge{
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:6px 9px;
+  color:var(--gold2);
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.main{
+  width:100%;
+  max-width:900px;
+  margin:auto;
+  padding:10px;
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:12px;
+  margin-bottom:9px;
+}
+
+.title{
+  margin:0;
+  color:var(--gold2);
+  font-size:18px;
+  font-weight:900;
+}
+
+.subtitle{
+  margin:5px 0 0;
+  color:#999;
+  font-size:10px;
+  line-height:1.5;
+}
+
+.status-card{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  align-items:center;
+}
+
+.status-label{
+  color:#777;
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.status-value{
+  color:var(--gold2);
+  font-size:11px;
+  font-weight:900;
+  text-align:right;
+}
+
+.status-message{
+  grid-column:1/-1;
+  color:#aaa;
+  font-size:9px;
+  line-height:1.45;
+}
+
+.amount-card{
+  text-align:center;
+  background:#070707;
+  border:1px solid rgba(212,175,55,.35);
+}
+
+.amount-label{
+  color:#888;
+  font-size:9px;
+  font-weight:800;
+}
+
+.amount-value{
+  margin-top:3px;
+  color:var(--gold2);
+  font-size:30px;
+  font-weight:900;
+}
+
+.details-card{
+  background:var(--panel);
+}
+
+.section-title{
+  color:var(--gold2);
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:7px;
+}
+
+.details{
+  color:#ddd;
+  font-size:10px;
+  line-height:1.65;
+  white-space:pre-wrap;
+}
+
+.payment-id-box{
+  margin-top:9px;
+  padding:9px;
+  border-radius:8px;
+  background:#050505;
+  border:1px solid rgba(212,175,55,.25);
+}
+
+.payment-id-label{
+  color:#777;
+  font-size:8px;
+  font-weight:800;
+}
+
+.payment-id-value{
+  margin-top:3px;
+  color:var(--gold2);
+  font-size:11px;
+  font-weight:900;
+  word-break:break-all;
+}
+
+.bank-card{
+  background:#0b0b0b;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.bank-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.bank-row:last-child{
+  border-bottom:0;
+}
+
+.bank-label{
+  color:#777;
+  font-size:9px;
+  font-weight:800;
+}
+
+.bank-value{
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  text-align:right;
+  word-break:break-word;
+}
+
+.reference-card{
+  background:#0d0d0d;
+}
+
+.reference-input{
+  width:100%;
+  min-height:42px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;
+  background:#050505;
+  color:#fff;
+  outline:none;
+  padding:10px;
+  font-size:11px;
+}
+
+.reference-input:focus{
+  border-color:var(--gold);
+}
+
+.note-input{
+  width:100%;
+  min-height:65px;
+  resize:vertical;
+  margin-top:7px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;
+  background:#050505;
+  color:#fff;
+  outline:none;
+  padding:10px;
+  font-size:10px;
+}
+
+.note-input:focus{
+  border-color:var(--gold);
+}
+
+.primary-button,
+.report-button,
+.download-button,
+.back-button{
+  width:100%;
+  min-height:46px;
+  border:0;
+  border-radius:9px;
+  margin-top:8px;
+  font-size:10px;
+  font-weight:900;
+}
+
+.primary-button{
+  background:var(--gold);
+  color:#000;
+}
+
+.primary-button:disabled,
+.report-button:disabled,
+.download-button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.report-button{
+  background:var(--green);
+  color:#fff;
+}
+
+.download-button{
+  background:#242424;
+  color:#777;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.download-button.active{
+  background:var(--green2);
+  color:#fff;
+  border-color:var(--green2);
+  cursor:pointer;
+}
+
+.back-button{
+  background:var(--red);
+  color:#fff;
+}
+
+.message{
+  min-height:20px;
+  margin:8px 0;
+  color:#888;
+  text-align:center;
+  font-size:9px;
+  line-height:1.45;
+}
+
+.message.error{
+  color:#ff7777;
+}
+
+.message.success{
+  color:#75dc99;
+}
+
+.message.warning{
+  color:#f0cf63;
+}
+
+.progress{
+  height:5px;
+  margin-top:8px;
+  border-radius:10px;
+  overflow:hidden;
+  background:#222;
+}
+
+.progress-bar{
+  width:0%;
+  height:100%;
+  background:var(--gold);
+  transition:width .25s ease;
+}
+
+.download-area{
+  display:none;
+}
+
+.download-area.show{
+  display:block;
+}
+
+.locked-note{
+  padding:9px;
+  border-radius:8px;
+  background:#080808;
+  border:1px solid rgba(255,255,255,.07);
+  color:#888;
+  font-size:9px;
+  line-height:1.5;
+}
+
+.saved-note{
+  padding:9px;
+  border-radius:8px;
+  background:rgba(0,128,0,.08);
+  border:1px solid rgba(0,128,0,.35);
+  color:#9ddd9d;
+  font-size:9px;
+  line-height:1.5;
+}
+
+.hidden{
+  display:none!important;
+}
 
 
-# ============================================================
-# Naija Pocket Business Center
-# payment_api.py
-#
-# PURPOSE:
-#   This API handles ONLY the payment/download side of the flow.
-#   The existing document/intelligence API remains separate.
-#
-# HANDLES:
-#   /api/payment/create
-#   /api/payment/report
-#   /api/payment/status
-#   /api/payment/complete
-#   /api/customer-care/payments
-#   /api/customer-care/payment/verify
-#   /api/download
-#
-# DOES NOT HANDLE:
-#   /api/chat
-#   /api/upload
-#   /api/correct
-#   document generation
-#   review generation
-# ============================================================
+/* ==========================================================
+   BACK OFFICE
+========================================================== */
 
-APP_VERSION = "payment-download-v2-exact-review-snapshot"
+#backOfficeView{
+  display:none;
+}
 
-BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = Path(os.getenv("PAYMENT_DB_PATH", str(BASE_DIR / "payment_gateway.db")))
-DOWNLOAD_DIR = Path(os.getenv("DOWNLOAD_DIR", str(BASE_DIR / "downloads")))
-DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
+body.back-office-mode #customerPaymentView{
+  display:none;
+}
 
-# Example:
-# https://your-old-api.onrender.com
-OLD_API_BASE_URL = os.getenv("OLD_API_BASE_URL", "").strip().rstrip("/")
+body.back-office-mode #backOfficeView{
+  display:block;
+}
 
-# Optional shared secret. If configured, it is sent to the old API bridge.
-INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "").strip()
+body.back-office-mode .service-badge{
+  color:var(--gold2);
+}
 
-DEFAULT_CURRENCY = "NGN"
-DEFAULT_PAYMENT_METHOD = "bank_transfer"
+.bo-header-card{
+  background:#080808;
+}
 
-app = FastAPI(
-    title="Naija Pocket Business Center Payment API",
-    version=APP_VERSION,
-)
+.bo-title{
+  margin:0;
+  color:var(--gold2);
+  font-size:19px;
+  font-weight:900;
+}
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+.bo-subtitle{
+  margin:5px 0 0;
+  color:#999;
+  font-size:10px;
+  line-height:1.5;
+}
+
+.bo-key-input{
+  width:100%;
+  min-height:44px;
+  margin-top:9px;
+  border:1px solid rgba(212,175,55,.25);
+  border-radius:8px;
+  background:#050505;
+  color:#fff;
+  outline:none;
+  padding:10px;
+  font-size:11px;
+}
+
+.bo-key-input:focus{
+  border-color:var(--gold);
+}
+
+.bo-button{
+  width:100%;
+  min-height:44px;
+  border:0;
+  border-radius:9px;
+  margin-top:8px;
+  font-size:10px;
+  font-weight:900;
+}
+
+.bo-load{
+  background:var(--gold);
+  color:#000;
+}
+
+.bo-refresh{
+  background:#252525;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.bo-exit{
+  background:var(--red);
+  color:#fff;
+}
+
+.bo-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+
+.bo-stat{
+  min-width:0;
+  padding:10px 7px;
+  text-align:center;
+  border-radius:8px;
+  background:#070707;
+  border:1px solid rgba(212,175,55,.18);
+}
+
+.bo-stat-number{
+  color:var(--gold2);
+  font-size:18px;
+  font-weight:900;
+}
+
+.bo-stat-label{
+  margin-top:3px;
+  color:#777;
+  font-size:7px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.bo-message{
+  min-height:18px;
+  margin:7px 0;
+  text-align:center;
+  color:#999;
+  font-size:9px;
+  line-height:1.4;
+}
+
+.bo-message.error{
+  color:#ff7777;
+}
+
+.bo-message.success{
+  color:#75dc99;
+}
+
+.bo-message.warning{
+  color:#f0cf63;
+}
+
+.bo-record{
+  background:#0b0b0b;
+  border:1px solid rgba(212,175,55,.18);
+  border-radius:10px;
+  padding:10px;
+  margin-bottom:8px;
+}
+
+.bo-record-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+}
+
+.bo-record-title{
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+.bo-status{
+  flex:none;
+  padding:5px 7px;
+  border-radius:12px;
+  font-size:7px;
+  font-weight:900;
+  text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.12);
+  color:#aaa;
+}
+
+.bo-status.saved{
+  color:var(--gold2);
+  border-color:rgba(212,175,55,.35);
+}
+
+.bo-status.reported{
+  color:#f0cf63;
+  border-color:rgba(240,207,99,.35);
+}
+
+.bo-status.verified{
+  color:#75dc99;
+  border-color:rgba(0,160,0,.45);
+}
+
+.bo-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:9px;
+}
+
+.bo-field{
+  padding:7px;
+  border-radius:7px;
+  background:#050505;
+  border:1px solid rgba(255,255,255,.06);
+  min-width:0;
+}
+
+.bo-field-label{
+  color:#666;
+  font-size:7px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.bo-field-value{
+  margin-top:2px;
+  color:#ddd;
+  font-size:9px;
+  font-weight:800;
+  word-break:break-word;
+}
+
+.bo-actions{
+  margin-top:8px;
+}
+
+.bo-action{
+  width:100%;
+  min-height:42px;
+  border:0;
+  border-radius:8px;
+  margin-top:6px;
+  font-size:9px;
+  font-weight:900;
+}
+
+.bo-view{
+  background:#242424;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.bo-activate{
+  background:var(--green);
+  color:#fff;
+}
+
+.bo-activate:disabled,
+.bo-view:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.bo-document{
+  display:none;
+  margin-top:8px;
+  padding:9px;
+  background:#050505;
+  border:1px solid rgba(212,175,55,.18);
+  border-radius:8px;
+  color:#ddd;
+  font-size:9px;
+  line-height:1.55;
+  white-space:pre-wrap;
+  max-height:300px;
+  overflow:auto;
+}
+
+.bo-document.show{
+  display:block;
+}
+
+.bo-empty{
+  padding:18px 10px;
+  text-align:center;
+  color:#777;
+  font-size:9px;
+  line-height:1.5;
+  border:1px dashed rgba(255,255,255,.1);
+  border-radius:9px;
+}
+
+.bo-note{
+  padding:9px;
+  margin-top:8px;
+  border-radius:8px;
+  background:#080808;
+  border:1px solid rgba(255,255,255,.06);
+  color:#777;
+  font-size:8px;
+  line-height:1.5;
+}
+
+@media(max-width:600px){
+
+  .main{
+    padding:8px 7px 14px;
+  }
+
+  .header{
+    padding:9px 8px;
+  }
+
+  .brand-title{
+    font-size:14px;
+  }
+
+  .title{
+    font-size:16px;
+  }
+
+  .amount-value{
+    font-size:27px;
+  }
+
+  .card{
+    padding:10px;
+  }
+
+  .primary-button,
+  .report-button,
+  .download-button,
+  .back-button,
+  .bo-button,
+  .bo-action{
+    min-height:44px;
+  }
+
+  .bo-stats{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .bo-grid{
+    grid-template-columns:1fr;
+  }
+
+  .bo-record-head{
+    flex-direction:column;
+  }
+
+  .bo-status{
+    align-self:flex-start;
+  }
+}
+
+@media(min-width:800px){
+
+  .main{
+    padding:18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div class="header-inner">
+
+    <div>
+
+      <h1 class="brand-title">
+        Naija Pocket Business Center
+      </h1>
+
+      <div class="brand-subtitle">
+        Secure payment and document delivery
+      </div>
+
+    </div>
+
+    <div
+      id="serviceBadge"
+      class="service-badge"
+    >
+      Service
+    </div>
+
+  </div>
+
+</header>
 
 
-# ============================================================
-# GENERAL HELPERS
-# ============================================================
+<!-- ========================================================
+     CUSTOMER PAYMENT MODE
+========================================================= -->
 
-def now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+<main
+  id="customerPaymentView"
+  class="main"
+>
 
+  <section class="card">
 
-def clean(value: Any) -> str:
-    if value is None:
-        return ""
-    return str(value).strip()
+    <h2 class="title">
+      Payment Details
+    </h2>
 
+    <p class="subtitle">
+      Your exact reviewed document is connected to this payment.
+      Once payment is created, the document is saved securely for download.
+    </p>
 
-def money(value: Any) -> float:
-    try:
-        return round(float(value), 2)
-    except (TypeError, ValueError):
-        return 0.0
-
-
-def json_response_error(
-    code: str,
-    message: str,
-    status_code: int = 400,
-    **extra: Any,
-) -> JSONResponse:
-    payload = {
-        "ok": False,
-        "error": code,
-        "message": message,
-    }
-    payload.update(extra)
-    return JSONResponse(payload, status_code=status_code)
+  </section>
 
 
-def normalize_status(status: Any) -> str:
-    return clean(status).lower().replace("-", "_").replace(" ", "_")
+  <section class="card status-card">
+
+    <div class="status-label">
+      Payment Status
+    </div>
+
+    <div
+      id="statusValue"
+      class="status-value"
+    >
+      Preparing...
+    </div>
+
+    <div
+      id="statusMessage"
+      class="status-message"
+    >
+      Preparing your secure payment.
+    </div>
+
+    <div class="progress">
+
+      <div
+        id="progressBar"
+        class="progress-bar"
+      ></div>
+
+    </div>
+
+  </section>
 
 
-def payment_is_reported(status: str) -> bool:
-    return normalize_status(status) in {
-        "reported",
-        "payment_reported",
-        "verification_pending",
-        "awaiting_verification",
-        "pending_verification",
-        "payment_pending",
-    }
+  <section class="card amount-card">
+
+    <div class="amount-label">
+      AMOUNT TO PAY
+    </div>
+
+    <div
+      id="amountValue"
+      class="amount-value"
+    >
+      ₦0
+    </div>
+
+  </section>
 
 
-def payment_is_verified(status: str) -> bool:
-    return normalize_status(status) in {
-        "verified",
-        "approved",
-        "paid",
-        "payment_verified",
-        "payment_confirmed",
-        "confirmed",
-        "activated",
-        "completed",
-        "complete",
-    }
+  <section class="card details-card">
+
+    <div class="section-title">
+      ORDER INFORMATION
+    </div>
+
+    <div
+      id="orderDetails"
+      class="details"
+    >
+      Preparing order details...
+    </div>
+
+    <div
+      id="paymentIdBox"
+      class="payment-id-box hidden"
+    >
+
+      <div class="payment-id-label">
+        PAYMENT ID
+      </div>
+
+      <div
+        id="paymentIdValue"
+        class="payment-id-value"
+      ></div>
+
+    </div>
+
+  </section>
 
 
-def payment_is_pending(status: str) -> bool:
-    return normalize_status(status) in {
-        "pending",
-        "created",
-        "initiated",
-        "reported",
-        "verification_pending",
-        "awaiting_verification",
-    }
+  <section class="card bank-card">
+
+    <div class="section-title">
+      MAKE YOUR PAYMENT
+    </div>
+
+    <div
+      class="details"
+      style="margin-bottom:6px;"
+    >
+      Transfer exactly the amount shown above.
+      After completing your bank transfer, enter your payment reference below.
+    </div>
+
+    <div class="bank-row">
+
+      <div class="bank-label">
+        Bank
+      </div>
+
+      <div
+        id="bankName"
+        class="bank-value"
+      >
+        Your Business Bank
+      </div>
+
+    </div>
+
+    <div class="bank-row">
+
+      <div class="bank-label">
+        Account Name
+      </div>
+
+      <div
+        id="accountName"
+        class="bank-value"
+      >
+        Naija Pocket Business Center
+      </div>
+
+    </div>
+
+    <div class="bank-row">
+
+      <div class="bank-label">
+        Account Number
+      </div>
+
+      <div
+        id="accountNumber"
+        class="bank-value"
+      >
+        0000000000
+      </div>
+
+    </div>
+
+  </section>
 
 
-# ============================================================
-# SQLITE PAYMENT STORE
-# ============================================================
+  <section class="card reference-card">
 
-def connect_db() -> sqlite3.Connection:
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.row_factory = sqlite3.Row
-    return conn
+    <div class="section-title">
+      PAYMENT REFERENCE
+    </div>
+
+    <input
+      id="paymentReference"
+      class="reference-input"
+      type="text"
+      autocomplete="off"
+      placeholder="Enter your bank transfer reference"
+    >
+
+    <textarea
+      id="paymentNote"
+      class="note-input"
+      placeholder="Optional note for Customer Care"
+    ></textarea>
+
+    <button
+      id="reportButton"
+      class="report-button"
+      type="button"
+      disabled
+    >
+      ✓ I HAVE MADE PAYMENT
+    </button>
+
+  </section>
 
 
-def init_db() -> None:
-    with connect_db() as conn:
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS payment_orders (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                payment_id TEXT NOT NULL UNIQUE,
-                job_id TEXT NOT NULL,
-                customer_id TEXT,
-                service TEXT,
-                amount REAL NOT NULL,
-                currency TEXT NOT NULL DEFAULT 'NGN',
-                payment_method TEXT NOT NULL,
-                payment_status TEXT NOT NULL DEFAULT 'pending',
-                payment_reference TEXT,
-                customer_note TEXT,
-                admin_note TEXT,
-                document_version TEXT,
-                document_filename TEXT,
-                document_payload TEXT,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL,
-                reported_at TEXT,
-                verified_at TEXT,
-                downloaded_at TEXT,
-                download_count INTEGER NOT NULL DEFAULT 0,
-                document_saved_path TEXT,
-                document_saved_at TEXT
+  <section
+    id="downloadArea"
+    class="card download-area"
+  >
+
+    <div class="section-title">
+      DOWNLOAD
+    </div>
+
+    <div
+      id="downloadNote"
+      class="locked-note"
+    >
+      Customer Care must verify your payment before the saved document can be downloaded.
+    </div>
+
+    <button
+      id="downloadButton"
+      class="download-button"
+      type="button"
+      disabled
+    >
+      🔒 DOWNLOAD DOCUMENT
+    </button>
+
+  </section>
+
+
+  <div
+    id="message"
+    class="message"
+  ></div>
+
+
+  <button
+    id="backButton"
+    class="back-button"
+    type="button"
+  >
+    BACK OFFICE
+  </button>
+
+</main>
+
+
+<!-- ========================================================
+     SINGLE BACK OFFICE
+
+     IMPORTANT:
+     This is the ONLY Back Office implementation.
+     It belongs to payment.html.
+
+     Workspace should only open:
+       /payment.html?mode=back_office
+
+     No Back Office logic is required inside Workspace.
+========================================================= -->
+
+<main
+  id="backOfficeView"
+  class="main"
+>
+
+  <section class="card bo-header-card">
+
+    <h2 class="bo-title">
+      Customer Care Back Office
+    </h2>
+
+    <p class="bo-subtitle">
+      View saved customer documents, confirm reported payments,
+      and activate download for the exact document already saved.
+    </p>
+
+    <input
+      id="boAdminKey"
+      class="bo-key-input"
+      type="password"
+      autocomplete="off"
+      placeholder="Enter Back Office access key"
+    >
+
+    <button
+      id="boLoadButton"
+      class="bo-button bo-load"
+      type="button"
+    >
+      LOAD SAVED DOCUMENTS
+    </button>
+
+    <button
+      id="boRefreshButton"
+      class="bo-button bo-refresh"
+      type="button"
+    >
+      REFRESH BACK OFFICE
+    </button>
+
+    <button
+      id="boExitButton"
+      class="bo-button bo-exit"
+      type="button"
+    >
+      EXIT BACK OFFICE
+    </button>
+
+    <div
+      id="boMessage"
+      class="bo-message"
+    ></div>
+
+  </section>
+
+
+  <section class="card">
+
+    <div class="section-title">
+      BACK OFFICE SUMMARY
+    </div>
+
+    <div class="bo-stats">
+
+      <div class="bo-stat">
+
+        <div
+          id="boTotal"
+          class="bo-stat-number"
+        >
+          0
+        </div>
+
+        <div class="bo-stat-label">
+          Saved
+        </div>
+
+      </div>
+
+
+      <div class="bo-stat">
+
+        <div
+          id="boReported"
+          class="bo-stat-number"
+        >
+          0
+        </div>
+
+        <div class="bo-stat-label">
+          Reported
+        </div>
+
+      </div>
+
+
+      <div class="bo-stat">
+
+        <div
+          id="boActivated"
+          class="bo-stat-number"
+        >
+          0
+        </div>
+
+        <div class="bo-stat-label">
+          Activated
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="card">
+
+    <div class="section-title">
+      SAVED DOCUMENTS
+    </div>
+
+    <div
+      id="boRecords"
+    >
+
+      <div class="bo-empty">
+        Enter the Back Office access key and tap LOAD SAVED DOCUMENTS.
+      </div>
+
+    </div>
+
+    <div class="bo-note">
+      Saved documents are listed independently of whether the customer
+      has reported payment. Reporting payment changes the payment state;
+      activation only unlocks the already-saved document.
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+"use strict";
+
+
+/* ============================================================
+   Naija Pocket Business Center
+   payment.html
+
+   CUSTOMER PAYMENT FLOW
+   ---------------------
+
+   The customer payment components from the supplied file
+   remain intact.
+
+
+   BACK OFFICE
+   -----------
+
+   There is ONE Back Office and it lives in this payment.html.
+
+   Workspace access should simply open:
+
+       /payment.html?mode=back_office
+
+   Payment page access uses the same URL.
+
+   The Back Office does not regenerate documents.
+
+   The saved document created by /api/payment/create is
+   the document that remains associated with the payment.
+
+   LOCAL BACK OFFICE KEY
+   ---------------------
+
+   The Back Office access key is checked locally inside
+   this HTML file.
+
+   It is NOT sent to the Payment API.
+   It is NOT read from Render.
+   It is NOT an environment variable.
+
+   Key:
+       NPBC-2026
+
+============================================================ */
+
+
+/*
+* CONFIRMED LIVE PAYMENT API
+*/
+
+const PAYMENT_API_BASE =
+  "https://naija-pocket-payment-api.onrender.com";
+
+
+/* ==========================================================
+   LOCAL BACK OFFICE ACCESS KEY
+
+   This key exists only in payment.html.
+   It is never included in an API request.
+========================================================== */
+
+const LOCAL_BACK_OFFICE_KEY =
+  "NPBC-2026";
+
+let backOfficeUnlocked =
+  false;
+
+
+/* ==========================================================
+   URL PARAMETERS
+========================================================== */
+
+const params =
+  new URLSearchParams(
+    location.search
+  );
+
+
+/* ==========================================================
+   BACK OFFICE MODE DETECTION
+========================================================== */
+
+const isBackOfficeMode =
+  params.get("mode") === "back_office" ||
+  params.get("back_office") === "1";
+
+
+if(isBackOfficeMode){
+
+  document.body.classList.add(
+    "back-office-mode"
+  );
+
+}
+
+
+/* ==========================================================
+   CUSTOMER STATE
+========================================================== */
+
+const jobId =
+  clean(params.get("job_id"));
+
+const queryVersionId =
+  clean(
+    params.get("version_id") ||
+    params.get("versionId") ||
+    params.get("document_version")
+  );
+
+const queryPaymentId =
+  clean(
+    params.get("payment_id") ||
+    params.get("paymentId")
+  );
+
+const queryService =
+  clean(params.get("service")) ||
+  "Business Center Service";
+
+const queryAmount =
+  parseMoney(params.get("amount"));
+
+
+const SNAPSHOT_KEYS = [
+
+  "npb_payment_review_snapshot_" +
+  jobId,
+
+  "npb_payment_review_snapshot",
+
+  "payment_review_snapshot_" +
+  jobId,
+
+  "payment_review_snapshot"
+
+];
+
+
+const $ =
+  id =>
+    document.getElementById(id);
+
+
+let snapshot = null;
+
+let paymentId =
+  queryPaymentId;
+
+let versionId =
+  queryVersionId;
+
+let service =
+  queryService;
+
+let amount =
+  queryAmount;
+
+let customerId = "";
+
+let filename = "";
+
+let pages = [];
+
+let documentText = "";
+
+let paymentStatus =
+  "none";
+
+let paymentStarted =
+  false;
+
+let paymentReported =
+  false;
+
+let paymentVerified =
+  false;
+
+let downloadUnlocked =
+  false;
+
+let createInProgress =
+  false;
+
+let reportInProgress =
+  false;
+
+let statusTimer =
+  null;
+
+
+/* ==========================================================
+   BASIC HELPERS
+========================================================== */
+
+function clean(value){
+
+  if(
+    value === null ||
+    value === undefined
+  ){
+
+    return "";
+
+  }
+
+  return String(value).trim();
+
+}
+
+
+function parseMoney(value){
+
+  if(
+    value === null ||
+    value === undefined
+  ){
+
+    return 0;
+
+  }
+
+  if(typeof value === "number"){
+
+    return Number.isFinite(value) &&
+           value > 0
+      ? value
+      : 0;
+
+  }
+
+  const number =
+    Number(
+      String(value)
+        .replace(/[^0-9.]/g,"")
+    );
+
+  return Number.isFinite(number) &&
+         number > 0
+    ? number
+    : 0;
+
+}
+
+
+function formatMoney(value){
+
+  const n =
+    parseMoney(value);
+
+  if(!n){
+
+    return "₦0";
+
+  }
+
+  return "₦" +
+    n.toLocaleString(
+      "en-NG",
+      {
+        minimumFractionDigits:0,
+        maximumFractionDigits:2
+      }
+    );
+
+}
+
+
+function normalizeStatus(status){
+
+  return clean(status)
+    .toLowerCase()
+    .replace(/-/g,"_")
+    .replace(/\s+/g,"_");
+
+}
+
+
+function isReported(status){
+
+  return [
+
+    "reported",
+
+    "payment_reported",
+
+    "verification_pending",
+
+    "awaiting_verification",
+
+    "pending_verification",
+
+    "payment_pending"
+
+  ].includes(
+    normalizeStatus(status)
+  );
+
+}
+
+
+function isVerified(status){
+
+  return [
+
+    "verified",
+
+    "approved",
+
+    "paid",
+
+    "payment_verified",
+
+    "payment_confirmed",
+
+    "confirmed",
+
+    "activated",
+
+    "completed",
+
+    "complete"
+
+  ].includes(
+    normalizeStatus(status)
+  );
+
+}
+
+
+/* ==========================================================
+   CUSTOMER ELEMENTS
+========================================================== */
+
+const serviceBadge =
+  $("serviceBadge");
+
+const statusValue =
+  $("statusValue");
+
+const statusMessage =
+  $("statusMessage");
+
+const progressBar =
+  $("progressBar");
+
+const amountValue =
+  $("amountValue");
+
+const orderDetails =
+  $("orderDetails");
+
+const paymentIdBox =
+  $("paymentIdBox");
+
+const paymentIdValue =
+  $("paymentIdValue");
+
+const paymentReference =
+  $("paymentReference");
+
+const paymentNote =
+  $("paymentNote");
+
+const reportButton =
+  $("reportButton");
+
+const downloadArea =
+  $("downloadArea");
+
+const downloadNote =
+  $("downloadNote");
+
+const downloadButton =
+  $("downloadButton");
+
+const message =
+  $("message");
+
+const backButton =
+  $("backButton");
+
+
+/* ==========================================================
+   CUSTOMER API HELPERS
+========================================================== */
+
+async function paymentGet(path){
+
+  const response =
+    await fetch(
+      PAYMENT_API_BASE + path,
+      {
+        method:"GET",
+        cache:"no-store",
+        headers:{
+          "Accept":"application/json"
+        }
+      }
+    );
+
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
+
+  if(!response.ok){
+
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "The payment service could not complete the request."
+    );
+
+  }
+
+  return data;
+
+}
+
+
+async function paymentPost(
+  path,
+  body
+){
+
+  let response;
+
+  try{
+
+    response =
+      await fetch(
+        PAYMENT_API_BASE + path,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json",
+
+            "Accept":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(
+              body || {}
             )
-            """
+        }
+      );
+
+  }catch(error){
+
+    throw new Error(
+      "The payment server could not be reached. Please wait a moment and try again."
+    );
+
+  }
+
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
+
+  if(
+    !response.ok ||
+    data.ok === false
+  ){
+
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "The payment request could not be completed."
+    );
+
+  }
+
+  return data;
+
+}
+
+
+/* ==========================================================
+   CUSTOMER SNAPSHOT
+========================================================== */
+
+function readReviewSnapshot(){
+
+  for(
+    const key of SNAPSHOT_KEYS
+  ){
+
+    try{
+
+      const raw =
+        sessionStorage.getItem(key);
+
+      if(!raw){
+
+        continue;
+
+      }
+
+      const data =
+        JSON.parse(raw);
+
+      if(
+        data &&
+        typeof data === "object"
+      ){
+
+        if(
+          !jobId ||
+          !data.job_id ||
+          clean(data.job_id) === jobId
+        ){
+
+          return data;
+
+        }
+
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Could not read payment snapshot:",
+        error
+      );
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+function normalizePages(value){
+
+  if(!Array.isArray(value)){
+
+    return [];
+
+  }
+
+  return value
+
+    .map(
+      (page,index) => {
+
+        if(
+          typeof page === "string"
+        ){
+
+          return {
+            page_number:index + 1,
+            position:index + 1,
+            content:page
+          };
+
+        }
+
+        if(
+          page &&
+          typeof page === "object"
+        ){
+
+          return {
+
+            ...page,
+
+            page_number:
+              Number(
+                page.page_number ||
+                page.page ||
+                page.position ||
+                index + 1
+              ),
+
+            position:
+              Number(
+                page.position ||
+                page.page_number ||
+                page.page ||
+                index + 1
+              ),
+
+            content:
+              clean(
+                page.content ||
+                page.text ||
+                page.html ||
+                page.body ||
+                ""
+              )
+
+          };
+
+        }
+
+        return null;
+
+      }
+    )
+
+    .filter(Boolean)
+
+    .filter(
+      page =>
+        clean(page.content)
+    );
+
+}
+
+
+function applySnapshot(){
+
+  snapshot =
+    readReviewSnapshot();
+
+  if(!snapshot){
+
+    orderDetails.textContent =
+      "No Review snapshot was found for this payment.";
+
+    return false;
+
+  }
+
+  const snapshotJobId =
+    clean(snapshot.job_id);
+
+  if(
+    jobId &&
+    snapshotJobId &&
+    snapshotJobId !== jobId
+  ){
+
+    orderDetails.textContent =
+      "The Review document does not match this job.";
+
+    return false;
+
+  }
+
+  if(
+    !versionId &&
+    clean(snapshot.version_id)
+  ){
+
+    versionId =
+      clean(snapshot.version_id);
+
+  }
+
+  if(
+    !versionId &&
+    clean(snapshot.document_version)
+  ){
+
+    versionId =
+      clean(snapshot.document_version);
+
+  }
+
+  if(
+    !service &&
+    clean(snapshot.service)
+  ){
+
+    service =
+      clean(snapshot.service);
+
+  }
+
+  if(
+    !amount &&
+    parseMoney(snapshot.amount)
+  ){
+
+    amount =
+      parseMoney(snapshot.amount);
+
+  }
+
+  customerId =
+    clean(
+      snapshot.customer_id
+    );
+
+  filename =
+    clean(
+      snapshot.filename ||
+      snapshot.document_filename
+    );
+
+  pages =
+    normalizePages(
+      snapshot.pages ||
+      snapshot.document_pages
+    );
+
+  documentText =
+    clean(
+      snapshot.document_text ||
+      snapshot.text ||
+      snapshot.content
+    );
+
+  if(
+    pages.length === 0 &&
+    documentText
+  ){
+
+    pages = [
+
+      {
+        page_number:1,
+        position:1,
+        content:documentText
+      }
+
+    ];
+
+  }
+
+  serviceBadge.textContent =
+    service || "Service";
+
+  amountValue.textContent =
+    formatMoney(amount);
+
+  orderDetails.textContent =
+
+    "Service: " +
+    (
+      service ||
+      "Business Center Service"
+    ) +
+
+    "\n\n" +
+
+    "Job ID: " +
+    (
+      jobId ||
+      snapshotJobId ||
+      "—"
+    ) +
+
+    "\n\n" +
+
+    "Document Version: " +
+    (
+      versionId ||
+      "—"
+    ) +
+
+    "\n\n" +
+
+    "Pages: " +
+    pages.length;
+
+  return true;
+
+}
+
+
+/* ==========================================================
+   CUSTOMER DISPLAY
+========================================================== */
+
+function setMessage(
+  text,
+  type=""
+){
+
+  message.textContent =
+    text || "";
+
+  message.className =
+    "message" +
+    (
+      type
+        ? " " + type
+        : ""
+    );
+
+}
+
+
+function setStatus(text){
+
+  statusValue.textContent =
+    text || "Preparing...";
+
+}
+
+
+function setProgress(percent){
+
+  const n =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(percent) || 0
+      )
+    );
+
+  progressBar.style.width =
+    n + "%";
+
+}
+
+
+function showPaymentId(){
+
+  if(!paymentId){
+
+    paymentIdBox
+      .classList
+      .add("hidden");
+
+    paymentIdValue.textContent =
+      "";
+
+    return;
+
+  }
+
+  paymentIdBox
+    .classList
+    .remove("hidden");
+
+  paymentIdValue.textContent =
+    paymentId;
+
+}
+
+
+function updatePaymentDisplay(){
+
+  showPaymentId();
+
+  amountValue.textContent =
+    formatMoney(amount);
+
+  if(
+    paymentVerified ||
+    isVerified(paymentStatus)
+  ){
+
+    paymentVerified =
+      true;
+
+    downloadUnlocked =
+      true;
+
+    paymentStarted =
+      true;
+
+    paymentReported =
+      true;
+
+    setStatus(
+      "Payment Verified — Download Unlocked"
+    );
+
+    statusMessage.textContent =
+      "Customer Care has verified this payment. Your already-saved document is ready for download.";
+
+    setProgress(100);
+
+    downloadArea
+      .classList
+      .add("show");
+
+    downloadNote.className =
+      "saved-note";
+
+    downloadNote.textContent =
+      "Payment verified. The exact document saved when payment was created is now available. No document will be regenerated.";
+
+    downloadButton.disabled =
+      false;
+
+    downloadButton
+      .classList
+      .add("active");
+
+    downloadButton.textContent =
+      "⬇ DOWNLOAD DOCUMENT";
+
+    reportButton.disabled =
+      true;
+
+    return;
+
+  }
+
+  if(
+    paymentReported ||
+    isReported(paymentStatus)
+  ){
+
+    paymentReported =
+      true;
+
+    paymentStarted =
+      true;
+
+    setStatus(
+      "Payment Reported — Awaiting Verification"
+    );
+
+    statusMessage.textContent =
+      "Your payment report has been sent to Customer Care. Download will unlock after verification.";
+
+    setProgress(75);
+
+    downloadArea
+      .classList
+      .add("show");
+
+    downloadNote.className =
+      "locked-note";
+
+    downloadNote.textContent =
+      "Payment Reported — Awaiting Verification. The exact reviewed document is already saved and waiting for Customer Care verification.";
+
+    downloadButton.disabled =
+      true;
+
+    downloadButton
+      .classList
+      .remove("active");
+
+    downloadButton.textContent =
+      "🔒 DOWNLOAD DOCUMENT";
+
+    reportButton.disabled =
+      true;
+
+    return;
+
+  }
+
+  if(paymentStarted){
+
+    setStatus(
+      "Payment Ready"
+    );
+
+    statusMessage.textContent =
+      "Your Payment ID has been created and the exact reviewed document has been saved.";
+
+    setProgress(45);
+
+    downloadArea
+      .classList
+      .add("show");
+
+    downloadNote.className =
+      "locked-note";
+
+    downloadNote.textContent =
+      "The exact Review document has been saved. Complete your bank transfer, then tap I HAVE MADE PAYMENT.";
+
+    downloadButton.disabled =
+      true;
+
+    downloadButton
+      .classList
+      .remove("active");
+
+    downloadButton.textContent =
+      "🔒 DOWNLOAD DOCUMENT";
+
+    reportButton.disabled =
+      false;
+
+    return;
+
+  }
+
+  setStatus(
+    "Preparing Payment"
+  );
+
+  statusMessage.textContent =
+    "Creating your secure payment record and saving the exact Review document.";
+
+  setProgress(15);
+
+  reportButton.disabled =
+    true;
+
+}
+
+
+/* ==========================================================
+   CUSTOMER CREATE PAYMENT
+========================================================== */
+
+async function createPayment(){
+
+  if(createInProgress){
+
+    return;
+
+  }
+
+  createInProgress =
+    true;
+
+  try{
+
+    if(!snapshot){
+
+      snapshot =
+        readReviewSnapshot();
+
+    }
+
+    if(!snapshot){
+
+      throw new Error(
+        "The exact Review document could not be found. Please return to Review and tap MAKE PAYMENT again."
+      );
+
+    }
+
+    if(!jobId){
+
+      throw new Error(
+        "The job ID is missing from this payment request."
+      );
+
+    }
+
+    if(!versionId){
+
+      throw new Error(
+        "The document version is missing. Please return to Review and try again."
+      );
+
+    }
+
+    if(
+      !pages.length &&
+      !documentText
+    ){
+
+      throw new Error(
+        "The exact reviewed document is empty. Payment cannot be started."
+      );
+
+    }
+
+    if(
+      !amount ||
+      amount <= 0
+    ){
+
+      throw new Error(
+        "The amount to pay is not available."
+      );
+
+    }
+
+    setStatus(
+      "Creating Payment"
+    );
+
+    statusMessage.textContent =
+      "Saving the exact Review document and creating your unique Payment ID.";
+
+    setProgress(25);
+
+    const payload = {
+
+      job_id:
+        jobId,
+
+      customer_id:
+        customerId || undefined,
+
+      service:
+        service ||
+        "Business Center Service",
+
+      amount:
+        amount,
+
+      payment_method:
+        "bank_transfer",
+
+      version_id:
+        versionId,
+
+      document_version:
+        versionId,
+
+      pages:
+        pages,
+
+      document_pages:
+        pages,
+
+      document_text:
+        documentText,
+
+      filename:
+        filename ||
+        (
+          "naija_pocket_" +
+          jobId +
+          ".docx"
+        ),
+
+      document_filename:
+        filename ||
+        (
+          "naija_pocket_" +
+          jobId +
+          ".docx"
         )
-        conn.execute(
-            """
-            CREATE INDEX IF NOT EXISTS idx_payment_orders_job_id
-            ON payment_orders(job_id)
-            """
-        )
-        conn.execute(
-            """
-            CREATE INDEX IF NOT EXISTS idx_payment_orders_status
-            ON payment_orders(payment_status)
-            """
-        )
-        columns = {row["name"] for row in conn.execute("PRAGMA table_info(payment_orders)").fetchall()}
-        if "document_saved_path" not in columns:
-            conn.execute("ALTER TABLE payment_orders ADD COLUMN document_saved_path TEXT")
-        if "document_saved_at" not in columns:
-            conn.execute("ALTER TABLE payment_orders ADD COLUMN document_saved_at TEXT")
-        conn.commit()
+
+    };
+
+    const data =
+      await paymentPost(
+        "/api/payment/create",
+        payload
+      );
+
+    const returnedPayment =
+      data.payment || {};
+
+    paymentId =
+      clean(
+        data.payment_id ||
+        returnedPayment.payment_id ||
+        data.order_number ||
+        data.reference
+      );
+
+    if(!paymentId){
+
+      throw new Error(
+        "The payment service created no Payment ID."
+      );
+
+    }
+
+    paymentStatus =
+      clean(
+        data.payment_status ||
+        returnedPayment.payment_status ||
+        "pending"
+      );
+
+    paymentStarted =
+      true;
+
+    paymentReported =
+      isReported(
+        paymentStatus
+      );
+
+    paymentVerified =
+      !!(
+        data.payment_verified ||
+        data.paid ||
+        data.download_unlocked ||
+        isVerified(paymentStatus)
+      );
+
+    downloadUnlocked =
+      !!(
+        data.download_unlocked ||
+        paymentVerified
+      );
+
+    if(
+      data.amount &&
+      parseMoney(data.amount)
+    ){
+
+      amount =
+        parseMoney(
+          data.amount
+        );
+
+    }
+
+    try{
+
+      const savedState = {
+
+        payment_id:
+          paymentId,
+
+        job_id:
+          jobId,
+
+        version_id:
+          versionId,
+
+        amount:
+          amount,
+
+        service:
+          service,
+
+        created_at:
+          new Date().toISOString()
+
+      };
+
+      sessionStorage.setItem(
+        "npb_payment_state_" +
+        jobId,
+        JSON.stringify(savedState)
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Could not save local payment state:",
+        error
+      );
+
+    }
+
+    setProgress(55);
+
+    updatePaymentDisplay();
+
+    if(
+      data.document_saved === false
+    ){
+
+      throw new Error(
+        "Payment was returned without confirmation that the exact document was saved."
+      );
+
+    }
+
+    setMessage(
+      "Payment created successfully. Payment ID: " +
+      paymentId +
+      ". The exact Review document has been saved for download.",
+      "success"
+    );
+
+    startStatusPolling();
+
+  }catch(error){
+
+    console.error(
+      "PAYMENT CREATE ERROR:",
+      error
+    );
+
+    setStatus(
+      "Payment Setup Failed"
+    );
+
+    statusMessage.textContent =
+      error.message ||
+      "Unable to prepare payment.";
+
+    setProgress(0);
+
+    setMessage(
+      error.message ||
+      "Unable to prepare payment.",
+      "error"
+    );
+
+  }finally{
+
+    createInProgress =
+      false;
+
+  }
+
+}
 
 
-def row_to_dict(row: sqlite3.Row | None) -> dict[str, Any] | None:
-    if row is None:
-        return None
-    return dict(row)
+/* ==========================================================
+   CUSTOMER EXISTING PAYMENT
+========================================================== */
 
+async function loadExistingPayment(){
 
-def get_payment(payment_id: str) -> dict[str, Any] | None:
-    with connect_db() as conn:
-        row = conn.execute(
-            "SELECT * FROM payment_orders WHERE payment_id = ?",
-            (payment_id,),
-        ).fetchone()
-    return row_to_dict(row)
+  if(!jobId){
 
+    return false;
 
-def get_latest_payment_for_job(job_id: str) -> dict[str, Any] | None:
-    with connect_db() as conn:
-        row = conn.execute(
-            """
-            SELECT *
-            FROM payment_orders
-            WHERE job_id = ?
-            ORDER BY id DESC
-            LIMIT 1
-            """,
-            (job_id,),
-        ).fetchone()
-    return row_to_dict(row)
+  }
 
+  try{
 
-def get_payments_for_job(job_id: str) -> list[dict[str, Any]]:
-    with connect_db() as conn:
-        rows = conn.execute(
-            """
-            SELECT *
-            FROM payment_orders
-            WHERE job_id = ?
-            ORDER BY id DESC
-            """,
-            (job_id,),
-        ).fetchall()
-    return [dict(row) for row in rows]
-
-
-def list_pending_payments() -> list[dict[str, Any]]:
-    with connect_db() as conn:
-        rows = conn.execute(
-            """
-            SELECT *
-            FROM payment_orders
-            WHERE payment_status IN (
-                'reported',
-                'verification_pending',
-                'awaiting_verification'
+    const query =
+      paymentId
+        ? (
+            "?payment_id=" +
+            encodeURIComponent(
+              paymentId
             )
-            ORDER BY id DESC
-            """
-        ).fetchall()
-    return [dict(row) for row in rows]
-
-
-def create_payment_record(
-    *,
-    payment_id: str,
-    job_id: str,
-    customer_id: str,
-    service: str,
-    amount: float,
-    currency: str,
-    payment_method: str,
-    document_version: str,
-    document_filename: str,
-    document_payload: dict[str, Any],
-) -> dict[str, Any]:
-    timestamp = now_iso()
-    with connect_db() as conn:
-        conn.execute(
-            """
-            INSERT INTO payment_orders (
-                payment_id,
-                job_id,
-                customer_id,
-                service,
-                amount,
-                currency,
-                payment_method,
-                payment_status,
-                document_version,
-                document_filename,
-                document_payload,
-                created_at,
-                updated_at
+          )
+        : (
+            "?job_id=" +
+            encodeURIComponent(
+              jobId
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?)
-            """,
+          );
+
+    const data =
+      await paymentGet(
+        "/api/payment/status" +
+        query
+      );
+
+    const payment =
+      data.payment || {};
+
+    if(!payment){
+
+      return false;
+
+    }
+
+    const existingId =
+      clean(
+        data.payment_id ||
+        payment.payment_id
+      );
+
+    if(existingId){
+
+      paymentId =
+        existingId;
+
+    }
+
+    const existingVersion =
+      clean(
+        data.version_id ||
+        payment.version_id ||
+        payment.document_version
+      );
+
+    if(
+      existingVersion &&
+      !versionId
+    ){
+
+      versionId =
+        existingVersion;
+
+    }
+
+    const existingAmount =
+      parseMoney(
+        data.amount ||
+        payment.amount
+      );
+
+    if(existingAmount){
+
+      amount =
+        existingAmount;
+
+    }
+
+    const existingService =
+      clean(
+        payment.service
+      );
+
+    if(existingService){
+
+      service =
+        existingService;
+
+    }
+
+    paymentStatus =
+      clean(
+        data.payment_status ||
+        payment.payment_status
+      );
+
+    paymentStarted =
+      !!paymentId;
+
+    paymentReported =
+      !!(
+        data.payment_reported ||
+        isReported(paymentStatus)
+      );
+
+    paymentVerified =
+      !!(
+        data.payment_verified ||
+        data.paid ||
+        isVerified(paymentStatus)
+      );
+
+    downloadUnlocked =
+      !!(
+        data.download_unlocked ||
+        paymentVerified
+      );
+
+    updatePaymentDisplay();
+
+    return !!paymentId;
+
+  }catch(error){
+
+    console.warn(
+      "Existing payment lookup failed:",
+      error
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* ==========================================================
+   CUSTOMER REPORT PAYMENT
+========================================================== */
+
+async function reportPayment(){
+
+  if(reportInProgress){
+
+    return;
+
+  }
+
+  if(!paymentId){
+
+    setMessage(
+      "Payment has not been started yet. Please wait for the Payment ID to be created.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(paymentReported){
+
+    updatePaymentDisplay();
+
+    return;
+
+  }
+
+  reportInProgress =
+    true;
+
+  try{
+
+    const reference =
+      clean(
+        paymentReference.value
+      );
+
+    const note =
+      clean(
+        paymentNote.value
+      );
+
+    if(!reference){
+
+      setMessage(
+        "Please enter your bank transfer payment reference first.",
+        "error"
+      );
+
+      paymentReference.focus();
+
+      return;
+
+    }
+
+    reportButton.disabled =
+      true;
+
+    setStatus(
+      "Reporting Payment"
+    );
+
+    statusMessage.textContent =
+      "Sending your Payment ID and payment report to Customer Care.";
+
+    setProgress(65);
+
+    const data =
+      await paymentPost(
+        "/api/payment/report",
+        {
+          payment_id:
+            paymentId,
+
+          job_id:
+            jobId,
+
+          payment_reference:
+            reference,
+
+          note:
+            note
+        }
+      );
+
+    paymentStatus =
+      clean(
+        data.payment_status ||
+        (
+          data.payment &&
+          data.payment.payment_status
+        ) ||
+        "reported"
+      );
+
+    paymentReported =
+      true;
+
+    paymentVerified =
+      !!(
+        data.payment_verified ||
+        data.paid ||
+        data.download_unlocked
+      );
+
+    downloadUnlocked =
+      !!(
+        data.download_unlocked ||
+        paymentVerified
+      );
+
+    updatePaymentDisplay();
+
+    setMessage(
+      data.message ||
+      "Payment Reported — Awaiting Verification",
+      "success"
+    );
+
+    try{
+
+      sessionStorage.setItem(
+        "npb_payment_reference_" +
+        jobId,
+        reference
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Could not save payment reference:",
+        error
+      );
+
+    }
+
+    startStatusPolling();
+
+  }catch(error){
+
+    console.error(
+      "PAYMENT REPORT ERROR:",
+      error
+    );
+
+    reportButton.disabled =
+      false;
+
+    setMessage(
+      error.message ||
+      "The payment report could not be completed.",
+      "error"
+    );
+
+    updatePaymentDisplay();
+
+  }finally{
+
+    reportInProgress =
+      false;
+
+  }
+
+}
+
+
+/* ==========================================================
+   CUSTOMER STATUS POLLING
+========================================================== */
+
+async function checkPaymentStatus(){
+
+  if(
+    !paymentId &&
+    !jobId
+  ){
+
+    return;
+
+  }
+
+  try{
+
+    const query =
+      paymentId
+        ? (
+            "?payment_id=" +
+            encodeURIComponent(
+              paymentId
+            )
+          )
+        : (
+            "?job_id=" +
+            encodeURIComponent(
+              jobId
+            )
+          );
+
+    const data =
+      await paymentGet(
+        "/api/payment/status" +
+        query
+      );
+
+    const payment =
+      data.payment || {};
+
+    if(payment){
+
+      const returnedId =
+        clean(
+          data.payment_id ||
+          payment.payment_id
+        );
+
+      if(returnedId){
+
+        paymentId =
+          returnedId;
+
+      }
+
+      const returnedStatus =
+        clean(
+          data.payment_status ||
+          payment.payment_status
+        );
+
+      if(returnedStatus){
+
+        paymentStatus =
+          returnedStatus;
+
+      }
+
+      const returnedAmount =
+        parseMoney(
+          data.amount ||
+          payment.amount
+        );
+
+      if(returnedAmount){
+
+        amount =
+          returnedAmount;
+
+      }
+
+      paymentReported =
+        !!(
+          data.payment_reported ||
+          isReported(paymentStatus)
+        );
+
+      paymentVerified =
+        !!(
+          data.payment_verified ||
+          data.paid ||
+          isVerified(paymentStatus)
+        );
+
+      downloadUnlocked =
+        !!(
+          data.download_unlocked ||
+          paymentVerified
+        );
+
+      if(paymentId){
+
+        paymentStarted =
+          true;
+
+      }
+
+    }
+
+    updatePaymentDisplay();
+
+  }catch(error){
+
+    console.warn(
+      "Payment status check failed:",
+      error
+    );
+
+  }
+
+}
+
+
+function startStatusPolling(){
+
+  if(statusTimer){
+
+    return;
+
+  }
+
+  statusTimer =
+    setInterval(
+      async () => {
+
+        await checkPaymentStatus();
+
+        if(
+          paymentVerified ||
+          downloadUnlocked
+        ){
+
+          clearInterval(
+            statusTimer
+          );
+
+          statusTimer =
+            null;
+
+        }
+
+      },
+      5000
+    );
+
+}
+
+
+/* ==========================================================
+   CUSTOMER DOWNLOAD
+========================================================== */
+
+async function downloadDocument(){
+
+  if(!paymentId){
+
+    setMessage(
+      "No Payment ID is available.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if(
+    !paymentVerified &&
+    !downloadUnlocked
+  ){
+
+    setMessage(
+      "Download remains locked until Customer Care verifies your payment.",
+      "warning"
+    );
+
+    return;
+
+  }
+
+  try{
+
+    downloadButton.disabled =
+      true;
+
+    downloadButton.textContent =
+      "Preparing Download...";
+
+    setMessage(
+      "Opening your already-saved document...",
+      ""
+    );
+
+    const url =
+      PAYMENT_API_BASE +
+      "/api/download?payment_id=" +
+      encodeURIComponent(
+        paymentId
+      );
+
+    window.location.href =
+      url;
+
+  }catch(error){
+
+    console.error(
+      "DOWNLOAD ERROR:",
+      error
+    );
+
+    downloadButton.disabled =
+      false;
+
+    downloadButton
+      .classList
+      .add("active");
+
+    downloadButton.textContent =
+      "⬇ DOWNLOAD DOCUMENT";
+
+    setMessage(
+      error.message ||
+      "Unable to open the saved document.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* ==========================================================
+   BACK OFFICE
+========================================================== */
+
+const boAdminKey =
+  $("boAdminKey");
+
+const boLoadButton =
+  $("boLoadButton");
+
+const boRefreshButton =
+  $("boRefreshButton");
+
+const boExitButton =
+  $("boExitButton");
+
+const boMessage =
+  $("boMessage");
+
+const boRecords =
+  $("boRecords");
+
+const boTotal =
+  $("boTotal");
+
+const boReported =
+  $("boReported");
+
+const boActivated =
+  $("boActivated");
+
+
+let backOfficeRecords = [];
+
+
+function setBackOfficeMessage(
+  text,
+  type=""
+){
+
+  boMessage.textContent =
+    text || "";
+
+  boMessage.className =
+    "bo-message" +
+    (
+      type
+        ? " " + type
+        : ""
+    );
+
+}
+
+
+/* ==========================================================
+   LOCAL BACK OFFICE KEY CHECK
+
+   IMPORTANT:
+   This function does not contact the API.
+
+   The key is checked entirely inside payment.html.
+========================================================== */
+
+function checkLocalBackOfficeKey(){
+
+  const enteredKey =
+    clean(
+      boAdminKey.value
+    );
+
+  if(!enteredKey){
+
+    setBackOfficeMessage(
+      "Please enter the Back Office access key.",
+      "warning"
+    );
+
+    boAdminKey.focus();
+
+    return false;
+
+  }
+
+  if(
+    enteredKey !==
+    LOCAL_BACK_OFFICE_KEY
+  ){
+
+    backOfficeUnlocked =
+      false;
+
+    boRecords.innerHTML =
+      '<div class="bo-empty">' +
+      'Back Office access denied. Please enter the correct access key.' +
+      '</div>';
+
+    boTotal.textContent =
+      "0";
+
+    boReported.textContent =
+      "0";
+
+    boActivated.textContent =
+      "0";
+
+    setBackOfficeMessage(
+      "Incorrect Back Office access key.",
+      "error"
+    );
+
+    boAdminKey.value =
+      "";
+
+    boAdminKey.focus();
+
+    return false;
+
+  }
+
+  backOfficeUnlocked =
+    true;
+
+  setBackOfficeMessage(
+    "Back Office access granted.",
+    "success"
+  );
+
+  return true;
+
+}
+
+
+function getBackOfficeKey(){
+
+  return clean(
+    boAdminKey.value
+  );
+
+}
+
+
+/* ==========================================================
+   BACK OFFICE API HEADERS
+
+   NO ADMIN KEY IS SENT TO THE API.
+
+   The Back Office key is purely local to payment.html.
+========================================================== */
+
+function backOfficeHeaders(){
+
+  return {
+    "Accept":
+      "application/json"
+  };
+
+}
+
+
+async function backOfficeGet(path){
+
+  const response =
+    await fetch(
+      PAYMENT_API_BASE + path,
+      {
+        method:"GET",
+        cache:"no-store",
+        headers:
+          backOfficeHeaders()
+      }
+    );
+
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
+
+  if(!response.ok){
+
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "The Back Office request could not be completed."
+    );
+
+  }
+
+  return data;
+
+}
+
+
+async function backOfficePost(
+  path,
+  body
+){
+
+  const response =
+    await fetch(
+      PAYMENT_API_BASE + path,
+      {
+        method:"POST",
+
+        headers:{
+          ...backOfficeHeaders(),
+
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify(
+            body || {}
+          )
+      }
+    );
+
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
+
+  if(
+    !response.ok ||
+    data.ok === false
+  ){
+
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "The Back Office action could not be completed."
+    );
+
+  }
+
+  return data;
+
+}
+
+
+function recordPaymentId(record){
+
+  return clean(
+    record.payment_id ||
+    record.paymentId ||
+    record.id
+  );
+
+}
+
+
+function recordJobId(record){
+
+  return clean(
+    record.job_id ||
+    record.jobId ||
+    record.work_id
+  );
+
+}
+
+
+function recordVersionId(record){
+
+  return clean(
+    record.version_id ||
+    record.versionId ||
+    record.document_version
+  );
+
+}
+
+
+function recordService(record){
+
+  return clean(
+    record.service ||
+    record.service_name ||
+    "Business Center Service"
+  );
+
+}
+
+
+function recordAmount(record){
+
+  return parseMoney(
+    record.amount ||
+    record.total_amount
+  );
+
+}
+
+
+function recordFilename(record){
+
+  return clean(
+    record.filename ||
+    record.document_filename ||
+    record.saved_filename ||
+    "Saved document"
+  );
+
+}
+
+
+function recordStatus(record){
+
+  return clean(
+    record.payment_status ||
+    record.status ||
+    "saved"
+  );
+
+}
+
+
+function boDisplayStatus(record){
+
+  const status =
+    normalizeStatus(
+      recordStatus(record)
+    );
+
+  if(
+    isVerified(status) ||
+    record.download_unlocked === true ||
+    record.payment_verified === true
+  ){
+
+    return {
+
+      text:
+        "Download Activated",
+
+      className:
+        "verified"
+
+    };
+
+  }
+
+  if(
+    isReported(status) ||
+    record.payment_reported === true
+  ){
+
+    return {
+
+      text:
+        "Payment Reported — Awaiting Verification",
+
+      className:
+        "reported"
+
+    };
+
+  }
+
+  return {
+
+    text:
+      "Saved — Awaiting Customer Payment",
+
+    className:
+      "saved"
+
+  };
+
+}
+
+
+function recordDocumentText(record){
+
+  return clean(
+    record.document_text ||
+    record.text ||
+    record.document_content ||
+    record.content
+  );
+
+}
+
+
+function recordPages(record){
+
+  if(
+    Array.isArray(record.pages)
+  ){
+
+    return record.pages;
+
+  }
+
+  if(
+    Array.isArray(record.document_pages)
+  ){
+
+    return record.document_pages;
+
+  }
+
+  return [];
+
+}
+
+
+function escapeHtml(value){
+
+  return String(
+    value === null ||
+    value === undefined
+      ? ""
+      : value
+  )
+
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
+
+function renderBackOffice(){
+
+  boRecords.innerHTML =
+    "";
+
+  const records =
+    Array.isArray(
+      backOfficeRecords
+    )
+      ? backOfficeRecords
+      : [];
+
+  boTotal.textContent =
+    records.length;
+
+  boReported.textContent =
+    records.filter(
+      record =>
+        isReported(
+          recordStatus(record)
+        ) ||
+        record.payment_reported === true
+    ).length;
+
+  boActivated.textContent =
+    records.filter(
+      record =>
+        isVerified(
+          recordStatus(record)
+        ) ||
+        record.download_unlocked === true ||
+        record.payment_verified === true
+    ).length;
+
+  if(!records.length){
+
+    boRecords.innerHTML =
+      '<div class="bo-empty">' +
+      'No saved payment documents were returned by the Payment API.' +
+      '</div>';
+
+    return;
+
+  }
+
+
+  records.forEach(
+    (record,index) => {
+
+      const payment =
+        recordPaymentId(record);
+
+      const job =
+        recordJobId(record);
+
+      const version =
+        recordVersionId(record);
+
+      const serviceName =
+        recordService(record);
+
+      const filenameValue =
+        recordFilename(record);
+
+      const amountValueRecord =
+        recordAmount(record);
+
+      const status =
+        boDisplayStatus(record);
+
+      const text =
+        recordDocumentText(record);
+
+      const pagesValue =
+        recordPages(record);
+
+      const recordId =
+        "bo-record-" + index;
+
+      const documentId =
+        "bo-document-" + index;
+
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        "bo-record";
+
+      wrapper.innerHTML =
+
+        '<div class="bo-record-head">' +
+
+          '<div class="bo-record-title">' +
+            escapeHtml(
+              serviceName
+            ) +
+          '</div>' +
+
+          '<div class="bo-status ' +
+            status.className +
+          '">' +
+            escapeHtml(
+              status.text
+            ) +
+          '</div>' +
+
+        '</div>' +
+
+
+        '<div class="bo-grid">' +
+
+          '<div class="bo-field">' +
+
+            '<div class="bo-field-label">' +
+              'Payment ID' +
+            '</div>' +
+
+            '<div class="bo-field-value">' +
+              escapeHtml(
+                payment || "—"
+              ) +
+            '</div>' +
+
+          '</div>' +
+
+
+          '<div class="bo-field">' +
+
+            '<div class="bo-field-label">' +
+              'Job ID' +
+            '</div>' +
+
+            '<div class="bo-field-value">' +
+              escapeHtml(
+                job || "—"
+              ) +
+            '</div>' +
+
+          '</div>' +
+
+
+          '<div class="bo-field">' +
+
+            '<div class="bo-field-label">' +
+              'Document Version' +
+            '</div>' +
+
+            '<div class="bo-field-value">' +
+              escapeHtml(
+                version || "—"
+              ) +
+            '</div>' +
+
+          '</div>' +
+
+
+          '<div class="bo-field">' +
+
+            '<div class="bo-field-label">' +
+              'Amount' +
+            '</div>' +
+
+            '<div class="bo-field-value">' +
+              escapeHtml(
+                amountValueRecord
+                  ? formatMoney(
+                      amountValueRecord
+                    )
+                  : "—"
+              ) +
+            '</div>' +
+
+          '</div>' +
+
+
+          '<div class="bo-field">' +
+
+            '<div class="bo-field-label">' +
+              'Filename' +
+            '</div>' +
+
+            '<div class="bo-field-value">' +
+              escapeHtml(
+                filenameValue
+              ) +
+            '</div>' +
+
+          '</div>' +
+
+
+          '<div class="bo-field">' +
+
+            '<div class="bo-field-label">' +
+              'Pages' +
+            '</div>' +
+
+            '<div class="bo-field-value">' +
+              escapeHtml(
+                pagesValue.length
+                  ? pagesValue.length
+                  : (
+                      record.pages_count ||
+                      record.page_count ||
+                      "—"
+                    )
+              ) +
+            '</div>' +
+
+          '</div>' +
+
+        '</div>' +
+
+
+        '<div class="bo-actions">' +
+
+          '<button ' +
+
+            'id="' +
+              recordId +
+            '-view" ' +
+
+            'class="bo-action bo-view" ' +
+
+            'type="button">' +
+
+            'VIEW SAVED DOCUMENT INFORMATION' +
+
+          '</button>' +
+
+          (
+
             (
-                payment_id,
-                job_id,
-                customer_id,
-                service,
-                amount,
-                currency,
-                payment_method,
-                document_version,
-                document_filename,
-                json.dumps(document_payload, ensure_ascii=False),
-                timestamp,
-                timestamp,
-            ),
-        )
-        conn.commit()
-    return get_payment(payment_id) or {}
+              isReported(
+                recordStatus(record)
+              ) ||
 
+              record.payment_reported === true
 
-def saved_document_path(payment: dict[str, Any]) -> Path | None:
-    raw = clean(payment.get("document_saved_path"))
-    if not raw:
-        return None
-    path = Path(raw)
-    return path if path.is_absolute() else BASE_DIR / path
+            ) &&
 
+            !(
+              isVerified(
+                recordStatus(record)
+              ) ||
 
-def saved_document_exists(payment: dict[str, Any]) -> bool:
-    path = saved_document_path(payment)
-    return bool(path and path.is_file() and path.stat().st_size > 0)
+              record.download_unlocked === true ||
 
-
-def save_exact_document_snapshot(payment: dict[str, Any], document: dict[str, Any]) -> tuple[bool, str]:
-    if saved_document_exists(payment):
-        return True, str(saved_document_path(payment))
-    pages = normalize_pages(document.get("pages"))
-    if not pages and clean(document.get("document_text")):
-        pages = [clean(document.get("document_text"))]
-    if not pages:
-        return False, "The reviewed document contains no downloadable content."
-    filename = clean(document.get("filename")) or clean(payment.get("document_filename")) or f"naija_pocket_{payment.get('job_id','document')}.docx"
-    if not filename.lower().endswith(".docx"):
-        filename += ".docx"
-    folder = DOWNLOAD_DIR / clean(payment.get("payment_id"))
-    folder.mkdir(parents=True, exist_ok=True)
-    output = folder / Path(filename).name
-    try:
-        generated = make_docx(pages, str(output))
-        generated = Path(generated)
-        if generated != output:
-            if output.exists(): output.unlink()
-            generated.replace(output)
-        if not output.is_file() or output.stat().st_size <= 0:
-            return False, "The reviewed document snapshot was not saved correctly."
-        ts=now_iso()
-        with connect_db() as conn:
-            conn.execute("UPDATE payment_orders SET document_saved_path=?, document_saved_at=?, document_filename=?, updated_at=? WHERE payment_id=?", (str(output),ts,Path(filename).name,ts,clean(payment.get("payment_id"))))
-            conn.commit()
-        return True, str(output)
-    except Exception as exc:
-        try:
-            if output.exists(): output.unlink()
-        except Exception: pass
-        return False, str(exc)
-
-
-def update_payment_record(
-    payment_id: str,
-    *,
-    status: str | None = None,
-    payment_reference: str | None = None,
-    customer_note: str | None = None,
-    admin_note: str | None = None,
-    verified_at: str | None = None,
-    reported_at: str | None = None,
-) -> dict[str, Any] | None:
-    current = get_payment(payment_id)
-    if not current:
-        return None
-
-    fields: list[str] = []
-    values: list[Any] = []
-
-    if status is not None:
-        fields.append("payment_status = ?")
-        values.append(status)
-    if payment_reference is not None:
-        fields.append("payment_reference = ?")
-        values.append(payment_reference)
-    if customer_note is not None:
-        fields.append("customer_note = ?")
-        values.append(customer_note)
-    if admin_note is not None:
-        fields.append("admin_note = ?")
-        values.append(admin_note)
-    if verified_at is not None:
-        fields.append("verified_at = ?")
-        values.append(verified_at)
-    if reported_at is not None:
-        fields.append("reported_at = ?")
-        values.append(reported_at)
-
-    fields.append("updated_at = ?")
-    values.append(now_iso())
-    values.append(payment_id)
-
-    with connect_db() as conn:
-        conn.execute(
-            f"UPDATE payment_orders SET {', '.join(fields)} WHERE payment_id = ?",
-            tuple(values),
-        )
-        conn.commit()
-
-    return get_payment(payment_id)
-
-
-def increment_download(payment_id: str) -> dict[str, Any] | None:
-    timestamp = now_iso()
-    with connect_db() as conn:
-        conn.execute(
-            """
-            UPDATE payment_orders
-            SET download_count = download_count + 1,
-                downloaded_at = ?,
-                updated_at = ?
-            WHERE payment_id = ?
-            """,
-            (timestamp, timestamp, payment_id),
-        )
-        conn.commit()
-    return get_payment(payment_id)
-
-
-# ============================================================
-# OLD API BRIDGE
-# ============================================================
-
-def old_api_configured() -> bool:
-    return bool(OLD_API_BASE_URL)
-
-
-def old_api_request(
-    method: str,
-    path: str,
-    *,
-    query: dict[str, Any] | None = None,
-    body: dict[str, Any] | None = None,
-    timeout: int = 25,
-) -> Any:
-    if not OLD_API_BASE_URL:
-        raise RuntimeError("OLD_API_BASE_URL is not configured")
-
-    clean_path = "/" + path.lstrip("/")
-    url = OLD_API_BASE_URL + clean_path
-
-    if query:
-        parts: list[str] = []
-        from urllib.parse import quote
-
-        for key, value in query.items():
-            if value is None or value == "":
-                continue
-            parts.append(f"{quote(str(key))}={quote(str(value))}")
-        if parts:
-            url += "?" + "&".join(parts)
-
-    headers = {
-        "Accept": "application/json",
-        "User-Agent": "NaijaPocketPaymentAPI/1.0",
-    }
-    if INTERNAL_API_KEY:
-        headers["X-Internal-API-Key"] = INTERNAL_API_KEY
-
-    data: bytes | None = None
-    if body is not None:
-        data = json.dumps(body, ensure_ascii=False).encode("utf-8")
-        headers["Content-Type"] = "application/json"
-
-    request = urllib.request.Request(
-        url,
-        data=data,
-        headers=headers,
-        method=method.upper(),
-    )
-
-    try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
-            raw = response.read()
-            content_type = response.headers.get("Content-Type", "")
-            if "json" in content_type.lower():
-                return json.loads(raw.decode("utf-8"))
-            try:
-                return json.loads(raw.decode("utf-8"))
-            except Exception:
-                return raw.decode("utf-8", errors="replace")
-    except urllib.error.HTTPError as exc:
-        raw = exc.read()
-        try:
-            detail = json.loads(raw.decode("utf-8"))
-        except Exception:
-            detail = raw.decode("utf-8", errors="replace")
-        raise RuntimeError(f"Old API returned HTTP {exc.code}: {detail}") from exc
-    except urllib.error.URLError as exc:
-        raise RuntimeError(f"Could not reach old API: {exc}") from exc
-
-
-def extract_job_payload(response: Any) -> dict[str, Any] | None:
-    if not isinstance(response, dict):
-        return None
-
-    candidates: list[Any] = [response]
-    for key in ("data", "job", "result", "document"):
-        value = response.get(key)
-        if isinstance(value, dict):
-            candidates.append(value)
-
-    for candidate in candidates:
-        if any(
-            key in candidate
-            for key in (
-                "job_id",
-                "pages",
-                "document_pages",
-                "document_text",
-                "text",
-                "content",
+              record.payment_verified === true
             )
-        ):
-            return candidate
-    return None
+
+            ?
+
+              '<button ' +
+
+                'id="' +
+                  recordId +
+                '-activate" ' +
+
+                'class="bo-action bo-activate" ' +
+
+                'type="button">' +
+
+                'ACTIVATE DOWNLOAD' +
+
+              '</button>'
+
+            :
+
+              ''
+
+          ) +
+
+        '</div>' +
 
 
-def normalize_pages(value: Any) -> list[str]:
-    if value is None:
-        return []
+        '<div ' +
 
-    if isinstance(value, str):
-        return [value] if value.strip() else []
+          'id="' +
+            documentId +
+          '" ' +
 
-    if isinstance(value, (tuple, list)):
-        output: list[str] = []
-        for item in value:
-            if isinstance(item, dict):
-                text = (
-                    item.get("text")
-                    or item.get("content")
-                    or item.get("body")
-                    or item.get("page_text")
-                    or ""
+          'class="bo-document">' +
+
+        '</div>';
+
+
+      boRecords.appendChild(
+        wrapper
+      );
+
+
+      const viewButton =
+        document.getElementById(
+          recordId + "-view"
+        );
+
+
+      const documentBox =
+        document.getElementById(
+          documentId
+        );
+
+
+      if(viewButton){
+
+        viewButton.addEventListener(
+          "click",
+          () => {
+
+            if(
+              documentBox.classList.contains(
+                "show"
+              )
+            ){
+
+              documentBox.classList.remove(
+                "show"
+              );
+
+              documentBox.textContent =
+                "";
+
+              return;
+
+            }
+
+
+            /*
+             * The current Payment API does not expose a
+             * separate admin document-view route.
+             *
+             * Therefore this button displays only the
+             * document information returned by the existing
+             * Back Office payment-list endpoint.
+             *
+             * It does NOT attempt to bypass the customer's
+             * download lock.
+             */
+
+            const info = [
+
+              "SERVICE: " +
+              serviceName,
+
+              "PAYMENT ID: " +
+              (
+                payment || "—"
+              ),
+
+              "JOB ID: " +
+              (
+                job || "—"
+              ),
+
+              "DOCUMENT VERSION: " +
+              (
+                version || "—"
+              ),
+
+              "FILENAME: " +
+              filenameValue,
+
+              "AMOUNT: " +
+              (
+                amountValueRecord
+                  ? formatMoney(
+                      amountValueRecord
+                    )
+                  : "—"
+              ),
+
+              "PAGES: " +
+              (
+                pagesValue.length ||
+                record.pages_count ||
+                record.page_count ||
+                "—"
+              ),
+
+              "STATUS: " +
+              status.text
+
+            ];
+
+
+            if(text){
+
+              info.push(
+                "",
+                "SAVED DOCUMENT TEXT:",
+                text
+              );
+
+            }
+
+
+            documentBox.textContent =
+              info.join("\n");
+
+            documentBox.classList.add(
+              "show"
+            );
+
+          }
+        );
+
+      }
+
+
+      const activateButton =
+        document.getElementById(
+          recordId + "-activate"
+        );
+
+
+      if(activateButton){
+
+        activateButton.addEventListener(
+          "click",
+          () =>
+            activateBackOfficeDownload(
+              record
+            )
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* ==========================================================
+   LOAD BACK OFFICE
+
+   The local key must be validated before any Back Office
+   records are requested from the API.
+========================================================== */
+
+async function loadBackOffice(){
+
+  if(!backOfficeUnlocked){
+
+    if(
+      !checkLocalBackOfficeKey()
+    ){
+
+      return;
+
+    }
+
+  }
+
+  setBackOfficeMessage(
+    "Loading saved documents..."
+  );
+
+  boLoadButton.disabled =
+    true;
+
+  boRefreshButton.disabled =
+    true;
+
+  try{
+
+    const data =
+      await backOfficeGet(
+        "/api/back-office/payments"
+      );
+
+
+    /*
+     * The existing API returns:
+     *
+     * {
+     *   ok: true,
+     *   payments: [...]
+     * }
+     *
+     * Keep support for alternative list names without
+     * changing the customer payment flow.
+     */
+
+    backOfficeRecords =
+      Array.isArray(
+        data.payments
+      )
+        ? data.payments
+        : (
+            Array.isArray(data.records)
+
+              ? data.records
+
+              : (
+                  Array.isArray(data.items)
+
+                    ? data.items
+
+                    : []
                 )
-                if str(text).strip():
-                    output.append(str(text).strip())
-            elif str(item).strip():
-                output.append(str(item).strip())
-        return output
-
-    if isinstance(value, dict):
-        text = (
-            value.get("text")
-            or value.get("content")
-            or value.get("body")
-            or value.get("page_text")
-            or ""
-        )
-        return [str(text).strip()] if str(text).strip() else []
-
-    return [str(value).strip()] if str(value).strip() else []
+          );
 
 
-def fetch_current_document(job_id: str) -> dict[str, Any]:
-    """
-    Ask the existing API for the current review/document state.
-
-    The payment service does not import the old API and therefore does not
-    share its private in-memory state. The old API remains responsible for
-    producing the document; this bridge only reads that document.
-    """
-    if not OLD_API_BASE_URL:
-        raise RuntimeError(
-            "OLD_API_BASE_URL is not configured. Set it to the base URL of the existing API."
-        )
-
-    last_error: Exception | None = None
-    paths = [
-        "/api/review/pages",
-        "/api/review",
-    ]
-
-    for path in paths:
-        try:
-            response = old_api_request(
-                "GET",
-                path,
-                query={"job_id": job_id},
-            )
-            payload = extract_job_payload(response)
-            if payload:
-                return normalize_document_payload(payload, job_id)
-        except Exception as exc:
-            last_error = exc
-
-    if last_error:
-        raise last_error
-    raise RuntimeError("The old API returned no usable document for this job.")
+    renderBackOffice();
 
 
-def normalize_document_payload(payload: dict[str, Any], job_id: str) -> dict[str, Any]:
-    pages = normalize_pages(
-        payload.get("pages")
-        or payload.get("document_pages")
-        or payload.get("review_pages")
-        or payload.get("page_texts")
-    )
+    setBackOfficeMessage(
 
-    document_text = clean(
-        payload.get("document_text")
-        or payload.get("text")
-        or payload.get("content")
-        or payload.get("document")
-    )
+      backOfficeRecords.length +
 
-    if not pages and document_text:
-        pages = [document_text]
+      " saved payment record" +
 
-    status = clean(payload.get("status"))
-    review_finished = bool(
-        payload.get("review_finished")
-        or payload.get("review_complete")
-        or normalize_status(status) == "review_complete"
-    )
+      (
+        backOfficeRecords.length === 1
+          ? ""
+          : "s"
+      ) +
 
-    amount = money(
-        payload.get("amount")
-        or payload.get("total_amount")
-        or payload.get("price")
-        or payload.get("billing", {}).get("total")
-        if isinstance(payload.get("billing"), dict)
-        else payload.get("amount")
-    )
+      " found.",
 
-    if amount <= 0 and isinstance(payload.get("billing"), dict):
-        amount = money(
-            payload["billing"].get("amount")
-            or payload["billing"].get("total_amount")
-            or payload["billing"].get("price")
-        )
+      "success"
 
-    version = clean(
-        payload.get("version_id")
-        or payload.get("document_version")
-        or payload.get("version")
-    )
+    );
 
-    if not version:
-        # A deterministic fallback based on the current document contents.
-        import hashlib
+  }catch(error){
 
-        digest_source = json.dumps(
-            {
-                "job_id": job_id,
-                "pages": pages,
-                "text": document_text,
-            },
-            ensure_ascii=False,
-            sort_keys=True,
-        ).encode("utf-8")
-        version = hashlib.sha256(digest_source).hexdigest()[:24]
+    console.error(
+      "BACK OFFICE LOAD ERROR:",
+      error
+    );
 
-    filename = clean(
-        payload.get("filename")
-        or payload.get("document_filename")
-        or f"naija_pocket_{job_id}.docx"
-    )
-    if not filename.lower().endswith(".docx"):
-        filename += ".docx"
+    backOfficeRecords =
+      [];
 
-    return {
-        "job_id": job_id,
-        "status": status,
-        "review_finished": review_finished,
-        "pages": pages,
-        "document_text": document_text,
-        "amount": amount,
-        "version_id": version,
-        "filename": filename,
-        "service": clean(payload.get("service")),
-        "customer_id": clean(payload.get("customer_id")),
-        "raw": payload,
+    renderBackOffice();
+
+    setBackOfficeMessage(
+      error.message ||
+      "The Back Office could not load saved documents.",
+      "error"
+    );
+
+  }finally{
+
+    boLoadButton.disabled =
+      false;
+
+    boRefreshButton.disabled =
+      false;
+
+  }
+
+}
+
+
+/* ==========================================================
+   ACTIVATE DOWNLOAD
+========================================================== */
+
+async function activateBackOfficeDownload(
+  record
+){
+
+  if(!backOfficeUnlocked){
+
+    setBackOfficeMessage(
+      "Back Office access is locked. Please enter the correct access key.",
+      "warning"
+    );
+
+    return;
+
+  }
+
+
+  const payment =
+    recordPaymentId(record);
+
+  const job =
+    recordJobId(record);
+
+
+  if(!payment){
+
+    setBackOfficeMessage(
+      "This saved record has no Payment ID.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const confirmed =
+    window.confirm(
+
+      "Activate customer download for Payment ID " +
+      payment +
+      "?\n\n" +
+
+      "This will use the document that is already saved. " +
+      "It will not regenerate the document."
+
+    );
+
+
+  if(!confirmed){
+
+    return;
+
+  }
+
+
+  setBackOfficeMessage(
+    "Activating download..."
+  );
+
+
+  try{
+
+    /*
+     * IMPORTANT:
+     *
+     * The current payment_api.py does not expose
+     * /api/back-office/activate-download.
+     *
+     * Its existing verification endpoint is:
+     *
+     * /api/customer-care/payment/verify
+     *
+     * We use the existing endpoint rather than inventing
+     * a route that does not exist.
+     *
+     * The endpoint operates on the existing saved payment
+     * record and does not regenerate the document.
+     */
+
+    const data =
+      await backOfficePost(
+        "/api/customer-care/payment/verify",
+        {
+          payment_id:
+            payment,
+
+          job_id:
+            job || null,
+
+          verified:
+            true,
+
+          note:
+            "Download activated from Payment HTML Back Office."
+        }
+      );
+
+
+    setBackOfficeMessage(
+
+      data.message ||
+      "Download activated successfully.",
+
+      "success"
+
+    );
+
+
+    await loadBackOffice();
+
+  }catch(error){
+
+    console.error(
+      "BACK OFFICE ACTIVATION ERROR:",
+      error
+    );
+
+    setBackOfficeMessage(
+      error.message ||
+      "Download activation could not be completed.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* ==========================================================
+   BACK OFFICE NAVIGATION
+========================================================== */
+
+function openPaymentBackOffice(){
+
+  window.location.href =
+    "/payment.html?mode=back_office";
+
+}
+
+
+function exitBackOffice(){
+
+  window.location.href =
+    "/workspace.html";
+
+}
+
+
+/* ==========================================================
+   BACK OFFICE BUTTONS
+========================================================== */
+
+boLoadButton.addEventListener(
+  "click",
+  () => {
+
+    if(
+      !backOfficeUnlocked &&
+      !checkLocalBackOfficeKey()
+    ){
+
+      return;
+
     }
 
+    loadBackOffice();
 
-def safe_current_document(job_id: str) -> tuple[dict[str, Any] | None, str | None]:
-    try:
-        return fetch_current_document(job_id), None
-    except Exception as exc:
-        return None, str(exc)
+  }
+);
 
 
-# ============================================================
-# SNAPSHOT / DOCUMENT HELPERS
-# ============================================================
+boRefreshButton.addEventListener(
+  "click",
+  () => {
 
-def snapshot_payload(document: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "job_id": document.get("job_id"),
-        "pages": document.get("pages", []),
-        "document_text": document.get("document_text", ""),
-        "service": document.get("service", ""),
-        "filename": document.get("filename", ""),
+    if(!backOfficeUnlocked){
+
+      setBackOfficeMessage(
+        "Enter the correct Back Office access key before refreshing.",
+        "warning"
+      );
+
+      boAdminKey.focus();
+
+      return;
+
     }
 
+    loadBackOffice();
 
-def payment_document(payment: dict[str, Any]) -> dict[str, Any]:
-    raw = payment.get("document_payload") or "{}"
-    try:
-        data = json.loads(raw)
-        if isinstance(data, dict):
-            return data
-    except Exception:
-        pass
-    return {}
+  }
+);
 
 
-def document_has_content(document: dict[str, Any]) -> bool:
-    pages = normalize_pages(document.get("pages"))
-    return bool(pages or clean(document.get("document_text")))
+boExitButton.addEventListener(
+  "click",
+  exitBackOffice
+);
 
 
-def document_version_is_current(payment: dict[str, Any], current: dict[str, Any]) -> bool:
-    stored = clean(payment.get("document_version"))
-    current_version = clean(current.get("version_id"))
-    return bool(stored and current_version and stored == current_version)
+/* ==========================================================
+   ALLOW ENTER KEY TO UNLOCK / LOAD
+========================================================== */
 
+boAdminKey.addEventListener(
+  "keydown",
+  event => {
 
-def current_document_is_ready(document: dict[str, Any]) -> bool:
-    if not document_has_content(document):
-        return False
-    if document.get("review_finished"):
-        return True
-    return normalize_status(document.get("status")) == "review_complete"
+    if(
+      event.key === "Enter"
+    ){
 
+      event.preventDefault();
 
-# ============================================================
-# DOCX CREATION
-# ============================================================
+      if(
+        checkLocalBackOfficeKey()
+      ){
 
-def xml_escape(value: str) -> str:
-    return escape(value, {'"': "&quot;", "'": "&apos;"})
+        loadBackOffice();
 
+      }
 
-def paragraph_xml(text: str) -> str:
-    lines = str(text).splitlines() or [""]
-    runs: list[str] = []
-    for index, line in enumerate(lines):
-        if index:
-            runs.append("<w:br/>")
-        runs.append(
-            '<w:r><w:rPr><w:sz w:val="24"/></w:rPr>'
-            f'<w:t xml:space="preserve">{xml_escape(line)}</w:t></w:r>'
-        )
-    return "<w:p>" + "".join(runs) + "</w:p>"
-
-
-def make_docx(pages: list[str], filename: str) -> Path:
-    safe_name = Path(filename).name
-    if not safe_name.lower().endswith(".docx"):
-        safe_name += ".docx"
-
-    output_path = DOWNLOAD_DIR / f"{uuid.uuid4().hex}_{safe_name}"
-
-    body_parts: list[str] = []
-    for index, page in enumerate(pages):
-        if index:
-            body_parts.append(
-                '<w:p><w:r><w:br w:type="page"/></w:r></w:p>'
-            )
-        body_parts.append(paragraph_xml(page))
-
-    document_xml = f'''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:body>
-    {''.join(body_parts)}
-    <w:sectPr>
-      <w:pgSz w:w="11906" w:h="16838"/>
-      <w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/>
-    </w:sectPr>
-  </w:body>
-</w:document>'''
-
-    styles_xml = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:docDefaults>
-    <w:rPrDefault>
-      <w:rPr>
-        <w:rFonts w:ascii="Arial" w:hAnsi="Arial"/>
-        <w:sz w:val="24"/>
-      </w:rPr>
-    </w:rPrDefault>
-  </w:docDefaults>
-</w:styles>'''
-
-    content_types = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
-  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
-  <Default Extension="xml" ContentType="application/xml"/>
-  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
-  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
-</Types>'''
-
-    rels = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
-</Relationships>'''
-
-    document_rels = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
-</Relationships>'''
-
-    with zipfile.ZipFile(output_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        archive.writestr("[Content_Types].xml", content_types)
-        archive.writestr("_rels/.rels", rels)
-        archive.writestr("word/document.xml", document_xml)
-        archive.writestr("word/styles.xml", styles_xml)
-        archive.writestr("word/_rels/document.xml.rels", document_rels)
-
-    return output_path
-
-
-# ============================================================
-# API RESPONSE FORMAT
-# ============================================================
-
-def read_saved_document_snapshot(payment: dict[str, Any]) -> tuple[list[str], str]:
-    """Read the already-saved DOCX snapshot without regenerating or changing it."""
-    path = saved_document_path(payment)
-    if not path or not path.is_file() or path.stat().st_size <= 0:
-        return [], ""
-
-    try:
-        with zipfile.ZipFile(path, "r") as archive:
-            xml_bytes = archive.read("word/document.xml")
-        root = ET.fromstring(xml_bytes)
-    except Exception:
-        return [], ""
-
-    ns = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
-    pages: list[str] = []
-    current_lines: list[str] = []
-
-    for paragraph in root.iter(ns + "p"):
-        paragraph_lines: list[str] = []
-        current_line: list[str] = []
-        page_break = False
-
-        for node in paragraph.iter():
-            if node.tag == ns + "t":
-                current_line.append(node.text or "")
-            elif node.tag == ns + "br":
-                br_type = node.attrib.get(ns + "type", "")
-                if br_type == "page":
-                    if current_line:
-                        paragraph_lines.append("".join(current_line))
-                        current_line = []
-                    page_break = True
-                else:
-                    paragraph_lines.append("".join(current_line))
-                    current_line = []
-
-        if current_line or not paragraph_lines:
-            paragraph_lines.append("".join(current_line))
-
-        current_lines.extend(paragraph_lines)
-
-        if page_break:
-            page_text = "\n".join(current_lines).strip()
-            if page_text:
-                pages.append(page_text)
-            current_lines = []
-
-    final_text = "\n".join(current_lines).strip()
-    if final_text:
-        pages.append(final_text)
-
-    return pages, "\n\n".join(pages)
-
-
-def payment_public(payment: dict[str, Any] | None) -> dict[str, Any] | None:
-    if not payment:
-        return None
-
-    return {
-        "payment_id": payment.get("payment_id"),
-        "job_id": payment.get("job_id"),
-        "customer_id": payment.get("customer_id"),
-        "service": payment.get("service"),
-        "amount": money(payment.get("amount")),
-        "currency": payment.get("currency", DEFAULT_CURRENCY),
-        "payment_method": payment.get("payment_method"),
-        "payment_status": payment.get("payment_status"),
-        "payment_reference": payment.get("payment_reference"),
-        "customer_note": payment.get("customer_note"),
-        "admin_note": payment.get("admin_note"),
-        "document_version": payment.get("document_version"),
-        "version_id": payment.get("document_version"),
-        "versionId": payment.get("document_version"),
-        "document_filename": payment.get("document_filename"),
-        "document_saved": saved_document_exists(payment),
-        "document_saved_at": payment.get("document_saved_at"),
-        "created_at": payment.get("created_at"),
-        "updated_at": payment.get("updated_at"),
-        "reported_at": payment.get("reported_at"),
-        "verified_at": payment.get("verified_at"),
-        "downloaded_at": payment.get("downloaded_at"),
-        "download_count": payment.get("download_count", 0),
-        "paid": payment_is_verified(payment.get("payment_status", "")),
-        "payment_verified": payment_is_verified(payment.get("payment_status", "")),
-        "download_unlocked": payment_is_verified(payment.get("payment_status", "")),
     }
 
-
-# ============================================================
-# BACK OFFICE / JOB SYNCHRONIZATION
-# ============================================================
-
-def payment_display_status(payment: dict[str, Any]) -> str:
-    status = normalize_status(payment.get("payment_status"))
-    if payment_is_verified(status):
-        return "Payment Verified — Download Unlocked"
-    if payment_is_reported(status):
-        return "Payment Reported — Awaiting Verification"
-    if status in {"rejected", "declined", "failed"}:
-        return "Payment Rejected"
-    return "Payment Pending"
+  }
+);
 
 
-def back_office_payment_record(payment: dict[str, Any]) -> dict[str, Any]:
-    public = payment_public(payment) or {}
-    saved_pages, saved_text = read_saved_document_snapshot(payment)
-    public.update({
-        "status": payment.get("payment_status"),
-        "display_status": payment_display_status(payment),
-        "payment_reported": payment_is_reported(payment.get("payment_status", "")),
-        "awaiting_verification": payment_is_reported(payment.get("payment_status", "")),
-        "verified": payment_is_verified(payment.get("payment_status", "")),
-        "unlocked": payment_is_verified(payment.get("payment_status", "")),
-        "document_text": saved_text,
-        "text": saved_text,
-        "document_content": saved_text,
-        "pages": saved_pages,
-        "document_pages": saved_pages,
-        "saved_document_page_count": len(saved_pages),
-        "saved_document_filename": payment.get("document_filename"),
-    })
-    return public
+/* ==========================================================
+   CUSTOMER BUTTONS
+========================================================== */
+
+reportButton.addEventListener(
+  "click",
+  reportPayment
+);
+
+downloadButton.addEventListener(
+  "click",
+  downloadDocument
+);
+
+backButton.addEventListener(
+  "click",
+  openPaymentBackOffice
+);
 
 
-def get_all_payments() -> list[dict[str, Any]]:
-    with connect_db() as conn:
-        rows = conn.execute("SELECT * FROM payment_orders ORDER BY id DESC").fetchall()
-    return [dict(r) for r in rows]
+/* ==========================================================
+   CUSTOMER MODE INITIALIZATION
+========================================================== */
+
+async function startCustomerPayment(){
+
+  serviceBadge.textContent =
+    service || "Service";
+
+  amountValue.textContent =
+    formatMoney(amount);
 
 
-def get_back_office_jobs_combined() -> list[dict[str, Any]]:
-    payments = get_all_payments()
-    grouped: dict[str, dict[str, Any]] = {}
-    for payment in payments:
-        job_id = clean(payment.get("job_id"))
-        if not job_id:
-            continue
-        item = grouped.setdefault(job_id, {
-            "job_id": job_id,
-            "customer_id": clean(payment.get("customer_id")),
-            "service": clean(payment.get("service")),
-            "amount": money(payment.get("amount")),
-            "currency": payment.get("currency", DEFAULT_CURRENCY),
-            "payment_status": payment.get("payment_status"),
-            "status": payment_display_status(payment),
-            "display_status": payment_display_status(payment),
-            "payment_id": payment.get("payment_id"),
-            "payment_reference": payment.get("payment_reference"),
-            "document_version": payment.get("document_version"),
-            "version_id": payment.get("document_version"),
-            "document_saved": saved_document_exists(payment),
-            "payment_reported": payment_is_reported(payment.get("payment_status", "")),
-            "awaiting_verification": payment_is_reported(payment.get("payment_status", "")),
-            "payment_verified": payment_is_verified(payment.get("payment_status", "")),
-            "download_unlocked": payment_is_verified(payment.get("payment_status", "")),
-            "created_at": payment.get("created_at"),
-            "reported_at": payment.get("reported_at"),
-            "verified_at": payment.get("verified_at"),
-        })
-        # Latest record for the job is authoritative.
-        if payment.get("id", 0) > 0:
-            item.update({
-                "customer_id": clean(payment.get("customer_id")) or item.get("customer_id"),
-                "service": clean(payment.get("service")) or item.get("service"),
-                "amount": money(payment.get("amount")) or item.get("amount"),
-                "currency": payment.get("currency", DEFAULT_CURRENCY),
-                "payment_status": payment.get("payment_status"),
-                "status": payment_display_status(payment),
-                "display_status": payment_display_status(payment),
-                "payment_id": payment.get("payment_id"),
-                "payment_reference": payment.get("payment_reference"),
-                "document_version": payment.get("document_version"),
-                "version_id": payment.get("document_version"),
-                "document_saved": saved_document_exists(payment),
-                "payment_reported": payment_is_reported(payment.get("payment_status", "")),
-                "awaiting_verification": payment_is_reported(payment.get("payment_status", "")),
-                "payment_verified": payment_is_verified(payment.get("payment_status", "")),
-                "download_unlocked": payment_is_verified(payment.get("payment_status", "")),
-                "created_at": payment.get("created_at"),
-                "reported_at": payment.get("reported_at"),
-                "verified_at": payment.get("verified_at"),
-            })
-    return list(grouped.values())
+  const snapshotFound =
+    applySnapshot();
 
 
-def back_office_stats() -> dict[str, Any]:
-    payments = get_all_payments()
-    jobs = get_back_office_jobs_combined()
-    reported = sum(1 for p in payments if payment_is_reported(p.get("payment_status", "")))
-    verified = sum(1 for p in payments if payment_is_verified(p.get("payment_status", "")))
-    pending = sum(1 for p in payments if payment_is_pending(p.get("payment_status", "")) and not payment_is_reported(p.get("payment_status", "")))
-    return {
-        "ok": True,
-        "total": len(payments),
-        "total_payments": len(payments),
-        "total_jobs": len(jobs),
-        "pending": pending,
-        "reported": reported,
-        "payment_reported": reported,
-        "awaiting_verification": reported,
-        "verified": verified,
-        "completed": verified,
-        "unlocked": verified,
-        "revenue": round(sum(money(p.get("amount")) for p in payments if payment_is_verified(p.get("payment_status", ""))), 2),
-    }
+  if(!snapshotFound){
+
+    setStatus(
+      "Review Snapshot Missing"
+    );
+
+    statusMessage.textContent =
+      "This payment page did not receive the exact document from Review.";
+
+    setMessage(
+      "Return to Review and tap MAKE PAYMENT again so the exact reviewed document can be transferred to Payment.",
+      "error"
+    );
+
+    return;
+
+  }
 
 
-def synchronize_report_to_old_api(payment: dict[str, Any]) -> dict[str, Any]:
-    """Best-effort synchronization with the main API when OLD_API_BASE_URL is configured."""
-    if not old_api_configured():
-        return {"ok": False, "configured": False, "message": "OLD_API_BASE_URL is not configured"}
-    payload = {
-        "payment_id": payment.get("payment_id"),
-        "job_id": payment.get("job_id"),
-        "customer_id": payment.get("customer_id"),
-        "service": payment.get("service"),
-        "amount": money(payment.get("amount")),
-        "currency": payment.get("currency", DEFAULT_CURRENCY),
-        "payment_method": payment.get("payment_method"),
-        "payment_reference": payment.get("payment_reference"),
-        "payment_status": payment.get("payment_status"),
-        "status": payment_display_status(payment),
-        "reported_at": payment.get("reported_at"),
-        "document_version": payment.get("document_version"),
-        "version_id": payment.get("document_version"),
-    }
-    # Try compatibility endpoints; a failed optional bridge must never erase the local report.
-    candidates = [
-        "/api/payment/report-sync",
-        "/api/back-office/payment-sync",
-        "/api/payment/sync",
-    ]
-    errors=[]
-    for path in candidates:
-        try:
-            return {"ok": True, "configured": True, "path": path, "response": old_api_request("POST", path, body=payload)}
-        except Exception as exc:
-            errors.append(str(exc))
-    return {"ok": False, "configured": True, "errors": errors}
+  if(
+    !paymentId &&
+    jobId
+  ){
 
+    try{
 
-# ============================================================
-# ROUTES
-# ============================================================
+      const raw =
+        sessionStorage.getItem(
+          "npb_payment_state_" +
+          jobId
+        );
 
-@app.get("/")
-async def root() -> dict[str, Any]:
-    return {
-        "ok": True,
-        "service": "Naija Pocket Business Center Payment API",
-        "version": APP_VERSION,
-        "old_api_configured": old_api_configured(),
-    }
+      if(raw){
 
+        const saved =
+          JSON.parse(raw);
 
-@app.get("/health")
-@app.get("/api/health")
-async def health() -> dict[str, Any]:
-    return {
-        "ok": True,
-        "service": "payment_api",
-        "version": APP_VERSION,
-        "old_api_configured": old_api_configured(),
-        "database": str(DB_PATH),
-    }
+        if(
+          saved &&
+          clean(saved.payment_id)
+        ){
 
+          paymentId =
+            clean(
+              saved.payment_id
+            );
 
-@app.post("/api/payment/create")
-async def payment_create(request: Request, job_id: str | None = None, customer_id: str | None = None, service: str | None = None, amount: float | None = None, payment_method: str | None = None):
-    try:
-        body = await request.json()
-        if not isinstance(body, dict): body = {}
-    except Exception:
-        body = {}
-    job_id=clean(job_id or body.get("job_id")); customer_id=clean(customer_id or body.get("customer_id")); service=clean(service or body.get("service")); method=clean(payment_method or body.get("payment_method")) or DEFAULT_PAYMENT_METHOD
-    if amount is None: amount=body.get("amount")
-    if not job_id: return json_response_error("JOB_ID_REQUIRED","job_id is required.",400)
-    current,error=safe_current_document(job_id)
-    if error or current is None: return json_response_error("DOCUMENT_LOOKUP_FAILED","The existing document service could not be reached for this job.",502,detail=error)
-    requested_version=clean(body.get("version_id") or body.get("document_version") or body.get("versionId"))
-    supplied_pages=body.get("pages", body.get("document_pages"))
-    supplied_text=clean(body.get("document_text") or body.get("text") or body.get("content"))
-    supplied_filename=clean(body.get("filename") or body.get("document_filename"))
-    exact=bool(requested_version and (supplied_pages is not None or supplied_text))
-    backend_version=clean(current.get("version_id"))
-    if exact and backend_version and backend_version != requested_version:
-        return json_response_error("PAYMENT_DOCUMENT_CHANGED","The reviewed document version no longer matches the current job version. Please return to Review and try again.",409,job_id=job_id,version_id=requested_version,current_version=backend_version)
-    if exact:
-        doc={"job_id":job_id,"pages":supplied_pages if supplied_pages is not None else [],"document_text":supplied_text,"version_id":requested_version,"filename":supplied_filename or clean(current.get("filename")) or f"naija_pocket_{job_id}.docx","service":service or clean(current.get("service")),"customer_id":customer_id or clean(current.get("customer_id")),"amount":money(current.get("amount")),"review_finished":True,"status":"review_complete"}
-    else:
-        doc=current
-        if not current_document_is_ready(doc): return json_response_error("DOCUMENT_NOT_READY","The document is not ready for payment yet.",409,job_id=job_id,status=doc.get("status"))
-    if not document_has_content(doc): return json_response_error("DOCUMENT_EMPTY","The reviewed document contains no downloadable content.",409,job_id=job_id)
-    version=clean(doc.get("version_id")) or backend_version or requested_version
-    if not version: return json_response_error("VERSION_ID_REQUIRED","A document version is required before payment can be created.",409,job_id=job_id)
-    final_amount=money(doc.get("amount")) or money(amount)
-    if final_amount<=0: return json_response_error("AMOUNT_NOT_AVAILABLE","The document service did not provide an amount to pay.",409,job_id=job_id)
-    latest=get_latest_payment_for_job(job_id)
-    if latest and clean(latest.get("document_version"))==version and normalize_status(latest.get("payment_status")) in {"pending","reported","verification_pending","awaiting_verification","verified","completed","complete","paid"}:
-        if not saved_document_exists(latest):
-            ok,err=save_exact_document_snapshot(latest,doc)
-            if not ok: return json_response_error("DOCUMENT_SNAPSHOT_FAILED","The exact reviewed document could not be saved before payment.",500,detail=err,job_id=job_id,version_id=version)
-            latest=get_payment(latest["payment_id"]) or latest
-        return {"ok":True,"message":"Existing payment and exact reviewed document snapshot reused.","payment":payment_public(latest),"payment_id":latest["payment_id"],"amount":money(latest["amount"]),"currency":latest["currency"],"payment_status":latest["payment_status"],"paid":payment_is_verified(latest["payment_status"]),"payment_verified":payment_is_verified(latest["payment_status"]),"download_unlocked":payment_is_verified(latest["payment_status"]),"document_version":version,"version_id":version,"document_saved":True}
-    payment_id=f"NPB-{uuid.uuid4().hex[:12].upper()}"
-    payload=snapshot_payload(doc); payload.update({"version_id":version,"document_version":version,"customer_id":customer_id or clean(doc.get("customer_id")),"service":service or clean(doc.get("service")),"amount":final_amount,"currency":DEFAULT_CURRENCY})
-    record=create_payment_record(payment_id=payment_id,job_id=job_id,customer_id=customer_id or clean(doc.get("customer_id")),service=service or clean(doc.get("service")),amount=final_amount,currency=DEFAULT_CURRENCY,payment_method=method,document_version=version,document_filename=supplied_filename or clean(doc.get("filename")) or f"naija_pocket_{job_id}.docx",document_payload=payload)
-    ok,err=save_exact_document_snapshot(record,doc)
-    if not ok:
-        with connect_db() as conn: conn.execute("DELETE FROM payment_orders WHERE payment_id=?",(payment_id,)); conn.commit()
-        return json_response_error("DOCUMENT_SNAPSHOT_FAILED","The exact reviewed document could not be saved. Payment has not been started.",500,detail=err,job_id=job_id,version_id=version)
-    record=get_payment(payment_id) or record
-    return {"ok":True,"message":"Payment created and the exact reviewed document was saved successfully.","payment":payment_public(record),"payment_id":payment_id,"amount":final_amount,"currency":DEFAULT_CURRENCY,"payment_status":"pending","paid":False,"payment_verified":False,"download_unlocked":False,"document_version":version,"version_id":version,"document_saved":True}
-
-
-@app.post("/api/payment/report")
-async def payment_report(
-    request: Request,
-    payment_id: str | None = None,
-    job_id: str | None = None,
-    payment_reference: str | None = None,
-    note: str | None = None,
-):
-    try:
-        body = await request.json()
-        if isinstance(body, dict):
-            payment_id = payment_id or body.get("payment_id")
-            job_id = job_id or body.get("job_id")
-            payment_reference = payment_reference or body.get("payment_reference") or body.get("reference")
-            note = note or body.get("note") or body.get("message")
-    except Exception:
-        pass
-
-    payment_id = clean(payment_id)
-    job_id = clean(job_id)
-
-    payment = get_payment(payment_id) if payment_id else None
-    if not payment and job_id:
-        payment = get_latest_payment_for_job(job_id)
-
-    if not payment:
-        return json_response_error(
-            "PAYMENT_NOT_FOUND",
-            "No payment record was found for this request.",
-            404,
-        )
-
-    if not document_version_is_current(payment, safe_current_document(payment["job_id"])[0] or {}):
-        return json_response_error(
-            "PAYMENT_DOCUMENT_CHANGED",
-            "The document was changed after this payment was created. A new payment record is required for the current document.",
-            409,
-        )
-
-    status = normalize_status(payment.get("payment_status"))
-    if payment_is_verified(status):
-        return {
-            "ok": True,
-            "message": "Payment has already been verified.",
-            "payment": payment_public(payment),
-            "paid": True,
-            "payment_verified": True,
-            "download_unlocked": True,
         }
 
-    if not saved_document_exists(payment):
-        return json_response_error(
-            "DOCUMENT_SNAPSHOT_MISSING",
-            "The exact reviewed document was not saved. Payment cannot be reported until the snapshot exists.",
-            409,
-            payment_id=payment.get("payment_id"),
-        )
+      }
 
-    updated = update_payment_record(
-        payment["payment_id"],
-        status="reported",
-        payment_reference=clean(payment_reference) or None,
-        customer_note=clean(note) or None,
-        reported_at=now_iso(),
-    )
-    sync = synchronize_report_to_old_api(updated or payment)
+    }catch(error){
 
-    return {
-        "ok": True,
-        "message": "Payment Reported — Awaiting Verification",
-        "payment": payment_public(updated),
-        "back_office": back_office_payment_record(updated or payment),
-        "sync": sync,
-        "paid": False,
-        "payment_verified": False,
-        "download_unlocked": False,
+      console.warn(
+        "Could not restore payment state:",
+        error
+      );
+
     }
 
+  }
 
-@app.get("/api/payment/status")
-async def payment_status(
-    payment_id: str | None = None,
-    job_id: str | None = None,
-):
-    payment = get_payment(clean(payment_id)) if clean(payment_id) else None
-    if not payment and clean(job_id):
-        payment = get_latest_payment_for_job(clean(job_id))
 
-    if not payment:
-        return {
-            "ok": True,
-            "payment": None,
-            "payment_status": "none",
-            "paid": False,
-            "payment_verified": False,
-            "download_unlocked": False,
-        }
+  if(paymentId){
 
-    current, error = safe_current_document(payment["job_id"])
-    if error or current is None:
-        return {
-            "ok": True,
-            "payment": payment_public(payment),
-            "payment_status": payment.get("payment_status"),
-            "paid": False,
-            "payment_verified": False,
-            "download_unlocked": False,
-            "document_check": "unavailable",
-        }
+    await loadExistingPayment();
 
-    if not document_version_is_current(payment, current):
-        return {
-            "ok": True,
-            "payment": payment_public(payment),
-            "payment_status": "invalid_for_current_document",
-            "paid": False,
-            "payment_verified": False,
-            "download_unlocked": False,
-            "document_check": "changed",
-            "message": "The document changed after payment creation. Payment cannot unlock the changed document.",
-        }
+    if(paymentId){
 
-    verified = payment_is_verified(payment.get("payment_status", ""))
-    return {
-        "ok": True,
-        "payment": payment_public(payment),
-        "payment_status": payment.get("payment_status"),
-        "paid": verified,
-        "payment_verified": verified,
-        "download_unlocked": verified,
-        "document_check": "current",
+      paymentStarted =
+        true;
+
+      updatePaymentDisplay();
+
+      startStatusPolling();
+
+      return;
+
     }
 
-
-@app.post("/api/payment/complete")
-async def payment_complete_compat(
-    request: Request,
-    payment_id: str | None = None,
-    job_id: str | None = None,
-    payment_reference: str | None = None,
-    note: str | None = None,
-):
-    """
-    Compatibility endpoint.
-
-    It deliberately does NOT unlock download.
-    It only records that the customer has reported payment.
-    Customer Care verification is still required.
-    """
-    return await payment_report(
-        request,
-        payment_id=payment_id,
-        job_id=job_id,
-        payment_reference=payment_reference,
-        note=note,
-    )
+  }
 
 
-@app.get("/api/customer-care/payments")
-async def customer_care_payments():
-    records = list_pending_payments()
-    return {
-        "ok": True,
-        "count": len(records),
-        "payments": [payment_public(record) for record in records],
-    }
+  const existing =
+    await loadExistingPayment();
 
 
-@app.post("/api/customer-care/payment/verify")
-async def customer_care_verify(
-    request: Request,
-    payment_id: str | None = None,
-    verified: bool = True,
-    note: str | None = None,
-):
-    try:
-        body = await request.json()
-        if isinstance(body, dict):
-            payment_id = payment_id or body.get("payment_id")
-            if "verified" in body:
-                verified = bool(body.get("verified"))
-            note = note or body.get("note") or body.get("admin_note")
-    except Exception:
-        pass
+  if(
+    existing &&
+    paymentId
+  ){
 
-    payment_id = clean(payment_id)
-    if not payment_id:
-        return json_response_error(
-            "PAYMENT_ID_REQUIRED",
-            "payment_id is required.",
-            400,
-        )
+    paymentStarted =
+      true;
 
-    payment = get_payment(payment_id)
-    if not payment:
-        return json_response_error(
-            "PAYMENT_NOT_FOUND",
-            "Payment record not found.",
-            404,
-        )
+    updatePaymentDisplay();
 
-    if not verified:
-        updated = update_payment_record(
-            payment_id,
-            status="rejected",
-            admin_note=clean(note) or None,
-        )
-        return {
-            "ok": True,
-            "message": "Payment marked as rejected.",
-            "payment": payment_public(updated),
-            "paid": False,
-            "payment_verified": False,
-            "download_unlocked": False,
-        }
+    startStatusPolling();
 
-    if not saved_document_exists(payment):
-        return json_response_error("DOCUMENT_SNAPSHOT_MISSING","Customer Care cannot unlock this payment because the exact document snapshot is missing.",409,payment_id=payment_id)
+    return;
 
-    current, error = safe_current_document(payment["job_id"])
-    if error or current is None:
-        return json_response_error("DOCUMENT_LOOKUP_FAILED","Customer Care verification cannot be completed because the current document could not be checked.",502,detail=error)
-
-    if not document_version_is_current(payment, current):
-        return json_response_error(
-            "PAYMENT_DOCUMENT_CHANGED",
-            "This payment belongs to an older version of the document and cannot unlock the current document.",
-            409,
-        )
-
-    updated = update_payment_record(
-        payment_id,
-        status="verified",
-        admin_note=clean(note) or None,
-        verified_at=now_iso(),
-    )
-
-    return {
-        "ok": True,
-        "message": "Payment verified. Download is now unlocked for this document version.",
-        "payment": payment_public(updated),
-        "back_office": back_office_payment_record(updated or payment),
-        "paid": True,
-        "payment_verified": True,
-        "download_unlocked": True,
-    }
+  }
 
 
-@app.get("/api/back-office/payments")
-@app.get("/api/customer-care/payments/all")
-async def back_office_payments():
-    records = get_all_payments()
-    return {
-        "ok": True,
-        "count": len(records),
-        "total": len(records),
-        "payments": [back_office_payment_record(p) for p in records],
-        "stats": back_office_stats(),
-    }
+  await createPayment();
+
+}
 
 
-@app.get("/api/back-office/jobs")
-@app.get("/api/customer-care/jobs")
-async def back_office_jobs():
-    jobs = get_back_office_jobs_combined()
-    return {
-        "ok": True,
-        "count": len(jobs),
-        "total": len(jobs),
-        "jobs": jobs,
-        "records": jobs,
-        "stats": back_office_stats(),
-    }
+/* ==========================================================
+   START
+========================================================== */
 
+if(isBackOfficeMode){
 
-@app.get("/api/back-office/stats")
-@app.get("/api/customer-care/stats")
-async def back_office_statistics():
-    return back_office_stats()
+  /*
+   * Do NOT initialize customer payment creation when the
+   * same payment.html is opened as Back Office.
+   *
+   * Do NOT automatically load the Back Office.
+   *
+   * Customer Care must first enter the local key:
+   *
+   * NPBC-2026
+   */
 
+  serviceBadge.textContent =
+    "BACK OFFICE";
 
-@app.get("/api/back-office/payment/{payment_id}")
-async def back_office_payment(payment_id: str):
-    payment = get_payment(clean(payment_id))
-    if not payment:
-        return json_response_error("PAYMENT_NOT_FOUND", "Payment record not found.", 404)
-    return {"ok": True, "payment": back_office_payment_record(payment)}
+  setBackOfficeMessage(
+    "Enter the Back Office access key to continue.",
+    "warning"
+  );
 
+}else{
 
-@app.get("/api/download")
-async def download_document(payment_id: str | None = None, job_id: str | None = None):
-    payment=get_payment(clean(payment_id)) if clean(payment_id) else None
-    if not payment and clean(job_id): payment=get_latest_payment_for_job(clean(job_id))
-    if not payment: return json_response_error("PAYMENT_NOT_FOUND","Payment record not found.",404)
-    if not payment_is_verified(payment.get("payment_status","")): return json_response_error("DOWNLOAD_LOCKED","Download remains locked until Customer Care verifies the payment.",403,payment_status=payment.get("payment_status"),payment_id=payment.get("payment_id"),download_unlocked=False)
-    output=saved_document_path(payment)
-    if not output or not output.is_file() or output.stat().st_size<=0: return json_response_error("DOCUMENT_SNAPSHOT_MISSING","The paid document snapshot is missing. Download remains locked for safety.",409,payment_id=payment.get("payment_id"),version_id=payment.get("document_version"),download_unlocked=False)
-    increment_download(payment["payment_id"])
-    filename=clean(payment.get("document_filename")) or output.name
-    return FileResponse(path=str(output),media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",filename=Path(filename).name,headers={"X-Payment-ID":payment["payment_id"],"X-Document-Version":clean(payment.get("document_version")),"X-Download-Unlocked":"true","X-Document-Snapshot":"true"})
+  startCustomerPayment();
 
+}
 
-# ============================================================
-# STARTUP
-# ============================================================
+</script>
 
-@app.on_event("startup")
-async def startup() -> None:
-    init_db()
-    print("[PAYMENT API] Startup complete.")
-    print(f"[PAYMENT API] Version: {APP_VERSION}")
-    print(f"[PAYMENT API] Database: {DB_PATH}")
-    print(f"[PAYMENT API] Old API configured: {bool(OLD_API_BASE_URL)}")
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(
-        "payment_api:app",
-        host="0.0.0.0",
-        port=int(os.getenv("PORT", "8000")),
-    )
+</body>
+</html> 
