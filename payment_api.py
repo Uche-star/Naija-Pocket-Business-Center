@@ -430,6 +430,47 @@ def saved_document_path(
     return candidate
 
 
+def read_saved_document_text(
+    payment: dict[str, Any]
+) -> str:
+
+    path = saved_document_path(
+        payment
+    )
+
+    # --------------------------------------------------------
+    # IMPORTANT:
+    #
+    # Read the exact file that was already saved.
+    # Do not regenerate it.
+    # Do not create another copy.
+    # --------------------------------------------------------
+
+    if path and path.is_file():
+
+        try:
+
+            return path.read_text(
+                encoding="utf-8"
+            )
+
+        except Exception:
+            pass
+
+    # --------------------------------------------------------
+    # Fallback:
+    #
+    # The exact reviewed document text is also stored in the
+    # payment record when the document is saved.
+    # --------------------------------------------------------
+
+    return clean(
+        payment.get(
+            "document_text"
+        )
+    )
+
+
 def save_exact_document_snapshot(
     payment: dict[str, Any],
     pages: Any,
@@ -659,6 +700,23 @@ def payment_public(
         []
     )
 
+    # --------------------------------------------------------
+    # ACTUAL SAVED DOCUMENT
+    #
+    # This reads the document that was already saved.
+    # Nothing is regenerated here.
+    # --------------------------------------------------------
+
+    document_text = ""
+
+    if saved:
+
+        document_text = (
+            read_saved_document_text(
+                payment
+            )
+        )
+
     return {
         "id": payment.get(
             "id"
@@ -712,11 +770,23 @@ def payment_public(
 
         "pages": pages,
 
+        "document_pages": pages,
+
         "page_count": (
             len(pages)
             if isinstance(pages, list)
             else 0
         ),
+
+        # ----------------------------------------------------
+        # THE ACTUAL SAVED DOCUMENT CONTENT
+        # ----------------------------------------------------
+
+        "document_text": document_text,
+
+        "text": document_text,
+
+        "document_content": document_text,
 
         "document_saved": saved,
 
@@ -730,6 +800,18 @@ def payment_public(
 
         "document_saved_at": payment.get(
             "document_saved_at"
+        ),
+
+        "saved_document_filename": (
+            payment.get(
+                "filename"
+            )
+        ),
+
+        "saved_document_page_count": (
+            len(pages)
+            if isinstance(pages, list)
+            else 0
         ),
 
         "reported_at": payment.get(
@@ -1998,6 +2080,21 @@ async def back_office_document_info(
         payment
     )
 
+    # --------------------------------------------------------
+    # Return the actual saved document content here too.
+    # This endpoint is available independently of the main
+    # Back Office payment-list response.
+    # --------------------------------------------------------
+
+    document_text = ""
+
+    if saved:
+        document_text = (
+            read_saved_document_text(
+                payment
+            )
+        )
+
     return {
         "ok": True,
 
@@ -2024,6 +2121,9 @@ async def back_office_document_info(
         "pages":
             pages,
 
+        "document_pages":
+            pages,
+
         "page_count":
             len(pages)
             if isinstance(
@@ -2031,6 +2131,19 @@ async def back_office_document_info(
                 list
             )
             else 0,
+
+        # ----------------------------------------------------
+        # ACTUAL SAVED DOCUMENT
+        # ----------------------------------------------------
+
+        "document_text":
+            document_text,
+
+        "text":
+            document_text,
+
+        "document_content":
+            document_text,
 
         "document_saved":
             saved,
@@ -2049,6 +2162,11 @@ async def back_office_document_info(
             payment.get(
                 "status"
             ),
+
+        "verified":
+            payment.get(
+                "status"
+            ) == "verified",
 
         "download_unlocked":
             payment.get(
@@ -2280,6 +2398,14 @@ async def back_office_activate_download(
                 )
             }
         )
+
+    # --------------------------------------------------------
+    # ACTIVATE ONLY.
+    #
+    # Do NOT regenerate.
+    # Do NOT rewrite.
+    # Do NOT create another document.
+    # --------------------------------------------------------
 
     update_payment(
         payment_id,
