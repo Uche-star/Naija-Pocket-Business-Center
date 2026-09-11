@@ -3,1183 +3,1137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Review Your Complete Service — Naija Pocket Business Center</title>
+<title>Make Payment — Naija Pocket Business Center</title>
 
 <style>
 :root{
   --black:#050505;
-  --panel:#111;
-  --line:rgba(255,255,255,.12);
+  --panel:#101010;
+  --panel2:#171717;
   --gold:#d4af37;
-  --gold2:#f0cf62;
+  --gold2:#f0cf63;
+  --green:#008000;
+  --green2:#00a000;
+  --red:#b00020;
   --white:#fff;
-  --muted:#a2a2a2;
-  --red:#9d0000;
-  --green:#008000
+  --muted:#999;
+  --line:rgba(212,175,55,.25);
 }
 
 *{
   box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent
+  -webkit-tap-highlight-color:transparent;
 }
 
 html,body{
   margin:0;
-  padding:0;
   width:100%;
-  height:100%;
+  min-height:100%;
   background:var(--black);
   color:var(--white);
-  font-family:Inter,Arial,sans-serif
+  font-family:Inter,Arial,sans-serif;
 }
 
-body{
-  overflow:hidden
-}
+body{min-height:100vh}
 
-button,textarea,input{
-  font:inherit
-}
-
-button{
-  cursor:pointer
-}
-
-button:disabled{
-  opacity:.45;
-  cursor:not-allowed
-}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
 
 .header{
-  display:none!important
+  background:#080808;
+  border-bottom:1px solid var(--line);
+  padding:10px 12px;
+}
+
+.header-inner{
+  max-width:900px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.brand-title{
+  margin:0;
+  color:var(--gold2);
+  font-size:16px;
+  font-weight:900;
+}
+
+.brand-subtitle{
+  margin-top:2px;
+  color:#777;
+  font-size:9px;
+}
+
+.service-badge{
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:6px 9px;
+  color:var(--gold2);
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap;
 }
 
 .main{
-  position:fixed!important;
-  top:0!important;
-  left:0!important;
-  right:0!important;
-  bottom:0!important;
-  width:100%!important;
-  max-width:1100px!important;
-  margin:0 auto!important;
-  padding:0!important;
-  display:grid!important;
-  grid-template-rows:50% 50%!important;
-  gap:0!important;
-  overflow:hidden!important
-}
-
-.review-card{
-  grid-row:1;
-  min-height:0!important;
-  height:100%!important;
-  display:flex!important;
-  flex-direction:column!important;
-  border-radius:0!important;
-  overflow:hidden!important;
-  background:#0b0b0b;
-  border:1px solid rgba(212,175,55,.22)
-}
-
-.document-card-header{
-  padding:8px 10px!important;
-  background:#111;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px
-}
-
-.document-heading h3{
-  margin:0;
-  color:var(--gold2);
-  font-size:13px;
-  font-weight:900
-}
-
-.page-count{
-  color:#aaa;
-  font-size:10px;
-  font-weight:800
-}
-
-.document-scroll{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  height:auto!important;
-  padding:5px!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain
-}
-
-.page-viewer{
-  width:100%
-}
-
-.document-page{
-  position:relative;
   width:100%;
-  min-height:620px;
-  background:#fff;
-  color:#111;
-  border-radius:2px;
-  box-shadow:0 8px 35px rgba(0,0,0,.45);
-  padding:42px 30px 58px;
-  overflow:visible;
-  user-select:text;
-  -webkit-user-select:text;
-  cursor:default
+  max-width:900px;
+  margin:auto;
+  padding:10px;
 }
 
-.page-number-inside{
-  color:#777;
-  font-family:Arial,sans-serif;
-  font-size:9px;
-  text-align:center;
-  margin-bottom:24px
-}
-
-.page-content{
-  width:100%;
-  color:#111;
-  font-family:"Times New Roman",Georgia,serif;
-  font-size:14px;
-  line-height:1.75;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  word-break:normal
-}
-
-.page-content p{
-  margin-top:0;
-  margin-bottom:12px
-}
-
-.page-content h1,
-.page-content h2,
-.page-content h3,
-.page-content h4,
-.page-content h5,
-.page-content h6{
-  color:inherit;
-  font-family:inherit;
-  line-height:1.25;
-  margin-top:16px;
-  margin-bottom:10px
-}
-
-.page-content h1{font-size:2em}
-.page-content h2{font-size:1.6em}
-.page-content h3{font-size:1.35em}
-.page-content h4{font-size:1.15em}
-
-.page-content strong,
-.page-content b{
-  font-weight:700
-}
-
-.page-content em,
-.page-content i{
-  font-style:italic
-}
-
-.page-content u{
-  text-decoration:underline
-}
-
-.page-content ul,
-.page-content ol{
-  margin-top:8px;
-  margin-bottom:12px;
-  padding-left:28px
-}
-
-.page-content li{
-  margin-bottom:4px
-}
-
-.page-content blockquote{
-  margin:12px 0;
-  padding-left:14px;
-  border-left:3px solid #aaa
-}
-
-.page-content hr{
-  border:0;
-  border-top:1px solid #999;
-  margin:18px 0
-}
-
-.page-content table{
-  width:100%;
-  border-collapse:collapse;
-  margin:14px 0;
-  font-family:inherit;
-  font-size:inherit
-}
-
-.page-content th,
-.page-content td{
-  border:1px solid #555;
-  padding:6px 8px;
-  vertical-align:top;
-  text-align:left
-}
-
-.page-content th{
-  font-weight:700
-}
-
-.page-content pre{
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  font-family:monospace
-}
-
-.empty-page{
-  min-height:500px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#777;
-  font-family:Arial,sans-serif;
-  font-size:12px;
-  text-align:center
-}
-
-.loading{
-  min-height:500px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  color:#999;
-  font-size:11px;
-  text-align:center
-}
-
-.spinner{
-  width:29px;
-  height:29px;
-  border:3px solid #333;
-  border-top-color:var(--gold);
-  border-radius:50%;
-  animation:spin .8s linear infinite
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-.page-navigation{
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  gap:7px;
-  margin-top:9px
-}
-
-.nav-button{
-  min-height:43px;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
-  background:#181818;
-  color:#fff;
-  font-size:10px;
-  font-weight:900
-}
-
-.nav-button.next{
-  background:#252525
-}
-
-.page-indicator{
-  min-width:85px;
-  color:var(--gold2);
-  text-align:center;
-  font-size:10px;
-  font-weight:900
-}
-
-.go-row{
-  display:flex;
-  gap:7px;
-  margin-top:7px
-}
-
-.page-number-input{
-  flex:1;
-  min-width:0;
-  height:39px;
-  background:#151515;
-  border:1px solid var(--line);
-  border-radius:8px;
-  color:#fff;
-  padding:0 10px;
-  outline:none;
-  font-size:11px
-}
-
-.go-button{
-  width:75px;
-  border:0;
-  border-radius:8px;
-  background:var(--gold);
-  color:#000;
-  font-size:10px;
-  font-weight:900
-}
-
-.page-review{
-  margin-top:8px;
-  padding:11px;
-  background:#101010;
-  border:1px solid var(--line);
-  border-radius:10px
-}
-
-.page-review-title{
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900;
-  margin-bottom:5px
-}
-
-.page-review-text{
-  color:#bbb;
-  font-size:10px;
-  line-height:1.55;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere
-}
-
-.action-area{
-  grid-row:2;
-  min-height:0!important;
-  height:100%!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  padding:7px 8px 18px!important;
-  border-top:2px solid var(--gold)!important;
-  box-shadow:none!important;
-  background:#080808;
-  position:relative
-}
-
-.top-panel{
-  margin:0 0 6px!important;
-  padding:7px 9px!important;
+.card{
   background:var(--panel);
   border:1px solid var(--line);
-  border-radius:13px
+  border-radius:11px;
+  padding:12px;
+  margin-bottom:9px;
 }
 
-.review-title{
+.title{
   margin:0;
-  color:#fff;
-  font-family:Montserrat,Arial,sans-serif;
-  font-size:17px;
-  font-weight:900
+  color:var(--gold2);
+  font-size:18px;
+  font-weight:900;
 }
 
-.review-subtitle{
-  margin:4px 0 0;
-  color:#aaa;
+.subtitle{
+  margin:5px 0 0;
+  color:#999;
   font-size:10px;
-  line-height:1.45
+  line-height:1.5;
 }
 
-.status-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+.status-card{
+  display:grid;
+  grid-template-columns:1fr auto;
   gap:8px;
-  margin-top:8px
+  align-items:center;
 }
 
 .status-label{
-  color:#aaa;
-  font-size:9px
+  color:#777;
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
 }
 
 .status-value{
   color:var(--gold2);
-  font-size:10px;
-  font-weight:900
+  font-size:11px;
+  font-weight:900;
+  text-align:right;
 }
 
-.progress-shell{
-  margin-top:6px;
+.status-message{
+  grid-column:1/-1;
+  color:#aaa;
+  font-size:9px;
+  line-height:1.45;
+}
+
+.amount-card{
+  text-align:center;
+  background:#070707;
+  border:1px solid rgba(212,175,55,.35);
+}
+
+.amount-label{
+  color:#888;
+  font-size:9px;
+  font-weight:800;
+}
+
+.amount-value{
+  margin-top:3px;
+  color:var(--gold2);
+  font-size:30px;
+  font-weight:900;
+}
+
+.details-card{background:var(--panel)}
+
+.section-title{
+  color:var(--gold2);
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:7px;
+}
+
+.details{
+  color:#ddd;
+  font-size:10px;
+  line-height:1.65;
+  white-space:pre-wrap;
+}
+
+.payment-id-box{
+  margin-top:9px;
+  padding:9px;
+  border-radius:8px;
+  background:#050505;
+  border:1px solid rgba(212,175,55,.25);
+}
+
+.payment-id-label{
+  color:#777;
+  font-size:8px;
+  font-weight:800;
+}
+
+.payment-id-value{
+  margin-top:3px;
+  color:var(--gold2);
+  font-size:11px;
+  font-weight:900;
+  word-break:break-all;
+}
+
+.payment-details-area{
+  display:none;
+}
+
+.payment-details-area.show{
+  display:block;
+}
+
+.bank-card{
+  background:#0b0b0b;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.bank-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.bank-row:last-child{border-bottom:0}
+
+.bank-label{
+  color:#777;
+  font-size:9px;
+  font-weight:800;
+}
+
+.bank-value{
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  text-align:right;
+  word-break:break-word;
+}
+
+.reference-card{background:#0d0d0d}
+
+.reference-input{
   width:100%;
-  height:6px;
+  min-height:42px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;
+  background:#050505;
+  color:#fff;
+  outline:none;
+  padding:10px;
+  font-size:11px;
+}
+
+.reference-input:focus{border-color:var(--gold)}
+
+.note-input{
+  width:100%;
+  min-height:65px;
+  resize:vertical;
+  margin-top:7px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;
+  background:#050505;
+  color:#fff;
+  outline:none;
+  padding:10px;
+  font-size:10px;
+}
+
+.note-input:focus{border-color:var(--gold)}
+
+.primary-button,
+.report-button,
+.download-button,
+.customer-care-button,
+.back-button{
+  width:100%;
+  min-height:46px;
+  border:0;
+  border-radius:9px;
+  margin-top:8px;
+  font-size:10px;
+  font-weight:900;
+}
+
+.primary-button{
+  background:var(--gold);
+  color:#000;
+}
+
+.primary-button:disabled,
+.report-button:disabled,
+.download-button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.report-button{
+  background:var(--green);
+  color:#fff;
+}
+
+.download-button{
   background:#242424;
-  border-radius:20px;
-  overflow:hidden
+  color:#777;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.download-button.active{
+  background:var(--green2);
+  color:#fff;
+  border-color:var(--green2);
+  cursor:pointer;
+}
+
+.customer-care-button{
+  background:#171717;
+  color:var(--gold2);
+  border:1px solid rgba(212,175,55,.35);
+}
+
+.back-button{
+  background:var(--red);
+  color:#fff;
+}
+
+.message{
+  min-height:20px;
+  margin:8px 0;
+  color:#888;
+  text-align:center;
+  font-size:9px;
+  line-height:1.45;
+}
+
+.message.error{color:#ff7777}
+.message.success{color:#75dc99}
+.message.warning{color:#f0cf63}
+
+.progress{
+  height:5px;
+  margin-top:8px;
+  border-radius:10px;
+  overflow:hidden;
+  background:#222;
 }
 
 .progress-bar{
   width:0%;
   height:100%;
   background:var(--gold);
-  transition:width .25s ease
+  transition:width .25s ease;
 }
 
-.progress-text{
-  margin-top:4px;
+.download-area{display:none}
+.download-area.show{display:block}
+
+.locked-note{
+  padding:9px;
+  border-radius:8px;
+  background:#080808;
+  border:1px solid rgba(255,255,255,.07);
   color:#888;
   font-size:9px;
-  text-align:right
+  line-height:1.5;
 }
 
-.top-amount-card{
-  margin:0 0 6px!important;
-  padding:6px!important;
-  background:#111;
-  border:1px solid rgba(212,175,55,.45);
-  border-radius:13px;
-  text-align:left
-}
-
-.top-amount-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:6px
-}
-
-.top-amount-card>.top-amount-head>div:first-child{
-  flex:0 0 108px;
-  text-align:center
-}
-
-.top-amount-label{
-  color:#aaa;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.8px
-}
-
-.top-amount-value{
-  margin-top:2px;
-  color:var(--gold2);
-  font-size:27px;
-  font-weight:900
-}
-
-.top-action-buttons{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:5px;
-  flex:1;
-  max-width:none!important
-}
-
-.top-action-buttons button{
-  width:100%;
-  min-height:38px;
-  height:38px;
-  padding:4px 5px;
+.saved-note{
+  padding:9px;
   border-radius:8px;
+  background:rgba(0,128,0,.08);
+  border:1px solid rgba(0,128,0,.35);
+  color:#9ddd9d;
   font-size:9px;
-  font-weight:900;
-  line-height:1.05
+  line-height:1.5;
 }
 
-.make-payment-button{
-  background:#d4af37!important;
-  color:#000!important;
-  border:0!important
-}
-
-.confirm-payment-button{
-  background:#008000!important;
-  color:#fff!important;
-  border:0!important
-}
-
-.download-button{
-  background:#007bff!important;
-  color:#fff!important;
-  border:0!important
-}
-
-.download-button:disabled{
-  background:#666!important;
-  color:#fff!important;
-  opacity:1!important
-}
-
-.download-button.active{
-  background:#007bff!important;
-  color:#fff!important;
-  cursor:pointer
-}
-
-.correction-box{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:7px;
-  align-items:end;
-  margin-top:6px!important
-}
-
-.correction-input{
-  width:100%;
-  height:43px;
-  min-height:43px;
-  max-height:100px;
-  resize:none;
-  padding:11px;
-  background:#171717;
-  border:1px solid rgba(255,255,255,.14);
+.official-note{
+  padding:10px;
   border-radius:8px;
+  background:#080808;
+  border:1px solid rgba(212,175,55,.16);
+  color:#999;
+  font-size:9px;
+  line-height:1.6;
+}
+
+.official-note strong{
+  color:#ddd;
+}
+
+.hidden{display:none!important}
+
+/* ==========================================================
+   BACK OFFICE
+========================================================== */
+
+#backOfficeView{display:none}
+
+body.back-office-mode #customerPaymentView{display:none}
+body.back-office-mode #backOfficeView{display:block}
+body.back-office-mode .service-badge{color:var(--gold2)}
+
+.bo-header-card{background:#080808}
+
+.bo-title{
+  margin:0;
+  color:var(--gold2);
+  font-size:19px;
+  font-weight:900;
+}
+
+.bo-subtitle{
+  margin:5px 0 0;
+  color:#999;
+  font-size:10px;
+  line-height:1.5;
+}
+
+.bo-key-input{
+  width:100%;
+  min-height:44px;
+  margin-top:9px;
+  border:1px solid rgba(212,175,55,.25);
+  border-radius:8px;
+  background:#050505;
   color:#fff;
   outline:none;
-  font-size:11px;
-  line-height:1.4
-}
-
-.correction-button{
-  min-width:125px;
-  min-height:43px;
-  border:1px solid rgba(212,175,55,.38);
-  border-radius:8px;
-  background:#171717;
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900
-}
-
-.payment-section{
-  display:block;
-  margin-top:6px!important;
   padding:10px;
-  background:#111;
-  border:1px solid rgba(212,175,55,.4);
-  border-radius:10px
+  font-size:11px;
 }
 
-.payment-title{
-  color:var(--gold2);
-  font-size:12px;
-  font-weight:900
-}
+.bo-key-input:focus{border-color:var(--gold)}
 
-.payment-subtitle{
-  margin-top:3px;
-  color:#888;
-  font-size:9px;
-  line-height:1.45
-}
-
-.payment-details{
-  margin-top:7px;
-  color:#ddd;
-  white-space:pre-wrap;
+.bo-button{
+  width:100%;
+  min-height:44px;
+  border:0;
+  border-radius:9px;
+  margin-top:8px;
   font-size:10px;
-  line-height:1.5
+  font-weight:900;
 }
 
-.payment-id{
-  margin-top:6px;
-  color:#aaa;
-  font-size:9px;
-  word-break:break-all
+.bo-load{
+  background:var(--gold);
+  color:#000;
 }
 
-.payment-message{
-  margin-top:7px;
-  color:#888;
-  font-size:9px;
+.bo-refresh{
+  background:#252525;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.bo-exit{
+  background:var(--red);
+  color:#fff;
+}
+
+.bo-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+
+.bo-stat{
+  min-width:0;
+  padding:10px 7px;
   text-align:center;
-  line-height:1.45
+  border-radius:8px;
+  background:#070707;
+  border:1px solid rgba(212,175,55,.18);
 }
 
-.message{
-  position:absolute!important;
-  left:5px!important;
-  right:5px!important;
-  bottom:1px!important;
-  z-index:50!important;
-  background:rgba(0,0,0,.92)!important;
-  min-height:17px;
-  margin-top:2px;
-  color:#888;
+.bo-stat-number{
+  color:var(--gold2);
+  font-size:18px;
+  font-weight:900;
+}
+
+.bo-stat-label{
+  margin-top:3px;
+  color:#777;
+  font-size:7px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.bo-message{
+  min-height:18px;
+  margin:7px 0;
+  text-align:center;
+  color:#999;
   font-size:9px;
-  text-align:center
+  line-height:1.4;
 }
 
-.message.error{
-  color:#ff7777
+.bo-message.error{color:#ff7777}
+.bo-message.success{color:#75dc99}
+.bo-message.warning{color:#f0cf63}
+
+.bo-record{
+  background:#0b0b0b;
+  border:1px solid rgba(212,175,55,.18);
+  border-radius:10px;
+  padding:10px;
+  margin-bottom:8px;
 }
 
-.message.success{
-  color:#75dc99
+.bo-record-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+}
+
+.bo-record-title{
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+.bo-status{
+  flex:none;
+  padding:5px 7px;
+  border-radius:12px;
+  font-size:7px;
+  font-weight:900;
+  text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.12);
+  color:#aaa;
+}
+
+.bo-status.saved{
+  color:var(--gold2);
+  border-color:rgba(212,175,55,.35);
+}
+
+.bo-status.reported{
+  color:#f0cf63;
+  border-color:rgba(240,207,99,.35);
+}
+
+.bo-status.verified{
+  color:#75dc99;
+  border-color:rgba(0,160,0,.45);
+}
+
+.bo-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:9px;
+}
+
+.bo-field{
+  padding:7px;
+  border-radius:7px;
+  background:#050505;
+  border:1px solid rgba(255,255,255,.06);
+  min-width:0;
+}
+
+.bo-field-label{
+  color:#666;
+  font-size:7px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.bo-field-value{
+  margin-top:2px;
+  color:#ddd;
+  font-size:9px;
+  font-weight:800;
+  word-break:break-word;
+}
+
+.bo-actions{
+  margin-top:8px;
+}
+
+.bo-action{
+  width:100%;
+  min-height:42px;
+  border:0;
+  border-radius:8px;
+  margin-top:6px;
+  font-size:9px;
+  font-weight:900;
+}
+
+.bo-view{
+  background:#242424;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.bo-activate{
+  background:var(--green);
+  color:#fff;
+}
+
+.bo-activate:disabled,
+.bo-view:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.bo-document{
+  display:none;
+  margin-top:8px;
+  padding:9px;
+  background:#050505;
+  border:1px solid rgba(212,175,55,.18);
+  border-radius:8px;
+  color:#ddd;
+  font-size:9px;
+  line-height:1.55;
+  white-space:pre-wrap;
+  max-height:400px;
+  overflow:auto;
+}
+
+.bo-document.show{display:block}
+
+.bo-empty{
+  padding:18px 10px;
+  text-align:center;
+  color:#777;
+  font-size:9px;
+  line-height:1.5;
+  border:1px dashed rgba(255,255,255,.1);
+  border-radius:9px;
+}
+
+.bo-note{
+  padding:9px;
+  margin-top:8px;
+  border-radius:8px;
+  background:#080808;
+  border:1px solid rgba(255,255,255,.06);
+  color:#777;
+  font-size:8px;
+  line-height:1.5;
 }
 
 @media(max-width:600px){
-  .main{
-    grid-template-rows:50% 50%!important
+  .main{padding:8px 7px 14px}
+  .header{padding:9px 8px}
+  .brand-title{font-size:14px}
+  .title{font-size:16px}
+  .amount-value{font-size:27px}
+  .card{padding:10px}
+
+  .primary-button,
+  .report-button,
+  .download-button,
+  .customer-care-button,
+  .back-button,
+  .bo-button,
+  .bo-action{
+    min-height:44px;
   }
 
-  .document-page{
-    min-height:560px!important;
-    padding:28px 16px 40px!important
+  .bo-stats{
+    grid-template-columns:repeat(3,1fr);
   }
 
-  .page-content{
-    font-size:13px!important;
-    line-height:1.65!important
+  .bo-grid{
+    grid-template-columns:1fr;
   }
 
-  .document-scroll{
-    padding:3px!important
+  .bo-record-head{
+    flex-direction:column;
   }
 
-  .action-area{
-    padding:5px 5px 18px!important
-  }
-
-  .action-area .top-panel{
-    padding:6px 8px!important
-  }
-
-  .action-area .review-title{
-    font-size:14px!important
-  }
-
-  .action-area .review-subtitle{
-    font-size:8px!important;
-    margin-top:2px!important
-  }
-
-  .action-area .status-row{
-    margin-top:5px!important
-  }
-
-  .action-area .progress-shell{
-    margin-top:4px!important;
-    height:5px!important
-  }
-
-  .action-area .progress-text{
-    margin-top:3px!important;
-    font-size:8px!important
-  }
-
-  .action-area .top-amount-head{
-    align-items:center!important
-  }
-
-  .action-area .top-amount-card>.top-amount-head>div:first-child{
-    flex:0 0 72px!important
-  }
-
-  .action-area .top-amount-label{
-    font-size:8px!important
-  }
-
-  .action-area .top-amount-value{
-    font-size:19px!important
-  }
-
-  .action-area .top-action-buttons{
-    gap:3px!important
-  }
-
-  .action-area .top-action-buttons button{
-    min-height:38px!important;
-    height:38px!important;
-    font-size:8px!important;
-    padding:3px 2px!important
-  }
-
-  .action-area .correction-box{
-    grid-template-columns:1fr auto!important;
-    gap:5px!important
-  }
-
-  .action-area .correction-input{
-    height:38px!important;
-    min-height:38px!important;
-    padding:8px!important;
-    font-size:9px!important
-  }
-
-  .action-area .correction-button{
-    min-width:105px!important;
-    min-height:38px!important;
-    font-size:8px!important
-  }
-
-  .action-area .payment-section{
-    padding:7px!important
-  }
-
-  .action-area .payment-title{
-    font-size:10px!important
-  }
-
-  .action-area .payment-subtitle,
-  .action-area .payment-details,
-  .action-area .payment-message{
-    font-size:8px!important;
-    line-height:1.3!important
-  }
-
-  .action-area .payment-id{
-    font-size:8px!important
-  }
-
-  .page-navigation{
-    margin-top:7px!important
-  }
-
-  .nav-button{
-    min-height:38px!important;
-    font-size:9px!important
-  }
-
-  .go-row{
-    margin-top:5px!important
-  }
-
-  .page-number-input{
-    height:35px!important
-  }
-
-  .go-button{
-    width:65px!important
+  .bo-status{
+    align-self:flex-start;
   }
 }
 
 @media(min-width:800px){
-  .document-page{
-    max-width:820px;
-    margin:auto;
-    min-height:1050px;
-    padding:65px 70px 75px
-  }
-
-  .page-content{
-    font-size:15px;
-    line-height:1.8
-  }
+  .main{padding:18px}
 }
 </style>
 </head>
 
 <body>
 
-<span id="serviceBadge" style="display:none">Service</span>
-
-<main class="main">
-
-<section class="review-card">
-
-  <div class="document-card-header">
-    <div class="document-heading">
-      <h3>Your Complete Document</h3>
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <h1 class="brand-title">Naija Pocket Business Center</h1>
+      <div class="brand-subtitle">Secure payment and document delivery</div>
     </div>
 
-    <div id="pageCount" class="page-count">
-      0 PAGES
-    </div>
+    <div id="serviceBadge" class="service-badge">Service</div>
   </div>
+</header>
 
-  <div id="documentScroll" class="document-scroll">
+<!-- ========================================================
+     CUSTOMER PAYMENT MODE
+========================================================= -->
 
-    <div id="pageViewer" class="page-viewer">
+<main id="customerPaymentView" class="main">
 
-      <div class="loading">
-        <div class="spinner"></div>
-        <div>Your service is being carefully prepared.</div>
-      </div>
+  <section class="card">
+    <h2 class="title">Payment Details</h2>
 
-    </div>
-
-    <div class="page-navigation">
-
-      <button
-        id="previousButton"
-        class="nav-button"
-        type="button"
-        disabled>
-        ← Previous Page
-      </button>
-
-      <div id="pageIndicator" class="page-indicator">
-        Page 0 of 0
-      </div>
-
-      <button
-        id="nextButton"
-        class="nav-button next"
-        type="button"
-        disabled>
-        Next Page →
-      </button>
-
-    </div>
-
-    <div class="go-row">
-
-      <input
-        id="pageNumberInput"
-        class="page-number-input"
-        type="number"
-        min="1"
-        placeholder="Enter page number">
-
-      <button
-        id="goButton"
-        class="go-button"
-        type="button">
-        GO
-      </button>
-
-    </div>
-
-    <div
-      id="pageReview"
-      class="page-review"
-      style="display:none">
-
-      <div class="page-review-title">
-        PAGE REVIEW
-      </div>
-
-      <div
-        id="pageReviewText"
-        class="page-review-text">
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<section class="action-area">
-
-  <section class="top-panel">
-
-    <h2 class="review-title">
-      Review Your Complete Service
-    </h2>
-
-    <p class="review-subtitle">
-      Review every page. Make any necessary correction, then pay and download after Customer Care verifies your payment.
+    <p class="subtitle">
+      Your exact reviewed document is connected to this payment.
+      The document is saved securely using the same job and document version from Review.
     </p>
+  </section>
 
-    <div class="status-row">
+  <section class="card status-card">
 
-      <span class="status-label">
-        Review status
-      </span>
+    <div class="status-label">Payment Status</div>
 
-      <span
-        id="statusValue"
-        class="status-value">
-        Preparing...
-      </span>
-
+    <div id="statusValue" class="status-value">
+      Preparing...
     </div>
 
-    <div class="progress-shell">
-
-      <div
-        id="progressBar"
-        class="progress-bar">
-      </div>
-
+    <div id="statusMessage" class="status-message">
+      Preparing your secure payment.
     </div>
 
-    <div
-      id="progressText"
-      class="progress-text">
-      Preparing the document...
+    <div class="progress">
+      <div id="progressBar" class="progress-bar"></div>
     </div>
 
   </section>
 
-  <section class="top-amount-card">
+  <section class="card amount-card">
 
-    <div class="top-amount-head">
+    <div class="amount-label">AMOUNT TO PAY</div>
 
-      <div>
+    <div id="amountValue" class="amount-value">
+      ₦0
+    </div>
 
-        <div class="top-amount-label">
-          AMOUNT TO PAY
-        </div>
+  </section>
 
-        <div
-          id="amountValueTop"
-          class="top-amount-value">
-          ₦0
-        </div>
+  <section class="card details-card">
 
-      </div>
+    <div class="section-title">ORDER INFORMATION</div>
 
-      <div class="top-action-buttons">
+    <div id="orderDetails" class="details">
+      Preparing order details...
+    </div>
 
-        <button
-          id="makePaymentButton"
-          class="make-payment-button"
-          type="button">
-          💳 MAKE PAYMENT
-        </button>
+    <div id="paymentIdBox" class="payment-id-box hidden">
 
-        <button
-          id="paymentButton"
-          class="confirm-payment-button"
-          type="button"
-          disabled>
-          ✓ I HAVE MADE PAYMENT
-        </button>
+      <div class="payment-id-label">PAYMENT ID</div>
 
-        <button
-          id="downloadButton"
-          class="download-button"
-          type="button"
-          disabled>
-          🔒 DOWNLOAD DOCUMENT
-        </button>
-
-      </div>
+      <div id="paymentIdValue" class="payment-id-value"></div>
 
     </div>
 
   </section>
 
-  <div class="correction-box">
+  <!-- ======================================================
+       MAKE PAYMENT
+       This button only opens the payment instructions.
+       It does not report payment.
+  ======================================================= -->
 
-    <textarea
-      id="correctionInput"
-      class="correction-input"
-      placeholder="Want anything changed? Tell us what to correct..."></textarea>
+  <section class="card">
+
+    <div class="section-title">PAYMENT ACTION</div>
+
+    <div class="details">
+      When you are ready to make payment, tap the button below
+      to view the official bank transfer details.
+    </div>
 
     <button
-      id="correctionButton"
-      class="correction-button"
-      type="button">
-      Apply Correction
+      id="makePaymentButton"
+      class="primary-button"
+      type="button"
+    >
+      MAKE PAYMENT
     </button>
+
+  </section>
+
+  <!-- ======================================================
+       PAYMENT DETAILS AREA
+  ======================================================= -->
+
+  <div id="paymentDetailsArea" class="payment-details-area">
+
+    <section class="card bank-card">
+
+      <div class="section-title">OFFICIAL PAYMENT DETAILS</div>
+
+      <div class="details" style="margin-bottom:6px;">
+        Transfer exactly the amount shown above.
+        After completing your bank transfer, return to this page,
+        enter your payment reference and tap I HAVE MADE PAYMENT.
+      </div>
+
+      <div class="bank-row">
+        <div class="bank-label">Bank</div>
+        <div id="bankName" class="bank-value">Your Business Bank</div>
+      </div>
+
+      <div class="bank-row">
+        <div class="bank-label">Account Name</div>
+        <div id="accountName" class="bank-value">
+          Naija Pocket Business Center
+        </div>
+      </div>
+
+      <div class="bank-row">
+        <div class="bank-label">Account Number</div>
+        <div id="accountNumber" class="bank-value">
+          0000000000
+        </div>
+      </div>
+
+    </section>
+
+    <section class="card reference-card">
+
+      <div class="section-title">PAYMENT REFERENCE</div>
+
+      <input
+        id="paymentReference"
+        class="reference-input"
+        type="text"
+        autocomplete="off"
+        placeholder="Enter your bank transfer reference"
+      >
+
+      <textarea
+        id="paymentNote"
+        class="note-input"
+        placeholder="Optional note for Customer Care"
+      ></textarea>
+
+      <button
+        id="reportButton"
+        class="report-button"
+        type="button"
+        disabled
+      >
+        I HAVE MADE PAYMENT
+      </button>
+
+    </section>
+
+    <section class="card">
+
+      <div class="section-title">CUSTOMER CARE</div>
+
+      <div class="details">
+        Need assistance with your payment, payment reference,
+        or document delivery? Contact Customer Care directly.
+      </div>
+
+      <button
+        id="customerCareButton"
+        class="customer-care-button"
+        type="button"
+      >
+        CUSTOMER CARE
+      </button>
+
+    </section>
+
+    <section class="card">
+
+      <div class="official-note">
+        <strong>Official Payment Notice</strong><br><br>
+
+        Please transfer only the amount displayed on this page
+        to the official account details provided above.
+        After completing the transfer, enter your payment reference
+        and select <strong>I HAVE MADE PAYMENT</strong>.
+
+        <br><br>
+
+        Your payment report will be submitted to Customer Care
+        for verification. Payment verification is required before
+        document download is enabled.
+
+        <br><br>
+
+        The document associated with this payment is the exact
+        reviewed document already saved for this job and document
+        version. The document will not be regenerated during
+        verification or download.
+      </div>
+
+    </section>
 
   </div>
 
-  <section
-    id="paymentSection"
-    class="payment-section">
+  <section id="downloadArea" class="card download-area">
 
-    <div class="payment-title">
-      PAYMENT
+    <div class="section-title">DOCUMENT DOWNLOAD</div>
+
+    <div id="downloadNote" class="locked-note">
+      Customer Care must verify your payment before the saved document can be downloaded.
     </div>
 
-    <div class="payment-subtitle">
-      Your exact reviewed document will be handed to the payment page. Payment will be created there and the document will be saved for download. Customer Care will verify your payment before download is unlocked.
-    </div>
+    <button
+      id="downloadButton"
+      class="download-button"
+      type="button"
+      disabled
+    >
+      DOWNLOAD DOCUMENT
+    </button>
 
-    <div
-      id="paymentDetails"
-      class="payment-details">
-      Payment has not been started.
-    </div>
+  </section>
 
-    <div
-      id="paymentId"
-      class="payment-id"
-      style="display:none">
-    </div>
+  <div id="message" class="message"></div>
 
-    <div
-      id="paymentMessage"
-      class="payment-message">
-      Download remains locked until Customer Care verifies your payment.
+  <button
+    id="backButton"
+    class="back-button"
+    type="button"
+  >
+    BACK OFFICE
+  </button>
+
+</main>
+
+<!-- ========================================================
+     SINGLE BACK OFFICE
+========================================================= -->
+
+<main id="backOfficeView" class="main">
+
+  <section class="card bo-header-card">
+
+    <h2 class="bo-title">Customer Care Back Office</h2>
+
+    <p class="bo-subtitle">
+      View saved customer documents, confirm reported payments,
+      and activate download for the exact document already saved.
+    </p>
+
+    <input
+      id="boAdminKey"
+      class="bo-key-input"
+      type="password"
+      autocomplete="off"
+      placeholder="Enter Back Office access key"
+    >
+
+    <button
+      id="boLoadButton"
+      class="bo-button bo-load"
+      type="button"
+    >
+      LOAD SAVED DOCUMENTS
+    </button>
+
+    <button
+      id="boRefreshButton"
+      class="bo-button bo-refresh"
+      type="button"
+    >
+      REFRESH BACK OFFICE
+    </button>
+
+    <button
+      id="boExitButton"
+      class="bo-button bo-exit"
+      type="button"
+    >
+      EXIT BACK OFFICE
+    </button>
+
+    <div id="boMessage" class="bo-message"></div>
+
+  </section>
+
+  <section class="card">
+
+    <div class="section-title">BACK OFFICE SUMMARY</div>
+
+    <div class="bo-stats">
+
+      <div class="bo-stat">
+        <div id="boTotal" class="bo-stat-number">0</div>
+        <div class="bo-stat-label">Saved</div>
+      </div>
+
+      <div class="bo-stat">
+        <div id="boReported" class="bo-stat-number">0</div>
+        <div class="bo-stat-label">Reported</div>
+      </div>
+
+      <div class="bo-stat">
+        <div id="boActivated" class="bo-stat-number">0</div>
+        <div class="bo-stat-label">Activated</div>
+      </div>
+
     </div>
 
   </section>
 
-</section>
+  <section class="card">
 
-<div
-  id="message"
-  class="message">
-</div>
+    <div class="section-title">SAVED DOCUMENTS</div>
+
+    <div id="boRecords">
+
+      <div class="bo-empty">
+        Enter the Back Office access key and tap LOAD SAVED DOCUMENTS.
+      </div>
+
+    </div>
+
+    <div class="bo-note">
+      Saved documents are listed independently of whether the customer
+      has reported payment. Reporting payment changes the payment state;
+      activation only unlocks the already-saved document.
+    </div>
+
+  </section>
 
 </main>
 
 <script>
 "use strict";
 
-/* ===========================================================
-   MAIN REVIEW API
-   =========================================================== */
+/* ============================================================
+   Naija Pocket Business Center
+   payment.html
 
-const API_BASE = "";
+   CUSTOMER PAYMENT
+   ----------------
+   MAKE PAYMENT:
+       Opens/reveals the official payment details.
 
+   I HAVE MADE PAYMENT:
+       Uses the existing payment-report API.
 
-/* ===========================================================
-   URL PARAMETERS
-   =========================================================== */
+   DOWNLOAD DOCUMENT:
+       Uses the existing saved-document download API.
+
+   CUSTOMER CARE:
+       Opens direct Customer Care contact options.
+
+   BACK OFFICE
+   -----------
+   The Back Office is controlled by this payment.html.
+
+   Workspace opens:
+       /payment.html?mode=back_office
+
+   LOCAL ACCESS KEY:
+       NPBC-2026
+
+   DOWNLOAD RULE
+   -------------
+   ACTIVATE DOWNLOAD does not regenerate the document.
+
+   It only unlocks the exact document that was already saved
+   for the payment/job/version.
+============================================================ */
+
+const PAYMENT_API_BASE =
+  "https://naija-pocket-payment-api.onrender.com";
+
+const LOCAL_BACK_OFFICE_KEY =
+  "NPBC-2026";
+
+let backOfficeUnlocked = false;
 
 const params =
   new URLSearchParams(location.search);
 
+const isBackOfficeMode =
+  params.get("mode") === "back_office" ||
+  params.get("back_office") === "1";
+
+if(isBackOfficeMode){
+  document.body.classList.add("back-office-mode");
+}
+
+/* ==========================================================
+   CUSTOMER STATE
+========================================================== */
+
 const jobId =
-  (params.get("job_id") || "").trim();
+  clean(params.get("job_id"));
 
-const service =
-  (
-    params.get("service") ||
-    "Business Center Service"
-  ).trim();
+const queryVersionId =
+  clean(
+    params.get("version_id") ||
+    params.get("versionId") ||
+    params.get("document_version")
+  );
 
-const customerId =
-  (
-    params.get("customer_id") ||
-    localStorage.getItem("customer_id") ||
-    localStorage.getItem("customerId") ||
-    ""
-  ).trim();
-
-const incomingPaymentId =
-  (
+const queryPaymentId =
+  clean(
     params.get("payment_id") ||
-    localStorage.getItem("payment_id") ||
-    ""
-  ).trim();
+    params.get("paymentId")
+  );
 
+const queryService =
+  clean(params.get("service")) ||
+  "Business Center Service";
 
-/* ===========================================================
-   DOM
-   =========================================================== */
+const queryAmount =
+  parseMoney(params.get("amount"));
 
-const $ =
-  id => document.getElementById(id);
+const SNAPSHOT_KEYS = [
+  "npb_payment_review_snapshot_" + jobId,
+  "npb_payment_review_snapshot",
+  "payment_review_snapshot_" + jobId,
+  "payment_review_snapshot"
+];
 
-const serviceBadge =
-  $("serviceBadge");
-
-const statusValue =
-  $("statusValue");
-
-const progressBar =
-  $("progressBar");
-
-const progressText =
-  $("progressText");
-
-const pageCount =
-  $("pageCount");
-
-const amountValueTop =
-  $("amountValueTop");
-
-const documentScroll =
-  $("documentScroll");
-
-const pageViewer =
-  $("pageViewer");
-
-const previousButton =
-  $("previousButton");
-
-const nextButton =
-  $("nextButton");
-
-const pageIndicator =
-  $("pageIndicator");
-
-const pageNumberInput =
-  $("pageNumberInput");
-
-const goButton =
-  $("goButton");
-
-const pageReview =
-  $("pageReview");
-
-const pageReviewText =
-  $("pageReviewText");
-
-const correctionInput =
-  $("correctionInput");
-
-const correctionButton =
-  $("correctionButton");
-
-const paymentSection =
-  $("paymentSection");
-
-const paymentDetails =
-  $("paymentDetails");
-
-const paymentId =
-  $("paymentId");
-
-const makePaymentButton =
-  $("makePaymentButton");
-
-const paymentButton =
-  $("paymentButton");
-
-const downloadButton =
-  $("downloadButton");
-
-const paymentMessage =
-  $("paymentMessage");
-
-const message =
-  $("message");
-
-
-/* ===========================================================
-   STATE
-   =========================================================== */
-
+let snapshot = null;
+let paymentId = queryPaymentId;
+let versionId = queryVersionId;
+let service = queryService;
+let amount = queryAmount;
+let customerId = "";
+let filename = "";
 let pages = [];
-
-let currentPage = 1;
-
-let totalPages = 0;
-
-let currentVersion = 1;
-
-let versionId = "";
-
-let currentStatus = "";
-
-let reviewFinished = false;
-
-let paid = false;
-
+let documentText = "";
+let paymentStatus = "none";
 let paymentStarted = false;
+let paymentReported = false;
+let paymentVerified = false;
+let downloadUnlocked = false;
+let createInProgress = false;
+let reportInProgress = false;
+let statusTimer = null;
 
-let paymentPending = false;
-
-let busy = false;
-
-let pollTimer = null;
-
-let polling = false;
-
-let amount = 0;
-
-let billing = "";
-
-let paymentIdentifier =
-  incomingPaymentId;
-
-
-/* ===========================================================
+/* ==========================================================
    BASIC HELPERS
-   =========================================================== */
+========================================================== */
 
 function clean(value){
 
@@ -1193,2615 +1147,2571 @@ function clean(value){
   return String(value).trim();
 }
 
+function parseMoney(value){
 
-function setMessage(
-  text,
-  type = ""
-){
+  if(
+    value === null ||
+    value === undefined
+  ){
+    return 0;
+  }
+
+  if(typeof value === "number"){
+
+    return Number.isFinite(value) && value > 0
+      ? value
+      : 0;
+  }
+
+  const number =
+    Number(
+      String(value).replace(/[^0-9.]/g,"")
+    );
+
+  return Number.isFinite(number) && number > 0
+    ? number
+    : 0;
+}
+
+function formatMoney(value){
+
+  const n = parseMoney(value);
+
+  if(!n){
+    return "₦0";
+  }
+
+  return "₦" +
+    n.toLocaleString(
+      "en-NG",
+      {
+        minimumFractionDigits:0,
+        maximumFractionDigits:2
+      }
+    );
+}
+
+function normalizeStatus(status){
+
+  return clean(status)
+    .toLowerCase()
+    .replace(/-/g,"_")
+    .replace(/\s+/g,"_");
+}
+
+function isReported(status){
+
+  return [
+    "reported",
+    "payment_reported",
+    "verification_pending",
+    "awaiting_verification",
+    "pending_verification",
+    "payment_pending"
+  ].includes(
+    normalizeStatus(status)
+  );
+}
+
+function isVerified(status){
+
+  return [
+    "verified",
+    "approved",
+    "paid",
+    "payment_verified",
+    "payment_confirmed",
+    "confirmed",
+    "activated",
+    "completed",
+    "complete"
+  ].includes(
+    normalizeStatus(status)
+  );
+}
+
+/* ==========================================================
+   IMPORTANT DOWNLOAD STATE HELPER
+========================================================== */
+
+function extractDownloadUnlocked(data){
+
+  const payment =
+    data &&
+    data.payment &&
+    typeof data.payment === "object"
+      ? data.payment
+      : {};
+
+  return (
+    data &&
+    (
+      data.download_unlocked === true ||
+      data.payment_verified === true ||
+      data.paid === true ||
+      payment.download_unlocked === true ||
+      payment.payment_verified === true ||
+      payment.paid === true
+    )
+  );
+}
+
+function extractPaymentVerified(data){
+
+  const payment =
+    data &&
+    data.payment &&
+    typeof data.payment === "object"
+      ? data.payment
+      : {};
+
+  return (
+    data &&
+    (
+      data.payment_verified === true ||
+      data.paid === true ||
+      payment.payment_verified === true ||
+      payment.paid === true ||
+      isVerified(
+        data.payment_status ||
+        payment.payment_status
+      )
+    )
+  );
+}
+
+/* ==========================================================
+   CUSTOMER ELEMENTS
+========================================================== */
+
+const serviceBadge = $("serviceBadge");
+const statusValue = $("statusValue");
+const statusMessage = $("statusMessage");
+const progressBar = $("progressBar");
+const amountValue = $("amountValue");
+const orderDetails = $("orderDetails");
+const paymentIdBox = $("paymentIdBox");
+const paymentIdValue = $("paymentIdValue");
+const paymentReference = $("paymentReference");
+const paymentNote = $("paymentNote");
+const reportButton = $("reportButton");
+const downloadArea = $("downloadArea");
+const downloadNote = $("downloadNote");
+const downloadButton = $("downloadButton");
+const message = $("message");
+const backButton = $("backButton");
+
+const makePaymentButton =
+  $("makePaymentButton");
+
+const paymentDetailsArea =
+  $("paymentDetailsArea");
+
+const customerCareButton =
+  $("customerCareButton");
+
+/* ==========================================================
+   CUSTOMER API
+========================================================== */
+
+async function paymentGet(path){
+
+  const response =
+    await fetch(
+      PAYMENT_API_BASE + path,
+      {
+        method:"GET",
+        cache:"no-store",
+        headers:{
+          "Accept":"application/json"
+        }
+      }
+    );
+
+  const data =
+    await response.json().catch(() => ({}));
+
+  if(!response.ok){
+
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "The payment service could not complete the request."
+    );
+  }
+
+  return data;
+}
+
+async function paymentPost(path,body){
+
+  let response;
+
+  try{
+
+    response =
+      await fetch(
+        PAYMENT_API_BASE + path,
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "Accept":"application/json"
+          },
+          body:JSON.stringify(body || {})
+        }
+      );
+
+  }catch(error){
+
+    throw new Error(
+      "The payment server could not be reached. Please wait a moment and try again."
+    );
+  }
+
+  const data =
+    await response.json().catch(() => ({}));
+
+  if(
+    !response.ok ||
+    data.ok === false
+  ){
+
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "The payment request could not be completed."
+    );
+  }
+
+  return data;
+}
+
+/* ==========================================================
+   CUSTOMER SNAPSHOT
+========================================================== */
+
+function readReviewSnapshot(){
+
+  for(const key of SNAPSHOT_KEYS){
+
+    try{
+
+      const raw =
+        sessionStorage.getItem(key);
+
+      if(!raw){
+        continue;
+      }
+
+      const data =
+        JSON.parse(raw);
+
+      if(
+        data &&
+        typeof data === "object"
+      ){
+
+        if(
+          !jobId ||
+          !data.job_id ||
+          clean(data.job_id) === jobId
+        ){
+
+          return data;
+        }
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Could not read payment snapshot:",
+        error
+      );
+    }
+  }
+
+  return null;
+}
+
+function normalizePages(value){
+
+  if(!Array.isArray(value)){
+    return [];
+  }
+
+  return value
+    .map(
+      (page,index) => {
+
+        if(typeof page === "string"){
+
+          return {
+            page_number:index + 1,
+            position:index + 1,
+            content:page
+          };
+        }
+
+        if(
+          page &&
+          typeof page === "object"
+        ){
+
+          return {
+            ...page,
+
+            page_number:
+              Number(
+                page.page_number ||
+                page.page ||
+                page.position ||
+                index + 1
+              ),
+
+            position:
+              Number(
+                page.position ||
+                page.page_number ||
+                page.page ||
+                index + 1
+              ),
+
+            content:
+              clean(
+                page.content ||
+                page.text ||
+                page.html ||
+                page.body ||
+                ""
+              )
+          };
+        }
+
+        return null;
+      }
+    )
+    .filter(Boolean)
+    .filter(
+      page => clean(page.content)
+    );
+}
+
+function applySnapshot(){
+
+  snapshot =
+    readReviewSnapshot();
+
+  if(!snapshot){
+
+    orderDetails.textContent =
+      "No Review snapshot was found for this payment.";
+
+    return false;
+  }
+
+  const snapshotJobId =
+    clean(snapshot.job_id);
+
+  if(
+    jobId &&
+    snapshotJobId &&
+    snapshotJobId !== jobId
+  ){
+
+    orderDetails.textContent =
+      "The Review document does not match this job.";
+
+    return false;
+  }
+
+  if(
+    !versionId &&
+    clean(snapshot.version_id)
+  ){
+
+    versionId =
+      clean(snapshot.version_id);
+  }
+
+  if(
+    !versionId &&
+    clean(snapshot.document_version)
+  ){
+
+    versionId =
+      clean(snapshot.document_version);
+  }
+
+  if(
+    !service &&
+    clean(snapshot.service)
+  ){
+
+    service =
+      clean(snapshot.service);
+  }
+
+  if(
+    !amount &&
+    parseMoney(snapshot.amount)
+  ){
+
+    amount =
+      parseMoney(snapshot.amount);
+  }
+
+  customerId =
+    clean(snapshot.customer_id);
+
+  filename =
+    clean(
+      snapshot.filename ||
+      snapshot.document_filename
+    );
+
+  pages =
+    normalizePages(
+      snapshot.pages ||
+      snapshot.document_pages
+    );
+
+  documentText =
+    clean(
+      snapshot.document_text ||
+      snapshot.text ||
+      snapshot.content
+    );
+
+  if(
+    pages.length === 0 &&
+    documentText
+  ){
+
+    pages = [{
+      page_number:1,
+      position:1,
+      content:documentText
+    }];
+  }
+
+  serviceBadge.textContent =
+    service || "Service";
+
+  amountValue.textContent =
+    formatMoney(amount);
+
+  orderDetails.textContent =
+    "Service: " +
+    (service || "Business Center Service") +
+
+    "\n\nJob ID: " +
+    (jobId || snapshotJobId || "—") +
+
+    "\n\nDocument Version: " +
+    (versionId || "—") +
+
+    "\n\nPages: " +
+    pages.length;
+
+  return true;
+}
+
+/* ==========================================================
+   CUSTOMER DISPLAY
+========================================================== */
+
+function setMessage(text,type=""){
 
   message.textContent =
     text || "";
 
   message.className =
     "message" +
-    (
-      type
-        ? " " + type
-        : ""
-    );
+    (type ? " " + type : "");
 }
-
 
 function setStatus(text){
 
   statusValue.textContent =
-    text ||
-    "Preparing...";
+    text || "Preparing...";
 }
 
+function setProgress(percent){
 
-function state(){
-
-  return clean(
-    currentStatus
-  ).toLowerCase();
-}
-
-
-function complete(data){
-
-  return !!data &&
-    (
-      state() ===
-        "review_complete" ||
-      data.review_finished ===
-        true
-    );
-}
-
-
-/* ===========================================================
-   LOCAL PAYMENT CONTEXT
-   =========================================================== */
-
-function savePaymentContext(){
-
-  if(paymentIdentifier){
-
-    localStorage.setItem(
-      "payment_id",
-      paymentIdentifier
+  const n =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(percent) || 0
+      )
     );
 
+  progressBar.style.width =
+    n + "%";
+}
+
+function showPaymentId(){
+
+  if(!paymentId){
+
+    paymentIdBox.classList.add("hidden");
+    paymentIdValue.textContent = "";
+
+    return;
   }
 
-  if(jobId){
-
-    localStorage.setItem(
-      "payment_job_id",
-      jobId
-    );
-
-  }
-
-  if(versionId){
-
-    localStorage.setItem(
-      "payment_version_id",
-      versionId
-    );
-
-  }
-
+  paymentIdBox.classList.remove("hidden");
+  paymentIdValue.textContent = paymentId;
 }
 
+function updatePaymentDisplay(){
 
-function clearPaymentContext(){
+  showPaymentId();
 
-  localStorage.removeItem(
-    "payment_id"
-  );
+  amountValue.textContent =
+    formatMoney(amount);
 
-  localStorage.removeItem(
-    "payment_job_id"
-  );
+  if(
+    paymentVerified ||
+    downloadUnlocked ||
+    isVerified(paymentStatus)
+  ){
 
-  localStorage.removeItem(
-    "payment_version_id"
-  );
+    paymentVerified = true;
+    downloadUnlocked = true;
+    paymentStarted = true;
 
+    setStatus(
+      "Payment Verified — Download Unlocked"
+    );
+
+    statusMessage.textContent =
+      "Customer Care has verified this payment. Your already-saved document is ready for download.";
+
+    setProgress(100);
+
+    downloadArea.classList.add("show");
+
+    downloadNote.className =
+      "saved-note";
+
+    downloadNote.textContent =
+      "Payment verified. The exact document saved when payment was created is now available. No document will be regenerated.";
+
+    downloadButton.disabled = false;
+    downloadButton.classList.add("active");
+
+    downloadButton.textContent =
+      "DOWNLOAD DOCUMENT";
+
+    reportButton.disabled = true;
+
+    return;
+  }
+
+  if(
+    paymentReported ||
+    isReported(paymentStatus)
+  ){
+
+    paymentReported = true;
+    paymentStarted = true;
+
+    setStatus(
+      "Payment Reported — Awaiting Verification"
+    );
+
+    statusMessage.textContent =
+      "Your payment report has been sent to Customer Care. Download will unlock after verification.";
+
+    setProgress(75);
+
+    downloadArea.classList.add("show");
+
+    downloadNote.className =
+      "locked-note";
+
+    downloadNote.textContent =
+      "Payment Reported — Awaiting Verification. The exact reviewed document is already saved and waiting for Customer Care verification.";
+
+    downloadButton.disabled = true;
+    downloadButton.classList.remove("active");
+
+    downloadButton.textContent =
+      "DOWNLOAD DOCUMENT";
+
+    reportButton.disabled = true;
+
+    return;
+  }
+
+  if(paymentStarted){
+
+    setStatus("Payment Ready");
+
+    statusMessage.textContent =
+      "Your Payment ID has been created and the exact reviewed document has been saved.";
+
+    setProgress(45);
+
+    downloadArea.classList.add("show");
+
+    downloadNote.className =
+      "locked-note";
+
+    downloadNote.textContent =
+      "The exact Review document has been saved. Complete your bank transfer, then tap I HAVE MADE PAYMENT.";
+
+    downloadButton.disabled = true;
+    downloadButton.classList.remove("active");
+
+    downloadButton.textContent =
+      "DOWNLOAD DOCUMENT";
+
+    reportButton.disabled = false;
+
+    return;
+  }
+
+  setStatus("Preparing Payment");
+
+  statusMessage.textContent =
+    "Creating your secure payment record and saving the exact Review document.";
+
+  setProgress(15);
+
+  reportButton.disabled = true;
 }
 
+/* ==========================================================
+   MAKE PAYMENT
+   ---------------------------------------------
+   This action only opens the official payment details.
+   It does NOT report payment.
+   It does NOT unlock download.
+   It does NOT regenerate the document.
+========================================================== */
 
-/* ===========================================================
-   NORMAL REVIEW API
-   =========================================================== */
+function openPaymentDetails(){
 
-async function apiGet(url){
+  paymentDetailsArea.classList.add("show");
+
+  makePaymentButton.textContent =
+    "PAYMENT DETAILS OPEN";
+
+  makePaymentButton.disabled = true;
+
+  setMessage(
+    "Official payment details are now displayed below.",
+    "success"
+  );
+
+  setTimeout(
+    () => {
+
+      paymentDetailsArea.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+
+    },
+    50
+  );
+}
+
+/* ==========================================================
+   CUSTOMER CREATE PAYMENT
+========================================================== */
+
+async function createPayment(){
+
+  if(createInProgress){
+    return;
+  }
+
+  createInProgress = true;
+
+  try{
+
+    if(!snapshot){
+      snapshot = readReviewSnapshot();
+    }
+
+    if(!snapshot){
+
+      throw new Error(
+        "The exact Review document could not be found. Please return to Review and tap MAKE PAYMENT again."
+      );
+    }
+
+    if(!jobId){
+
+      throw new Error(
+        "The job ID is missing from this payment request."
+      );
+    }
+
+    if(!versionId){
+
+      throw new Error(
+        "The document version is missing. Please return to Review and try again."
+      );
+    }
+
+    if(
+      !pages.length &&
+      !documentText
+    ){
+
+      throw new Error(
+        "The exact reviewed document is empty. Payment cannot be started."
+      );
+    }
+
+    if(!amount || amount <= 0){
+
+      throw new Error(
+        "The amount to pay is not available."
+      );
+    }
+
+    setStatus("Creating Payment");
+
+    statusMessage.textContent =
+      "Saving the exact Review document and creating your unique Payment ID.";
+
+    setProgress(25);
+
+    const payload = {
+
+      job_id:jobId,
+
+      customer_id:
+        customerId || undefined,
+
+      service:
+        service || "Business Center Service",
+
+      amount:amount,
+
+      payment_method:
+        "bank_transfer",
+
+      version_id:
+        versionId,
+
+      document_version:
+        versionId,
+
+      pages:pages,
+
+      document_pages:
+        pages,
+
+      document_text:
+        documentText,
+
+      filename:
+        filename ||
+        ("naija_pocket_" + jobId + ".docx"),
+
+      document_filename:
+        filename ||
+        ("naija_pocket_" + jobId + ".docx")
+    };
+
+    const data =
+      await paymentPost(
+        "/api/payment/create",
+        payload
+      );
+
+    const returnedPayment =
+      data.payment || {};
+
+    paymentId =
+      clean(
+        data.payment_id ||
+        returnedPayment.payment_id ||
+        data.order_number ||
+        data.reference
+      );
+
+    if(!paymentId){
+
+      throw new Error(
+        "The payment service created no Payment ID."
+      );
+    }
+
+    paymentStatus =
+      clean(
+        data.payment_status ||
+        returnedPayment.payment_status ||
+        "pending"
+      );
+
+    paymentStarted = true;
+
+    paymentReported =
+      !!(
+        data.payment_reported ||
+        isReported(paymentStatus)
+      );
+
+    paymentVerified =
+      extractPaymentVerified(data);
+
+    downloadUnlocked =
+      extractDownloadUnlocked(data) ||
+      paymentVerified;
+
+    if(
+      data.amount &&
+      parseMoney(data.amount)
+    ){
+
+      amount =
+        parseMoney(data.amount);
+    }
+
+    try{
+
+      const savedState = {
+
+        payment_id:paymentId,
+        job_id:jobId,
+        version_id:versionId,
+        amount:amount,
+        service:service,
+        created_at:new Date().toISOString()
+
+      };
+
+      sessionStorage.setItem(
+        "npb_payment_state_" + jobId,
+        JSON.stringify(savedState)
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Could not save local payment state:",
+        error
+      );
+    }
+
+    setProgress(55);
+
+    updatePaymentDisplay();
+
+    if(data.document_saved === false){
+
+      throw new Error(
+        "Payment was returned without confirmation that the exact document was saved."
+      );
+    }
+
+    setMessage(
+      "Payment created successfully. Payment ID: " +
+      paymentId +
+      ". The exact Review document has been saved for download.",
+      "success"
+    );
+
+    startStatusPolling();
+
+  }catch(error){
+
+    console.error(
+      "PAYMENT CREATE ERROR:",
+      error
+    );
+
+    setStatus("Payment Setup Failed");
+
+    statusMessage.textContent =
+      error.message ||
+      "Unable to prepare payment.";
+
+    setProgress(0);
+
+    setMessage(
+      error.message ||
+      "Unable to prepare payment.",
+      "error"
+    );
+
+  }finally{
+
+    createInProgress = false;
+  }
+}
+
+/* ==========================================================
+   CUSTOMER EXISTING PAYMENT
+========================================================== */
+
+async function loadExistingPayment(){
+
+  if(!jobId){
+    return false;
+  }
+
+  try{
+
+    const query =
+      paymentId
+        ? "?payment_id=" +
+          encodeURIComponent(paymentId)
+        : "?job_id=" +
+          encodeURIComponent(jobId);
+
+    const data =
+      await paymentGet(
+        "/api/payment/status" + query
+      );
+
+    const payment =
+      data.payment || {};
+
+    const existingId =
+      clean(
+        data.payment_id ||
+        payment.payment_id
+      );
+
+    if(existingId){
+      paymentId = existingId;
+    }
+
+    const existingVersion =
+      clean(
+        data.version_id ||
+        payment.version_id ||
+        payment.document_version
+      );
+
+    if(existingVersion && !versionId){
+      versionId = existingVersion;
+    }
+
+    const existingAmount =
+      parseMoney(
+        data.amount ||
+        payment.amount
+      );
+
+    if(existingAmount){
+      amount = existingAmount;
+    }
+
+    const existingService =
+      clean(payment.service);
+
+    if(existingService){
+      service = existingService;
+    }
+
+    paymentStatus =
+      clean(
+        data.payment_status ||
+        payment.payment_status
+      );
+
+    paymentStarted =
+      !!paymentId;
+
+    paymentReported =
+      !!(
+        data.payment_reported ||
+        payment.payment_reported ||
+        isReported(paymentStatus)
+      );
+
+    paymentVerified =
+      extractPaymentVerified(data);
+
+    downloadUnlocked =
+      extractDownloadUnlocked(data) ||
+      paymentVerified;
+
+    updatePaymentDisplay();
+
+    return !!paymentId;
+
+  }catch(error){
+
+    console.warn(
+      "Existing payment lookup failed:",
+      error
+    );
+
+    return false;
+  }
+}
+
+/* ==========================================================
+   CUSTOMER REPORT PAYMENT
+   ---------------------------------------------
+   This is the SAME payment-report action used by
+   the payment/download flow.
+========================================================== */
+
+async function reportPayment(){
+
+  if(reportInProgress){
+    return;
+  }
+
+  if(!paymentId){
+
+    setMessage(
+      "Payment has not been started yet. Please wait for the Payment ID to be created.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(paymentReported){
+
+    updatePaymentDisplay();
+
+    return;
+  }
+
+  reportInProgress = true;
+
+  try{
+
+    const reference =
+      clean(paymentReference.value);
+
+    const note =
+      clean(paymentNote.value);
+
+    if(!reference){
+
+      setMessage(
+        "Please enter your bank transfer payment reference first.",
+        "error"
+      );
+
+      paymentReference.focus();
+
+      return;
+    }
+
+    reportButton.disabled = true;
+
+    setStatus("Reporting Payment");
+
+    statusMessage.textContent =
+      "Sending your Payment ID and payment report to Customer Care.";
+
+    setProgress(65);
+
+    const data =
+      await paymentPost(
+        "/api/payment/report",
+        {
+          payment_id:paymentId,
+          job_id:jobId,
+          payment_reference:reference,
+          note:note
+        }
+      );
+
+    paymentStatus =
+      clean(
+        data.payment_status ||
+        (
+          data.payment &&
+          data.payment.payment_status
+        ) ||
+        "reported"
+      );
+
+    paymentReported = true;
+
+    paymentVerified =
+      extractPaymentVerified(data);
+
+    downloadUnlocked =
+      extractDownloadUnlocked(data) ||
+      paymentVerified;
+
+    updatePaymentDisplay();
+
+    setMessage(
+      data.message ||
+      "Payment Reported — Awaiting Verification",
+      "success"
+    );
+
+    try{
+
+      sessionStorage.setItem(
+        "npb_payment_reference_" + jobId,
+        reference
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Could not save payment reference:",
+        error
+      );
+    }
+
+    startStatusPolling();
+
+  }catch(error){
+
+    console.error(
+      "PAYMENT REPORT ERROR:",
+      error
+    );
+
+    reportButton.disabled = false;
+
+    setMessage(
+      error.message ||
+      "The payment report could not be completed.",
+      "error"
+    );
+
+    updatePaymentDisplay();
+
+  }finally{
+
+    reportInProgress = false;
+  }
+}
+
+/* ==========================================================
+   CUSTOMER STATUS POLLING
+========================================================== */
+
+async function checkPaymentStatus(){
+
+  if(!paymentId && !jobId){
+    return;
+  }
+
+  try{
+
+    const query =
+      paymentId
+        ? "?payment_id=" +
+          encodeURIComponent(paymentId)
+        : "?job_id=" +
+          encodeURIComponent(jobId);
+
+    const data =
+      await paymentGet(
+        "/api/payment/status" + query
+      );
+
+    const payment =
+      data.payment || {};
+
+    const returnedId =
+      clean(
+        data.payment_id ||
+        payment.payment_id
+      );
+
+    if(returnedId){
+      paymentId = returnedId;
+    }
+
+    const returnedStatus =
+      clean(
+        data.payment_status ||
+        payment.payment_status
+      );
+
+    if(returnedStatus){
+      paymentStatus = returnedStatus;
+    }
+
+    const returnedAmount =
+      parseMoney(
+        data.amount ||
+        payment.amount
+      );
+
+    if(returnedAmount){
+      amount = returnedAmount;
+    }
+
+    paymentReported =
+      !!(
+        data.payment_reported ||
+        payment.payment_reported ||
+        isReported(paymentStatus)
+      );
+
+    paymentVerified =
+      extractPaymentVerified(data);
+
+    downloadUnlocked =
+      extractDownloadUnlocked(data) ||
+      paymentVerified;
+
+    if(paymentId){
+      paymentStarted = true;
+    }
+
+    updatePaymentDisplay();
+
+  }catch(error){
+
+    console.warn(
+      "Payment status check failed:",
+      error
+    );
+  }
+}
+
+function startStatusPolling(){
+
+  if(statusTimer){
+    return;
+  }
+
+  statusTimer =
+    setInterval(
+      async () => {
+
+        await checkPaymentStatus();
+
+        if(
+          paymentVerified ||
+          downloadUnlocked
+        ){
+
+          clearInterval(statusTimer);
+
+          statusTimer = null;
+        }
+
+      },
+      5000
+    );
+}
+
+/* ==========================================================
+   CUSTOMER DOWNLOAD
+   ---------------------------------------------
+   This is the SAME saved-document download action.
+   It does NOT regenerate the document.
+========================================================== */
+
+async function downloadDocument(){
+
+  if(!paymentId){
+
+    setMessage(
+      "No Payment ID is available.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(
+    !paymentVerified &&
+    !downloadUnlocked
+  ){
+
+    setMessage(
+      "Download remains locked until Customer Care activates your download.",
+      "warning"
+    );
+
+    return;
+  }
+
+  try{
+
+    downloadButton.disabled = true;
+
+    downloadButton.textContent =
+      "PREPARING DOWNLOAD...";
+
+    setMessage(
+      "Opening your already-saved document...",
+      ""
+    );
+
+    const url =
+      PAYMENT_API_BASE +
+      "/api/download?payment_id=" +
+      encodeURIComponent(paymentId);
+
+    window.location.href = url;
+
+  }catch(error){
+
+    console.error(
+      "DOWNLOAD ERROR:",
+      error
+    );
+
+    downloadButton.disabled = false;
+
+    downloadButton.classList.add("active");
+
+    downloadButton.textContent =
+      "DOWNLOAD DOCUMENT";
+
+    setMessage(
+      error.message ||
+      "Unable to open the saved document.",
+      "error"
+    );
+  }
+}
+
+/* ==========================================================
+   CUSTOMER CARE
+========================================================== */
+
+function openCustomerCare(){
+
+  const reference =
+    clean(paymentReference.value);
+
+  const payment =
+    clean(paymentId);
+
+  const job =
+    clean(jobId);
+
+  const text =
+    "Hello Naija Pocket Business Center Customer Care.%0A%0A" +
+    "I need assistance with my payment/document.%0A" +
+    "Job ID: " +
+    encodeURIComponent(job || "Not available") +
+    "%0A" +
+    "Payment ID: " +
+    encodeURIComponent(payment || "Not available") +
+    "%0A" +
+    "Payment Reference: " +
+    encodeURIComponent(reference || "Not yet entered");
+
+  const whatsappUrl =
+    "https://wa.me/2348057073891?text=" +
+    text;
+
+  window.location.href =
+    whatsappUrl;
+}
+
+/* ==========================================================
+   BACK OFFICE
+========================================================== */
+
+const boAdminKey = $("boAdminKey");
+const boLoadButton = $("boLoadButton");
+const boRefreshButton = $("boRefreshButton");
+const boExitButton = $("boExitButton");
+const boMessage = $("boMessage");
+const boRecords = $("boRecords");
+const boTotal = $("boTotal");
+const boReported = $("boReported");
+const boActivated = $("boActivated");
+
+let backOfficeRecords = [];
+
+function setBackOfficeMessage(text,type=""){
+
+  boMessage.textContent =
+    text || "";
+
+  boMessage.className =
+    "bo-message" +
+    (type ? " " + type : "");
+}
+
+function checkLocalBackOfficeKey(){
+
+  const enteredKey =
+    clean(boAdminKey.value);
+
+  if(!enteredKey){
+
+    setBackOfficeMessage(
+      "Please enter the Back Office access key.",
+      "warning"
+    );
+
+    boAdminKey.focus();
+
+    return false;
+  }
+
+  if(
+    enteredKey !==
+    LOCAL_BACK_OFFICE_KEY
+  ){
+
+    backOfficeUnlocked = false;
+
+    boRecords.innerHTML =
+      '<div class="bo-empty">' +
+      'Back Office access denied. Please enter the correct access key.' +
+      '</div>';
+
+    boTotal.textContent = "0";
+    boReported.textContent = "0";
+    boActivated.textContent = "0";
+
+    setBackOfficeMessage(
+      "Incorrect Back Office access key.",
+      "error"
+    );
+
+    boAdminKey.value = "";
+    boAdminKey.focus();
+
+    return false;
+  }
+
+  backOfficeUnlocked = true;
+
+  setBackOfficeMessage(
+    "Back Office access granted.",
+    "success"
+  );
+
+  return true;
+}
+
+function backOfficeHeaders(){
+
+  return {
+    "Accept":"application/json"
+  };
+}
+
+async function backOfficeGet(path){
 
   const response =
     await fetch(
-      API_BASE + url,
+      PAYMENT_API_BASE + path,
       {
-        cache:"no-store"
+        method:"GET",
+        cache:"no-store",
+        headers:backOfficeHeaders()
       }
     );
 
   const data =
-    await response
-      .json()
-      .catch(
-        () => ({})
-      );
+    await response.json().catch(() => ({}));
 
   if(!response.ok){
 
-    throw Error(
-      data.error_message ||
-      data.error ||
-      data.message ||
-      "Unable to load the document."
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "The Back Office request could not be completed."
     );
-
   }
 
   return data;
 }
 
-
-async function apiPost(
-  url,
-  body
-){
+async function backOfficePost(path,body){
 
   const response =
     await fetch(
-      API_BASE + url,
+      PAYMENT_API_BASE + path,
       {
         method:"POST",
-
         headers:{
-          "Content-Type":
-            "application/json",
-
-          "Accept":
-            "application/json"
+          ...backOfficeHeaders(),
+          "Content-Type":"application/json"
         },
-
-        body:
-          JSON.stringify(
-            body || {}
-          )
+        body:JSON.stringify(body || {})
       }
     );
 
   const data =
-    await response
-      .json()
-      .catch(
-        () => ({})
-      );
+    await response.json().catch(() => ({}));
 
   if(
     !response.ok ||
-    data.success === false ||
     data.ok === false
   ){
 
-    throw Error(
-      data.error_message ||
-      data.error ||
-      data.message ||
-      data.detail ||
-      "The request could not be completed."
+    throw new Error(
+      clean(
+        data.message ||
+        data.error ||
+        data.detail
+      ) ||
+      "The Back Office action could not be completed."
     );
-
   }
 
   return data;
 }
 
+/* ==========================================================
+   BACK OFFICE RECORD HELPERS
+========================================================== */
 
-/* ===========================================================
-   PAGE HELPERS
-   =========================================================== */
+function recordPaymentId(record){
 
-function normalizePages(data){
-
-  let source = [];
-
-  if(
-    Array.isArray(
-      data?.review_pages
-    ) &&
-    data.review_pages.length
-  ){
-
-    source =
-      data.review_pages;
-
-  }
-
-  else if(
-    Array.isArray(
-      data?.document_pages
-    ) &&
-    data.document_pages.length
-  ){
-
-    source =
-      data.document_pages;
-
-  }
-
-  else if(
-    Array.isArray(
-      data?.pages
-    ) &&
-    data.pages.length
-  ){
-
-    source =
-      data.pages;
-
-  }
-
-  return source
-    .map(
-      (item,index) => ({
-
-        page_number:
-          Number(
-            item.page_number
-          ) ||
-          index + 1,
-
-        position:
-          Number(
-            item.position
-          ) ||
-          index + 1,
-
-        status:
-          clean(
-            item.status
-          ) ||
-          "queued",
-
-        content:
-          item.content == null
-            ? ""
-            : String(
-                item.content
-              ),
-
-        review:
-          clean(
-            item.review
-          ),
-
-        error:
-          clean(
-            item.error
-          )
-
-      })
-    )
-    .sort(
-      (a,b) =>
-        a.position -
-        b.position
-    );
+  return clean(
+    record.payment_id ||
+    record.paymentId ||
+    record.id
+  );
 }
 
+function recordJobId(record){
 
-function extractPages(data){
+  return clean(
+    record.job_id ||
+    record.jobId ||
+    record.work_id
+  );
+}
 
-  let result =
-    normalizePages(
-      data
+function recordVersionId(record){
+
+  return clean(
+    record.version_id ||
+    record.versionId ||
+    record.document_version
+  );
+}
+
+function recordService(record){
+
+  return clean(
+    record.service ||
+    record.service_name ||
+    "Business Center Service"
+  );
+}
+
+function recordAmount(record){
+
+  return parseMoney(
+    record.amount ||
+    record.total_amount
+  );
+}
+
+function recordFilename(record){
+
+  return clean(
+    record.filename ||
+    record.document_filename ||
+    record.saved_filename ||
+    "Saved document"
+  );
+}
+
+function recordStatus(record){
+
+  return clean(
+    record.payment_status ||
+    record.status ||
+    "saved"
+  );
+}
+
+function recordIsActivated(record){
+
+  return (
+    record.download_unlocked === true ||
+    record.payment_verified === true ||
+    record.download_activated === true ||
+    isVerified(recordStatus(record))
+  );
+}
+
+function boDisplayStatus(record){
+
+  const status =
+    normalizeStatus(
+      recordStatus(record)
     );
 
-  if(result.length){
+  if(recordIsActivated(record)){
 
-    return result;
-
+    return {
+      text:"Download Activated",
+      className:"verified"
+    };
   }
 
-  for(
-    const child of [
-      data?.document,
-      data?.result,
-      data?.review,
-      data?.output
-    ]
+  if(
+    isReported(status) ||
+    record.payment_reported === true
   ){
 
-    if(
-      child &&
-      typeof child === "object"
-    ){
+    return {
+      text:
+        "Payment Reported — Awaiting Verification",
+      className:"reported"
+    };
+  }
 
-      result =
-        normalizePages(
-          child
-        );
+  return {
+    text:
+      "Saved — Awaiting Customer Payment",
+    className:"saved"
+  };
+}
 
-      if(result.length){
+function recordDocumentText(record){
 
-        return result;
+  return clean(
+    record.document_text ||
+    record.text ||
+    record.document_content ||
+    record.content
+  );
+}
 
-      }
+function recordPages(record){
 
-    }
+  if(Array.isArray(record.pages)){
+    return record.pages;
+  }
 
+  if(Array.isArray(record.document_pages)){
+    return record.document_pages;
   }
 
   return [];
 }
 
+/* ==========================================================
+   DOCUMENT DISPLAY CLEANING
 
-/* ===========================================================
-   SAFE DOCUMENT HTML
-   =========================================================== */
+   DISPLAY ONLY.
+   The saved document is never modified.
+========================================================== */
 
-const allowedTags =
-  new Set([
-    "DIV",
-    "P",
-    "BR",
-    "SPAN",
-    "STRONG",
-    "B",
-    "EM",
-    "I",
-    "U",
-    "S",
-    "STRIKE",
-    "H1",
-    "H2",
-    "H3",
-    "H4",
-    "H5",
-    "H6",
-    "UL",
-    "OL",
-    "LI",
-    "BLOCKQUOTE",
-    "HR",
-    "TABLE",
-    "THEAD",
-    "TBODY",
-    "TFOOT",
-    "TR",
-    "TH",
-    "TD",
-    "PRE",
-    "SUP",
-    "SUB"
-  ]);
+function cleanDocumentForDisplay(value){
 
+  let text =
+    clean(value);
 
-const allowedAttrs =
-  new Set([
-    "style",
-    "align",
-    "colspan",
-    "rowspan"
-  ]);
+  if(!text){
+    return "";
+  }
 
+  text =
+    text
+      .replace(/\r\n/g,"\n")
+      .replace(/\r/g,"\n");
 
-const allowedStyles =
-  new Set([
-    "color",
-    "background-color",
-    "font-family",
-    "font-size",
-    "font-weight",
-    "font-style",
-    "text-decoration",
-    "text-align",
-    "text-indent",
-    "line-height",
-    "letter-spacing",
-    "margin",
-    "margin-top",
-    "margin-right",
-    "margin-bottom",
-    "margin-left",
-    "padding",
-    "padding-top",
-    "padding-right",
-    "padding-bottom",
-    "padding-left",
-    "vertical-align",
-    "width",
-    "max-width",
-    "border",
-    "border-top",
-    "border-right",
-    "border-bottom",
-    "border-left",
-    "background"
-  ]);
-
-
-function normText(value){
-
-  return String(
-    value == null
-      ? ""
-      : value
-  )
-    .replace(
-      /\r\n/g,
-      "\n"
-    )
-    .replace(
-      /\r/g,
-      "\n"
-    )
-    .replace(
-      /\u00a0/g,
-      " "
-    )
-    .replace(
-      /^\s*#{1,6}\s+/gm,
+  text =
+    text.replace(
+      /```[a-zA-Z0-9_-]*\n?/g,
       ""
-    )
-    .replace(
-      /\n{5,}/g,
-      "\n\n"
-    )
-    .trim();
+    );
+
+  text =
+    text.replace(
+      /\*\*\*(.*?)\*\*\*/gs,
+      "$1"
+    );
+
+  text =
+    text.replace(
+      /\*\*(.*?)\*\*/gs,
+      "$1"
+    );
+
+  text =
+    text.replace(
+      /__(.*?)__/gs,
+      "$1"
+    );
+
+  text =
+    text.replace(
+      /\*(.*?)\*/gs,
+      "$1"
+    );
+
+  text =
+    text.replace(
+      /_(.*?)_/gs,
+      "$1"
+    );
+
+  text =
+    text.replace(
+      /^[ \t]*#{1,6}[ \t]*/gm,
+      ""
+    );
+
+  text =
+    text.replace(
+      /^[ \t]*[-*+][ \t]+/gm,
+      ""
+    );
+
+  text =
+    text.replace(
+      /^[ \t]*\*+[ \t]*$/gm,
+      ""
+    );
+
+  text =
+    text.replace(
+      /^[ \t]*_+[ \t]*$/gm,
+      ""
+    );
+
+  return text.trim();
 }
 
+function getSavedDocumentForDisplay(record){
 
-function safeStyle(value){
+  let text =
+    recordDocumentText(record);
 
-  const output = [];
-
-  for(
-    const definition of
-    String(value || "").split(";")
-  ){
-
-    const index =
-      definition.indexOf(":");
-
-    if(index < 0){
-
-      continue;
-
-    }
-
-    const property =
-      definition
-        .slice(0,index)
-        .trim()
-        .toLowerCase();
-
-    const styleValue =
-      definition
-        .slice(index + 1)
-        .trim();
-
-    if(
-      allowedStyles.has(
-        property
-      ) &&
-      !/javascript:|expression\(|url\(|@import/i.test(
-        styleValue
-      )
-    ){
-
-      output.push(
-        property +
-        ":" +
-        styleValue
-      );
-
-    }
-
+  if(text){
+    return cleanDocumentForDisplay(text);
   }
 
-  return output.join(";");
-}
-
-
-function renderPlain(text){
-
-  const fragment =
-    document.createDocumentFragment();
-
-  const lines =
-    normText(text).split("\n");
-
-  lines.forEach(
-    (line,index) => {
-
-      if(line === ""){
-
-        fragment.appendChild(
-          document.createElement(
-            "br"
-          )
-        );
-
-        return;
-
-      }
-
-      const parts =
-        line.split(
-          /(\*\*[^*]+\*\*)/g
-        );
-
-      parts.forEach(
-        part => {
-
-          if(!part){
-
-            return;
-
-          }
-
-          if(
-            part.startsWith("**") &&
-            part.endsWith("**")
-          ){
-
-            const element =
-              document.createElement(
-                "strong"
-              );
-
-            element.textContent =
-              part.slice(2,-2);
-
-            fragment.appendChild(
-              element
-            );
-
-          }
-
-          else{
-
-            fragment.appendChild(
-              document.createTextNode(
-                part.replace(
-                  /^\*+|\*+$/g,
-                  ""
-                )
-              )
-            );
-
-          }
-
-        }
-      );
-
-      if(
-        index <
-        lines.length - 1
-      ){
-
-        fragment.appendChild(
-          document.createElement(
-            "br"
-          )
-        );
-
-      }
-
-    }
-  );
-
-  return fragment;
-}
-
-
-function sanitizeHtml(source){
+  const recordPageList =
+    recordPages(record);
 
   if(
-    !/<[a-z][\s\S]*>/i.test(
-      String(source || "")
-    )
+    !Array.isArray(recordPageList) ||
+    !recordPageList.length
   ){
-
-    return renderPlain(
-      source
-    );
-
-  }
-
-  const documentObject =
-    new DOMParser()
-      .parseFromString(
-        String(source),
-        "text/html"
-      );
-
-  const output =
-    document.createDocumentFragment();
-
-
-  function walk(
-    node,
-    parent
-  ){
-
-    if(
-      node.nodeType ===
-      Node.TEXT_NODE
-    ){
-
-      parent.appendChild(
-        document.createTextNode(
-          normText(
-            node.nodeValue || ""
-          )
-        )
-      );
-
-      return;
-
-    }
-
-    if(
-      node.nodeType !==
-      Node.ELEMENT_NODE
-    ){
-
-      return;
-
-    }
-
-    const tag =
-      node.tagName.toUpperCase();
-
-    if([
-      "SCRIPT",
-      "STYLE",
-      "IFRAME",
-      "OBJECT",
-      "EMBED",
-      "FORM",
-      "INPUT",
-      "BUTTON",
-      "TEXTAREA",
-      "SELECT",
-      "VIDEO",
-      "AUDIO"
-    ].includes(tag)){
-
-      return;
-
-    }
-
-    if(
-      !allowedTags.has(tag)
-    ){
-
-      for(
-        const child of
-        node.childNodes
-      ){
-
-        walk(
-          child,
-          parent
-        );
-
-      }
-
-      return;
-
-    }
-
-    const element =
-      document.createElement(
-        tag.toLowerCase()
-      );
-
-
-    for(
-      const attribute of
-      node.attributes
-    ){
-
-      const name =
-        attribute.name
-          .toLowerCase();
-
-      const value =
-        attribute.value || "";
-
-      if(
-        !allowedAttrs.has(name)
-      ){
-
-        continue;
-
-      }
-
-      if(
-        name === "style"
-      ){
-
-        const style =
-          safeStyle(
-            value
-          );
-
-        if(style){
-
-          element.setAttribute(
-            "style",
-            style
-          );
-
-        }
-
-      }
-
-      else if(
-        name === "align" &&
-        [
-          "left",
-          "center",
-          "right",
-          "justify"
-        ].includes(
-          value
-            .toLowerCase()
-            .trim()
-        )
-      ){
-
-        element.setAttribute(
-          "align",
-          value
-            .toLowerCase()
-            .trim()
-        );
-
-      }
-
-      else if(
-        (
-          name === "colspan" ||
-          name === "rowspan"
-        ) &&
-        /^\d+$/.test(value) &&
-        +value > 0 &&
-        +value <= 100
-      ){
-
-        element.setAttribute(
-          name,
-          value
-        );
-
-      }
-
-    }
-
-
-    for(
-      const child of
-      node.childNodes
-    ){
-
-      walk(
-        child,
-        element
-      );
-
-    }
-
-    parent.appendChild(
-      element
-    );
-
-  }
-
-
-  for(
-    const child of
-    documentObject.body.childNodes
-  ){
-
-    walk(
-      child,
-      output
-    );
-
-  }
-
-  return output;
-}
-
-
-/* ===========================================================
-   BUTTON STATE
-   =========================================================== */
-
-function updateButtons(){
-
-  previousButton.disabled =
-    busy ||
-    currentPage <= 1;
-
-  nextButton.disabled =
-    busy ||
-    currentPage >= totalPages ||
-    !totalPages;
-
-  correctionButton.disabled =
-    busy;
-
-  /*
-   * MAKE PAYMENT is enabled only when the exact Review
-   * document is ready.
-   *
-   * IMPORTANT:
-   * Review does NOT create the payment.
-   * It only prepares the exact snapshot and opens
-   * payment.html.
-   */
-
-  makePaymentButton.disabled =
-    busy ||
-    amount <= 0 ||
-    !reviewFinished ||
-    !pages.length ||
-    !versionId;
-
-  /*
-   * The payment reporting action belongs to payment.html.
-   */
-
-  paymentButton.disabled =
-    true;
-
-  /*
-   * Review download remains locked unless payment status
-   * has been verified.
-   */
-
-  downloadButton.disabled =
-    busy ||
-    !paid;
-
-  downloadButton.classList.toggle(
-    "active",
-    paid
-  );
-}
-
-
-/* ===========================================================
-   RENDER PAGE
-   =========================================================== */
-
-function renderPage(){
-
-  pageViewer.innerHTML = "";
-
-  if(!pages.length){
-
-    pageViewer.innerHTML =
-      '<div class="loading">' +
-      '<div class="spinner"></div>' +
-      '<div>Your service is being carefully prepared.</div>' +
-      '</div>';
-
-    pageIndicator.textContent =
-      "Page 0 of 0";
-
-    updateButtons();
-
-    return;
-
-  }
-
-  const page =
-    pages[
-      currentPage - 1
-    ];
-
-  if(!page){
-
-    pageViewer.innerHTML =
-      '<div class="empty-page">' +
-      'This document page is not available yet.' +
-      '</div>';
-
-    return;
-
-  }
-
-  const article =
-    document.createElement(
-      "article"
-    );
-
-  article.className =
-    "document-page";
-
-
-  const number =
-    document.createElement(
-      "div"
-    );
-
-  number.className =
-    "page-number-inside";
-
-  number.textContent =
-    "PAGE " +
-    page.page_number;
-
-
-  const content =
-    document.createElement(
-      "div"
-    );
-
-  content.className =
-    "page-content";
-
-  content.appendChild(
-    sanitizeHtml(
-      page.content ||
-      "This page is still being prepared."
-    )
-  );
-
-
-  article.append(
-    number,
-    content
-  );
-
-  pageViewer.appendChild(
-    article
-  );
-
-
-  pageIndicator.textContent =
-    "Page " +
-    currentPage +
-    " of " +
-    totalPages;
-
-
-  if(
-    page.review ||
-    page.error
-  ){
-
-    pageReview.style.display =
-      "block";
-
-    pageReviewText.textContent =
-      page.error
-        ? "Page information:\n\n" +
-          normText(
-            page.error
-          )
-        : normText(
-            page.review
-          );
-
-  }
-
-  else{
-
-    pageReview.style.display =
-      "none";
-
-  }
-
-  updateButtons();
-}
-
-
-function showPage(number){
-
-  if(!totalPages){
-
-    return;
-
-  }
-
-  currentPage =
-    Math.max(
-      1,
-      Math.min(
-        totalPages,
-        Math.floor(
-          Number(number) || 1
-        )
-      )
-    );
-
-  renderPage();
-
-  documentScroll.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-}
-
-
-previousButton.onclick =
-  () =>
-    showPage(
-      currentPage - 1
-    );
-
-
-nextButton.onclick =
-  () =>
-    showPage(
-      currentPage + 1
-    );
-
-
-goButton.onclick = () => {
-
-  const number =
-    Number(
-      pageNumberInput.value
-    );
-
-  if(
-    !Number.isInteger(number) ||
-    number < 1 ||
-    number > totalPages
-  ){
-
-    return setMessage(
-      "Enter a page number from 1 to " +
-      totalPages +
-      ".",
-      "error"
-    );
-
-  }
-
-  setMessage("");
-
-  showPage(
-    number
-  );
-
-};
-
-
-pageNumberInput.onkeydown =
-  event => {
-
-    if(
-      event.key === "Enter"
-    ){
-
-      event.preventDefault();
-
-      goButton.click();
-
-    }
-
-  };
-
-
-/* ===========================================================
-   BILLING
-   =========================================================== */
-
-function extractAmount(data){
-
-  const seen =
-    new Set();
-
-
-  function find(value){
-
-    if(value == null){
-
-      return 0;
-
-    }
-
-    if(
-      typeof value === "number" &&
-      isFinite(value) &&
-      value > 0
-    ){
-
-      return value;
-
-    }
-
-    if(
-      typeof value === "string"
-    ){
-
-      const number =
-        Number(
-          value.replace(
-            /[^0-9.]/g,
-            ""
-          )
-        );
-
-      return isFinite(number) &&
-        number > 0
-        ? number
-        : 0;
-
-    }
-
-    if(
-      typeof value !== "object" ||
-      seen.has(value)
-    ){
-
-      return 0;
-
-    }
-
-    seen.add(value);
-
-
-    for(
-      const key of [
-        "amount",
-        "price"
-      ]
-    ){
-
-      const number =
-        find(
-          value[key]
-        );
-
-      if(number > 0){
-
-        return number;
-
-      }
-
-    }
-
-
-    for(
-      const key of [
-        "billing",
-        "bill",
-        "payment",
-        "job",
-        "result",
-        "document",
-        "review",
-        "output"
-      ]
-    ){
-
-      const number =
-        find(
-          value[key]
-        );
-
-      if(number > 0){
-
-        return number;
-
-      }
-
-    }
-
-    return 0;
-  }
-
-
-  return find(data);
-}
-
-
-function extractBilling(data){
-
-  const seen =
-    new Set();
-
-
-  function find(value){
-
-    if(value == null){
-
-      return "";
-
-    }
-
-    if(
-      typeof value === "string"
-    ){
-
-      return value.trim();
-
-    }
-
-    if(
-      typeof value !== "object" ||
-      seen.has(value)
-    ){
-
-      return "";
-
-    }
-
-    seen.add(value);
-
-
-    if(
-      typeof value.billing ===
-      "string" &&
-      value.billing.trim()
-    ){
-
-      return value.billing.trim();
-
-    }
-
-
-    for(
-      const key of [
-        "billing",
-        "bill",
-        "payment",
-        "job",
-        "result",
-        "document",
-        "review",
-        "output"
-      ]
-    ){
-
-      const result =
-        find(
-          value[key]
-        );
-
-      if(result){
-
-        return result;
-
-      }
-
-    }
 
     return "";
   }
 
-
-  return find(data);
-}
-
-
-/* ===========================================================
-   PAYMENT PANEL
-   =========================================================== */
-
-function updatePaymentPanel(){
-
-  amountValueTop.textContent =
-    amount > 0
-      ? "₦" +
-        amount.toLocaleString()
-      : "Quotation required";
-
-
-  paymentDetails.textContent =
-    "Service: " +
-    (
-      service ||
-      "Business Center Service"
-    ) +
-    "\nBilling: " +
-    (
-      billing ||
-      "Fixed price"
-    ) +
-    "\n\n" +
-    (
-      paymentIdentifier
-        ? "Payment workflow already has a payment record."
-        : "Tap MAKE PAYMENT to hand the exact reviewed document to the payment page."
-    ) +
-    "\nCustomer Care verification is required before download.";
-
-
-  if(paymentIdentifier){
-
-    paymentId.style.display =
-      "block";
-
-    paymentId.textContent =
-      "Payment ID: " +
-      paymentIdentifier;
-
-  }
-
-  else{
-
-    paymentId.style.display =
-      "none";
-
-    paymentId.textContent =
-      "";
-
-  }
-
-
-  if(paid){
-
-    makePaymentButton.textContent =
-      "✓ PAYMENT VERIFIED";
-
-    downloadButton.disabled =
-      false;
-
-    downloadButton.classList.add(
-      "active"
-    );
-
-    downloadButton.textContent =
-      "⬇ DOWNLOAD DOCUMENT";
-
-    paymentMessage.textContent =
-      "Payment verified by Customer Care.\n" +
-      "Download is now available.";
-
-  }
-
-  else if(paymentPending){
-
-    makePaymentButton.textContent =
-      "✓ PAYMENT REPORTED";
-
-    downloadButton.disabled =
-      true;
-
-    downloadButton.classList.remove(
-      "active"
-    );
-
-    downloadButton.textContent =
-      "🔒 DOWNLOAD DOCUMENT";
-
-    paymentMessage.textContent =
-      "Payment reported.\n" +
-      "Please wait for Customer Care to verify your payment.";
-
-  }
-
-  else if(paymentStarted){
-
-    makePaymentButton.textContent =
-      "✓ PAYMENT CREATED";
-
-    downloadButton.disabled =
-      true;
-
-    downloadButton.classList.remove(
-      "active"
-    );
-
-    downloadButton.textContent =
-      "🔒 DOWNLOAD DOCUMENT";
-
-    paymentMessage.textContent =
-      "Payment workflow has started.\n" +
-      "Continue on the payment page.";
-
-  }
-
-  else{
-
-    makePaymentButton.textContent =
-      "💳 MAKE PAYMENT";
-
-    downloadButton.disabled =
-      true;
-
-    downloadButton.classList.remove(
-      "active"
-    );
-
-    downloadButton.textContent =
-      "🔒 DOWNLOAD DOCUMENT";
-
-    paymentMessage.textContent =
-      amount > 0
-        ? "Download remains locked until Customer Care verifies your payment."
-        : "This service requires a quotation before payment.";
-
-  }
-
-  updateButtons();
-}
-
-
-/* ===========================================================
-   APPLY REVIEW JOB
-   =========================================================== */
-
-function applyJob(data){
-
-  currentStatus =
-    clean(
-      data.status
-    );
-
-  reviewFinished =
-    complete(data);
-
-
-  const extractedPages =
-    extractPages(data);
-
-  if(extractedPages.length){
-
-    pages =
-      extractedPages;
-
-    totalPages =
-      extractedPages.length;
-
-  }
-
-  else{
-
-    totalPages =
-      Number(
-        data.total_pages
-      ) || 0;
-
-  }
-
-
-  currentVersion =
-    Number(
-      data.current_version
-    ) || 1;
-
-
-  versionId =
-    clean(
-      data.version_id ||
-      data.document_version ||
-      data.versionId ||
-      data.current_version
-    );
-
-
-  /*
-   * Review does not independently trust payment flags.
-   * Payment truth is checked only by the payment workflow.
-   */
-
-  amount =
-    extractAmount(data) ||
-    amount;
-
-  billing =
-    clean(data.billing) ||
-    extractBilling(data) ||
-    billing;
-
-
-  /*
-   * Preserve an existing payment ID only when the backend
-   * explicitly returns one for the current document.
-   */
-
-  const returnedPaymentId =
-    clean(
-      data.payment_id
-    );
-
-  if(
-    returnedPaymentId
-  ){
-
-    paymentIdentifier =
-      returnedPaymentId;
-
-    paymentStarted =
-      true;
-
-    savePaymentContext();
-
-  }
-
-
-  if(totalPages){
-
-    currentPage =
-      Math.max(
-        1,
-        Math.min(
-          currentPage,
-          totalPages
-        )
-      );
-
-  }
-
-
-  const progress =
-    data.progress || {};
-
-  const completed =
-    Number(
-      progress.completed
-    ) || 0;
-
-  const total =
-    Number(
-      progress.total
-    ) ||
-    totalPages ||
-    0;
-
-
-  let percent =
-    total
-      ? Math.round(
-          completed /
-          total *
-          100
-        )
-      : 0;
-
-
-  if(
-    reviewFinished &&
-    totalPages
-  ){
-
-    percent = 100;
-
-  }
-
-
-  progressBar.style.width =
-    Math.max(
-      0,
-      Math.min(
-        100,
-        percent
-      )
-    ) + "%";
-
-
-  pageCount.textContent =
-    totalPages +
-    (
-      totalPages === 1
-        ? " PAGE"
-        : " PAGES"
-    );
-
-
-  if(reviewFinished){
-
-    setStatus(
-      "READY"
-    );
-
-    progressText.textContent =
-      "Your document is ready to review and pay.";
-
-  }
-
-  else if(
-    state() === "reviewing"
-  ){
-
-    setStatus(
-      "REVIEWING"
-    );
-
-    progressText.textContent =
-      completed +
-      " of " +
-      total +
-      " pages reviewed.";
-
-  }
-
-  else if(
-    state() === "correcting"
-  ){
-
-    setStatus(
-      "CORRECTING"
-    );
-
-    progressText.textContent =
-      "Your correction is being applied.";
-
-  }
-
-  else if(
-    state() === "review_error" ||
-    state() === "correction_error"
-  ){
-
-    setStatus(
-      "ERROR"
-    );
-
-    progressText.textContent =
-      "The document review encountered an error.";
-
-  }
-
-  else{
-
-    setStatus(
-      currentStatus
-        ? currentStatus.toUpperCase()
-        : "PREPARING"
-    );
-
-  }
-
-
-  renderPage();
-
-  updatePaymentPanel();
-}
-
-
-/* ===========================================================
-   PAYMENT STATUS
-   ===========================================================
-
-   IMPORTANT:
-
-   Review does NOT create payments.
-
-   This status check is only used when an existing payment ID
-   has already been established by payment.html.
-   =========================================================== */
-
-async function loadPaymentState(){
-
-  if(
-    !jobId ||
-    !paymentIdentifier
-  ){
-
-    return null;
-
-  }
-
-
-  try{
-
-    /*
-     * The payment API is intentionally not hard-coded here.
-     *
-     * Review itself does not need to communicate with the
-     * payment service during the initial MAKE PAYMENT action.
-     *
-     * If the customer returns here with a payment ID,
-     * payment.html remains the authoritative payment page.
-     *
-     * The Review page therefore does not manufacture or
-     * interpret a payment record.
-     */
-
-    return null;
-
-  }
-
-  catch(error){
-
-    console.log(
-      "[PAYMENT STATUS]",
-      error
-    );
-
-  }
-
-  return null;
-}
-
-
-/* ===========================================================
-   LOAD REVIEW JOB
-   =========================================================== */
-
-async function loadJob(){
-
-  const data =
-    await apiGet(
-      "/api/review?job_id=" +
-      encodeURIComponent(
-        jobId
-      )
-    );
-
-  applyJob(data);
-
-  await loadPaymentState();
-
-  return data;
-}
-
-
-/* ===========================================================
-   REVIEW POLLING
-   =========================================================== */
-
-function startPolling(){
-
-  if(polling){
-
-    return;
-
-  }
-
-  polling = true;
-
-
-  const poll =
-    async () => {
-
-      try{
-
-        const data =
-          await loadJob();
-
-
-        if(
-          complete(data) &&
-          extractPages(data).length
-        ){
-
-          polling = false;
-
-          return;
-
-        }
-
-
-        if([
-          "review_error",
-          "correction_error"
-        ].includes(
-          state()
-        )){
-
-          polling = false;
-
-          return;
-
-        }
-
-
-        pollTimer =
-          setTimeout(
-            poll,
-            1200
-          );
-
-      }
-
-      catch(error){
-
-        polling = false;
-
-        if(!pages.length){
-
-          setMessage(
-            error.message,
-            "error"
-          );
-
-        }
-
-      }
-
-    };
-
-
-  poll();
-}
-
-
-/* ===========================================================
-   CORRECTION
-   =========================================================== */
-
-correctionButton.onclick =
-  async () => {
-
-    const instruction =
-      clean(
-        correctionInput.value
-      );
-
-
-    if(!instruction){
-
-      return setMessage(
-        "Please write the correction or change you want.",
-        "error"
-      );
-
-    }
-
-
-    try{
-
-      busy = true;
-
-      updateButtons();
-
-      setMessage(
-        "Applying your correction..."
-      );
-
-
-      await apiPost(
-        "/api/correct",
-        {
-          job_id:
-            jobId,
-
-          instruction:
-            instruction
-        }
-      );
-
-
-      correctionInput.value =
-        "";
-
-
-      /*
-       * A correction creates a NEW document version.
-       *
-       * Therefore any previous payment/document snapshot
-       * must no longer be associated with this Review.
-       */
-
-      paid = false;
-
-      paymentStarted = false;
-
-      paymentPending = false;
-
-      paymentIdentifier = "";
-
-      clearPaymentContext();
-
-      amount = 0;
-
-      billing = "";
-
-
-      currentStatus =
-        "correcting";
-
-      pages = [];
-
-      totalPages = 0;
-
-      currentPage = 1;
-
-
-      renderPage();
-
-      updatePaymentPanel();
-
-
-      setMessage(
-        "Your correction has started.",
-        "success"
-      );
-
-
-      startPolling();
-
-    }
-
-    catch(error){
-
-      setMessage(
-        error.message,
-        "error"
-      );
-
-    }
-
-    finally{
-
-      busy = false;
-
-      updateButtons();
-
-    }
-
-  };
-
-
-/* ===========================================================
-   EXACT REVIEW SNAPSHOT HANDOFF
-   ===========================================================
-
-   THIS IS THE CRITICAL FIX.
-
-   Review does NOT call:
-
-       /api/payment/create
-
-   Review does NOT create a Payment ID.
-
-   Review does NOT save the document to the Download Base.
-
-   Instead:
-
-       1. Take the exact pages currently displayed.
-       2. Take the exact current document version.
-       3. Take the amount/service/customer information.
-       4. Put that exact snapshot into sessionStorage.
-       5. Open payment.html.
-
-   payment.html then becomes responsible for:
-
-       - creating the real Payment ID
-       - creating the payment record
-       - saving the exact snapshot
-       - showing bank details
-       - accepting payment reference
-       - reporting payment
-       - connecting to Back Office
-       - waiting for Customer Care verification
-       - unlocking the already-saved document
-
-   No document regeneration occurs here.
-   =========================================================== */
-
-function buildExactReviewSnapshot(){
-
-  const exactPages =
-    pages.map(
-      (page,index) => ({
-
-        page_number:
-          Number(
-            page.page_number
-          ) ||
-          index + 1,
-
-        position:
-          Number(
-            page.position
-          ) ||
-          index + 1,
-
-        status:
-          clean(
-            page.status
-          ) ||
-          "review_complete",
-
-        content:
-          page.content == null
-            ? ""
-            : String(
-                page.content
-              ),
-
-        review:
-          clean(
-            page.review
-          ),
-
-        error:
-          clean(
-            page.error
-          )
-
-      })
-    );
-
-
-  const documentText =
-    exactPages
+  const combined =
+    recordPageList
       .map(
-        page =>
-          page.content
+        page => {
+
+          if(typeof page === "string"){
+            return page;
+          }
+
+          if(
+            page &&
+            typeof page === "object"
+          ){
+
+            return clean(
+              page.content ||
+              page.text ||
+              page.body ||
+              page.html ||
+              ""
+            );
+          }
+
+          return "";
+        }
       )
-      .join(
-        "\n\n"
-      );
+      .filter(page => clean(page))
+      .join("\n\n");
 
-
-  const filename =
-    "Naija_Pocket_Business_Center_" +
-    jobId.replace(
-      /[^a-zA-Z0-9_-]/g,
-      "_"
-    ) +
-    ".docx";
-
-
-  return {
-
-    job_id:
-      jobId,
-
-    customer_id:
-      customerId,
-
-    service:
-      service ||
-      "Business Center Service",
-
-    amount:
-      Number(amount) || 0,
-
-    currency:
-      "NGN",
-
-    payment_method:
-      "bank_transfer",
-
-    version_id:
-      versionId,
-
-    document_version:
-      versionId,
-
-    versionId:
-      versionId,
-
-    filename:
-      filename,
-
-    document_filename:
-      filename,
-
-    pages:
-      exactPages,
-
-    document_pages:
-      exactPages,
-
-    review_pages:
-      exactPages,
-
-    document_text:
-      documentText,
-
-    text:
-      documentText,
-
-    content:
-      documentText,
-
-    billing:
-      billing || "",
-
-    review_finished:
-      true,
-
-    status:
-      "review_complete",
-
-    /*
-     * If a previous payment ID exists, pass it along,
-     * but do not create or modify it here.
-     */
-
-    payment_id:
-      paymentIdentifier || ""
-
-  };
-
+  return cleanDocumentForDisplay(combined);
 }
 
+function escapeHtml(value){
 
-/* ===========================================================
-   SAVE EXACT SNAPSHOT TO SESSION STORAGE
-   =========================================================== */
-
-function saveExactReviewSnapshot(){
-
-  const snapshot =
-    buildExactReviewSnapshot();
-
-
-  const serialized =
-    JSON.stringify(
-      snapshot
-    );
-
-
-  /*
-   * Primary key used by payment.html.
-   */
-
-  if(jobId){
-
-    sessionStorage.setItem(
-      "npb_payment_review_snapshot_" +
-      jobId,
-      serialized
-    );
-
-  }
-
-
-  /*
-   * Generic fallback key.
-   */
-
-  sessionStorage.setItem(
-    "npb_payment_review_snapshot",
-    serialized
-  );
-
-
-  /*
-   * Compatibility keys so that the payment page can recover
-   * the snapshot even if an older handoff key is checked.
-   */
-
-  if(jobId){
-
-    sessionStorage.setItem(
-      "payment_review_snapshot_" +
-      jobId,
-      serialized
-    );
-
-  }
-
-  sessionStorage.setItem(
-    "payment_review_snapshot",
-    serialized
-  );
-
-
-  /*
-   * Also retain the most recent snapshot in localStorage.
-   *
-   * This is only a recovery copy.
-   * payment.html should still prefer sessionStorage.
-   */
-
-  try{
-
-    localStorage.setItem(
-      "npb_payment_review_snapshot_" +
-      jobId,
-      serialized
-    );
-
-  }
-
-  catch(error){
-
-    console.log(
-      "[SNAPSHOT LOCAL STORAGE]",
-      error
-    );
-
-  }
-
-
-  return snapshot;
+  return String(
+    value === null ||
+    value === undefined
+      ? ""
+      : value
+  )
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
 }
 
-
-/* ===========================================================
-   OPEN PAYMENT PAGE
-   =========================================================== */
-
-function openPaymentPage(){
-
-  if(!reviewFinished){
-
-    setMessage(
-      "Please wait until the complete document review is ready.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(!jobId){
-
-    setMessage(
-      "The document job could not be identified.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(!versionId){
-
-    setMessage(
-      "The current document version could not be identified. Please refresh the review.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(!pages.length){
-
-    setMessage(
-      "The complete document pages are not available yet.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(amount <= 0){
-
-    setMessage(
-      "This service requires a quotation before payment.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(busy){
-
-    return;
-
-  }
-
-
-  try{
-
-    busy = true;
-
-    updateButtons();
-
-
-    setStatus(
-      "PAYMENT READY"
-    );
-
-
-    progressText.textContent =
-      "Connecting your exact reviewed document to payment...";
-
-
-    setMessage(
-      "Preparing your exact reviewed document for payment..."
-    );
-
-
-    /*
-     * This is the exact document currently visible in Review.
-     *
-     * Nothing is regenerated.
-     */
-
-    const snapshot =
-      saveExactReviewSnapshot();
-
-
-    /*
-     * Confirm that the snapshot really contains pages before
-     * allowing navigation.
-     */
-
-    if(
-      !snapshot ||
-      !Array.isArray(
-        snapshot.pages
-      ) ||
-      !snapshot.pages.length
-    ){
-
-      throw Error(
-        "The exact reviewed document could not be transferred to the payment page."
-      );
-
-    }
-
-
-    /*
-     * Confirm version information.
-     */
-
-    if(
-      !clean(
-        snapshot.version_id
-      )
-    ){
-
-      throw Error(
-        "The document version could not be transferred to the payment page."
-      );
-
-    }
-
-
-    /*
-     * Build payment.html URL.
-     *
-     * payment.html will perform payment creation.
-     */
-
-    const paymentUrl =
-      "payment.html" +
-      "?job_id=" +
-      encodeURIComponent(
-        jobId
-      ) +
-      "&version_id=" +
-      encodeURIComponent(
-        versionId
-      ) +
-      "&service=" +
-      encodeURIComponent(
-        service ||
-        "Business Center Service"
-      ) +
-      "&amount=" +
-      encodeURIComponent(
-        amount
-      );
-
-
-    /*
-     * If an existing payment ID is already associated with
-     * this Review, preserve it.
-     *
-     * Initial payment flow has no payment ID yet.
-     */
-
-    if(paymentIdentifier){
-
-      window.location.href =
-        paymentUrl +
-        "&payment_id=" +
-        encodeURIComponent(
-          paymentIdentifier
-        );
-
-    }
-
-    else{
-
-      window.location.href =
-        paymentUrl;
-
-    }
-
-  }
-
-  catch(error){
-
-    busy = false;
-
-    updateButtons();
-
-    setStatus(
-      "PAYMENT NOT READY"
-    );
-
-    progressText.textContent =
-      "The payment handoff could not be completed.";
-
-    setMessage(
-      error.message,
-      "error"
-    );
-
-  }
-
-}
-
-
-/* ===========================================================
-   MAKE PAYMENT
-   ===========================================================
-
-   IMPORTANT:
-
-   This button does NOT create a payment.
-
-   It transfers the exact Review snapshot to payment.html.
-
-   payment.html is responsible for creating the payment record
-   and saving the document.
-   =========================================================== */
-
-makePaymentButton.onclick =
-  () => {
-
-    openPaymentPage();
-
-  };
-
-
-/* ===========================================================
-   I HAVE MADE PAYMENT
-   ===========================================================
-
-   The actual payment-report action belongs to payment.html.
-
-   This button remains disabled on Review so there is only one
-   authoritative payment-report action.
-   =========================================================== */
-
-paymentButton.onclick =
-  () => {
-
-    setMessage(
-      "Please use the payment page to report your payment.",
-      "error"
-    );
-
-  };
-
-
-/* ===========================================================
-   DOWNLOAD
-   ===========================================================
-
-   Review only allows download if a verified payment has
-   already been established.
-
-   The actual download should be served from the saved
-   payment snapshot.
-   =========================================================== */
-
-downloadButton.onclick =
-  () => {
-
-    if(!paid){
-
-      return setMessage(
-        "Download is locked until Customer Care verifies your payment.",
-        "error"
-      );
-
-    }
-
-
-    if(!paymentIdentifier){
-
-      return setMessage(
-        "The payment record could not be identified.",
-        "error"
-      );
-
-    }
-
-
-    /*
-     * Use the payment page's download workflow.
-     *
-     * The authoritative download endpoint is resolved from
-     * the payment page/application rather than creating a new
-     * document here.
-     */
-
-    const downloadUrl =
-      "payment.html" +
-      "?job_id=" +
-      encodeURIComponent(
-        jobId
-      ) +
-      "&payment_id=" +
-      encodeURIComponent(
-        paymentIdentifier
-      ) +
-      "&download=1";
-
-
-    window.location.href =
-      downloadUrl;
-
-  };
-
-
-/* ===========================================================
-   START
-   =========================================================== */
-
-async function start(){
-
-  serviceBadge.textContent =
-    service;
-
-
-  if(!jobId){
-
-    setStatus(
-      "NO DOCUMENT"
-    );
-
-    pageViewer.innerHTML =
-      '<div class="empty-page">' +
-      'No document job was supplied.' +
+/* ==========================================================
+   RENDER BACK OFFICE
+========================================================== */
+
+function renderBackOffice(){
+
+  boRecords.innerHTML = "";
+
+  const records =
+    Array.isArray(backOfficeRecords)
+      ? backOfficeRecords
+      : [];
+
+  boTotal.textContent =
+    records.length;
+
+  boReported.textContent =
+    records.filter(
+      record =>
+        isReported(recordStatus(record)) ||
+        record.payment_reported === true
+    ).length;
+
+  boActivated.textContent =
+    records.filter(
+      record =>
+        recordIsActivated(record)
+    ).length;
+
+  if(!records.length){
+
+    boRecords.innerHTML =
+      '<div class="bo-empty">' +
+      'No saved payment documents were returned by the Payment API.' +
       '</div>';
 
-    setMessage(
-      "This review page needs a document job.",
-      "error"
-    );
-
     return;
-
   }
 
+  records.forEach(
+    (record,index) => {
+
+      const payment =
+        recordPaymentId(record);
+
+      const job =
+        recordJobId(record);
+
+      const version =
+        recordVersionId(record);
+
+      const serviceName =
+        recordService(record);
+
+      const filenameValue =
+        recordFilename(record);
+
+      const amountValueRecord =
+        recordAmount(record);
+
+      const status =
+        boDisplayStatus(record);
+
+      const pagesValue =
+        recordPages(record);
+
+      const recordId =
+        "bo-record-" + index;
+
+      const documentId =
+        "bo-document-" + index;
+
+      const activateId =
+        recordId + "-activate";
+
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        "bo-record";
+
+      wrapper.innerHTML =
+
+        '<div class="bo-record-head">' +
+
+          '<div class="bo-record-title">' +
+            escapeHtml(serviceName) +
+          '</div>' +
+
+          '<div class="bo-status ' +
+            status.className +
+          '">' +
+            escapeHtml(status.text) +
+          '</div>' +
+
+        '</div>' +
+
+        '<div class="bo-grid">' +
+
+          '<div class="bo-field">' +
+            '<div class="bo-field-label">Payment ID</div>' +
+            '<div class="bo-field-value">' +
+              escapeHtml(payment || "—") +
+            '</div>' +
+          '</div>' +
+
+          '<div class="bo-field">' +
+            '<div class="bo-field-label">Job ID</div>' +
+            '<div class="bo-field-value">' +
+              escapeHtml(job || "—") +
+            '</div>' +
+          '</div>' +
+
+          '<div class="bo-field">' +
+            '<div class="bo-field-label">Document Version</div>' +
+            '<div class="bo-field-value">' +
+              escapeHtml(version || "—") +
+            '</div>' +
+          '</div>' +
+
+          '<div class="bo-field">' +
+            '<div class="bo-field-label">Amount</div>' +
+            '<div class="bo-field-value">' +
+              escapeHtml(
+                amountValueRecord
+                  ? formatMoney(amountValueRecord)
+                  : "—"
+              ) +
+            '</div>' +
+          '</div>' +
+
+          '<div class="bo-field">' +
+            '<div class="bo-field-label">Filename</div>' +
+            '<div class="bo-field-value">' +
+              escapeHtml(filenameValue) +
+            '</div>' +
+          '</div>' +
+
+          '<div class="bo-field">' +
+            '<div class="bo-field-label">Pages</div>' +
+            '<div class="bo-field-value">' +
+              escapeHtml(
+                pagesValue.length
+                  ? pagesValue.length
+                  : (
+                      record.pages_count ||
+                      record.page_count ||
+                      "—"
+                    )
+              ) +
+            '</div>' +
+          '</div>' +
+
+        '</div>' +
+
+        '<div class="bo-actions">' +
+
+          '<button ' +
+            'id="' + recordId + '-view" ' +
+            'class="bo-action bo-view" ' +
+            'type="button">' +
+            'VIEW SAVED DOCUMENT' +
+          '</button>' +
+
+        '</div>' +
+
+        '<div ' +
+          'id="' + documentId + '" ' +
+          'class="bo-document">' +
+        '</div>' +
+
+        '<div class="bo-actions">' +
+
+          '<button ' +
+            'id="' + activateId + '" ' +
+            'class="bo-action bo-activate" ' +
+            'type="button">' +
+            'ACTIVATE DOWNLOAD' +
+          '</button>' +
+
+        '</div>';
+
+      boRecords.appendChild(wrapper);
+
+      const viewButton =
+        document.getElementById(
+          recordId + "-view"
+        );
+
+      const documentBox =
+        document.getElementById(
+          documentId
+        );
+
+      const activateButton =
+        document.getElementById(
+          activateId
+        );
+
+      const alreadyActivated =
+        recordIsActivated(record);
+
+      if(
+        activateButton &&
+        alreadyActivated
+      ){
+
+        activateButton.disabled = true;
+
+        activateButton.textContent =
+          "DOWNLOAD ALREADY ACTIVATED";
+      }
+
+      if(viewButton){
+
+        viewButton.addEventListener(
+          "click",
+          () => {
+
+            if(
+              documentBox.classList.contains("show")
+            ){
+
+              documentBox.classList.remove("show");
+
+              documentBox.textContent = "";
+
+              viewButton.textContent =
+                "VIEW SAVED DOCUMENT";
+
+              return;
+            }
+
+            const displayText =
+              getSavedDocumentForDisplay(record);
+
+            documentBox.textContent =
+              displayText ||
+              "The saved document has no readable text.";
+
+            documentBox.classList.add("show");
+
+            viewButton.textContent =
+              "HIDE SAVED DOCUMENT";
+          }
+        );
+      }
+
+      if(activateButton){
+
+        activateButton.addEventListener(
+          "click",
+          () =>
+            activateBackOfficeDownload(
+              record,
+              activateButton
+            )
+        );
+      }
+
+    }
+  );
+}
+
+/* ==========================================================
+   LOAD BACK OFFICE
+========================================================== */
+
+async function loadBackOffice(){
+
+  if(!backOfficeUnlocked){
+
+    if(!checkLocalBackOfficeKey()){
+      return;
+    }
+  }
+
+  setBackOfficeMessage(
+    "Loading saved documents..."
+  );
+
+  boLoadButton.disabled = true;
+  boRefreshButton.disabled = true;
 
   try{
 
     const data =
-      await loadJob();
+      await backOfficeGet(
+        "/api/back-office/payments"
+      );
 
+    backOfficeRecords =
+      Array.isArray(data.payments)
+        ? data.payments
+        : (
+            Array.isArray(data.records)
+              ? data.records
+              : (
+                  Array.isArray(data.items)
+                    ? data.items
+                    : []
+                )
+          );
 
-    if(
-      !complete(data) &&
-      ![
-        "review_error",
-        "correction_error"
-      ].includes(
-        state()
-      )
-    ){
+    renderBackOffice();
 
-      startPolling();
-
-    }
-
-  }
-
-  catch(error){
-
-    setStatus(
-      "ERROR"
+    setBackOfficeMessage(
+      backOfficeRecords.length +
+      " saved payment record" +
+      (
+        backOfficeRecords.length === 1
+          ? ""
+          : "s"
+      ) +
+      " found.",
+      "success"
     );
 
-    setMessage(
-      error.message,
+  }catch(error){
+
+    console.error(
+      "BACK OFFICE LOAD ERROR:",
+      error
+    );
+
+    backOfficeRecords = [];
+
+    renderBackOffice();
+
+    setBackOfficeMessage(
+      error.message ||
+      "The Back Office could not load saved documents.",
       "error"
     );
 
+  }finally{
 
-    pageViewer.innerHTML =
-      '<div class="empty-page">' +
-      String(
-        error.message
-      )
-        .replaceAll(
-          "<",
-          "&lt;"
-        )
-        .replaceAll(
-          ">",
-          "&gt;"
-        ) +
-      '</div>';
-
+    boLoadButton.disabled = false;
+    boRefreshButton.disabled = false;
   }
-
 }
 
+/* ==========================================================
+   ACTIVATE DOWNLOAD
+==========================================================
 
-start();
+   IMPORTANT:
 
+   There is NO dependency on:
+       payment_reported
+       I HAVE MADE PAYMENT
+
+   Customer Care can receive payment information through
+   another route and still activate the saved document.
+
+   This action does NOT regenerate or resave the document.
+
+   It only changes the download authorization for the
+   existing saved payment/document record.
+========================================================== */
+
+async function activateBackOfficeDownload(
+  record,
+  activateButton
+){
+
+  if(!backOfficeUnlocked){
+
+    setBackOfficeMessage(
+      "Back Office access is locked. Please enter the correct access key.",
+      "warning"
+    );
+
+    return;
+  }
+
+  const payment =
+    recordPaymentId(record);
+
+  const job =
+    recordJobId(record);
+
+  const version =
+    recordVersionId(record);
+
+  if(!payment){
+
+    setBackOfficeMessage(
+      "This saved record has no Payment ID.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(recordIsActivated(record)){
+
+    if(activateButton){
+
+      activateButton.disabled = true;
+
+      activateButton.textContent =
+        "DOWNLOAD ALREADY ACTIVATED";
+    }
+
+    setBackOfficeMessage(
+      "Download is already activated for this saved document.",
+      "success"
+    );
+
+    return;
+  }
+
+  const confirmed =
+    window.confirm(
+      "Activate customer download for Payment ID " +
+      payment +
+      "?\n\n" +
+      "This will use the document that is already saved. " +
+      "It will not regenerate the document."
+    );
+
+  if(!confirmed){
+    return;
+  }
+
+  if(activateButton){
+
+    activateButton.disabled = true;
+
+    activateButton.textContent =
+      "ACTIVATING DOWNLOAD...";
+  }
+
+  setBackOfficeMessage(
+    "Activating download..."
+  );
+
+  try{
+
+    let data;
+
+    try{
+
+      data =
+        await backOfficePost(
+          "/api/back-office/activate-download",
+          {
+            payment_id:payment,
+            job_id:job || null,
+            version_id:version || null,
+            verified:true
+          }
+        );
+
+    }catch(primaryError){
+
+      console.warn(
+        "Dedicated Back Office activation failed; trying existing Customer Care verification endpoint:",
+        primaryError
+      );
+
+      data =
+        await backOfficePost(
+          "/api/customer-care/payment/verify",
+          {
+            payment_id:payment,
+            job_id:job || null,
+            version_id:version || null,
+            verified:true,
+            note:
+              "Download activated from Payment HTML Back Office after Customer Care payment verification."
+          }
+        );
+    }
+
+    setBackOfficeMessage(
+      data.message ||
+      "Download activated successfully.",
+      "success"
+    );
+
+    await loadBackOffice();
+
+  }catch(error){
+
+    console.error(
+      "BACK OFFICE ACTIVATION ERROR:",
+      error
+    );
+
+    if(activateButton){
+
+      activateButton.disabled = false;
+
+      activateButton.textContent =
+        "ACTIVATE DOWNLOAD";
+    }
+
+    setBackOfficeMessage(
+      error.message ||
+      "Download activation could not be completed.",
+      "error"
+    );
+  }
+}
+
+/* ==========================================================
+   NAVIGATION
+========================================================== */
+
+function openPaymentBackOffice(){
+
+  window.location.href =
+    "/payment.html?mode=back_office";
+}
+
+function exitBackOffice(){
+
+  window.location.href =
+    "/workspace.html";
+}
+
+/* ==========================================================
+   BACK OFFICE BUTTONS
+========================================================== */
+
+boLoadButton.addEventListener(
+  "click",
+  () => {
+
+    if(
+      !backOfficeUnlocked &&
+      !checkLocalBackOfficeKey()
+    ){
+      return;
+    }
+
+    loadBackOffice();
+  }
+);
+
+boRefreshButton.addEventListener(
+  "click",
+  () => {
+
+    if(!backOfficeUnlocked){
+
+      setBackOfficeMessage(
+        "Enter the correct Back Office access key before refreshing.",
+        "warning"
+      );
+
+      boAdminKey.focus();
+
+      return;
+    }
+
+    loadBackOffice();
+  }
+);
+
+boExitButton.addEventListener(
+  "click",
+  exitBackOffice
+);
+
+boAdminKey.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Enter"){
+
+      event.preventDefault();
+
+      if(checkLocalBackOfficeKey()){
+        loadBackOffice();
+      }
+    }
+  }
+);
+
+/* ==========================================================
+   CUSTOMER BUTTONS
+========================================================== */
+
+/*
+   MAKE PAYMENT:
+   Only reveals the payment details.
+*/
+makePaymentButton.addEventListener(
+  "click",
+  openPaymentDetails
+);
+
+/*
+   I HAVE MADE PAYMENT:
+   Uses the existing payment report function.
+*/
+reportButton.addEventListener(
+  "click",
+  reportPayment
+);
+
+/*
+   DOWNLOAD DOCUMENT:
+   Uses the existing saved-document download function.
+*/
+downloadButton.addEventListener(
+  "click",
+  downloadDocument
+);
+
+/*
+   CUSTOMER CARE:
+   Opens direct WhatsApp support.
+*/
+customerCareButton.addEventListener(
+  "click",
+  openCustomerCare
+);
+
+/*
+   BACK OFFICE:
+   Preserved.
+*/
+backButton.addEventListener(
+  "click",
+  openPaymentBackOffice
+);
+
+/* ==========================================================
+   CUSTOMER INITIALIZATION
+========================================================== */
+
+async function startCustomerPayment(){
+
+  serviceBadge.textContent =
+    service || "Service";
+
+  amountValue.textContent =
+    formatMoney(amount);
+
+  const snapshotFound =
+    applySnapshot();
+
+  if(!snapshotFound){
+
+    setStatus(
+      "Review Snapshot Missing"
+    );
+
+    statusMessage.textContent =
+      "This payment page did not receive the exact document from Review.";
+
+    setMessage(
+      "Return to Review and tap MAKE PAYMENT again so the exact reviewed document can be transferred to Payment.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(!paymentId && jobId){
+
+    try{
+
+      const raw =
+        sessionStorage.getItem(
+          "npb_payment_state_" + jobId
+        );
+
+      if(raw){
+
+        const saved =
+          JSON.parse(raw);
+
+        if(
+          saved &&
+          clean(saved.payment_id)
+        ){
+
+          paymentId =
+            clean(saved.payment_id);
+        }
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Could not restore payment state:",
+        error
+      );
+    }
+  }
+
+  if(paymentId){
+
+    await loadExistingPayment();
+
+    if(paymentId){
+
+      paymentStarted = true;
+
+      updatePaymentDisplay();
+
+      startStatusPolling();
+
+      return;
+    }
+  }
+
+  const existing =
+    await loadExistingPayment();
+
+  if(existing && paymentId){
+
+    paymentStarted = true;
+
+    updatePaymentDisplay();
+
+    startStatusPolling();
+
+    return;
+  }
+
+  await createPayment();
+}
+
+/* ==========================================================
+   START
+========================================================== */
+
+if(isBackOfficeMode){
+
+  /*
+     Do not create a customer payment while Back Office
+     mode is open.
+
+     Customer Care must enter:
+         NPBC-2026
+  */
+
+  serviceBadge.textContent =
+    "BACK OFFICE";
+
+  setBackOfficeMessage(
+    "Enter the Back Office access key to continue.",
+    "warning"
+  );
+
+}else{
+
+  startCustomerPayment();
+}
 </script>
 
 </body>
