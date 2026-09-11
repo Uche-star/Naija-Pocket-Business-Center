@@ -1,8 +1,11 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Naija Pocket Business Center</title><style>
+<title>Naija Pocket Business Center</title>
+
+<style>
 *{box-sizing:border-box}
 
 html,body{
@@ -25,8 +28,15 @@ button{cursor:pointer}
 :root{
     --gold:#d4af37;
     --gold2:#f3d66b;
+    --cream:#fff4d6;
+    --champagne:#f4d58d;
+    --rose:#e8b4a8;
+    --teal:#70d1c1;
+    --blue:#8fb8e8;
+    --purple:#b99be8;
+    --green:#39b87f;
+    --green2:#168047;
     --red:#b30000;
-    --green:#168047;
     --border:rgba(212,175,55,.28);
 }
 
@@ -39,6 +49,10 @@ button{cursor:pointer}
     background:#000;
 }
 
+/* ============================================================
+   HEADER
+   ============================================================ */
+
 .header{
     flex:0 0 auto;
     min-height:65px;
@@ -47,8 +61,16 @@ button{cursor:pointer}
     align-items:center;
     justify-content:space-between;
     gap:10px;
-    background:#050505;
-    border-bottom:1px solid var(--border);
+    background:
+        linear-gradient(
+            90deg,
+            #050505 0%,
+            #101010 35%,
+            #080808 65%,
+            #050505 100%
+        );
+    border-bottom:1px solid rgba(212,175,55,.32);
+    box-shadow:0 4px 20px rgba(0,0,0,.45);
     z-index:20;
 }
 
@@ -58,16 +80,28 @@ button{cursor:pointer}
 
 .brand-title{
     margin:0;
-    color:var(--green);
+    background:
+        linear-gradient(
+            90deg,
+            var(--green),
+            var(--teal),
+            var(--cream),
+            var(--gold2)
+        );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
     font-size:clamp(18px,4vw,25px);
-    font-weight:800;
+    font-weight:900;
     line-height:1.2;
+    letter-spacing:.2px;
 }
 
 .brand-subtitle{
     margin-top:3px;
-    color:#ccc;
+    color:var(--blue);
     font-size:10px;
+    letter-spacing:.35px;
 }
 
 .header-actions{
@@ -81,7 +115,13 @@ button{cursor:pointer}
 .service-badge{
     max-width:40%;
     padding:7px 10px;
-    background:#171717;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(212,175,55,.10),
+            rgba(112,209,193,.06),
+            rgba(143,184,232,.07)
+        );
     border:1px solid rgba(212,175,55,.55);
     border-radius:999px;
     color:var(--gold2);
@@ -90,6 +130,7 @@ button{cursor:pointer}
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
+    box-shadow:0 0 14px rgba(212,175,55,.06);
 }
 
 .back-office-entry{
@@ -110,7 +151,10 @@ button{cursor:pointer}
     border-color:rgba(212,175,55,.35);
 }
 
-/* MAIN */
+/* ============================================================
+   MAIN
+   ============================================================ */
+
 .main{
     flex:1 1 auto;
     min-height:0;
@@ -120,7 +164,22 @@ button{cursor:pointer}
     -webkit-overflow-scrolling:touch;
     overscroll-behavior:contain;
     background:
-        radial-gradient(circle at top,#181818 0,#080808 35%,#000 100%);
+        radial-gradient(
+            circle at 15% 0%,
+            rgba(57,184,127,.08) 0,
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 85% 0%,
+            rgba(185,155,232,.07) 0,
+            transparent 26%
+        ),
+        radial-gradient(
+            circle at top,
+            #181818 0,
+            #080808 35%,
+            #000 100%
+        );
 }
 
 .main-inner{
@@ -130,7 +189,10 @@ button{cursor:pointer}
     padding:14px 10px 35px;
 }
 
-/* CUSTOMER FORM */
+/* ============================================================
+   CUSTOMER FORM
+   ============================================================ */
+
 .intro-card,
 .form-card,
 .review-header{
@@ -140,14 +202,31 @@ button{cursor:pointer}
 .intro-card{
     margin-bottom:12px;
     padding:16px;
-    background:linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid var(--border);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(57,184,127,.08),
+            rgba(212,175,55,.08) 45%,
+            rgba(143,184,232,.06)
+        ),
+        linear-gradient(145deg,#191919,#0d0d0d);
+    border:1px solid rgba(212,175,55,.34);
+    box-shadow:0 10px 35px rgba(0,0,0,.22);
 }
 
 .intro-title,
 .review-title{
     margin:0;
-    color:var(--gold2);
+    background:
+        linear-gradient(
+            90deg,
+            var(--gold2),
+            var(--cream),
+            var(--rose)
+        );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
     font-weight:900;
 }
 
@@ -165,22 +244,35 @@ button{cursor:pointer}
     display:inline-block;
     margin-top:10px;
     padding:7px 10px;
-    background:rgba(212,175,55,.09);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(212,175,55,.10),
+            rgba(112,209,193,.07)
+        );
     border:1px solid rgba(212,175,55,.3);
     border-radius:8px;
-    color:var(--gold2);
+    color:var(--champagne);
     font-size:12px;
     font-weight:800;
 }
 
 .form-card{
-    background:#101010;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(143,184,232,.035),
+            rgba(185,155,232,.025),
+            rgba(232,180,168,.025)
+        ),
+        #101010;
     border:1px solid rgba(255,255,255,.09);
     padding:15px;
 }
 
 .form-heading{
     margin:0;
+    color:var(--teal);
     font-size:17px;
 }
 
@@ -200,7 +292,7 @@ button{cursor:pointer}
 .field label{
     display:block;
     margin-bottom:5px;
-    color:#e8e8e8;
+    color:var(--cream);
     font-size:11px;
     font-weight:800;
 }
@@ -229,14 +321,15 @@ button{cursor:pointer}
 .field input:focus,
 .field textarea:focus,
 .field select:focus{
-    border-color:rgba(212,175,55,.65);
+    border-color:rgba(112,209,193,.65);
+    box-shadow:0 0 0 2px rgba(112,209,193,.06);
 }
 
 .form-note{
     margin-top:12px;
     padding:10px;
     background:#151515;
-    border-left:3px solid var(--gold);
+    border-left:3px solid var(--purple);
     border-radius:7px;
     color:#bdbdbd;
     font-size:10px;
@@ -247,17 +340,27 @@ button{cursor:pointer}
     width:100%;
     min-height:50px;
     margin-top:15px;
-    border:0;
+    border:1px solid rgba(244,213,141,.35);
     border-radius:10px;
-    background:var(--gold);
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold2),
+            var(--champagne),
+            var(--cream)
+        );
     color:#000;
     font-size:13px;
     font-weight:900;
+    box-shadow:0 5px 20px rgba(212,175,55,.12);
 }
 
 .form-submit:disabled{opacity:.45}
 
-/* REVIEW GATEWAY */
+/* ============================================================
+   REVIEW GATEWAY
+   ============================================================ */
+
 .review-view{
     display:none;
     width:100%;
@@ -269,7 +372,14 @@ button{cursor:pointer}
 .review-header{
     padding:16px;
     margin-bottom:11px;
-    background:linear-gradient(145deg,#191919,#0d0d0d);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(185,155,232,.07),
+            rgba(212,175,55,.08),
+            rgba(57,184,127,.05)
+        ),
+        linear-gradient(145deg,#191919,#0d0d0d);
     border:1px solid rgba(212,175,55,.38);
 }
 
@@ -285,7 +395,14 @@ button{cursor:pointer}
 .workspace-review-gateway{
     width:100%;
     padding:22px 16px;
-    background:#101010;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(112,209,193,.05),
+            rgba(143,184,232,.04),
+            rgba(232,180,168,.04)
+        ),
+        #101010;
     border:1px solid rgba(212,175,55,.30);
     border-radius:13px;
     text-align:center;
@@ -309,15 +426,24 @@ button{cursor:pointer}
     width:100%;
     min-height:48px;
     margin-top:15px;
-    border:0;
+    border:1px solid rgba(244,213,141,.35);
     border-radius:9px;
-    background:var(--gold);
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold2),
+            var(--champagne),
+            var(--cream)
+        );
     color:#000;
     font-size:12px;
     font-weight:900;
 }
 
-/* BACK OFFICE */
+/* ============================================================
+   BACK OFFICE
+   ============================================================ */
+
 #backOfficeView{
     display:none;
 }
@@ -329,7 +455,14 @@ button{cursor:pointer}
 .back-office-header{
     padding:17px;
     margin-bottom:12px;
-    background:linear-gradient(145deg,#191919,#0c0c0c);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(212,175,55,.09),
+            rgba(57,184,127,.05),
+            rgba(185,155,232,.05)
+        ),
+        linear-gradient(145deg,#191919,#0c0c0c);
     border:1px solid rgba(212,175,55,.42);
     border-radius:15px;
 }
@@ -595,13 +728,23 @@ button{cursor:pointer}
     border-color:rgba(212,175,55,.35);
 }
 
-/* BOTTOM */
+/* ============================================================
+   CUSTOMER BOTTOM CONTROLS
+   ============================================================ */
+
 .bottom{
     flex:0 0 auto;
     width:100%;
     padding:8px 9px calc(8px + env(safe-area-inset-bottom));
-    background:#080808;
-    border-top:1px solid var(--border);
+    background:
+        linear-gradient(
+            90deg,
+            #070707,
+            #0c0c0c,
+            #080808
+        );
+    border-top:1px solid rgba(212,175,55,.30);
+    box-shadow:0 -4px 20px rgba(0,0,0,.35);
     z-index:20;
 }
 
@@ -612,7 +755,7 @@ button{cursor:pointer}
 
 .tools{
     display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-template-columns:repeat(2,minmax(0,1fr));
     gap:6px;
     margin-bottom:7px;
 }
@@ -621,16 +764,45 @@ button{cursor:pointer}
 .choose-service-button{
     min-height:39px;
     border-radius:8px;
-    background:#181818;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(143,184,232,.05),
+            rgba(185,155,232,.04),
+            rgba(255,255,255,.02)
+        ),
+        #181818;
     color:#fff;
     border:1px solid rgba(255,255,255,.13);
     font-size:10px;
     font-weight:800;
 }
 
+.tool-button:hover{
+    border-color:rgba(212,175,55,.35);
+}
+
 .tool-button.gold{
     color:var(--gold2);
     border-color:rgba(212,175,55,.35);
+}
+
+.customer-care-button{
+    color:var(--teal);
+    border-color:rgba(112,209,193,.38);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(57,184,127,.08),
+            rgba(112,209,193,.06),
+            rgba(212,175,55,.04)
+        ),
+        #151515;
+}
+
+.customer-care-button:hover{
+    color:var(--cream);
+    border-color:rgba(112,209,193,.65);
 }
 
 .choose-service-button{
@@ -659,30 +831,26 @@ button{cursor:pointer}
     outline:0;
 }
 
+.message-input:focus{
+    border-color:rgba(112,209,193,.55);
+}
+
 .send-button{
     width:64px;
     min-height:45px;
     border:0;
     border-radius:9px;
-    background:var(--gold);
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold2),
+            var(--champagne),
+            var(--cream)
+        );
     color:#000;
     font-size:11px;
     font-weight:900;
 }
-
-.voice-recording{
-    display:none;
-    margin-bottom:6px;
-    padding:7px;
-    background:#190707;
-    border:1px solid rgba(179,0,0,.55);
-    border-radius:8px;
-    color:#ff8c8c;
-    font-size:10px;
-    text-align:center;
-}
-
-.voice-recording.show{display:block}
 
 .status{
     min-height:14px;
@@ -702,7 +870,154 @@ button:disabled{
     cursor:not-allowed;
 }
 
-/* REVIEW OVERLAY */
+/* ============================================================
+   CUSTOMER CARE POPUP
+   ============================================================ */
+
+.customer-care-overlay{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.80);
+    z-index:1100;
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+}
+
+.customer-care-overlay.show{
+    display:flex;
+}
+
+.customer-care-card{
+    width:min(100%,390px);
+    padding:23px 19px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(57,184,127,.07),
+            rgba(212,175,55,.09),
+            rgba(185,155,232,.06)
+        ),
+        linear-gradient(145deg,#191919,#090909);
+    border:1px solid rgba(212,175,55,.55);
+    border-radius:18px;
+    box-shadow:0 25px 80px rgba(0,0,0,.70);
+    text-align:center;
+}
+
+.customer-care-kicker{
+    margin-bottom:5px;
+    color:var(--teal);
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:2px;
+    text-transform:uppercase;
+}
+
+.customer-care-title{
+    margin:0;
+    background:
+        linear-gradient(
+            90deg,
+            var(--gold2),
+            var(--cream),
+            var(--rose)
+        );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:24px;
+    font-weight:700;
+    letter-spacing:.4px;
+}
+
+.customer-care-line{
+    width:70px;
+    height:1px;
+    margin:11px auto 13px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--gold2),
+            var(--teal),
+            transparent
+        );
+}
+
+.customer-care-text{
+    margin:0;
+    color:#c9c9c9;
+    font-size:11px;
+    line-height:1.6;
+}
+
+.customer-care-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:17px;
+}
+
+.customer-care-action{
+    min-height:48px;
+    border-radius:9px;
+    font-size:10px;
+    font-weight:900;
+}
+
+.customer-care-whatsapp{
+    border:1px solid rgba(57,184,127,.55);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(57,184,127,.17),
+            rgba(22,128,71,.08)
+        ),
+        #101010;
+    color:#7bd99a;
+}
+
+.customer-care-phone{
+    border:1px solid rgba(212,175,55,.45);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(212,175,55,.12),
+            rgba(244,213,141,.05)
+        ),
+        #101010;
+    color:var(--gold2);
+}
+
+.customer-care-number{
+    margin-top:14px;
+    color:var(--champagne);
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:13px;
+    letter-spacing:.8px;
+}
+
+.customer-care-close{
+    width:100%;
+    min-height:42px;
+    margin-top:13px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:9px;
+    background:#111;
+    color:#aaa;
+    font-size:10px;
+    font-weight:800;
+}
+
+/* ============================================================
+   REVIEW OVERLAY
+   ============================================================ */
+
 .review-gateway-overlay{
     position:fixed;
     inset:0;
@@ -721,7 +1036,14 @@ button:disabled{
 .review-gateway-card{
     width:min(100%,420px);
     padding:22px;
-    background:linear-gradient(145deg,#1b1b1b,#0b0b0b);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(185,155,232,.07),
+            rgba(212,175,55,.09),
+            rgba(57,184,127,.05)
+        ),
+        linear-gradient(145deg,#1b1b1b,#0b0b0b);
     border:1px solid rgba(212,175,55,.55);
     border-radius:17px;
     box-shadow:0 20px 70px rgba(0,0,0,.65);
@@ -771,7 +1093,13 @@ button:disabled{
     margin-top:16px;
     border:0;
     border-radius:10px;
-    background:var(--gold);
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold2),
+            var(--champagne),
+            var(--cream)
+        );
     color:#000;
     font-size:13px;
     font-weight:900;
@@ -788,6 +1116,10 @@ button:disabled{
     font-size:11px;
     font-weight:800;
 }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 
 @media(max-width:600px){
 
@@ -819,6 +1151,18 @@ button:disabled{
         padding:20px 16px;
     }
 
+    .customer-care-card{
+        padding:21px 16px;
+    }
+
+}
+
+@media(max-width:390px){
+
+    .customer-care-actions{
+        grid-template-columns:1fr;
+    }
+
 }
 
 @media(max-height:650px){
@@ -827,37 +1171,62 @@ button:disabled{
         max-height:calc(100dvh - 30px);
         overflow-y:auto;
     }
+
+    .customer-care-card{
+        max-height:calc(100dvh - 30px);
+        overflow-y:auto;
+    }
 }
-</style></head><body><div class="app"><header class="header"><div class="brand">
+</style>
+</head>
 
-    <h1 class="brand-title">
-        Naija Pocket Business Center
-    </h1>
+<body>
 
-    <div class="brand-subtitle">
-        Your Business Center
+<div class="app">
+
+<header class="header">
+
+    <div class="brand">
+
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
+
+        <div class="brand-subtitle">
+            Your Business Center
+        </div>
+
     </div>
 
-</div>
+    <div class="header-actions">
 
-<div class="header-actions">
+        <button
+            id="backOfficeEntryButton"
+            class="back-office-entry"
+            type="button"
+            aria-label="Open Back Office"
+        >
+            BACK OFFICE
+        </button>
 
-    <button
-        id="backOfficeEntryButton"
-        class="back-office-entry"
-        type="button"
-        aria-label="Open Back Office"
-    >
-        BACK OFFICE
-    </button>
+        <div id="serviceBadge" class="service-badge">
+            Service
+        </div>
 
-    <div id="serviceBadge" class="service-badge">
-        Service
     </div>
 
-</div>
+</header>
 
-</header><main class="main"><div class="main-inner"><!-- CUSTOMER FORM --><section id="formView"><div class="intro-card">
+
+<main class="main">
+
+<div class="main-inner">
+
+<!-- CUSTOMER FORM -->
+
+<section id="formView">
+
+<div class="intro-card">
 
     <h2 id="introTitle" class="intro-title">
         Let's get started
@@ -902,7 +1271,14 @@ button:disabled{
 
 </div>
 
-</section><!-- CUSTOMER REVIEW GATEWAY --><section id="reviewView" class="review-view"><div class="review-header">
+</section>
+
+
+<!-- CUSTOMER REVIEW GATEWAY -->
+
+<section id="reviewView" class="review-view">
+
+<div class="review-header">
 
     <h2 class="review-title">
         Your Work Is Ready
@@ -938,7 +1314,14 @@ button:disabled{
 
 </div>
 
-</section><!-- BACK OFFICE --><section id="backOfficeView"><div class="back-office-header">
+</section>
+
+
+<!-- BACK OFFICE -->
+
+<section id="backOfficeView">
+
+<div class="back-office-header">
 
     <h2 class="back-office-title">
         Back Office
@@ -987,6 +1370,7 @@ button:disabled{
 <div class="back-office-summary">
 
     <div class="back-office-stat">
+
         <span
             id="backOfficeTotal"
             class="back-office-stat-value"
@@ -997,10 +1381,12 @@ button:disabled{
         <span class="back-office-stat-label">
             Payment Reports
         </span>
+
     </div>
 
 
     <div class="back-office-stat">
+
         <span
             id="backOfficeApproved"
             class="back-office-stat-value"
@@ -1011,10 +1397,12 @@ button:disabled{
         <span class="back-office-stat-label">
             Awaiting Verification
         </span>
+
     </div>
 
 
     <div class="back-office-stat">
+
         <span
             id="backOfficeActivated"
             class="back-office-stat-value"
@@ -1025,6 +1413,7 @@ button:disabled{
         <span class="back-office-stat-label">
             Unlocked
         </span>
+
     </div>
 
 </div>
@@ -1059,16 +1448,21 @@ button:disabled{
     EXIT BACK OFFICE
 </button>
 
-</section></div></main><!-- CUSTOMER BOTTOM CONTROLS --><section
-    id="customerBottom"
-    class="bottom"
-><div class="bottom-inner"><div
-    id="voiceRecording"
-    class="voice-recording"
->
-    🔴 Recording... tap Voice again to stop.
+</section>
+
 </div>
 
+</main>
+
+
+<!-- CUSTOMER BOTTOM CONTROLS -->
+
+<section
+    id="customerBottom"
+    class="bottom"
+>
+
+<div class="bottom-inner">
 
 <div class="tools">
 
@@ -1082,11 +1476,11 @@ button:disabled{
 
 
     <button
-        id="voiceButton"
-        class="tool-button gold"
+        id="customerCareButton"
+        class="tool-button customer-care-button"
         type="button"
     >
-        🎤 Voice
+        CUSTOMER CARE
     </button>
 
 
@@ -1131,12 +1525,88 @@ button:disabled{
 
 <div id="status" class="status"></div>
 
-</div></section><!-- REVIEW OVERLAY --><div
+</div>
+
+</section>
+
+
+<!-- CUSTOMER CARE -->
+
+<div
+    id="customerCareOverlay"
+    class="customer-care-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="customerCareTitle"
+>
+
+<div class="customer-care-card">
+
+    <div class="customer-care-kicker">
+        PERSONAL ASSISTANCE
+    </div>
+
+    <h2
+        id="customerCareTitle"
+        class="customer-care-title"
+    >
+        Customer Care
+    </h2>
+
+    <div class="customer-care-line"></div>
+
+    <p class="customer-care-text">
+        Need help with your request, payment or document?
+        Contact Customer Care directly.
+    </p>
+
+    <div class="customer-care-actions">
+
+        <button
+            id="customerCareWhatsApp"
+            class="customer-care-action customer-care-whatsapp"
+            type="button"
+        >
+            WHATSAPP
+        </button>
+
+        <button
+            id="customerCarePhone"
+            class="customer-care-action customer-care-phone"
+            type="button"
+        >
+            CALL CUSTOMER CARE
+        </button>
+
+    </div>
+
+    <div class="customer-care-number">
+        +234 805 707 3891
+    </div>
+
+    <button
+        id="customerCareClose"
+        class="customer-care-close"
+        type="button"
+    >
+        CLOSE
+    </button>
+
+</div>
+
+</div>
+
+
+<!-- REVIEW OVERLAY -->
+
+<div
     id="reviewGatewayOverlay"
     class="review-gateway-overlay"
     role="dialog"
     aria-modal="true"
-><div class="review-gateway-card">
+>
+
+<div class="review-gateway-card">
 
     <div class="review-gateway-icon">
         📄
@@ -1174,7 +1644,10 @@ button:disabled{
 
 </div>
 
-</div><script>
+</div>
+
+
+<script>
 "use strict";
 
 /*
@@ -1184,8 +1657,6 @@ WORKSPACE
 
 CUSTOMER MODE
 -------------
-
-The customer Workspace flow below is preserved.
 
 conversation.html
         ↓
@@ -1218,21 +1689,6 @@ It does NOT:
 The document shown here must already have been saved by the
 payment-report lifecycle.
 
-Customer:
-    I HAVE MADE PAYMENT
-            ↓
-server saves exact latest approved work
-            ↓
-payment report becomes visible here
-            ↓
-Payment Reported — Awaiting Verification
-            ↓
-Customer Care verifies payment
-            ↓
-UNLOCK DOWNLOAD
-            ↓
-the already-saved document becomes downloadable
-
 ============================================================
 */
 
@@ -1242,6 +1698,7 @@ const REVIEW_PAGE = "review.html";
 
 
 /* ELEMENTS */
+
 const $ = id => document.getElementById(id);
 
 const formView = $("formView");
@@ -1259,14 +1716,25 @@ const introText = $("introText");
 const price = $("price");
 
 const uploadBtn = $("uploadButton");
-const voiceBtn = $("voiceButton");
+const customerCareBtn = $("customerCareButton");
 const customerBtn = $("customerServiceButton");
 
 const fileInput = $("fileInput");
 const messageInput = $("messageInput");
 const sendBtn = $("sendButton");
 const status = $("status");
-const voiceRecording = $("voiceRecording");
+
+const customerCareOverlay =
+    $("customerCareOverlay");
+
+const customerCareWhatsApp =
+    $("customerCareWhatsApp");
+
+const customerCarePhone =
+    $("customerCarePhone");
+
+const customerCareClose =
+    $("customerCareClose");
 
 const reviewGatewayOverlay =
     $("reviewGatewayOverlay");
@@ -1282,6 +1750,7 @@ const workspaceOpenReviewButton =
 
 
 /* BACK OFFICE ELEMENTS */
+
 const backOfficeEntryButton =
     $("backOfficeEntryButton");
 
@@ -1311,6 +1780,7 @@ const backOfficeActivated =
 
 
 /* URL STATE */
+
 const params =
     new URLSearchParams(location.search);
 
@@ -1327,6 +1797,7 @@ const isBackOfficeMode =
 
 
 /* IDS */
+
 function makeId(prefix){
 
     if(
@@ -1405,17 +1876,15 @@ if(jobId){
 
 
 /* STATE */
+
 let busy = false;
 let currentWork = "";
-
-let mediaRecorder = null;
-let recordedChunks = [];
-let recordingStream = null;
 
 let backOfficeJobsData = [];
 
 
 /* HELPERS */
+
 function clean(value){
 
     if(
@@ -1458,7 +1927,7 @@ function setBusy(value){
         formSubmit,
         sendBtn,
         uploadBtn,
-        voiceBtn,
+        customerCareBtn,
         customerBtn
     ].forEach(button => {
 
@@ -1516,6 +1985,7 @@ function valueFrom(object,keys){
 
 
 /* SERVER RESPONSE NORMALISATION */
+
 function serverJobId(data){
 
     return clean(
@@ -1567,6 +2037,7 @@ function serverError(data,response){
 
 
 /* API CHAT */
+
 async function apiChat(payload){
 
     let response;
@@ -1636,6 +2107,7 @@ async function apiChat(payload){
 
 
 /* REVIEW NAVIGATION */
+
 function openFullReview(){
 
     if(!jobId){
@@ -1715,7 +2187,10 @@ function showReview(work){
 }
 
 
-/* SERVICE FORMS */
+/* ============================================================
+   SERVICE FORMS
+   ============================================================ */
+
 const generic = [
 
     {
@@ -2086,7 +2561,10 @@ function collectForm(){
 }
 
 
-/* GUIDANCE */
+/* ============================================================
+   GUIDANCE
+   ============================================================ */
+
 async function loadGuidance(){
 
     setStatus(
@@ -2249,7 +2727,10 @@ Do not discuss internal systems.`,
 }
 
 
-/* WORK CREATION */
+/* ============================================================
+   WORK CREATION
+   ============================================================ */
+
 async function createWork(formData){
 
     if(busy){
@@ -2372,6 +2853,7 @@ The customer expects the completed work to proceed to review.`;
 
 
 /* FORM SUBMIT */
+
 serviceForm.addEventListener(
     "submit",
     event => {
@@ -2394,7 +2876,10 @@ serviceForm.addEventListener(
 );
 
 
-/* REVIEW */
+/* ============================================================
+   REVIEW
+   ============================================================ */
+
 reviewGatewayOpenButton.addEventListener(
     "click",
     openFullReview
@@ -2437,6 +2922,7 @@ document.addEventListener(
         if(event.key === "Escape"){
 
             closeReviewGateway();
+            closeCustomerCare();
 
         }
 
@@ -2444,7 +2930,10 @@ document.addEventListener(
 );
 
 
-/* CUSTOMER MESSAGE */
+/* ============================================================
+   CUSTOMER MESSAGE
+   ============================================================ */
+
 async function sendMessage(
     message,
     eventName="customer_message"
@@ -2577,6 +3066,7 @@ async function sendMessage(
 
 
 /* SEND MESSAGE */
+
 sendBtn.addEventListener(
     "click",
     () => {
@@ -2646,7 +3136,10 @@ messageInput.addEventListener(
 );
 
 
-/* CUSTOMER SERVICE */
+/* ============================================================
+   CUSTOMER SERVICE
+   ============================================================ */
+
 customerBtn.addEventListener(
     "click",
     async () => {
@@ -2750,7 +3243,86 @@ customerBtn.addEventListener(
 );
 
 
-/* UPLOAD */
+/* ============================================================
+   CUSTOMER CARE
+   ============================================================ */
+
+function openCustomerCare(){
+
+    customerCareOverlay
+        .classList
+        .add("show");
+
+}
+
+
+function closeCustomerCare(){
+
+    customerCareOverlay
+        .classList
+        .remove("show");
+
+}
+
+
+customerCareBtn.addEventListener(
+    "click",
+    openCustomerCare
+);
+
+
+customerCareClose.addEventListener(
+    "click",
+    closeCustomerCare
+);
+
+
+customerCareOverlay.addEventListener(
+    "click",
+    event => {
+
+        if(
+            event.target ===
+            customerCareOverlay
+        ){
+
+            closeCustomerCare();
+
+        }
+
+    }
+);
+
+
+customerCareWhatsApp.addEventListener(
+    "click",
+    () => {
+
+        window.open(
+            "https://wa.me/2348057073891",
+            "_blank",
+            "noopener,noreferrer"
+        );
+
+    }
+);
+
+
+customerCarePhone.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "tel:+2348057073891";
+
+    }
+);
+
+
+/* ============================================================
+   UPLOAD
+   ============================================================ */
+
 uploadBtn.addEventListener(
     "click",
     () => {
@@ -2910,266 +3482,6 @@ fileInput.addEventListener(
 );
 
 
-/* VOICE */
-voiceBtn.addEventListener(
-    "click",
-    async () => {
-
-        if(
-            mediaRecorder &&
-            mediaRecorder.state === "recording"
-        ){
-
-            mediaRecorder.stop();
-
-            return;
-        }
-
-
-        if(
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia
-        ){
-
-            setStatus(
-                "Voice recording is not supported on this device.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        try{
-
-            recordingStream =
-                await navigator.mediaDevices.getUserMedia({
-                    audio:true
-                });
-
-
-            recordedChunks = [];
-
-
-            mediaRecorder =
-                new MediaRecorder(
-                    recordingStream
-                );
-
-
-            mediaRecorder.ondataavailable =
-                event => {
-
-                    if(event.data?.size){
-
-                        recordedChunks.push(
-                            event.data
-                        );
-
-                    }
-
-                };
-
-
-            mediaRecorder.onstop =
-                async () => {
-
-                    recordingStream
-                        ?.getTracks()
-                        .forEach(
-                            track =>
-                                track.stop()
-                        );
-
-
-                    recordingStream = null;
-
-
-                    voiceRecording
-                        .classList
-                        .remove("show");
-
-
-                    voiceBtn.textContent =
-                        "🎤 Voice";
-
-
-                    if(!recordedChunks.length){
-
-                        setStatus(
-                            "No voice recording was captured.",
-                            "error"
-                        );
-
-                        return;
-                    }
-
-
-                    const formData =
-                        new FormData();
-
-
-                    formData.append(
-                        "file",
-                        new Blob(
-                            recordedChunks,
-                            {
-                                type:"audio/webm"
-                            }
-                        ),
-                        "voice_message.webm"
-                    );
-
-
-                    formData.append(
-                        "customer_id",
-                        customerId
-                    );
-
-
-                    formData.append(
-                        "job_id",
-                        jobId
-                    );
-
-
-                    formData.append(
-                        "client_request_id",
-                        requestId
-                    );
-
-
-                    formData.append(
-                        "service",
-                        service
-                    );
-
-
-                    setBusy(true);
-
-                    setStatus(
-                        "Processing your voice message..."
-                    );
-
-
-                    try{
-
-                        const response =
-                            await fetch(
-                                API_BASE +
-                                "/api/voice",
-                                {
-                                    method:"POST",
-                                    body:formData
-                                }
-                            );
-
-
-                        const data =
-                            await response
-                                .json()
-                                .catch(
-                                    () => ({})
-                                );
-
-
-                        if(!response.ok){
-
-                            throw new Error(
-                                serverError(
-                                    data,
-                                    response
-                                )
-                            );
-
-                        }
-
-
-                        if(
-                            data.success === false
-                        ){
-
-                            throw new Error(
-                                serverError(
-                                    data,
-                                    response
-                                )
-                            );
-
-                        }
-
-
-                        const returnedJob =
-                            serverJobId(data);
-
-
-                        if(returnedJob){
-
-                            jobId =
-                                returnedJob;
-
-                            storageSet(
-                                "npbc_job_id",
-                                jobId
-                            );
-
-                        }
-
-
-                        setBusy(false);
-
-
-                        await sendMessage(
-                            "A voice instruction has been received for this active service. Use the customer's voice instruction and current job context to continue the request.",
-                            "voice_uploaded"
-                        );
-
-
-                    }catch(error){
-
-                        setStatus(
-                            error.message ||
-                            "Voice processing failed.",
-                            "error"
-                        );
-
-                        setBusy(false);
-
-                    }
-
-                };
-
-
-            mediaRecorder.start();
-
-
-            voiceRecording
-                .classList
-                .add("show");
-
-
-            voiceBtn.textContent =
-                "⏹ Stop Voice";
-
-
-            setStatus(
-                "Recording your voice..."
-            );
-
-
-        }catch(error){
-
-            setStatus(
-                "Could not access your microphone.",
-                "error"
-            );
-
-        }
-
-    }
-);
-
-
 /* ============================================================
    BACK OFFICE
    ============================================================ */
@@ -3215,13 +3527,6 @@ function normaliseBackOfficeJobs(data){
 
 }
 
-
-/*
- * The Back Office now treats each returned record as a payment
- * report containing the already-saved customer document.
- *
- * No document generation happens here.
- */
 
 function getJobIdFromBackOffice(job){
 
@@ -3674,14 +3979,6 @@ async function loadBackOfficeJobs(){
 
     try{
 
-        /*
-         * This endpoint is read-only from the Back Office.
-         *
-         * The customer payment-report action is responsible for
-         * creating the saved document before this endpoint returns
-         * the record.
-         */
-
         const response =
             await fetch(
                 API_BASE +
@@ -3977,11 +4274,6 @@ function renderBackOfficeJobs(){
                 statuses
             );
 
-
-            /*
-             * The document card deliberately displays information
-             * about the already-saved document.
-             */
 
             const documentBox =
                 document.createElement("div");
@@ -4294,12 +4586,6 @@ async function unlockSavedDocument(
 
     try{
 
-        /*
-         * This endpoint changes only the delivery/unlock state.
-         *
-         * It must NOT generate or save another document.
-         */
-
         const response =
             await fetch(
                 API_BASE +
@@ -4400,12 +4686,6 @@ async function unlockSavedDocument(
         );
 
 
-        /*
-         * Read the persistent state again.
-         *
-         * No document generation happens here.
-         */
-
         await loadBackOfficeJobs();
 
 
@@ -4438,6 +4718,9 @@ function openBackOffice(){
     reviewGatewayOverlay
         .classList
         .remove("show");
+
+
+    closeCustomerCare();
 
 
     formView.style.display =
@@ -4493,6 +4776,7 @@ function exitBackOffice(){
 
 
 /* BACK OFFICE EVENTS */
+
 backOfficeEntryButton.addEventListener(
     "click",
     openBackOffice
@@ -4534,6 +4818,7 @@ backOfficeKey.addEventListener(
 
 
 /* BACK OFFICE INITIALISE */
+
 function initBackOffice(){
 
     formView.style.display =
@@ -4559,10 +4844,6 @@ function initBackOffice(){
         "none";
 
 
-    /*
-     * Back Office never calls /api/chat.
-     */
-
     setStatus(
         "Back Office ready."
     );
@@ -4571,6 +4852,7 @@ function initBackOffice(){
 
 
 /* NORMAL CUSTOMER INITIALISE */
+
 async function initCustomer(){
 
     serviceBadge.textContent =
@@ -4584,6 +4866,7 @@ async function initCustomer(){
 
 
 /* INITIALISE */
+
 async function init(){
 
     if(isBackOfficeMode){
@@ -4601,5 +4884,7 @@ async function init(){
 
 init();
 
-</script></body>
+</script>
+
+</body>
 </html>
