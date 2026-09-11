@@ -73,10 +73,6 @@ body{
   position:relative;
 }
 
-/* ===========================================================
-   LUXURY AMBIENT BACKGROUND
-   =========================================================== */
-
 body::before,
 body::after{
   content:"";
@@ -142,10 +138,6 @@ button:disabled{
   cursor:not-allowed;
 }
 
-/* ===========================================================
-   MAIN LUXURY FRAME
-   =========================================================== */
-
 .main{
   position:fixed!important;
   top:0!important;
@@ -179,10 +171,6 @@ button:disabled{
       rgba(181,108,255,.07)
     );
 }
-
-/* ===========================================================
-   DOCUMENT AREA
-   =========================================================== */
 
 .review-card{
   grid-row:1;
@@ -231,10 +219,6 @@ button:disabled{
     );
   z-index:3;
 }
-
-/* ===========================================================
-   DOCUMENT HEADER
-   =========================================================== */
 
 .document-card-header{
   padding:9px 11px!important;
@@ -289,10 +273,6 @@ button:disabled{
   background:rgba(212,175,55,.045);
 }
 
-/* ===========================================================
-   DOCUMENT SCROLL
-   =========================================================== */
-
 .document-scroll{
   flex:1 1 auto!important;
   min-height:0!important;
@@ -331,10 +311,6 @@ button:disabled{
 .page-viewer{
   width:100%;
 }
-
-/* ===========================================================
-   DOCUMENT PAGE — KEEP CLEAN
-   =========================================================== */
 
 .document-page{
   position:relative;
@@ -507,10 +483,6 @@ button:disabled{
   to{transform:rotate(360deg)}
 }
 
-/* ===========================================================
-   PAGE NAVIGATION
-   =========================================================== */
-
 .page-navigation{
   display:grid;
   grid-template-columns:1fr auto 1fr;
@@ -613,10 +585,6 @@ button:disabled{
     0 5px 20px rgba(212,175,55,.14);
 }
 
-/* ===========================================================
-   PAGE REVIEW
-   =========================================================== */
-
 .page-review{
   margin-top:8px;
   padding:11px;
@@ -645,10 +613,6 @@ button:disabled{
   white-space:pre-wrap;
   overflow-wrap:anywhere;
 }
-
-/* ===========================================================
-   LUXURY ACTION AREA
-   =========================================================== */
 
 .action-area{
   grid-row:2;
@@ -733,10 +697,6 @@ button:disabled{
     );
   border-radius:20px;
 }
-
-/* ===========================================================
-   TOP PANEL
-   =========================================================== */
 
 .top-panel{
   margin:0 0 7px!important;
@@ -873,10 +833,6 @@ button:disabled{
   font-size:9px;
   text-align:right;
 }
-
-/* ===========================================================
-   AMOUNT / ACTION CARD
-   =========================================================== */
 
 .top-amount-card{
   margin:0 0 7px!important;
@@ -1074,10 +1030,6 @@ button:disabled{
     0 7px 22px rgba(22,140,255,.25);
 }
 
-/* ===========================================================
-   CORRECTION
-   =========================================================== */
-
 .correction-box{
   display:grid;
   grid-template-columns:1fr auto;
@@ -1133,10 +1085,6 @@ button:disabled{
   box-shadow:
     0 5px 18px rgba(0,0,0,.22);
 }
-
-/* ===========================================================
-   MODALS
-   =========================================================== */
 
 .modal-backdrop{
   position:fixed;
@@ -1359,10 +1307,6 @@ button:disabled{
   border:1px solid rgba(255,255,255,.13);
 }
 
-/* ===========================================================
-   BACK OFFICE
-   =========================================================== */
-
 .back-office-row{
   display:flex;
   justify-content:flex-end;
@@ -1386,10 +1330,6 @@ button:disabled{
   color:var(--gold2);
   border-color:rgba(212,175,55,.5);
 }
-
-/* ===========================================================
-   MESSAGE
-   =========================================================== */
 
 .message{
   position:absolute!important;
@@ -1419,10 +1359,6 @@ button:disabled{
 .message.success{
   color:#75dc99;
 }
-
-/* ===========================================================
-   MOBILE
-   =========================================================== */
 
 @media(max-width:600px){
 
@@ -1574,6 +1510,30 @@ button:disabled{
 <body>
 
 <span id="serviceBadge" style="display:none">Service</span>
+
+<!--
+  Hidden payment bridge.
+
+  The customer never sees payment.html.
+  payment.html is loaded invisibly only when the customer
+  confirms payment from this Review page.
+-->
+<iframe
+  id="paymentBridgeFrame"
+  title="Payment Bridge"
+  aria-hidden="true"
+  tabindex="-1"
+  style="
+    position:fixed;
+    width:1px;
+    height:1px;
+    border:0;
+    opacity:0;
+    pointer-events:none;
+    left:-10000px;
+    top:-10000px;
+  ">
+</iframe>
 
 <main class="main">
 
@@ -1803,10 +1763,6 @@ button:disabled{
 </main>
 
 
-<!-- =========================================================
-     BANK PAYMENT MODAL
-     ========================================================= -->
-
 <div
   id="paymentModal"
   class="modal-backdrop"
@@ -1904,10 +1860,6 @@ button:disabled{
 
 </div>
 
-
-<!-- =========================================================
-     CUSTOMER CARE MODAL
-     ========================================================= -->
 
 <div
   id="customerCareModal"
@@ -2013,15 +1965,6 @@ const customerId =
     ""
   ).trim();
 
-/*
- * IMPORTANT:
- * Do not inherit an old global payment_id when a new
- * service is opened. A payment belongs to the current
- * job/version, not to the browser globally.
- *
- * A payment ID is accepted here only when it is explicitly
- * supplied in the current Review URL.
- */
 const incomingPaymentId =
   (
     params.get("payment_id") ||
@@ -2129,6 +2072,9 @@ const customerCareModal =
 const closeCustomerCareModal =
   $("closeCustomerCareModal");
 
+const paymentBridgeFrame =
+  $("paymentBridgeFrame");
+
 
 /* ===========================================================
    STATE
@@ -2172,6 +2118,27 @@ let billing = "";
 
 let paymentIdentifier =
   incomingPaymentId;
+
+
+/* ===========================================================
+   PAYMENT BRIDGE STATE
+   =========================================================== */
+
+let paymentBridgeReady = false;
+
+let paymentBridgeBusy = false;
+
+let paymentBridgeTimer = null;
+
+
+/*
+ * The bridge is deliberately hidden.
+ *
+ * Review does not call the Payment API.
+ * Payment.html owns the payment API operations.
+ */
+const PAYMENT_BRIDGE_URL =
+  "/payment.html?mode=review_bridge";
 
 
 /* ===========================================================
@@ -2241,11 +2208,6 @@ function complete(data){
    CURRENT PAYMENT OWNERSHIP
    =========================================================== */
 
-/*
- * A payment status response must belong to this exact
- * Review job/version before it is allowed to change the
- * Review payment state.
- */
 function paymentBelongsToCurrentReview(data){
 
   if(!data){
@@ -2293,14 +2255,6 @@ function paymentBelongsToCurrentReview(data){
 
   }
 
-  /*
-   * If the response identifies a different job/version,
-   * it is definitely stale.
-   *
-   * If the current URL explicitly supplied payment_id
-   * and the API response contains no ownership metadata,
-   * allow the explicit URL payment to continue.
-   */
   return true;
 }
 
@@ -2315,10 +2269,6 @@ function savePaymentContext(){
     return;
   }
 
-  /*
-   * Keep the payment context tied to this job.
-   * Do not maintain a reusable global payment_id.
-   */
   if(jobId){
 
     sessionStorage.setItem(
@@ -2362,10 +2312,6 @@ function clearPaymentContext(){
 
   }
 
-  /*
-   * Remove legacy global values so an older service cannot
-   * leak into a new service.
-   */
   localStorage.removeItem(
     "payment_id"
   );
@@ -2381,8 +2327,22 @@ function clearPaymentContext(){
 
 
 /* ===========================================================
-   PAYMENT API HELPERS
+   PAYMENT STATUS API
    =========================================================== */
+
+/*
+ * IMPORTANT:
+ *
+ * These functions remain only for STATUS/DOWNLOAD monitoring.
+ *
+ * Review no longer calls:
+ *
+ *   /api/payment/create
+ *   /api/payment/report
+ *
+ * Those operations are now owned by payment.html through
+ * the hidden bridge.
+ */
 
 async function paymentGet(path){
 
@@ -2415,57 +2375,6 @@ async function paymentGet(path){
       data.message ||
       data.detail ||
       "Unable to communicate with the payment service."
-    );
-
-  }
-
-  return data;
-}
-
-
-async function paymentPost(
-  path,
-  body
-){
-
-  const response =
-    await fetch(
-      PAYMENT_API_BASE +
-      path,
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":
-            "application/json",
-          "Accept":
-            "application/json"
-        },
-        body:
-          JSON.stringify(
-            body || {}
-          )
-      }
-    );
-
-  const data =
-    await response
-      .json()
-      .catch(
-        () => ({})
-      );
-
-  if(
-    !response.ok ||
-    data.success === false ||
-    data.ok === false
-  ){
-
-    throw Error(
-      data.error_message ||
-      data.error ||
-      data.message ||
-      data.detail ||
-      "The payment request could not be completed."
     );
 
   }
@@ -3916,10 +3825,6 @@ function applyJob(data){
 
 function interpretPaymentStatus(data){
 
-  /*
-   * Never allow a payment belonging to another job/version
-   * to alter this Review page.
-   */
   if(
     !paymentBelongsToCurrentReview(
       data
@@ -4179,13 +4084,6 @@ function startPaymentPolling(){
 
 async function loadExistingPayment(){
 
-  /*
-   * Do not search for or resurrect an old global payment.
-   *
-   * A new Review service starts without a payment unless
-   * the current URL explicitly supplied a payment_id or
-   * the current job response supplied one.
-   */
   if(!paymentIdentifier){
     return;
   }
@@ -4932,143 +4830,339 @@ function closePaymentDetails(){
 
 
 /* ===========================================================
-   CREATE PAYMENT DIRECTLY FROM REVIEW
+   HIDDEN PAYMENT.HTML BRIDGE
    =========================================================== */
 
-async function createPaymentFromReview(
-  snapshot
-){
+/*
+ * Payment.html is deliberately loaded invisibly.
+ *
+ * This is the ONLY payment creation/reporting path from
+ * Review.
+ *
+ * Review sends the exact snapshot to payment.html.
+ * Payment.html performs:
+ *
+ *   /api/payment/create
+ *   /api/payment/report
+ *
+ * and sends the result back.
+ */
 
-  const payload = {
+function destroyPaymentBridge(){
 
-    job_id:
-      snapshot.job_id,
+  if(paymentBridgeTimer){
 
-    customer_id:
-      snapshot.customer_id,
-
-    service:
-      snapshot.service,
-
-    amount:
-      snapshot.amount,
-
-    payment_method:
-      "bank_transfer",
-
-    version_id:
-      snapshot.version_id,
-
-    document_version:
-      snapshot.document_version,
-
-    pages:
-      snapshot.pages,
-
-    document_pages:
-      snapshot.document_pages,
-
-    review_pages:
-      snapshot.review_pages,
-
-    document_text:
-      snapshot.document_text,
-
-    text:
-      snapshot.text,
-
-    content:
-      snapshot.content,
-
-    filename:
-      snapshot.filename,
-
-    document_filename:
-      snapshot.document_filename,
-
-    billing:
-      snapshot.billing || ""
-
-  };
-
-
-  const response =
-    await paymentPost(
-      "/api/payment/create",
-      payload
+    clearTimeout(
+      paymentBridgeTimer
     );
 
-
-  const id =
-    extractPaymentId(
-      response
-    );
-
-
-  if(!id){
-
-    throw Error(
-      "The payment service did not return a payment ID."
-    );
+    paymentBridgeTimer = null;
 
   }
 
+  paymentBridgeReady = false;
 
-  paymentIdentifier =
-    id;
+  paymentBridgeBusy = false;
 
-  paymentStarted =
-    true;
-
-  paymentDetailsOpened =
-    true;
-
-  savePaymentContext();
-
-  saveSnapshotWithPaymentId();
-
-
-  return response;
+  paymentBridgeFrame.src =
+    "about:blank";
 }
 
 
-/* ===========================================================
-   REPORT PAYMENT DIRECTLY FROM REVIEW
-   =========================================================== */
+function preparePaymentBridge(){
 
-async function reportPaymentDirectly(){
+  paymentBridgeReady = false;
 
-  if(!paymentIdentifier){
+  paymentBridgeBusy = true;
+
+  paymentBridgeFrame.src =
+    PAYMENT_BRIDGE_URL;
+}
+
+
+function sendSnapshotToPaymentBridge(
+  snapshot
+){
+
+  if(
+    !paymentBridgeFrame.contentWindow
+  ){
 
     throw Error(
-      "A payment ID was not created."
+      "The payment connection could not be opened."
     );
 
   }
 
 
-  const response =
-    await paymentPost(
-      "/api/payment/report",
-      {
+  paymentBridgeFrame.contentWindow.postMessage(
+    {
+      type:
+        "NPBC_REVIEW_PAYMENT_REQUEST",
 
-        payment_id:
-          paymentIdentifier,
+      action:
+        "CREATE_AND_REPORT_PAYMENT",
 
-        job_id:
-          jobId,
+      source:
+        "NPBC_REVIEW",
 
-        payment_reference:
-          paymentIdentifier,
+      job_id:
+        snapshot.job_id,
 
-        note:
-          "Customer reported payment from Review page after completing the bank transfer. Exact reviewed document/version was supplied with the payment record."
+      version_id:
+        snapshot.version_id,
+
+      snapshot:
+        snapshot
+
+    },
+    location.origin
+  );
+}
+
+
+/*
+ * The bridge sends this message back after payment.html
+ * has completed its own payment API work.
+ */
+window.addEventListener(
+  "message",
+  event => {
+
+    if(
+      event.origin !==
+      location.origin
+    ){
+
+      return;
+
+    }
+
+
+    if(
+      event.source !==
+      paymentBridgeFrame.contentWindow
+    ){
+
+      return;
+
+    }
+
+
+    const data =
+      event.data || {};
+
+
+    if(
+      data.type ===
+      "NPBC_PAYMENT_BRIDGE_READY"
+    ){
+
+      paymentBridgeReady = true;
+
+      if(
+        data.job_id &&
+        clean(data.job_id) !==
+        jobId
+      ){
+
+        return;
 
       }
-    );
+
+      return;
+
+    }
 
 
-  return response;
+    if(
+      data.type ===
+      "NPBC_PAYMENT_BRIDGE_RESULT"
+    ){
+
+      paymentBridgeBusy = false;
+
+      if(paymentBridgeTimer){
+
+        clearTimeout(
+          paymentBridgeTimer
+        );
+
+        paymentBridgeTimer = null;
+
+      }
+
+
+      const resultJobId =
+        clean(
+          data.job_id
+        );
+
+      const resultVersionId =
+        clean(
+          data.version_id
+        );
+
+
+      if(
+        resultJobId &&
+        resultJobId !== jobId
+      ){
+
+        return;
+
+      }
+
+
+      if(
+        resultVersionId &&
+        versionId &&
+        resultVersionId !==
+        versionId
+      ){
+
+        return;
+
+      }
+
+
+      if(
+        data.success === false ||
+        data.ok === false
+      ){
+
+        busy = false;
+
+        setStatus(
+          "PAYMENT ERROR"
+        );
+
+        progressText.textContent =
+          "The payment could not be reported.";
+
+        setMessage(
+          data.error ||
+          data.message ||
+          "The payment could not be reported.",
+          "error"
+        );
+
+        updateButtons();
+
+        return;
+
+      }
+
+
+      const returnedPaymentId =
+        extractPaymentId(
+          data
+        );
+
+
+      if(!returnedPaymentId){
+
+        busy = false;
+
+        setStatus(
+          "PAYMENT ERROR"
+        );
+
+        setMessage(
+          "Payment connection completed without a payment ID.",
+          "error"
+        );
+
+        updateButtons();
+
+        return;
+
+      }
+
+
+      paymentIdentifier =
+        returnedPaymentId;
+
+      paymentStarted =
+        true;
+
+      paymentPending =
+        true;
+
+      paid =
+        false;
+
+      paymentDetailsOpened =
+        true;
+
+
+      savePaymentContext();
+
+      saveSnapshotWithPaymentId();
+
+
+      setStatus(
+        "PAYMENT REPORTED"
+      );
+
+      progressText.textContent =
+        "Payment Reported — Awaiting Customer Care Verification.";
+
+
+      setMessage(
+        "Payment reported successfully. Customer Care verification is required before download is unlocked.",
+        "success"
+      );
+
+
+      updatePaymentPanel();
+
+      busy = false;
+
+      updateButtons();
+
+      startPaymentPolling();
+
+      /*
+       * The bridge has completed its work.
+       * Keep the iframe available for the current session,
+       * but no longer treat it as busy.
+       */
+      return;
+
+    }
+
+  }
+);
+
+
+/*
+ * If the iframe does not answer, fail cleanly instead of
+ * leaving the Review button permanently locked.
+ */
+function bridgeTimeout(){
+
+  if(!paymentBridgeBusy){
+    return;
+  }
+
+  paymentBridgeBusy = false;
+
+  busy = false;
+
+  setStatus(
+    "PAYMENT CONNECTION ERROR"
+  );
+
+  progressText.textContent =
+    "The payment service could not be reached.";
+
+  setMessage(
+    "The payment connection could not be completed. Please try again.",
+    "error"
+  );
+
+  updateButtons();
 }
 
 
@@ -5148,9 +5242,21 @@ async function reportPaymentFromReview(){
   }
 
 
+  if(paymentBridgeBusy){
+
+    return setMessage(
+      "Your payment is already being processed.",
+      "error"
+    );
+
+  }
+
+
   try{
 
     busy = true;
+
+    paymentBridgeBusy = true;
 
     updateButtons();
 
@@ -5182,21 +5288,69 @@ async function reportPaymentFromReview(){
     }
 
 
-    if(!paymentIdentifier){
+    /*
+     * Do NOT call the Payment API here.
+     *
+     * The hidden payment.html bridge owns that operation.
+     */
+    setStatus(
+      "CONNECTING PAYMENT"
+    );
 
-      setStatus(
-        "CREATING PAYMENT"
-      );
-
-      progressText.textContent =
-        "Creating your payment record...";
+    progressText.textContent =
+      "Connecting securely to the payment service...";
 
 
-      await createPaymentFromReview(
-        snapshot
-      );
+    preparePaymentBridge();
 
-    }
+
+    /*
+     * Wait for payment.html to load its bridge.
+     */
+    await new Promise(
+      (resolve,reject) => {
+
+        const started =
+          Date.now();
+
+        const wait =
+          () => {
+
+            if(paymentBridgeReady){
+
+              resolve();
+
+              return;
+
+            }
+
+            if(
+              Date.now() -
+              started >
+              12000
+            ){
+
+              reject(
+                Error(
+                  "The payment connection timed out."
+                )
+              );
+
+              return;
+
+            }
+
+            setTimeout(
+              wait,
+              100
+            );
+
+          };
+
+        wait();
+
+      }
+    );
 
 
     setStatus(
@@ -5204,64 +5358,36 @@ async function reportPaymentFromReview(){
     );
 
     progressText.textContent =
-      "Reporting your payment for Customer Care verification...";
+      "The payment service is recording your payment and exact document...";
 
 
-    await reportPaymentDirectly();
-
-
-    saveSnapshotWithPaymentId();
-
-
-    paymentStarted =
-      true;
-
-    paymentPending =
-      true;
-
-    paid =
-      false;
-
-    paymentDetailsOpened =
-      true;
-
-
-    savePaymentContext();
-
-
-    setStatus(
-      "PAYMENT REPORTED"
-    );
-
-    progressText.textContent =
-      "Payment Reported — Awaiting Customer Care Verification.";
-
-
-    paymentButton.textContent =
-      "✓ PAYMENT REPORTED";
-
-
-    paymentMessageState();
-
-
-    setMessage(
-      "Payment reported successfully. Customer Care verification is required before download is unlocked.",
-      "success"
+    sendSnapshotToPaymentBridge(
+      snapshot
     );
 
 
-    updatePaymentPanel();
-
-    startPaymentPolling();
+    /*
+     * Keep the busy state until payment.html replies.
+     * The message handler above completes the operation.
+     */
+    paymentBridgeTimer =
+      setTimeout(
+        bridgeTimeout,
+        30000
+      );
 
   }
 
   catch(error){
 
     console.error(
-      "[REVIEW PAYMENT]",
+      "[REVIEW PAYMENT BRIDGE]",
       error
     );
+
+    paymentBridgeBusy = false;
+
+    busy = false;
 
     setStatus(
       "PAYMENT ERROR"
@@ -5276,29 +5402,10 @@ async function reportPaymentFromReview(){
       "error"
     );
 
-  }
-
-  finally{
-
-    busy = false;
-
     updateButtons();
 
   }
-}
 
-
-/* ===========================================================
-   PAYMENT MESSAGE STATE
-   =========================================================== */
-
-function paymentMessageState(){
-
-  if(paymentPending){
-
-    return;
-
-  }
 }
 
 
