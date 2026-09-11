@@ -1,9 +1,13 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Naija Pocket Business Center</title><style>
+<title>Naija Pocket Business Center</title>
+
+<style>
 *{box-sizing:border-box}
+
 html,body{
     width:100%;
     height:100%;
@@ -11,11 +15,13 @@ html,body{
     padding:0;
     overflow:hidden;
 }
+
 body{
     background:#000;
     color:#fff;
     font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
+
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 
@@ -785,47 +791,6 @@ button{cursor:pointer}
     border-color:rgba(112,209,193,.65);
 }
 
-.composer{
-    display:flex;
-    align-items:flex-end;
-    gap:6px;
-}
-
-.message-input{
-    flex:1;
-    min-width:0;
-    min-height:45px;
-    max-height:105px;
-    resize:none;
-    padding:11px;
-    background:#171717;
-    color:#fff;
-    border:1px solid rgba(255,255,255,.16);
-    border-radius:9px;
-    outline:0;
-}
-
-.message-input:focus{
-    border-color:rgba(112,209,193,.55);
-}
-
-.send-button{
-    width:64px;
-    min-height:45px;
-    border:0;
-    border-radius:9px;
-    background:
-        linear-gradient(
-            135deg,
-            var(--gold2),
-            var(--champagne),
-            var(--cream)
-        );
-    color:#000;
-    font-size:11px;
-    font-weight:900;
-}
-
 .status{
     min-height:14px;
     margin-top:3px;
@@ -1076,6 +1041,7 @@ button:disabled{
 ============================================================ */
 
 @media(max-width:600px){
+
     .header{
         padding-left:9px;
         padding-right:9px;
@@ -1110,12 +1076,14 @@ button:disabled{
 }
 
 @media(max-width:390px){
+
     .customer-care-actions{
         grid-template-columns:1fr;
     }
 }
 
 @media(max-height:650px){
+
     .review-gateway-card{
         max-height:calc(100dvh - 30px);
         overflow-y:auto;
@@ -1126,109 +1094,410 @@ button:disabled{
         overflow-y:auto;
     }
 }
-</style></head><body><div class="app"><header class="header"><div class="brand">
-    <h1 class="brand-title">
-        Naija Pocket Business Center
-    </h1>
+</style>
+</head>
 
-    <div class="brand-subtitle">
-        Your Business Center
-    </div>
-</div>
+<body>
 
-<div class="header-actions">
+<div class="app">
 
-    <button
-        id="backOfficeEntryButton"
-        class="back-office-entry"
-        type="button"
-        aria-label="Open Back Office"
-    >
-        BACK OFFICE
-    </button>
+<header class="header">
 
-    <div id="serviceBadge" class="service-badge">
-        Service
-    </div>
+    <div class="brand">
 
-</div>
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
 
-</header><main class="main"><div class="main-inner"><!-- CUSTOMER FORM --><section id="formView"><div class="intro-card">
-
-    <h2 id="introTitle" class="intro-title">
-        Let's get started
-    </h2>
-
-    <p id="introText" class="intro-text">
-        Please wait while we prepare useful information for this service.
-    </p>
-
-    <div id="price" class="price">
-        Service
-    </div>
-
-</div>
-
-<div class="form-card">
-
-    <h3 class="form-heading">
-        Your Service Information
-    </h3>
-
-    <p class="form-description">
-        Fill in the information relevant to your request.
-        Optional fields can be left blank.
-    </p>
-
-    <form id="serviceForm">
-
-        <div id="fields" class="fields"></div>
-
-        <div class="form-note">
-            When you tap <strong>SEND</strong>, your prepared work will immediately
-            appear on the full review page, ready for you to read and review.
+        <div class="brand-subtitle">
+            Your Business Center
         </div>
 
+    </div>
+
+    <div class="header-actions">
+
         <button
-            id="formSubmit"
-            class="form-submit"
-            type="submit"
+            id="backOfficeEntryButton"
+            class="back-office-entry"
+            type="button"
+            aria-label="Open Back Office"
         >
-            SEND
+            BACK OFFICE
         </button>
 
-    </form>
+        <div id="serviceBadge" class="service-badge">
+            Service
+        </div>
+
+    </div>
+
+</header>
+
+<main class="main">
+
+<div class="main-inner">
+
+<!-- CUSTOMER FORM -->
+
+<section id="formView">
+
+    <div class="intro-card">
+
+        <h2 id="introTitle" class="intro-title">
+            Let's get started
+        </h2>
+
+        <p id="introText" class="intro-text">
+            Please wait while we prepare useful information for this service.
+        </p>
+
+        <div id="price" class="price">
+            Service
+        </div>
+
+    </div>
+
+    <div class="form-card">
+
+        <h3 class="form-heading">
+            Your Service Information
+        </h3>
+
+        <p class="form-description">
+            Fill in the information relevant to your request.
+            Optional fields can be left blank.
+        </p>
+
+        <form id="serviceForm">
+
+            <div id="fields" class="fields"></div>
+
+            <div class="form-note">
+                When you tap <strong>SEND</strong>, your prepared work will immediately
+                appear on the full review page, ready for you to read and review.
+            </div>
+
+            <button
+                id="formSubmit"
+                class="form-submit"
+                type="submit"
+            >
+                SEND
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+<!-- CUSTOMER REVIEW GATEWAY -->
+
+<section id="reviewView" class="review-view">
+
+    <div class="review-header">
+
+        <h2 class="review-title">
+            Your Work Is Ready
+        </h2>
+
+        <p class="review-subtitle">
+            Your prepared work has been completed.
+            Open the full review page to read it, request corrections,
+            approve it and continue to payment.
+        </p>
+
+    </div>
+
+    <div class="workspace-review-gateway">
+
+        <h3 class="workspace-review-gateway-title">
+            Full Review Available
+        </h3>
+
+        <p class="workspace-review-gateway-text">
+            Your review is handled by the dedicated review page.
+            Open it to continue with the complete document workflow.
+        </p>
+
+        <button
+            id="workspaceOpenReviewButton"
+            class="workspace-review-open"
+            type="button"
+        >
+            Open Full Review
+        </button>
+
+    </div>
+
+</section>
+
+<!-- BACK OFFICE -->
+
+<section id="backOfficeView">
+
+    <div class="back-office-header">
+
+        <h2 class="back-office-title">
+            Back Office
+        </h2>
+
+        <p class="back-office-subtitle">
+            See documents already saved when customers reported payment.
+            Verify the payment and unlock the exact saved document for download.
+        </p>
+
+    </div>
+
+    <div class="back-office-key-card">
+
+        <label
+            class="back-office-key-label"
+            for="backOfficeKey"
+        >
+            Operator Key
+        </label>
+
+        <div class="back-office-key-row">
+
+            <input
+                id="backOfficeKey"
+                class="back-office-key-input"
+                type="password"
+                autocomplete="off"
+                placeholder="Enter Back Office key"
+            >
+
+            <button
+                id="backOfficeLoadButton"
+                class="back-office-load"
+                type="button"
+            >
+                LOAD
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="back-office-summary">
+
+        <div class="back-office-stat">
+
+            <span
+                id="backOfficeTotal"
+                class="back-office-stat-value"
+            >
+                0
+            </span>
+
+            <span class="back-office-stat-label">
+                Payment Reports
+            </span>
+
+        </div>
+
+        <div class="back-office-stat">
+
+            <span
+                id="backOfficeApproved"
+                class="back-office-stat-value"
+            >
+                0
+            </span>
+
+            <span class="back-office-stat-label">
+                Awaiting Verification
+            </span>
+
+        </div>
+
+        <div class="back-office-stat">
+
+            <span
+                id="backOfficeActivated"
+                class="back-office-stat-value"
+            >
+                0
+            </span>
+
+            <span class="back-office-stat-label">
+                Unlocked
+            </span>
+
+        </div>
+
+    </div>
+
+    <div
+        id="backOfficeJobs"
+        class="back-office-jobs"
+    >
+
+        <div class="back-office-empty">
+            Enter the operator key and tap LOAD.
+        </div>
+
+    </div>
+
+    <button
+        id="backOfficeRefreshButton"
+        class="back-office-refresh"
+        type="button"
+    >
+        REFRESH
+    </button>
+
+    <button
+        id="backOfficeExitButton"
+        class="back-office-exit"
+        type="button"
+    >
+        EXIT BACK OFFICE
+    </button>
+
+</section>
 
 </div>
 
-</section><!-- CUSTOMER REVIEW GATEWAY --><section id="reviewView" class="review-view"><div class="review-header">
+</main>
 
-    <h2 class="review-title">
+<!-- CUSTOMER BOTTOM CONTROLS -->
+
+<section
+    id="customerBottom"
+    class="bottom"
+>
+
+<div class="bottom-inner">
+
+    <div class="tools">
+
+        <button
+            id="uploadButton"
+            class="tool-button"
+            type="button"
+        >
+            📄 Upload Documents You Want To Give Us
+        </button>
+
+        <button
+            id="customerCareButton"
+            class="tool-button customer-care-button"
+            type="button"
+        >
+            CUSTOMER CARE
+        </button>
+
+    </div>
+
+    <input
+        id="fileInput"
+        type="file"
+        accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+    >
+
+    <div id="status" class="status"></div>
+
+</div>
+
+</section>
+
+<!-- CUSTOMER CARE -->
+
+<div
+    id="customerCareOverlay"
+    class="customer-care-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="customerCareTitle"
+>
+
+<div class="customer-care-card">
+
+    <div class="customer-care-kicker">
+        PERSONAL ASSISTANCE
+    </div>
+
+    <h2
+        id="customerCareTitle"
+        class="customer-care-title"
+    >
+        Customer Care
+    </h2>
+
+    <div class="customer-care-line"></div>
+
+    <p class="customer-care-text">
+        Need help with your request, payment or document?
+        Contact Customer Care directly.
+    </p>
+
+    <div class="customer-care-actions">
+
+        <button
+            id="customerCareWhatsApp"
+            class="customer-care-action customer-care-whatsapp"
+            type="button"
+        >
+            WHATSAPP
+        </button>
+
+        <button
+            id="customerCarePhone"
+            class="customer-care-action customer-care-phone"
+            type="button"
+        >
+            CALL CUSTOMER CARE
+        </button>
+
+    </div>
+
+    <div class="customer-care-number">
+        +234 805 707 3891
+    </div>
+
+    <button
+        id="customerCareClose"
+        class="customer-care-close"
+        type="button"
+    >
+        CLOSE
+    </button>
+
+</div>
+
+</div>
+
+<!-- REVIEW OVERLAY -->
+
+<div
+    id="reviewGatewayOverlay"
+    class="review-gateway-overlay"
+    role="dialog"
+    aria-modal="true"
+>
+
+<div class="review-gateway-card">
+
+    <div class="review-gateway-icon">
+        📄
+    </div>
+
+    <h2 class="review-gateway-title">
         Your Work Is Ready
     </h2>
 
-    <p class="review-subtitle">
-        Your prepared work has been completed.
-        Open the full review page to read it, request corrections,
-        approve it and continue to payment.
-    </p>
-
-</div>
-
-<div class="workspace-review-gateway">
-
-    <h3 class="workspace-review-gateway-title">
-        Full Review Available
-    </h3>
-
-    <p class="workspace-review-gateway-text">
-        Your review is handled by the dedicated review page.
-        Open it to continue with the complete document workflow.
+    <p class="review-gateway-message">
+        Your prepared work is ready for review.
+        Open the dedicated review page to read the complete work,
+        request corrections, approve it and continue to payment.
     </p>
 
     <button
-        id="workspaceOpenReviewButton"
-        class="workspace-review-open"
+        id="reviewGatewayOpenButton"
+        class="review-gateway-button"
         type="button"
     >
         Open Full Review
@@ -1236,262 +1505,9 @@ button:disabled{
 
 </div>
 
-</section><!-- BACK OFFICE --><section id="backOfficeView"><div class="back-office-header">
-
-    <h2 class="back-office-title">
-        Back Office
-    </h2>
-
-    <p class="back-office-subtitle">
-        See documents already saved when customers reported payment.
-        Verify the payment and unlock the exact saved document for download.
-    </p>
-
 </div>
 
-<div class="back-office-key-card">
-
-    <label
-        class="back-office-key-label"
-        for="backOfficeKey"
-    >
-        Operator Key
-    </label>
-
-    <div class="back-office-key-row">
-
-        <input
-            id="backOfficeKey"
-            class="back-office-key-input"
-            type="password"
-            autocomplete="off"
-            placeholder="Enter Back Office key"
-        >
-
-        <button
-            id="backOfficeLoadButton"
-            class="back-office-load"
-            type="button"
-        >
-            LOAD
-        </button>
-
-    </div>
-
-</div>
-
-<div class="back-office-summary">
-
-    <div class="back-office-stat">
-
-        <span
-            id="backOfficeTotal"
-            class="back-office-stat-value"
-        >
-            0
-        </span>
-
-        <span class="back-office-stat-label">
-            Payment Reports
-        </span>
-
-    </div>
-
-    <div class="back-office-stat">
-
-        <span
-            id="backOfficeApproved"
-            class="back-office-stat-value"
-        >
-            0
-        </span>
-
-        <span class="back-office-stat-label">
-            Awaiting Verification
-        </span>
-
-    </div>
-
-    <div class="back-office-stat">
-
-        <span
-            id="backOfficeActivated"
-            class="back-office-stat-value"
-        >
-            0
-        </span>
-
-        <span class="back-office-stat-label">
-            Unlocked
-        </span>
-
-    </div>
-
-</div>
-
-<div
-    id="backOfficeJobs"
-    class="back-office-jobs"
->
-
-    <div class="back-office-empty">
-        Enter the operator key and tap LOAD.
-    </div>
-
-</div>
-
-<button
-    id="backOfficeRefreshButton"
-    class="back-office-refresh"
-    type="button"
->
-    REFRESH
-</button>
-
-<button
-    id="backOfficeExitButton"
-    class="back-office-exit"
-    type="button"
->
-    EXIT BACK OFFICE
-</button>
-
-</section></div>
-</main><!-- CUSTOMER BOTTOM CONTROLS --><section
-    id="customerBottom"
-    class="bottom"
-><div class="bottom-inner"><div class="tools">
-
-    <button
-        id="uploadButton"
-        class="tool-button"
-        type="button"
-    >
-        📄 Upload Documents You Want To Give Us
-    </button>
-
-    <button
-        id="customerCareButton"
-        class="tool-button customer-care-button"
-        type="button"
-    >
-        CUSTOMER CARE
-    </button>
-
-</div>
-
-<input
-    id="fileInput"
-    type="file"
-    accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
->
-
-<div class="composer">
-
-    <textarea
-        id="messageInput"
-        class="message-input"
-        rows="1"
-        placeholder="Type your message..."
-        autocomplete="off"
-    ></textarea>
-
-    <button
-        id="sendButton"
-        class="send-button"
-        type="button"
-    >
-        SEND
-    </button>
-
-</div>
-
-<div id="status" class="status"></div>
-
-</div></section><!-- CUSTOMER CARE --><div
-    id="customerCareOverlay"
-    class="customer-care-overlay"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="customerCareTitle"
-><div class="customer-care-card"><div class="customer-care-kicker">
-    PERSONAL ASSISTANCE
-</div>
-
-<h2
-    id="customerCareTitle"
-    class="customer-care-title"
->
-    Customer Care
-</h2>
-
-<div class="customer-care-line"></div>
-
-<p class="customer-care-text">
-    Need help with your request, payment or document?
-    Contact Customer Care directly.
-</p>
-
-<div class="customer-care-actions">
-
-    <button
-        id="customerCareWhatsApp"
-        class="customer-care-action customer-care-whatsapp"
-        type="button"
-    >
-        WHATSAPP
-    </button>
-
-    <button
-        id="customerCarePhone"
-        class="customer-care-action customer-care-phone"
-        type="button"
-    >
-        CALL CUSTOMER CARE
-    </button>
-
-</div>
-
-<div class="customer-care-number">
-    +234 805 707 3891
-</div>
-
-<button
-    id="customerCareClose"
-    class="customer-care-close"
-    type="button"
->
-    CLOSE
-</button>
-
-</div></div><!-- REVIEW OVERLAY --><div
-    id="reviewGatewayOverlay"
-    class="review-gateway-overlay"
-    role="dialog"
-    aria-modal="true"
-><div class="review-gateway-card"><div class="review-gateway-icon">
-    📄
-</div>
-
-<h2 class="review-gateway-title">
-    Your Work Is Ready
-</h2>
-
-<p class="review-gateway-message">
-    Your prepared work is ready for review.
-    Open the dedicated review page to read the complete work,
-    request corrections, approve it and continue to payment.
-</p>
-
-<button
-    id="reviewGatewayOpenButton"
-    class="review-gateway-button"
-    type="button"
->
-    Open Full Review
-</button>
-
-</div></div><script>
+<script>
 "use strict";
 
 /*============================================================
@@ -1555,8 +1571,6 @@ const uploadBtn = $("uploadButton");
 const customerCareBtn = $("customerCareButton");
 
 const fileInput = $("fileInput");
-const messageInput = $("messageInput");
-const sendBtn = $("sendButton");
 const status = $("status");
 
 const customerCareOverlay =
@@ -1643,6 +1657,7 @@ function makeId(prefix){
             .toString(36)
             .slice(2)
     );
+
 }
 
 function storageGet(key){
@@ -1742,7 +1757,6 @@ function setBusy(value){
 
     [
         formSubmit,
-        sendBtn,
         uploadBtn,
         customerCareBtn
     ].forEach(button => {
@@ -2698,197 +2712,6 @@ document.addEventListener(
 );
 
 /* ============================================================
-   CUSTOMER MESSAGE
-============================================================ */
-
-async function sendMessage(
-    message,
-    eventName="customer_message"
-){
-
-    if(busy){
-        return;
-    }
-
-    const text =
-        clean(message);
-
-    if(!text){
-        return;
-    }
-
-    setBusy(true);
-
-    setStatus(
-        "Processing your message..."
-    );
-
-    try{
-
-        const data =
-            await apiChat({
-
-                message:text,
-
-                service,
-
-                customer_id:
-                    customerId,
-
-                job_id:
-                    jobId || null,
-
-                client_request_id:
-                    requestId,
-
-                event:
-                    eventName,
-
-                current_work:
-                    currentWork || null,
-
-                create_work:true
-
-            });
-
-        const returnedJob =
-            serverJobId(data);
-
-        if(returnedJob){
-
-            jobId =
-                returnedJob;
-
-            storageSet(
-                "npbc_job_id",
-                jobId
-            );
-
-        }
-
-        const work =
-            serverWork(data);
-
-        if(work){
-
-            currentWork =
-                work;
-
-            showReview(currentWork);
-
-            if(jobId){
-
-                showReviewGateway();
-
-            }
-
-        }
-
-        const reply =
-            serverReply(data);
-
-        if(
-            reply &&
-            !work
-        ){
-
-            setStatus(
-                reply,
-                "success"
-            );
-
-        }else{
-
-            setStatus(
-                "Ready for your next instruction.",
-                "success"
-            );
-
-        }
-
-    }catch(error){
-
-        setStatus(
-            error.message ||
-            "Message processing failed.",
-            "error"
-        );
-
-    }finally{
-
-        setBusy(false);
-
-    }
-
-}
-
-/* SEND MESSAGE */
-
-sendBtn.addEventListener(
-    "click",
-    () => {
-
-        const text =
-            clean(messageInput.value);
-
-        if(!text){
-
-            setStatus(
-                "Please type your message first.",
-                "error"
-            );
-
-            return;
-        }
-
-        messageInput.value = "";
-
-        messageInput.style.height =
-            "auto";
-
-        sendMessage(
-            text,
-            "customer_message"
-        );
-
-    }
-);
-
-messageInput.addEventListener(
-    "keydown",
-    event => {
-
-        if(
-            event.key === "Enter" &&
-            !event.shiftKey
-        ){
-
-            event.preventDefault();
-
-            sendBtn.click();
-
-        }
-
-    }
-);
-
-messageInput.addEventListener(
-    "input",
-    () => {
-
-        messageInput.style.height =
-            "auto";
-
-        messageInput.style.height =
-            Math.min(
-                messageInput.scrollHeight,
-                105
-            ) + "px";
-
-    }
-);
-
-/* ============================================================
    CUSTOMER CARE
 ============================================================ */
 
@@ -3079,9 +2902,78 @@ fileInput.addEventListener(
                 "Your document has been received. Processing it now..."
             );
 
-            await sendMessage(
-                "The customer has uploaded a document for this active service. Use the uploaded document together with the current job context and continue the customer's request.",
-                "document_uploaded"
+            /*
+             * The upload continues through the existing server
+             * workflow. The removed bottom message composer is
+             * not used here.
+             */
+
+            const uploadMessage =
+                "The customer has uploaded a document for this active service. Use the uploaded document together with the current job context and continue the customer's request.";
+
+            const uploadResult =
+                await apiChat({
+
+                    message:
+                        uploadMessage,
+
+                    service,
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId || null,
+
+                    client_request_id:
+                        requestId,
+
+                    event:
+                        "document_uploaded",
+
+                    current_work:
+                        currentWork || null,
+
+                    create_work:true
+
+                });
+
+            const uploadReturnedJob =
+                serverJobId(uploadResult);
+
+            if(uploadReturnedJob){
+
+                jobId =
+                    uploadReturnedJob;
+
+                storageSet(
+                    "npbc_job_id",
+                    jobId
+                );
+
+            }
+
+            const work =
+                serverWork(uploadResult);
+
+            if(work){
+
+                currentWork =
+                    work;
+
+                showReview(currentWork);
+
+                if(jobId){
+
+                    showReviewGateway();
+
+                }
+
+            }
+
+            setStatus(
+                "Your document has been received and processed.",
+                "success"
             );
 
         }catch(error){
@@ -3092,10 +2984,9 @@ fileInput.addEventListener(
                 "error"
             );
 
-            setBusy(false);
-
         }finally{
 
+            setBusy(false);
             fileInput.value = "";
 
         }
@@ -3740,13 +3631,11 @@ function renderBackOfficeJobs(){
 
             card.className =
                 "back-office-job" +
-
                 (
                     awaiting
                         ? " reported"
                         : ""
                 ) +
-
                 (
                     unlocked
                         ? " unlocked"
@@ -3770,7 +3659,6 @@ function renderBackOfficeJobs(){
 
             meta.textContent =
                 `${customerName} • Job #${jobIdValue || "—"}` +
-
                 (
                     createdAt
                         ? ` • ${formatDate(createdAt)}`
@@ -3849,13 +3737,11 @@ function renderBackOfficeJobs(){
 
             documentMeta.textContent =
                 `File: ${documentName}` +
-
                 (
                     version
                         ? ` • Version ${version}`
                         : ""
                 ) +
-
                 (
                     documentId
                         ? ` • Saved Document ID: ${documentId}`
@@ -3951,13 +3837,9 @@ function renderBackOfficeJobs(){
 
             note.textContent =
                 unlocked
-
                     ? "Download is unlocked for this already-saved document. No new document is generated."
-
                     : awaiting
-
                         ? "Verify the customer's payment before pressing UNLOCK DOWNLOAD. The existing saved document will be unlocked; it will not be regenerated."
-
                         : "This record is read-only here. The saved customer document is not regenerated by Back Office.";
 
             card.appendChild(
@@ -4367,5 +4249,7 @@ async function init(){
 }
 
 init();
-</script></body>
+</script>
+
+</body>
 </html>
