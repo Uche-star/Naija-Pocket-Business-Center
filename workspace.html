@@ -6,1144 +6,732 @@
 <title>Naija Pocket Business Center</title>
 
 <style>
-*{box-sizing:border-box}
+:root{
+    --black:#050505;
+    --black2:#0b0b0b;
+    --gold:#d4af37;
+    --gold2:#f3d66b;
+    --green:#168047;
+    --green2:#57c98b;
+    --cream:#fff8df;
+    --muted:#b9b1a0;
+    --red:#b30000;
+    --purple:#b99be8;
+}
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
 
 html,body{
-    width:100%;
-    height:100%;
     margin:0;
     padding:0;
-    overflow:hidden;
+    min-height:100%;
+    background:
+        radial-gradient(circle at top right,rgba(212,175,55,.07),transparent 28%),
+        radial-gradient(circle at bottom left,rgba(22,128,71,.06),transparent 28%),
+        var(--black);
+    color:var(--cream);
+    font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-    background:#000;
-    color:#fff;
-    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    min-height:100vh;
 }
 
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
+button,
+input,
+select,
+textarea{
+    font:inherit;
+}
 
-:root{
-    --gold:#d4af37;
-    --gold2:#f3d66b;
-    --cream:#fff4d6;
-    --champagne:#f4d58d;
-    --rose:#e8b4a8;
-    --teal:#70d1c1;
-    --blue:#8fb8e8;
-    --purple:#b99be8;
-    --green:#39b87f;
-    --green2:#168047;
-    --red:#b30000;
-    --border:rgba(212,175,55,.28);
+button{
+    cursor:pointer;
 }
 
 .app{
-    width:100%;
-    height:100dvh;
-    min-height:0;
+    min-height:100vh;
     display:flex;
     flex-direction:column;
-    background:#000;
 }
 
-/* ============================================================
-   HEADER
-============================================================ */
+header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    padding:13px 14px;
+    background:rgba(5,5,5,.96);
+    border-bottom:1px solid rgba(212,175,55,.22);
+    backdrop-filter:blur(12px);
+}
 
-.header{
-    flex:0 0 auto;
-    min-height:65px;
-    padding:9px 12px;
+.header-inner{
+    max-width:900px;
+    margin:auto;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:10px;
-    background:
-        linear-gradient(
-            90deg,
-            #050505 0%,
-            #101010 35%,
-            #080808 65%,
-            #050505 100%
-        );
-    border-bottom:1px solid rgba(212,175,55,.32);
-    box-shadow:0 4px 20px rgba(0,0,0,.45);
-    z-index:20;
 }
 
-.brand{min-width:0}
+.brand{
+    min-width:0;
+}
 
 .brand-title{
-    margin:0;
-    background:
-        linear-gradient(
-            90deg,
-            var(--green),
-            var(--teal),
-            var(--cream),
-            var(--gold2)
-        );
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    font-size:clamp(18px,4vw,25px);
+    color:var(--gold2);
+    font-size:15px;
     font-weight:900;
-    line-height:1.2;
-    letter-spacing:.2px;
+    letter-spacing:.8px;
+    white-space:nowrap;
 }
 
-.brand-subtitle{
-    margin-top:3px;
-    color:var(--blue);
-    font-size:10px;
-    letter-spacing:.35px;
+.brand-sub{
+    margin-top:2px;
+    color:var(--muted);
+    font-size:9px;
+    letter-spacing:.8px;
+    white-space:nowrap;
 }
 
 .header-actions{
     display:flex;
     align-items:center;
-    justify-content:flex-end;
-    gap:6px;
-    min-width:0;
+    gap:7px;
+}
+
+.back-office-btn{
+    border:1px solid rgba(212,175,55,.42);
+    background:linear-gradient(135deg,#16120a,#0c0c0c);
+    color:var(--gold2);
+    border-radius:8px;
+    padding:8px 10px;
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:.4px;
 }
 
 .service-badge{
-    max-width:40%;
-    padding:7px 10px;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(212,175,55,.10),
-            rgba(112,209,193,.06),
-            rgba(143,184,232,.07)
-        );
-    border:1px solid rgba(212,175,55,.55);
+    max-width:900px;
+    margin:0 auto;
+    padding:9px 14px 0;
+}
+
+.service-badge span{
+    display:inline-block;
+    padding:6px 9px;
+    border:1px solid rgba(22,128,71,.45);
     border-radius:999px;
-    color:var(--gold2);
-    font-size:10px;
+    background:rgba(22,128,71,.09);
+    color:var(--green2);
+    font-size:9px;
     font-weight:800;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    box-shadow:0 0 14px rgba(212,175,55,.06);
+    letter-spacing:.5px;
 }
 
-.back-office-entry{
-    flex:0 0 auto;
-    min-height:30px;
-    padding:0 8px;
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:7px;
-    background:#101010;
-    color:#777;
-    font-size:8px;
-    font-weight:800;
-    letter-spacing:.2px;
-}
-
-.back-office-entry:hover{
-    color:var(--gold2);
-    border-color:rgba(212,175,55,.35);
-}
-
-/* ============================================================
-   MAIN
-============================================================ */
-
-.main{
-    flex:1 1 auto;
-    min-height:0;
-    width:100%;
-    overflow-x:hidden;
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
-    overscroll-behavior:contain;
-    background:
-        radial-gradient(
-            circle at 15% 0%,
-            rgba(57,184,127,.08) 0,
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 85% 0%,
-            rgba(185,155,232,.07) 0,
-            transparent 26%
-        ),
-        radial-gradient(
-            circle at top,
-            #181818 0,
-            #080808 35%,
-            #000 100%
-        );
-}
-
-.main-inner{
+main{
     width:100%;
     max-width:900px;
     margin:0 auto;
-    padding:14px 10px 35px;
-}
-
-/* ============================================================
-   CUSTOMER FORM
-============================================================ */
-
-.intro-card,.form-card,.review-header{
-    border-radius:15px;
+    padding:12px 14px 110px;
 }
 
 .intro-card{
-    margin-bottom:12px;
-    padding:16px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(57,184,127,.08),
-            rgba(212,175,55,.08) 45%,
-            rgba(143,184,232,.06)
-        ),
-        linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid rgba(212,175,55,.34);
-    box-shadow:0 10px 35px rgba(0,0,0,.22);
-}
-
-.intro-title,.review-title{
-    margin:0;
-    background:
-        linear-gradient(
-            90deg,
-            var(--gold2),
-            var(--cream),
-            var(--rose)
-        );
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    font-weight:900;
-}
-
-.intro-title{font-size:19px}
-
-.intro-text{
-    margin:7px 0 0;
-    color:#dedede;
-    font-size:13px;
-    line-height:1.6;
-    white-space:pre-wrap;
-}
-
-.price{
-    display:inline-block;
-    margin-top:10px;
-    padding:7px 10px;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(212,175,55,.10),
-            rgba(112,209,193,.07)
-        );
-    border:1px solid rgba(212,175,55,.3);
-    border-radius:8px;
-    color:var(--champagne);
-    font-size:12px;
-    font-weight:800;
-}
-
-.form-card{
-    background:
-        linear-gradient(
-            145deg,
-            rgba(143,184,232,.035),
-            rgba(185,155,232,.025),
-            rgba(232,180,168,.025)
-        ),
-        #101010;
-    border:1px solid rgba(255,255,255,.09);
-    padding:15px;
-}
-
-.form-heading{
-    margin:0;
-    color:var(--teal);
-    font-size:17px;
-}
-
-.form-description{
-    margin:5px 0 14px;
-    color:#a9a9a9;
-    font-size:11px;
-    line-height:1.5;
-}
-
-.fields{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
-.field label{
-    display:block;
-    margin-bottom:5px;
-    color:var(--cream);
-    font-size:11px;
-    font-weight:800;
-}
-
-.required{color:#ff8585}
-.optional{color:#777;font-weight:500}
-
-.field input,.field textarea,.field select{
-    width:100%;
-    border:1px solid rgba(255,255,255,.14);
-    border-radius:9px;
-    background:#181818;
-    color:#fff;
-    outline:0;
-    padding:11px;
-    font-size:13px;
-}
-
-.field textarea{
-    min-height:85px;
-    resize:vertical;
-}
-
-.field input:focus,.field textarea:focus,.field select:focus{
-    border-color:rgba(112,209,193,.65);
-    box-shadow:0 0 0 2px rgba(112,209,193,.06);
-}
-
-.form-note{
-    margin-top:12px;
-    padding:10px;
-    background:#151515;
-    border-left:3px solid var(--purple);
-    border-radius:7px;
-    color:#bdbdbd;
-    font-size:10px;
-    line-height:1.5;
-}
-
-.form-submit{
-    width:100%;
-    min-height:50px;
-    margin-top:15px;
-    border:1px solid rgba(244,213,141,.35);
-    border-radius:10px;
-    background:
-        linear-gradient(
-            135deg,
-            var(--gold2),
-            var(--champagne),
-            var(--cream)
-        );
-    color:#000;
-    font-size:13px;
-    font-weight:900;
-    box-shadow:0 5px 20px rgba(212,175,55,.12);
-}
-
-.form-submit:disabled{opacity:.45}
-
-/* ============================================================
-   REVIEW GATEWAY
-============================================================ */
-
-.review-view{
-    display:none;
-    width:100%;
-    min-width:0;
-}
-
-.review-view.show{display:block}
-
-.review-header{
-    padding:16px;
-    margin-bottom:11px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(185,155,232,.07),
-            rgba(212,175,55,.08),
-            rgba(57,184,127,.05)
-        ),
-        linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid rgba(212,175,55,.38);
-}
-
-.review-title{font-size:20px}
-
-.review-subtitle{
-    margin:5px 0 0;
-    color:#bdbdbd;
-    font-size:11px;
-    line-height:1.5;
-}
-
-.workspace-review-gateway{
-    width:100%;
-    padding:22px 16px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(112,209,193,.05),
-            rgba(143,184,232,.04),
-            rgba(232,180,168,.04)
-        ),
-        #101010;
-    border:1px solid rgba(212,175,55,.30);
+    margin-top:4px;
+    padding:17px 15px;
+    border:1px solid rgba(212,175,55,.24);
     border-radius:13px;
-    text-align:center;
-}
-
-.workspace-review-gateway-title{
-    margin:0;
-    color:var(--gold2);
-    font-size:17px;
-    font-weight:900;
-}
-
-.workspace-review-gateway-text{
-    margin:8px 0 0;
-    color:#bdbdbd;
-    font-size:11px;
-    line-height:1.55;
-}
-
-.workspace-review-open{
-    width:100%;
-    min-height:48px;
-    margin-top:15px;
-    border:1px solid rgba(244,213,141,.35);
-    border-radius:9px;
-    background:
-        linear-gradient(
-            135deg,
-            var(--gold2),
-            var(--champagne),
-            var(--cream)
-        );
-    color:#000;
-    font-size:12px;
-    font-weight:900;
-}
-
-/* ============================================================
-   BACK OFFICE
-============================================================ */
-
-#backOfficeView{display:none}
-
-#backOfficeView.show{display:block}
-
-.back-office-header{
-    padding:17px;
-    margin-bottom:12px;
     background:
         linear-gradient(
             145deg,
-            rgba(212,175,55,.09),
-            rgba(57,184,127,.05),
-            rgba(185,155,232,.05)
-        ),
-        linear-gradient(145deg,#191919,#0c0c0c);
-    border:1px solid rgba(212,175,55,.42);
-    border-radius:15px;
+            rgba(212,175,55,.07),
+            rgba(22,128,71,.025),
+            rgba(185,155,232,.025)
+        );
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.3),
+        inset 0 1px 0 rgba(255,255,255,.025);
 }
 
-.back-office-title{
+.intro-title{
     margin:0;
     color:var(--gold2);
     font-size:21px;
     font-weight:900;
+    letter-spacing:.4px;
 }
 
-.back-office-subtitle{
-    margin:6px 0 0;
-    color:#aaa;
+.intro-text{
+    margin:7px 0 0;
+    color:var(--muted);
     font-size:11px;
     line-height:1.55;
 }
 
-.back-office-key-card{
-    padding:14px;
-    margin-bottom:12px;
-    background:#101010;
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:13px;
+.price{
+    margin-top:12px;
+    color:var(--cream);
+    font-size:13px;
+    font-weight:900;
 }
 
-.back-office-key-label{
+/* PREMIUM SCROLL INSTRUCTION */
+.scroll-instruction{
+    margin-top:12px;
+    padding:11px 12px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(212,175,55,.10),
+            rgba(57,184,127,.06),
+            rgba(185,155,232,.05)
+        );
+    border:1px solid rgba(212,175,55,.30);
+    border-radius:10px;
+    color:var(--gold2);
+    text-align:center;
+    font-size:10px;
+    font-weight:800;
+    line-height:1.55;
+    box-shadow:0 0 18px rgba(212,175,55,.05);
+}
+
+.scroll-instruction strong{
     display:block;
-    margin-bottom:6px;
-    color:#ddd;
+    margin-bottom:4px;
+    color:var(--cream);
     font-size:11px;
+    font-weight:900;
+    letter-spacing:.7px;
+}
+
+.form-card{
+    margin-top:12px;
+    padding:15px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;
+    background:rgba(255,255,255,.025);
+}
+
+.form-title{
+    color:var(--gold2);
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.6px;
+    margin-bottom:10px;
+}
+
+label{
+    display:block;
+    margin:10px 0 5px;
+    color:var(--cream);
+    font-size:10px;
     font-weight:800;
 }
 
-.back-office-key-row{
-    display:flex;
-    gap:7px;
+input,
+select,
+textarea{
+    width:100%;
+    border:1px solid rgba(212,175,55,.2);
+    border-radius:9px;
+    outline:none;
+    background:#0c0c0c;
+    color:var(--cream);
+    padding:11px 12px;
 }
 
-.back-office-key-input{
-    flex:1;
-    min-width:0;
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:rgba(212,175,55,.6);
+    box-shadow:0 0 0 2px rgba(212,175,55,.06);
+}
+
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+.primary-btn{
+    width:100%;
+    margin-top:12px;
+    padding:12px;
+    border:1px solid rgba(212,175,55,.6);
+    border-radius:9px;
+    background:linear-gradient(135deg,#c9a52e,#f3d66b,#b88c19);
+    color:#080808;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.5px;
+    box-shadow:0 8px 22px rgba(212,175,55,.1);
+}
+
+.primary-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.secondary-btn{
+    width:100%;
+    margin-top:8px;
     padding:11px;
-    border:1px solid rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.13);
     border-radius:9px;
-    background:#181818;
-    color:#fff;
-    outline:0;
-    font-size:12px;
+    background:#0c0c0c;
+    color:var(--cream);
+    font-size:10px;
+    font-weight:800;
 }
 
-.back-office-key-input:focus{
-    border-color:rgba(212,175,55,.65);
-}
-
-.back-office-load{
-    min-width:92px;
-    border:0;
+.danger-btn{
+    width:100%;
+    margin-top:8px;
+    padding:11px;
+    border:1px solid rgba(179,0,0,.4);
     border-radius:9px;
-    background:var(--gold);
-    color:#000;
-    font-size:11px;
-    font-weight:900;
+    background:rgba(179,0,0,.08);
+    color:#ff8585;
+    font-size:10px;
+    font-weight:800;
 }
 
-.back-office-summary{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:7px;
-    margin-bottom:12px;
-}
-
-.back-office-stat{
-    padding:11px 8px;
-    background:#111;
-    border:1px solid rgba(255,255,255,.09);
-    border-radius:10px;
-    text-align:center;
-}
-
-.back-office-stat-value{
-    display:block;
-    color:var(--gold2);
-    font-size:17px;
-    font-weight:900;
-}
-
-.back-office-stat-label{
-    display:block;
-    margin-top:3px;
-    color:#888;
-    font-size:9px;
-}
-
-.back-office-jobs{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-.back-office-empty{
-    padding:28px 15px;
-    background:#101010;
-    border:1px solid rgba(255,255,255,.09);
-    border-radius:13px;
-    color:#888;
-    font-size:11px;
-    line-height:1.6;
-    text-align:center;
-}
-
-.back-office-job{
+.upload-box{
+    margin-top:12px;
     padding:14px;
-    background:#101010;
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:13px;
+    border:1px dashed rgba(212,175,55,.35);
+    border-radius:11px;
+    background:rgba(212,175,55,.025);
+    text-align:center;
 }
 
-.back-office-job.reported{
-    border-color:rgba(212,175,55,.60);
-}
-
-.back-office-job.unlocked{
-    border-color:rgba(22,128,71,.60);
-}
-
-.back-office-job-title{
-    margin:0;
-    color:#fff;
-    font-size:14px;
+.upload-box-title{
+    color:var(--cream);
+    font-size:11px;
     font-weight:900;
+}
+
+.upload-box-text{
+    margin-top:5px;
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.5;
+}
+
+.file-input{
+    display:none;
+}
+
+.upload-btn{
+    display:inline-block;
+    margin-top:10px;
+    padding:9px 12px;
+    border:1px solid rgba(22,128,71,.45);
+    border-radius:8px;
+    background:rgba(22,128,71,.08);
+    color:var(--green2);
+    font-size:10px;
+    font-weight:900;
+}
+
+.file-name{
+    margin-top:8px;
+    color:var(--gold2);
+    font-size:9px;
     word-break:break-word;
 }
 
-.back-office-job-meta{
-    margin-top:5px;
-    color:#888;
+.status{
+    margin-top:10px;
+    padding:9px 10px;
+    border-radius:8px;
+    background:rgba(255,255,255,.035);
+    color:var(--muted);
     font-size:9px;
     line-height:1.5;
 }
 
-.back-office-status-row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:5px;
-    margin-top:9px;
+.status.ready{
+    border:1px solid rgba(22,128,71,.25);
+    color:var(--green2);
 }
 
-.back-office-status{
-    display:inline-flex;
-    align-items:center;
-    padding:5px 7px;
-    border-radius:999px;
-    background:#191919;
-    border:1px solid rgba(255,255,255,.10);
-    color:#aaa;
-    font-size:9px;
-    font-weight:800;
+.status.error{
+    border:1px solid rgba(179,0,0,.25);
+    color:#ff8585;
 }
 
-.back-office-status.good{
-    color:#7bd99a;
-    border-color:rgba(22,128,71,.45);
+.hidden{
+    display:none!important;
 }
 
-.back-office-status.waiting{
+.gateway{
+    margin-top:14px;
+    padding:15px;
+    border:1px solid rgba(212,175,55,.22);
+    border-radius:12px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(212,175,55,.05),
+            rgba(22,128,71,.02)
+        );
+}
+
+.gateway-title{
     color:var(--gold2);
-    border-color:rgba(212,175,55,.35);
-}
-
-.back-office-document{
-    margin-top:11px;
-    padding:12px;
-    background:#151515;
-    border:1px solid rgba(255,255,255,.09);
-    border-radius:10px;
-}
-
-.back-office-document-title{
-    color:#ddd;
-    font-size:11px;
+    font-size:13px;
     font-weight:900;
 }
 
-.back-office-document-meta{
+.gateway-text{
+    margin-top:6px;
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.5;
+}
+
+.review-gateway-btn{
+    width:100%;
+    margin-top:11px;
+    padding:12px;
+    border:1px solid rgba(212,175,55,.55);
+    border-radius:9px;
+    background:#12100a;
+    color:var(--gold2);
+    font-size:10px;
+    font-weight:900;
+}
+
+.bo-card{
+    margin-top:14px;
+    padding:15px;
+    border:1px solid rgba(212,175,55,.23);
+    border-radius:12px;
+    background:#0b0b0b;
+}
+
+.bo-title{
+    color:var(--gold2);
+    font-size:14px;
+    font-weight:900;
+}
+
+.bo-sub{
     margin-top:5px;
-    color:#888;
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.5;
+}
+
+.bo-key{
+    margin-top:12px;
+}
+
+.bo-actions{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-top:10px;
+}
+
+.bo-actions button{
+    flex:1 1 130px;
+}
+
+.jobs-list{
+    margin-top:12px;
+    display:grid;
+    gap:9px;
+}
+
+.job-item{
+    padding:11px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:9px;
+    background:rgba(255,255,255,.025);
+}
+
+.job-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.job-id{
+    color:var(--gold2);
+    font-size:10px;
+    font-weight:900;
+}
+
+.job-status{
+    color:var(--green2);
+    font-size:8px;
+    font-weight:900;
+    text-transform:uppercase;
+}
+
+.job-meta{
+    margin-top:6px;
+    color:var(--muted);
     font-size:9px;
     line-height:1.55;
 }
 
-.back-office-document-actions{
+.job-buttons{
     display:flex;
-    gap:7px;
-    margin-top:10px;
+    gap:6px;
+    margin-top:9px;
 }
 
-.back-office-view-document{
+.job-buttons button{
     flex:1;
-    min-height:42px;
-    border:1px solid rgba(255,255,255,.13);
-    border-radius:8px;
-    background:#181818;
-    color:#fff;
-    font-size:10px;
-    font-weight:800;
-}
-
-.back-office-unlock{
-    flex:1;
-    min-height:42px;
-    border:0;
-    border-radius:8px;
-    background:var(--gold);
-    color:#000;
-    font-size:10px;
-    font-weight:900;
-}
-
-.back-office-unlock:disabled{
-    background:#254b35;
-    color:#9fe0b4;
-    opacity:1;
-}
-
-.back-office-note{
-    margin-top:10px;
-    padding:9px;
-    background:#0d0d0d;
-    border-left:3px solid var(--gold);
-    border-radius:6px;
-    color:#888;
+    padding:8px;
+    border-radius:7px;
     font-size:9px;
-    line-height:1.5;
-}
-
-.back-office-refresh{
-    width:100%;
-    min-height:45px;
-    margin-top:12px;
-    border:1px solid rgba(212,175,55,.35);
-    border-radius:9px;
-    background:#171717;
-    color:var(--gold2);
-    font-size:11px;
     font-weight:900;
 }
 
-.back-office-exit{
-    width:100%;
-    min-height:45px;
-    margin-top:7px;
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:9px;
-    background:#111;
-    color:#aaa;
-    font-size:11px;
-    font-weight:900;
-}
-
-.back-office-exit:hover{
-    color:#fff;
-    border-color:rgba(212,175,55,.35);
-}
-
-/* ============================================================
-   CUSTOMER BOTTOM CONTROLS
-============================================================ */
-
-.bottom{
-    flex:0 0 auto;
-    width:100%;
-    padding:8px 9px calc(8px + env(safe-area-inset-bottom));
-    background:
-        linear-gradient(
-            90deg,
-            #070707,
-            #0c0c0c,
-            #080808
-        );
-    border-top:1px solid rgba(212,175,55,.30);
-    box-shadow:0 -4px 20px rgba(0,0,0,.35);
-    z-index:20;
+.bottom-controls{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:40;
+    padding:9px 12px calc(9px + env(safe-area-inset-bottom));
+    background:rgba(5,5,5,.96);
+    border-top:1px solid rgba(212,175,55,.18);
+    backdrop-filter:blur(12px);
 }
 
 .bottom-inner{
     max-width:900px;
     margin:auto;
-}
-
-.tools{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:6px;
-    margin-bottom:7px;
-}
-
-.tool-button,.choose-service-button{
-    min-height:39px;
-    border-radius:8px;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(143,184,232,.05),
-            rgba(185,155,232,.04),
-            rgba(255,255,255,.02)
-        ),
-        #181818;
-    color:#fff;
-    border:1px solid rgba(255,255,255,.13);
-    font-size:10px;
-    font-weight:800;
-}
-
-.tool-button:hover{
-    border-color:rgba(212,175,55,.35);
-}
-
-.tool-button.gold{
-    color:var(--gold2);
-    border-color:rgba(212,175,55,.35);
-}
-
-.customer-care-button{
-    color:var(--teal);
-    border-color:rgba(112,209,193,.38);
-    background:
-        linear-gradient(
-            135deg,
-            rgba(57,184,127,.08),
-            rgba(112,209,193,.06),
-            rgba(212,175,55,.04)
-        ),
-        #151515;
-}
-
-.customer-care-button:hover{
-    color:var(--cream);
-    border-color:rgba(112,209,193,.65);
-}
-
-.status{
-    min-height:14px;
-    margin-top:3px;
-    color:#777;
-    font-size:9px;
-    text-align:center;
-}
-
-.status.error{color:#ff7777}
-.status.success{color:#7bd99a}
-
-#fileInput{display:none}
-
-button:disabled{
-    opacity:.45;
-    cursor:not-allowed;
-}
-
-/* ============================================================
-   CUSTOMER CARE POPUP
-============================================================ */
-
-.customer-care-overlay{
-    position:fixed;
-    inset:0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    background:rgba(0,0,0,.80);
-    z-index:1100;
-    backdrop-filter:blur(6px);
-    -webkit-backdrop-filter:blur(6px);
-}
-
-.customer-care-overlay.show{
-    display:flex;
-}
-
-.customer-care-card{
-    width:min(100%,390px);
-    padding:23px 19px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(57,184,127,.07),
-            rgba(212,175,55,.09),
-            rgba(185,155,232,.06)
-        ),
-        linear-gradient(145deg,#191919,#090909);
-    border:1px solid rgba(212,175,55,.55);
-    border-radius:18px;
-    box-shadow:0 25px 80px rgba(0,0,0,.70);
-    text-align:center;
-}
-
-.customer-care-kicker{
-    margin-bottom:5px;
-    color:var(--teal);
-    font-size:8px;
-    font-weight:900;
-    letter-spacing:2px;
-    text-transform:uppercase;
-}
-
-.customer-care-title{
-    margin:0;
-    background:
-        linear-gradient(
-            90deg,
-            var(--gold2),
-            var(--cream),
-            var(--rose)
-        );
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:24px;
-    font-weight:700;
-    letter-spacing:.4px;
-}
-
-.customer-care-line{
-    width:70px;
-    height:1px;
-    margin:11px auto 13px;
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            var(--gold2),
-            var(--teal),
-            transparent
-        );
-}
-
-.customer-care-text{
-    margin:0;
-    color:#c9c9c9;
-    font-size:11px;
-    line-height:1.6;
-}
-
-.customer-care-actions{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-top:17px;
+    gap:7px;
 }
 
-.customer-care-action{
-    min-height:48px;
-    border-radius:9px;
-    font-size:10px;
+.bottom-btn{
+    padding:10px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:8px;
+    background:#0c0c0c;
+    color:var(--cream);
+    font-size:9px;
     font-weight:900;
 }
 
-.customer-care-whatsapp{
-    border:1px solid rgba(57,184,127,.55);
-    background:
-        linear-gradient(
-            135deg,
-            rgba(57,184,127,.17),
-            rgba(22,128,71,.08)
-        ),
-        #101010;
-    color:#7bd99a;
+.customer-care{
+    position:fixed;
+    right:12px;
+    bottom:72px;
+    z-index:45;
 }
 
-.customer-care-phone{
-    border:1px solid rgba(212,175,55,.45);
-    background:
-        linear-gradient(
-            135deg,
-            rgba(212,175,55,.12),
-            rgba(244,213,141,.05)
-        ),
-        #101010;
-    color:var(--gold2);
+.customer-care button{
+    border:1px solid rgba(22,128,71,.5);
+    border-radius:999px;
+    padding:10px 12px;
+    background:#0b1510;
+    color:var(--green2);
+    font-size:9px;
+    font-weight:900;
+    box-shadow:0 8px 25px rgba(0,0,0,.3);
 }
 
-.customer-care-number{
-    margin-top:14px;
-    color:var(--champagne);
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:13px;
-    letter-spacing:.8px;
+.care-popup{
+    position:fixed;
+    left:12px;
+    right:12px;
+    bottom:125px;
+    z-index:60;
+    max-width:500px;
+    margin:auto;
+    padding:15px;
+    border:1px solid rgba(22,128,71,.35);
+    border-radius:12px;
+    background:#090d0b;
+    box-shadow:0 15px 45px rgba(0,0,0,.55);
 }
 
-.customer-care-close{
-    width:100%;
-    min-height:42px;
-    margin-top:13px;
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:9px;
-    background:#111;
-    color:#aaa;
-    font-size:10px;
-    font-weight:800;
+.care-title{
+    color:var(--green2);
+    font-size:12px;
+    font-weight:900;
 }
 
-/* ============================================================
-   REVIEW OVERLAY
-============================================================ */
+.care-text{
+    margin-top:6px;
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.55;
+}
 
-.review-gateway-overlay{
+.review-overlay{
     position:fixed;
     inset:0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    background:rgba(0,0,0,.82);
-    z-index:1000;
-    backdrop-filter:blur(5px);
-    -webkit-backdrop-filter:blur(5px);
-}
-
-.review-gateway-overlay.show{
+    z-index:100;
+    background:rgba(0,0,0,.94);
     display:flex;
+    flex-direction:column;
 }
 
-.review-gateway-card{
-    width:min(100%,420px);
-    padding:22px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(185,155,232,.07),
-            rgba(212,175,55,.09),
-            rgba(57,184,127,.05)
-        ),
-        linear-gradient(145deg,#1b1b1b,#0b0b0b);
-    border:1px solid rgba(212,175,55,.55);
-    border-radius:17px;
-    box-shadow:0 20px 70px rgba(0,0,0,.65);
-    text-align:center;
+.review-head{
+    flex:0 0 auto;
+    padding:12px;
+    border-bottom:1px solid rgba(212,175,55,.2);
+    background:#080808;
 }
 
-.review-gateway-icon{
-    width:58px;
-    height:58px;
-    margin:0 auto 13px;
+.review-head-inner{
+    max-width:900px;
+    margin:auto;
     display:flex;
     align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    background:rgba(212,175,55,.12);
-    border:1px solid rgba(212,175,55,.45);
-    font-size:27px;
+    justify-content:space-between;
+    gap:10px;
 }
 
-.review-gateway-title{
-    margin:0;
+.review-heading{
     color:var(--gold2);
-    font-size:20px;
-    font-weight:900;
-}
-
-.review-gateway-message{
-    margin:9px 0 0;
-    color:#d0d0d0;
     font-size:12px;
-    line-height:1.6;
-}
-
-.review-gateway-button{
-    width:100%;
-    min-height:50px;
-    margin-top:16px;
-    border:0;
-    border-radius:10px;
-    background:
-        linear-gradient(
-            135deg,
-            var(--gold2),
-            var(--champagne),
-            var(--cream)
-        );
-    color:#000;
-    font-size:13px;
     font-weight:900;
 }
 
-/* ============================================================
-   RESPONSIVE
-============================================================ */
+.review-close{
+    padding:8px 10px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:7px;
+    background:#0d0d0d;
+    color:var(--cream);
+    font-size:9px;
+    font-weight:900;
+}
+
+.review-body{
+    flex:1;
+    overflow:auto;
+    padding:15px;
+}
+
+.review-content{
+    max-width:900px;
+    margin:auto;
+    color:#f5f0df;
+    font-size:12px;
+    line-height:1.75;
+    white-space:pre-wrap;
+    word-break:break-word;
+}
+
+.review-footer{
+    flex:0 0 auto;
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    border-top:1px solid rgba(212,175,55,.2);
+    background:#080808;
+}
+
+.review-footer-inner{
+    max-width:900px;
+    margin:auto;
+    display:flex;
+    gap:7px;
+}
+
+.review-footer button{
+    flex:1;
+    padding:10px;
+    border-radius:8px;
+    font-size:9px;
+    font-weight:900;
+}
+
+.review-prev,
+.review-next{
+    border:1px solid rgba(255,255,255,.12);
+    background:#0d0d0d;
+    color:var(--cream);
+}
+
+.review-approve{
+    border:1px solid rgba(212,175,55,.55);
+    background:linear-gradient(135deg,#c9a52e,#f3d66b,#b88c19);
+    color:#080808;
+}
 
 @media(max-width:600px){
-
-    .header{
-        padding-left:9px;
-        padding-right:9px;
+    .brand-title{
+        font-size:13px;
     }
 
-    .header-actions{
-        gap:4px;
+    .brand-sub{
+        font-size:8px;
     }
 
-    .service-badge{
-        max-width:32%;
-        padding-left:8px;
-        padding-right:8px;
+    .back-office-btn{
+        font-size:8px;
+        padding:7px 8px;
     }
 
-    .back-office-entry{
-        padding:0 6px;
-        font-size:7px;
+    main{
+        padding-left:10px;
+        padding-right:10px;
     }
 
-    .main-inner{
-        padding:12px 9px 30px;
+    .intro-card{
+        padding:15px 13px;
     }
 
-    .review-gateway-card{
-        padding:20px 16px;
+    .intro-title{
+        font-size:19px;
     }
 
-    .customer-care-card{
-        padding:21px 16px;
-    }
-}
-
-@media(max-width:390px){
-
-    .customer-care-actions{
-        grid-template-columns:1fr;
-    }
-}
-
-@media(max-height:650px){
-
-    .review-gateway-card{
-        max-height:calc(100dvh - 30px);
-        overflow-y:auto;
+    .scroll-instruction{
+        font-size:9px;
     }
 
-    .customer-care-card{
-        max-height:calc(100dvh - 30px);
-        overflow-y:auto;
+    .scroll-instruction strong{
+        font-size:10px;
     }
 }
 </style>
 </head>
 
 <body>
-
 <div class="app">
 
-<header class="header">
-
-    <div class="brand">
-
-        <h1 class="brand-title">
-            Naija Pocket Business Center
-        </h1>
-
-        <div class="brand-subtitle">
-            Your Business Center
+<header>
+    <div class="header-inner">
+        <div class="brand">
+            <div class="brand-title">NAIJA POCKET BUSINESS CENTER</div>
+            <div class="brand-sub">BETTER DOCUMENTS • BETTER RESULTS</div>
         </div>
 
-    </div>
-
-    <div class="header-actions">
-
-        <button
-            id="backOfficeEntryButton"
-            class="back-office-entry"
-            type="button"
-            aria-label="Open Back Office"
-        >
-            BACK OFFICE
-        </button>
-
-        <div id="serviceBadge" class="service-badge">
-            Service
+        <div class="header-actions">
+            <button
+                type="button"
+                class="back-office-btn"
+                onclick="openBackOffice()"
+            >
+                BACK OFFICE
+            </button>
         </div>
-
     </div>
-
 </header>
 
-<main class="main">
+<div class="service-badge">
+    <span id="serviceBadge">DOCUMENT SERVICE</span>
+</div>
 
-<div class="main-inner">
-
-<!-- CUSTOMER FORM -->
+<main>
 
 <section id="formView">
 
     <div class="intro-card">
-
         <h2 id="introTitle" class="intro-title">
             Let's get started
         </h2>
@@ -1156,32 +744,53 @@ button:disabled{
             Service
         </div>
 
+        <div class="scroll-instruction">
+            <strong>✦ YOUR DOCUMENT IS ALMOST READY ✦</strong>
+            Scroll down to the end of this page to complete your request, and your typed work will be generated within a minute.
+        </div>
     </div>
 
     <div class="form-card">
 
-        <h3 class="form-heading">
-            Your Service Information
-        </h3>
-
-        <p class="form-description">
-            Fill in the information relevant to your request.
-            Optional fields can be left blank.
-        </p>
+        <div class="form-title">
+            YOUR REQUEST
+        </div>
 
         <form id="serviceForm">
 
-            <div id="fields" class="fields"></div>
+            <div id="dynamicFields"></div>
 
-            <div class="form-note">
-                When you tap <strong>SEND</strong>, your prepared work will immediately
-                appear on the full review page, ready for you to read and review.
+            <div class="upload-box">
+                <div class="upload-box-title">
+                    Documents You Want To Give Us
+                </div>
+
+                <div class="upload-box-text">
+                    Upload any supporting document you want us to use for your request.
+                </div>
+
+                <label for="documentUpload" class="upload-btn">
+                    📄 CHOOSE DOCUMENT
+                </label>
+
+                <input
+                    id="documentUpload"
+                    class="file-input"
+                    type="file"
+                    multiple
+                >
+
+                <div id="fileName" class="file-name">
+                    No document selected
+                </div>
             </div>
 
+            <div id="formStatus" class="status hidden"></div>
+
             <button
-                id="formSubmit"
-                class="form-submit"
+                id="sendBtn"
                 type="submit"
+                class="primary-btn"
             >
                 SEND
             </button>
@@ -1190,2273 +799,560 @@ button:disabled{
 
     </div>
 
-</section>
+    <div class="gateway">
+        <div class="gateway-title">
+            YOUR DOCUMENT WORKFLOW
+        </div>
 
-<!-- CUSTOMER REVIEW GATEWAY -->
-
-<section id="reviewView" class="review-view">
-
-    <div class="review-header">
-
-        <h2 class="review-title">
-            Your Work Is Ready
-        </h2>
-
-        <p class="review-subtitle">
-            Your prepared work has been completed.
-            Open the full review page to read it, request corrections,
-            approve it and continue to payment.
-        </p>
-
-    </div>
-
-    <div class="workspace-review-gateway">
-
-        <h3 class="workspace-review-gateway-title">
-            Full Review Available
-        </h3>
-
-        <p class="workspace-review-gateway-text">
-            Your review is handled by the dedicated review page.
-            Open it to continue with the complete document workflow.
-        </p>
+        <div class="gateway-text">
+            Once your request is completed, your document will be prepared for review before payment and download.
+        </div>
 
         <button
-            id="workspaceOpenReviewButton"
-            class="workspace-review-open"
             type="button"
+            class="review-gateway-btn"
+            onclick="openReviewGateway()"
         >
-            Open Full Review
+            OPEN REVIEW
         </button>
-
     </div>
 
 </section>
 
-<!-- BACK OFFICE -->
 
-<section id="backOfficeView">
+<section id="backOfficeView" class="hidden">
 
-    <div class="back-office-header">
+    <div class="bo-card">
 
-        <h2 class="back-office-title">
-            Back Office
-        </h2>
+        <div class="bo-title">
+            BACK OFFICE
+        </div>
 
-        <p class="back-office-subtitle">
-            See documents already saved when customers reported payment.
-            Verify the payment and unlock the exact saved document for download.
-        </p>
+        <div class="bo-sub">
+            Manage completed jobs and activate the exact saved document version that the customer is allowed to download.
+        </div>
 
-    </div>
-
-    <div class="back-office-key-card">
-
-        <label
-            class="back-office-key-label"
-            for="backOfficeKey"
-        >
-            Operator Key
-        </label>
-
-        <div class="back-office-key-row">
+        <div class="bo-key">
+            <label for="backOfficeKey">
+                ADMIN ACCESS KEY
+            </label>
 
             <input
                 id="backOfficeKey"
-                class="back-office-key-input"
                 type="password"
                 autocomplete="off"
                 placeholder="Enter Back Office key"
             >
+        </div>
 
+        <div class="bo-actions">
             <button
-                id="backOfficeLoadButton"
-                class="back-office-load"
                 type="button"
+                class="primary-btn"
+                onclick="loadBackOfficeJobs()"
             >
-                LOAD
+                LOAD JOBS
             </button>
 
+            <button
+                type="button"
+                class="secondary-btn"
+                onclick="loadBackOfficeJobs()"
+            >
+                REFRESH BACK OFFICE
+            </button>
+
+            <button
+                type="button"
+                class="secondary-btn"
+                onclick="closeBackOffice()"
+            >
+                EXIT BACK OFFICE
+            </button>
         </div>
+
+        <div id="backOfficeStatus" class="status hidden"></div>
+
+        <div id="jobsList" class="jobs-list"></div>
 
     </div>
-
-    <div class="back-office-summary">
-
-        <div class="back-office-stat">
-
-            <span
-                id="backOfficeTotal"
-                class="back-office-stat-value"
-            >
-                0
-            </span>
-
-            <span class="back-office-stat-label">
-                Payment Reports
-            </span>
-
-        </div>
-
-        <div class="back-office-stat">
-
-            <span
-                id="backOfficeApproved"
-                class="back-office-stat-value"
-            >
-                0
-            </span>
-
-            <span class="back-office-stat-label">
-                Awaiting Verification
-            </span>
-
-        </div>
-
-        <div class="back-office-stat">
-
-            <span
-                id="backOfficeActivated"
-                class="back-office-stat-value"
-            >
-                0
-            </span>
-
-            <span class="back-office-stat-label">
-                Unlocked
-            </span>
-
-        </div>
-
-    </div>
-
-    <div
-        id="backOfficeJobs"
-        class="back-office-jobs"
-    >
-
-        <div class="back-office-empty">
-            Enter the operator key and tap LOAD.
-        </div>
-
-    </div>
-
-    <button
-        id="backOfficeRefreshButton"
-        class="back-office-refresh"
-        type="button"
-    >
-        REFRESH
-    </button>
-
-    <button
-        id="backOfficeExitButton"
-        class="back-office-exit"
-        type="button"
-    >
-        EXIT BACK OFFICE
-    </button>
 
 </section>
-
-</div>
 
 </main>
 
-<!-- CUSTOMER BOTTOM CONTROLS -->
-
-<section
-    id="customerBottom"
-    class="bottom"
->
-
-<div class="bottom-inner">
-
-    <div class="tools">
-
-        <button
-            id="uploadButton"
-            class="tool-button"
-            type="button"
-        >
-            📄 Upload Documents You Want To Give Us
-        </button>
-
-        <button
-            id="customerCareButton"
-            class="tool-button customer-care-button"
-            type="button"
-        >
-            CUSTOMER CARE
-        </button>
-
-    </div>
-
-    <input
-        id="fileInput"
-        type="file"
-        accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+<div class="customer-care">
+    <button
+        type="button"
+        onclick="toggleCustomerCare()"
     >
-
-    <div id="status" class="status"></div>
-
+        CUSTOMER CARE
+    </button>
 </div>
 
-</section>
-
-<!-- CUSTOMER CARE -->
-
 <div
-    id="customerCareOverlay"
-    class="customer-care-overlay"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="customerCareTitle"
+    id="carePopup"
+    class="care-popup hidden"
 >
-
-<div class="customer-care-card">
-
-    <div class="customer-care-kicker">
-        PERSONAL ASSISTANCE
+    <div class="care-title">
+        CUSTOMER CARE
     </div>
 
-    <h2
-        id="customerCareTitle"
-        class="customer-care-title"
-    >
-        Customer Care
-    </h2>
-
-    <div class="customer-care-line"></div>
-
-    <p class="customer-care-text">
-        Need help with your request, payment or document?
-        Contact Customer Care directly.
-    </p>
-
-    <div class="customer-care-actions">
-
-        <button
-            id="customerCareWhatsApp"
-            class="customer-care-action customer-care-whatsapp"
-            type="button"
-        >
-            WHATSAPP
-        </button>
-
-        <button
-            id="customerCarePhone"
-            class="customer-care-action customer-care-phone"
-            type="button"
-        >
-            CALL CUSTOMER CARE
-        </button>
-
-    </div>
-
-    <div class="customer-care-number">
-        +234 805 707 3891
+    <div class="care-text">
+        If you need help with your request, payment, review or download, Customer Care is available to assist you.
     </div>
 
     <button
-        id="customerCareClose"
-        class="customer-care-close"
         type="button"
+        class="secondary-btn"
+        onclick="toggleCustomerCare()"
     >
         CLOSE
     </button>
-
 </div>
-
-</div>
-
-<!-- REVIEW OVERLAY -->
 
 <div
-    id="reviewGatewayOverlay"
-    class="review-gateway-overlay"
-    role="dialog"
-    aria-modal="true"
+    id="reviewOverlay"
+    class="review-overlay hidden"
 >
 
-<div class="review-gateway-card">
+    <div class="review-head">
+        <div class="review-head-inner">
 
-    <div class="review-gateway-icon">
-        📄
+            <div class="review-heading">
+                DOCUMENT REVIEW
+            </div>
+
+            <button
+                type="button"
+                class="review-close"
+                onclick="closeReviewOverlay()"
+            >
+                CLOSE
+            </button>
+
+        </div>
     </div>
 
-    <h2 class="review-gateway-title">
-        Your Work Is Ready
-    </h2>
+    <div class="review-body">
+        <div
+            id="reviewContent"
+            class="review-content"
+        ></div>
+    </div>
 
-    <p class="review-gateway-message">
-        Your prepared work is ready for review.
-        Open the dedicated review page to read the complete work,
-        request corrections, approve it and continue to payment.
-    </p>
+    <div class="review-footer">
+        <div class="review-footer-inner">
 
-    <button
-        id="reviewGatewayOpenButton"
-        class="review-gateway-button"
-        type="button"
-    >
-        Open Full Review
-    </button>
+            <button
+                type="button"
+                class="review-prev"
+                onclick="reviewPrevious()"
+            >
+                PREVIOUS
+            </button>
+
+            <button
+                type="button"
+                class="review-next"
+                onclick="reviewNext()"
+            >
+                NEXT
+            </button>
+
+            <button
+                type="button"
+                class="review-approve"
+                onclick="approveReview()"
+            >
+                I WANT TO MAKE PAYMENT
+            </button>
+
+        </div>
+    </div>
 
 </div>
 
+<div class="bottom-controls">
+    <div class="bottom-inner">
+
+        <button
+            type="button"
+            class="bottom-btn"
+            onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        >
+            BACK TO TOP
+        </button>
+
+        <button
+            type="button"
+            class="bottom-btn"
+            onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})"
+        >
+            GO TO END
+        </button>
+
+    </div>
 </div>
 
 <script>
-"use strict";
-
-/*============================================================
-WORKSPACE
-============================================================
-
-CUSTOMER MODE
--------------
-conversation.html
-        ↓
-workspace.html?service=...
-        ↓
-/api/chat
-        ↓
-server workflow
-        ↓
-server creates/updates job
-        ↓
-review.html?job_id=...
-
-BACK OFFICE MODE
-----------------
-Back Office is ONLY for payment verification and download
-unlocking.
-
-It does NOT:
-- create work
-- regenerate work
-- create another version
-- replace the customer's approved document
-- call /api/chat
-- save a new document
-
-The document shown here must already have been saved by the
-payment-report lifecycle.
-
-============================================================*/
-
 const API_BASE = "";
 const REVIEW_PAGE = "review.html";
 
-/* ELEMENTS */
+let currentService = "";
+let currentJobId = localStorage.getItem("npbc_job_id") || "";
+let currentCustomerId = localStorage.getItem("npbc_customer_id") || "";
+let currentReviewData = null;
+let currentReviewPage = 0;
 
-const $ = id => document.getElementById(id);
+const formView = document.getElementById("formView");
+const backOfficeView = document.getElementById("backOfficeView");
 
-const formView = $("formView");
-const reviewView = $("reviewView");
-const backOfficeView = $("backOfficeView");
-const customerBottom = $("customerBottom");
+const serviceBadge = document.getElementById("serviceBadge");
+const introTitle = document.getElementById("introTitle");
+const introText = document.getElementById("introText");
+const price = document.getElementById("price");
 
-const serviceForm = $("serviceForm");
-const fields = $("fields");
-const formSubmit = $("formSubmit");
+const dynamicFields = document.getElementById("dynamicFields");
+const serviceForm = document.getElementById("serviceForm");
+const formStatus = document.getElementById("formStatus");
+const sendBtn = document.getElementById("sendBtn");
 
-const serviceBadge = $("serviceBadge");
-const introTitle = $("introTitle");
-const introText = $("introText");
-const price = $("price");
+const documentUpload = document.getElementById("documentUpload");
+const fileName = document.getElementById("fileName");
 
-const uploadBtn = $("uploadButton");
-const customerCareBtn = $("customerCareButton");
+const reviewOverlay = document.getElementById("reviewOverlay");
+const reviewContent = document.getElementById("reviewContent");
 
-const fileInput = $("fileInput");
-const status = $("status");
+const backOfficeStatus = document.getElementById("backOfficeStatus");
+const jobsList = document.getElementById("jobsList");
+const backOfficeKey = document.getElementById("backOfficeKey");
 
-const customerCareOverlay =
-    $("customerCareOverlay");
+const carePopup = document.getElementById("carePopup");
 
-const customerCareWhatsApp =
-    $("customerCareWhatsApp");
 
-const customerCarePhone =
-    $("customerCarePhone");
+function setStatus(message, type = ""){
+    formStatus.classList.remove("hidden","ready","error");
 
-const customerCareClose =
-    $("customerCareClose");
-
-const reviewGatewayOverlay =
-    $("reviewGatewayOverlay");
-
-const reviewGatewayOpenButton =
-    $("reviewGatewayOpenButton");
-
-const workspaceOpenReviewButton =
-    $("workspaceOpenReviewButton");
-
-/* BACK OFFICE ELEMENTS */
-
-const backOfficeEntryButton =
-    $("backOfficeEntryButton");
-
-const backOfficeExitButton =
-    $("backOfficeExitButton");
-
-const backOfficeKey =
-    $("backOfficeKey");
-
-const backOfficeLoadButton =
-    $("backOfficeLoadButton");
-
-const backOfficeRefreshButton =
-    $("backOfficeRefreshButton");
-
-const backOfficeJobs =
-    $("backOfficeJobs");
-
-const backOfficeTotal =
-    $("backOfficeTotal");
-
-const backOfficeApproved =
-    $("backOfficeApproved");
-
-const backOfficeActivated =
-    $("backOfficeActivated");
-
-/* URL STATE */
-
-const params =
-    new URLSearchParams(location.search);
-
-const service =
-    (
-        params.get("service") ||
-        "Business Center Service"
-    ).trim();
-
-const isBackOfficeMode =
-    params.get("back_office") === "1" ||
-    params.get("mode") === "back_office";
-
-/* IDS */
-
-function makeId(prefix){
-
-    if(
-        typeof crypto !== "undefined" &&
-        typeof crypto.randomUUID === "function"
-    ){
-        return prefix + crypto.randomUUID();
+    if(type){
+        formStatus.classList.add(type);
     }
+
+    formStatus.textContent = message;
+}
+
+
+function setBackOfficeStatus(message, type = ""){
+    backOfficeStatus.classList.remove("hidden","ready","error");
+
+    if(type){
+        backOfficeStatus.classList.add(type);
+    }
+
+    backOfficeStatus.textContent = message;
+}
+
+
+function getServiceFromUrl(){
+    const params = new URLSearchParams(window.location.search);
 
     return (
-        prefix +
-        Date.now() +
-        "_" +
-        Math.random()
-            .toString(36)
-            .slice(2)
+        params.get("service") ||
+        params.get("service_name") ||
+        localStorage.getItem("npbc_service") ||
+        ""
     );
-
 }
 
-function storageGet(key){
 
-    try{
-        return localStorage.getItem(key);
-    }catch{
-        return null;
+function getCustomerId(){
+    if(!currentCustomerId){
+        currentCustomerId =
+            "customer-" +
+            Date.now() +
+            "-" +
+            Math.random().toString(36).slice(2,8);
+
+        localStorage.setItem(
+            "npbc_customer_id",
+            currentCustomerId
+        );
     }
 
+    return currentCustomerId;
 }
 
-function storageSet(key,value){
-
-    try{
-        localStorage.setItem(key,value);
-    }catch{}
-
-}
-
-let customerId =
-    storageGet("npbc_customer_id") ||
-    makeId("customer_");
-
-storageSet(
-    "npbc_customer_id",
-    customerId
-);
-
-let jobId =
-    params.get("job_id") ||
-    storageGet("npbc_job_id") ||
-    "";
-
-let requestId =
-    makeId("request_");
-
-storageSet(
-    "npbc_client_request_id",
-    requestId
-);
-
-if(jobId){
-
-    storageSet(
-        "npbc_job_id",
-        jobId
-    );
-
-}
-
-/* STATE */
-
-let busy = false;
-let currentWork = "";
-let backOfficeJobsData = [];
-
-/* HELPERS */
-
-function clean(value){
-
-    if(
-        value === undefined ||
-        value === null
-    ){
-        return "";
-    }
-
-    return String(value).trim();
-
-}
 
 function escapeHtml(value){
-
-    return clean(value)
+    return String(value ?? "")
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;")
         .replace(/"/g,"&quot;")
         .replace(/'/g,"&#039;");
-
 }
 
-function setStatus(message,type=""){
 
-    status.textContent =
-        message || "";
-
-    status.className =
-        "status " + type;
-
+function toggleCustomerCare(){
+    carePopup.classList.toggle("hidden");
 }
 
-function setBusy(value){
 
-    busy = value;
+function openBackOffice(){
+    formView.classList.add("hidden");
+    backOfficeView.classList.remove("hidden");
 
-    [
-        formSubmit,
-        uploadBtn,
-        customerCareBtn
-    ].forEach(button => {
-
-        if(button){
-            button.disabled = value;
-        }
-
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
     });
-
 }
 
-function formatDate(value){
 
-    if(!value){
-        return "Date unavailable";
-    }
-
-    const date =
-        new Date(value);
-
-    if(
-        Number.isNaN(
-            date.getTime()
-        )
-    ){
-        return clean(value);
-    }
-
-    return date.toLocaleString();
-
+function closeBackOffice(){
+    backOfficeView.classList.add("hidden");
+    formView.classList.remove("hidden");
 }
 
-function valueFrom(object,keys){
 
-    if(!object){
-        return "";
-    }
-
-    for(const key of keys){
-
-        if(
-            object[key] !== undefined &&
-            object[key] !== null &&
-            object[key] !== ""
-        ){
-            return object[key];
-        }
-
-    }
-
-    return "";
-
-}
-
-/* SERVER RESPONSE NORMALISATION */
-
-function serverJobId(data){
-
-    return clean(
-        data?.job_id ||
-        data?.jobId ||
-        data?.job?.id ||
-        data?.data?.job_id
-    );
-
-}
-
-function serverReply(data){
-
-    return clean(
-        data?.reply ||
-        data?.message ||
-        data?.response ||
-        data?.content
-    );
-
-}
-
-function serverWork(data){
-
-    return clean(
-        data?.work ||
-        data?.document ||
-        data?.content ||
-        data?.reply
-    );
-
-}
-
-function serverError(data,response){
-
-    return clean(
-        data?.error_message ||
-        data?.detail ||
-        data?.reply ||
-        data?.message ||
-        data?.error ||
-        (
-            response
-                ? `Request failed (${response.status}).`
-                : "Request failed."
-        )
-    );
-
-}
-
-/* API CHAT */
-
-async function apiChat(payload){
-
-    let response;
-
-    try{
-
-        response =
-            await fetch(
-                API_BASE + "/api/chat",
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify(payload)
-                }
-            );
-
-    }catch(error){
-
-        throw new Error(
-            "Unable to connect to the Business Center service."
-        );
-
-    }
-
-    let data = {};
-
-    try{
-
-        data = await response.json();
-
-    }catch{
-
-        data = {};
-
-    }
-
-    if(!response.ok){
-
-        throw new Error(
-            serverError(data,response)
-        );
-
-    }
-
-    if(
-        data &&
-        data.success === false
-    ){
-
-        throw new Error(
-            serverError(data,response)
-        );
-
-    }
-
-    return data;
-
-}
-
-/* REVIEW NAVIGATION */
-
-function openFullReview(){
-
-    if(!jobId){
-
+function openReviewGateway(){
+    if(!currentJobId){
         setStatus(
-            "The server has not created a review job yet.",
+            "Please complete your request first so your document can be reviewed.",
             "error"
         );
 
         return;
     }
-
-    storageSet(
-        "npbc_job_id",
-        jobId
-    );
-
-    storageSet(
-        "npbc_review_job_id",
-        jobId
-    );
-
-    storageSet(
-        "npbc_review_service",
-        service
-    );
-
-    storageSet(
-        "npbc_review_customer_id",
-        customerId
-    );
-
-    storageSet(
-        "npbc_review_request_id",
-        requestId
-    );
 
     window.location.href =
         REVIEW_PAGE +
         "?job_id=" +
-        encodeURIComponent(jobId);
-
+        encodeURIComponent(currentJobId);
 }
 
-function showReviewGateway(){
 
-    reviewGatewayOverlay
-        .classList
-        .add("show");
-
+function closeReviewOverlay(){
+    reviewOverlay.classList.add("hidden");
 }
 
-function closeReviewGateway(){
 
-    reviewGatewayOverlay
-        .classList
-        .remove("show");
-
-}
-
-function showReview(work){
-
-    currentWork =
-        clean(work);
-
-    formView.style.display =
-        "none";
-
-    reviewView.classList.add(
-        "show"
-    );
-
-}
-
-/* ============================================================
-   SERVICE FORMS
-============================================================ */
-
-const generic = [
-
-    {
-        name:"request",
-        label:"What do you need?",
-        required:true,
-        type:"textarea",
-        placeholder:
-            "Tell us exactly what you want done"
-    },
-
-    {
-        name:"important_details",
-        label:"Important details",
-        type:"textarea",
-        placeholder:
-            "Add the information that matters to your request"
-    },
-
-    {
-        name:"other_instructions",
-        label:"Other instructions",
-        type:"textarea",
-        placeholder:
-            "Anything else you want considered"
-    }
-
-];
-
-const forms = {
-
-    "document formatting":[
-
-        {
-            name:"document_title",
-            label:"Document title",
-            required:true,
-            type:"text",
-            placeholder:
-                "Enter the document title"
-        },
-
-        {
-            name:"document_type",
-            label:"Document type",
-            required:true,
-            type:"text",
-            placeholder:
-                "e.g. report, essay, thesis, business document"
-        },
-
-        {
-            name:"page_count",
-            label:"Number of pages",
-            type:"text",
-            placeholder:
-                "Enter the number of pages if known"
-        },
-
-        {
-            name:"formatting_style",
-            label:"Formatting style",
-            type:"text",
-            placeholder:
-                "e.g. APA, MLA, Harvard, business standard"
-        },
-
-        {
-            name:"special_instructions",
-            label:"Specific formatting instructions",
-            type:"textarea",
-            placeholder:
-                "Font, spacing, margins, headings, layout, or anything else"
-        }
-
-    ],
-
-    "research assistance":[
-
-        {
-            name:"research_topic",
-            label:"Research topic or question",
-            required:true,
-            type:"textarea",
-            placeholder:
-                "What do you want to research?"
-        },
-
-        {
-            name:"desired_length",
-            label:"Desired length",
-            type:"text",
-            placeholder:
-                "e.g. 3 pages, 1,500 words"
-        },
-
-        {
-            name:"research_purpose",
-            label:"Purpose of the research",
-            type:"textarea",
-            placeholder:
-                "Tell us what the research is for"
-        },
-
-        {
-            name:"special_instructions",
-            label:"Additional instructions",
-            type:"textarea",
-            placeholder:
-                "Anything specific you want covered"
-        }
-
-    ],
-
-    "seminar papers":[
-
-        {
-            name:"topic",
-            label:"Topic / Title",
-            required:true,
-            type:"textarea",
-            placeholder:
-                "Enter the seminar paper topic"
-        },
-
-        {
-            name:"length",
-            label:"Desired length",
-            required:true,
-            type:"text",
-            placeholder:
-                "e.g. 3 pages, 2,000 words"
-        },
-
-        {
-            name:"formatting_style",
-            label:"Formatting style",
-            type:"text",
-            placeholder:
-                "e.g. APA, Harvard, MLA"
-        },
-
-        {
-            name:"special_instructions",
-            label:"Special instructions",
-            type:"textarea",
-            placeholder:
-                "Points to cover, structure, sources, or other instructions"
-        }
-
-    ],
-
-    "essay writing":[
-
-        {
-            name:"topic",
-            label:"Essay topic or question",
-            required:true,
-            type:"textarea",
-            placeholder:
-                "Enter the essay topic or question"
-        },
-
-        {
-            name:"length",
-            label:"Desired length",
-            required:true,
-            type:"text",
-            placeholder:
-                "e.g. 1,000 words, 3 pages"
-        },
-
-        {
-            name:"academic_level",
-            label:"Academic level",
-            type:"text",
-            placeholder:
-                "e.g. secondary school, undergraduate, postgraduate"
-        },
-
-        {
-            name:"special_instructions",
-            label:"Additional instructions",
-            type:"textarea",
-            placeholder:
-                "Anything specific you want included"
-        }
-
-    ],
-
-    "cv writing":[
-
-        {
-            name:"full_name",
-            label:"Full name",
-            required:true,
-            type:"text",
-            placeholder:
-                "Enter your full name"
-        },
-
-        {
-            name:"career_target",
-            label:"Job / career you are targeting",
-            required:true,
-            type:"text",
-            placeholder:
-                "e.g. Accountant, Software Developer"
-        },
-
-        {
-            name:"experience",
-            label:"Work experience",
-            type:"textarea",
-            placeholder:
-                "Enter your work history and responsibilities"
-        },
-
-        {
-            name:"education",
-            label:"Education",
-            type:"textarea",
-            placeholder:
-                "Schools, qualifications and dates"
-        },
-
-        {
-            name:"skills",
-            label:"Skills and achievements",
-            type:"textarea",
-            placeholder:
-                "List important skills, achievements or certifications"
-        },
-
-        {
-            name:"additional_information",
-            label:"Additional information",
-            type:"textarea",
-            placeholder:
-                "Anything else that should appear in your CV"
-        }
-
-    ]
-
-};
-
-function definition(){
-
-    const lowerService =
-        service.toLowerCase();
-
-    const key =
-        Object.keys(forms).find(
-            key =>
-                lowerService.includes(key)
-        );
-
-    return key
-        ? forms[key]
-        : generic;
-
-}
-
-function renderForm(){
-
-    fields.innerHTML = "";
-
-    definition().forEach(field => {
-
-        const wrapper =
-            document.createElement("div");
-
-        wrapper.className =
-            "field";
-
-        const label =
-            document.createElement("label");
-
-        label.htmlFor =
-            field.name;
-
-        label.innerHTML =
-            escapeHtml(field.label) +
-            (
-                field.required
-                    ? ' <span class="required">*</span>'
-                    : ' <span class="optional">(optional)</span>'
-            );
-
-        let input;
-
-        if(field.type === "textarea"){
-
-            input =
-                document.createElement("textarea");
-
-        }else{
-
-            input =
-                document.createElement("input");
-
-            input.type =
-                field.type || "text";
-
-        }
-
-        input.id =
-            field.name;
-
-        input.name =
-            field.name;
-
-        input.placeholder =
-            field.placeholder || "";
-
-        input.autocomplete =
-            "off";
-
-        if(field.required){
-
-            input.required = true;
-
-        }
-
-        wrapper.append(
-            label,
-            input
-        );
-
-        fields.appendChild(
-            wrapper
-        );
-
-    });
-
-}
-
-function collectForm(){
-
-    const data = {};
-
-    serviceForm
-        .querySelectorAll(
-            "input,textarea,select"
-        )
-        .forEach(element => {
-
-            const value =
-                clean(element.value);
-
-            if(value){
-
-                data[element.name] =
-                    value;
-
-            }
-
-        });
-
-    return data;
-
-}
-
-/* ============================================================
-   GUIDANCE
-============================================================ */
-
-async function loadGuidance(){
-
-    setStatus(
-        "Preparing useful information for this service..."
-    );
-
-    try{
-
-        const data =
-            await apiChat({
-
-                service,
-
-                customer_id:
-                    customerId,
-
-                job_id:
-                    jobId || null,
-
-                client_request_id:
-                    requestId,
-
-                event:
-                    "service_selected",
-
-                message:
-                    `The customer has selected the service "${service}".
-Provide a short customer-facing explanation of:
-- what this service does
-- what the customer will receive
-- what information they should prepare
-- useful documents they may provide
-- the service fee if known
-Do not create the customer's work yet.
-Do not request payment.
-Do not discuss internal systems.`,
-
-                create_work:false,
-
-                guidance_only:true
-
-            });
-
-        const reply =
-            serverReply(data);
-
-        if(reply){
-
-            introText.textContent =
-                reply;
-
-        }
-
-        const returnedJob =
-            serverJobId(data);
-
-        if(returnedJob){
-
-            jobId =
-                returnedJob;
-
-            storageSet(
-                "npbc_job_id",
-                jobId
-            );
-
-        }
-
-        const amount =
-            data.amount ??
-            data.price ??
-            data.service_amount;
-
-        if(
-            amount !== undefined &&
-            amount !== null
-        ){
-
-            const numeric =
-                Number(
-                    String(amount)
-                        .replace(/[^0-9.]/g,"")
-                );
-
-            if(Number.isFinite(numeric)){
-
-                price.textContent =
-                    "Service fee: ₦" +
-                    numeric.toLocaleString();
-
-            }else{
-
-                price.textContent =
-                    "Service fee: " +
-                    String(amount);
-
-            }
-
-        }else{
-
-            const match =
-                (reply || "")
-                    .match(/₦\s?[\d,]+/);
-
-            if(match){
-
-                price.textContent =
-                    "Service fee: " +
-                    match[0];
-
-            }else if(
-                /quotation/i.test(
-                    reply || ""
-                )
-            ){
-
-                price.textContent =
-                    "Service fee: Quotation required";
-
-            }else{
-
-                price.textContent =
-                    "Service: " +
-                    service;
-
-            }
-
-        }
-
-        setStatus("");
-
-    }catch(error){
-
-        introText.textContent =
-            "Internet issue. Please check your internet connection, go back, and try the service button again.";
-
-        price.textContent =
-            "Service: " +
-            service;
-
-        setStatus(
-            "",
-            ""
-        );
-
-    }
-
-}
-
-/* ============================================================
-   WORK CREATION
-============================================================ */
-
-async function createWork(formData){
-
-    if(busy){
+function reviewPrevious(){
+    if(
+        !currentReviewData ||
+        !Array.isArray(currentReviewData.pages)
+    ){
         return;
     }
 
-    setBusy(true);
-
-    setStatus(
-        "Sending your request for processing..."
+    currentReviewPage = Math.max(
+        0,
+        currentReviewPage - 1
     );
 
-    const message =
-        `The customer has submitted the information required
-for the selected service.
+    renderReviewPage();
+}
 
-Selected service:
-${service}
 
-Customer information:
-${Object.entries(formData)
-    .map(
-        ([key,value]) =>
-            `${key}: ${value}`
-    )
-    .join("\n\n")}
+function reviewNext(){
+    if(
+        !currentReviewData ||
+        !Array.isArray(currentReviewData.pages)
+    ){
+        return;
+    }
 
-Please process the customer's request and create the requested
-work according to the active service workflow.
-The customer expects the completed work to proceed to review.`;
+    currentReviewPage = Math.min(
+        currentReviewData.pages.length - 1,
+        currentReviewPage + 1
+    );
 
-    try{
+    renderReviewPage();
+}
 
-        const data =
-            await apiChat({
 
-                message,
+function renderReviewPage(){
+    if(
+        !currentReviewData ||
+        !Array.isArray(currentReviewData.pages)
+    ){
+        reviewContent.textContent = "";
+        return;
+    }
 
-                service,
+    reviewContent.textContent =
+        currentReviewData.pages[currentReviewPage] || "";
+}
 
-                customer_id:
-                    customerId,
 
-                job_id:
-                    jobId || null,
-
-                client_request_id:
-                    requestId,
-
-                event:
-                    "form_submitted",
-
-                form_data:
-                    formData,
-
-                create_work:true
-
-            });
-
-        const returnedJob =
-            serverJobId(data);
-
-        if(returnedJob){
-
-            jobId =
-                returnedJob;
-
-            storageSet(
-                "npbc_job_id",
-                jobId
-            );
-
-        }
-
-        if(!jobId){
-
-            throw new Error(
-                "The server completed the request but did not return the active job ID."
-            );
-
-        }
-
-        currentWork =
-            serverWork(data);
-
-        showReview(currentWork);
-
+async function approveReview(){
+    if(!currentJobId){
         setStatus(
-            "Your work is ready for review.",
-            "success"
-        );
-
-        showReviewGateway();
-
-    }catch(error){
-
-        setStatus(
-            error.message ||
-            "We could not complete the request.",
+            "No active job was found.",
             "error"
         );
 
-    }finally{
-
-        setBusy(false);
-
+        return;
     }
 
+    /*
+      The approved review/payment transition is handled by the
+      existing review/payment flow.
+    */
+
+    window.location.href =
+        "payment.html?job_id=" +
+        encodeURIComponent(currentJobId);
 }
 
-/* FORM SUBMIT */
+
+documentUpload.addEventListener(
+    "change",
+    function(){
+        if(!documentUpload.files.length){
+            fileName.textContent =
+                "No document selected";
+
+            return;
+        }
+
+        if(documentUpload.files.length === 1){
+            fileName.textContent =
+                documentUpload.files[0].name;
+
+            return;
+        }
+
+        fileName.textContent =
+            documentUpload.files.length +
+            " documents selected";
+    }
+);
+
 
 serviceForm.addEventListener(
     "submit",
-    event => {
-
+    async function(event){
         event.preventDefault();
 
-        if(busy){
-            return;
-        }
-
-        if(!serviceForm.reportValidity()){
-            return;
-        }
-
-        createWork(
-            collectForm()
-        );
-
-    }
-);
-
-/* ============================================================
-   REVIEW
-============================================================ */
-
-reviewGatewayOpenButton.addEventListener(
-    "click",
-    openFullReview
-);
-
-workspaceOpenReviewButton.addEventListener(
-    "click",
-    openFullReview
-);
-
-reviewGatewayOverlay.addEventListener(
-    "click",
-    event => {
-
-        if(
-            event.target ===
-            reviewGatewayOverlay
-        ){
-
-            closeReviewGateway();
-
-        }
-
-    }
-);
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if(event.key === "Escape"){
-
-            closeReviewGateway();
-            closeCustomerCare();
-
-        }
-
-    }
-);
-
-/* ============================================================
-   CUSTOMER CARE
-============================================================ */
-
-function openCustomerCare(){
-
-    customerCareOverlay
-        .classList
-        .add("show");
-
-}
-
-function closeCustomerCare(){
-
-    customerCareOverlay
-        .classList
-        .remove("show");
-
-}
-
-customerCareBtn.addEventListener(
-    "click",
-    openCustomerCare
-);
-
-customerCareClose.addEventListener(
-    "click",
-    closeCustomerCare
-);
-
-customerCareOverlay.addEventListener(
-    "click",
-    event => {
-
-        if(
-            event.target ===
-            customerCareOverlay
-        ){
-
-            closeCustomerCare();
-
-        }
-
-    }
-);
-
-customerCareWhatsApp.addEventListener(
-    "click",
-    () => {
-
-        window.open(
-            "https://wa.me/2348057073891",
-            "_blank",
-            "noopener,noreferrer"
-        );
-
-    }
-);
-
-customerCarePhone.addEventListener(
-    "click",
-    () => {
-
-        window.location.href =
-            "tel:+2348057073891";
-
-    }
-);
-
-/* ============================================================
-   UPLOAD
-============================================================ */
-
-uploadBtn.addEventListener(
-    "click",
-    () => {
-
-        if(!busy){
-
-            fileInput.click();
-
-        }
-
-    }
-);
-
-fileInput.addEventListener(
-    "change",
-    async () => {
-
-        const file =
-            fileInput.files?.[0];
-
-        if(!file){
-            return;
-        }
-
-        const formData =
-            new FormData();
-
-        formData.append(
-            "file",
-            file
-        );
-
-        formData.append(
-            "customer_id",
-            customerId
-        );
-
-        formData.append(
-            "job_id",
-            jobId
-        );
-
-        formData.append(
-            "client_request_id",
-            requestId
-        );
-
-        formData.append(
-            "service",
-            service
-        );
-
-        setBusy(true);
-
         setStatus(
-            "Uploading the document..."
+            "Preparing your request...",
+            ""
         );
+
+        sendBtn.disabled = true;
 
         try{
+            const formData =
+                new FormData(serviceForm);
+
+            formData.append(
+                "service",
+                currentService
+            );
+
+            formData.append(
+                "customer_id",
+                getCustomerId()
+            );
+
+            if(currentJobId){
+                formData.append(
+                    "job_id",
+                    currentJobId
+                );
+            }
+
+            if(documentUpload.files.length){
+                for(
+                    const file of documentUpload.files
+                ){
+                    formData.append(
+                        "documents",
+                        file
+                    );
+                }
+            }
 
             const response =
                 await fetch(
-                    API_BASE +
-                    "/api/upload",
+                    API_BASE + "/api/jobs",
                     {
                         method:"POST",
                         body:formData
                     }
                 );
 
-            const data =
-                await response
-                    .json()
-                    .catch(
-                        () => ({})
-                    );
-
             if(!response.ok){
-
                 throw new Error(
-                    serverError(
-                        data,
-                        response
-                    )
+                    "Request failed with status " +
+                    response.status
                 );
-
             }
 
-            if(data.success === false){
+            const data =
+                await response.json();
 
-                throw new Error(
-                    serverError(
-                        data,
-                        response
-                    )
-                );
+            if(data.job_id){
+                currentJobId =
+                    String(data.job_id);
 
-            }
-
-            const returnedJob =
-                serverJobId(data);
-
-            if(returnedJob){
-
-                jobId =
-                    returnedJob;
-
-                storageSet(
+                localStorage.setItem(
                     "npbc_job_id",
-                    jobId
+                    currentJobId
                 );
+            }
 
+            if(data.customer_id){
+                currentCustomerId =
+                    String(data.customer_id);
+
+                localStorage.setItem(
+                    "npbc_customer_id",
+                    currentCustomerId
+                );
             }
 
             setStatus(
-                "Your document has been received. Processing it now..."
-            );
-
-            /*
-             * The upload continues through the existing server
-             * workflow. The removed bottom message composer is
-             * not used here.
-             */
-
-            const uploadMessage =
-                "The customer has uploaded a document for this active service. Use the uploaded document together with the current job context and continue the customer's request.";
-
-            const uploadResult =
-                await apiChat({
-
-                    message:
-                        uploadMessage,
-
-                    service,
-
-                    customer_id:
-                        customerId,
-
-                    job_id:
-                        jobId || null,
-
-                    client_request_id:
-                        requestId,
-
-                    event:
-                        "document_uploaded",
-
-                    current_work:
-                        currentWork || null,
-
-                    create_work:true
-
-                });
-
-            const uploadReturnedJob =
-                serverJobId(uploadResult);
-
-            if(uploadReturnedJob){
-
-                jobId =
-                    uploadReturnedJob;
-
-                storageSet(
-                    "npbc_job_id",
-                    jobId
-                );
-
-            }
-
-            const work =
-                serverWork(uploadResult);
-
-            if(work){
-
-                currentWork =
-                    work;
-
-                showReview(currentWork);
-
-                if(jobId){
-
-                    showReviewGateway();
-
-                }
-
-            }
-
-            setStatus(
-                "Your document has been received and processed.",
-                "success"
+                "Your request has been received. Your document is being prepared.",
+                "ready"
             );
 
         }catch(error){
+            console.error(error);
 
             setStatus(
-                error.message ||
-                "Document upload failed.",
+                "We could not complete the request right now. Please try again.",
                 "error"
             );
 
         }finally{
-
-            setBusy(false);
-            fileInput.value = "";
-
+            sendBtn.disabled = false;
         }
-
     }
 );
 
-/* ============================================================
-   BACK OFFICE
-============================================================ */
-
-function normaliseBackOfficeJobs(data){
-
-    if(Array.isArray(data)){
-        return data;
-    }
-
-    if(Array.isArray(data?.jobs)){
-        return data.jobs;
-    }
-
-    if(Array.isArray(data?.payment_reports)){
-        return data.payment_reports;
-    }
-
-    if(Array.isArray(data?.paymentReports)){
-        return data.paymentReports;
-    }
-
-    if(Array.isArray(data?.data?.jobs)){
-        return data.data.jobs;
-    }
-
-    if(Array.isArray(data?.data?.payment_reports)){
-        return data.data.payment_reports;
-    }
-
-    if(Array.isArray(data?.data?.paymentReports)){
-        return data.data.paymentReports;
-    }
-
-    return [];
-
-}
-
-function getJobIdFromBackOffice(job){
-
-    return valueFrom(
-        job,
-        [
-            "job_id",
-            "jobId",
-            "id"
-        ]
-    );
-
-}
-
-function getPaymentId(job){
-
-    return valueFrom(
-        job,
-        [
-            "payment_id",
-            "paymentId",
-            "latest_payment_id"
-        ]
-    );
-
-}
-
-function getSavedDocument(job){
-
-    return (
-        job?.saved_document ||
-        job?.savedDocument ||
-        job?.download ||
-        job?.download_file ||
-        job?.downloadFile ||
-        job?.saved_work ||
-        job?.savedWork ||
-        job?.document ||
-        job?.work ||
-        job?.approved_work ||
-        job?.approvedWork ||
-        {}
-    );
-
-}
-
-function getSavedDocumentId(job){
-
-    const document =
-        getSavedDocument(job);
-
-    return valueFrom(
-        document,
-        [
-            "work_id",
-            "workId",
-            "document_id",
-            "documentId",
-            "saved_work_id",
-            "savedWorkId",
-            "id"
-        ]
-    ) ||
-
-    valueFrom(
-        job,
-        [
-            "work_id",
-            "workId",
-            "saved_work_id",
-            "savedWorkId",
-            "document_id",
-            "documentId"
-        ]
-    );
-
-}
-
-function getSavedDocumentUrl(job){
-
-    const document =
-        getSavedDocument(job);
-
-    return clean(
-        valueFrom(
-            document,
-            [
-                "download_url",
-                "downloadUrl",
-                "file_url",
-                "fileUrl",
-                "url",
-                "download",
-                "path"
-            ]
-        ) ||
-
-        valueFrom(
-            job,
-            [
-                "download_url",
-                "downloadUrl",
-                "file_url",
-                "fileUrl",
-                "download"
-            ]
-        )
-    );
-
-}
-
-function getSavedDocumentName(job){
-
-    const document =
-        getSavedDocument(job);
-
-    return clean(
-        valueFrom(
-            document,
-            [
-                "filename",
-                "file_name",
-                "fileName",
-                "name",
-                "title"
-            ]
-        ) ||
-
-        valueFrom(
-            job,
-            [
-                "filename",
-                "file_name",
-                "fileName"
-            ]
-        )
-    ) ||
-
-    "Saved customer document";
-
-}
-
-function getSavedDocumentVersion(job){
-
-    const document =
-        getSavedDocument(job);
-
-    return valueFrom(
-        document,
-        [
-            "version",
-            "version_number",
-            "versionNumber"
-        ]
-    ) ||
-
-    valueFrom(
-        job,
-        [
-            "document_version",
-            "documentVersion",
-            "version",
-            "version_number",
-            "versionNumber"
-        ]
-    );
-
-}
-
-function getPaymentStatus(job){
-
-    return clean(
-        valueFrom(
-            job,
-            [
-                "payment_status",
-                "paymentStatus",
-                "latest_payment_status",
-                "status"
-            ]
-        )
-    ).toLowerCase();
-
-}
-
-function getDownloadStatus(job){
-
-    const document =
-        getSavedDocument(job);
-
-    const value =
-        valueFrom(
-            document,
-            [
-                "download_unlocked",
-                "downloadUnlocked",
-                "download_activated",
-                "downloadActivated",
-                "activated",
-                "unlocked"
-            ]
-        );
-
-    if(
-        value === true ||
-        value === 1 ||
-        value === "1" ||
-        value === "true"
-    ){
-        return true;
-    }
-
-    const jobValue =
-        valueFrom(
-            job,
-            [
-                "download_unlocked",
-                "downloadUnlocked",
-                "download_activated",
-                "downloadActivated",
-                "download_ready",
-                "downloadReady"
-            ]
-        );
-
-    return (
-        jobValue === true ||
-        jobValue === 1 ||
-        jobValue === "1" ||
-        jobValue === "true"
-    );
-
-}
-
-function paymentReported(job){
-
-    const statusValue =
-        getPaymentStatus(job);
-
-    return (
-        statusValue ===
-            "reported" ||
-
-        statusValue ===
-            "payment_reported" ||
-
-        statusValue ===
-            "awaiting_verification" ||
-
-        statusValue ===
-            "payment_pending_verification" ||
-
-        statusValue ===
-            "pending_verification" ||
-
-        statusValue ===
-            "paid" ||
-
-        statusValue ===
-            "confirmed"
-    );
-
-}
-
-function isAwaitingVerification(job){
-
-    const statusValue =
-        getPaymentStatus(job);
-
-    if(
-        statusValue ===
-            "reported" ||
-
-        statusValue ===
-            "payment_reported" ||
-
-        statusValue ===
-            "awaiting_verification" ||
-
-        statusValue ===
-            "payment_pending_verification" ||
-
-        statusValue ===
-            "pending_verification"
-    ){
-        return true;
-    }
-
-    return (
-        paymentReported(job) &&
-        !getDownloadStatus(job)
-    );
-
-}
-
-function getCustomerName(job){
-
-    return clean(
-        valueFrom(
-            job,
-            [
-                "customer_name",
-                "customerName",
-                "name"
-            ]
-        )
-    ) ||
-    "Customer";
-
-}
-
-function getServiceName(job){
-
-    return clean(
-        valueFrom(
-            job,
-            [
-                "service",
-                "service_name",
-                "serviceName"
-            ]
-        )
-    ) ||
-    "Business Center Service";
-
-}
-
-function getCreatedAt(job){
-
-    return valueFrom(
-        job,
-        [
-            "created_at",
-            "createdAt",
-            "payment_reported_at",
-            "paymentReportedAt",
-            "reported_at",
-            "reportedAt"
-        ]
-    );
-
-}
-
-function getAmount(job){
-
-    return valueFrom(
-        job,
-        [
-            "amount",
-            "payment_amount",
-            "paymentAmount",
-            "service_amount",
-            "serviceAmount"
-        ]
-    );
-
-}
-
-function formatAmount(value){
-
-    if(
-        value === undefined ||
-        value === null ||
-        value === ""
-    ){
-        return "";
-    }
-
-    const numeric =
-        Number(
-            String(value)
-                .replace(/[^0-9.]/g,"")
-        );
-
-    if(Number.isFinite(numeric)){
-
-        return (
-            "₦" +
-            numeric.toLocaleString(
-                "en-NG",
-                {
-                    minimumFractionDigits:2,
-                    maximumFractionDigits:2
-                }
-            )
-        );
-
-    }
-
-    return String(value);
-
-}
-
-/* ============================================================
-   LOAD BACK OFFICE
-============================================================ */
 
 async function loadBackOfficeJobs(){
 
     const key =
-        clean(
-            backOfficeKey.value
-        );
+        backOfficeKey.value.trim();
 
     if(!key){
-
-        backOfficeJobs.innerHTML = `
-            <div class="back-office-empty">
-                Enter the Back Office operator key first.
-            </div>
-        `;
+        setBackOfficeStatus(
+            "Please enter the Back Office access key.",
+            "error"
+        );
 
         return;
     }
 
-    backOfficeLoadButton.disabled =
-        true;
+    setBackOfficeStatus(
+        "Loading Back Office...",
+        ""
+    );
 
-    backOfficeLoadButton.textContent =
-        "LOADING...";
-
-    backOfficeJobs.innerHTML = `
-        <div class="back-office-empty">
-            Loading payment reports...
-        </div>
-    `;
+    jobsList.innerHTML = "";
 
     try{
 
@@ -3466,790 +1362,292 @@ async function loadBackOfficeJobs(){
                 "/api/back-office/jobs",
                 {
                     method:"GET",
-
                     headers:{
-                        "Accept":
-                            "application/json",
-
-                        "X-Admin-Key":
-                            key
+                        "X-Back-Office-Key":key
                     }
                 }
             );
 
+        if(!response.ok){
+            throw new Error(
+                "Back Office request failed: " +
+                response.status
+            );
+        }
+
         const data =
-            await response
-                .json()
-                .catch(
-                    () => ({})
+            await response.json();
+
+        const jobs =
+            Array.isArray(data)
+                ? data
+                : (
+                    Array.isArray(data.jobs)
+                        ? data.jobs
+                        : []
                 );
 
-        if(!response.ok){
+        renderBackOfficeJobs(jobs);
 
-            throw new Error(
-                serverError(
-                    data,
-                    response
-                )
-            );
-
-        }
-
-        if(data.success === false){
-
-            throw new Error(
-                serverError(
-                    data,
-                    response
-                )
-            );
-
-        }
-
-        backOfficeJobsData =
-            normaliseBackOfficeJobs(data);
-
-        renderBackOfficeJobs();
-
-        setStatus(
-            `${backOfficeJobsData.length} payment report(s) loaded.`,
-            "success"
+        setBackOfficeStatus(
+            jobs.length
+                ? jobs.length + " job(s) loaded."
+                : "No jobs found.",
+            jobs.length ? "ready" : ""
         );
 
     }catch(error){
 
-        backOfficeJobs.innerHTML = `
-            <div class="back-office-empty">
-                ${escapeHtml(
-                    error.message ||
-                    "Could not load Back Office payment reports."
-                )}
-            </div>
-        `;
+        console.error(error);
 
-        setStatus(
-            error.message ||
-            "Could not load Back Office payment reports.",
+        setBackOfficeStatus(
+            "Unable to load Back Office jobs.",
             "error"
         );
-
-    }finally{
-
-        backOfficeLoadButton.disabled =
-            false;
-
-        backOfficeLoadButton.textContent =
-            "LOAD";
-
     }
-
 }
 
-/* ============================================================
-   RENDER PAYMENT REPORTS
-============================================================ */
 
-function renderBackOfficeJobs(){
+function renderBackOfficeJobs(jobs){
 
-    backOfficeTotal.textContent =
-        backOfficeJobsData.length;
-
-    let awaitingCount = 0;
-    let unlockedCount = 0;
-
-    backOfficeJobs.innerHTML = "";
-
-    if(!backOfficeJobsData.length){
-
-        backOfficeJobs.innerHTML = `
-            <div class="back-office-empty">
-                No payment reports are currently available.
-            </div>
-        `;
-
-        backOfficeApproved.textContent =
-            "0";
-
-        backOfficeActivated.textContent =
-            "0";
+    if(!jobs.length){
+        jobsList.innerHTML =
+            '<div class="status">No jobs available.</div>';
 
         return;
     }
 
-    backOfficeJobsData.forEach(
-        job => {
+    jobsList.innerHTML =
+        jobs.map(
+            function(job){
 
-            const jobIdValue =
-                getJobIdFromBackOffice(job);
+                const id =
+                    job.job_id ??
+                    job.id ??
+                    "";
 
-            const paymentId =
-                getPaymentId(job);
+                const status =
+                    job.payment_status ??
+                    job.status ??
+                    "Unknown";
 
-            const customerName =
-                getCustomerName(job);
+                const customer =
+                    job.customer_id ??
+                    "";
 
-            const serviceName =
-                getServiceName(job);
+                const version =
+                    job.version_id ??
+                    "";
 
-            const paymentStatus =
-                getPaymentStatus(job);
+                const saved =
+                    job.document_saved_path ||
+                    job.document_path ||
+                    job.saved_document ||
+                    "";
 
-            const awaiting =
-                isAwaitingVerification(job);
+                return `
+                    <div class="job-item">
+                        <div class="job-top">
+                            <div class="job-id">
+                                JOB #${escapeHtml(id)}
+                            </div>
 
-            const unlocked =
-                getDownloadStatus(job);
+                            <div class="job-status">
+                                ${escapeHtml(status)}
+                            </div>
+                        </div>
 
-            if(awaiting){
-                awaitingCount++;
-            }
+                        <div class="job-meta">
+                            Customer: ${escapeHtml(customer)}
+                            <br>
+                            Version: ${escapeHtml(version)}
+                            <br>
+                            Saved document:
+                            ${saved ? "Available" : "Not saved"}
+                        </div>
 
-            if(unlocked){
-                unlockedCount++;
-            }
+                        <div class="job-buttons">
 
-            const createdAt =
-                getCreatedAt(job);
+                            <button
+                                type="button"
+                                class="secondary-btn"
+                                onclick="openBackOfficeJob('${escapeHtml(id)}')"
+                            >
+                                OPEN JOB
+                            </button>
 
-            const amount =
-                getAmount(job);
+                            <button
+                                type="button"
+                                class="primary-btn"
+                                onclick="unlockBackOfficeJob('${escapeHtml(id)}')"
+                            >
+                                UNLOCK DOWNLOAD
+                            </button>
 
-            const documentId =
-                getSavedDocumentId(job);
-
-            const documentUrl =
-                getSavedDocumentUrl(job);
-
-            const documentName =
-                getSavedDocumentName(job);
-
-            const version =
-                getSavedDocumentVersion(job);
-
-            const card =
-                document.createElement("article");
-
-            card.className =
-                "back-office-job" +
-                (
-                    awaiting
-                        ? " reported"
-                        : ""
-                ) +
-                (
-                    unlocked
-                        ? " unlocked"
-                        : ""
-                );
-
-            const title =
-                document.createElement("h3");
-
-            title.className =
-                "back-office-job-title";
-
-            title.textContent =
-                serviceName;
-
-            const meta =
-                document.createElement("div");
-
-            meta.className =
-                "back-office-job-meta";
-
-            meta.textContent =
-                `${customerName} • Job #${jobIdValue || "—"}` +
-                (
-                    createdAt
-                        ? ` • ${formatDate(createdAt)}`
-                        : ""
-                );
-
-            const statuses =
-                document.createElement("div");
-
-            statuses.className =
-                "back-office-status-row";
-
-            const paymentLabel =
-                awaiting
-                    ? "Payment Reported — Awaiting Verification"
-                    : unlocked
-                        ? "Payment Verified"
-                        : (
-                            paymentStatus ||
-                            "Payment Status"
-                        );
-
-            statuses.innerHTML =
-                `
-                <span class="back-office-status ${awaiting ? "waiting" : unlocked ? "good" : ""}">
-                    ${escapeHtml(paymentLabel)}
-                </span>
-
-                ${
-                    paymentId
-                        ? `
-                            <span class="back-office-status">
-                                Payment ID: ${escapeHtml(paymentId)}
-                            </span>
-                          `
-                        : ""
-                }
-
-                ${
-                    amount
-                        ? `
-                            <span class="back-office-status">
-                                ${escapeHtml(formatAmount(amount))}
-                            </span>
-                          `
-                        : ""
-                }
+                        </div>
+                    </div>
                 `;
-
-            card.append(
-                title,
-                meta,
-                statuses
-            );
-
-            const documentBox =
-                document.createElement("div");
-
-            documentBox.className =
-                "back-office-document";
-
-            const documentTitle =
-                document.createElement("div");
-
-            documentTitle.className =
-                "back-office-document-title";
-
-            documentTitle.textContent =
-                "Already-Saved Customer Document";
-
-            const documentMeta =
-                document.createElement("div");
-
-            documentMeta.className =
-                "back-office-document-meta";
-
-            documentMeta.textContent =
-                `File: ${documentName}` +
-                (
-                    version
-                        ? ` • Version ${version}`
-                        : ""
-                ) +
-                (
-                    documentId
-                        ? ` • Saved Document ID: ${documentId}`
-                        : ""
-                );
-
-            const actions =
-                document.createElement("div");
-
-            actions.className =
-                "back-office-document-actions";
-
-            const viewButton =
-                document.createElement("button");
-
-            viewButton.type =
-                "button";
-
-            viewButton.className =
-                "back-office-view-document";
-
-            viewButton.textContent =
-                "VIEW DOCUMENT";
-
-            const unlockButton =
-                document.createElement("button");
-
-            unlockButton.type =
-                "button";
-
-            unlockButton.className =
-                "back-office-unlock";
-
-            if(unlocked){
-
-                unlockButton.textContent =
-                    "DOWNLOAD UNLOCKED";
-
-                unlockButton.disabled =
-                    true;
-
-            }else{
-
-                unlockButton.textContent =
-                    "UNLOCK DOWNLOAD";
-
             }
-
-            viewButton.addEventListener(
-                "click",
-                () => {
-
-                    openSavedDocument(
-                        job
-                    );
-
-                }
-            );
-
-            unlockButton.addEventListener(
-                "click",
-                () => {
-
-                    unlockSavedDocument(
-                        job,
-                        unlockButton,
-                        card
-                    );
-
-                }
-            );
-
-            actions.append(
-                viewButton,
-                unlockButton
-            );
-
-            documentBox.append(
-                documentTitle,
-                documentMeta,
-                actions
-            );
-
-            card.appendChild(
-                documentBox
-            );
-
-            const note =
-                document.createElement("div");
-
-            note.className =
-                "back-office-note";
-
-            note.textContent =
-                unlocked
-                    ? "Download is unlocked for this already-saved document. No new document is generated."
-                    : awaiting
-                        ? "Verify the customer's payment before pressing UNLOCK DOWNLOAD. The existing saved document will be unlocked; it will not be regenerated."
-                        : "This record is read-only here. The saved customer document is not regenerated by Back Office.";
-
-            card.appendChild(
-                note
-            );
-
-            backOfficeJobs.appendChild(
-                card
-            );
-
-        }
-    );
-
-    backOfficeApproved.textContent =
-        awaitingCount;
-
-    backOfficeActivated.textContent =
-        unlockedCount;
-
+        )
+        .join("");
 }
 
-/* ============================================================
-   VIEW ALREADY-SAVED DOCUMENT
-============================================================ */
 
-function openSavedDocument(job){
+async function openBackOfficeJob(jobId){
 
-    const url =
-        getSavedDocumentUrl(job);
-
-    if(url){
-
-        window.open(
-            url,
-            "_blank",
-            "noopener,noreferrer"
-        );
-
+    if(!jobId){
         return;
     }
 
-    const documentId =
-        getSavedDocumentId(job);
-
-    const jobNumber =
-        getJobIdFromBackOffice(job);
-
-    const paymentId =
-        getPaymentId(job);
-
-    const details =
-        [
-            "Already-Saved Customer Document",
-            "",
-            `Job ID: ${jobNumber || "—"}`,
-            `Payment ID: ${paymentId || "—"}`,
-            `Saved Document ID: ${documentId || "—"}`,
-            `File: ${getSavedDocumentName(job)}`,
-            `Version: ${getSavedDocumentVersion(job) || "—"}`,
-            "",
-            "The server did not return a direct document URL."
-        ].join("\n");
-
-    window.alert(
-        details
-    );
-
+    window.location.href =
+        REVIEW_PAGE +
+        "?job_id=" +
+        encodeURIComponent(jobId);
 }
 
-/* ============================================================
-   UNLOCK EXACT SAVED DOCUMENT
-============================================================ */
 
-async function unlockSavedDocument(
-    job,
-    button,
-    card
-){
+async function unlockBackOfficeJob(jobId){
 
     const key =
-        clean(
-            backOfficeKey.value
-        );
+        backOfficeKey.value.trim();
 
     if(!key){
-
-        setStatus(
-            "Enter the Back Office operator key first.",
+        setBackOfficeStatus(
+            "Please enter the Back Office access key.",
             "error"
         );
 
         return;
     }
-
-    const jobNumber =
-        getJobIdFromBackOffice(job);
-
-    const paymentId =
-        getPaymentId(job);
-
-    const documentId =
-        getSavedDocumentId(job);
-
-    if(
-        !jobNumber &&
-        !paymentId &&
-        !documentId
-    ){
-
-        setStatus(
-            "This payment report does not contain a valid saved-document reference.",
-            "error"
-        );
-
-        return;
-    }
-
-    const confirmed =
-        window.confirm(
-            "Have you verified this customer's payment?\n\n" +
-            "Press OK to unlock the EXACT document that was already saved when the customer reported payment.\n\n" +
-            "No document will be regenerated."
-        );
-
-    if(!confirmed){
-        return;
-    }
-
-    button.disabled =
-        true;
-
-    button.textContent =
-        "UNLOCKING...";
-
-    setStatus(
-        "Unlocking the already-saved customer document..."
-    );
 
     try{
 
         const response =
             await fetch(
                 API_BASE +
-                "/api/back-office/activate-download",
+                "/api/back-office/jobs/" +
+                encodeURIComponent(jobId) +
+                "/unlock",
                 {
                     method:"POST",
-
                     headers:{
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "application/json",
-
-                        "X-Admin-Key":
-                            key
+                        "X-Back-Office-Key":key,
+                        "Content-Type":"application/json"
                     },
-
-                    body:
-                        JSON.stringify({
-
-                            job_id:
-                                jobNumber || null,
-
-                            payment_id:
-                                paymentId || null,
-
-                            work_id:
-                                documentId || null,
-
-                            document_id:
-                                documentId || null,
-
-                            admin_key:
-                                key,
-
-                            action:
-                                "unlock_download"
-
-                        })
+                    body:JSON.stringify({
+                        job_id:jobId
+                    })
                 }
             );
 
-        const data =
-            await response
-                .json()
-                .catch(
-                    () => ({})
-                );
-
         if(!response.ok){
-
             throw new Error(
-                serverError(
-                    data,
-                    response
-                )
+                "Unlock failed: " +
+                response.status
             );
-
         }
 
-        if(data.success === false){
-
-            throw new Error(
-                serverError(
-                    data,
-                    response
-                )
-            );
-
-        }
-
-        button.textContent =
-            "DOWNLOAD UNLOCKED";
-
-        button.disabled =
-            true;
-
-        card.classList.remove(
-            "reported"
-        );
-
-        card.classList.add(
-            "unlocked"
-        );
-
-        setStatus(
-            "Payment verified. The exact already-saved document is now unlocked for customer download.",
-            "success"
+        setBackOfficeStatus(
+            "Download unlocked successfully.",
+            "ready"
         );
 
         await loadBackOfficeJobs();
 
     }catch(error){
 
-        button.disabled =
-            false;
+        console.error(error);
 
-        button.textContent =
-            "UNLOCK DOWNLOAD";
-
-        setStatus(
-            error.message ||
-            "Could not unlock the saved document.",
+        setBackOfficeStatus(
+            "Unable to unlock this download.",
             "error"
         );
+    }
+}
 
+
+async function initialize(){
+
+    currentService =
+        getServiceFromUrl();
+
+    if(currentService){
+        localStorage.setItem(
+            "npbc_service",
+            currentService
+        );
     }
 
-}
-
-/* ============================================================
-   OPEN BACK OFFICE
-============================================================ */
-
-function openBackOffice(){
-
-    reviewGatewayOverlay
-        .classList
-        .remove("show");
-
-    closeCustomerCare();
-
-    formView.style.display =
-        "none";
-
-    reviewView.classList.remove(
-        "show"
-    );
-
-    customerBottom.style.display =
-        "none";
-
-    backOfficeView.classList.add(
-        "show"
-    );
-
     serviceBadge.textContent =
-        "BACK OFFICE";
+        currentService
+            ? currentService.toUpperCase()
+            : "DOCUMENT SERVICE";
 
-    backOfficeEntryButton.style.display =
-        "none";
+    getCustomerId();
 
-    setStatus(
-        "Back Office ready."
-    );
+    /*
+      Existing service/form initialization remains
+      controlled by the current server workflow.
+    */
 
-}
+    try{
 
-function exitBackOffice(){
+        const response =
+            await fetch(
+                API_BASE +
+                "/api/chat",
+                {
+                    method:"POST",
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body:JSON.stringify({
+                        message:
+                            "Prepare useful customer-facing information for the selected service.",
+                        service:
+                            currentService,
+                        customer_id:
+                            currentCustomerId,
+                        job_id:
+                            currentJobId
+                    })
+                }
+            );
 
-    backOfficeView.classList.remove(
-        "show"
-    );
+        if(response.ok){
 
-    formView.style.display =
-        "";
+            const data =
+                await response.json();
 
-    customerBottom.style.display =
-        "";
+            if(data.title){
+                introTitle.textContent =
+                    data.title;
+            }
 
-    serviceBadge.textContent =
-        service;
+            if(data.message){
+                introText.textContent =
+                    data.message;
+            }
 
-    backOfficeEntryButton.style.display =
-        "";
-
-    setStatus(
-        ""
-    );
-
-}
-
-/* BACK OFFICE EVENTS */
-
-backOfficeEntryButton.addEventListener(
-    "click",
-    openBackOffice
-);
-
-backOfficeExitButton.addEventListener(
-    "click",
-    exitBackOffice
-);
-
-backOfficeLoadButton.addEventListener(
-    "click",
-    loadBackOfficeJobs
-);
-
-backOfficeRefreshButton.addEventListener(
-    "click",
-    loadBackOfficeJobs
-);
-
-backOfficeKey.addEventListener(
-    "keydown",
-    event => {
-
-        if(event.key === "Enter"){
-
-            event.preventDefault();
-
-            loadBackOfficeJobs();
-
+            if(data.price){
+                price.textContent =
+                    data.price;
+            }
         }
 
+    }catch(error){
+        console.warn(
+            "Guidance information unavailable:",
+            error
+        );
     }
-);
-
-/* BACK OFFICE INITIALISE */
-
-function initBackOffice(){
-
-    formView.style.display =
-        "none";
-
-    reviewView.classList.remove(
-        "show"
-    );
-
-    customerBottom.style.display =
-        "none";
-
-    backOfficeView.classList.add(
-        "show"
-    );
-
-    serviceBadge.textContent =
-        "BACK OFFICE";
-
-    backOfficeEntryButton.style.display =
-        "none";
-
-    setStatus(
-        "Back Office ready."
-    );
-
 }
 
-/* NORMAL CUSTOMER INITIALISE */
 
-async function initCustomer(){
-
-    serviceBadge.textContent =
-        service;
-
-    renderForm();
-
-    await loadGuidance();
-
-}
-
-/* INITIALISE */
-
-async function init(){
-
-    if(isBackOfficeMode){
-
-        initBackOffice();
-
-        return;
-    }
-
-    await initCustomer();
-
-}
-
-init();
+initialize();
 </script>
 
+</div>
 </body>
 </html>
