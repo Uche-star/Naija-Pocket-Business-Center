@@ -1,24 +1,112 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><title>Naija Pocket Business Center</title><style>*{box-sizing:border-box;}html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;}body{background:#050505;color:#fff;font-family:Arial,Helvetica,sans-serif;}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Naija Pocket Business Center</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    background:#050505;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
 
 /* =========================================================
    MAIN PAGE
 ========================================================= */
-.page{width:100%;height:100vh;height:100dvh;padding:max(4px,env(safe-area-inset-top)) 4px max(4px,env(safe-area-inset-bottom)) 4px;display:flex;flex-direction:column;background:radial-gradient(circle at 50% -20%,rgba(31,164,99,.13),transparent 38%),linear-gradient(145deg,#020202 0%,#090909 45%,#000 100%);overflow:hidden;}
+
+.page{
+    width:100%;
+    height:100vh;
+    height:100dvh;
+    padding:max(4px,env(safe-area-inset-top)) 4px max(4px,env(safe-area-inset-bottom)) 4px;
+    display:flex;
+    flex-direction:column;
+    background:
+        radial-gradient(circle at 50% -20%,rgba(31,164,99,.13),transparent 38%),
+        linear-gradient(145deg,#020202 0%,#090909 45%,#000 100%);
+    overflow:hidden;
+}
 
 /* =========================================================
    LUXURY WELCOME PANEL
 ========================================================= */
-.welcome-half{position:relative;width:100%;height:50%;flex:0 0 50%;display:flex;align-items:stretch;justify-content:center;overflow:hidden;padding:10px 14px 10px;text-align:center;background:radial-gradient(ellipse at 50% 35%,#242424 0%,#101010 42%,#050505 78%,#000 100%);border:1px solid rgba(212,175,55,.30);border-bottom:2px solid #d4af37;border-radius:10px;box-shadow:inset 0 0 45px rgba(255,255,255,.025),0 8px 35px rgba(0,0,0,.65);}
+
+.welcome-half{
+    position:relative;
+    width:100%;
+    height:50%;
+    flex:0 0 50%;
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+    overflow:hidden;
+    padding:10px 14px 10px;
+    text-align:center;
+    background:
+        radial-gradient(
+            ellipse at 50% 35%,
+            #242424 0%,
+            #101010 42%,
+            #050505 78%,
+            #000 100%
+        );
+    border:1px solid rgba(212,175,55,.30);
+    border-bottom:2px solid #d4af37;
+    border-radius:10px;
+    box-shadow:
+        inset 0 0 45px rgba(255,255,255,.025),
+        0 8px 35px rgba(0,0,0,.65);
+}
 
 /* Luxury inner frame */
-.welcome-half::before{content:"";position:absolute;top:7px;left:7px;right:7px;bottom:7px;border:1px solid rgba(212,175,55,.22);border-radius:7px;pointer-events:none;}
+
+.welcome-half::before{
+    content:"";
+    position:absolute;
+    top:7px;
+    left:7px;
+    right:7px;
+    bottom:7px;
+    border:1px solid rgba(212,175,55,.22);
+    border-radius:7px;
+    pointer-events:none;
+}
 
 /* Corner ornaments */
-.welcome-half::after{content:"";position:absolute;width:80px;height:80px;top:-45px;right:-45px;border:1px solid rgba(212,175,55,.25);border-radius:50%;box-shadow:0 0 0 12px rgba(212,175,55,.025),0 0 0 24px rgba(212,175,55,.018);pointer-events:none;}
+
+.welcome-half::after{
+    content:"";
+    position:absolute;
+    width:80px;
+    height:80px;
+    top:-45px;
+    right:-45px;
+    border:1px solid rgba(212,175,55,.25);
+    border-radius:50%;
+    box-shadow:
+        0 0 0 12px rgba(212,175,55,.025),
+        0 0 0 24px rgba(212,175,55,.018);
+    pointer-events:none;
+}
 
 /* =========================================================
    CUSTOMER CARE — LUXURY EDGE CONTROL
 ========================================================= */
+
 .customer-care{
     position:absolute;
     top:2px;
@@ -70,12 +158,13 @@
     width:34px;
     height:1px;
     margin:0 auto 5px;
-    background:linear-gradient(
-        90deg,
-        transparent,
-        #d4af37 50%,
-        transparent
-    );
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37 50%,
+            transparent
+        );
 }
 
 .customer-care-button::after{
@@ -85,12 +174,13 @@
     right:20%;
     bottom:3px;
     height:1px;
-    background:linear-gradient(
-        90deg,
-        transparent,
-        rgba(31,164,99,.75),
-        transparent
-    );
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(31,164,99,.75),
+            transparent
+        );
 }
 
 .customer-care-button:hover,
@@ -196,90 +286,394 @@
     text-align:center;
 }
 
-.welcome-content{position:relative;z-index:2;width:100%;height:100%;max-width:1200px;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;overflow:hidden;padding:4px 0;}
+/* =========================================================
+   WELCOME CONTENT
+========================================================= */
+
+.welcome-content{
+    position:relative;
+    z-index:2;
+    width:100%;
+    height:100%;
+    max-width:1200px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-evenly;
+    overflow:hidden;
+    padding:4px 0;
+}
 
 /* =========================================================
    BRAND
 ========================================================= */
-.brand-kicker{margin:0;color:#d4af37;font-family:Georgia,"Times New Roman",serif;font-size:clamp(9px,2vw,14px);font-weight:400;letter-spacing:clamp(3px,1vw,7px);text-transform:uppercase;opacity:.9;}
 
-.brand-name{width:100%;margin:0;color:#fff;font-family:Georgia,"Times New Roman",serif;font-size:clamp(28px,8vw,65px);font-weight:700;line-height:1.08;letter-spacing:clamp(1px,.5vw,4px);text-transform:uppercase;text-shadow:0 2px 25px rgba(0,0,0,.8);flex:0 0 auto;}
+.brand-kicker{
+    margin:0;
+    color:#d4af37;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(9px,2vw,14px);
+    font-weight:400;
+    letter-spacing:clamp(3px,1vw,7px);
+    text-transform:uppercase;
+    opacity:.9;
+}
 
-.brand-name .green{color:#1fa463;}
-.brand-name .gold{color:#D4AF6A;}
+/* Main brand moved slightly downward */
+
+.brand-name{
+    width:100%;
+    margin:8px 0 0;
+    color:#fff;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(28px,8vw,65px);
+    font-weight:700;
+    line-height:1.08;
+    letter-spacing:clamp(1px,.5vw,4px);
+    text-transform:uppercase;
+    text-shadow:0 2px 25px rgba(0,0,0,.8);
+    flex:0 0 auto;
+}
+
+/* =========================================================
+   UPPER HALF LUXURY COLOUR PALETTE
+========================================================= */
+
+.brand-name .green{
+    color:#39B87F;
+    text-shadow:
+        0 0 18px rgba(57,184,127,.12),
+        0 2px 25px rgba(0,0,0,.8);
+}
+
+.brand-name .gold{
+    color:#E8C96A;
+    text-shadow:
+        0 0 18px rgba(232,201,106,.12),
+        0 2px 25px rgba(0,0,0,.8);
+}
+
+.brand-kicker{
+    color:#B99BE8;
+}
+
+.value:first-of-type{
+    color:#F4D58D;
+}
+
+.value:nth-of-type(2){
+    color:#70D1C1;
+}
+
+.value.luxury-value .luxury-main{
+    color:#FFF4D6;
+}
+
+.value.luxury-value .luxury-sub{
+    color:#8FB8E8;
+}
+
+.services-title{
+    color:#E8B4A8;
+}
 
 /* =========================================================
    GOLD ORNAMENT
 ========================================================= */
-.gold-divider{width:clamp(76px,22vw,151px);height:1px;margin:0;background:linear-gradient(90deg,transparent,#d4af37 25%,#f4d878 50%,#d4af37 75%,transparent);position:relative;flex:0 0 auto;}
 
-.gold-divider::before,.gold-divider::after{content:"";position:absolute;top:50%;width:6px;height:6px;border:1px solid #d4af37;transform:translateY(-50%) rotate(45deg);}
-.gold-divider::before{left:8%;}
-.gold-divider::after{right:8%;}
+.gold-divider{
+    width:clamp(76px,22vw,151px);
+    height:1px;
+    margin:0;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #D4AF37 25%,
+            #F4D878 50%,
+            #D4AF37 75%,
+            transparent
+        );
+    position:relative;
+    flex:0 0 auto;
+}
+
+.gold-divider::before,
+.gold-divider::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:6px;
+    height:6px;
+    border:1px solid #d4af37;
+    transform:translateY(-50%) rotate(45deg);
+}
+
+.gold-divider::before{
+    left:8%;
+}
+
+.gold-divider::after{
+    right:8%;
+}
 
 /* =========================================================
    BRAND PROMISE
 ========================================================= */
-.value{width:100%;margin:0;color:#f4f1e8;font-size:clamp(12px,3vw,22px);font-weight:600;line-height:1.15;letter-spacing:clamp(.2px,.15vw,1px);flex:0 0 auto;}
 
-.value:first-of-type{color:#d4af37;font-weight:700;letter-spacing:clamp(.5px,.2vw,1.5px);}
+.value{
+    width:100%;
+    margin:0;
+    color:#f4f1e8;
+    font-size:clamp(12px,3vw,22px);
+    font-weight:600;
+    line-height:1.15;
+    letter-spacing:clamp(.2px,.15vw,1px);
+    flex:0 0 auto;
+}
 
-.value.luxury-value{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:2px 8px;color:#f5f1e6;font-family:Georgia,"Times New Roman",serif;font-size:clamp(11px,3vw,22px);font-weight:400;line-height:1.08;letter-spacing:clamp(.8px,.25vw,2.5px);text-transform:uppercase;text-shadow:0 2px 12px rgba(212,175,55,.12);}
+.value.luxury-value{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    padding:2px 8px;
+    color:#f5f1e6;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(11px,3vw,22px);
+    font-weight:400;
+    line-height:1.08;
+    letter-spacing:clamp(.8px,.25vw,2.5px);
+    text-transform:uppercase;
+    text-shadow:0 2px 12px rgba(212,175,55,.12);
+}
 
-.value.luxury-value::before{content:"";width:clamp(31px,9vw,71px);height:1px;margin-bottom:1px;background:linear-gradient(90deg,transparent,#d4af37,transparent);}
+.value.luxury-value::before{
+    content:"";
+    width:clamp(31px,9vw,71px);
+    height:1px;
+    margin-bottom:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
+        );
+}
 
-.value.luxury-value .luxury-main{display:block;color:#fff;font-weight:600;letter-spacing:clamp(.7px,.22vw,2px);}
+.value.luxury-value .luxury-main{
+    display:block;
+    font-weight:600;
+    letter-spacing:clamp(.7px,.22vw,2px);
+}
 
-.value.luxury-value .luxury-sub{display:block;color:#d4af37;font-size:1em;font-weight:400;letter-spacing:clamp(1px,.3vw,3px);text-transform:uppercase;}
+.value.luxury-value .luxury-sub{
+    display:block;
+    font-size:1em;
+    font-weight:400;
+    letter-spacing:clamp(1px,.3vw,3px);
+    text-transform:uppercase;
+}
 
-.value.luxury-value::after{content:"";width:clamp(46px,13vw,96px);height:1px;margin-top:1px;background:linear-gradient(90deg,transparent,#d4af37,transparent);opacity:.55;}
+.value.luxury-value::after{
+    content:"";
+    width:clamp(46px,13vw,96px);
+    height:1px;
+    margin-top:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
+        );
+    opacity:.55;
+}
 
 /* =========================================================
    DOCUMENT HUB TITLE
 ========================================================= */
-.services-title{width:100%;margin:0;color:#fff;font-family:Georgia,"Times New Roman",serif;font-size:clamp(12px,3vw,23px);font-weight:700;line-height:1.1;letter-spacing:clamp(.8px,.25vw,2px);text-transform:uppercase;}
+
+.services-title{
+    width:100%;
+    margin:0;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(12px,3vw,23px);
+    font-weight:700;
+    line-height:1.1;
+    letter-spacing:clamp(.8px,.25vw,2px);
+    text-transform:uppercase;
+}
 
 /* =========================================================
    MOVING BRAND LINE
 ========================================================= */
-.document-people-window{width:100%;overflow:hidden;margin:0;padding:2px 0;flex:0 0 auto;}
 
-.document-people-track{display:inline-flex;align-items:center;flex-wrap:nowrap;width:max-content;white-space:nowrap;color:#D4AF6A;font-family:Georgia,"Times New Roman",serif;font-size:clamp(12px,3vw,23px);font-weight:700;letter-spacing:clamp(1px,.35vw,3px);animation:documentPeopleMove 22s linear infinite;will-change:transform;}
+.document-people-window{
+    width:100%;
+    overflow:hidden;
+    margin:0;
+    padding:2px 0;
+    flex:0 0 auto;
+}
 
-.document-people-track .tagline-text{display:inline-block;flex:0 0 auto;white-space:nowrap;}
+.document-people-track{
+    display:inline-flex;
+    align-items:center;
+    flex-wrap:nowrap;
+    width:max-content;
+    white-space:nowrap;
+    color:#E8C96A;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(12px,3vw,23px);
+    font-weight:700;
+    letter-spacing:clamp(1px,.35vw,3px);
+    animation:documentPeopleMove 22s linear infinite;
+    will-change:transform;
+}
 
-.document-people-track .wide-gap{display:inline-block;width:360px;min-width:360px;height:1px;flex:0 0 360px;}
+.document-people-track .tagline-text{
+    display:inline-block;
+    flex:0 0 auto;
+    white-space:nowrap;
+}
+
+.document-people-track .wide-gap{
+    display:inline-block;
+    width:360px;
+    min-width:360px;
+    height:1px;
+    flex:0 0 360px;
+}
 
 @keyframes documentPeopleMove{
-    0%{transform:translateX(100vw);}
-    100%{transform:translateX(calc(-100% - 100vw));}
+    0%{
+        transform:translateX(100vw);
+    }
+
+    100%{
+        transform:translateX(calc(-100% - 100vw));
+    }
 }
 
 /* =========================================================
    SERVICES SECTION
 ========================================================= */
-.services-half{width:100%;height:50%;flex:0 0 50%;display:flex;flex-direction:column;overflow:hidden;padding-top:5px;}
+
+.services-half{
+    width:100%;
+    height:50%;
+    flex:0 0 50%;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    padding-top:5px;
+}
 
 /* =========================================================
    IMPORTANT SERVICE INSTRUCTION
 ========================================================= */
-.service-instruction{width:100%;flex:0 0 auto;margin:0 0 5px;padding:5px 8px 7px;color:#FFFDF5;font-family:Georgia,"Times New Roman",serif;font-size:clamp(12px,3vw,20px);font-weight:700;line-height:1.15;text-align:center;letter-spacing:clamp(.4px,.16vw,1.2px);text-transform:uppercase;text-shadow:0 1px 8px rgba(212,175,106,.30);border-top:1px solid rgba(212,175,106,.70);border-bottom:1px solid rgba(212,175,106,.45);}
+
+.service-instruction{
+    width:100%;
+    flex:0 0 auto;
+    margin:0 0 5px;
+    padding:5px 8px 7px;
+    color:#FFFDF5;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(12px,3vw,20px);
+    font-weight:700;
+    line-height:1.15;
+    text-align:center;
+    letter-spacing:clamp(.4px,.16vw,1.2px);
+    text-transform:uppercase;
+    text-shadow:0 1px 8px rgba(212,175,106,.30);
+    border-top:1px solid rgba(212,175,106,.70);
+    border-bottom:1px solid rgba(212,175,106,.45);
+}
 
 /* =========================================================
    SERVICE GRID
 ========================================================= */
-.services{width:100%;flex:1 1 auto;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(10,minmax(0,1fr));gap:4px;overflow:hidden;padding:1px 1px 0;}
+
+.services{
+    width:100%;
+    flex:1 1 auto;
+    min-height:0;
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-template-rows:repeat(10,minmax(0,1fr));
+    gap:4px;
+    overflow:hidden;
+    padding:1px 1px 0;
+}
 
 /* =========================================================
    SERVICE BUTTON
 ========================================================= */
-.service-button{position:relative;width:100%;min-width:0;min-height:0;padding:3px 5px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.008));color:#f4f2eb;border:1px solid rgba(255,255,255,.055);border-radius:5px;font-family:Arial,Helvetica,sans-serif;font-size:clamp(10px,2.5vw,17px);font-weight:700;line-height:1.02;letter-spacing:clamp(.05px,.08vw,.5px);text-align:center;display:flex;align-items:center;justify-content:center;white-space:normal;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.025);transition:color .18s ease,background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease;}
 
-.service-button::after{content:"";position:absolute;left:25%;right:25%;bottom:1px;height:1px;background:linear-gradient(90deg,transparent,#d4af37,transparent);opacity:.65;pointer-events:none;transition:left .18s ease,right .18s ease,opacity .18s ease;}
+.service-button{
+    position:relative;
+    width:100%;
+    min-width:0;
+    min-height:0;
+    padding:3px 5px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.035),
+            rgba(255,255,255,.008)
+        );
+    color:#f4f2eb;
+    border:1px solid rgba(255,255,255,.055);
+    border-radius:5px;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:clamp(10px,2.5vw,17px);
+    font-weight:700;
+    line-height:1.02;
+    letter-spacing:clamp(.05px,.08vw,.5px);
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    white-space:normal;
+    overflow:hidden;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+    transition:
+        color .18s ease,
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease;
+}
+
+.service-button::after{
+    content:"";
+    position:absolute;
+    left:25%;
+    right:25%;
+    bottom:1px;
+    height:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
+        );
+    opacity:.65;
+    pointer-events:none;
+    transition:left .18s ease,right .18s ease,opacity .18s ease;
+}
 
 /* =========================================================
    LUXURY SERVICE COLOR PALETTE
 ========================================================= */
+
 .service-button:nth-child(1){color:#F4D58D;}
 .service-button:nth-child(2){color:#FFF4D6;}
 .service-button:nth-child(3){color:#E8B4A8;}
@@ -309,40 +703,132 @@
 .service-button:nth-child(27){color:#E8B4A8;}
 .service-button:nth-child(28){color:#FFF4D6;}
 
-.service-button:hover{color:#d4af37;background:linear-gradient(145deg,rgba(212,175,55,.09),rgba(31,164,99,.035));border-color:rgba(212,175,55,.28);box-shadow:0 0 15px rgba(212,175,55,.06);transform:translateY(-1px);}
+.service-button:hover{
+    color:#d4af37;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(212,175,55,.09),
+            rgba(31,164,99,.035)
+        );
+    border-color:rgba(212,175,55,.28);
+    box-shadow:0 0 15px rgba(212,175,55,.06);
+    transform:translateY(-1px);
+}
 
-.service-button:hover::after{left:12%;right:12%;opacity:1;}
+.service-button:hover::after{
+    left:12%;
+    right:12%;
+    opacity:1;
+}
 
-.service-button:active{color:#d4af37;transform:scale(.96);}
+.service-button:active{
+    color:#d4af37;
+    transform:scale(.96);
+}
 
-.service-button.working{color:#d4af37;border-color:rgba(212,175,55,.55);background:rgba(212,175,55,.06);}
+.service-button.working{
+    color:#d4af37;
+    border-color:rgba(212,175,55,.55);
+    background:rgba(212,175,55,.06);
+}
 
-.service-button:disabled{cursor:wait;opacity:.42;}
+.service-button:disabled{
+    cursor:wait;
+    opacity:.42;
+}
 
 /* =========================================================
    FINAL BRAND SIGNATURE
+   DOUBLE ARROW/DASH SIGNS REMOVED
 ========================================================= */
-.luxury-tagline{grid-column:1 / -1;grid-row:10;position:relative;width:100%;min-width:0;padding:2px 6px;color:#d4af37;font-family:Georgia,"Times New Roman",serif;font-size:clamp(8px,2.1vw,17px);font-weight:700;line-height:1.05;letter-spacing:clamp(.3px,.15vw,1.4px);text-align:center;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;text-transform:uppercase;}
 
-.luxury-tagline::before,.luxury-tagline::after{content:"";height:1px;flex:1 1 auto;min-width:8px;background:linear-gradient(90deg,transparent,#d4af37);opacity:.65;}
+.luxury-tagline{
+    grid-column:1 / -1;
+    grid-row:10;
+    position:relative;
+    width:100%;
+    min-width:0;
+    padding:2px 6px;
+    color:#d4af37;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(8px,2.1vw,17px);
+    font-weight:700;
+    line-height:1.05;
+    letter-spacing:clamp(.3px,.15vw,1.4px);
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-transform:uppercase;
+}
 
-.luxury-tagline::after{background:linear-gradient(90deg,#d4af37,transparent);}
+.luxury-tagline::before,
+.luxury-tagline::after{
+    content:"";
+    height:1px;
+    flex:1 1 auto;
+    min-width:8px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37
+        );
+    opacity:.65;
+}
 
-.luxury-tagline .brand-signature{flex:0 1 auto;min-width:0;padding:0 8px;}
+.luxury-tagline::after{
+    background:
+        linear-gradient(
+            90deg,
+            #d4af37,
+            transparent
+        );
+}
 
-.luxury-tagline .brand-main{font-weight:800;letter-spacing:clamp(.4px,.18vw,1.8px);}
+.luxury-tagline .brand-signature{
+    flex:0 1 auto;
+    min-width:0;
+    padding:0 8px;
+}
 
-.luxury-tagline .brand-sub{font-weight:400;letter-spacing:clamp(.3px,.15vw,1.3px);}
+.luxury-tagline .brand-main{
+    font-weight:800;
+    letter-spacing:clamp(.4px,.18vw,1.8px);
+}
+
+.luxury-tagline .brand-sub{
+    display:block;
+    margin-top:1px;
+    font-weight:400;
+    letter-spacing:clamp(.3px,.15vw,1.3px);
+}
 
 /* =========================================================
    SMALL PHONES
 ========================================================= */
+
 @media(max-width:430px){
-    .page{padding-left:3px;padding-right:3px;}
 
-    .welcome-half{padding:6px 8px 7px;border-radius:8px;}
+    .page{
+        padding-left:3px;
+        padding-right:3px;
+    }
 
-    .welcome-half::before{top:5px;left:5px;right:5px;bottom:5px;}
+    .welcome-half{
+        padding:6px 8px 7px;
+        border-radius:8px;
+    }
+
+    .welcome-half::before{
+        top:5px;
+        left:5px;
+        right:5px;
+        bottom:5px;
+    }
 
     .customer-care{
         top:1px;
@@ -365,40 +851,89 @@
         width:176px;
     }
 
-    .brand-kicker{font-size:8px;letter-spacing:3px;}
+    .brand-kicker{
+        font-size:8px;
+        letter-spacing:3px;
+    }
 
-    .brand-name{font-size:28px;letter-spacing:1px;line-height:1.08;}
+    .brand-name{
+        font-size:28px;
+        letter-spacing:1px;
+        line-height:1.08;
+        margin-top:8px;
+    }
 
-    .gold-divider{width:83px;}
+    .gold-divider{
+        width:83px;
+    }
 
-    .value{font-size:12px;line-height:1.12;}
+    .value{
+        font-size:12px;
+        line-height:1.12;
+    }
 
-    .value.luxury-value{font-size:11.5px;gap:2px;padding:1px 5px;}
+    .value.luxury-value{
+        font-size:11.5px;
+        gap:2px;
+        padding:1px 5px;
+    }
 
-    .value.luxury-value .luxury-sub{letter-spacing:1px;}
+    .value.luxury-value .luxury-sub{
+        letter-spacing:1px;
+    }
 
-    .services-title{font-size:12px;}
+    .services-title{
+        font-size:12px;
+    }
 
-    .document-people-track{font-size:12px;letter-spacing:1.4px;}
+    .document-people-track{
+        font-size:12px;
+        letter-spacing:1.4px;
+    }
 
-    .document-people-track .wide-gap{width:270px;min-width:270px;flex-basis:270px;}
+    .document-people-track .wide-gap{
+        width:270px;
+        min-width:270px;
+        flex-basis:270px;
+    }
 
-    .service-instruction{font-size:11.5px;font-weight:700;line-height:1.15;letter-spacing:.45px;padding:4px 4px 5px;margin-bottom:3px;}
+    .service-instruction{
+        font-size:11.5px;
+        font-weight:700;
+        line-height:1.15;
+        letter-spacing:.45px;
+        padding:4px 4px 5px;
+        margin-bottom:3px;
+    }
 
-    .services{gap:3px;}
+    .services{
+        gap:3px;
+    }
 
-    .service-button{padding:2px 3px;font-size:11px;}
+    .service-button{
+        padding:2px 3px;
+        font-size:11px;
+    }
 
-    .luxury-tagline{font-size:8.5px;padding:2px 2px;}
+    .luxury-tagline{
+        font-size:8.5px;
+        padding:2px 2px;
+    }
 
-    .luxury-tagline .brand-signature{padding:0 4px;}
+    .luxury-tagline .brand-signature{
+        padding:0 4px;
+    }
 }
 
 /* =========================================================
    VERY SMALL PHONES
 ========================================================= */
+
 @media(max-width:360px){
-    .welcome-half{padding:5px 6px 6px;}
+
+    .welcome-half{
+        padding:5px 6px 6px;
+    }
 
     .customer-care{
         top:0;
@@ -421,60 +956,126 @@
         width:160px;
     }
 
-    .brand-kicker{font-size:7px;letter-spacing:2.5px;}
+    .brand-kicker{
+        font-size:7px;
+        letter-spacing:2.5px;
+    }
 
-    .brand-name{font-size:24px;letter-spacing:.8px;line-height:1.08;}
+    .brand-name{
+        font-size:24px;
+        letter-spacing:.8px;
+        line-height:1.08;
+        margin-top:8px;
+    }
 
-    .gold-divider{width:69px;}
+    .gold-divider{
+        width:69px;
+    }
 
-    .value{font-size:10px;}
+    .value{
+        font-size:10px;
+    }
 
-    .value.luxury-value{font-size:9.8px;}
+    .value.luxury-value{
+        font-size:9.8px;
+    }
 
-    .services-title{font-size:10.5px;}
+    .services-title{
+        font-size:10.5px;
+    }
 
-    .document-people-track{font-size:10.5px;}
+    .document-people-track{
+        font-size:10.5px;
+    }
 
-    .document-people-track .wide-gap{width:230px;min-width:230px;flex-basis:230px;}
+    .document-people-track .wide-gap{
+        width:230px;
+        min-width:230px;
+        flex-basis:230px;
+    }
 
-    .service-instruction{font-size:10px;}
+    .service-instruction{
+        font-size:10px;
+    }
 
-    .services{gap:2px;}
+    .services{
+        gap:2px;
+    }
 
-    .service-button{padding:1px 2px;font-size:10px;}
+    .service-button{
+        padding:1px 2px;
+        font-size:10px;
+    }
 
-    .luxury-tagline{font-size:7.5px;}
+    .luxury-tagline{
+        font-size:7.5px;
+    }
 
-    .luxury-tagline .brand-signature{padding:0 2px;}
+    .luxury-tagline .brand-signature{
+        padding:0 2px;
+    }
 }
 
 /* =========================================================
    TABLET / DESKTOP
 ========================================================= */
+
 @media(min-width:700px){
-    .brand-name{font-size:clamp(43px,6vw,67px);}
 
-    .value{font-size:clamp(18px,2.5vw,24px);}
+    .brand-name{
+        font-size:clamp(43px,6vw,67px);
+        margin-top:12px;
+    }
 
-    .value.luxury-value{font-size:clamp(18px,2.35vw,23px);}
+    .value{
+        font-size:clamp(18px,2.5vw,24px);
+    }
 
-    .services-title{font-size:clamp(19px,2.6vw,25px);}
+    .value.luxury-value{
+        font-size:clamp(18px,2.35vw,23px);
+    }
 
-    .document-people-track{font-size:clamp(20px,3vw,27px);}
+    .services-title{
+        font-size:clamp(19px,2.6vw,25px);
+    }
 
-    .document-people-track .wide-gap{width:620px;min-width:620px;flex-basis:620px;}
+    .document-people-track{
+        font-size:clamp(20px,3vw,27px);
+    }
 
-    .service-button{font-size:16px;}
+    .document-people-track .wide-gap{
+        width:620px;
+        min-width:620px;
+        flex-basis:620px;
+    }
 
-    .services{gap:5px;}
+    .service-button{
+        font-size:16px;
+    }
 
-    .luxury-tagline{font-size:clamp(13px,1.8vw,17px);}
+    .services{
+        gap:5px;
+    }
+
+    .luxury-tagline{
+        font-size:clamp(13px,1.8vw,17px);
+    }
 }
-</style></head><body><div class="page">
+</style>
+</head>
+
+<body>
+
+<div class="page">
 
 <section class="welcome-half">
 
+    <!-- =====================================================
+         CUSTOMER CARE
+    ====================================================== -->
+
     <div class="customer-care">
+
         <button
             type="button"
             class="customer-care-button"
@@ -489,6 +1090,7 @@
             class="customer-care-panel"
             id="customerCarePanel"
         >
+
             <div class="customer-care-heading">
                 CONTACT CUSTOMER CARE
             </div>
@@ -512,16 +1114,30 @@
             <span class="customer-care-number">
                 +234 805 707 3891
             </span>
+
         </div>
     </div>
+
+    <!-- =====================================================
+         WELCOME CONTENT
+    ====================================================== -->
 
     <div class="welcome-content">
 
         <h1 class="brand-name">
-            <span class="green">NAIJA POCKET</span>
+
+            <span class="green">
+                NAIJA POCKET
+            </span>
+
             <br>
+
             BUSINESS
-            <span class="gold">CENTER</span>
+
+            <span class="gold">
+                CENTER
+            </span>
+
         </h1>
 
         <div class="gold-divider"></div>
@@ -535,6 +1151,7 @@
         </div>
 
         <div class="value luxury-value">
+
             <span class="luxury-main">
                 DO EVERYTHING CONCERNING YOUR DOCUMENTS
             </span>
@@ -542,6 +1159,7 @@
             <span class="luxury-sub">
                 FROM YOUR PHONE, WHEREVER YOU ARE
             </span>
+
         </div>
 
         <div class="services-title">
@@ -549,16 +1167,21 @@
         </div>
 
         <div class="document-people-window">
+
             <div class="document-people-track">
+
                 <span class="tagline-text">
-                    PREPARE YOUR DOCUMENTS IN MINUTES
+                    THE DOCUMENT PEOPLE
                 </span>
 
                 <span class="wide-gap"></span>
+
             </div>
+
         </div>
 
     </div>
+
 </section>
 
 <section class="services-half">
@@ -678,19 +1301,25 @@
         </button>
 
         <div class="luxury-tagline">
+
             <span class="brand-signature">
+
                 <span class="brand-main">
                     NAIJA POCKET BUSINESS CENTER
                 </span>
 
                 <span class="brand-sub">
-                    — YOUR BUSINESS CENTER IN YOUR POCKET —
+                    YOUR BUSINESS CENTER IN YOUR POCKET
                 </span>
+
             </span>
+
         </div>
 
     </div>
+
 </section>
+
 </div>
 
 <script>
@@ -702,20 +1331,27 @@ const serviceButtons =
 let requestInProgress = false;
 
 function releaseServiceButtons(){
+
     requestInProgress = false;
 
     serviceButtons.forEach(function(button){
+
         button.disabled = false;
+
         button.classList.remove("working");
+
     });
 }
 
 function cryptoRandomId(){
+
     if(
         window.crypto &&
         window.crypto.randomUUID
     ){
+
         return window.crypto.randomUUID();
+
     }
 
     return(
@@ -727,11 +1363,14 @@ function cryptoRandomId(){
 }
 
 function openWorkspace(service,button){
+
     if(
         requestInProgress ||
         !service
     ){
+
         return;
+
     }
 
     requestInProgress = true;
@@ -739,9 +1378,13 @@ function openWorkspace(service,button){
     button.classList.add("working");
 
     serviceButtons.forEach(function(otherButton){
+
         if(otherButton !== button){
+
             otherButton.disabled = true;
+
         }
+
     });
 
     let customerId =
@@ -750,6 +1393,7 @@ function openWorkspace(service,button){
         );
 
     if(!customerId){
+
         customerId =
             "customer_" +
             cryptoRandomId();
@@ -758,6 +1402,7 @@ function openWorkspace(service,button){
             "npbc_customer_id",
             customerId
         );
+
     }
 
     localStorage.setItem(
@@ -777,9 +1422,11 @@ function openWorkspace(service,button){
 }
 
 serviceButtons.forEach(function(button){
+
     button.addEventListener(
         "click",
         function(){
+
             const service =
                 button.getAttribute(
                     "data-service"
@@ -789,8 +1436,10 @@ serviceButtons.forEach(function(button){
                 service,
                 button
             );
+
         }
     );
+
 });
 
 releaseServiceButtons();
@@ -798,22 +1447,27 @@ releaseServiceButtons();
 window.addEventListener(
     "pageshow",
     function(){
+
         releaseServiceButtons();
+
     }
 );
 
 document.addEventListener(
     "visibilitychange",
     function(){
+
         if(
             document.visibilityState ===
             "visible"
         ){
+
             releaseServiceButtons();
+
         }
+
     }
 );
-
 
 /* =========================================================
    CUSTOMER CARE
@@ -830,17 +1484,24 @@ const customerCarePanel =
     );
 
 function closeCustomerCare(){
+
     if(!customerCarePanel){
+
         return;
+
     }
 
-    customerCarePanel.classList.remove("open");
+    customerCarePanel.classList.remove(
+        "open"
+    );
 
     if(customerCareButton){
+
         customerCareButton.setAttribute(
             "aria-expanded",
             "false"
         );
+
     }
 }
 
@@ -852,6 +1513,7 @@ if(
     customerCareButton.addEventListener(
         "click",
         function(event){
+
             event.stopPropagation();
 
             const isOpen =
@@ -860,8 +1522,11 @@ if(
                 );
 
             if(isOpen){
+
                 closeCustomerCare();
+
             }else{
+
                 customerCarePanel.classList.add(
                     "open"
                 );
@@ -870,32 +1535,44 @@ if(
                     "aria-expanded",
                     "true"
                 );
+
             }
+
         }
     );
 
     customerCarePanel.addEventListener(
         "click",
         function(event){
+
             event.stopPropagation();
+
         }
     );
 
     document.addEventListener(
         "click",
         function(){
+
             closeCustomerCare();
+
         }
     );
 
     document.addEventListener(
         "keydown",
         function(event){
+
             if(event.key === "Escape"){
+
                 closeCustomerCare();
+
             }
+
         }
     );
 }
 </script>
-</body></html>
+
+</body>
+</html>
