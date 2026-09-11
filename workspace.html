@@ -1077,16 +1077,6 @@ button:disabled{
     line-height:1.6;
 }
 
-.review-gateway-note{
-    margin:12px 0 0;
-    padding:9px;
-    background:#111;
-    border-radius:8px;
-    color:#999;
-    font-size:10px;
-    line-height:1.5;
-}
-
 .review-gateway-button{
     width:100%;
     min-height:50px;
@@ -1103,18 +1093,6 @@ button:disabled{
     color:#000;
     font-size:13px;
     font-weight:900;
-}
-
-.review-gateway-close{
-    width:100%;
-    min-height:42px;
-    margin-top:7px;
-    border-radius:9px;
-    background:#181818;
-    color:#fff;
-    border:1px solid rgba(255,255,255,.13);
-    font-size:11px;
-    font-weight:800;
 }
 
 /* ============================================================
@@ -1483,15 +1461,6 @@ button:disabled{
         CUSTOMER CARE
     </button>
 
-
-    <button
-        id="customerServiceButton"
-        class="tool-button"
-        type="button"
-    >
-        Customer Service
-    </button>
-
 </div>
 
 
@@ -1622,24 +1591,12 @@ button:disabled{
         request corrections, approve it and continue to payment.
     </p>
 
-    <div class="review-gateway-note">
-        The review page will open using the active server job.
-    </div>
-
     <button
         id="reviewGatewayOpenButton"
         class="review-gateway-button"
         type="button"
     >
         Open Full Review
-    </button>
-
-    <button
-        id="reviewGatewayCloseButton"
-        class="review-gateway-close"
-        type="button"
-    >
-        Continue Here
     </button>
 
 </div>
@@ -1741,9 +1698,6 @@ const reviewGatewayOverlay =
 
 const reviewGatewayOpenButton =
     $("reviewGatewayOpenButton");
-
-const reviewGatewayCloseButton =
-    $("reviewGatewayCloseButton");
 
 const workspaceOpenReviewButton =
     $("workspaceOpenReviewButton");
@@ -2558,6 +2512,7 @@ function collectForm(){
         });
 
     return data;
+
 }
 
 
@@ -2889,12 +2844,6 @@ reviewGatewayOpenButton.addEventListener(
 workspaceOpenReviewButton.addEventListener(
     "click",
     openFullReview
-);
-
-
-reviewGatewayCloseButton.addEventListener(
-    "click",
-    closeReviewGateway
 );
 
 
