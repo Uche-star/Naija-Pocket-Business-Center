@@ -563,33 +563,78 @@ button:disabled{
 }
 
 /* ===========================================================
-   LOCAL BANK DETAILS
+   MODALS
    =========================================================== */
 
-.payment-section{
-  display:block;
-  margin-top:6px!important;
-  padding:10px;
-  background:#111;
-  border:1px solid rgba(212,175,55,.4);
-  border-radius:10px
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(0,0,0,.82);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px)
 }
 
-.payment-title{
+.modal-backdrop.open{
+  display:flex
+}
+
+.modal{
+  width:min(430px,100%);
+  max-height:90vh;
+  overflow-y:auto;
+  background:#101010;
+  border:1px solid rgba(212,175,55,.55);
+  border-radius:15px;
+  box-shadow:0 20px 70px rgba(0,0,0,.7);
+  padding:16px
+}
+
+.modal.customer-modal{
+  border-color:rgba(0,128,0,.6)
+}
+
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px
+}
+
+.modal-title{
   color:var(--gold2);
-  font-size:12px;
+  font-size:15px;
   font-weight:900
 }
 
-.payment-subtitle{
-  margin-top:3px;
+.customer-modal .modal-title{
+  color:#75dc99
+}
+
+.modal-close{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.14);
+  background:#1a1a1a;
+  color:#fff;
+  font-size:18px;
+  line-height:1
+}
+
+.modal-subtitle{
   color:#aaa;
-  font-size:9px;
-  line-height:1.5
+  font-size:10px;
+  line-height:1.55;
+  margin-bottom:10px
 }
 
 .bank-details-box{
-  margin-top:9px;
   padding:10px;
   background:#090909;
   border:1px solid rgba(212,175,55,.35);
@@ -601,7 +646,7 @@ button:disabled{
   justify-content:space-between;
   align-items:flex-start;
   gap:10px;
-  padding:6px 0;
+  padding:8px 0;
   border-bottom:1px solid rgba(255,255,255,.07)
 }
 
@@ -624,8 +669,8 @@ button:disabled{
 }
 
 .demo-warning{
-  margin-top:8px;
-  padding:7px;
+  margin-top:9px;
+  padding:8px;
   border:1px solid rgba(255,190,0,.35);
   border-radius:7px;
   color:#f0cf62;
@@ -635,56 +680,33 @@ button:disabled{
   text-align:center
 }
 
-.payment-id{
-  margin-top:6px;
-  color:#aaa;
-  font-size:9px;
-  word-break:break-all
-}
-
-.payment-message{
-  margin-top:8px;
-  color:#aaa;
-  font-size:9px;
-  text-align:center;
-  line-height:1.5
-}
-
-/* ===========================================================
-   CUSTOMER CARE PANEL
-   =========================================================== */
-
-.customer-care-panel{
-  display:none;
-  margin-top:6px;
-  padding:10px;
-  background:#111;
-  border:1px solid rgba(0,128,0,.45);
-  border-radius:10px
-}
-
-.customer-care-title{
-  color:#75dc99;
-  font-size:11px;
+.modal-action{
+  width:100%;
+  min-height:42px;
+  margin-top:11px;
+  border:0;
+  border-radius:9px;
+  background:var(--gold);
+  color:#000;
+  font-size:10px;
   font-weight:900
 }
 
 .customer-care-text{
-  margin-top:4px;
   color:#aaa;
-  font-size:9px;
-  line-height:1.5
+  font-size:10px;
+  line-height:1.55
 }
 
 .customer-care-actions{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:6px;
-  margin-top:8px
+  gap:7px;
+  margin-top:12px
 }
 
 .customer-care-actions button{
-  min-height:38px;
+  min-height:42px;
   border-radius:8px;
   font-size:9px;
   font-weight:900
@@ -700,6 +722,34 @@ button:disabled{
   background:#222;
   color:#fff;
   border:1px solid rgba(255,255,255,.16)
+}
+
+/* ===========================================================
+   BACK OFFICE MICRO BUTTON
+   =========================================================== */
+
+.back-office-row{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:7px;
+  padding-right:2px
+}
+
+.back-office-button{
+  min-height:22px;
+  padding:3px 8px;
+  border:1px solid rgba(212,175,55,.22);
+  border-radius:6px;
+  background:transparent;
+  color:#6f6f6f;
+  font-size:7px;
+  font-weight:800;
+  letter-spacing:.3px
+}
+
+.back-office-button:active{
+  color:var(--gold2);
+  border-color:rgba(212,175,55,.5)
 }
 
 .message{
@@ -821,35 +871,13 @@ button:disabled{
     font-size:8px!important
   }
 
-  .action-area .payment-section{
-    padding:7px!important
-  }
-
-  .action-area .payment-title{
-    font-size:10px!important
-  }
-
-  .action-area .payment-subtitle,
-  .action-area .payment-message{
-    font-size:8px!important;
-    line-height:1.4!important
-  }
-
-  .action-area .bank-detail-label,
-  .action-area .bank-detail-value{
+  .bank-detail-label,
+  .bank-detail-value{
     font-size:8px!important
   }
 
-  .action-area .demo-warning{
+  .demo-warning{
     font-size:7px!important
-  }
-
-  .action-area .payment-id{
-    font-size:8px!important
-  }
-
-  .customer-care-actions{
-    grid-template-columns:1fr 1fr
   }
 
   .page-navigation{
@@ -912,12 +940,10 @@ button:disabled{
   <div id="documentScroll" class="document-scroll">
 
     <div id="pageViewer" class="page-viewer">
-
       <div class="loading">
         <div class="spinner"></div>
         <div>Your service is being carefully prepared.</div>
       </div>
-
     </div>
 
     <div class="page-navigation">
@@ -982,6 +1008,7 @@ button:disabled{
 
 </section>
 
+
 <section class="action-area">
 
   <section class="top-panel">
@@ -1025,6 +1052,7 @@ button:disabled{
 
   </section>
 
+
   <section class="top-amount-card">
 
     <div class="top-amount-head">
@@ -1042,6 +1070,7 @@ button:disabled{
         </div>
 
       </div>
+
 
       <div class="top-action-buttons">
 
@@ -1081,6 +1110,7 @@ button:disabled{
 
   </section>
 
+
   <div class="correction-box">
 
     <textarea
@@ -1097,30 +1127,65 @@ button:disabled{
 
   </div>
 
-  <!-- =======================================================
-       LOCAL PAYMENT DETAILS
 
-       MAKE PAYMENT ONLY OPENS THIS SECTION.
-       NO PAYMENT API IS CALLED HERE.
-       ======================================================= -->
+  <div class="back-office-row">
 
-  <section
-    id="paymentSection"
-    class="payment-section">
+    <button
+      id="backOfficeButton"
+      class="back-office-button"
+      type="button">
+      BACK OFFICE
+    </button>
 
-    <div class="payment-title">
-      PAYMENT INFORMATION
+  </div>
+
+
+</section>
+
+
+<div
+  id="message"
+  class="message">
+</div>
+
+</main>
+
+
+<!-- =========================================================
+     BANK PAYMENT MODAL
+     ========================================================= -->
+
+<div
+  id="paymentModal"
+  class="modal-backdrop"
+  aria-hidden="true">
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+        PAYMENT INFORMATION
+      </div>
+
+      <button
+        id="closePaymentModal"
+        class="modal-close"
+        type="button"
+        aria-label="Close">
+        ×
+      </button>
+
     </div>
 
-    <div class="payment-subtitle">
-      To make payment, use the bank details below. After completing your transfer, tap <strong>I HAVE MADE PAYMENT</strong> so your payment can be reported for Customer Care verification.
+    <div class="modal-subtitle">
+      Use the bank details below to complete your transfer. After completing the transfer, return here and tap <strong>I HAVE MADE PAYMENT</strong>.
     </div>
 
-    <div
-      id="bankDetailsBox"
-      class="bank-details-box">
+    <div class="bank-details-box">
 
       <div class="bank-detail-row">
+
         <div class="bank-detail-label">
           BANK
         </div>
@@ -1128,9 +1193,11 @@ button:disabled{
         <div class="bank-detail-value">
           DEMO BANK — NOT FOR REAL PAYMENT
         </div>
+
       </div>
 
       <div class="bank-detail-row">
+
         <div class="bank-detail-label">
           ACCOUNT NAME
         </div>
@@ -1138,9 +1205,11 @@ button:disabled{
         <div class="bank-detail-value">
           NAIJA POCKET BUSINESS CENTER — DEMO
         </div>
+
       </div>
 
       <div class="bank-detail-row">
+
         <div class="bank-detail-label">
           ACCOUNT NUMBER
         </div>
@@ -1148,9 +1217,11 @@ button:disabled{
         <div class="bank-detail-value">
           0000000000 — DEMO ONLY
         </div>
+
       </div>
 
       <div class="bank-detail-row">
+
         <div class="bank-detail-label">
           AMOUNT
         </div>
@@ -1160,6 +1231,7 @@ button:disabled{
           class="bank-detail-value">
           ₦0
         </div>
+
       </div>
 
     </div>
@@ -1169,30 +1241,43 @@ button:disabled{
       The real Naija Pocket Business Center bank details should be entered here before production use.
     </div>
 
-    <div
-      id="paymentId"
-      class="payment-id"
-      style="display:none">
-    </div>
+    <button
+      id="paymentModalDone"
+      class="modal-action"
+      type="button">
+      I UNDERSTAND — CONTINUE
+    </button>
 
-    <div
-      id="paymentMessage"
-      class="payment-message">
-      Payment details are shown for your convenience. Customer Care verification is required before download is unlocked.
-    </div>
+  </div>
 
-  </section>
+</div>
 
-  <!-- =======================================================
-       CUSTOMER CARE
-       ======================================================= -->
 
-  <section
-    id="customerCarePanel"
-    class="customer-care-panel">
+<!-- =========================================================
+     CUSTOMER CARE MODAL
+     ========================================================= -->
 
-    <div class="customer-care-title">
-      CUSTOMER CARE
+<div
+  id="customerCareModal"
+  class="modal-backdrop"
+  aria-hidden="true">
+
+  <div class="modal customer-modal">
+
+    <div class="modal-header">
+
+      <div class="modal-title">
+        CUSTOMER CARE
+      </div>
+
+      <button
+        id="closeCustomerCareModal"
+        class="modal-close"
+        type="button"
+        aria-label="Close">
+        ×
+      </button>
+
     </div>
 
     <div class="customer-care-text">
@@ -1217,19 +1302,14 @@ button:disabled{
 
     </div>
 
-  </section>
+  </div>
 
-</section>
-
-<div
-  id="message"
-  class="message">
 </div>
 
-</main>
 
 <script>
 "use strict";
+
 
 /* ===========================================================
    MAIN REVIEW API
@@ -1240,13 +1320,10 @@ const API_BASE = "";
 
 /* ===========================================================
    PAYMENT API
-   ===========================================================
 
-   The MAKE PAYMENT button itself does NOT use this API.
-
-   The API is used only when the customer taps
-   I HAVE MADE PAYMENT or when an existing payment record
-   needs to be handed to the authoritative payment page.
+   This is the same payment service used by Payment HTML.
+   Review now communicates with it directly when the customer
+   confirms that payment has been made.
    =========================================================== */
 
 const PAYMENT_API_BASE =
@@ -1354,17 +1431,8 @@ const correctionInput =
 const correctionButton =
   $("correctionButton");
 
-const paymentSection =
-  $("paymentSection");
-
-const paymentDetails =
-  $("bankDetailsBox");
-
 const bankAmount =
   $("bankAmount");
-
-const paymentId =
-  $("paymentId");
 
 const makePaymentButton =
   $("makePaymentButton");
@@ -1375,14 +1443,8 @@ const paymentButton =
 const downloadButton =
   $("downloadButton");
 
-const paymentMessage =
-  $("paymentMessage");
-
 const customerCareButton =
   $("customerCareButton");
-
-const customerCarePanel =
-  $("customerCarePanel");
 
 const whatsappButton =
   $("whatsappButton");
@@ -1390,8 +1452,26 @@ const whatsappButton =
 const phoneButton =
   $("phoneButton");
 
+const backOfficeButton =
+  $("backOfficeButton");
+
 const message =
   $("message");
+
+const paymentModal =
+  $("paymentModal");
+
+const closePaymentModal =
+  $("closePaymentModal");
+
+const paymentModalDone =
+  $("paymentModalDone");
+
+const customerCareModal =
+  $("customerCareModal");
+
+const closeCustomerCareModal =
+  $("closeCustomerCareModal");
 
 
 /* ===========================================================
@@ -1448,9 +1528,7 @@ function clean(value){
     value === null ||
     value === undefined
   ){
-
     return "";
-
   }
 
   return String(value).trim();
@@ -1480,7 +1558,6 @@ function setStatus(text){
   statusValue.textContent =
     text ||
     "Preparing...";
-
 }
 
 
@@ -1489,7 +1566,6 @@ function state(){
   return clean(
     currentStatus
   ).toLowerCase();
-
 }
 
 
@@ -1502,7 +1578,6 @@ function complete(data){
       data.review_finished ===
         true
     );
-
 }
 
 
@@ -1538,7 +1613,6 @@ function savePaymentContext(){
     );
 
   }
-
 }
 
 
@@ -1555,7 +1629,6 @@ function clearPaymentContext(){
   localStorage.removeItem(
     "payment_version_id"
   );
-
 }
 
 
@@ -1599,7 +1672,6 @@ async function paymentGet(path){
   }
 
   return data;
-
 }
 
 
@@ -1614,15 +1686,12 @@ async function paymentPost(
       path,
       {
         method:"POST",
-
         headers:{
           "Content-Type":
             "application/json",
-
           "Accept":
             "application/json"
         },
-
         body:
           JSON.stringify(
             body || {}
@@ -1654,7 +1723,6 @@ async function paymentPost(
   }
 
   return data;
-
 }
 
 
@@ -1691,7 +1759,6 @@ async function apiGet(url){
   }
 
   return data;
-
 }
 
 
@@ -1705,15 +1772,12 @@ async function apiPost(
       API_BASE + url,
       {
         method:"POST",
-
         headers:{
           "Content-Type":
             "application/json",
-
           "Accept":
             "application/json"
         },
-
         body:
           JSON.stringify(
             body || {}
@@ -1745,7 +1809,6 @@ async function apiPost(
   }
 
   return data;
-
 }
 
 
@@ -1839,7 +1902,6 @@ function normalizePages(data){
         a.position -
         b.position
     );
-
 }
 
 
@@ -1886,7 +1948,6 @@ function extractPages(data){
   }
 
   return [];
-
 }
 
 
@@ -1896,6 +1957,7 @@ function extractPages(data){
 
 const allowedTags =
   new Set([
+
     "DIV",
     "P",
     "BR",
@@ -1928,6 +1990,7 @@ const allowedTags =
     "PRE",
     "SUP",
     "SUB"
+
   ]);
 
 
@@ -1942,6 +2005,7 @@ const allowedAttrs =
 
 const allowedStyles =
   new Set([
+
     "color",
     "background-color",
     "font-family",
@@ -1972,6 +2036,7 @@ const allowedStyles =
     "border-bottom",
     "border-left",
     "background"
+
   ]);
 
 
@@ -2003,7 +2068,6 @@ function normText(value){
       "\n\n"
     )
     .trim();
-
 }
 
 
@@ -2020,9 +2084,7 @@ function safeStyle(value){
       definition.indexOf(":");
 
     if(index < 0){
-
       continue;
-
     }
 
     const property =
@@ -2056,7 +2118,6 @@ function safeStyle(value){
   }
 
   return output.join(";");
-
 }
 
 
@@ -2080,7 +2141,6 @@ function renderPlain(text){
         );
 
         return;
-
       }
 
       const parts =
@@ -2092,9 +2152,7 @@ function renderPlain(text){
         part => {
 
           if(!part){
-
             return;
-
           }
 
           if(
@@ -2149,7 +2207,6 @@ function renderPlain(text){
   );
 
   return fragment;
-
 }
 
 
@@ -2177,7 +2234,6 @@ function sanitizeHtml(source){
   const output =
     document.createDocumentFragment();
 
-
   function walk(
     node,
     parent
@@ -2197,7 +2253,6 @@ function sanitizeHtml(source){
       );
 
       return;
-
     }
 
     if(
@@ -2256,15 +2311,13 @@ function sanitizeHtml(source){
         tag.toLowerCase()
       );
 
-
     for(
       const attribute of
       node.attributes
     ){
 
       const name =
-        attribute.name
-          .toLowerCase();
+        attribute.name.toLowerCase();
 
       const value =
         attribute.value || "";
@@ -2339,7 +2392,6 @@ function sanitizeHtml(source){
 
     }
 
-
     for(
       const child of
       node.childNodes
@@ -2358,7 +2410,6 @@ function sanitizeHtml(source){
 
   }
 
-
   for(
     const child of
     documentObject.body.childNodes
@@ -2372,7 +2423,6 @@ function sanitizeHtml(source){
   }
 
   return output;
-
 }
 
 
@@ -2394,12 +2444,6 @@ function updateButtons(){
   correctionButton.disabled =
     busy;
 
-  /*
-   * MAKE PAYMENT is ONLY a local UI action.
-   *
-   * It does not require payment API access.
-   */
-
   makePaymentButton.disabled =
     busy ||
     amount <= 0 ||
@@ -2407,20 +2451,11 @@ function updateButtons(){
     !pages.length ||
     !versionId;
 
-  /*
-   * I HAVE MADE PAYMENT becomes available only after
-   * the local bank details have been opened.
-   */
-
   paymentButton.disabled =
     busy ||
     !paymentDetailsOpened ||
     paymentPending ||
     paid;
-
-  /*
-   * Download is available only after payment verification.
-   */
 
   downloadButton.disabled =
     busy ||
@@ -2430,7 +2465,6 @@ function updateButtons(){
     "active",
     paid
   );
-
 }
 
 
@@ -2456,7 +2490,6 @@ function renderPage(){
     updateButtons();
 
     return;
-
   }
 
   const page =
@@ -2472,7 +2505,6 @@ function renderPage(){
       '</div>';
 
     return;
-
   }
 
   const article =
@@ -2482,7 +2514,6 @@ function renderPage(){
 
   article.className =
     "document-page";
-
 
   const number =
     document.createElement(
@@ -2495,7 +2526,6 @@ function renderPage(){
   number.textContent =
     "PAGE " +
     page.page_number;
-
 
   const content =
     document.createElement(
@@ -2512,7 +2542,6 @@ function renderPage(){
     )
   );
 
-
   article.append(
     number,
     content
@@ -2522,13 +2551,11 @@ function renderPage(){
     article
   );
 
-
   pageIndicator.textContent =
     "Page " +
     currentPage +
     " of " +
     totalPages;
-
 
   if(
     page.review ||
@@ -2558,16 +2585,13 @@ function renderPage(){
   }
 
   updateButtons();
-
 }
 
 
 function showPage(number){
 
   if(!totalPages){
-
     return;
-
   }
 
   currentPage =
@@ -2587,7 +2611,6 @@ function showPage(number){
     top:0,
     behavior:"smooth"
   });
-
 }
 
 
@@ -2661,13 +2684,10 @@ function extractAmount(data){
   const seen =
     new Set();
 
-
   function find(value){
 
     if(value == null){
-
       return 0;
-
     }
 
     if(
@@ -2710,7 +2730,6 @@ function extractAmount(data){
 
     seen.add(value);
 
-
     for(
       const key of [
         "amount",
@@ -2724,13 +2743,10 @@ function extractAmount(data){
         );
 
       if(number > 0){
-
         return number;
-
       }
 
     }
-
 
     for(
       const key of [
@@ -2751,20 +2767,15 @@ function extractAmount(data){
         );
 
       if(number > 0){
-
         return number;
-
       }
 
     }
 
     return 0;
-
   }
 
-
   return find(data);
-
 }
 
 
@@ -2773,13 +2784,10 @@ function extractBilling(data){
   const seen =
     new Set();
 
-
   function find(value){
 
     if(value == null){
-
       return "";
-
     }
 
     if(
@@ -2801,7 +2809,6 @@ function extractBilling(data){
 
     seen.add(value);
 
-
     if(
       typeof value.billing ===
       "string" &&
@@ -2811,7 +2818,6 @@ function extractBilling(data){
       return value.billing.trim();
 
     }
-
 
     for(
       const key of [
@@ -2832,25 +2838,20 @@ function extractBilling(data){
         );
 
       if(result){
-
         return result;
-
       }
 
     }
 
     return "";
-
   }
 
-
   return find(data);
-
 }
 
 
 /* ===========================================================
-   PAYMENT PANEL
+   PAYMENT PANEL STATE
    =========================================================== */
 
 function updatePaymentPanel(){
@@ -2861,34 +2862,11 @@ function updatePaymentPanel(){
         amount.toLocaleString()
       : "Quotation required";
 
-
   bankAmount.textContent =
     amount > 0
       ? "₦" +
         amount.toLocaleString()
       : "Quotation required";
-
-
-  if(paymentIdentifier){
-
-    paymentId.style.display =
-      "block";
-
-    paymentId.textContent =
-      "Payment ID: " +
-      paymentIdentifier;
-
-  }
-
-  else{
-
-    paymentId.style.display =
-      "none";
-
-    paymentId.textContent =
-      "";
-
-  }
 
 
   if(paid){
@@ -2911,9 +2889,6 @@ function updatePaymentPanel(){
 
     downloadButton.textContent =
       "⬇ DOWNLOAD DOCUMENT";
-
-    paymentMessage.textContent =
-      "Payment verified by Customer Care. Download is now available.";
 
   }
 
@@ -2938,9 +2913,6 @@ function updatePaymentPanel(){
     downloadButton.textContent =
       "🔒 DOWNLOAD DOCUMENT";
 
-    paymentMessage.textContent =
-      "Payment reported — awaiting Customer Care verification.";
-
   }
 
   else if(paymentDetailsOpened){
@@ -2950,9 +2922,6 @@ function updatePaymentPanel(){
 
     paymentButton.textContent =
       "✓ I HAVE MADE PAYMENT";
-
-    paymentMessage.textContent =
-      "After completing your transfer, tap I HAVE MADE PAYMENT. Customer Care will verify the payment before download is unlocked.";
 
   }
 
@@ -2974,15 +2943,9 @@ function updatePaymentPanel(){
     downloadButton.textContent =
       "🔒 DOWNLOAD DOCUMENT";
 
-    paymentMessage.textContent =
-      amount > 0
-        ? "Tap MAKE PAYMENT to view the Naija Pocket Business Center payment details."
-        : "This service requires a quotation before payment.";
-
   }
 
   updateButtons();
-
 }
 
 
@@ -2999,7 +2962,6 @@ function applyJob(data){
 
   reviewFinished =
     complete(data);
-
 
   const extractedPages =
     extractPages(data);
@@ -3023,12 +2985,10 @@ function applyJob(data){
 
   }
 
-
   currentVersion =
     Number(
       data.current_version
     ) || 1;
-
 
   versionId =
     clean(
@@ -3037,7 +2997,6 @@ function applyJob(data){
       data.versionId ||
       data.current_version
     );
-
 
   amount =
     extractAmount(data) ||
@@ -3049,19 +3008,12 @@ function applyJob(data){
     billing;
 
 
-  /*
-   * Preserve an existing payment ID only when the backend
-   * explicitly returns one for the current document.
-   */
-
   const returnedPaymentId =
     clean(
       data.payment_id
     );
 
-  if(
-    returnedPaymentId
-  ){
+  if(returnedPaymentId){
 
     paymentIdentifier =
       returnedPaymentId;
@@ -3103,7 +3055,6 @@ function applyJob(data){
     totalPages ||
     0;
 
-
   let percent =
     total
       ? Math.round(
@@ -3113,7 +3064,6 @@ function applyJob(data){
         )
       : 0;
 
-
   if(
     reviewFinished &&
     totalPages
@@ -3122,7 +3072,6 @@ function applyJob(data){
     percent = 100;
 
   }
-
 
   progressBar.style.width =
     Math.max(
@@ -3207,16 +3156,14 @@ function applyJob(data){
 
   }
 
-
   renderPage();
 
   updatePaymentPanel();
-
 }
 
 
 /* ===========================================================
-   PAYMENT STATUS
+   PAYMENT STATUS INTERPRETATION
    =========================================================== */
 
 function interpretPaymentStatus(data){
@@ -3234,23 +3181,33 @@ function interpretPaymentStatus(data){
     data?.verified === true ||
     data?.download_unlocked === true ||
     data?.downloadUnlocked === true ||
+    data?.payment?.payment_verified === true ||
+    data?.payment?.verified === true ||
+    data?.payment?.download_unlocked === true ||
     [
       "verified",
       "payment_verified",
       "download_unlocked",
       "unlocked",
-      "activated"
+      "activated",
+      "approved",
+      "paid",
+      "completed",
+      "complete"
     ].includes(status);
 
 
   const reported =
     data?.payment_reported === true ||
     data?.reported === true ||
+    data?.payment?.payment_reported === true ||
     [
       "reported",
       "awaiting_verification",
       "payment_reported",
-      "pending_verification"
+      "pending_verification",
+      "verification_pending",
+      "payment_pending"
     ].includes(status);
 
 
@@ -3267,7 +3224,6 @@ function interpretPaymentStatus(data){
     updatePaymentPanel();
 
     return "verified";
-
   }
 
 
@@ -3284,13 +3240,13 @@ function interpretPaymentStatus(data){
     updatePaymentPanel();
 
     return "reported";
-
   }
 
 
   if(
     status ||
-    data?.payment_id
+    data?.payment_id ||
+    data?.payment?.payment_id
   ){
 
     paymentStarted = true;
@@ -3300,7 +3256,6 @@ function interpretPaymentStatus(data){
   updatePaymentPanel();
 
   return status;
-
 }
 
 
@@ -3321,7 +3276,6 @@ function stopPaymentPolling(){
     paymentPollTimer = null;
 
   }
-
 }
 
 
@@ -3392,6 +3346,18 @@ function startPaymentPolling(){
         }
 
 
+        if(result === "reported"){
+
+          setStatus(
+            "PAYMENT REPORTED"
+          );
+
+          progressText.textContent =
+            "Payment Reported — Awaiting Customer Care Verification.";
+
+        }
+
+
         paymentPollTimer =
           setTimeout(
             poll,
@@ -3419,7 +3385,6 @@ function startPaymentPolling(){
 
 
   poll();
-
 }
 
 
@@ -3430,11 +3395,8 @@ function startPaymentPolling(){
 async function loadExistingPayment(){
 
   if(!paymentIdentifier){
-
     return;
-
   }
-
 
   try{
 
@@ -3446,10 +3408,11 @@ async function loadExistingPayment(){
         )
       );
 
-
     interpretPaymentStatus(
       data
     );
+
+    savePaymentContext();
 
     startPaymentPolling();
 
@@ -3463,7 +3426,6 @@ async function loadExistingPayment(){
     );
 
   }
-
 }
 
 
@@ -3486,7 +3448,6 @@ async function loadJob(){
   await loadExistingPayment();
 
   return data;
-
 }
 
 
@@ -3497,9 +3458,7 @@ async function loadJob(){
 function startPolling(){
 
   if(polling){
-
     return;
-
   }
 
   polling = true;
@@ -3567,7 +3526,6 @@ function startPolling(){
 
 
   poll();
-
 }
 
 
@@ -3621,13 +3579,6 @@ correctionButton.onclick =
         "";
 
 
-      /*
-       * A correction creates a NEW document version.
-       *
-       * Therefore the previous payment/document state cannot
-       * remain associated with the new Review version.
-       */
-
       paid = false;
 
       paymentStarted = false;
@@ -3646,7 +3597,6 @@ correctionButton.onclick =
 
       billing = "";
 
-
       currentStatus =
         "correcting";
 
@@ -3655,7 +3605,6 @@ correctionButton.onclick =
       totalPages = 0;
 
       currentPage = 1;
-
 
       renderPage();
 
@@ -3828,7 +3777,6 @@ function buildExactReviewSnapshot(){
       paymentIdentifier || ""
 
   };
-
 }
 
 
@@ -3840,7 +3788,6 @@ function saveExactReviewSnapshot(){
 
   const snapshot =
     buildExactReviewSnapshot();
-
 
   const serialized =
     JSON.stringify(
@@ -3884,11 +3831,15 @@ function saveExactReviewSnapshot(){
 
   try{
 
-    localStorage.setItem(
-      "npb_payment_review_snapshot_" +
-      jobId,
-      serialized
-    );
+    if(jobId){
+
+      localStorage.setItem(
+        "npb_payment_review_snapshot_" +
+        jobId,
+        serialized
+      );
+
+    }
 
   }
 
@@ -3903,25 +3854,144 @@ function saveExactReviewSnapshot(){
 
 
   return snapshot;
-
 }
 
 
 /* ===========================================================
-   MAKE PAYMENT — LOCAL ONLY
-   ===========================================================
+   UPDATE SNAPSHOT WITH PAYMENT ID
+   =========================================================== */
 
-   IMPORTANT:
+function saveSnapshotWithPaymentId(){
 
-   This function does NOT:
+  if(!paymentIdentifier){
+    return;
+  }
 
-       - call payment API
-       - create Payment ID
-       - open payment.html
-       - report payment
+  const snapshot =
+    buildExactReviewSnapshot();
 
-   It simply opens the bank details already displayed on
-   this Review page.
+  snapshot.payment_id =
+    paymentIdentifier;
+
+  const serialized =
+    JSON.stringify(
+      snapshot
+    );
+
+
+  if(jobId){
+
+    sessionStorage.setItem(
+      "npb_payment_review_snapshot_" +
+      jobId,
+      serialized
+    );
+
+  }
+
+  sessionStorage.setItem(
+    "npb_payment_review_snapshot",
+    serialized
+  );
+
+
+  if(jobId){
+
+    sessionStorage.setItem(
+      "payment_review_snapshot_" +
+      jobId,
+      serialized
+    );
+
+  }
+
+  sessionStorage.setItem(
+    "payment_review_snapshot",
+    serialized
+  );
+
+
+  try{
+
+    if(jobId){
+
+      localStorage.setItem(
+        "npb_payment_review_snapshot_" +
+        jobId,
+        serialized
+      );
+
+    }
+
+  }
+
+  catch(error){
+
+    console.log(
+      "[PAYMENT SNAPSHOT UPDATE]",
+      error
+    );
+
+  }
+}
+
+
+/* ===========================================================
+   EXTRACT PAYMENT ID FROM PAYMENT API RESPONSE
+   =========================================================== */
+
+function extractPaymentId(data){
+
+  const candidates = [
+
+    data?.payment_id,
+
+    data?.id,
+
+    data?.payment?.payment_id,
+
+    data?.payment?.id,
+
+    data?.payment_order?.payment_id,
+
+    data?.payment_order?.id,
+
+    data?.order?.payment_id,
+
+    data?.order?.id,
+
+    data?.result?.payment_id,
+
+    data?.result?.id,
+
+    data?.data?.payment_id,
+
+    data?.data?.id
+
+  ];
+
+
+  for(
+    const candidate of
+    candidates
+  ){
+
+    const value =
+      clean(candidate);
+
+    if(value){
+      return value;
+    }
+
+  }
+
+
+  return "";
+}
+
+
+/* ===========================================================
+   OPEN BANK DETAILS MODAL
    =========================================================== */
 
 function openBankDetails(){
@@ -3934,11 +4004,13 @@ function openBankDetails(){
     );
 
     return;
-
   }
 
 
-  if(!amount || amount <= 0){
+  if(
+    !amount ||
+    amount <= 0
+  ){
 
     setMessage(
       "This service requires a quotation before payment.",
@@ -3946,7 +4018,6 @@ function openBankDetails(){
     );
 
     return;
-
   }
 
 
@@ -3958,7 +4029,6 @@ function openBankDetails(){
     );
 
     return;
-
   }
 
 
@@ -3970,16 +4040,19 @@ function openBankDetails(){
     );
 
     return;
-
   }
 
 
   paymentDetailsOpened = true;
 
-  paymentSection.scrollIntoView({
-    behavior:"smooth",
-    block:"nearest"
-  });
+  paymentModal.classList.add(
+    "open"
+  );
+
+  paymentModal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
 
 
   setStatus(
@@ -3990,32 +4063,188 @@ function openBankDetails(){
     "Use the payment details below, then confirm your payment.";
 
   setMessage(
-    "Payment details are now available below.",
+    "Payment details are now available.",
     "success"
   );
 
   updatePaymentPanel();
+}
 
+
+/* ===========================================================
+   CLOSE PAYMENT MODAL
+   =========================================================== */
+
+function closePaymentDetails(){
+
+  paymentModal.classList.remove(
+    "open"
+  );
+
+  paymentModal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  updateButtons();
+}
+
+
+/* ===========================================================
+   CREATE PAYMENT DIRECTLY FROM REVIEW
+   =========================================================== */
+
+async function createPaymentFromReview(
+  snapshot
+){
+
+  const payload = {
+
+    job_id:
+      snapshot.job_id,
+
+    customer_id:
+      snapshot.customer_id,
+
+    service:
+      snapshot.service,
+
+    amount:
+      snapshot.amount,
+
+    payment_method:
+      "bank_transfer",
+
+    version_id:
+      snapshot.version_id,
+
+    document_version:
+      snapshot.document_version,
+
+    pages:
+      snapshot.pages,
+
+    document_pages:
+      snapshot.document_pages,
+
+    review_pages:
+      snapshot.review_pages,
+
+    document_text:
+      snapshot.document_text,
+
+    text:
+      snapshot.text,
+
+    content:
+      snapshot.content,
+
+    filename:
+      snapshot.filename,
+
+    document_filename:
+      snapshot.document_filename,
+
+    billing:
+      snapshot.billing || ""
+
+  };
+
+
+  const response =
+    await paymentPost(
+      "/api/payment/create",
+      payload
+    );
+
+
+  const id =
+    extractPaymentId(
+      response
+    );
+
+
+  if(!id){
+
+    throw Error(
+      "The payment service did not return a payment ID."
+    );
+
+  }
+
+
+  paymentIdentifier =
+    id;
+
+  paymentStarted =
+    true;
+
+  paymentDetailsOpened =
+    true;
+
+  savePaymentContext();
+
+  saveSnapshotWithPaymentId();
+
+
+  return response;
+}
+
+
+/* ===========================================================
+   REPORT PAYMENT DIRECTLY FROM REVIEW
+   =========================================================== */
+
+async function reportPaymentDirectly(){
+
+  if(!paymentIdentifier){
+
+    throw Error(
+      "A payment ID was not created."
+    );
+
+  }
+
+
+  const response =
+    await paymentPost(
+      "/api/payment/report",
+      {
+
+        payment_id:
+          paymentIdentifier,
+
+        job_id:
+          jobId,
+
+        payment_reference:
+          paymentIdentifier,
+
+        note:
+          "Customer reported payment from Review page after completing the bank transfer. Exact reviewed document/version was supplied with the payment record."
+
+      }
+    );
+
+
+  return response;
 }
 
 
 /* ===========================================================
    I HAVE MADE PAYMENT
-   ===========================================================
 
-   MAKE PAYMENT itself remains completely local.
+   IMPORTANT:
 
-   When the customer confirms that payment has been made,
-   the exact Review snapshot is handed to payment.html.
+   This stays on review.html.
 
-   payment.html remains the authoritative component for:
-       - creating the payment record
-       - payment reporting
-       - Back Office verification
-       - download unlocking
+   It does NOT navigate to payment.html.
 
-   This prevents Review from inventing a separate payment
-   record or a second download workflow.
+   It:
+     1. saves exact reviewed document
+     2. creates payment record
+     3. reports payment
+     4. waits for Customer Care verification
    =========================================================== */
 
 async function reportPaymentFromReview(){
@@ -4070,6 +4299,26 @@ async function reportPaymentFromReview(){
   }
 
 
+  if(paymentPending){
+
+    return setMessage(
+      "Payment has already been reported and is awaiting Customer Care verification.",
+      "error"
+    );
+
+  }
+
+
+  if(paid){
+
+    return setMessage(
+      "Payment has already been verified.",
+      "success"
+    );
+
+  }
+
+
   try{
 
     busy = true;
@@ -4077,9 +4326,18 @@ async function reportPaymentFromReview(){
     updateButtons();
 
 
+    setStatus(
+      "SAVING DOCUMENT"
+    );
+
+    progressText.textContent =
+      "Saving the exact reviewed document and version for payment verification.";
+
+
     /*
-     * Save the exact current Review document before handing
-     * control to the authoritative payment page.
+     * The exact document currently displayed in Review
+     * is saved locally first so the same snapshot is
+     * available to the payment service.
      */
 
     const snapshot =
@@ -4088,7 +4346,9 @@ async function reportPaymentFromReview(){
 
     if(
       !snapshot ||
-      !Array.isArray(snapshot.pages) ||
+      !Array.isArray(
+        snapshot.pages
+      ) ||
       !snapshot.pages.length
     ){
 
@@ -4100,77 +4360,145 @@ async function reportPaymentFromReview(){
 
 
     /*
-     * payment.html will recover this exact snapshot and use
-     * its existing working payment/report/download workflow.
+     * If there is no payment ID yet, create the payment.
      */
 
-    const paymentUrl =
-      "payment.html" +
-      "?job_id=" +
-      encodeURIComponent(
-        jobId
-      ) +
-      "&version_id=" +
-      encodeURIComponent(
-        versionId
-      ) +
-      "&service=" +
-      encodeURIComponent(
-        service ||
-        "Business Center Service"
-      ) +
-      "&amount=" +
-      encodeURIComponent(
-        amount
+    if(!paymentIdentifier){
+
+      setStatus(
+        "CREATING PAYMENT"
       );
 
+      progressText.textContent =
+        "Creating your payment record...";
 
-    if(paymentIdentifier){
 
-      window.location.href =
-        paymentUrl +
-        "&payment_id=" +
-        encodeURIComponent(
-          paymentIdentifier
-        );
+      await createPaymentFromReview(
+        snapshot
+      );
 
     }
 
-    else{
 
-      window.location.href =
-        paymentUrl;
+    /*
+     * Report the payment to the same payment API used
+     * by Payment HTML.
+     */
 
-    }
+    setStatus(
+      "REPORTING PAYMENT"
+    );
+
+    progressText.textContent =
+      "Reporting your payment for Customer Care verification...";
+
+
+    await reportPaymentDirectly();
+
+
+    /*
+     * Save the exact snapshot again with the actual
+     * payment ID attached.
+     */
+
+    saveSnapshotWithPaymentId();
+
+
+    paymentStarted =
+      true;
+
+    paymentPending =
+      true;
+
+    paid =
+      false;
+
+    paymentDetailsOpened =
+      true;
+
+
+    savePaymentContext();
+
+
+    setStatus(
+      "PAYMENT REPORTED"
+    );
+
+    progressText.textContent =
+      "Payment Reported — Awaiting Customer Care Verification.";
+
+
+    paymentButton.textContent =
+      "✓ PAYMENT REPORTED";
+
+
+    paymentMessageState();
+
+
+    setMessage(
+      "Payment reported successfully. Customer Care verification is required before download is unlocked.",
+      "success"
+    );
+
+
+    updatePaymentPanel();
+
+    startPaymentPolling();
 
   }
 
   catch(error){
 
-    busy = false;
+    console.error(
+      "[REVIEW PAYMENT]",
+      error
+    );
 
-    updateButtons();
+    setStatus(
+      "PAYMENT ERROR"
+    );
+
+    progressText.textContent =
+      "The payment could not be reported.";
 
     setMessage(
-      error.message,
+      error.message ||
+      "The payment could not be reported. Please try again.",
       "error"
     );
 
   }
 
+  finally{
+
+    busy = false;
+
+    updateButtons();
+
+  }
+}
+
+
+/* ===========================================================
+   PAYMENT MESSAGE STATE
+   =========================================================== */
+
+function paymentMessageState(){
+
+  if(paymentPending){
+
+    return;
+
+  }
 }
 
 
 /* ===========================================================
    DOWNLOAD
-   ===========================================================
 
-   If a verified payment ID is already known, Review sends
-   the customer directly to the authoritative payment download
-   endpoint.
+   Uses the authoritative existing payment download endpoint.
 
-   If no payment ID exists, the customer is sent to payment.html
-   so the existing payment workflow can resolve the record.
+   No document regeneration takes place here.
    =========================================================== */
 
 function downloadDocument(){
@@ -4205,35 +4533,45 @@ function downloadDocument(){
 
   window.location.href =
     downloadUrl;
-
 }
 
 
 /* ===========================================================
-   CUSTOMER CARE
+   CUSTOMER CARE MODAL
    =========================================================== */
+
+function openCustomerCare(){
+
+  customerCareModal.classList.add(
+    "open"
+  );
+
+  customerCareModal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+}
+
+
+function closeCustomerCare(){
+
+  customerCareModal.classList.remove(
+    "open"
+  );
+
+  customerCareModal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+}
+
 
 customerCareButton.onclick =
   () => {
 
-    const isVisible =
-      customerCarePanel.style.display ===
-      "block";
-
-    customerCarePanel.style.display =
-      isVisible
-        ? "none"
-        : "block";
-
-
-    if(!isVisible){
-
-      customerCarePanel.scrollIntoView({
-        behavior:"smooth",
-        block:"nearest"
-      });
-
-    }
+    openCustomerCare();
 
   };
 
@@ -4245,6 +4583,7 @@ whatsappButton.onclick =
       "Hello Naija Pocket Business Center Customer Care. " +
       "I need assistance with my service.";
 
+
     const url =
       "https://wa.me/" +
       CUSTOMER_CARE_PHONE +
@@ -4252,6 +4591,7 @@ whatsappButton.onclick =
       encodeURIComponent(
         text
       );
+
 
     window.open(
       url,
@@ -4272,16 +4612,115 @@ phoneButton.onclick =
 
 
 /* ===========================================================
+   BACK OFFICE
+
+   Uses the existing Payment HTML Back Office.
+
+   The Back Office remains owned by payment.html.
+   =========================================================== */
+
+function openPaymentBackOffice(){
+
+  window.location.href =
+    "/payment.html?mode=back_office";
+
+}
+
+
+backOfficeButton.onclick =
+  () => {
+
+    openPaymentBackOffice();
+
+  };
+
+
+/* ===========================================================
+   MODAL EVENTS
+   =========================================================== */
+
+closePaymentModal.onclick =
+  () => {
+
+    closePaymentDetails();
+
+  };
+
+
+paymentModalDone.onclick =
+  () => {
+
+    closePaymentDetails();
+
+  };
+
+
+closeCustomerCareModal.onclick =
+  () => {
+
+    closeCustomerCare();
+
+  };
+
+
+paymentModal.addEventListener(
+  "click",
+  event => {
+
+    if(
+      event.target ===
+      paymentModal
+    ){
+
+      closePaymentDetails();
+
+    }
+
+  }
+);
+
+
+customerCareModal.addEventListener(
+  "click",
+  event => {
+
+    if(
+      event.target ===
+      customerCareModal
+    ){
+
+      closeCustomerCare();
+
+    }
+
+  }
+);
+
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key === "Escape"
+    ){
+
+      closePaymentDetails();
+
+      closeCustomerCare();
+
+    }
+
+  }
+);
+
+
+/* ===========================================================
    BUTTON WIRING
    =========================================================== */
 
 makePaymentButton.onclick =
   () => {
-
-    /*
-     * LOCAL ONLY.
-     * No API call.
-     */
 
     openBankDetails();
 
@@ -4331,7 +4770,6 @@ async function start(){
     );
 
     return;
-
   }
 
 
@@ -4367,7 +4805,6 @@ async function start(){
       error.message,
       "error"
     );
-
 
     pageViewer.innerHTML =
       '<div class="empty-page">' +
