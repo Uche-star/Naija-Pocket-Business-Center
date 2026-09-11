@@ -1,8 +1,11 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Make Payment — Naija Pocket Business Center</title><style>
+<title>Make Payment — Naija Pocket Business Center</title>
+
+<style>
 :root{
   --black:#050505;
   --panel:#101010;
@@ -351,10 +354,6 @@ button{cursor:pointer}
 
 .hidden{display:none!important}
 
-/* ==========================================================
-   BACK OFFICE
-========================================================== */
-
 #backOfficeView{display:none}
 
 body.back-office-mode #customerPaymentView{display:none}
@@ -402,10 +401,7 @@ body.back-office-mode .service-badge{color:var(--gold2)}
   font-weight:900;
 }
 
-.bo-load{
-  background:var(--gold);
-  color:#000;
-}
+.bo-load{background:var(--gold);color:#000}
 
 .bo-refresh{
   background:#252525;
@@ -413,10 +409,7 @@ body.back-office-mode .service-badge{color:var(--gold2)}
   border:1px solid rgba(255,255,255,.12);
 }
 
-.bo-exit{
-  background:var(--red);
-  color:#fff;
-}
+.bo-exit{background:var(--red);color:#fff}
 
 .bo-stats{
   display:grid;
@@ -538,9 +531,7 @@ body.back-office-mode .service-badge{color:var(--gold2)}
   word-break:break-word;
 }
 
-.bo-actions{
-  margin-top:8px;
-}
+.bo-actions{margin-top:8px}
 
 .bo-action{
   width:100%;
@@ -614,7 +605,6 @@ body.back-office-mode .service-badge{color:var(--gold2)}
   .title{font-size:16px}
   .amount-value{font-size:27px}
   .card{padding:10px}
-
   .primary-button,
   .report-button,
   .download-button,
@@ -623,274 +613,245 @@ body.back-office-mode .service-badge{color:var(--gold2)}
   .bo-action{
     min-height:44px;
   }
-
-  .bo-stats{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .bo-grid{
-    grid-template-columns:1fr;
-  }
-
-  .bo-record-head{
-    flex-direction:column;
-  }
-
-  .bo-status{
-    align-self:flex-start;
-  }
+  .bo-stats{grid-template-columns:repeat(3,1fr)}
+  .bo-grid{grid-template-columns:1fr}
+  .bo-record-head{flex-direction:column}
+  .bo-status{align-self:flex-start}
 }
 
 @media(min-width:800px){
   .main{padding:18px}
 }
-</style></head><body><header class="header">
+</style>
+</head>
+
+<body>
+
+<header class="header">
   <div class="header-inner">
     <div>
       <h1 class="brand-title">Naija Pocket Business Center</h1>
       <div class="brand-subtitle">Secure payment and document delivery</div>
-    </div><div id="serviceBadge" class="service-badge">Service</div>
-
+    </div>
+    <div id="serviceBadge" class="service-badge">Service</div>
   </div>
-</header><!-- ========================================================
-     CUSTOMER PAYMENT MODE
-========================================================= --><main id="customerPaymentView" class="main">  <section class="card">
-    <h2 class="title">Payment Details</h2><p class="subtitle">
-  Your exact reviewed document is connected to this payment.
-  Once payment is created, the document is saved securely for download.
-</p>
+</header>
 
-  </section>  <section class="card status-card"><div class="status-label">Payment Status</div>
+<main id="customerPaymentView" class="main">
 
-<div id="statusValue" class="status-value">
-  Preparing...
-</div>
+  <section class="card">
+    <h2 class="title">Payment Details</h2>
+    <p class="subtitle">
+      Your exact reviewed document is connected to this payment.
+      Once payment is created, the document is saved securely for download.
+    </p>
+  </section>
 
-<div id="statusMessage" class="status-message">
-  Preparing your secure payment.
-</div>
+  <section class="card status-card">
+    <div class="status-label">Payment Status</div>
+    <div id="statusValue" class="status-value">Preparing...</div>
+    <div id="statusMessage" class="status-message">
+      Preparing your secure payment.
+    </div>
+    <div class="progress">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+  </section>
 
-<div class="progress">
-  <div id="progressBar" class="progress-bar"></div>
-</div>
+  <section class="card amount-card">
+    <div class="amount-label">AMOUNT TO PAY</div>
+    <div id="amountValue" class="amount-value">₦0</div>
+  </section>
 
-  </section>  <section class="card amount-card"><div class="amount-label">AMOUNT TO PAY</div>
+  <section class="card details-card">
+    <div class="section-title">ORDER INFORMATION</div>
+    <div id="orderDetails" class="details">
+      Preparing order details...
+    </div>
 
-<div id="amountValue" class="amount-value">
-  ₦0
-</div>
+    <div id="paymentIdBox" class="payment-id-box hidden">
+      <div class="payment-id-label">PAYMENT ID</div>
+      <div id="paymentIdValue" class="payment-id-value"></div>
+    </div>
+  </section>
 
-  </section>  <section class="card details-card"><div class="section-title">ORDER INFORMATION</div>
+  <section class="card bank-card">
+    <div class="section-title">MAKE YOUR PAYMENT</div>
 
-<div id="orderDetails" class="details">
-  Preparing order details...
-</div>
+    <div class="details" style="margin-bottom:6px;">
+      Transfer exactly the amount shown above.
+      After completing your bank transfer, enter your payment reference below.
+    </div>
 
-<div id="paymentIdBox" class="payment-id-box hidden">
+    <div class="bank-row">
+      <div class="bank-label">Bank</div>
+      <div id="bankName" class="bank-value">Your Business Bank</div>
+    </div>
 
-  <div class="payment-id-label">PAYMENT ID</div>
+    <div class="bank-row">
+      <div class="bank-label">Account Name</div>
+      <div id="accountName" class="bank-value">
+        Naija Pocket Business Center
+      </div>
+    </div>
 
-  <div id="paymentIdValue" class="payment-id-value"></div>
+    <div class="bank-row">
+      <div class="bank-label">Account Number</div>
+      <div id="accountNumber" class="bank-value">
+        0000000000
+      </div>
+    </div>
+  </section>
 
-</div>
+  <section class="card reference-card">
+    <div class="section-title">PAYMENT REFERENCE</div>
 
-  </section>  <section class="card bank-card"><div class="section-title">MAKE YOUR PAYMENT</div>
+    <input
+      id="paymentReference"
+      class="reference-input"
+      type="text"
+      autocomplete="off"
+      placeholder="Enter your bank transfer reference"
+    >
 
-<div class="details" style="margin-bottom:6px;">
-  Transfer exactly the amount shown above.
-  After completing your bank transfer, enter your payment reference below.
-</div>
+    <textarea
+      id="paymentNote"
+      class="note-input"
+      placeholder="Optional note for Customer Care"
+    ></textarea>
 
-<div class="bank-row">
-  <div class="bank-label">Bank</div>
-  <div id="bankName" class="bank-value">Your Business Bank</div>
-</div>
+    <button
+      id="reportButton"
+      class="report-button"
+      type="button"
+      disabled
+    >
+      ✓ I HAVE MADE PAYMENT
+    </button>
+  </section>
 
-<div class="bank-row">
-  <div class="bank-label">Account Name</div>
-  <div id="accountName" class="bank-value">
-    Naija Pocket Business Center
-  </div>
-</div>
+  <section id="downloadArea" class="card download-area">
+    <div class="section-title">DOWNLOAD</div>
 
-<div class="bank-row">
-  <div class="bank-label">Account Number</div>
-  <div id="accountNumber" class="bank-value">
-    0000000000
-  </div>
-</div>
+    <div id="downloadNote" class="locked-note">
+      Customer Care must verify your payment before the saved document can be downloaded.
+    </div>
 
-  </section>  <section class="card reference-card"><div class="section-title">PAYMENT REFERENCE</div>
+    <button
+      id="downloadButton"
+      class="download-button"
+      type="button"
+      disabled
+    >
+      🔒 DOWNLOAD DOCUMENT
+    </button>
+  </section>
 
-<input
-  id="paymentReference"
-  class="reference-input"
-  type="text"
-  autocomplete="off"
-  placeholder="Enter your bank transfer reference"
->
+  <div id="message" class="message"></div>
 
-<textarea
-  id="paymentNote"
-  class="note-input"
-  placeholder="Optional note for Customer Care"
-></textarea>
+  <button id="backButton" class="back-button" type="button">
+    BACK OFFICE
+  </button>
 
-<button
-  id="reportButton"
-  class="report-button"
-  type="button"
-  disabled
->
-  ✓ I HAVE MADE PAYMENT
-</button>
+</main>
 
-  </section>  <section id="downloadArea" class="card download-area"><div class="section-title">DOWNLOAD</div>
+<main id="backOfficeView" class="main">
 
-<div id="downloadNote" class="locked-note">
-  Customer Care must verify your payment before the saved document can be downloaded.
-</div>
+  <section class="card bo-header-card">
 
-<button
-  id="downloadButton"
-  class="download-button"
-  type="button"
-  disabled
->
-  🔒 DOWNLOAD DOCUMENT
-</button>
+    <h2 class="bo-title">Customer Care Back Office</h2>
 
-  </section>  <div id="message" class="message"></div><button
-id="backButton"
-class="back-button"
-type="button"
+    <p class="bo-subtitle">
+      View saved customer documents, confirm reported payments,
+      and activate download for the exact document already saved.
+    </p>
 
-«»
+    <input
+      id="boAdminKey"
+      class="bo-key-input"
+      type="password"
+      autocomplete="off"
+      placeholder="Enter Back Office access key"
+    >
 
-BACK OFFICE
+    <button id="boLoadButton" class="bo-button bo-load" type="button">
+      LOAD SAVED DOCUMENTS
+    </button>
 
-  </button></main><!-- ========================================================
-     SINGLE BACK OFFICE
-========================================================= --><main id="backOfficeView" class="main">  <section class="card bo-header-card"><h2 class="bo-title">Customer Care Back Office</h2>
+    <button id="boRefreshButton" class="bo-button bo-refresh" type="button">
+      REFRESH BACK OFFICE
+    </button>
 
-<p class="bo-subtitle">
-  View saved customer documents, confirm reported payments,
-  and activate download for the exact document already saved.
-</p>
+    <button id="boExitButton" class="bo-button bo-exit" type="button">
+      EXIT BACK OFFICE
+    </button>
 
-<input
-  id="boAdminKey"
-  class="bo-key-input"
-  type="password"
-  autocomplete="off"
-  placeholder="Enter Back Office access key"
->
+    <div id="boMessage" class="bo-message"></div>
+  </section>
 
-<button
-  id="boLoadButton"
-  class="bo-button bo-load"
-  type="button"
->
-  LOAD SAVED DOCUMENTS
-</button>
+  <section class="card">
 
-<button
-  id="boRefreshButton"
-  class="bo-button bo-refresh"
-  type="button"
->
-  REFRESH BACK OFFICE
-</button>
+    <div class="section-title">BACK OFFICE SUMMARY</div>
 
-<button
-  id="boExitButton"
-  class="bo-button bo-exit"
-  type="button"
->
-  EXIT BACK OFFICE
-</button>
+    <div class="bo-stats">
+      <div class="bo-stat">
+        <div id="boTotal" class="bo-stat-number">0</div>
+        <div class="bo-stat-label">Saved</div>
+      </div>
 
-<div id="boMessage" class="bo-message"></div>
+      <div class="bo-stat">
+        <div id="boReported" class="bo-stat-number">0</div>
+        <div class="bo-stat-label">Reported</div>
+      </div>
 
-  </section>  <section class="card"><div class="section-title">BACK OFFICE SUMMARY</div>
+      <div class="bo-stat">
+        <div id="boActivated" class="bo-stat-number">0</div>
+        <div class="bo-stat-label">Activated</div>
+      </div>
+    </div>
+  </section>
 
-<div class="bo-stats">
+  <section class="card">
 
-  <div class="bo-stat">
-    <div id="boTotal" class="bo-stat-number">0</div>
-    <div class="bo-stat-label">Saved</div>
-  </div>
+    <div class="section-title">SAVED DOCUMENTS</div>
 
-  <div class="bo-stat">
-    <div id="boReported" class="bo-stat-number">0</div>
-    <div class="bo-stat-label">Reported</div>
-  </div>
+    <div id="boRecords">
+      <div class="bo-empty">
+        Enter the Back Office access key and tap LOAD SAVED DOCUMENTS.
+      </div>
+    </div>
 
-  <div class="bo-stat">
-    <div id="boActivated" class="bo-stat-number">0</div>
-    <div class="bo-stat-label">Activated</div>
-  </div>
+    <div class="bo-note">
+      Saved documents are listed independently of whether the customer
+      has reported payment. Reporting payment changes the payment state;
+      activation only unlocks the already-saved document.
+    </div>
 
-</div>
+  </section>
 
-  </section>  <section class="card"><div class="section-title">SAVED DOCUMENTS</div>
+</main>
 
-<div id="boRecords">
-
-  <div class="bo-empty">
-    Enter the Back Office access key and tap LOAD SAVED DOCUMENTS.
-  </div>
-
-</div>
-
-<div class="bo-note">
-  Saved documents are listed independently of whether the customer
-  has reported payment. Reporting payment changes the payment state;
-  activation only unlocks the already-saved document.
-</div>
-
-  </section></main><script>
+<script>
 "use strict";
 
 /* ============================================================
    Naija Pocket Business Center
    payment.html
 
-   ONE BACK OFFICE
-   ---------------
-   The Back Office is controlled by this payment.html.
+   MODES
+   -----
+   Normal customer payment:
+       /payment.html
 
-   Workspace only opens:
+   Back Office:
        /payment.html?mode=back_office
 
-   REVIEW PAYMENT BRIDGE
-   ---------------------
-   Review can load this same payment.html invisibly with:
+   Hidden Review bridge:
        /payment.html?mode=review_bridge
 
-   In bridge mode this page does not display or start the
-   normal customer payment UI. It receives the exact Review
-   snapshot through postMessage, creates the payment record,
-   saves the exact document through the Payment API, reports
-   the customer's payment confirmation, and sends the result
-   back to Review.
-
-   LOCAL ACCESS KEY
-   ----------------
-       NPBC-2026
-
-   The key is checked locally by this HTML.
-   It is not sent to the API.
-
-   DOWNLOAD RULE
-   -------------
-   ACTIVATE DOWNLOAD does not depend on the customer
-   tapping I HAVE MADE PAYMENT.
-
-   Customer Care may confirm payment independently and
-   activate the exact document already saved.
-
-   The saved document is never regenerated here.
+   The Review bridge is invisible to the customer.
+   Review sends the exact document snapshot to this page.
+   This page performs the Payment API operations.
 ============================================================ */
 
 const PAYMENT_API_BASE =
@@ -898,8 +859,6 @@ const PAYMENT_API_BASE =
 
 const LOCAL_BACK_OFFICE_KEY =
   "NPBC-2026";
-
-let backOfficeUnlocked = false;
 
 const params =
   new URLSearchParams(location.search);
@@ -917,12 +876,6 @@ const isBackOfficeMode =
 if(isBackOfficeMode){
   document.body.classList.add("back-office-mode");
 }
-
-/* ==========================================================
-   REVIEW PAYMENT BRIDGE STATE
-========================================================== */
-
-let reviewBridgeBusy = false;
 
 /* ==========================================================
    CUSTOMER STATE
@@ -1023,7 +976,8 @@ function parseMoney(value){
 
 function formatMoney(value){
 
-  const n = parseMoney(value);
+  const n =
+    parseMoney(value);
 
   if(!n){
     return "₦0";
@@ -1079,7 +1033,7 @@ function isVerified(status){
 }
 
 /* ==========================================================
-   IMPORTANT DOWNLOAD STATE HELPER
+   DOWNLOAD STATE
 ========================================================== */
 
 function extractDownloadUnlocked(data){
@@ -1777,31 +1731,22 @@ async function createPayment(){
       extractDownloadUnlocked(data) ||
       paymentVerified;
 
-    if(
-      data.amount &&
-      parseMoney(data.amount)
-    ){
-
-      amount =
-        parseMoney(data.amount);
+    if(data.amount && parseMoney(data.amount)){
+      amount = parseMoney(data.amount);
     }
 
     try{
 
-      const savedState = {
-
-        payment_id:paymentId,
-        job_id:jobId,
-        version_id:versionId,
-        amount:amount,
-        service:service,
-        created_at:new Date().toISOString()
-
-      };
-
       sessionStorage.setItem(
-        "npb_payment_state_" + jobId,
-        JSON.stringify(savedState)
+        "npbc_payment_state_" + jobId,
+        JSON.stringify({
+          payment_id:paymentId,
+          job_id:jobId,
+          version_id:versionId,
+          amount:amount,
+          service:service,
+          created_at:new Date().toISOString()
+        })
       );
 
     }catch(error){
@@ -2283,29 +2228,24 @@ async function downloadDocument(){
 
 /* ==========================================================
    REVIEW PAYMENT BRIDGE
-==========================================================
+   ==========================================================
 
-   This is intentionally separate from the normal visible
-   customer payment workflow.
+   IMPORTANT:
 
-   Review opens this page invisibly as:
+   This section is ONLY used when this page is loaded as:
 
        /payment.html?mode=review_bridge
 
-   Review then sends the exact reviewed snapshot through
-   postMessage.
+   It is invisible inside Review's iframe.
 
-   This page performs the Payment API calls.
+   Review sends the exact snapshot here.
+   This page owns the actual Payment API calls.
 
-   Therefore Review itself never calls:
-       /api/payment/create
-       /api/payment/report
-
-   The exact reviewed document is sent unchanged to the
-   Payment API.
+   Normal customer mode and Back Office mode do not use
+   these functions.
 ========================================================== */
 
-function bridgeReply(payload){
+function postReviewBridgeMessage(payload){
 
   try{
 
@@ -2315,222 +2255,252 @@ function bridgeReply(payload){
     ){
 
       window.parent.postMessage(
-        {
-          type:"NPBC_PAYMENT_BRIDGE_RESULT",
-          source:"NPBC_PAYMENT_BRIDGE",
-          ...(payload || {})
-        },
-        location.origin
+        payload,
+        window.location.origin
       );
+
+      return true;
     }
 
   }catch(error){
 
     console.error(
-      "PAYMENT BRIDGE REPLY ERROR:",
+      "REVIEW BRIDGE POST ERROR:",
       error
     );
   }
+
+  return false;
 }
 
-function announceBridgeReady(){
+function bridgeNormalizePages(value){
 
-  try{
-
-    if(
-      window.parent &&
-      window.parent !== window
-    ){
-
-      window.parent.postMessage(
-        {
-          type:"NPBC_PAYMENT_BRIDGE_READY",
-          source:"NPBC_PAYMENT_BRIDGE"
-        },
-        location.origin
-      );
-    }
-
-  }catch(error){
-
-    console.error(
-      "PAYMENT BRIDGE READY ERROR:",
-      error
-    );
+  if(!Array.isArray(value)){
+    return [];
   }
+
+  return value
+    .map(
+      (page,index) => {
+
+        if(typeof page === "string"){
+
+          return {
+            page_number:index + 1,
+            position:index + 1,
+            content:page
+          };
+        }
+
+        if(
+          page &&
+          typeof page === "object"
+        ){
+
+          return {
+            ...page,
+            page_number:
+              Number(
+                page.page_number ||
+                page.page ||
+                page.position ||
+                index + 1
+              ),
+            position:
+              Number(
+                page.position ||
+                page.page_number ||
+                page.page ||
+                index + 1
+              ),
+            content:
+              clean(
+                page.content ||
+                page.text ||
+                page.body ||
+                page.html ||
+                ""
+              )
+          };
+        }
+
+        return null;
+      }
+    )
+    .filter(Boolean)
+    .filter(
+      page => clean(page.content)
+    );
 }
 
-function normalizeBridgeSnapshot(incomingSnapshot){
+function validateReviewBridgeSnapshot(incoming){
 
   if(
-    !incomingSnapshot ||
-    typeof incomingSnapshot !== "object"
+    !incoming ||
+    typeof incoming !== "object"
   ){
 
     throw new Error(
-      "The Review payment snapshot was not received."
+      "No valid Review payment snapshot was received."
     );
   }
 
-  const bridgeJobId =
-    clean(incomingSnapshot.job_id);
+  const incomingJobId =
+    clean(incoming.job_id);
 
-  if(!bridgeJobId){
-
-    throw new Error(
-      "The Review job ID is missing."
-    );
-  }
-
-  const bridgeVersionId =
+  const incomingVersionId =
     clean(
-      incomingSnapshot.version_id ||
-      incomingSnapshot.document_version ||
-      incomingSnapshot.versionId
+      incoming.version_id ||
+      incoming.versionId ||
+      incoming.document_version
     );
 
-  if(!bridgeVersionId){
+  const incomingAmount =
+    parseMoney(incoming.amount);
 
-    throw new Error(
-      "The Review document version is missing."
+  const incomingPages =
+    bridgeNormalizePages(
+      incoming.pages ||
+      incoming.document_pages ||
+      incoming.review_pages
     );
-  }
 
-  const bridgeService =
-    clean(incomingSnapshot.service) ||
-    "Business Center Service";
-
-  const bridgeAmount =
-    parseMoney(incomingSnapshot.amount);
-
-  if(
-    !bridgeAmount ||
-    bridgeAmount <= 0
-  ){
-
-    throw new Error(
-      "The payment amount is missing."
-    );
-  }
-
-  const bridgeCustomerId =
-    clean(incomingSnapshot.customer_id);
-
-  const bridgeFilename =
+  const incomingText =
     clean(
-      incomingSnapshot.filename ||
-      incomingSnapshot.document_filename
-    ) ||
-    ("naija_pocket_" + bridgeJobId + ".docx");
-
-  let bridgePages =
-    normalizePages(
-      incomingSnapshot.pages ||
-      incomingSnapshot.document_pages ||
-      incomingSnapshot.review_pages
+      incoming.document_text ||
+      incoming.text ||
+      incoming.content
     );
 
-  const bridgeText =
-    clean(
-      incomingSnapshot.document_text ||
-      incomingSnapshot.text ||
-      incomingSnapshot.content
+  if(!incomingJobId){
+
+    throw new Error(
+      "The Review payment request has no Job ID."
     );
+  }
 
-  if(
-    bridgePages.length === 0 &&
-    bridgeText
-  ){
+  if(!incomingVersionId){
 
-    bridgePages = [{
-      page_number:1,
-      position:1,
-      content:bridgeText
-    }];
+    throw new Error(
+      "The Review payment request has no document version."
+    );
+  }
+
+  if(!incomingAmount){
+
+    throw new Error(
+      "The Review payment request has no valid payment amount."
+    );
   }
 
   if(
-    !bridgePages.length &&
-    !bridgeText
+    !incomingPages.length &&
+    !incomingText
   ){
 
     throw new Error(
-      "The exact reviewed document is empty."
+      "The Review payment request contains no document."
     );
   }
 
   return {
-    job_id:bridgeJobId,
-    customer_id:bridgeCustomerId,
-    service:bridgeService,
-    amount:bridgeAmount,
-    version_id:bridgeVersionId,
-    document_version:bridgeVersionId,
-    filename:bridgeFilename,
-    document_filename:bridgeFilename,
-    pages:bridgePages,
-    document_pages:bridgePages,
-    document_text:bridgeText,
+    ...incoming,
 
-    /*
-       Preserve these if Review eventually supplies them.
-       No artificial bank reference is generated.
-    */
-    payment_reference:
-      clean(
-        incomingSnapshot.payment_reference ||
-        incomingSnapshot.paymentReference
-      ),
+    job_id:incomingJobId,
 
-    payment_note:
+    version_id:incomingVersionId,
+
+    document_version:incomingVersionId,
+
+    versionId:incomingVersionId,
+
+    amount:incomingAmount,
+
+    pages:incomingPages,
+
+    document_pages:incomingPages,
+
+    review_pages:incomingPages,
+
+    document_text:incomingText,
+
+    text:incomingText,
+
+    content:incomingText,
+
+    filename:
       clean(
-        incomingSnapshot.payment_note ||
-        incomingSnapshot.paymentNote ||
-        incomingSnapshot.note
-      )
+        incoming.filename ||
+        incoming.document_filename
+      ) ||
+      ("naija_pocket_" + incomingJobId + ".docx"),
+
+    document_filename:
+      clean(
+        incoming.document_filename ||
+        incoming.filename
+      ) ||
+      ("naija_pocket_" + incomingJobId + ".docx")
   };
 }
 
-async function bridgeCreatePayment(reviewSnapshot){
+async function createPaymentFromReviewBridge(reviewSnapshot){
+
+  const s =
+    validateReviewBridgeSnapshot(
+      reviewSnapshot
+    );
 
   const payload = {
 
-    job_id:
-      reviewSnapshot.job_id,
+    job_id:s.job_id,
 
     customer_id:
-      reviewSnapshot.customer_id ||
-      undefined,
+      clean(s.customer_id) || undefined,
 
     service:
-      reviewSnapshot.service,
+      clean(s.service) ||
+      "Business Center Service",
 
     amount:
-      reviewSnapshot.amount,
+      parseMoney(s.amount),
+
+    currency:
+      clean(s.currency) ||
+      "NGN",
 
     payment_method:
       "bank_transfer",
 
     version_id:
-      reviewSnapshot.version_id,
+      s.version_id,
 
     document_version:
-      reviewSnapshot.document_version,
+      s.version_id,
 
     pages:
-      reviewSnapshot.pages,
+      s.pages,
 
     document_pages:
-      reviewSnapshot.document_pages,
+      s.pages,
+
+    review_pages:
+      s.pages,
 
     document_text:
-      reviewSnapshot.document_text,
+      s.document_text,
+
+    text:
+      s.document_text,
+
+    content:
+      s.document_text,
 
     filename:
-      reviewSnapshot.filename,
+      s.filename,
 
     document_filename:
-      reviewSnapshot.document_filename
+      s.document_filename
   };
 
   const data =
@@ -2542,7 +2512,7 @@ async function bridgeCreatePayment(reviewSnapshot){
   const returnedPayment =
     data.payment || {};
 
-  const bridgePaymentId =
+  const createdPaymentId =
     clean(
       data.payment_id ||
       returnedPayment.payment_id ||
@@ -2550,23 +2520,24 @@ async function bridgeCreatePayment(reviewSnapshot){
       data.reference
     );
 
-  if(!bridgePaymentId){
+  if(!createdPaymentId){
 
     throw new Error(
-      "The payment service created no Payment ID."
+      "Payment creation completed without returning a Payment ID."
     );
   }
 
   if(data.document_saved === false){
 
     throw new Error(
-      "Payment was returned without confirmation that the exact document was saved."
+      "Payment creation did not confirm that the exact reviewed document was saved."
     );
   }
 
   return {
+    snapshot:s,
     data:data,
-    payment_id:bridgePaymentId,
+    payment_id:createdPaymentId,
     payment_status:
       clean(
         data.payment_status ||
@@ -2576,129 +2547,122 @@ async function bridgeCreatePayment(reviewSnapshot){
   };
 }
 
-async function bridgeReportPayment(
-  reviewSnapshot,
-  bridgePaymentId
-){
+async function reportPaymentFromReviewBridge(paymentInfo){
+
+  const s =
+    paymentInfo.snapshot;
+
+  const createdPaymentId =
+    paymentInfo.payment_id;
 
   /*
-     IMPORTANT:
+     Review currently does not display a separate bank-reference
+     input. Therefore this bridge does NOT invent a fake bank
+     transfer reference.
 
-     The Review page currently does not contain a bank
-     transfer reference field. Therefore this bridge does
-     NOT invent one.
-
-     If Review supplies payment_reference, it is forwarded.
-     Otherwise the field is sent as an empty string and the
-     Payment API decides whether its report endpoint permits
-     a customer confirmation without a bank reference.
-
-     This prevents the system from falsely fabricating a
-     bank transfer reference.
+     If Review later supplies payment_reference, it will be used.
+     Otherwise an empty reference is passed to the existing
+     payment-report endpoint.
   */
 
-  const reportPayload = {
+  const paymentReferenceFromReview =
+    clean(
+      s.payment_reference ||
+      s.paymentReference ||
+      s.bank_transfer_reference ||
+      s.bankTransferReference ||
+      ""
+    );
 
-    payment_id:
-      bridgePaymentId,
-
-    job_id:
-      reviewSnapshot.job_id,
-
-    payment_reference:
-      reviewSnapshot.payment_reference || "",
-
-    note:
-      reviewSnapshot.payment_note ||
-      "Customer confirmed payment from Review page."
-  };
+  const paymentNoteFromReview =
+    clean(
+      s.payment_note ||
+      s.paymentNote ||
+      ""
+    );
 
   const data =
     await paymentPost(
       "/api/payment/report",
-      reportPayload
+      {
+        payment_id:
+          createdPaymentId,
+
+        job_id:
+          s.job_id,
+
+        version_id:
+          s.version_id,
+
+        payment_reference:
+          paymentReferenceFromReview,
+
+        note:
+          paymentNoteFromReview ||
+          "Payment reported from Review page."
+      }
     );
 
-  const payment =
+  const returnedPayment =
     data.payment || {};
+
+  const status =
+    clean(
+      data.payment_status ||
+      returnedPayment.payment_status ||
+      "reported"
+    );
 
   return {
     data:data,
-
-    payment_status:
-      clean(
-        data.payment_status ||
-        payment.payment_status ||
-        "reported"
-      ),
-
-    payment_reported:
-      true
+    payment_id:createdPaymentId,
+    payment_status:status
   };
 }
 
-async function handleReviewPaymentBridge(data){
-
-  if(reviewBridgeBusy){
-
-    bridgeReply({
-      success:false,
-      ok:false,
-      error:
-        "A payment request is already being processed."
-    });
-
-    return;
-  }
-
-  reviewBridgeBusy = true;
+async function handleReviewBridgeRequest(data){
 
   try{
 
-    const reviewSnapshot =
-      normalizeBridgeSnapshot(
-        data.snapshot
+    const incomingSnapshot =
+      data.snapshot;
+
+    const paymentInfo =
+      await createPaymentFromReviewBridge(
+        incomingSnapshot
       );
 
     /*
-       CREATE
+       The create call has now saved the exact reviewed
+       document and created the Payment ID.
 
-       This saves the exact Review document against the
-       same job/version through the Payment API.
+       Next, report the payment using the same Payment ID.
     */
 
-    const created =
-      await bridgeCreatePayment(
-        reviewSnapshot
+    const reportInfo =
+      await reportPaymentFromReviewBridge(
+        paymentInfo
       );
 
-    /*
-       REPORT
+    postReviewBridgeMessage({
 
-       This is performed by payment.html, not Review.
-    */
+      type:
+        "NPBC_PAYMENT_BRIDGE_RESULT",
 
-    const reported =
-      await bridgeReportPayment(
-        reviewSnapshot,
-        created.payment_id
-      );
+      source:
+        "NPBC_PAYMENT_BRIDGE",
 
-    /*
-       Return only the result needed by Review.
-    */
+      success:
+        true,
 
-    bridgeReply({
-
-      success:true,
-
-      ok:true,
+      ok:
+        true,
 
       payment_id:
-        created.payment_id,
+        reportInfo.payment_id,
 
       payment_status:
-        reported.payment_status,
+        reportInfo.payment_status,
 
       payment_reported:
         true,
@@ -2706,14 +2670,8 @@ async function handleReviewPaymentBridge(data){
       document_saved:
         true,
 
-      job_id:
-        reviewSnapshot.job_id,
-
-      version_id:
-        reviewSnapshot.version_id,
-
       message:
-        reported.data.message ||
+        reportInfo.data.message ||
         "Payment Reported — Awaiting Verification"
     });
 
@@ -2724,83 +2682,116 @@ async function handleReviewPaymentBridge(data){
       error
     );
 
-    bridgeReply({
+    postReviewBridgeMessage({
 
-      success:false,
+      type:
+        "NPBC_PAYMENT_BRIDGE_RESULT",
 
-      ok:false,
+      source:
+        "NPBC_PAYMENT_BRIDGE",
+
+      success:
+        false,
+
+      ok:
+        false,
 
       error:
         error.message ||
-        "The payment request could not be completed."
+        "The payment could not be reported."
     });
-
-  }finally{
-
-    reviewBridgeBusy = false;
   }
 }
 
-function installReviewPaymentBridge(){
+function installReviewBridge(){
+
+  /*
+     Do not run customer initialization.
+     Do not run Back Office initialization.
+     Do not read job_id from this iframe URL.
+  */
+
+  document.body.classList.add("hidden");
 
   window.addEventListener(
     "message",
     event => {
 
       /*
-         Only accept messages from the same origin.
+         Security:
+         Review and this bridge are same-origin.
+         Only accept messages from the actual parent window.
       */
 
       if(
         event.origin !==
-        location.origin
+        window.location.origin
       ){
 
         return;
       }
 
-      /*
-         Only accept messages from the parent Review page.
-      */
-
       if(
-        !event.source ||
-        event.source !== window.parent
+        event.source !==
+        window.parent
       ){
 
         return;
       }
 
       const data =
-        event.data || {};
+        event.data;
 
       if(
-        data.type !==
+        !data ||
+        typeof data !== "object"
+      ){
+
+        return;
+      }
+
+      if(
+        data.type ===
         "NPBC_REVIEW_PAYMENT_REQUEST"
       ){
 
-        return;
+        if(
+          data.source !==
+          "NPBC_REVIEW"
+        ){
+
+          return;
+        }
+
+        if(
+          data.action !==
+          "CREATE_AND_REPORT_PAYMENT"
+        ){
+
+          return;
+        }
+
+        handleReviewBridgeRequest(
+          data
+        );
       }
 
-      if(
-        data.action !==
-        "CREATE_AND_REPORT_PAYMENT"
-      ){
-
-        return;
-      }
-
-      handleReviewPaymentBridge(data);
     }
   );
 
   /*
-     Tell Review that this hidden payment.html bridge
-     has finished loading and is ready to receive the
-     exact Review snapshot.
+     Tell Review immediately that the hidden payment
+     receiver is ready.
   */
 
-  announceBridgeReady();
+  postReviewBridgeMessage({
+
+    type:
+      "NPBC_PAYMENT_BRIDGE_READY",
+
+    source:
+      "NPBC_PAYMENT_BRIDGE"
+  });
 }
 
 /* ==========================================================
@@ -2817,6 +2808,7 @@ const boTotal = $("boTotal");
 const boReported = $("boReported");
 const boActivated = $("boActivated");
 
+let backOfficeUnlocked = false;
 let backOfficeRecords = [];
 
 function setBackOfficeMessage(text,type=""){
@@ -2883,13 +2875,6 @@ function checkLocalBackOfficeKey(){
   return true;
 }
 
-function backOfficeHeaders(){
-
-  return {
-    "Accept":"application/json"
-  };
-}
-
 async function backOfficeGet(path){
 
   const response =
@@ -2898,7 +2883,9 @@ async function backOfficeGet(path){
       {
         method:"GET",
         cache:"no-store",
-        headers:backOfficeHeaders()
+        headers:{
+          "Accept":"application/json"
+        }
       }
     );
 
@@ -2928,7 +2915,7 @@ async function backOfficePost(path,body){
       {
         method:"POST",
         headers:{
-          ...backOfficeHeaders(),
+          "Accept":"application/json",
           "Content-Type":"application/json"
         },
         body:JSON.stringify(body || {})
@@ -3089,13 +3076,6 @@ function recordPages(record){
 
   return [];
 }
-
-/* ==========================================================
-   DOCUMENT DISPLAY CLEANING
-
-   DISPLAY ONLY.
-   The saved document is never modified.
-========================================================== */
 
 function cleanDocumentForDisplay(value){
 
@@ -3322,12 +3302,6 @@ function renderBackOffice(){
       wrapper.className =
         "bo-record";
 
-      /*
-         IMPORTANT:
-         The metadata remains OUTSIDE the document viewer.
-         The viewer itself contains only the document.
-      */
-
       wrapper.innerHTML =
 
         '<div class="bo-record-head">' +
@@ -3506,7 +3480,6 @@ function renderBackOffice(){
             )
         );
       }
-
     }
   );
 }
@@ -3591,21 +3564,6 @@ async function loadBackOffice(){
 
 /* ==========================================================
    ACTIVATE DOWNLOAD
-==========================================================
-
-   IMPORTANT:
-
-   There is NO dependency on:
-       payment_reported
-       I HAVE MADE PAYMENT
-
-   Customer Care can receive payment information through
-   another route and still activate the saved document.
-
-   This action does NOT regenerate or resave the document.
-
-   It only changes the download authorization for the
-   existing saved payment/document record.
 ========================================================== */
 
 async function activateBackOfficeDownload(
@@ -3886,7 +3844,7 @@ async function startCustomerPayment(){
 
       const raw =
         sessionStorage.getItem(
-          "npb_payment_state_" + jobId
+          "npbc_payment_state_" + jobId
         );
 
       if(raw){
@@ -3953,29 +3911,15 @@ async function startCustomerPayment(){
 if(isReviewBridgeMode){
 
   /*
-     REVIEW BRIDGE MODE
+     Hidden iframe mode.
 
-     This mode intentionally does NOT:
-       - start customer payment UI
-       - create a payment automatically
-       - open Back Office
-       - redirect anywhere
-
-     It waits for Review to send:
-       NPBC_REVIEW_PAYMENT_REQUEST
+     NOTHING from the normal customer page is started here.
+     The bridge waits for Review's postMessage request.
   */
 
-  installReviewPaymentBridge();
+  installReviewBridge();
 
 }else if(isBackOfficeMode){
-
-  /*
-     Do not create a customer payment while Back Office
-     mode is open.
-
-     Customer Care must enter:
-         NPBC-2026
-  */
 
   serviceBadge.textContent =
     "BACK OFFICE";
@@ -3989,5 +3933,7 @@ if(isReviewBridgeMode){
 
   startCustomerPayment();
 }
-</script></body>
+</script>
+
+</body>
 </html>
