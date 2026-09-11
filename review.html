@@ -33,57 +33,216 @@ html,body{
   font-family:Inter,Arial,sans-serif
 }
 
-body{
-  overflow:hidden
-}
+body{overflow:hidden}
 
-button,textarea,input{
-  font:inherit
-}
-
-button{
-  cursor:pointer
-}
-
-button:disabled{
-  opacity:.45;
-  cursor:not-allowed
-}
+button,textarea,input{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
 
 .header{
-  display:none!important
+  width:100%;
+  height:66px;
+  background:#000;
+  border-bottom:1px solid var(--line);
+  padding:11px 12px;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:200
+}
+
+.header-inner{
+  width:100%;
+  max-width:950px;
+  height:100%;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px
+}
+
+.brand{min-width:0}
+
+.brand-title{
+  margin:0;
+  color:var(--gold2);
+  font-family:Montserrat,Arial,sans-serif;
+  font-size:18px;
+  line-height:1.15;
+  font-weight:900
+}
+
+.brand-subtitle{
+  margin-top:3px;
+  color:#aaa;
+  font-size:10px
+}
+
+.service-badge{
+  flex:0 0 auto;
+  max-width:45%;
+  padding:7px 9px;
+  border:1px solid rgba(212,175,55,.4);
+  border-radius:8px;
+  color:var(--gold2);
+  background:#111;
+  font-size:9px;
+  font-weight:800;
+  text-align:center
 }
 
 .main{
-  position:fixed!important;
-  top:0!important;
-  left:0!important;
-  right:0!important;
-  bottom:0!important;
-  width:100%!important;
-  max-width:1100px!important;
-  margin:0 auto!important;
-  padding:0!important;
-  display:grid!important;
-  grid-template-rows:50% 50%!important;
-  gap:0!important;
-  overflow:hidden!important
+  position:fixed;
+  top:66px;
+  left:0;
+  right:0;
+  bottom:0;
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+  padding:10px 5px 0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden
+}
+
+.top-amount-card{
+  flex:0 0 auto;
+  margin:0 0 8px;
+  padding:7px 8px;
+  background:#111;
+  border:1px solid rgba(212,175,55,.45);
+  border-radius:13px;
+  text-align:left
+}
+
+.top-amount-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px
+}
+
+.top-action-buttons{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:5px;
+  flex:1;
+  max-width:650px
+}
+
+.top-action-buttons button{
+  width:100%;
+  min-height:38px;
+  height:38px;
+  padding:4px 5px;
+  border-radius:8px;
+  font-size:9px;
+  font-weight:900;
+  line-height:1.05
+}
+
+.top-amount-card>.top-amount-head>div:first-child{
+  flex:0 0 108px;
+  text-align:center
+}
+
+.top-amount-label{
+  color:#aaa;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.8px
+}
+
+.top-amount-value{
+  margin-top:2px;
+  color:var(--gold2);
+  font-size:27px;
+  font-weight:900
+}
+
+.top-panel{
+  flex:0 0 auto;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:11px 13px;
+  margin-bottom:8px
+}
+
+.review-title{
+  margin:0;
+  color:#fff;
+  font-family:Montserrat,Arial,sans-serif;
+  font-size:17px;
+  font-weight:900
+}
+
+.review-subtitle{
+  margin:4px 0 0;
+  color:#aaa;
+  font-size:10px;
+  line-height:1.45
+}
+
+.status-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:8px
+}
+
+.status-label{
+  color:#aaa;
+  font-size:9px
+}
+
+.status-value{
+  color:var(--gold2);
+  font-size:10px;
+  font-weight:900
+}
+
+.progress-shell{
+  margin-top:6px;
+  width:100%;
+  height:6px;
+  background:#242424;
+  border-radius:20px;
+  overflow:hidden
+}
+
+.progress-bar{
+  width:0%;
+  height:100%;
+  background:var(--gold);
+  transition:width .25s ease
+}
+
+.progress-text{
+  margin-top:4px;
+  color:#888;
+  font-size:9px;
+  text-align:right
 }
 
 .review-card{
-  grid-row:1;
-  min-height:0!important;
-  height:100%!important;
-  display:flex!important;
-  flex-direction:column!important;
-  border-radius:0!important;
-  overflow:hidden!important;
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
   background:#0b0b0b;
-  border:1px solid rgba(212,175,55,.22)
+  border:1px solid rgba(212,175,55,.22);
+  border-radius:13px;
+  overflow:hidden
 }
 
 .document-card-header{
-  padding:8px 10px!important;
+  flex:0 0 auto;
+  padding:10px 11px 8px;
   background:#111;
   border-bottom:1px solid var(--line);
   display:flex;
@@ -106,19 +265,23 @@ button:disabled{
 }
 
 .document-scroll{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  height:auto!important;
-  padding:5px!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:5px;
   -webkit-overflow-scrolling:touch;
   overscroll-behavior:contain
 }
 
-.page-viewer{
-  width:100%
+.document-scroll::-webkit-scrollbar{width:5px}
+.document-scroll::-webkit-scrollbar-track{background:#090909}
+.document-scroll::-webkit-scrollbar-thumb{
+  background:#3a3a3a;
+  border-radius:20px
 }
+
+.page-viewer{width:100%}
 
 .document-page{
   position:relative;
@@ -178,18 +341,12 @@ button:disabled{
 .page-content h4{font-size:1.15em}
 
 .page-content strong,
-.page-content b{
-  font-weight:700
-}
+.page-content b{font-weight:700}
 
 .page-content em,
-.page-content i{
-  font-style:italic
-}
+.page-content i{font-style:italic}
 
-.page-content u{
-  text-decoration:underline
-}
+.page-content u{text-decoration:underline}
 
 .page-content ul,
 .page-content ol{
@@ -198,9 +355,7 @@ button:disabled{
   padding-left:28px
 }
 
-.page-content li{
-  margin-bottom:4px
-}
+.page-content li{margin-bottom:4px}
 
 .page-content blockquote{
   margin:12px 0;
@@ -230,9 +385,7 @@ button:disabled{
   text-align:left
 }
 
-.page-content th{
-  font-weight:700
-}
+.page-content th{font-weight:700}
 
 .page-content pre{
   white-space:pre-wrap;
@@ -294,9 +447,7 @@ button:disabled{
   font-weight:900
 }
 
-.nav-button.next{
-  background:#252525
-}
+.nav-button.next{background:#252525}
 
 .page-indicator{
   min-width:85px;
@@ -359,173 +510,20 @@ button:disabled{
 }
 
 .action-area{
-  grid-row:2;
-  min-height:0!important;
-  height:100%!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  padding:7px 8px 18px!important;
-  border-top:2px solid var(--gold)!important;
-  box-shadow:none!important;
+  flex:0 0 auto;
   background:#080808;
-  position:relative
-}
-
-.top-panel{
-  margin:0 0 6px!important;
-  padding:7px 9px!important;
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:13px
-}
-
-.review-title{
-  margin:0;
-  color:#fff;
-  font-family:Montserrat,Arial,sans-serif;
-  font-size:17px;
-  font-weight:900
-}
-
-.review-subtitle{
-  margin:4px 0 0;
-  color:#aaa;
-  font-size:10px;
-  line-height:1.45
-}
-
-.status-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  margin-top:8px
-}
-
-.status-label{
-  color:#aaa;
-  font-size:9px
-}
-
-.status-value{
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900
-}
-
-.progress-shell{
-  margin-top:6px;
-  width:100%;
-  height:6px;
-  background:#242424;
-  border-radius:20px;
-  overflow:hidden
-}
-
-.progress-bar{
-  width:0%;
-  height:100%;
-  background:var(--gold);
-  transition:width .25s ease
-}
-
-.progress-text{
-  margin-top:4px;
-  color:#888;
-  font-size:9px;
-  text-align:right
-}
-
-.top-amount-card{
-  margin:0 0 6px!important;
-  padding:6px!important;
-  background:#111;
-  border:1px solid rgba(212,175,55,.45);
-  border-radius:13px;
-  text-align:left
-}
-
-.top-amount-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:6px
-}
-
-.top-amount-card>.top-amount-head>div:first-child{
-  flex:0 0 108px;
-  text-align:center
-}
-
-.top-amount-label{
-  color:#aaa;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.8px
-}
-
-.top-amount-value{
-  margin-top:2px;
-  color:var(--gold2);
-  font-size:27px;
-  font-weight:900
-}
-
-.top-action-buttons{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:5px;
-  flex:1;
-  max-width:none!important
-}
-
-.top-action-buttons button{
-  width:100%;
-  min-height:38px;
-  height:38px;
-  padding:4px 5px;
-  border-radius:8px;
-  font-size:9px;
-  font-weight:900;
-  line-height:1.05
-}
-
-.make-payment-button{
-  background:#d4af37!important;
-  color:#000!important;
-  border:0!important
-}
-
-.confirm-payment-button{
-  background:#008000!important;
-  color:#fff!important;
-  border:0!important
-}
-
-.download-button{
-  background:#007bff!important;
-  color:#fff!important;
-  border:0!important
-}
-
-.download-button:disabled{
-  background:#666!important;
-  color:#fff!important;
-  opacity:1!important
-}
-
-.download-button.active{
-  background:#007bff!important;
-  color:#fff!important;
-  cursor:pointer
+  border-top:1px solid var(--line);
+  padding:8px 10px 9px;
+  box-shadow:0 -8px 25px rgba(0,0,0,.45);
+  position:relative;
+  z-index:20
 }
 
 .correction-box{
   display:grid;
   grid-template-columns:1fr auto;
   gap:7px;
-  align-items:end;
-  margin-top:6px!important
+  align-items:end
 }
 
 .correction-input{
@@ -555,9 +553,39 @@ button:disabled{
   font-weight:900
 }
 
+.make-payment-button{
+  background:#d4af37;
+  color:#000;
+  border:0
+}
+
+.confirm-payment-button{
+  background:#008000;
+  color:#fff;
+  border:0
+}
+
+.download-button{
+  background:#007bff;
+  color:#fff;
+  border:0
+}
+
+.download-button:disabled{
+  background:#666;
+  color:#fff;
+  opacity:1
+}
+
+.download-button.active{
+  background:#007bff;
+  color:#fff;
+  cursor:pointer
+}
+
 .payment-section{
   display:block;
-  margin-top:6px!important;
+  margin-top:7px;
   padding:10px;
   background:#111;
   border:1px solid rgba(212,175,55,.4);
@@ -600,46 +628,33 @@ button:disabled{
   line-height:1.45
 }
 
-/* ===========================================================
-   PAYMENT INPUTS
-   =========================================================== */
-
-.payment-input-group{
-  margin-top:8px
+.payment-message.payment-ready{
+  color:#75dc99!important;
+  border:1px solid rgba(117,220,153,.2)
 }
 
-.payment-input-label{
-  display:block;
-  margin-bottom:4px;
-  color:#aaa;
+.payment-message.payment-waiting{
+  color:#f0cf62!important;
+  border:1px solid rgba(212,175,55,.18)
+}
+
+.payment-message.payment-locked{
+  color:#999!important
+}
+
+.message{
+  flex:0 0 auto;
+  min-height:17px;
+  margin-top:2px;
+  color:#888;
   font-size:9px;
-  font-weight:800
+  text-align:center
 }
 
-.payment-input{
-  width:100%;
-  min-height:38px;
-  background:#171717;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
-  color:#fff;
-  padding:8px 10px;
-  outline:none;
-  font-size:10px
-}
+.message.error{color:#ff7777}
+.message.success{color:#75dc99}
 
-.payment-input:focus{
-  border-color:rgba(212,175,55,.7)
-}
-
-.payment-note{
-  min-height:62px;
-  resize:vertical
-}
-
-/* ===========================================================
-   BANK PAYMENT MODAL
-   =========================================================== */
+/* PAYMENT POPUP */
 
 .payment-modal{
   position:fixed;
@@ -648,8 +663,8 @@ button:disabled{
   display:none;
   align-items:center;
   justify-content:center;
-  padding:16px;
-  background:rgba(0,0,0,.82);
+  padding:14px;
+  background:rgba(0,0,0,.78);
   backdrop-filter:blur(5px)
 }
 
@@ -658,45 +673,46 @@ button:disabled{
 }
 
 .payment-modal-card{
-  width:min(520px,100%);
+  width:100%;
+  max-width:430px;
   max-height:92vh;
   overflow-y:auto;
   background:#101010;
   border:1px solid rgba(212,175,55,.55);
   border-radius:16px;
-  box-shadow:0 20px 70px rgba(0,0,0,.7);
+  box-shadow:0 18px 60px rgba(0,0,0,.65);
   padding:16px
 }
 
 .payment-modal-title{
   color:var(--gold2);
-  font-size:18px;
+  font-size:15px;
   font-weight:900;
   text-align:center
 }
 
 .payment-modal-subtitle{
   margin-top:5px;
-  color:#aaa;
-  font-size:10px;
+  color:#999;
+  font-size:9px;
   line-height:1.5;
   text-align:center
 }
 
 .bank-box{
   margin-top:12px;
-  padding:12px;
-  background:#080808;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:11px
+  padding:13px;
+  background:#050505;
+  border:1px solid rgba(212,175,55,.3);
+  border-radius:10px
 }
 
 .bank-row{
   display:flex;
   justify-content:space-between;
-  gap:15px;
-  padding:8px 0;
-  border-bottom:1px solid rgba(255,255,255,.08)
+  gap:12px;
+  padding:7px 0;
+  border-bottom:1px solid rgba(255,255,255,.07)
 }
 
 .bank-row:last-child{
@@ -711,109 +727,201 @@ button:disabled{
 
 .bank-value{
   color:#fff;
-  font-size:11px;
+  font-size:10px;
   font-weight:900;
   text-align:right;
   word-break:break-word
 }
 
 .modal-amount{
-  margin-top:12px;
-  padding:10px;
-  background:rgba(212,175,55,.08);
+  margin-top:10px;
+  padding:9px;
+  background:#111;
   border:1px solid rgba(212,175,55,.25);
-  border-radius:10px;
+  border-radius:8px;
   text-align:center
 }
 
 .modal-amount-label{
-  color:#aaa;
-  font-size:9px;
+  color:#888;
+  font-size:8px;
   font-weight:800
 }
 
 .modal-amount-value{
   margin-top:2px;
   color:var(--gold2);
-  font-size:24px;
+  font-size:25px;
   font-weight:900
 }
 
-.modal-reference{
-  margin-top:12px
+.payment-input-group{
+  margin-top:10px
 }
 
-.modal-reference label{
+.payment-input-label{
   display:block;
   margin-bottom:5px;
   color:#aaa;
-  font-size:9px;
-  font-weight:800
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.5px
 }
 
-.modal-reference input,
-.modal-reference textarea{
+.payment-input{
   width:100%;
-  background:#171717;
-  border:1px solid rgba(255,255,255,.15);
+  height:40px;
+  padding:0 10px;
+  background:#181818;
+  border:1px solid rgba(255,255,255,.14);
   border-radius:8px;
   color:#fff;
   outline:none;
-  padding:9px 10px;
   font-size:10px
 }
 
-.modal-reference textarea{
-  min-height:58px;
-  resize:vertical;
-  margin-top:6px
+.payment-note-input{
+  width:100%;
+  min-height:65px;
+  padding:9px 10px;
+  background:#181818;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:8px;
+  color:#fff;
+  outline:none;
+  font-size:10px;
+  resize:vertical
 }
 
-.modal-actions{
+.modal-buttons{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:13px
+  gap:7px;
+  margin-top:12px
 }
 
 .modal-button{
   min-height:42px;
-  border:0;
   border-radius:8px;
-  font-size:10px;
+  font-size:9px;
   font-weight:900
 }
 
-.modal-button.close{
-  background:#242424;
-  color:#fff
+.modal-close{
+  background:#222;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12)
 }
 
-.modal-button.report{
+.modal-report{
   background:#008000;
-  color:#fff
+  color:#fff;
+  border:0
 }
 
-.modal-button.report:disabled{
-  background:#555;
-  color:#aaa
-}
-
-.modal-message{
-  min-height:16px;
-  margin-top:8px;
+.modal-status{
+  margin-top:9px;
+  min-height:15px;
   color:#888;
-  font-size:9px;
-  text-align:center;
-  line-height:1.45
+  font-size:8px;
+  line-height:1.4;
+  text-align:center
 }
 
-.modal-message.error{
-  color:#ff7777
+.modal-status.error{color:#ff7777}
+.modal-status.success{color:#75dc99}
+
+.modal-payment-id{
+  margin-top:8px;
+  padding:7px;
+  background:#080808;
+  border-radius:6px;
+  color:#999;
+  font-size:8px;
+  word-break:break-all;
+  text-align:center
 }
 
-.modal-message.success{
-  color:#75dc99
+/* TWO-HALF REVIEW LAYOUT */
+
+.header{
+  display:none!important
+}
+
+.main{
+  position:fixed!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  max-width:1100px!important;
+  margin:0 auto!important;
+  padding:0!important;
+  display:grid!important;
+  grid-template-rows:50% 50%!important;
+  gap:0!important;
+  overflow:hidden!important
+}
+
+.review-card{
+  grid-row:1;
+  min-height:0!important;
+  height:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  border-radius:0!important;
+  overflow:hidden!important
+}
+
+.document-card-header{
+  padding:8px 10px!important
+}
+
+.document-scroll{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:5px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important
+}
+
+.action-area{
+  grid-row:2;
+  min-height:0!important;
+  height:100%!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:7px 8px 18px!important;
+  border-top:2px solid var(--gold)!important;
+  box-shadow:none!important
+}
+
+.action-area .top-panel{
+  margin:0 0 6px!important;
+  padding:7px 9px!important
+}
+
+.action-area .top-amount-card{
+  margin:0 0 6px!important;
+  padding:6px!important
+}
+
+.action-area .top-amount-head{
+  gap:6px!important
+}
+
+.action-area .top-action-buttons{
+  max-width:none!important
+}
+
+.action-area .correction-box{
+  margin-top:6px!important
+}
+
+.action-area .payment-section{
+  margin-top:6px!important
 }
 
 .message{
@@ -822,23 +930,35 @@ button:disabled{
   right:5px!important;
   bottom:1px!important;
   z-index:50!important;
-  background:rgba(0,0,0,.92)!important;
-  min-height:17px;
-  margin-top:2px;
-  color:#888;
-  font-size:9px;
-  text-align:center
+  background:rgba(0,0,0,.92)!important
 }
 
-.message.error{
-  color:#ff7777
+.make-payment-button{
+  background:#d4af37!important;
+  color:#000!important;
+  border:0!important
 }
 
-.message.success{
-  color:#75dc99
+.confirm-payment-button{
+  background:#008000!important;
+  color:#fff!important;
+  border:0!important
+}
+
+.download-button{
+  background:#007bff!important;
+  color:#fff!important;
+  border:0!important
+}
+
+.download-button:disabled{
+  background:#666!important;
+  color:#fff!important;
+  opacity:1!important
 }
 
 @media(max-width:600px){
+
   .main{
     grid-template-rows:50% 50%!important
   }
@@ -851,10 +971,6 @@ button:disabled{
   .page-content{
     font-size:13px!important;
     line-height:1.65!important
-  }
-
-  .document-scroll{
-    padding:3px!important
   }
 
   .action-area{
@@ -973,47 +1089,21 @@ button:disabled{
     width:65px!important
   }
 
-  .payment-modal{
-    padding:8px
-  }
-
   .payment-modal-card{
     padding:12px;
     border-radius:13px
   }
 
   .payment-modal-title{
-    font-size:16px
+    font-size:13px
   }
 
   .bank-row{
-    padding:7px 0
+    padding:6px 0
   }
 
-  .bank-label{
-    font-size:8px
-  }
-
-  .bank-value{
-    font-size:10px
-  }
-
-  .modal-actions{
+  .modal-buttons{
     grid-template-columns:1fr;
-  }
-}
-
-@media(min-width:800px){
-  .document-page{
-    max-width:820px;
-    margin:auto;
-    min-height:1050px;
-    padding:65px 70px 75px
-  }
-
-  .page-content{
-    font-size:15px;
-    line-height:1.8
   }
 }
 </style>
@@ -1027,267 +1117,181 @@ button:disabled{
 
 <section class="review-card">
 
-  <div class="document-card-header">
-    <div class="document-heading">
-      <h3>Your Complete Document</h3>
-    </div>
+<div class="document-card-header">
+  <div class="document-heading">
+    <h3>Your Complete Document</h3>
+  </div>
+  <div id="pageCount" class="page-count">0 PAGES</div>
+</div>
 
-    <div id="pageCount" class="page-count">
-      0 PAGES
+<div id="documentScroll" class="document-scroll">
+
+  <div id="pageViewer" class="page-viewer">
+    <div class="loading">
+      <div class="spinner"></div>
+      <div>Your service is being carefully prepared.</div>
     </div>
   </div>
 
-  <div id="documentScroll" class="document-scroll">
+  <div class="page-navigation">
+    <button id="previousButton" class="nav-button" type="button" disabled>
+      ← Previous Page
+    </button>
 
-    <div id="pageViewer" class="page-viewer">
-
-      <div class="loading">
-        <div class="spinner"></div>
-        <div>Your service is being carefully prepared.</div>
-      </div>
-
+    <div id="pageIndicator" class="page-indicator">
+      Page 0 of 0
     </div>
 
-    <div class="page-navigation">
-
-      <button
-        id="previousButton"
-        class="nav-button"
-        type="button"
-        disabled>
-        ← Previous Page
-      </button>
-
-      <div id="pageIndicator" class="page-indicator">
-        Page 0 of 0
-      </div>
-
-      <button
-        id="nextButton"
-        class="nav-button next"
-        type="button"
-        disabled>
-        Next Page →
-      </button>
-
-    </div>
-
-    <div class="go-row">
-
-      <input
-        id="pageNumberInput"
-        class="page-number-input"
-        type="number"
-        min="1"
-        placeholder="Enter page number">
-
-      <button
-        id="goButton"
-        class="go-button"
-        type="button">
-        GO
-      </button>
-
-    </div>
-
-    <div
-      id="pageReview"
-      class="page-review"
-      style="display:none">
-
-      <div class="page-review-title">
-        PAGE REVIEW
-      </div>
-
-      <div
-        id="pageReviewText"
-        class="page-review-text">
-      </div>
-
-    </div>
-
+    <button id="nextButton" class="nav-button next" type="button" disabled>
+      Next Page →
+    </button>
   </div>
+
+  <div class="go-row">
+    <input
+      id="pageNumberInput"
+      class="page-number-input"
+      type="number"
+      min="1"
+      placeholder="Enter page number"
+    >
+    <button id="goButton" class="go-button" type="button">
+      GO
+    </button>
+  </div>
+
+  <div id="pageReview" class="page-review" style="display:none">
+    <div class="page-review-title">PAGE REVIEW</div>
+    <div id="pageReviewText" class="page-review-text"></div>
+  </div>
+
+</div>
 
 </section>
 
 <section class="action-area">
 
-  <section class="top-panel">
+<section class="top-panel">
 
-    <h2 class="review-title">
-      Review Your Complete Service
-    </h2>
+  <h2 class="review-title">
+    Review Your Complete Service
+  </h2>
 
-    <p class="review-subtitle">
-      Review every page. Make any necessary correction, then pay and download after Customer Care verifies your payment.
-    </p>
+  <p class="review-subtitle">
+    Review every page. Make any necessary correction, then pay and download after Customer Care verifies your payment.
+  </p>
 
-    <div class="status-row">
-
-      <span class="status-label">
-        Review status
-      </span>
-
-      <span
-        id="statusValue"
-        class="status-value">
-        Preparing...
-      </span>
-
-    </div>
-
-    <div class="progress-shell">
-
-      <div
-        id="progressBar"
-        class="progress-bar">
-      </div>
-
-    </div>
-
-    <div
-      id="progressText"
-      class="progress-text">
-      Preparing the document...
-    </div>
-
-  </section>
-
-  <section class="top-amount-card">
-
-    <div class="top-amount-head">
-
-      <div>
-
-        <div class="top-amount-label">
-          AMOUNT TO PAY
-        </div>
-
-        <div
-          id="amountValueTop"
-          class="top-amount-value">
-          ₦0
-        </div>
-
-      </div>
-
-      <div class="top-action-buttons">
-
-        <button
-          id="makePaymentButton"
-          class="make-payment-button"
-          type="button">
-          💳 MAKE PAYMENT
-        </button>
-
-        <button
-          id="paymentButton"
-          class="confirm-payment-button"
-          type="button"
-          disabled>
-          ✓ I HAVE MADE PAYMENT
-        </button>
-
-        <button
-          id="downloadButton"
-          class="download-button"
-          type="button"
-          disabled>
-          🔒 DOWNLOAD DOCUMENT
-        </button>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <div class="correction-box">
-
-    <textarea
-      id="correctionInput"
-      class="correction-input"
-      placeholder="Want anything changed? Tell us what to correct..."></textarea>
-
-    <button
-      id="correctionButton"
-      class="correction-button"
-      type="button">
-      Apply Correction
-    </button>
-
+  <div class="status-row">
+    <span class="status-label">Review status</span>
+    <span id="statusValue" class="status-value">Preparing...</span>
   </div>
 
-  <section
-    id="paymentSection"
-    class="payment-section">
+  <div class="progress-shell">
+    <div id="progressBar" class="progress-bar"></div>
+  </div>
 
-    <div class="payment-title">
-      PAYMENT
-    </div>
-
-    <div class="payment-subtitle">
-      Your exact reviewed document is saved against this job and document version when payment is prepared. Make your bank transfer, enter your payment reference, and report the payment here. Customer Care will verify the payment before download is unlocked.
-    </div>
-
-    <div
-      id="paymentDetails"
-      class="payment-details">
-      Payment has not been started.
-    </div>
-
-    <div
-      id="paymentId"
-      class="payment-id"
-      style="display:none">
-    </div>
-
-    <div
-      id="paymentInputGroup"
-      class="payment-input-group"
-      style="display:none">
-
-      <label
-        class="payment-input-label"
-        for="paymentReferenceInput">
-        PAYMENT REFERENCE
-      </label>
-
-      <input
-        id="paymentReferenceInput"
-        class="payment-input"
-        type="text"
-        autocomplete="off"
-        placeholder="Enter your bank transfer/payment reference">
-
-      <label
-        class="payment-input-label"
-        for="paymentNoteInput"
-        style="margin-top:7px">
-        NOTE (OPTIONAL)
-      </label>
-
-      <textarea
-        id="paymentNoteInput"
-        class="payment-input payment-note"
-        placeholder="Optional note for Customer Care"></textarea>
-
-    </div>
-
-    <div
-      id="paymentMessage"
-      class="payment-message">
-      Download remains locked until Customer Care verifies your payment.
-    </div>
-
-  </section>
+  <div id="progressText" class="progress-text">
+    Preparing the document...
+  </div>
 
 </section>
 
-<div
-  id="paymentModal"
-  class="payment-modal"
-  aria-hidden="true">
+<section class="top-amount-card">
+
+  <div class="top-amount-head">
+
+    <div>
+      <div class="top-amount-label">AMOUNT TO PAY</div>
+      <div id="amountValueTop" class="top-amount-value">₦0</div>
+    </div>
+
+    <div class="top-action-buttons">
+
+      <button
+        id="makePaymentButton"
+        class="make-payment-button"
+        type="button"
+      >
+        MAKE PAYMENT
+      </button>
+
+      <button
+        id="paymentButton"
+        class="confirm-payment-button"
+        type="button"
+        disabled
+      >
+        I HAVE MADE PAYMENT
+      </button>
+
+      <button
+        id="downloadButton"
+        class="download-button"
+        type="button"
+        disabled
+      >
+        🔒 DOWNLOAD DOCUMENT
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<div class="correction-box">
+
+  <textarea
+    id="correctionInput"
+    class="correction-input"
+    placeholder="Want anything changed? Tell us what to correct..."
+  ></textarea>
+
+  <button
+    id="correctionButton"
+    class="correction-button"
+    type="button"
+  >
+    Apply Correction
+  </button>
+
+</div>
+
+<section id="paymentSection" class="payment-section">
+
+  <div class="payment-title">
+    SECURE PAYMENT &amp; DOWNLOAD
+  </div>
+
+  <div class="payment-subtitle">
+    Your approved document is saved securely before payment begins. Make your bank transfer here, report the payment, and Customer Care will verify it before your download is released.
+  </div>
+
+  <div id="paymentDetails" class="payment-details">
+    Payment setup is ready.
+  </div>
+
+  <div id="paymentId" class="payment-id" style="display:none"></div>
+
+  <div
+    id="paymentMessage"
+    class="payment-message payment-locked"
+  >
+    Download is currently locked. Payment verification is required before the document can be released.
+  </div>
+
+</section>
+
+</section>
+
+<div id="message" class="message"></div>
+
+</main>
+
+
+<!-- PAYMENT POPUP -->
+
+<div id="paymentModal" class="payment-modal">
 
   <div class="payment-modal-card">
 
@@ -1296,21 +1300,18 @@ button:disabled{
     </div>
 
     <div class="payment-modal-subtitle">
-      Your exact reviewed document has been prepared for this payment. Make your bank transfer using the account details below.
+      Your exact reviewed document has been securely saved for this payment.
+      Make your bank transfer using the account details below.
     </div>
 
     <div class="modal-amount">
-
       <div class="modal-amount-label">
         AMOUNT TO PAY
       </div>
 
-      <div
-        id="modalAmountValue"
-        class="modal-amount-value">
+      <div id="modalAmount" class="modal-amount-value">
         ₦0
       </div>
-
     </div>
 
     <div class="bank-box">
@@ -1332,44 +1333,68 @@ button:disabled{
 
     </div>
 
-    <div class="modal-reference">
+    <div class="payment-input-group">
 
-      <label for="modalPaymentReference">
+      <label
+        class="payment-input-label"
+        for="paymentReferenceInput"
+      >
         PAYMENT REFERENCE
       </label>
 
       <input
-        id="modalPaymentReference"
+        id="paymentReferenceInput"
+        class="payment-input"
         type="text"
         autocomplete="off"
-        placeholder="Enter your payment reference after transfer">
+        placeholder="Enter your bank transfer reference"
+      >
+
+    </div>
+
+    <div class="payment-input-group">
+
+      <label
+        class="payment-input-label"
+        for="paymentNoteInput"
+      >
+        NOTE (OPTIONAL)
+      </label>
 
       <textarea
-        id="modalPaymentNote"
-        placeholder="Optional note for Customer Care"></textarea>
+        id="paymentNoteInput"
+        class="payment-note-input"
+        placeholder="Optional note for Customer Care"
+      ></textarea>
 
     </div>
 
     <div
-      id="modalMessage"
-      class="modal-message">
-      After making payment, enter the reference above and tap I HAVE MADE PAYMENT.
+      id="modalPaymentId"
+      class="modal-payment-id"
+      style="display:none"
+    ></div>
+
+    <div id="modalStatus" class="modal-status">
+      Payment is ready. Make your bank transfer, then enter the payment reference and tap I HAVE MADE PAYMENT.
     </div>
 
-    <div class="modal-actions">
+    <div class="modal-buttons">
 
       <button
         id="closePaymentModal"
-        class="modal-button close"
-        type="button">
+        class="modal-button modal-close"
+        type="button"
+      >
         CLOSE
       </button>
 
       <button
         id="modalReportButton"
-        class="modal-button report"
-        type="button">
-        ✓ I HAVE MADE PAYMENT
+        class="modal-button modal-report"
+        type="button"
+      >
+        I HAVE MADE PAYMENT
       </button>
 
     </div>
@@ -1378,1342 +1403,699 @@ button:disabled{
 
 </div>
 
-<div
-  id="message"
-  class="message">
-</div>
-
-</main>
 
 <script>
 "use strict";
 
-/* ===========================================================
-   MAIN REVIEW API
-   =========================================================== */
+
+/* ============================================================
+   API CONFIGURATION
+   ============================================================ */
 
 const API_BASE = "";
-
-
-/* ===========================================================
-   PAYMENT AUTHORITY
-   ===========================================================
-
-   These are the same payment endpoints and semantics used
-   by the current payment.html.
-
-   payment.html remains the Back Office/payment authority.
-   Review is only the customer-facing wrapper.
-   =========================================================== */
 
 const PAYMENT_API_BASE =
   "https://naija-pocket-payment-api.onrender.com";
 
 
-/* ===========================================================
-   URL PARAMETERS
-   =========================================================== */
+/* ============================================================
+   URL / SERVICE CONTEXT
+   ============================================================ */
 
-const params =
-  new URLSearchParams(location.search);
+const params = new URLSearchParams(location.search);
 
 const jobId =
   (params.get("job_id") || "").trim();
 
 const service =
-  (
-    params.get("service") ||
-    "Business Center Service"
-  ).trim();
-
-const customerId =
-  (
-    params.get("customer_id") ||
-    localStorage.getItem("customer_id") ||
-    localStorage.getItem("customerId") ||
-    ""
-  ).trim();
-
-const incomingPaymentId =
-  (
-    params.get("payment_id") ||
-    localStorage.getItem("payment_id") ||
-    ""
-  ).trim();
+  (params.get("service") || "Business Center Service").trim();
 
 
-/* ===========================================================
+/* ============================================================
    DOM
-   =========================================================== */
+   ============================================================ */
 
-const $ =
-  id => document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-const serviceBadge =
-  $("serviceBadge");
+const serviceBadge = $("serviceBadge");
+const statusValue = $("statusValue");
+const progressBar = $("progressBar");
+const progressText = $("progressText");
+const pageCount = $("pageCount");
+const amountValueTop = $("amountValueTop");
+const documentScroll = $("documentScroll");
+const pageViewer = $("pageViewer");
+const previousButton = $("previousButton");
+const nextButton = $("nextButton");
+const pageIndicator = $("pageIndicator");
+const pageNumberInput = $("pageNumberInput");
+const goButton = $("goButton");
+const pageReview = $("pageReview");
+const pageReviewText = $("pageReviewText");
+const correctionInput = $("correctionInput");
+const correctionButton = $("correctionButton");
+const paymentSection = $("paymentSection");
+const paymentDetails = $("paymentDetails");
+const paymentId = $("paymentId");
+const makePaymentButton = $("makePaymentButton");
+const paymentButton = $("paymentButton");
+const downloadButton = $("downloadButton");
+const paymentMessage = $("paymentMessage");
+const message = $("message");
 
-const statusValue =
-  $("statusValue");
-
-const progressBar =
-  $("progressBar");
-
-const progressText =
-  $("progressText");
-
-const pageCount =
-  $("pageCount");
-
-const amountValueTop =
-  $("amountValueTop");
-
-const documentScroll =
-  $("documentScroll");
-
-const pageViewer =
-  $("pageViewer");
-
-const previousButton =
-  $("previousButton");
-
-const nextButton =
-  $("nextButton");
-
-const pageIndicator =
-  $("pageIndicator");
-
-const pageNumberInput =
-  $("pageNumberInput");
-
-const goButton =
-  $("goButton");
-
-const pageReview =
-  $("pageReview");
-
-const pageReviewText =
-  $("pageReviewText");
-
-const correctionInput =
-  $("correctionInput");
-
-const correctionButton =
-  $("correctionButton");
-
-const paymentSection =
-  $("paymentSection");
-
-const paymentDetails =
-  $("paymentDetails");
-
-const paymentId =
-  $("paymentId");
-
-const makePaymentButton =
-  $("makePaymentButton");
-
-const paymentButton =
-  $("paymentButton");
-
-const downloadButton =
-  $("downloadButton");
-
-const paymentMessage =
-  $("paymentMessage");
-
-const paymentInputGroup =
-  $("paymentInputGroup");
-
-const paymentReferenceInput =
-  $("paymentReferenceInput");
-
-const paymentNoteInput =
-  $("paymentNoteInput");
-
-const paymentModal =
-  $("paymentModal");
-
-const modalAmountValue =
-  $("modalAmountValue");
-
-const modalPaymentReference =
-  $("modalPaymentReference");
-
-const modalPaymentNote =
-  $("modalPaymentNote");
-
-const modalMessage =
-  $("modalMessage");
-
-const closePaymentModal =
-  $("closePaymentModal");
-
-const modalReportButton =
-  $("modalReportButton");
-
-const message =
-  $("message");
+const paymentModal = $("paymentModal");
+const modalAmount = $("modalAmount");
+const paymentReferenceInput = $("paymentReferenceInput");
+const paymentNoteInput = $("paymentNoteInput");
+const modalPaymentId = $("modalPaymentId");
+const modalStatus = $("modalStatus");
+const closePaymentModal = $("closePaymentModal");
+const modalReportButton = $("modalReportButton");
 
 
-/* ===========================================================
+/* ============================================================
    STATE
-   =========================================================== */
+   ============================================================ */
 
 let pages = [];
-
 let currentPage = 1;
-
 let totalPages = 0;
-
 let currentVersion = 1;
-
 let versionId = "";
-
 let currentStatus = "";
-
 let reviewFinished = false;
 
 let paid = false;
-
 let paymentStarted = false;
-
 let paymentPending = false;
 
 let busy = false;
 
 let pollTimer = null;
-
 let polling = false;
+let paymentPollTimer = null;
 
 let amount = 0;
-
 let billing = "";
 
-let paymentIdentifier =
-  incomingPaymentId;
+let paymentIdentifier = "";
 
-let paymentReference = "";
-
-let paymentNote = "";
-
-let paymentStatusTimer = null;
-
-let paymentStatusPolling = false;
-
-let createInProgress = false;
-
-let reportInProgress = false;
+let customerId = "";
+let documentFilename = "";
 
 
-/* ===========================================================
-   BASIC HELPERS
-   =========================================================== */
+/* ============================================================
+   PAYMENT STORAGE IS SCOPED TO CURRENT JOB + VERSION
+   ============================================================ */
 
-function clean(value){
+function paymentStorageKey(){
+  if(!jobId || !versionId)return "";
+  return "npbc_payment_context_" +
+    encodeURIComponent(jobId) +
+    "_" +
+    encodeURIComponent(versionId);
+}
 
-  if(
-    value === null ||
-    value === undefined
-  ){
-    return "";
+function readScopedPaymentContext(){
+
+  const key = paymentStorageKey();
+
+  if(!key)return null;
+
+  try{
+
+    const raw = localStorage.getItem(key);
+
+    if(!raw)return null;
+
+    const data = JSON.parse(raw);
+
+    if(
+      !data ||
+      String(data.job_id || "") !== String(jobId) ||
+      String(data.version_id || "") !== String(versionId)
+    ){
+      localStorage.removeItem(key);
+      return null;
+    }
+
+    return data;
+
+  }catch(_e){
+
+    try{
+      localStorage.removeItem(key);
+    }catch(__e){}
+
+    return null;
   }
-
-  return String(value).trim();
 }
 
+function saveScopedPaymentContext(){
 
-function setMessage(
-  text,
-  type = ""
-){
+  const key = paymentStorageKey();
 
-  message.textContent =
-    text || "";
+  if(!key || !paymentIdentifier)return;
 
-  message.className =
-    "message" +
-    (
-      type
-        ? " " + type
-        : ""
+  try{
+
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        job_id: jobId,
+        version_id: versionId,
+        payment_id: paymentIdentifier,
+        amount: amount,
+        service: service,
+        updated_at: new Date().toISOString()
+      })
     );
+
+  }catch(_e){}
+}
+
+function clearScopedPaymentContext(){
+
+  const key = paymentStorageKey();
+
+  if(!key)return;
+
+  try{
+    localStorage.removeItem(key);
+  }catch(_e){}
 }
 
 
-function setStatus(text){
+/* ============================================================
+   HELPERS
+   ============================================================ */
 
+function clean(v){
+  return v == null ? "" : String(v).trim();
+}
+
+function setMessage(t,type=""){
+  message.textContent = t || "";
+  message.className =
+    "message" + (type ? " " + type : "");
+}
+
+function setStatus(t){
   statusValue.textContent =
-    text ||
-    "Preparing...";
+    t || "Preparing...";
 }
-
 
 function state(){
-
-  return clean(
-    currentStatus
-  ).toLowerCase();
+  return clean(currentStatus).toLowerCase();
 }
 
-
-function complete(data){
-
-  return !!data &&
+function complete(d){
+  return !!d &&
     (
-      state() ===
-        "review_complete" ||
-      data.review_finished ===
-        true
+      state() === "review_complete" ||
+      d.review_finished === true
     );
 }
 
 
-function parseMoney(value){
-
-  if(
-    value === null ||
-    value === undefined
-  ){
-
-    return 0;
-
-  }
-
-  if(
-    typeof value === "number" &&
-    isFinite(value)
-  ){
-
-    return value;
-
-  }
-
-  const number =
-    Number(
-      String(value)
-        .replace(
-          /[^0-9.]/g,
-          ""
-        )
-    );
-
-  return isFinite(number)
-    ? number
-    : 0;
-}
-
-
-function formatMoney(value){
-
-  const number =
-    parseMoney(value);
-
-  return "₦" +
-    number.toLocaleString(
-      "en-NG"
-    );
-}
-
-
-/* ===========================================================
-   PAYMENT STATUS HELPERS
-   =========================================================== */
-
-function normalizePaymentStatus(value){
-
-  return clean(
-    value
-  )
-    .toLowerCase()
-    .replace(
-      /[\s-]+/g,
-      "_"
-    );
-}
-
-
-function isReported(status){
-
-  const value =
-    normalizePaymentStatus(
-      status
-    );
-
-  return [
-    "reported",
-    "payment_reported",
-    "awaiting_verification",
-    "pending_verification",
-    "reported_awaiting_verification",
-    "payment_pending",
-    "pending"
-  ].includes(
-    value
-  );
-}
-
-
-function isVerified(status){
-
-  const value =
-    normalizePaymentStatus(
-      status
-    );
-
-  return [
-    "verified",
-    "payment_verified",
-    "activated",
-    "download_unlocked",
-    "unlocked",
-    "completed"
-  ].includes(
-    value
-  );
-}
-
-
-function extractPaymentVerified(data){
-
-  if(!data){
-
-    return false;
-
-  }
-
-  if(
-    data.payment_verified === true ||
-    data.verified === true ||
-    data.download_unlocked === true ||
-    data.downloadUnlocked === true ||
-    data.activated === true ||
-    data.unlocked === true
-  ){
-
-    return true;
-
-  }
-
-  const status =
-    normalizePaymentStatus(
-      data.status ||
-      data.payment_status ||
-      data.paymentStatus
-    );
-
-  return isVerified(status);
-}
-
-
-function extractDownloadUnlocked(data){
-
-  if(!data){
-
-    return false;
-
-  }
-
-  if(
-    data.download_unlocked === true ||
-    data.downloadUnlocked === true ||
-    data.unlocked === true ||
-    data.activated === true
-  ){
-
-    return true;
-
-  }
-
-  return false;
-}
-
-
-/* ===========================================================
-   LOCAL PAYMENT CONTEXT
-   =========================================================== */
-
-function savePaymentContext(){
-
-  if(paymentIdentifier){
-
-    localStorage.setItem(
-      "payment_id",
-      paymentIdentifier
-    );
-
-  }
-
-  if(jobId){
-
-    localStorage.setItem(
-      "payment_job_id",
-      jobId
-    );
-
-  }
-
-  if(versionId){
-
-    localStorage.setItem(
-      "payment_version_id",
-      versionId
-    );
-
-  }
-
-}
-
-
-function clearPaymentContext(){
-
-  localStorage.removeItem(
-    "payment_id"
-  );
-
-  localStorage.removeItem(
-    "payment_job_id"
-  );
-
-  localStorage.removeItem(
-    "payment_version_id"
-  );
-
-}
-
-
-/* ===========================================================
-   PAYMENT SESSION STATE
-   =========================================================== */
-
-function savePaymentSession(){
-
-  if(!jobId){
-
-    return;
-
-  }
-
-  const stateData = {
-
-    payment_id:
-      paymentIdentifier,
-
-    payment_status:
-      paymentPending
-        ? "payment_reported"
-        : paid
-          ? "verified"
-          : paymentStarted
-            ? "created"
-            : "",
-
-    payment_reference:
-      paymentReference,
-
-    payment_verified:
-      paid,
-
-    download_unlocked:
-      paid,
-
-    version_id:
-      versionId,
-
-    amount:
-      amount,
-
-    service:
-      service
-
-  };
-
-  try{
-
-    sessionStorage.setItem(
-      "npb_payment_state_" +
-      jobId,
-      JSON.stringify(
-        stateData
-      )
-    );
-
-  }
-
-  catch(error){
-
-    console.log(
-      "[PAYMENT SESSION]",
-      error
-    );
-
-  }
-
-}
-
-
-function restorePaymentSession(){
-
-  if(!jobId){
-
-    return;
-
-  }
-
-  let raw = null;
-
-  try{
-
-    raw =
-      sessionStorage.getItem(
-        "npb_payment_state_" +
-        jobId
-      );
-
-  }
-
-  catch(error){
-
-    return;
-
-  }
-
-  if(!raw){
-
-    return;
-
-  }
-
-  try{
-
-    const data =
-      JSON.parse(raw);
-
-    if(
-      clean(
-        data.payment_id
-      )
-    ){
-
-      paymentIdentifier =
-        clean(
-          data.payment_id
-        );
-
-    }
-
-    if(
-      clean(
-        data.payment_reference
-      )
-    ){
-
-      paymentReference =
-        clean(
-          data.payment_reference
-        );
-
-    }
-
-    if(
-      data.payment_verified ===
-      true ||
-      data.download_unlocked ===
-      true
-    ){
-
-      paid = true;
-
-      paymentStarted = true;
-
-      paymentPending = false;
-
-    }
-
-    else if(
-      data.payment_status ===
-      "payment_reported"
-    ){
-
-      paymentPending = true;
-
-      paymentStarted = true;
-
-    }
-
-    else if(
-      data.payment_status ===
-      "created"
-    ){
-
-      paymentStarted = true;
-
-    }
-
-    if(
-      paymentIdentifier
-    ){
-
-      savePaymentContext();
-
-    }
-
-  }
-
-  catch(error){
-
-    console.log(
-      "[PAYMENT RESTORE]",
-      error
-    );
-
-  }
-
-}
-
-
-/* ===========================================================
-   NORMAL REVIEW API
-   =========================================================== */
+/* ============================================================
+   MAIN API
+   ============================================================ */
 
 async function apiGet(url){
 
-  const response =
-    await fetch(
-      API_BASE + url,
-      {
-        cache:"no-store"
-      }
-    );
+  const r = await fetch(
+    API_BASE + url,
+    {cache:"no-store"}
+  );
 
-  const data =
-    await response
-      .json()
-      .catch(
-        () => ({})
-      );
+  const d = await r.json().catch(() => ({}));
 
-  if(!response.ok){
-
+  if(!r.ok){
     throw Error(
-      data.error_message ||
-      data.error ||
-      data.message ||
+      d.error_message ||
+      d.error ||
+      d.message ||
       "Unable to load the document."
     );
-
   }
 
-  return data;
+  return d;
 }
 
+async function apiPost(url,body){
 
-async function apiPost(
-  url,
-  body
-){
+  const r = await fetch(
+    API_BASE + url,
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(body || {})
+    }
+  );
 
-  const response =
-    await fetch(
-      API_BASE + url,
-      {
-        method:"POST",
+  const d = await r.json().catch(() => ({}));
 
-        headers:{
-          "Content-Type":
-            "application/json",
-
-          "Accept":
-            "application/json"
-        },
-
-        body:
-          JSON.stringify(
-            body || {}
-          )
-      }
-    );
-
-  const data =
-    await response
-      .json()
-      .catch(
-        () => ({})
-      );
-
-  if(
-    !response.ok ||
-    data.success === false ||
-    data.ok === false
-  ){
+  if(!r.ok || d.success === false){
 
     throw Error(
-      data.error_message ||
-      data.error ||
-      data.message ||
-      data.detail ||
+      d.error_message ||
+      d.error ||
+      d.message ||
       "The request could not be completed."
     );
-
   }
 
-  return data;
+  return d;
 }
 
 
-/* ===========================================================
+/* ============================================================
    PAYMENT API
-   =========================================================== */
+   ============================================================ */
 
-async function paymentGet(path){
+async function paymentGet(url){
 
-  const response =
-    await fetch(
-      PAYMENT_API_BASE +
-      path,
-      {
-        method:"GET",
-        cache:"no-store",
-        headers:{
-          "Accept":
-            "application/json"
-        }
-      }
+  let r;
+
+  try{
+
+    r = await fetch(
+      PAYMENT_API_BASE + url,
+      {cache:"no-store"}
     );
 
-  const data =
-    await response
-      .json()
-      .catch(
-        () => ({})
-      );
-
-  if(!response.ok){
+  }catch(e){
 
     throw Error(
-      data.error_message ||
-      data.error ||
-      data.message ||
-      data.detail ||
-      "Unable to communicate with the payment service."
+      "The payment service could not be reached. Please check your internet connection and try again."
     );
-
   }
 
-  return data;
+  const text = await r.text();
+
+  let d = {};
+
+  try{
+    d = text ? JSON.parse(text) : {};
+  }catch(_e){
+    d = {raw:text};
+  }
+
+  if(!r.ok){
+
+    const code =
+      clean(d.error_code || d.code);
+
+    const detail =
+      d.error_message ||
+      d.error ||
+      d.message ||
+      code ||
+      "";
+
+    const error = new Error(
+      detail ||
+      "Payment status could not be checked."
+    );
+
+    error.status = r.status;
+    error.code = code;
+
+    throw error;
+  }
+
+  return d;
 }
 
+async function paymentPost(url,body){
 
-async function paymentPost(
-  path,
-  body
-){
+  let r;
 
-  const response =
-    await fetch(
-      PAYMENT_API_BASE +
-      path,
+  try{
+
+    r = await fetch(
+      PAYMENT_API_BASE + url,
       {
         method:"POST",
-
         headers:{
-          "Content-Type":
-            "application/json",
-
-          "Accept":
-            "application/json"
+          "Content-Type":"application/json"
         },
-
-        body:
-          JSON.stringify(
-            body || {}
-          )
+        body:JSON.stringify(body || {})
       }
     );
 
-  const data =
-    await response
-      .json()
-      .catch(
-        () => ({})
-      );
-
-  if(
-    !response.ok ||
-    data.success === false ||
-    data.ok === false
-  ){
+  }catch(e){
 
     throw Error(
-      data.error_message ||
-      data.error ||
-      data.message ||
-      data.detail ||
-      "The payment request could not be completed."
+      "The payment service could not be reached. Please check your internet connection and try again."
     );
-
   }
 
-  return data;
-}
+  const text = await r.text();
 
+  let d = {};
 
-/* ===========================================================
-   PAGE HELPERS
-   =========================================================== */
-
-function normalizePages(data){
-
-  let source = [];
+  try{
+    d = text ? JSON.parse(text) : {};
+  }catch(_e){
+    d = {raw:text};
+  }
 
   if(
-    Array.isArray(
-      data?.review_pages
-    ) &&
-    data.review_pages.length
+    !r.ok ||
+    d.ok === false ||
+    d.success === false
   ){
 
-    source =
-      data.review_pages;
+    const detail =
+      d.error_message ||
+      d.error ||
+      d.message ||
+      (
+        d.detail &&
+        typeof d.detail === "string"
+          ? d.detail
+          : ""
+      ) ||
+      ((d.raw || "").slice(0,220));
 
-  }
-
-  else if(
-    Array.isArray(
-      data?.document_pages
-    ) &&
-    data.document_pages.length
-  ){
-
-    source =
-      data.document_pages;
-
-  }
-
-  else if(
-    Array.isArray(
-      data?.pages
-    ) &&
-    data.pages.length
-  ){
-
-    source =
-      data.pages;
-
-  }
-
-  return source
-    .map(
-      (item,index) => ({
-
-        page_number:
-          Number(
-            item.page_number
-          ) ||
-          index + 1,
-
-        position:
-          Number(
-            item.position
-          ) ||
-          index + 1,
-
-        status:
-          clean(
-            item.status
-          ) ||
-          "queued",
-
-        content:
-          item.content == null
-            ? ""
-            : String(
-                item.content
-              ),
-
-        review:
-          clean(
-            item.review
-          ),
-
-        error:
-          clean(
-            item.error
-          )
-
-      })
-    )
-    .sort(
-      (a,b) =>
-        a.position -
-        b.position
+    const error = new Error(
+      detail
+        ? "Payment preparation failed: " + detail
+        : "Payment preparation failed (HTTP " +
+          r.status +
+          "). Please try again."
     );
+
+    error.status = r.status;
+
+    throw error;
+  }
+
+  return d;
 }
 
 
-function extractPages(data){
+/* ============================================================
+   PAGE DATA
+   ============================================================ */
 
-  let result =
-    normalizePages(
-      data
-    );
+function normalizePages(d){
 
-  if(result.length){
+  let s = [];
 
-    return result;
+  if(
+    Array.isArray(d?.review_pages) &&
+    d.review_pages.length
+  ){
+    s = d.review_pages;
 
+  }else if(
+    Array.isArray(d?.document_pages) &&
+    d.document_pages.length
+  ){
+    s = d.document_pages;
+
+  }else if(
+    Array.isArray(d?.pages) &&
+    d.pages.length
+  ){
+    s = d.pages;
   }
 
+  return s
+    .map((x,i) => ({
+      page_number:
+        Number(x.page_number) || i + 1,
+
+      position:
+        Number(x.position) || i + 1,
+
+      status:
+        clean(x.status) || "queued",
+
+      content:
+        x.content == null
+          ? ""
+          : String(x.content),
+
+      review:
+        clean(x.review),
+
+      error:
+        clean(x.error)
+    }))
+    .sort((a,b) => a.position - b.position);
+}
+
+function extractPages(d){
+
+  let x = normalizePages(d);
+
+  if(x.length)return x;
+
   for(
-    const child of [
-      data?.document,
-      data?.result,
-      data?.review,
-      data?.output
+    const c of [
+      d?.document,
+      d?.result,
+      d?.review,
+      d?.output
     ]
   ){
 
     if(
-      child &&
-      typeof child === "object"
+      c &&
+      typeof c === "object"
     ){
 
-      result =
-        normalizePages(
-          child
-        );
+      x = normalizePages(c);
 
-      if(result.length){
-
-        return result;
-
-      }
-
+      if(x.length)return x;
     }
-
   }
 
   return [];
 }
 
 
-/* ===========================================================
-   SAFE DOCUMENT HTML
-   =========================================================== */
+/* ============================================================
+   DOCUMENT SANITIZATION
+   ============================================================ */
 
-const allowedTags =
-  new Set([
-    "DIV",
-    "P",
-    "BR",
-    "SPAN",
-    "STRONG",
-    "B",
-    "EM",
-    "I",
-    "U",
-    "S",
-    "STRIKE",
-    "H1",
-    "H2",
-    "H3",
-    "H4",
-    "H5",
-    "H6",
-    "UL",
-    "OL",
-    "LI",
-    "BLOCKQUOTE",
-    "HR",
-    "TABLE",
-    "THEAD",
-    "TBODY",
-    "TFOOT",
-    "TR",
-    "TH",
-    "TD",
-    "PRE",
-    "SUP",
-    "SUB"
-  ]);
+const allowedTags = new Set([
+  "DIV",
+  "P",
+  "BR",
+  "SPAN",
+  "STRONG",
+  "B",
+  "EM",
+  "I",
+  "U",
+  "S",
+  "STRIKE",
+  "H1",
+  "H2",
+  "H3",
+  "H4",
+  "H5",
+  "H6",
+  "UL",
+  "OL",
+  "LI",
+  "BLOCKQUOTE",
+  "HR",
+  "TABLE",
+  "THEAD",
+  "TBODY",
+  "TFOOT",
+  "TR",
+  "TH",
+  "TD",
+  "PRE",
+  "SUP",
+  "SUB"
+]);
 
+const allowedAttrs = new Set([
+  "style",
+  "align",
+  "colspan",
+  "rowspan"
+]);
 
-const allowedAttrs =
-  new Set([
-    "style",
-    "align",
-    "colspan",
-    "rowspan"
-  ]);
+const allowedStyles = new Set([
+  "color",
+  "background-color",
+  "font-family",
+  "font-size",
+  "font-weight",
+  "font-style",
+  "text-decoration",
+  "text-align",
+  "text-indent",
+  "line-height",
+  "letter-spacing",
+  "margin",
+  "margin-top",
+  "margin-right",
+  "margin-bottom",
+  "margin-left",
+  "padding",
+  "padding-top",
+  "padding-right",
+  "padding-bottom",
+  "padding-left",
+  "vertical-align",
+  "width",
+  "max-width",
+  "border",
+  "border-top",
+  "border-right",
+  "border-bottom",
+  "border-left",
+  "background"
+]);
 
+function normText(v){
 
-const allowedStyles =
-  new Set([
-    "color",
-    "background-color",
-    "font-family",
-    "font-size",
-    "font-weight",
-    "font-style",
-    "text-decoration",
-    "text-align",
-    "text-indent",
-    "line-height",
-    "letter-spacing",
-    "margin",
-    "margin-top",
-    "margin-right",
-    "margin-bottom",
-    "margin-left",
-    "padding",
-    "padding-top",
-    "padding-right",
-    "padding-bottom",
-    "padding-left",
-    "vertical-align",
-    "width",
-    "max-width",
-    "border",
-    "border-top",
-    "border-right",
-    "border-bottom",
-    "border-left",
-    "background"
-  ]);
-
-
-function normText(value){
-
-  return String(
-    value == null
-      ? ""
-      : value
-  )
-    .replace(
-      /\r\n/g,
-      "\n"
-    )
-    .replace(
-      /\r/g,
-      "\n"
-    )
-    .replace(
-      /\u00a0/g,
-      " "
-    )
-    .replace(
-      /^\s*#{1,6}\s+/gm,
-      ""
-    )
-    .replace(
-      /\n{5,}/g,
-      "\n\n"
-    )
+  return String(v == null ? "" : v)
+    .replace(/\r\n/g,"\n")
+    .replace(/\r/g,"\n")
+    .replace(/\u00a0/g," ")
+    .replace(/^\s*#{1,6}\s+/gm,"")
+    .replace(/\n{5,}/g,"\n\n")
     .trim();
 }
 
+function safeStyle(s){
 
-function safeStyle(value){
-
-  const output = [];
+  let out = [];
 
   for(
-    const definition of
-    String(value || "").split(";")
+    const d of String(s || "").split(";")
   ){
 
-    const index =
-      definition.indexOf(":");
+    const i = d.indexOf(":");
 
-    if(index < 0){
+    if(i < 0)continue;
 
-      continue;
-
-    }
-
-    const property =
-      definition
-        .slice(0,index)
+    const p =
+      d.slice(0,i)
         .trim()
         .toLowerCase();
 
-    const styleValue =
-      definition
-        .slice(index + 1)
-        .trim();
+    const v =
+      d.slice(i+1).trim();
 
     if(
-      allowedStyles.has(
-        property
-      ) &&
-      !/javascript:|expression\(|url\(|@import/i.test(
-        styleValue
-      )
+      allowedStyles.has(p) &&
+      !/javascript:|expression\(|url\(|@import/i.test(v)
     ){
-
-      output.push(
-        property +
-        ":" +
-        styleValue
-      );
-
+      out.push(p + ":" + v);
     }
-
   }
 
-  return output.join(";");
+  return out.join(";");
 }
 
+function renderPlain(t){
 
-function renderPlain(text){
-
-  const fragment =
+  const f =
     document.createDocumentFragment();
 
   const lines =
-    normText(text).split("\n");
+    normText(t).split("\n");
 
-  lines.forEach(
-    (line,index) => {
+  lines.forEach((line,i) => {
 
-      if(line === ""){
-
-        fragment.appendChild(
-          document.createElement(
-            "br"
-          )
-        );
-
-        return;
-
-      }
-
-      const parts =
-        line.split(
-          /(\*\*[^*]+\*\*)/g
-        );
-
-      parts.forEach(
-        part => {
-
-          if(!part){
-
-            return;
-
-          }
-
-          if(
-            part.startsWith("**") &&
-            part.endsWith("**")
-          ){
-
-            const element =
-              document.createElement(
-                "strong"
-              );
-
-            element.textContent =
-              part.slice(2,-2);
-
-            fragment.appendChild(
-              element
-            );
-
-          }
-
-          else{
-
-            fragment.appendChild(
-              document.createTextNode(
-                part.replace(
-                  /^\*+|\*+$/g,
-                  ""
-                )
-              )
-            );
-
-          }
-
-        }
+    if(line === ""){
+      f.appendChild(
+        document.createElement("br")
       );
+      return;
+    }
+
+    const parts =
+      line.split(/(\*\*[^*]+\*\*)/g);
+
+    parts.forEach(p => {
+
+      if(!p)return;
 
       if(
-        index <
-        lines.length - 1
+        p.startsWith("**") &&
+        p.endsWith("**")
       ){
 
-        fragment.appendChild(
-          document.createElement(
-            "br"
+        const e =
+          document.createElement("strong");
+
+        e.textContent =
+          p.slice(2,-2);
+
+        f.appendChild(e);
+
+      }else{
+
+        f.appendChild(
+          document.createTextNode(
+            p.replace(/^\*+|\*+$/g,"")
           )
         );
-
       }
+    });
 
+    if(i < lines.length - 1){
+      f.appendChild(
+        document.createElement("br")
+      );
     }
-  );
+  });
 
-  return fragment;
+  return f;
 }
 
-
-function sanitizeHtml(source){
+function sanitizeHtml(src){
 
   if(
     !/<[a-z][\s\S]*>/i.test(
-      String(source || "")
+      String(src || "")
     )
   ){
-
-    return renderPlain(
-      source
-    );
-
+    return renderPlain(src);
   }
 
-  const documentObject =
+  const doc =
     new DOMParser()
       .parseFromString(
-        String(source),
+        String(src),
         "text/html"
       );
 
-  const output =
+  const out =
     document.createDocumentFragment();
 
+  function walk(n,parent){
 
-  function walk(
-    node,
-    parent
-  ){
-
-    if(
-      node.nodeType ===
-      Node.TEXT_NODE
-    ){
+    if(n.nodeType === Node.TEXT_NODE){
 
       parent.appendChild(
         document.createTextNode(
-          normText(
-            node.nodeValue || ""
-          )
+          normText(n.nodeValue || "")
         )
       );
 
       return;
-
     }
 
-    if(
-      node.nodeType !==
-      Node.ELEMENT_NODE
-    ){
-
-      return;
-
-    }
+    if(n.nodeType !== Node.ELEMENT_NODE)return;
 
     const tag =
-      node.tagName.toUpperCase();
+      n.tagName.toUpperCase();
 
     if([
       "SCRIPT",
@@ -2729,78 +2111,44 @@ function sanitizeHtml(source){
       "VIDEO",
       "AUDIO"
     ].includes(tag)){
-
       return;
-
     }
 
-    if(
-      !allowedTags.has(tag)
-    ){
+    if(!allowedTags.has(tag)){
 
       for(
-        const child of
-        node.childNodes
+        const c of n.childNodes
       ){
-
-        walk(
-          child,
-          parent
-        );
-
+        walk(c,parent);
       }
 
       return;
-
     }
 
-    const element =
+    const e =
       document.createElement(
         tag.toLowerCase()
       );
 
-
     for(
-      const attribute of
-      node.attributes
+      const a of n.attributes
     ){
 
       const name =
-        attribute.name
-          .toLowerCase();
+        a.name.toLowerCase();
 
-      const value =
-        attribute.value || "";
+      const v =
+        a.value || "";
 
-      if(
-        !allowedAttrs.has(name)
-      ){
+      if(!allowedAttrs.has(name))continue;
 
-        continue;
+      if(name === "style"){
 
-      }
+        const s = safeStyle(v);
 
-      if(
-        name === "style"
-      ){
+        if(s)e.setAttribute("style",s);
 
-        const style =
-          safeStyle(
-            value
-          );
-
-        if(style){
-
-          element.setAttribute(
-            "style",
-            style
-          );
-
-        }
-
-      }
-
-      else if(
+      }else if(
         name === "align" &&
         [
           "left",
@@ -2808,79 +2156,178 @@ function sanitizeHtml(source){
           "right",
           "justify"
         ].includes(
-          value
-            .toLowerCase()
-            .trim()
+          v.toLowerCase().trim()
         )
       ){
 
-        element.setAttribute(
+        e.setAttribute(
           "align",
-          value
-            .toLowerCase()
-            .trim()
+          v.toLowerCase().trim()
         );
 
-      }
-
-      else if(
+      }else if(
         (
           name === "colspan" ||
           name === "rowspan"
         ) &&
-        /^\d+$/.test(value) &&
-        +value > 0 &&
-        +value <= 100
+        /^\d+$/.test(v) &&
+        +v > 0 &&
+        +v <= 100
       ){
 
-        element.setAttribute(
-          name,
-          value
-        );
-
+        e.setAttribute(name,v);
       }
-
     }
-
 
     for(
-      const child of
-      node.childNodes
+      const c of n.childNodes
     ){
-
-      walk(
-        child,
-        element
-      );
-
+      walk(c,e);
     }
 
-    parent.appendChild(
-      element
-    );
-
+    parent.appendChild(e);
   }
-
 
   for(
-    const child of
-    documentObject.body.childNodes
+    const c of doc.body.childNodes
   ){
-
-    walk(
-      child,
-      output
-    );
-
+    walk(c,out);
   }
 
-  return output;
+  return out;
 }
 
 
-/* ===========================================================
-   BUTTON STATE
-   =========================================================== */
+/* ============================================================
+   AMOUNT / BILLING
+   ============================================================ */
+
+function extractAmount(d){
+
+  const seen = new Set();
+
+  function find(x){
+
+    if(x == null)return 0;
+
+    if(
+      typeof x === "number" &&
+      isFinite(x) &&
+      x > 0
+    ){
+      return x;
+    }
+
+    if(typeof x === "string"){
+
+      const n =
+        Number(
+          x.replace(/[^0-9.]/g,"")
+        );
+
+      return isFinite(n) && n > 0
+        ? n
+        : 0;
+    }
+
+    if(
+      typeof x !== "object" ||
+      seen.has(x)
+    ){
+      return 0;
+    }
+
+    seen.add(x);
+
+    for(
+      const k of ["amount","price"]
+    ){
+
+      const n = find(x[k]);
+
+      if(n > 0)return n;
+    }
+
+    for(
+      const k of [
+        "billing",
+        "bill",
+        "payment",
+        "job",
+        "result",
+        "document",
+        "review",
+        "output"
+      ]
+    ){
+
+      const n = find(x[k]);
+
+      if(n > 0)return n;
+    }
+
+    return 0;
+  }
+
+  return find(d);
+}
+
+function extractBilling(d){
+
+  const seen = new Set();
+
+  function find(x){
+
+    if(x == null)return "";
+
+    if(typeof x === "string"){
+      return x.trim();
+    }
+
+    if(
+      typeof x !== "object" ||
+      seen.has(x)
+    ){
+      return "";
+    }
+
+    seen.add(x);
+
+    if(
+      typeof x.billing === "string" &&
+      x.billing.trim()
+    ){
+      return x.billing.trim();
+    }
+
+    for(
+      const k of [
+        "billing",
+        "bill",
+        "payment",
+        "job",
+        "result",
+        "document",
+        "review",
+        "output"
+      ]
+    ){
+
+      const v = find(x[k]);
+
+      if(v)return v;
+    }
+
+    return "";
+  }
+
+  return find(d);
+}
+
+
+/* ============================================================
+   PAYMENT UI
+   ============================================================ */
 
 function updateButtons(){
 
@@ -2896,31 +2343,20 @@ function updateButtons(){
   correctionButton.disabled =
     busy;
 
-
   makePaymentButton.disabled =
     busy ||
-    createInProgress ||
+    paymentStarted ||
     amount <= 0 ||
-    !reviewFinished ||
-    !pages.length ||
-    !versionId ||
-    paid;
-
+    !reviewFinished;
 
   paymentButton.disabled =
     busy ||
-    reportInProgress ||
     !paymentStarted ||
-    !paymentIdentifier ||
-    paid ||
-    paymentPending;
-
+    paid;
 
   downloadButton.disabled =
     busy ||
-    !paid ||
-    !paymentIdentifier;
-
+    !paid;
 
   downloadButton.classList.toggle(
     "active",
@@ -2928,10 +2364,165 @@ function updateButtons(){
   );
 }
 
+function updatePaymentPanel(){
 
-/* ===========================================================
-   RENDER PAGE
-   =========================================================== */
+  amountValueTop.textContent =
+    amount > 0
+      ? "₦" + amount.toLocaleString()
+      : "Quotation required";
+
+  modalAmount.textContent =
+    amount > 0
+      ? "₦" + amount.toLocaleString()
+      : "Quotation required";
+
+  if(paid){
+
+    paymentDetails.textContent =
+      "Service: " +
+      (service || "Business Center Service") +
+      "\nPayment status: VERIFIED" +
+      "\nYour approved document is ready for download.";
+
+    paymentMessage.className =
+      "payment-message payment-ready";
+
+    paymentMessage.textContent =
+      "Payment verified by Customer Care. Your approved document is now available for download.";
+
+    makePaymentButton.textContent =
+      "✓ PAYMENT VERIFIED";
+
+  }else if(paymentPending){
+
+    paymentDetails.textContent =
+      "Service: " +
+      (service || "Business Center Service") +
+      "\nAmount: ₦" +
+      Number(amount || 0).toLocaleString() +
+      "\nPayment status: AWAITING VERIFICATION";
+
+    paymentMessage.className =
+      "payment-message payment-waiting";
+
+    paymentMessage.textContent =
+      "Payment Reported — Awaiting Verification. Customer Care will verify your payment before download is unlocked.";
+
+    makePaymentButton.textContent =
+      "✓ PAYMENT REPORTED";
+
+  }else if(paymentStarted){
+
+    paymentDetails.textContent =
+      "Service: " +
+      (service || "Business Center Service") +
+      "\nAmount: ₦" +
+      Number(amount || 0).toLocaleString() +
+      "\nPayment status: PAYMENT READY";
+
+    paymentMessage.className =
+      "payment-message payment-waiting";
+
+    paymentMessage.textContent =
+      "Your exact reviewed document is saved and ready. Make your bank transfer, then report it here.";
+
+    makePaymentButton.textContent =
+      "✓ PAYMENT READY";
+
+  }else{
+
+    paymentDetails.textContent =
+      "Service: " +
+      (service || "Business Center Service") +
+      "\nAmount: " +
+      (
+        amount > 0
+          ? "₦" + amount.toLocaleString()
+          : "Quotation required"
+      ) +
+      "\nPayment status: NOT STARTED";
+
+    paymentMessage.className =
+      "payment-message payment-locked";
+
+    paymentMessage.textContent =
+      amount > 0
+        ? "Your exact reviewed document will be securely saved when you select MAKE PAYMENT."
+        : "A quotation is required before payment can be started.";
+
+    makePaymentButton.textContent =
+      "MAKE PAYMENT";
+  }
+
+  if(paymentIdentifier){
+
+    paymentId.style.display =
+      "block";
+
+    paymentId.textContent =
+      "Payment ID: " +
+      paymentIdentifier;
+
+    modalPaymentId.style.display =
+      "block";
+
+    modalPaymentId.textContent =
+      "Payment ID: " +
+      paymentIdentifier;
+
+  }else{
+
+    paymentId.style.display =
+      "none";
+
+    paymentId.textContent = "";
+
+    modalPaymentId.style.display =
+      "none";
+
+    modalPaymentId.textContent = "";
+  }
+
+  if(paid){
+
+    downloadButton.disabled = false;
+
+    downloadButton.classList.add(
+      "active"
+    );
+
+    downloadButton.textContent =
+      "DOWNLOAD DOCUMENT";
+
+  }else{
+
+    downloadButton.disabled = true;
+
+    downloadButton.classList.remove(
+      "active"
+    );
+
+    downloadButton.textContent =
+      "🔒 DOWNLOAD DOCUMENT";
+  }
+
+  paymentButton.style.display =
+    paymentPending && !paid
+      ? "block"
+      : "block";
+
+  paymentButton.disabled =
+    busy ||
+    !paymentStarted ||
+    paid;
+
+  updateButtons();
+}
+
+
+/* ============================================================
+   PAGE RENDERING
+   ============================================================ */
 
 function renderPage(){
 
@@ -2951,15 +2542,12 @@ function renderPage(){
     updateButtons();
 
     return;
-
   }
 
-  const page =
-    pages[
-      currentPage - 1
-    ];
+  const p =
+    pages[currentPage - 1];
 
-  if(!page){
+  if(!p){
 
     pageViewer.innerHTML =
       '<div class="empty-page">' +
@@ -2967,111 +2555,73 @@ function renderPage(){
       '</div>';
 
     return;
-
   }
 
-  const article =
-    document.createElement(
-      "article"
-    );
+  const a =
+    document.createElement("article");
 
-  article.className =
+  a.className =
     "document-page";
 
+  const n =
+    document.createElement("div");
 
-  const number =
-    document.createElement(
-      "div"
-    );
-
-  number.className =
+  n.className =
     "page-number-inside";
 
-  number.textContent =
-    "PAGE " +
-    page.page_number;
+  n.textContent =
+    "PAGE " + p.page_number;
 
+  const c =
+    document.createElement("div");
 
-  const content =
-    document.createElement(
-      "div"
-    );
-
-  content.className =
+  c.className =
     "page-content";
 
-  content.appendChild(
+  c.appendChild(
     sanitizeHtml(
-      page.content ||
+      p.content ||
       "This page is still being prepared."
     )
   );
 
+  a.append(n,c);
 
-  article.append(
-    number,
-    content
-  );
-
-  pageViewer.appendChild(
-    article
-  );
-
+  pageViewer.appendChild(a);
 
   pageIndicator.textContent =
-    "Page " +
-    currentPage +
-    " of " +
-    totalPages;
+    `Page ${currentPage} of ${totalPages}`;
 
-
-  if(
-    page.review ||
-    page.error
-  ){
+  if(p.review || p.error){
 
     pageReview.style.display =
       "block";
 
     pageReviewText.textContent =
-      page.error
+      p.error
         ? "Page information:\n\n" +
-          normText(
-            page.error
-          )
-        : normText(
-            page.review
-          );
+          normText(p.error)
+        : normText(p.review);
 
-  }
-
-  else{
+  }else{
 
     pageReview.style.display =
       "none";
-
   }
 
   updateButtons();
 }
 
+function showPage(n){
 
-function showPage(number){
-
-  if(!totalPages){
-
-    return;
-
-  }
+  if(!totalPages)return;
 
   currentPage =
     Math.max(
       1,
       Math.min(
         totalPages,
-        Math.floor(
-          Number(number) || 1
-        )
+        Math.floor(Number(n) || 1)
       )
     );
 
@@ -3083,32 +2633,21 @@ function showPage(number){
   });
 }
 
-
 previousButton.onclick =
-  () =>
-    showPage(
-      currentPage - 1
-    );
-
+  () => showPage(currentPage - 1);
 
 nextButton.onclick =
-  () =>
-    showPage(
-      currentPage + 1
-    );
-
+  () => showPage(currentPage + 1);
 
 goButton.onclick = () => {
 
-  const number =
-    Number(
-      pageNumberInput.value
-    );
+  const n =
+    Number(pageNumberInput.value);
 
   if(
-    !Number.isInteger(number) ||
-    number < 1 ||
-    number > totalPages
+    !Number.isInteger(n) ||
+    n < 1 ||
+    n > totalPages
   ){
 
     return setMessage(
@@ -3117,479 +2656,159 @@ goButton.onclick = () => {
       ".",
       "error"
     );
-
   }
 
   setMessage("");
 
-  showPage(
-    number
-  );
+  showPage(n);
+};
 
+pageNumberInput.onkeydown = e => {
+
+  if(e.key === "Enter"){
+
+    e.preventDefault();
+
+    goButton.click();
+  }
 };
 
 
-pageNumberInput.onkeydown =
-  event => {
-
-    if(
-      event.key === "Enter"
-    ){
-
-      event.preventDefault();
-
-      goButton.click();
-
-    }
-
-  };
-
-
-/* ===========================================================
-   BILLING
-   =========================================================== */
-
-function extractAmount(data){
-
-  const seen =
-    new Set();
-
-
-  function find(value){
-
-    if(value == null){
-
-      return 0;
-
-    }
-
-    if(
-      typeof value === "number" &&
-      isFinite(value) &&
-      value > 0
-    ){
-
-      return value;
-
-    }
-
-    if(
-      typeof value === "string"
-    ){
-
-      const number =
-        Number(
-          value.replace(
-            /[^0-9.]/g,
-            ""
-          )
-        );
-
-      return isFinite(number) &&
-        number > 0
-        ? number
-        : 0;
-
-    }
-
-    if(
-      typeof value !== "object" ||
-      seen.has(value)
-    ){
-
-      return 0;
-
-    }
-
-    seen.add(value);
-
-
-    for(
-      const key of [
-        "amount",
-        "price"
-      ]
-    ){
-
-      const number =
-        find(
-          value[key]
-        );
-
-      if(number > 0){
-
-        return number;
-
-      }
-
-    }
-
-
-    for(
-      const key of [
-        "billing",
-        "bill",
-        "payment",
-        "job",
-        "result",
-        "document",
-        "review",
-        "output"
-      ]
-    ){
-
-      const number =
-        find(
-          value[key]
-        );
-
-      if(number > 0){
-
-        return number;
-
-      }
-
-    }
-
-    return 0;
-  }
-
-
-  return find(data);
-}
-
-
-function extractBilling(data){
-
-  const seen =
-    new Set();
-
-
-  function find(value){
-
-    if(value == null){
-
-      return "";
-
-    }
-
-    if(
-      typeof value === "string"
-    ){
-
-      return value.trim();
-
-    }
-
-    if(
-      typeof value !== "object" ||
-      seen.has(value)
-    ){
-
-      return "";
-
-    }
-
-    seen.add(value);
-
-
-    if(
-      typeof value.billing ===
-      "string" &&
-      value.billing.trim()
-    ){
-
-      return value.billing.trim();
-
-    }
-
-
-    for(
-      const key of [
-        "billing",
-        "bill",
-        "payment",
-        "job",
-        "result",
-        "document",
-        "review",
-        "output"
-      ]
-    ){
-
-      const result =
-        find(
-          value[key]
-        );
-
-      if(result){
-
-        return result;
-
-      }
-
-    }
-
-    return "";
-  }
-
-
-  return find(data);
-}
-
-
-/* ===========================================================
-   PAYMENT PANEL
-   =========================================================== */
-
-function updatePaymentPanel(){
-
-  amountValueTop.textContent =
-    amount > 0
-      ? formatMoney(amount)
-      : "Quotation required";
-
-
-  paymentDetails.textContent =
-    "Service: " +
-    (
-      service ||
-      "Business Center Service"
-    ) +
-    "\nBilling: " +
-    (
-      billing ||
-      "Fixed price"
-    ) +
-    "\n\n" +
-    (
-      paymentIdentifier
-        ? "Payment ID: " +
-          paymentIdentifier
-        : "Tap MAKE PAYMENT to prepare payment."
-    ) +
-    "\nThe exact reviewed document is saved against this payment.";
-
-
-  if(paymentIdentifier){
-
-    paymentId.style.display =
-      "block";
-
-    paymentId.textContent =
-      "Payment ID: " +
-      paymentIdentifier;
-
-  }
-
-  else{
-
-    paymentId.style.display =
-      "none";
-
-    paymentId.textContent =
-      "";
-
-  }
-
-
-  if(paid){
-
-    makePaymentButton.textContent =
-      "✓ PAYMENT VERIFIED";
-
-    paymentButton.textContent =
-      "✓ PAYMENT VERIFIED";
-
-    paymentButton.disabled =
-      true;
-
-    downloadButton.disabled =
-      false;
-
-    downloadButton.classList.add(
-      "active"
-    );
-
-    downloadButton.textContent =
-      "⬇ DOWNLOAD DOCUMENT";
-
-    paymentInputGroup.style.display =
-      "none";
-
-    paymentMessage.textContent =
-      "Payment verified by Customer Care.\n" +
-      "Download is now available.";
-
-  }
-
-  else if(paymentPending){
-
-    makePaymentButton.textContent =
-      "✓ PAYMENT REPORTED";
-
-    paymentButton.textContent =
-      "✓ PAYMENT REPORTED";
-
-    downloadButton.disabled =
-      true;
-
-    downloadButton.classList.remove(
-      "active"
-    );
-
-    downloadButton.textContent =
-      "🔒 DOWNLOAD DOCUMENT";
-
-    paymentInputGroup.style.display =
-      "block";
-
-    paymentMessage.textContent =
-      "Payment reported — Awaiting Verification.\n" +
-      "Please wait for Customer Care to verify your payment.";
-
-  }
-
-  else if(paymentStarted){
-
-    makePaymentButton.textContent =
-      "✓ PAYMENT READY";
-
-    paymentButton.textContent =
-      "✓ I HAVE MADE PAYMENT";
-
-    downloadButton.disabled =
-      true;
-
-    downloadButton.classList.remove(
-      "active"
-    );
-
-    downloadButton.textContent =
-      "🔒 DOWNLOAD DOCUMENT";
-
-    paymentInputGroup.style.display =
-      "block";
-
-    paymentMessage.textContent =
-      "Payment is ready. Make your bank transfer, then report it using I HAVE MADE PAYMENT.";
-
-  }
-
-  else{
-
-    makePaymentButton.textContent =
-      "💳 MAKE PAYMENT";
-
-    paymentButton.textContent =
-      "✓ I HAVE MADE PAYMENT";
-
-    downloadButton.disabled =
-      true;
-
-    downloadButton.classList.remove(
-      "active"
-    );
-
-    downloadButton.textContent =
-      "🔒 DOWNLOAD DOCUMENT";
-
-    paymentInputGroup.style.display =
-      "none";
-
-    paymentMessage.textContent =
-      amount > 0
-        ? "Download remains locked until Customer Care verifies your payment."
-        : "This service requires a quotation before payment.";
-
-  }
-
-  updateButtons();
-}
-
-
-/* ===========================================================
-   APPLY REVIEW JOB
-   =========================================================== */
-
-function applyJob(data){
+/* ============================================================
+   APPLY JOB
+   ============================================================ */
+
+function applyJob(d){
 
   currentStatus =
-    clean(
-      data.status
-    );
+    clean(d.status);
 
   reviewFinished =
-    complete(data);
+    complete(d);
 
+  customerId =
+    clean(
+      d.customer_id ||
+      d.customerId ||
+      d.job?.customer_id ||
+      d.document?.customer_id ||
+      d.result?.customer_id ||
+      d.output?.customer_id
+    ) ||
+    customerId;
 
-  const extractedPages =
-    extractPages(data);
+  documentFilename =
+    clean(
+      d.filename ||
+      d.document_filename ||
+      d.document?.filename ||
+      d.result?.filename ||
+      d.output?.filename
+    ) ||
+    documentFilename;
 
-  if(extractedPages.length){
+  const p =
+    extractPages(d);
 
-    pages =
-      extractedPages;
+  if(p.length){
 
-    totalPages =
-      extractedPages.length;
+    pages = p;
+    totalPages = p.length;
 
-  }
-
-  else{
+  }else{
 
     totalPages =
       Number(
-        data.total_pages
+        d.total_pages ||
+        d.totalPages
       ) || 0;
-
   }
-
 
   currentVersion =
     Number(
-      data.current_version
+      d.current_version ||
+      d.currentVersion ||
+      d.version ||
+      d.document_version
     ) || 1;
-
 
   versionId =
     clean(
-      data.version_id ||
-      data.document_version ||
-      data.versionId ||
-      data.current_version
+      d.version_id ||
+      d.versionId ||
+      d.document_version_id ||
+      d.documentVersionId ||
+      d.document_version ||
+      d.current_version_id ||
+      d.currentVersionId ||
+      d.document?.version_id ||
+      d.result?.version_id ||
+      d.output?.version_id
     );
 
-
   amount =
-    extractAmount(data) ||
+    extractAmount(d) ||
     amount;
 
   billing =
-    clean(data.billing) ||
-    extractBilling(data) ||
+    clean(d.billing) ||
+    extractBilling(d) ||
     billing;
 
+  /*
+    Only accept a payment ID supplied by the CURRENT
+    job/review response. Never pull a global payment_id.
+  */
 
-  const returnedPaymentId =
+  const jobPaymentId =
     clean(
-      data.payment_id
+      d.payment_id ||
+      d.paymentId ||
+      d.payment?.payment_id ||
+      d.payment?.id
     );
 
-  if(
-    returnedPaymentId
-  ){
+  if(jobPaymentId){
 
     paymentIdentifier =
-      returnedPaymentId;
+      jobPaymentId;
 
-    paymentStarted =
-      true;
+    paymentStarted = true;
 
-    savePaymentContext();
+  }else if(
+    !paymentIdentifier &&
+    versionId
+  ){
 
+    const stored =
+      readScopedPaymentContext();
+
+    if(stored?.payment_id){
+
+      paymentIdentifier =
+        clean(stored.payment_id);
+    }
   }
 
+  paid =
+    !!(
+      d.paid ||
+      d.payment_verified ||
+      d.download_unlocked
+    );
+
+  paymentPending =
+    !!(
+      d.payment_pending ||
+      d.payment_reported ||
+      d.awaiting_verification
+    );
+
+  paymentStarted =
+    paymentStarted ||
+    paymentPending ||
+    !!paymentIdentifier ||
+    paid;
 
   if(totalPages){
 
@@ -3601,55 +2820,36 @@ function applyJob(data){
           totalPages
         )
       );
-
   }
 
+  const pr =
+    d.progress || {};
 
-  const progress =
-    data.progress || {};
+  const done =
+    Number(pr.completed) || 0;
 
-  const completed =
-    Number(
-      progress.completed
-    ) || 0;
-
-  const total =
-    Number(
-      progress.total
-    ) ||
+  const tot =
+    Number(pr.total) ||
     totalPages ||
     0;
 
-
-  let percent =
-    total
-      ? Math.round(
-          completed /
-          total *
-          100
-        )
+  let pct =
+    tot
+      ? Math.round(done / tot * 100)
       : 0;
-
 
   if(
     reviewFinished &&
     totalPages
   ){
-
-    percent = 100;
-
+    pct = 100;
   }
-
 
   progressBar.style.width =
     Math.max(
       0,
-      Math.min(
-        100,
-        percent
-      )
+      Math.min(100,pct)
     ) + "%";
-
 
   pageCount.textContent =
     totalPages +
@@ -3659,71 +2859,52 @@ function applyJob(data){
         : " PAGES"
     );
 
-
   if(reviewFinished){
 
-    setStatus(
-      "READY"
-    );
+    setStatus("READY");
 
     progressText.textContent =
-      "Your document is ready to review and pay.";
+      "Your document is ready to review and download after payment.";
 
-  }
-
-  else if(
+  }else if(
     state() === "reviewing"
   ){
 
-    setStatus(
-      "REVIEWING"
-    );
+    setStatus("REVIEWING");
 
     progressText.textContent =
-      completed +
+      done +
       " of " +
-      total +
+      tot +
       " pages reviewed.";
 
-  }
-
-  else if(
+  }else if(
     state() === "correcting"
   ){
 
-    setStatus(
-      "CORRECTING"
-    );
+    setStatus("CORRECTING");
 
     progressText.textContent =
       "Your correction is being applied.";
 
-  }
-
-  else if(
+  }else if(
     state() === "review_error" ||
     state() === "correction_error"
   ){
 
-    setStatus(
-      "ERROR"
-    );
+    setStatus("ERROR");
 
     progressText.textContent =
       "The document review encountered an error.";
 
-  }
-
-  else{
+  }else{
 
     setStatus(
       currentStatus
         ? currentStatus.toUpperCase()
         : "PREPARING"
     );
-
   }
-
 
   renderPage();
 
@@ -3731,1351 +2912,371 @@ function applyJob(data){
 }
 
 
-/* ===========================================================
-   EXACT REVIEW SNAPSHOT
-   =========================================================== */
+/* ============================================================
+   PAYMENT STATUS
+   ============================================================ */
 
-function buildExactReviewSnapshot(){
+function isPaymentNotFound(error){
 
-  const exactPages =
-    pages.map(
-      (page,index) => ({
+  const code =
+    clean(
+      error?.code ||
+      error?.message
+    ).toUpperCase();
 
-        page_number:
-          Number(
-            page.page_number
-          ) ||
-          index + 1,
-
-        position:
-          Number(
-            page.position
-          ) ||
-          index + 1,
-
-        status:
-          clean(
-            page.status
-          ) ||
-          "review_complete",
-
-        content:
-          page.content == null
-            ? ""
-            : String(
-                page.content
-              ),
-
-        review:
-          clean(
-            page.review
-          ),
-
-        error:
-          clean(
-            page.error
-          )
-
-      })
-    );
-
-
-  const documentText =
-    exactPages
-      .map(
-        page =>
-          page.content
-      )
-      .join(
-        "\n\n"
-      );
-
-
-  const filename =
-    "Naija_Pocket_Business_Center_" +
-    jobId.replace(
-      /[^a-zA-Z0-9_-]/g,
-      "_"
-    ) +
-    ".docx";
-
-
-  return {
-
-    job_id:
-      jobId,
-
-    customer_id:
-      customerId,
-
-    service:
-      service ||
-      "Business Center Service",
-
-    amount:
-      Number(amount) || 0,
-
-    currency:
-      "NGN",
-
-    payment_method:
-      "bank_transfer",
-
-    version_id:
-      versionId,
-
-    document_version:
-      versionId,
-
-    versionId:
-      versionId,
-
-    filename:
-      filename,
-
-    document_filename:
-      filename,
-
-    pages:
-      exactPages,
-
-    document_pages:
-      exactPages,
-
-    review_pages:
-      exactPages,
-
-    document_text:
-      documentText,
-
-    text:
-      documentText,
-
-    content:
-      documentText,
-
-    billing:
-      billing || "",
-
-    review_finished:
-      true,
-
-    status:
-      "review_complete",
-
-    payment_id:
-      paymentIdentifier || ""
-
-  };
-
+  return (
+    Number(error?.status) === 404 ||
+    code.includes("PAYMENT_NOT_FOUND") ||
+    code.includes("PAYMENT RECORD NOT FOUND")
+  );
 }
 
+function paymentBelongsToCurrentJobVersion(d){
 
-/* ===========================================================
-   SAVE EXACT SNAPSHOT
-   =========================================================== */
+  const p =
+    d?.payment &&
+    typeof d.payment === "object"
+      ? d.payment
+      : {};
 
-function saveExactReviewSnapshot(){
-
-  const snapshot =
-    buildExactReviewSnapshot();
-
-
-  const serialized =
-    JSON.stringify(
-      snapshot
+  const returnedJobId =
+    clean(
+      d.job_id ||
+      d.jobId ||
+      p.job_id ||
+      p.jobId
     );
 
-
-  if(jobId){
-
-    sessionStorage.setItem(
-      "npb_payment_review_snapshot_" +
-      jobId,
-      serialized
+  const returnedVersionId =
+    clean(
+      d.version_id ||
+      d.versionId ||
+      d.document_version ||
+      p.version_id ||
+      p.versionId ||
+      p.document_version
     );
 
-  }
-
-
-  sessionStorage.setItem(
-    "npb_payment_review_snapshot",
-    serialized
-  );
-
-
-  if(jobId){
-
-    sessionStorage.setItem(
-      "payment_review_snapshot_" +
-      jobId,
-      serialized
-    );
-
-  }
-
-
-  sessionStorage.setItem(
-    "payment_review_snapshot",
-    serialized
-  );
-
-
-  try{
-
-    localStorage.setItem(
-      "npb_payment_review_snapshot_" +
-      jobId,
-      serialized
-    );
-
-  }
-
-  catch(error){
-
-    console.log(
-      "[SNAPSHOT LOCAL STORAGE]",
-      error
-    );
-
-  }
-
-
-  return snapshot;
-}
-
-
-/* ===========================================================
-   CREATE PAYMENT
-   ===========================================================
-
-   This uses the same payment creation contract currently
-   used by payment.html.
-
-   The payment service saves the exact document snapshot.
-   =========================================================== */
-
-async function createPayment(){
-
-  if(createInProgress){
-
-    return;
-
+  if(
+    returnedJobId &&
+    String(returnedJobId) !==
+    String(jobId)
+  ){
+    return false;
   }
 
   if(
-    !jobId ||
-    !versionId ||
-    !pages.length ||
-    amount <= 0
+    returnedVersionId &&
+    String(returnedVersionId) !==
+    String(versionId)
   ){
-
-    throw Error(
-      "The payment information is incomplete."
-    );
-
+    return false;
   }
 
+  return true;
+}
 
-  createInProgress = true;
+async function loadPaymentState(){
 
-  updateButtons();
+  if(
+    !versionId &&
+    !paymentIdentifier
+  ){
+    return null;
+  }
 
+  /*
+    First use a payment ID belonging to the current
+    job/version only. If none exists, ask the API for
+    the current job/version.
+  */
+
+  let identifier =
+    clean(paymentIdentifier);
 
   try{
 
-    const snapshot =
-      saveExactReviewSnapshot();
+    if(!identifier){
 
+      const stored =
+        readScopedPaymentContext();
 
-    if(
-      !snapshot ||
-      !Array.isArray(
-        snapshot.pages
-      ) ||
-      !snapshot.pages.length
-    ){
+      if(stored?.payment_id){
 
-      throw Error(
-        "The exact reviewed document could not be prepared for payment."
-      );
-
+        identifier =
+          clean(stored.payment_id);
+      }
     }
 
+    let q = "";
 
-    const payload = {
+    if(identifier){
 
-      job_id:
-        jobId,
+      q =
+        "?payment_id=" +
+        encodeURIComponent(identifier);
 
-      customer_id:
-        customerId ||
-        undefined,
+    }else{
 
-      service:
-        service ||
-        "Business Center Service",
-
-      amount:
-        amount,
-
-      payment_method:
-        "bank_transfer",
-
-      version_id:
-        versionId,
-
-      document_version:
-        versionId,
-
-      pages:
-        snapshot.pages,
-
-      document_pages:
-        snapshot.pages,
-
-      document_text:
-        snapshot.document_text,
-
-      filename:
-        snapshot.filename ||
-        (
-          "naija_pocket_" +
-          jobId +
-          ".docx"
-        ),
-
-      document_filename:
-        snapshot.document_filename ||
-        (
-          "naija_pocket_" +
-          jobId +
-          ".docx"
-        )
-
-    };
-
-
-    const data =
-      await paymentPost(
-        "/api/payment/create",
-        payload
-      );
-
-
-    const returnedPayment =
-      data.payment ||
-      data.order ||
-      data.data ||
-      {};
-
-
-    const returnedId =
-      clean(
-        data.payment_id ||
-        returnedPayment.payment_id ||
-        data.order_number ||
-        data.reference ||
-        returnedPayment.order_number ||
-        returnedPayment.reference
-      );
-
-
-    if(!returnedId){
-
-      throw Error(
-        "The payment service did not return a payment ID."
-      );
-
+      q =
+        "?job_id=" +
+        encodeURIComponent(jobId) +
+        "&version_id=" +
+        encodeURIComponent(versionId);
     }
 
-
-    if(
-      data.document_saved ===
-      false
-    ){
-
-      throw Error(
-        "The payment service did not save the exact reviewed document."
+    const d =
+      await paymentGet(
+        "/api/payment/status" + q
       );
 
+    if(!paymentBelongsToCurrentJobVersion(d)){
+
+      clearScopedPaymentContext();
+
+      paymentIdentifier = "";
+      paymentStarted = false;
+      paymentPending = false;
+      paid = false;
+
+      updatePaymentPanel();
+
+      return null;
     }
 
+    const p =
+      d.payment &&
+      typeof d.payment === "object"
+        ? d.payment
+        : {};
 
     paymentIdentifier =
-      returnedId;
-
-    paymentStarted =
-      true;
-
-    paymentPending =
-      false;
-
-    paid =
-      extractPaymentVerified(
-        data
-      ) ||
-      extractDownloadUnlocked(
-        data
-      );
-
-
-    savePaymentContext();
-
-    savePaymentSession();
-
-    updatePaymentPanel();
-
-
-    return data;
-
-  }
-
-  finally{
-
-    createInProgress = false;
-
-    updateButtons();
-
-  }
-
-}
-
-
-/* ===========================================================
-   OPEN BANK PAYMENT MODAL
-   =========================================================== */
-
-function openPaymentModal(){
-
-  modalAmountValue.textContent =
-    formatMoney(
-      amount
-    );
-
-
-  if(paymentReference){
-
-    modalPaymentReference.value =
-      paymentReference;
-
-  }
-
-  else{
-
-    modalPaymentReference.value =
-      paymentReferenceInput.value ||
-      "";
-
-  }
-
-
-  if(paymentNote){
-
-    modalPaymentNote.value =
-      paymentNote;
-
-  }
-
-  else{
-
-    modalPaymentNote.value =
-      paymentNoteInput.value ||
-      "";
-
-  }
-
-
-  modalMessage.textContent =
-    "After making payment, enter the reference above and tap I HAVE MADE PAYMENT.";
-
-  modalMessage.className =
-    "modal-message";
-
-
-  paymentModal.classList.add(
-    "show"
-  );
-
-  paymentModal.setAttribute(
-    "aria-hidden",
-    "false"
-  );
-
-}
-
-
-function closePaymentModalWindow(){
-
-  paymentModal.classList.remove(
-    "show"
-  );
-
-  paymentModal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-}
-
-
-closePaymentModal.onclick =
-  () => {
-
-    closePaymentModalWindow();
-
-  };
-
-
-paymentModal.addEventListener(
-  "click",
-  event => {
-
-    if(
-      event.target ===
-      paymentModal
-    ){
-
-      closePaymentModalWindow();
-
-    }
-
-  }
-);
-
-
-/* ===========================================================
-   MAKE PAYMENT
-   =========================================================== */
-
-async function openPaymentPage(){
-
-  if(!reviewFinished){
-
-    setMessage(
-      "Please wait until the complete document review is ready.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(!jobId){
-
-    setMessage(
-      "The document job could not be identified.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(!versionId){
-
-    setMessage(
-      "The current document version could not be identified. Please refresh the review.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(!pages.length){
-
-    setMessage(
-      "The complete document pages are not available yet.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(amount <= 0){
-
-    setMessage(
-      "This service requires a quotation before payment.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  if(
-    busy ||
-    createInProgress
-  ){
-
-    return;
-
-  }
-
-
-  try{
-
-    busy = true;
-
-    updateButtons();
-
-
-    setStatus(
-      "PAYMENT READY"
-    );
-
-
-    progressText.textContent =
-      "Preparing your exact reviewed document for payment...";
-
-
-    setMessage(
-      "Preparing your exact reviewed document for payment..."
-    );
-
-
-    /*
-     * Save the exact Review snapshot first.
-     */
-
-    const snapshot =
-      saveExactReviewSnapshot();
-
-
-    if(
-      !snapshot ||
-      !Array.isArray(
-        snapshot.pages
-      ) ||
-      !snapshot.pages.length
-    ){
-
-      throw Error(
-        "The exact reviewed document could not be prepared for payment."
-      );
-
-    }
-
-
-    /*
-     * If a payment already exists for this exact Review,
-     * do not create another payment.
-     */
-
-    if(!paymentIdentifier){
-
-      await createPayment();
-
-    }
-
-    else{
-
-      paymentStarted =
-        true;
-
-    }
-
-
-    updatePaymentPanel();
-
-
-    setStatus(
-      "PAYMENT READY"
-    );
-
-
-    progressText.textContent =
-      "Your exact reviewed document is saved and ready for payment.";
-
-
-    setMessage(
-      "Payment is ready. Please make your bank transfer using the account details.",
-      "success"
-    );
-
-
-    openPaymentModal();
-
-  }
-
-  catch(error){
-
-    setStatus(
-      "PAYMENT NOT READY"
-    );
-
-    progressText.textContent =
-      "The payment preparation could not be completed.";
-
-    setMessage(
-      error.message,
-      "error"
-    );
-
-  }
-
-  finally{
-
-    busy = false;
-
-    updateButtons();
-
-  }
-
-}
-
-
-/* ===========================================================
-   REPORT PAYMENT
-   =========================================================== */
-
-async function reportPayment(){
-
-  if(reportInProgress){
-
-    return;
-
-  }
-
-
-  if(!paymentIdentifier){
-
-    modalMessage.textContent =
-      "The payment record is not ready yet.";
-
-    modalMessage.className =
-      "modal-message error";
-
-    return;
-
-  }
-
-
-  const reference =
-    clean(
-      modalPaymentReference.value ||
-      paymentReferenceInput.value
-    );
-
-
-  const note =
-    clean(
-      modalPaymentNote.value ||
-      paymentNoteInput.value
-    );
-
-
-  if(!reference){
-
-    modalMessage.textContent =
-      "Please enter your payment reference.";
-
-    modalMessage.className =
-      "modal-message error";
-
-    return;
-
-  }
-
-
-  reportInProgress = true;
-
-  modalReportButton.disabled =
-    true;
-
-  paymentButton.disabled =
-    true;
-
-
-  try{
-
-    modalMessage.textContent =
-      "Reporting your payment...";
-
-    modalMessage.className =
-      "modal-message";
-
-
-    const data =
-      await paymentPost(
-        "/api/payment/report",
-        {
-          payment_id:
-            paymentIdentifier,
-
-          job_id:
-            jobId,
-
-          payment_reference:
-            reference,
-
-          note:
-            note
-
-        }
-      );
-
-
-    paymentReference =
-      reference;
-
-    paymentNote =
-      note;
-
-    paymentStarted =
-      true;
-
-    paymentPending =
-      true;
-
-    paid =
-      extractPaymentVerified(
-        data
-      ) ||
-      extractDownloadUnlocked(
-        data
-      );
-
-
-    if(paid){
-
-      paymentPending =
-        false;
-
-    }
-
-
-    try{
-
-      sessionStorage.setItem(
-        "npb_payment_reference_" +
-        jobId,
-        reference
-      );
-
-    }
-
-    catch(error){
-
-      console.log(
-        "[PAYMENT REFERENCE]",
-        error
-      );
-
-    }
-
-
-    savePaymentSession();
-
-    updatePaymentPanel();
-
-
-    if(paid){
-
-      modalMessage.textContent =
-        "Payment has been verified. Download is now unlocked.";
-
-      modalMessage.className =
-        "modal-message success";
-
-      setMessage(
-        "Payment verified. Your download is now available.",
-        "success"
-      );
-
-      closePaymentModalWindow();
-
-    }
-
-    else{
-
-      modalMessage.textContent =
-        "Payment reported — Awaiting Verification.";
-
-      modalMessage.className =
-        "modal-message success";
-
-      setMessage(
-        "Payment reported — Awaiting Verification.",
-        "success"
-      );
-
-    }
-
-
-    startPaymentStatusPolling();
-
-  }
-
-  catch(error){
-
-    modalMessage.textContent =
-      error.message;
-
-    modalMessage.className =
-      "modal-message error";
-
-    setMessage(
-      error.message,
-      "error"
-    );
-
-  }
-
-  finally{
-
-    reportInProgress = false;
-
-    modalReportButton.disabled =
-      false;
-
-    updateButtons();
-
-  }
-
-}
-
-
-modalReportButton.onclick =
-  () => {
-
-    reportPayment();
-
-  };
-
-
-paymentButton.onclick =
-  () => {
-
-    if(
-      !paymentStarted ||
-      !paymentIdentifier
-    ){
-
-      return setMessage(
-        "Please tap MAKE PAYMENT first.",
-        "error"
-      );
-
-    }
-
-
-    if(paymentPending){
-
-      return setMessage(
-        "Payment has already been reported. Please wait for Customer Care verification.",
-        "error"
-      );
-
-    }
-
-
-    openPaymentModal();
-
-  };
-
-
-/* ===========================================================
-   PAYMENT STATUS
-   =========================================================== */
-
-async function checkPaymentStatus(){
-
-  if(
-    !jobId ||
-    !paymentIdentifier
-  ){
-
-    return null;
-
-  }
-
-
-  try{
-
-    const data =
-      await paymentGet(
-        "/api/payment/status?payment_id=" +
-        encodeURIComponent(
-          paymentIdentifier
-        )
-      );
-
-
-    const returnedPayment =
-      data.payment ||
-      data.order ||
-      data.data ||
-      {};
-
-
-    const returnedId =
       clean(
-        data.payment_id ||
-        returnedPayment.payment_id ||
-        data.order_number ||
-        data.reference ||
-        returnedPayment.order_number ||
-        returnedPayment.reference
-      );
-
-
-    if(returnedId){
-
-      paymentIdentifier =
-        returnedId;
-
-      savePaymentContext();
-
-    }
-
+        d.payment_id ||
+        p.payment_id ||
+        d.order_number ||
+        d.reference ||
+        p.order_number ||
+        p.reference
+      ) ||
+      identifier ||
+      paymentIdentifier;
 
     const status =
-      data.status ||
-      data.payment_status ||
-      data.paymentStatus ||
-      returnedPayment.status ||
-      returnedPayment.payment_status ||
-      "";
+      clean(
+        d.payment_status ||
+        d.status ||
+        p.payment_status
+      ).toLowerCase();
 
-
-    const verified =
-      extractPaymentVerified(
-        data
-      ) ||
-      extractPaymentVerified(
-        returnedPayment
+    paid =
+      !!(
+        d.paid ||
+        d.payment_verified ||
+        d.download_unlocked ||
+        p.paid ||
+        p.payment_verified ||
+        p.download_unlocked
       );
 
-
-    const unlocked =
-      extractDownloadUnlocked(
-        data
-      ) ||
-      extractDownloadUnlocked(
-        returnedPayment
-      );
-
-
-    const reported =
-      isReported(status) ||
-      data.payment_reported === true ||
-      data.reported === true ||
-      returnedPayment.payment_reported === true ||
-      returnedPayment.reported === true;
-
+    paymentPending =
+      !paid &&
+      [
+        "pending",
+        "reported",
+        "payment_reported",
+        "verification_pending",
+        "awaiting_verification",
+        "pending_verification",
+        "payment_pending"
+      ].includes(status);
 
     paymentStarted =
-      true;
+      paymentStarted ||
+      paymentPending ||
+      !!paymentIdentifier ||
+      paid;
 
+    amount =
+      Number(
+        d.amount ||
+        p.amount
+      ) ||
+      amount;
 
-    if(
-      verified ||
-      unlocked
-    ){
+    billing =
+      clean(
+        d.billing ||
+        p.billing
+      ) ||
+      billing;
 
-      paid =
-        true;
-
-      paymentPending =
-        false;
-
-    }
-
-    else if(reported){
-
-      paid =
-        false;
-
-      paymentPending =
-        true;
-
-    }
-
-
-    savePaymentSession();
+    saveScopedPaymentContext();
 
     updatePaymentPanel();
 
+    return d;
 
-    if(paid){
+  }catch(e){
 
-      stopPaymentStatusPolling();
+    if(isPaymentNotFound(e)){
 
-      setStatus(
-        "PAYMENT VERIFIED"
-      );
+      /*
+        IMPORTANT:
+        Never leave a stale payment ID in Review.
+        A missing payment is treated as invalid payment
+        context for this exact job/version.
+      */
 
-      progressText.textContent =
-        "Customer Care has verified your payment. Your document is ready to download.";
+      clearScopedPaymentContext();
 
-      setMessage(
-        "Payment verified. Download is now available.",
-        "success"
-      );
+      paymentIdentifier = "";
+      paymentStarted = false;
+      paymentPending = false;
+      paid = false;
 
+      updatePaymentPanel();
+
+      return null;
     }
 
-    else if(paymentPending){
+    if(
+      paymentStarted ||
+      paymentIdentifier
+    ){
 
-      setStatus(
-        "PAYMENT REPORTED"
-      );
+      paymentMessage.className =
+        "payment-message payment-waiting";
 
-      progressText.textContent =
-        "Payment reported — Awaiting Verification.";
-
+      paymentMessage.textContent =
+        "Payment status could not be checked right now. Your payment record has not been removed. Please try again shortly.";
     }
 
-
-    return data;
-
-  }
-
-  catch(error){
-
-    console.log(
-      "[PAYMENT STATUS]",
-      error
-    );
-
     return null;
-
   }
-
 }
 
 
-/* ===========================================================
-   PAYMENT STATUS POLLING
-   =========================================================== */
-
-function stopPaymentStatusPolling(){
-
-  paymentStatusPolling =
-    false;
-
-  if(paymentStatusTimer){
-
-    clearTimeout(
-      paymentStatusTimer
-    );
-
-    paymentStatusTimer =
-      null;
-
-  }
-
-}
-
-
-function startPaymentStatusPolling(){
-
-  if(
-    paymentStatusPolling ||
-    !paymentIdentifier ||
-    paid
-  ){
-
-    return;
-
-  }
-
-
-  paymentStatusPolling =
-    true;
-
-
-  const poll =
-    async () => {
-
-      if(
-        !paymentStatusPolling
-      ){
-
-        return;
-
-      }
-
-
-      await checkPaymentStatus();
-
-
-      if(
-        paid
-      ){
-
-        paymentStatusPolling =
-          false;
-
-        return;
-
-      }
-
-
-      paymentStatusTimer =
-        setTimeout(
-          poll,
-          5000
-        );
-
-    };
-
-
-  poll();
-
-}
-
-
-/* ===========================================================
-   LOAD EXISTING PAYMENT
-   =========================================================== */
-
-async function loadExistingPayment(){
-
-  if(
-    !jobId ||
-    !paymentIdentifier
-  ){
-
-    return null;
-
-  }
-
-
-  try{
-
-    const data =
-      await checkPaymentStatus();
-
-    return data;
-
-  }
-
-  catch(error){
-
-    console.log(
-      "[EXISTING PAYMENT]",
-      error
-    );
-
-    return null;
-
-  }
-
-}
-
-
-/* ===========================================================
+/* ============================================================
    LOAD REVIEW JOB
-   =========================================================== */
+   ============================================================ */
 
 async function loadJob(){
 
-  const data =
+  const d =
     await apiGet(
       "/api/review?job_id=" +
-      encodeURIComponent(
-        jobId
-      )
+      encodeURIComponent(jobId)
     );
 
-  applyJob(data);
+  applyJob(d);
 
-  return data;
+  await loadPaymentState();
+
+  return d;
 }
 
 
-/* ===========================================================
+/* ============================================================
+   PAYMENT POLLING
+   ============================================================ */
+
+function startPaymentPolling(){
+
+  if(paymentPollTimer)return;
+
+  const poll = async () => {
+
+    paymentPollTimer = null;
+
+    if(!paymentStarted || paid){
+      return;
+    }
+
+    await loadPaymentState();
+
+    if(!paid){
+
+      paymentPollTimer =
+        setTimeout(
+          poll,
+          3000
+        );
+    }
+  };
+
+  paymentPollTimer =
+    setTimeout(
+      poll,
+      3000
+    );
+}
+
+
+/* ============================================================
    REVIEW POLLING
-   =========================================================== */
+   ============================================================ */
 
 function startPolling(){
 
-  if(polling){
-
-    return;
-
-  }
+  if(polling)return;
 
   polling = true;
 
+  const poll = async () => {
 
-  const poll =
-    async () => {
+    try{
 
-      try{
+      const d =
+        await loadJob();
 
-        const data =
-          await loadJob();
-
-
-        if(
-          complete(data) &&
-          extractPages(data).length
-        ){
-
-          polling = false;
-
-          return;
-
-        }
-
-
-        if([
-          "review_error",
-          "correction_error"
-        ].includes(
-          state()
-        )){
-
-          polling = false;
-
-          return;
-
-        }
-
-
-        pollTimer =
-          setTimeout(
-            poll,
-            1200
-          );
-
-      }
-
-      catch(error){
+      if(
+        complete(d) &&
+        extractPages(d).length
+      ){
 
         polling = false;
-
-        if(!pages.length){
-
-          setMessage(
-            error.message,
-            "error"
-          );
-
-        }
-
+        return;
       }
 
-    };
+      if(
+        [
+          "review_error",
+          "correction_error"
+        ].includes(state())
+      ){
 
+        polling = false;
+        return;
+      }
+
+      pollTimer =
+        setTimeout(
+          poll,
+          1200
+        );
+
+    }catch(e){
+
+      polling = false;
+
+      if(!pages.length){
+
+        setMessage(
+          e.message,
+          "error"
+        );
+      }
+    }
+  };
 
   poll();
 }
 
 
-/* ===========================================================
+/* ============================================================
    CORRECTION
-   =========================================================== */
+   ============================================================ */
 
 correctionButton.onclick =
   async () => {
@@ -5085,16 +3286,13 @@ correctionButton.onclick =
         correctionInput.value
       );
 
-
     if(!instruction){
 
       return setMessage(
         "Please write the correction or change you want.",
         "error"
       );
-
     }
-
 
     try{
 
@@ -5106,110 +3304,576 @@ correctionButton.onclick =
         "Applying your correction..."
       );
 
-
       await apiPost(
         "/api/correct",
         {
-          job_id:
-            jobId,
-
-          instruction:
-            instruction
+          job_id:jobId,
+          instruction:instruction
         }
       );
 
-
-      correctionInput.value =
-        "";
-
+      correctionInput.value = "";
 
       /*
-       * A correction creates a NEW document version.
-       *
-       * Therefore the previous payment/document snapshot
-       * must no longer be associated with this Review.
-       */
+        A correction creates a new reviewed version.
+        Any payment belonging to the previous version
+        must no longer be reused.
+      */
 
       paid = false;
-
       paymentStarted = false;
-
       paymentPending = false;
-
       paymentIdentifier = "";
-
-      paymentReference = "";
-
-      paymentNote = "";
-
-      clearPaymentContext();
-
-      stopPaymentStatusPolling();
-
       amount = 0;
-
       billing = "";
 
+      clearScopedPaymentContext();
+
+      if(paymentPollTimer){
+
+        clearTimeout(
+          paymentPollTimer
+        );
+
+        paymentPollTimer = null;
+      }
 
       currentStatus =
         "correcting";
 
       pages = [];
-
       totalPages = 0;
-
       currentPage = 1;
-
 
       renderPage();
 
       updatePaymentPanel();
-
 
       setMessage(
         "Your correction has started.",
         "success"
       );
 
-
       startPolling();
 
-    }
-
-    catch(error){
+    }catch(e){
 
       setMessage(
-        error.message,
+        e.message,
         "error"
       );
 
-    }
-
-    finally{
+    }finally{
 
       busy = false;
 
       updateButtons();
-
     }
-
   };
 
 
-/* ===========================================================
-   DOWNLOAD DOCUMENT
-   ===========================================================
+/* ============================================================
+   OPEN PAYMENT POPUP
+   ============================================================ */
 
-   IMPORTANT:
+function openPaymentModal(){
 
-   This uses the same saved-document endpoint used by the
-   current payment.html.
+  modalAmount.textContent =
+    amount > 0
+      ? "₦" + amount.toLocaleString()
+      : "Quotation required";
 
-   It does NOT regenerate the document.
-   =========================================================== */
+  modalPaymentId.style.display =
+    paymentIdentifier
+      ? "block"
+      : "none";
+
+  modalPaymentId.textContent =
+    paymentIdentifier
+      ? "Payment ID: " + paymentIdentifier
+      : "";
+
+  modalStatus.className =
+    "modal-status";
+
+  modalStatus.textContent =
+    paymentPending
+      ? "Payment has already been reported. Customer Care is verifying it."
+      : "Make your bank transfer using the account details above, then enter your payment reference and tap I HAVE MADE PAYMENT.";
+
+  paymentModal.classList.add("show");
+
+  setTimeout(
+    () => paymentReferenceInput.focus(),
+    100
+  );
+}
+
+function closePaymentPopup(){
+
+  paymentModal.classList.remove(
+    "show"
+  );
+}
+
+
+/* ============================================================
+   CREATE PAYMENT
+   ============================================================ */
+
+async function createPayment(){
+
+  if(!reviewFinished){
+
+    throw Error(
+      "Please wait until the complete document review is ready."
+    );
+  }
+
+  if(!jobId){
+
+    throw Error(
+      "This document job could not be identified."
+    );
+  }
+
+  if(!versionId){
+
+    throw Error(
+      "The current document version could not be identified. Please refresh Review and try again."
+    );
+  }
+
+  if(amount <= 0){
+
+    throw Error(
+      "This service requires a quotation before payment."
+    );
+  }
+
+  /*
+    Before creating anything, check whether a valid payment
+    already exists for THIS exact job/version.
+  */
+
+  if(
+    paymentIdentifier &&
+    paymentStarted
+  ){
+
+    const existing =
+      await loadPaymentState();
+
+    if(
+      existing &&
+      paymentIdentifier
+    ){
+      return existing;
+    }
+
+    paymentIdentifier = "";
+    paymentStarted = false;
+    paymentPending = false;
+    paid = false;
+
+    clearScopedPaymentContext();
+  }
+
+  const payload = {
+
+    job_id:
+      jobId,
+
+    customer_id:
+      customerId || undefined,
+
+    service:
+      service || "Business Center Service",
+
+    amount:
+      amount,
+
+    payment_method:
+      "bank_transfer",
+
+    version_id:
+      versionId,
+
+    document_version:
+      versionId,
+
+    pages:
+      pages.map(p => ({
+        page_number:
+          p.page_number,
+
+        position:
+          p.position,
+
+        content:
+          p.content,
+
+        review:
+          p.review,
+
+        status:
+          p.status
+      })),
+
+    document_text:
+      pages
+        .map(p => p.content || "")
+        .join("\n\n"),
+
+    filename:
+      documentFilename ||
+      ("naija_pocket_" + jobId + ".docx"),
+
+    document_filename:
+      documentFilename ||
+      ("naija_pocket_" + jobId + ".docx"),
+
+    document_pages:
+      pages.length,
+
+    total_pages:
+      pages.length
+  };
+
+  const d =
+    await paymentPost(
+      "/api/payment/create",
+      payload
+    );
+
+  const returnedPayment =
+    d.payment &&
+    typeof d.payment === "object"
+      ? d.payment
+      : {};
+
+  const newPaymentId =
+    clean(
+      d.payment_id ||
+      returnedPayment.payment_id ||
+      d.order_number ||
+      d.reference ||
+      returnedPayment.order_number ||
+      returnedPayment.reference
+    );
+
+  if(!newPaymentId){
+
+    throw Error(
+      "The payment service did not return a payment ID."
+    );
+  }
+
+  if(d.document_saved === false){
+
+    throw Error(
+      "The reviewed document could not be securely saved for this payment."
+    );
+  }
+
+  if(
+    d.document_saved !== true
+  ){
+
+    throw Error(
+      "The payment service did not confirm that the exact reviewed document was saved."
+    );
+  }
+
+  paymentIdentifier =
+    newPaymentId;
+
+  paymentStarted = true;
+  paymentPending = false;
+  paid = false;
+
+  amount =
+    Number(
+      d.amount ||
+      returnedPayment.amount
+    ) ||
+    amount;
+
+  billing =
+    clean(
+      d.billing ||
+      returnedPayment.billing
+    ) ||
+    billing;
+
+  saveScopedPaymentContext();
+
+  updatePaymentPanel();
+
+  return d;
+}
+
+
+/* ============================================================
+   MAKE PAYMENT
+   ============================================================ */
+
+makePaymentButton.onclick =
+  async () => {
+
+    if(!reviewFinished){
+
+      return setMessage(
+        "Please wait until the complete document review is ready.",
+        "error"
+      );
+    }
+
+    if(!jobId){
+
+      return setMessage(
+        "This document job could not be identified.",
+        "error"
+      );
+    }
+
+    if(!versionId){
+
+      return setMessage(
+        "The current document version could not be identified. Please refresh Review and try again.",
+        "error"
+      );
+    }
+
+    if(amount <= 0){
+
+      return setMessage(
+        "This service requires a quotation before payment.",
+        "error"
+      );
+    }
+
+    if(
+      paymentPending &&
+      paymentIdentifier
+    ){
+
+      openPaymentModal();
+
+      return;
+    }
+
+    try{
+
+      busy = true;
+
+      updateButtons();
+
+      setMessage(
+        "Saving your exact reviewed document and preparing payment...",
+        "success"
+      );
+
+      await createPayment();
+
+      setMessage(
+        "Your exact reviewed document is securely saved. Complete your bank transfer using the account details shown.",
+        "success"
+      );
+
+      openPaymentModal();
+
+    }catch(e){
+
+      setMessage(
+        e.message,
+        "error"
+      );
+
+    }finally{
+
+      busy = false;
+
+      updateButtons();
+    }
+  };
+
+
+/* ============================================================
+   REPORT PAYMENT
+   ============================================================ */
+
+async function reportPayment(){
+
+  if(!paymentIdentifier){
+
+    throw Error(
+      "Payment has not been prepared yet. Tap MAKE PAYMENT first."
+    );
+  }
+
+  const reference =
+    clean(
+      paymentReferenceInput.value
+    );
+
+  if(!reference){
+
+    throw Error(
+      "Please enter your payment reference."
+    );
+  }
+
+  const note =
+    clean(
+      paymentNoteInput.value
+    );
+
+  const body = {
+
+    payment_id:
+      paymentIdentifier,
+
+    job_id:
+      jobId,
+
+    payment_reference:
+      reference,
+
+    note:
+      note
+  };
+
+  const d =
+    await paymentPost(
+      "/api/payment/report",
+      body
+    );
+
+  paymentPending = true;
+  paid = false;
+  paymentStarted = true;
+
+  saveScopedPaymentContext();
+
+  updatePaymentPanel();
+
+  return d;
+}
+
+
+/* ============================================================
+   I HAVE MADE PAYMENT
+   ============================================================ */
+
+async function submitPaymentReport(){
+
+  if(
+    !paymentStarted ||
+    !paymentIdentifier
+  ){
+
+    throw Error(
+      "Tap MAKE PAYMENT first so your exact document can be prepared for payment."
+    );
+  }
+
+  if(paid){
+
+    closePaymentPopup();
+
+    setMessage(
+      "Payment has already been verified.",
+      "success"
+    );
+
+    return;
+  }
+
+  modalReportButton.disabled = true;
+
+  modalStatus.className =
+    "modal-status";
+
+  modalStatus.textContent =
+    "Reporting your payment...";
+
+  try{
+
+    await reportPayment();
+
+    modalStatus.className =
+      "modal-status success";
+
+    modalStatus.textContent =
+      "Payment reported successfully. Customer Care will verify your payment before download is unlocked.";
+
+    setMessage(
+      "Payment Reported — Awaiting Verification.",
+      "success"
+    );
+
+    startPaymentPolling();
+
+  }catch(e){
+
+    modalStatus.className =
+      "modal-status error";
+
+    modalStatus.textContent =
+      e.message;
+
+    setMessage(
+      e.message,
+      "error"
+    );
+
+  }finally{
+
+    modalReportButton.disabled =
+      false;
+
+    updateButtons();
+  }
+}
+
+paymentButton.onclick =
+  () => {
+
+    if(!paymentStarted){
+
+      return setMessage(
+        "Tap MAKE PAYMENT first, then complete your bank transfer.",
+        "error"
+      );
+    }
+
+    openPaymentModal();
+  };
+
+modalReportButton.onclick =
+  submitPaymentReport;
+
+closePaymentModal.onclick =
+  closePaymentPopup;
+
+paymentModal.onclick =
+  e => {
+
+    if(
+      e.target === paymentModal
+    ){
+      closePaymentPopup();
+    }
+  };
+
+
+/* ============================================================
+   DOWNLOAD
+   ============================================================ */
 
 downloadButton.onclick =
-  () => {
+  async () => {
 
     if(!paid){
 
@@ -5217,9 +3881,7 @@ downloadButton.onclick =
         "Download is locked until Customer Care verifies your payment.",
         "error"
       );
-
     }
-
 
     if(!paymentIdentifier){
 
@@ -5227,48 +3889,108 @@ downloadButton.onclick =
         "The payment record could not be identified.",
         "error"
       );
-
     }
 
-
-    const downloadUrl =
+    const u =
       PAYMENT_API_BASE +
       "/api/download?payment_id=" +
       encodeURIComponent(
         paymentIdentifier
       );
 
+    setMessage(
+      "Preparing your verified document..."
+    );
 
-    window.location.href =
-      downloadUrl;
+    try{
 
+      const r =
+        await fetch(
+          u,
+          {
+            method:"GET",
+            cache:"no-store"
+          }
+        );
+
+      if(!r.ok){
+
+        const d =
+          await r.json().catch(
+            () => ({})
+          );
+
+        throw Error(
+          d.error_message ||
+          d.error ||
+          d.message ||
+          (
+            r.status === 403
+              ? "Download remains locked until Customer Care verifies your payment."
+              : "The document could not be downloaded."
+          )
+        );
+      }
+
+      const blob =
+        await r.blob();
+
+      if(!blob.size){
+
+        throw Error(
+          "The saved document is empty."
+        );
+      }
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const a =
+        document.createElement("a");
+
+      a.href = url;
+
+      a.download =
+        documentFilename ||
+        ("naija_pocket_" + jobId + ".docx");
+
+      a.rel =
+        "noopener";
+
+      document.body.appendChild(a);
+
+      a.click();
+
+      a.remove();
+
+      setTimeout(
+        () => URL.revokeObjectURL(url),
+        5000
+      );
+
+      setMessage(
+        "Your verified document is ready.",
+        "success"
+      );
+
+    }catch(e){
+
+      setMessage(
+        e.message,
+        "error"
+      );
+    }
   };
 
 
-/* ===========================================================
-   MAKE PAYMENT BUTTON
-   =========================================================== */
-
-makePaymentButton.onclick =
-  () => {
-
-    openPaymentPage();
-
-  };
-
-
-/* ===========================================================
+/* ============================================================
    START
-   =========================================================== */
+   ============================================================ */
 
 async function start(){
 
   serviceBadge.textContent =
     service;
-
-
-  restorePaymentSession();
-
 
   if(!jobId){
 
@@ -5287,88 +4009,51 @@ async function start(){
     );
 
     return;
-
   }
-
 
   try{
 
-    const data =
+    const d =
       await loadJob();
 
-
-    /*
-     * If a payment ID was restored from the current session
-     * or supplied by the URL, check the payment authority.
-     */
-
-    if(paymentIdentifier){
-
-      await loadExistingPayment();
-
-    }
-
-
-    updatePaymentPanel();
-
-
     if(
-      !complete(data) &&
+      !complete(d) &&
       ![
         "review_error",
         "correction_error"
-      ].includes(
-        state()
-      )
+      ].includes(state())
     ){
 
       startPolling();
-
     }
 
-
     if(
-      paymentIdentifier &&
+      paymentStarted &&
       !paid
     ){
 
-      startPaymentStatusPolling();
-
+      startPaymentPolling();
     }
 
-  }
-
-  catch(error){
+  }catch(e){
 
     setStatus(
       "ERROR"
     );
 
     setMessage(
-      error.message,
+      e.message,
       "error"
     );
 
-
     pageViewer.innerHTML =
       '<div class="empty-page">' +
-      String(
-        error.message
-      )
-        .replaceAll(
-          "<",
-          "&lt;"
-        )
-        .replaceAll(
-          ">",
-          "&gt;"
-        ) +
+      String(e.message)
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;") +
       '</div>';
-
   }
-
 }
-
 
 start();
 
