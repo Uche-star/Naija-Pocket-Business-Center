@@ -647,6 +647,31 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .message.error{color:#ff7777}
 .message.success{color:#75dc99}
 
+/* TINY BACK OFFICE BUTTON */
+
+.back-office-button{
+  display:block;
+  width:max-content;
+  margin:5px auto 0;
+  padding:3px 7px;
+  min-height:20px;
+  border:1px solid rgba(212,175,55,.22);
+  border-radius:5px;
+  background:#0d0d0d;
+  color:#777;
+  font-size:7px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.3px;
+  opacity:.72
+}
+
+.back-office-button:hover{
+  color:var(--gold2);
+  border-color:rgba(212,175,55,.45);
+  opacity:1
+}
+
 /* PAYMENT POPUP */
 
 .payment-modal{
@@ -1246,6 +1271,14 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 </section>
 
+<button
+  id="backOfficeButton"
+  class="back-office-button"
+  type="button"
+>
+  BACK OFFICE
+</button>
+
 </section>
 
 <div id="message" class="message"></div>
@@ -1375,15 +1408,11 @@ const service =
 
 
 /*
-  IMPORTANT:
-  job_id is retained only because the existing Review API uses it
-  to load/correct the review.
+  The title is deliberately collected from every known
+  URL spelling first.
 
-  It is NOT used as:
-  - product identity
-  - payment identity
-  - download identity
-  - payment reference
+  It is still only the DOCUMENT TITLE.
+  It is never a payment ID or job ID.
 */
 
 let documentTitle =
@@ -1393,6 +1422,9 @@ let documentTitle =
     params.get("documentTitle") ||
     params.get("work_title") ||
     params.get("workTitle") ||
+    params.get("document_name") ||
+    params.get("documentName") ||
+    params.get("subject") ||
     ""
   ).trim();
 
@@ -1426,6 +1458,8 @@ const paymentButton = $("paymentButton");
 const downloadButton = $("downloadButton");
 const paymentMessage = $("paymentMessage");
 const message = $("message");
+
+const backOfficeButton = $("backOfficeButton");
 
 const paymentModal = $("paymentModal");
 const modalAmount = $("modalAmount");
@@ -1501,52 +1535,388 @@ function complete(d){
    DOCUMENT TITLE
    ============================================================ */
 
+/*
+  Some Review API responses expose the title directly.
+  Others wrap the job inside data/payload/result/job_data,
+  etc.
+
+  This extractor intentionally searches ONLY title-like
+  property names. It does not treat IDs as titles.
+*/
+
+const TITLE_KEYS = [
+  "document_title",
+  "documentTitle",
+  "document_name",
+  "documentName",
+  "work_title",
+  "workTitle",
+  "work_name",
+  "workName",
+  "title",
+  "subject"
+];
+
+const TITLE_WRAPPER_KEYS = [
+  "data",
+  "payload",
+  "response",
+  "result",
+  "review",
+  "job",
+  "job_data",
+  "jobData",
+  "document",
+  "document_data",
+  "documentData",
+  "output",
+  "service",
+  "service_data",
+  "serviceData",
+  "details",
+  "record",
+  "item"
+];
+
+function validDocumentTitle(value){
+
+  const v = clean(value);
+
+  if(!v)return "";
+
+  /*
+    Never accept IDs or obvious technical values as
+    document titles.
+  */
+
+  if(
+    /^NPB[-_]/i.test(v) ||
+    /^job[-_ ]?\d+$/i.test(v) ||
+    /^payment[-_ ]?/i.test(v) ||
+    /^version[-_ ]?/i.test(v) ||
+    /^\d+$/.test(v)
+  ){
+    return "";
+  }
+
+  /*
+    A service name should not accidentally become the
+    document title.
+  */
+
+  if(
+    v.toLowerCase() ===
+    clean(service).toLowerCase()
+  ){
+    return "";
+  }
+
+  return v;
+}
+
 function extractDocumentTitle(d){
 
-  const candidates = [
+  /*
+    First: direct and known locations.
+  */
+
+  const directCandidates = [
 
     d?.document_title,
     d?.documentTitle,
-    d?.title,
+    d?.document_name,
+    d?.documentName,
     d?.work_title,
     d?.workTitle,
+    d?.work_name,
+    d?.workName,
+    d?.title,
+    d?.subject,
 
     d?.document?.document_title,
     d?.document?.documentTitle,
-    d?.document?.title,
+    d?.document?.document_name,
+    d?.document?.documentName,
     d?.document?.work_title,
     d?.document?.workTitle,
+    d?.document?.title,
+    d?.document?.subject,
 
     d?.result?.document_title,
     d?.result?.documentTitle,
-    d?.result?.title,
+    d?.result?.document_name,
+    d?.result?.documentName,
     d?.result?.work_title,
     d?.result?.workTitle,
+    d?.result?.title,
+    d?.result?.subject,
 
     d?.review?.document_title,
     d?.review?.documentTitle,
-    d?.review?.title,
+    d?.review?.document_name,
+    d?.review?.documentName,
     d?.review?.work_title,
     d?.review?.workTitle,
+    d?.review?.title,
+    d?.review?.subject,
 
     d?.output?.document_title,
     d?.output?.documentTitle,
-    d?.output?.title,
+    d?.output?.document_name,
+    d?.output?.documentName,
     d?.output?.work_title,
     d?.output?.workTitle,
+    d?.output?.title,
+    d?.output?.subject,
 
     d?.job?.document_title,
     d?.job?.documentTitle,
-    d?.job?.title,
+    d?.job?.document_name,
+    d?.job?.documentName,
     d?.job?.work_title,
-    d?.job?.workTitle
+    d?.job?.workTitle,
+    d?.job?.title,
+    d?.job?.subject
   ];
 
-  for(const value of candidates){
+  for(const value of directCandidates){
 
-    const v = clean(value);
+    const v =
+      validDocumentTitle(value);
 
     if(v)return v;
+  }
+
+  /*
+    Second: recursively inspect the response.
+
+    This handles structures such as:
+
+      {
+        data: {
+          job_data: {
+            document: {
+              title: "How Ghana Creates Revenue as a Country"
+            }
+          }
+        }
+      }
+
+    without depending on one exact API response shape.
+  */
+
+  const visited = new Set();
+
+  function walk(value,depth){
+
+    if(
+      value == null ||
+      depth > 8
+    ){
+      return "";
+    }
+
+    if(
+      typeof value !== "object"
+    ){
+      return "";
+    }
+
+    if(visited.has(value)){
+      return "";
+    }
+
+    visited.add(value);
+
+    /*
+      Prefer explicit title keys before descending.
+    */
+
+    for(const key of TITLE_KEYS){
+
+      if(
+        Object.prototype.hasOwnProperty.call(
+          value,
+          key
+        )
+      ){
+
+        const found =
+          validDocumentTitle(
+            value[key]
+          );
+
+        if(found)return found;
+      }
+    }
+
+    /*
+      Search normal wrapper/object keys first.
+    */
+
+    for(const key of TITLE_WRAPPER_KEYS){
+
+      if(
+        Object.prototype.hasOwnProperty.call(
+          value,
+          key
+        )
+      ){
+
+        const found =
+          walk(
+            value[key],
+            depth + 1
+          );
+
+        if(found)return found;
+      }
+    }
+
+    /*
+      Finally inspect remaining object properties.
+
+      This catches API wrappers that use an unexpected
+      container name while still looking only for title-like
+      keys inside those objects.
+    */
+
+    for(const key of Object.keys(value)){
+
+      if(
+        TITLE_KEYS.includes(key) ||
+        TITLE_WRAPPER_KEYS.includes(key)
+      ){
+        continue;
+      }
+
+      const child =
+        value[key];
+
+      if(
+        child &&
+        typeof child === "object"
+      ){
+
+        const found =
+          walk(
+            child,
+            depth + 1
+          );
+
+        if(found)return found;
+      }
+    }
+
+    return "";
+  }
+
+  return walk(d,0);
+}
+
+
+/*
+  Last-resort document-content title extraction.
+
+  This is intentionally conservative. It is used only when
+  the Review response and URL contain no title metadata.
+
+  For the supplied document, whose first meaningful heading is:
+
+    How Ghana Creates Revenue as a Country
+
+  this allows the payment product to be identified correctly.
+*/
+
+function extractTitleFromPageContent(){
+
+  if(!Array.isArray(pages) || !pages.length){
+    return "";
+  }
+
+  for(const p of pages){
+
+    const raw =
+      clean(p?.content);
+
+    if(!raw)continue;
+
+    const temp =
+      document.createElement("div");
+
+    temp.innerHTML = raw;
+
+    const text =
+      clean(
+        temp.textContent ||
+        temp.innerText ||
+        ""
+      );
+
+    if(!text)continue;
+
+    const lines =
+      text
+        .split(/\n+/)
+        .map(x => clean(x))
+        .filter(Boolean);
+
+    if(!lines.length)continue;
+
+    /*
+      Ignore generic document labels.
+    */
+
+    const generic = new Set([
+      "page",
+      "document",
+      "document title",
+      "untitled",
+      "your document",
+      "your complete document",
+      "business center service"
+    ]);
+
+    for(const line of lines){
+
+      if(
+        line.length < 3 ||
+        line.length > 180
+      ){
+        continue;
+      }
+
+      if(
+        generic.has(
+          line.toLowerCase()
+        )
+      ){
+        continue;
+      }
+
+      /*
+        Ignore obvious metadata lines.
+      */
+
+      if(
+        /^(page|date|service|customer|job|payment|version)\s*[:#-]/i.test(line)
+      ){
+        continue;
+      }
+
+      /*
+        Avoid treating a long paragraph as a title.
+      */
+
+      const words =
+        line.split(/\s+/).length;
+
+      if(words > 18){
+        continue;
+      }
+
+      return line;
+    }
   }
 
   return "";
@@ -1554,14 +1924,44 @@ function extractDocumentTitle(d){
 
 function ensureDocumentTitle(d){
 
+  /*
+    1. URL title
+    2. API response title
+    3. page-content title
+  */
+
+  if(documentTitle){
+    return documentTitle;
+  }
+
   const found =
     extractDocumentTitle(d);
 
   if(found){
-    documentTitle = found;
+
+    documentTitle =
+      found;
+
+    return documentTitle;
   }
 
-  return documentTitle;
+  /*
+    Page-content fallback is called after pages have been
+    extracted by applyJob().
+  */
+
+  const pageTitle =
+    extractTitleFromPageContent();
+
+  if(pageTitle){
+
+    documentTitle =
+      pageTitle;
+
+    return documentTitle;
+  }
+
+  return "";
 }
 
 
@@ -1809,7 +2209,11 @@ function extractPages(d){
       d?.document,
       d?.result,
       d?.review,
-      d?.output
+      d?.output,
+      d?.data,
+      d?.payload,
+      d?.job_data,
+      d?.jobData
     ]
   ){
 
@@ -2613,6 +3017,40 @@ function applyJob(d){
   reviewFinished =
     complete(d);
 
+  /*
+    Extract pages BEFORE the title fallback because the
+    document-content fallback can use the actual reviewed
+    document pages.
+  */
+
+  const p =
+    extractPages(d);
+
+  if(p.length){
+
+    pages = p;
+    totalPages = p.length;
+
+  }else{
+
+    totalPages =
+      Number(
+        d.total_pages ||
+        d.totalPages
+      ) || 0;
+  }
+
+  /*
+    Title extraction order:
+
+    1. URL title already loaded into documentTitle.
+    2. Explicit title fields in Review response.
+    3. Recursively wrapped title fields.
+    4. First meaningful document title/heading.
+
+    This happens before payment state is loaded.
+  */
+
   ensureDocumentTitle(d);
 
   customerId =
@@ -2635,23 +3073,6 @@ function applyJob(d){
       d.output?.filename
     ) ||
     documentFilename;
-
-  const p =
-    extractPages(d);
-
-  if(p.length){
-
-    pages = p;
-    totalPages = p.length;
-
-  }else{
-
-    totalPages =
-      Number(
-        d.total_pages ||
-        d.totalPages
-      ) || 0;
-  }
 
   currentVersion =
     Number(
@@ -2843,14 +3264,6 @@ function isProductNotFound(error){
 }
 
 
-/*
-  Restore payment/product state using the current
-  Service + Document Title identity.
-
-  A missing product is normal before MAKE PAYMENT and
-  therefore is silently treated as "not started".
-*/
-
 async function loadPaymentState(){
 
   if(!service || !documentTitle){
@@ -2940,11 +3353,6 @@ async function loadPaymentState(){
 
   }catch(e){
 
-    /*
-      PRODUCT_NOT_FOUND simply means this reviewed
-      document has not yet entered payment preparation.
-    */
-
     if(isProductNotFound(e)){
 
       paymentStarted = false;
@@ -2956,12 +3364,6 @@ async function loadPaymentState(){
 
       return null;
     }
-
-    /*
-      Do not show the old payment-ID error.
-      Payment status lookup must never make Review appear
-      broken when the product itself is still available.
-    */
 
     return null;
   }
@@ -2983,9 +3385,12 @@ async function loadJob(){
   applyJob(d);
 
   /*
-    Only check product/payment state after the title
-    has been identified. The product API is independent
-    from the Review API.
+    Title has now been resolved from:
+      URL
+      Review response
+      or document content
+
+    BEFORE the payment product lookup.
   */
 
   if(documentTitle){
@@ -3170,6 +3575,13 @@ correctionButton.onclick =
       totalPages = 0;
       currentPage = 1;
 
+      /*
+        Preserve the known document title if the correction
+        response does not change it. If the next Review
+        response provides a new title, ensureDocumentTitle()
+        can still replace an empty title.
+      */
+
       renderPage();
 
       updatePaymentPanel();
@@ -3195,6 +3607,28 @@ correctionButton.onclick =
       updateButtons();
     }
   };
+
+
+/* ============================================================
+   BACK OFFICE
+   ============================================================ */
+
+/*
+  The Back Office remains owned by the Payment HTML flow.
+  This button is deliberately tiny so it does not interfere
+  with the customer Review experience.
+
+  Existing payment Back Office entry point:
+    /payment.html?back_office=1
+
+  No payment ID or job ID is used here.
+*/
+
+backOfficeButton.onclick = () => {
+
+  window.location.href =
+    "/payment.html?back_office=1";
+};
 
 
 /* ============================================================
@@ -3275,6 +3709,27 @@ async function createPayment(){
     );
   }
 
+  /*
+    FINAL TITLE RESOLUTION BEFORE PAYMENT.
+
+    This is deliberately repeated immediately before
+    /api/payment/create so the API can never receive an
+    empty document_title when Review already contains
+    the document title.
+  */
+
+  if(!documentTitle){
+
+    const recoveredTitle =
+      extractTitleFromPageContent();
+
+    if(recoveredTitle){
+
+      documentTitle =
+        recoveredTitle;
+    }
+  }
+
   if(!documentTitle){
 
     throw Error(
@@ -3297,8 +3752,7 @@ async function createPayment(){
   }
 
   /*
-    If the exact Service + Document Title product already exists,
-    restore its state instead of creating a duplicate workflow.
+    Existing Service + Document Title product is reused.
   */
 
   if(paymentStarted){
@@ -3319,10 +3773,13 @@ async function createPayment(){
 
   /*
     IMPORTANT:
-    job_id is intentionally NOT sent as product/payment identity.
 
-    customer_id may be retained as optional customer metadata,
-    but Service + Document Title is the business identity.
+    job_id is NOT sent as product/payment identity.
+
+    customer_id is optional metadata only.
+
+    BUSINESS IDENTITY:
+      service + document_title
   */
 
   const payload = {
@@ -3404,11 +3861,6 @@ async function createPayment(){
       payload
     );
 
-  /*
-    The current payment API does not require or return
-    a Payment ID. The saved product is the source of truth.
-  */
-
   if(d.document_saved === false){
 
     throw Error(
@@ -3448,11 +3900,6 @@ async function createPayment(){
       d.product?.billing
     ) ||
     billing;
-
-  /*
-    If the API returned an already-existing activated product,
-    preserve that state.
-  */
 
   if(
     d.download_unlocked === true ||
@@ -3501,6 +3948,24 @@ makePaymentButton.onclick =
         "The current document version could not be identified. Please refresh Review and try again.",
         "error"
       );
+    }
+
+    /*
+      Resolve the title again immediately before payment.
+    */
+
+    if(!documentTitle){
+
+      const recoveredTitle =
+        extractTitleFromPageContent();
+
+      if(recoveredTitle){
+
+        documentTitle =
+          recoveredTitle;
+
+        updatePaymentPanel();
+      }
     }
 
     if(!documentTitle){
@@ -3595,13 +4060,12 @@ async function reportPayment(){
     );
 
   /*
-    IMPORTANT:
     No payment ID.
     No payment reference.
     No job ID.
 
-    The payment record is located using:
-    Service + Document Title.
+    Payment record:
+      Service + Document Title
   */
 
   const body = {
@@ -3760,11 +4224,6 @@ paymentModal.onclick =
 
 downloadButton.onclick =
   async () => {
-
-    /*
-      Customer Care activation is the actual download gate.
-      Payment verification alone is not enough.
-    */
 
     if(!downloadUnlocked){
 
