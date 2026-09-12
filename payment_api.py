@@ -1494,7 +1494,7 @@ def make_docx(
   <Override PartName="/word/document.xml"
     ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
   <Override PartName="/word/styles.xml"
-    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.styles+xml"/>
 </Types>
 """
 
@@ -4650,6 +4650,7 @@ async def startup() -> None:
                 BACK_OFFICE_ADMIN_KEY
             )
         )
+    )
 
 
 # ============================================================
