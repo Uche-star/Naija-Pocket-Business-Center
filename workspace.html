@@ -61,14 +61,7 @@ button{cursor:pointer}
     align-items:center;
     justify-content:space-between;
     gap:10px;
-    background:
-        linear-gradient(
-            90deg,
-            #050505 0%,
-            #101010 35%,
-            #080808 65%,
-            #050505 100%
-        );
+    background:linear-gradient(90deg,#050505,#101010 35%,#080808 65%,#050505);
     border-bottom:1px solid rgba(212,175,55,.32);
     box-shadow:0 4px 20px rgba(0,0,0,.45);
     z-index:20;
@@ -78,14 +71,7 @@ button{cursor:pointer}
 
 .brand-title{
     margin:0;
-    background:
-        linear-gradient(
-            90deg,
-            var(--green),
-            var(--teal),
-            var(--cream),
-            var(--gold2)
-        );
+    background:linear-gradient(90deg,var(--green),var(--teal),var(--cream),var(--gold2));
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
@@ -113,13 +99,7 @@ button{cursor:pointer}
 .service-badge{
     max-width:40%;
     padding:7px 10px;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(212,175,55,.10),
-            rgba(112,209,193,.06),
-            rgba(143,184,232,.07)
-        );
+    background:linear-gradient(135deg,rgba(212,175,55,.10),rgba(112,209,193,.06),rgba(143,184,232,.07));
     border:1px solid rgba(212,175,55,.55);
     border-radius:999px;
     color:var(--gold2);
@@ -162,22 +142,9 @@ button{cursor:pointer}
     -webkit-overflow-scrolling:touch;
     overscroll-behavior:contain;
     background:
-        radial-gradient(
-            circle at 15% 0%,
-            rgba(57,184,127,.08) 0,
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 85% 0%,
-            rgba(185,155,232,.07) 0,
-            transparent 26%
-        ),
-        radial-gradient(
-            circle at top,
-            #181818 0,
-            #080808 35%,
-            #000 100%
-        );
+        radial-gradient(circle at 15% 0%,rgba(57,184,127,.08) 0,transparent 28%),
+        radial-gradient(circle at 85% 0%,rgba(185,155,232,.07) 0,transparent 26%),
+        radial-gradient(circle at top,#181818 0,#080808 35%,#000 100%);
 }
 
 .main-inner{
@@ -199,12 +166,7 @@ button{cursor:pointer}
     margin-bottom:12px;
     padding:16px;
     background:
-        linear-gradient(
-            145deg,
-            rgba(57,184,127,.08),
-            rgba(212,175,55,.08) 45%,
-            rgba(143,184,232,.06)
-        ),
+        linear-gradient(145deg,rgba(57,184,127,.08),rgba(212,175,55,.08) 45%,rgba(143,184,232,.06)),
         linear-gradient(145deg,#191919,#0d0d0d);
     border:1px solid rgba(212,175,55,.34);
     box-shadow:0 10px 35px rgba(0,0,0,.22);
@@ -212,13 +174,7 @@ button{cursor:pointer}
 
 .intro-title,.review-title{
     margin:0;
-    background:
-        linear-gradient(
-            90deg,
-            var(--gold2),
-            var(--cream),
-            var(--rose)
-        );
+    background:linear-gradient(90deg,var(--gold2),var(--cream),var(--rose));
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
@@ -239,12 +195,7 @@ button{cursor:pointer}
     display:inline-block;
     margin-top:10px;
     padding:7px 10px;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(212,175,55,.10),
-            rgba(112,209,193,.07)
-        );
+    background:linear-gradient(135deg,rgba(212,175,55,.10),rgba(112,209,193,.07));
     border:1px solid rgba(212,175,55,.3);
     border-radius:8px;
     color:var(--champagne);
@@ -254,12 +205,7 @@ button{cursor:pointer}
 
 .form-card{
     background:
-        linear-gradient(
-            145deg,
-            rgba(143,184,232,.035),
-            rgba(185,155,232,.025),
-            rgba(232,180,168,.025)
-        ),
+        linear-gradient(145deg,rgba(143,184,232,.035),rgba(185,155,232,.025),rgba(232,180,168,.025)),
         #101010;
     border:1px solid rgba(255,255,255,.09);
     padding:15px;
@@ -333,13 +279,7 @@ button{cursor:pointer}
     margin-top:15px;
     border:1px solid rgba(244,213,141,.35);
     border-radius:10px;
-    background:
-        linear-gradient(
-            135deg,
-            var(--gold2),
-            var(--champagne),
-            var(--cream)
-        );
+    background:linear-gradient(135deg,var(--gold2),var(--champagne),var(--cream));
     color:#000;
     font-size:13px;
     font-weight:900;
@@ -349,7 +289,7 @@ button{cursor:pointer}
 .form-submit:disabled{opacity:.45}
 
 /* ============================================================
-   REVIEW GATEWAY
+   LUXURY REVIEW GATEWAY PAGE
 ============================================================ */
 
 .review-view{
@@ -361,74 +301,138 @@ button{cursor:pointer}
 .review-view.show{display:block}
 
 .review-header{
-    padding:16px;
-    margin-bottom:11px;
+    position:relative;
+    overflow:hidden;
+    padding:26px 20px 24px;
+    margin-bottom:12px;
     background:
-        linear-gradient(
-            145deg,
-            rgba(185,155,232,.07),
-            rgba(212,175,55,.08),
-            rgba(57,184,127,.05)
-        ),
-        linear-gradient(145deg,#191919,#0d0d0d);
-    border:1px solid rgba(212,175,55,.38);
+        radial-gradient(circle at 12% 20%,rgba(57,184,127,.14),transparent 28%),
+        radial-gradient(circle at 88% 10%,rgba(212,175,55,.15),transparent 30%),
+        linear-gradient(145deg,#181818,#080808);
+    border:1px solid rgba(212,175,55,.45);
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.45),
+        inset 0 1px rgba(255,255,255,.04);
 }
 
-.review-title{font-size:20px}
+.review-header:before{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    right:-80px;
+    top:-100px;
+    border-radius:50%;
+    border:1px solid rgba(212,175,55,.15);
+    box-shadow:
+        0 0 0 18px rgba(212,175,55,.025),
+        0 0 0 38px rgba(212,175,55,.018);
+    pointer-events:none;
+}
+
+.review-header:after{
+    content:"";
+    position:absolute;
+    left:-70px;
+    bottom:-110px;
+    width:190px;
+    height:190px;
+    border-radius:50%;
+    border:1px solid rgba(57,184,127,.12);
+    box-shadow:0 0 0 22px rgba(57,184,127,.018);
+    pointer-events:none;
+}
+
+.review-title{
+    position:relative;
+    z-index:1;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(25px,7vw,34px);
+    letter-spacing:.3px;
+}
 
 .review-subtitle{
-    margin:5px 0 0;
-    color:#bdbdbd;
-    font-size:11px;
-    line-height:1.5;
+    position:relative;
+    z-index:1;
+    max-width:650px;
+    margin:8px 0 0;
+    color:#c8c8c8;
+    font-size:12px;
+    line-height:1.7;
 }
 
 .workspace-review-gateway{
+    position:relative;
+    overflow:hidden;
     width:100%;
-    padding:22px 16px;
+    padding:32px 19px 27px;
     background:
-        linear-gradient(
-            145deg,
-            rgba(112,209,193,.05),
-            rgba(143,184,232,.04),
-            rgba(232,180,168,.04)
-        ),
-        #101010;
-    border:1px solid rgba(212,175,55,.30);
-    border-radius:13px;
+        radial-gradient(circle at 50% 0%,rgba(212,175,55,.12),transparent 42%),
+        linear-gradient(145deg,rgba(57,184,127,.045),rgba(212,175,55,.055),rgba(143,184,232,.025)),
+        #0b0b0b;
+    border:1px solid rgba(212,175,55,.38);
+    border-radius:17px;
     text-align:center;
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.55),
+        inset 0 1px rgba(255,255,255,.035);
+}
+
+.workspace-review-gateway:before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:1px solid rgba(212,175,55,.08);
+    border-radius:12px;
+    pointer-events:none;
 }
 
 .workspace-review-gateway-title{
+    position:relative;
+    z-index:1;
     margin:0;
     color:var(--gold2);
-    font-size:17px;
-    font-weight:900;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:23px;
+    font-weight:700;
+    letter-spacing:.2px;
 }
 
 .workspace-review-gateway-text{
-    margin:8px 0 0;
+    position:relative;
+    z-index:1;
+    max-width:570px;
+    margin:9px auto 0;
     color:#bdbdbd;
     font-size:11px;
-    line-height:1.55;
+    line-height:1.65;
 }
 
 .workspace-review-open{
+    position:relative;
+    z-index:1;
     width:100%;
-    min-height:48px;
-    margin-top:15px;
-    border:1px solid rgba(244,213,141,.35);
-    border-radius:9px;
+    min-height:50px;
+    margin-top:18px;
+    border:1px solid rgba(244,213,141,.55);
+    border-radius:10px;
     background:
-        linear-gradient(
-            135deg,
-            var(--gold2),
-            var(--champagne),
-            var(--cream)
-        );
-    color:#000;
+        linear-gradient(135deg,var(--gold2),var(--champagne),var(--cream));
+    color:#050505;
     font-size:12px;
     font-weight:900;
+    letter-spacing:.7px;
+    box-shadow:
+        0 8px 28px rgba(212,175,55,.14),
+        inset 0 1px rgba(255,255,255,.6);
+    transition:transform .2s ease,box-shadow .2s ease;
+}
+
+.workspace-review-open:hover{
+    transform:translateY(-1px);
+    box-shadow:
+        0 11px 35px rgba(212,175,55,.23),
+        inset 0 1px rgba(255,255,255,.7);
 }
 
 /* ============================================================
@@ -436,20 +440,12 @@ button{cursor:pointer}
 ============================================================ */
 
 #backOfficeView{display:none}
-
 #backOfficeView.show{display:block}
 
 .back-office-header{
     padding:17px;
     margin-bottom:12px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(212,175,55,.09),
-            rgba(57,184,127,.05),
-            rgba(185,155,232,.05)
-        ),
-        linear-gradient(145deg,#191919,#0c0c0c);
+    background:linear-gradient(145deg,rgba(212,175,55,.09),rgba(57,184,127,.05),rgba(185,155,232,.05)),linear-gradient(145deg,#191919,#0c0c0c);
     border:1px solid rgba(212,175,55,.42);
     border-radius:15px;
 }
@@ -501,9 +497,7 @@ button{cursor:pointer}
     font-size:12px;
 }
 
-.back-office-key-input:focus{
-    border-color:rgba(212,175,55,.65);
-}
+.back-office-key-input:focus{border-color:rgba(212,175,55,.65)}
 
 .back-office-load{
     min-width:92px;
@@ -568,13 +562,8 @@ button{cursor:pointer}
     border-radius:13px;
 }
 
-.back-office-job.reported{
-    border-color:rgba(212,175,55,.60);
-}
-
-.back-office-job.unlocked{
-    border-color:rgba(22,128,71,.60);
-}
+.back-office-job.reported{border-color:rgba(212,175,55,.60)}
+.back-office-job.unlocked{border-color:rgba(22,128,71,.60)}
 
 .back-office-job-title{
     margin:0;
@@ -647,26 +636,24 @@ button{cursor:pointer}
     margin-top:10px;
 }
 
-.back-office-view-document{
+.back-office-view-document,.back-office-unlock{
     flex:1;
     min-height:42px;
-    border:1px solid rgba(255,255,255,.13);
     border-radius:8px;
+    font-size:10px;
+    font-weight:900;
+}
+
+.back-office-view-document{
+    border:1px solid rgba(255,255,255,.13);
     background:#181818;
     color:#fff;
-    font-size:10px;
-    font-weight:800;
 }
 
 .back-office-unlock{
-    flex:1;
-    min-height:42px;
     border:0;
-    border-radius:8px;
     background:var(--gold);
     color:#000;
-    font-size:10px;
-    font-weight:900;
 }
 
 .back-office-unlock:disabled{
@@ -723,13 +710,7 @@ button{cursor:pointer}
     flex:0 0 auto;
     width:100%;
     padding:8px 9px calc(8px + env(safe-area-inset-bottom));
-    background:
-        linear-gradient(
-            90deg,
-            #070707,
-            #0c0c0c,
-            #080808
-        );
+    background:linear-gradient(90deg,#070707,#0c0c0c,#080808);
     border-top:1px solid rgba(212,175,55,.30);
     box-shadow:0 -4px 20px rgba(0,0,0,.35);
     z-index:20;
@@ -750,23 +731,14 @@ button{cursor:pointer}
 .tool-button,.choose-service-button{
     min-height:39px;
     border-radius:8px;
-    background:
-        linear-gradient(
-            135deg,
-            rgba(143,184,232,.05),
-            rgba(185,155,232,.04),
-            rgba(255,255,255,.02)
-        ),
-        #181818;
+    background:linear-gradient(135deg,rgba(143,184,232,.05),rgba(185,155,232,.04),rgba(255,255,255,.02)),#181818;
     color:#fff;
     border:1px solid rgba(255,255,255,.13);
     font-size:10px;
     font-weight:800;
 }
 
-.tool-button:hover{
-    border-color:rgba(212,175,55,.35);
-}
+.tool-button:hover{border-color:rgba(212,175,55,.35)}
 
 .tool-button.gold{
     color:var(--gold2);
@@ -776,14 +748,7 @@ button{cursor:pointer}
 .customer-care-button{
     color:var(--teal);
     border-color:rgba(112,209,193,.38);
-    background:
-        linear-gradient(
-            135deg,
-            rgba(57,184,127,.08),
-            rgba(112,209,193,.06),
-            rgba(212,175,55,.04)
-        ),
-        #151515;
+    background:linear-gradient(135deg,rgba(57,184,127,.08),rgba(112,209,193,.06),rgba(212,175,55,.04)),#151515;
 }
 
 .customer-care-button:hover{
@@ -826,21 +791,12 @@ button:disabled{
     -webkit-backdrop-filter:blur(6px);
 }
 
-.customer-care-overlay.show{
-    display:flex;
-}
+.customer-care-overlay.show{display:flex}
 
 .customer-care-card{
     width:min(100%,390px);
     padding:23px 19px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(57,184,127,.07),
-            rgba(212,175,55,.09),
-            rgba(185,155,232,.06)
-        ),
-        linear-gradient(145deg,#191919,#090909);
+    background:linear-gradient(145deg,rgba(57,184,127,.07),rgba(212,175,55,.09),rgba(185,155,232,.06)),linear-gradient(145deg,#191919,#090909);
     border:1px solid rgba(212,175,55,.55);
     border-radius:18px;
     box-shadow:0 25px 80px rgba(0,0,0,.70);
@@ -858,13 +814,7 @@ button:disabled{
 
 .customer-care-title{
     margin:0;
-    background:
-        linear-gradient(
-            90deg,
-            var(--gold2),
-            var(--cream),
-            var(--rose)
-        );
+    background:linear-gradient(90deg,var(--gold2),var(--cream),var(--rose));
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
@@ -878,14 +828,7 @@ button:disabled{
     width:70px;
     height:1px;
     margin:11px auto 13px;
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            var(--gold2),
-            var(--teal),
-            transparent
-        );
+    background:linear-gradient(90deg,transparent,var(--gold2),var(--teal),transparent);
 }
 
 .customer-care-text{
@@ -911,25 +854,13 @@ button:disabled{
 
 .customer-care-whatsapp{
     border:1px solid rgba(57,184,127,.55);
-    background:
-        linear-gradient(
-            135deg,
-            rgba(57,184,127,.17),
-            rgba(22,128,71,.08)
-        ),
-        #101010;
+    background:linear-gradient(135deg,rgba(57,184,127,.17),rgba(22,128,71,.08)),#101010;
     color:#7bd99a;
 }
 
 .customer-care-phone{
     border:1px solid rgba(212,175,55,.45);
-    background:
-        linear-gradient(
-            135deg,
-            rgba(212,175,55,.12),
-            rgba(244,213,141,.05)
-        ),
-        #101010;
+    background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(244,213,141,.05)),#101010;
     color:var(--gold2);
 }
 
@@ -954,7 +885,7 @@ button:disabled{
 }
 
 /* ============================================================
-   REVIEW OVERLAY
+   LUXURY REVIEW OVERLAY + FIREWORKS
 ============================================================ */
 
 .review-gateway-overlay{
@@ -964,76 +895,254 @@ button:disabled{
     align-items:center;
     justify-content:center;
     padding:20px;
-    background:rgba(0,0,0,.82);
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 50% 40%,rgba(212,175,55,.055),transparent 34%),
+        radial-gradient(circle at 12% 18%,rgba(57,184,127,.045),transparent 28%),
+        rgba(0,0,0,.91);
     z-index:1000;
-    backdrop-filter:blur(5px);
-    -webkit-backdrop-filter:blur(5px);
+    backdrop-filter:blur(9px);
+    -webkit-backdrop-filter:blur(9px);
 }
 
 .review-gateway-overlay.show{
     display:flex;
+    animation:reviewOverlayIn .45s ease both;
 }
+
+@keyframes reviewOverlayIn{
+    from{opacity:0}
+    to{opacity:1}
+}
+
+/* Ambient luxury glow */
+
+.review-gateway-overlay:before{
+    content:"";
+    position:absolute;
+    width:70vw;
+    height:70vw;
+    max-width:700px;
+    max-height:700px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(212,175,55,.07),transparent 68%);
+    filter:blur(4px);
+    pointer-events:none;
+    animation:luxuryPulse 5s ease-in-out infinite;
+}
+
+.review-gateway-overlay:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(circle at 18% 78%,rgba(57,184,127,.035),transparent 20%),
+        radial-gradient(circle at 83% 25%,rgba(212,175,55,.04),transparent 22%);
+    pointer-events:none;
+}
+
+@keyframes luxuryPulse{
+    0%,100%{transform:scale(.88);opacity:.55}
+    50%{transform:scale(1.08);opacity:1}
+}
+
+/* Firework canvas */
+
+.review-fireworks-canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:1;
+    pointer-events:none;
+}
+
+/* Fine stars */
+
+.review-stars{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    opacity:.65;
+    background-image:
+        radial-gradient(circle at 12% 20%,rgba(255,244,214,.8) 0 1px,transparent 1.5px),
+        radial-gradient(circle at 77% 14%,rgba(243,214,107,.7) 0 1px,transparent 1.5px),
+        radial-gradient(circle at 88% 69%,rgba(255,244,214,.55) 0 1px,transparent 1.5px),
+        radial-gradient(circle at 22% 72%,rgba(57,184,127,.55) 0 1px,transparent 1.5px),
+        radial-gradient(circle at 62% 84%,rgba(244,213,141,.55) 0 1px,transparent 1.5px);
+}
+
+/* Card */
 
 .review-gateway-card{
-    width:min(100%,420px);
-    padding:22px;
+    position:relative;
+    z-index:5;
+    width:min(100%,450px);
+    padding:30px 22px 23px;
     background:
-        linear-gradient(
-            145deg,
-            rgba(185,155,232,.07),
-            rgba(212,175,55,.09),
-            rgba(57,184,127,.05)
-        ),
-        linear-gradient(145deg,#1b1b1b,#0b0b0b);
-    border:1px solid rgba(212,175,55,.55);
-    border-radius:17px;
-    box-shadow:0 20px 70px rgba(0,0,0,.65);
+        linear-gradient(145deg,rgba(255,255,255,.035),rgba(212,175,55,.045) 45%,rgba(57,184,127,.025)),
+        linear-gradient(145deg,rgba(24,24,24,.97),rgba(5,5,5,.98));
+    border:1px solid rgba(212,175,55,.62);
+    border-radius:23px;
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.88),
+        0 0 50px rgba(212,175,55,.07),
+        inset 0 1px rgba(255,255,255,.08);
     text-align:center;
+    animation:reviewCardIn .55s cubic-bezier(.16,1,.3,1) both;
 }
 
+.review-gateway-card:before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:1px solid rgba(212,175,55,.11);
+    border-radius:17px;
+    pointer-events:none;
+}
+
+.review-gateway-card:after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:13%;
+    right:13%;
+    height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold2),var(--cream),var(--gold2),transparent);
+    opacity:.75;
+    pointer-events:none;
+}
+
+@keyframes reviewCardIn{
+    from{
+        opacity:0;
+        transform:translateY(22px) scale(.96);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+}
+
+/* Replace the old document emoji with a luxury emblem */
+
 .review-gateway-icon{
-    width:58px;
-    height:58px;
-    margin:0 auto 13px;
+    position:relative;
+    width:72px;
+    height:72px;
+    margin:0 auto 17px;
     display:flex;
     align-items:center;
     justify-content:center;
     border-radius:50%;
-    background:rgba(212,175,55,.12);
-    border:1px solid rgba(212,175,55,.45);
-    font-size:27px;
+    background:
+        radial-gradient(circle,rgba(244,213,141,.20),rgba(212,175,55,.06) 58%,transparent 60%),
+        #090909;
+    border:1px solid rgba(212,175,55,.62);
+    box-shadow:
+        0 0 0 7px rgba(212,175,55,.035),
+        0 0 0 14px rgba(212,175,55,.018),
+        0 0 30px rgba(212,175,55,.16);
+}
+
+.review-gateway-icon:before{
+    content:"";
+    width:24px;
+    height:24px;
+    border:1px solid var(--gold2);
+    transform:rotate(45deg);
+    box-shadow:
+        0 0 16px rgba(212,175,55,.30),
+        inset 0 0 12px rgba(212,175,55,.08);
+}
+
+.review-gateway-icon:after{
+    content:"";
+    position:absolute;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--gold2);
+    box-shadow:
+        0 -24px 0 -2px rgba(244,213,141,.85),
+        0 24px 0 -2px rgba(244,213,141,.45),
+        24px 0 0 -2px rgba(57,184,127,.65),
+        -24px 0 0 -2px rgba(212,175,55,.65);
+    animation:emblemGlow 2.8s ease-in-out infinite;
+}
+
+@keyframes emblemGlow{
+    0%,100%{opacity:.65;transform:scale(.85)}
+    50%{opacity:1;transform:scale(1.15)}
 }
 
 .review-gateway-title{
+    position:relative;
+    z-index:1;
     margin:0;
-    color:var(--gold2);
-    font-size:20px;
-    font-weight:900;
+    background:linear-gradient(90deg,var(--gold2),var(--cream),var(--gold2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(27px,7vw,34px);
+    font-weight:700;
+    letter-spacing:.2px;
 }
 
 .review-gateway-message{
-    margin:9px 0 0;
-    color:#d0d0d0;
-    font-size:12px;
-    line-height:1.6;
+    position:relative;
+    z-index:1;
+    max-width:365px;
+    margin:11px auto 0;
+    color:#c7c7c7;
+    font-size:11px;
+    line-height:1.75;
 }
 
 .review-gateway-button{
+    position:relative;
+    z-index:1;
     width:100%;
-    min-height:50px;
-    margin-top:16px;
-    border:0;
-    border-radius:10px;
-    background:
-        linear-gradient(
-            135deg,
-            var(--gold2),
-            var(--champagne),
-            var(--cream)
-        );
-    color:#000;
-    font-size:13px;
+    min-height:53px;
+    margin-top:20px;
+    overflow:hidden;
+    border:1px solid rgba(255,244,214,.65);
+    border-radius:11px;
+    background:linear-gradient(135deg,var(--gold2),var(--champagne),var(--cream));
+    color:#050505;
+    font-size:12px;
     font-weight:900;
+    letter-spacing:1px;
+    box-shadow:
+        0 10px 35px rgba(212,175,55,.16),
+        inset 0 1px rgba(255,255,255,.75);
+    transition:transform .2s ease,box-shadow .2s ease;
+}
+
+.review-gateway-button:before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-80%;
+    width:45%;
+    height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.48),transparent);
+    transform:skewX(-20deg);
+    animation:buttonShine 3.8s ease-in-out infinite;
+}
+
+.review-gateway-button:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 14px 42px rgba(212,175,55,.27),
+        inset 0 1px rgba(255,255,255,.85);
+}
+
+@keyframes buttonShine{
+    0%,45%{left:-80%}
+    65%,100%{left:135%}
 }
 
 /* ============================================================
@@ -1047,9 +1156,7 @@ button:disabled{
         padding-right:9px;
     }
 
-    .header-actions{
-        gap:4px;
-    }
+    .header-actions{gap:4px}
 
     .service-badge{
         max-width:32%;
@@ -1067,7 +1174,7 @@ button:disabled{
     }
 
     .review-gateway-card{
-        padding:20px 16px;
+        padding:27px 16px 20px;
     }
 
     .customer-care-card{
@@ -1079,6 +1186,14 @@ button:disabled{
 
     .customer-care-actions{
         grid-template-columns:1fr;
+    }
+
+    .review-gateway-card{
+        border-radius:19px;
+    }
+
+    .review-gateway-title{
+        font-size:27px;
     }
 }
 
@@ -1138,8 +1253,6 @@ button:disabled{
 
 <div class="main-inner">
 
-<!-- CUSTOMER FORM -->
-
 <section id="formView">
 
     <div class="intro-card">
@@ -1192,8 +1305,6 @@ button:disabled{
 
 </section>
 
-<!-- CUSTOMER REVIEW GATEWAY -->
-
 <section id="reviewView" class="review-view">
 
     <div class="review-header">
@@ -1226,14 +1337,12 @@ button:disabled{
             class="workspace-review-open"
             type="button"
         >
-            Open Full Review
+            OPEN FULL REVIEW
         </button>
 
     </div>
 
 </section>
-
-<!-- BACK OFFICE -->
 
 <section id="backOfficeView">
 
@@ -1284,56 +1393,23 @@ button:disabled{
     <div class="back-office-summary">
 
         <div class="back-office-stat">
-
-            <span
-                id="backOfficeTotal"
-                class="back-office-stat-value"
-            >
-                0
-            </span>
-
-            <span class="back-office-stat-label">
-                Payment Reports
-            </span>
-
+            <span id="backOfficeTotal" class="back-office-stat-value">0</span>
+            <span class="back-office-stat-label">Payment Reports</span>
         </div>
 
         <div class="back-office-stat">
-
-            <span
-                id="backOfficeApproved"
-                class="back-office-stat-value"
-            >
-                0
-            </span>
-
-            <span class="back-office-stat-label">
-                Awaiting Verification
-            </span>
-
+            <span id="backOfficeApproved" class="back-office-stat-value">0</span>
+            <span class="back-office-stat-label">Awaiting Verification</span>
         </div>
 
         <div class="back-office-stat">
-
-            <span
-                id="backOfficeActivated"
-                class="back-office-stat-value"
-            >
-                0
-            </span>
-
-            <span class="back-office-stat-label">
-                Unlocked
-            </span>
-
+            <span id="backOfficeActivated" class="back-office-stat-value">0</span>
+            <span class="back-office-stat-label">Unlocked</span>
         </div>
 
     </div>
 
-    <div
-        id="backOfficeJobs"
-        class="back-office-jobs"
-    >
+    <div id="backOfficeJobs" class="back-office-jobs">
 
         <div class="back-office-empty">
             Enter the operator key and tap LOAD.
@@ -1363,12 +1439,7 @@ button:disabled{
 
 </main>
 
-<!-- CUSTOMER BOTTOM CONTROLS -->
-
-<section
-    id="customerBottom"
-    class="bottom"
->
+<section id="customerBottom" class="bottom">
 
 <div class="bottom-inner">
 
@@ -1404,8 +1475,6 @@ button:disabled{
 
 </section>
 
-<!-- CUSTOMER CARE -->
-
 <div
     id="customerCareOverlay"
     class="customer-care-overlay"
@@ -1420,10 +1489,7 @@ button:disabled{
         PERSONAL ASSISTANCE
     </div>
 
-    <h2
-        id="customerCareTitle"
-        class="customer-care-title"
-    >
+    <h2 id="customerCareTitle" class="customer-care-title">
         Customer Care
     </h2>
 
@@ -1470,7 +1536,7 @@ button:disabled{
 
 </div>
 
-<!-- REVIEW OVERLAY -->
+<!-- LUXURY REVIEW GATEWAY -->
 
 <div
     id="reviewGatewayOverlay"
@@ -1479,11 +1545,17 @@ button:disabled{
     aria-modal="true"
 >
 
+<canvas
+    id="reviewFireworksCanvas"
+    class="review-fireworks-canvas"
+    aria-hidden="true"
+></canvas>
+
+<div class="review-stars" aria-hidden="true"></div>
+
 <div class="review-gateway-card">
 
-    <div class="review-gateway-icon">
-        📄
-    </div>
+    <div class="review-gateway-icon" aria-hidden="true"></div>
 
     <h2 class="review-gateway-title">
         Your Work Is Ready
@@ -1500,7 +1572,7 @@ button:disabled{
         class="review-gateway-button"
         type="button"
     >
-        Open Full Review
+        OPEN FULL REVIEW
     </button>
 
 </div>
@@ -1510,46 +1582,8 @@ button:disabled{
 <script>
 "use strict";
 
-/*============================================================
-WORKSPACE
-============================================================
-
-CUSTOMER MODE
--------------
-conversation.html
-        ↓
-workspace.html?service=...
-        ↓
-/api/chat
-        ↓
-server workflow
-        ↓
-server creates/updates job
-        ↓
-review.html?job_id=...
-
-BACK OFFICE MODE
-----------------
-Back Office is ONLY for payment verification and download
-unlocking.
-
-It does NOT:
-- create work
-- regenerate work
-- create another version
-- replace the customer's approved document
-- call /api/chat
-- save a new document
-
-The document shown here must already have been saved by the
-payment-report lifecycle.
-
-============================================================*/
-
 const API_BASE = "";
 const REVIEW_PAGE = "review.html";
-
-/* ELEMENTS */
 
 const $ = id => document.getElementById(id);
 
@@ -1569,76 +1603,38 @@ const price = $("price");
 
 const uploadBtn = $("uploadButton");
 const customerCareBtn = $("customerCareButton");
-
 const fileInput = $("fileInput");
 const status = $("status");
 
-const customerCareOverlay =
-    $("customerCareOverlay");
+const customerCareOverlay = $("customerCareOverlay");
+const customerCareWhatsApp = $("customerCareWhatsApp");
+const customerCarePhone = $("customerCarePhone");
+const customerCareClose = $("customerCareClose");
 
-const customerCareWhatsApp =
-    $("customerCareWhatsApp");
+const reviewGatewayOverlay = $("reviewGatewayOverlay");
+const reviewGatewayOpenButton = $("reviewGatewayOpenButton");
+const workspaceOpenReviewButton = $("workspaceOpenReviewButton");
 
-const customerCarePhone =
-    $("customerCarePhone");
+const backOfficeEntryButton = $("backOfficeEntryButton");
+const backOfficeExitButton = $("backOfficeExitButton");
+const backOfficeKey = $("backOfficeKey");
+const backOfficeLoadButton = $("backOfficeLoadButton");
+const backOfficeRefreshButton = $("backOfficeRefreshButton");
+const backOfficeJobs = $("backOfficeJobs");
+const backOfficeTotal = $("backOfficeTotal");
+const backOfficeApproved = $("backOfficeApproved");
+const backOfficeActivated = $("backOfficeActivated");
 
-const customerCareClose =
-    $("customerCareClose");
+const params = new URLSearchParams(location.search);
 
-const reviewGatewayOverlay =
-    $("reviewGatewayOverlay");
-
-const reviewGatewayOpenButton =
-    $("reviewGatewayOpenButton");
-
-const workspaceOpenReviewButton =
-    $("workspaceOpenReviewButton");
-
-/* BACK OFFICE ELEMENTS */
-
-const backOfficeEntryButton =
-    $("backOfficeEntryButton");
-
-const backOfficeExitButton =
-    $("backOfficeExitButton");
-
-const backOfficeKey =
-    $("backOfficeKey");
-
-const backOfficeLoadButton =
-    $("backOfficeLoadButton");
-
-const backOfficeRefreshButton =
-    $("backOfficeRefreshButton");
-
-const backOfficeJobs =
-    $("backOfficeJobs");
-
-const backOfficeTotal =
-    $("backOfficeTotal");
-
-const backOfficeApproved =
-    $("backOfficeApproved");
-
-const backOfficeActivated =
-    $("backOfficeActivated");
-
-/* URL STATE */
-
-const params =
-    new URLSearchParams(location.search);
-
-const service =
-    (
-        params.get("service") ||
-        "Business Center Service"
-    ).trim();
+const service = (
+    params.get("service") ||
+    "Business Center Service"
+).trim();
 
 const isBackOfficeMode =
     params.get("back_office") === "1" ||
     params.get("mode") === "back_office";
-
-/* IDS */
 
 function makeId(prefix){
 
@@ -1649,15 +1645,10 @@ function makeId(prefix){
         return prefix + crypto.randomUUID();
     }
 
-    return (
-        prefix +
+    return prefix +
         Date.now() +
         "_" +
-        Math.random()
-            .toString(36)
-            .slice(2)
-    );
-
+        Math.random().toString(36).slice(2);
 }
 
 function storageGet(key){
@@ -1667,7 +1658,6 @@ function storageGet(key){
     }catch{
         return null;
     }
-
 }
 
 function storageSet(key,value){
@@ -1682,18 +1672,14 @@ let customerId =
     storageGet("npbc_customer_id") ||
     makeId("customer_");
 
-storageSet(
-    "npbc_customer_id",
-    customerId
-);
+storageSet("npbc_customer_id",customerId);
 
 let jobId =
     params.get("job_id") ||
     storageGet("npbc_job_id") ||
     "";
 
-let requestId =
-    makeId("request_");
+let requestId = makeId("request_");
 
 storageSet(
     "npbc_client_request_id",
@@ -1701,21 +1687,12 @@ storageSet(
 );
 
 if(jobId){
-
-    storageSet(
-        "npbc_job_id",
-        jobId
-    );
-
+    storageSet("npbc_job_id",jobId);
 }
-
-/* STATE */
 
 let busy = false;
 let currentWork = "";
 let backOfficeJobsData = [];
-
-/* HELPERS */
 
 function clean(value){
 
@@ -1727,7 +1704,6 @@ function clean(value){
     }
 
     return String(value).trim();
-
 }
 
 function escapeHtml(value){
@@ -1738,17 +1714,12 @@ function escapeHtml(value){
         .replace(/>/g,"&gt;")
         .replace(/"/g,"&quot;")
         .replace(/'/g,"&#039;");
-
 }
 
 function setStatus(message,type=""){
 
-    status.textContent =
-        message || "";
-
-    status.className =
-        "status " + type;
-
+    status.textContent = message || "";
+    status.className = "status " + type;
 }
 
 function setBusy(value){
@@ -1766,7 +1737,6 @@ function setBusy(value){
         }
 
     });
-
 }
 
 function formatDate(value){
@@ -1775,19 +1745,13 @@ function formatDate(value){
         return "Date unavailable";
     }
 
-    const date =
-        new Date(value);
+    const date = new Date(value);
 
-    if(
-        Number.isNaN(
-            date.getTime()
-        )
-    ){
+    if(Number.isNaN(date.getTime())){
         return clean(value);
     }
 
     return date.toLocaleString();
-
 }
 
 function valueFrom(object,keys){
@@ -1809,10 +1773,7 @@ function valueFrom(object,keys){
     }
 
     return "";
-
 }
-
-/* SERVER RESPONSE NORMALISATION */
 
 function serverJobId(data){
 
@@ -1822,7 +1783,6 @@ function serverJobId(data){
         data?.job?.id ||
         data?.data?.job_id
     );
-
 }
 
 function serverReply(data){
@@ -1833,7 +1793,6 @@ function serverReply(data){
         data?.response ||
         data?.content
     );
-
 }
 
 function serverWork(data){
@@ -1844,7 +1803,6 @@ function serverWork(data){
         data?.content ||
         data?.reply
     );
-
 }
 
 function serverError(data,response){
@@ -1861,10 +1819,7 @@ function serverError(data,response){
                 : "Request failed."
         )
     );
-
 }
-
-/* API CHAT */
 
 async function apiChat(payload){
 
@@ -1872,69 +1827,43 @@ async function apiChat(payload){
 
     try{
 
-        response =
-            await fetch(
-                API_BASE + "/api/chat",
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify(payload)
-                }
-            );
+        response = await fetch(
+            API_BASE + "/api/chat",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Accept":"application/json"
+                },
+                body:JSON.stringify(payload)
+            }
+        );
 
     }catch(error){
 
         throw new Error(
             "Unable to connect to the Business Center service."
         );
-
     }
 
     let data = {};
 
     try{
-
         data = await response.json();
-
     }catch{
-
         data = {};
-
     }
 
     if(!response.ok){
-
-        throw new Error(
-            serverError(data,response)
-        );
-
+        throw new Error(serverError(data,response));
     }
 
-    if(
-        data &&
-        data.success === false
-    ){
-
-        throw new Error(
-            serverError(data,response)
-        );
-
+    if(data && data.success === false){
+        throw new Error(serverError(data,response));
     }
 
     return data;
-
 }
-
-/* REVIEW NAVIGATION */
 
 function openFullReview(){
 
@@ -1948,36 +1877,16 @@ function openFullReview(){
         return;
     }
 
-    storageSet(
-        "npbc_job_id",
-        jobId
-    );
-
-    storageSet(
-        "npbc_review_job_id",
-        jobId
-    );
-
-    storageSet(
-        "npbc_review_service",
-        service
-    );
-
-    storageSet(
-        "npbc_review_customer_id",
-        customerId
-    );
-
-    storageSet(
-        "npbc_review_request_id",
-        requestId
-    );
+    storageSet("npbc_job_id",jobId);
+    storageSet("npbc_review_job_id",jobId);
+    storageSet("npbc_review_service",service);
+    storageSet("npbc_review_customer_id",customerId);
+    storageSet("npbc_review_request_id",requestId);
 
     window.location.href =
         REVIEW_PAGE +
         "?job_id=" +
         encodeURIComponent(jobId);
-
 }
 
 function showReviewGateway(){
@@ -1998,15 +1907,11 @@ function closeReviewGateway(){
 
 function showReview(work){
 
-    currentWork =
-        clean(work);
+    currentWork = clean(work);
 
-    formView.style.display =
-        "none";
+    formView.style.display = "none";
 
-    reviewView.classList.add(
-        "show"
-    );
+    reviewView.classList.add("show");
 
 }
 
@@ -2021,24 +1926,21 @@ const generic = [
         label:"What do you need?",
         required:true,
         type:"textarea",
-        placeholder:
-            "Tell us exactly what you want done"
+        placeholder:"Tell us exactly what you want done"
     },
 
     {
         name:"important_details",
         label:"Important details",
         type:"textarea",
-        placeholder:
-            "Add the information that matters to your request"
+        placeholder:"Add the information that matters to your request"
     },
 
     {
         name:"other_instructions",
         label:"Other instructions",
         type:"textarea",
-        placeholder:
-            "Anything else you want considered"
+        placeholder:"Anything else you want considered"
     }
 
 ];
@@ -2052,8 +1954,7 @@ const forms = {
             label:"Document title",
             required:true,
             type:"text",
-            placeholder:
-                "Enter the document title"
+            placeholder:"Enter the document title"
         },
 
         {
@@ -2061,32 +1962,28 @@ const forms = {
             label:"Document type",
             required:true,
             type:"text",
-            placeholder:
-                "e.g. report, essay, thesis, business document"
+            placeholder:"e.g. report, essay, thesis, business document"
         },
 
         {
             name:"page_count",
             label:"Number of pages",
             type:"text",
-            placeholder:
-                "Enter the number of pages if known"
+            placeholder:"Enter the number of pages if known"
         },
 
         {
             name:"formatting_style",
             label:"Formatting style",
             type:"text",
-            placeholder:
-                "e.g. APA, MLA, Harvard, business standard"
+            placeholder:"e.g. APA, MLA, Harvard, business standard"
         },
 
         {
             name:"special_instructions",
             label:"Specific formatting instructions",
             type:"textarea",
-            placeholder:
-                "Font, spacing, margins, headings, layout, or anything else"
+            placeholder:"Font, spacing, margins, headings, layout, or anything else"
         }
 
     ],
@@ -2098,32 +1995,28 @@ const forms = {
             label:"Research topic or question",
             required:true,
             type:"textarea",
-            placeholder:
-                "What do you want to research?"
+            placeholder:"What do you want to research?"
         },
 
         {
             name:"desired_length",
             label:"Desired length",
             type:"text",
-            placeholder:
-                "e.g. 3 pages, 1,500 words"
+            placeholder:"e.g. 3 pages, 1,500 words"
         },
 
         {
             name:"research_purpose",
             label:"Purpose of the research",
             type:"textarea",
-            placeholder:
-                "Tell us what the research is for"
+            placeholder:"Tell us what the research is for"
         },
 
         {
             name:"special_instructions",
             label:"Additional instructions",
             type:"textarea",
-            placeholder:
-                "Anything specific you want covered"
+            placeholder:"Anything specific you want covered"
         }
 
     ],
@@ -2135,8 +2028,7 @@ const forms = {
             label:"Topic / Title",
             required:true,
             type:"textarea",
-            placeholder:
-                "Enter the seminar paper topic"
+            placeholder:"Enter the seminar paper topic"
         },
 
         {
@@ -2144,24 +2036,21 @@ const forms = {
             label:"Desired length",
             required:true,
             type:"text",
-            placeholder:
-                "e.g. 3 pages, 2,000 words"
+            placeholder:"e.g. 3 pages, 2,000 words"
         },
 
         {
             name:"formatting_style",
             label:"Formatting style",
             type:"text",
-            placeholder:
-                "e.g. APA, Harvard, MLA"
+            placeholder:"e.g. APA, Harvard, MLA"
         },
 
         {
             name:"special_instructions",
             label:"Special instructions",
             type:"textarea",
-            placeholder:
-                "Points to cover, structure, sources, or other instructions"
+            placeholder:"Points to cover, structure, sources, or other instructions"
         }
 
     ],
@@ -2173,8 +2062,7 @@ const forms = {
             label:"Essay topic or question",
             required:true,
             type:"textarea",
-            placeholder:
-                "Enter the essay topic or question"
+            placeholder:"Enter the essay topic or question"
         },
 
         {
@@ -2182,24 +2070,21 @@ const forms = {
             label:"Desired length",
             required:true,
             type:"text",
-            placeholder:
-                "e.g. 1,000 words, 3 pages"
+            placeholder:"e.g. 1,000 words, 3 pages"
         },
 
         {
             name:"academic_level",
             label:"Academic level",
             type:"text",
-            placeholder:
-                "e.g. secondary school, undergraduate, postgraduate"
+            placeholder:"e.g. secondary school, undergraduate, postgraduate"
         },
 
         {
             name:"special_instructions",
             label:"Additional instructions",
             type:"textarea",
-            placeholder:
-                "Anything specific you want included"
+            placeholder:"Anything specific you want included"
         }
 
     ],
@@ -2211,8 +2096,7 @@ const forms = {
             label:"Full name",
             required:true,
             type:"text",
-            placeholder:
-                "Enter your full name"
+            placeholder:"Enter your full name"
         },
 
         {
@@ -2220,40 +2104,35 @@ const forms = {
             label:"Job / career you are targeting",
             required:true,
             type:"text",
-            placeholder:
-                "e.g. Accountant, Software Developer"
+            placeholder:"e.g. Accountant, Software Developer"
         },
 
         {
             name:"experience",
             label:"Work experience",
             type:"textarea",
-            placeholder:
-                "Enter your work history and responsibilities"
+            placeholder:"Enter your work history and responsibilities"
         },
 
         {
             name:"education",
             label:"Education",
             type:"textarea",
-            placeholder:
-                "Schools, qualifications and dates"
+            placeholder:"Schools, qualifications and dates"
         },
 
         {
             name:"skills",
             label:"Skills and achievements",
             type:"textarea",
-            placeholder:
-                "List important skills, achievements or certifications"
+            placeholder:"List important skills, achievements or certifications"
         },
 
         {
             name:"additional_information",
             label:"Additional information",
             type:"textarea",
-            placeholder:
-                "Anything else that should appear in your CV"
+            placeholder:"Anything else that should appear in your CV"
         }
 
     ]
@@ -2262,19 +2141,13 @@ const forms = {
 
 function definition(){
 
-    const lowerService =
-        service.toLowerCase();
+    const lowerService = service.toLowerCase();
 
-    const key =
-        Object.keys(forms).find(
-            key =>
-                lowerService.includes(key)
-        );
+    const key = Object.keys(forms).find(
+        key => lowerService.includes(key)
+    );
 
-    return key
-        ? forms[key]
-        : generic;
-
+    return key ? forms[key] : generic;
 }
 
 function renderForm(){
@@ -2283,17 +2156,11 @@ function renderForm(){
 
     definition().forEach(field => {
 
-        const wrapper =
-            document.createElement("div");
+        const wrapper = document.createElement("div");
+        wrapper.className = "field";
 
-        wrapper.className =
-            "field";
-
-        const label =
-            document.createElement("label");
-
-        label.htmlFor =
-            field.name;
+        const label = document.createElement("label");
+        label.htmlFor = field.name;
 
         label.innerHTML =
             escapeHtml(field.label) +
@@ -2306,46 +2173,23 @@ function renderForm(){
         let input;
 
         if(field.type === "textarea"){
-
-            input =
-                document.createElement("textarea");
-
+            input = document.createElement("textarea");
         }else{
-
-            input =
-                document.createElement("input");
-
-            input.type =
-                field.type || "text";
-
+            input = document.createElement("input");
+            input.type = field.type || "text";
         }
 
-        input.id =
-            field.name;
-
-        input.name =
-            field.name;
-
-        input.placeholder =
-            field.placeholder || "";
-
-        input.autocomplete =
-            "off";
+        input.id = field.name;
+        input.name = field.name;
+        input.placeholder = field.placeholder || "";
+        input.autocomplete = "off";
 
         if(field.required){
-
             input.required = true;
-
         }
 
-        wrapper.append(
-            label,
-            input
-        );
-
-        fields.appendChild(
-            wrapper
-        );
+        wrapper.append(label,input);
+        fields.appendChild(wrapper);
 
     });
 
@@ -2356,25 +2200,18 @@ function collectForm(){
     const data = {};
 
     serviceForm
-        .querySelectorAll(
-            "input,textarea,select"
-        )
+        .querySelectorAll("input,textarea,select")
         .forEach(element => {
 
-            const value =
-                clean(element.value);
+            const value = clean(element.value);
 
             if(value){
-
-                data[element.name] =
-                    value;
-
+                data[element.name] = value;
             }
 
         });
 
     return data;
-
 }
 
 /* ============================================================
@@ -2389,25 +2226,20 @@ async function loadGuidance(){
 
     try{
 
-        const data =
-            await apiChat({
+        const data = await apiChat({
 
-                service,
+            service,
 
-                customer_id:
-                    customerId,
+            customer_id:customerId,
 
-                job_id:
-                    jobId || null,
+            job_id:jobId || null,
 
-                client_request_id:
-                    requestId,
+            client_request_id:requestId,
 
-                event:
-                    "service_selected",
+            event:"service_selected",
 
-                message:
-                    `The customer has selected the service "${service}".
+            message:
+                `The customer has selected the service "${service}".
 Provide a short customer-facing explanation of:
 - what this service does
 - what the customer will receive
@@ -2418,29 +2250,23 @@ Do not create the customer's work yet.
 Do not request payment.
 Do not discuss internal systems.`,
 
-                create_work:false,
+            create_work:false,
 
-                guidance_only:true
+            guidance_only:true
 
-            });
+        });
 
-        const reply =
-            serverReply(data);
+        const reply = serverReply(data);
 
         if(reply){
-
-            introText.textContent =
-                reply;
-
+            introText.textContent = reply;
         }
 
-        const returnedJob =
-            serverJobId(data);
+        const returnedJob = serverJobId(data);
 
         if(returnedJob){
 
-            jobId =
-                returnedJob;
+            jobId = returnedJob;
 
             storageSet(
                 "npbc_job_id",
@@ -2492,9 +2318,7 @@ Do not discuss internal systems.`,
                     match[0];
 
             }else if(
-                /quotation/i.test(
-                    reply || ""
-                )
+                /quotation/i.test(reply || "")
             ){
 
                 price.textContent =
@@ -2521,10 +2345,7 @@ Do not discuss internal systems.`,
             "Service: " +
             service;
 
-        setStatus(
-            "",
-            ""
-        );
+        setStatus("","");
 
     }
 
@@ -2567,39 +2388,31 @@ The customer expects the completed work to proceed to review.`;
 
     try{
 
-        const data =
-            await apiChat({
+        const data = await apiChat({
 
-                message,
+            message,
 
-                service,
+            service,
 
-                customer_id:
-                    customerId,
+            customer_id:customerId,
 
-                job_id:
-                    jobId || null,
+            job_id:jobId || null,
 
-                client_request_id:
-                    requestId,
+            client_request_id:requestId,
 
-                event:
-                    "form_submitted",
+            event:"form_submitted",
 
-                form_data:
-                    formData,
+            form_data:formData,
 
-                create_work:true
+            create_work:true
 
-            });
+        });
 
-        const returnedJob =
-            serverJobId(data);
+        const returnedJob = serverJobId(data);
 
         if(returnedJob){
 
-            jobId =
-                returnedJob;
+            jobId = returnedJob;
 
             storageSet(
                 "npbc_job_id",
@@ -2616,8 +2429,7 @@ The customer expects the completed work to proceed to review.`;
 
         }
 
-        currentWork =
-            serverWork(data);
+        currentWork = serverWork(data);
 
         showReview(currentWork);
 
@@ -2643,8 +2455,6 @@ The customer expects the completed work to proceed to review.`;
     }
 
 }
-
-/* FORM SUBMIT */
 
 serviceForm.addEventListener(
     "submit",
@@ -2685,13 +2495,8 @@ reviewGatewayOverlay.addEventListener(
     "click",
     event => {
 
-        if(
-            event.target ===
-            reviewGatewayOverlay
-        ){
-
+        if(event.target === reviewGatewayOverlay){
             closeReviewGateway();
-
         }
 
     }
@@ -2745,13 +2550,8 @@ customerCareOverlay.addEventListener(
     "click",
     event => {
 
-        if(
-            event.target ===
-            customerCareOverlay
-        ){
-
+        if(event.target === customerCareOverlay){
             closeCustomerCare();
-
         }
 
     }
@@ -2789,9 +2589,7 @@ uploadBtn.addEventListener(
     () => {
 
         if(!busy){
-
             fileInput.click();
-
         }
 
     }
@@ -2811,30 +2609,11 @@ fileInput.addEventListener(
         const formData =
             new FormData();
 
-        formData.append(
-            "file",
-            file
-        );
-
-        formData.append(
-            "customer_id",
-            customerId
-        );
-
-        formData.append(
-            "job_id",
-            jobId
-        );
-
-        formData.append(
-            "client_request_id",
-            requestId
-        );
-
-        formData.append(
-            "service",
-            service
-        );
+        formData.append("file",file);
+        formData.append("customer_id",customerId);
+        formData.append("job_id",jobId);
+        formData.append("client_request_id",requestId);
+        formData.append("service",service);
 
         setBusy(true);
 
@@ -2846,8 +2625,7 @@ fileInput.addEventListener(
 
             const response =
                 await fetch(
-                    API_BASE +
-                    "/api/upload",
+                    API_BASE + "/api/upload",
                     {
                         method:"POST",
                         body:formData
@@ -2857,17 +2635,12 @@ fileInput.addEventListener(
             const data =
                 await response
                     .json()
-                    .catch(
-                        () => ({})
-                    );
+                    .catch(() => ({}));
 
             if(!response.ok){
 
                 throw new Error(
-                    serverError(
-                        data,
-                        response
-                    )
+                    serverError(data,response)
                 );
 
             }
@@ -2875,10 +2648,7 @@ fileInput.addEventListener(
             if(data.success === false){
 
                 throw new Error(
-                    serverError(
-                        data,
-                        response
-                    )
+                    serverError(data,response)
                 );
 
             }
@@ -2888,8 +2658,7 @@ fileInput.addEventListener(
 
             if(returnedJob){
 
-                jobId =
-                    returnedJob;
+                jobId = returnedJob;
 
                 storageSet(
                     "npbc_job_id",
@@ -2902,37 +2671,25 @@ fileInput.addEventListener(
                 "Your document has been received. Processing it now..."
             );
 
-            /*
-             * The upload continues through the existing server
-             * workflow. The removed bottom message composer is
-             * not used here.
-             */
-
             const uploadMessage =
                 "The customer has uploaded a document for this active service. Use the uploaded document together with the current job context and continue the customer's request.";
 
             const uploadResult =
                 await apiChat({
 
-                    message:
-                        uploadMessage,
+                    message:uploadMessage,
 
                     service,
 
-                    customer_id:
-                        customerId,
+                    customer_id:customerId,
 
-                    job_id:
-                        jobId || null,
+                    job_id:jobId || null,
 
-                    client_request_id:
-                        requestId,
+                    client_request_id:requestId,
 
-                    event:
-                        "document_uploaded",
+                    event:"document_uploaded",
 
-                    current_work:
-                        currentWork || null,
+                    current_work:currentWork || null,
 
                     create_work:true
 
@@ -2943,8 +2700,7 @@ fileInput.addEventListener(
 
             if(uploadReturnedJob){
 
-                jobId =
-                    uploadReturnedJob;
+                jobId = uploadReturnedJob;
 
                 storageSet(
                     "npbc_job_id",
@@ -2958,15 +2714,12 @@ fileInput.addEventListener(
 
             if(work){
 
-                currentWork =
-                    work;
+                currentWork = work;
 
                 showReview(currentWork);
 
                 if(jobId){
-
                     showReviewGateway();
-
                 }
 
             }
@@ -3029,18 +2782,13 @@ function normaliseBackOfficeJobs(data){
     }
 
     return [];
-
 }
 
 function getJobIdFromBackOffice(job){
 
     return valueFrom(
         job,
-        [
-            "job_id",
-            "jobId",
-            "id"
-        ]
+        ["job_id","jobId","id"]
     );
 
 }
@@ -3094,7 +2842,6 @@ function getSavedDocumentId(job){
             "id"
         ]
     ) ||
-
     valueFrom(
         job,
         [
@@ -3127,7 +2874,6 @@ function getSavedDocumentUrl(job){
                 "path"
             ]
         ) ||
-
         valueFrom(
             job,
             [
@@ -3158,7 +2904,6 @@ function getSavedDocumentName(job){
                 "title"
             ]
         ) ||
-
         valueFrom(
             job,
             [
@@ -3167,9 +2912,7 @@ function getSavedDocumentName(job){
                 "fileName"
             ]
         )
-    ) ||
-
-    "Saved customer document";
+    ) || "Saved customer document";
 
 }
 
@@ -3186,7 +2929,6 @@ function getSavedDocumentVersion(job){
             "versionNumber"
         ]
     ) ||
-
     valueFrom(
         job,
         [
@@ -3271,26 +3013,13 @@ function paymentReported(job){
         getPaymentStatus(job);
 
     return (
-        statusValue ===
-            "reported" ||
-
-        statusValue ===
-            "payment_reported" ||
-
-        statusValue ===
-            "awaiting_verification" ||
-
-        statusValue ===
-            "payment_pending_verification" ||
-
-        statusValue ===
-            "pending_verification" ||
-
-        statusValue ===
-            "paid" ||
-
-        statusValue ===
-            "confirmed"
+        statusValue === "reported" ||
+        statusValue === "payment_reported" ||
+        statusValue === "awaiting_verification" ||
+        statusValue === "payment_pending_verification" ||
+        statusValue === "pending_verification" ||
+        statusValue === "paid" ||
+        statusValue === "confirmed"
     );
 
 }
@@ -3301,20 +3030,11 @@ function isAwaitingVerification(job){
         getPaymentStatus(job);
 
     if(
-        statusValue ===
-            "reported" ||
-
-        statusValue ===
-            "payment_reported" ||
-
-        statusValue ===
-            "awaiting_verification" ||
-
-        statusValue ===
-            "payment_pending_verification" ||
-
-        statusValue ===
-            "pending_verification"
+        statusValue === "reported" ||
+        statusValue === "payment_reported" ||
+        statusValue === "awaiting_verification" ||
+        statusValue === "payment_pending_verification" ||
+        statusValue === "pending_verification"
     ){
         return true;
     }
@@ -3337,8 +3057,7 @@ function getCustomerName(job){
                 "name"
             ]
         )
-    ) ||
-    "Customer";
+    ) || "Customer";
 
 }
 
@@ -3353,8 +3072,7 @@ function getServiceName(job){
                 "serviceName"
             ]
         )
-    ) ||
-    "Business Center Service";
+    ) || "Business Center Service";
 
 }
 
@@ -3424,16 +3142,10 @@ function formatAmount(value){
 
 }
 
-/* ============================================================
-   LOAD BACK OFFICE
-============================================================ */
-
 async function loadBackOfficeJobs(){
 
     const key =
-        clean(
-            backOfficeKey.value
-        );
+        clean(backOfficeKey.value);
 
     if(!key){
 
@@ -3446,11 +3158,8 @@ async function loadBackOfficeJobs(){
         return;
     }
 
-    backOfficeLoadButton.disabled =
-        true;
-
-    backOfficeLoadButton.textContent =
-        "LOADING...";
+    backOfficeLoadButton.disabled = true;
+    backOfficeLoadButton.textContent = "LOADING...";
 
     backOfficeJobs.innerHTML = `
         <div class="back-office-empty">
@@ -3462,17 +3171,12 @@ async function loadBackOfficeJobs(){
 
         const response =
             await fetch(
-                API_BASE +
-                "/api/back-office/jobs",
+                API_BASE + "/api/back-office/jobs",
                 {
                     method:"GET",
-
                     headers:{
-                        "Accept":
-                            "application/json",
-
-                        "X-Admin-Key":
-                            key
+                        "Accept":"application/json",
+                        "X-Admin-Key":key
                     }
                 }
             );
@@ -3480,17 +3184,12 @@ async function loadBackOfficeJobs(){
         const data =
             await response
                 .json()
-                .catch(
-                    () => ({})
-                );
+                .catch(() => ({}));
 
         if(!response.ok){
 
             throw new Error(
-                serverError(
-                    data,
-                    response
-                )
+                serverError(data,response)
             );
 
         }
@@ -3498,10 +3197,7 @@ async function loadBackOfficeJobs(){
         if(data.success === false){
 
             throw new Error(
-                serverError(
-                    data,
-                    response
-                )
+                serverError(data,response)
             );
 
         }
@@ -3535,19 +3231,12 @@ async function loadBackOfficeJobs(){
 
     }finally{
 
-        backOfficeLoadButton.disabled =
-            false;
-
-        backOfficeLoadButton.textContent =
-            "LOAD";
+        backOfficeLoadButton.disabled = false;
+        backOfficeLoadButton.textContent = "LOAD";
 
     }
 
 }
-
-/* ============================================================
-   RENDER PAYMENT REPORTS
-============================================================ */
 
 function renderBackOfficeJobs(){
 
@@ -3567,291 +3256,256 @@ function renderBackOfficeJobs(){
             </div>
         `;
 
-        backOfficeApproved.textContent =
-            "0";
-
-        backOfficeActivated.textContent =
-            "0";
+        backOfficeApproved.textContent = "0";
+        backOfficeActivated.textContent = "0";
 
         return;
     }
 
-    backOfficeJobsData.forEach(
-        job => {
+    backOfficeJobsData.forEach(job => {
 
-            const jobIdValue =
-                getJobIdFromBackOffice(job);
+        const jobIdValue =
+            getJobIdFromBackOffice(job);
 
-            const paymentId =
-                getPaymentId(job);
+        const paymentId =
+            getPaymentId(job);
 
-            const customerName =
-                getCustomerName(job);
+        const customerName =
+            getCustomerName(job);
 
-            const serviceName =
-                getServiceName(job);
+        const serviceName =
+            getServiceName(job);
 
-            const paymentStatus =
-                getPaymentStatus(job);
+        const paymentStatus =
+            getPaymentStatus(job);
 
-            const awaiting =
-                isAwaitingVerification(job);
+        const awaiting =
+            isAwaitingVerification(job);
 
-            const unlocked =
-                getDownloadStatus(job);
+        const unlocked =
+            getDownloadStatus(job);
 
-            if(awaiting){
-                awaitingCount++;
-            }
+        if(awaiting){
+            awaitingCount++;
+        }
 
-            if(unlocked){
-                unlockedCount++;
-            }
+        if(unlocked){
+            unlockedCount++;
+        }
 
-            const createdAt =
-                getCreatedAt(job);
+        const createdAt =
+            getCreatedAt(job);
 
-            const amount =
-                getAmount(job);
+        const amount =
+            getAmount(job);
 
-            const documentId =
-                getSavedDocumentId(job);
+        const documentId =
+            getSavedDocumentId(job);
 
-            const documentUrl =
-                getSavedDocumentUrl(job);
+        const documentUrl =
+            getSavedDocumentUrl(job);
 
-            const documentName =
-                getSavedDocumentName(job);
+        const documentName =
+            getSavedDocumentName(job);
 
-            const version =
-                getSavedDocumentVersion(job);
+        const version =
+            getSavedDocumentVersion(job);
 
-            const card =
-                document.createElement("article");
+        const card =
+            document.createElement("article");
 
-            card.className =
-                "back-office-job" +
-                (
-                    awaiting
-                        ? " reported"
-                        : ""
-                ) +
-                (
-                    unlocked
-                        ? " unlocked"
-                        : ""
-                );
+        card.className =
+            "back-office-job" +
+            (awaiting ? " reported" : "") +
+            (unlocked ? " unlocked" : "");
 
-            const title =
-                document.createElement("h3");
+        const title =
+            document.createElement("h3");
 
-            title.className =
-                "back-office-job-title";
+        title.className =
+            "back-office-job-title";
 
-            title.textContent =
-                serviceName;
+        title.textContent =
+            serviceName;
 
-            const meta =
-                document.createElement("div");
+        const meta =
+            document.createElement("div");
 
-            meta.className =
-                "back-office-job-meta";
+        meta.className =
+            "back-office-job-meta";
 
-            meta.textContent =
-                `${customerName} • Job #${jobIdValue || "—"}` +
-                (
-                    createdAt
-                        ? ` • ${formatDate(createdAt)}`
-                        : ""
-                );
-
-            const statuses =
-                document.createElement("div");
-
-            statuses.className =
-                "back-office-status-row";
-
-            const paymentLabel =
-                awaiting
-                    ? "Payment Reported — Awaiting Verification"
-                    : unlocked
-                        ? "Payment Verified"
-                        : (
-                            paymentStatus ||
-                            "Payment Status"
-                        );
-
-            statuses.innerHTML =
-                `
-                <span class="back-office-status ${awaiting ? "waiting" : unlocked ? "good" : ""}">
-                    ${escapeHtml(paymentLabel)}
-                </span>
-
-                ${
-                    paymentId
-                        ? `
-                            <span class="back-office-status">
-                                Payment ID: ${escapeHtml(paymentId)}
-                            </span>
-                          `
-                        : ""
-                }
-
-                ${
-                    amount
-                        ? `
-                            <span class="back-office-status">
-                                ${escapeHtml(formatAmount(amount))}
-                            </span>
-                          `
-                        : ""
-                }
-                `;
-
-            card.append(
-                title,
-                meta,
-                statuses
+        meta.textContent =
+            `${customerName} • Job #${jobIdValue || "—"}` +
+            (
+                createdAt
+                    ? ` • ${formatDate(createdAt)}`
+                    : ""
             );
 
-            const documentBox =
-                document.createElement("div");
+        const statuses =
+            document.createElement("div");
 
-            documentBox.className =
-                "back-office-document";
+        statuses.className =
+            "back-office-status-row";
 
-            const documentTitle =
-                document.createElement("div");
-
-            documentTitle.className =
-                "back-office-document-title";
-
-            documentTitle.textContent =
-                "Already-Saved Customer Document";
-
-            const documentMeta =
-                document.createElement("div");
-
-            documentMeta.className =
-                "back-office-document-meta";
-
-            documentMeta.textContent =
-                `File: ${documentName}` +
-                (
-                    version
-                        ? ` • Version ${version}`
-                        : ""
-                ) +
-                (
-                    documentId
-                        ? ` • Saved Document ID: ${documentId}`
-                        : ""
-                );
-
-            const actions =
-                document.createElement("div");
-
-            actions.className =
-                "back-office-document-actions";
-
-            const viewButton =
-                document.createElement("button");
-
-            viewButton.type =
-                "button";
-
-            viewButton.className =
-                "back-office-view-document";
-
-            viewButton.textContent =
-                "VIEW DOCUMENT";
-
-            const unlockButton =
-                document.createElement("button");
-
-            unlockButton.type =
-                "button";
-
-            unlockButton.className =
-                "back-office-unlock";
-
-            if(unlocked){
-
-                unlockButton.textContent =
-                    "DOWNLOAD UNLOCKED";
-
-                unlockButton.disabled =
-                    true;
-
-            }else{
-
-                unlockButton.textContent =
-                    "UNLOCK DOWNLOAD";
-
-            }
-
-            viewButton.addEventListener(
-                "click",
-                () => {
-
-                    openSavedDocument(
-                        job
+        const paymentLabel =
+            awaiting
+                ? "Payment Reported — Awaiting Verification"
+                : unlocked
+                    ? "Payment Verified"
+                    : (
+                        paymentStatus ||
+                        "Payment Status"
                     );
 
-                }
+        statuses.innerHTML = `
+            <span class="back-office-status ${awaiting ? "waiting" : unlocked ? "good" : ""}">
+                ${escapeHtml(paymentLabel)}
+            </span>
+
+            ${
+                paymentId
+                    ? `
+                        <span class="back-office-status">
+                            Payment ID: ${escapeHtml(paymentId)}
+                        </span>
+                      `
+                    : ""
+            }
+
+            ${
+                amount
+                    ? `
+                        <span class="back-office-status">
+                            ${escapeHtml(formatAmount(amount))}
+                        </span>
+                      `
+                    : ""
+            }
+        `;
+
+        card.append(
+            title,
+            meta,
+            statuses
+        );
+
+        const documentBox =
+            document.createElement("div");
+
+        documentBox.className =
+            "back-office-document";
+
+        const documentTitle =
+            document.createElement("div");
+
+        documentTitle.className =
+            "back-office-document-title";
+
+        documentTitle.textContent =
+            "Already-Saved Customer Document";
+
+        const documentMeta =
+            document.createElement("div");
+
+        documentMeta.className =
+            "back-office-document-meta";
+
+        documentMeta.textContent =
+            `File: ${documentName}` +
+            (
+                version
+                    ? ` • Version ${version}`
+                    : ""
+            ) +
+            (
+                documentId
+                    ? ` • Saved Document ID: ${documentId}`
+                    : ""
             );
 
-            unlockButton.addEventListener(
-                "click",
-                () => {
+        const actions =
+            document.createElement("div");
 
-                    unlockSavedDocument(
-                        job,
-                        unlockButton,
-                        card
-                    );
+        actions.className =
+            "back-office-document-actions";
 
-                }
-            );
+        const viewButton =
+            document.createElement("button");
 
-            actions.append(
-                viewButton,
-                unlockButton
-            );
+        viewButton.type = "button";
+        viewButton.className = "back-office-view-document";
+        viewButton.textContent = "VIEW DOCUMENT";
 
-            documentBox.append(
-                documentTitle,
-                documentMeta,
-                actions
-            );
+        const unlockButton =
+            document.createElement("button");
 
-            card.appendChild(
-                documentBox
-            );
+        unlockButton.type = "button";
+        unlockButton.className = "back-office-unlock";
 
-            const note =
-                document.createElement("div");
+        if(unlocked){
 
-            note.className =
-                "back-office-note";
+            unlockButton.textContent =
+                "DOWNLOAD UNLOCKED";
 
-            note.textContent =
-                unlocked
-                    ? "Download is unlocked for this already-saved document. No new document is generated."
-                    : awaiting
-                        ? "Verify the customer's payment before pressing UNLOCK DOWNLOAD. The existing saved document will be unlocked; it will not be regenerated."
-                        : "This record is read-only here. The saved customer document is not regenerated by Back Office.";
+            unlockButton.disabled = true;
 
-            card.appendChild(
-                note
-            );
+        }else{
 
-            backOfficeJobs.appendChild(
-                card
-            );
+            unlockButton.textContent =
+                "UNLOCK DOWNLOAD";
 
         }
-    );
+
+        viewButton.addEventListener(
+            "click",
+            () => {
+                openSavedDocument(job);
+            }
+        );
+
+        unlockButton.addEventListener(
+            "click",
+            () => {
+                unlockSavedDocument(
+                    job,
+                    unlockButton,
+                    card
+                );
+            }
+        );
+
+        actions.append(
+            viewButton,
+            unlockButton
+        );
+
+        documentBox.append(
+            documentTitle,
+            documentMeta,
+            actions
+        );
+
+        card.appendChild(documentBox);
+
+        const note =
+            document.createElement("div");
+
+        note.className =
+            "back-office-note";
+
+        note.textContent =
+            unlocked
+                ? "Download is unlocked for this already-saved document. No new document is generated."
+                : awaiting
+                    ? "Verify the customer's payment before pressing UNLOCK DOWNLOAD. The existing saved document will be unlocked; it will not be regenerated."
+                    : "This record is read-only here. The saved customer document is not regenerated by Back Office.";
+
+        card.appendChild(note);
+
+        backOfficeJobs.appendChild(card);
+
+    });
 
     backOfficeApproved.textContent =
         awaitingCount;
@@ -3860,10 +3514,6 @@ function renderBackOfficeJobs(){
         unlockedCount;
 
 }
-
-/* ============================================================
-   VIEW ALREADY-SAVED DOCUMENT
-============================================================ */
 
 function openSavedDocument(job){
 
@@ -3903,15 +3553,9 @@ function openSavedDocument(job){
             "The server did not return a direct document URL."
         ].join("\n");
 
-    window.alert(
-        details
-    );
+    window.alert(details);
 
 }
-
-/* ============================================================
-   UNLOCK EXACT SAVED DOCUMENT
-============================================================ */
 
 async function unlockSavedDocument(
     job,
@@ -3920,9 +3564,7 @@ async function unlockSavedDocument(
 ){
 
     const key =
-        clean(
-            backOfficeKey.value
-        );
+        clean(backOfficeKey.value);
 
     if(!key){
 
@@ -3968,11 +3610,8 @@ async function unlockSavedDocument(
         return;
     }
 
-    button.disabled =
-        true;
-
-    button.textContent =
-        "UNLOCKING...";
+    button.disabled = true;
+    button.textContent = "UNLOCKING...";
 
     setStatus(
         "Unlocking the already-saved customer document..."
@@ -3986,57 +3625,44 @@ async function unlockSavedDocument(
                 "/api/back-office/activate-download",
                 {
                     method:"POST",
-
                     headers:{
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "application/json",
-
-                        "X-Admin-Key":
-                            key
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                        "X-Admin-Key":key
                     },
+                    body:JSON.stringify({
 
-                    body:
-                        JSON.stringify({
+                        job_id:
+                            jobNumber || null,
 
-                            job_id:
-                                jobNumber || null,
+                        payment_id:
+                            paymentId || null,
 
-                            payment_id:
-                                paymentId || null,
+                        work_id:
+                            documentId || null,
 
-                            work_id:
-                                documentId || null,
+                        document_id:
+                            documentId || null,
 
-                            document_id:
-                                documentId || null,
+                        admin_key:
+                            key,
 
-                            admin_key:
-                                key,
+                        action:
+                            "unlock_download"
 
-                            action:
-                                "unlock_download"
-
-                        })
+                    })
                 }
             );
 
         const data =
             await response
                 .json()
-                .catch(
-                    () => ({})
-                );
+                .catch(() => ({}));
 
         if(!response.ok){
 
             throw new Error(
-                serverError(
-                    data,
-                    response
-                )
+                serverError(data,response)
             );
 
         }
@@ -4044,10 +3670,7 @@ async function unlockSavedDocument(
         if(data.success === false){
 
             throw new Error(
-                serverError(
-                    data,
-                    response
-                )
+                serverError(data,response)
             );
 
         }
@@ -4055,16 +3678,10 @@ async function unlockSavedDocument(
         button.textContent =
             "DOWNLOAD UNLOCKED";
 
-        button.disabled =
-            true;
+        button.disabled = true;
 
-        card.classList.remove(
-            "reported"
-        );
-
-        card.classList.add(
-            "unlocked"
-        );
+        card.classList.remove("reported");
+        card.classList.add("unlocked");
 
         setStatus(
             "Payment verified. The exact already-saved document is now unlocked for customer download.",
@@ -4075,11 +3692,8 @@ async function unlockSavedDocument(
 
     }catch(error){
 
-        button.disabled =
-            false;
-
-        button.textContent =
-            "UNLOCK DOWNLOAD";
+        button.disabled = false;
+        button.textContent = "UNLOCK DOWNLOAD";
 
         setStatus(
             error.message ||
@@ -4091,10 +3705,6 @@ async function unlockSavedDocument(
 
 }
 
-/* ============================================================
-   OPEN BACK OFFICE
-============================================================ */
-
 function openBackOffice(){
 
     reviewGatewayOverlay
@@ -4103,19 +3713,13 @@ function openBackOffice(){
 
     closeCustomerCare();
 
-    formView.style.display =
-        "none";
+    formView.style.display = "none";
 
-    reviewView.classList.remove(
-        "show"
-    );
+    reviewView.classList.remove("show");
 
-    customerBottom.style.display =
-        "none";
+    customerBottom.style.display = "none";
 
-    backOfficeView.classList.add(
-        "show"
-    );
+    backOfficeView.classList.add("show");
 
     serviceBadge.textContent =
         "BACK OFFICE";
@@ -4123,23 +3727,17 @@ function openBackOffice(){
     backOfficeEntryButton.style.display =
         "none";
 
-    setStatus(
-        "Back Office ready."
-    );
+    setStatus("Back Office ready.");
 
 }
 
 function exitBackOffice(){
 
-    backOfficeView.classList.remove(
-        "show"
-    );
+    backOfficeView.classList.remove("show");
 
-    formView.style.display =
-        "";
+    formView.style.display = "";
 
-    customerBottom.style.display =
-        "";
+    customerBottom.style.display = "";
 
     serviceBadge.textContent =
         service;
@@ -4147,13 +3745,9 @@ function exitBackOffice(){
     backOfficeEntryButton.style.display =
         "";
 
-    setStatus(
-        ""
-    );
+    setStatus("");
 
 }
-
-/* BACK OFFICE EVENTS */
 
 backOfficeEntryButton.addEventListener(
     "click",
@@ -4190,23 +3784,15 @@ backOfficeKey.addEventListener(
     }
 );
 
-/* BACK OFFICE INITIALISE */
-
 function initBackOffice(){
 
-    formView.style.display =
-        "none";
+    formView.style.display = "none";
 
-    reviewView.classList.remove(
-        "show"
-    );
+    reviewView.classList.remove("show");
 
-    customerBottom.style.display =
-        "none";
+    customerBottom.style.display = "none";
 
-    backOfficeView.classList.add(
-        "show"
-    );
+    backOfficeView.classList.add("show");
 
     serviceBadge.textContent =
         "BACK OFFICE";
@@ -4214,13 +3800,9 @@ function initBackOffice(){
     backOfficeEntryButton.style.display =
         "none";
 
-    setStatus(
-        "Back Office ready."
-    );
+    setStatus("Back Office ready.");
 
 }
-
-/* NORMAL CUSTOMER INITIALISE */
 
 async function initCustomer(){
 
@@ -4232,8 +3814,6 @@ async function initCustomer(){
     await loadGuidance();
 
 }
-
-/* INITIALISE */
 
 async function init(){
 
@@ -4249,7 +3829,472 @@ async function init(){
 }
 
 init();
+
+/* ============================================================
+   LUXURY FIREWORK ENGINE
+   VISUAL ONLY — DOES NOT INTERACT WITH WORKSPACE LOGIC
+============================================================ */
+
+(function(){
+
+    const canvas =
+        document.getElementById(
+            "reviewFireworksCanvas"
+        );
+
+    const overlay =
+        document.getElementById(
+            "reviewGatewayOverlay"
+        );
+
+    if(!canvas || !overlay){
+        return;
+    }
+
+    const ctx =
+        canvas.getContext("2d");
+
+    if(!ctx){
+        return;
+    }
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let animationId = null;
+    let running = false;
+    let lastSpawn = 0;
+    let nextSpawn = 650;
+
+    const particles = [];
+    const rockets = [];
+
+    const colors = [
+        "#f3d66b",
+        "#d4af37",
+        "#fff4d6",
+        "#f4d58d",
+        "#39b87f",
+        "#168047"
+    ];
+
+    function resize(){
+
+        dpr =
+            Math.min(
+                window.devicePixelRatio || 1,
+                2
+            );
+
+        width =
+            overlay.clientWidth || window.innerWidth;
+
+        height =
+            overlay.clientHeight || window.innerHeight;
+
+        canvas.width =
+            Math.floor(width * dpr);
+
+        canvas.height =
+            Math.floor(height * dpr);
+
+        canvas.style.width =
+            width + "px";
+
+        canvas.style.height =
+            height + "px";
+
+        ctx.setTransform(
+            dpr,
+            0,
+            0,
+            dpr,
+            0,
+            0
+        );
+
+    }
+
+    function random(min,max){
+        return min +
+            Math.random() * (max - min);
+    }
+
+    function spawnRocket(){
+
+        rockets.push({
+            x:random(width * .12,width * .88),
+            y:height + 15,
+            targetY:random(height * .12,height * .48),
+            speed:random(7.5,10.5),
+            color:
+                colors[
+                    Math.floor(
+                        Math.random() *
+                        colors.length
+                    )
+                ]
+        });
+
+    }
+
+    function explode(x,y,color){
+
+        const count =
+            Math.floor(
+                random(38,64)
+            );
+
+        const base =
+            Math.random() * Math.PI;
+
+        for(let i=0;i<count;i++){
+
+            const angle =
+                (Math.PI * 2 * i / count) +
+                random(-.035,.035);
+
+            const speed =
+                random(1.4,4.5);
+
+            particles.push({
+
+                x,
+                y,
+
+                vx:
+                    Math.cos(angle) *
+                    speed,
+
+                vy:
+                    Math.sin(angle) *
+                    speed,
+
+                life:1,
+
+                decay:
+                    random(.010,.020),
+
+                gravity:
+                    random(.025,.055),
+
+                size:
+                    random(.7,1.7),
+
+                color:
+                    Math.random() < .82
+                        ? color
+                        : colors[
+                            Math.floor(
+                                Math.random() *
+                                colors.length
+                            )
+                        ]
+
+            });
+
+        }
+
+        for(let i=0;i<6;i++){
+
+            const angle =
+                base +
+                (Math.PI * 2 * i / 6);
+
+            particles.push({
+
+                x,
+                y,
+
+                vx:
+                    Math.cos(angle) *
+                    random(2.8,5.2),
+
+                vy:
+                    Math.sin(angle) *
+                    random(2.8,5.2),
+
+                life:1,
+
+                decay:.026,
+
+                gravity:.04,
+
+                size:1.9,
+
+                color:"#fff4d6"
+
+            });
+
+        }
+
+    }
+
+    function update(timestamp){
+
+        if(!running){
+            animationId = null;
+            return;
+        }
+
+        ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+        if(
+            timestamp - lastSpawn >
+            nextSpawn
+        ){
+
+            spawnRocket();
+
+            lastSpawn = timestamp;
+
+            nextSpawn =
+                random(650,1250);
+
+        }
+
+        for(
+            let i=rockets.length-1;
+            i>=0;
+            i--
+        ){
+
+            const rocket =
+                rockets[i];
+
+            rocket.y -= rocket.speed;
+
+            ctx.save();
+
+            ctx.globalAlpha = .75;
+
+            ctx.fillStyle =
+                rocket.color;
+
+            ctx.shadowBlur = 8;
+
+            ctx.shadowColor =
+                rocket.color;
+
+            ctx.beginPath();
+
+            ctx.arc(
+                rocket.x,
+                rocket.y,
+                1.7,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+            ctx.restore();
+
+            if(
+                rocket.y <=
+                rocket.targetY
+            ){
+
+                explode(
+                    rocket.x,
+                    rocket.y,
+                    rocket.color
+                );
+
+                rockets.splice(i,1);
+
+            }
+
+        }
+
+        for(
+            let i=particles.length-1;
+            i>=0;
+            i--
+        ){
+
+            const particle =
+                particles[i];
+
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+
+            particle.vx *= .985;
+            particle.vy =
+                particle.vy * .985 +
+                particle.gravity;
+
+            particle.life -=
+                particle.decay;
+
+            if(particle.life <= 0){
+
+                particles.splice(i,1);
+
+                continue;
+            }
+
+            ctx.save();
+
+            ctx.globalAlpha =
+                Math.max(
+                    0,
+                    particle.life
+                );
+
+            ctx.fillStyle =
+                particle.color;
+
+            ctx.shadowBlur =
+                particle.size * 7;
+
+            ctx.shadowColor =
+                particle.color;
+
+            ctx.beginPath();
+
+            ctx.arc(
+                particle.x,
+                particle.y,
+                particle.size,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+            ctx.restore();
+
+        }
+
+        animationId =
+            requestAnimationFrame(
+                update
+            );
+
+    }
+
+    function start(){
+
+        if(running){
+            return;
+        }
+
+        running = true;
+
+        resize();
+
+        particles.length = 0;
+        rockets.length = 0;
+
+        lastSpawn = 0;
+        nextSpawn = 350;
+
+        animationId =
+            requestAnimationFrame(
+                update
+            );
+
+    }
+
+    function stop(){
+
+        running = false;
+
+        if(animationId !== null){
+
+            cancelAnimationFrame(
+                animationId
+            );
+
+            animationId = null;
+
+        }
+
+        particles.length = 0;
+        rockets.length = 0;
+
+        ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+    }
+
+    window.addEventListener(
+        "resize",
+        resize,
+        {passive:true}
+    );
+
+    const observer =
+        new MutationObserver(
+            mutations => {
+
+                mutations.forEach(
+                    mutation => {
+
+                        if(
+                            mutation.type !==
+                            "attributes"
+                        ){
+                            return;
+                        }
+
+                        if(
+                            mutation.attributeName !==
+                            "class"
+                        ){
+                            return;
+                        }
+
+                        if(
+                            overlay.classList.contains(
+                                "show"
+                            )
+                        ){
+
+                            start();
+
+                        }else{
+
+                            stop();
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    observer.observe(
+        overlay,
+        {
+            attributes:true,
+            attributeFilter:["class"]
+        }
+    );
+
+    resize();
+
+    if(
+        overlay.classList.contains(
+            "show"
+        )
+    ){
+        start();
+    }
+
+})();
 </script>
 
 </body>
-</html> 
+</html>
