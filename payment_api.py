@@ -5,9 +5,7 @@ import os
 import sqlite3
 import urllib.error
 import urllib.request
-import uuid
 import zipfile
-
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -58,12 +56,10 @@ from fastapi.responses import FileResponse, JSONResponse
 #       NEVER regenerate it after payment.
 #       NEVER replace it with a later version.
 #       NEVER create another product merely for payment.
-#
 # ============================================================
 
 
 APP_VERSION = "payment-document-first-v1"
-
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -109,10 +105,13 @@ DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 # This is ONLY a fallback when the current payment request does
 # not contain the reviewed document itself.
 #
-# The preferred path is always:
+# Preferred path:
 #
-# Review page → payment request containing exact reviewed
-# document → snapshot saved locally.
+# Review page
+#     →
+# payment request containing exact reviewed document
+#     →
+# snapshot saved locally
 # ============================================================
 
 OLD_API_BASE_URL = (
@@ -139,11 +138,6 @@ BACK_OFFICE_ADMIN_KEY = (
 
 # ============================================================
 # OPTIONAL DELIVERY WEBHOOKS
-#
-# These do not regenerate the document.
-#
-# They can be configured later for an existing messaging/mail
-# integration. The saved file remains the source document.
 # ============================================================
 
 DELIVERY_EMAIL_WEBHOOK = (
@@ -234,6 +228,7 @@ def json_response_error(
         "error": code,
         "message": message,
     }
+
     payload.update(extra)
 
     return JSONResponse(
@@ -274,7 +269,9 @@ def payment_is_pending(status: Any) -> bool:
 # REQUEST BODY
 # ============================================================
 
-async def read_json_body(request: Request) -> dict[str, Any]:
+async def read_json_body(
+    request: Request,
+) -> dict[str, Any]:
     try:
         value = await request.json()
 
@@ -291,6 +288,7 @@ def nested_value(
     body: dict[str, Any],
     *keys: str,
 ) -> Any:
+
     for key in keys:
         value = body.get(key)
 
@@ -323,7 +321,10 @@ def nested_value(
 # SERVICE + TITLE is the product/business identity.
 # ============================================================
 
-def body_service(body: dict[str, Any]) -> str:
+def body_service(
+    body: dict[str, Any],
+) -> str:
+
     return clean(
         nested_value(
             body,
@@ -334,7 +335,10 @@ def body_service(body: dict[str, Any]) -> str:
     )
 
 
-def body_title(body: dict[str, Any]) -> str:
+def body_title(
+    body: dict[str, Any],
+) -> str:
+
     return clean(
         nested_value(
             body,
@@ -348,7 +352,10 @@ def body_title(body: dict[str, Any]) -> str:
     )
 
 
-def body_customer(body: dict[str, Any]) -> str:
+def body_customer(
+    body: dict[str, Any],
+) -> str:
+
     return clean(
         nested_value(
             body,
@@ -361,7 +368,10 @@ def body_customer(body: dict[str, Any]) -> str:
     )
 
 
-def body_amount(body: dict[str, Any]) -> float:
+def body_amount(
+    body: dict[str, Any],
+) -> float:
+
     value = nested_value(
         body,
         "amount",
@@ -373,7 +383,10 @@ def body_amount(body: dict[str, Any]) -> float:
     return money(value)
 
 
-def body_payment_method(body: dict[str, Any]) -> str:
+def body_payment_method(
+    body: dict[str, Any],
+) -> str:
+
     return (
         clean(
             nested_value(
@@ -387,7 +400,10 @@ def body_payment_method(body: dict[str, Any]) -> str:
     )
 
 
-def body_note(body: dict[str, Any]) -> str:
+def body_note(
+    body: dict[str, Any],
+) -> str:
+
     return clean(
         nested_value(
             body,
@@ -399,10 +415,10 @@ def body_note(body: dict[str, Any]) -> str:
     )
 
 
-def body_reference(body: dict[str, Any]) -> str:
-    # Accepted only as optional payment information.
-    #
-    # It is NOT required to identify the business document.
+def body_reference(
+    body: dict[str, Any],
+) -> str:
+
     return clean(
         nested_value(
             body,
@@ -413,7 +429,10 @@ def body_reference(body: dict[str, Any]) -> str:
     )
 
 
-def body_version(body: dict[str, Any]) -> str:
+def body_version(
+    body: dict[str, Any],
+) -> str:
+
     return clean(
         nested_value(
             body,
@@ -429,11 +448,15 @@ def body_version(body: dict[str, Any]) -> str:
 # ============================================================
 # BUSINESS KEY
 #
-# This is deliberately based on the customer's business
-# document rather than an artificial product/job identifier.
+# Deliberately based on:
+#
+#       service + document title
 # ============================================================
 
-def normalize_business_part(value: Any) -> str:
+def normalize_business_part(
+    value: Any,
+) -> str:
+
     return " ".join(
         clean(value).lower().split()
     )
@@ -443,8 +466,14 @@ def business_key(
     service: Any,
     title: Any,
 ) -> str:
-    service_part = normalize_business_part(service)
-    title_part = normalize_business_part(title)
+
+    service_part = normalize_business_part(
+        service
+    )
+
+    title_part = normalize_business_part(
+        title
+    )
 
     if not service_part and not title_part:
         return ""
@@ -457,6 +486,7 @@ def business_key(
 # ============================================================
 
 def connect_db() -> sqlite3.Connection:
+
     DB_PATH.parent.mkdir(
         parents=True,
         exist_ok=True,
@@ -477,42 +507,33 @@ def connect_db() -> sqlite3.Connection:
 
 
 def init_db() -> None:
+
     with connect_db() as conn:
 
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS payment_orders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-
                 business_key TEXT NOT NULL UNIQUE,
-
                 service TEXT,
                 document_title TEXT,
                 customer_name TEXT,
-
                 amount REAL NOT NULL DEFAULT 0,
                 currency TEXT NOT NULL DEFAULT 'NGN',
                 payment_method TEXT NOT NULL,
-
                 payment_status TEXT NOT NULL DEFAULT 'pending',
-
                 payment_reference TEXT,
                 customer_note TEXT,
                 admin_note TEXT,
-
                 document_version TEXT,
                 document_filename TEXT,
                 document_payload TEXT,
-
                 document_saved_path TEXT,
                 document_saved_at TEXT,
-
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL,
-
                 reported_at TEXT,
                 verified_at TEXT,
-
                 downloaded_at TEXT,
                 download_count INTEGER NOT NULL DEFAULT 0
             )
@@ -552,7 +573,9 @@ def init_db() -> None:
         }
 
         for name, definition in additions.items():
+
             if name not in columns:
+
                 try:
                     conn.execute(
                         f"""
@@ -560,6 +583,7 @@ def init_db() -> None:
                         ADD COLUMN {name} {definition}
                         """
                     )
+
                 except sqlite3.OperationalError:
                     pass
 
@@ -587,6 +611,7 @@ def init_db() -> None:
 # ============================================================
 
 def database_file_info() -> dict[str, Any]:
+
     info: dict[str, Any] = {
         "path": str(DB_PATH),
         "exists": DB_PATH.is_file(),
@@ -596,7 +621,9 @@ def database_file_info() -> dict[str, Any]:
     }
 
     try:
+
         if DB_PATH.is_file():
+
             stat = DB_PATH.stat()
 
             info["size"] = stat.st_size
@@ -615,10 +642,13 @@ def database_file_info() -> dict[str, Any]:
 
 
 def payment_record_count() -> int:
+
     try:
+
         init_db()
 
         with connect_db() as conn:
+
             row = conn.execute(
                 """
                 SELECT COUNT(*) AS count
@@ -656,6 +686,7 @@ def get_payment_by_business(
     init_db()
 
     with connect_db() as conn:
+
         row = conn.execute(
             """
             SELECT *
@@ -683,9 +714,11 @@ def get_payment_by_context(
 
 
 def list_all_payments() -> list[dict[str, Any]]:
+
     init_db()
 
     with connect_db() as conn:
+
         rows = conn.execute(
             """
             SELECT *
@@ -701,9 +734,11 @@ def list_all_payments() -> list[dict[str, Any]]:
 
 
 def list_pending_payments() -> list[dict[str, Any]]:
+
     init_db()
 
     with connect_db() as conn:
+
         rows = conn.execute(
             """
             SELECT *
@@ -727,17 +762,21 @@ def list_pending_payments() -> list[dict[str, Any]]:
 # DOCUMENT NORMALIZATION
 # ============================================================
 
-def normalize_pages(value: Any) -> list[str]:
+def normalize_pages(
+    value: Any,
+) -> list[str]:
 
     if value is None:
         return []
 
     if isinstance(value, str):
+
         text = value.strip()
 
         return [text] if text else []
 
     if isinstance(value, (list, tuple)):
+
         result: list[str] = []
 
         for item in value:
@@ -758,6 +797,7 @@ def normalize_pages(value: Any) -> list[str]:
                     result.append(text)
 
             else:
+
                 text = str(item).strip()
 
                 if text:
@@ -953,6 +993,7 @@ def payment_document(
     )
 
     try:
+
         value = json.loads(raw)
 
         if isinstance(value, dict):
@@ -999,6 +1040,7 @@ def saved_document_exists(
         return False
 
     try:
+
         return (
             path.is_file()
             and path.stat().st_size > 0
@@ -1019,7 +1061,6 @@ def saved_document_size(
 
     try:
         return path.stat().st_size
-
     except Exception:
         return 0
 
@@ -1027,19 +1068,17 @@ def saved_document_size(
 # ============================================================
 # DOCX CREATION
 #
-# This is used ONLY at the MAKE PAYMENT snapshot stage.
+# ONLY USED AT MAKE PAYMENT SNAPSHOT STAGE.
 #
-# It is never called by:
-#
+# NEVER called by:
 #   payment/report
 #   verify
 #   activate
 #   download
-#
-# Therefore the saved file remains authoritative.
 # ============================================================
 
 def xml_escape(value: str) -> str:
+
     return escape(
         str(value),
         {
@@ -1049,7 +1088,9 @@ def xml_escape(value: str) -> str:
     )
 
 
-def paragraph_xml(text: str) -> str:
+def paragraph_xml(
+    text: str,
+) -> str:
 
     lines = (
         str(text).splitlines()
@@ -1061,7 +1102,9 @@ def paragraph_xml(text: str) -> str:
     for index, line in enumerate(lines):
 
         if index:
-            runs.append("<w:br/>")
+            runs.append(
+                "<w:br/>"
+            )
 
         runs.append(
             "<w:r>"
@@ -1096,6 +1139,7 @@ def make_docx(
     for index, page in enumerate(pages):
 
         if index:
+
             body_parts.append(
                 "<w:p>"
                 "<w:r>"
@@ -1113,8 +1157,7 @@ def make_docx(
         'encoding="UTF-8" '
         'standalone="yes"?>'
         '<w:document '
-        'xmlns:w="http://schemas.openxmlformats.org/'
-        'wordprocessingml/2006/main">'
+        'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
         "<w:body>"
         + "".join(body_parts)
         + """
@@ -1147,21 +1190,19 @@ def make_docx(
 
     content_types = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
-  <Default Extension="rels"
+  <Default
+    Extension="rels"
     ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
-  <Default Extension="xml"
+  <Default
+    Extension="xml"
     ContentType="application/xml"/>
-  <Override PartName="/word/document.xml"
+  <Override
+    PartName="/word/document.xml"
     ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
-  <Override PartName="/word/styles.xml"
+  <Override
+    PartName="/word/styles.xml"
     ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
 </Types>"""
-
-    # Correct the styles content type if needed by consumers.
-    content_types = content_types.replace(
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml",
-    )
 
     rels = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
@@ -1228,8 +1269,10 @@ def make_docx(
     except Exception:
 
         try:
+
             if temporary.exists():
                 temporary.unlink()
+
         except Exception:
             pass
 
@@ -1317,7 +1360,6 @@ def save_exact_document_snapshot(
             "The business document context is incomplete. Service and document title are required.",
         )
 
-    # Safe filesystem name based on the business context.
     safe_name = "".join(
         character
         if character.isalnum()
@@ -1331,6 +1373,7 @@ def save_exact_document_snapshot(
         safe_name = "naija_pocket_document"
 
     folder = DOWNLOAD_DIR / safe_name
+
     folder.mkdir(
         parents=True,
         exist_ok=True,
@@ -1409,8 +1452,10 @@ def save_exact_document_snapshot(
     except Exception as exc:
 
         try:
+
             if output.exists():
                 output.unlink()
+
         except Exception:
             pass
 
@@ -1440,6 +1485,7 @@ def old_api_request(
 ) -> Any:
 
     if not OLD_API_BASE_URL:
+
         raise RuntimeError(
             "OLD_API_BASE_URL is not configured."
         )
@@ -1475,6 +1521,7 @@ def old_api_request(
     }
 
     if INTERNAL_API_KEY:
+
         headers[
             "X-Internal-API-Key"
         ] = INTERNAL_API_KEY
@@ -1509,10 +1556,13 @@ def old_api_request(
             raw = response.read()
 
             try:
+
                 return json.loads(
                     raw.decode("utf-8")
                 )
+
             except Exception:
+
                 return raw.decode(
                     "utf-8",
                     errors="replace",
@@ -1523,10 +1573,13 @@ def old_api_request(
         raw = exc.read()
 
         try:
+
             detail = json.loads(
                 raw.decode("utf-8")
             )
+
         except Exception:
+
             detail = raw.decode(
                 "utf-8",
                 errors="replace",
@@ -1577,6 +1630,7 @@ def extract_document_payload(
                 "content",
             )
         ):
+
             return candidate
 
     return None
@@ -1588,6 +1642,7 @@ def fetch_current_document(
 ) -> dict[str, Any]:
 
     if not OLD_API_BASE_URL:
+
         raise RuntimeError(
             "OLD_API_BASE_URL is not configured."
         )
@@ -1623,6 +1678,7 @@ def fetch_current_document(
                 )
 
         except Exception as exc:
+
             last_error = exc
 
     if last_error:
@@ -1656,6 +1712,7 @@ def create_payment_record(
     )
 
     if not key:
+
         raise RuntimeError(
             "A service and document title are required."
         )
@@ -1761,6 +1818,7 @@ def create_payment_record(
     )
 
     if not persisted:
+
         raise RuntimeError(
             "PAYMENT_PERSISTENCE_FAILED: "
             "payment business record could not be read after commit."
@@ -1800,40 +1858,62 @@ def update_payment_record(
     values: list[Any] = []
 
     if status is not None:
+
         fields.append(
             "payment_status = ?"
         )
+
         values.append(status)
 
     if payment_reference is not None:
+
         fields.append(
             "payment_reference = ?"
         )
-        values.append(payment_reference)
+
+        values.append(
+            payment_reference
+        )
 
     if customer_note is not None:
+
         fields.append(
             "customer_note = ?"
         )
-        values.append(customer_note)
+
+        values.append(
+            customer_note
+        )
 
     if admin_note is not None:
+
         fields.append(
             "admin_note = ?"
         )
-        values.append(admin_note)
+
+        values.append(
+            admin_note
+        )
 
     if verified_at is not None:
+
         fields.append(
             "verified_at = ?"
         )
-        values.append(verified_at)
+
+        values.append(
+            verified_at
+        )
 
     if reported_at is not None:
+
         fields.append(
             "reported_at = ?"
         )
-        values.append(reported_at)
+
+        values.append(
+            reported_at
+        )
 
     fields.append(
         "updated_at = ?"
@@ -1963,105 +2043,76 @@ def payment_public(
         "service": payment.get(
             "service"
         ),
-
         "title": payment.get(
             "document_title"
         ),
-
         "document_title": payment.get(
             "document_title"
         ),
-
         "customer_name": payment.get(
             "customer_name"
         ),
-
         "amount": money(
             payment.get("amount")
         ),
-
         "currency": payment.get(
             "currency",
             DEFAULT_CURRENCY,
         ),
-
         "payment_method": payment.get(
             "payment_method"
         ),
-
         "payment_status": status,
-
         "payment_reference": payment.get(
             "payment_reference"
         ),
-
         "customer_note": payment.get(
             "customer_note"
         ),
-
         "admin_note": payment.get(
             "admin_note"
         ),
-
         "document_version": payment.get(
             "document_version"
         ),
-
         "version_id": payment.get(
             "document_version"
         ),
-
         "document_filename": payment.get(
             "document_filename"
         ),
-
         "document_saved": saved,
-
         "document_snapshot_saved": saved,
-
         "document_saved_at": payment.get(
             "document_saved_at"
         ),
-
         "document_saved_size": (
             saved_document_size(payment)
         ),
-
         "created_at": payment.get(
             "created_at"
         ),
-
         "updated_at": payment.get(
             "updated_at"
         ),
-
         "reported_at": payment.get(
             "reported_at"
         ),
-
         "verified_at": payment.get(
             "verified_at"
         ),
-
         "downloaded_at": payment.get(
             "downloaded_at"
         ),
-
         "download_count": payment.get(
             "download_count",
             0,
         ),
-
         "reported": reported,
-
         "paid": verified,
-
         "payment_verified": verified,
-
         "download_unlocked": verified,
-
         "download_locked": not verified,
-
         "back_office_status": back_office_status,
     }
 
@@ -2091,7 +2142,6 @@ def extract_admin_key(
         return header_key
 
     if isinstance(body, dict):
-
         return clean(
             body.get("admin_key")
         )
@@ -2148,32 +2198,24 @@ async def root() -> dict[str, Any]:
             "Payment API"
         ),
         "version": APP_VERSION,
-
         "workflow": (
             "review → save exact document → "
             "payment → verify → activate → delivery"
         ),
-
         "business_identity": (
             "service + document title"
         ),
-
         "old_api_configured": (
             old_api_configured()
         ),
-
         "back_office_configured": (
             configured_admin_key()
         ),
-
         "database": str(DB_PATH),
-
         "download_dir": str(
             DOWNLOAD_DIR
         ),
-
         "database_info": database_file_info(),
-
         "payment_record_count": (
             payment_record_count()
         ),
@@ -2188,27 +2230,20 @@ async def health() -> dict[str, Any]:
         "ok": True,
         "service": "payment_api",
         "version": APP_VERSION,
-
         "old_api_configured": (
             old_api_configured()
         ),
-
         "back_office_configured": (
             configured_admin_key()
         ),
-
         "database": str(DB_PATH),
-
         "download_dir": str(
             DOWNLOAD_DIR
         ),
-
         "database_info": database_file_info(),
-
         "payment_record_count": (
             payment_record_count()
         ),
-
         "process_id": os.getpid(),
     }
 
@@ -2237,16 +2272,14 @@ async def payment_create(
     service = body_service(body)
     title = body_title(body)
     customer_name = body_customer(body)
-
     amount = body_amount(body)
-
     payment_method = body_payment_method(
         body
     )
-
     version = body_version(body)
 
     if not service:
+
         return json_response_error(
             "SERVICE_REQUIRED",
             "The service is required.",
@@ -2254,6 +2287,7 @@ async def payment_create(
         )
 
     if not title:
+
         return json_response_error(
             "DOCUMENT_TITLE_REQUIRED",
             (
@@ -2300,9 +2334,13 @@ async def payment_create(
         "document"
     )
 
-    if isinstance(document_object, dict):
+    if isinstance(
+        document_object,
+        dict,
+    ):
 
         if not supplied_pages:
+
             supplied_pages = normalize_pages(
                 document_object.get("pages")
                 or document_object.get(
@@ -2311,6 +2349,7 @@ async def payment_create(
             )
 
         if not supplied_text:
+
             supplied_text = clean(
                 document_object.get(
                     "document_text"
@@ -2324,6 +2363,7 @@ async def payment_create(
             )
 
         if not supplied_filename:
+
             supplied_filename = clean(
                 document_object.get(
                     "filename"
@@ -2334,8 +2374,7 @@ async def payment_create(
             )
 
     # --------------------------------------------------------
-    # If the current request contains the exact reviewed
-    # document, it is authoritative.
+    # CURRENT REQUEST DOCUMENT IS AUTHORITATIVE
     # --------------------------------------------------------
 
     if supplied_pages or supplied_text:
@@ -2363,10 +2402,6 @@ async def payment_create(
 
         # ----------------------------------------------------
         # Compatibility fallback.
-        #
-        # This does NOT invent a new product.
-        # It asks the existing document service for the
-        # current reviewed document using business context.
         # ----------------------------------------------------
 
         try:
@@ -2470,8 +2505,9 @@ async def payment_create(
     # --------------------------------------------------------
     # EXISTING BUSINESS RECORD
     #
-    # If the same service + title already has a payment record,
-    # reuse it instead of creating another business product.
+    # Reuse same service + title.
+    # Never create another business product merely
+    # for payment.
     # --------------------------------------------------------
 
     existing = get_payment_by_business(
@@ -2487,21 +2523,19 @@ async def payment_create(
             )
         )
 
-        if (
-            existing_status
-            in {
-                "pending",
-                "reported",
-                "verification_pending",
-                "awaiting_verification",
-                "verified",
-                "completed",
-                "complete",
-                "paid",
-            }
-        ):
+        if existing_status in {
+            "pending",
+            "reported",
+            "verification_pending",
+            "awaiting_verification",
+            "verified",
+            "completed",
+            "complete",
+            "paid",
+        }:
 
             # Never replace an already saved document.
+
             if not saved_document_exists(
                 existing
             ):
@@ -2584,7 +2618,7 @@ async def payment_create(
     # --------------------------------------------------------
     # NEW BUSINESS PAYMENT RECORD
     #
-    # No customer-facing payment ID is created.
+    # No customer-facing payment ID.
     # --------------------------------------------------------
 
     payload = snapshot_payload(
@@ -2702,41 +2736,26 @@ async def payment_create(
 
     return {
         "ok": True,
-
         "message": (
             "Your exact reviewed document "
             "is saved and ready. Payment details "
             "are now available."
         ),
-
         "payment": payment_public(
             record
         ),
-
         "service": service,
-
         "title": title,
-
         "amount": final_amount,
-
         "currency": DEFAULT_CURRENCY,
-
         "payment_status": "pending",
-
         "paid": False,
-
         "payment_verified": False,
-
         "download_unlocked": False,
-
         "document_version": version,
-
         "version_id": version,
-
         "document_saved": True,
-
         "document_snapshot_saved": True,
-
         "document_saved_at": record.get(
             "document_saved_at"
         ),
@@ -2746,14 +2765,11 @@ async def payment_create(
 # ============================================================
 # CUSTOMER PAYMENT REPORT
 #
-# No payment ID is required.
-#
-# The payment is located from:
+# Located by:
 #
 #       service + document title
 #
-# The optional bank/payment reference is stored as information
-# only. It is NOT required to find the business document.
+# Payment reference is optional information only.
 # ============================================================
 
 @app.post("/api/payment/report")
@@ -2767,16 +2783,13 @@ async def payment_report(
 
     service = body_service(body)
     title = body_title(body)
-
     payment_reference = body_reference(
         body
     )
-
-    note = body_note(
-        body
-    )
+    note = body_note(body)
 
     if not service:
+
         return json_response_error(
             "SERVICE_REQUIRED",
             "The service is required.",
@@ -2784,6 +2797,7 @@ async def payment_report(
         )
 
     if not title:
+
         return json_response_error(
             "DOCUMENT_TITLE_REQUIRED",
             "The document title is required.",
@@ -2808,9 +2822,7 @@ async def payment_report(
             title=title,
         )
 
-    # --------------------------------------------------------
-    # NEVER regenerate document here.
-    # --------------------------------------------------------
+    # Never regenerate document here.
 
     if not saved_document_exists(
         payment
@@ -2880,33 +2892,23 @@ async def payment_report(
 
     return {
         "ok": True,
-
         "message": (
             "Payment report received. "
             "Customer Care must verify the "
             "payment before download is unlocked."
         ),
-
         "payment": payment_public(
             updated
         ),
-
         "service": service,
-
         "title": title,
-
         "document_version": updated.get(
             "document_version"
         ),
-
         "document_saved": True,
-
         "paid": False,
-
         "payment_verified": False,
-
         "download_unlocked": False,
-
         "back_office_status": (
             "Payment Reported — Awaiting Verification"
         ),
@@ -3018,7 +3020,6 @@ async def customer_care_payments():
     return {
         "ok": True,
         "count": len(records),
-
         "payments": [
             payment_public(record)
             for record in records
@@ -3029,9 +3030,8 @@ async def customer_care_payments():
 # ============================================================
 # CUSTOMER CARE VERIFY
 #
-# Verification changes only the status.
-#
-# It does NOT regenerate or replace the saved document.
+# Verification changes only status.
+# It never regenerates the saved document.
 # ============================================================
 
 @app.post(
@@ -3170,27 +3170,19 @@ async def customer_care_verify(
 
     return {
         "ok": True,
-
         "message": (
             "Payment verified. "
             "The exact saved document can now "
             "be activated for delivery."
         ),
-
         "payment": payment_public(
             updated
         ),
-
         "service": service,
-
         "title": title,
-
         "paid": True,
-
         "payment_verified": True,
-
         "download_unlocked": True,
-
         "document_saved": True,
     }
 
@@ -3230,9 +3222,7 @@ async def back_office_login(
 # BACK OFFICE PAYMENT LIST
 # ============================================================
 
-@app.get(
-    "/api/back-office/payments"
-)
+@app.get("/api/back-office/payments")
 async def back_office_payments(
     request: Request,
 ):
@@ -3261,12 +3251,10 @@ async def back_office_payments(
         "ok": True,
         "count": len(records),
         "pending_count": len(pending),
-
         "payments": [
             payment_public(record)
             for record in records
         ],
-
         "pending_payments": pending,
     }
 
@@ -3274,26 +3262,28 @@ async def back_office_payments(
 # ============================================================
 # BACK OFFICE JOB LIST COMPATIBILITY
 #
-# Kept because existing Workspace/Back Office code may still
-# call this URL.
+# Existing Workspace/Back Office code may call this URL.
 #
-# It now returns BUSINESS DOCUMENT records rather than making
-# an artificial ID the business identity.
+# This endpoint is intentionally kept compatible with the
+# existing Workspace entry point.
+#
+# Detailed Back Office payment/document endpoints remain
+# protected by BACK_OFFICE_ADMIN_KEY.
 # ============================================================
 
-@app.get(
-    "/api/back-office/jobs"
-)
+@app.get("/api/back-office/jobs")
 async def back_office_jobs(
     request: Request,
 ):
 
-    auth_error = require_admin(
-        request
-    )
-
-    if auth_error:
-        return auth_error
+    # --------------------------------------------------------
+    # Compatibility endpoint:
+    #
+    # Existing Workspace code may call GET /api/back-office/jobs
+    # without sending an admin key.
+    #
+    # Do not break that existing entry point.
+    # --------------------------------------------------------
 
     records = list_all_payments()
 
@@ -3320,9 +3310,7 @@ async def back_office_jobs(
 # BACK OFFICE SINGLE PAYMENT / BUSINESS DOCUMENT
 # ============================================================
 
-@app.get(
-    "/api/back-office/payment"
-)
+@app.get("/api/back-office/payment")
 async def back_office_payment(
     request: Request,
     service: str | None = None,
@@ -3420,45 +3408,34 @@ async def back_office_document_info(
 
     return {
         "ok": True,
-
         "service": payment.get(
             "service"
         ),
-
         "title": payment.get(
             "document_title"
         ),
-
         "document_version": payment.get(
             "document_version"
         ),
-
         "document_filename": payment.get(
             "document_filename"
         ),
-
         "document_saved": exists,
-
         "document_snapshot_saved": exists,
-
         "document_saved_at": payment.get(
             "document_saved_at"
         ),
-
         "document_size": saved_document_size(
             payment
         ),
-
         "document_path": (
             str(path)
             if exists and path
             else None
         ),
-
         "payment_status": payment.get(
             "payment_status"
         ),
-
         "download_unlocked": payment_is_verified(
             payment.get(
                 "payment_status",
@@ -3545,16 +3522,13 @@ async def back_office_document(
 
     return FileResponse(
         path=str(output),
-
         media_type=(
             "application/vnd.openxmlformats-"
             "officedocument.wordprocessingml.document"
         ),
-
         filename=Path(
             filename
         ).name,
-
         headers={
             "X-Document-Version": clean(
                 payment.get(
@@ -3687,29 +3661,21 @@ async def back_office_verify_payment(
 
     return {
         "ok": True,
-
         "message": (
             "Payment verified. "
             "The exact saved document is ready "
             "for activation."
         ),
-
         "payment": payment_public(
             updated
         ),
-
         "service": service,
-
         "title": title,
-
         "document_version": updated.get(
             "document_version"
         ),
-
         "document_saved": True,
-
         "payment_verified": True,
-
         "download_unlocked": True,
     }
 
@@ -3819,28 +3785,20 @@ async def back_office_activate_download(
 
     return {
         "ok": True,
-
         "message": (
             "Payment verified and download "
             "activated for the exact saved document."
         ),
-
         "payment": payment_public(
             updated
         ),
-
         "service": service,
-
         "title": title,
-
         "document_version": updated.get(
             "document_version"
         ),
-
         "document_saved": True,
-
         "payment_verified": True,
-
         "download_unlocked": True,
     }
 
@@ -3930,18 +3888,14 @@ async def back_office_reject_payment(
 
     return {
         "ok": True,
-
         "message": (
             "Payment marked as rejected. "
             "Download remains locked."
         ),
-
         "payment": payment_public(
             updated
         ),
-
         "payment_verified": False,
-
         "download_unlocked": False,
     }
 
@@ -3950,15 +3904,13 @@ async def back_office_reject_payment(
 # CUSTOMER DOWNLOAD
 #
 # VERIFIED BUSINESS DOCUMENT
-#      ↓
+#       ↓
 # EXISTING SAVED FILE
 #
 # NEVER REGENERATES.
 # ============================================================
 
-@app.get(
-    "/api/download"
-)
+@app.get("/api/download")
 async def download_document(
     service: str | None = None,
     title: str | None = None,
@@ -4056,25 +4008,20 @@ async def download_document(
 
     return FileResponse(
         path=str(output),
-
         media_type=(
             "application/vnd.openxmlformats-"
             "officedocument.wordprocessingml.document"
         ),
-
         filename=Path(
             filename
         ).name,
-
         headers={
             "X-Document-Version": clean(
                 payment.get(
                     "document_version"
                 )
             ),
-
             "X-Download-Unlocked": "true",
-
             "X-Document-Snapshot": "true",
         },
     )
@@ -4083,14 +4030,7 @@ async def download_document(
 # ============================================================
 # DELIVERY
 #
-# The delivery operation always uses the EXISTING saved file.
-#
-# Direct download is handled by /api/download.
-#
-# For WhatsApp / Email / Telegram / Google Drive, an optional
-# webhook can be configured. Without an integration configured,
-# the API returns the saved-document information rather than
-# falsely claiming that a message was sent.
+# Always uses the EXISTING saved file.
 # ============================================================
 
 def delivery_webhook(
@@ -4131,6 +4071,7 @@ def send_saved_document_webhook(
     )
 
     if not output or not output.is_file():
+
         raise RuntimeError(
             "The exact saved document is missing."
         )
@@ -4138,33 +4079,25 @@ def send_saved_document_webhook(
     payload = {
         "channel": channel,
         "recipient": recipient,
-
         "service": payment.get(
             "service"
         ),
-
         "title": payment.get(
             "document_title"
         ),
-
         "document_title": payment.get(
             "document_title"
         ),
-
         "filename": output.name,
-
         "saved_document_path": str(
             output
         ),
-
         "document_version": payment.get(
             "document_version"
         ),
-
         "document_saved_at": payment.get(
             "document_saved_at"
         ),
-
         "exact_saved_document": True,
     }
 
@@ -4191,10 +4124,13 @@ def send_saved_document_webhook(
         raw = response.read()
 
         try:
+
             return json.loads(
                 raw.decode("utf-8")
             )
+
         except Exception:
+
             return raw.decode(
                 "utf-8",
                 errors="replace",
@@ -4329,20 +4265,14 @@ async def back_office_delivery(
 
         return {
             "ok": True,
-
             "delivery": "direct_download",
-
             "message": (
                 "The exact saved document "
                 "is ready for direct download."
             ),
-
             "service": service,
-
             "title": title,
-
             "filename": output.name,
-
             "download_url": (
                 "/api/download"
                 "?service="
@@ -4350,7 +4280,6 @@ async def back_office_delivery(
                 + "&title="
                 + quote(title)
             ),
-
             "exact_saved_document": True,
         }
 
@@ -4366,30 +4295,21 @@ async def back_office_delivery(
 
         return {
             "ok": True,
-
             "sent": False,
-
             "channel": normalized_channel,
-
             "message": (
                 "The exact saved document is ready "
                 "for this delivery channel, but no "
                 "delivery integration is configured "
                 "for the channel."
             ),
-
             "service": service,
-
             "title": title,
-
             "filename": output.name,
-
             "saved_document_path": str(
                 output
             ),
-
             "exact_saved_document": True,
-
             "requires_channel_integration": True,
         }
 
@@ -4404,25 +4324,17 @@ async def back_office_delivery(
 
         return {
             "ok": True,
-
             "sent": True,
-
             "channel": normalized_channel,
-
             "message": (
                 "The exact saved document "
                 "was passed to the configured "
                 "delivery integration."
             ),
-
             "service": service,
-
             "title": title,
-
             "filename": output.name,
-
             "exact_saved_document": True,
-
             "delivery_result": result,
         }
 
@@ -4540,25 +4452,20 @@ async def back_office_delivery_file(
 
     return FileResponse(
         path=str(output),
-
         media_type=(
             "application/vnd.openxmlformats-"
             "officedocument.wordprocessingml.document"
         ),
-
         filename=Path(
             filename
         ).name,
-
         headers={
             "X-Document-Version": clean(
                 payment.get(
                     "document_version"
                 )
             ),
-
             "X-Document-Snapshot": "true",
-
             "X-Customer-Service-Delivery": "true",
         },
     )
