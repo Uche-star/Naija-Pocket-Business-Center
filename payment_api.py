@@ -3,14 +3,13 @@ from __future__ import annotations
 import json
 import os
 import re
-import smtplib
 import sqlite3
 import urllib.error
 import urllib.request
 import uuid
 import zipfile
+
 from datetime import datetime, timezone
-from email.message import EmailMessage
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -25,36 +24,44 @@ from fastapi.responses import FileResponse, JSONResponse
 # Naija Pocket Business Center
 # payment_api.py
 #
-# DOCUMENT-FIRST PAYMENT + CUSTOMER CARE DELIVERY
+# DOCUMENT / PRODUCT-FIRST PAYMENT API
 #
-# CORE BUSINESS RULE
+# BUSINESS RULE
 #
-# The finished document is the product.
+# The thing being sold is the customer's document/product.
 #
-# Payment verification is a business-control step.
+# Product identity:
+#     SERVICE + TITLE
 #
-# Delivery is the objective.
+# Payment is only the release/verification gate.
 #
-# The exact finished document is saved once and reused for:
+# Any database identifier retained by this API is internal
+# bookkeeping only. It is NOT the customer's product.
 #
-#   CUSTOMER DOWNLOAD
-#   CUSTOMER CARE DOWNLOAD
-#   EMAIL DELIVERY
-#   WHATSAPP DELIVERY
+# CUSTOMER FLOW
 #
-# NO endpoint regenerates an already-saved document.
+#     SERVICE + TITLE
+#             ↓
+#     EXACT REVIEWED DOCUMENT
+#             ↓
+#     SAVE EXACT DOCUMENT
+#             ↓
+#     PAYMENT
+#             ↓
+#     PAYMENT REPORTED
+#             ↓
+#     CUSTOMER CARE VERIFICATION
+#             ↓
+#     UNLOCK
+#             ↓
+#     SAME SAVED DOCUMENT DELIVERED
 #
-# Protected files are NOT involved:
-#
-#   workspace.html
-#   review.html
-#   database.py
-#
+# The API NEVER regenerates the document during verification
+# or customer download.
 # ============================================================
 
-
 APP_VERSION = (
-    "payment-delivery-v5-document-first-customer-care"
+    "payment-document-first-v5-service-title-product"
 )
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -69,9 +76,7 @@ _raw_db_path = os.getenv(
     str(BASE_DIR / "payment_gateway.db"),
 ).strip()
 
-DB_PATH = Path(
-    _raw_db_path
-).expanduser()
+DB_PATH = Path(_raw_db_path).expanduser()
 
 if not DB_PATH.is_absolute():
     DB_PATH = BASE_DIR / DB_PATH
@@ -105,6 +110,9 @@ DOWNLOAD_DIR.mkdir(
 
 # ============================================================
 # OPTIONAL OLD API BRIDGE
+#
+# ONLY USED AS A FALLBACK WHEN THE PAYMENT REQUEST DID NOT
+# CONTAIN THE EXACT REVIEWED DOCUMENT.
 # ============================================================
 
 OLD_API_BASE_URL = (
@@ -139,105 +147,6 @@ BACK_OFFICE_ADMIN_KEY = (
 
 
 # ============================================================
-# OPTIONAL CUSTOMER CARE EMAIL
-#
-# These are optional. Download/unlock does NOT depend on them.
-#
-# SMTP_HOST
-# SMTP_PORT
-# SMTP_USERNAME
-# SMTP_PASSWORD
-# SMTP_FROM
-# SMTP_USE_TLS
-# ============================================================
-
-SMTP_HOST = (
-    os.getenv(
-        "SMTP_HOST",
-        "",
-    )
-    .strip()
-)
-
-try:
-    SMTP_PORT = int(
-        os.getenv(
-            "SMTP_PORT",
-            "587",
-        )
-    )
-except Exception:
-    SMTP_PORT = 587
-
-SMTP_USERNAME = (
-    os.getenv(
-        "SMTP_USERNAME",
-        "",
-    )
-    .strip()
-)
-
-SMTP_PASSWORD = (
-    os.getenv(
-        "SMTP_PASSWORD",
-        "",
-    )
-    .strip()
-)
-
-SMTP_FROM = (
-    os.getenv(
-        "SMTP_FROM",
-        SMTP_USERNAME,
-    )
-    .strip()
-)
-
-SMTP_USE_TLS = (
-    os.getenv(
-        "SMTP_USE_TLS",
-        "true",
-    )
-    .strip()
-    .lower()
-    in {
-        "1",
-        "true",
-        "yes",
-        "on",
-    }
-)
-
-
-# ============================================================
-# OPTIONAL WHATSAPP CLOUD API
-#
-# WHATSAPP_ACCESS_TOKEN
-# WHATSAPP_PHONE_NUMBER_ID
-#
-# WhatsApp delivery requires a configured WhatsApp provider.
-# The document remains available for normal download even when
-# WhatsApp is not configured.
-# ============================================================
-
-WHATSAPP_ACCESS_TOKEN = (
-    os.getenv(
-        "WHATSAPP_ACCESS_TOKEN",
-        "",
-    )
-    .strip()
-)
-
-WHATSAPP_PHONE_NUMBER_ID = (
-    os.getenv(
-        "WHATSAPP_PHONE_NUMBER_ID",
-        "",
-    )
-    .strip()
-)
-
-
-# ============================================================
 # DEFAULTS
 # ============================================================
 
@@ -250,10 +159,7 @@ DEFAULT_PAYMENT_METHOD = "bank_transfer"
 # ============================================================
 
 app = FastAPI(
-    title=(
-        "Naija Pocket Business Center "
-        "Payment and Customer Care API"
-    ),
+    title="Naija Pocket Business Center Payment API",
     version=APP_VERSION,
 )
 
@@ -271,34 +177,23 @@ app.add_middleware(
 # ============================================================
 
 def now_iso() -> str:
-    return datetime.now(
-        timezone.utc
-    ).isoformat()
+    return datetime.now(timezone.utc).isoformat()
 
 
 def clean(value: Any) -> str:
     if value is None:
         return ""
-
     return str(value).strip()
 
 
 def money(value: Any) -> float:
     try:
-        return round(
-            float(value),
-            2,
-        )
-    except (
-        TypeError,
-        ValueError,
-    ):
+        return round(float(value), 2)
+    except (TypeError, ValueError):
         return 0.0
 
 
-def normalize_status(
-    status: Any,
-) -> str:
+def normalize_status(status: Any) -> str:
     return (
         clean(status)
         .lower()
@@ -307,9 +202,13 @@ def normalize_status(
     )
 
 
-def normalize_payment_id(
-    value: Any,
-) -> str:
+def normalize_payment_id(value: Any) -> str:
+    """
+    Internal compatibility only.
+
+    Payment references are never treated as the customer's
+    product identity.
+    """
     value = clean(value)
 
     if not value:
@@ -318,16 +217,72 @@ def normalize_payment_id(
     return value.upper()
 
 
-def normalize_job_id(
-    value: Any,
-) -> str:
+def normalize_job_id(value: Any) -> str:
+    """
+    Internal compatibility only.
+
+    Existing installations may still have an internal database
+    reference attached to a product. It must never be required
+    when Service + Title are available.
+    """
     return clean(value)
 
 
-def normalize_version(
-    value: Any,
-) -> str:
+def normalize_title(value: Any) -> str:
     return clean(value)
+
+
+def normalize_service(value: Any) -> str:
+    return clean(value)
+
+
+def product_identity(
+    service: Any,
+    title: Any,
+) -> str:
+    """
+    Human/business identity of the customer's product.
+
+    This is the important product lookup key.
+
+    It deliberately uses SERVICE + TITLE rather than a payment
+    reference.
+    """
+    service_text = normalize_service(service)
+    title_text = normalize_title(title)
+
+    if not service_text or not title_text:
+        return ""
+
+    return (
+        service_text.casefold()
+        + " | "
+        + title_text.casefold()
+    )
+
+
+def safe_product_part(value: Any) -> str:
+    """
+    Makes Service/Title safe for filesystem storage.
+    """
+    value = clean(value)
+
+    if not value:
+        return "product"
+
+    value = re.sub(
+        r'[<>:"/\\|?*\x00-\x1f]',
+        "_",
+        value,
+    )
+
+    value = re.sub(
+        r"\s+",
+        " ",
+        value,
+    ).strip()
+
+    return value[:150] or "product"
 
 
 def json_response_error(
@@ -351,17 +306,11 @@ def json_response_error(
     )
 
 
-# ============================================================
-# PAYMENT STATUS
-# ============================================================
-
 def payment_is_reported(
     status: Any,
 ) -> bool:
 
-    return normalize_status(
-        status
-    ) in {
+    return normalize_status(status) in {
         "reported",
         "verification_pending",
         "awaiting_verification",
@@ -372,9 +321,7 @@ def payment_is_verified(
     status: Any,
 ) -> bool:
 
-    return normalize_status(
-        status
-    ) in {
+    return normalize_status(status) in {
         "verified",
         "completed",
         "complete",
@@ -386,9 +333,7 @@ def payment_is_pending(
     status: Any,
 ) -> bool:
 
-    return normalize_status(
-        status
-    ) in {
+    return normalize_status(status) in {
         "pending",
         "created",
         "initiated",
@@ -396,38 +341,6 @@ def payment_is_pending(
         "verification_pending",
         "awaiting_verification",
     }
-
-
-# ============================================================
-# DELIVERY STATUS
-# ============================================================
-
-def delivery_is_verified(
-    delivery: dict[str, Any] | None,
-) -> bool:
-
-    if not delivery:
-        return False
-
-    return clean(
-        delivery.get(
-            "verification_status"
-        )
-    ).lower() == "verified"
-
-
-def delivery_is_unlocked(
-    delivery: dict[str, Any] | None,
-) -> bool:
-
-    if not delivery:
-        return False
-
-    return clean(
-        delivery.get(
-            "release_status"
-        )
-    ).lower() == "unlocked"
 
 
 # ============================================================
@@ -439,25 +352,15 @@ def nested_payment_value(
     *keys: str,
 ) -> Any:
 
-    payment = body.get(
-        "payment"
-    )
+    payment = body.get("payment")
 
-    if isinstance(
-        payment,
-        dict,
-    ):
+    if isinstance(payment, dict):
 
         for key in keys:
 
-            value = payment.get(
-                key
-            )
+            value = payment.get(key)
 
-            if value not in (
-                None,
-                "",
-            ):
+            if value not in (None, ""):
                 return value
 
     return None
@@ -468,18 +371,10 @@ def body_payment_id(
 ) -> str:
 
     candidates = (
-        body.get(
-            "payment_id"
-        ),
-        body.get(
-            "paymentId"
-        ),
-        body.get(
-            "paymentID"
-        ),
-        body.get(
-            "id"
-        ),
+        body.get("payment_id"),
+        body.get("paymentId"),
+        body.get("paymentID"),
+        body.get("id"),
         nested_payment_value(
             body,
             "payment_id",
@@ -491,9 +386,7 @@ def body_payment_id(
 
     for value in candidates:
 
-        value = normalize_payment_id(
-            value
-        )
+        value = normalize_payment_id(value)
 
         if value:
             return value
@@ -506,40 +399,22 @@ def body_job_id(
 ) -> str:
 
     candidates = (
-        body.get(
-            "job_id"
-        ),
-        body.get(
-            "jobId"
-        ),
-        body.get(
-            "work_id"
-        ),
-        body.get(
-            "workId"
-        ),
-        body.get(
-            "document_id"
-        ),
-        body.get(
-            "documentId"
-        ),
+        body.get("job_id"),
+        body.get("jobId"),
+        body.get("work_id"),
+        body.get("workId"),
         nested_payment_value(
             body,
             "job_id",
             "jobId",
             "work_id",
             "workId",
-            "document_id",
-            "documentId",
         ),
     )
 
     for value in candidates:
 
-        value = normalize_job_id(
-            value
-        )
+        value = normalize_job_id(value)
 
         if value:
             return value
@@ -547,30 +422,29 @@ def body_job_id(
     return ""
 
 
-def body_version_id(
+def body_service(
     body: dict[str, Any],
 ) -> str:
 
     candidates = (
-        body.get(
-            "version_id"
-        ),
-        body.get(
-            "versionId"
-        ),
-        body.get(
-            "document_version"
-        ),
-        body.get(
-            "version"
+        body.get("service"),
+        body.get("service_name"),
+        body.get("serviceName"),
+        body.get("product_service"),
+        body.get("productService"),
+        nested_payment_value(
+            body,
+            "service",
+            "service_name",
+            "serviceName",
+            "product_service",
+            "productService",
         ),
     )
 
     for value in candidates:
 
-        value = normalize_version(
-            value
-        )
+        value = normalize_service(value)
 
         if value:
             return value
@@ -578,66 +452,33 @@ def body_version_id(
     return ""
 
 
-def body_customer_email(
+def body_title(
     body: dict[str, Any],
 ) -> str:
 
     candidates = (
-        body.get(
-            "customer_email"
-        ),
-        body.get(
-            "customerEmail"
-        ),
-        body.get(
-            "email"
+        body.get("title"),
+        body.get("job_title"),
+        body.get("jobTitle"),
+        body.get("document_title"),
+        body.get("documentTitle"),
+        body.get("product_title"),
+        body.get("productTitle"),
+        nested_payment_value(
+            body,
+            "title",
+            "job_title",
+            "jobTitle",
+            "document_title",
+            "documentTitle",
+            "product_title",
+            "productTitle",
         ),
     )
 
     for value in candidates:
 
-        value = clean(value)
-
-        if value:
-            return value
-
-    return ""
-
-
-def body_customer_phone(
-    body: dict[str, Any],
-) -> str:
-
-    candidates = (
-        body.get(
-            "customer_phone"
-        ),
-        body.get(
-            "customerPhone"
-        ),
-        body.get(
-            "phone"
-        ),
-        body.get(
-            "phone_number"
-        ),
-        body.get(
-            "phoneNumber"
-        ),
-        body.get(
-            "whatsapp"
-        ),
-        body.get(
-            "whatsapp_number"
-        ),
-        body.get(
-            "whatsappNumber"
-        ),
-    )
-
-    for value in candidates:
-
-        value = clean(value)
+        value = normalize_title(value)
 
         if value:
             return value
@@ -674,10 +515,6 @@ def init_db() -> None:
 
     with connect_db() as conn:
 
-        # ----------------------------------------------------
-        # EXISTING PAYMENT TABLE
-        # ----------------------------------------------------
-
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS payment_orders (
@@ -685,11 +522,15 @@ def init_db() -> None:
 
                 payment_id TEXT NOT NULL UNIQUE,
 
-                job_id TEXT NOT NULL,
+                job_id TEXT,
 
                 customer_id TEXT,
 
                 service TEXT,
+
+                job_title TEXT,
+
+                product_key TEXT,
 
                 amount REAL NOT NULL,
 
@@ -730,105 +571,48 @@ def init_db() -> None:
             """
         )
 
-        # ----------------------------------------------------
-        # DOCUMENT-FIRST DELIVERY TABLE
-        #
-        # This is the important architectural addition.
-        #
-        # A finished document exists independently of a
-        # payment lookup.
-        # ----------------------------------------------------
+        columns = {
+            row["name"]
+            for row in conn.execute(
+                "PRAGMA table_info(payment_orders)"
+            ).fetchall()
+        }
 
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS document_deliveries (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+        if "job_title" not in columns:
 
-                job_id TEXT NOT NULL,
-
-                version_id TEXT NOT NULL,
-
-                customer_id TEXT,
-
-                customer_email TEXT,
-
-                customer_phone TEXT,
-
-                service TEXT,
-
-                amount REAL NOT NULL DEFAULT 0,
-
-                currency TEXT NOT NULL DEFAULT 'NGN',
-
-                document_filename TEXT NOT NULL,
-
-                document_saved_path TEXT NOT NULL,
-
-                document_saved_at TEXT NOT NULL,
-
-                document_payload TEXT,
-
-                payment_id TEXT,
-
-                verification_status TEXT
-                    NOT NULL DEFAULT 'pending',
-
-                release_status TEXT
-                    NOT NULL DEFAULT 'locked',
-
-                verification_note TEXT,
-
-                verified_at TEXT,
-
-                unlocked_at TEXT,
-
-                download_count INTEGER
-                    NOT NULL DEFAULT 0,
-
-                last_downloaded_at TEXT,
-
-                last_delivery_channel TEXT,
-
-                last_delivery_at TEXT,
-
-                email_sent_at TEXT,
-
-                whatsapp_sent_at TEXT,
-
-                created_at TEXT NOT NULL,
-
-                updated_at TEXT NOT NULL,
-
-                UNIQUE (
-                    job_id,
-                    version_id
-                )
+            conn.execute(
+                """
+                ALTER TABLE payment_orders
+                ADD COLUMN job_title TEXT
+                """
             )
-            """
-        )
 
-        conn.execute(
-            """
-            CREATE INDEX IF NOT EXISTS
-            idx_document_deliveries_job
-            ON document_deliveries(job_id)
-            """
-        )
+        if "product_key" not in columns:
 
-        conn.execute(
-            """
-            CREATE INDEX IF NOT EXISTS
-            idx_document_deliveries_status
-            ON document_deliveries(
-                verification_status,
-                release_status
+            conn.execute(
+                """
+                ALTER TABLE payment_orders
+                ADD COLUMN product_key TEXT
+                """
             )
-            """
-        )
 
-        # ----------------------------------------------------
-        # EXISTING INDEXES
-        # ----------------------------------------------------
+        if "document_saved_path" not in columns:
+
+            conn.execute(
+                """
+                ALTER TABLE payment_orders
+                ADD COLUMN document_saved_path TEXT
+                """
+            )
+
+        if "document_saved_at" not in columns:
+
+            conn.execute(
+                """
+                ALTER TABLE payment_orders
+                ADD COLUMN document_saved_at TEXT
+                """
+            )
 
         conn.execute(
             """
@@ -841,52 +625,29 @@ def init_db() -> None:
         conn.execute(
             """
             CREATE INDEX IF NOT EXISTS
+            idx_payment_orders_product_key
+            ON payment_orders(product_key)
+            """
+        )
+
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_payment_orders_service_title
+            ON payment_orders(service, job_title)
+            """
+        )
+
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS
             idx_payment_orders_status
             ON payment_orders(payment_status)
             """
         )
 
-        # ----------------------------------------------------
-        # SAFE MIGRATION OF EXISTING PAYMENT TABLE
-        # ----------------------------------------------------
-
-        columns = {
-            row["name"]
-            for row in conn.execute(
-                "PRAGMA table_info(payment_orders)"
-            ).fetchall()
-        }
-
-        if (
-            "document_saved_path"
-            not in columns
-        ):
-
-            conn.execute(
-                """
-                ALTER TABLE payment_orders
-                ADD COLUMN document_saved_path TEXT
-                """
-            )
-
-        if (
-            "document_saved_at"
-            not in columns
-        ):
-
-            conn.execute(
-                """
-                ALTER TABLE payment_orders
-                ADD COLUMN document_saved_at TEXT
-                """
-            )
-
         conn.commit()
 
-
-# ============================================================
-# ROW HELPERS
-# ============================================================
 
 def row_to_dict(
     row: sqlite3.Row | None,
@@ -904,7 +665,7 @@ def row_to_dict(
 
 def database_file_info() -> dict[str, Any]:
 
-    info = {
+    info: dict[str, Any] = {
         "path": str(DB_PATH),
         "exists": DB_PATH.is_file(),
         "absolute": DB_PATH.is_absolute(),
@@ -959,32 +720,6 @@ def payment_record_count() -> int:
         return 0
 
 
-def document_record_count() -> int:
-
-    try:
-
-        init_db()
-
-        with connect_db() as conn:
-
-            row = conn.execute(
-                """
-                SELECT COUNT(*) AS count
-                FROM document_deliveries
-                """
-            ).fetchone()
-
-        return int(
-            row["count"]
-            if row
-            else 0
-        )
-
-    except Exception:
-
-        return 0
-
-
 # ============================================================
 # PAYMENT READERS
 # ============================================================
@@ -1022,8 +757,7 @@ def get_payment(
                 """
                 SELECT *
                 FROM payment_orders
-                WHERE payment_id
-                    COLLATE NOCASE = ?
+                WHERE payment_id COLLATE NOCASE = ?
                 LIMIT 1
                 """,
                 (
@@ -1034,13 +768,53 @@ def get_payment(
     return row_to_dict(row)
 
 
+def get_latest_payment_for_product(
+    service: str,
+    title: str,
+) -> dict[str, Any] | None:
+
+    service = normalize_service(service)
+    title = normalize_title(title)
+
+    if not service or not title:
+        return None
+
+    key = product_identity(
+        service,
+        title,
+    )
+
+    init_db()
+
+    with connect_db() as conn:
+
+        row = conn.execute(
+            """
+            SELECT *
+            FROM payment_orders
+            WHERE product_key = ?
+               OR (
+                    service COLLATE NOCASE = ?
+                    AND job_title COLLATE NOCASE = ?
+               )
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (
+                key,
+                service,
+                title,
+            ),
+        ).fetchone()
+
+    return row_to_dict(row)
+
+
 def get_latest_payment_for_job(
     job_id: str,
 ) -> dict[str, Any] | None:
 
-    job_id = normalize_job_id(
-        job_id
-    )
+    job_id = normalize_job_id(job_id)
 
     if not job_id:
         return None
@@ -1065,54 +839,21 @@ def get_latest_payment_for_job(
     return row_to_dict(row)
 
 
-def get_payment_for_job_version(
-    job_id: str,
-    version_id: str,
-) -> dict[str, Any] | None:
-
-    job_id = normalize_job_id(
-        job_id
-    )
-
-    version_id = normalize_version(
-        version_id
-    )
-
-    if not job_id or not version_id:
-        return None
-
-    init_db()
-
-    with connect_db() as conn:
-
-        row = conn.execute(
-            """
-            SELECT *
-            FROM payment_orders
-            WHERE job_id = ?
-              AND document_version = ?
-            ORDER BY id DESC
-            LIMIT 1
-            """,
-            (
-                job_id,
-                version_id,
-            ),
-        ).fetchone()
-
-    return row_to_dict(row)
-
-
-def get_payments_for_job(
-    job_id: str,
+def get_payments_for_product(
+    service: str,
+    title: str,
 ) -> list[dict[str, Any]]:
 
-    job_id = normalize_job_id(
-        job_id
-    )
+    service = normalize_service(service)
+    title = normalize_title(title)
 
-    if not job_id:
+    if not service or not title:
         return []
+
+    key = product_identity(
+        service,
+        title,
+    )
 
     init_db()
 
@@ -1122,11 +863,17 @@ def get_payments_for_job(
             """
             SELECT *
             FROM payment_orders
-            WHERE job_id = ?
+            WHERE product_key = ?
+               OR (
+                    service COLLATE NOCASE = ?
+                    AND job_title COLLATE NOCASE = ?
+               )
             ORDER BY id DESC
             """,
             (
-                job_id,
+                key,
+                service,
+                title,
             ),
         ).fetchall()
 
@@ -1136,9 +883,7 @@ def get_payments_for_job(
     ]
 
 
-def list_pending_payments() -> list[
-    dict[str, Any]
-]:
+def list_pending_payments() -> list[dict[str, Any]]:
 
     init_db()
 
@@ -1163,9 +908,7 @@ def list_pending_payments() -> list[
     ]
 
 
-def list_all_payments() -> list[
-    dict[str, Any]
-]:
+def list_all_payments() -> list[dict[str, Any]]:
 
     init_db()
 
@@ -1186,142 +929,66 @@ def list_all_payments() -> list[
 
 
 # ============================================================
-# DOCUMENT-FIRST READERS
+# PRODUCT RESOLUTION
 # ============================================================
 
-def get_document_delivery(
-    job_id: str,
-    version_id: str = "",
+def resolve_product_payment(
+    *,
+    payment_id: str = "",
+    job_id: str = "",
+    service: str = "",
+    title: str = "",
 ) -> dict[str, Any] | None:
+    """
+    Product-first resolution.
 
-    job_id = normalize_job_id(
-        job_id
-    )
+    Priority:
 
-    version_id = normalize_version(
-        version_id
-    )
+        1. Service + Title
+        2. Existing internal payment reference
+        3. Existing internal job reference
 
-    if not job_id:
-        return None
+    The business product remains Service + Title.
+    """
 
-    init_db()
+    service = normalize_service(service)
+    title = normalize_title(title)
+    payment_id = normalize_payment_id(payment_id)
+    job_id = normalize_job_id(job_id)
 
-    with connect_db() as conn:
+    if service and title:
 
-        if version_id:
+        product = get_latest_payment_for_product(
+            service,
+            title,
+        )
 
-            row = conn.execute(
-                """
-                SELECT *
-                FROM document_deliveries
-                WHERE job_id = ?
-                  AND version_id = ?
-                LIMIT 1
-                """,
-                (
-                    job_id,
-                    version_id,
-                ),
-            ).fetchone()
+        if product:
+            return product
 
-        else:
+    if payment_id:
 
-            row = conn.execute(
-                """
-                SELECT *
-                FROM document_deliveries
-                WHERE job_id = ?
-                ORDER BY id DESC
-                LIMIT 1
-                """,
-                (
-                    job_id,
-                ),
-            ).fetchone()
+        payment = get_payment(
+            payment_id
+        )
 
-    return row_to_dict(row)
+        if payment:
+            return payment
 
+    if job_id:
 
-def get_document_by_payment_id(
-    payment_id: str,
-) -> dict[str, Any] | None:
+        payment = get_latest_payment_for_job(
+            job_id
+        )
 
-    payment_id = normalize_payment_id(
-        payment_id
-    )
+        if payment:
+            return payment
 
-    if not payment_id:
-        return None
-
-    init_db()
-
-    with connect_db() as conn:
-
-        row = conn.execute(
-            """
-            SELECT *
-            FROM document_deliveries
-            WHERE payment_id
-                COLLATE NOCASE = ?
-            ORDER BY id DESC
-            LIMIT 1
-            """,
-            (
-                payment_id,
-            ),
-        ).fetchone()
-
-    return row_to_dict(row)
-
-
-def list_document_deliveries() -> list[
-    dict[str, Any]
-]:
-
-    init_db()
-
-    with connect_db() as conn:
-
-        rows = conn.execute(
-            """
-            SELECT *
-            FROM document_deliveries
-            ORDER BY id DESC
-            """
-        ).fetchall()
-
-    return [
-        dict(row)
-        for row in rows
-    ]
-
-
-def list_pending_documents() -> list[
-    dict[str, Any]
-]:
-
-    init_db()
-
-    with connect_db() as conn:
-
-        rows = conn.execute(
-            """
-            SELECT *
-            FROM document_deliveries
-            WHERE release_status != 'unlocked'
-            ORDER BY id DESC
-            """
-        ).fetchall()
-
-    return [
-        dict(row)
-        for row in rows
-    ]
+    return None
 
 
 # ============================================================
-# PAYMENT WRITE
+# PAYMENT DATABASE WRITE
 # ============================================================
 
 def create_payment_record(
@@ -1330,6 +997,7 @@ def create_payment_record(
     job_id: str,
     customer_id: str,
     service: str,
+    title: str,
     amount: float,
     currency: str,
     payment_method: str,
@@ -1346,14 +1014,30 @@ def create_payment_record(
         job_id
     )
 
+    service = normalize_service(
+        service
+    )
+
+    title = normalize_title(
+        title
+    )
+
     if not payment_id:
+
         raise RuntimeError(
-            "Cannot create payment without payment ID."
+            "Cannot create payment without internal payment reference."
         )
 
-    if not job_id:
+    if not service:
+
         raise RuntimeError(
-            "Cannot create payment without job ID."
+            "Cannot create payment without service."
+        )
+
+    if not title:
+
+        raise RuntimeError(
+            "Cannot create payment without product title."
         )
 
     timestamp = now_iso()
@@ -1361,6 +1045,11 @@ def create_payment_record(
     payload_json = json.dumps(
         document_payload,
         ensure_ascii=False,
+    )
+
+    product_key = product_identity(
+        service,
+        title,
     )
 
     with connect_db() as conn:
@@ -1378,6 +1067,8 @@ def create_payment_record(
                     job_id,
                     customer_id,
                     service,
+                    job_title,
+                    product_key,
                     amount,
                     currency,
                     payment_method,
@@ -1396,6 +1087,8 @@ def create_payment_record(
                     ?,
                     ?,
                     ?,
+                    ?,
+                    ?,
                     'pending',
                     ?,
                     ?,
@@ -1406,9 +1099,11 @@ def create_payment_record(
                 """,
                 (
                     payment_id,
-                    job_id,
+                    job_id or None,
                     customer_id,
                     service,
+                    title,
+                    product_key,
                     amount,
                     currency,
                     payment_method,
@@ -1438,8 +1133,8 @@ def create_payment_record(
 
                 raise RuntimeError(
                     "PAYMENT_PERSISTENCE_FAILED: "
-                    "SQLite INSERT completed without "
-                    "an immediately readable payment row."
+                    "payment record was inserted but "
+                    "could not be read inside the transaction."
                 )
 
             conn.commit()
@@ -1461,8 +1156,7 @@ def create_payment_record(
 
         raise RuntimeError(
             "PAYMENT_PERSISTENCE_FAILED: "
-            "payment ID was inserted but could not "
-            "be read back after SQLite commit."
+            "payment record could not be read after commit."
         )
 
     return persisted
@@ -1571,8 +1265,7 @@ def update_payment_record(
             f"""
             UPDATE payment_orders
             SET {', '.join(fields)}
-            WHERE payment_id
-                COLLATE NOCASE = ?
+            WHERE payment_id COLLATE NOCASE = ?
             """,
             tuple(values),
         )
@@ -1604,8 +1297,7 @@ def increment_download(
                     download_count + 1,
                 downloaded_at = ?,
                 updated_at = ?
-            WHERE payment_id
-                COLLATE NOCASE = ?
+            WHERE payment_id COLLATE NOCASE = ?
             """,
             (
                 timestamp,
@@ -1634,8 +1326,7 @@ def delete_payment_record(
         conn.execute(
             """
             DELETE FROM payment_orders
-            WHERE payment_id
-                COLLATE NOCASE = ?
+            WHERE payment_id COLLATE NOCASE = ?
             """,
             (
                 payment_id,
@@ -1643,457 +1334,6 @@ def delete_payment_record(
         )
 
         conn.commit()
-
-
-# ============================================================
-# DOCUMENT-FIRST DATABASE WRITE
-# ============================================================
-
-def upsert_document_delivery(
-    document: dict[str, Any],
-    saved_path: Path,
-    *,
-    payment_id: str = "",
-    customer_email: str = "",
-    customer_phone: str = "",
-) -> dict[str, Any]:
-
-    job_id = normalize_job_id(
-        document.get(
-            "job_id"
-        )
-    )
-
-    version_id = normalize_version(
-        document.get(
-            "version_id"
-        )
-        or document.get(
-            "document_version"
-        )
-    )
-
-    if not job_id:
-        raise RuntimeError(
-            "DOCUMENT_JOB_ID_REQUIRED"
-        )
-
-    if not version_id:
-        raise RuntimeError(
-            "DOCUMENT_VERSION_REQUIRED"
-        )
-
-    filename = (
-        clean(
-            document.get(
-                "filename"
-            )
-        )
-        or clean(
-            document.get(
-                "document_filename"
-            )
-        )
-        or f"naija_pocket_{job_id}.docx"
-    )
-
-    payload = snapshot_payload(
-        document
-    )
-
-    timestamp = now_iso()
-
-    existing = get_document_delivery(
-        job_id,
-        version_id,
-    )
-
-    if existing:
-
-        # ----------------------------------------------------
-        # CRITICAL:
-        #
-        # NEVER replace an existing saved document with a new
-        # generated file.
-        #
-        # We only update metadata.
-        # ----------------------------------------------------
-
-        existing_path = clean(
-            existing.get(
-                "document_saved_path"
-            )
-        )
-
-        if existing_path:
-
-            actual = Path(
-                existing_path
-            )
-
-            if (
-                actual.is_file()
-                and actual.stat().st_size > 0
-            ):
-                saved_path = actual
-
-        with connect_db() as conn:
-
-            conn.execute(
-                """
-                UPDATE document_deliveries
-                SET
-                    customer_id = COALESCE(
-                        NULLIF(?, ''),
-                        customer_id
-                    ),
-                    customer_email = COALESCE(
-                        NULLIF(?, ''),
-                        customer_email
-                    ),
-                    customer_phone = COALESCE(
-                        NULLIF(?, ''),
-                        customer_phone
-                    ),
-                    service = COALESCE(
-                        NULLIF(?, ''),
-                        service
-                    ),
-                    amount = CASE
-                        WHEN ? > 0
-                        THEN ?
-                        ELSE amount
-                    END,
-                    payment_id = COALESCE(
-                        NULLIF(?, ''),
-                        payment_id
-                    ),
-                    updated_at = ?
-                WHERE job_id = ?
-                  AND version_id = ?
-                """,
-                (
-                    clean(
-                        document.get(
-                            "customer_id"
-                        )
-                    ),
-                    customer_email,
-                    customer_phone,
-                    clean(
-                        document.get(
-                            "service"
-                        )
-                    ),
-                    money(
-                        document.get(
-                            "amount"
-                        )
-                    ),
-                    money(
-                        document.get(
-                            "amount"
-                        )
-                    ),
-                    normalize_payment_id(
-                        payment_id
-                    ),
-                    timestamp,
-                    job_id,
-                    version_id,
-                ),
-            )
-
-            conn.commit()
-
-        refreshed = get_document_delivery(
-            job_id,
-            version_id,
-        )
-
-        if not refreshed:
-            raise RuntimeError(
-                "DOCUMENT_DELIVERY_RECORD_MISSING"
-            )
-
-        return refreshed
-
-    with connect_db() as conn:
-
-        conn.execute(
-            """
-            INSERT INTO document_deliveries (
-                job_id,
-                version_id,
-                customer_id,
-                customer_email,
-                customer_phone,
-                service,
-                amount,
-                currency,
-                document_filename,
-                document_saved_path,
-                document_saved_at,
-                document_payload,
-                payment_id,
-                verification_status,
-                release_status,
-                created_at,
-                updated_at
-            )
-            VALUES (
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                'pending',
-                'locked',
-                ?,
-                ?
-            )
-            """,
-            (
-                job_id,
-                version_id,
-                clean(
-                    document.get(
-                        "customer_id"
-                    )
-                ),
-                customer_email,
-                customer_phone,
-                clean(
-                    document.get(
-                        "service"
-                    )
-                ),
-                money(
-                    document.get(
-                        "amount"
-                    )
-                ),
-                DEFAULT_CURRENCY,
-                filename,
-                str(saved_path),
-                timestamp,
-                json.dumps(
-                    payload,
-                    ensure_ascii=False,
-                ),
-                normalize_payment_id(
-                    payment_id
-                ),
-                timestamp,
-                timestamp,
-            ),
-        )
-
-        conn.commit()
-
-    result = get_document_delivery(
-        job_id,
-        version_id,
-    )
-
-    if not result:
-        raise RuntimeError(
-            "DOCUMENT_DELIVERY_PERSISTENCE_FAILED"
-        )
-
-    return result
-
-
-def update_document_delivery(
-    job_id: str,
-    version_id: str,
-    *,
-    payment_id: str | None = None,
-    verification_status: str | None = None,
-    release_status: str | None = None,
-    verification_note: str | None = None,
-    verified_at: str | None = None,
-    unlocked_at: str | None = None,
-    customer_email: str | None = None,
-    customer_phone: str | None = None,
-    last_delivery_channel: str | None = None,
-    last_delivery_at: str | None = None,
-    email_sent_at: str | None = None,
-    whatsapp_sent_at: str | None = None,
-) -> dict[str, Any] | None:
-
-    fields: list[str] = []
-    values: list[Any] = []
-
-    if payment_id is not None:
-
-        fields.append(
-            "payment_id = ?"
-        )
-
-        values.append(
-            normalize_payment_id(
-                payment_id
-            )
-        )
-
-    if verification_status is not None:
-
-        fields.append(
-            "verification_status = ?"
-        )
-
-        values.append(
-            verification_status
-        )
-
-    if release_status is not None:
-
-        fields.append(
-            "release_status = ?"
-        )
-
-        values.append(
-            release_status
-        )
-
-    if verification_note is not None:
-
-        fields.append(
-            "verification_note = ?"
-        )
-
-        values.append(
-            verification_note
-        )
-
-    if verified_at is not None:
-
-        fields.append(
-            "verified_at = ?"
-        )
-
-        values.append(
-            verified_at
-        )
-
-    if unlocked_at is not None:
-
-        fields.append(
-            "unlocked_at = ?"
-        )
-
-        values.append(
-            unlocked_at
-        )
-
-    if customer_email is not None:
-
-        fields.append(
-            "customer_email = ?"
-        )
-
-        values.append(
-            customer_email
-        )
-
-    if customer_phone is not None:
-
-        fields.append(
-            "customer_phone = ?"
-        )
-
-        values.append(
-            customer_phone
-        )
-
-    if last_delivery_channel is not None:
-
-        fields.append(
-            "last_delivery_channel = ?"
-        )
-
-        values.append(
-            last_delivery_channel
-        )
-
-    if last_delivery_at is not None:
-
-        fields.append(
-            "last_delivery_at = ?"
-        )
-
-        values.append(
-            last_delivery_at
-        )
-
-    if email_sent_at is not None:
-
-        fields.append(
-            "email_sent_at = ?"
-        )
-
-        values.append(
-            email_sent_at
-        )
-
-    if whatsapp_sent_at is not None:
-
-        fields.append(
-            "whatsapp_sent_at = ?"
-        )
-
-        values.append(
-            whatsapp_sent_at
-        )
-
-    if not fields:
-        return get_document_delivery(
-            job_id,
-            version_id,
-        )
-
-    fields.append(
-        "updated_at = ?"
-    )
-
-    values.append(
-        now_iso()
-    )
-
-    values.extend(
-        [
-            normalize_job_id(job_id),
-            normalize_version(version_id),
-        ]
-    )
-
-    with connect_db() as conn:
-
-        conn.execute(
-            f"""
-            UPDATE document_deliveries
-            SET {', '.join(fields)}
-            WHERE job_id = ?
-              AND version_id = ?
-            """,
-            tuple(values),
-        )
-
-        conn.commit()
-
-    return get_document_delivery(
-        job_id,
-        version_id,
-    )
 
 
 # ============================================================
@@ -2107,32 +1347,19 @@ def normalize_pages(
     if value is None:
         return []
 
-    if isinstance(
-        value,
-        str,
-    ):
+    if isinstance(value, str):
 
         text = value.strip()
 
-        return (
-            [text]
-            if text
-            else []
-        )
+        return [text] if text else []
 
-    if isinstance(
-        value,
-        (list, tuple),
-    ):
+    if isinstance(value, (list, tuple)):
 
         result: list[str] = []
 
         for item in value:
 
-            if isinstance(
-                item,
-                dict,
-            ):
+            if isinstance(item, dict):
 
                 text = (
                     item.get("text")
@@ -2142,32 +1369,21 @@ def normalize_pages(
                     or ""
                 )
 
-                text = str(
-                    text
-                ).strip()
+                text = str(text).strip()
 
                 if text:
-                    result.append(
-                        text
-                    )
+                    result.append(text)
 
             else:
 
-                text = str(
-                    item
-                ).strip()
+                text = str(item).strip()
 
                 if text:
-                    result.append(
-                        text
-                    )
+                    result.append(text)
 
         return result
 
-    if isinstance(
-        value,
-        dict,
-    ):
+    if isinstance(value, dict):
 
         text = (
             value.get("text")
@@ -2177,25 +1393,13 @@ def normalize_pages(
             or ""
         )
 
-        text = str(
-            text
-        ).strip()
+        text = str(text).strip()
 
-        return (
-            [text]
-            if text
-            else []
-        )
+        return [text] if text else []
 
-    text = str(
-        value
-    ).strip()
+    text = str(value).strip()
 
-    return (
-        [text]
-        if text
-        else []
-    )
+    return [text] if text else []
 
 
 def document_has_content(
@@ -2203,9 +1407,7 @@ def document_has_content(
 ) -> bool:
 
     pages = normalize_pages(
-        document.get(
-            "pages"
-        )
+        document.get("pages")
     )
 
     if pages:
@@ -2222,40 +1424,27 @@ def document_has_content(
 
 def normalize_document(
     document: dict[str, Any],
-    job_id: str,
+    job_id: str = "",
     *,
     version_id: str = "",
     filename: str = "",
     service: str = "",
+    title: str = "",
     customer_id: str = "",
     amount: float = 0.0,
 ) -> dict[str, Any]:
 
     pages = normalize_pages(
-        document.get(
-            "pages"
-        )
-        or document.get(
-            "document_pages"
-        )
-        or document.get(
-            "review_pages"
-        )
-        or document.get(
-            "page_texts"
-        )
+        document.get("pages")
+        or document.get("document_pages")
+        or document.get("review_pages")
+        or document.get("page_texts")
     )
 
     text = clean(
-        document.get(
-            "document_text"
-        )
-        or document.get(
-            "text"
-        )
-        or document.get(
-            "content"
-        )
+        document.get("document_text")
+        or document.get("text")
+        or document.get("content")
     )
 
     if not pages and text:
@@ -2263,216 +1452,176 @@ def normalize_document(
 
     final_version = clean(
         version_id
-        or document.get(
-            "version_id"
-        )
-        or document.get(
-            "document_version"
-        )
-        or document.get(
-            "version"
-        )
+        or document.get("version_id")
+        or document.get("document_version")
+        or document.get("version")
     )
 
     final_filename = clean(
         filename
-        or document.get(
-            "filename"
-        )
-        or document.get(
-            "document_filename"
-        )
-        or f"naija_pocket_{job_id}.docx"
+        or document.get("filename")
+        or document.get("document_filename")
+        or "naija_pocket_document.docx"
     )
-
-    final_filename = Path(
-        final_filename
-    ).name
 
     if not final_filename.lower().endswith(
         ".docx"
     ):
         final_filename += ".docx"
 
-    final_service = clean(
+    final_service = normalize_service(
         service
-        or document.get(
-            "service"
-        )
+        or document.get("service")
+    )
+
+    final_title = normalize_title(
+        title
+        or document.get("title")
+        or document.get("job_title")
+        or document.get("document_title")
     )
 
     final_customer = clean(
         customer_id
-        or document.get(
-            "customer_id"
-        )
+        or document.get("customer_id")
     )
 
     final_amount = (
         money(amount)
-        or money(
-            document.get(
-                "amount"
-            )
-        )
-        or money(
-            document.get(
-                "total_amount"
-            )
-        )
-        or money(
-            document.get(
-                "price"
-            )
-        )
+        or money(document.get("amount"))
+        or money(document.get("total_amount"))
+        or money(document.get("price"))
     )
 
     return {
-        "job_id": clean(
-            job_id
-        ),
-        "pages": pages,
-        "document_text": text,
-        "version_id": final_version,
-        "document_version": final_version,
-        "filename": final_filename,
-        "document_filename": final_filename,
+        "job_id": clean(job_id),
+
         "service": final_service,
+
+        "title": final_title,
+
+        "job_title": final_title,
+
+        "product_key": product_identity(
+            final_service,
+            final_title,
+        ),
+
+        "pages": pages,
+
+        "document_text": text,
+
+        "version_id": final_version,
+
+        "document_version": final_version,
+
+        "filename": final_filename,
+
+        "document_filename": final_filename,
+
         "customer_id": final_customer,
+
         "amount": final_amount,
+
         "review_finished": True,
+
         "status": "review_complete",
     }
 
+
+# ============================================================
+# SNAPSHOT PAYLOAD
+# ============================================================
 
 def snapshot_payload(
     document: dict[str, Any],
 ) -> dict[str, Any]:
 
+    service = normalize_service(
+        document.get("service")
+    )
+
+    title = normalize_title(
+        document.get("title")
+        or document.get("job_title")
+    )
+
     return {
-        "job_id": document.get(
-            "job_id"
+        "job_id": clean(
+            document.get("job_id")
         ),
+
+        "service": service,
+
+        "title": title,
+
+        "job_title": title,
+
+        "product_key": product_identity(
+            service,
+            title,
+        ),
+
         "pages": normalize_pages(
-            document.get(
-                "pages"
-            )
+            document.get("pages")
         ),
+
         "document_text": clean(
-            document.get(
-                "document_text"
-            )
+            document.get("document_text")
         ),
+
         "version_id": clean(
-            document.get(
-                "version_id"
-            )
+            document.get("version_id")
         ),
+
         "document_version": clean(
-            document.get(
-                "document_version"
-            )
+            document.get("document_version")
         ),
-        "service": clean(
-            document.get(
-                "service"
-            )
-        ),
+
         "filename": clean(
-            document.get(
-                "filename"
-            )
+            document.get("filename")
         ),
+
         "document_filename": clean(
-            document.get(
-                "document_filename"
-            )
+            document.get("document_filename")
         ),
+
         "customer_id": clean(
-            document.get(
-                "customer_id"
-            )
+            document.get("customer_id")
         ),
+
         "amount": money(
-            document.get(
-                "amount"
-            )
+            document.get("amount")
         ),
     }
 
 
-# ============================================================
-# DOCUMENT PATH HELPERS
-# ============================================================
+def payment_document(
+    payment: dict[str, Any],
+) -> dict[str, Any]:
 
-def delivery_document_path(
-    delivery: dict[str, Any],
-) -> Path | None:
-
-    raw = clean(
-        delivery.get(
-            "document_saved_path"
+    raw = (
+        payment.get(
+            "document_payload"
         )
+        or "{}"
     )
-
-    if not raw:
-        return None
-
-    path = Path(
-        raw
-    )
-
-    if path.is_absolute():
-        return path
-
-    return BASE_DIR / path
-
-
-def delivery_document_exists(
-    delivery: dict[str, Any] | None,
-) -> bool:
-
-    if not delivery:
-        return False
-
-    path = delivery_document_path(
-        delivery
-    )
-
-    if not path:
-        return False
 
     try:
 
-        return (
-            path.is_file()
-            and path.stat().st_size > 0
-        )
+        value = json.loads(raw)
+
+        if isinstance(value, dict):
+            return value
 
     except Exception:
+        pass
 
-        return False
-
-
-def delivery_document_size(
-    delivery: dict[str, Any] | None,
-) -> int:
-
-    path = delivery_document_path(
-        delivery
-    )
-
-    if not path:
-        return 0
-
-    try:
-        return path.stat().st_size
-    except Exception:
-        return 0
+    return {}
 
 
 # ============================================================
-# LEGACY PAYMENT DOCUMENT PATH
+# SAVED DOCUMENT PATH
 # ============================================================
 
 def saved_document_path(
@@ -2488,9 +1637,7 @@ def saved_document_path(
     if not raw:
         return None
 
-    path = Path(
-        raw
-    )
+    path = Path(raw)
 
     if path.is_absolute():
         return path
@@ -2517,7 +1664,6 @@ def saved_document_exists(
         )
 
     except Exception:
-
         return False
 
 
@@ -2534,6 +1680,7 @@ def saved_document_size(
 
     try:
         return path.stat().st_size
+
     except Exception:
         return 0
 
@@ -2566,9 +1713,7 @@ def paragraph_xml(
 
     runs: list[str] = []
 
-    for index, line in enumerate(
-        lines
-    ):
+    for index, line in enumerate(lines):
 
         if index:
 
@@ -2622,9 +1767,7 @@ def make_docx(
             )
 
         body_parts.append(
-            paragraph_xml(
-                page
-            )
+            paragraph_xml(page)
         )
 
     document_xml = (
@@ -2662,8 +1805,7 @@ def make_docx(
       </w:rPr>
     </w:rPrDefault>
   </w:docDefaults>
-</w:styles>
-"""
+</w:styles>"""
 
     content_types = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
@@ -2674,9 +1816,21 @@ def make_docx(
   <Override PartName="/word/document.xml"
     ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
   <Override PartName="/word/styles.xml"
-    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.styles+xml"/>
-</Types>
-"""
+    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>"""
+
+    # Correct the styles content type explicitly.
+    content_types = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels"
+    ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml"
+    ContentType="application/xml"/>
+  <Override PartName="/word/document.xml"
+    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml"
+    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+</Types>"""
 
     rels = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
@@ -2684,8 +1838,7 @@ def make_docx(
     Id="rId1"
     Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
     Target="word/document.xml"/>
-</Relationships>
-"""
+</Relationships>"""
 
     document_rels = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
@@ -2693,8 +1846,7 @@ def make_docx(
     Id="rId1"
     Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"
     Target="styles.xml"/>
-</Relationships>
-"""
+</Relationships>"""
 
     temporary = output_path.with_suffix(
         ".tmp.docx"
@@ -2756,80 +1908,30 @@ def make_docx(
 
 
 # ============================================================
-# EXACT DOCUMENT SNAPSHOT
+# SAVE EXACT DOCUMENT SNAPSHOT
 # ============================================================
 
-def save_document_first(
+def save_exact_document_snapshot(
+    payment: dict[str, Any],
     document: dict[str, Any],
-) -> tuple[
-    bool,
-    str,
-    Path | None,
-]:
+) -> tuple[bool, str]:
 
-    job_id = normalize_job_id(
-        document.get(
-            "job_id"
+    # NEVER replace an already saved product snapshot.
+    if saved_document_exists(
+        payment
+    ):
+
+        existing = saved_document_path(
+            payment
         )
-    )
 
-    version = normalize_version(
-        document.get(
-            "version_id"
-        )
-            or document.get(
-                "document_version"
-            )
-    )
-
-    if not job_id:
         return (
-            False,
-            "Job ID is missing.",
-            None,
+            True,
+            str(existing),
         )
-
-    if not version:
-        return (
-            False,
-            "Document version is missing.",
-            None,
-        )
-
-    # --------------------------------------------------------
-    # If this exact job/version already exists and the file is
-    # present, reuse it. NEVER regenerate it.
-    # --------------------------------------------------------
-
-    existing = get_document_delivery(
-        job_id,
-        version,
-    )
-
-    if existing:
-
-        existing_path = (
-            delivery_document_path(
-                existing
-            )
-        )
-
-        if (
-            existing_path
-            and existing_path.is_file()
-            and existing_path.stat().st_size > 0
-        ):
-
-            return (
-                True,
-                str(existing_path),
-                existing_path,
-            )
 
     pages = normalize_pages(
-        document.get(
-            "pages"
-        )
+        document.get("pages")
     )
 
     if not pages:
@@ -2848,21 +1950,34 @@ def save_document_first(
         return (
             False,
             "The reviewed document contains no downloadable content.",
-            None,
         )
+
+    service = normalize_service(
+        document.get("service")
+        or payment.get("service")
+    )
+
+    title = normalize_title(
+        document.get("title")
+        or document.get("job_title")
+        or payment.get("job_title")
+    )
 
     filename = (
         clean(
-            document.get(
-                "filename"
-            )
+            document.get("filename")
         )
         or clean(
             document.get(
                 "document_filename"
             )
         )
-        or f"naija_pocket_{job_id}.docx"
+        or clean(
+            payment.get(
+                "document_filename"
+            )
+        )
+        or "naija_pocket_document.docx"
     )
 
     filename = Path(
@@ -2874,17 +1989,33 @@ def save_document_first(
     ):
         filename += ".docx"
 
+    if not service:
+        service = "Document"
+
+    if not title:
+        title = "Customer Product"
+
     # --------------------------------------------------------
-    # The document is stored by JOB + VERSION.
+    # PRODUCT-BASED STORAGE
     #
-    # It is NOT dependent on a payment ID.
+    # The folder is based on SERVICE + TITLE.
+    #
+    # Any internal payment reference remains only in the
+    # database record and is not the product identity.
     # --------------------------------------------------------
+
+    service_folder = safe_product_part(
+        service
+    )
+
+    title_folder = safe_product_part(
+        title
+    )
 
     folder = (
         DOWNLOAD_DIR
-        / "documents"
-        / clean(job_id)
-        / clean(version)
+        / service_folder
+        / title_folder
     )
 
     folder.mkdir(
@@ -2912,34 +2043,76 @@ def save_document_first(
 
             return (
                 False,
-                "The exact reviewed document was not saved correctly.",
-                None,
+                "The exact reviewed document snapshot was not saved correctly.",
             )
 
-        delivery = upsert_document_delivery(
-            document,
-            output,
+        timestamp = now_iso()
+
+        payment_id = normalize_payment_id(
+            payment.get(
+                "payment_id"
+            )
         )
 
-        if not delivery_document_exists(
-            delivery
+        with connect_db() as conn:
+
+            conn.execute(
+                """
+                UPDATE payment_orders
+                SET
+                    document_saved_path = ?,
+                    document_saved_at = ?,
+                    document_filename = ?,
+                    service = ?,
+                    job_title = ?,
+                    product_key = ?,
+                    updated_at = ?
+                WHERE payment_id COLLATE NOCASE = ?
+                """,
+                (
+                    str(output),
+                    timestamp,
+                    filename,
+                    service,
+                    title,
+                    product_identity(
+                        service,
+                        title,
+                    ),
+                    timestamp,
+                    payment_id,
+                ),
+            )
+
+            conn.commit()
+
+        refreshed = get_payment(
+            payment_id
+        )
+
+        if not refreshed:
+
+            return (
+                False,
+                "Payment record disappeared after document save.",
+            )
+
+        if not saved_document_exists(
+            refreshed
         ):
 
             return (
                 False,
-                "The document was created but could not be confirmed.",
-                None,
+                "Document file was created but could not be confirmed.",
             )
 
         return (
             True,
             str(output),
-            output,
         )
 
     except Exception as exc:
 
-        # Only remove a file created during THIS operation.
         try:
 
             if output.exists():
@@ -2951,152 +2124,7 @@ def save_document_first(
         return (
             False,
             str(exc),
-            None,
         )
-
-
-# ============================================================
-# CONNECT PAYMENT RECORD TO DOCUMENT
-# ============================================================
-
-def connect_payment_to_document(
-    payment: dict[str, Any],
-    delivery: dict[str, Any],
-) -> dict[str, Any] | None:
-
-    job_id = normalize_job_id(
-        delivery.get(
-            "job_id"
-        )
-    )
-
-    version = normalize_version(
-        delivery.get(
-            "version_id"
-        )
-    )
-
-    if not job_id or not version:
-        return delivery
-
-    return update_document_delivery(
-        job_id,
-        version,
-        payment_id=payment.get(
-            "payment_id"
-        ),
-    )
-
-
-# ============================================================
-# LEGACY PAYMENT SNAPSHOT COMPATIBILITY
-# ============================================================
-
-def save_exact_document_snapshot(
-    payment: dict[str, Any],
-    document: dict[str, Any],
-) -> tuple[bool, str]:
-
-    job_id = normalize_job_id(
-        payment.get(
-            "job_id"
-        )
-    )
-
-    version = normalize_version(
-        payment.get(
-            "document_version"
-        )
-    )
-
-    if not job_id or not version:
-
-        return (
-            False,
-            "Payment does not contain a usable job/version.",
-        )
-
-    delivery = get_document_delivery(
-        job_id,
-        version,
-    )
-
-    if delivery and delivery_document_exists(
-        delivery
-    ):
-
-        path = delivery_document_path(
-            delivery
-        )
-
-        return (
-            True,
-            str(path),
-        )
-
-    ok, message, output = (
-        save_document_first(
-            document
-        )
-    )
-
-    if not ok or not output:
-        return (
-            False,
-            message,
-        )
-
-    updated = upsert_document_delivery(
-        document,
-        output,
-        payment_id=payment.get(
-            "payment_id"
-        ),
-    )
-
-    # --------------------------------------------------------
-    # Preserve compatibility with existing payment_orders.
-    # --------------------------------------------------------
-
-    payment_id = normalize_payment_id(
-        payment.get(
-            "payment_id"
-        )
-    )
-
-    with connect_db() as conn:
-
-        conn.execute(
-            """
-            UPDATE payment_orders
-            SET
-                document_saved_path = ?,
-                document_saved_at = ?,
-                document_filename = ?,
-                updated_at = ?
-            WHERE payment_id
-                COLLATE NOCASE = ?
-            """,
-            (
-                str(output),
-                updated.get(
-                    "document_saved_at"
-                )
-                or now_iso(),
-                Path(
-                    output
-                ).name,
-                now_iso(),
-                payment_id,
-            ),
-        )
-
-        conn.commit()
-
-    return (
-        True,
-        str(output),
-    )
 
 
 # ============================================================
@@ -3148,9 +2176,7 @@ def old_api_request(
             )
 
         if parts:
-            url += "?" + "&".join(
-                parts
-            )
+            url += "?" + "&".join(parts)
 
     headers = {
         "Accept": "application/json",
@@ -3286,6 +2312,7 @@ def extract_job_payload(
             value,
             dict,
         ):
+
             candidates.append(
                 value
             )
@@ -3385,10 +2412,7 @@ def fetch_current_document(
                     or payload.get(
                         "document_filename"
                     )
-                    or (
-                        f"naija_pocket_"
-                        f"{job_id}.docx"
-                    )
+                    or "naija_pocket_document.docx"
                 )
 
                 if not pages and text:
@@ -3396,32 +2420,55 @@ def fetch_current_document(
 
                 return {
                     "job_id": job_id,
+
                     "pages": pages,
+
                     "document_text": text,
+
                     "version_id": version,
+
                     "document_version": version,
+
                     "filename": filename,
+
                     "document_filename": filename,
+
                     "service": clean(
                         payload.get(
                             "service"
                         )
                     ),
+
+                    "title": clean(
+                        payload.get(
+                            "title"
+                        )
+                        or payload.get(
+                            "job_title"
+                        )
+                        or payload.get(
+                            "document_title"
+                        )
+                    ),
+
                     "customer_id": clean(
                         payload.get(
                             "customer_id"
                         )
                     ),
+
                     "amount": money(
                         payload.get(
                             "amount"
                         )
                     ),
+
                     "status": clean(
                         payload.get(
                             "status"
                         )
                     ),
+
                     "review_finished": True,
                 }
 
@@ -3438,290 +2485,7 @@ def fetch_current_document(
 
 
 # ============================================================
-# FIND DOCUMENT FROM REQUEST
-#
-# IMPORTANT:
-#
-# This resolver does NOT require payment lookup.
-# ============================================================
-
-def resolve_document_delivery(
-    *,
-    payment_id: str = "",
-    job_id: str = "",
-    version_id: str = "",
-) -> dict[str, Any] | None:
-
-    payment_id = normalize_payment_id(
-        payment_id
-    )
-
-    job_id = normalize_job_id(
-        job_id
-    )
-
-    version_id = normalize_version(
-        version_id
-    )
-
-    delivery = None
-
-    if payment_id:
-
-        delivery = (
-            get_document_by_payment_id(
-                payment_id
-            )
-        )
-
-        if delivery:
-            return delivery
-
-    if job_id and version_id:
-
-        delivery = get_document_delivery(
-            job_id,
-            version_id,
-        )
-
-        if delivery:
-            return delivery
-
-    if job_id:
-
-        delivery = get_document_delivery(
-            job_id
-        )
-
-        if delivery:
-            return delivery
-
-    return None
-
-
-def resolve_payment_for_delivery(
-    delivery: dict[str, Any] | None,
-) -> dict[str, Any] | None:
-
-    if not delivery:
-        return None
-
-    payment_id = normalize_payment_id(
-        delivery.get(
-            "payment_id"
-        )
-    )
-
-    if payment_id:
-
-        payment = get_payment(
-            payment_id
-        )
-
-        if payment:
-            return payment
-
-    job_id = normalize_job_id(
-        delivery.get(
-            "job_id"
-        )
-    )
-
-    version = normalize_version(
-        delivery.get(
-            "version_id"
-        )
-    )
-
-    if job_id and version:
-
-        payment = (
-            get_payment_for_job_version(
-                job_id,
-                version,
-            )
-        )
-
-        if payment:
-            return payment
-
-    if job_id:
-
-        return get_latest_payment_for_job(
-            job_id
-        )
-
-    return None
-
-
-# ============================================================
-# PUBLIC DOCUMENT REPRESENTATION
-# ============================================================
-
-def document_public(
-    delivery: dict[str, Any] | None,
-) -> dict[str, Any] | None:
-
-    if not delivery:
-        return None
-
-    exists = delivery_document_exists(
-        delivery
-    )
-
-    verified = delivery_is_verified(
-        delivery
-    )
-
-    unlocked = delivery_is_unlocked(
-        delivery
-    )
-
-    if unlocked:
-
-        status_label = (
-            "Payment Verified — Download Unlocked"
-        )
-
-    elif verified:
-
-        status_label = (
-            "Payment Verified — Ready for Delivery"
-        )
-
-    else:
-
-        status_label = (
-            "Awaiting Payment Verification"
-        )
-
-    return {
-        "job_id": delivery.get(
-            "job_id"
-        ),
-
-        "job_number": delivery.get(
-            "job_id"
-        ),
-
-        "work_id": delivery.get(
-            "job_id"
-        ),
-
-        "document_id": delivery.get(
-            "job_id"
-        ),
-
-        "version_id": delivery.get(
-            "version_id"
-        ),
-
-        "versionId": delivery.get(
-            "version_id"
-        ),
-
-        "document_version": delivery.get(
-            "version_id"
-        ),
-
-        "customer_id": delivery.get(
-            "customer_id"
-        ),
-
-        "customer_email": delivery.get(
-            "customer_email"
-        ),
-
-        "customer_phone": delivery.get(
-            "customer_phone"
-        ),
-
-        "service": delivery.get(
-            "service"
-        ),
-
-        "amount": money(
-            delivery.get(
-                "amount"
-            )
-        ),
-
-        "currency": delivery.get(
-            "currency",
-            DEFAULT_CURRENCY,
-        ),
-
-        "payment_id": delivery.get(
-            "payment_id"
-        ),
-
-        "document_filename": delivery.get(
-            "document_filename"
-        ),
-
-        "document_saved": exists,
-
-        "document_snapshot_saved": exists,
-
-        "document_saved_at": delivery.get(
-            "document_saved_at"
-        ),
-
-        "document_saved_size": (
-            delivery_document_size(
-                delivery
-            )
-        ),
-
-        "verification_status": delivery.get(
-            "verification_status"
-        ),
-
-        "release_status": delivery.get(
-            "release_status"
-        ),
-
-        "payment_verified": verified,
-
-        "download_unlocked": unlocked,
-
-        "download_locked": not unlocked,
-
-        "verified_at": delivery.get(
-            "verified_at"
-        ),
-
-        "unlocked_at": delivery.get(
-            "unlocked_at"
-        ),
-
-        "download_count": delivery.get(
-            "download_count",
-            0,
-        ),
-
-        "last_delivery_channel": delivery.get(
-            "last_delivery_channel"
-        ),
-
-        "last_delivery_at": delivery.get(
-            "last_delivery_at"
-        ),
-
-        "email_sent_at": delivery.get(
-            "email_sent_at"
-        ),
-
-        "whatsapp_sent_at": delivery.get(
-            "whatsapp_sent_at"
-        ),
-
-        "status_label": status_label,
-    }
-
-
-# ============================================================
-# PUBLIC PAYMENT REPRESENTATION
+# PUBLIC PRODUCT/PAYMENT REPRESENTATION
 # ============================================================
 
 def payment_public(
@@ -3736,67 +2500,39 @@ def payment_public(
         "",
     )
 
-    delivery = get_document_delivery(
-        normalize_job_id(
-            payment.get(
-                "job_id"
-            )
-        ),
-        normalize_version(
-            payment.get(
-                "document_version"
-            )
-        ),
+    saved = saved_document_exists(
+        payment
     )
 
-    document_saved = (
-        delivery_document_exists(
-            delivery
-        )
-        if delivery
-        else saved_document_exists(
-            payment
-        )
-    )
-
-    verified = (
-        delivery_is_verified(
-            delivery
-        )
-        if delivery
-        else payment_is_verified(
-            status
-        )
-    )
-
-    unlocked = (
-        delivery_is_unlocked(
-            delivery
-        )
-        if delivery
-        else payment_is_verified(
-            status
-        )
-    )
-
-    if payment_is_reported(
+    verified = payment_is_verified(
         status
-    ):
+    )
+
+    reported = payment_is_reported(
+        status
+    )
+
+    service = normalize_service(
+        payment.get("service")
+    )
+
+    title = normalize_title(
+        payment.get("job_title")
+        or payment_document(
+            payment
+        ).get("title")
+    )
+
+    if reported:
 
         back_office_status = (
             "Payment Reported — Awaiting Verification"
         )
 
-    elif verified and unlocked:
-
-        back_office_status = (
-            "Payment Verified — Download Unlocked"
-        )
-
     elif verified:
 
         back_office_status = (
-            "Payment Verified — Ready for Delivery"
+            "Payment Verified — Download Unlocked"
         )
 
     else:
@@ -3806,6 +2542,55 @@ def payment_public(
         )
 
     return {
+
+        # ----------------------------------------------------
+        # PRODUCT INFORMATION FIRST
+        # ----------------------------------------------------
+
+        "service": service,
+
+        "title": title,
+
+        "job_title": title,
+
+        "product_key": product_identity(
+            service,
+            title,
+        ),
+
+        "document_filename": payment.get(
+            "document_filename"
+        ),
+
+        "document_version": payment.get(
+            "document_version"
+        ),
+
+        "version_id": payment.get(
+            "document_version"
+        ),
+
+        "document_saved": saved,
+
+        "document_snapshot_saved": saved,
+
+        "document_saved_at": payment.get(
+            "document_saved_at"
+        ),
+
+        "document_saved_size": (
+            saved_document_size(
+                payment
+            )
+        ),
+
+        # ----------------------------------------------------
+        # EXISTING INTERNAL COMPATIBILITY DATA
+        #
+        # Retained so existing payment UI/backend code does
+        # not break, but it is NOT the product identity.
+        # ----------------------------------------------------
+
         "payment_id": payment.get(
             "payment_id"
         ),
@@ -3822,9 +2607,9 @@ def payment_public(
             "customer_id"
         ),
 
-        "service": payment.get(
-            "service"
-        ),
+        # ----------------------------------------------------
+        # PAYMENT
+        # ----------------------------------------------------
 
         "amount": money(
             payment.get(
@@ -3855,46 +2640,6 @@ def payment_public(
             "admin_note"
         ),
 
-        "document_version": payment.get(
-            "document_version"
-        ),
-
-        "version_id": payment.get(
-            "document_version"
-        ),
-
-        "versionId": payment.get(
-            "document_version"
-        ),
-
-        "document_filename": payment.get(
-            "document_filename"
-        ),
-
-        "document_saved": document_saved,
-
-        "document_snapshot_saved": document_saved,
-
-        "document_saved_at": (
-            delivery.get(
-                "document_saved_at"
-            )
-            if delivery
-            else payment.get(
-                "document_saved_at"
-            )
-        ),
-
-        "document_saved_size": (
-            delivery_document_size(
-                delivery
-            )
-            if delivery
-            else saved_document_size(
-                payment
-            )
-        ),
-
         "created_at": payment.get(
             "created_at"
         ),
@@ -3907,14 +2652,8 @@ def payment_public(
             "reported_at"
         ),
 
-        "verified_at": (
-            delivery.get(
-                "verified_at"
-            )
-            if delivery
-            else payment.get(
-                "verified_at"
-            )
+        "verified_at": payment.get(
+            "verified_at"
         ),
 
         "downloaded_at": payment.get(
@@ -3926,17 +2665,15 @@ def payment_public(
             0,
         ),
 
-        "reported": payment_is_reported(
-            status
-        ),
+        "reported": reported,
 
         "paid": verified,
 
         "payment_verified": verified,
 
-        "download_unlocked": unlocked,
+        "download_unlocked": verified,
 
-        "download_locked": not unlocked,
+        "download_locked": not verified,
 
         "back_office_status": (
             back_office_status
@@ -3945,7 +2682,7 @@ def payment_public(
 
 
 # ============================================================
-# BACK OFFICE AUTH
+# BACK OFFICE AUTHENTICATION
 # ============================================================
 
 def configured_admin_key() -> bool:
@@ -4035,42 +2772,42 @@ async def root() -> dict[str, Any]:
 
     return {
         "ok": True,
+
         "service": (
             "Naija Pocket Business Center "
-            "Payment + Customer Care API"
+            "Payment API"
         ),
+
         "version": APP_VERSION,
+
         "business_model": (
-            "finished_document_first"
+            "DOCUMENT_PRODUCT_FIRST"
         ),
+
+        "product_identity": (
+            "SERVICE + TITLE"
+        ),
+
         "old_api_configured": (
             old_api_configured()
         ),
+
         "back_office_configured": (
             configured_admin_key()
         ),
-        "email_delivery_configured": (
-            bool(
-                SMTP_HOST
-                and SMTP_FROM
-            )
-        ),
-        "whatsapp_delivery_configured": (
-            bool(
-                WHATSAPP_ACCESS_TOKEN
-                and WHATSAPP_PHONE_NUMBER_ID
-            )
-        ),
+
         "database": str(DB_PATH),
+
         "download_dir": str(
             DOWNLOAD_DIR
         ),
-        "database_info": database_file_info(),
+
+        "database_info": (
+            database_file_info()
+        ),
+
         "payment_record_count": (
             payment_record_count()
-        ),
-        "document_record_count": (
-            document_record_count()
         ),
     }
 
@@ -4081,40 +2818,41 @@ async def health() -> dict[str, Any]:
 
     return {
         "ok": True,
+
         "service": "payment_api",
+
         "version": APP_VERSION,
+
         "business_model": (
-            "finished_document_first"
+            "DOCUMENT_PRODUCT_FIRST"
         ),
+
+        "product_identity": (
+            "SERVICE + TITLE"
+        ),
+
         "old_api_configured": (
             old_api_configured()
         ),
+
         "back_office_configured": (
             configured_admin_key()
         ),
-        "email_delivery_configured": (
-            bool(
-                SMTP_HOST
-                and SMTP_FROM
-            )
-        ),
-        "whatsapp_delivery_configured": (
-            bool(
-                WHATSAPP_ACCESS_TOKEN
-                and WHATSAPP_PHONE_NUMBER_ID
-            )
-        ),
+
         "database": str(DB_PATH),
+
         "download_dir": str(
             DOWNLOAD_DIR
         ),
-        "database_info": database_file_info(),
+
+        "database_info": (
+            database_file_info()
+        ),
+
         "payment_record_count": (
             payment_record_count()
         ),
-        "document_record_count": (
-            document_record_count()
-        ),
+
         "process_id": os.getpid(),
     }
 
@@ -4122,15 +2860,13 @@ async def health() -> dict[str, Any]:
 # ============================================================
 # CUSTOMER PAYMENT CREATE
 #
-# IMPORTANT CHANGE:
+# PRODUCT FIRST
 #
-# DOCUMENT IS SAVED FIRST.
+# SERVICE + TITLE + EXACT DOCUMENT
 #
-# Payment record creation happens after the document has its
-# own job/version delivery record.
-#
-# Therefore a payment persistence problem no longer means that
-# the finished document disappears.
+# An internal database reference may still be accepted for
+# compatibility, but it is NOT required when Service + Title
+# are supplied.
 # ============================================================
 
 @app.post("/api/payment/create")
@@ -4139,6 +2875,7 @@ async def payment_create(
     job_id: str | None = None,
     customer_id: str | None = None,
     service: str | None = None,
+    title: str | None = None,
     amount: float | None = None,
     payment_method: str | None = None,
 ):
@@ -4169,11 +2906,14 @@ async def payment_create(
         )
     )
 
-    service = clean(
+    service = normalize_service(
         service
-        or body.get(
-            "service"
-        )
+        or body_service(body)
+    )
+
+    title = normalize_title(
+        title
+        or body_title(body)
     )
 
     method = (
@@ -4191,28 +2931,54 @@ async def payment_create(
             "amount"
         )
 
-    if not job_id:
+    # --------------------------------------------------------
+    # SERVICE + TITLE ARE NOW THE BUSINESS PRODUCT IDENTITY.
+    # --------------------------------------------------------
+
+    if not service:
 
         return json_response_error(
-            "JOB_ID_REQUIRED",
-            "job_id is required.",
+            "SERVICE_REQUIRED",
+            "The product service is required.",
             400,
         )
 
-    requested_version = (
-        body_version_id(body)
+    if not title:
+
+        return json_response_error(
+            "TITLE_REQUIRED",
+            "The product title is required.",
+            400,
+        )
+
+    # --------------------------------------------------------
+    # EXACT SNAPSHOT FROM PAYMENT HTML
+    # --------------------------------------------------------
+
+    requested_version = clean(
+        body.get(
+            "version_id"
+        )
+        or body.get(
+            "document_version"
+        )
+        or body.get(
+            "versionId"
+        )
     )
 
-    supplied_pages = normalize_pages(
-        body.get(
-            "pages"
-        )
-        if body.get(
-            "pages"
-        ) is not None
-        else body.get(
+    supplied_pages_value = body.get(
+        "pages"
+    )
+
+    if supplied_pages_value is None:
+
+        supplied_pages_value = body.get(
             "document_pages"
         )
+
+    supplied_pages = normalize_pages(
+        supplied_pages_value
     )
 
     supplied_text = clean(
@@ -4236,18 +3002,6 @@ async def payment_create(
         )
     )
 
-    customer_email = (
-        body_customer_email(
-            body
-        )
-    )
-
-    customer_phone = (
-        body_customer_phone(
-            body
-        )
-    )
-
     supplied_amount = money(
         amount
     )
@@ -4261,7 +3015,7 @@ async def payment_create(
     )
 
     # --------------------------------------------------------
-    # EXACT REVIEW SNAPSHOT FROM PAYMENT HTML
+    # EXACT SNAPSHOT IS AUTHORITATIVE
     # --------------------------------------------------------
 
     if exact_snapshot_supplied:
@@ -4269,53 +3023,64 @@ async def payment_create(
         doc = normalize_document(
             {
                 "pages": supplied_pages,
+
                 "document_text": supplied_text,
+
                 "version_id": requested_version,
+
                 "filename": (
                     supplied_filename
-                    or (
-                        f"naija_pocket_"
-                        f"{job_id}.docx"
-                    )
+                    or "customer_document.docx"
                 ),
+
                 "service": service,
+
+                "title": title,
+
                 "customer_id": customer_id,
+
                 "amount": supplied_amount,
             },
+
             job_id,
+
             version_id=requested_version,
+
             filename=(
                 supplied_filename
-                or (
-                    f"naija_pocket_"
-                    f"{job_id}.docx"
-                )
+                or "customer_document.docx"
             ),
+
             service=service,
+
+            title=title,
+
             customer_id=customer_id,
+
             amount=supplied_amount,
         )
 
     else:
 
         # ----------------------------------------------------
-        # OLD API FALLBACK
+        # FALLBACK ONLY FOR EXISTING DEPLOYMENT COMPATIBILITY
         # ----------------------------------------------------
 
         current_error = None
 
-        try:
+        doc = None
 
-            doc = fetch_current_document(
-                job_id
-            )
+        if job_id:
 
-        except Exception as exc:
+            try:
 
-            current_error = str(
-                exc
-            )
-            doc = None
+                doc = fetch_current_document(
+                    job_id
+                )
+
+            except Exception as exc:
+
+                current_error = str(exc)
 
         if doc is None:
 
@@ -4329,22 +3094,26 @@ async def payment_create(
                 ),
                 502,
                 detail=current_error,
-                job_id=job_id,
+                service=service,
+                title=title,
             )
 
         doc = normalize_document(
             doc,
             job_id,
+
             version_id=clean(
                 doc.get(
                     "version_id"
                 )
             ),
+
             filename=clean(
                 doc.get(
                     "filename"
                 )
             ),
+
             service=(
                 service
                 or clean(
@@ -4353,6 +3122,19 @@ async def payment_create(
                     )
                 )
             ),
+
+            title=(
+                title
+                or clean(
+                    doc.get(
+                        "title"
+                    )
+                    or doc.get(
+                        "job_title"
+                    )
+                )
+            ),
+
             customer_id=(
                 customer_id
                 or clean(
@@ -4361,6 +3143,7 @@ async def payment_create(
                     )
                 )
             ),
+
             amount=(
                 supplied_amount
                 or money(
@@ -4370,6 +3153,10 @@ async def payment_create(
                 )
             ),
         )
+
+    # --------------------------------------------------------
+    # CONTENT CHECK
+    # --------------------------------------------------------
 
     if not document_has_content(
         doc
@@ -4382,10 +3169,11 @@ async def payment_create(
                 "no downloadable content."
             ),
             409,
-            job_id=job_id,
+            service=service,
+            title=title,
         )
 
-    version = normalize_version(
+    version = clean(
         doc.get(
             "version_id"
         )
@@ -4393,16 +3181,20 @@ async def payment_create(
 
     if not version:
 
-        return json_response_error(
-            "VERSION_ID_REQUIRED",
-            (
-                "A document version is required "
-                "before the finished document can "
-                "be saved."
-            ),
-            409,
-            job_id=job_id,
+        # Preserve compatibility with documents that do not
+        # expose a version, while still keeping the actual
+        # product usable.
+        version = (
+            "reviewed-"
+            + datetime.now(
+                timezone.utc
+            ).strftime(
+                "%Y%m%d%H%M%S"
+            )
         )
+
+        doc["version_id"] = version
+        doc["document_version"] = version
 
     final_amount = (
         money(
@@ -4413,241 +3205,25 @@ async def payment_create(
         or supplied_amount
     )
 
+    if final_amount <= 0:
+
+        return json_response_error(
+            "AMOUNT_NOT_AVAILABLE",
+            (
+                "The amount to pay is not available."
+            ),
+            409,
+            service=service,
+            title=title,
+        )
+
     final_filename = (
         clean(
             doc.get(
                 "filename"
             )
         )
-        or (
-            f"naija_pocket_"
-            f"{job_id}.docx"
-        )
-    )
-
-    # --------------------------------------------------------
-    # STEP 1
-    #
-    # SAVE THE PRODUCT FIRST.
-    # --------------------------------------------------------
-
-    existing_delivery = (
-        get_document_delivery(
-            job_id,
-            version,
-        )
-    )
-
-    if (
-        existing_delivery
-        and delivery_document_exists(
-            existing_delivery
-        )
-    ):
-
-        delivery = existing_delivery
-
-        output = delivery_document_path(
-            delivery
-        )
-
-    else:
-
-        ok, message, output = (
-            save_document_first(
-                doc
-            )
-        )
-
-        if not ok or not output:
-
-            return json_response_error(
-                "DOCUMENT_SNAPSHOT_FAILED",
-                (
-                    "The exact reviewed document "
-                    "could not be saved."
-                ),
-                500,
-                detail=message,
-                job_id=job_id,
-                version_id=version,
-            )
-
-        delivery = get_document_delivery(
-            job_id,
-            version,
-        )
-
-    if not delivery:
-
-        return json_response_error(
-            "DOCUMENT_RECORD_MISSING",
-            (
-                "The finished document was saved "
-                "but its delivery record could not "
-                "be confirmed."
-            ),
-            500,
-            job_id=job_id,
-            version_id=version,
-        )
-
-    # Save customer delivery information.
-    delivery = (
-        update_document_delivery(
-            job_id,
-            version,
-            customer_email=(
-                customer_email
-                if customer_email
-                else None
-            ),
-            customer_phone=(
-                customer_phone
-                if customer_phone
-                else None
-            ),
-        )
-        or delivery
-    )
-
-    # --------------------------------------------------------
-    # STEP 2
-    #
-    # LOOK FOR EXISTING PAYMENT FOR SAME JOB/VERSION.
-    # --------------------------------------------------------
-
-    latest = (
-        get_payment_for_job_version(
-            job_id,
-            version,
-        )
-    )
-
-    if latest:
-
-        # Connect existing payment to document.
-        delivery = (
-            update_document_delivery(
-                job_id,
-                version,
-                payment_id=latest.get(
-                    "payment_id"
-                ),
-            )
-            or delivery
-        )
-
-        # Keep payment record path synchronized.
-        if output:
-
-            with connect_db() as conn:
-
-                conn.execute(
-                    """
-                    UPDATE payment_orders
-                    SET
-                        document_saved_path = ?,
-                        document_saved_at = ?,
-                        document_filename = ?,
-                        updated_at = ?
-                    WHERE payment_id
-                        COLLATE NOCASE = ?
-                    """,
-                    (
-                        str(output),
-                        delivery.get(
-                            "document_saved_at"
-                        )
-                        or now_iso(),
-                        Path(
-                            output
-                        ).name,
-                        now_iso(),
-                        latest.get(
-                            "payment_id"
-                        ),
-                    ),
-                )
-
-                conn.commit()
-
-        latest = (
-            get_payment(
-                latest.get(
-                    "payment_id"
-                )
-            )
-            or latest
-        )
-
-        return {
-            "ok": True,
-            "message": (
-                "The exact finished document is "
-                "already saved and the existing "
-                "payment record was reused."
-            ),
-            "payment": payment_public(
-                latest
-            ),
-            "payment_id": latest.get(
-                "payment_id"
-            ),
-            "paymentId": latest.get(
-                "payment_id"
-            ),
-            "amount": money(
-                latest.get(
-                    "amount"
-                )
-            ),
-            "currency": latest.get(
-                "currency",
-                DEFAULT_CURRENCY,
-            ),
-            "payment_status": latest.get(
-                "payment_status"
-            ),
-            "paid": (
-                payment_is_verified(
-                    latest.get(
-                        "payment_status"
-                    )
-                )
-            ),
-            "payment_verified": (
-                payment_is_verified(
-                    latest.get(
-                        "payment_status"
-                    )
-                )
-            ),
-            "download_unlocked": (
-                delivery_is_unlocked(
-                    delivery
-                )
-            ),
-            "document_version": version,
-            "version_id": version,
-            "document_saved": True,
-            "document_snapshot_saved": True,
-            "document_delivery": document_public(
-                delivery
-            ),
-        }
-
-    # --------------------------------------------------------
-    # STEP 3
-    #
-    # CREATE PAYMENT RECORD.
-    #
-    # If this fails, the document record remains.
-    # --------------------------------------------------------
-
-    payment_id = (
-        "NPB-"
-        + uuid.uuid4().hex[:12].upper()
+        or "customer_document.docx"
     )
 
     final_customer_id = (
@@ -4661,11 +3237,188 @@ async def payment_create(
 
     final_service = (
         service
-        or clean(
+        or normalize_service(
             doc.get(
                 "service"
             )
         )
+    )
+
+    final_title = (
+        title
+        or normalize_title(
+            doc.get(
+                "title"
+            )
+            or doc.get(
+                "job_title"
+            )
+        )
+    )
+
+    # --------------------------------------------------------
+    # REUSE EXISTING PAYMENT FOR THE SAME PRODUCT/VERSION
+    #
+    # IMPORTANT:
+    #
+    # Service + Title is the product.
+    #
+    # We look up the product before creating another payment.
+    # --------------------------------------------------------
+
+    latest = get_latest_payment_for_product(
+        final_service,
+        final_title,
+    )
+
+    if latest:
+
+        latest_version = clean(
+            latest.get(
+                "document_version"
+            )
+        )
+
+        latest_status = normalize_status(
+            latest.get(
+                "payment_status"
+            )
+        )
+
+        reusable_statuses = {
+            "pending",
+            "reported",
+            "verification_pending",
+            "awaiting_verification",
+            "verified",
+            "completed",
+            "complete",
+            "paid",
+        }
+
+        if (
+            latest_version == version
+            and latest_status
+            in reusable_statuses
+        ):
+
+            if not saved_document_exists(
+                latest
+            ):
+
+                ok, error = (
+                    save_exact_document_snapshot(
+                        latest,
+                        doc,
+                    )
+                )
+
+                if not ok:
+
+                    return json_response_error(
+                        "DOCUMENT_SNAPSHOT_FAILED",
+                        (
+                            "The exact reviewed "
+                            "document could not be "
+                            "saved."
+                        ),
+                        500,
+                        detail=error,
+                        service=final_service,
+                        title=final_title,
+                    )
+
+                latest = (
+                    get_payment(
+                        latest[
+                            "payment_id"
+                        ]
+                    )
+                    or latest
+                )
+
+            return {
+                "ok": True,
+
+                "message": (
+                    "The exact customer document "
+                    "is already prepared for payment."
+                ),
+
+                "product": {
+                    "service": final_service,
+                    "title": final_title,
+                    "document_saved": True,
+                    "document_version": version,
+                    "document_filename": latest.get(
+                        "document_filename"
+                    ),
+                },
+
+                "payment": payment_public(
+                    latest
+                ),
+
+                # Compatibility only.
+                "payment_id": latest[
+                    "payment_id"
+                ],
+
+                "amount": money(
+                    latest[
+                        "amount"
+                    ]
+                ),
+
+                "currency": latest[
+                    "currency"
+                ],
+
+                "payment_status": latest[
+                    "payment_status"
+                ],
+
+                "paid": payment_is_verified(
+                    latest[
+                        "payment_status"
+                    ]
+                ),
+
+                "payment_verified": (
+                    payment_is_verified(
+                        latest[
+                            "payment_status"
+                        ]
+                    )
+                ),
+
+                "download_unlocked": (
+                    payment_is_verified(
+                        latest[
+                            "payment_status"
+                        ]
+                    )
+                ),
+
+                "document_version": version,
+
+                "version_id": version,
+
+                "document_saved": True,
+
+                "document_snapshot_saved": True,
+            }
+
+    # --------------------------------------------------------
+    # CREATE NEW PAYMENT RECORD
+    #
+    # This is internal bookkeeping.
+    # The product itself is Service + Title + saved document.
+    # --------------------------------------------------------
+
+    payment_id = (
+        "NPB-"
+        + uuid.uuid4().hex[:12].upper()
     )
 
     payload = snapshot_payload(
@@ -4675,11 +3428,26 @@ async def payment_create(
     payload.update(
         {
             "job_id": job_id,
-            "version_id": version,
-            "document_version": version,
-            "customer_id": final_customer_id,
+
             "service": final_service,
+
+            "title": final_title,
+
+            "job_title": final_title,
+
+            "product_key": product_identity(
+                final_service,
+                final_title,
+            ),
+
+            "version_id": version,
+
+            "document_version": version,
+
+            "customer_id": final_customer_id,
+
             "amount": final_amount,
+
             "currency": DEFAULT_CURRENCY,
         }
     )
@@ -4688,129 +3456,443 @@ async def payment_create(
 
         record = create_payment_record(
             payment_id=payment_id,
+
             job_id=job_id,
+
             customer_id=final_customer_id,
+
             service=final_service,
+
+            title=final_title,
+
             amount=final_amount,
+
             currency=DEFAULT_CURRENCY,
+
             payment_method=method,
+
             document_version=version,
+
             document_filename=final_filename,
+
             document_payload=payload,
         )
 
+    except sqlite3.IntegrityError as exc:
+
+        existing = get_payment(
+            payment_id
+        )
+
+        if existing:
+
+            record = existing
+
+        else:
+
+            return json_response_error(
+                "PAYMENT_CREATE_FAILED",
+                (
+                    "The payment record could not "
+                    "be persisted."
+                ),
+                500,
+                detail=str(exc),
+                service=final_service,
+                title=final_title,
+            )
+
     except Exception as exc:
 
-        # ----------------------------------------------------
-        # IMPORTANT:
-        #
-        # Do NOT delete the finished document.
-        #
-        # The product has already been saved.
-        # ----------------------------------------------------
-
         return json_response_error(
-            "PAYMENT_RECORD_UNAVAILABLE",
+            "PAYMENT_CREATE_FAILED",
             (
-                "The finished document has been saved "
-                "successfully, but the payment record "
-                "could not be created."
+                "The payment record could not "
+                "be persisted."
             ),
             500,
             detail=str(exc),
-            job_id=job_id,
-            version_id=version,
-            document_saved=True,
-            document_ready_for_customer_care=True,
+            service=final_service,
+            title=final_title,
         )
 
     # --------------------------------------------------------
-    # CONNECT PAYMENT → DOCUMENT
+    # SAVE EXACT PRODUCT
     # --------------------------------------------------------
 
-    delivery = (
-        update_document_delivery(
-            job_id,
-            version,
-            payment_id=payment_id,
-        )
-        or delivery
+    ok, error = save_exact_document_snapshot(
+        record,
+        doc,
     )
 
-    # --------------------------------------------------------
-    # COMPATIBILITY PATH IN payment_orders
-    # --------------------------------------------------------
+    if not ok:
 
-    if output:
-
-        with connect_db() as conn:
-
-            conn.execute(
-                """
-                UPDATE payment_orders
-                SET
-                    document_saved_path = ?,
-                    document_saved_at = ?,
-                    document_filename = ?,
-                    updated_at = ?
-                WHERE payment_id
-                    COLLATE NOCASE = ?
-                """,
-                (
-                    str(output),
-                    delivery.get(
-                        "document_saved_at"
-                    )
-                    or now_iso(),
-                    Path(
-                        output
-                    ).name,
-                    now_iso(),
-                    payment_id,
-                ),
-            )
-
-            conn.commit()
-
-    record = (
-        get_payment(
+        delete_payment_record(
             payment_id
         )
-        or record
+
+        return json_response_error(
+            "DOCUMENT_SNAPSHOT_FAILED",
+            (
+                "The exact reviewed document "
+                "could not be saved. "
+                "Payment has not been started."
+            ),
+            500,
+            detail=error,
+            service=final_service,
+            title=final_title,
+        )
+
+    # --------------------------------------------------------
+    # FINAL PRODUCT PROOF
+    # --------------------------------------------------------
+
+    record = get_payment(
+        payment_id
     )
+
+    if not record:
+
+        return json_response_error(
+            "PRODUCT_PERSISTENCE_FAILED",
+            (
+                "The product record could not "
+                "be recovered after the document "
+                "was saved."
+            ),
+            500,
+            service=final_service,
+            title=final_title,
+        )
+
+    if not saved_document_exists(
+        record
+    ):
+
+        delete_payment_record(
+            payment_id
+        )
+
+        return json_response_error(
+            "DOCUMENT_SNAPSHOT_FAILED",
+            (
+                "The document save could not "
+                "be confirmed. Payment has "
+                "not been started."
+            ),
+            500,
+            service=final_service,
+            title=final_title,
+        )
 
     return {
         "ok": True,
+
         "message": (
-            "Payment record created and the exact "
-            "finished document is safely saved."
+            "The exact customer document "
+            "has been prepared and saved "
+            "successfully."
         ),
+
+        # ----------------------------------------------------
+        # PRODUCT FIRST
+        # ----------------------------------------------------
+
+        "product": {
+            "service": final_service,
+            "title": final_title,
+            "document_saved": True,
+            "document_snapshot_saved": True,
+            "document_version": version,
+            "document_filename": record.get(
+                "document_filename"
+            ),
+            "document_saved_at": record.get(
+                "document_saved_at"
+            ),
+        },
+
+        # ----------------------------------------------------
+        # INTERNAL PAYMENT COMPATIBILITY
+        # ----------------------------------------------------
+
         "payment": payment_public(
             record
         ),
+
         "payment_id": payment_id,
+
         "paymentId": payment_id,
+
         "amount": final_amount,
+
         "currency": DEFAULT_CURRENCY,
+
         "payment_status": "pending",
+
         "paid": False,
+
         "payment_verified": False,
+
         "download_unlocked": False,
+
         "document_version": version,
+
         "version_id": version,
+
         "document_saved": True,
+
         "document_snapshot_saved": True,
-        "document_saved_at": delivery.get(
+
+        "document_saved_at": record.get(
             "document_saved_at"
-        ),
-        "document_delivery": document_public(
-            delivery
         ),
     }
 
 
 # ============================================================
+# PAYMENT PREPARATION / PRODUCT RESOLUTION
+#
+# THIS IS THE IMPORTANT COMPATIBILITY LAYER MISSING FROM THE
+# PREVIOUS VERSION.
+#
+# It does NOT create a new product.
+# It does NOT regenerate a document.
+# It simply locates the already-prepared product.
+#
+# Supports GET and POST.
+# ============================================================
+
+async def payment_prepare_common(
+    request: Request,
+) -> JSONResponse | dict[str, Any]:
+
+    body: dict[str, Any] = {}
+
+    try:
+
+        raw_body = await request.json()
+
+        if isinstance(
+            raw_body,
+            dict,
+        ):
+
+            body = raw_body
+
+    except Exception:
+        pass
+
+    payment_id = body_payment_id(
+        body
+    )
+
+    service = body_service(
+        body
+    )
+
+    title = body_title(
+        body
+    )
+
+    job_id = body_job_id(
+        body
+    )
+
+    payment = resolve_product_payment(
+        payment_id=payment_id,
+        job_id=job_id,
+        service=service,
+        title=title,
+    )
+
+    if not payment:
+
+        return json_response_error(
+            "PRODUCT_NOT_FOUND",
+            (
+                "The requested customer product "
+                "could not be found."
+            ),
+            404,
+            service=service or None,
+            title=title or None,
+        )
+
+    product = payment_document(
+        payment
+    )
+
+    resolved_service = (
+        normalize_service(
+            payment.get(
+                "service"
+            )
+        )
+        or service
+        or normalize_service(
+            product.get(
+                "service"
+            )
+        )
+    )
+
+    resolved_title = (
+        normalize_title(
+            payment.get(
+                "job_title"
+            )
+        )
+        or title
+        or normalize_title(
+            product.get(
+                "title"
+            )
+            or product.get(
+                "job_title"
+            )
+        )
+    )
+
+    if not saved_document_exists(
+        payment
+    ):
+
+        return json_response_error(
+            "DOCUMENT_NOT_READY",
+            (
+                "The exact customer document "
+                "has not been saved yet."
+            ),
+            409,
+            service=resolved_service,
+            title=resolved_title,
+        )
+
+    verified = payment_is_verified(
+        payment.get(
+            "payment_status"
+        )
+    )
+
+    reported = payment_is_reported(
+        payment.get(
+            "payment_status"
+        )
+    )
+
+    return {
+        "ok": True,
+
+        "product": {
+            "service": resolved_service,
+
+            "title": resolved_title,
+
+            "product_key": product_identity(
+                resolved_service,
+                resolved_title,
+            ),
+
+            "document_saved": True,
+
+            "document_snapshot_saved": True,
+
+            "document_filename": payment.get(
+                "document_filename"
+            ),
+
+            "document_version": payment.get(
+                "document_version"
+            ),
+
+            "document_saved_at": payment.get(
+                "document_saved_at"
+            ),
+
+            "document_size": saved_document_size(
+                payment
+            ),
+
+            "ready": True,
+        },
+
+        "payment": payment_public(
+            payment
+        ),
+
+        "payment_status": payment.get(
+            "payment_status"
+        ),
+
+        "payment_verified": verified,
+
+        "download_unlocked": verified,
+
+        "payment_reported": reported,
+
+        # Compatibility only.
+        "payment_id": payment.get(
+            "payment_id"
+        ),
+
+        "job_id": payment.get(
+            "job_id"
+        ),
+    }
+
+
+@app.post("/api/payment/prepare")
+async def payment_prepare_post(
+    request: Request,
+):
+    return await payment_prepare_common(
+        request
+    )
+
+
+@app.get("/api/payment/prepare")
+async def payment_prepare_get(
+    request: Request,
+    payment_id: str | None = None,
+    paymentId: str | None = None,
+    job_id: str | None = None,
+    service: str | None = None,
+    title: str | None = None,
+):
+
+    body = {
+        "payment_id": payment_id
+        or paymentId
+        or "",
+
+        "job_id": job_id or "",
+
+        "service": service or "",
+
+        "title": title or "",
+    }
+
+    # GET compatibility is handled through the same resolver.
+    class QueryRequest:
+
+        async def json(self):
+            return body
+
+    return await payment_prepare_common(
+        QueryRequest()
+    )
+
+
+# ============================================================
 # CUSTOMER PAYMENT REPORT
+#
+# Product can be resolved by:
+#
+#     Service + Title
+#
+# with existing internal references retained as compatibility.
 # ============================================================
 
 @app.post("/api/payment/report")
@@ -4818,6 +3900,8 @@ async def payment_report(
     request: Request,
     payment_id: str | None = None,
     job_id: str | None = None,
+    service: str | None = None,
+    title: str | None = None,
     payment_reference: str | None = None,
     note: str | None = None,
 ):
@@ -4832,6 +3916,7 @@ async def payment_report(
             raw_body,
             dict,
         ):
+
             body = raw_body
 
     except Exception:
@@ -4847,8 +3932,14 @@ async def payment_report(
         or body_job_id(body)
     )
 
-    version_id = normalize_version(
-        body_version_id(body)
+    service = normalize_service(
+        service
+        or body_service(body)
+    )
+
+    title = normalize_title(
+        title
+        or body_title(body)
     )
 
     payment_reference = clean(
@@ -4883,170 +3974,47 @@ async def payment_report(
         )
     )
 
-    # --------------------------------------------------------
-    # FIRST: locate the DOCUMENT.
-    #
-    # This is intentionally independent of payment lookup.
-    # --------------------------------------------------------
-
-    delivery = resolve_document_delivery(
+    payment = resolve_product_payment(
         payment_id=payment_id,
         job_id=job_id,
-        version_id=version_id,
+        service=service,
+        title=title,
     )
-
-    if delivery:
-
-        job_id = normalize_job_id(
-            delivery.get(
-                "job_id"
-            )
-        )
-
-        version_id = normalize_version(
-            delivery.get(
-                "version_id"
-            )
-        )
-
-    # --------------------------------------------------------
-    # SECOND: locate payment.
-    # --------------------------------------------------------
-
-    payment = (
-        get_payment(
-            payment_id
-        )
-        if payment_id
-        else None
-    )
-
-    if not payment and delivery:
-
-        payment = resolve_payment_for_delivery(
-            delivery
-        )
-
-    if not payment and job_id:
-
-        payment = get_latest_payment_for_job(
-            job_id
-        )
-
-    # --------------------------------------------------------
-    # If payment is missing but the finished document exists,
-    # Customer Care can still see the saved product.
-    #
-    # We do NOT pretend payment has been reported.
-    # --------------------------------------------------------
 
     if not payment:
 
-        if delivery:
-
-            return {
-                "ok": True,
-                "message": (
-                    "The finished document is saved. "
-                    "No payment record was found yet. "
-                    "Customer Care can review the saved "
-                    "document record and verify payment "
-                    "through its normal business process."
-                ),
-                "payment": None,
-                "payment_id": None,
-                "job_id": delivery.get(
-                    "job_id"
-                ),
-                "document_version": delivery.get(
-                    "version_id"
-                ),
-                "document_saved": True,
-                "payment_verified": (
-                    delivery_is_verified(
-                        delivery
-                    )
-                ),
-                "download_unlocked": (
-                    delivery_is_unlocked(
-                        delivery
-                    )
-                ),
-                "document_delivery": document_public(
-                    delivery
-                ),
-                "payment_not_found": True,
-            }
-
         return json_response_error(
-            "DOCUMENT_NOT_FOUND",
+            "PRODUCT_NOT_FOUND",
             (
-                "No finished document was found "
-                "for this request."
+                "No customer product was found "
+                "for this payment request."
             ),
             404,
-            requested_payment_id=payment_id or None,
-            requested_job_id=job_id or None,
-            requested_version_id=version_id or None,
+            service=service or None,
+            title=title or None,
         )
 
     # --------------------------------------------------------
-    # Make sure the payment is linked to the saved document.
+    # NEVER regenerate the product.
     # --------------------------------------------------------
 
-    if not delivery:
-
-        delivery = resolve_document_delivery(
-            payment_id=payment.get(
-                "payment_id"
-            ),
-            job_id=payment.get(
-                "job_id"
-            ),
-            version_id=payment.get(
-                "document_version"
-            ),
-        )
-
-    if not delivery:
-
-        return json_response_error(
-            "DOCUMENT_SNAPSHOT_MISSING",
-            (
-                "The payment exists, but its exact "
-                "finished document could not be found."
-            ),
-            409,
-            payment_id=payment.get(
-                "payment_id"
-            ),
-            job_id=payment.get(
-                "job_id"
-            ),
-            version_id=payment.get(
-                "document_version"
-            ),
-        )
-
-    if not delivery_document_exists(
-        delivery
+    if not saved_document_exists(
+        payment
     ):
 
         return json_response_error(
             "DOCUMENT_SNAPSHOT_MISSING",
             (
-                "The exact finished document file "
-                "could not be found."
+                "The exact reviewed document "
+                "is missing. Payment cannot "
+                "be reported safely."
             ),
             409,
-            payment_id=payment.get(
-                "payment_id"
+            service=payment.get(
+                "service"
             ),
-            job_id=delivery.get(
-                "job_id"
-            ),
-            version_id=delivery.get(
-                "version_id"
+            title=payment.get(
+                "job_title"
             ),
         )
 
@@ -5060,68 +4028,57 @@ async def payment_report(
         status
     ):
 
-        delivery = (
-            update_document_delivery(
-                delivery.get(
-                    "job_id"
-                ),
-                delivery.get(
-                    "version_id"
-                ),
-                verification_status="verified",
-                release_status="unlocked",
-                verified_at=(
-                    delivery.get(
-                        "verified_at"
-                    )
-                    or now_iso()
-                ),
-                unlocked_at=(
-                    delivery.get(
-                        "unlocked_at"
-                    )
-                    or now_iso()
-                ),
-                payment_id=payment.get(
-                    "payment_id"
-                ),
-            )
-            or delivery
-        )
-
         return {
             "ok": True,
+
             "message": (
                 "Payment has already been verified."
             ),
+
+            "product": {
+                "service": payment.get(
+                    "service"
+                ),
+
+                "title": payment.get(
+                    "job_title"
+                ),
+
+                "document_saved": True,
+
+                "document_filename": payment.get(
+                    "document_filename"
+                ),
+            },
+
             "payment": payment_public(
                 payment
             ),
-            "payment_id": payment.get(
-                "payment_id"
-            ),
+
             "paid": True,
+
             "payment_verified": True,
+
             "download_unlocked": True,
-            "document_saved": True,
-            "document_delivery": document_public(
-                delivery
-            ),
         }
 
     updated = update_payment_record(
-        payment.get(
+        payment[
             "payment_id"
-        ),
+        ],
+
         status="reported",
+
         payment_reference=(
             payment_reference
             or None
         ),
+
         customer_note=(
             note
             or None
         ),
+
         reported_at=now_iso(),
     )
 
@@ -5129,215 +4086,169 @@ async def payment_report(
 
         return json_response_error(
             "PAYMENT_UPDATE_FAILED",
-            (
-                "Payment report could not be saved."
-            ),
+            "Payment report could not be saved.",
             500,
-            payment_id=payment.get(
-                "payment_id"
-            ),
         )
-
-    delivery = (
-        update_document_delivery(
-            delivery.get(
-                "job_id"
-            ),
-            delivery.get(
-                "version_id"
-            ),
-            payment_id=updated.get(
-                "payment_id"
-            ),
-        )
-        or delivery
-    )
 
     return {
         "ok": True,
+
         "message": (
             "Payment report received. "
             "Customer Care must verify the "
-            "payment before delivery is released."
+            "payment before the document is released."
         ),
+
+        "product": {
+            "service": updated.get(
+                "service"
+            ),
+
+            "title": updated.get(
+                "job_title"
+            ),
+
+            "document_saved": True,
+
+            "document_filename": updated.get(
+                "document_filename"
+            ),
+        },
+
         "payment": payment_public(
             updated
         ),
+
+        # Compatibility only.
         "payment_id": updated.get(
             "payment_id"
         ),
-        "paymentId": updated.get(
-            "payment_id"
-        ),
+
         "job_id": updated.get(
             "job_id"
         ),
+
         "document_version": updated.get(
             "document_version"
         ),
+
         "document_saved": True,
+
         "paid": False,
+
         "payment_verified": False,
+
         "download_unlocked": False,
+
         "back_office_status": (
             "Payment Reported — Awaiting Verification"
-        ),
-        "document_delivery": document_public(
-            delivery
         ),
     }
 
 
 # ============================================================
-# PAYMENT STATUS
+# CUSTOMER PAYMENT STATUS
 # ============================================================
 
 @app.get("/api/payment/status")
 async def payment_status(
     payment_id: str | None = None,
-    job_id: str | None = None,
     paymentId: str | None = None,
+    job_id: str | None = None,
+    service: str | None = None,
+    title: str | None = None,
 ):
 
-    payment_id = normalize_payment_id(
-        payment_id
-        or paymentId
-    )
-
-    job_id = normalize_job_id(
-        job_id
-    )
-
-    payment = (
-        get_payment(
+    payment = resolve_product_payment(
+        payment_id=normalize_payment_id(
             payment_id
-        )
-        if payment_id
-        else None
-    )
+            or paymentId
+        ),
 
-    if not payment and job_id:
-
-        payment = get_latest_payment_for_job(
+        job_id=normalize_job_id(
             job_id
-        )
+        ),
+
+        service=normalize_service(
+            service
+        ),
+
+        title=normalize_title(
+            title
+        ),
+    )
 
     if not payment:
 
-        delivery = (
-            get_document_delivery(
-                job_id
-            )
-            if job_id
-            else None
-        )
-
-        if delivery:
-
-            return {
-                "ok": True,
-                "payment": None,
-                "payment_id": None,
-                "payment_status": "none",
-                "paid": delivery_is_verified(
-                    delivery
-                ),
-                "payment_verified": (
-                    delivery_is_verified(
-                        delivery
-                    )
-                ),
-                "download_unlocked": (
-                    delivery_is_unlocked(
-                        delivery
-                    )
-                ),
-                "document_saved": (
-                    delivery_document_exists(
-                        delivery
-                    )
-                ),
-                "document_delivery": document_public(
-                    delivery
-                ),
-            }
-
         return {
             "ok": True,
+
+            "product": None,
+
             "payment": None,
-            "payment_id": payment_id or None,
+
             "payment_status": "none",
+
             "paid": False,
+
             "payment_verified": False,
+
             "download_unlocked": False,
-            "document_saved": False,
         }
 
-    delivery = resolve_document_delivery(
-        payment_id=payment.get(
-            "payment_id"
-        ),
-        job_id=payment.get(
-            "job_id"
-        ),
-        version_id=payment.get(
-            "document_version"
-        ),
+    saved = saved_document_exists(
+        payment
     )
 
-    verified = (
-        delivery_is_verified(
-            delivery
+    verified = payment_is_verified(
+        payment.get(
+            "payment_status"
         )
-        if delivery
-        else payment_is_verified(
-            payment.get(
-                "payment_status"
-            )
-        )
-    )
-
-    unlocked = (
-        delivery_is_unlocked(
-            delivery
-        )
-        if delivery
-        else verified
     )
 
     return {
         "ok": True,
+
+        "product": {
+            "service": payment.get(
+                "service"
+            ),
+
+            "title": payment.get(
+                "job_title"
+            ),
+
+            "document_saved": saved,
+
+            "document_filename": payment.get(
+                "document_filename"
+            ),
+
+            "document_version": payment.get(
+                "document_version"
+            ),
+        },
+
         "payment": payment_public(
             payment
         ),
-        "payment_id": payment.get(
-            "payment_id"
-        ),
+
         "payment_status": payment.get(
             "payment_status"
         ),
+
         "paid": verified,
+
         "payment_verified": verified,
-        "download_unlocked": unlocked,
-        "document_saved": (
-            delivery_document_exists(
-                delivery
-            )
-            if delivery
-            else saved_document_exists(
-                payment
-            )
-        ),
+
+        "download_unlocked": verified,
+
+        "document_saved": saved,
+
         "document_check": (
             "current_snapshot"
-            if delivery
-            and delivery_document_exists(
-                delivery
-            )
+            if saved
             else "missing_snapshot"
-        ),
-        "document_delivery": document_public(
-            delivery
         ),
     }
 
@@ -5351,6 +4262,8 @@ async def payment_complete_compat(
     request: Request,
     payment_id: str | None = None,
     job_id: str | None = None,
+    service: str | None = None,
+    title: str | None = None,
     payment_reference: str | None = None,
     note: str | None = None,
 ):
@@ -5359,53 +4272,53 @@ async def payment_complete_compat(
         request,
         payment_id=payment_id,
         job_id=job_id,
+        service=service,
+        title=title,
         payment_reference=payment_reference,
         note=note,
     )
 
 
 # ============================================================
-# CUSTOMER CARE DOCUMENT LIST
-#
-# THIS IS NOW DOCUMENT-FIRST.
-#
-# Customer Care does not need a successful payment lookup just
-# to see the finished document.
-# ============================================================
-
-@app.get(
-    "/api/customer-care/documents"
-)
-async def customer_care_documents():
-
-    records = list_document_deliveries()
-
-    return {
-        "ok": True,
-        "count": len(records),
-        "documents": [
-            document_public(
-                record
-            )
-            for record in records
-        ],
-    }
-
-
-# ============================================================
 # CUSTOMER CARE PAYMENTS
 # ============================================================
 
-@app.get(
-    "/api/customer-care/payments"
-)
+@app.get("/api/customer-care/payments")
 async def customer_care_payments():
 
     records = list_pending_payments()
 
     return {
         "ok": True,
+
         "count": len(records),
+
+        "products": [
+            {
+                "service": record.get(
+                    "service"
+                ),
+
+                "title": record.get(
+                    "job_title"
+                ),
+
+                "document_saved": saved_document_exists(
+                    record
+                ),
+
+                "document_filename": record.get(
+                    "document_filename"
+                ),
+
+                "payment": payment_public(
+                    record
+                ),
+            }
+            for record in records
+        ],
+
+        # Existing compatibility collection.
         "payments": [
             payment_public(
                 record
@@ -5416,10 +4329,7 @@ async def customer_care_payments():
 
 
 # ============================================================
-# CUSTOMER CARE VERIFY PAYMENT
-#
-# Payment verification is now copied onto the document
-# delivery record.
+# CUSTOMER CARE VERIFY
 # ============================================================
 
 @app.post(
@@ -5429,6 +4339,8 @@ async def customer_care_verify(
     request: Request,
     payment_id: str | None = None,
     verified: bool = True,
+    service: str | None = None,
+    title: str | None = None,
     note: str | None = None,
 ):
 
@@ -5442,6 +4354,7 @@ async def customer_care_verify(
             raw_body,
             dict,
         ):
+
             body = raw_body
 
     except Exception:
@@ -5452,12 +4365,14 @@ async def customer_care_verify(
         or body_payment_id(body)
     )
 
-    job_id = body_job_id(
-        body
+    service = normalize_service(
+        service
+        or body_service(body)
     )
 
-    version_id = body_version_id(
-        body
+    title = normalize_title(
+        title
+        or body_title(body)
     )
 
     if "verified" in body:
@@ -5497,237 +4412,103 @@ async def customer_care_verify(
         )
     )
 
-    # --------------------------------------------------------
-    # DOCUMENT FIRST
-    # --------------------------------------------------------
-
-    delivery = resolve_document_delivery(
+    payment = resolve_product_payment(
         payment_id=payment_id,
-        job_id=job_id,
-        version_id=version_id,
+        service=service,
+        title=title,
     )
-
-    # --------------------------------------------------------
-    # PAYMENT IS OPTIONAL FOR LOCATING THE SAVED DOCUMENT.
-    # --------------------------------------------------------
-
-    payment = (
-        get_payment(
-            payment_id
-        )
-        if payment_id
-        else None
-    )
-
-    if not payment and delivery:
-
-        payment = resolve_payment_for_delivery(
-            delivery
-        )
-
-    if not payment and delivery:
-
-        if not verified:
-
-            delivery = (
-                update_document_delivery(
-                    delivery.get(
-                        "job_id"
-                    ),
-                    delivery.get(
-                        "version_id"
-                    ),
-                    verification_status="rejected",
-                    verification_note=note,
-                )
-                or delivery
-            )
-
-            return {
-                "ok": True,
-                "message": (
-                    "Payment marked as rejected. "
-                    "Document remains locked."
-                ),
-                "payment": None,
-                "document_delivery": document_public(
-                    delivery
-                ),
-                "payment_verified": False,
-                "download_unlocked": False,
-            }
-
-        # ----------------------------------------------------
-        # No payment record, but the saved document exists.
-        #
-        # Customer Care can record its business verification
-        # against the document itself.
-        # ----------------------------------------------------
-
-        if not delivery_document_exists(
-            delivery
-        ):
-
-            return json_response_error(
-                "DOCUMENT_SNAPSHOT_MISSING",
-                (
-                    "The finished document is not "
-                    "available for delivery."
-                ),
-                409,
-            )
-
-        timestamp = now_iso()
-
-        delivery = (
-            update_document_delivery(
-                delivery.get(
-                    "job_id"
-                ),
-                delivery.get(
-                    "version_id"
-                ),
-                verification_status="verified",
-                release_status="unlocked",
-                verification_note=note,
-                verified_at=timestamp,
-                unlocked_at=timestamp,
-            )
-            or delivery
-        )
-
-        return {
-            "ok": True,
-            "message": (
-                "Payment verified by Customer Care. "
-                "The saved document is now unlocked."
-            ),
-            "payment": None,
-            "payment_id": None,
-            "job_id": delivery.get(
-                "job_id"
-            ),
-            "document_version": delivery.get(
-                "version_id"
-            ),
-            "document_saved": True,
-            "payment_verified": True,
-            "download_unlocked": True,
-            "document_delivery": document_public(
-                delivery
-            ),
-        }
 
     if not payment:
 
         return json_response_error(
-            "DOCUMENT_NOT_FOUND",
-            (
-                "No saved finished document or "
-                "payment record was found."
-            ),
+            "PRODUCT_NOT_FOUND",
+            "Customer product not found.",
             404,
+            service=service or None,
+            title=title or None,
         )
 
-    if not delivery:
-
-        delivery = resolve_document_delivery(
-            payment_id=payment.get(
-                "payment_id"
-            ),
-            job_id=payment.get(
-                "job_id"
-            ),
-            version_id=payment.get(
-                "document_version"
-            ),
+    internal_payment_id = normalize_payment_id(
+        payment.get(
+            "payment_id"
         )
-
-    if not delivery:
-
-        return json_response_error(
-            "DOCUMENT_SNAPSHOT_MISSING",
-            (
-                "The payment exists but the exact "
-                "finished document cannot be found."
-            ),
-            409,
-            payment_id=payment.get(
-                "payment_id"
-            ),
-        )
+    )
 
     if not verified:
 
         updated = update_payment_record(
-            payment.get(
-                "payment_id"
-            ),
+            internal_payment_id,
+
             status="rejected",
+
             admin_note=(
                 note
                 or None
             ),
         )
 
-        delivery = (
-            update_document_delivery(
-                delivery.get(
-                    "job_id"
-                ),
-                delivery.get(
-                    "version_id"
-                ),
-                verification_status="rejected",
-                release_status="locked",
-                verification_note=note,
-            )
-            or delivery
-        )
-
         return {
             "ok": True,
+
             "message": (
-                "Payment marked as rejected. "
-                "Document remains locked."
+                "Payment marked as rejected."
             ),
+
+            "product": {
+                "service": updated.get(
+                    "service"
+                ),
+
+                "title": updated.get(
+                    "job_title"
+                ),
+
+                "document_saved": saved_document_exists(
+                    updated
+                ),
+            },
+
             "payment": payment_public(
                 updated
             ),
-            "document_delivery": document_public(
-                delivery
-            ),
+
             "paid": False,
+
             "payment_verified": False,
+
             "download_unlocked": False,
         }
 
-    if not delivery_document_exists(
-        delivery
+    if not saved_document_exists(
+        payment
     ):
 
         return json_response_error(
             "DOCUMENT_SNAPSHOT_MISSING",
             (
                 "Customer Care cannot unlock "
-                "this document because the exact "
-                "finished document is missing."
+                "this product because the exact "
+                "document is missing."
             ),
             409,
-            payment_id=payment.get(
-                "payment_id"
+            service=payment.get(
+                "service"
+            ),
+            title=payment.get(
+                "job_title"
             ),
         )
 
     updated = update_payment_record(
-        payment.get(
-            "payment_id"
-        ),
+        internal_payment_id,
+
         status="verified",
+
         admin_note=(
             note
             or None
         ),
+
         verified_at=now_iso(),
     )
 
@@ -5735,68 +4516,50 @@ async def customer_care_verify(
 
         return json_response_error(
             "PAYMENT_UPDATE_FAILED",
-            (
-                "Payment could not be updated, "
-                "but the saved document remains "
-                "available to Customer Care."
-            ),
+            "Payment could not be verified.",
             500,
-            payment_id=payment.get(
-                "payment_id"
-            ),
-            document_saved=True,
         )
-
-    timestamp = now_iso()
-
-    delivery = (
-        update_document_delivery(
-            delivery.get(
-                "job_id"
-            ),
-            delivery.get(
-                "version_id"
-            ),
-            payment_id=updated.get(
-                "payment_id"
-            ),
-            verification_status="verified",
-            release_status="unlocked",
-            verification_note=note,
-            verified_at=(
-                delivery.get(
-                    "verified_at"
-                )
-                or timestamp
-            ),
-            unlocked_at=(
-                delivery.get(
-                    "unlocked_at"
-                )
-                or timestamp
-            ),
-        )
-        or delivery
-    )
 
     return {
         "ok": True,
+
         "message": (
             "Payment verified. "
-            "The exact saved document is "
-            "now unlocked for download and "
-            "Customer Care delivery."
+            "The exact saved customer document "
+            "is now unlocked for delivery."
         ),
+
+        "product": {
+            "service": updated.get(
+                "service"
+            ),
+
+            "title": updated.get(
+                "job_title"
+            ),
+
+            "document_saved": True,
+
+            "document_filename": updated.get(
+                "document_filename"
+            ),
+
+            "document_version": updated.get(
+                "document_version"
+            ),
+        },
+
         "payment": payment_public(
             updated
         ),
+
         "paid": True,
+
         "payment_verified": True,
+
         "download_unlocked": True,
+
         "document_saved": True,
-        "document_delivery": document_public(
-            delivery
-        ),
     }
 
 
@@ -5819,6 +4582,7 @@ async def back_office_login(
             body,
             dict,
         ):
+
             body = {}
 
     except Exception:
@@ -5835,8 +4599,11 @@ async def back_office_login(
 
     return {
         "ok": True,
+
         "authenticated": True,
+
         "back_office": True,
+
         "message": (
             "Back Office access granted."
         ),
@@ -5844,41 +4611,7 @@ async def back_office_login(
 
 
 # ============================================================
-# BACK OFFICE DOCUMENT LIST
-#
-# THIS IS THE PRIMARY CUSTOMER CARE WORK QUEUE.
-# ============================================================
-
-@app.get(
-    "/api/back-office/documents"
-)
-async def back_office_documents(
-    request: Request,
-):
-
-    auth_error = require_admin(
-        request
-    )
-
-    if auth_error:
-        return auth_error
-
-    records = list_document_deliveries()
-
-    return {
-        "ok": True,
-        "count": len(records),
-        "documents": [
-            document_public(
-                record
-            )
-            for record in records
-        ],
-    }
-
-
-# ============================================================
-# BACK OFFICE PAYMENTS
+# BACK OFFICE PAYMENT LIST
 # ============================================================
 
 @app.get(
@@ -5912,16 +4645,45 @@ async def back_office_payments(
 
     return {
         "ok": True,
+
         "count": len(records),
+
         "pending_count": len(
             pending
         ),
+
+        "products": [
+            {
+                "service": record.get(
+                    "service"
+                ),
+
+                "title": record.get(
+                    "job_title"
+                ),
+
+                "document_saved": saved_document_exists(
+                    record
+                ),
+
+                "document_filename": record.get(
+                    "document_filename"
+                ),
+
+                "payment_status": record.get(
+                    "payment_status"
+                ),
+            }
+            for record in records
+        ],
+
         "payments": [
             payment_public(
                 record
             )
             for record in records
         ],
+
         "pending_payments": pending,
     }
 
@@ -5929,7 +4691,10 @@ async def back_office_payments(
 # ============================================================
 # BACK OFFICE JOB LIST
 #
-# DOCUMENTS FIRST.
+# Existing endpoint retained for compatibility.
+#
+# The returned business object is now the PRODUCT:
+# Service + Title + Document.
 # ============================================================
 
 @app.get(
@@ -5946,91 +4711,65 @@ async def back_office_jobs(
     if auth_error:
         return auth_error
 
-    documents = list_document_deliveries()
+    records = list_all_payments()
 
-    jobs: list[dict[str, Any]] = []
+    products: list[dict[str, Any]] = []
 
-    for delivery in documents:
+    for payment in records:
 
-        public = document_public(
-            delivery
+        public = payment_public(
+            payment
         )
 
         if not public:
             continue
 
-        payment = resolve_payment_for_delivery(
-            delivery
-        )
-
-        if payment:
-
-            public[
-                "payment_status"
-            ] = payment.get(
-                "payment_status"
-            )
-
-            public[
-                "payment_reference"
-            ] = payment.get(
-                "payment_reference"
-            )
-
-            public[
-                "payment"
-            ] = payment_public(
-                payment
-            )
-
+        public["status_label"] = (
+            "Payment Reported — Awaiting Verification"
             if payment_is_reported(
                 payment.get(
-                    "payment_status"
+                    "payment_status",
+                    "",
                 )
-            ) and not delivery_is_verified(
-                delivery
-            ):
-
-                public[
-                    "status_label"
-                ] = (
-                    "Payment Reported — Awaiting Verification"
-                )
-
-        if delivery_is_unlocked(
-            delivery
-        ):
-
-            public[
-                "status_label"
-            ] = (
+            )
+            else (
                 "Payment Verified — Download Unlocked"
+                if payment_is_verified(
+                    payment.get(
+                        "payment_status",
+                        "",
+                    )
+                )
+                else clean(
+                    payment.get(
+                        "payment_status"
+                    )
+                )
             )
+        )
 
-        elif delivery_is_verified(
-            delivery
-        ):
-
-            public[
-                "status_label"
-            ] = (
-                "Payment Verified — Ready for Delivery"
-            )
-
-        jobs.append(
+        products.append(
             public
         )
 
     return {
         "ok": True,
-        "count": len(jobs),
-        "jobs": jobs,
-        "payments": jobs,
+
+        "count": len(
+            products
+        ),
+
+        "products": products,
+
+        # Existing UI compatibility.
+        "jobs": products,
+
+        "payments": products,
     }
 
 
 # ============================================================
-# BACK OFFICE SINGLE PAYMENT
+# BACK OFFICE SINGLE PRODUCT/PAYMENT
 # ============================================================
 
 @app.get(
@@ -6039,8 +4778,10 @@ async def back_office_jobs(
 async def back_office_payment(
     request: Request,
     payment_id: str | None = None,
-    job_id: str | None = None,
     paymentId: str | None = None,
+    job_id: str | None = None,
+    service: str | None = None,
+    title: str | None = None,
 ):
 
     auth_error = require_admin(
@@ -6050,37 +4791,58 @@ async def back_office_payment(
     if auth_error:
         return auth_error
 
-    payment_id = normalize_payment_id(
-        payment_id
-        or paymentId
-    )
-
-    payment = None
-
-    if payment_id:
-
-        payment = get_payment(
+    payment = resolve_product_payment(
+        payment_id=normalize_payment_id(
             payment_id
-        )
+            or paymentId
+        ),
 
-    if not payment and clean(
-        job_id
-    ):
-
-        payment = get_latest_payment_for_job(
+        job_id=normalize_job_id(
             job_id
-        )
+        ),
+
+        service=normalize_service(
+            service
+        ),
+
+        title=normalize_title(
+            title
+        ),
+    )
 
     if not payment:
 
         return json_response_error(
-            "PAYMENT_NOT_FOUND",
-            "Payment record not found.",
+            "PRODUCT_NOT_FOUND",
+            "Customer product not found.",
             404,
         )
 
     return {
         "ok": True,
+
+        "product": {
+            "service": payment.get(
+                "service"
+            ),
+
+            "title": payment.get(
+                "job_title"
+            ),
+
+            "document_saved": saved_document_exists(
+                payment
+            ),
+
+            "document_filename": payment.get(
+                "document_filename"
+            ),
+
+            "document_version": payment.get(
+                "document_version"
+            ),
+        },
+
         "payment": payment_public(
             payment
         ),
@@ -6089,8 +4851,6 @@ async def back_office_payment(
 
 # ============================================================
 # BACK OFFICE DOCUMENT INFO
-#
-# DOES NOT REQUIRE PAYMENT LOOKUP.
 # ============================================================
 
 @app.get(
@@ -6099,9 +4859,10 @@ async def back_office_payment(
 async def back_office_document_info(
     request: Request,
     payment_id: str | None = None,
-    job_id: str | None = None,
     paymentId: str | None = None,
-    version_id: str | None = None,
+    job_id: str | None = None,
+    service: str | None = None,
+    title: str | None = None,
 ):
 
     auth_error = require_admin(
@@ -6111,82 +4872,92 @@ async def back_office_document_info(
     if auth_error:
         return auth_error
 
-    payment_id = normalize_payment_id(
-        payment_id
-        or paymentId
+    payment = resolve_product_payment(
+        payment_id=normalize_payment_id(
+            payment_id
+            or paymentId
+        ),
+
+        job_id=normalize_job_id(
+            job_id
+        ),
+
+        service=normalize_service(
+            service
+        ),
+
+        title=normalize_title(
+            title
+        ),
     )
 
-    delivery = resolve_document_delivery(
-        payment_id=payment_id,
-        job_id=job_id or "",
-        version_id=version_id or "",
-    )
-
-    if not delivery:
+    if not payment:
 
         return json_response_error(
-            "DOCUMENT_NOT_FOUND",
-            "Finished document record not found.",
+            "PRODUCT_NOT_FOUND",
+            "Customer product not found.",
             404,
-            payment_id=payment_id or None,
-            job_id=job_id or None,
-            version_id=version_id or None,
         )
 
-    exists = delivery_document_exists(
-        delivery
+    exists = saved_document_exists(
+        payment
     )
 
-    path = delivery_document_path(
-        delivery
-    )
-
-    payment = resolve_payment_for_delivery(
-        delivery
+    path = saved_document_path(
+        payment
     )
 
     return {
         "ok": True,
-        "payment_id": delivery.get(
-            "payment_id"
+
+        "service": payment.get(
+            "service"
         ),
-        "job_id": delivery.get(
-            "job_id"
+
+        "title": payment.get(
+            "job_title"
         ),
-        "document_version": delivery.get(
-            "version_id"
-        ),
-        "document_filename": delivery.get(
+
+        "document_filename": payment.get(
             "document_filename"
         ),
+
+        "document_version": payment.get(
+            "document_version"
+        ),
+
         "document_saved": exists,
+
         "document_snapshot_saved": exists,
-        "document_saved_at": delivery.get(
+
+        "document_saved_at": payment.get(
             "document_saved_at"
         ),
-        "document_size": delivery_document_size(
-            delivery
+
+        "document_size": saved_document_size(
+            payment
         ),
+
         "document_path": (
             str(path)
             if exists and path
             else None
         ),
-        "payment_status": (
+
+        "payment_status": payment.get(
+            "payment_status"
+        ),
+
+        "download_unlocked": payment_is_verified(
             payment.get(
-                "payment_status"
+                "payment_status",
+                "",
             )
-            if payment
-            else None
         ),
-        "payment_verified": delivery_is_verified(
-            delivery
-        ),
-        "download_unlocked": delivery_is_unlocked(
-            delivery
-        ),
-        "document_delivery": document_public(
-            delivery
+
+        # Internal compatibility only.
+        "payment_id": payment.get(
+            "payment_id"
         ),
     }
 
@@ -6194,7 +4965,9 @@ async def back_office_document_info(
 # ============================================================
 # BACK OFFICE SAVED DOCUMENT
 #
-# SERVES EXACT SAVED SNAPSHOT ONLY.
+# SERVES EXISTING SNAPSHOT ONLY.
+#
+# NEVER REGENERATES.
 # ============================================================
 
 @app.get(
@@ -6203,9 +4976,10 @@ async def back_office_document_info(
 async def back_office_document(
     request: Request,
     payment_id: str | None = None,
-    job_id: str | None = None,
     paymentId: str | None = None,
-    version_id: str | None = None,
+    job_id: str | None = None,
+    service: str | None = None,
+    title: str | None = None,
 ):
 
     auth_error = require_admin(
@@ -6215,27 +4989,35 @@ async def back_office_document(
     if auth_error:
         return auth_error
 
-    payment_id = normalize_payment_id(
-        payment_id
-        or paymentId
+    payment = resolve_product_payment(
+        payment_id=normalize_payment_id(
+            payment_id
+            or paymentId
+        ),
+
+        job_id=normalize_job_id(
+            job_id
+        ),
+
+        service=normalize_service(
+            service
+        ),
+
+        title=normalize_title(
+            title
+        ),
     )
 
-    delivery = resolve_document_delivery(
-        payment_id=payment_id,
-        job_id=job_id or "",
-        version_id=version_id or "",
-    )
-
-    if not delivery:
+    if not payment:
 
         return json_response_error(
-            "DOCUMENT_NOT_FOUND",
-            "Finished document record not found.",
+            "PRODUCT_NOT_FOUND",
+            "Customer product not found.",
             404,
         )
 
-    output = delivery_document_path(
-        delivery
+    output = saved_document_path(
+        payment
     )
 
     if (
@@ -6247,21 +5029,15 @@ async def back_office_document(
         return json_response_error(
             "DOCUMENT_SNAPSHOT_MISSING",
             (
-                "The exact saved document "
-                "snapshot is missing."
+                "The exact saved customer "
+                "document is missing."
             ),
             409,
-            job_id=delivery.get(
-                "job_id"
-            ),
-            version_id=delivery.get(
-                "version_id"
-            ),
         )
 
     filename = (
         clean(
-            delivery.get(
+            payment.get(
                 "document_filename"
             )
         )
@@ -6270,25 +5046,37 @@ async def back_office_document(
 
     return FileResponse(
         path=str(output),
+
         media_type=(
             "application/vnd.openxmlformats-"
             "officedocument.wordprocessingml.document"
         ),
+
         filename=Path(
             filename
         ).name,
+
         headers={
-            "X-Payment-ID": clean(
-                delivery.get(
-                    "payment_id"
+            "X-Product-Service": clean(
+                payment.get(
+                    "service"
                 )
             ),
+
+            "X-Product-Title": clean(
+                payment.get(
+                    "job_title"
+                )
+            ),
+
             "X-Document-Version": clean(
-                delivery.get(
-                    "version_id"
+                payment.get(
+                    "document_version"
                 )
             ),
+
             "X-Document-Snapshot": "true",
+
             "X-Back-Office": "true",
         },
     )
@@ -6313,6 +5101,7 @@ async def back_office_verify_payment(
             body,
             dict,
         ):
+
             body = {}
 
     except Exception:
@@ -6331,11 +5120,11 @@ async def back_office_verify_payment(
         body
     )
 
-    job_id = body_job_id(
+    service = body_service(
         body
     )
 
-    version_id = body_version_id(
+    title = body_title(
         body
     )
 
@@ -6348,178 +5137,124 @@ async def back_office_verify_payment(
         )
     )
 
-    # --------------------------------------------------------
-    # DOCUMENT FIRST
-    # --------------------------------------------------------
-
-    delivery = resolve_document_delivery(
+    payment = resolve_product_payment(
         payment_id=payment_id,
-        job_id=job_id,
-        version_id=version_id,
+        service=service,
+        title=title,
     )
 
-    if not delivery:
+    if not payment:
 
         return json_response_error(
-            "DOCUMENT_NOT_FOUND",
-            (
-                "No saved finished document was "
-                "found for this job/version."
-            ),
+            "PRODUCT_NOT_FOUND",
+            "Customer product not found.",
             404,
-            payment_id=payment_id or None,
-            job_id=job_id or None,
-            version_id=version_id or None,
         )
 
-    if not delivery_document_exists(
-        delivery
+    status = normalize_status(
+        payment.get(
+            "payment_status"
+        )
+    )
+
+    if status in {
+        "rejected",
+        "cancelled",
+        "canceled",
+    }:
+
+        return json_response_error(
+            "PAYMENT_NOT_VERIFIABLE",
+            (
+                "This payment cannot be unlocked "
+                "because it is marked as rejected "
+                "or cancelled."
+            ),
+            409,
+        )
+
+    if not saved_document_exists(
+        payment
     ):
 
         return json_response_error(
             "DOCUMENT_SNAPSHOT_MISSING",
             (
-                "The exact saved document "
-                "snapshot is missing."
+                "UNLOCK DOWNLOAD cannot continue "
+                "because the exact saved customer "
+                "document is missing."
             ),
             409,
-            job_id=delivery.get(
-                "job_id"
-            ),
-            version_id=delivery.get(
-                "version_id"
-            ),
         )
 
-    payment = resolve_payment_for_delivery(
-        delivery
+    updated = update_payment_record(
+        payment[
+            "payment_id"
+        ],
+
+        status="verified",
+
+        admin_note=(
+            note
+            or None
+        ),
+
+        verified_at=now_iso(),
     )
 
-    # --------------------------------------------------------
-    # If a payment exists, update it.
-    # If it does not, verification can still be recorded
-    # against the finished document.
-    # --------------------------------------------------------
+    if not updated:
 
-    if payment:
-
-        status = normalize_status(
-            payment.get(
-                "payment_status"
-            )
+        return json_response_error(
+            "PAYMENT_UPDATE_FAILED",
+            "Payment could not be verified.",
+            500,
         )
-
-        if status in {
-            "rejected",
-            "cancelled",
-            "canceled",
-        }:
-
-            return json_response_error(
-                "PAYMENT_NOT_VERIFIABLE",
-                (
-                    "This payment is marked as "
-                    "rejected or cancelled."
-                ),
-                409,
-                payment_id=payment.get(
-                    "payment_id"
-                ),
-            )
-
-        updated_payment = (
-            update_payment_record(
-                payment.get(
-                    "payment_id"
-                ),
-                status="verified",
-                admin_note=(
-                    note
-                    or None
-                ),
-                verified_at=now_iso(),
-            )
-        )
-
-    else:
-
-        updated_payment = None
-
-    timestamp = now_iso()
-
-    delivery = (
-        update_document_delivery(
-            delivery.get(
-                "job_id"
-            ),
-            delivery.get(
-                "version_id"
-            ),
-            payment_id=(
-                payment.get(
-                    "payment_id"
-                )
-                if payment
-                else None
-            ),
-            verification_status="verified",
-            release_status="unlocked",
-            verification_note=note,
-            verified_at=(
-                delivery.get(
-                    "verified_at"
-                )
-                or timestamp
-            ),
-            unlocked_at=(
-                delivery.get(
-                    "unlocked_at"
-                )
-                or timestamp
-            ),
-        )
-        or delivery
-    )
 
     return {
         "ok": True,
+
         "message": (
             "Payment verified. "
-            "The exact saved document is "
-            "now unlocked for download and "
-            "Customer Care delivery."
+            "UNLOCK DOWNLOAD is now active "
+            "for the exact saved customer document."
         ),
-        "payment": (
-            payment_public(
-                updated_payment
-            )
-            if updated_payment
-            else None
+
+        "product": {
+            "service": updated.get(
+                "service"
+            ),
+
+            "title": updated.get(
+                "job_title"
+            ),
+
+            "document_saved": True,
+
+            "document_filename": updated.get(
+                "document_filename"
+            ),
+
+            "document_version": updated.get(
+                "document_version"
+            ),
+        },
+
+        "payment": payment_public(
+            updated
         ),
-        "payment_id": (
-            delivery.get(
-                "payment_id"
-            )
-        ),
-        "job_id": delivery.get(
-            "job_id"
-        ),
-        "document_version": delivery.get(
-            "version_id"
-        ),
-        "document_saved": True,
+
         "payment_verified": True,
+
         "download_unlocked": True,
-        "document_delivery": document_public(
-            delivery
-        ),
+
+        "document_saved": True,
     }
 
 
 # ============================================================
 # BACK OFFICE ACTIVATE DOWNLOAD
 #
-# DOCUMENT-FIRST.
+# EXISTING SNAPSHOT → VERIFIED
 #
 # NO REGENERATION.
 # ============================================================
@@ -6539,6 +5274,7 @@ async def back_office_activate_download(
             body,
             dict,
         ):
+
             body = {}
 
     except Exception:
@@ -6561,7 +5297,11 @@ async def back_office_activate_download(
         body
     )
 
-    version_id = body_version_id(
+    service = body_service(
+        body
+    )
+
+    title = body_title(
         body
     )
 
@@ -6574,160 +5314,103 @@ async def back_office_activate_download(
         )
     )
 
-    # --------------------------------------------------------
-    # DOCUMENT IS THE PRIMARY RECORD.
-    # --------------------------------------------------------
-
-    delivery = resolve_document_delivery(
+    payment = resolve_product_payment(
         payment_id=payment_id,
         job_id=job_id,
-        version_id=version_id,
+        service=service,
+        title=title,
     )
 
-    if not delivery:
+    if not payment:
 
         return json_response_error(
-            "DOCUMENT_NOT_FOUND",
+            "PRODUCT_NOT_FOUND",
             (
-                "No saved finished document was "
-                "found for this job/version."
+                "No customer product was found."
             ),
             404,
-            requested_payment_id=payment_id or None,
-            requested_job_id=job_id or None,
-            requested_version_id=version_id or None,
+            service=service or None,
+            title=title or None,
         )
 
-    if not delivery_document_exists(
-        delivery
+    if not saved_document_exists(
+        payment
     ):
 
         return json_response_error(
             "DOCUMENT_SNAPSHOT_MISSING",
             (
                 "UNLOCK DOWNLOAD cannot continue "
-                "because the exact saved document "
-                "snapshot is missing."
+                "because the exact saved customer "
+                "document is missing."
             ),
             409,
-            job_id=delivery.get(
-                "job_id"
-            ),
-            version_id=delivery.get(
-                "version_id"
-            ),
         )
 
-    payment = resolve_payment_for_delivery(
-        delivery
+    internal_payment_id = normalize_payment_id(
+        payment.get(
+            "payment_id"
+        )
     )
 
-    if payment:
+    updated = update_payment_record(
+        internal_payment_id,
 
-        status = normalize_status(
-            payment.get(
-                "payment_status"
-            )
-        )
+        status="verified",
 
-        if status in {
-            "rejected",
-            "cancelled",
-            "canceled",
-        }:
+        admin_note=(
+            note
+            or None
+        ),
 
-            return json_response_error(
-                "PAYMENT_NOT_VERIFIABLE",
-                (
-                    "This payment is marked as "
-                    "rejected or cancelled."
-                ),
-                409,
-                payment_id=payment.get(
-                    "payment_id"
-                ),
-            )
-
-        payment = (
-            update_payment_record(
-                payment.get(
-                    "payment_id"
-                ),
-                status="verified",
-                admin_note=(
-                    note
-                    or None
-                ),
-                verified_at=now_iso(),
-            )
-            or payment
-        )
-
-    timestamp = now_iso()
-
-    delivery = (
-        update_document_delivery(
-            delivery.get(
-                "job_id"
-            ),
-            delivery.get(
-                "version_id"
-            ),
-            payment_id=(
-                payment.get(
-                    "payment_id"
-                )
-                if payment
-                else None
-            ),
-            verification_status="verified",
-            release_status="unlocked",
-            verification_note=note,
-            verified_at=(
-                delivery.get(
-                    "verified_at"
-                )
-                or timestamp
-            ),
-            unlocked_at=timestamp,
-        )
-        or delivery
+        verified_at=now_iso(),
     )
+
+    if not updated:
+
+        return json_response_error(
+            "PAYMENT_UPDATE_FAILED",
+            "Download could not be unlocked.",
+            500,
+        )
 
     return {
         "ok": True,
+
         "message": (
-            "The exact saved document is "
-            "now unlocked. No document was regenerated."
+            "Payment verified and the exact "
+            "saved customer document is unlocked."
         ),
-        "payment": (
-            payment_public(
-                payment
-            )
-            if payment
-            else None
+
+        "product": {
+            "service": updated.get(
+                "service"
+            ),
+
+            "title": updated.get(
+                "job_title"
+            ),
+
+            "document_saved": True,
+
+            "document_filename": updated.get(
+                "document_filename"
+            ),
+
+            "document_version": updated.get(
+                "document_version"
+            ),
+        },
+
+        "payment": payment_public(
+            updated
         ),
-        "payment_id": delivery.get(
-            "payment_id"
-        ),
-        "job_id": delivery.get(
-            "job_id"
-        ),
-        "work_id": delivery.get(
-            "job_id"
-        ),
-        "document_id": delivery.get(
-            "job_id"
-        ),
-        "document_version": delivery.get(
-            "version_id"
-        ),
-        "document_saved": True,
+
         "payment_verified": True,
+
         "download_unlocked": True,
-        "document_delivery": document_public(
-            delivery
-        ),
+
+        "document_saved": True,
     }
 
 
@@ -6750,6 +5433,7 @@ async def back_office_reject_payment(
             body,
             dict,
         ):
+
             body = {}
 
     except Exception:
@@ -6768,11 +5452,11 @@ async def back_office_reject_payment(
         body
     )
 
-    job_id = body_job_id(
+    service = body_service(
         body
     )
 
-    version_id = body_version_id(
+    title = body_title(
         body
     )
 
@@ -6785,93 +5469,76 @@ async def back_office_reject_payment(
         )
     )
 
-    delivery = resolve_document_delivery(
+    payment = resolve_product_payment(
         payment_id=payment_id,
-        job_id=job_id,
-        version_id=version_id,
+        service=service,
+        title=title,
     )
 
-    if not delivery:
+    if not payment:
 
         return json_response_error(
-            "DOCUMENT_NOT_FOUND",
-            "Finished document not found.",
+            "PRODUCT_NOT_FOUND",
+            "Customer product not found.",
             404,
         )
 
-    payment = resolve_payment_for_delivery(
-        delivery
-    )
+    if payment_is_verified(
+        payment.get(
+            "payment_status"
+        )
+    ):
 
-    if payment:
-
-        if payment_is_verified(
-            payment.get(
-                "payment_status"
-            )
-        ):
-
-            return json_response_error(
-                "PAYMENT_ALREADY_UNLOCKED",
-                (
-                    "This payment is already verified "
-                    "and download is unlocked."
-                ),
-                409,
-                payment_id=payment.get(
-                    "payment_id"
-                ),
-            )
-
-        updated_payment = (
-            update_payment_record(
-                payment.get(
-                    "payment_id"
-                ),
-                status="rejected",
-                admin_note=(
-                    note
-                    or None
-                ),
-            )
+        return json_response_error(
+            "PAYMENT_ALREADY_UNLOCKED",
+            (
+                "This product has already been "
+                "verified and download is unlocked."
+            ),
+            409,
         )
 
-    else:
+    updated = update_payment_record(
+        payment[
+            "payment_id"
+        ],
 
-        updated_payment = None
+        status="rejected",
 
-    delivery = (
-        update_document_delivery(
-            delivery.get(
-                "job_id"
-            ),
-            delivery.get(
-                "version_id"
-            ),
-            verification_status="rejected",
-            release_status="locked",
-            verification_note=note,
-        )
-        or delivery
+        admin_note=(
+            note
+            or None
+        ),
     )
 
     return {
         "ok": True,
+
         "message": (
             "Payment marked as rejected. "
-            "Download remains locked."
+            "The customer document remains locked."
         ),
-        "payment": (
-            payment_public(
-                updated_payment
-            )
-            if updated_payment
-            else None
+
+        "product": {
+            "service": updated.get(
+                "service"
+            ),
+
+            "title": updated.get(
+                "job_title"
+            ),
+
+            "document_saved": saved_document_exists(
+                updated
+            ),
+        },
+
+        "payment": payment_public(
+            updated
         ),
-        "document_delivery": document_public(
-            delivery
-        ),
+
         "payment_verified": False,
+
         "download_unlocked": False,
     }
 
@@ -6879,12 +5546,18 @@ async def back_office_reject_payment(
 # ============================================================
 # CUSTOMER DOWNLOAD
 #
-# IMPORTANT:
+# THIS IS THE PRODUCT DELIVERY POINT.
 #
-# DOWNLOAD IS NOW BASED ON THE SAVED DOCUMENT RECORD.
+# The API serves the EXACT SAVED DOCUMENT.
 #
-# Payment lookup is attempted for compatibility, but the saved
-# document record is the authoritative delivery record.
+# It does NOT:
+#
+#   - regenerate it
+#   - reconstruct it
+#   - create a new version
+#   - use payment data as the product
+#
+# Payment verification only unlocks delivery.
 # ============================================================
 
 @app.get(
@@ -6892,73 +5565,65 @@ async def back_office_reject_payment(
 )
 async def download_document(
     payment_id: str | None = None,
-    job_id: str | None = None,
     paymentId: str | None = None,
-    version_id: str | None = None,
+    job_id: str | None = None,
+    service: str | None = None,
+    title: str | None = None,
 ):
 
-    payment_id = normalize_payment_id(
-        payment_id
-        or paymentId
+    payment = resolve_product_payment(
+        payment_id=normalize_payment_id(
+            payment_id
+            or paymentId
+        ),
+
+        job_id=normalize_job_id(
+            job_id
+        ),
+
+        service=normalize_service(
+            service
+        ),
+
+        title=normalize_title(
+            title
+        ),
     )
 
-    job_id = normalize_job_id(
-        job_id
-    )
-
-    version_id = normalize_version(
-        version_id
-    )
-
-    delivery = resolve_document_delivery(
-        payment_id=payment_id,
-        job_id=job_id,
-        version_id=version_id,
-    )
-
-    if not delivery:
+    if not payment:
 
         return json_response_error(
-            "DOCUMENT_NOT_FOUND",
+            "PRODUCT_NOT_FOUND",
             (
-                "No finished document was found "
-                "for this request."
+                "The customer document "
+                "could not be found."
             ),
             404,
-            requested_payment_id=payment_id or None,
-            requested_job_id=job_id or None,
-            requested_version_id=version_id or None,
+            service=service or None,
+            title=title or None,
         )
 
-    if not delivery_is_unlocked(
-        delivery
+    if not payment_is_verified(
+        payment.get(
+            "payment_status"
+        )
     ):
 
         return json_response_error(
             "DOWNLOAD_LOCKED",
             (
-                "Download remains locked until "
-                "Customer Care verifies and "
-                "releases this document."
+                "The customer document remains "
+                "locked until payment is verified."
             ),
             403,
-            payment_id=delivery.get(
-                "payment_id"
-            ),
-            job_id=delivery.get(
-                "job_id"
-            ),
-            document_version=delivery.get(
-                "version_id"
-            ),
-            payment_verified=delivery_is_verified(
-                delivery
+            payment_status=payment.get(
+                "payment_status"
             ),
             download_unlocked=False,
         )
 
-    output = delivery_document_path(
-        delivery
+    output = saved_document_path(
+        payment
     )
 
     if (
@@ -6970,62 +5635,29 @@ async def download_document(
         return json_response_error(
             "DOCUMENT_SNAPSHOT_MISSING",
             (
-                "The exact saved document "
-                "snapshot is missing."
+                "The exact customer document "
+                "is missing. Download remains "
+                "locked for safety."
             ),
             409,
-            job_id=delivery.get(
-                "job_id"
+            service=payment.get(
+                "service"
             ),
-            version_id=delivery.get(
-                "version_id"
+            title=payment.get(
+                "job_title"
             ),
+            download_unlocked=False,
         )
 
-    timestamp = now_iso()
-
-    with connect_db() as conn:
-
-        conn.execute(
-            """
-            UPDATE document_deliveries
-            SET
-                download_count =
-                    download_count + 1,
-                last_downloaded_at = ?,
-                updated_at = ?
-            WHERE job_id = ?
-              AND version_id = ?
-            """,
-            (
-                timestamp,
-                timestamp,
-                delivery.get(
-                    "job_id"
-                ),
-                delivery.get(
-                    "version_id"
-                ),
-            ),
-        )
-
-        conn.commit()
-
-    payment = resolve_payment_for_delivery(
-        delivery
+    increment_download(
+        payment[
+            "payment_id"
+        ]
     )
 
-    if payment:
-
-        increment_download(
+    filename = (
+        clean(
             payment.get(
-                "payment_id"
-            )
-        )
-
-    filename = (
-        clean(
-            delivery.get(
                 "document_filename"
             )
         )
@@ -7034,1058 +5666,39 @@ async def download_document(
 
     return FileResponse(
         path=str(output),
+
         media_type=(
             "application/vnd.openxmlformats-"
             "officedocument.wordprocessingml.document"
         ),
+
         filename=Path(
             filename
         ).name,
+
         headers={
-            "X-Payment-ID": clean(
-                delivery.get(
-                    "payment_id"
+
+            "X-Product-Service": clean(
+                payment.get(
+                    "service"
                 )
             ),
-            "X-Job-ID": clean(
-                delivery.get(
-                    "job_id"
+
+            "X-Product-Title": clean(
+                payment.get(
+                    "job_title"
                 )
             ),
+
             "X-Document-Version": clean(
-                delivery.get(
-                    "version_id"
+                payment.get(
+                    "document_version"
                 )
             ),
+
             "X-Download-Unlocked": "true",
+
             "X-Document-Snapshot": "true",
-        },
-    )
-
-
-# ============================================================
-# CUSTOMER CARE DOCUMENT FILE RESOLUTION
-# ============================================================
-
-def require_released_document(
-    delivery: dict[str, Any] | None,
-) -> tuple[
-    bool,
-    str,
-    Path | None,
-]:
-
-    if not delivery:
-
-        return (
-            False,
-            "Finished document not found.",
-            None,
-        )
-
-    if not delivery_is_verified(
-        delivery
-    ):
-
-        return (
-            False,
-            "Payment has not been verified.",
-            None,
-        )
-
-    if not delivery_is_unlocked(
-        delivery
-    ):
-
-        return (
-            False,
-            "Document has not been released.",
-            None,
-        )
-
-    path = delivery_document_path(
-        delivery
-    )
-
-    if (
-        not path
-        or not path.is_file()
-        or path.stat().st_size <= 0
-    ):
-
-        return (
-            False,
-            "The exact saved document file is missing.",
-            None,
-        )
-
-    return (
-        True,
-        "",
-        path,
-    )
-
-
-# ============================================================
-# EMAIL VALIDATION
-# ============================================================
-
-def valid_email(
-    address: str,
-) -> bool:
-
-    address = clean(
-        address
-    )
-
-    if not address:
-        return False
-
-    return bool(
-        re.match(
-            r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-            address,
-        )
-    )
-
-
-# ============================================================
-# CUSTOMER CARE EMAIL DELIVERY
-#
-# Uses the EXACT saved document.
-# ============================================================
-
-def send_document_email(
-    *,
-    delivery: dict[str, Any],
-    recipient: str,
-    message_text: str = "",
-) -> dict[str, Any]:
-
-    recipient = clean(
-        recipient
-    )
-
-    if not valid_email(
-        recipient
-    ):
-
-        raise RuntimeError(
-            "A valid customer email address is required."
-        )
-
-    if not SMTP_HOST or not SMTP_FROM:
-
-        raise RuntimeError(
-            (
-                "EMAIL_DELIVERY_NOT_CONFIGURED: "
-                "Set SMTP_HOST and SMTP_FROM "
-                "in the payment service environment."
-            )
-        )
-
-    path = delivery_document_path(
-        delivery
-    )
-
-    if (
-        not path
-        or not path.is_file()
-    ):
-
-        raise RuntimeError(
-            "The exact saved document file is missing."
-        )
-
-    filename = (
-        clean(
-            delivery.get(
-                "document_filename"
-            )
-        )
-        or path.name
-    )
-
-    message = EmailMessage()
-
-    message[
-        "Subject"
-    ] = (
-        "Naija Pocket Business Center "
-        "— Your Finished Document"
-    )
-
-    message[
-        "From"
-    ] = SMTP_FROM
-
-    message[
-        "To"
-    ] = recipient
-
-    body = (
-        message_text.strip()
-        if message_text.strip()
-        else (
-            "Hello,\n\n"
-            "Your finished document from "
-            "Naija Pocket Business Center "
-            "is attached.\n\n"
-            "Thank you."
-        )
-    )
-
-    message.set_content(
-        body
-    )
-
-    with open(
-        path,
-        "rb",
-    ) as file:
-
-        data = file.read()
-
-    message.add_attachment(
-        data,
-        maintype="application",
-        subtype=(
-            "vnd.openxmlformats-officedocument"
-            ".wordprocessingml.document"
-        ),
-        filename=filename,
-    )
-
-    if SMTP_USE_TLS:
-
-        with smtplib.SMTP(
-            SMTP_HOST,
-            SMTP_PORT,
-            timeout=30,
-        ) as server:
-
-            server.starttls()
-
-            if (
-                SMTP_USERNAME
-                and SMTP_PASSWORD
-            ):
-
-                server.login(
-                    SMTP_USERNAME,
-                    SMTP_PASSWORD,
-                )
-
-            server.send_message(
-                message
-            )
-
-    else:
-
-        with smtplib.SMTP(
-            SMTP_HOST,
-            SMTP_PORT,
-            timeout=30,
-        ) as server:
-
-            if (
-                SMTP_USERNAME
-                and SMTP_PASSWORD
-            ):
-
-                server.login(
-                    SMTP_USERNAME,
-                    SMTP_PASSWORD,
-                )
-
-            server.send_message(
-                message
-            )
-
-    return {
-        "ok": True,
-        "channel": "email",
-        "recipient": recipient,
-        "filename": filename,
-    }
-
-
-# ============================================================
-# CUSTOMER CARE SEND BY EMAIL
-#
-# Can be called using:
-#
-# payment_id
-# OR
-# job_id + version_id
-# ============================================================
-
-@app.post(
-    "/api/customer-care/send/email"
-)
-async def customer_care_send_email(
-    request: Request,
-):
-
-    try:
-
-        body = await request.json()
-
-        if not isinstance(
-            body,
-            dict,
-        ):
-            body = {}
-
-    except Exception:
-
-        body = {}
-
-    auth_error = require_admin(
-        request,
-        body,
-    )
-
-    if auth_error:
-        return auth_error
-
-    payment_id = body_payment_id(
-        body
-    )
-
-    job_id = body_job_id(
-        body
-    )
-
-    version_id = body_version_id(
-        body
-    )
-
-    recipient = (
-        body_customer_email(
-            body
-        )
-    )
-
-    message_text = clean(
-        body.get(
-            "message"
-        )
-        or body.get(
-            "note"
-        )
-    )
-
-    delivery = resolve_document_delivery(
-        payment_id=payment_id,
-        job_id=job_id,
-        version_id=version_id,
-    )
-
-    if not recipient and delivery:
-
-        recipient = clean(
-            delivery.get(
-                "customer_email"
-            )
-        )
-
-    if not delivery:
-
-        return json_response_error(
-            "DOCUMENT_NOT_FOUND",
-            "Finished document not found.",
-            404,
-        )
-
-    ok, error, path = (
-        require_released_document(
-            delivery
-        )
-    )
-
-    if not ok:
-
-        return json_response_error(
-            "DELIVERY_NOT_RELEASED",
-            error,
-            403,
-            job_id=delivery.get(
-                "job_id"
-            ),
-            version_id=delivery.get(
-                "version_id"
-            ),
-        )
-
-    try:
-
-        result = send_document_email(
-            delivery=delivery,
-            recipient=recipient,
-            message_text=message_text,
-        )
-
-    except Exception as exc:
-
-        return json_response_error(
-            "EMAIL_DELIVERY_FAILED",
-            str(exc),
-            502,
-            job_id=delivery.get(
-                "job_id"
-            ),
-            version_id=delivery.get(
-                "version_id"
-            ),
-            document_saved=True,
-        )
-
-    timestamp = now_iso()
-
-    delivery = (
-        update_document_delivery(
-            delivery.get(
-                "job_id"
-            ),
-            delivery.get(
-                "version_id"
-            ),
-            customer_email=recipient,
-            last_delivery_channel="email",
-            last_delivery_at=timestamp,
-            email_sent_at=timestamp,
-        )
-        or delivery
-    )
-
-    return {
-        "ok": True,
-        "message": (
-            "The exact saved document was "
-            "sent by email."
-        ),
-        "channel": "email",
-        "recipient": recipient,
-        "job_id": delivery.get(
-            "job_id"
-        ),
-        "document_version": delivery.get(
-            "version_id"
-        ),
-        "document_filename": delivery.get(
-            "document_filename"
-        ),
-        "document_saved": True,
-        "document_delivery": document_public(
-            delivery
-        ),
-    }
-
-
-# ============================================================
-# WHATSAPP HELPERS
-# ============================================================
-
-def normalize_whatsapp_number(
-    value: Any,
-) -> str:
-
-    raw = clean(
-        value
-    )
-
-    if not raw:
-        return ""
-
-    # Keep international digits only.
-    digits = re.sub(
-        r"\D+",
-        "",
-        raw,
-    )
-
-    # Nigeria convenience:
-    # 080... becomes 23480...
-    if (
-        digits.startswith("0")
-        and len(digits) >= 10
-    ):
-
-        digits = (
-            "234"
-            + digits[1:]
-        )
-
-    return digits
-
-
-def whatsapp_configured() -> bool:
-
-    return bool(
-        WHATSAPP_ACCESS_TOKEN
-        and WHATSAPP_PHONE_NUMBER_ID
-    )
-
-
-def whatsapp_api_request(
-    *,
-    phone_number: str,
-    text: str,
-) -> dict[str, Any]:
-
-    if not whatsapp_configured():
-
-        raise RuntimeError(
-            (
-                "WHATSAPP_DELIVERY_NOT_CONFIGURED: "
-                "Set WHATSAPP_ACCESS_TOKEN and "
-                "WHATSAPP_PHONE_NUMBER_ID."
-            )
-        )
-
-    number = normalize_whatsapp_number(
-        phone_number
-    )
-
-    if not number:
-
-        raise RuntimeError(
-            "A customer WhatsApp number is required."
-        )
-
-    url = (
-        "https://graph.facebook.com/v20.0/"
-        + quote(
-            WHATSAPP_PHONE_NUMBER_ID
-        )
-        + "/messages"
-    )
-
-    payload = {
-        "messaging_product": "whatsapp",
-        "to": number,
-        "type": "text",
-        "text": {
-            "preview_url": False,
-            "body": text,
-        },
-    }
-
-    data = json.dumps(
-        payload
-    ).encode(
-        "utf-8"
-    )
-
-    request = urllib.request.Request(
-        url,
-        data=data,
-        headers={
-            "Authorization": (
-                "Bearer "
-                + WHATSAPP_ACCESS_TOKEN
-            ),
-            "Content-Type": (
-                "application/json"
-            ),
-            "Accept": (
-                "application/json"
-            ),
-        },
-        method="POST",
-    )
-
-    try:
-
-        with urllib.request.urlopen(
-            request,
-            timeout=30,
-        ) as response:
-
-            raw = response.read()
-
-            try:
-
-                return json.loads(
-                    raw.decode(
-                        "utf-8"
-                    )
-                )
-
-            except Exception:
-
-                return {
-                    "raw": raw.decode(
-                        "utf-8",
-                        errors="replace",
-                    )
-                }
-
-    except urllib.error.HTTPError as exc:
-
-        raw = exc.read()
-
-        try:
-
-            detail = json.loads(
-                raw.decode(
-                    "utf-8"
-                )
-            )
-
-        except Exception:
-
-            detail = raw.decode(
-                "utf-8",
-                errors="replace",
-            )
-
-        raise RuntimeError(
-            f"WhatsApp API returned HTTP "
-            f"{exc.code}: {detail}"
-        ) from exc
-
-    except urllib.error.URLError as exc:
-
-        raise RuntimeError(
-            f"Could not reach WhatsApp API: {exc}"
-        ) from exc
-
-
-# ============================================================
-# CUSTOMER CARE SEND BY WHATSAPP
-#
-# The exact saved document is NOT regenerated.
-#
-# This endpoint sends a WhatsApp message containing the
-# customer-facing delivery information.
-#
-# A WhatsApp Cloud API media-upload flow can be added when the
-# provider credentials/support are enabled. For now, the
-# endpoint safely confirms the document and sends the delivery
-# notification/link data without pretending the binary file
-# was uploaded when it was not.
-# ============================================================
-
-@app.post(
-    "/api/customer-care/send/whatsapp"
-)
-async def customer_care_send_whatsapp(
-    request: Request,
-):
-
-    try:
-
-        body = await request.json()
-
-        if not isinstance(
-            body,
-            dict,
-        ):
-            body = {}
-
-    except Exception:
-
-        body = {}
-
-    auth_error = require_admin(
-        request,
-        body,
-    )
-
-    if auth_error:
-        return auth_error
-
-    payment_id = body_payment_id(
-        body
-    )
-
-    job_id = body_job_id(
-        body
-    )
-
-    version_id = body_version_id(
-        body
-    )
-
-    phone = (
-        body_customer_phone(
-            body
-        )
-    )
-
-    message_text = clean(
-        body.get(
-            "message"
-        )
-        or body.get(
-            "note"
-        )
-    )
-
-    delivery = resolve_document_delivery(
-        payment_id=payment_id,
-        job_id=job_id,
-        version_id=version_id,
-    )
-
-    if not phone and delivery:
-
-        phone = clean(
-            delivery.get(
-                "customer_phone"
-            )
-        )
-
-    if not delivery:
-
-        return json_response_error(
-            "DOCUMENT_NOT_FOUND",
-            "Finished document not found.",
-            404,
-        )
-
-    ok, error, path = (
-        require_released_document(
-            delivery
-        )
-    )
-
-    if not ok:
-
-        return json_response_error(
-            "DELIVERY_NOT_RELEASED",
-            error,
-            403,
-            job_id=delivery.get(
-                "job_id"
-            ),
-            version_id=delivery.get(
-                "version_id"
-            ),
-        )
-
-    normalized_phone = (
-        normalize_whatsapp_number(
-            phone
-        )
-    )
-
-    if not normalized_phone:
-
-        return json_response_error(
-            "WHATSAPP_NUMBER_REQUIRED",
-            (
-                "A customer WhatsApp number "
-                "is required."
-            ),
-            400,
-        )
-
-    filename = (
-        clean(
-            delivery.get(
-                "document_filename"
-            )
-        )
-        or (
-            path.name
-            if path
-            else "finished_document.docx"
-        )
-    )
-
-    if not message_text:
-
-        message_text = (
-            "Hello. Your finished document "
-            "from Naija Pocket Business Center "
-            "is ready. "
-            f"Document: {filename}"
-        )
-
-    # --------------------------------------------------------
-    # If WhatsApp is configured, send the message.
-    # --------------------------------------------------------
-
-    whatsapp_response = None
-
-    if whatsapp_configured():
-
-        try:
-
-            whatsapp_response = (
-                whatsapp_api_request(
-                    phone_number=normalized_phone,
-                    text=message_text,
-                )
-            )
-
-        except Exception as exc:
-
-            return json_response_error(
-                "WHATSAPP_DELIVERY_FAILED",
-                str(exc),
-                502,
-                job_id=delivery.get(
-                    "job_id"
-                ),
-                version_id=delivery.get(
-                    "version_id"
-                ),
-                document_saved=True,
-            )
-
-    else:
-
-        # ----------------------------------------------------
-        # Do not falsely claim that WhatsApp sent the file.
-        #
-        # The saved document remains safely available.
-        # ----------------------------------------------------
-
-        return {
-            "ok": False,
-            "error": (
-                "WHATSAPP_DELIVERY_NOT_CONFIGURED"
-            ),
-            "message": (
-                "The exact document is ready and "
-                "released, but WhatsApp delivery is "
-                "not configured on the server."
-            ),
-            "job_id": delivery.get(
-                "job_id"
-            ),
-            "document_version": delivery.get(
-                "version_id"
-            ),
-            "document_saved": True,
-            "document_filename": filename,
-            "customer_whatsapp": normalized_phone,
-            "whatsapp_configured": False,
-            "document_delivery": document_public(
-                delivery
-            ),
-        }
-
-    timestamp = now_iso()
-
-    delivery = (
-        update_document_delivery(
-            delivery.get(
-                "job_id"
-            ),
-            delivery.get(
-                "version_id"
-            ),
-            customer_phone=normalized_phone,
-            last_delivery_channel="whatsapp",
-            last_delivery_at=timestamp,
-            whatsapp_sent_at=timestamp,
-        )
-        or delivery
-    )
-
-    return {
-        "ok": True,
-        "message": (
-            "The WhatsApp delivery message "
-            "was sent for the exact saved document."
-        ),
-        "channel": "whatsapp",
-        "recipient": normalized_phone,
-        "job_id": delivery.get(
-            "job_id"
-        ),
-        "document_version": delivery.get(
-            "version_id"
-        ),
-        "document_filename": filename,
-        "document_saved": True,
-        "whatsapp_configured": True,
-        "whatsapp_response": whatsapp_response,
-        "document_delivery": document_public(
-            delivery
-        ),
-    }
-
-
-# ============================================================
-# CUSTOMER CARE DELIVERY STATUS
-# ============================================================
-
-@app.get(
-    "/api/customer-care/delivery"
-)
-async def customer_care_delivery(
-    request: Request,
-    payment_id: str | None = None,
-    job_id: str | None = None,
-    version_id: str | None = None,
-    paymentId: str | None = None,
-):
-
-    auth_error = require_admin(
-        request
-    )
-
-    if auth_error:
-        return auth_error
-
-    payment_id = normalize_payment_id(
-        payment_id
-        or paymentId
-    )
-
-    delivery = resolve_document_delivery(
-        payment_id=payment_id,
-        job_id=job_id or "",
-        version_id=version_id or "",
-    )
-
-    if not delivery:
-
-        return json_response_error(
-            "DOCUMENT_NOT_FOUND",
-            "Finished document not found.",
-            404,
-        )
-
-    payment = resolve_payment_for_delivery(
-        delivery
-    )
-
-    return {
-        "ok": True,
-        "document": document_public(
-            delivery
-        ),
-        "payment": (
-            payment_public(
-                payment
-            )
-            if payment
-            else None
-        ),
-    }
-
-
-# ============================================================
-# CUSTOMER CARE RELEASE / UNLOCK
-#
-# Alias endpoint for systems that use the word RELEASE.
-# ============================================================
-
-@app.post(
-    "/api/customer-care/release"
-)
-async def customer_care_release(
-    request: Request,
-):
-
-    return await back_office_activate_download(
-        request
-    )
-
-
-# ============================================================
-# BACK OFFICE DOWNLOAD
-#
-# Customer Care can download the exact file after release.
-# ============================================================
-
-@app.get(
-    "/api/customer-care/document"
-)
-async def customer_care_document(
-    request: Request,
-    payment_id: str | None = None,
-    job_id: str | None = None,
-    version_id: str | None = None,
-    paymentId: str | None = None,
-):
-
-    auth_error = require_admin(
-        request
-    )
-
-    if auth_error:
-        return auth_error
-
-    payment_id = normalize_payment_id(
-        payment_id
-        or paymentId
-    )
-
-    delivery = resolve_document_delivery(
-        payment_id=payment_id,
-        job_id=job_id or "",
-        version_id=version_id or "",
-    )
-
-    if not delivery:
-
-        return json_response_error(
-            "DOCUMENT_NOT_FOUND",
-            "Finished document not found.",
-            404,
-        )
-
-    if not delivery_document_exists(
-        delivery
-    ):
-
-        return json_response_error(
-            "DOCUMENT_SNAPSHOT_MISSING",
-            "The exact saved document is missing.",
-            409,
-        )
-
-    output = delivery_document_path(
-        delivery
-    )
-
-    if not output:
-
-        return json_response_error(
-            "DOCUMENT_SNAPSHOT_MISSING",
-            "Saved document path is missing.",
-            409,
-        )
-
-    filename = (
-        clean(
-            delivery.get(
-                "document_filename"
-            )
-        )
-        or output.name
-    )
-
-    return FileResponse(
-        path=str(output),
-        media_type=(
-            "application/vnd.openxmlformats-"
-            "officedocument.wordprocessingml.document"
-        ),
-        filename=Path(
-            filename
-        ).name,
-        headers={
-            "X-Job-ID": clean(
-                delivery.get(
-                    "job_id"
-                )
-            ),
-            "X-Document-Version": clean(
-                delivery.get(
-                    "version_id"
-                )
-            ),
-            "X-Document-Snapshot": "true",
-            "X-Customer-Care": "true",
         },
     )
 
@@ -8106,6 +5719,16 @@ async def startup() -> None:
     print(
         "[PAYMENT API] Version: "
         + APP_VERSION
+    )
+
+    print(
+        "[PAYMENT API] Business model: "
+        "DOCUMENT_PRODUCT_FIRST"
+    )
+
+    print(
+        "[PAYMENT API] Product identity: "
+        "SERVICE + TITLE"
     )
 
     print(
@@ -8133,40 +5756,6 @@ async def startup() -> None:
             bool(
                 BACK_OFFICE_ADMIN_KEY
             )
-        )
-    )
-
-    print(
-        "[PAYMENT API] Email delivery configured: "
-        + str(
-            bool(
-                SMTP_HOST
-                and SMTP_FROM
-            )
-        )
-    )
-
-    print(
-        "[PAYMENT API] WhatsApp delivery configured: "
-        + str(
-            bool(
-                WHATSAPP_ACCESS_TOKEN
-                and WHATSAPP_PHONE_NUMBER_ID
-            )
-        )
-    )
-
-    print(
-        "[PAYMENT API] Payment records: "
-        + str(
-            payment_record_count()
-        )
-    )
-
-    print(
-        "[PAYMENT API] Finished document records: "
-        + str(
-            document_record_count()
         )
     )
 
