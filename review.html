@@ -7,71 +7,90 @@
 
 <style>
 :root{
-  --black:#030303;
-  --black2:#070707;
-  --panel:#0c0c0c;
-  --panel2:#11110f;
-  --panel3:#161512;
-  --line:rgba(255,255,255,.09);
-  --line-gold:rgba(212,175,55,.24);
-  --line-gold-strong:rgba(212,175,55,.48);
+  --black:#020202;
+  --black2:#050505;
+  --black3:#080807;
+  --panel:#0b0b0a;
+  --panel2:#10100e;
+  --panel3:#151410;
+
   --gold:#d4af37;
-  --gold2:#f0cf62;
+  --gold2:#efd36a;
   --gold3:#fff0a8;
-  --white:#fff;
-  --muted:#8f8d88;
-  --muted2:#aaa69c;
-  --red:#9d0000;
+  --champagne:#f4d58d;
+  --cream:#fff7df;
+
   --green:#168047;
-  --green2:#75dc99;
-  --blue:#007bff;
+  --green2:#58c98a;
+
+  --white:#fff;
+  --muted:#85827a;
+  --muted2:#aaa59a;
+
+  --line:rgba(255,255,255,.075);
+  --gold-line:rgba(212,175,55,.18);
+  --gold-line-strong:rgba(212,175,55,.40);
+
+  --red:#9d0000;
+  --blue:#0878e8;
 }
 
 *{
   box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent
+  -webkit-tap-highlight-color:transparent;
 }
 
-html,body{
-  margin:0;
-  padding:0;
+html,
+body{
   width:100%;
   height:100%;
+  margin:0;
+  padding:0;
+
   background:
     radial-gradient(
-      circle at 50% -15%,
-      rgba(212,175,55,.075),
-      transparent 36%
+      circle at 50% -12%,
+      rgba(212,175,55,.095),
+      transparent 33%
+    ),
+    radial-gradient(
+      circle at 5% 85%,
+      rgba(22,128,71,.035),
+      transparent 28%
     ),
     radial-gradient(
       circle at 100% 100%,
-      rgba(22,128,71,.035),
+      rgba(212,175,55,.025),
       transparent 30%
     ),
-    #030303;
+    #020202;
+
   color:var(--white);
+
   font-family:
     Inter,
     Montserrat,
     Arial,
-    sans-serif
+    sans-serif;
 }
 
 body{
-  overflow:hidden
+  overflow:hidden;
 }
 
-button,textarea,input{
-  font:inherit
+button,
+textarea,
+input{
+  font:inherit;
 }
 
 button{
-  cursor:pointer
+  cursor:pointer;
 }
 
 button:disabled{
-  opacity:.45;
-  cursor:not-allowed
+  opacity:.42;
+  cursor:not-allowed;
 }
 
 /* ============================================================
@@ -79,25 +98,26 @@ button:disabled{
    ============================================================ */
 
 .header{
-  display:none!important
+  display:none!important;
 }
 
 /* ============================================================
-   MAIN LUXURY REVIEW FRAME
+   LUXURY REVIEW FRAME
    ============================================================ */
 
 .main{
   position:fixed!important;
-  top:0!important;
-  left:0!important;
-  right:0!important;
-  bottom:0!important;
+  inset:0!important;
+
   width:100%!important;
-  max-width:1180px!important;
+  max-width:1240px!important;
+
   margin:0 auto!important;
   padding:0!important;
+
   display:grid!important;
-  grid-template-rows:50% 50%!important;
+  grid-template-rows:52% 48%!important;
+
   gap:0!important;
   overflow:hidden!important;
 
@@ -105,12 +125,31 @@ button:disabled{
     linear-gradient(
       180deg,
       #050505 0%,
-      #070706 48%,
+      #080806 48%,
       #030303 100%
     );
 
   box-shadow:
-    inset 0 0 0 1px rgba(212,175,55,.035);
+    inset 0 0 0 1px rgba(212,175,55,.045),
+    0 0 80px rgba(0,0,0,.8);
+}
+
+.main::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:50;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(212,175,55,.018),
+      transparent
+    );
+
+  mix-blend-mode:screen;
 }
 
 /* ============================================================
@@ -119,24 +158,31 @@ button:disabled{
 
 .review-card{
   grid-row:1;
+
   min-height:0!important;
   height:100%!important;
+
   display:flex!important;
   flex-direction:column!important;
 
-  border-radius:0!important;
+  position:relative;
+
   overflow:hidden!important;
+
+  border-radius:0!important;
+  border:0!important;
 
   background:
     radial-gradient(
-      circle at 50% 0%,
-      rgba(212,175,55,.045),
+      ellipse at 50% 0%,
+      rgba(212,175,55,.065),
       transparent 48%
     ),
-    #080808;
-
-  border:0!important;
-  position:relative;
+    linear-gradient(
+      180deg,
+      #090909,
+      #050505
+    );
 }
 
 .review-card::before{
@@ -145,16 +191,41 @@ button:disabled{
   top:0;
   left:0;
   right:0;
+
   height:1px;
+
   background:
     linear-gradient(
       90deg,
-      transparent,
-      rgba(212,175,55,.5),
-      transparent
+      transparent 4%,
+      rgba(212,175,55,.18),
+      rgba(255,239,168,.70),
+      rgba(212,175,55,.18),
+      transparent 96%
     );
+
+  z-index:10;
+}
+
+.review-card::after{
+  content:"";
+  position:absolute;
+  top:18px;
+  left:50%;
+
+  width:280px;
+  height:80px;
+
+  transform:translateX(-50%);
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(212,175,55,.06),
+      transparent 70%
+    );
+
   pointer-events:none;
-  z-index:5;
 }
 
 /* ============================================================
@@ -163,47 +234,73 @@ button:disabled{
 
 .document-card-header{
   flex:0 0 auto;
-  min-height:48px;
-  padding:8px 14px!important;
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(21,20,17,.98),
-      rgba(11,11,10,.98)
-    );
+  min-height:57px;
 
-  border-bottom:1px solid rgba(212,175,55,.14);
+  padding:9px 17px 12px!important;
+
+  position:relative;
 
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
 
-  position:relative;
+  gap:15px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(22,21,18,.98),
+      rgba(9,9,8,.98)
+    );
+
+  border-bottom:
+    1px solid rgba(212,175,55,.16);
+
+  box-shadow:
+    0 8px 22px rgba(0,0,0,.22);
 }
 
 .document-card-header::before{
-  content:"DOCUMENT REVIEW";
+  content:"NAIJA POCKET BUSINESS CENTER";
+
   position:absolute;
-  left:14px;
-  bottom:3px;
-  color:rgba(212,175,55,.34);
-  font-size:5px;
+  left:17px;
+  bottom:4px;
+
+  color:
+    rgba(212,175,55,.25);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size:5.5px;
   font-weight:900;
-  letter-spacing:2.4px;
+
+  letter-spacing:2.8px;
+
   pointer-events:none;
 }
 
 .document-card-header::after{
   content:"";
+
   position:absolute;
-  right:14px;
+  right:17px;
   bottom:0;
-  width:72px;
+
+  width:88px;
   height:1px;
-  background:var(--gold);
-  opacity:.42;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--gold)
+    );
+
+  opacity:.48;
 }
 
 .document-heading{
@@ -213,27 +310,52 @@ button:disabled{
 
 .document-heading h3{
   margin:0;
-  color:#f6e7ae;
+
+  color:
+    var(--champagne);
+
   font-family:
     Georgia,
     "Times New Roman",
     serif;
-  font-size:15px;
+
+  font-size:17px;
   line-height:1.1;
-  font-weight:600;
-  letter-spacing:.15px;
+  font-weight:500;
+
+  letter-spacing:.2px;
+
+  text-shadow:
+    0 1px 18px rgba(212,175,55,.08);
 }
 
 .page-count{
   flex:0 0 auto;
-  padding:5px 8px;
-  border:1px solid rgba(212,175,55,.18);
-  border-radius:3px;
-  background:rgba(212,175,55,.035);
-  color:#bdb7a8;
-  font-size:8px;
+
+  padding:6px 10px;
+
+  border:
+    1px solid rgba(212,175,55,.25);
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(212,175,55,.075),
+      rgba(212,175,55,.025)
+    );
+
+  color:
+    #cfc6ad;
+
+  font-size:7.5px;
   font-weight:900;
-  letter-spacing:1.2px;
+
+  letter-spacing:1.3px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.025);
 }
 
 /* ============================================================
@@ -244,37 +366,45 @@ button:disabled{
   flex:1 1 auto!important;
   min-height:0!important;
   height:auto!important;
-  padding:12px 10px 7px!important;
+
+  padding:15px 13px 9px!important;
 
   overflow-y:auto!important;
   overflow-x:hidden!important;
 
   -webkit-overflow-scrolling:touch;
+
   overscroll-behavior:contain;
 
   background:
     radial-gradient(
-      ellipse at center top,
+      ellipse at 50% 0%,
       rgba(255,255,255,.018),
       transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.005),
+      transparent
     );
 }
 
 .document-scroll::-webkit-scrollbar{
-  width:4px
+  width:4px;
 }
 
 .document-scroll::-webkit-scrollbar-track{
-  background:#050505
+  background:#030303;
 }
 
 .document-scroll::-webkit-scrollbar-thumb{
   background:
     linear-gradient(
       180deg,
-      #7c6723,
-      #2f2a1a
+      #8a7228,
+      #322b18
     );
+
   border-radius:20px;
 }
 
@@ -285,13 +415,17 @@ button:disabled{
 .page-viewer{
   width:100%;
   max-width:900px;
+
   margin:0 auto;
 }
 
 .document-page{
   position:relative;
+
   width:100%;
   min-height:620px;
+
+  padding:46px 40px 62px;
 
   background:
     linear-gradient(
@@ -302,68 +436,96 @@ button:disabled{
 
   color:#111;
 
-  border-radius:2px;
+  border-radius:3px;
 
   box-shadow:
-    0 1px 0 rgba(255,255,255,.9),
-    0 8px 30px rgba(0,0,0,.46),
-    0 22px 55px rgba(0,0,0,.25);
-
-  padding:42px 34px 58px;
+    0 1px 0 rgba(255,255,255,.95),
+    0 10px 35px rgba(0,0,0,.50),
+    0 28px 65px rgba(0,0,0,.25);
 
   overflow:visible;
 
   user-select:text;
   -webkit-user-select:text;
+
   cursor:default;
+
+  transform:translateZ(0);
 }
 
 .document-page::before{
   content:"";
+
   position:absolute;
-  inset:7px;
-  border:1px solid rgba(0,0,0,.045);
+  inset:8px;
+
+  border:
+    1px solid rgba(0,0,0,.045);
+
   pointer-events:none;
 }
 
 .document-page::after{
   content:"";
+
   position:absolute;
-  top:7px;
-  left:7px;
-  width:38px;
-  height:38px;
-  border-top:1px solid rgba(0,0,0,.10);
-  border-left:1px solid rgba(0,0,0,.10);
+
+  top:8px;
+  left:8px;
+
+  width:46px;
+  height:46px;
+
+  border-top:
+    1px solid rgba(0,0,0,.11);
+
+  border-left:
+    1px solid rgba(0,0,0,.11);
+
   pointer-events:none;
 }
 
 .page-number-inside{
   color:#777;
-  font-family:Arial,sans-serif;
+
+  font-family:
+    Arial,
+    sans-serif;
+
   font-size:8px;
+
   text-align:center;
-  margin-bottom:24px;
-  letter-spacing:1px;
+
+  margin-bottom:27px;
+
+  letter-spacing:1.8px;
+
+  font-weight:600;
 }
 
 .page-content{
   width:100%;
+
   color:#111;
+
   font-family:
     "Times New Roman",
     Georgia,
     serif;
+
   font-size:14px;
   line-height:1.75;
+
   white-space:pre-wrap;
+
   overflow-wrap:anywhere;
+
   word-break:normal;
 }
 
 .page-content p{
   margin-top:0;
-  margin-bottom:12px
+  margin-bottom:12px;
 }
 
 .page-content h1,
@@ -373,120 +535,159 @@ button:disabled{
 .page-content h5,
 .page-content h6{
   color:inherit;
+
   font-family:inherit;
+
   line-height:1.25;
+
   margin-top:16px;
-  margin-bottom:10px
+  margin-bottom:10px;
 }
 
-.page-content h1{font-size:2em}
-.page-content h2{font-size:1.6em}
-.page-content h3{font-size:1.35em}
-.page-content h4{font-size:1.15em}
+.page-content h1{
+  font-size:2em;
+}
+
+.page-content h2{
+  font-size:1.6em;
+}
+
+.page-content h3{
+  font-size:1.35em;
+}
+
+.page-content h4{
+  font-size:1.15em;
+}
 
 .page-content strong,
 .page-content b{
-  font-weight:700
+  font-weight:700;
 }
 
 .page-content em,
 .page-content i{
-  font-style:italic
+  font-style:italic;
 }
 
 .page-content u{
-  text-decoration:underline
+  text-decoration:underline;
 }
 
 .page-content ul,
 .page-content ol{
   margin-top:8px;
   margin-bottom:12px;
-  padding-left:28px
+  padding-left:28px;
 }
 
 .page-content li{
-  margin-bottom:4px
+  margin-bottom:4px;
 }
 
 .page-content blockquote{
   margin:12px 0;
   padding-left:14px;
-  border-left:3px solid #aaa
+  border-left:3px solid #aaa;
 }
 
 .page-content hr{
   border:0;
   border-top:1px solid #999;
-  margin:18px 0
+  margin:18px 0;
 }
 
 .page-content table{
   width:100%;
   border-collapse:collapse;
   margin:14px 0;
+
   font-family:inherit;
-  font-size:inherit
+  font-size:inherit;
 }
 
 .page-content th,
 .page-content td{
   border:1px solid #555;
   padding:6px 8px;
+
   vertical-align:top;
-  text-align:left
+  text-align:left;
 }
 
 .page-content th{
-  font-weight:700
+  font-weight:700;
 }
 
 .page-content pre{
   white-space:pre-wrap;
   overflow-wrap:anywhere;
-  font-family:monospace
+  font-family:monospace;
 }
 
 /* ============================================================
-   LOADING / EMPTY STATES
+   LOADING / EMPTY
    ============================================================ */
 
 .empty-page{
   min-height:500px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
+  padding:30px;
+
   color:#777;
+
   font-family:Arial,sans-serif;
   font-size:12px;
-  text-align:center
+
+  text-align:center;
 }
 
 .loading{
   min-height:500px;
+
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:10px;
-  color:#999;
+
+  gap:12px;
+
+  color:#918d82;
+
   font-size:11px;
-  text-align:center
+
+  text-align:center;
 }
 
 .spinner{
-  width:29px;
-  height:29px;
-  border:2px solid rgba(255,255,255,.10);
-  border-top-color:var(--gold);
-  border-right-color:rgba(240,207,98,.45);
+  width:30px;
+  height:30px;
+
+  border:
+    1px solid rgba(255,255,255,.09);
+
+  border-top-color:
+    var(--gold2);
+
+  border-right-color:
+    rgba(244,213,141,.55);
+
   border-radius:50%;
-  animation:spin .8s linear infinite
+
+  animation:
+    spin .8s linear infinite;
+
+  box-shadow:
+    0 0 20px rgba(212,175,55,.07);
 }
 
 @keyframes spin{
   to{
-    transform:rotate(360deg)
+    transform:rotate(360deg);
   }
 }
 
@@ -496,40 +697,65 @@ button:disabled{
 
 .page-navigation{
   display:grid;
-  grid-template-columns:1fr auto 1fr;
+
+  grid-template-columns:
+    1fr auto 1fr;
+
   align-items:center;
-  gap:7px;
-  margin-top:10px;
+
+  gap:8px;
+
+  max-width:900px;
+
+  margin:11px auto 0;
 }
 
 .nav-button{
-  min-height:42px;
-  border:1px solid rgba(212,175,55,.13);
-  border-radius:5px;
+  min-height:43px;
+
+  border:
+    1px solid rgba(212,175,55,.15);
+
+  border-radius:7px;
 
   background:
     linear-gradient(
       180deg,
-      #171715,
+      #181815,
       #0d0d0c
     );
 
   color:#e7e2d5;
-  font-size:9px;
+
+  font-size:8.5px;
   font-weight:900;
-  letter-spacing:.3px;
+
+  letter-spacing:.45px;
 
   transition:
     border-color .2s ease,
     background .2s ease,
     color .2s ease,
-    transform .2s ease;
+    transform .2s ease,
+    box-shadow .2s ease;
 }
 
 .nav-button:hover:not(:disabled){
-  border-color:rgba(212,175,55,.42);
-  color:var(--gold2);
-  background:#181713;
+  border-color:
+    rgba(212,175,55,.42);
+
+  color:
+    var(--gold2);
+
+  background:
+    linear-gradient(
+      180deg,
+      #1d1c17,
+      #10100e
+    );
+
+  box-shadow:
+    0 5px 18px rgba(0,0,0,.22);
 }
 
 .nav-button:active:not(:disabled){
@@ -540,18 +766,22 @@ button:disabled{
   background:
     linear-gradient(
       180deg,
-      #1c1b17,
+      #1d1c17,
       #11110f
     );
 }
 
 .page-indicator{
-  min-width:85px;
+  min-width:92px;
+
   color:#d6c887;
+
   text-align:center;
+
   font-size:8px;
   font-weight:900;
-  letter-spacing:.8px;
+
+  letter-spacing:1px;
 }
 
 /* ============================================================
@@ -560,56 +790,85 @@ button:disabled{
 
 .go-row{
   display:flex;
+
   gap:7px;
-  margin-top:7px;
+
   max-width:900px;
-  margin-left:auto;
-  margin-right:auto;
+
+  margin:8px auto 0;
 }
 
 .page-number-input{
   flex:1;
+
   min-width:0;
-  height:36px;
 
-  background:#0d0d0c;
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:5px;
+  height:37px;
 
-  color:#fff;
-  padding:0 10px;
-  outline:none;
-  font-size:10px;
-}
-
-.page-number-input:focus{
-  border-color:rgba(212,175,55,.42);
-  box-shadow:0 0 0 2px rgba(212,175,55,.045);
-}
-
-.go-button{
-  width:68px;
-  border:1px solid rgba(240,207,98,.45);
-  border-radius:5px;
+  padding:0 11px;
 
   background:
     linear-gradient(
       180deg,
-      #e5c653,
-      #c7a52e
+      #10100f,
+      #0a0a09
+    );
+
+  border:
+    1px solid rgba(255,255,255,.09);
+
+  border-radius:7px;
+
+  color:#fff;
+
+  outline:none;
+
+  font-size:9px;
+}
+
+.page-number-input::placeholder{
+  color:#625f58;
+}
+
+.page-number-input:focus{
+  border-color:
+    rgba(212,175,55,.42);
+
+  box-shadow:
+    0 0 0 2px rgba(212,175,55,.04);
+}
+
+.go-button{
+  width:70px;
+
+  border:
+    1px solid rgba(240,207,98,.50);
+
+  border-radius:7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #edd05d,
+      #c59f2b
     );
 
   color:#080808;
-  font-size:9px;
+
+  font-size:8.5px;
   font-weight:900;
-  letter-spacing:.8px;
+
+  letter-spacing:.9px;
+
+  box-shadow:
+    0 5px 15px rgba(212,175,55,.08);
 }
 
 .go-button:hover{
   background:
     linear-gradient(
       180deg,
-      #f2d86c,
+      #f6dc75,
       #d4af37
     );
 }
@@ -619,34 +878,48 @@ button:disabled{
    ============================================================ */
 
 .page-review{
-  margin-top:8px;
-  padding:11px;
+  margin:8px auto 0;
+
+  max-width:900px;
+
+  padding:12px;
 
   background:
     linear-gradient(
       135deg,
-      rgba(212,175,55,.045),
-      rgba(255,255,255,.015)
+      rgba(212,175,55,.055),
+      rgba(255,255,255,.012)
     );
 
-  border:1px solid rgba(212,175,55,.14);
-  border-radius:6px;
+  border:
+    1px solid rgba(212,175,55,.15);
+
+  border-radius:8px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.018);
 }
 
 .page-review-title{
   color:#d9bf62;
-  font-size:8px;
+
+  font-size:7.5px;
   font-weight:900;
-  letter-spacing:1.5px;
-  margin-bottom:5px
+
+  letter-spacing:1.7px;
+
+  margin-bottom:5px;
 }
 
 .page-review-text{
   color:#aaa69d;
+
   font-size:9px;
   line-height:1.55;
+
   white-space:pre-wrap;
-  overflow-wrap:anywhere
+
+  overflow-wrap:anywhere;
 }
 
 /* ============================================================
@@ -655,39 +928,71 @@ button:disabled{
 
 .action-area{
   grid-row:2;
+
   min-height:0!important;
   height:100%!important;
 
   overflow-y:auto!important;
   overflow-x:hidden!important;
 
-  padding:8px 10px 20px!important;
+  padding:9px 12px 22px!important;
+
+  position:relative;
 
   background:
     radial-gradient(
       ellipse at 50% 0%,
-      rgba(212,175,55,.035),
-      transparent 45%
+      rgba(212,175,55,.055),
+      transparent 43%
     ),
-    #050505;
+    linear-gradient(
+      180deg,
+      #070706,
+      #030303
+    );
 
-  border-top:1px solid rgba(212,175,55,.50)!important;
+  border-top:
+    1px solid rgba(212,175,55,.48)!important;
 
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.025);
 }
 
+.action-area::before{
+  content:"";
+
+  position:absolute;
+
+  top:0;
+  left:50%;
+
+  width:320px;
+  height:1px;
+
+  transform:translateX(-50%);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,239,168,.65),
+      transparent
+    );
+
+  pointer-events:none;
+}
+
 .action-area::-webkit-scrollbar{
-  width:4px
+  width:4px;
 }
 
 .action-area::-webkit-scrollbar-track{
-  background:#030303
+  background:#030303;
 }
 
 .action-area::-webkit-scrollbar-thumb{
   background:#3c3420;
-  border-radius:20px
+  border-radius:20px;
 }
 
 /* ============================================================
@@ -695,102 +1000,154 @@ button:disabled{
    ============================================================ */
 
 .action-area .top-panel{
-  margin:0 0 7px!important;
-  padding:9px 11px!important;
+  margin:0 0 8px!important;
+
+  padding:11px 13px 10px!important;
 
   background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(212,175,55,.045),
+      transparent 35%
+    ),
     linear-gradient(
       135deg,
-      rgba(20,19,16,.98),
-      rgba(9,9,8,.98)
+      rgba(20,19,16,.99),
+      rgba(8,8,7,.99)
     );
 
-  border:1px solid rgba(212,175,55,.17);
-  border-radius:7px;
+  border:
+    1px solid rgba(212,175,55,.18);
+
+  border-radius:9px;
 
   position:relative;
+
   overflow:hidden;
+
+  box-shadow:
+    0 7px 24px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.018);
 }
 
 .action-area .top-panel::before{
   content:"";
+
   position:absolute;
+
   top:0;
   left:0;
+
   width:2px;
   height:100%;
+
   background:
     linear-gradient(
       180deg,
       var(--gold2),
-      rgba(212,175,55,.15)
+      rgba(212,175,55,.10)
     );
 }
 
 .action-area .top-panel::after{
   content:"NPBC";
+
   position:absolute;
-  right:11px;
-  top:8px;
-  color:rgba(212,175,55,.10);
-  font-family:Georgia,serif;
-  font-size:8px;
+
+  right:13px;
+  top:10px;
+
+  color:
+    rgba(212,175,55,.105);
+
+  font-family:
+    Georgia,
+    serif;
+
+  font-size:9px;
   font-weight:700;
+
   letter-spacing:3px;
+
   pointer-events:none;
 }
 
 .review-title{
   margin:0;
+
   color:#f5ead0;
+
   font-family:
     Georgia,
     "Times New Roman",
     serif;
-  font-size:17px;
+
+  font-size:18px;
   line-height:1.2;
-  font-weight:600;
+
+  font-weight:500;
+
   letter-spacing:.05px;
 }
 
 .review-subtitle{
   margin:4px 0 0;
-  max-width:720px;
+
+  max-width:760px;
+
   color:#8f8c84;
+
   font-size:9px;
-  line-height:1.45;
+
+  line-height:1.5;
 }
 
 .status-row{
   display:flex;
+
   align-items:center;
   justify-content:space-between;
+
   gap:8px;
-  margin-top:8px
+
+  margin-top:9px;
 }
 
 .status-label{
   color:#77756f;
-  font-size:8px;
+
+  font-size:7.5px;
+
   text-transform:uppercase;
-  letter-spacing:1.1px;
+
+  letter-spacing:1.2px;
+
   font-weight:800;
 }
 
 .status-value{
   color:var(--gold2);
+
   font-size:9px;
+
   font-weight:900;
-  letter-spacing:.8px;
+
+  letter-spacing:.9px;
+
+  text-shadow:
+    0 0 14px rgba(212,175,55,.08);
 }
 
 .progress-shell{
   margin-top:6px;
+
   width:100%;
   height:4px;
 
   background:#1c1b18;
+
   border-radius:20px;
+
   overflow:hidden;
 
   box-shadow:
@@ -804,21 +1161,26 @@ button:disabled{
   background:
     linear-gradient(
       90deg,
-      #9f7b18,
-      var(--gold2)
+      #96741a,
+      var(--gold2),
+      #fff0a8
     );
 
   box-shadow:
-    0 0 8px rgba(212,175,55,.18);
+    0 0 9px rgba(212,175,55,.22);
 
-  transition:width .25s ease
+  transition:
+    width .25s ease;
 }
 
 .progress-text{
   margin-top:4px;
+
   color:#66645f;
-  font-size:8px;
-  text-align:right
+
+  font-size:7.5px;
+
+  text-align:right;
 }
 
 /* ============================================================
@@ -826,51 +1188,71 @@ button:disabled{
    ============================================================ */
 
 .action-area .top-amount-card{
-  margin:0 0 7px!important;
-  padding:7px!important;
+  margin:0 0 8px!important;
+
+  padding:8px!important;
 
   background:
+    radial-gradient(
+      circle at 0% 50%,
+      rgba(212,175,55,.04),
+      transparent 35%
+    ),
     linear-gradient(
       135deg,
-      #12110e,
-      #090908
+      #13120f,
+      #080807
     );
 
-  border:1px solid rgba(212,175,55,.30);
-  border-radius:7px;
+  border:
+    1px solid rgba(212,175,55,.28);
+
+  border-radius:9px;
 
   text-align:left;
 
   box-shadow:
-    0 5px 18px rgba(0,0,0,.25);
+    0 7px 22px rgba(0,0,0,.26),
+    inset 0 1px 0 rgba(255,255,255,.018);
 }
 
 .action-area .top-amount-head{
-  gap:7px!important;
+  gap:9px!important;
 }
 
 .action-area .top-amount-card>.top-amount-head>div:first-child{
-  flex:0 0 112px!important;
+  flex:0 0 118px!important;
   text-align:center;
 }
 
 .top-amount-label{
   color:#77746a;
+
   font-size:7px;
+
   font-weight:900;
-  letter-spacing:1.6px;
+
+  letter-spacing:1.7px;
 }
 
 .top-amount-value{
-  margin-top:2px;
+  margin-top:3px;
+
   color:#f0cf62;
+
   font-family:
     Georgia,
     "Times New Roman",
     serif;
-  font-size:25px;
+
+  font-size:27px;
+
   line-height:1;
-  font-weight:600;
+
+  font-weight:500;
+
+  text-shadow:
+    0 0 18px rgba(212,175,55,.08);
 }
 
 /* ============================================================
@@ -879,32 +1261,46 @@ button:disabled{
 
 .top-action-buttons{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
   gap:5px;
+
   flex:1;
-  max-width:650px;
+
+  max-width:680px;
 }
 
 .top-action-buttons button{
   width:100%;
-  min-height:38px;
-  height:38px;
+
+  min-height:40px;
+  height:40px;
+
   padding:4px 5px;
-  border-radius:5px;
+
+  border-radius:6px;
 
   font-size:8px;
   font-weight:900;
+
   line-height:1.05;
-  letter-spacing:.45px;
+
+  letter-spacing:.5px;
 
   transition:
     transform .18s ease,
     filter .18s ease,
-    border-color .18s ease;
+    border-color .18s ease,
+    box-shadow .18s ease;
 }
 
 .top-action-buttons button:not(:disabled):hover{
   filter:brightness(1.08);
+
+  box-shadow:
+    0 5px 16px rgba(0,0,0,.25);
 }
 
 .top-action-buttons button:not(:disabled):active{
@@ -920,14 +1316,15 @@ button:disabled{
     linear-gradient(
       135deg,
       #f1d35f,
-      #c59f28
+      #c49d28
     )!important;
 
   color:#090909!important;
+
   border:0!important;
 
   box-shadow:
-    0 4px 14px rgba(212,175,55,.10);
+    0 4px 16px rgba(212,175,55,.10);
 }
 
 .make-payment-button:hover:not(:disabled){
@@ -948,14 +1345,15 @@ button:disabled{
     linear-gradient(
       135deg,
       #168047,
-      #0b5f34
+      #0a5d33
     )!important;
 
   color:#fff!important;
+
   border:0!important;
 
   box-shadow:
-    0 4px 14px rgba(22,128,71,.10);
+    0 4px 16px rgba(22,128,71,.10);
 }
 
 /* ============================================================
@@ -971,6 +1369,7 @@ button:disabled{
     )!important;
 
   color:#fff!important;
+
   border:0!important;
 }
 
@@ -978,11 +1377,12 @@ button:disabled{
   background:
     linear-gradient(
       135deg,
-      #454545,
-      #303030
+      #3f3f3d,
+      #292928
     )!important;
 
-  color:#a5a5a5!important;
+  color:#aaa!important;
+
   opacity:1!important;
 }
 
@@ -995,7 +1395,11 @@ button:disabled{
     )!important;
 
   color:#fff!important;
+
   cursor:pointer;
+
+  box-shadow:
+    0 5px 18px rgba(8,120,232,.14);
 }
 
 /* ============================================================
@@ -1004,36 +1408,49 @@ button:disabled{
 
 .correction-box{
   display:grid;
-  grid-template-columns:1fr auto;
-  gap:6px;
+
+  grid-template-columns:
+    1fr auto;
+
+  gap:7px;
+
   align-items:end;
-  margin-top:6px!important;
+
+  margin-top:7px!important;
 }
 
 .correction-input{
   width:100%;
-  height:41px;
-  min-height:41px;
+
+  height:42px;
+  min-height:42px;
   max-height:100px;
+
   resize:none;
 
-  padding:10px;
+  padding:10px 11px;
 
   background:
     linear-gradient(
       180deg,
       #11110f,
-      #0b0b0a
+      #090908
     );
 
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:5px;
+  border:
+    1px solid rgba(255,255,255,.08);
+
+  border-radius:7px;
 
   color:#fff;
+
   outline:none;
 
   font-size:9px;
   line-height:1.4;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.012);
 }
 
 .correction-input::placeholder{
@@ -1041,39 +1458,53 @@ button:disabled{
 }
 
 .correction-input:focus{
-  border-color:rgba(212,175,55,.34);
+  border-color:
+    rgba(212,175,55,.34);
+
   box-shadow:
-    0 0 0 2px rgba(212,175,55,.035);
+    0 0 0 2px rgba(212,175,55,.035),
+    inset 0 1px 0 rgba(255,255,255,.012);
 }
 
 .correction-button{
-  min-width:125px;
-  min-height:41px;
+  min-width:130px;
+  min-height:42px;
 
-  border:1px solid rgba(212,175,55,.28);
-  border-radius:5px;
+  border:
+    1px solid rgba(212,175,55,.28);
+
+  border-radius:7px;
 
   background:
     linear-gradient(
       180deg,
-      #161511,
+      #171612,
       #0c0c0b
     );
 
   color:#d9bd5d;
 
   font-size:8px;
+
   font-weight:900;
-  letter-spacing:.45px;
+
+  letter-spacing:.5px;
 
   transition:
     background .18s ease,
-    border-color .18s ease;
+    border-color .18s ease,
+    box-shadow .18s ease;
 }
 
 .correction-button:hover:not(:disabled){
-  border-color:rgba(212,175,55,.48);
-  background:#181713;
+  border-color:
+    rgba(212,175,55,.48);
+
+  background:
+    #191814;
+
+  box-shadow:
+    0 4px 14px rgba(0,0,0,.20);
 }
 
 /* ============================================================
@@ -1082,127 +1513,201 @@ button:disabled{
 
 .payment-section{
   display:block;
-  margin-top:7px!important;
-  padding:9px!important;
+
+  margin-top:8px!important;
+
+  padding:10px!important;
 
   background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(212,175,55,.04),
+      transparent 38%
+    ),
     linear-gradient(
       135deg,
-      rgba(19,18,15,.98),
-      rgba(8,8,7,.98)
+      rgba(19,18,15,.99),
+      rgba(8,8,7,.99)
     );
 
-  border:1px solid rgba(212,175,55,.25);
-  border-radius:7px;
+  border:
+    1px solid rgba(212,175,55,.25);
+
+  border-radius:9px;
 
   position:relative;
+
   overflow:hidden;
+
+  box-shadow:
+    0 7px 22px rgba(0,0,0,.20);
 }
 
 .payment-section::before{
   content:"";
+
   position:absolute;
+
   top:0;
   left:0;
   right:0;
+
   height:1px;
+
   background:
     linear-gradient(
       90deg,
       transparent,
-      rgba(240,207,98,.45),
+      rgba(240,207,98,.55),
       transparent
     );
 }
 
+.payment-section::after{
+  content:"SECURE";
+
+  position:absolute;
+
+  right:11px;
+  top:9px;
+
+  color:
+    rgba(212,175,55,.10);
+
+  font-size:6px;
+
+  font-weight:900;
+
+  letter-spacing:2px;
+}
+
 .payment-title{
   color:#e8ce70;
+
   font-family:
     Georgia,
     "Times New Roman",
     serif;
+
   font-size:11px;
-  font-weight:600;
-  letter-spacing:.8px;
+
+  font-weight:500;
+
+  letter-spacing:.9px;
 }
 
 .payment-subtitle{
   margin-top:3px;
+
   color:#77746c;
+
   font-size:8px;
-  line-height:1.45;
+
+  line-height:1.5;
+
   max-width:900px;
 }
 
 .payment-details{
   margin-top:7px;
-  padding:6px 7px;
+
+  padding:7px 8px;
 
   color:#bcb8ad;
 
   white-space:pre-wrap;
+
   font-size:8px;
+
   line-height:1.5;
 
-  background:rgba(255,255,255,.018);
-  border-left:1px solid rgba(212,175,55,.18);
+  background:
+    rgba(255,255,255,.018);
+
+  border-left:
+    1px solid rgba(212,175,55,.20);
+
+  border-radius:0 4px 4px 0;
 }
 
 .payment-message{
   margin-top:6px;
-  padding:6px 7px;
+
+  padding:7px 8px;
 
   color:#66645e;
+
   font-size:8px;
+
   text-align:center;
+
   line-height:1.45;
 
-  border:1px solid transparent;
-  border-radius:4px;
+  border:
+    1px solid transparent;
+
+  border-radius:5px;
 }
 
 .payment-message.payment-ready{
   color:#75dc99!important;
-  background:rgba(22,128,71,.055);
-  border:1px solid rgba(117,220,153,.18);
+
+  background:
+    rgba(22,128,71,.055);
+
+  border:
+    1px solid rgba(117,220,153,.18);
 }
 
 .payment-message.payment-waiting{
   color:#e1c45c!important;
-  background:rgba(212,175,55,.045);
-  border:1px solid rgba(212,175,55,.17);
+
+  background:
+    rgba(212,175,55,.045);
+
+  border:
+    1px solid rgba(212,175,55,.17);
 }
 
 .payment-message.payment-locked{
   color:#777!important;
-  background:rgba(255,255,255,.012);
+
+  background:
+    rgba(255,255,255,.012);
 }
 
 /* ============================================================
-   TINY BACK OFFICE BUTTON
+   BACK OFFICE
    ============================================================ */
 
 .back-office-button{
   display:block;
+
   width:max-content;
 
-  margin:5px auto 0;
+  margin:6px auto 0;
 
-  padding:2px 6px;
-  min-height:18px;
+  padding:3px 8px;
 
-  border:1px solid rgba(212,175,55,.16);
-  border-radius:3px;
+  min-height:19px;
+
+  border:
+    1px solid rgba(212,175,55,.16);
+
+  border-radius:20px;
 
   background:
     rgba(255,255,255,.012);
 
-  color:#5e5c57;
+  color:#625f58;
 
   font-size:6.5px;
+
   line-height:1;
+
   font-weight:800;
-  letter-spacing:.8px;
+
+  letter-spacing:.9px;
 
   opacity:.58;
 
@@ -1215,8 +1720,13 @@ button:disabled{
 
 .back-office-button:hover{
   color:#d5bc62;
-  border-color:rgba(212,175,55,.38);
-  background:rgba(212,175,55,.025);
+
+  border-color:
+    rgba(212,175,55,.38);
+
+  background:
+    rgba(212,175,55,.025);
+
   opacity:1;
 }
 
@@ -1226,170 +1736,258 @@ button:disabled{
 
 .message{
   flex:0 0 auto;
-  min-height:17px;
-  margin-top:2px;
+
+  min-height:18px;
+
+  margin-top:3px;
+
   color:#77746c;
+
   font-size:8px;
+
   text-align:center;
 }
 
 .message.error{
-  color:#ff7777
+  color:#ff7777;
 }
 
 .message.success{
-  color:#75dc99
+  color:#75dc99;
 }
 
 /* ============================================================
-   PAYMENT POPUP
+   PAYMENT POPUP / LUXURY PAYMENT CHAMBER
    ============================================================ */
 
 .payment-modal{
   position:fixed;
+
   inset:0;
+
   z-index:1000;
 
   display:none;
+
   align-items:center;
   justify-content:center;
 
-  padding:14px;
+  padding:15px;
 
   background:
-    rgba(0,0,0,.84);
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(212,175,55,.045),
+      transparent 34%
+    ),
+    rgba(0,0,0,.88);
 
-  backdrop-filter:blur(8px);
+  backdrop-filter:blur(10px);
 }
 
 .payment-modal.show{
-  display:flex
+  display:flex;
 }
 
 .payment-modal-card{
   width:100%;
-  max-width:430px;
+  max-width:445px;
   max-height:92vh;
 
   overflow-y:auto;
 
+  position:relative;
+
+  padding:19px;
+
   background:
     radial-gradient(
       circle at 50% 0%,
-      rgba(212,175,55,.055),
-      transparent 45%
+      rgba(212,175,55,.07),
+      transparent 46%
     ),
-    #0d0d0c;
+    linear-gradient(
+      180deg,
+      #11110f,
+      #080807
+    );
 
-  border:1px solid rgba(212,175,55,.42);
-  border-radius:10px;
+  border:
+    1px solid rgba(212,175,55,.44);
+
+  border-radius:13px;
 
   box-shadow:
-    0 20px 70px rgba(0,0,0,.72),
-    0 0 0 1px rgba(255,255,255,.018);
-
-  padding:16px;
-
-  position:relative;
+    0 25px 80px rgba(0,0,0,.78),
+    0 0 0 1px rgba(255,255,255,.018),
+    0 0 60px rgba(212,175,55,.035);
 }
 
 .payment-modal-card::before{
-  content:"NPBC";
+  content:"NAIJA POCKET BUSINESS CENTER";
+
   position:absolute;
-  top:10px;
-  left:12px;
 
-  color:rgba(212,175,55,.16);
+  top:11px;
+  left:15px;
 
-  font-family:Georgia,serif;
-  font-size:7px;
-  letter-spacing:2px;
+  color:
+    rgba(212,175,55,.15);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size:5px;
+
+  letter-spacing:2.4px;
+}
+
+.payment-modal-card::after{
+  content:"";
+
+  position:absolute;
+
+  top:0;
+  left:15%;
+  right:15%;
+
+  height:1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,240,168,.65),
+      transparent
+    );
 }
 
 .payment-modal-title{
   color:#efd579;
+
   font-family:
     Georgia,
     "Times New Roman",
     serif;
-  font-size:16px;
-  font-weight:600;
+
+  font-size:18px;
+
+  font-weight:500;
+
   text-align:center;
-  letter-spacing:.3px;
+
+  letter-spacing:.4px;
+
+  text-shadow:
+    0 0 18px rgba(212,175,55,.08);
 }
 
 .payment-modal-subtitle{
-  margin-top:5px;
+  margin-top:6px;
+
   color:#85827a;
+
   font-size:8px;
-  line-height:1.5;
+
+  line-height:1.55;
+
   text-align:center;
 }
 
 .bank-box{
-  margin-top:12px;
+  margin-top:13px;
+
   padding:13px;
 
-  background:#050505;
+  background:
+    linear-gradient(
+      180deg,
+      #060606,
+      #030303
+    );
 
-  border:1px solid rgba(212,175,55,.22);
-  border-radius:6px;
+  border:
+    1px solid rgba(212,175,55,.22);
+
+  border-radius:8px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.015);
 }
 
 .bank-row{
   display:flex;
-  justify-content:space-between;
-  gap:12px;
-  padding:7px 0;
 
-  border-bottom:1px solid rgba(255,255,255,.055);
+  justify-content:space-between;
+
+  gap:12px;
+
+  padding:8px 0;
+
+  border-bottom:
+    1px solid rgba(255,255,255,.055);
 }
 
 .bank-row:last-child{
-  border-bottom:0
+  border-bottom:0;
 }
 
 .bank-label{
   color:#706e68;
+
   font-size:8px;
+
   font-weight:800;
-  letter-spacing:.5px;
+
+  letter-spacing:.6px;
 }
 
 .bank-value{
   color:#e6e1d5;
+
   font-size:9px;
+
   font-weight:900;
+
   text-align:right;
+
   word-break:break-word;
 }
 
 .modal-amount{
-  margin-top:10px;
-  padding:9px;
+  margin-top:11px;
+
+  padding:10px;
 
   background:
     linear-gradient(
       135deg,
-      rgba(212,175,55,.07),
+      rgba(212,175,55,.075),
       rgba(255,255,255,.015)
     );
 
-  border:1px solid rgba(212,175,55,.20);
-  border-radius:6px;
+  border:
+    1px solid rgba(212,175,55,.20);
+
+  border-radius:8px;
 
   text-align:center;
 }
 
 .modal-amount-label{
   color:#716e65;
+
   font-size:7px;
+
   font-weight:800;
-  letter-spacing:1.2px;
+
+  letter-spacing:1.3px;
 }
 
 .modal-amount-value{
-  margin-top:2px;
+  margin-top:3px;
+
   color:#f0cf62;
 
   font-family:
@@ -1397,63 +1995,93 @@ button:disabled{
     "Times New Roman",
     serif;
 
-  font-size:25px;
-  font-weight:600;
+  font-size:27px;
+
+  font-weight:500;
 }
 
 .payment-input-group{
-  margin-top:10px
+  margin-top:11px;
 }
 
 .payment-input-label{
   display:block;
+
   margin-bottom:5px;
+
   color:#858179;
+
   font-size:7px;
+
   font-weight:900;
+
   letter-spacing:1px;
 }
 
 .payment-note-input{
   width:100%;
-  min-height:65px;
-  padding:9px 10px;
 
-  background:#151513;
+  min-height:67px;
 
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:5px;
+  padding:10px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #151513,
+      #0d0d0c
+    );
+
+  border:
+    1px solid rgba(255,255,255,.09);
+
+  border-radius:6px;
 
   color:#fff;
+
   outline:none;
 
   font-size:9px;
+
   resize:vertical;
 }
 
 .payment-note-input:focus{
-  border-color:rgba(212,175,55,.34);
+  border-color:
+    rgba(212,175,55,.34);
 }
 
 .modal-buttons{
   display:grid;
-  grid-template-columns:1fr 1fr;
+
+  grid-template-columns:
+    1fr 1fr;
+
   gap:7px;
-  margin-top:12px
+
+  margin-top:13px;
 }
 
 .modal-button{
-  min-height:42px;
-  border-radius:5px;
+  min-height:43px;
+
+  border-radius:7px;
+
   font-size:8px;
+
   font-weight:900;
-  letter-spacing:.5px;
+
+  letter-spacing:.55px;
 }
 
 .modal-close{
-  background:#191918;
+  background:
+    #191918;
+
   color:#ddd;
-  border:1px solid rgba(255,255,255,.10);
+
+  border:
+    1px solid rgba(255,255,255,.10);
 }
 
 .modal-report{
@@ -1463,53 +2091,63 @@ button:disabled{
       #168047,
       #0b6035
     );
+
   color:#fff;
+
   border:0;
+
+  box-shadow:
+    0 5px 17px rgba(22,128,71,.10);
 }
 
 .modal-status{
   margin-top:9px;
+
   min-height:15px;
-  padding:4px;
+
+  padding:5px;
 
   color:#74716a;
 
   font-size:8px;
+
   line-height:1.4;
+
   text-align:center;
 }
 
 .modal-status.error{
-  color:#ff7777
+  color:#ff7777;
 }
 
 .modal-status.success{
-  color:#75dc99
+  color:#75dc99;
 }
 
 /* ============================================================
-   SMALL SCREEN REFINEMENT
+   MOBILE
    ============================================================ */
 
 @media(max-width:600px){
 
   .main{
-    grid-template-rows:50% 50%!important
+    grid-template-rows:51% 49%!important;
   }
 
   .document-card-header{
-    min-height:45px;
-    padding:7px 9px!important
+    min-height:48px;
+
+    padding:7px 10px 10px!important;
   }
 
   .document-card-header::before{
-    left:9px;
+    left:10px;
     letter-spacing:1.8px;
   }
 
   .document-card-header::after{
-    right:9px;
-    width:55px;
+    right:10px;
+    width:58px;
   }
 
   .document-heading{
@@ -1517,189 +2155,302 @@ button:disabled{
   }
 
   .document-heading h3{
-    font-size:13px
+    font-size:14px;
   }
 
   .page-count{
-    padding:4px 6px;
+    padding:5px 7px;
+
     font-size:7px;
-    letter-spacing:.8px;
+
+    letter-spacing:.85px;
   }
 
   .document-scroll{
-    padding:8px 5px 5px!important
+    padding:9px 5px 5px!important;
   }
 
   .document-page{
     min-height:560px!important;
-    padding:28px 16px 40px!important
+
+    padding:29px 17px 42px!important;
+
+    border-radius:3px;
   }
 
   .document-page::before{
-    inset:5px
+    inset:5px;
   }
 
   .document-page::after{
     top:5px;
     left:5px;
-    width:25px;
-    height:25px;
+
+    width:27px;
+    height:27px;
   }
 
   .page-content{
     font-size:13px!important;
-    line-height:1.65!important
+    line-height:1.65!important;
   }
 
   .page-number-inside{
     font-size:7px;
-    margin-bottom:18px;
+
+    margin-bottom:19px;
+  }
+
+  .page-navigation{
+    margin-top:7px!important;
+
+    gap:5px;
+  }
+
+  .nav-button{
+    min-height:38px!important;
+
+    font-size:7.5px!important;
+  }
+
+  .page-indicator{
+    min-width:66px;
+
+    font-size:7px;
+  }
+
+  .go-row{
+    margin-top:5px!important;
+  }
+
+  .page-number-input{
+    height:35px!important;
+
+    font-size:9px;
+  }
+
+  .go-button{
+    width:64px!important;
+  }
+
+  .page-review{
+    margin-top:5px!important;
+
+    padding:9px;
+  }
+
+  .page-review-title{
+    font-size:7px;
+  }
+
+  .page-review-text{
+    font-size:8px;
   }
 
   .action-area{
-    padding:5px 5px 18px!important
+    padding:5px 5px 18px!important;
   }
 
   .action-area .top-panel{
-    padding:7px 8px!important
+    padding:8px 9px!important;
   }
 
   .action-area .review-title{
-    font-size:14px!important
+    font-size:15px!important;
   }
 
   .action-area .review-subtitle{
     font-size:8px!important;
-    margin-top:2px!important
+
+    margin-top:3px!important;
   }
 
   .action-area .status-row{
-    margin-top:5px!important
+    margin-top:6px!important;
   }
 
   .action-area .progress-shell{
     margin-top:4px!important;
-    height:4px!important
+
+    height:4px!important;
   }
 
   .action-area .progress-text{
     margin-top:3px!important;
-    font-size:7px!important
+
+    font-size:7px!important;
   }
 
   .action-area .top-amount-card{
-    padding:6px!important
+    padding:6px!important;
   }
 
   .action-area .top-amount-head{
-    align-items:center!important
+    align-items:center!important;
   }
 
   .action-area .top-amount-card>.top-amount-head>div:first-child{
-    flex:0 0 72px!important
+    flex:0 0 74px!important;
   }
 
   .action-area .top-amount-label{
-    font-size:7px!important
+    font-size:6.5px!important;
   }
 
   .action-area .top-amount-value{
-    font-size:19px!important
+    font-size:20px!important;
   }
 
   .action-area .top-action-buttons{
-    gap:3px!important
+    gap:3px!important;
   }
 
   .action-area .top-action-buttons button{
     min-height:38px!important;
+
     height:38px!important;
-    font-size:7px!important;
-    padding:3px 2px!important
+
+    font-size:6.7px!important;
+
+    padding:3px 2px!important;
   }
 
   .action-area .correction-box{
-    grid-template-columns:1fr auto!important;
-    gap:5px!important
+    grid-template-columns:
+      1fr auto!important;
+
+    gap:5px!important;
   }
 
   .action-area .correction-input{
     height:38px!important;
+
     min-height:38px!important;
+
     padding:8px!important;
-    font-size:9px!important
+
+    font-size:8.5px!important;
   }
 
   .action-area .correction-button{
     min-width:105px!important;
+
     min-height:38px!important;
-    font-size:8px!important
+
+    font-size:7.5px!important;
   }
 
   .action-area .payment-section{
-    padding:7px!important
+    padding:8px!important;
   }
 
   .action-area .payment-title{
-    font-size:10px!important
+    font-size:10px!important;
   }
 
   .action-area .payment-subtitle,
   .action-area .payment-details,
   .action-area .payment-message{
-    font-size:8px!important;
-    line-height:1.3!important
-  }
+    font-size:7.7px!important;
 
-  .page-navigation{
-    margin-top:7px!important
-  }
-
-  .nav-button{
-    min-height:38px!important;
-    font-size:8px!important
-  }
-
-  .page-indicator{
-    min-width:68px;
-    font-size:7px;
-  }
-
-  .go-row{
-    margin-top:5px!important
-  }
-
-  .page-number-input{
-    height:35px!important;
-    font-size:9px;
-  }
-
-  .go-button{
-    width:65px!important
+    line-height:1.35!important;
   }
 
   .back-office-button{
     margin-top:4px;
-    padding:2px 5px;
-    min-height:16px;
-    font-size:6px;
+
+    padding:2px 6px;
+
+    min-height:17px;
+
+    font-size:5.8px;
+  }
+
+  .payment-modal{
+    padding:10px;
   }
 
   .payment-modal-card{
-    padding:12px;
-    border-radius:8px
+    padding:13px;
+
+    border-radius:10px;
   }
 
   .payment-modal-title{
-    font-size:13px
+    font-size:14px;
+  }
+
+  .payment-modal-subtitle{
+    font-size:7.7px;
   }
 
   .bank-row{
-    padding:6px 0
+    padding:6px 0;
+  }
+
+  .bank-label{
+    font-size:7px;
+  }
+
+  .bank-value{
+    font-size:8px;
+  }
+
+  .modal-amount-value{
+    font-size:23px;
   }
 
   .modal-buttons{
     grid-template-columns:1fr;
+  }
+}
+
+/* ============================================================
+   VERY SMALL PHONES
+   ============================================================ */
+
+@media(max-width:380px){
+
+  .main{
+    grid-template-rows:50% 50%!important;
+  }
+
+  .document-heading h3{
+    font-size:13px;
+  }
+
+  .page-count{
+    font-size:6.5px;
+  }
+
+  .document-page{
+    padding-left:14px!important;
+    padding-right:14px!important;
+  }
+
+  .page-content{
+    font-size:12.5px!important;
+  }
+
+  .action-area .review-title{
+    font-size:14px!important;
+  }
+
+  .action-area .top-amount-card>.top-amount-head>div:first-child{
+    flex:0 0 65px!important;
+  }
+
+  .action-area .top-amount-value{
+    font-size:18px!important;
+  }
+
+  .action-area .top-action-buttons button{
+    font-size:6.2px!important;
+  }
+
+  .action-area .correction-button{
+    min-width:96px!important;
+    font-size:7px!important;
   }
 }
 </style>
@@ -1717,7 +2468,10 @@ button:disabled{
   <div class="document-heading">
     <h3>Your Complete Document</h3>
   </div>
-  <div id="pageCount" class="page-count">0 PAGES</div>
+
+  <div id="pageCount" class="page-count">
+    0 PAGES
+  </div>
 </div>
 
 <div id="documentScroll" class="document-scroll">
@@ -1730,20 +2484,36 @@ button:disabled{
   </div>
 
   <div class="page-navigation">
-    <button id="previousButton" class="nav-button" type="button" disabled>
+
+    <button
+      id="previousButton"
+      class="nav-button"
+      type="button"
+      disabled
+    >
       ← Previous Page
     </button>
 
-    <div id="pageIndicator" class="page-indicator">
+    <div
+      id="pageIndicator"
+      class="page-indicator"
+    >
       Page 0 of 0
     </div>
 
-    <button id="nextButton" class="nav-button next" type="button" disabled>
+    <button
+      id="nextButton"
+      class="nav-button next"
+      type="button"
+      disabled
+    >
       Next Page →
     </button>
+
   </div>
 
   <div class="go-row">
+
     <input
       id="pageNumberInput"
       class="page-number-input"
@@ -1751,19 +2521,36 @@ button:disabled{
       min="1"
       placeholder="Enter page number"
     >
-    <button id="goButton" class="go-button" type="button">
+
+    <button
+      id="goButton"
+      class="go-button"
+      type="button"
+    >
       GO
     </button>
+
   </div>
 
-  <div id="pageReview" class="page-review" style="display:none">
-    <div class="page-review-title">PAGE REVIEW</div>
-    <div id="pageReviewText" class="page-review-text"></div>
+  <div
+    id="pageReview"
+    class="page-review"
+    style="display:none"
+  >
+    <div class="page-review-title">
+      PAGE REVIEW
+    </div>
+
+    <div
+      id="pageReviewText"
+      class="page-review-text"
+    ></div>
   </div>
 
 </div>
 
 </section>
+
 
 <section class="action-area">
 
@@ -1778,28 +2565,56 @@ button:disabled{
   </p>
 
   <div class="status-row">
-    <span class="status-label">Review status</span>
-    <span id="statusValue" class="status-value">Preparing...</span>
+
+    <span class="status-label">
+      Review status
+    </span>
+
+    <span
+      id="statusValue"
+      class="status-value"
+    >
+      Preparing...
+    </span>
+
   </div>
 
   <div class="progress-shell">
-    <div id="progressBar" class="progress-bar"></div>
+    <div
+      id="progressBar"
+      class="progress-bar"
+    ></div>
   </div>
 
-  <div id="progressText" class="progress-text">
+  <div
+    id="progressText"
+    class="progress-text"
+  >
     Preparing the document...
   </div>
 
 </section>
+
 
 <section class="top-amount-card">
 
   <div class="top-amount-head">
 
     <div>
-      <div class="top-amount-label">AMOUNT TO PAY</div>
-      <div id="amountValueTop" class="top-amount-value">₦0</div>
+
+      <div class="top-amount-label">
+        AMOUNT TO PAY
+      </div>
+
+      <div
+        id="amountValueTop"
+        class="top-amount-value"
+      >
+        ₦0
+      </div>
+
     </div>
+
 
     <div class="top-action-buttons">
 
@@ -1835,6 +2650,7 @@ button:disabled{
 
 </section>
 
+
 <div class="correction-box">
 
   <textarea
@@ -1853,7 +2669,11 @@ button:disabled{
 
 </div>
 
-<section id="paymentSection" class="payment-section">
+
+<section
+  id="paymentSection"
+  class="payment-section"
+>
 
   <div class="payment-title">
     SECURE PAYMENT &amp; DOWNLOAD
@@ -1863,7 +2683,10 @@ button:disabled{
     Your approved document is saved securely before payment begins. Make your bank transfer here, report the payment, and Customer Care will verify it before your download is released.
   </div>
 
-  <div id="paymentDetails" class="payment-details">
+  <div
+    id="paymentDetails"
+    class="payment-details"
+  >
     Payment setup is ready.
   </div>
 
@@ -1876,6 +2699,7 @@ button:disabled{
 
 </section>
 
+
 <button
   id="backOfficeButton"
   class="back-office-button"
@@ -1886,14 +2710,23 @@ button:disabled{
 
 </section>
 
-<div id="message" class="message"></div>
+
+<div
+  id="message"
+  class="message"
+></div>
 
 </main>
 
 
-<!-- PAYMENT POPUP -->
+<!-- ==========================================================
+     PAYMENT POPUP
+     ========================================================== -->
 
-<div id="paymentModal" class="payment-modal">
+<div
+  id="paymentModal"
+  class="payment-modal"
+>
 
   <div class="payment-modal-card">
 
@@ -1907,33 +2740,55 @@ button:disabled{
     </div>
 
     <div class="modal-amount">
+
       <div class="modal-amount-label">
         AMOUNT TO PAY
       </div>
 
-      <div id="modalAmount" class="modal-amount-value">
+      <div
+        id="modalAmount"
+        class="modal-amount-value"
+      >
         ₦0
       </div>
+
     </div>
+
 
     <div class="bank-box">
 
       <div class="bank-row">
-        <span class="bank-label">Bank</span>
-        <span class="bank-value">Your Business Bank</span>
+        <span class="bank-label">
+          Bank
+        </span>
+
+        <span class="bank-value">
+          Your Business Bank
+        </span>
       </div>
 
       <div class="bank-row">
-        <span class="bank-label">Account Name</span>
-        <span class="bank-value">Naija Pocket Business Center</span>
+        <span class="bank-label">
+          Account Name
+        </span>
+
+        <span class="bank-value">
+          Naija Pocket Business Center
+        </span>
       </div>
 
       <div class="bank-row">
-        <span class="bank-label">Account Number</span>
-        <span class="bank-value">0000000000</span>
+        <span class="bank-label">
+          Account Number
+        </span>
+
+        <span class="bank-value">
+          0000000000
+        </span>
       </div>
 
     </div>
+
 
     <div class="payment-input-group">
 
@@ -1952,9 +2807,14 @@ button:disabled{
 
     </div>
 
-    <div id="modalStatus" class="modal-status">
+
+    <div
+      id="modalStatus"
+      class="modal-status"
+    >
       Payment is ready. Make your bank transfer, then tap I HAVE MADE PAYMENT.
     </div>
+
 
     <div class="modal-buttons">
 
