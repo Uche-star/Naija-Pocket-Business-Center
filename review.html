@@ -7,15 +7,24 @@
 
 <style>
 :root{
-  --black:#050505;
-  --panel:#111;
-  --line:rgba(255,255,255,.12);
+  --black:#030303;
+  --black2:#070707;
+  --panel:#0c0c0c;
+  --panel2:#11110f;
+  --panel3:#161512;
+  --line:rgba(255,255,255,.09);
+  --line-gold:rgba(212,175,55,.24);
+  --line-gold-strong:rgba(212,175,55,.48);
   --gold:#d4af37;
   --gold2:#f0cf62;
+  --gold3:#fff0a8;
   --white:#fff;
-  --muted:#a2a2a2;
+  --muted:#8f8d88;
+  --muted2:#aaa69c;
   --red:#9d0000;
-  --green:#008000
+  --green:#168047;
+  --green2:#75dc99;
+  --blue:#007bff;
 }
 
 *{
@@ -28,293 +37,328 @@ html,body{
   padding:0;
   width:100%;
   height:100%;
-  background:var(--black);
+  background:
+    radial-gradient(
+      circle at 50% -15%,
+      rgba(212,175,55,.075),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(22,128,71,.035),
+      transparent 30%
+    ),
+    #030303;
   color:var(--white);
-  font-family:Inter,Arial,sans-serif
+  font-family:
+    Inter,
+    Montserrat,
+    Arial,
+    sans-serif
 }
 
-body{overflow:hidden}
+body{
+  overflow:hidden
+}
 
-button,textarea,input{font:inherit}
-button{cursor:pointer}
-button:disabled{opacity:.45;cursor:not-allowed}
+button,textarea,input{
+  font:inherit
+}
+
+button{
+  cursor:pointer
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed
+}
+
+/* ============================================================
+   HIDDEN ORIGINAL HEADER
+   ============================================================ */
 
 .header{
-  width:100%;
-  height:66px;
-  background:#000;
-  border-bottom:1px solid var(--line);
-  padding:11px 12px;
-  position:fixed;
+  display:none!important
+}
+
+/* ============================================================
+   MAIN LUXURY REVIEW FRAME
+   ============================================================ */
+
+.main{
+  position:fixed!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  max-width:1180px!important;
+  margin:0 auto!important;
+  padding:0!important;
+  display:grid!important;
+  grid-template-rows:50% 50%!important;
+  gap:0!important;
+  overflow:hidden!important;
+
+  background:
+    linear-gradient(
+      180deg,
+      #050505 0%,
+      #070706 48%,
+      #030303 100%
+    );
+
+  box-shadow:
+    inset 0 0 0 1px rgba(212,175,55,.035);
+}
+
+/* ============================================================
+   DOCUMENT REVIEW CHAMBER
+   ============================================================ */
+
+.review-card{
+  grid-row:1;
+  min-height:0!important;
+  height:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+
+  border-radius:0!important;
+  overflow:hidden!important;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(212,175,55,.045),
+      transparent 48%
+    ),
+    #080808;
+
+  border:0!important;
+  position:relative;
+}
+
+.review-card::before{
+  content:"";
+  position:absolute;
   top:0;
   left:0;
   right:0;
-  z-index:200
+  height:1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(212,175,55,.5),
+      transparent
+    );
+  pointer-events:none;
+  z-index:5;
 }
 
-.header-inner{
-  width:100%;
-  max-width:950px;
-  height:100%;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px
-}
-
-.brand{min-width:0}
-
-.brand-title{
-  margin:0;
-  color:var(--gold2);
-  font-family:Montserrat,Arial,sans-serif;
-  font-size:18px;
-  line-height:1.15;
-  font-weight:900
-}
-
-.brand-subtitle{
-  margin-top:3px;
-  color:#aaa;
-  font-size:10px
-}
-
-.service-badge{
-  flex:0 0 auto;
-  max-width:45%;
-  padding:7px 9px;
-  border:1px solid rgba(212,175,55,.4);
-  border-radius:8px;
-  color:var(--gold2);
-  background:#111;
-  font-size:9px;
-  font-weight:800;
-  text-align:center
-}
-
-.main{
-  position:fixed;
-  top:66px;
-  left:0;
-  right:0;
-  bottom:0;
-  width:100%;
-  max-width:1100px;
-  margin:auto;
-  padding:10px 5px 0;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden
-}
-
-.top-amount-card{
-  flex:0 0 auto;
-  margin:0 0 8px;
-  padding:7px 8px;
-  background:#111;
-  border:1px solid rgba(212,175,55,.45);
-  border-radius:13px;
-  text-align:left
-}
-
-.top-amount-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px
-}
-
-.top-action-buttons{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:5px;
-  flex:1;
-  max-width:650px
-}
-
-.top-action-buttons button{
-  width:100%;
-  min-height:38px;
-  height:38px;
-  padding:4px 5px;
-  border-radius:8px;
-  font-size:9px;
-  font-weight:900;
-  line-height:1.05
-}
-
-.top-amount-card>.top-amount-head>div:first-child{
-  flex:0 0 108px;
-  text-align:center
-}
-
-.top-amount-label{
-  color:#aaa;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.8px
-}
-
-.top-amount-value{
-  margin-top:2px;
-  color:var(--gold2);
-  font-size:27px;
-  font-weight:900
-}
-
-.top-panel{
-  flex:0 0 auto;
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:11px 13px;
-  margin-bottom:8px
-}
-
-.review-title{
-  margin:0;
-  color:#fff;
-  font-family:Montserrat,Arial,sans-serif;
-  font-size:17px;
-  font-weight:900
-}
-
-.review-subtitle{
-  margin:4px 0 0;
-  color:#aaa;
-  font-size:10px;
-  line-height:1.45
-}
-
-.status-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  margin-top:8px
-}
-
-.status-label{
-  color:#aaa;
-  font-size:9px
-}
-
-.status-value{
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900
-}
-
-.progress-shell{
-  margin-top:6px;
-  width:100%;
-  height:6px;
-  background:#242424;
-  border-radius:20px;
-  overflow:hidden
-}
-
-.progress-bar{
-  width:0%;
-  height:100%;
-  background:var(--gold);
-  transition:width .25s ease
-}
-
-.progress-text{
-  margin-top:4px;
-  color:#888;
-  font-size:9px;
-  text-align:right
-}
-
-.review-card{
-  flex:1 1 auto;
-  min-height:0;
-  display:flex;
-  flex-direction:column;
-  background:#0b0b0b;
-  border:1px solid rgba(212,175,55,.22);
-  border-radius:13px;
-  overflow:hidden
-}
+/* ============================================================
+   DOCUMENT HEADER
+   ============================================================ */
 
 .document-card-header{
   flex:0 0 auto;
-  padding:10px 11px 8px;
-  background:#111;
-  border-bottom:1px solid var(--line);
+  min-height:48px;
+  padding:8px 14px!important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(21,20,17,.98),
+      rgba(11,11,10,.98)
+    );
+
+  border-bottom:1px solid rgba(212,175,55,.14);
+
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:8px
+  gap:12px;
+
+  position:relative;
+}
+
+.document-card-header::before{
+  content:"DOCUMENT REVIEW";
+  position:absolute;
+  left:14px;
+  bottom:3px;
+  color:rgba(212,175,55,.34);
+  font-size:5px;
+  font-weight:900;
+  letter-spacing:2.4px;
+  pointer-events:none;
+}
+
+.document-card-header::after{
+  content:"";
+  position:absolute;
+  right:14px;
+  bottom:0;
+  width:72px;
+  height:1px;
+  background:var(--gold);
+  opacity:.42;
+}
+
+.document-heading{
+  min-width:0;
+  padding-bottom:5px;
 }
 
 .document-heading h3{
   margin:0;
-  color:var(--gold2);
-  font-size:13px;
-  font-weight:900
+  color:#f6e7ae;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size:15px;
+  line-height:1.1;
+  font-weight:600;
+  letter-spacing:.15px;
 }
 
 .page-count{
-  color:#aaa;
-  font-size:10px;
-  font-weight:800
+  flex:0 0 auto;
+  padding:5px 8px;
+  border:1px solid rgba(212,175,55,.18);
+  border-radius:3px;
+  background:rgba(212,175,55,.035);
+  color:#bdb7a8;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:1.2px;
 }
+
+/* ============================================================
+   DOCUMENT SCROLL AREA
+   ============================================================ */
 
 .document-scroll{
-  flex:1 1 auto;
-  min-height:0;
-  overflow-y:auto;
-  overflow-x:hidden;
-  padding:5px;
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:12px 10px 7px!important;
+
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+
   -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain
+  overscroll-behavior:contain;
+
+  background:
+    radial-gradient(
+      ellipse at center top,
+      rgba(255,255,255,.018),
+      transparent 55%
+    );
 }
 
-.document-scroll::-webkit-scrollbar{width:5px}
-.document-scroll::-webkit-scrollbar-track{background:#090909}
+.document-scroll::-webkit-scrollbar{
+  width:4px
+}
+
+.document-scroll::-webkit-scrollbar-track{
+  background:#050505
+}
+
 .document-scroll::-webkit-scrollbar-thumb{
-  background:#3a3a3a;
-  border-radius:20px
+  background:
+    linear-gradient(
+      180deg,
+      #7c6723,
+      #2f2a1a
+    );
+  border-radius:20px;
 }
 
-.page-viewer{width:100%}
+/* ============================================================
+   DOCUMENT PAGE
+   ============================================================ */
+
+.page-viewer{
+  width:100%;
+  max-width:900px;
+  margin:0 auto;
+}
 
 .document-page{
   position:relative;
   width:100%;
   min-height:620px;
-  background:#fff;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fdfdfc 100%
+    );
+
   color:#111;
+
   border-radius:2px;
-  box-shadow:0 8px 35px rgba(0,0,0,.45);
-  padding:42px 30px 58px;
+
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.9),
+    0 8px 30px rgba(0,0,0,.46),
+    0 22px 55px rgba(0,0,0,.25);
+
+  padding:42px 34px 58px;
+
   overflow:visible;
+
   user-select:text;
   -webkit-user-select:text;
-  cursor:default
+  cursor:default;
+}
+
+.document-page::before{
+  content:"";
+  position:absolute;
+  inset:7px;
+  border:1px solid rgba(0,0,0,.045);
+  pointer-events:none;
+}
+
+.document-page::after{
+  content:"";
+  position:absolute;
+  top:7px;
+  left:7px;
+  width:38px;
+  height:38px;
+  border-top:1px solid rgba(0,0,0,.10);
+  border-left:1px solid rgba(0,0,0,.10);
+  pointer-events:none;
 }
 
 .page-number-inside{
   color:#777;
   font-family:Arial,sans-serif;
-  font-size:9px;
+  font-size:8px;
   text-align:center;
-  margin-bottom:24px
+  margin-bottom:24px;
+  letter-spacing:1px;
 }
 
 .page-content{
   width:100%;
   color:#111;
-  font-family:"Times New Roman",Georgia,serif;
+  font-family:
+    "Times New Roman",
+    Georgia,
+    serif;
   font-size:14px;
   line-height:1.75;
   white-space:pre-wrap;
   overflow-wrap:anywhere;
-  word-break:normal
+  word-break:normal;
 }
 
 .page-content p{
@@ -341,12 +385,18 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .page-content h4{font-size:1.15em}
 
 .page-content strong,
-.page-content b{font-weight:700}
+.page-content b{
+  font-weight:700
+}
 
 .page-content em,
-.page-content i{font-style:italic}
+.page-content i{
+  font-style:italic
+}
 
-.page-content u{text-decoration:underline}
+.page-content u{
+  text-decoration:underline
+}
 
 .page-content ul,
 .page-content ol{
@@ -355,7 +405,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
   padding-left:28px
 }
 
-.page-content li{margin-bottom:4px}
+.page-content li{
+  margin-bottom:4px
+}
 
 .page-content blockquote{
   margin:12px 0;
@@ -385,13 +437,19 @@ button:disabled{opacity:.45;cursor:not-allowed}
   text-align:left
 }
 
-.page-content th{font-weight:700}
+.page-content th{
+  font-weight:700
+}
 
 .page-content pre{
   white-space:pre-wrap;
   overflow-wrap:anywhere;
   font-family:monospace
 }
+
+/* ============================================================
+   LOADING / EMPTY STATES
+   ============================================================ */
 
 .empty-page{
   min-height:500px;
@@ -419,271 +477,789 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .spinner{
   width:29px;
   height:29px;
-  border:3px solid #333;
+  border:2px solid rgba(255,255,255,.10);
   border-top-color:var(--gold);
+  border-right-color:rgba(240,207,98,.45);
   border-radius:50%;
   animation:spin .8s linear infinite
 }
 
 @keyframes spin{
-  to{transform:rotate(360deg)}
+  to{
+    transform:rotate(360deg)
+  }
 }
+
+/* ============================================================
+   DOCUMENT NAVIGATION
+   ============================================================ */
 
 .page-navigation{
   display:grid;
   grid-template-columns:1fr auto 1fr;
   align-items:center;
   gap:7px;
-  margin-top:9px
+  margin-top:10px;
 }
 
 .nav-button{
-  min-height:43px;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
-  background:#181818;
-  color:#fff;
-  font-size:10px;
-  font-weight:900
+  min-height:42px;
+  border:1px solid rgba(212,175,55,.13);
+  border-radius:5px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #171715,
+      #0d0d0c
+    );
+
+  color:#e7e2d5;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.3px;
+
+  transition:
+    border-color .2s ease,
+    background .2s ease,
+    color .2s ease,
+    transform .2s ease;
 }
 
-.nav-button.next{background:#252525}
+.nav-button:hover:not(:disabled){
+  border-color:rgba(212,175,55,.42);
+  color:var(--gold2);
+  background:#181713;
+}
+
+.nav-button:active:not(:disabled){
+  transform:translateY(1px);
+}
+
+.nav-button.next{
+  background:
+    linear-gradient(
+      180deg,
+      #1c1b17,
+      #11110f
+    );
+}
 
 .page-indicator{
   min-width:85px;
-  color:var(--gold2);
+  color:#d6c887;
   text-align:center;
-  font-size:10px;
-  font-weight:900
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.8px;
 }
+
+/* ============================================================
+   GO TO PAGE
+   ============================================================ */
 
 .go-row{
   display:flex;
   gap:7px;
-  margin-top:7px
+  margin-top:7px;
+  max-width:900px;
+  margin-left:auto;
+  margin-right:auto;
 }
 
 .page-number-input{
   flex:1;
   min-width:0;
-  height:39px;
-  background:#151515;
-  border:1px solid var(--line);
-  border-radius:8px;
+  height:36px;
+
+  background:#0d0d0c;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:5px;
+
   color:#fff;
   padding:0 10px;
   outline:none;
-  font-size:11px
+  font-size:10px;
+}
+
+.page-number-input:focus{
+  border-color:rgba(212,175,55,.42);
+  box-shadow:0 0 0 2px rgba(212,175,55,.045);
 }
 
 .go-button{
-  width:75px;
-  border:0;
-  border-radius:8px;
-  background:var(--gold);
-  color:#000;
-  font-size:10px;
-  font-weight:900
+  width:68px;
+  border:1px solid rgba(240,207,98,.45);
+  border-radius:5px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #e5c653,
+      #c7a52e
+    );
+
+  color:#080808;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.8px;
 }
+
+.go-button:hover{
+  background:
+    linear-gradient(
+      180deg,
+      #f2d86c,
+      #d4af37
+    );
+}
+
+/* ============================================================
+   PAGE REVIEW
+   ============================================================ */
 
 .page-review{
   margin-top:8px;
   padding:11px;
-  background:#101010;
-  border:1px solid var(--line);
-  border-radius:10px
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(212,175,55,.045),
+      rgba(255,255,255,.015)
+    );
+
+  border:1px solid rgba(212,175,55,.14);
+  border-radius:6px;
 }
 
 .page-review-title{
-  color:var(--gold2);
-  font-size:10px;
+  color:#d9bf62;
+  font-size:8px;
   font-weight:900;
+  letter-spacing:1.5px;
   margin-bottom:5px
 }
 
 .page-review-text{
-  color:#bbb;
-  font-size:10px;
+  color:#aaa69d;
+  font-size:9px;
   line-height:1.55;
   white-space:pre-wrap;
   overflow-wrap:anywhere
 }
 
+/* ============================================================
+   ACTION / CONTROL CHAMBER
+   ============================================================ */
+
 .action-area{
-  flex:0 0 auto;
-  background:#080808;
-  border-top:1px solid var(--line);
-  padding:8px 10px 9px;
-  box-shadow:0 -8px 25px rgba(0,0,0,.45);
-  position:relative;
-  z-index:20
+  grid-row:2;
+  min-height:0!important;
+  height:100%!important;
+
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+
+  padding:8px 10px 20px!important;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(212,175,55,.035),
+      transparent 45%
+    ),
+    #050505;
+
+  border-top:1px solid rgba(212,175,55,.50)!important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.025);
 }
+
+.action-area::-webkit-scrollbar{
+  width:4px
+}
+
+.action-area::-webkit-scrollbar-track{
+  background:#030303
+}
+
+.action-area::-webkit-scrollbar-thumb{
+  background:#3c3420;
+  border-radius:20px
+}
+
+/* ============================================================
+   REVIEW STATUS PANEL
+   ============================================================ */
+
+.action-area .top-panel{
+  margin:0 0 7px!important;
+  padding:9px 11px!important;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(20,19,16,.98),
+      rgba(9,9,8,.98)
+    );
+
+  border:1px solid rgba(212,175,55,.17);
+  border-radius:7px;
+
+  position:relative;
+  overflow:hidden;
+}
+
+.action-area .top-panel::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:2px;
+  height:100%;
+  background:
+    linear-gradient(
+      180deg,
+      var(--gold2),
+      rgba(212,175,55,.15)
+    );
+}
+
+.action-area .top-panel::after{
+  content:"NPBC";
+  position:absolute;
+  right:11px;
+  top:8px;
+  color:rgba(212,175,55,.10);
+  font-family:Georgia,serif;
+  font-size:8px;
+  font-weight:700;
+  letter-spacing:3px;
+  pointer-events:none;
+}
+
+.review-title{
+  margin:0;
+  color:#f5ead0;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size:17px;
+  line-height:1.2;
+  font-weight:600;
+  letter-spacing:.05px;
+}
+
+.review-subtitle{
+  margin:4px 0 0;
+  max-width:720px;
+  color:#8f8c84;
+  font-size:9px;
+  line-height:1.45;
+}
+
+.status-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:8px
+}
+
+.status-label{
+  color:#77756f;
+  font-size:8px;
+  text-transform:uppercase;
+  letter-spacing:1.1px;
+  font-weight:800;
+}
+
+.status-value{
+  color:var(--gold2);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.8px;
+}
+
+.progress-shell{
+  margin-top:6px;
+  width:100%;
+  height:4px;
+
+  background:#1c1b18;
+  border-radius:20px;
+  overflow:hidden;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.025);
+}
+
+.progress-bar{
+  width:0%;
+  height:100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #9f7b18,
+      var(--gold2)
+    );
+
+  box-shadow:
+    0 0 8px rgba(212,175,55,.18);
+
+  transition:width .25s ease
+}
+
+.progress-text{
+  margin-top:4px;
+  color:#66645f;
+  font-size:8px;
+  text-align:right
+}
+
+/* ============================================================
+   AMOUNT / PRIMARY COMMAND PANEL
+   ============================================================ */
+
+.action-area .top-amount-card{
+  margin:0 0 7px!important;
+  padding:7px!important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #12110e,
+      #090908
+    );
+
+  border:1px solid rgba(212,175,55,.30);
+  border-radius:7px;
+
+  text-align:left;
+
+  box-shadow:
+    0 5px 18px rgba(0,0,0,.25);
+}
+
+.action-area .top-amount-head{
+  gap:7px!important;
+}
+
+.action-area .top-amount-card>.top-amount-head>div:first-child{
+  flex:0 0 112px!important;
+  text-align:center;
+}
+
+.top-amount-label{
+  color:#77746a;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:1.6px;
+}
+
+.top-amount-value{
+  margin-top:2px;
+  color:#f0cf62;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size:25px;
+  line-height:1;
+  font-weight:600;
+}
+
+/* ============================================================
+   THREE MAIN ACTIONS
+   ============================================================ */
+
+.top-action-buttons{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:5px;
+  flex:1;
+  max-width:650px;
+}
+
+.top-action-buttons button{
+  width:100%;
+  min-height:38px;
+  height:38px;
+  padding:4px 5px;
+  border-radius:5px;
+
+  font-size:8px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:.45px;
+
+  transition:
+    transform .18s ease,
+    filter .18s ease,
+    border-color .18s ease;
+}
+
+.top-action-buttons button:not(:disabled):hover{
+  filter:brightness(1.08);
+}
+
+.top-action-buttons button:not(:disabled):active{
+  transform:translateY(1px);
+}
+
+/* ============================================================
+   PAYMENT BUTTON
+   ============================================================ */
+
+.make-payment-button{
+  background:
+    linear-gradient(
+      135deg,
+      #f1d35f,
+      #c59f28
+    )!important;
+
+  color:#090909!important;
+  border:0!important;
+
+  box-shadow:
+    0 4px 14px rgba(212,175,55,.10);
+}
+
+.make-payment-button:hover:not(:disabled){
+  background:
+    linear-gradient(
+      135deg,
+      #f8df76,
+      #d4af37
+    )!important;
+}
+
+/* ============================================================
+   CONFIRM PAYMENT
+   ============================================================ */
+
+.confirm-payment-button{
+  background:
+    linear-gradient(
+      135deg,
+      #168047,
+      #0b5f34
+    )!important;
+
+  color:#fff!important;
+  border:0!important;
+
+  box-shadow:
+    0 4px 14px rgba(22,128,71,.10);
+}
+
+/* ============================================================
+   DOWNLOAD
+   ============================================================ */
+
+.download-button{
+  background:
+    linear-gradient(
+      135deg,
+      #0878e8,
+      #005fc1
+    )!important;
+
+  color:#fff!important;
+  border:0!important;
+}
+
+.download-button:disabled{
+  background:
+    linear-gradient(
+      135deg,
+      #454545,
+      #303030
+    )!important;
+
+  color:#a5a5a5!important;
+  opacity:1!important;
+}
+
+.download-button.active{
+  background:
+    linear-gradient(
+      135deg,
+      #1688f5,
+      #0068d1
+    )!important;
+
+  color:#fff!important;
+  cursor:pointer;
+}
+
+/* ============================================================
+   CORRECTION AREA
+   ============================================================ */
 
 .correction-box{
   display:grid;
   grid-template-columns:1fr auto;
-  gap:7px;
-  align-items:end
+  gap:6px;
+  align-items:end;
+  margin-top:6px!important;
 }
 
 .correction-input{
   width:100%;
-  height:43px;
-  min-height:43px;
+  height:41px;
+  min-height:41px;
   max-height:100px;
   resize:none;
-  padding:11px;
-  background:#171717;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
+
+  padding:10px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #11110f,
+      #0b0b0a
+    );
+
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:5px;
+
   color:#fff;
   outline:none;
-  font-size:11px;
-  line-height:1.4
+
+  font-size:9px;
+  line-height:1.4;
+}
+
+.correction-input::placeholder{
+  color:#65635e;
+}
+
+.correction-input:focus{
+  border-color:rgba(212,175,55,.34);
+  box-shadow:
+    0 0 0 2px rgba(212,175,55,.035);
 }
 
 .correction-button{
   min-width:125px;
-  min-height:43px;
-  border:1px solid rgba(212,175,55,.38);
-  border-radius:8px;
-  background:#171717;
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900
+  min-height:41px;
+
+  border:1px solid rgba(212,175,55,.28);
+  border-radius:5px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #161511,
+      #0c0c0b
+    );
+
+  color:#d9bd5d;
+
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.45px;
+
+  transition:
+    background .18s ease,
+    border-color .18s ease;
 }
 
-.make-payment-button{
-  background:#d4af37;
-  color:#000;
-  border:0
+.correction-button:hover:not(:disabled){
+  border-color:rgba(212,175,55,.48);
+  background:#181713;
 }
 
-.confirm-payment-button{
-  background:#008000;
-  color:#fff;
-  border:0
-}
-
-.download-button{
-  background:#007bff;
-  color:#fff;
-  border:0
-}
-
-.download-button:disabled{
-  background:#666;
-  color:#fff;
-  opacity:1
-}
-
-.download-button.active{
-  background:#007bff;
-  color:#fff;
-  cursor:pointer
-}
+/* ============================================================
+   SECURE PAYMENT PANEL
+   ============================================================ */
 
 .payment-section{
   display:block;
-  margin-top:7px;
-  padding:10px;
-  background:#111;
-  border:1px solid rgba(212,175,55,.4);
-  border-radius:10px
+  margin-top:7px!important;
+  padding:9px!important;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(19,18,15,.98),
+      rgba(8,8,7,.98)
+    );
+
+  border:1px solid rgba(212,175,55,.25);
+  border-radius:7px;
+
+  position:relative;
+  overflow:hidden;
+}
+
+.payment-section::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(240,207,98,.45),
+      transparent
+    );
 }
 
 .payment-title{
-  color:var(--gold2);
-  font-size:12px;
-  font-weight:900
+  color:#e8ce70;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.8px;
 }
 
 .payment-subtitle{
   margin-top:3px;
-  color:#888;
-  font-size:9px;
-  line-height:1.45
+  color:#77746c;
+  font-size:8px;
+  line-height:1.45;
+  max-width:900px;
 }
 
 .payment-details{
   margin-top:7px;
-  color:#ddd;
+  padding:6px 7px;
+
+  color:#bcb8ad;
+
   white-space:pre-wrap;
-  font-size:10px;
-  line-height:1.5
+  font-size:8px;
+  line-height:1.5;
+
+  background:rgba(255,255,255,.018);
+  border-left:1px solid rgba(212,175,55,.18);
 }
 
 .payment-message{
-  margin-top:7px;
-  color:#888;
-  font-size:9px;
+  margin-top:6px;
+  padding:6px 7px;
+
+  color:#66645e;
+  font-size:8px;
   text-align:center;
-  line-height:1.45
+  line-height:1.45;
+
+  border:1px solid transparent;
+  border-radius:4px;
 }
 
 .payment-message.payment-ready{
   color:#75dc99!important;
-  border:1px solid rgba(117,220,153,.2)
+  background:rgba(22,128,71,.055);
+  border:1px solid rgba(117,220,153,.18);
 }
 
 .payment-message.payment-waiting{
-  color:#f0cf62!important;
-  border:1px solid rgba(212,175,55,.18)
+  color:#e1c45c!important;
+  background:rgba(212,175,55,.045);
+  border:1px solid rgba(212,175,55,.17);
 }
 
 .payment-message.payment-locked{
-  color:#999!important
+  color:#777!important;
+  background:rgba(255,255,255,.012);
 }
+
+/* ============================================================
+   TINY BACK OFFICE BUTTON
+   ============================================================ */
+
+.back-office-button{
+  display:block;
+  width:max-content;
+
+  margin:5px auto 0;
+
+  padding:2px 6px;
+  min-height:18px;
+
+  border:1px solid rgba(212,175,55,.16);
+  border-radius:3px;
+
+  background:
+    rgba(255,255,255,.012);
+
+  color:#5e5c57;
+
+  font-size:6.5px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.8px;
+
+  opacity:.58;
+
+  transition:
+    color .18s ease,
+    border-color .18s ease,
+    opacity .18s ease,
+    background .18s ease;
+}
+
+.back-office-button:hover{
+  color:#d5bc62;
+  border-color:rgba(212,175,55,.38);
+  background:rgba(212,175,55,.025);
+  opacity:1;
+}
+
+/* ============================================================
+   STATUS MESSAGE
+   ============================================================ */
 
 .message{
   flex:0 0 auto;
   min-height:17px;
   margin-top:2px;
-  color:#888;
-  font-size:9px;
-  text-align:center
+  color:#77746c;
+  font-size:8px;
+  text-align:center;
 }
 
-.message.error{color:#ff7777}
-.message.success{color:#75dc99}
-
-/* TINY BACK OFFICE BUTTON */
-
-.back-office-button{
-  display:block;
-  width:max-content;
-  margin:5px auto 0;
-  padding:3px 7px;
-  min-height:20px;
-  border:1px solid rgba(212,175,55,.22);
-  border-radius:5px;
-  background:#0d0d0d;
-  color:#777;
-  font-size:7px;
-  line-height:1;
-  font-weight:800;
-  letter-spacing:.3px;
-  opacity:.72
+.message.error{
+  color:#ff7777
 }
 
-.back-office-button:hover{
-  color:var(--gold2);
-  border-color:rgba(212,175,55,.45);
-  opacity:1
+.message.success{
+  color:#75dc99
 }
 
-/* PAYMENT POPUP */
+/* ============================================================
+   PAYMENT POPUP
+   ============================================================ */
 
 .payment-modal{
   position:fixed;
   inset:0;
   z-index:1000;
+
   display:none;
   align-items:center;
   justify-content:center;
+
   padding:14px;
-  background:rgba(0,0,0,.78);
-  backdrop-filter:blur(5px)
+
+  background:
+    rgba(0,0,0,.84);
+
+  backdrop-filter:blur(8px);
 }
 
 .payment-modal.show{
@@ -694,35 +1270,70 @@ button:disabled{opacity:.45;cursor:not-allowed}
   width:100%;
   max-width:430px;
   max-height:92vh;
+
   overflow-y:auto;
-  background:#101010;
-  border:1px solid rgba(212,175,55,.55);
-  border-radius:16px;
-  box-shadow:0 18px 60px rgba(0,0,0,.65);
-  padding:16px
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(212,175,55,.055),
+      transparent 45%
+    ),
+    #0d0d0c;
+
+  border:1px solid rgba(212,175,55,.42);
+  border-radius:10px;
+
+  box-shadow:
+    0 20px 70px rgba(0,0,0,.72),
+    0 0 0 1px rgba(255,255,255,.018);
+
+  padding:16px;
+
+  position:relative;
+}
+
+.payment-modal-card::before{
+  content:"NPBC";
+  position:absolute;
+  top:10px;
+  left:12px;
+
+  color:rgba(212,175,55,.16);
+
+  font-family:Georgia,serif;
+  font-size:7px;
+  letter-spacing:2px;
 }
 
 .payment-modal-title{
-  color:var(--gold2);
-  font-size:15px;
-  font-weight:900;
-  text-align:center
+  color:#efd579;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-size:16px;
+  font-weight:600;
+  text-align:center;
+  letter-spacing:.3px;
 }
 
 .payment-modal-subtitle{
   margin-top:5px;
-  color:#999;
-  font-size:9px;
+  color:#85827a;
+  font-size:8px;
   line-height:1.5;
-  text-align:center
+  text-align:center;
 }
 
 .bank-box{
   margin-top:12px;
   padding:13px;
+
   background:#050505;
-  border:1px solid rgba(212,175,55,.3);
-  border-radius:10px
+
+  border:1px solid rgba(212,175,55,.22);
+  border-radius:6px;
 }
 
 .bank-row{
@@ -730,7 +1341,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
   justify-content:space-between;
   gap:12px;
   padding:7px 0;
-  border-bottom:1px solid rgba(255,255,255,.07)
+
+  border-bottom:1px solid rgba(255,255,255,.055);
 }
 
 .bank-row:last-child{
@@ -738,39 +1350,55 @@ button:disabled{opacity:.45;cursor:not-allowed}
 }
 
 .bank-label{
-  color:#888;
-  font-size:9px;
-  font-weight:800
+  color:#706e68;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.5px;
 }
 
 .bank-value{
-  color:#fff;
-  font-size:10px;
+  color:#e6e1d5;
+  font-size:9px;
   font-weight:900;
   text-align:right;
-  word-break:break-word
+  word-break:break-word;
 }
 
 .modal-amount{
   margin-top:10px;
   padding:9px;
-  background:#111;
-  border:1px solid rgba(212,175,55,.25);
-  border-radius:8px;
-  text-align:center
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(212,175,55,.07),
+      rgba(255,255,255,.015)
+    );
+
+  border:1px solid rgba(212,175,55,.20);
+  border-radius:6px;
+
+  text-align:center;
 }
 
 .modal-amount-label{
-  color:#888;
-  font-size:8px;
-  font-weight:800
+  color:#716e65;
+  font-size:7px;
+  font-weight:800;
+  letter-spacing:1.2px;
 }
 
 .modal-amount-value{
   margin-top:2px;
-  color:var(--gold2);
+  color:#f0cf62;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
   font-size:25px;
-  font-weight:900
+  font-weight:600;
 }
 
 .payment-input-group{
@@ -780,23 +1408,31 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .payment-input-label{
   display:block;
   margin-bottom:5px;
-  color:#aaa;
-  font-size:8px;
+  color:#858179;
+  font-size:7px;
   font-weight:900;
-  letter-spacing:.5px
+  letter-spacing:1px;
 }
 
 .payment-note-input{
   width:100%;
   min-height:65px;
   padding:9px 10px;
-  background:#181818;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
+
+  background:#151513;
+
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:5px;
+
   color:#fff;
   outline:none;
-  font-size:10px;
-  resize:vertical
+
+  font-size:9px;
+  resize:vertical;
+}
+
+.payment-note-input:focus{
+  border-color:rgba(212,175,55,.34);
 }
 
 .modal-buttons{
@@ -808,149 +1444,52 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 .modal-button{
   min-height:42px;
-  border-radius:8px;
-  font-size:9px;
-  font-weight:900
+  border-radius:5px;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.5px;
 }
 
 .modal-close{
-  background:#222;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.12)
+  background:#191918;
+  color:#ddd;
+  border:1px solid rgba(255,255,255,.10);
 }
 
 .modal-report{
-  background:#008000;
+  background:
+    linear-gradient(
+      135deg,
+      #168047,
+      #0b6035
+    );
   color:#fff;
-  border:0
+  border:0;
 }
 
 .modal-status{
   margin-top:9px;
   min-height:15px;
-  color:#888;
+  padding:4px;
+
+  color:#74716a;
+
   font-size:8px;
   line-height:1.4;
-  text-align:center
+  text-align:center;
 }
 
-.modal-status.error{color:#ff7777}
-.modal-status.success{color:#75dc99}
-
-/* TWO-HALF REVIEW LAYOUT */
-
-.header{
-  display:none!important
+.modal-status.error{
+  color:#ff7777
 }
 
-.main{
-  position:fixed!important;
-  top:0!important;
-  left:0!important;
-  right:0!important;
-  bottom:0!important;
-  width:100%!important;
-  max-width:1100px!important;
-  margin:0 auto!important;
-  padding:0!important;
-  display:grid!important;
-  grid-template-rows:50% 50%!important;
-  gap:0!important;
-  overflow:hidden!important
+.modal-status.success{
+  color:#75dc99
 }
 
-.review-card{
-  grid-row:1;
-  min-height:0!important;
-  height:100%!important;
-  display:flex!important;
-  flex-direction:column!important;
-  border-radius:0!important;
-  overflow:hidden!important
-}
-
-.document-card-header{
-  padding:8px 10px!important
-}
-
-.document-scroll{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  height:auto!important;
-  padding:5px!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important
-}
-
-.action-area{
-  grid-row:2;
-  min-height:0!important;
-  height:100%!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  padding:7px 8px 18px!important;
-  border-top:2px solid var(--gold)!important;
-  box-shadow:none!important
-}
-
-.action-area .top-panel{
-  margin:0 0 6px!important;
-  padding:7px 9px!important
-}
-
-.action-area .top-amount-card{
-  margin:0 0 6px!important;
-  padding:6px!important
-}
-
-.action-area .top-amount-head{
-  gap:6px!important
-}
-
-.action-area .top-action-buttons{
-  max-width:none!important
-}
-
-.action-area .correction-box{
-  margin-top:6px!important
-}
-
-.action-area .payment-section{
-  margin-top:6px!important
-}
-
-.message{
-  position:absolute!important;
-  left:5px!important;
-  right:5px!important;
-  bottom:1px!important;
-  z-index:50!important;
-  background:rgba(0,0,0,.92)!important
-}
-
-.make-payment-button{
-  background:#d4af37!important;
-  color:#000!important;
-  border:0!important
-}
-
-.confirm-payment-button{
-  background:#008000!important;
-  color:#fff!important;
-  border:0!important
-}
-
-.download-button{
-  background:#007bff!important;
-  color:#fff!important;
-  border:0!important
-}
-
-.download-button:disabled{
-  background:#666!important;
-  color:#fff!important;
-  opacity:1!important
-}
+/* ============================================================
+   SMALL SCREEN REFINEMENT
+   ============================================================ */
 
 @media(max-width:600px){
 
@@ -958,9 +1497,53 @@ button:disabled{opacity:.45;cursor:not-allowed}
     grid-template-rows:50% 50%!important
   }
 
+  .document-card-header{
+    min-height:45px;
+    padding:7px 9px!important
+  }
+
+  .document-card-header::before{
+    left:9px;
+    letter-spacing:1.8px;
+  }
+
+  .document-card-header::after{
+    right:9px;
+    width:55px;
+  }
+
+  .document-heading{
+    padding-bottom:4px;
+  }
+
+  .document-heading h3{
+    font-size:13px
+  }
+
+  .page-count{
+    padding:4px 6px;
+    font-size:7px;
+    letter-spacing:.8px;
+  }
+
+  .document-scroll{
+    padding:8px 5px 5px!important
+  }
+
   .document-page{
     min-height:560px!important;
     padding:28px 16px 40px!important
+  }
+
+  .document-page::before{
+    inset:5px
+  }
+
+  .document-page::after{
+    top:5px;
+    left:5px;
+    width:25px;
+    height:25px;
   }
 
   .page-content{
@@ -968,12 +1551,17 @@ button:disabled{opacity:.45;cursor:not-allowed}
     line-height:1.65!important
   }
 
+  .page-number-inside{
+    font-size:7px;
+    margin-bottom:18px;
+  }
+
   .action-area{
     padding:5px 5px 18px!important
   }
 
   .action-area .top-panel{
-    padding:6px 8px!important
+    padding:7px 8px!important
   }
 
   .action-area .review-title{
@@ -991,12 +1579,16 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
   .action-area .progress-shell{
     margin-top:4px!important;
-    height:5px!important
+    height:4px!important
   }
 
   .action-area .progress-text{
     margin-top:3px!important;
-    font-size:8px!important
+    font-size:7px!important
+  }
+
+  .action-area .top-amount-card{
+    padding:6px!important
   }
 
   .action-area .top-amount-head{
@@ -1008,7 +1600,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   }
 
   .action-area .top-amount-label{
-    font-size:8px!important
+    font-size:7px!important
   }
 
   .action-area .top-amount-value{
@@ -1022,7 +1614,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .action-area .top-action-buttons button{
     min-height:38px!important;
     height:38px!important;
-    font-size:8px!important;
+    font-size:7px!important;
     padding:3px 2px!important
   }
 
@@ -1065,7 +1657,12 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
   .nav-button{
     min-height:38px!important;
-    font-size:9px!important
+    font-size:8px!important
+  }
+
+  .page-indicator{
+    min-width:68px;
+    font-size:7px;
   }
 
   .go-row{
@@ -1073,16 +1670,24 @@ button:disabled{opacity:.45;cursor:not-allowed}
   }
 
   .page-number-input{
-    height:35px!important
+    height:35px!important;
+    font-size:9px;
   }
 
   .go-button{
     width:65px!important
   }
 
+  .back-office-button{
+    margin-top:4px;
+    padding:2px 5px;
+    min-height:16px;
+    font-size:6px;
+  }
+
   .payment-modal-card{
     padding:12px;
-    border-radius:13px
+    border-radius:8px
   }
 
   .payment-modal-title{
@@ -1407,14 +2012,6 @@ const service =
   ).trim();
 
 
-/*
-  The title is deliberately collected from every known
-  URL spelling first.
-
-  It is still only the DOCUMENT TITLE.
-  It is never a payment ID or job ID.
-*/
-
 let documentTitle =
   (
     params.get("title") ||
@@ -1535,15 +2132,6 @@ function complete(d){
    DOCUMENT TITLE
    ============================================================ */
 
-/*
-  Some Review API responses expose the title directly.
-  Others wrap the job inside data/payload/result/job_data,
-  etc.
-
-  This extractor intentionally searches ONLY title-like
-  property names. It does not treat IDs as titles.
-*/
-
 const TITLE_KEYS = [
   "document_title",
   "documentTitle",
@@ -1584,11 +2172,6 @@ function validDocumentTitle(value){
 
   if(!v)return "";
 
-  /*
-    Never accept IDs or obvious technical values as
-    document titles.
-  */
-
   if(
     /^NPB[-_]/i.test(v) ||
     /^job[-_ ]?\d+$/i.test(v) ||
@@ -1598,11 +2181,6 @@ function validDocumentTitle(value){
   ){
     return "";
   }
-
-  /*
-    A service name should not accidentally become the
-    document title.
-  */
 
   if(
     v.toLowerCase() ===
@@ -1615,10 +2193,6 @@ function validDocumentTitle(value){
 }
 
 function extractDocumentTitle(d){
-
-  /*
-    First: direct and known locations.
-  */
 
   const directCandidates = [
 
@@ -1687,24 +2261,6 @@ function extractDocumentTitle(d){
     if(v)return v;
   }
 
-  /*
-    Second: recursively inspect the response.
-
-    This handles structures such as:
-
-      {
-        data: {
-          job_data: {
-            document: {
-              title: "How Ghana Creates Revenue as a Country"
-            }
-          }
-        }
-      }
-
-    without depending on one exact API response shape.
-  */
-
   const visited = new Set();
 
   function walk(value,depth){
@@ -1728,10 +2284,6 @@ function extractDocumentTitle(d){
 
     visited.add(value);
 
-    /*
-      Prefer explicit title keys before descending.
-    */
-
     for(const key of TITLE_KEYS){
 
       if(
@@ -1749,10 +2301,6 @@ function extractDocumentTitle(d){
         if(found)return found;
       }
     }
-
-    /*
-      Search normal wrapper/object keys first.
-    */
 
     for(const key of TITLE_WRAPPER_KEYS){
 
@@ -1772,14 +2320,6 @@ function extractDocumentTitle(d){
         if(found)return found;
       }
     }
-
-    /*
-      Finally inspect remaining object properties.
-
-      This catches API wrappers that use an unexpected
-      container name while still looking only for title-like
-      keys inside those objects.
-    */
 
     for(const key of Object.keys(value)){
 
@@ -1813,20 +2353,6 @@ function extractDocumentTitle(d){
 
   return walk(d,0);
 }
-
-
-/*
-  Last-resort document-content title extraction.
-
-  This is intentionally conservative. It is used only when
-  the Review response and URL contain no title metadata.
-
-  For the supplied document, whose first meaningful heading is:
-
-    How Ghana Creates Revenue as a Country
-
-  this allows the payment product to be identified correctly.
-*/
 
 function extractTitleFromPageContent(){
 
@@ -1863,10 +2389,6 @@ function extractTitleFromPageContent(){
 
     if(!lines.length)continue;
 
-    /*
-      Ignore generic document labels.
-    */
-
     const generic = new Set([
       "page",
       "document",
@@ -1894,19 +2416,11 @@ function extractTitleFromPageContent(){
         continue;
       }
 
-      /*
-        Ignore obvious metadata lines.
-      */
-
       if(
         /^(page|date|service|customer|job|payment|version)\s*[:#-]/i.test(line)
       ){
         continue;
       }
-
-      /*
-        Avoid treating a long paragraph as a title.
-      */
 
       const words =
         line.split(/\s+/).length;
@@ -1924,12 +2438,6 @@ function extractTitleFromPageContent(){
 
 function ensureDocumentTitle(d){
 
-  /*
-    1. URL title
-    2. API response title
-    3. page-content title
-  */
-
   if(documentTitle){
     return documentTitle;
   }
@@ -1944,11 +2452,6 @@ function ensureDocumentTitle(d){
 
     return documentTitle;
   }
-
-  /*
-    Page-content fallback is called after pages have been
-    extracted by applyJob().
-  */
 
   const pageTitle =
     extractTitleFromPageContent();
@@ -3017,12 +3520,6 @@ function applyJob(d){
   reviewFinished =
     complete(d);
 
-  /*
-    Extract pages BEFORE the title fallback because the
-    document-content fallback can use the actual reviewed
-    document pages.
-  */
-
   const p =
     extractPages(d);
 
@@ -3039,17 +3536,6 @@ function applyJob(d){
         d.totalPages
       ) || 0;
   }
-
-  /*
-    Title extraction order:
-
-    1. URL title already loaded into documentTitle.
-    2. Explicit title fields in Review response.
-    3. Recursively wrapped title fields.
-    4. First meaningful document title/heading.
-
-    This happens before payment state is loaded.
-  */
 
   ensureDocumentTitle(d);
 
@@ -3104,11 +3590,6 @@ function applyJob(d){
     clean(d.billing) ||
     extractBilling(d) ||
     billing;
-
-  /*
-    Payment IDs are intentionally ignored.
-    Service + Document Title is the payment/product identity.
-  */
 
   paid =
     !!(
@@ -3384,15 +3865,6 @@ async function loadJob(){
 
   applyJob(d);
 
-  /*
-    Title has now been resolved from:
-      URL
-      Review response
-      or document content
-
-    BEFORE the payment product lookup.
-  */
-
   if(documentTitle){
 
     await loadPaymentState();
@@ -3545,12 +4017,6 @@ correctionButton.onclick =
 
       correctionInput.value = "";
 
-      /*
-        A correction creates a new reviewed version.
-        The previous saved/payment state must not be
-        reused for the new version.
-      */
-
       paid = false;
       paymentStarted = false;
       paymentPending = false;
@@ -3574,13 +4040,6 @@ correctionButton.onclick =
       pages = [];
       totalPages = 0;
       currentPage = 1;
-
-      /*
-        Preserve the known document title if the correction
-        response does not change it. If the next Review
-        response provides a new title, ensureDocumentTitle()
-        can still replace an empty title.
-      */
 
       renderPage();
 
@@ -3612,17 +4071,6 @@ correctionButton.onclick =
 /* ============================================================
    BACK OFFICE
    ============================================================ */
-
-/*
-  The Back Office remains owned by the Payment HTML flow.
-  This button is deliberately tiny so it does not interfere
-  with the customer Review experience.
-
-  Existing payment Back Office entry point:
-    /payment.html?back_office=1
-
-  No payment ID or job ID is used here.
-*/
 
 backOfficeButton.onclick = () => {
 
@@ -3709,15 +4157,6 @@ async function createPayment(){
     );
   }
 
-  /*
-    FINAL TITLE RESOLUTION BEFORE PAYMENT.
-
-    This is deliberately repeated immediately before
-    /api/payment/create so the API can never receive an
-    empty document_title when Review already contains
-    the document title.
-  */
-
   if(!documentTitle){
 
     const recoveredTitle =
@@ -3751,10 +4190,6 @@ async function createPayment(){
     );
   }
 
-  /*
-    Existing Service + Document Title product is reused.
-  */
-
   if(paymentStarted){
 
     const existing =
@@ -3770,17 +4205,6 @@ async function createPayment(){
     paid = false;
     downloadUnlocked = false;
   }
-
-  /*
-    IMPORTANT:
-
-    job_id is NOT sent as product/payment identity.
-
-    customer_id is optional metadata only.
-
-    BUSINESS IDENTITY:
-      service + document_title
-  */
 
   const payload = {
 
@@ -3950,10 +4374,6 @@ makePaymentButton.onclick =
       );
     }
 
-    /*
-      Resolve the title again immediately before payment.
-    */
-
     if(!documentTitle){
 
       const recoveredTitle =
@@ -4058,15 +4478,6 @@ async function reportPayment(){
     clean(
       paymentNoteInput.value
     );
-
-  /*
-    No payment ID.
-    No payment reference.
-    No job ID.
-
-    Payment record:
-      Service + Document Title
-  */
 
   const body = {
 
