@@ -34,10 +34,17 @@ html,body{
   font-family:Inter,Arial,sans-serif;
 }
 
-body{min-height:100vh}
+body{
+  min-height:100vh;
+}
 
-button,input,textarea{font:inherit}
-button{cursor:pointer}
+button,input,textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
 
 .header{
   background:#080808;
@@ -169,7 +176,9 @@ button{cursor:pointer}
   font-weight:900;
 }
 
-.details-card{background:var(--panel)}
+.details-card{
+  background:var(--panel);
+}
 
 .section-title{
   color:var(--gold2);
@@ -199,7 +208,9 @@ button{cursor:pointer}
   border-bottom:1px solid rgba(255,255,255,.06);
 }
 
-.bank-row:last-child{border-bottom:0}
+.bank-row:last-child{
+  border-bottom:0;
+}
 
 .bank-label{
   color:#777;
@@ -290,12 +301,25 @@ button{cursor:pointer}
   line-height:1.45;
 }
 
-.message.error{color:#ff7777}
-.message.success{color:#75dc99}
-.message.warning{color:#f0cf63}
+.message.error{
+  color:#ff7777;
+}
 
-.download-area{display:none}
-.download-area.show{display:block}
+.message.success{
+  color:#75dc99;
+}
+
+.message.warning{
+  color:#f0cf63;
+}
+
+.download-area{
+  display:none;
+}
+
+.download-area.show{
+  display:block;
+}
 
 .locked-note{
   padding:9px;
@@ -317,13 +341,17 @@ button{cursor:pointer}
   line-height:1.5;
 }
 
-.hidden{display:none!important}
+.hidden{
+  display:none!important;
+}
 
 /* ==========================================================
    BACK OFFICE
 ========================================================== */
 
-#backOfficeView{display:none}
+#backOfficeView{
+  display:none;
+}
 
 body.back-office-mode #customerPaymentView{
   display:none;
@@ -333,7 +361,9 @@ body.back-office-mode #backOfficeView{
   display:block;
 }
 
-.bo-header-card{background:#080808}
+.bo-header-card{
+  background:#080808;
+}
 
 .bo-title{
   margin:0;
@@ -430,9 +460,17 @@ body.back-office-mode #backOfficeView{
   line-height:1.4;
 }
 
-.bo-message.error{color:#ff7777}
-.bo-message.success{color:#75dc99}
-.bo-message.warning{color:#f0cf63}
+.bo-message.error{
+  color:#ff7777;
+}
+
+.bo-message.success{
+  color:#75dc99;
+}
+
+.bo-message.warning{
+  color:#f0cf63;
+}
 
 .bo-record{
   background:#0b0b0b;
@@ -636,6 +674,7 @@ body.back-office-mode #backOfficeView{
 }
 
 @media(min-width:800px){
+
   .main{
     padding:18px;
   }
@@ -738,10 +777,6 @@ body.back-office-mode #backOfficeView{
 
   </section>
 
-  <!-- ======================================================
-       MAKE PAYMENT
-  ======================================================= -->
-
   <section class="card">
 
     <div class="section-title">
@@ -758,7 +793,7 @@ body.back-office-mode #backOfficeView{
       class="primary-button"
       type="button"
     >
-      💳 MAKE PAYMENT
+      MAKE PAYMENT
     </button>
 
   </section>
@@ -825,8 +860,8 @@ body.back-office-mode #backOfficeView{
   ======================================================= -->
 
   <section
-    id="referenceCard"
-    class="card reference-card hidden"
+    id="reportCard"
+    class="card hidden"
   >
 
     <div class="section-title">
@@ -851,7 +886,7 @@ body.back-office-mode #backOfficeView{
       type="button"
       disabled
     >
-      ✓ I HAVE MADE PAYMENT
+      I HAVE MADE PAYMENT
     </button>
 
   </section>
@@ -876,7 +911,7 @@ body.back-office-mode #backOfficeView{
       type="button"
       disabled
     >
-      🔒 DOWNLOAD DOCUMENT
+      DOWNLOAD DOCUMENT
     </button>
 
   </section>
@@ -1009,10 +1044,14 @@ body.back-office-mode #backOfficeView{
 const PAYMENT_API_BASE =
   "https://naija-pocket-payment-api.onrender.com";
 
-/* ==========================================================
-   BACK OFFICE KEY
-========================================================== */
+/*
+   This value is only used by the Back Office page to
+   provide the access key to the API.
 
+   The actual server-side key must match this value in:
+       BACK_OFFICE_ADMIN_KEY
+   on the Payment API deployment.
+*/
 const LOCAL_BACK_OFFICE_KEY =
   "NPBC-2026";
 
@@ -1058,11 +1097,15 @@ const queryAmount =
   parseMoney(params.get("amount"));
 
 const SNAPSHOT_KEYS = [
-  "npb_payment_review_snapshot_" + internalSnapshotKey,
+  internalSnapshotKey
+    ? "npb_payment_review_snapshot_" + internalSnapshotKey
+    : "",
   "npb_payment_review_snapshot",
-  "payment_review_snapshot_" + internalSnapshotKey,
+  internalSnapshotKey
+    ? "payment_review_snapshot_" + internalSnapshotKey
+    : "",
   "payment_review_snapshot"
-];
+].filter(Boolean);
 
 /* ==========================================================
    CUSTOMER STATE
@@ -1097,8 +1140,6 @@ let downloadUnlocked = false;
 
 let createInProgress = false;
 let reportInProgress = false;
-
-let statusTimer = null;
 
 /* ==========================================================
    DOM
@@ -1136,8 +1177,8 @@ const makePaymentButton =
 const bankCard =
   $("bankCard");
 
-const referenceCard =
-  $("referenceCard");
+const reportCard =
+  $("reportCard");
 
 const paymentNote =
   $("paymentNote");
@@ -1292,6 +1333,23 @@ function isVerified(status){
   );
 }
 
+/*
+   IMPORTANT:
+
+   Payment verification is NOT the same thing as
+   download activation.
+
+   The customer download is unlocked ONLY when the
+   Payment API explicitly returns download_unlocked=true.
+
+   We deliberately do NOT treat:
+       payment_verified
+       paid
+       verified
+
+   as download_unlocked.
+*/
+
 function extractDownloadUnlocked(data){
 
   const payment =
@@ -1305,11 +1363,7 @@ function extractDownloadUnlocked(data){
     data &&
     (
       data.download_unlocked === true ||
-      data.payment_verified === true ||
-      data.paid === true ||
-      payment.download_unlocked === true ||
-      payment.payment_verified === true ||
-      payment.paid === true
+      payment.download_unlocked === true
     )
   );
 }
@@ -1327,9 +1381,7 @@ function extractPaymentVerified(data){
     data &&
     (
       data.payment_verified === true ||
-      data.paid === true ||
       payment.payment_verified === true ||
-      payment.paid === true ||
       isVerified(
         data.payment_status ||
         payment.payment_status
@@ -1442,10 +1494,7 @@ function normalizePages(value){
 
 function readReviewSnapshot(){
 
-  const keys =
-    SNAPSHOT_KEYS.filter(Boolean);
-
-  for(const key of keys){
+  for(const key of SNAPSHOT_KEYS){
 
     try{
 
@@ -1476,12 +1525,7 @@ function readReviewSnapshot(){
     }
   }
 
-  /*
-     Some Review versions may have stored the snapshot
-     in localStorage instead of sessionStorage.
-  */
-
-  for(const key of keys){
+  for(const key of SNAPSHOT_KEYS){
 
     try{
 
@@ -1535,7 +1579,8 @@ function applySnapshot(){
     service =
       clean(
         snapshot.service ||
-        snapshot.service_name
+        snapshot.service_name ||
+        snapshot.selected_service
       ) ||
       "Business Center Service";
   }
@@ -1579,7 +1624,10 @@ function applySnapshot(){
   }
 
   customerId =
-    clean(snapshot.customer_id);
+    clean(
+      snapshot.customer_id ||
+      snapshot.customerId
+    );
 
   filename =
     clean(
@@ -1667,35 +1715,29 @@ function updatePaymentDisplay(){
     );
 
   /*
-     VERIFIED
+     ACTUAL DOWNLOAD UNLOCK
   */
 
-  if(
-    paymentVerified ||
-    downloadUnlocked ||
-    isVerified(paymentStatus)
-  ){
+  if(downloadUnlocked){
 
-    paymentVerified = true;
-    downloadUnlocked = true;
     paymentStarted = true;
 
     setStatus(
-      "Payment Verified — Download Unlocked"
+      "Download Unlocked"
     );
 
     statusMessage.textContent =
-      "Customer Care has verified this payment. Your already-saved document is ready for download.";
+      "Customer Care has activated download for your already-saved document.";
 
     setProgress(100);
 
     makePaymentButton.disabled = true;
 
     makePaymentButton.textContent =
-      "✓ PAYMENT VERIFIED";
+      "PAYMENT COMPLETED";
 
     bankCard.classList.remove("hidden");
-    referenceCard.classList.remove("hidden");
+    reportCard.classList.remove("hidden");
 
     downloadArea.classList.add("show");
 
@@ -1703,14 +1745,63 @@ function updatePaymentDisplay(){
       "saved-note";
 
     downloadNote.textContent =
-      "Payment verified. The exact document saved when payment was created is now available. No document will be regenerated.";
+      "Your exact reviewed document has been saved and Customer Care has activated your download.";
 
     downloadButton.disabled = false;
 
     downloadButton.classList.add("active");
 
     downloadButton.textContent =
-      "⬇ DOWNLOAD DOCUMENT";
+      "DOWNLOAD DOCUMENT";
+
+    reportButton.disabled = true;
+
+    return;
+  }
+
+  /*
+     PAYMENT VERIFIED BUT DOWNLOAD NOT ACTIVATED
+  */
+
+  if(
+    paymentVerified ||
+    isVerified(paymentStatus)
+  ){
+
+    paymentVerified = true;
+    paymentStarted = true;
+
+    setStatus(
+      "Payment Verified — Awaiting Activation"
+    );
+
+    statusMessage.textContent =
+      "Customer Care has verified your payment. Your download is waiting for Customer Care activation.";
+
+    setProgress(90);
+
+    makePaymentButton.disabled = true;
+
+    makePaymentButton.textContent =
+      "PAYMENT VERIFIED";
+
+    bankCard.classList.remove("hidden");
+    reportCard.classList.remove("hidden");
+
+    downloadArea.classList.add("show");
+
+    downloadNote.className =
+      "locked-note";
+
+    downloadNote.textContent =
+      "Payment verified. Customer Care must activate download before the saved document can be downloaded.";
+
+    downloadButton.disabled = true;
+
+    downloadButton.classList.remove("active");
+
+    downloadButton.textContent =
+      "DOWNLOAD DOCUMENT";
 
     reportButton.disabled = true;
 
@@ -1734,17 +1825,17 @@ function updatePaymentDisplay(){
     );
 
     statusMessage.textContent =
-      "Your payment report has been sent to Customer Care. Download will unlock after verification.";
+      "Your payment report has been sent to Customer Care. Download will unlock after verification and activation.";
 
     setProgress(75);
 
     makePaymentButton.disabled = true;
 
     makePaymentButton.textContent =
-      "✓ PAYMENT READY";
+      "PAYMENT REPORTED";
 
     bankCard.classList.remove("hidden");
-    referenceCard.classList.remove("hidden");
+    reportCard.classList.remove("hidden");
 
     downloadArea.classList.add("show");
 
@@ -1752,14 +1843,14 @@ function updatePaymentDisplay(){
       "locked-note";
 
     downloadNote.textContent =
-      "Payment Reported — Awaiting Verification. The exact reviewed document is already saved and waiting for Customer Care verification.";
+      "Payment Reported — Awaiting Verification. The exact reviewed document is already saved.";
 
     downloadButton.disabled = true;
 
     downloadButton.classList.remove("active");
 
     downloadButton.textContent =
-      "🔒 DOWNLOAD DOCUMENT";
+      "DOWNLOAD DOCUMENT";
 
     reportButton.disabled = true;
 
@@ -1772,7 +1863,9 @@ function updatePaymentDisplay(){
 
   if(paymentStarted){
 
-    setStatus("Payment Ready");
+    setStatus(
+      "Payment Ready"
+    );
 
     statusMessage.textContent =
       "Your exact reviewed document has been saved. You can now make your bank transfer.";
@@ -1782,11 +1875,11 @@ function updatePaymentDisplay(){
     makePaymentButton.disabled = true;
 
     makePaymentButton.textContent =
-      "✓ PAYMENT READY";
+      "PAYMENT READY";
 
     bankCard.classList.remove("hidden");
 
-    referenceCard.classList.remove("hidden");
+    reportCard.classList.remove("hidden");
 
     downloadArea.classList.add("show");
 
@@ -1794,14 +1887,14 @@ function updatePaymentDisplay(){
       "locked-note";
 
     downloadNote.textContent =
-      "The exact Review document has been saved. Complete your bank transfer, then tap I HAVE MADE PAYMENT.";
+      "The exact reviewed document has been saved. Complete your bank transfer, then tap I HAVE MADE PAYMENT.";
 
     downloadButton.disabled = true;
 
     downloadButton.classList.remove("active");
 
     downloadButton.textContent =
-      "🔒 DOWNLOAD DOCUMENT";
+      "DOWNLOAD DOCUMENT";
 
     reportButton.disabled = false;
 
@@ -1809,10 +1902,12 @@ function updatePaymentDisplay(){
   }
 
   /*
-     NOT CREATED YET
+     NOT CREATED
   */
 
-  setStatus("Ready");
+  setStatus(
+    "Ready"
+  );
 
   statusMessage.textContent =
     "Your payment has not been created yet. Tap MAKE PAYMENT to continue.";
@@ -1822,11 +1917,11 @@ function updatePaymentDisplay(){
   makePaymentButton.disabled = false;
 
   makePaymentButton.textContent =
-    "💳 MAKE PAYMENT";
+    "MAKE PAYMENT";
 
   bankCard.classList.add("hidden");
 
-  referenceCard.classList.add("hidden");
+  reportCard.classList.add("hidden");
 
   downloadArea.classList.remove("show");
 
@@ -1838,12 +1933,12 @@ function updatePaymentDisplay(){
 ==========================================================
 
    BUSINESS IDENTITY:
-       service + document title
+       Service + Document Title
 
    NO:
-       payment ID
-       payment reference
-       job ID as payment identity
+       Payment ID
+       Payment reference
+       Job ID as payment identity
 ========================================================== */
 
 async function createPayment(){
@@ -1900,10 +1995,12 @@ async function createPayment(){
 
     makePaymentButton.disabled = true;
 
-    setStatus("Saving Document");
+    setStatus(
+      "Saving Document"
+    );
 
     statusMessage.textContent =
-      "Saving the exact Review document and preparing your payment.";
+      "Saving the exact reviewed document and preparing your payment.";
 
     setProgress(25);
 
@@ -1982,29 +2079,32 @@ async function createPayment(){
     paymentVerified =
       extractPaymentVerified(data);
 
+    /*
+       IMPORTANT:
+       Do not convert payment verification into
+       download activation.
+    */
+
     downloadUnlocked =
-      extractDownloadUnlocked(data) ||
-      paymentVerified;
+      extractDownloadUnlocked(data);
 
-    if(data.amount){
+    const returnedAmount =
+      parseMoney(
+        data.amount ||
+        returnedPayment.amount
+      );
 
-      const returnedAmount =
-        parseMoney(data.amount);
-
-      if(returnedAmount){
-        amount = returnedAmount;
-      }
+    if(returnedAmount){
+      amount = returnedAmount;
     }
 
     updatePaymentDisplay();
 
     setMessage(
       data.message ||
-      "Payment prepared successfully. The exact reviewed document has been securely saved. You can now make your bank transfer.",
+      "Your exact reviewed document has been securely saved. You can now make your bank transfer.",
       "success"
     );
-
-    startStatusPolling();
 
   }catch(error){
 
@@ -2030,13 +2130,13 @@ async function createPayment(){
     setProgress(0);
 
     bankCard.classList.add("hidden");
-    referenceCard.classList.add("hidden");
+    reportCard.classList.add("hidden");
     downloadArea.classList.remove("show");
 
     makePaymentButton.disabled = false;
 
     makePaymentButton.textContent =
-      "💳 MAKE PAYMENT";
+      "MAKE PAYMENT";
 
     setMessage(
       error.message ||
@@ -2151,211 +2251,15 @@ async function paymentPost(path,body){
 }
 
 /* ==========================================================
-   PAYMENT STATUS
-========================================================== */
-
-async function loadExistingPayment(){
-
-  if(
-    !service ||
-    !documentTitle
-  ){
-
-    return false;
-  }
-
-  try{
-
-    const query =
-      "?service=" +
-      encodeURIComponent(service) +
-      "&title=" +
-      encodeURIComponent(documentTitle);
-
-    const data =
-      await paymentGet(
-        "/api/payment/status" + query
-      );
-
-    const payment =
-      data.payment || {};
-
-    const returnedStatus =
-      clean(
-        data.payment_status ||
-        payment.payment_status
-      );
-
-    if(
-      returnedStatus === "none" &&
-      !data.payment
-    ){
-
-      return false;
-    }
-
-    paymentStatus =
-      returnedStatus ||
-      "pending";
-
-    paymentStarted =
-      true;
-
-    paymentReported =
-      !!(
-        data.payment_reported ||
-        payment.payment_reported ||
-        isReported(paymentStatus)
-      );
-
-    paymentVerified =
-      extractPaymentVerified(data);
-
-    downloadUnlocked =
-      extractDownloadUnlocked(data) ||
-      paymentVerified;
-
-    const existingAmount =
-      parseMoney(
-        data.amount ||
-        payment.amount
-      );
-
-    if(existingAmount){
-      amount = existingAmount;
-    }
-
-    updatePaymentDisplay();
-
-    return true;
-
-  }catch(error){
-
-    console.warn(
-      "Existing payment lookup failed:",
-      error
-    );
-
-    return false;
-  }
-}
-
-async function checkPaymentStatus(){
-
-  if(
-    !service ||
-    !documentTitle
-  ){
-
-    return;
-  }
-
-  try{
-
-    const query =
-      "?service=" +
-      encodeURIComponent(service) +
-      "&title=" +
-      encodeURIComponent(documentTitle);
-
-    const data =
-      await paymentGet(
-        "/api/payment/status" + query
-      );
-
-    const payment =
-      data.payment || {};
-
-    const returnedStatus =
-      clean(
-        data.payment_status ||
-        payment.payment_status
-      );
-
-    if(returnedStatus){
-
-      paymentStatus =
-        returnedStatus;
-    }
-
-    const returnedAmount =
-      parseMoney(
-        data.amount ||
-        payment.amount
-      );
-
-    if(returnedAmount){
-      amount = returnedAmount;
-    }
-
-    paymentReported =
-      !!(
-        data.payment_reported ||
-        payment.payment_reported ||
-        isReported(paymentStatus)
-      );
-
-    paymentVerified =
-      extractPaymentVerified(data);
-
-    downloadUnlocked =
-      extractDownloadUnlocked(data) ||
-      paymentVerified;
-
-    updatePaymentDisplay();
-
-  }catch(error){
-
-    console.warn(
-      "Payment status check failed:",
-      error
-    );
-  }
-}
-
-function startStatusPolling(){
-
-  if(statusTimer){
-    return;
-  }
-
-  if(
-    !service ||
-    !documentTitle
-  ){
-
-    return;
-  }
-
-  statusTimer =
-    setInterval(
-      async () => {
-
-        await checkPaymentStatus();
-
-        if(
-          paymentVerified ||
-          downloadUnlocked
-        ){
-
-          clearInterval(statusTimer);
-
-          statusTimer = null;
-        }
-
-      },
-      5000
-    );
-}
-
-/* ==========================================================
    REPORT PAYMENT
 ==========================================================
 
-   NO PAYMENT REFERENCE IS REQUESTED.
+   The payment is located by:
 
-   The saved payment is located by:
        Service + Document Title
+
+   No payment ID.
+   No payment reference.
 ========================================================== */
 
 async function reportPayment(){
@@ -2434,8 +2338,7 @@ async function reportPayment(){
       extractPaymentVerified(data);
 
     downloadUnlocked =
-      extractDownloadUnlocked(data) ||
-      paymentVerified;
+      extractDownloadUnlocked(data);
 
     updatePaymentDisplay();
 
@@ -2444,8 +2347,6 @@ async function reportPayment(){
       "Payment Reported — Awaiting Verification",
       "success"
     );
-
-    startStatusPolling();
 
   }catch(error){
 
@@ -2489,10 +2390,12 @@ async function downloadDocument(){
     return;
   }
 
-  if(
-    !paymentVerified &&
-    !downloadUnlocked
-  ){
+  /*
+     Only the actual backend download-unlocked flag
+     is allowed to release the document.
+  */
+
+  if(!downloadUnlocked){
 
     setMessage(
       "Download remains locked until Customer Care activates your download.",
@@ -2507,11 +2410,10 @@ async function downloadDocument(){
     downloadButton.disabled = true;
 
     downloadButton.textContent =
-      "Preparing Download...";
+      "PREPARING DOWNLOAD...";
 
     setMessage(
-      "Opening your already-saved document...",
-      ""
+      "Opening your already-saved document..."
     );
 
     const url =
@@ -2538,7 +2440,7 @@ async function downloadDocument(){
     );
 
     downloadButton.textContent =
-      "⬇ DOWNLOAD DOCUMENT";
+      "DOWNLOAD DOCUMENT";
 
     setMessage(
       error.message ||
@@ -2549,7 +2451,7 @@ async function downloadDocument(){
 }
 
 /* ==========================================================
-   BACK OFFICE HELPERS
+   BACK OFFICE
 ========================================================== */
 
 function setBackOfficeMessage(
@@ -2565,10 +2467,17 @@ function setBackOfficeMessage(
     (type ? " " + type : "");
 }
 
+function getBackOfficeKey(){
+
+  return clean(
+    boAdminKey.value
+  );
+}
+
 function checkLocalBackOfficeKey(){
 
   const enteredKey =
-    clean(boAdminKey.value);
+    getBackOfficeKey();
 
   if(!enteredKey){
 
@@ -2622,6 +2531,16 @@ function checkLocalBackOfficeKey(){
 
 async function backOfficeGet(path){
 
+  const key =
+    getBackOfficeKey();
+
+  if(!key){
+
+    throw new Error(
+      "Enter the Back Office access key first."
+    );
+  }
+
   const response =
     await fetch(
       PAYMENT_API_BASE + path,
@@ -2629,7 +2548,8 @@ async function backOfficeGet(path){
         method:"GET",
         cache:"no-store",
         headers:{
-          "Accept":"application/json"
+          "Accept":"application/json",
+          "X-Back-Office-Key":key
         }
       }
     );
@@ -2659,6 +2579,16 @@ async function backOfficePost(
   body
 ){
 
+  const key =
+    getBackOfficeKey();
+
+  if(!key){
+
+    throw new Error(
+      "Enter the Back Office access key first."
+    );
+  }
+
   const response =
     await fetch(
       PAYMENT_API_BASE + path,
@@ -2666,7 +2596,8 @@ async function backOfficePost(
         method:"POST",
         headers:{
           "Accept":"application/json",
-          "Content-Type":"application/json"
+          "Content-Type":"application/json",
+          "X-Back-Office-Key":key
         },
         body:JSON.stringify(
           body || {}
@@ -2750,11 +2681,16 @@ function recordStatus(record){
 
 function recordIsActivated(record){
 
+  /*
+     ONLY the actual download flag means activated.
+
+     Payment verification by itself does not unlock
+     the customer download.
+  */
+
   return (
     record.download_unlocked === true ||
-    record.payment_verified === true ||
-    record.download_activated === true ||
-    isVerified(recordStatus(record))
+    record.download_activated === true
   );
 }
 
@@ -2769,6 +2705,18 @@ function boDisplayStatus(record){
 
     return {
       text:"Download Activated",
+      className:"verified"
+    };
+  }
+
+  if(
+    isVerified(status) ||
+    record.payment_verified === true
+  ){
+
+    return {
+      text:
+        "Payment Verified — Awaiting Activation",
       className:"verified"
     };
   }
@@ -3397,50 +3345,29 @@ async function activateBackOfficeDownload(
 
   try{
 
-    let data;
+    /*
+       IMPORTANT:
 
-    try{
+       Activation uses the dedicated activation endpoint.
 
-      data =
-        await backOfficePost(
-          "/api/back-office/activate-download",
-          {
-            service:
-              recordServiceName,
+       We do NOT fall back to payment verification because
+       payment verification does not unlock the download.
+    */
 
-            document_title:
-              recordDocumentTitle,
+    const data =
+      await backOfficePost(
+        "/api/back-office/activate-download",
+        {
+          service:
+            recordServiceName,
 
-            verified:
-              true
-          }
-        );
+          document_title:
+            recordDocumentTitle,
 
-    }catch(primaryError){
-
-      console.warn(
-        "Dedicated Back Office activation failed; trying Customer Care verification endpoint:",
-        primaryError
+          verified:
+            true
+        }
       );
-
-      data =
-        await backOfficePost(
-          "/api/customer-care/payment/verify",
-          {
-            service:
-              recordServiceName,
-
-            document_title:
-              recordDocumentTitle,
-
-            verified:
-              true,
-
-            note:
-              "Download activated from Payment HTML Back Office after Customer Care payment verification."
-          }
-        );
-    }
 
     setBackOfficeMessage(
       data.message ||
@@ -3593,7 +3520,7 @@ boAdminKey.addEventListener(
    CUSTOMER INITIALIZATION
 ========================================================== */
 
-async function startCustomerPayment(){
+function startCustomerPayment(){
 
   serviceBadge.textContent =
     service || "Service";
@@ -3626,11 +3553,8 @@ async function startCustomerPayment(){
   /*
      No payment is automatically created.
 
-     We also do not automatically create a payment from
-     an old customer record.
-
-     The customer intentionally starts payment by tapping
-     MAKE PAYMENT.
+     The customer intentionally starts payment by
+     tapping MAKE PAYMENT.
   */
 
   updatePaymentDisplay();
@@ -3646,6 +3570,10 @@ async function startCustomerPayment(){
 ========================================================== */
 
 if(isBackOfficeMode){
+
+  document.body.classList.add(
+    "back-office-mode"
+  );
 
   serviceBadge.textContent =
     "BACK OFFICE";
