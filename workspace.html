@@ -40,6 +40,10 @@ button{cursor:pointer}
     --border:rgba(212,175,55,.28);
 }
 
+/* ============================================================
+   APP
+============================================================ */
+
 .app{
     width:100%;
     height:100dvh;
@@ -99,7 +103,12 @@ button{cursor:pointer}
 .service-badge{
     max-width:40%;
     padding:7px 10px;
-    background:linear-gradient(135deg,rgba(212,175,55,.10),rgba(112,209,193,.06),rgba(143,184,232,.07));
+    background:linear-gradient(
+        135deg,
+        rgba(212,175,55,.10),
+        rgba(112,209,193,.06),
+        rgba(143,184,232,.07)
+    );
     border:1px solid rgba(212,175,55,.55);
     border-radius:999px;
     color:var(--gold2);
@@ -158,7 +167,9 @@ button{cursor:pointer}
    CUSTOMER FORM
 ============================================================ */
 
-.intro-card,.form-card,.review-header{
+.intro-card,
+.form-card,
+.review-header{
     border-radius:15px;
 }
 
@@ -166,15 +177,26 @@ button{cursor:pointer}
     margin-bottom:12px;
     padding:16px;
     background:
-        linear-gradient(145deg,rgba(57,184,127,.08),rgba(212,175,55,.08) 45%,rgba(143,184,232,.06)),
+        linear-gradient(
+            145deg,
+            rgba(57,184,127,.08),
+            rgba(212,175,55,.08) 45%,
+            rgba(143,184,232,.06)
+        ),
         linear-gradient(145deg,#191919,#0d0d0d);
     border:1px solid rgba(212,175,55,.34);
     box-shadow:0 10px 35px rgba(0,0,0,.22);
 }
 
-.intro-title,.review-title{
+.intro-title,
+.review-title{
     margin:0;
-    background:linear-gradient(90deg,var(--gold2),var(--cream),var(--rose));
+    background:linear-gradient(
+        90deg,
+        var(--gold2),
+        var(--cream),
+        var(--rose)
+    );
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
@@ -195,7 +217,11 @@ button{cursor:pointer}
     display:inline-block;
     margin-top:10px;
     padding:7px 10px;
-    background:linear-gradient(135deg,rgba(212,175,55,.10),rgba(112,209,193,.07));
+    background:linear-gradient(
+        135deg,
+        rgba(212,175,55,.10),
+        rgba(112,209,193,.07)
+    );
     border:1px solid rgba(212,175,55,.3);
     border-radius:8px;
     color:var(--champagne);
@@ -205,7 +231,12 @@ button{cursor:pointer}
 
 .form-card{
     background:
-        linear-gradient(145deg,rgba(143,184,232,.035),rgba(185,155,232,.025),rgba(232,180,168,.025)),
+        linear-gradient(
+            145deg,
+            rgba(143,184,232,.035),
+            rgba(185,155,232,.025),
+            rgba(232,180,168,.025)
+        ),
         #101010;
     border:1px solid rgba(255,255,255,.09);
     padding:15px;
@@ -241,7 +272,9 @@ button{cursor:pointer}
 .required{color:#ff8585}
 .optional{color:#777;font-weight:500}
 
-.field input,.field textarea,.field select{
+.field input,
+.field textarea,
+.field select{
     width:100%;
     border:1px solid rgba(255,255,255,.14);
     border-radius:9px;
@@ -257,7 +290,9 @@ button{cursor:pointer}
     resize:vertical;
 }
 
-.field input:focus,.field textarea:focus,.field select:focus{
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
     border-color:rgba(112,209,193,.65);
     box-shadow:0 0 0 2px rgba(112,209,193,.06);
 }
@@ -279,7 +314,12 @@ button{cursor:pointer}
     margin-top:15px;
     border:1px solid rgba(244,213,141,.35);
     border-radius:10px;
-    background:linear-gradient(135deg,var(--gold2),var(--champagne),var(--cream));
+    background:linear-gradient(
+        135deg,
+        var(--gold2),
+        var(--champagne),
+        var(--cream)
+    );
     color:#000;
     font-size:13px;
     font-weight:900;
@@ -306,8 +346,16 @@ button{cursor:pointer}
     padding:26px 20px 24px;
     margin-bottom:12px;
     background:
-        radial-gradient(circle at 12% 20%,rgba(57,184,127,.14),transparent 28%),
-        radial-gradient(circle at 88% 10%,rgba(212,175,55,.15),transparent 30%),
+        radial-gradient(
+            circle at 12% 20%,
+            rgba(57,184,127,.14),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 88% 10%,
+            rgba(212,175,55,.15),
+            transparent 30%
+        ),
         linear-gradient(145deg,#181818,#080808);
     border:1px solid rgba(212,175,55,.45);
     box-shadow:
@@ -367,8 +415,17 @@ button{cursor:pointer}
     width:100%;
     padding:32px 19px 27px;
     background:
-        radial-gradient(circle at 50% 0%,rgba(212,175,55,.12),transparent 42%),
-        linear-gradient(145deg,rgba(57,184,127,.045),rgba(212,175,55,.055),rgba(143,184,232,.025)),
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(212,175,55,.12),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(57,184,127,.045),
+            rgba(212,175,55,.055),
+            rgba(143,184,232,.025)
+        ),
         #0b0b0b;
     border:1px solid rgba(212,175,55,.38);
     border-radius:17px;
@@ -417,7 +474,12 @@ button{cursor:pointer}
     border:1px solid rgba(244,213,141,.55);
     border-radius:10px;
     background:
-        linear-gradient(135deg,var(--gold2),var(--champagne),var(--cream));
+        linear-gradient(
+            135deg,
+            var(--gold2),
+            var(--champagne),
+            var(--cream)
+        );
     color:#050505;
     font-size:12px;
     font-weight:900;
@@ -445,7 +507,14 @@ button{cursor:pointer}
 .back-office-header{
     padding:17px;
     margin-bottom:12px;
-    background:linear-gradient(145deg,rgba(212,175,55,.09),rgba(57,184,127,.05),rgba(185,155,232,.05)),linear-gradient(145deg,#191919,#0c0c0c);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(212,175,55,.09),
+            rgba(57,184,127,.05),
+            rgba(185,155,232,.05)
+        ),
+        linear-gradient(145deg,#191919,#0c0c0c);
     border:1px solid rgba(212,175,55,.42);
     border-radius:15px;
 }
@@ -497,7 +566,9 @@ button{cursor:pointer}
     font-size:12px;
 }
 
-.back-office-key-input:focus{border-color:rgba(212,175,55,.65)}
+.back-office-key-input:focus{
+    border-color:rgba(212,175,55,.65);
+}
 
 .back-office-load{
     min-width:92px;
@@ -562,8 +633,13 @@ button{cursor:pointer}
     border-radius:13px;
 }
 
-.back-office-job.reported{border-color:rgba(212,175,55,.60)}
-.back-office-job.unlocked{border-color:rgba(22,128,71,.60)}
+.back-office-job.reported{
+    border-color:rgba(212,175,55,.60);
+}
+
+.back-office-job.unlocked{
+    border-color:rgba(22,128,71,.60);
+}
 
 .back-office-job-title{
     margin:0;
@@ -636,7 +712,8 @@ button{cursor:pointer}
     margin-top:10px;
 }
 
-.back-office-view-document,.back-office-unlock{
+.back-office-view-document,
+.back-office-unlock{
     flex:1;
     min-height:42px;
     border-radius:8px;
@@ -728,17 +805,27 @@ button{cursor:pointer}
     margin-bottom:7px;
 }
 
-.tool-button,.choose-service-button{
+.tool-button,
+.choose-service-button{
     min-height:39px;
     border-radius:8px;
-    background:linear-gradient(135deg,rgba(143,184,232,.05),rgba(185,155,232,.04),rgba(255,255,255,.02)),#181818;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(143,184,232,.05),
+            rgba(185,155,232,.04),
+            rgba(255,255,255,.02)
+        ),
+        #181818;
     color:#fff;
     border:1px solid rgba(255,255,255,.13);
     font-size:10px;
     font-weight:800;
 }
 
-.tool-button:hover{border-color:rgba(212,175,55,.35)}
+.tool-button:hover{
+    border-color:rgba(212,175,55,.35);
+}
 
 .tool-button.gold{
     color:var(--gold2);
@@ -748,7 +835,14 @@ button{cursor:pointer}
 .customer-care-button{
     color:var(--teal);
     border-color:rgba(112,209,193,.38);
-    background:linear-gradient(135deg,rgba(57,184,127,.08),rgba(112,209,193,.06),rgba(212,175,55,.04)),#151515;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(57,184,127,.08),
+            rgba(112,209,193,.06),
+            rgba(212,175,55,.04)
+        ),
+        #151515;
 }
 
 .customer-care-button:hover{
@@ -796,7 +890,14 @@ button:disabled{
 .customer-care-card{
     width:min(100%,390px);
     padding:23px 19px;
-    background:linear-gradient(145deg,rgba(57,184,127,.07),rgba(212,175,55,.09),rgba(185,155,232,.06)),linear-gradient(145deg,#191919,#090909);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(57,184,127,.07),
+            rgba(212,175,55,.09),
+            rgba(185,155,232,.06)
+        ),
+        linear-gradient(145deg,#191919,#090909);
     border:1px solid rgba(212,175,55,.55);
     border-radius:18px;
     box-shadow:0 25px 80px rgba(0,0,0,.70);
@@ -814,7 +915,12 @@ button:disabled{
 
 .customer-care-title{
     margin:0;
-    background:linear-gradient(90deg,var(--gold2),var(--cream),var(--rose));
+    background:linear-gradient(
+        90deg,
+        var(--gold2),
+        var(--cream),
+        var(--rose)
+    );
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
@@ -828,7 +934,13 @@ button:disabled{
     width:70px;
     height:1px;
     margin:11px auto 13px;
-    background:linear-gradient(90deg,transparent,var(--gold2),var(--teal),transparent);
+    background:linear-gradient(
+        90deg,
+        transparent,
+        var(--gold2),
+        var(--teal),
+        transparent
+    );
 }
 
 .customer-care-text{
@@ -854,13 +966,25 @@ button:disabled{
 
 .customer-care-whatsapp{
     border:1px solid rgba(57,184,127,.55);
-    background:linear-gradient(135deg,rgba(57,184,127,.17),rgba(22,128,71,.08)),#101010;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(57,184,127,.17),
+            rgba(22,128,71,.08)
+        ),
+        #101010;
     color:#7bd99a;
 }
 
 .customer-care-phone{
     border:1px solid rgba(212,175,55,.45);
-    background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(244,213,141,.05)),#101010;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(212,175,55,.12),
+            rgba(244,213,141,.05)
+        ),
+        #101010;
     color:var(--gold2);
 }
 
@@ -897,8 +1021,16 @@ button:disabled{
     padding:20px;
     overflow:hidden;
     background:
-        radial-gradient(circle at 50% 40%,rgba(212,175,55,.055),transparent 34%),
-        radial-gradient(circle at 12% 18%,rgba(57,184,127,.045),transparent 28%),
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(212,175,55,.055),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 12% 18%,
+            rgba(57,184,127,.045),
+            transparent 28%
+        ),
         rgba(0,0,0,.91);
     z-index:1000;
     backdrop-filter:blur(9px);
@@ -925,7 +1057,11 @@ button:disabled{
     max-width:700px;
     max-height:700px;
     border-radius:50%;
-    background:radial-gradient(circle,rgba(212,175,55,.07),transparent 68%);
+    background:radial-gradient(
+        circle,
+        rgba(212,175,55,.07),
+        transparent 68%
+    );
     filter:blur(4px);
     pointer-events:none;
     animation:luxuryPulse 5s ease-in-out infinite;
@@ -936,14 +1072,28 @@ button:disabled{
     position:absolute;
     inset:0;
     background:
-        radial-gradient(circle at 18% 78%,rgba(57,184,127,.035),transparent 20%),
-        radial-gradient(circle at 83% 25%,rgba(212,175,55,.04),transparent 22%);
+        radial-gradient(
+            circle at 18% 78%,
+            rgba(57,184,127,.035),
+            transparent 20%
+        ),
+        radial-gradient(
+            circle at 83% 25%,
+            rgba(212,175,55,.04),
+            transparent 22%
+        );
     pointer-events:none;
 }
 
 @keyframes luxuryPulse{
-    0%,100%{transform:scale(.88);opacity:.55}
-    50%{transform:scale(1.08);opacity:1}
+    0%,100%{
+        transform:scale(.88);
+        opacity:.55;
+    }
+    50%{
+        transform:scale(1.08);
+        opacity:1;
+    }
 }
 
 /* Firework canvas */
@@ -966,39 +1116,82 @@ button:disabled{
     pointer-events:none;
     opacity:.65;
     background-image:
-        radial-gradient(circle at 12% 20%,rgba(255,244,214,.8) 0 1px,transparent 1.5px),
-        radial-gradient(circle at 77% 14%,rgba(243,214,107,.7) 0 1px,transparent 1.5px),
-        radial-gradient(circle at 88% 69%,rgba(255,244,214,.55) 0 1px,transparent 1.5px),
-        radial-gradient(circle at 22% 72%,rgba(57,184,127,.55) 0 1px,transparent 1.5px),
-        radial-gradient(circle at 62% 84%,rgba(244,213,141,.55) 0 1px,transparent 1.5px);
+        radial-gradient(
+            circle at 12% 20%,
+            rgba(255,244,214,.8) 0 1px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle at 77% 14%,
+            rgba(243,214,107,.7) 0 1px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle at 88% 69%,
+            rgba(255,244,214,.55) 0 1px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle at 22% 72%,
+            rgba(57,184,127,.55) 0 1px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle at 62% 84%,
+            rgba(244,213,141,.55) 0 1px,
+            transparent 1.5px
+        );
 }
 
-/* Card */
+/* ============================================================
+   PREMIUM LUXURY REVIEW CARD
+   VISUAL ONLY
+   FIREWORKS AND WORKSPACE LOGIC ARE UNCHANGED
+============================================================ */
 
 .review-gateway-card{
     position:relative;
     z-index:5;
-    width:min(100%,450px);
-    padding:30px 22px 23px;
+    width:min(100%,470px);
+    padding:42px 30px 31px;
+
     background:
-        linear-gradient(145deg,rgba(255,255,255,.035),rgba(212,175,55,.045) 45%,rgba(57,184,127,.025)),
-        linear-gradient(145deg,rgba(24,24,24,.97),rgba(5,5,5,.98));
-    border:1px solid rgba(212,175,55,.62);
-    border-radius:23px;
+        radial-gradient(
+            circle at 50% -20%,
+            rgba(244,213,141,.075),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.025),
+            rgba(212,175,55,.018) 48%,
+            rgba(57,184,127,.012)
+        ),
+        rgba(5,5,5,.94);
+
+    border:1px solid rgba(244,213,141,.22);
+    border-radius:30px;
+
     box-shadow:
-        0 30px 100px rgba(0,0,0,.88),
-        0 0 50px rgba(212,175,55,.07),
-        inset 0 1px rgba(255,255,255,.08);
+        0 35px 110px rgba(0,0,0,.92),
+        0 0 45px rgba(212,175,55,.045),
+        inset 0 1px rgba(255,255,255,.055);
+
     text-align:center;
-    animation:reviewCardIn .55s cubic-bezier(.16,1,.3,1) both;
+
+    animation:
+        reviewCardIn
+        .55s
+        cubic-bezier(.16,1,.3,1)
+        both;
 }
 
 .review-gateway-card:before{
     content:"";
     position:absolute;
-    inset:8px;
-    border:1px solid rgba(212,175,55,.11);
-    border-radius:17px;
+    inset:11px;
+    border:1px solid rgba(244,213,141,.075);
+    border-radius:23px;
     pointer-events:none;
 }
 
@@ -1006,10 +1199,18 @@ button:disabled{
     content:"";
     position:absolute;
     top:0;
-    left:13%;
-    right:13%;
+    left:19%;
+    right:19%;
     height:1px;
-    background:linear-gradient(90deg,transparent,var(--gold2),var(--cream),var(--gold2),transparent);
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(244,213,141,.35),
+            rgba(255,244,214,.88),
+            rgba(244,213,141,.35),
+            transparent
+        );
     opacity:.75;
     pointer-events:none;
 }
@@ -1017,132 +1218,247 @@ button:disabled{
 @keyframes reviewCardIn{
     from{
         opacity:0;
-        transform:translateY(22px) scale(.96);
+        transform:
+            translateY(22px)
+            scale(.965);
     }
+
     to{
         opacity:1;
-        transform:translateY(0) scale(1);
+        transform:
+            translateY(0)
+            scale(1);
     }
 }
 
-/* Replace the old document emoji with a luxury emblem */
-
 .review-gateway-icon{
     position:relative;
-    width:72px;
-    height:72px;
-    margin:0 auto 17px;
+    width:64px;
+    height:64px;
+    margin:0 auto 22px;
     display:flex;
     align-items:center;
     justify-content:center;
     border-radius:50%;
+
     background:
-        radial-gradient(circle,rgba(244,213,141,.20),rgba(212,175,55,.06) 58%,transparent 60%),
-        #090909;
-    border:1px solid rgba(212,175,55,.62);
+        radial-gradient(
+            circle,
+            rgba(244,213,141,.09),
+            rgba(212,175,55,.025) 58%,
+            transparent 70%
+        ),
+        #050505;
+
+    border:1px solid rgba(244,213,141,.42);
+
     box-shadow:
-        0 0 0 7px rgba(212,175,55,.035),
-        0 0 0 14px rgba(212,175,55,.018),
-        0 0 30px rgba(212,175,55,.16);
+        0 0 0 6px rgba(212,175,55,.018),
+        0 0 0 13px rgba(212,175,55,.008),
+        0 0 28px rgba(212,175,55,.08);
 }
 
 .review-gateway-icon:before{
     content:"";
-    width:24px;
-    height:24px;
-    border:1px solid var(--gold2);
+    width:21px;
+    height:21px;
+    border:1px solid rgba(244,213,141,.82);
     transform:rotate(45deg);
+
     box-shadow:
-        0 0 16px rgba(212,175,55,.30),
-        inset 0 0 12px rgba(212,175,55,.08);
+        0 0 15px rgba(212,175,55,.18),
+        inset 0 0 9px rgba(212,175,55,.04);
 }
 
 .review-gateway-icon:after{
     content:"";
     position:absolute;
-    width:8px;
-    height:8px;
+    width:5px;
+    height:5px;
     border-radius:50%;
-    background:var(--gold2);
+    background:rgba(255,244,214,.92);
+
     box-shadow:
-        0 -24px 0 -2px rgba(244,213,141,.85),
-        0 24px 0 -2px rgba(244,213,141,.45),
-        24px 0 0 -2px rgba(57,184,127,.65),
-        -24px 0 0 -2px rgba(212,175,55,.65);
-    animation:emblemGlow 2.8s ease-in-out infinite;
+        0 -21px 0 -1px rgba(244,213,141,.70),
+        0 21px 0 -1px rgba(244,213,141,.35),
+        21px 0 0 -1px rgba(57,184,127,.48),
+        -21px 0 0 -1px rgba(212,175,55,.48);
+
+    animation:
+        emblemGlow
+        3.2s
+        ease-in-out
+        infinite;
 }
 
 @keyframes emblemGlow{
-    0%,100%{opacity:.65;transform:scale(.85)}
-    50%{opacity:1;transform:scale(1.15)}
+    0%,100%{
+        opacity:.55;
+        transform:scale(.88);
+    }
+
+    50%{
+        opacity:.9;
+        transform:scale(1.08);
+    }
 }
 
 .review-gateway-title{
     position:relative;
     z-index:1;
     margin:0;
-    background:linear-gradient(90deg,var(--gold2),var(--cream),var(--gold2));
+
+    background:
+        linear-gradient(
+            100deg,
+            #d9bb69,
+            #fff4d6 48%,
+            #d9bb69
+        );
+
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(27px,7vw,34px);
-    font-weight:700;
-    letter-spacing:.2px;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(
+            29px,
+            7vw,
+            37px
+        );
+
+    font-weight:500;
+    letter-spacing:.15px;
+    line-height:1.12;
+}
+
+.review-gateway-title:after{
+    content:"";
+    display:block;
+    width:42px;
+    height:1px;
+    margin:17px auto 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(244,213,141,.62),
+            transparent
+        );
 }
 
 .review-gateway-message{
     position:relative;
     z-index:1;
-    max-width:365px;
-    margin:11px auto 0;
-    color:#c7c7c7;
+    max-width:360px;
+    margin:17px auto 0;
+    color:rgba(255,244,214,.68);
     font-size:11px;
-    line-height:1.75;
+    line-height:1.85;
+    letter-spacing:.12px;
 }
 
 .review-gateway-button{
     position:relative;
     z-index:1;
-    width:100%;
-    min-height:53px;
-    margin-top:20px;
+
+    width:auto;
+    min-width:210px;
+    min-height:48px;
+
+    margin-top:25px;
+    padding:0 27px;
+
     overflow:hidden;
-    border:1px solid rgba(255,244,214,.65);
-    border-radius:11px;
-    background:linear-gradient(135deg,var(--gold2),var(--champagne),var(--cream));
-    color:#050505;
-    font-size:12px;
-    font-weight:900;
-    letter-spacing:1px;
+
+    border:1px solid rgba(244,213,141,.58);
+    border-radius:999px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(244,213,141,.075),
+            rgba(212,175,55,.025)
+        );
+
+    color:#f4d58d;
+
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1.8px;
+
     box-shadow:
-        0 10px 35px rgba(212,175,55,.16),
-        inset 0 1px rgba(255,255,255,.75);
-    transition:transform .2s ease,box-shadow .2s ease;
+        0 8px 28px rgba(0,0,0,.30),
+        inset 0 1px rgba(255,255,255,.045);
+
+    transition:
+        background .25s ease,
+        border-color .25s ease,
+        color .25s ease,
+        transform .25s ease,
+        box-shadow .25s ease;
 }
 
 .review-gateway-button:before{
     content:"";
     position:absolute;
     top:0;
-    left:-80%;
-    width:45%;
+    left:-75%;
+    width:38%;
     height:100%;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.48),transparent);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.22),
+            transparent
+        );
+
     transform:skewX(-20deg);
-    animation:buttonShine 3.8s ease-in-out infinite;
+
+    animation:
+        buttonShine
+        4.8s
+        ease-in-out
+        infinite;
 }
 
 .review-gateway-button:hover{
     transform:translateY(-2px);
+
+    border-color:
+        rgba(255,244,214,.82);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(244,213,141,.16),
+            rgba(212,175,55,.055)
+        );
+
+    color:#fff4d6;
+
     box-shadow:
-        0 14px 42px rgba(212,175,55,.27),
-        inset 0 1px rgba(255,255,255,.85);
+        0 12px 35px rgba(212,175,55,.11),
+        0 0 24px rgba(212,175,55,.045),
+        inset 0 1px rgba(255,255,255,.08);
 }
 
 @keyframes buttonShine{
-    0%,45%{left:-80%}
-    65%,100%{left:135%}
+    0%,48%{
+        left:-75%;
+    }
+
+    68%,100%{
+        left:135%;
+    }
 }
 
 /* ============================================================
@@ -1156,7 +1472,9 @@ button:disabled{
         padding-right:9px;
     }
 
-    .header-actions{gap:4px}
+    .header-actions{
+        gap:4px;
+    }
 
     .service-badge{
         max-width:32%;
@@ -1174,7 +1492,7 @@ button:disabled{
     }
 
     .review-gateway-card{
-        padding:27px 16px 20px;
+        padding:34px 18px 25px;
     }
 
     .customer-care-card{
@@ -1189,7 +1507,8 @@ button:disabled{
     }
 
     .review-gateway-card{
-        border-radius:19px;
+        border-radius:24px;
+        padding:30px 16px 22px;
     }
 
     .review-gateway-title{
@@ -1219,7 +1538,6 @@ button:disabled{
 <header class="header">
 
     <div class="brand">
-
         <h1 class="brand-title">
             Naija Pocket Business Center
         </h1>
@@ -1227,7 +1545,6 @@ button:disabled{
         <div class="brand-subtitle">
             Your Business Center
         </div>
-
     </div>
 
     <div class="header-actions">
@@ -1436,7 +1753,6 @@ button:disabled{
 </section>
 
 </div>
-
 </main>
 
 <section id="customerBottom" class="bottom">
@@ -1665,7 +1981,6 @@ function storageSet(key,value){
     try{
         localStorage.setItem(key,value);
     }catch{}
-
 }
 
 let customerId =
@@ -1844,6 +2159,7 @@ async function apiChat(payload){
         throw new Error(
             "Unable to connect to the Business Center service."
         );
+
     }
 
     let data = {};
@@ -1894,7 +2210,6 @@ function showReviewGateway(){
     reviewGatewayOverlay
         .classList
         .add("show");
-
 }
 
 function closeReviewGateway(){
@@ -1902,7 +2217,6 @@ function closeReviewGateway(){
     reviewGatewayOverlay
         .classList
         .remove("show");
-
 }
 
 function showReview(work){
@@ -1910,9 +2224,7 @@ function showReview(work){
     currentWork = clean(work);
 
     formView.style.display = "none";
-
     reviewView.classList.add("show");
-
 }
 
 /* ============================================================
@@ -2160,6 +2472,7 @@ function renderForm(){
         wrapper.className = "field";
 
         const label = document.createElement("label");
+
         label.htmlFor = field.name;
 
         label.innerHTML =
@@ -2173,10 +2486,14 @@ function renderForm(){
         let input;
 
         if(field.type === "textarea"){
+
             input = document.createElement("textarea");
+
         }else{
+
             input = document.createElement("input");
             input.type = field.type || "text";
+
         }
 
         input.id = field.name;
@@ -2192,7 +2509,6 @@ function renderForm(){
         fields.appendChild(wrapper);
 
     });
-
 }
 
 function collectForm(){
@@ -2229,29 +2545,16 @@ async function loadGuidance(){
         const data = await apiChat({
 
             service,
-
             customer_id:customerId,
-
             job_id:jobId || null,
-
             client_request_id:requestId,
 
             event:"service_selected",
 
             message:
-                `The customer has selected the service "${service}".
-Provide a short customer-facing explanation of:
-- what this service does
-- what the customer will receive
-- what information they should prepare
-- useful documents they may provide
-- the service fee if known
-Do not create the customer's work yet.
-Do not request payment.
-Do not discuss internal systems.`,
+                `The customer has selected the service "${service}".Provide a short customer-facing explanation of:- what this service does- what the customer will receive- what information they should prepare- useful documents they may provide- the service fee if knownDo not create the customer's work yet.Do not request payment.Do not discuss internal systems.`,
 
             create_work:false,
-
             guidance_only:true
 
         });
@@ -2272,7 +2575,6 @@ Do not discuss internal systems.`,
                 "npbc_job_id",
                 jobId
             );
-
         }
 
         const amount =
@@ -2329,9 +2631,7 @@ Do not discuss internal systems.`,
                 price.textContent =
                     "Service: " +
                     service;
-
             }
-
         }
 
         setStatus("");
@@ -2346,9 +2646,7 @@ Do not discuss internal systems.`,
             service;
 
         setStatus("","");
-
     }
-
 }
 
 /* ============================================================
@@ -2368,36 +2666,21 @@ async function createWork(formData){
     );
 
     const message =
-        `The customer has submitted the information required
-for the selected service.
-
-Selected service:
-${service}
-
-Customer information:
-${Object.entries(formData)
-    .map(
-        ([key,value]) =>
-            `${key}: ${value}`
-    )
-    .join("\n\n")}
-
-Please process the customer's request and create the requested
-work according to the active service workflow.
-The customer expects the completed work to proceed to review.`;
+        `The customer has submitted the information requiredfor the selected service.Selected service:${service}Customer information:${Object.entries(formData)
+        .map(
+            ([key,value]) =>
+                `${key}: ${value}`
+        )
+        .join("\n\n")}Please process the customer's request and create the requestedwork according to the active service workflow.The customer expects the completed work to proceed to review.`;
 
     try{
 
         const data = await apiChat({
 
             message,
-
             service,
-
             customer_id:customerId,
-
             job_id:jobId || null,
-
             client_request_id:requestId,
 
             event:"form_submitted",
@@ -2418,7 +2701,6 @@ The customer expects the completed work to proceed to review.`;
                 "npbc_job_id",
                 jobId
             );
-
         }
 
         if(!jobId){
@@ -2426,7 +2708,6 @@ The customer expects the completed work to proceed to review.`;
             throw new Error(
                 "The server completed the request but did not return the active job ID."
             );
-
         }
 
         currentWork = serverWork(data);
@@ -2453,7 +2734,6 @@ The customer expects the completed work to proceed to review.`;
         setBusy(false);
 
     }
-
 }
 
 serviceForm.addEventListener(
@@ -2525,7 +2805,6 @@ function openCustomerCare(){
     customerCareOverlay
         .classList
         .add("show");
-
 }
 
 function closeCustomerCare(){
@@ -2533,7 +2812,6 @@ function closeCustomerCare(){
     customerCareOverlay
         .classList
         .remove("show");
-
 }
 
 customerCareBtn.addEventListener(
@@ -2664,7 +2942,6 @@ fileInput.addEventListener(
                     "npbc_job_id",
                     jobId
                 );
-
             }
 
             setStatus(
@@ -2706,7 +2983,6 @@ fileInput.addEventListener(
                     "npbc_job_id",
                     jobId
                 );
-
             }
 
             const work =
@@ -2721,7 +2997,6 @@ fileInput.addEventListener(
                 if(jobId){
                     showReviewGateway();
                 }
-
             }
 
             setStatus(
@@ -2790,7 +3065,6 @@ function getJobIdFromBackOffice(job){
         job,
         ["job_id","jobId","id"]
     );
-
 }
 
 function getPaymentId(job){
@@ -2803,7 +3077,6 @@ function getPaymentId(job){
             "latest_payment_id"
         ]
     );
-
 }
 
 function getSavedDocument(job){
@@ -2822,7 +3095,6 @@ function getSavedDocument(job){
         job?.approvedWork ||
         {}
     );
-
 }
 
 function getSavedDocumentId(job){
@@ -2842,6 +3114,7 @@ function getSavedDocumentId(job){
             "id"
         ]
     ) ||
+
     valueFrom(
         job,
         [
@@ -2853,7 +3126,6 @@ function getSavedDocumentId(job){
             "documentId"
         ]
     );
-
 }
 
 function getSavedDocumentUrl(job){
@@ -2874,6 +3146,7 @@ function getSavedDocumentUrl(job){
                 "path"
             ]
         ) ||
+
         valueFrom(
             job,
             [
@@ -2885,7 +3158,6 @@ function getSavedDocumentUrl(job){
             ]
         )
     );
-
 }
 
 function getSavedDocumentName(job){
@@ -2904,6 +3176,7 @@ function getSavedDocumentName(job){
                 "title"
             ]
         ) ||
+
         valueFrom(
             job,
             [
@@ -2913,7 +3186,6 @@ function getSavedDocumentName(job){
             ]
         )
     ) || "Saved customer document";
-
 }
 
 function getSavedDocumentVersion(job){
@@ -2929,6 +3201,7 @@ function getSavedDocumentVersion(job){
             "versionNumber"
         ]
     ) ||
+
     valueFrom(
         job,
         [
@@ -2939,7 +3212,6 @@ function getSavedDocumentVersion(job){
             "versionNumber"
         ]
     );
-
 }
 
 function getPaymentStatus(job){
@@ -2955,7 +3227,6 @@ function getPaymentStatus(job){
             ]
         )
     ).toLowerCase();
-
 }
 
 function getDownloadStatus(job){
@@ -3004,7 +3275,6 @@ function getDownloadStatus(job){
         jobValue === "1" ||
         jobValue === "true"
     );
-
 }
 
 function paymentReported(job){
@@ -3021,7 +3291,6 @@ function paymentReported(job){
         statusValue === "paid" ||
         statusValue === "confirmed"
     );
-
 }
 
 function isAwaitingVerification(job){
@@ -3043,7 +3312,6 @@ function isAwaitingVerification(job){
         paymentReported(job) &&
         !getDownloadStatus(job)
     );
-
 }
 
 function getCustomerName(job){
@@ -3058,7 +3326,6 @@ function getCustomerName(job){
             ]
         )
     ) || "Customer";
-
 }
 
 function getServiceName(job){
@@ -3073,7 +3340,6 @@ function getServiceName(job){
             ]
         )
     ) || "Business Center Service";
-
 }
 
 function getCreatedAt(job){
@@ -3089,7 +3355,6 @@ function getCreatedAt(job){
             "reportedAt"
         ]
     );
-
 }
 
 function getAmount(job){
@@ -3104,7 +3369,6 @@ function getAmount(job){
             "serviceAmount"
         ]
     );
-
 }
 
 function formatAmount(value){
@@ -3139,7 +3403,6 @@ function formatAmount(value){
     }
 
     return String(value);
-
 }
 
 async function loadBackOfficeJobs(){
@@ -3174,6 +3437,7 @@ async function loadBackOfficeJobs(){
                 API_BASE + "/api/back-office/jobs",
                 {
                     method:"GET",
+
                     headers:{
                         "Accept":"application/json",
                         "X-Admin-Key":key
@@ -3235,7 +3499,6 @@ async function loadBackOfficeJobs(){
         backOfficeLoadButton.textContent = "LOAD";
 
     }
-
 }
 
 function renderBackOfficeJobs(){
@@ -3359,6 +3622,7 @@ function renderBackOfficeJobs(){
                     );
 
         statuses.innerHTML = `
+
             <span class="back-office-status ${awaiting ? "waiting" : unlocked ? "good" : ""}">
                 ${escapeHtml(paymentLabel)}
             </span>
@@ -3382,6 +3646,7 @@ function renderBackOfficeJobs(){
                       `
                     : ""
             }
+
         `;
 
         card.append(
@@ -3434,14 +3699,18 @@ function renderBackOfficeJobs(){
             document.createElement("button");
 
         viewButton.type = "button";
-        viewButton.className = "back-office-view-document";
-        viewButton.textContent = "VIEW DOCUMENT";
+        viewButton.className =
+            "back-office-view-document";
+
+        viewButton.textContent =
+            "VIEW DOCUMENT";
 
         const unlockButton =
             document.createElement("button");
 
         unlockButton.type = "button";
-        unlockButton.className = "back-office-unlock";
+        unlockButton.className =
+            "back-office-unlock";
 
         if(unlocked){
 
@@ -3512,7 +3781,6 @@ function renderBackOfficeJobs(){
 
     backOfficeActivated.textContent =
         unlockedCount;
-
 }
 
 function openSavedDocument(job){
@@ -3554,7 +3822,6 @@ function openSavedDocument(job){
         ].join("\n");
 
     window.alert(details);
-
 }
 
 async function unlockSavedDocument(
@@ -3625,11 +3892,13 @@ async function unlockSavedDocument(
                 "/api/back-office/activate-download",
                 {
                     method:"POST",
+
                     headers:{
                         "Content-Type":"application/json",
                         "Accept":"application/json",
                         "X-Admin-Key":key
                     },
+
                     body:JSON.stringify({
 
                         job_id:
@@ -3693,7 +3962,9 @@ async function unlockSavedDocument(
     }catch(error){
 
         button.disabled = false;
-        button.textContent = "UNLOCK DOWNLOAD";
+
+        button.textContent =
+            "UNLOCK DOWNLOAD";
 
         setStatus(
             error.message ||
@@ -3702,7 +3973,6 @@ async function unlockSavedDocument(
         );
 
     }
-
 }
 
 function openBackOffice(){
@@ -3728,7 +3998,6 @@ function openBackOffice(){
         "none";
 
     setStatus("Back Office ready.");
-
 }
 
 function exitBackOffice(){
@@ -3746,7 +4015,6 @@ function exitBackOffice(){
         "";
 
     setStatus("");
-
 }
 
 backOfficeEntryButton.addEventListener(
@@ -3801,7 +4069,6 @@ function initBackOffice(){
         "none";
 
     setStatus("Back Office ready.");
-
 }
 
 async function initCustomer(){
@@ -3812,7 +4079,6 @@ async function initCustomer(){
     renderForm();
 
     await loadGuidance();
-
 }
 
 async function init(){
@@ -3825,7 +4091,6 @@ async function init(){
     }
 
     await initCustomer();
-
 }
 
 init();
@@ -3887,10 +4152,12 @@ init();
             );
 
         width =
-            overlay.clientWidth || window.innerWidth;
+            overlay.clientWidth ||
+            window.innerWidth;
 
         height =
-            overlay.clientHeight || window.innerHeight;
+            overlay.clientHeight ||
+            window.innerHeight;
 
         canvas.width =
             Math.floor(width * dpr);
@@ -3912,21 +4179,36 @@ init();
             0,
             0
         );
-
     }
 
     function random(min,max){
+
         return min +
-            Math.random() * (max - min);
+            Math.random() *
+            (max - min);
     }
 
     function spawnRocket(){
 
         rockets.push({
-            x:random(width * .12,width * .88),
+
+            x:random(
+                width * .12,
+                width * .88
+            ),
+
             y:height + 15,
-            targetY:random(height * .12,height * .48),
-            speed:random(7.5,10.5),
+
+            targetY:random(
+                height * .12,
+                height * .48
+            ),
+
+            speed:random(
+                7.5,
+                10.5
+            ),
+
             color:
                 colors[
                     Math.floor(
@@ -3934,8 +4216,8 @@ init();
                         colors.length
                     )
                 ]
-        });
 
+        });
     }
 
     function explode(x,y,color){
@@ -3946,7 +4228,8 @@ init();
             );
 
         const base =
-            Math.random() * Math.PI;
+            Math.random() *
+            Math.PI;
 
         for(let i=0;i<count;i++){
 
@@ -3992,7 +4275,6 @@ init();
                         ]
 
             });
-
         }
 
         for(let i=0;i<6;i++){
@@ -4025,15 +4307,15 @@ init();
                 color:"#fff4d6"
 
             });
-
         }
-
     }
 
     function update(timestamp){
 
         if(!running){
+
             animationId = null;
+
             return;
         }
 
@@ -4055,7 +4337,6 @@ init();
 
             nextSpawn =
                 random(650,1250);
-
         }
 
         for(
@@ -4067,7 +4348,8 @@ init();
             const rocket =
                 rockets[i];
 
-            rocket.y -= rocket.speed;
+            rocket.y -=
+                rocket.speed;
 
             ctx.save();
 
@@ -4107,9 +4389,7 @@ init();
                 );
 
                 rockets.splice(i,1);
-
             }
-
         }
 
         for(
@@ -4121,10 +4401,14 @@ init();
             const particle =
                 particles[i];
 
-            particle.x += particle.vx;
-            particle.y += particle.vy;
+            particle.x +=
+                particle.vx;
+
+            particle.y +=
+                particle.vy;
 
             particle.vx *= .985;
+
             particle.vy =
                 particle.vy * .985 +
                 particle.gravity;
@@ -4169,14 +4453,12 @@ init();
             ctx.fill();
 
             ctx.restore();
-
         }
 
         animationId =
             requestAnimationFrame(
                 update
             );
-
     }
 
     function start(){
@@ -4199,7 +4481,6 @@ init();
             requestAnimationFrame(
                 update
             );
-
     }
 
     function stop(){
@@ -4213,7 +4494,6 @@ init();
             );
 
             animationId = null;
-
         }
 
         particles.length = 0;
@@ -4225,7 +4505,6 @@ init();
             width,
             height
         );
-
     }
 
     window.addEventListener(
@@ -4290,7 +4569,9 @@ init();
             "show"
         )
     ){
+
         start();
+
     }
 
 })();
