@@ -19,16 +19,19 @@ html,body{
 }
 
 body{
-    background:#050505;
+    background:#020202;
     color:#fff;
     font-family:Arial,Helvetica,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
 }
 
 /* =========================================================
-   MAIN PAGE
+   PAGE — DEEP LUXURY ATMOSPHERE
 ========================================================= */
 
 .page{
+    position:relative;
     width:100%;
     height:100vh;
     height:100dvh;
@@ -36,14 +39,64 @@ body{
     display:flex;
     flex-direction:column;
     background:
-        radial-gradient(circle at 50% -20%,rgba(31,164,99,.13),transparent 38%),
-        linear-gradient(145deg,#020202 0%,#090909 45%,#000 100%);
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(212,175,55,.085),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 8% 45%,
+            rgba(31,164,99,.055),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 92% 75%,
+            rgba(180,130,55,.035),
+            transparent 25%
+        ),
+        linear-gradient(
+            145deg,
+            #010101 0%,
+            #070707 43%,
+            #020202 100%
+        );
     overflow:hidden;
 }
 
+/* Subtle cinematic light sweep */
+
+.page::before{
+    content:"";
+    position:absolute;
+    inset:-30%;
+    background:
+        radial-gradient(
+            ellipse at 50% 20%,
+            rgba(255,236,170,.025),
+            transparent 25%
+        );
+    pointer-events:none;
+    animation:ambientBreath 8s ease-in-out infinite;
+}
+
+@keyframes ambientBreath{
+    0%,100%{
+        opacity:.55;
+        transform:scale(1);
+    }
+    50%{
+        opacity:1;
+        transform:scale(1.05);
+    }
+}
+
 /* =========================================================
-   LUXURY WELCOME PANEL
+   ELEGANT GOLD PARTICLE / FIREWORK AMBIENCE
 ========================================================= */
+
+.welcome-half::marker{
+    display:none;
+}
 
 .welcome-half{
     position:relative;
@@ -58,49 +111,103 @@ body{
     text-align:center;
     background:
         radial-gradient(
+            circle at 50% 45%,
+            rgba(212,175,55,.075),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 18% 70%,
+            rgba(31,164,99,.055),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 82% 25%,
+            rgba(212,175,55,.045),
+            transparent 22%
+        ),
+        radial-gradient(
             ellipse at 50% 35%,
-            #242424 0%,
-            #101010 42%,
+            #202020 0%,
+            #0e0e0e 42%,
             #050505 78%,
             #000 100%
         );
-    border:1px solid rgba(212,175,55,.30);
-    border-bottom:2px solid #d4af37;
+    border:1px solid rgba(212,175,55,.34);
+    border-bottom:2px solid rgba(212,175,55,.82);
     border-radius:10px;
     box-shadow:
-        inset 0 0 45px rgba(255,255,255,.025),
-        0 8px 35px rgba(0,0,0,.65);
+        inset 0 0 55px rgba(255,255,255,.025),
+        inset 0 -18px 35px rgba(0,0,0,.28),
+        0 8px 35px rgba(0,0,0,.68);
 }
 
-/* Luxury inner frame */
+/* Firework burst 1 */
 
 .welcome-half::before{
     content:"";
     position:absolute;
-    top:7px;
-    left:7px;
-    right:7px;
-    bottom:7px;
-    border:1px solid rgba(212,175,55,.22);
-    border-radius:7px;
+    top:10%;
+    left:50%;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:#f4d58d;
+    box-shadow:
+        0 -38px 0 -1px rgba(244,213,141,.7),
+        0 38px 0 -1px rgba(244,213,141,.7),
+        -38px 0 0 -1px rgba(244,213,141,.7),
+        38px 0 0 -1px rgba(244,213,141,.7),
+        -27px -27px 0 -1px rgba(244,213,141,.55),
+        27px -27px 0 -1px rgba(244,213,141,.55),
+        -27px 27px 0 -1px rgba(244,213,141,.55),
+        27px 27px 0 -1px rgba(244,213,141,.55),
+        0 -67px 0 -1px rgba(212,175,55,.22),
+        0 67px 0 -1px rgba(212,175,55,.22),
+        -67px 0 0 -1px rgba(212,175,55,.22),
+        67px 0 0 -1px rgba(212,175,55,.22);
+    opacity:.34;
+    filter:blur(.15px);
+    animation:
+        fireworkPulse 5.5s ease-in-out infinite,
+        fireworkRotate 14s linear infinite;
     pointer-events:none;
 }
 
-/* Corner ornaments */
+/* Inner frame + second atmospheric burst */
 
 .welcome-half::after{
     content:"";
     position:absolute;
-    width:80px;
-    height:80px;
-    top:-45px;
-    right:-45px;
-    border:1px solid rgba(212,175,55,.25);
-    border-radius:50%;
+    inset:7px;
+    border:1px solid rgba(212,175,55,.20);
+    border-radius:7px;
     box-shadow:
-        0 0 0 12px rgba(212,175,55,.025),
-        0 0 0 24px rgba(212,175,55,.018);
+        inset 0 0 28px rgba(212,175,55,.018);
     pointer-events:none;
+}
+
+@keyframes fireworkPulse{
+    0%,100%{
+        opacity:.18;
+        transform:scale(.82);
+    }
+    35%{
+        opacity:.5;
+        transform:scale(1.06);
+    }
+    55%{
+        opacity:.28;
+        transform:scale(.92);
+    }
+}
+
+@keyframes fireworkRotate{
+    from{
+        rotate:0deg;
+    }
+    to{
+        rotate:360deg;
+    }
 }
 
 /* =========================================================
@@ -122,15 +229,15 @@ body{
     position:relative;
     min-width:145px;
     padding:7px 13px 8px;
-    border:1px solid rgba(212,175,55,.55);
+    border:1px solid rgba(212,175,55,.58);
     border-top:0;
     border-radius:0 0 5px 5px;
     background:
         linear-gradient(
             180deg,
-            rgba(212,175,55,.10),
-            rgba(8,8,8,.96) 48%,
-            rgba(0,0,0,.98)
+            rgba(212,175,55,.12),
+            rgba(9,9,9,.97) 48%,
+            rgba(0,0,0,.99)
         );
     color:#f1d77b;
     font-family:Georgia,"Times New Roman",serif;
@@ -149,7 +256,8 @@ body{
         background .2s ease,
         border-color .2s ease,
         color .2s ease,
-        box-shadow .2s ease;
+        box-shadow .2s ease,
+        transform .2s ease;
 }
 
 .customer-care-button::before{
@@ -162,7 +270,7 @@ body{
         linear-gradient(
             90deg,
             transparent,
-            #d4af37 50%,
+            #f1d77b 50%,
             transparent
         );
 }
@@ -178,7 +286,7 @@ body{
         linear-gradient(
             90deg,
             transparent,
-            rgba(31,164,99,.75),
+            rgba(31,164,99,.8),
             transparent
         );
 }
@@ -186,17 +294,17 @@ body{
 .customer-care-button:hover,
 .customer-care-button:focus-visible{
     color:#fff;
-    border-color:rgba(212,175,55,.85);
+    border-color:rgba(212,175,55,.88);
     background:
         linear-gradient(
             180deg,
-            rgba(212,175,55,.17),
-            rgba(10,10,10,.97) 48%,
+            rgba(212,175,55,.18),
+            rgba(10,10,10,.98) 48%,
             rgba(0,0,0,.99)
         );
     box-shadow:
         0 6px 22px rgba(0,0,0,.65),
-        0 0 16px rgba(212,175,55,.08),
+        0 0 18px rgba(212,175,55,.09),
         inset 0 1px 0 rgba(255,255,255,.07);
     outline:none;
 }
@@ -213,14 +321,14 @@ body{
     background:
         linear-gradient(
             145deg,
-            rgba(20,20,20,.99),
-            rgba(2,2,2,.99)
+            rgba(21,21,21,.995),
+            rgba(2,2,2,.995)
         );
-    border:1px solid rgba(212,175,55,.42);
-    border-radius:4px;
+    border:1px solid rgba(212,175,55,.44);
+    border-radius:5px;
     box-shadow:
-        0 12px 30px rgba(0,0,0,.78),
-        0 0 18px rgba(212,175,55,.035),
+        0 12px 30px rgba(0,0,0,.82),
+        0 0 20px rgba(212,175,55,.04),
         inset 0 1px 0 rgba(255,255,255,.04);
 }
 
@@ -319,9 +427,8 @@ body{
     opacity:.9;
 }
 
-/* Main brand moved slightly downward */
-
 .brand-name{
+    position:relative;
     width:100%;
     margin:8px 0 0;
     color:#fff;
@@ -331,30 +438,52 @@ body{
     line-height:1.08;
     letter-spacing:clamp(1px,.5vw,4px);
     text-transform:uppercase;
-    text-shadow:0 2px 25px rgba(0,0,0,.8);
+    text-shadow:
+        0 2px 25px rgba(0,0,0,.8),
+        0 0 35px rgba(255,255,255,.025);
     flex:0 0 auto;
 }
 
+/* Fine metallic highlight */
+
+.brand-name::after{
+    content:"";
+    position:absolute;
+    left:20%;
+    right:20%;
+    bottom:-5px;
+    height:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(212,175,55,.18),
+            rgba(255,244,214,.42),
+            rgba(212,175,55,.18),
+            transparent
+        );
+}
+
 /* =========================================================
-   UPPER HALF LUXURY COLOUR PALETTE
+   BRAND COLOURS
 ========================================================= */
 
 .brand-name .green{
     color:#39B87F;
     text-shadow:
-        0 0 18px rgba(57,184,127,.12),
+        0 0 18px rgba(57,184,127,.13),
         0 2px 25px rgba(0,0,0,.8);
 }
 
 .brand-name .gold{
     color:#E8C96A;
     text-shadow:
-        0 0 18px rgba(232,201,106,.12),
+        0 0 18px rgba(232,201,106,.15),
         0 2px 25px rgba(0,0,0,.8);
 }
 
 .brand-kicker{
-    color:#B99BE8;
+    color:#C2A6E8;
 }
 
 .value:first-of-type{
@@ -396,6 +525,7 @@ body{
         );
     position:relative;
     flex:0 0 auto;
+    box-shadow:0 0 8px rgba(212,175,55,.13);
 }
 
 .gold-divider::before,
@@ -407,6 +537,7 @@ body{
     height:6px;
     border:1px solid #d4af37;
     transform:translateY(-50%) rotate(45deg);
+    box-shadow:0 0 7px rgba(212,175,55,.16);
 }
 
 .gold-divider::before{
@@ -505,6 +636,7 @@ body{
     line-height:1.1;
     letter-spacing:clamp(.8px,.25vw,2px);
     text-transform:uppercase;
+    text-shadow:0 2px 12px rgba(212,175,55,.07);
 }
 
 /* =========================================================
@@ -517,6 +649,8 @@ body{
     margin:0;
     padding:2px 0;
     flex:0 0 auto;
+    border-top:1px solid rgba(212,175,55,.045);
+    border-bottom:1px solid rgba(212,175,55,.045);
 }
 
 .document-people-track{
@@ -532,6 +666,7 @@ body{
     letter-spacing:clamp(1px,.35vw,3px);
     animation:documentPeopleMove 22s linear infinite;
     will-change:transform;
+    text-shadow:0 0 12px rgba(212,175,55,.08);
 }
 
 .document-people-track .tagline-text{
@@ -563,6 +698,7 @@ body{
 ========================================================= */
 
 .services-half{
+    position:relative;
     width:100%;
     height:50%;
     flex:0 0 50%;
@@ -577,6 +713,7 @@ body{
 ========================================================= */
 
 .service-instruction{
+    position:relative;
     width:100%;
     flex:0 0 auto;
     margin:0 0 5px;
@@ -592,6 +729,13 @@ body{
     text-shadow:0 1px 8px rgba(212,175,106,.30);
     border-top:1px solid rgba(212,175,106,.70);
     border-bottom:1px solid rgba(212,175,106,.45);
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(212,175,55,.025),
+            transparent
+        );
 }
 
 /* =========================================================
@@ -623,11 +767,11 @@ body{
     background:
         linear-gradient(
             145deg,
-            rgba(255,255,255,.035),
+            rgba(255,255,255,.040),
             rgba(255,255,255,.008)
         );
     color:#f4f2eb;
-    border:1px solid rgba(255,255,255,.055);
+    border:1px solid rgba(255,255,255,.065);
     border-radius:5px;
     font-family:Arial,Helvetica,sans-serif;
     font-size:clamp(10px,2.5vw,17px);
@@ -642,13 +786,29 @@ body{
     overflow:hidden;
     cursor:pointer;
     -webkit-tap-highlight-color:transparent;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.025),
+        inset 0 -1px 0 rgba(0,0,0,.4);
     transition:
         color .18s ease,
         background .18s ease,
         border-color .18s ease,
         transform .18s ease,
         box-shadow .18s ease;
+}
+
+.service-button::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(255,255,255,.025),
+            transparent 50%
+        );
+    pointer-events:none;
 }
 
 .service-button::after{
@@ -667,11 +827,14 @@ body{
         );
     opacity:.65;
     pointer-events:none;
-    transition:left .18s ease,right .18s ease,opacity .18s ease;
+    transition:
+        left .18s ease,
+        right .18s ease,
+        opacity .18s ease;
 }
 
 /* =========================================================
-   LUXURY SERVICE COLOR PALETTE
+   LUXURY SERVICE COLOUR PALETTE
 ========================================================= */
 
 .service-button:nth-child(1){color:#F4D58D;}
@@ -703,20 +866,25 @@ body{
 .service-button:nth-child(27){color:#E8B4A8;}
 .service-button:nth-child(28){color:#FFF4D6;}
 
-.service-button:hover{
+.service-button:hover,
+.service-button:focus-visible{
     color:#d4af37;
     background:
         linear-gradient(
             145deg,
-            rgba(212,175,55,.09),
-            rgba(31,164,99,.035)
+            rgba(212,175,55,.105),
+            rgba(31,164,99,.045)
         );
-    border-color:rgba(212,175,55,.28);
-    box-shadow:0 0 15px rgba(212,175,55,.06);
+    border-color:rgba(212,175,55,.34);
+    box-shadow:
+        0 0 15px rgba(212,175,55,.065),
+        inset 0 1px 0 rgba(255,255,255,.045);
     transform:translateY(-1px);
+    outline:none;
 }
 
-.service-button:hover::after{
+.service-button:hover::after,
+.service-button:focus-visible::after{
     left:12%;
     right:12%;
     opacity:1;
@@ -730,7 +898,15 @@ body{
 .service-button.working{
     color:#d4af37;
     border-color:rgba(212,175,55,.55);
-    background:rgba(212,175,55,.06);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(212,175,55,.10),
+            rgba(212,175,55,.025)
+        );
+    box-shadow:
+        0 0 17px rgba(212,175,55,.075),
+        inset 0 1px 0 rgba(255,255,255,.04);
 }
 
 .service-button:disabled{
@@ -740,7 +916,6 @@ body{
 
 /* =========================================================
    FINAL BRAND SIGNATURE
-   DOUBLE ARROW/DASH SIGNS REMOVED
 ========================================================= */
 
 .luxury-tagline{
@@ -805,6 +980,7 @@ body{
     margin-top:1px;
     font-weight:400;
     letter-spacing:clamp(.3px,.15vw,1.3px);
+    color:#e7d6a4;
 }
 
 /* =========================================================
@@ -823,11 +999,8 @@ body{
         border-radius:8px;
     }
 
-    .welcome-half::before{
-        top:5px;
-        left:5px;
-        right:5px;
-        bottom:5px;
+    .welcome-half::after{
+        inset:5px;
     }
 
     .customer-care{
@@ -1059,6 +1232,24 @@ body{
 
     .luxury-tagline{
         font-size:clamp(13px,1.8vw,17px);
+    }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+    .page::before,
+    .welcome-half::before,
+    .document-people-track{
+        animation:none;
+    }
+
+    .service-button,
+    .customer-care-button{
+        transition:none;
     }
 }
 </style>
