@@ -613,13 +613,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
   line-height:1.5
 }
 
-.payment-id{
-  margin-top:6px;
-  color:#aaa;
-  font-size:9px;
-  word-break:break-all
-}
-
 .payment-message{
   margin-top:7px;
   color:#888;
@@ -768,18 +761,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
   letter-spacing:.5px
 }
 
-.payment-input{
-  width:100%;
-  height:40px;
-  padding:0 10px;
-  background:#181818;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
-  color:#fff;
-  outline:none;
-  font-size:10px
-}
-
 .payment-note-input{
   width:100%;
   min-height:65px;
@@ -830,17 +811,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 .modal-status.error{color:#ff7777}
 .modal-status.success{color:#75dc99}
-
-.modal-payment-id{
-  margin-top:8px;
-  padding:7px;
-  background:#080808;
-  border-radius:6px;
-  color:#999;
-  font-size:8px;
-  word-break:break-all;
-  text-align:center
-}
 
 /* TWO-HALF REVIEW LAYOUT */
 
@@ -1064,10 +1034,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
     line-height:1.3!important
   }
 
-  .action-area .payment-id{
-    font-size:8px!important
-  }
-
   .page-navigation{
     margin-top:7px!important
   }
@@ -1271,8 +1237,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
     Payment setup is ready.
   </div>
 
-  <div id="paymentId" class="payment-id" style="display:none"></div>
-
   <div
     id="paymentMessage"
     class="payment-message payment-locked"
@@ -1337,25 +1301,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
       <label
         class="payment-input-label"
-        for="paymentReferenceInput"
-      >
-        PAYMENT REFERENCE
-      </label>
-
-      <input
-        id="paymentReferenceInput"
-        class="payment-input"
-        type="text"
-        autocomplete="off"
-        placeholder="Enter your bank transfer reference"
-      >
-
-    </div>
-
-    <div class="payment-input-group">
-
-      <label
-        class="payment-input-label"
         for="paymentNoteInput"
       >
         NOTE (OPTIONAL)
@@ -1369,14 +1314,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
     </div>
 
-    <div
-      id="modalPaymentId"
-      class="modal-payment-id"
-      style="display:none"
-    ></div>
-
     <div id="modalStatus" class="modal-status">
-      Payment is ready. Make your bank transfer, then enter the payment reference and tap I HAVE MADE PAYMENT.
+      Payment is ready. Make your bank transfer, then tap I HAVE MADE PAYMENT.
     </div>
 
     <div class="modal-buttons">
@@ -1428,7 +1367,34 @@ const jobId =
   (params.get("job_id") || "").trim();
 
 const service =
-  (params.get("service") || "Business Center Service").trim();
+  (
+    params.get("service") ||
+    params.get("selected_service") ||
+    "Business Center Service"
+  ).trim();
+
+
+/*
+  IMPORTANT:
+  job_id is retained only because the existing Review API uses it
+  to load/correct the review.
+
+  It is NOT used as:
+  - product identity
+  - payment identity
+  - download identity
+  - payment reference
+*/
+
+let documentTitle =
+  (
+    params.get("title") ||
+    params.get("document_title") ||
+    params.get("documentTitle") ||
+    params.get("work_title") ||
+    params.get("workTitle") ||
+    ""
+  ).trim();
 
 
 /* ============================================================
@@ -1454,9 +1420,7 @@ const pageReview = $("pageReview");
 const pageReviewText = $("pageReviewText");
 const correctionInput = $("correctionInput");
 const correctionButton = $("correctionButton");
-const paymentSection = $("paymentSection");
 const paymentDetails = $("paymentDetails");
-const paymentId = $("paymentId");
 const makePaymentButton = $("makePaymentButton");
 const paymentButton = $("paymentButton");
 const downloadButton = $("downloadButton");
@@ -1465,9 +1429,7 @@ const message = $("message");
 
 const paymentModal = $("paymentModal");
 const modalAmount = $("modalAmount");
-const paymentReferenceInput = $("paymentReferenceInput");
 const paymentNoteInput = $("paymentNoteInput");
-const modalPaymentId = $("modalPaymentId");
 const modalStatus = $("modalStatus");
 const closePaymentModal = $("closePaymentModal");
 const modalReportButton = $("modalReportButton");
@@ -1488,6 +1450,7 @@ let reviewFinished = false;
 let paid = false;
 let paymentStarted = false;
 let paymentPending = false;
+let downloadUnlocked = false;
 
 let busy = false;
 
@@ -1498,92 +1461,8 @@ let paymentPollTimer = null;
 let amount = 0;
 let billing = "";
 
-let paymentIdentifier = "";
-
 let customerId = "";
 let documentFilename = "";
-
-
-/* ============================================================
-   PAYMENT STORAGE IS SCOPED TO CURRENT JOB + VERSION
-   ============================================================ */
-
-function paymentStorageKey(){
-  if(!jobId || !versionId)return "";
-  return "npbc_payment_context_" +
-    encodeURIComponent(jobId) +
-    "_" +
-    encodeURIComponent(versionId);
-}
-
-function readScopedPaymentContext(){
-
-  const key = paymentStorageKey();
-
-  if(!key)return null;
-
-  try{
-
-    const raw = localStorage.getItem(key);
-
-    if(!raw)return null;
-
-    const data = JSON.parse(raw);
-
-    if(
-      !data ||
-      String(data.job_id || "") !== String(jobId) ||
-      String(data.version_id || "") !== String(versionId)
-    ){
-      localStorage.removeItem(key);
-      return null;
-    }
-
-    return data;
-
-  }catch(_e){
-
-    try{
-      localStorage.removeItem(key);
-    }catch(__e){}
-
-    return null;
-  }
-}
-
-function saveScopedPaymentContext(){
-
-  const key = paymentStorageKey();
-
-  if(!key || !paymentIdentifier)return;
-
-  try{
-
-    localStorage.setItem(
-      key,
-      JSON.stringify({
-        job_id: jobId,
-        version_id: versionId,
-        payment_id: paymentIdentifier,
-        amount: amount,
-        service: service,
-        updated_at: new Date().toISOString()
-      })
-    );
-
-  }catch(_e){}
-}
-
-function clearScopedPaymentContext(){
-
-  const key = paymentStorageKey();
-
-  if(!key)return;
-
-  try{
-    localStorage.removeItem(key);
-  }catch(_e){}
-}
 
 
 /* ============================================================
@@ -1615,6 +1494,74 @@ function complete(d){
       state() === "review_complete" ||
       d.review_finished === true
     );
+}
+
+
+/* ============================================================
+   DOCUMENT TITLE
+   ============================================================ */
+
+function extractDocumentTitle(d){
+
+  const candidates = [
+
+    d?.document_title,
+    d?.documentTitle,
+    d?.title,
+    d?.work_title,
+    d?.workTitle,
+
+    d?.document?.document_title,
+    d?.document?.documentTitle,
+    d?.document?.title,
+    d?.document?.work_title,
+    d?.document?.workTitle,
+
+    d?.result?.document_title,
+    d?.result?.documentTitle,
+    d?.result?.title,
+    d?.result?.work_title,
+    d?.result?.workTitle,
+
+    d?.review?.document_title,
+    d?.review?.documentTitle,
+    d?.review?.title,
+    d?.review?.work_title,
+    d?.review?.workTitle,
+
+    d?.output?.document_title,
+    d?.output?.documentTitle,
+    d?.output?.title,
+    d?.output?.work_title,
+    d?.output?.workTitle,
+
+    d?.job?.document_title,
+    d?.job?.documentTitle,
+    d?.job?.title,
+    d?.job?.work_title,
+    d?.job?.workTitle
+  ];
+
+  for(const value of candidates){
+
+    const v = clean(value);
+
+    if(v)return v;
+  }
+
+  return "";
+}
+
+function ensureDocumentTitle(d){
+
+  const found =
+    extractDocumentTitle(d);
+
+  if(found){
+    documentTitle = found;
+  }
+
+  return documentTitle;
 }
 
 
@@ -2352,15 +2299,16 @@ function updateButtons(){
   paymentButton.disabled =
     busy ||
     !paymentStarted ||
+    paymentPending ||
     paid;
 
   downloadButton.disabled =
     busy ||
-    !paid;
+    !downloadUnlocked;
 
   downloadButton.classList.toggle(
     "active",
-    paid
+    downloadUnlocked
   );
 }
 
@@ -2376,13 +2324,15 @@ function updatePaymentPanel(){
       ? "₦" + amount.toLocaleString()
       : "Quotation required";
 
-  if(paid){
+  if(downloadUnlocked){
 
     paymentDetails.textContent =
       "Service: " +
       (service || "Business Center Service") +
+      "\nDocument: " +
+      (documentTitle || "Approved Document") +
       "\nPayment status: VERIFIED" +
-      "\nYour approved document is ready for download.";
+      "\nDownload status: UNLOCKED";
 
     paymentMessage.className =
       "payment-message payment-ready";
@@ -2398,6 +2348,8 @@ function updatePaymentPanel(){
     paymentDetails.textContent =
       "Service: " +
       (service || "Business Center Service") +
+      "\nDocument: " +
+      (documentTitle || "Approved Document") +
       "\nAmount: ₦" +
       Number(amount || 0).toLocaleString() +
       "\nPayment status: AWAITING VERIFICATION";
@@ -2416,6 +2368,8 @@ function updatePaymentPanel(){
     paymentDetails.textContent =
       "Service: " +
       (service || "Business Center Service") +
+      "\nDocument: " +
+      (documentTitle || "Approved Document") +
       "\nAmount: ₦" +
       Number(amount || 0).toLocaleString() +
       "\nPayment status: PAYMENT READY";
@@ -2434,6 +2388,8 @@ function updatePaymentPanel(){
     paymentDetails.textContent =
       "Service: " +
       (service || "Business Center Service") +
+      "\nDocument: " +
+      (documentTitle || "Document title required") +
       "\nAmount: " +
       (
         amount > 0
@@ -2447,43 +2403,18 @@ function updatePaymentPanel(){
 
     paymentMessage.textContent =
       amount > 0
-        ? "Your exact reviewed document will be securely saved when you select MAKE PAYMENT."
+        ? (
+          documentTitle
+            ? "Your exact reviewed document will be securely saved when you select MAKE PAYMENT."
+            : "The document title could not be identified. Payment cannot be started yet."
+        )
         : "A quotation is required before payment can be started.";
 
     makePaymentButton.textContent =
       "MAKE PAYMENT";
   }
 
-  if(paymentIdentifier){
-
-    paymentId.style.display =
-      "block";
-
-    paymentId.textContent =
-      "Payment ID: " +
-      paymentIdentifier;
-
-    modalPaymentId.style.display =
-      "block";
-
-    modalPaymentId.textContent =
-      "Payment ID: " +
-      paymentIdentifier;
-
-  }else{
-
-    paymentId.style.display =
-      "none";
-
-    paymentId.textContent = "";
-
-    modalPaymentId.style.display =
-      "none";
-
-    modalPaymentId.textContent = "";
-  }
-
-  if(paid){
+  if(downloadUnlocked){
 
     downloadButton.disabled = false;
 
@@ -2506,14 +2437,10 @@ function updatePaymentPanel(){
       "🔒 DOWNLOAD DOCUMENT";
   }
 
-  paymentButton.style.display =
-    paymentPending && !paid
-      ? "block"
-      : "block";
-
   paymentButton.disabled =
     busy ||
     !paymentStarted ||
+    paymentPending ||
     paid;
 
   updateButtons();
@@ -2686,6 +2613,8 @@ function applyJob(d){
   reviewFinished =
     complete(d);
 
+  ensureDocumentTitle(d);
+
   customerId =
     clean(
       d.customer_id ||
@@ -2756,59 +2685,41 @@ function applyJob(d){
     billing;
 
   /*
-    Only accept a payment ID supplied by the CURRENT
-    job/review response. Never pull a global payment_id.
+    Payment IDs are intentionally ignored.
+    Service + Document Title is the payment/product identity.
   */
-
-  const jobPaymentId =
-    clean(
-      d.payment_id ||
-      d.paymentId ||
-      d.payment?.payment_id ||
-      d.payment?.id
-    );
-
-  if(jobPaymentId){
-
-    paymentIdentifier =
-      jobPaymentId;
-
-    paymentStarted = true;
-
-  }else if(
-    !paymentIdentifier &&
-    versionId
-  ){
-
-    const stored =
-      readScopedPaymentContext();
-
-    if(stored?.payment_id){
-
-      paymentIdentifier =
-        clean(stored.payment_id);
-    }
-  }
 
   paid =
     !!(
-      d.paid ||
       d.payment_verified ||
-      d.download_unlocked
+      d.paymentVerified
+    );
+
+  downloadUnlocked =
+    !!(
+      d.download_unlocked ||
+      d.downloadUnlocked ||
+      d.download_activated ||
+      d.downloadActivated
     );
 
   paymentPending =
     !!(
       d.payment_pending ||
       d.payment_reported ||
-      d.awaiting_verification
+      d.paymentReported ||
+      d.awaiting_verification ||
+      d.awaitingVerification
     );
 
   paymentStarted =
-    paymentStarted ||
-    paymentPending ||
-    !!paymentIdentifier ||
-    paid;
+    !!(
+      d.payment_started ||
+      d.paymentStarted ||
+      paymentPending ||
+      paid ||
+      downloadUnlocked
+    );
 
   if(totalPages){
 
@@ -2916,7 +2827,7 @@ function applyJob(d){
    PAYMENT STATUS
    ============================================================ */
 
-function isPaymentNotFound(error){
+function isProductNotFound(error){
 
   const code =
     clean(
@@ -2926,176 +2837,49 @@ function isPaymentNotFound(error){
 
   return (
     Number(error?.status) === 404 ||
-    code.includes("PAYMENT_NOT_FOUND") ||
-    code.includes("PAYMENT RECORD NOT FOUND")
+    code.includes("PRODUCT_NOT_FOUND") ||
+    code.includes("PRODUCT NOT FOUND")
   );
 }
 
-function paymentBelongsToCurrentJobVersion(d){
 
-  const p =
-    d?.payment &&
-    typeof d.payment === "object"
-      ? d.payment
-      : {};
+/*
+  Restore payment/product state using the current
+  Service + Document Title identity.
 
-  const returnedJobId =
-    clean(
-      d.job_id ||
-      d.jobId ||
-      p.job_id ||
-      p.jobId
-    );
-
-  const returnedVersionId =
-    clean(
-      d.version_id ||
-      d.versionId ||
-      d.document_version ||
-      p.version_id ||
-      p.versionId ||
-      p.document_version
-    );
-
-  if(
-    returnedJobId &&
-    String(returnedJobId) !==
-    String(jobId)
-  ){
-    return false;
-  }
-
-  if(
-    returnedVersionId &&
-    String(returnedVersionId) !==
-    String(versionId)
-  ){
-    return false;
-  }
-
-  return true;
-}
+  A missing product is normal before MAKE PAYMENT and
+  therefore is silently treated as "not started".
+*/
 
 async function loadPaymentState(){
 
-  if(
-    !versionId &&
-    !paymentIdentifier
-  ){
+  if(!service || !documentTitle){
     return null;
   }
 
-  /*
-    First use a payment ID belonging to the current
-    job/version only. If none exists, ask the API for
-    the current job/version.
-  */
-
-  let identifier =
-    clean(paymentIdentifier);
-
   try{
-
-    if(!identifier){
-
-      const stored =
-        readScopedPaymentContext();
-
-      if(stored?.payment_id){
-
-        identifier =
-          clean(stored.payment_id);
-      }
-    }
-
-    let q = "";
-
-    if(identifier){
-
-      q =
-        "?payment_id=" +
-        encodeURIComponent(identifier);
-
-    }else{
-
-      q =
-        "?job_id=" +
-        encodeURIComponent(jobId) +
-        "&version_id=" +
-        encodeURIComponent(versionId);
-    }
 
     const d =
       await paymentGet(
-        "/api/payment/status" + q
+        "/api/payment/status?service=" +
+        encodeURIComponent(service) +
+        "&title=" +
+        encodeURIComponent(documentTitle)
       );
-
-    if(!paymentBelongsToCurrentJobVersion(d)){
-
-      clearScopedPaymentContext();
-
-      paymentIdentifier = "";
-      paymentStarted = false;
-      paymentPending = false;
-      paid = false;
-
-      updatePaymentPanel();
-
-      return null;
-    }
 
     const p =
-      d.payment &&
-      typeof d.payment === "object"
-        ? d.payment
-        : {};
+      d.product &&
+      typeof d.product === "object"
+        ? d.product
+        : d;
 
-    paymentIdentifier =
-      clean(
-        d.payment_id ||
-        p.payment_id ||
-        d.order_number ||
-        d.reference ||
-        p.order_number ||
-        p.reference
-      ) ||
-      identifier ||
-      paymentIdentifier;
-
-    const status =
+    const paymentStatus =
       clean(
         d.payment_status ||
+        p.payment_status ||
         d.status ||
-        p.payment_status
+        p.status
       ).toLowerCase();
-
-    paid =
-      !!(
-        d.paid ||
-        d.payment_verified ||
-        d.download_unlocked ||
-        p.paid ||
-        p.payment_verified ||
-        p.download_unlocked
-      );
-
-    paymentPending =
-      !paid &&
-      [
-        "pending",
-        "reported",
-        "payment_reported",
-        "verification_pending",
-        "awaiting_verification",
-        "pending_verification",
-        "payment_pending"
-      ].includes(status);
-
-    paymentStarted =
-      paymentStarted ||
-      paymentPending ||
-      !!paymentIdentifier ||
-      paid;
 
     amount =
       Number(
@@ -3111,7 +2895,44 @@ async function loadPaymentState(){
       ) ||
       billing;
 
-    saveScopedPaymentContext();
+    paid =
+      !!(
+        d.payment_verified ||
+        d.paymentVerified ||
+        p.payment_verified ||
+        p.paymentVerified
+      );
+
+    downloadUnlocked =
+      !!(
+        d.download_unlocked ||
+        d.downloadUnlocked ||
+        p.download_unlocked ||
+        p.downloadUnlocked
+      );
+
+    paymentPending =
+      !paid &&
+      !downloadUnlocked &&
+      (
+        !!(
+          d.payment_reported ||
+          d.paymentReported ||
+          p.payment_reported ||
+          p.paymentReported
+        ) ||
+        [
+          "reported",
+          "payment_reported",
+          "verification_pending",
+          "awaiting_verification",
+          "pending_verification",
+          "pending"
+        ].includes(paymentStatus)
+      );
+
+    paymentStarted =
+      true;
 
     updatePaymentPanel();
 
@@ -3119,38 +2940,28 @@ async function loadPaymentState(){
 
   }catch(e){
 
-    if(isPaymentNotFound(e)){
+    /*
+      PRODUCT_NOT_FOUND simply means this reviewed
+      document has not yet entered payment preparation.
+    */
 
-      /*
-        IMPORTANT:
-        Never leave a stale payment ID in Review.
-        A missing payment is treated as invalid payment
-        context for this exact job/version.
-      */
+    if(isProductNotFound(e)){
 
-      clearScopedPaymentContext();
-
-      paymentIdentifier = "";
       paymentStarted = false;
       paymentPending = false;
       paid = false;
+      downloadUnlocked = false;
 
       updatePaymentPanel();
 
       return null;
     }
 
-    if(
-      paymentStarted ||
-      paymentIdentifier
-    ){
-
-      paymentMessage.className =
-        "payment-message payment-waiting";
-
-      paymentMessage.textContent =
-        "Payment status could not be checked right now. Your payment record has not been removed. Please try again shortly.";
-    }
+    /*
+      Do not show the old payment-ID error.
+      Payment status lookup must never make Review appear
+      broken when the product itself is still available.
+    */
 
     return null;
   }
@@ -3171,7 +2982,16 @@ async function loadJob(){
 
   applyJob(d);
 
-  await loadPaymentState();
+  /*
+    Only check product/payment state after the title
+    has been identified. The product API is independent
+    from the Review API.
+  */
+
+  if(documentTitle){
+
+    await loadPaymentState();
+  }
 
   return d;
 }
@@ -3189,18 +3009,24 @@ function startPaymentPolling(){
 
     paymentPollTimer = null;
 
-    if(!paymentStarted || paid){
+    if(
+      !paymentStarted ||
+      downloadUnlocked
+    ){
       return;
     }
 
     await loadPaymentState();
 
-    if(!paid){
+    if(
+      paymentStarted &&
+      !downloadUnlocked
+    ){
 
       paymentPollTimer =
         setTimeout(
           poll,
-          3000
+          5000
         );
     }
   };
@@ -3208,7 +3034,7 @@ function startPaymentPolling(){
   paymentPollTimer =
     setTimeout(
       poll,
-      3000
+      5000
     );
 }
 
@@ -3316,18 +3142,17 @@ correctionButton.onclick =
 
       /*
         A correction creates a new reviewed version.
-        Any payment belonging to the previous version
-        must no longer be reused.
+        The previous saved/payment state must not be
+        reused for the new version.
       */
 
       paid = false;
       paymentStarted = false;
       paymentPending = false;
-      paymentIdentifier = "";
+      downloadUnlocked = false;
+
       amount = 0;
       billing = "";
-
-      clearScopedPaymentContext();
 
       if(paymentPollTimer){
 
@@ -3383,30 +3208,36 @@ function openPaymentModal(){
       ? "₦" + amount.toLocaleString()
       : "Quotation required";
 
-  modalPaymentId.style.display =
-    paymentIdentifier
-      ? "block"
-      : "none";
-
-  modalPaymentId.textContent =
-    paymentIdentifier
-      ? "Payment ID: " + paymentIdentifier
-      : "";
-
   modalStatus.className =
     "modal-status";
 
-  modalStatus.textContent =
-    paymentPending
-      ? "Payment has already been reported. Customer Care is verifying it."
-      : "Make your bank transfer using the account details above, then enter your payment reference and tap I HAVE MADE PAYMENT.";
+  if(downloadUnlocked){
+
+    modalStatus.className =
+      "modal-status success";
+
+    modalStatus.textContent =
+      "Payment has been verified and your document is unlocked.";
+
+    modalReportButton.disabled = true;
+
+  }else if(paymentPending){
+
+    modalStatus.textContent =
+      "Payment has already been reported. Customer Care is verifying it.";
+
+    modalReportButton.disabled = true;
+
+  }else{
+
+    modalStatus.textContent =
+      "Make your bank transfer using the account details above, then tap I HAVE MADE PAYMENT.";
+
+    modalReportButton.disabled =
+      false;
+  }
 
   paymentModal.classList.add("show");
-
-  setTimeout(
-    () => paymentReferenceInput.focus(),
-    100
-  );
 }
 
 function closePaymentPopup(){
@@ -3418,7 +3249,7 @@ function closePaymentPopup(){
 
 
 /* ============================================================
-   CREATE PAYMENT
+   CREATE PAYMENT / SAVE EXACT DOCUMENT
    ============================================================ */
 
 async function createPayment(){
@@ -3444,6 +3275,13 @@ async function createPayment(){
     );
   }
 
+  if(!documentTitle){
+
+    throw Error(
+      "The document title could not be identified. Please refresh Review and try again."
+    );
+  }
+
   if(amount <= 0){
 
     throw Error(
@@ -3451,38 +3289,46 @@ async function createPayment(){
     );
   }
 
+  if(!pages.length){
+
+    throw Error(
+      "The complete reviewed document is not available yet."
+    );
+  }
+
   /*
-    Before creating anything, check whether a valid payment
-    already exists for THIS exact job/version.
+    If the exact Service + Document Title product already exists,
+    restore its state instead of creating a duplicate workflow.
   */
 
-  if(
-    paymentIdentifier &&
-    paymentStarted
-  ){
+  if(paymentStarted){
 
     const existing =
       await loadPaymentState();
 
-    if(
-      existing &&
-      paymentIdentifier
-    ){
+    if(existing){
+
       return existing;
     }
 
-    paymentIdentifier = "";
     paymentStarted = false;
     paymentPending = false;
     paid = false;
-
-    clearScopedPaymentContext();
+    downloadUnlocked = false;
   }
+
+  /*
+    IMPORTANT:
+    job_id is intentionally NOT sent as product/payment identity.
+
+    customer_id may be retained as optional customer metadata,
+    but Service + Document Title is the business identity.
+  */
 
   const payload = {
 
-    job_id:
-      jobId,
+    customer_name:
+      "",
 
     customer_id:
       customerId || undefined,
@@ -3490,14 +3336,17 @@ async function createPayment(){
     service:
       service || "Business Center Service",
 
+    document_title:
+      documentTitle,
+
     amount:
       amount,
 
+    currency:
+      "NGN",
+
     payment_method:
       "bank_transfer",
-
-    version_id:
-      versionId,
 
     document_version:
       versionId,
@@ -3520,6 +3369,9 @@ async function createPayment(){
           p.status
       })),
 
+    document_pages:
+      pages.length,
+
     document_text:
       pages
         .map(p => p.content || "")
@@ -3527,17 +3379,23 @@ async function createPayment(){
 
     filename:
       documentFilename ||
-      ("naija_pocket_" + jobId + ".docx"),
+      (
+        documentTitle
+          .replace(/[^\w.-]+/g,"_")
+          .replace(/^_+|_+$/g,"")
+          .slice(0,80) +
+        ".docx"
+      ),
 
     document_filename:
       documentFilename ||
-      ("naija_pocket_" + jobId + ".docx"),
-
-    document_pages:
-      pages.length,
-
-    total_pages:
-      pages.length
+      (
+        documentTitle
+          .replace(/[^\w.-]+/g,"_")
+          .replace(/^_+|_+$/g,"")
+          .slice(0,80) +
+        ".docx"
+      )
   };
 
   const d =
@@ -3546,28 +3404,10 @@ async function createPayment(){
       payload
     );
 
-  const returnedPayment =
-    d.payment &&
-    typeof d.payment === "object"
-      ? d.payment
-      : {};
-
-  const newPaymentId =
-    clean(
-      d.payment_id ||
-      returnedPayment.payment_id ||
-      d.order_number ||
-      d.reference ||
-      returnedPayment.order_number ||
-      returnedPayment.reference
-    );
-
-  if(!newPaymentId){
-
-    throw Error(
-      "The payment service did not return a payment ID."
-    );
-  }
+  /*
+    The current payment API does not require or return
+    a Payment ID. The saved product is the source of truth.
+  */
 
   if(d.document_saved === false){
 
@@ -3577,7 +3417,12 @@ async function createPayment(){
   }
 
   if(
-    d.document_saved !== true
+    d.document_saved !== true &&
+    !(
+      d.product?.document_saved === true ||
+      d.product_ready === true ||
+      d.product?.product_ready === true
+    )
   ){
 
     throw Error(
@@ -3585,28 +3430,41 @@ async function createPayment(){
     );
   }
 
-  paymentIdentifier =
-    newPaymentId;
-
   paymentStarted = true;
   paymentPending = false;
   paid = false;
+  downloadUnlocked = false;
 
   amount =
     Number(
       d.amount ||
-      returnedPayment.amount
+      d.product?.amount
     ) ||
     amount;
 
   billing =
     clean(
       d.billing ||
-      returnedPayment.billing
+      d.product?.billing
     ) ||
     billing;
 
-  saveScopedPaymentContext();
+  /*
+    If the API returned an already-existing activated product,
+    preserve that state.
+  */
+
+  if(
+    d.download_unlocked === true ||
+    d.product?.download_unlocked === true
+  ){
+    downloadUnlocked = true;
+    paid =
+      !!(
+        d.payment_verified ||
+        d.product?.payment_verified
+      );
+  }
 
   updatePaymentPanel();
 
@@ -3645,6 +3503,14 @@ makePaymentButton.onclick =
       );
     }
 
+    if(!documentTitle){
+
+      return setMessage(
+        "The document title could not be identified. Please refresh Review and try again.",
+        "error"
+      );
+    }
+
     if(amount <= 0){
 
       return setMessage(
@@ -3653,10 +3519,7 @@ makePaymentButton.onclick =
       );
     }
 
-    if(
-      paymentPending &&
-      paymentIdentifier
-    ){
+    if(paymentStarted){
 
       openPaymentModal();
 
@@ -3705,22 +3568,24 @@ makePaymentButton.onclick =
 
 async function reportPayment(){
 
-  if(!paymentIdentifier){
+  if(!paymentStarted){
 
     throw Error(
       "Payment has not been prepared yet. Tap MAKE PAYMENT first."
     );
   }
 
-  const reference =
-    clean(
-      paymentReferenceInput.value
-    );
-
-  if(!reference){
+  if(!service){
 
     throw Error(
-      "Please enter your payment reference."
+      "The service could not be identified."
+    );
+  }
+
+  if(!documentTitle){
+
+    throw Error(
+      "The document title could not be identified."
     );
   }
 
@@ -3729,16 +3594,23 @@ async function reportPayment(){
       paymentNoteInput.value
     );
 
+  /*
+    IMPORTANT:
+    No payment ID.
+    No payment reference.
+    No job ID.
+
+    The payment record is located using:
+    Service + Document Title.
+  */
+
   const body = {
 
-    payment_id:
-      paymentIdentifier,
+    service:
+      service,
 
-    job_id:
-      jobId,
-
-    payment_reference:
-      reference,
+    document_title:
+      documentTitle,
 
     note:
       note
@@ -3754,8 +3626,6 @@ async function reportPayment(){
   paid = false;
   paymentStarted = true;
 
-  saveScopedPaymentContext();
-
   updatePaymentPanel();
 
   return d;
@@ -3768,24 +3638,32 @@ async function reportPayment(){
 
 async function submitPaymentReport(){
 
-  if(
-    !paymentStarted ||
-    !paymentIdentifier
-  ){
+  if(!paymentStarted){
 
     throw Error(
       "Tap MAKE PAYMENT first so your exact document can be prepared for payment."
     );
   }
 
-  if(paid){
+  if(downloadUnlocked){
 
     closePaymentPopup();
 
     setMessage(
-      "Payment has already been verified.",
+      "Payment has already been verified and your document is unlocked.",
       "success"
     );
+
+    return;
+  }
+
+  if(paymentPending){
+
+    modalStatus.className =
+      "modal-status";
+
+    modalStatus.textContent =
+      "Payment has already been reported. Customer Care is verifying it.";
 
     return;
   }
@@ -3813,6 +3691,8 @@ async function submitPaymentReport(){
       "success"
     );
 
+    updatePaymentPanel();
+
     startPaymentPolling();
 
   }catch(e){
@@ -3834,6 +3714,12 @@ async function submitPaymentReport(){
       false;
 
     updateButtons();
+
+    if(paymentPending){
+
+      modalReportButton.disabled =
+        true;
+    }
   }
 }
 
@@ -3875,28 +3761,41 @@ paymentModal.onclick =
 downloadButton.onclick =
   async () => {
 
-    if(!paid){
+    /*
+      Customer Care activation is the actual download gate.
+      Payment verification alone is not enough.
+    */
+
+    if(!downloadUnlocked){
 
       return setMessage(
-        "Download is locked until Customer Care verifies your payment.",
+        "Download is locked until Customer Care verifies your payment and unlocks the document.",
         "error"
       );
     }
 
-    if(!paymentIdentifier){
+    if(!service){
 
       return setMessage(
-        "The payment record could not be identified.",
+        "The service could not be identified.",
+        "error"
+      );
+    }
+
+    if(!documentTitle){
+
+      return setMessage(
+        "The document title could not be identified.",
         "error"
       );
     }
 
     const u =
       PAYMENT_API_BASE +
-      "/api/download?payment_id=" +
-      encodeURIComponent(
-        paymentIdentifier
-      );
+      "/api/download?service=" +
+      encodeURIComponent(service) +
+      "&title=" +
+      encodeURIComponent(documentTitle);
 
     setMessage(
       "Preparing your verified document..."
@@ -3952,7 +3851,13 @@ downloadButton.onclick =
 
       a.download =
         documentFilename ||
-        ("naija_pocket_" + jobId + ".docx");
+        (
+          documentTitle
+            .replace(/[^\w.-]+/g,"_")
+            .replace(/^_+|_+$/g,"")
+            .slice(0,80) +
+          ".docx"
+        );
 
       a.rel =
         "noopener";
@@ -4029,7 +3934,8 @@ async function start(){
 
     if(
       paymentStarted &&
-      !paid
+      !downloadUnlocked &&
+      !paymentPending
     ){
 
       startPaymentPolling();
