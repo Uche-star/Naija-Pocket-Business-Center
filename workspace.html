@@ -9,1885 +9,4981 @@
 *{box-sizing:border-box}
 
 html,body{
-  width:100%;
-  height:100%;
-  margin:0;
-  overflow:hidden
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
 }
 
 body{
-  background:#020202;
-  color:#fff;
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif
+    background:#000;
+    color:#fff;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
 
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 
 :root{
-  --gold:#d4af37;
-  --gold2:#f3d66b;
-  --gold3:#fff0a8;
-  --green:#168047;
-  --green2:#1fa463;
-  --black:#020202;
-  --panel:#0b0b0b;
-  --panel2:#111;
-  --muted:#a8a8a8;
-  --border:rgba(212,175,55,.28);
-  --soft-border:rgba(255,255,255,.08)
+    --gold:#d4af37;
+    --gold2:#f3d66b;
+    --cream:#fff4d6;
+    --champagne:#f4d58d;
+    --rose:#e8b4a8;
+    --teal:#70d1c1;
+    --blue:#8fb8e8;
+    --purple:#b99be8;
+    --green:#39b87f;
+    --green2:#168047;
+    --red:#b30000;
+    --border:rgba(212,175,55,.28);
 }
 
+/* ============================================================
+   APP
+============================================================ */
 .app{
-  height:100dvh;
-  display:flex;
-  flex-direction:column;
-  background:
-    radial-gradient(circle at 50% -15%,rgba(212,175,55,.09),transparent 34%),
-    radial-gradient(circle at 100% 45%,rgba(22,128,71,.055),transparent 30%),
-    #020202
+    width:100%;
+    height:100dvh;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    background:#000;
 }
 
+/* ============================================================
+   HEADER
+============================================================ */
 .header{
-  flex:0 0 auto;
-  min-height:68px;
-  padding:10px 13px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  background:rgba(4,4,4,.97);
-  border-bottom:1px solid var(--border);
-  box-shadow:0 8px 30px rgba(0,0,0,.45);
-  z-index:20
+    flex:0 0 auto;
+    min-height:65px;
+    padding:9px 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:linear-gradient(90deg,#050505,#101010 35%,#080808 65%,#050505);
+    border-bottom:1px solid rgba(212,175,55,.32);
+    box-shadow:0 4px 20px rgba(0,0,0,.45);
+    z-index:20;
 }
 
-.brand{
-  min-width:0
-}
+.brand{min-width:0}
 
 .brand-title{
-  margin:0;
-  color:var(--gold2);
-  font-size:clamp(18px,4vw,25px);
-  font-weight:850;
-  letter-spacing:.15px
+    margin:0;
+    background:linear-gradient(90deg,var(--green),var(--teal),var(--cream),var(--gold2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-size:clamp(18px,4vw,25px);
+    font-weight:900;
+    line-height:1.2;
+    letter-spacing:.2px;
 }
 
 .brand-subtitle{
-  margin-top:3px;
-  color:#969696;
-  font-size:10px;
-  letter-spacing:1.25px;
-  text-transform:uppercase
+    margin-top:3px;
+    color:var(--blue);
+    font-size:10px;
+    letter-spacing:.35px;
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:6px;
+    min-width:0;
 }
 
 .service-badge{
-  max-width:46%;
-  padding:8px 12px;
-  background:
-    linear-gradient(135deg,rgba(212,175,55,.12),rgba(255,255,255,.025));
-  border:1px solid rgba(212,175,55,.48);
-  border-radius:999px;
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.25px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  box-shadow:inset 0 1px rgba(255,255,255,.05)
+    max-width:40%;
+    padding:7px 10px;
+    background:linear-gradient(
+        135deg,
+        rgba(212,175,55,.10),
+        rgba(112,209,193,.06),
+        rgba(143,184,232,.07)
+    );
+    border:1px solid rgba(212,175,55,.55);
+    border-radius:999px;
+    color:var(--gold2);
+    font-size:10px;
+    font-weight:800;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    box-shadow:0 0 14px rgba(212,175,55,.06);
 }
 
+.back-office-entry{
+    flex:0 0 auto;
+    min-height:30px;
+    padding:0 8px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:7px;
+    background:#101010;
+    color:#777;
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:.2px;
+}
+
+.back-office-entry:hover{
+    color:var(--gold2);
+    border-color:rgba(212,175,55,.35);
+}
+
+/* ============================================================
+   MAIN
+============================================================ */
 .main{
-  flex:1;
-  min-height:0;
-  overflow-y:auto;
-  overflow-x:hidden;
-  background:
-    radial-gradient(circle at 50% 0%,rgba(212,175,55,.055),transparent 34%),
-    linear-gradient(180deg,#090909 0%,#030303 70%,#020202 100%)
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    overflow-x:hidden;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+    background:
+        radial-gradient(circle at 15% 0%,rgba(57,184,127,.08) 0,transparent 28%),
+        radial-gradient(circle at 85% 0%,rgba(185,155,232,.07) 0,transparent 26%),
+        radial-gradient(circle at top,#181818 0,#080808 35%,#000 100%);
 }
 
 .main-inner{
-  max-width:900px;
-  margin:auto;
-  padding:18px 11px 28px
+    width:100%;
+    max-width:900px;
+    margin:0 auto;
+    padding:14px 10px 35px;
 }
 
-/* =========================================================
-   FORMS PAGE — LUXURY PRESENTATION
-   ========================================================= */
-
+/* ============================================================
+   CUSTOMER FORM — LUXURY VISUAL UPGRADE ONLY
+   NO FORM LOGIC OR STRUCTURE CHANGED
+============================================================ */
 #formView{
-  position:relative
+    position:relative;
+    width:100%;
 }
 
-#formView:before{
-  content:"";
-  display:block;
-  width:54px;
-  height:2px;
-  margin:0 auto 14px;
-  background:linear-gradient(90deg,transparent,var(--gold2),transparent);
-  opacity:.8
+#formView .intro-card,
+#formView .form-card{
+    position:relative;
+    overflow:hidden;
+    border-radius:22px;
 }
 
-.intro-card,
-.form-card,
-.review-header,
-.correction-card{
-  border-radius:17px
+#formView .intro-card{
+    margin-bottom:14px;
+    padding:22px 19px 20px;
+
+    background:
+        radial-gradient(
+            circle at 8% 0%,
+            rgba(57,184,127,.13),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 92% 0%,
+            rgba(212,175,55,.16),
+            transparent 37%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.035),
+            rgba(212,175,55,.025) 45%,
+            rgba(57,184,127,.018)
+        ),
+        linear-gradient(145deg,#191919,#080808);
+
+    border:1px solid rgba(244,213,141,.34);
+
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.48),
+        0 0 35px rgba(212,175,55,.035),
+        inset 0 1px rgba(255,255,255,.055);
 }
 
-.intro-card{
-  position:relative;
-  margin-bottom:13px;
-  padding:21px 18px 18px;
-  background:
-    linear-gradient(145deg,rgba(31,31,31,.98),rgba(9,9,9,.99));
-  border:1px solid rgba(212,175,55,.36);
-  box-shadow:
-    0 18px 45px rgba(0,0,0,.42),
-    inset 0 1px rgba(255,255,255,.045);
-  overflow:hidden
+#formView .intro-card:before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:1px solid rgba(244,213,141,.07);
+    border-radius:16px;
+    pointer-events:none;
 }
 
-.intro-card:before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0;
-  width:100%;
-  height:1px;
-  background:linear-gradient(
-    90deg,
-    transparent,
-    rgba(243,214,107,.8),
-    rgba(255,255,255,.4),
-    rgba(243,214,107,.8),
-    transparent
-  )
+#formView .intro-card:after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:18%;
+    right:18%;
+    height:1px;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(244,213,141,.22),
+        rgba(255,244,214,.72),
+        rgba(244,213,141,.22),
+        transparent
+    );
+    opacity:.75;
+    pointer-events:none;
 }
 
-.intro-card:after{
-  content:"";
-  position:absolute;
-  width:130px;
-  height:130px;
-  right:-70px;
-  top:-75px;
-  border-radius:50%;
-  border:1px solid rgba(212,175,55,.12)
+#formView .intro-title{
+    position:relative;
+    z-index:1;
+    margin:0;
+
+    background:linear-gradient(
+        100deg,
+        #d9bb69,
+        #fff4d6 48%,
+        #d9bb69
+    );
+
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(23px,6vw,31px);
+    font-weight:500;
+    line-height:1.15;
+    letter-spacing:.15px;
 }
 
-.intro-title{
-  margin:0;
-  color:var(--gold2);
-  font-size:clamp(21px,5vw,29px);
-  font-weight:900;
-  letter-spacing:-.3px;
-  line-height:1.15
+#formView .intro-title:after{
+    content:"";
+    display:block;
+    width:42px;
+    height:1px;
+    margin:12px 0 0;
+
+    background:linear-gradient(
+        90deg,
+        rgba(244,213,141,.75),
+        transparent
+    );
 }
 
-.intro-text{
-  margin:9px 0 0;
-  color:#d2d2d2;
-  font-size:13px;
-  line-height:1.7;
-  white-space:pre-wrap
+#formView .intro-text{
+    position:relative;
+    z-index:1;
+    margin:13px 0 0;
+    max-width:720px;
+
+    color:rgba(255,244,214,.68);
+    font-size:12px;
+    line-height:1.75;
+    letter-spacing:.08px;
+    white-space:pre-wrap;
 }
 
-.price{
-  display:inline-flex;
-  align-items:center;
-  margin-top:13px;
-  padding:8px 12px;
-  background:
-    linear-gradient(135deg,rgba(212,175,55,.13),rgba(212,175,55,.035));
-  border:1px solid rgba(212,175,55,.35);
-  border-radius:999px;
-  color:var(--gold3);
-  font-size:11px;
-  font-weight:850;
-  letter-spacing:.25px;
-  box-shadow:inset 0 1px rgba(255,255,255,.035)
+#formView .price{
+    position:relative;
+    z-index:1;
+    display:inline-flex;
+    align-items:center;
+    min-height:31px;
+    margin-top:15px;
+    padding:6px 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(244,213,141,.085),
+            rgba(212,175,55,.025)
+        );
+
+    border:1px solid rgba(244,213,141,.30);
+    border-radius:999px;
+
+    color:var(--champagne);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.35px;
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.04),
+        0 5px 18px rgba(0,0,0,.18);
 }
 
-.form-card{
-  position:relative;
-  padding:19px 16px 17px;
-  background:
-    linear-gradient(145deg,#111,#080808);
-  border:1px solid rgba(255,255,255,.09);
-  box-shadow:
-    0 20px 50px rgba(0,0,0,.45),
-    inset 0 1px rgba(255,255,255,.035)
+#formView .form-card{
+    padding:21px 18px 19px;
+
+    background:
+        radial-gradient(
+            circle at 92% 0%,
+            rgba(212,175,55,.075),
+            transparent 31%
+        ),
+        radial-gradient(
+            circle at 0% 100%,
+            rgba(57,184,127,.045),
+            transparent 28%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.022),
+            rgba(212,175,55,.018) 48%,
+            rgba(57,184,127,.012)
+        ),
+        #0a0a0a;
+
+    border:1px solid rgba(244,213,141,.22);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.52),
+        0 0 32px rgba(212,175,55,.025),
+        inset 0 1px rgba(255,255,255,.045);
 }
 
-.form-card:before{
-  content:"";
-  display:block;
-  width:34px;
-  height:2px;
-  margin-bottom:12px;
-  background:var(--gold)
+#formView .form-card:before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:1px solid rgba(244,213,141,.055);
+    border-radius:16px;
+    pointer-events:none;
 }
 
-.form-heading{
-  margin:0;
-  color:#f3f3f3;
-  font-size:18px;
-  font-weight:850;
-  letter-spacing:.1px
+#formView .form-card:after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:23%;
+    right:23%;
+    height:1px;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(244,213,141,.20),
+        transparent
+    );
+
+    pointer-events:none;
 }
 
-.form-description{
-  margin:6px 0 17px;
-  color:#999;
-  font-size:11px;
-  line-height:1.6
+#formView .form-heading{
+    position:relative;
+    z-index:1;
+    margin:0;
+
+    color:var(--gold2);
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:21px;
+    font-weight:500;
+    letter-spacing:.15px;
 }
 
-.fields{
-  display:flex;
-  flex-direction:column;
-  gap:14px
+#formView .form-description{
+    position:relative;
+    z-index:1;
+    margin:7px 0 18px;
+
+    color:rgba(255,255,255,.56);
+    font-size:10px;
+    line-height:1.7;
+    letter-spacing:.05px;
 }
 
-.field{
-  position:relative
+#formView .fields{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
 }
 
-.field label{
-  display:block;
-  margin-bottom:6px;
-  color:#e5e5e5;
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.15px
+#formView .field{
+    position:relative;
+    padding:12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.018),
+            rgba(212,175,55,.012)
+        ),
+        rgba(12,12,12,.72);
+
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:15px;
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.025),
+        0 6px 18px rgba(0,0,0,.16);
 }
 
-.required{
-  color:#e7b6b6
+#formView .field label{
+    display:block;
+    margin-bottom:7px;
+
+    color:rgba(255,244,214,.88);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.65px;
+    text-transform:uppercase;
 }
 
-.optional{
-  color:#707070;
-  font-weight:500
+#formView .required{
+    color:var(--gold2);
+    font-weight:900;
 }
 
-.field input,
-.field textarea,
-.field select{
-  width:100%;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:11px;
-  background:
-    linear-gradient(145deg,#181818,#101010);
-  color:#fff;
-  outline:0;
-  padding:12px 13px;
-  font-size:13px;
-  box-shadow:
-    inset 0 1px rgba(255,255,255,.025),
-    0 5px 16px rgba(0,0,0,.16);
-  transition:
-    border-color .2s ease,
-    box-shadow .2s ease,
-    background .2s ease
+#formView .optional{
+    color:#666;
+    font-size:9px;
+    font-weight:500;
+    letter-spacing:0;
+    text-transform:none;
 }
 
-.field textarea{
-  min-height:95px;
-  resize:vertical;
-  line-height:1.55
+#formView .field input,
+#formView .field textarea,
+#formView .field select{
+    width:100%;
+
+    border:1px solid rgba(244,213,141,.14);
+    border-radius:12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.018),
+            rgba(0,0,0,.08)
+        ),
+        #151515;
+
+    color:#fff;
+    outline:0;
+
+    padding:12px 12px;
+
+    font-size:13px;
+    line-height:1.45;
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.025),
+        0 3px 12px rgba(0,0,0,.15);
+
+    transition:
+        border-color .22s ease,
+        box-shadow .22s ease,
+        background .22s ease;
 }
 
-.field input::placeholder,
-.field textarea::placeholder{
-  color:#666
+#formView .field input::placeholder,
+#formView .field textarea::placeholder{
+    color:rgba(255,255,255,.30);
 }
 
-.field input:focus,
-.field textarea:focus,
-.field select:focus{
-  border-color:rgba(212,175,55,.62);
-  background:#151515;
-  box-shadow:
-    0 0 0 2px rgba(212,175,55,.055),
-    inset 0 1px rgba(255,255,255,.035)
+#formView .field textarea{
+    min-height:95px;
+    resize:vertical;
 }
 
-.form-note{
-  margin-top:15px;
-  padding:12px 12px 12px 13px;
-  background:
-    linear-gradient(135deg,rgba(212,175,55,.07),rgba(255,255,255,.018));
-  border:1px solid rgba(212,175,55,.16);
-  border-left:2px solid var(--gold);
-  border-radius:9px;
-  color:#aaa;
-  font-size:10px;
-  line-height:1.6
+#formView .field input:focus,
+#formView .field textarea:focus,
+#formView .field select:focus{
+    border-color:rgba(244,213,141,.62);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(244,213,141,.035),
+            rgba(0,0,0,.08)
+        ),
+        #151515;
+
+    box-shadow:
+        0 0 0 2px rgba(212,175,55,.045),
+        0 0 20px rgba(212,175,55,.055),
+        inset 0 1px rgba(255,255,255,.035);
 }
 
-.form-note strong{
-  color:var(--gold2)
+#formView .form-note{
+    position:relative;
+    z-index:1;
+
+    margin-top:15px;
+    padding:12px 13px;
+
+    background:
+        radial-gradient(
+            circle at 0% 50%,
+            rgba(212,175,55,.06),
+            transparent 45%
+        ),
+        #101010;
+
+    border:1px solid rgba(244,213,141,.10);
+    border-left:2px solid rgba(244,213,141,.55);
+    border-radius:10px;
+
+    color:rgba(255,255,255,.55);
+    font-size:10px;
+    line-height:1.65;
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.025);
 }
 
-.form-submit{
-  width:100%;
-  min-height:52px;
-  margin-top:16px;
-  border:1px solid rgba(243,214,107,.55);
-  border-radius:11px;
-  background:
-    linear-gradient(135deg,#f3d66b,#d4af37);
-  color:#050505;
-  font-size:12px;
-  font-weight:950;
-  letter-spacing:.65px;
-  box-shadow:
-    0 10px 24px rgba(0,0,0,.38),
-    inset 0 1px rgba(255,255,255,.38);
-  transition:transform .18s ease,box-shadow .18s ease
+#formView .form-note strong{
+    color:var(--champagne);
+    font-weight:900;
 }
 
-.form-submit:not(:disabled):active{
-  transform:translateY(1px);
-  box-shadow:0 5px 14px rgba(0,0,0,.4)
+#formView .form-submit{
+    position:relative;
+    z-index:1;
+
+    width:100%;
+    min-height:52px;
+    margin-top:17px;
+    overflow:hidden;
+
+    border:1px solid rgba(244,213,141,.55);
+    border-radius:999px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold2),
+            var(--champagne),
+            var(--cream)
+        );
+
+    color:#050505;
+
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:1.4px;
+
+    box-shadow:
+        0 10px 30px rgba(212,175,55,.13),
+        inset 0 1px rgba(255,255,255,.68);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease;
 }
 
-.form-submit:disabled{
-  opacity:.45
+#formView .form-submit:before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-75%;
+    width:35%;
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.34),
+        transparent
+    );
+
+    transform:skewX(-20deg);
+    animation:formButtonShine 5.2s ease-in-out infinite;
+    pointer-events:none;
 }
 
-/* =========================================================
-   EXISTING REVIEW AREA — PRESERVED
-   ========================================================= */
+#formView .form-submit:hover{
+    transform:translateY(-1px);
 
+    box-shadow:
+        0 13px 38px rgba(212,175,55,.22),
+        0 0 22px rgba(212,175,55,.06),
+        inset 0 1px rgba(255,255,255,.78);
+}
+
+#formView .form-submit:active{
+    transform:translateY(0);
+}
+
+#formView .form-submit:disabled{
+    opacity:.45;
+    transform:none;
+    box-shadow:0 5px 20px rgba(212,175,55,.07);
+}
+
+@keyframes formButtonShine{
+    0%,48%{left:-75%}
+    68%,100%{left:135%}
+}
+
+/* ============================================================
+   LUXURY REVIEW GATEWAY PAGE
+   UNTOUCHED
+============================================================ */
 .review-view{
-  display:none
+    display:none;
+    width:100%;
+    min-width:0;
 }
 
-.review-view.show{
-  display:block
-}
+.review-view.show{display:block}
 
 .review-header{
-  padding:16px;
-  margin-bottom:11px;
-  background:linear-gradient(145deg,#191919,#0d0d0d);
-  border:1px solid rgba(212,175,55,.38)
+    position:relative;
+    overflow:hidden;
+    padding:26px 20px 24px;
+    margin-bottom:12px;
+    background:
+        radial-gradient(
+            circle at 12% 20%,
+            rgba(57,184,127,.14),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 88% 10%,
+            rgba(212,175,55,.15),
+            transparent 30%
+        ),
+        linear-gradient(145deg,#181818,#080808);
+    border:1px solid rgba(212,175,55,.45);
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.45),
+        inset 0 1px rgba(255,255,255,.04);
+}
+
+.review-header:before{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    right:-80px;
+    top:-100px;
+    border-radius:50%;
+    border:1px solid rgba(212,175,55,.15);
+    box-shadow:
+        0 0 0 18px rgba(212,175,55,.025),
+        0 0 0 38px rgba(212,175,55,.018);
+    pointer-events:none;
+}
+
+.review-header:after{
+    content:"";
+    position:absolute;
+    left:-70px;
+    bottom:-110px;
+    width:190px;
+    height:190px;
+    border-radius:50%;
+    border:1px solid rgba(57,184,127,.12);
+    box-shadow:0 0 0 22px rgba(57,184,127,.018);
+    pointer-events:none;
 }
 
 .review-title{
-  margin:0;
-  color:var(--gold2);
-  font-weight:900;
-  font-size:20px
+    position:relative;
+    z-index:1;
+    margin:0;
+    background:linear-gradient(
+        90deg,
+        var(--gold2),
+        var(--cream),
+        var(--rose)
+    );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-weight:900;
 }
 
 .review-subtitle{
-  margin:5px 0 0;
-  color:#bdbdbd;
-  font-size:11px;
-  line-height:1.5
+    position:relative;
+    z-index:1;
+    max-width:650px;
+    margin:8px 0 0;
+    color:#c8c8c8;
+    font-size:12px;
+    line-height:1.7;
 }
 
-.work-card{
-  background:#f7f7f7;
-  color:#111;
-  border-radius:11px;
-  min-height:350px;
-  padding:22px 17px;
-  overflow-wrap:anywhere;
-  user-select:none;
-  -webkit-user-select:none;
-  -webkit-touch-callout:none
+.workspace-review-gateway{
+    position:relative;
+    overflow:hidden;
+    width:100%;
+    padding:32px 19px 27px;
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(212,175,55,.12),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(57,184,127,.045),
+            rgba(212,175,55,.055),
+            rgba(143,184,232,.025)
+        ),
+        #0b0b0b;
+    border:1px solid rgba(212,175,55,.38);
+    border-radius:17px;
+    text-align:center;
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.55),
+        inset 0 1px rgba(255,255,255,.035);
 }
 
-.work-content{
-  white-space:pre-wrap;
-  line-height:1.7;
-  font-size:14px;
-  user-select:none;
-  -webkit-user-select:none;
-  -webkit-touch-callout:none
+.workspace-review-gateway:before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:1px solid rgba(212,175,55,.08);
+    border-radius:12px;
+    pointer-events:none;
 }
 
-.work-placeholder{
-  color:#777;
-  text-align:center;
-  padding:70px 10px;
-  user-select:none;
-  -webkit-user-select:none
+.workspace-review-gateway-title{
+    position:relative;
+    z-index:1;
+    margin:0;
+    color:var(--gold2);
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:23px;
+    font-weight:700;
+    letter-spacing:.2px;
 }
 
-.correction-card{
-  margin-top:12px;
-  padding:14px;
-  background:#111;
-  border:1px solid rgba(255,255,255,.1)
+.workspace-review-gateway-text{
+    position:relative;
+    z-index:1;
+    max-width:570px;
+    margin:9px auto 0;
+    color:#bdbdbd;
+    font-size:11px;
+    line-height:1.65;
 }
 
-.correction-title{
-  margin:0 0 4px;
-  font-size:14px
+.workspace-review-open{
+    position:relative;
+    z-index:1;
+    width:100%;
+    min-height:50px;
+    margin-top:18px;
+    border:1px solid rgba(244,213,141,.55);
+    border-radius:10px;
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold2),
+            var(--champagne),
+            var(--cream)
+        );
+    color:#050505;
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.7px;
+    box-shadow:
+        0 8px 28px rgba(212,175,55,.14),
+        inset 0 1px rgba(255,255,255,.6);
+    transition:transform .2s ease,box-shadow .2s ease;
 }
 
-.correction-help{
-  margin:0 0 9px;
-  color:#999;
-  font-size:10px;
-  line-height:1.45
+.workspace-review-open:hover{
+    transform:translateY(-1px);
+    box-shadow:
+        0 11px 35px rgba(212,175,55,.23),
+        inset 0 1px rgba(255,255,255,.7);
 }
 
-.correction-input{
-  width:100%;
-  min-height:100px;
-  resize:vertical;
-  padding:11px;
-  background:#191919;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:9px;
-  outline:0
+/* ============================================================
+   BACK OFFICE
+============================================================ */
+#backOfficeView{display:none}
+#backOfficeView.show{display:block}
+
+.back-office-header{
+    padding:17px;
+    margin-bottom:12px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(212,175,55,.09),
+            rgba(57,184,127,.05),
+            rgba(185,155,232,.05)
+        ),
+        linear-gradient(145deg,#191919,#0c0c0c);
+    border:1px solid rgba(212,175,55,.42);
+    border-radius:15px;
 }
 
-.review-actions,
-.payment-buttons{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:7px;
-  margin-top:10px
+.back-office-title{
+    margin:0;
+    color:var(--gold2);
+    font-size:21px;
+    font-weight:900;
 }
 
-.review-button,
-.payment-buttons button{
-  min-height:43px;
-  border-radius:8px;
-  font-size:11px;
-  font-weight:850
+.back-office-subtitle{
+    margin:6px 0 0;
+    color:#aaa;
+    font-size:11px;
+    line-height:1.55;
 }
 
-.apply-button{
-  background:#252525;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.14)
+.back-office-key-card{
+    padding:14px;
+    margin-bottom:12px;
+    background:#101010;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:13px;
 }
 
-.approve-button,
-.payment-report{
-  background:var(--gold);
-  color:#000;
-  border:0
+.back-office-key-label{
+    display:block;
+    margin-bottom:6px;
+    color:#ddd;
+    font-size:11px;
+    font-weight:800;
 }
 
-.download-button{
-  width:100%;
-  min-height:47px;
-  margin-top:8px;
-  border-radius:8px;
-  background:#242424;
-  color:#777;
-  border:1px solid rgba(255,255,255,.1);
-  font-size:11px;
-  font-weight:850;
-  cursor:not-allowed
+.back-office-key-row{
+    display:flex;
+    gap:7px;
 }
 
-.download-button.active{
-  background:var(--green);
-  color:#fff;
-  border-color:var(--green);
-  cursor:pointer
+.back-office-key-input{
+    flex:1;
+    min-width:0;
+    padding:11px;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:9px;
+    background:#181818;
+    color:#fff;
+    outline:0;
+    font-size:12px;
 }
 
-.payment-message{
-  margin-top:8px;
-  color:#858585;
-  font-size:9px;
-  text-align:center
+.back-office-key-input:focus{
+    border-color:rgba(212,175,55,.65);
 }
 
-.payment-panel{
-  display:none;
-  margin-top:11px;
-  padding:13px;
-  background:#121212;
-  border:1px solid rgba(212,175,55,.38);
-  border-radius:12px
+.back-office-load{
+    min-width:92px;
+    border:0;
+    border-radius:9px;
+    background:var(--gold);
+    color:#000;
+    font-size:11px;
+    font-weight:900;
 }
 
-.payment-panel.show{
-  display:block
+.back-office-summary{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:7px;
+    margin-bottom:12px;
 }
 
-.payment-title{
-  color:var(--gold2);
-  font-size:13px;
-  font-weight:900;
-  margin-bottom:6px
+.back-office-stat{
+    padding:11px 8px;
+    background:#111;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:10px;
+    text-align:center;
 }
 
-.payment-details{
-  color:#ddd;
-  white-space:pre-wrap;
-  font-size:11px;
-  line-height:1.5
+.back-office-stat-value{
+    display:block;
+    color:var(--gold2);
+    font-size:17px;
+    font-weight:900;
 }
 
-.payment-check{
-  background:#282828;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.13)
+.back-office-stat-label{
+    display:block;
+    margin-top:3px;
+    color:#888;
+    font-size:9px;
 }
 
-/* =========================================================
-   EXISTING WORKSPACE CONTROLS — PRESERVED
-   ========================================================= */
+.back-office-jobs{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
 
+.back-office-empty{
+    padding:28px 15px;
+    background:#101010;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:13px;
+    color:#888;
+    font-size:11px;
+    line-height:1.6;
+    text-align:center;
+}
+
+.back-office-job{
+    padding:14px;
+    background:#101010;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:13px;
+}
+
+.back-office-job.reported{
+    border-color:rgba(212,175,55,.60);
+}
+
+.back-office-job.unlocked{
+    border-color:rgba(22,128,71,.60);
+}
+
+.back-office-job-title{
+    margin:0;
+    color:#fff;
+    font-size:14px;
+    font-weight:900;
+    word-break:break-word;
+}
+
+.back-office-job-meta{
+    margin-top:5px;
+    color:#888;
+    font-size:9px;
+    line-height:1.5;
+}
+
+.back-office-status-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    margin-top:9px;
+}
+
+.back-office-status{
+    display:inline-flex;
+    align-items:center;
+    padding:5px 7px;
+    border-radius:999px;
+    background:#191919;
+    border:1px solid rgba(255,255,255,.10);
+    color:#aaa;
+    font-size:9px;
+    font-weight:800;
+}
+
+.back-office-status.good{
+    color:#7bd99a;
+    border-color:rgba(22,128,71,.45);
+}
+
+.back-office-status.waiting{
+    color:var(--gold2);
+    border-color:rgba(212,175,55,.35);
+}
+
+.back-office-document{
+    margin-top:11px;
+    padding:12px;
+    background:#151515;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:10px;
+}
+
+.back-office-document-title{
+    color:#ddd;
+    font-size:11px;
+    font-weight:900;
+}
+
+.back-office-document-meta{
+    margin-top:5px;
+    color:#888;
+    font-size:9px;
+    line-height:1.55;
+}
+
+.back-office-document-actions{
+    display:flex;
+    gap:7px;
+    margin-top:10px;
+}
+
+.back-office-view-document,
+.back-office-unlock{
+    flex:1;
+    min-height:42px;
+    border-radius:8px;
+    font-size:10px;
+    font-weight:900;
+}
+
+.back-office-view-document{
+    border:1px solid rgba(255,255,255,.13);
+    background:#181818;
+    color:#fff;
+}
+
+.back-office-unlock{
+    border:0;
+    background:var(--gold);
+    color:#000;
+}
+
+.back-office-unlock:disabled{
+    background:#254b35;
+    color:#9fe0b4;
+    opacity:1;
+}
+
+.back-office-note{
+    margin-top:10px;
+    padding:9px;
+    background:#0d0d0d;
+    border-left:3px solid var(--gold);
+    border-radius:6px;
+    color:#888;
+    font-size:9px;
+    line-height:1.5;
+}
+
+.back-office-refresh{
+    width:100%;
+    min-height:45px;
+    margin-top:12px;
+    border:1px solid rgba(212,175,55,.35);
+    border-radius:9px;
+    background:#171717;
+    color:var(--gold2);
+    font-size:11px;
+    font-weight:900;
+}
+
+.back-office-exit{
+    width:100%;
+    min-height:45px;
+    margin-top:7px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:9px;
+    background:#111;
+    color:#aaa;
+    font-size:11px;
+    font-weight:900;
+}
+
+.back-office-exit:hover{
+    color:#fff;
+    border-color:rgba(212,175,55,.35);
+}
+
+/* ============================================================
+   CUSTOMER BOTTOM CONTROLS
+============================================================ */
 .bottom{
-  flex:0 0 auto;
-  padding:8px 9px calc(8px + env(safe-area-inset-bottom));
-  background:#080808;
-  border-top:1px solid var(--border);
-  z-index:20
+    flex:0 0 auto;
+    width:100%;
+    padding:8px 9px calc(8px + env(safe-area-inset-bottom));
+    background:linear-gradient(90deg,#070707,#0c0c0c,#080808);
+    border-top:1px solid rgba(212,175,55,.30);
+    box-shadow:0 -4px 20px rgba(0,0,0,.35);
+    z-index:20;
 }
 
 .bottom-inner{
-  max-width:900px;
-  margin:auto
+    max-width:900px;
+    margin:auto;
 }
 
 .tools{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:6px;
-  margin-bottom:7px
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+    margin-bottom:7px;
 }
 
 .tool-button,
 .choose-service-button{
-  min-height:39px;
-  border-radius:8px;
-  background:#181818;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.13);
-  font-size:10px;
-  font-weight:800
+    min-height:39px;
+    border-radius:8px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(143,184,232,.05),
+            rgba(185,155,232,.04),
+            rgba(255,255,255,.02)
+        ),
+        #181818;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.13);
+    font-size:10px;
+    font-weight:800;
+}
+
+.tool-button:hover{
+    border-color:rgba(212,175,55,.35);
 }
 
 .tool-button.gold{
-  color:var(--gold2);
-  border-color:rgba(212,175,55,.35)
+    color:var(--gold2);
+    border-color:rgba(212,175,55,.35);
 }
 
-.choose-service-button{
-  width:100%;
-  margin-bottom:7px;
-  background:#000
+.customer-care-button{
+    color:var(--teal);
+    border-color:rgba(112,209,193,.38);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(57,184,127,.08),
+            rgba(112,209,193,.06),
+            rgba(212,175,55,.04)
+        ),
+        #151515;
 }
 
-.composer{
-  display:flex;
-  align-items:flex-end;
-  gap:6px
-}
-
-.message-input{
-  flex:1;
-  min-width:0;
-  min-height:45px;
-  max-height:105px;
-  resize:none;
-  padding:11px;
-  background:#171717;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.16);
-  border-radius:9px;
-  outline:0
-}
-
-.send-button{
-  width:64px;
-  min-height:45px;
-  border:0;
-  border-radius:9px;
-  background:var(--gold);
-  color:#000;
-  font-size:11px;
-  font-weight:900
-}
-
-.voice-recording{
-  display:none;
-  margin-bottom:6px;
-  padding:7px;
-  background:#190707;
-  border:1px solid rgba(179,0,0,.55);
-  border-radius:8px;
-  color:#ff8c8c;
-  font-size:10px;
-  text-align:center
-}
-
-.voice-recording.show{
-  display:block
+.customer-care-button:hover{
+    color:var(--cream);
+    border-color:rgba(112,209,193,.65);
 }
 
 .status{
-  min-height:14px;
-  margin-top:3px;
-  color:#777;
-  font-size:9px;
-  text-align:center
+    min-height:14px;
+    margin-top:3px;
+    color:#777;
+    font-size:9px;
+    text-align:center;
 }
 
-.status.error{
-  color:#ff7777
-}
+.status.error{color:#ff7777}
+.status.success{color:#7bd99a}
 
-.status.success{
-  color:#7bd99a
-}
-
-#fileInput{
-  display:none
-}
+#fileInput{display:none}
 
 button:disabled{
-  opacity:.45;
-  cursor:not-allowed
+    opacity:.45;
+    cursor:not-allowed;
 }
 
-/* READ-ONLY: ADA TIPS */
-#introText,
-.intro-card{
-  user-select:none;
-  -webkit-user-select:none;
-  -moz-user-select:none;
-  -ms-user-select:none;
-  -webkit-touch-callout:none
+/* ============================================================
+   CUSTOMER CARE POPUP
+============================================================ */
+.customer-care-overlay{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.80);
+    z-index:1100;
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
 }
 
-@media(max-width:520px){
-  .main-inner{
-    padding:15px 10px 24px
-  }
+.customer-care-overlay.show{display:flex}
 
-  .intro-card{
-    padding:19px 15px 17px
-  }
+.customer-care-card{
+    width:min(100%,390px);
+    padding:23px 19px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(57,184,127,.07),
+            rgba(212,175,55,.09),
+            rgba(185,155,232,.06)
+        ),
+        linear-gradient(145deg,#191919,#090909);
+    border:1px solid rgba(212,175,55,.55);
+    border-radius:18px;
+    box-shadow:0 25px 80px rgba(0,0,0,.70);
+    text-align:center;
+}
 
-  .form-card{
-    padding:17px 13px 15px
-  }
+.customer-care-kicker{
+    margin-bottom:5px;
+    color:var(--teal);
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:2px;
+    text-transform:uppercase;
+}
 
-  .intro-title{
-    font-size:21px
-  }
+.customer-care-title{
+    margin:0;
+    background:linear-gradient(
+        90deg,
+        var(--gold2),
+        var(--cream),
+        var(--rose)
+    );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:24px;
+    font-weight:700;
+    letter-spacing:.4px;
+}
 
-  .tools{
-    gap:5px
-  }
+.customer-care-line{
+    width:70px;
+    height:1px;
+    margin:11px auto 13px;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        var(--gold2),
+        var(--teal),
+        transparent
+    );
+}
 
-  .tool-button,
-  .choose-service-button{
-    font-size:9px
-  }
+.customer-care-text{
+    margin:0;
+    color:#c9c9c9;
+    font-size:11px;
+    line-height:1.6;
+}
+
+.customer-care-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:17px;
+}
+
+.customer-care-action{
+    min-height:48px;
+    border-radius:9px;
+    font-size:10px;
+    font-weight:900;
+}
+
+.customer-care-whatsapp{
+    border:1px solid rgba(57,184,127,.55);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(57,184,127,.17),
+            rgba(22,128,71,.08)
+        ),
+        #101010;
+    color:#7bd99a;
+}
+
+.customer-care-phone{
+    border:1px solid rgba(212,175,55,.45);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(212,175,55,.12),
+            rgba(244,213,141,.05)
+        ),
+        #101010;
+    color:var(--gold2);
+}
+
+.customer-care-number{
+    margin-top:14px;
+    color:var(--champagne);
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:13px;
+    letter-spacing:.8px;
+}
+
+.customer-care-close{
+    width:100%;
+    min-height:42px;
+    margin-top:13px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:9px;
+    background:#111;
+    color:#aaa;
+    font-size:10px;
+    font-weight:800;
+}
+
+/* ============================================================
+   LUXURY REVIEW OVERLAY + FIREWORKS
+   UNTOUCHED
+============================================================ */
+.review-gateway-overlay{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(212,175,55,.055),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 12% 18%,
+            rgba(57,184,127,.045),
+            transparent 28%
+        ),
+        rgba(0,0,0,.91);
+    z-index:1000;
+    backdrop-filter:blur(9px);
+    -webkit-backdrop-filter:blur(9px);
+}
+
+.review-gateway-overlay.show{
+    display:flex;
+    animation:reviewOverlayIn .45s ease both;
+}
+
+@keyframes reviewOverlayIn{
+    from{opacity:0}
+    to{opacity:1}
+}
+
+.review-gateway-overlay:before{
+    content:"";
+    position:absolute;
+    width:70vw;
+    height:70vw;
+    max-width:700px;
+    max-height:700px;
+    border-radius:50%;
+    background:radial-gradient(
+        circle,
+        rgba(212,175,55,.07),
+        transparent 68%
+    );
+    filter:blur(4px);
+    pointer-events:none;
+    animation:luxuryPulse 5s ease-in-out infinite;
+}
+
+.review-gateway-overlay:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(
+            circle at 18% 78%,
+            rgba(57,184,127,.035),
+            transparent 20%
+        ),
+        radial-gradient(
+            circle at 83% 25%,
+            rgba(212,175,55,.04),
+            transparent 22%
+        );
+    pointer-events:none;
+}
+
+@keyframes luxuryPulse{
+    0%,100%{
+        transform:scale(.88);
+        opacity:.55;
+    }
+    50%{
+        transform:scale(1.08);
+        opacity:1;
+    }
+}
+
+.review-fireworks-canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:1;
+    pointer-events:none;
+}
+
+.review-stars{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    opacity:.65;
+    background-image:
+        radial-gradient(
+            circle at 12% 20%,
+            rgba(255,244,214,.8) 0 1px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle at 77% 14%,
+            rgba(243,214,107,.7) 0 1px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle at 88% 69%,
+            rgba(255,244,214,.55) 0 1px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle at 22% 72%,
+            rgba(57,184,127,.55) 0 1px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle at 62% 84%,
+            rgba(244,213,141,.55) 0 1px,
+            transparent 1.5px
+        );
+}
+
+/* ============================================================
+   PREMIUM LUXURY REVIEW CARD
+   VISUAL ONLY
+   FIREWORKS AND WORKSPACE LOGIC ARE UNCHANGED
+============================================================ */
+.review-gateway-card{
+    position:relative;
+    z-index:5;
+    width:min(100%,470px);
+    padding:42px 30px 31px;
+    background:
+        radial-gradient(
+            circle at 50% -20%,
+            rgba(244,213,141,.075),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.025),
+            rgba(212,175,55,.018) 48%,
+            rgba(57,184,127,.012)
+        ),
+        rgba(5,5,5,.94);
+    border:1px solid rgba(244,213,141,.22);
+    border-radius:30px;
+    box-shadow:
+        0 35px 110px rgba(0,0,0,.92),
+        0 0 45px rgba(212,175,55,.045),
+        inset 0 1px rgba(255,255,255,.055);
+    text-align:center;
+    animation:
+        reviewCardIn
+        .55s
+        cubic-bezier(.16,1,.3,1)
+        both;
+}
+
+.review-gateway-card:before{
+    content:"";
+    position:absolute;
+    inset:11px;
+    border:1px solid rgba(244,213,141,.075);
+    border-radius:23px;
+    pointer-events:none;
+}
+
+.review-gateway-card:after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:19%;
+    right:19%;
+    height:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(244,213,141,.35),
+            rgba(255,244,214,.88),
+            rgba(244,213,141,.35),
+            transparent
+        );
+    opacity:.75;
+    pointer-events:none;
+}
+
+@keyframes reviewCardIn{
+    from{
+        opacity:0;
+        transform:
+            translateY(22px)
+            scale(.965);
+    }
+    to{
+        opacity:1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+.review-gateway-icon{
+    position:relative;
+    width:64px;
+    height:64px;
+    margin:0 auto 22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle,
+            rgba(244,213,141,.09),
+            rgba(212,175,55,.025) 58%,
+            transparent 70%
+        ),
+        #050505;
+    border:1px solid rgba(244,213,141,.42);
+    box-shadow:
+        0 0 0 6px rgba(212,175,55,.018),
+        0 0 0 13px rgba(212,175,55,.008),
+        0 0 28px rgba(212,175,55,.08);
+}
+
+.review-gateway-icon:before{
+    content:"";
+    width:21px;
+    height:21px;
+    border:1px solid rgba(244,213,141,.82);
+    transform:rotate(45deg);
+    box-shadow:
+        0 0 15px rgba(212,175,55,.18),
+        inset 0 0 9px rgba(212,175,55,.04);
+}
+
+.review-gateway-icon:after{
+    content:"";
+    position:absolute;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:rgba(255,244,214,.92);
+    box-shadow:
+        0 -21px 0 -1px rgba(244,213,141,.70),
+        0 21px 0 -1px rgba(244,213,141,.35),
+        21px 0 0 -1px rgba(57,184,127,.48),
+        -21px 0 0 -1px rgba(212,175,55,.48);
+    animation:
+        emblemGlow
+        3.2s
+        ease-in-out
+        infinite;
+}
+
+@keyframes emblemGlow{
+    0%,100%{
+        opacity:.55;
+        transform:scale(.88);
+    }
+    50%{
+        opacity:.9;
+        transform:scale(1.08);
+    }
+}
+
+.review-gateway-title{
+    position:relative;
+    z-index:1;
+    margin:0;
+    background:
+        linear-gradient(
+            100deg,
+            #d9bb69,
+            #fff4d6 48%,
+            #d9bb69
+        );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+    font-size:
+        clamp(
+            29px,
+            7vw,
+            37px
+        );
+    font-weight:500;
+    letter-spacing:.15px;
+    line-height:1.12;
+}
+
+.review-gateway-title:after{
+    content:"";
+    display:block;
+    width:42px;
+    height:1px;
+    margin:17px auto 0;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(244,213,141,.62),
+            transparent
+        );
+}
+
+.review-gateway-message{
+    position:relative;
+    z-index:1;
+    max-width:360px;
+    margin:17px auto 0;
+    color:rgba(255,244,214,.68);
+    font-size:11px;
+    line-height:1.85;
+    letter-spacing:.12px;
+}
+
+.review-gateway-button{
+    position:relative;
+    z-index:1;
+    width:auto;
+    min-width:210px;
+    min-height:48px;
+    margin-top:25px;
+    padding:0 27px;
+    overflow:hidden;
+    border:1px solid rgba(244,213,141,.58);
+    border-radius:999px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(244,213,141,.075),
+            rgba(212,175,55,.025)
+        );
+    color:#f4d58d;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1.8px;
+    box-shadow:
+        0 8px 28px rgba(0,0,0,.30),
+        inset 0 1px rgba(255,255,255,.045);
+    transition:
+        background .25s ease,
+        border-color .25s ease,
+        color .25s ease,
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.review-gateway-button:before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-75%;
+    width:38%;
+    height:100%;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.22),
+            transparent
+        );
+    transform:skewX(-20deg);
+    animation:
+        buttonShine
+        4.8s
+        ease-in-out
+        infinite;
+}
+
+.review-gateway-button:hover{
+    transform:translateY(-2px);
+    border-color:
+        rgba(255,244,214,.82);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(244,213,141,.16),
+            rgba(212,175,55,.055)
+        );
+    color:#fff4d6;
+    box-shadow:
+        0 12px 35px rgba(212,175,55,.11),
+        0 0 24px rgba(212,175,55,.045),
+        inset 0 1px rgba(255,255,255,.08);
+}
+
+@keyframes buttonShine{
+    0%,48%{
+        left:-75%;
+    }
+    68%,100%{
+        left:135%;
+    }
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media(max-width:600px){
+
+    .header{
+        padding-left:9px;
+        padding-right:9px;
+    }
+
+    .header-actions{
+        gap:4px;
+    }
+
+    .service-badge{
+        max-width:32%;
+        padding-left:8px;
+        padding-right:8px;
+    }
+
+    .back-office-entry{
+        padding:0 6px;
+        font-size:7px;
+    }
+
+    .main-inner{
+        padding:12px 9px 30px;
+    }
+
+    /* Forms-only responsive refinement */
+    #formView .intro-card{
+        padding:20px 16px 18px;
+        border-radius:20px;
+    }
+
+    #formView .form-card{
+        padding:18px 14px 17px;
+        border-radius:20px;
+    }
+
+    #formView .field{
+        padding:10px;
+        border-radius:13px;
+    }
+
+    #formView .field input,
+    #formView .field textarea,
+    #formView .field select{
+        padding:11px;
+    }
+
+    #formView .form-heading{
+        font-size:20px;
+    }
+
+    #formView .intro-title{
+        font-size:23px;
+    }
+
+    .review-gateway-card{
+        padding:34px 18px 25px;
+    }
+
+    .customer-care-card{
+        padding:21px 16px;
+    }
+}
+
+@media(max-width:390px){
+
+    .customer-care-actions{
+        grid-template-columns:1fr;
+    }
+
+    #formView .intro-card{
+        padding:18px 14px 17px;
+    }
+
+    #formView .form-card{
+        padding:17px 12px 15px;
+    }
+
+    #formView .field{
+        padding:9px;
+    }
+
+    .review-gateway-card{
+        border-radius:24px;
+        padding:30px 16px 22px;
+    }
+
+    .review-gateway-title{
+        font-size:27px;
+    }
+}
+
+@media(max-height:650px){
+
+    .review-gateway-card{
+        max-height:calc(100dvh - 30px);
+        overflow-y:auto;
+    }
+
+    .customer-care-card{
+        max-height:calc(100dvh - 30px);
+        overflow-y:auto;
+    }
 }
 </style>
 </head>
 
 <body>
+
 <div class="app">
 
 <header class="header">
-  <div class="brand">
-    <h1 class="brand-title">Naija Pocket Business Center</h1>
-    <div class="brand-subtitle">Your Business Center</div>
-  </div>
-  <div id="serviceBadge" class="service-badge">Service</div>
+
+    <div class="brand">
+        <h1 class="brand-title">
+            Naija Pocket Business Center
+        </h1>
+
+        <div class="brand-subtitle">
+            Your Business Center
+        </div>
+    </div>
+
+    <div class="header-actions">
+
+        <button
+            id="backOfficeEntryButton"
+            class="back-office-entry"
+            type="button"
+            aria-label="Open Back Office"
+        >
+            BACK OFFICE
+        </button>
+
+        <div id="serviceBadge" class="service-badge">
+            Service
+        </div>
+
+    </div>
+
 </header>
 
 <main class="main">
+
 <div class="main-inner">
 
 <section id="formView">
 
-  <div class="intro-card" id="introCard">
-    <h2 id="introTitle" class="intro-title">Let's get started</h2>
-    <p id="introText" class="intro-text">Please wait while we prepare useful information for this service.</p>
-    <div id="price" class="price">Service</div>
-  </div>
+    <div class="intro-card">
 
-  <div class="form-card">
-    <h3 class="form-heading">Your Service Information</h3>
-    <p class="form-description">
-      Fill in the information relevant to your request. Optional fields can be left blank.
-    </p>
+        <h2 id="introTitle" class="intro-title">
+            Let's get started
+        </h2>
 
-    <form id="serviceForm">
-      <div id="fields" class="fields"></div>
+        <p id="introText" class="intro-text">
+            Please wait while we prepare useful information for this service.
+        </p>
 
-      <div class="form-note">
-        When you tap <strong>SEND</strong>, your information will be sent for processing and your prepared work will open immediately in the review area.
-      </div>
+        <div id="price" class="price">
+            Service
+        </div>
 
-      <button id="formSubmit" class="form-submit" type="submit">SEND</button>
-    </form>
-  </div>
+    </div>
+
+    <div class="form-card">
+
+        <h3 class="form-heading">
+            Your Service Information
+        </h3>
+
+        <p class="form-description">
+            Fill in the information relevant to your request.
+            Optional fields can be left blank.
+        </p>
+
+        <form id="serviceForm">
+
+            <div id="fields" class="fields"></div>
+
+            <div class="form-note">
+                When you tap <strong>SEND</strong>, your prepared work will immediately
+                appear on the full review page, ready for you to read and review.
+            </div>
+
+            <button
+                id="formSubmit"
+                class="form-submit"
+                type="submit"
+            >
+                SEND
+            </button>
+
+        </form>
+
+    </div>
 
 </section>
 
 <section id="reviewView" class="review-view">
 
-  <div class="review-header">
-    <h2 class="review-title">Your Work</h2>
-    <p class="review-subtitle">
-      Read through your prepared work carefully. You can request corrections before approving it.
-    </p>
-  </div>
+    <div class="review-header">
 
-  <div id="workCard" class="work-card">
-    <div id="workContent" class="work-content">
-      <div class="work-placeholder">Your prepared work will appear here.</div>
+        <h2 class="review-title">
+            Your Work Is Ready
+        </h2>
+
+        <p class="review-subtitle">
+            Your prepared work has been completed.
+            Open the full review page to read it, request corrections,
+            approve it and continue to payment.
+        </p>
+
     </div>
-  </div>
 
-  <div class="correction-card">
-    <h3 class="correction-title">Need any corrections?</h3>
-    <p class="correction-help">
-      Tell us exactly what you want changed, added or corrected.
-    </p>
+    <div class="workspace-review-gateway">
 
-    <textarea
-      id="correctionInput"
-      class="correction-input"
-      placeholder="Write your corrections or changes here..."
-    ></textarea>
+        <h3 class="workspace-review-gateway-title">
+            Full Review Available
+        </h3>
 
-    <div class="review-actions">
-      <button id="applyCorrectionsButton" class="review-button apply-button" type="button">
-        Apply My Corrections
-      </button>
+        <p class="workspace-review-gateway-text">
+            Your review is handled by the dedicated review page.
+            Open it to continue with the complete document workflow.
+        </p>
 
-      <button id="approveButton" class="review-button approve-button" type="button">
-        Approve &amp; Pay
-      </button>
+        <button
+            id="workspaceOpenReviewButton"
+            class="workspace-review-open"
+            type="button"
+        >
+            OPEN FULL REVIEW
+        </button>
+
     </div>
-  </div>
 
-  <button id="downloadButton" class="download-button" type="button" disabled>
-    🔒 Download Your Work
-  </button>
+</section>
 
-  <div class="payment-message">
-    Payment must be confirmed before the download button becomes active.
-  </div>
+<section id="backOfficeView">
 
-  <div id="paymentPanel" class="payment-panel">
-    <div class="payment-title">Payment</div>
-    <div id="paymentDetails" class="payment-details"></div>
+    <div class="back-office-header">
 
-    <div class="payment-buttons">
-      <button id="paymentReportButton" class="payment-report" type="button">
-        Report Payment
-      </button>
+        <h2 class="back-office-title">
+            Back Office
+        </h2>
 
-      <button id="paymentCheckButton" class="payment-check" type="button">
-        Check Status
-      </button>
+        <p class="back-office-subtitle">
+            See documents already saved when customers reported payment.
+            Verify the payment and unlock the exact saved document for download.
+        </p>
+
     </div>
-  </div>
+
+    <div class="back-office-key-card">
+
+        <label
+            class="back-office-key-label"
+            for="backOfficeKey"
+        >
+            Operator Key
+        </label>
+
+        <div class="back-office-key-row">
+
+            <input
+                id="backOfficeKey"
+                class="back-office-key-input"
+                type="password"
+                autocomplete="off"
+                placeholder="Enter Back Office key"
+            >
+
+            <button
+                id="backOfficeLoadButton"
+                class="back-office-load"
+                type="button"
+            >
+                LOAD
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="back-office-summary">
+
+        <div class="back-office-stat">
+            <span id="backOfficeTotal" class="back-office-stat-value">0</span>
+            <span class="back-office-stat-label">Payment Reports</span>
+        </div>
+
+        <div class="back-office-stat">
+            <span id="backOfficeApproved" class="back-office-stat-value">0</span>
+            <span class="back-office-stat-label">Awaiting Verification</span>
+        </div>
+
+        <div class="back-office-stat">
+            <span id="backOfficeActivated" class="back-office-stat-value">0</span>
+            <span class="back-office-stat-label">Unlocked</span>
+        </div>
+
+    </div>
+
+    <div id="backOfficeJobs" class="back-office-jobs">
+
+        <div class="back-office-empty">
+            Enter the operator key and tap LOAD.
+        </div>
+
+    </div>
+
+    <button
+        id="backOfficeRefreshButton"
+        class="back-office-refresh"
+        type="button"
+    >
+        REFRESH
+    </button>
+
+    <button
+        id="backOfficeExitButton"
+        class="back-office-exit"
+        type="button"
+    >
+        EXIT BACK OFFICE
+    </button>
 
 </section>
 
 </div>
+
 </main>
 
-<section class="bottom">
-  <div class="bottom-inner">
+<section id="customerBottom" class="bottom">
 
-    <div id="voiceRecording" class="voice-recording">
-      🔴 Recording... tap Voice again to stop.
-    </div>
+<div class="bottom-inner">
 
     <div class="tools">
-      <button id="uploadButton" class="tool-button" type="button">
-        📄 Upload Documents You Want To Give Us
-      </button>
 
-      <button id="voiceButton" class="tool-button gold" type="button">
-        🎤 Voice
-      </button>
+        <button
+            id="uploadButton"
+            class="tool-button"
+            type="button"
+        >
+            📄 Upload Documents You Want To Give Us
+        </button>
 
-      <button id="customerServiceButton" class="tool-button" type="button">
-        Customer Service
-      </button>
+        <button
+            id="customerCareButton"
+            class="tool-button customer-care-button"
+            type="button"
+        >
+            CUSTOMER CARE
+        </button>
+
     </div>
-
-    <button id="chooseServiceButton" class="choose-service-button" type="button">
-      Choose Another Service
-    </button>
 
     <input
-      id="fileInput"
-      type="file"
-      accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
+        id="fileInput"
+        type="file"
+        accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.xls,.xlsx,.csv,.ppt,.pptx"
     >
-
-    <div class="composer">
-      <textarea
-        id="messageInput"
-        class="message-input"
-        rows="1"
-        placeholder="Type your message..."
-        autocomplete="off"
-      ></textarea>
-
-      <button id="sendButton" class="send-button" type="button">
-        SEND
-      </button>
-    </div>
 
     <div id="status" class="status"></div>
 
-  </div>
+</div>
+
 </section>
+
+<div
+    id="customerCareOverlay"
+    class="customer-care-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="customerCareTitle"
+>
+
+<div class="customer-care-card">
+
+    <div class="customer-care-kicker">
+        PERSONAL ASSISTANCE
+    </div>
+
+    <h2 id="customerCareTitle" class="customer-care-title">
+        Customer Care
+    </h2>
+
+    <div class="customer-care-line"></div>
+
+    <p class="customer-care-text">
+        Need help with your request, payment or document?
+        Contact Customer Care directly.
+    </p>
+
+    <div class="customer-care-actions">
+
+        <button
+            id="customerCareWhatsApp"
+            class="customer-care-action customer-care-whatsapp"
+            type="button"
+        >
+            WHATSAPP
+        </button>
+
+        <button
+            id="customerCarePhone"
+            class="customer-care-action customer-care-phone"
+            type="button"
+        >
+            CALL CUSTOMER CARE
+        </button>
+
+    </div>
+
+    <div class="customer-care-number">
+        +234 805 707 3891
+    </div>
+
+    <button
+        id="customerCareClose"
+        class="customer-care-close"
+        type="button"
+    >
+        CLOSE
+    </button>
+
+</div>
+
+</div>
+
+<!-- LUXURY REVIEW GATEWAY -->
+
+<div
+    id="reviewGatewayOverlay"
+    class="review-gateway-overlay"
+    role="dialog"
+    aria-modal="true"
+>
+
+<canvas
+    id="reviewFireworksCanvas"
+    class="review-fireworks-canvas"
+    aria-hidden="true"
+></canvas>
+
+<div class="review-stars" aria-hidden="true"></div>
+
+<div class="review-gateway-card">
+
+    <div class="review-gateway-icon" aria-hidden="true"></div>
+
+    <h2 class="review-gateway-title">
+        Your Work Is Ready
+    </h2>
+
+    <p class="review-gateway-message">
+        Your prepared work is ready for review.
+        Open the dedicated review page to read the complete work,
+        request corrections, approve it and continue to payment.
+    </p>
+
+    <button
+        id="reviewGatewayOpenButton"
+        class="review-gateway-button"
+        type="button"
+    >
+        OPEN FULL REVIEW
+    </button>
+
+</div>
 
 </div>
 
 <script>
 "use strict";
 
-const API_BASE="";
+const API_BASE = "";
+const REVIEW_PAGE = "review.html";
 
-const $=id=>document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-const formView=$("formView"),
-reviewView=$("reviewView"),
-serviceForm=$("serviceForm"),
-fields=$("fields"),
-formSubmit=$("formSubmit"),
-serviceBadge=$("serviceBadge"),
-introTitle=$("introTitle"),
-introText=$("introText"),
-price=$("price"),
-introCard=$("introCard"),
-workCard=$("workCard"),
-workContent=$("workContent"),
-correctionInput=$("correctionInput"),
-applyBtn=$("applyCorrectionsButton"),
-approveBtn=$("approveButton"),
-downloadBtn=$("downloadButton"),
-uploadBtn=$("uploadButton"),
-voiceBtn=$("voiceButton"),
-customerBtn=$("customerServiceButton"),
-chooseBtn=$("chooseServiceButton"),
-fileInput=$("fileInput"),
-messageInput=$("messageInput"),
-sendBtn=$("sendButton"),
-status=$("status"),
-voiceRecording=$("voiceRecording"),
-paymentPanel=$("paymentPanel"),
-paymentDetails=$("paymentDetails"),
-paymentReport=$("paymentReportButton"),
-paymentCheck=$("paymentCheckButton");
+const formView = $("formView");
+const reviewView = $("reviewView");
+const backOfficeView = $("backOfficeView");
+const customerBottom = $("customerBottom");
+const serviceForm = $("serviceForm");
+const fields = $("fields");
+const formSubmit = $("formSubmit");
+const serviceBadge = $("serviceBadge");
+const introTitle = $("introTitle");
+const introText = $("introText");
+const price = $("price");
+const uploadBtn = $("uploadButton");
+const customerCareBtn = $("customerCareButton");
+const fileInput = $("fileInput");
+const status = $("status");
 
-const params=new URLSearchParams(location.search),
-service=(params.get("service")||"Business Center Service").trim();
+const customerCareOverlay = $("customerCareOverlay");
+const customerCareWhatsApp = $("customerCareWhatsApp");
+const customerCarePhone = $("customerCarePhone");
+const customerCareClose = $("customerCareClose");
 
-function id(prefix){
-  return prefix+(crypto.randomUUID?crypto.randomUUID():Date.now()+"_"+Math.random().toString(36).slice(2))
-}
+const reviewGatewayOverlay = $("reviewGatewayOverlay");
+const reviewGatewayOpenButton = $("reviewGatewayOpenButton");
+const workspaceOpenReviewButton = $("workspaceOpenReviewButton");
 
-function get(k){
-  try{
-    return localStorage.getItem(k)
-  }catch(e){
-    return null
-  }
-}
+const backOfficeEntryButton = $("backOfficeEntryButton");
+const backOfficeExitButton = $("backOfficeExitButton");
+const backOfficeKey = $("backOfficeKey");
+const backOfficeLoadButton = $("backOfficeLoadButton");
+const backOfficeRefreshButton = $("backOfficeRefreshButton");
+const backOfficeJobs = $("backOfficeJobs");
+const backOfficeTotal = $("backOfficeTotal");
+const backOfficeApproved = $("backOfficeApproved");
+const backOfficeActivated = $("backOfficeActivated");
 
-function put(k,v){
-  try{
-    localStorage.setItem(k,v)
-  }catch(e){}
-}
+const params = new URLSearchParams(location.search);
 
-let customerId=get("npbc_customer_id")||id("customer_");
-put("npbc_customer_id",customerId);
+const service = (
+    params.get("service") ||
+    "Business Center Service"
+).trim();
 
-let jobId=params.get("job_id")||get("npbc_job_id")||id("job_");
-put("npbc_job_id",jobId);
+const isBackOfficeMode =
+    params.get("back_office") === "1" ||
+    params.get("mode") === "back_office";
 
-let requestId=get("npbc_client_request_id")||id("request_");
-put("npbc_client_request_id",requestId);
+function makeId(prefix){
 
-let busy=false,
-approved=false,
-paymentConfirmed=false,
-currentWork="",
-mediaRecorder=null,
-recordedChunks=[],
-recordingStream=null;
-
-function clean(v){
-  return v==null?null:String(v).trim()||null
-}
-
-function setStatus(m,t=""){
-  status.textContent=m||"";
-  status.className="status "+t
-}
-
-function busyState(v){
-  busy=v;
-  [
-    formSubmit,
-    sendBtn,
-    uploadBtn,
-    voiceBtn,
-    customerBtn,
-    chooseBtn,
-    applyBtn,
-    approveBtn
-  ].forEach(x=>x.disabled=v)
-}
-
-const generic=[
-  {
-    name:"request",
-    label:"What do you need?",
-    required:true,
-    type:"textarea",
-    placeholder:"Tell us exactly what you want done"
-  },
-  {
-    name:"important_details",
-    label:"Important details",
-    type:"textarea",
-    placeholder:"Add the information that matters to your request"
-  },
-  {
-    name:"other_instructions",
-    label:"Other instructions",
-    type:"textarea",
-    placeholder:"Anything else you want considered"
-  }
-];
-
-const forms={
-  "document formatting":[
-    {
-      name:"document_title",
-      label:"Document title",
-      required:true,
-      type:"text",
-      placeholder:"Enter the document title"
-    },
-    {
-      name:"document_type",
-      label:"Document type",
-      required:true,
-      type:"text",
-      placeholder:"e.g. report, essay, thesis, business document"
-    },
-    {
-      name:"page_count",
-      label:"Number of pages",
-      type:"text",
-      placeholder:"Enter the number of pages if known"
-    },
-    {
-      name:"formatting_style",
-      label:"Formatting style",
-      type:"text",
-      placeholder:"e.g. APA, MLA, Harvard, business standard"
-    },
-    {
-      name:"special_instructions",
-      label:"Specific formatting instructions",
-      type:"textarea",
-      placeholder:"Font, spacing, margins, headings, layout, or anything else"
-    }
-  ],
-
-  "research assistance":[
-    {
-      name:"research_topic",
-      label:"Research topic or question",
-      required:true,
-      type:"textarea",
-      placeholder:"What do you want to research?"
-    },
-    {
-      name:"desired_length",
-      label:"Desired length",
-      type:"text",
-      placeholder:"e.g. 3 pages, 1,500 words"
-    },
-    {
-      name:"research_purpose",
-      label:"Purpose of the research",
-      type:"textarea",
-      placeholder:"Tell us what the research is for"
-    },
-    {
-      name:"special_instructions",
-      label:"Additional instructions",
-      type:"textarea",
-      placeholder:"Anything specific you want covered"
-    }
-  ],
-
-  "seminar papers":[
-    {
-      name:"topic",
-      label:"Topic / Title",
-      required:true,
-      type:"textarea",
-      placeholder:"Enter the seminar paper topic"
-    },
-    {
-      name:"length",
-      label:"Desired length",
-      required:true,
-      type:"text",
-      placeholder:"e.g. 3 pages, 2,000 words"
-    },
-    {
-      name:"formatting_style",
-      label:"Formatting style",
-      type:"text",
-      placeholder:"Leave blank for standard formatting"
-    },
-    {
-      name:"special_instructions",
-      label:"Special instructions",
-      type:"textarea",
-      placeholder:"Points to cover, tone, structure, or other instructions"
-    }
-  ],
-
-  "essay writing":[
-    {
-      name:"topic",
-      label:"Essay topic",
-      required:true,
-      type:"textarea",
-      placeholder:"Enter the essay topic or question"
-    },
-    {
-      name:"length",
-      label:"Desired length",
-      required:true,
-      type:"text",
-      placeholder:"e.g. 1,000 words, 3 pages"
-    },
-    {
-      name:"academic_level",
-      label:"Academic level",
-      type:"text",
-      placeholder:"e.g. secondary school, undergraduate, postgraduate"
-    },
-    {
-      name:"special_instructions",
-      label:"Additional instructions",
-      type:"textarea",
-      placeholder:"Anything specific you want included"
-    }
-  ],
-
-  "cv writing":[
-    {
-      name:"full_name",
-      label:"Full name",
-      required:true,
-      type:"text",
-      placeholder:"Enter your full name"
-    },
-    {
-      name:"career_target",
-      label:"Job / career you are targeting",
-      required:true,
-      type:"text",
-      placeholder:"e.g. Accountant, Software Developer"
-    },
-    {
-      name:"experience",
-      label:"Work experience",
-      type:"textarea",
-      placeholder:"Enter your work history and responsibilities"
-    },
-    {
-      name:"education",
-      label:"Education",
-      type:"textarea",
-      placeholder:"Schools, qualifications and dates"
-    },
-    {
-      name:"skills",
-      label:"Skills and achievements",
-      type:"textarea",
-      placeholder:"List important skills, achievements or certifications"
-    },
-    {
-      name:"additional_information",
-      label:"Additional information",
-      type:"textarea",
-      placeholder:"Anything else that should appear in your CV"
-    }
-  ]
-};
-
-function definition(){
-  const s=service.toLowerCase();
-
-  return Object.keys(forms).find(k=>s.includes(k))
-    ?forms[Object.keys(forms).find(k=>s.includes(k))]
-    :generic
-}
-
-function renderForm(){
-  fields.innerHTML="";
-
-  definition().forEach(f=>{
-    const w=document.createElement("div"),
-          l=document.createElement("label"),
-          i=document.createElement(f.type==="textarea"?"textarea":"input");
-
-    w.className="field";
-
-    l.htmlFor=f.name;
-
-    l.innerHTML=
-      f.label+
-      (
-        f.required
-        ?' <span class="required">*</span>'
-        :' <span class="optional">(optional)</span>'
-      );
-
-    i.id=f.name;
-    i.name=f.name;
-    i.placeholder=f.placeholder||"";
-
-    if(f.required)i.required=true;
-
-    if(f.type!=="textarea"){
-      i.type=f.type||"text";
+    if(
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+    ){
+        return prefix + crypto.randomUUID();
     }
 
-    w.append(l,i);
-    fields.append(w);
-  })
+    return prefix +
+        Date.now() +
+        "_" +
+        Math.random().toString(36).slice(2);
 }
 
-function collect(){
-  const d={};
+function storageGet(key){
 
-  serviceForm.querySelectorAll("input,textarea,select").forEach(e=>{
-    const v=clean(e.value);
-    if(v)d[e.name]=v
-  });
-
-  return d
+    try{
+        return localStorage.getItem(key);
+    }catch{
+        return null;
+    }
 }
 
-function guidancePrompt(){
-  return `The customer has just selected this service: ${service}. Prepare a short, clear customer-facing introduction explaining what the service does, what the customer will receive, the current fee or that quotation is required, useful information to prepare, practical tips specific to the service, and useful documents they may upload. Do not create the actual work yet. Do not ask for payment yet. Do not mention internal software, models, APIs or providers. Write concise, friendly Nigerian English.`
+function storageSet(key,value){
+
+    try{
+        localStorage.setItem(key,value);
+    }catch{}
 }
 
-async function apiChat(body){
-  const r=await fetch(API_BASE+"/api/chat",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(body)
-  });
+let customerId =
+    storageGet("npbc_customer_id") ||
+    makeId("customer_");
 
-  const d=await r.json().catch(()=>({}));
+storageSet(
+    "npbc_customer_id",
+    customerId
+);
 
-  if(!r.ok||!d.success){
-    throw new Error(d.reply||d.message||d.error||"Request failed.");
-  }
+let jobId =
+    params.get("job_id") ||
+    storageGet("npbc_job_id") ||
+    "";
 
-  return d
-}
+let requestId = makeId("request_");
 
-async function loadGuidance(){
-  setStatus("Preparing useful information for this service...");
+storageSet(
+    "npbc_client_request_id",
+    requestId
+);
 
-  try{
-    const d=await apiChat({
-      message:guidancePrompt(),
-      service,
-      event:"service_selected_guidance",
-      customer_id:customerId,
-      job_id:jobId,
-      client_request_id:requestId,
-      activate_intelligence:true,
-      guidance_only:true,
-      create_work:false
-    });
-
-    introTitle.textContent=service;
-
-    introText.textContent=
-      clean(d.reply)||
-      "Please provide the information requested below.";
-
-    const a=d.amount||d.price||d.service_amount;
-
-    price.textContent=
-      a
-      ?"Service fee: ₦"+Number(
-        String(a).replace(/[^0-9.]/g,"")
-      ).toLocaleString()
-      :/₦\s?[\d,]+/.test(d.reply||"")
-        ?"Service fee: "+(d.reply.match(/₦\s?[\d,]+/)||[""])[0]
-        :/quotation/i.test(d.reply||"")
-          ?"Service fee: Quotation required"
-          :"Service: "+service;
-
-    setStatus("");
-
-  }catch(e){
-
-    introText.textContent=
-      "Please provide the information requested in the form. If you are unsure what to provide, type your question below.";
-
-    price.textContent="Service: "+service;
-
-    setStatus(
-      "You can still complete the form or ask a question below.",
-      "error"
+if(jobId){
+    storageSet(
+        "npbc_job_id",
+        jobId
     );
-  }
 }
 
-function creationPrompt(data){
-  return `The customer has completed the service information form. Create the actual requested work now. Return the complete work so it can be reviewed here. Do not ask for an email address or send the customer elsewhere unless genuinely required. SERVICE: ${service}
+let busy = false;
+let currentWork = "";
+let backOfficeJobsData = [];
 
-CUSTOMER FORM INFORMATION:
-${Object.entries(data).map(([k,v])=>`${k}:
-${v}`).join("\n\n")}`
-}
+function clean(value){
 
-async function createWork(data){
-  busyState(true);
-  setStatus("Preparing your work...");
-
-  try{
-    const d=await apiChat({
-      message:creationPrompt(data),
-      service,
-      event:"form_submitted_create_work",
-      customer_id:customerId,
-      job_id:jobId,
-      client_request_id:requestId,
-      form_data:data,
-      activate_intelligence:true,
-      create_work:true
-    });
-
-    if(d.job_id){
-      jobId=d.job_id;
-      put("npbc_job_id",jobId)
+    if(
+        value === undefined ||
+        value === null
+    ){
+        return "";
     }
 
-    showReview(d.reply||"Your work has been prepared.");
+    return String(value).trim();
+}
 
-    setStatus(
-      "Your work is ready for review.",
-      "success"
+function escapeHtml(value){
+
+    return clean(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function setStatus(message,type=""){
+
+    status.textContent = message || "";
+    status.className = "status " + type;
+}
+
+function setBusy(value){
+
+    busy = value;
+
+    [
+        formSubmit,
+        uploadBtn,
+        customerCareBtn
+    ].forEach(button => {
+
+        if(button){
+            button.disabled = value;
+        }
+
+    });
+}
+
+function formatDate(value){
+
+    if(!value){
+        return "Date unavailable";
+    }
+
+    const date = new Date(value);
+
+    if(Number.isNaN(date.getTime())){
+        return clean(value);
+    }
+
+    return date.toLocaleString();
+}
+
+function valueFrom(object,keys){
+
+    if(!object){
+        return "";
+    }
+
+    for(const key of keys){
+
+        if(
+            object[key] !== undefined &&
+            object[key] !== null &&
+            object[key] !== ""
+        ){
+            return object[key];
+        }
+
+    }
+
+    return "";
+}
+
+function serverJobId(data){
+
+    return clean(
+        data?.job_id ||
+        data?.jobId ||
+        data?.job?.id ||
+        data?.data?.job_id
+    );
+}
+
+function serverReply(data){
+
+    return clean(
+        data?.reply ||
+        data?.message ||
+        data?.response ||
+        data?.content
+    );
+}
+
+function serverWork(data){
+
+    return clean(
+        data?.work ||
+        data?.document ||
+        data?.content ||
+        data?.reply
+    );
+}
+
+function serverError(data,response){
+
+    return clean(
+        data?.error_message ||
+        data?.detail ||
+        data?.reply ||
+        data?.message ||
+        data?.error ||
+        (
+            response
+                ? `Request failed (${response.status}).`
+                : "Request failed."
+        )
+    );
+}
+
+async function apiChat(payload){
+
+    let response;
+
+    try{
+
+        response = await fetch(
+            API_BASE + "/api/chat",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Accept":"application/json"
+                },
+                body:JSON.stringify(payload)
+            }
+        );
+
+    }catch(error){
+
+        throw new Error(
+            "Unable to connect to the Business Center service."
+        );
+
+    }
+
+    let data = {};
+
+    try{
+        data = await response.json();
+    }catch{
+        data = {};
+    }
+
+    if(!response.ok){
+        throw new Error(
+            serverError(data,response)
+        );
+    }
+
+    if(data && data.success === false){
+        throw new Error(
+            serverError(data,response)
+        );
+    }
+
+    return data;
+}
+
+function openFullReview(){
+
+    if(!jobId){
+
+        setStatus(
+            "The server has not created a review job yet.",
+            "error"
+        );
+
+        return;
+    }
+
+    storageSet(
+        "npbc_job_id",
+        jobId
     );
 
-  }catch(e){
-    setStatus(e.message,"error");
+    storageSet(
+        "npbc_review_job_id",
+        jobId
+    );
 
-  }finally{
-    busyState(false)
-  }
+    storageSet(
+        "npbc_review_service",
+        service
+    );
+
+    storageSet(
+        "npbc_review_customer_id",
+        customerId
+    );
+
+    storageSet(
+        "npbc_review_request_id",
+        requestId
+    );
+
+    window.location.href =
+        REVIEW_PAGE +
+        "?job_id=" +
+        encodeURIComponent(jobId);
+}
+
+function showReviewGateway(){
+
+    reviewGatewayOverlay
+        .classList
+        .add("show");
+}
+
+function closeReviewGateway(){
+
+    reviewGatewayOverlay
+        .classList
+        .remove("show");
 }
 
 function showReview(work){
-  formView.style.display="none";
-  reviewView.classList.add("show");
 
-  currentWork=work||"";
-  workContent.textContent=currentWork;
+    currentWork = clean(work);
 
-  correctionInput.value="";
-  paymentPanel.classList.remove("show");
+    formView.style.display = "none";
 
-  approved=false;
-  paymentConfirmed=false;
-
-  downloadBtn.disabled=true;
-  downloadBtn.classList.remove("active");
-  downloadBtn.textContent="🔒 Download Your Work";
-
-  main.scrollTop=0
+    reviewView.classList.add("show");
 }
 
-serviceForm.addEventListener("submit",e=>{
-  e.preventDefault();
+/* ============================================================
+   SERVICE FORMS
+============================================================ */
 
-  if(!busy&&serviceForm.reportValidity()){
-    createWork(collect())
-  }
-});
+const generic = [
 
-/* HARD READ-ONLY PROTECTION FOR ADA TIPS AND PREPARED WORK */
-[introCard,workCard].forEach(el=>{
-  ["copy","cut","contextmenu","selectstart","dragstart"].forEach(ev=>{
-    el.addEventListener(ev,e=>{
-      e.preventDefault();
+    {
+        name:"request",
+        label:"What do you need?",
+        required:true,
+        type:"textarea",
+        placeholder:"Tell us exactly what you want done"
+    },
 
-      if(e.clipboardData){
-        e.clipboardData.setData("text/plain","")
-      }
-    })
-  });
+    {
+        name:"important_details",
+        label:"Important details",
+        type:"textarea",
+        placeholder:"Add the information that matters to your request"
+    },
 
-  el.addEventListener("keydown",e=>{
-    if(
-      (e.ctrlKey||e.metaKey)&&
-      ["a","c","x","s","u"].includes(e.key.toLowerCase())
-    ){
-      e.preventDefault()
-    }
-  });
-
-  el.addEventListener("mousedown",e=>{
-    if(e.detail>1)e.preventDefault()
-  })
-});
-
-applyBtn.addEventListener("click",async()=>{
-  const c=clean(correctionInput.value);
-
-  if(!c){
-    return setStatus(
-      "Please write the correction or change you want.",
-      "error"
-    )
-  }
-
-  if(busy)return;
-
-  busyState(true);
-  setStatus("Applying your corrections...");
-
-  try{
-    const d=await apiChat({
-      message:`Please revise the prepared work using these customer corrections:
-
-${c}
-
-Return the complete revised work for review.`,
-      service,
-      event:"review_correction",
-      customer_id:customerId,
-      job_id:jobId,
-      client_request_id:requestId,
-      current_work:currentWork,
-      correction:c,
-      activate_intelligence:true,
-      create_work:true
-    });
-
-    currentWork=d.reply||currentWork;
-    workContent.textContent=currentWork;
-    correctionInput.value="";
-
-    setStatus(
-      "Your corrections have been applied. Please review the updated work.",
-      "success"
-    );
-
-    main.scrollTop=0;
-
-  }catch(e){
-    setStatus(e.message,"error");
-
-  }finally{
-    busyState(false)
-  }
-});
-
-approveBtn.addEventListener("click",async()=>{
-  if(busy)return;
-
-  busyState(true);
-  setStatus("Preparing your payment step...");
-
-  try{
-    const q=new URLSearchParams({
-      customer_id:customerId,
-      job_id:jobId,
-      client_request_id:requestId,
-      service
-    });
-
-    const r=await fetch(
-      API_BASE+"/api/approve?"+q,
-      {method:"POST"}
-    );
-
-    const d=await r.json().catch(()=>({}));
-
-    if(!r.ok||!d.success){
-      throw new Error(
-        d.message||"Approval could not be completed."
-      );
+    {
+        name:"other_instructions",
+        label:"Other instructions",
+        type:"textarea",
+        placeholder:"Anything else you want considered"
     }
 
-    approved=true;
+];
 
-    paymentPanel.classList.add("show");
+const forms = {
 
-    paymentDetails.textContent=
-      `Service: ${d.service||service}
-Amount: ${
-  Number(d.amount||0)>0
-  ?"₦"+Number(d.amount).toLocaleString()
-  :"Quotation required"
-}
-Order: ${d.order_number||"Pending"}`;
+    "document formatting":[
 
-    setStatus(
-      "Your work is approved. Payment is ready.",
-      "success"
-    );
-
-    paymentPanel.scrollIntoView({
-      behavior:"smooth",
-      block:"center"
-    });
-
-  }catch(e){
-    setStatus(e.message,"error");
-
-  }finally{
-    busyState(false)
-  }
-});
-
-paymentReport.addEventListener("click",async()=>{
-  if(!approved){
-    return setStatus(
-      "Approve the work first.",
-      "error"
-    )
-  }
-
-  const m=paymentDetails.textContent.match(
-    /Amount:\s*([^\n]+)/
-  );
-
-  const amount=m
-    ?Number(m[1].replace(/[^0-9.]/g,""))
-    :0;
-
-  if(amount<=0){
-    return setStatus(
-      "This service requires a quotation before payment.",
-      "error"
-    )
-  }
-
-  try{
-    const r=await fetch(
-      API_BASE+"/api/payment/create",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
+        {
+            name:"document_title",
+            label:"Document title",
+            required:true,
+            type:"text",
+            placeholder:"Enter the document title"
         },
-        body:JSON.stringify({
-          job_id:jobId,
-          customer_id:customerId,
-          service,
-          amount,
-          payment_method:"bank_transfer"
-        })
-      }
-    );
 
-    const d=await r.json().catch(()=>({}));
-
-    if(!r.ok||!d.success){
-      throw new Error(
-        d.message||"Payment record could not be created."
-      );
-    }
-
-    paymentDetails.textContent+=
-      `\nPayment ID: ${d.payment_id}\nStatus: Pending`;
-
-    setStatus(
-      "Payment reported. Verification is pending.",
-      "success"
-    );
-
-  }catch(e){
-    setStatus(e.message,"error")
-  }
-});
-
-paymentCheck.addEventListener("click",async()=>{
-  try{
-    const r=await fetch(
-      API_BASE+"/api/payment/status?job_id="+
-      encodeURIComponent(jobId)
-    );
-
-    const d=await r.json().catch(()=>({}));
-
-    if(!r.ok||!d.success){
-      throw new Error(
-        d.message||"Payment status could not be checked."
-      );
-    }
-
-    if(
-      String(d.status||"").toLowerCase()==="paid"
-    ){
-      paymentConfirmed=true;
-
-      downloadBtn.disabled=false;
-      downloadBtn.classList.add("active");
-      downloadBtn.textContent="⬇ Download Your Work";
-
-      downloadBtn.onclick=()=>{
-        location.href=
-          API_BASE+
-          "/api/download?job_id="+
-          encodeURIComponent(jobId)+
-          "&customer_id="+
-          encodeURIComponent(customerId)
-      };
-
-      paymentDetails.textContent+=
-        "\nStatus: Paid";
-
-      setStatus(
-        "Payment confirmed. Your download is now available.",
-        "success"
-      );
-
-    }else{
-      setStatus("Payment is still pending.")
-    }
-
-  }catch(e){
-    setStatus(e.message,"error")
-  }
-});
-
-uploadBtn.addEventListener("click",()=>{
-  if(!busy)fileInput.click()
-});
-
-fileInput.addEventListener("change",async()=>{
-  const f=fileInput.files?.[0];
-
-  if(!f)return;
-
-  const fd=new FormData();
-
-  fd.append("file",f);
-  fd.append("customer_id",customerId);
-  fd.append("job_id",jobId);
-  fd.append("client_request_id",requestId);
-  fd.append("service",service);
-
-  setStatus(
-    "Uploading the document you want to give us..."
-  );
-
-  try{
-    const r=await fetch(
-      API_BASE+"/api/upload",
-      {
-        method:"POST",
-        body:fd
-      }
-    );
-
-    const d=await r.json().catch(()=>({}));
-
-    if(!r.ok||!d.success){
-      throw new Error(
-        d.message||"Document upload failed."
-      );
-    }
-
-    setStatus(
-      "Your document has been received successfully.",
-      "success"
-    );
-
-    await sendMessage(
-      "A document has been uploaded for this active service. Use the uploaded document and current job context to continue the requested work. Do not ask the customer to email the document.",
-      "document_uploaded"
-    );
-
-  }catch(e){
-    setStatus(e.message,"error");
-
-  }finally{
-    fileInput.value=""
-  }
-});
-
-async function sendMessage(message,event){
-  if(busy)return null;
-
-  busyState(true);
-  setStatus("Processing your message...");
-
-  try{
-    const d=await apiChat({
-      message,
-      service,
-      event,
-      customer_id:customerId,
-      job_id:jobId,
-      client_request_id:requestId,
-      current_work:currentWork,
-      activate_intelligence:true,
-      create_work:true
-    });
-
-    if(d.job_id){
-      jobId=d.job_id;
-      put("npbc_job_id",jobId)
-    }
-
-    if(
-      d.reply&&
-      reviewView.classList.contains("show")
-    ){
-      currentWork=d.reply;
-      workContent.textContent=currentWork
-    }
-
-    setStatus(
-      "Ready for your next instruction.",
-      "success"
-    );
-
-    return d;
-
-  }catch(e){
-    setStatus(e.message,"error");
-    return null;
-
-  }finally{
-    busyState(false)
-  }
-}
-
-sendBtn.addEventListener("click",()=>{
-  const t=clean(messageInput.value);
-
-  if(!t){
-    return setStatus(
-      "Please type your message first.",
-      "error"
-    )
-  }
-
-  messageInput.value="";
-  messageInput.style.height="auto";
-
-  sendMessage(t,"customer_message")
-});
-
-messageInput.addEventListener("keydown",e=>{
-  if(e.key==="Enter"&&!e.shiftKey){
-    e.preventDefault();
-    sendBtn.click()
-  }
-});
-
-messageInput.addEventListener("input",()=>{
-  messageInput.style.height="auto";
-
-  messageInput.style.height=
-    Math.min(messageInput.scrollHeight,105)+"px"
-});
-
-customerBtn.addEventListener("click",async()=>{
-  if(busy)return;
-
-  busyState(true);
-  setStatus(
-    "Connecting you to Customer Service..."
-  );
-
-  try{
-    const q=new URLSearchParams({
-      customer_id:customerId,
-      job_id:jobId,
-      service
-    });
-
-    const r=await fetch(
-      API_BASE+"/api/customer-service?"+q,
-      {method:"POST"}
-    );
-
-    const d=await r.json().catch(()=>({}));
-
-    if(!r.ok||!d.success){
-      throw new Error(
-        d.reply||
-        d.message||
-        "Customer Service is unavailable."
-      );
-    }
-
-    setStatus(
-      d.reply||
-      "Customer Service is available to help.",
-      "success"
-    );
-
-  }catch(e){
-    setStatus(e.message,"error");
-
-  }finally{
-    busyState(false)
-  }
-});
-
-chooseBtn.addEventListener("click",()=>{
-  if(!busy){
-    location.href="conversation.html"
-  }
-});
-
-voiceBtn.addEventListener("click",async()=>{
-  if(mediaRecorder?.state==="recording"){
-    mediaRecorder.stop();
-    return
-  }
-
-  if(!navigator.mediaDevices?.getUserMedia){
-    return setStatus(
-      "Voice recording is not supported on this device.",
-      "error"
-    )
-  }
-
-  try{
-    recordingStream=
-      await navigator.mediaDevices.getUserMedia({
-        audio:true
-      });
-
-    recordedChunks=[];
-
-    mediaRecorder=
-      new MediaRecorder(recordingStream);
-
-    mediaRecorder.ondataavailable=e=>{
-      if(e.data?.size){
-        recordedChunks.push(e.data)
-      }
-    };
-
-    mediaRecorder.onstop=async()=>{
-      recordingStream?.getTracks().forEach(
-        t=>t.stop()
-      );
-
-      recordingStream=null;
-
-      voiceRecording.classList.remove("show");
-      voiceBtn.textContent="🎤 Voice";
-
-      if(!recordedChunks.length){
-        return setStatus(
-          "No voice recording was captured.",
-          "error"
-        )
-      }
-
-      const fd=new FormData();
-
-      fd.append(
-        "file",
-        new Blob(
-          recordedChunks,
-          {type:"audio/webm"}
-        ),
-        "voice_message.webm"
-      );
-
-      fd.append("customer_id",customerId);
-      fd.append("job_id",jobId);
-      fd.append("client_request_id",requestId);
-      fd.append("service",service);
-
-      try{
-        const r=await fetch(
-          API_BASE+"/api/voice",
-          {
-            method:"POST",
-            body:fd
-          }
-        );
-
-        const d=await r.json().catch(()=>({}));
-
-        if(!r.ok||!d.success){
-          throw new Error(
-            d.message||"Voice recording failed."
-          );
+        {
+            name:"document_type",
+            label:"Document type",
+            required:true,
+            type:"text",
+            placeholder:"e.g. report, essay, thesis, business document"
+        },
+
+        {
+            name:"page_count",
+            label:"Number of pages",
+            type:"text",
+            placeholder:"Enter the number of pages if known"
+        },
+
+        {
+            name:"formatting_style",
+            label:"Formatting style",
+            type:"text",
+            placeholder:"e.g. APA, MLA, Harvard, business standard"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Specific formatting instructions",
+            type:"textarea",
+            placeholder:"Font, spacing, margins, headings, layout, or anything else"
         }
 
-        await sendMessage(
-          "A voice recording has been received for this active service. Continue using the customer's voice instruction and current job context.",
-          "voice_uploaded"
+    ],
+
+    "research assistance":[
+
+        {
+            name:"research_topic",
+            label:"Research topic or question",
+            required:true,
+            type:"textarea",
+            placeholder:"What do you want to research?"
+        },
+
+        {
+            name:"desired_length",
+            label:"Desired length",
+            type:"text",
+            placeholder:"e.g. 3 pages, 1,500 words"
+        },
+
+        {
+            name:"research_purpose",
+            label:"Purpose of the research",
+            type:"textarea",
+            placeholder:"Tell us what the research is for"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Additional instructions",
+            type:"textarea",
+            placeholder:"Anything specific you want covered"
+        }
+
+    ],
+
+    "seminar papers":[
+
+        {
+            name:"topic",
+            label:"Topic / Title",
+            required:true,
+            type:"textarea",
+            placeholder:"Enter the seminar paper topic"
+        },
+
+        {
+            name:"length",
+            label:"Desired length",
+            required:true,
+            type:"text",
+            placeholder:"e.g. 3 pages, 2,000 words"
+        },
+
+        {
+            name:"formatting_style",
+            label:"Formatting style",
+            type:"text",
+            placeholder:"e.g. APA, Harvard, MLA"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Special instructions",
+            type:"textarea",
+            placeholder:"Points to cover, structure, sources, or other instructions"
+        }
+
+    ],
+
+    "essay writing":[
+
+        {
+            name:"topic",
+            label:"Essay topic or question",
+            required:true,
+            type:"textarea",
+            placeholder:"Enter the essay topic or question"
+        },
+
+        {
+            name:"length",
+            label:"Desired length",
+            required:true,
+            type:"text",
+            placeholder:"e.g. 1,000 words, 3 pages"
+        },
+
+        {
+            name:"academic_level",
+            label:"Academic level",
+            type:"text",
+            placeholder:"e.g. secondary school, undergraduate, postgraduate"
+        },
+
+        {
+            name:"special_instructions",
+            label:"Additional instructions",
+            type:"textarea",
+            placeholder:"Anything specific you want included"
+        }
+
+    ],
+
+    "cv writing":[
+
+        {
+            name:"full_name",
+            label:"Full name",
+            required:true,
+            type:"text",
+            placeholder:"Enter your full name"
+        },
+
+        {
+            name:"career_target",
+            label:"Job / career you are targeting",
+            required:true,
+            type:"text",
+            placeholder:"e.g. Accountant, Software Developer"
+        },
+
+        {
+            name:"experience",
+            label:"Work experience",
+            type:"textarea",
+            placeholder:"Enter your work history and responsibilities"
+        },
+
+        {
+            name:"education",
+            label:"Education",
+            type:"textarea",
+            placeholder:"Schools, qualifications and dates"
+        },
+
+        {
+            name:"skills",
+            label:"Skills and achievements",
+            type:"textarea",
+            placeholder:"List important skills, achievements or certifications"
+        },
+
+        {
+            name:"additional_information",
+            label:"Additional information",
+            type:"textarea",
+            placeholder:"Anything else that should appear in your CV"
+        }
+
+    ]
+
+};
+
+function definition(){
+
+    const lowerService =
+        service.toLowerCase();
+
+    const key =
+        Object.keys(forms).find(
+            key => lowerService.includes(key)
         );
 
-      }catch(e){
-        setStatus(e.message,"error")
-      }
-    };
+    return key
+        ? forms[key]
+        : generic;
+}
 
-    mediaRecorder.start();
+function renderForm(){
 
-    voiceRecording.classList.add("show");
-    voiceBtn.textContent="⏹ Stop Voice";
+    fields.innerHTML = "";
 
-    setStatus("Recording your voice...");
+    definition().forEach(field => {
 
-  }catch(e){
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.className = "field";
+
+        const label =
+            document.createElement("label");
+
+        label.htmlFor = field.name;
+
+        label.innerHTML =
+            escapeHtml(field.label) +
+            (
+                field.required
+                    ? ' <span class="required">*</span>'
+                    : ' <span class="optional">(optional)</span>'
+            );
+
+        let input;
+
+        if(field.type === "textarea"){
+
+            input =
+                document.createElement("textarea");
+
+        }else{
+
+            input =
+                document.createElement("input");
+
+            input.type =
+                field.type || "text";
+        }
+
+        input.id = field.name;
+        input.name = field.name;
+
+        input.placeholder =
+            field.placeholder || "";
+
+        input.autocomplete = "off";
+
+        if(field.required){
+            input.required = true;
+        }
+
+        wrapper.append(
+            label,
+            input
+        );
+
+        fields.appendChild(wrapper);
+
+    });
+}
+
+function collectForm(){
+
+    const data = {};
+
+    serviceForm
+        .querySelectorAll("input,textarea,select")
+        .forEach(element => {
+
+            const value =
+                clean(element.value);
+
+            if(value){
+                data[element.name] = value;
+            }
+
+        });
+
+    return data;
+}
+
+/* ============================================================
+   GUIDANCE
+============================================================ */
+
+async function loadGuidance(){
+
     setStatus(
-      "Could not access your microphone.",
-      "error"
-    )
-  }
-});
+        "Preparing useful information for this service..."
+    );
+
+    try{
+
+        const data = await apiChat({
+
+            service,
+
+            customer_id:
+                customerId,
+
+            job_id:
+                jobId || null,
+
+            client_request_id:
+                requestId,
+
+            event:
+                "service_selected",
+
+            message:
+                `The customer has selected the service "${service}".Provide a short customer-facing explanation of:- what this service does- what the customer will receive- what information they should prepare- useful documents they may provide- the service fee if knownDo not create the customer's work yet.Do not request payment.Do not discuss internal systems.`,
+
+            create_work:false,
+
+            guidance_only:true
+
+        });
+
+        const reply =
+            serverReply(data);
+
+        if(reply){
+            introText.textContent =
+                reply;
+        }
+
+        const returnedJob =
+            serverJobId(data);
+
+        if(returnedJob){
+
+            jobId =
+                returnedJob;
+
+            storageSet(
+                "npbc_job_id",
+                jobId
+            );
+
+        }
+
+        const amount =
+            data.amount ??
+            data.price ??
+            data.service_amount;
+
+        if(
+            amount !== undefined &&
+            amount !== null
+        ){
+
+            const numeric =
+                Number(
+                    String(amount)
+                        .replace(/[^0-9.]/g,"")
+                );
+
+            if(Number.isFinite(numeric)){
+
+                price.textContent =
+                    "Service fee: ₦" +
+                    numeric.toLocaleString();
+
+            }else{
+
+                price.textContent =
+                    "Service fee: " +
+                    String(amount);
+
+            }
+
+        }else{
+
+            const match =
+                (reply || "")
+                    .match(/₦\s?[\d,]+/);
+
+            if(match){
+
+                price.textContent =
+                    "Service fee: " +
+                    match[0];
+
+            }else if(
+                /quotation/i.test(reply || "")
+            ){
+
+                price.textContent =
+                    "Service fee: Quotation required";
+
+            }else{
+
+                price.textContent =
+                    "Service: " +
+                    service;
+            }
+        }
+
+        setStatus("");
+
+    }catch(error){
+
+        introText.textContent =
+            "Internet issue. Please check your internet connection, go back, and try the service button again.";
+
+        price.textContent =
+            "Service: " +
+            service;
+
+        setStatus("","");
+    }
+}
+
+/* ============================================================
+   WORK CREATION
+============================================================ */
+
+async function createWork(formData){
+
+    if(busy){
+        return;
+    }
+
+    setBusy(true);
+
+    setStatus(
+        "Sending your request for processing..."
+    );
+
+    const message =
+        `The customer has submitted the information requiredfor the selected service.Selected service:${service}Customer information:${Object.entries(formData)
+        .map(
+            ([key,value]) =>
+                `${key}: ${value}`
+        )
+        .join("\n\n")}Please process the customer's request and create the requestedwork according to the active service workflow.The customer expects the completed work to proceed to review.`;
+
+    try{
+
+        const data =
+            await apiChat({
+
+                message,
+
+                service,
+
+                customer_id:
+                    customerId,
+
+                job_id:
+                    jobId || null,
+
+                client_request_id:
+                    requestId,
+
+                event:
+                    "form_submitted",
+
+                form_data:
+                    formData,
+
+                create_work:true
+
+            });
+
+        const returnedJob =
+            serverJobId(data);
+
+        if(returnedJob){
+
+            jobId =
+                returnedJob;
+
+            storageSet(
+                "npbc_job_id",
+                jobId
+            );
+
+        }
+
+        if(!jobId){
+
+            throw new Error(
+                "The server completed the request but did not return the active job ID."
+            );
+
+        }
+
+        currentWork =
+            serverWork(data);
+
+        showReview(currentWork);
+
+        setStatus(
+            "Your work is ready for review.",
+            "success"
+        );
+
+        showReviewGateway();
+
+    }catch(error){
+
+        setStatus(
+            error.message ||
+            "We could not complete the request.",
+            "error"
+        );
+
+    }finally{
+
+        setBusy(false);
+
+    }
+}
+
+serviceForm.addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+        if(busy){
+            return;
+        }
+
+        if(!serviceForm.reportValidity()){
+            return;
+        }
+
+        createWork(
+            collectForm()
+        );
+
+    }
+);
+
+/* ============================================================
+   REVIEW
+============================================================ */
+
+reviewGatewayOpenButton.addEventListener(
+    "click",
+    openFullReview
+);
+
+workspaceOpenReviewButton.addEventListener(
+    "click",
+    openFullReview
+);
+
+reviewGatewayOverlay.addEventListener(
+    "click",
+    event => {
+
+        if(event.target === reviewGatewayOverlay){
+            closeReviewGateway();
+        }
+
+    }
+);
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "Escape"){
+
+            closeReviewGateway();
+            closeCustomerCare();
+
+        }
+
+    }
+);
+
+/* ============================================================
+   CUSTOMER CARE
+============================================================ */
+
+function openCustomerCare(){
+
+    customerCareOverlay
+        .classList
+        .add("show");
+}
+
+function closeCustomerCare(){
+
+    customerCareOverlay
+        .classList
+        .remove("show");
+}
+
+customerCareBtn.addEventListener(
+    "click",
+    openCustomerCare
+);
+
+customerCareClose.addEventListener(
+    "click",
+    closeCustomerCare
+);
+
+customerCareOverlay.addEventListener(
+    "click",
+    event => {
+
+        if(event.target === customerCareOverlay){
+            closeCustomerCare();
+        }
+
+    }
+);
+
+customerCareWhatsApp.addEventListener(
+    "click",
+    () => {
+
+        window.open(
+            "https://wa.me/2348057073891",
+            "_blank",
+            "noopener,noreferrer"
+        );
+
+    }
+);
+
+customerCarePhone.addEventListener(
+    "click",
+    () => {
+
+        window.location.href =
+            "tel:+2348057073891";
+
+    }
+);
+
+/* ============================================================
+   UPLOAD
+============================================================ */
+
+uploadBtn.addEventListener(
+    "click",
+    () => {
+
+        if(!busy){
+            fileInput.click();
+        }
+
+    }
+);
+
+fileInput.addEventListener(
+    "change",
+    async () => {
+
+        const file =
+            fileInput.files?.[0];
+
+        if(!file){
+            return;
+        }
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "file",
+            file
+        );
+
+        formData.append(
+            "customer_id",
+            customerId
+        );
+
+        formData.append(
+            "job_id",
+            jobId
+        );
+
+        formData.append(
+            "client_request_id",
+            requestId
+        );
+
+        formData.append(
+            "service",
+            service
+        );
+
+        setBusy(true);
+
+        setStatus(
+            "Uploading the document..."
+        );
+
+        try{
+
+            const response =
+                await fetch(
+                    API_BASE + "/api/upload",
+                    {
+                        method:"POST",
+                        body:formData
+                    }
+                );
+
+            const data =
+                await response
+                    .json()
+                    .catch(() => ({}));
+
+            if(!response.ok){
+
+                throw new Error(
+                    serverError(data,response)
+                );
+
+            }
+
+            if(data.success === false){
+
+                throw new Error(
+                    serverError(data,response)
+                );
+
+            }
+
+            const returnedJob =
+                serverJobId(data);
+
+            if(returnedJob){
+
+                jobId =
+                    returnedJob;
+
+                storageSet(
+                    "npbc_job_id",
+                    jobId
+                );
+
+            }
+
+            setStatus(
+                "Your document has been received. Processing it now..."
+            );
+
+            const uploadMessage =
+                "The customer has uploaded a document for this active service. Use the uploaded document together with the current job context and continue the customer's request.";
+
+            const uploadResult =
+                await apiChat({
+
+                    message:
+                        uploadMessage,
+
+                    service,
+
+                    customer_id:
+                        customerId,
+
+                    job_id:
+                        jobId || null,
+
+                    client_request_id:
+                        requestId,
+
+                    event:
+                        "document_uploaded",
+
+                    current_work:
+                        currentWork || null,
+
+                    create_work:true
+
+                });
+
+            const uploadReturnedJob =
+                serverJobId(uploadResult);
+
+            if(uploadReturnedJob){
+
+                jobId =
+                    uploadReturnedJob;
+
+                storageSet(
+                    "npbc_job_id",
+                    jobId
+                );
+
+            }
+
+            const work =
+                serverWork(uploadResult);
+
+            if(work){
+
+                currentWork =
+                    work;
+
+                showReview(currentWork);
+
+                if(jobId){
+                    showReviewGateway();
+                }
+
+            }
+
+            setStatus(
+                "Your document has been received and processed.",
+                "success"
+            );
+
+        }catch(error){
+
+            setStatus(
+                error.message ||
+                "Document upload failed.",
+                "error"
+            );
+
+        }finally{
+
+            setBusy(false);
+            fileInput.value = "";
+
+        }
+
+    }
+);
+
+/* ============================================================
+   BACK OFFICE
+============================================================ */
+
+function normaliseBackOfficeJobs(data){
+
+    if(Array.isArray(data)){
+        return data;
+    }
+
+    if(Array.isArray(data?.jobs)){
+        return data.jobs;
+    }
+
+    if(Array.isArray(data?.payment_reports)){
+        return data.payment_reports;
+    }
+
+    if(Array.isArray(data?.paymentReports)){
+        return data.paymentReports;
+    }
+
+    if(Array.isArray(data?.data?.jobs)){
+        return data.data.jobs;
+    }
+
+    if(Array.isArray(data?.data?.payment_reports)){
+        return data.data.payment_reports;
+    }
+
+    if(Array.isArray(data?.data?.paymentReports)){
+        return data.data.paymentReports;
+    }
+
+    return [];
+}
+
+function getJobIdFromBackOffice(job){
+
+    return valueFrom(
+        job,
+        ["job_id","jobId","id"]
+    );
+}
+
+function getPaymentId(job){
+
+    return valueFrom(
+        job,
+        [
+            "payment_id",
+            "paymentId",
+            "latest_payment_id"
+        ]
+    );
+}
+
+function getSavedDocument(job){
+
+    return (
+        job?.saved_document ||
+        job?.savedDocument ||
+        job?.download ||
+        job?.download_file ||
+        job?.downloadFile ||
+        job?.saved_work ||
+        job?.savedWork ||
+        job?.document ||
+        job?.work ||
+        job?.approved_work ||
+        job?.approvedWork ||
+        {}
+    );
+}
+
+function getSavedDocumentId(job){
+
+    const document =
+        getSavedDocument(job);
+
+    return valueFrom(
+        document,
+        [
+            "work_id",
+            "workId",
+            "document_id",
+            "documentId",
+            "saved_work_id",
+            "savedWorkId",
+            "id"
+        ]
+    ) ||
+
+    valueFrom(
+        job,
+        [
+            "work_id",
+            "workId",
+            "saved_work_id",
+            "savedWorkId",
+            "document_id",
+            "documentId"
+        ]
+    );
+}
+
+function getSavedDocumentUrl(job){
+
+    const document =
+        getSavedDocument(job);
+
+    return clean(
+        valueFrom(
+            document,
+            [
+                "download_url",
+                "downloadUrl",
+                "file_url",
+                "fileUrl",
+                "url",
+                "download",
+                "path"
+            ]
+        ) ||
+
+        valueFrom(
+            job,
+            [
+                "download_url",
+                "downloadUrl",
+                "file_url",
+                "fileUrl",
+                "download"
+            ]
+        )
+    );
+}
+
+function getSavedDocumentName(job){
+
+    const document =
+        getSavedDocument(job);
+
+    return clean(
+        valueFrom(
+            document,
+            [
+                "filename",
+                "file_name",
+                "fileName",
+                "name",
+                "title"
+            ]
+        ) ||
+
+        valueFrom(
+            job,
+            [
+                "filename",
+                "file_name",
+                "fileName"
+            ]
+        )
+    ) || "Saved customer document";
+}
+
+function getSavedDocumentVersion(job){
+
+    const document =
+        getSavedDocument(job);
+
+    return valueFrom(
+        document,
+        [
+            "version",
+            "version_number",
+            "versionNumber"
+        ]
+    ) ||
+
+    valueFrom(
+        job,
+        [
+            "document_version",
+            "documentVersion",
+            "version",
+            "version_number",
+            "versionNumber"
+        ]
+    );
+}
+
+function getPaymentStatus(job){
+
+    return clean(
+        valueFrom(
+            job,
+            [
+                "payment_status",
+                "paymentStatus",
+                "latest_payment_status",
+                "status"
+            ]
+        )
+    ).toLowerCase();
+}
+
+function getDownloadStatus(job){
+
+    const document =
+        getSavedDocument(job);
+
+    const value =
+        valueFrom(
+            document,
+            [
+                "download_unlocked",
+                "downloadUnlocked",
+                "download_activated",
+                "downloadActivated",
+                "activated",
+                "unlocked"
+            ]
+        );
+
+    if(
+        value === true ||
+        value === 1 ||
+        value === "1" ||
+        value === "true"
+    ){
+        return true;
+    }
+
+    const jobValue =
+        valueFrom(
+            job,
+            [
+                "download_unlocked",
+                "downloadUnlocked",
+                "download_activated",
+                "downloadActivated",
+                "download_ready",
+                "downloadReady"
+            ]
+        );
+
+    return (
+        jobValue === true ||
+        jobValue === 1 ||
+        jobValue === "1" ||
+        jobValue === "true"
+    );
+}
+
+function paymentReported(job){
+
+    const statusValue =
+        getPaymentStatus(job);
+
+    return (
+        statusValue === "reported" ||
+        statusValue === "payment_reported" ||
+        statusValue === "awaiting_verification" ||
+        statusValue === "payment_pending_verification" ||
+        statusValue === "pending_verification" ||
+        statusValue === "paid" ||
+        statusValue === "confirmed"
+    );
+}
+
+function isAwaitingVerification(job){
+
+    const statusValue =
+        getPaymentStatus(job);
+
+    if(
+        statusValue === "reported" ||
+        statusValue === "payment_reported" ||
+        statusValue === "awaiting_verification" ||
+        statusValue === "payment_pending_verification" ||
+        statusValue === "pending_verification"
+    ){
+        return true;
+    }
+
+    return (
+        paymentReported(job) &&
+        !getDownloadStatus(job)
+    );
+}
+
+function getCustomerName(job){
+
+    return clean(
+        valueFrom(
+            job,
+            [
+                "customer_name",
+                "customerName",
+                "name"
+            ]
+        )
+    ) || "Customer";
+}
+
+function getServiceName(job){
+
+    return clean(
+        valueFrom(
+            job,
+            [
+                "service",
+                "service_name",
+                "serviceName"
+            ]
+        )
+    ) || "Business Center Service";
+}
+
+function getCreatedAt(job){
+
+    return valueFrom(
+        job,
+        [
+            "created_at",
+            "createdAt",
+            "payment_reported_at",
+            "paymentReportedAt",
+            "reported_at",
+            "reportedAt"
+        ]
+    );
+}
+
+function getAmount(job){
+
+    return valueFrom(
+        job,
+        [
+            "amount",
+            "payment_amount",
+            "paymentAmount",
+            "service_amount",
+            "serviceAmount"
+        ]
+    );
+}
+
+function formatAmount(value){
+
+    if(
+        value === undefined ||
+        value === null ||
+        value === ""
+    ){
+        return "";
+    }
+
+    const numeric =
+        Number(
+            String(value)
+                .replace(/[^0-9.]/g,"")
+        );
+
+    if(Number.isFinite(numeric)){
+
+        return (
+            "₦" +
+            numeric.toLocaleString(
+                "en-NG",
+                {
+                    minimumFractionDigits:2,
+                    maximumFractionDigits:2
+                }
+            )
+        );
+
+    }
+
+    return String(value);
+}
+
+async function loadBackOfficeJobs(){
+
+    const key =
+        clean(backOfficeKey.value);
+
+    if(!key){
+
+        backOfficeJobs.innerHTML = `
+            <div class="back-office-empty">
+                Enter the Back Office operator key first.
+            </div>
+        `;
+
+        return;
+    }
+
+    backOfficeLoadButton.disabled = true;
+    backOfficeLoadButton.textContent = "LOADING...";
+
+    backOfficeJobs.innerHTML = `
+        <div class="back-office-empty">
+            Loading payment reports...
+        </div>
+    `;
+
+    try{
+
+        const response =
+            await fetch(
+                API_BASE + "/api/back-office/jobs",
+                {
+                    method:"GET",
+                    headers:{
+                        "Accept":"application/json",
+                        "X-Admin-Key":key
+                    }
+                }
+            );
+
+        const data =
+            await response
+                .json()
+                .catch(() => ({}));
+
+        if(!response.ok){
+
+            throw new Error(
+                serverError(data,response)
+            );
+
+        }
+
+        if(data.success === false){
+
+            throw new Error(
+                serverError(data,response)
+            );
+
+        }
+
+        backOfficeJobsData =
+            normaliseBackOfficeJobs(data);
+
+        renderBackOfficeJobs();
+
+        setStatus(
+            `${backOfficeJobsData.length} payment report(s) loaded.`,
+            "success"
+        );
+
+    }catch(error){
+
+        backOfficeJobs.innerHTML = `
+            <div class="back-office-empty">
+                ${escapeHtml(
+                    error.message ||
+                    "Could not load Back Office payment reports."
+                )}
+            </div>
+        `;
+
+        setStatus(
+            error.message ||
+            "Could not load Back Office payment reports.",
+            "error"
+        );
+
+    }finally{
+
+        backOfficeLoadButton.disabled = false;
+        backOfficeLoadButton.textContent = "LOAD";
+
+    }
+}
+
+function renderBackOfficeJobs(){
+
+    backOfficeTotal.textContent =
+        backOfficeJobsData.length;
+
+    let awaitingCount = 0;
+    let unlockedCount = 0;
+
+    backOfficeJobs.innerHTML = "";
+
+    if(!backOfficeJobsData.length){
+
+        backOfficeJobs.innerHTML = `
+            <div class="back-office-empty">
+                No payment reports are currently available.
+            </div>
+        `;
+
+        backOfficeApproved.textContent = "0";
+        backOfficeActivated.textContent = "0";
+
+        return;
+    }
+
+    backOfficeJobsData.forEach(job => {
+
+        const jobIdValue =
+            getJobIdFromBackOffice(job);
+
+        const paymentId =
+            getPaymentId(job);
+
+        const customerName =
+            getCustomerName(job);
+
+        const serviceName =
+            getServiceName(job);
+
+        const paymentStatus =
+            getPaymentStatus(job);
+
+        const awaiting =
+            isAwaitingVerification(job);
+
+        const unlocked =
+            getDownloadStatus(job);
+
+        if(awaiting){
+            awaitingCount++;
+        }
+
+        if(unlocked){
+            unlockedCount++;
+        }
+
+        const createdAt =
+            getCreatedAt(job);
+
+        const amount =
+            getAmount(job);
+
+        const documentId =
+            getSavedDocumentId(job);
+
+        const documentUrl =
+            getSavedDocumentUrl(job);
+
+        const documentName =
+            getSavedDocumentName(job);
+
+        const version =
+            getSavedDocumentVersion(job);
+
+        const card =
+            document.createElement("article");
+
+        card.className =
+            "back-office-job" +
+            (awaiting ? " reported" : "") +
+            (unlocked ? " unlocked" : "");
+
+        const title =
+            document.createElement("h3");
+
+        title.className =
+            "back-office-job-title";
+
+        title.textContent =
+            serviceName;
+
+        const meta =
+            document.createElement("div");
+
+        meta.className =
+            "back-office-job-meta";
+
+        meta.textContent =
+            `${customerName} • Job #${jobIdValue || "—"}` +
+            (
+                createdAt
+                    ? ` • ${formatDate(createdAt)}`
+                    : ""
+            );
+
+        const statuses =
+            document.createElement("div");
+
+        statuses.className =
+            "back-office-status-row";
+
+        const paymentLabel =
+            awaiting
+                ? "Payment Reported — Awaiting Verification"
+                : unlocked
+                    ? "Payment Verified"
+                    : (
+                        paymentStatus ||
+                        "Payment Status"
+                    );
+
+        statuses.innerHTML = `
+            <span class="back-office-status ${awaiting ? "waiting" : unlocked ? "good" : ""}">
+                ${escapeHtml(paymentLabel)}
+            </span>
+
+            ${
+                paymentId
+                    ? `
+                        <span class="back-office-status">
+                            Payment ID: ${escapeHtml(paymentId)}
+                        </span>
+                      `
+                    : ""
+            }
+
+            ${
+                amount
+                    ? `
+                        <span class="back-office-status">
+                            ${escapeHtml(formatAmount(amount))}
+                        </span>
+                      `
+                    : ""
+            }
+        `;
+
+        card.append(
+            title,
+            meta,
+            statuses
+        );
+
+        const documentBox =
+            document.createElement("div");
+
+        documentBox.className =
+            "back-office-document";
+
+        const documentTitle =
+            document.createElement("div");
+
+        documentTitle.className =
+            "back-office-document-title";
+
+        documentTitle.textContent =
+            "Already-Saved Customer Document";
+
+        const documentMeta =
+            document.createElement("div");
+
+        documentMeta.className =
+            "back-office-document-meta";
+
+        documentMeta.textContent =
+            `File: ${documentName}` +
+            (
+                version
+                    ? ` • Version ${version}`
+                    : ""
+            ) +
+            (
+                documentId
+                    ? ` • Saved Document ID: ${documentId}`
+                    : ""
+            );
+
+        const actions =
+            document.createElement("div");
+
+        actions.className =
+            "back-office-document-actions";
+
+        const viewButton =
+            document.createElement("button");
+
+        viewButton.type = "button";
+
+        viewButton.className =
+            "back-office-view-document";
+
+        viewButton.textContent =
+            "VIEW DOCUMENT";
+
+        const unlockButton =
+            document.createElement("button");
+
+        unlockButton.type = "button";
+
+        unlockButton.className =
+            "back-office-unlock";
+
+        if(unlocked){
+
+            unlockButton.textContent =
+                "DOWNLOAD UNLOCKED";
+
+            unlockButton.disabled = true;
+
+        }else{
+
+            unlockButton.textContent =
+                "UNLOCK DOWNLOAD";
+        }
+
+        viewButton.addEventListener(
+            "click",
+            () => {
+                openSavedDocument(job);
+            }
+        );
+
+        unlockButton.addEventListener(
+            "click",
+            () => {
+
+                unlockSavedDocument(
+                    job,
+                    unlockButton,
+                    card
+                );
+
+            }
+        );
+
+        actions.append(
+            viewButton,
+            unlockButton
+        );
+
+        documentBox.append(
+            documentTitle,
+            documentMeta,
+            actions
+        );
+
+        card.appendChild(documentBox);
+
+        const note =
+            document.createElement("div");
+
+        note.className =
+            "back-office-note";
+
+        note.textContent =
+            unlocked
+                ? "Download is unlocked for this already-saved document. No new document is generated."
+                : awaiting
+                    ? "Verify the customer's payment before pressing UNLOCK DOWNLOAD. The existing saved document will be unlocked; it will not be regenerated."
+                    : "This record is read-only here. The saved customer document is not regenerated by Back Office.";
+
+        card.appendChild(note);
+
+        backOfficeJobs.appendChild(card);
+
+    });
+
+    backOfficeApproved.textContent =
+        awaitingCount;
+
+    backOfficeActivated.textContent =
+        unlockedCount;
+}
+
+function openSavedDocument(job){
+
+    const url =
+        getSavedDocumentUrl(job);
+
+    if(url){
+
+        window.open(
+            url,
+            "_blank",
+            "noopener,noreferrer"
+        );
+
+        return;
+    }
+
+    const documentId =
+        getSavedDocumentId(job);
+
+    const jobNumber =
+        getJobIdFromBackOffice(job);
+
+    const paymentId =
+        getPaymentId(job);
+
+    const details =
+        [
+            "Already-Saved Customer Document",
+            "",
+            `Job ID: ${jobNumber || "—"}`,
+            `Payment ID: ${paymentId || "—"}`,
+            `Saved Document ID: ${documentId || "—"}`,
+            `File: ${getSavedDocumentName(job)}`,
+            `Version: ${getSavedDocumentVersion(job) || "—"}`,
+            "",
+            "The server did not return a direct document URL."
+        ].join("\n");
+
+    window.alert(details);
+}
+
+async function unlockSavedDocument(
+    job,
+    button,
+    card
+){
+
+    const key =
+        clean(backOfficeKey.value);
+
+    if(!key){
+
+        setStatus(
+            "Enter the Back Office operator key first.",
+            "error"
+        );
+
+        return;
+    }
+
+    const jobNumber =
+        getJobIdFromBackOffice(job);
+
+    const paymentId =
+        getPaymentId(job);
+
+    const documentId =
+        getSavedDocumentId(job);
+
+    if(
+        !jobNumber &&
+        !paymentId &&
+        !documentId
+    ){
+
+        setStatus(
+            "This payment report does not contain a valid saved-document reference.",
+            "error"
+        );
+
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Have you verified this customer's payment?\n\n" +
+            "Press OK to unlock the EXACT document that was already saved when the customer reported payment.\n\n" +
+            "No document will be regenerated."
+        );
+
+    if(!confirmed){
+        return;
+    }
+
+    button.disabled = true;
+
+    button.textContent =
+        "UNLOCKING...";
+
+    setStatus(
+        "Unlocking the already-saved customer document..."
+    );
+
+    try{
+
+        const response =
+            await fetch(
+                API_BASE +
+                "/api/back-office/activate-download",
+                {
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                        "X-Admin-Key":key
+                    },
+                    body:JSON.stringify({
+
+                        job_id:
+                            jobNumber || null,
+
+                        payment_id:
+                            paymentId || null,
+
+                        work_id:
+                            documentId || null,
+
+                        document_id:
+                            documentId || null,
+
+                        admin_key:
+                            key,
+
+                        action:
+                            "unlock_download"
+
+                    })
+                }
+            );
+
+        const data =
+            await response
+                .json()
+                .catch(() => ({}));
+
+        if(!response.ok){
+
+            throw new Error(
+                serverError(data,response)
+            );
+
+        }
+
+        if(data.success === false){
+
+            throw new Error(
+                serverError(data,response)
+            );
+
+        }
+
+        button.textContent =
+            "DOWNLOAD UNLOCKED";
+
+        button.disabled = true;
+
+        card.classList.remove("reported");
+        card.classList.add("unlocked");
+
+        setStatus(
+            "Payment verified. The exact already-saved document is now unlocked for customer download.",
+            "success"
+        );
+
+        await loadBackOfficeJobs();
+
+    }catch(error){
+
+        button.disabled = false;
+
+        button.textContent =
+            "UNLOCK DOWNLOAD";
+
+        setStatus(
+            error.message ||
+            "Could not unlock the saved document.",
+            "error"
+        );
+    }
+}
+
+function openBackOffice(){
+
+    reviewGatewayOverlay
+        .classList
+        .remove("show");
+
+    closeCustomerCare();
+
+    formView.style.display =
+        "none";
+
+    reviewView.classList.remove("show");
+
+    customerBottom.style.display =
+        "none";
+
+    backOfficeView.classList.add("show");
+
+    serviceBadge.textContent =
+        "BACK OFFICE";
+
+    backOfficeEntryButton.style.display =
+        "none";
+
+    setStatus(
+        "Back Office ready."
+    );
+}
+
+function exitBackOffice(){
+
+    backOfficeView.classList.remove("show");
+
+    formView.style.display =
+        "";
+
+    customerBottom.style.display =
+        "";
+
+    serviceBadge.textContent =
+        service;
+
+    backOfficeEntryButton.style.display =
+        "";
+
+    setStatus("");
+}
+
+backOfficeEntryButton.addEventListener(
+    "click",
+    openBackOffice
+);
+
+backOfficeExitButton.addEventListener(
+    "click",
+    exitBackOffice
+);
+
+backOfficeLoadButton.addEventListener(
+    "click",
+    loadBackOfficeJobs
+);
+
+backOfficeRefreshButton.addEventListener(
+    "click",
+    loadBackOfficeJobs
+);
+
+backOfficeKey.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "Enter"){
+
+            event.preventDefault();
+
+            loadBackOfficeJobs();
+
+        }
+
+    }
+);
+
+function initBackOffice(){
+
+    formView.style.display =
+        "none";
+
+    reviewView.classList.remove("show");
+
+    customerBottom.style.display =
+        "none";
+
+    backOfficeView.classList.add("show");
+
+    serviceBadge.textContent =
+        "BACK OFFICE";
+
+    backOfficeEntryButton.style.display =
+        "none";
+
+    setStatus(
+        "Back Office ready."
+    );
+}
+
+async function initCustomer(){
+
+    serviceBadge.textContent =
+        service;
+
+    renderForm();
+
+    await loadGuidance();
+}
 
 async function init(){
-  serviceBadge.textContent=service;
-  introTitle.textContent=service;
-  renderForm();
-  await loadGuidance()
+
+    if(isBackOfficeMode){
+
+        initBackOffice();
+
+        return;
+    }
+
+    await initCustomer();
 }
 
 init();
+
+/* ============================================================
+   LUXURY FIREWORK ENGINE
+   VISUAL ONLY — DOES NOT INTERACT WITH WORKSPACE LOGIC
+============================================================ */
+
+(function(){
+
+    const canvas =
+        document.getElementById(
+            "reviewFireworksCanvas"
+        );
+
+    const overlay =
+        document.getElementById(
+            "reviewGatewayOverlay"
+        );
+
+    if(!canvas || !overlay){
+        return;
+    }
+
+    const ctx =
+        canvas.getContext("2d");
+
+    if(!ctx){
+        return;
+    }
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let animationId = null;
+    let running = false;
+    let lastSpawn = 0;
+    let nextSpawn = 650;
+
+    const particles = [];
+    const rockets = [];
+
+    const colors = [
+        "#f3d66b",
+        "#d4af37",
+        "#fff4d6",
+        "#f4d58d",
+        "#39b87f",
+        "#168047"
+    ];
+
+    function resize(){
+
+        dpr =
+            Math.min(
+                window.devicePixelRatio || 1,
+                2
+            );
+
+        width =
+            overlay.clientWidth ||
+            window.innerWidth;
+
+        height =
+            overlay.clientHeight ||
+            window.innerHeight;
+
+        canvas.width =
+            Math.floor(width * dpr);
+
+        canvas.height =
+            Math.floor(height * dpr);
+
+        canvas.style.width =
+            width + "px";
+
+        canvas.style.height =
+            height + "px";
+
+        ctx.setTransform(
+            dpr,
+            0,
+            0,
+            dpr,
+            0,
+            0
+        );
+    }
+
+    function random(min,max){
+
+        return min +
+            Math.random() *
+            (max - min);
+    }
+
+    function spawnRocket(){
+
+        rockets.push({
+
+            x:random(
+                width * .12,
+                width * .88
+            ),
+
+            y:height + 15,
+
+            targetY:random(
+                height * .12,
+                height * .48
+            ),
+
+            speed:random(
+                7.5,
+                10.5
+            ),
+
+            color:
+                colors[
+                    Math.floor(
+                        Math.random() *
+                        colors.length
+                    )
+                ]
+
+        });
+    }
+
+    function explode(x,y,color){
+
+        const count =
+            Math.floor(
+                random(38,64)
+            );
+
+        const base =
+            Math.random() *
+            Math.PI;
+
+        for(let i=0;i<count;i++){
+
+            const angle =
+                (Math.PI * 2 * i / count) +
+                random(-.035,.035);
+
+            const speed =
+                random(1.4,4.5);
+
+            particles.push({
+
+                x,
+                y,
+
+                vx:
+                    Math.cos(angle) *
+                    speed,
+
+                vy:
+                    Math.sin(angle) *
+                    speed,
+
+                life:1,
+
+                decay:
+                    random(.010,.020),
+
+                gravity:
+                    random(.025,.055),
+
+                size:
+                    random(.7,1.7),
+
+                color:
+                    Math.random() < .82
+                        ? color
+                        : colors[
+                            Math.floor(
+                                Math.random() *
+                                colors.length
+                            )
+                        ]
+
+            });
+        }
+
+        for(let i=0;i<6;i++){
+
+            const angle =
+                base +
+                (Math.PI * 2 * i / 6);
+
+            particles.push({
+
+                x,
+                y,
+
+                vx:
+                    Math.cos(angle) *
+                    random(2.8,5.2),
+
+                vy:
+                    Math.sin(angle) *
+                    random(2.8,5.2),
+
+                life:1,
+
+                decay:.026,
+
+                gravity:.04,
+
+                size:1.9,
+
+                color:"#fff4d6"
+
+            });
+        }
+    }
+
+    function update(timestamp){
+
+        if(!running){
+
+            animationId = null;
+
+            return;
+        }
+
+        ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+        if(
+            timestamp - lastSpawn >
+            nextSpawn
+        ){
+
+            spawnRocket();
+
+            lastSpawn =
+                timestamp;
+
+            nextSpawn =
+                random(650,1250);
+        }
+
+        for(
+            let i=rockets.length-1;
+            i>=0;
+            i--
+        ){
+
+            const rocket =
+                rockets[i];
+
+            rocket.y -=
+                rocket.speed;
+
+            ctx.save();
+
+            ctx.globalAlpha = .75;
+
+            ctx.fillStyle =
+                rocket.color;
+
+            ctx.shadowBlur = 8;
+
+            ctx.shadowColor =
+                rocket.color;
+
+            ctx.beginPath();
+
+            ctx.arc(
+                rocket.x,
+                rocket.y,
+                1.7,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+            ctx.restore();
+
+            if(
+                rocket.y <=
+                rocket.targetY
+            ){
+
+                explode(
+                    rocket.x,
+                    rocket.y,
+                    rocket.color
+                );
+
+                rockets.splice(i,1);
+            }
+        }
+
+        for(
+            let i=particles.length-1;
+            i>=0;
+            i--
+        ){
+
+            const particle =
+                particles[i];
+
+            particle.x +=
+                particle.vx;
+
+            particle.y +=
+                particle.vy;
+
+            particle.vx *= .985;
+
+            particle.vy =
+                particle.vy * .985 +
+                particle.gravity;
+
+            particle.life -=
+                particle.decay;
+
+            if(particle.life <= 0){
+
+                particles.splice(i,1);
+
+                continue;
+            }
+
+            ctx.save();
+
+            ctx.globalAlpha =
+                Math.max(
+                    0,
+                    particle.life
+                );
+
+            ctx.fillStyle =
+                particle.color;
+
+            ctx.shadowBlur =
+                particle.size * 7;
+
+            ctx.shadowColor =
+                particle.color;
+
+            ctx.beginPath();
+
+            ctx.arc(
+                particle.x,
+                particle.y,
+                particle.size,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        animationId =
+            requestAnimationFrame(
+                update
+            );
+    }
+
+    function start(){
+
+        if(running){
+            return;
+        }
+
+        running = true;
+
+        resize();
+
+        particles.length = 0;
+        rockets.length = 0;
+
+        lastSpawn = 0;
+        nextSpawn = 350;
+
+        animationId =
+            requestAnimationFrame(
+                update
+            );
+    }
+
+    function stop(){
+
+        running = false;
+
+        if(animationId !== null){
+
+            cancelAnimationFrame(
+                animationId
+            );
+
+            animationId = null;
+        }
+
+        particles.length = 0;
+        rockets.length = 0;
+
+        ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+    }
+
+    window.addEventListener(
+        "resize",
+        resize,
+        {passive:true}
+    );
+
+    const observer =
+        new MutationObserver(
+            mutations => {
+
+                mutations.forEach(
+                    mutation => {
+
+                        if(
+                            mutation.type !==
+                            "attributes"
+                        ){
+                            return;
+                        }
+
+                        if(
+                            mutation.attributeName !==
+                            "class"
+                        ){
+                            return;
+                        }
+
+                        if(
+                            overlay.classList.contains(
+                                "show"
+                            )
+                        ){
+
+                            start();
+
+                        }else{
+
+                            stop();
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    observer.observe(
+        overlay,
+        {
+            attributes:true,
+            attributeFilter:["class"]
+        }
+    );
+
+    resize();
+
+    if(
+        overlay.classList.contains(
+            "show"
+        )
+    ){
+        start();
+    }
+
+})();
 </script>
 
 </body>
