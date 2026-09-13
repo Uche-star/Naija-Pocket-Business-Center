@@ -61,20 +61,445 @@ REVIEW_MIN_CHARS = int(
 
 BASE = Path(__file__).resolve().parent
 
+
 # ============================================================
-# BILLING
+# REVIEW / DOCUMENT STANDARDIZATION
 # ============================================================
 #
 # IMPORTANT:
-# Billing remains here.
 #
-# BillingManager remains the official source of service
-# prices. Payment processing is NOT handled by this API.
+# The Review page and the downloaded document must use the same
+# standardized document content.
+#
+# Ada may internally return Markdown-style text. That syntax is
+# an instruction/formatting representation, NOT customer-facing
+# document content.
+#
+# The following standardization removes visible Markdown syntax
+# before content reaches Review or Download.
+# ============================================================
+
+REVIEW_STANDARDIZATION_PROMPT = """
+REVIEW-PAGE DOCUMENT STANDARDIZATION REQUIREMENT:
+
+Everything that reaches the Review page must be standardized,
+properly formatted, professionally polished, and presentation-ready
+by default.
+
+This applies to:
+- newly generated documents;
+- customer-provided content;
+- uploaded document content;
+- rewritten content;
+- grammar corrections;
+- customer corrections;
+- customer revision instructions;
+- corrected versions of an existing document;
+- any content returned after a Review-page correction.
+
+Never return raw, rough, poorly structured, inconsistent, or
+unfinished customer text simply because the customer supplied it
+that way.
+
+Preserve the customer's intended meaning, facts, names, figures,
+instructions, and requested content, but automatically improve the
+presentation and writing wherever appropriate.
+
+By default:
+- correct grammar, spelling, punctuation, and sentence structure;
+- improve clarity, flow, and readability;
+- standardize headings, paragraphs, spacing, numbering, and lists;
+- use consistent professional formatting;
+- remove unnecessary repetition and awkward wording;
+- maintain a coherent document structure;
+- make the document look professionally prepared;
+- preserve the appropriate tone and purpose of the service;
+- do not invent facts or information that the customer did not provide;
+- do not remove important customer information merely to make the
+  document shorter;
+- do not expose internal AI, model, prompt, or system terminology.
+
+MARKDOWN / RAW FORMATTING:
+
+Markdown syntax must never appear visibly in the customer-facing
+document.
+
+Do not return visible:
+- asterisks used for bold or italic formatting;
+- Markdown heading markers;
+- Markdown table pipes;
+- Markdown table separator rows;
+- code fences;
+- raw formatting markers;
+- unnecessary horizontal-rule markers.
+
+If a table is required, represent it as a properly structured
+professional table in the final document representation.
+
+CUSTOMER CORRECTIONS:
+
+When a customer makes a correction or revision from the Review page,
+treat the customer's instruction as the requested change, then
+re-standardize and professionally polish the resulting document
+before returning it to Review.
+
+A customer correction must NOT cause the document to become rough,
+inconsistent, badly formatted, or less professional.
+
+The final corrected version must contain both:
+1. the customer's requested correction; and
+2. the same standard of professional formatting, writing quality,
+   consistency, and polish applied to the rest of the document.
+
+The Review page should always receive the best standardized and
+polished version available, not the customer's raw edited version.
+
+The final Review representation and the final downloadable document
+must represent the same approved document content.
+"""
+
+
+def _strip_markdown_inline(
+    text: Any,
+) -> str:
+    """
+    Remove customer-visible Markdown syntax while preserving
+    the actual document wording.
+    """
+
+    value = str(
+        text or ""
+    )
+
+    value = value.replace(
+        "\r\n",
+        "\n",
+    ).replace(
+        "\r",
+        "\n",
+    )
+
+    # Remove code fences.
+    value = re.sub(
+        r"```(?:markdown|md|text|plain)?",
+        "",
+        value,
+        flags=re.IGNORECASE,
+    )
+
+    value = value.replace(
+        "```",
+        "",
+    )
+
+    # Images: ![alt](url) -> alt
+    value = re.sub(
+        r"!\[([^\]]*)\]\([^)]+\)",
+        r"\1",
+        value,
+    )
+
+    # Links: [text](url) -> text
+    value = re.sub(
+        r"\[([^\]]+)\]\([^)]+\)",
+        r"\1",
+        value,
+    )
+
+    # Bold / italic / strike markers.
+    value = re.sub(
+        r"(\*\*|__)(.*?)\1",
+        r"\2",
+        value,
+        flags=re.DOTALL,
+    )
+
+    value = re.sub(
+        r"(?<!\w)(\*|_)([^*_]+)\1(?!\w)",
+        r"\2",
+        value,
+    )
+
+    # Remaining emphasis markers that may occur around words.
+    value = value.replace(
+        "**",
+        "",
+    ).replace(
+        "__",
+        "",
+    )
+
+    # Remove Markdown heading markers.
+    value = re.sub(
+        r"^\s{0,3}#{1,6}\s+",
+        "",
+        value,
+        flags=re.MULTILINE,
+    )
+
+    # Remove horizontal Markdown rules.
+    value = re.sub(
+        r"^\s*(?:-{3,}|\*{3,}|_{3,})\s*$",
+        "",
+        value,
+        flags=re.MULTILINE,
+    )
+
+    # Remove blockquote marker.
+    value = re.sub(
+        r"^\s*>\s?",
+        "",
+        value,
+        flags=re.MULTILINE,
+    )
+
+    # Remove Markdown list markers while preserving the list text.
+    value = re.sub(
+        r"^\s*[-*+]\s+",
+        "• ",
+        value,
+        flags=re.MULTILINE,
+    )
+
+    value = re.sub(
+        r"^\s*\d+[.)]\s+",
+        lambda match: (
+            re.match(
+                r"\d+",
+                match.group(0),
+            ).group(0)
+            + ". "
+        ),
+        value,
+        flags=re.MULTILINE,
+    )
+
+    # Remove escaped Markdown punctuation.
+    value = re.sub(
+        r"\\([\\`*{}\[\]()#+.!_>|~-])",
+        r"\1",
+        value,
+    )
+
+    return value
+
+
+def _is_markdown_table_separator(
+    line: str,
+) -> bool:
+    """
+    Detect rows such as:
+    |------|---------|
+    | :--- | :------ |
+    """
+
+    stripped = line.strip()
+
+    if "|" not in stripped:
+        return False
+
+    cells = [
+        cell.strip()
+        for cell in stripped.strip("|").split("|")
+    ]
+
+    if not cells:
+        return False
+
+    return all(
+        bool(
+            re.fullmatch(
+                r":?-{2,}:?",
+                cell,
+            )
+        )
+        for cell in cells
+    )
+
+
+def _split_markdown_table_row(
+    line: str,
+) -> list[str]:
+    stripped = line.strip()
+
+    if stripped.startswith("|"):
+        stripped = stripped[1:]
+
+    if stripped.endswith("|"):
+        stripped = stripped[:-1]
+
+    return [
+        _strip_markdown_inline(
+            cell.strip()
+        ).strip()
+        for cell in stripped.split("|")
+    ]
+
+
+def standardize_document_text(
+    text: Any,
+) -> str:
+    """
+    Convert intelligence output into clean customer-facing
+    document text.
+
+    This function deliberately removes Markdown presentation
+    syntax so that Review never displays raw *, |, ---, or
+    similar control characters.
+
+    It does NOT invent document content.
+    """
+
+    source = str(
+        text or ""
+    ).replace(
+        "\r\n",
+        "\n",
+    ).replace(
+        "\r",
+        "\n",
+    )
+
+    if not source.strip():
+        return ""
+
+    lines = source.split("\n")
+    output: list[str] = []
+
+    table_mode = False
+
+    for raw_line in lines:
+        line = raw_line.strip()
+
+        if not line:
+            if output and output[-1] != "":
+                output.append("")
+
+            table_mode = False
+            continue
+
+        # Remove obvious Markdown horizontal rules.
+        if re.fullmatch(
+            r"(?:-{3,}|\*{3,}|_{3,})",
+            line,
+        ):
+            table_mode = False
+            continue
+
+        # Markdown table.
+        if "|" in line:
+            if _is_markdown_table_separator(line):
+                table_mode = True
+                continue
+
+            cells = _split_markdown_table_row(
+                line
+            )
+
+            if len(cells) >= 2:
+                table_mode = True
+
+                # Use a clean readable table representation.
+                # The vertical Markdown delimiters are removed.
+                cleaned_cells = [
+                    cell.strip()
+                    for cell in cells
+                ]
+
+                output.append(
+                    "    ".join(
+                        cleaned_cells
+                    ).strip()
+                )
+
+                continue
+
+        # Ordinary Markdown/text line.
+        cleaned = _strip_markdown_inline(
+            line
+        ).strip()
+
+        # Remove repeated horizontal-rule remnants.
+        if re.fullmatch(
+            r"[-_=*~]{3,}",
+            cleaned,
+        ):
+            continue
+
+        # Remove accidental Markdown table remnants.
+        cleaned = cleaned.strip("|").strip()
+
+        if not cleaned:
+            continue
+
+        output.append(cleaned)
+
+    # Collapse excessive blank lines.
+    final_lines: list[str] = []
+
+    for line in output:
+        if not line:
+            if (
+                final_lines
+                and final_lines[-1] != ""
+            ):
+                final_lines.append("")
+
+            continue
+
+        final_lines.append(line.rstrip())
+
+    while (
+        final_lines
+        and final_lines[-1] == ""
+    ):
+        final_lines.pop()
+
+    while (
+        final_lines
+        and final_lines[0] == ""
+    ):
+        final_lines.pop(0)
+
+    return "\n".join(
+        final_lines
+    ).strip()
+
+
+def build_review_intelligence_context(
+    context: str | None,
+) -> str:
+    """
+    Add the document-standardization instruction to the
+    intelligence context without changing the customer's
+    original context.
+    """
+
+    parts: list[str] = []
+
+    if (
+        context
+        and context.strip()
+    ):
+        parts.append(
+            context.strip()
+        )
+
+    parts.append(
+        REVIEW_STANDARDIZATION_PROMPT.strip()
+    )
+
+    return "\n\n".join(parts).strip()
+
+
+# ============================================================
+# BILLING
 # ============================================================
 
 BILLING = BillingManager()
 
 DOWNLOAD_DIR = BASE / "generated_documents"
+
 DOWNLOAD_DIR.mkdir(
     parents=True,
     exist_ok=True,
@@ -334,7 +759,9 @@ def normalize_document_pages(
         pages,
         str,
     ):
-        text = clean_text(pages)
+        text = standardize_document_text(
+            pages
+        )
 
         if not text:
             return []
@@ -363,7 +790,7 @@ def normalize_document_pages(
             item,
             dict,
         ):
-            content = clean_text(
+            content = standardize_document_text(
                 item.get(
                     "content",
                     item.get(
@@ -391,7 +818,9 @@ def normalize_document_pages(
             item,
             str,
         ):
-            content = clean_text(item)
+            content = standardize_document_text(
+                item
+            )
 
             if content:
                 output.append(
@@ -415,12 +844,15 @@ def text_to_review_pages(
     text: str,
 ) -> list[dict[str, Any]]:
     """
-    Divide the COMPLETE document into review chunks.
+    Divide the COMPLETE standardized document into review
+    chunks.
 
     This never intentionally truncates the document.
     """
 
-    text = clean_text(text)
+    text = standardize_document_text(
+        text
+    )
 
     if not text:
         return []
@@ -542,7 +974,9 @@ def normalize_pages_for_review(
     text: str,
     supplied_pages: Any = None,
 ) -> list[dict[str, Any]]:
-    text = clean_text(text)
+    text = standardize_document_text(
+        text
+    )
 
     if text:
         return text_to_review_pages(text)
@@ -726,79 +1160,6 @@ def build_context(
 # INTELLIGENCE RESULT EXTRACTION
 # ============================================================
 
-# ============================================================
-# REVIEW DOCUMENT STANDARDIZATION / POLISHING INSTRUCTION
-# ============================================================
-#
-# Everything that reaches the Review page must be standardized,
-# professionally formatted, and highly polished by default.
-#
-# This applies both to newly created work and to every customer
-# correction/revision made from the Review page.
-#
-# This is an intelligence instruction only. It does not alter
-# the Review UI or any Review workflow component.
-# ============================================================
-
-REVIEW_STANDARDIZATION_PROMPT = """
-REVIEW-PAGE DOCUMENT STANDARDIZATION REQUIREMENT:
-
-Everything that reaches the Review page must be standardized,
-properly formatted, professionally polished, and presentation-ready
-by default.
-
-This applies to:
-- newly generated documents;
-- customer-provided content;
-- uploaded document content;
-- rewritten content;
-- grammar corrections;
-- customer corrections;
-- customer revision instructions;
-- corrected versions of an existing document;
-- any content returned after a Review-page correction.
-
-Never return raw, rough, poorly structured, inconsistent, or
-unfinished customer text simply because the customer supplied it
-that way.
-
-Preserve the customer's intended meaning, facts, names, figures,
-instructions, and requested content, but automatically improve the
-presentation and writing wherever appropriate.
-
-By default:
-- correct grammar, spelling, punctuation, and sentence structure;
-- improve clarity, flow, and readability;
-- standardize headings, paragraphs, spacing, numbering, and lists;
-- use consistent professional formatting;
-- remove unnecessary repetition and awkward wording;
-- maintain a coherent document structure;
-- make the document look professionally prepared;
-- preserve the appropriate tone and purpose of the service;
-- do not invent facts or information that the customer did not provide;
-- do not remove important customer information merely to make the
-  document shorter;
-- do not expose internal AI, model, prompt, or system terminology.
-
-CUSTOMER CORRECTIONS:
-
-When a customer makes a correction or revision from the Review page,
-treat the customer's instruction as the requested change, then
-re-standardize and professionally polish the resulting document
-before returning it to Review.
-
-A customer correction must NOT cause the document to become rough,
-inconsistent, badly formatted, or less professional.
-
-The final corrected version must therefore contain both:
-1. the customer's requested correction; and
-2. the same standard of professional formatting, writing quality,
-   consistency, and polish applied to the rest of the document.
-
-The Review page should always receive the best standardized and
-polished version available, not the customer's raw edited version.
-"""
-
 _TEXT_KEYS = (
     "document_text",
     "prepared_work",
@@ -837,7 +1198,9 @@ def _extract_from_value(
         value,
         str,
     ):
-        text = clean_text(value)
+        text = standardize_document_text(
+            value
+        )
 
         return (
             text,
@@ -879,9 +1242,13 @@ def _extract_from_value(
                     candidate,
                     str,
                 )
-                and clean_text(candidate)
+                and standardize_document_text(
+                    candidate
+                )
             ):
-                text = clean_text(candidate)
+                text = standardize_document_text(
+                    candidate
+                )
 
                 return (
                     text,
@@ -962,6 +1329,10 @@ def extract_complete_document(
     dict[str, Any],
 ]:
     text, pages = _extract_from_value(result)
+
+    text = standardize_document_text(
+        text
+    )
 
     if not text:
         raise ValueError(
@@ -1055,11 +1426,17 @@ async def create_document_with_intelligence(
     list[dict[str, Any]],
     dict[str, Any],
 ]:
+    intelligence_context = (
+        build_review_intelligence_context(
+            context
+        )
+    )
+
     kwargs = {
         "customer_request": customer_request,
         "service": request.service,
         "form_data": request.form_data,
-        "context": context,
+        "context": intelligence_context,
         "event": request.event,
         "message": customer_request,
         "original_request": customer_request,
@@ -1112,7 +1489,7 @@ async def create_document_with_intelligence(
                 "message": customer_request,
                 "service": request.service,
                 "event": request.event,
-                "context": context,
+                "context": intelligence_context,
                 "review_standardization_prompt": REVIEW_STANDARDIZATION_PROMPT,
             },
         )
@@ -1177,6 +1554,15 @@ def synchronize_job_document(
 
     job["total_pages"] = len(pages)
 
+    # Keep the master document text synchronized with the
+    # exact standardized pages shown in Review.
+    job["document_text"] = standardize_document_text(
+        "\n\n".join(
+            page["content"]
+            for page in pages
+        )
+    )
+
 
 def create_job(
     job_id: str,
@@ -1185,7 +1571,7 @@ def create_job(
     document_text: str,
     pages: Any,
 ) -> dict[str, Any]:
-    document_text = clean_text(
+    document_text = standardize_document_text(
         document_text
     )
 
@@ -1396,7 +1782,7 @@ def review_callback(
                     if update.get(
                         "content"
                     ) is not None:
-                        page["content"] = clean_text(
+                        page["content"] = standardize_document_text(
                             update.get(
                                 "content"
                             )
@@ -1495,7 +1881,7 @@ def review_callback(
                     "total": total,
                 }
 
-                job["assembled_review"] = clean_text(
+                job["assembled_review"] = standardize_document_text(
                     update.get(
                         "assembled_review",
                         "",
@@ -1580,6 +1966,12 @@ async def run_review(
                 "review_document_pages() method."
             )
 
+        intelligence_context = (
+            build_review_intelligence_context(
+                job.get("context")
+            )
+        )
+
         result = await _call_method_flexibly(
             method,
             {
@@ -1587,9 +1979,7 @@ async def run_review(
                 "service": job.get(
                     "service"
                 ),
-                "context": job.get(
-                    "context"
-                ),
+                "context": intelligence_context,
                 "customer_request": job.get(
                     "original_request"
                 ),
@@ -1613,9 +2003,11 @@ async def run_review(
             )
 
             if returned_pages:
-                returned_text = "\n\n".join(
-                    page["content"]
-                    for page in returned_pages
+                returned_text = standardize_document_text(
+                    "\n\n".join(
+                        page["content"]
+                        for page in returned_pages
+                    )
                 )
 
                 if returned_text:
@@ -1633,7 +2025,7 @@ async def run_review(
                         )
                     )
 
-            job["assembled_review"] = clean_text(
+            job["assembled_review"] = standardize_document_text(
                 result.get(
                     "assembled_review",
                     job.get(
@@ -1642,6 +2034,10 @@ async def run_review(
                     ),
                 )
             )
+
+        # Always synchronize Review with the standardized
+        # master document after intelligence review.
+        synchronize_job_document(job)
 
         total = len(
             job["document_pages"]
@@ -1950,7 +2346,7 @@ def uploaded_document_pages(
     filename: str,
     data: bytes,
 ) -> list[dict[str, Any]]:
-    text = clean_text(
+    text = standardize_document_text(
         extract_document(
             data,
             filename,
@@ -1974,7 +2370,8 @@ def make_download_docx(
     job: dict[str, Any],
 ) -> Path:
     """
-    Create a real DOCX from the current document.
+    Create a real DOCX from the SAME standardized document
+    currently held by Review.
 
     This endpoint is document generation only.
     It does not verify or process payment.
@@ -2010,6 +2407,9 @@ def make_download_docx(
         )
     )
 
+    # IMPORTANT:
+    # The downloaded document is built from the exact same
+    # standardized content used by Review.
     pages = normalize_pages(
         job.get(
             "document_pages",
@@ -2018,7 +2418,7 @@ def make_download_docx(
     )
 
     if not pages:
-        text = clean_text(
+        text = standardize_document_text(
             job.get(
                 "document_text",
                 "",
@@ -2061,7 +2461,7 @@ def make_download_docx(
     body: list[str] = []
 
     for index, page in enumerate(pages):
-        content = str(
+        content = standardize_document_text(
             page.get(
                 "content",
                 "",
@@ -2305,9 +2705,15 @@ async def upload(
             or str(uuid.uuid4())
         )
 
-        text = "\n\n".join(
-            page["content"]
-            for page in pages
+        text = standardize_document_text(
+            "\n\n".join(
+                page["content"]
+                for page in pages
+            )
+        )
+
+        pages = text_to_review_pages(
+            text
         )
 
         return {
@@ -2381,14 +2787,16 @@ async def chat(
         request.document_pages
     )
 
-    document_text = clean_text(
+    document_text = standardize_document_text(
         request.document_text
     )
 
     if not document_text and pages:
-        document_text = "\n\n".join(
-            page["content"]
-            for page in pages
+        document_text = standardize_document_text(
+            "\n\n".join(
+                page["content"]
+                for page in pages
+            )
         )
 
     try:
@@ -2450,7 +2858,7 @@ async def chat(
 
         if create_requested:
             if document_text or pages:
-                complete_text = (
+                complete_text = standardize_document_text(
                     document_text
                     or "\n\n".join(
                         page["content"]
@@ -2487,6 +2895,10 @@ async def chat(
                     request,
                     customer_request,
                     context,
+                )
+
+                complete_text = standardize_document_text(
+                    complete_text
                 )
 
                 print(
@@ -2540,7 +2952,7 @@ async def chat(
         # ----------------------------------------------------
 
         if pages or document_text:
-            complete_text = (
+            complete_text = standardize_document_text(
                 document_text
                 or "\n\n".join(
                     page["content"]
@@ -2920,6 +3332,12 @@ async def correct(
                     "correct_document() method."
                 )
 
+            intelligence_context = (
+                build_review_intelligence_context(
+                    job.get("context")
+                )
+            )
+
             result = await _call_method_flexibly(
                 method,
                 {
@@ -2932,9 +3350,7 @@ async def correct(
                     "service": job.get(
                         "service"
                     ),
-                    "context": job.get(
-                        "context"
-                    ),
+                    "context": intelligence_context,
                     "progress_callback": None,
                     "review_standardization_prompt": REVIEW_STANDARDIZATION_PROMPT,
                 },
@@ -2946,6 +3362,14 @@ async def correct(
                 metadata,
             ) = extract_complete_document(
                 result
+            )
+
+            corrected_text = standardize_document_text(
+                corrected_text
+            )
+
+            corrected_pages = text_to_review_pages(
+                corrected_text
             )
 
             job[
@@ -3086,6 +3510,10 @@ async def approve(
             "REVIEW_NOT_COMPLETE",
         )
 
+    # Ensure the approved version is exactly the same
+    # standardized version that Review is displaying.
+    synchronize_job_document(job)
+
     job["approved"] = True
 
     job["status"] = "approved"
@@ -3202,6 +3630,10 @@ async def download(
         )
 
     try:
+        # Use the exact standardized version that Review and
+        # approval currently hold.
+        synchronize_job_document(job)
+
         path = await asyncio.to_thread(
             make_download_docx,
             job,
@@ -3396,6 +3828,14 @@ async def startup():
 
     print(
         "Review pagination source: COMPLETE DOCUMENT TEXT"
+    )
+
+    print(
+        "Review document standardization: ENABLED"
+    )
+
+    print(
+        "Review/Download document consistency: ENABLED"
     )
 
     print(
