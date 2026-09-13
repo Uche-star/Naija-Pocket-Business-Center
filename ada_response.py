@@ -1,38 +1,90 @@
-"""
-Naija Pocket Business Center
-INTELLIGENCE-FIRST DOCUMENT ENGINE
+# ada_response.py
+# Naija Pocket Business Center
+# Ada customer-facing intelligence layer
+#
+# IMPORTANT:
+# - Ada is intelligence-first.
+# - Selected service is context, not a rigid workflow.
+# - No review_prompt.py is imported here.
+# - Groq token/request limits are preserved.
+# - Document standardization is intelligence-driven.
+# - Raw Markdown must never reach the customer-facing pages.
+# - Generation: one standardization pass.
+# - Review: findings only; incoming standardized document remains canonical.
+# - Correction: correction generation, then one standardization pass.
+# - Compatibility exports get_ada_model() and is_configured() are required by ada_api.py.
 
-COMPLETE REPLACEMENT: ada_response.py
-
-Purpose:
-- Ada is the intelligence layer.
-- Documents are professionally standardized before Workspace/Review.
-- Review examines the already-standardized document.
-- Review does NOT regenerate the complete document.
-- Customer corrections are applied first, then standardized once.
-- No review_prompt.py import.
-- Groq token-limit constants remain unchanged.
-- No blind Markdown stripping or mechanical document rewriting.
-"""
-
-from __future__ import annotations
-
-import hashlib
 import os
 import re
-import traceback
-from typing import Any, Callable
+import json
+from typing import Any, Dict, List, Optional, Tuple
 
 try:
     from groq import Groq
-except ImportError:
+except Exception:
     Groq = None
 
-from billing_manager import BillingManager
+try:
+    from ada_ai_config import API_KEY, MODEL
+except Exception:
+    API_KEY = os.getenv("GROQ_API_KEY", "")
+    MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+
+try:
+    from billing_manager import BillingManager
+except Exception:
+    BillingManager = None
+
+try:
+    from ada_prompt_manager import AdaPromptManager
+except Exception:
+    AdaPromptManager = None
 
 
 # ============================================================
-# EXISTING TOKEN / REQUEST LIMITS — DO NOT CHANGE
+# COMPATIBILITY FUNCTIONS
+# ============================================================
+
+def get_ada_model() -> str:
+    """
+    Public compatibility function required by ada_api.py.
+    Returns the configured Ada/Groq model without making a request.
+    """
+    try:
+        model = str(MODEL or "").strip()
+        if model:
+            return model
+    except Exception:
+        pass
+
+    return os.getenv(
+        "GROQ_MODEL",
+        "llama-3.3-70b-versatile",
+    ).strip()
+
+
+def is_configured() -> bool:
+    """
+    Public compatibility function required by ada_api.py.
+    Checks whether the Groq client can be configured with an API key.
+    """
+    if Groq is None:
+        return False
+
+    try:
+        api_key = str(API_KEY or "").strip()
+    except Exception:
+        api_key = os.getenv("GROQ_API_KEY", "").strip()
+
+    if not api_key:
+        api_key = os.getenv("GROQ_API_KEY", "").strip()
+
+    return bool(api_key)
+
+
+# ============================================================
+# TOKEN / REQUEST LIMITS
+# DO NOT CHANGE THESE VALUES
 # ============================================================
 
 MAX_SYSTEM_PROMPT_CHARS = 5000
@@ -40,7 +92,6 @@ MAX_HISTORY_MESSAGES = 4
 MAX_HISTORY_MESSAGE_CHARS = 900
 MAX_USER_MESSAGE_CHARS = 4500
 MAX_CONTEXT_CHARS = 1800
-
 MAX_DOCUMENT_PAGES = 1000
 
 GENERATION_REQUEST_CHARS = 8500
@@ -61,11 +112,182 @@ CONTINUATION_TAIL_CHARS = 3000
 
 
 # ============================================================
-# ERRORS
+# BASIC HELPERS
 # ============================================================
 
-class AdaResponseError(RuntimeError):
-    """Controlled Ada response error."""
+def _safe_text(value: Any) -> str:
+    if value is None:
+        return ""
+    return str(value).strip()
+
+
+def _limit_text(value: Any, limit: int) -> str:
+    text = _safe_text(value)
+    if len(text) <= limit:
+        return text
+    return text[:limit].rstrip()
+
+
+def _clean_model_output(text: Any) -> str:
+    """
+    Removes transport-level wrappers only.
+    It does NOT mechanically strip Markdown from documents.
+    Document structure is handled intelligently by Ada.
+    """
+    text = _safe_text(text)
+
+    if not text:
+        return ""
+
+    text = re.sub(
+        r"^\s*```(?:text|markdown|md)?\s*",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    text = re.sub(
+        r"\s*```\s*$",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    return text.strip()
+
+
+def _extract_response_text(response: Any) -> str:
+    try:
+        choices = getattr(response, "choices", None)
+        if not choices:
+            return ""
+
+        message = getattr(choices[0], "message", None)
+        if message is None:
+            return ""
+
+        content = getattr(message, "content", None)
+
+        if isinstance(content, str):
+            return content.strip()
+
+        if content is None:
+            return ""
+
+        return str(content).strip()
+
+    except Exception:
+        return ""
+
+
+def _normalise_pages(pages: Any) -> List[str]:
+    if pages is None:
+        return []
+
+    if isinstance(pages, str):
+        return [pages.strip()] if pages.strip() else []
+
+    if isinstance(pages, dict):
+        value = pages.get("pages")
+        if isinstance(value, list):
+            pages = value
+        else:
+            return []
+
+    result: List[str] = []
+
+    try:
+        for page in pages:
+            if isinstance(page, dict):
+                text = (
+                    page.get("text")
+                    or page.get("content")
+                    or page.get("body")
+                    or ""
+                )
+            else:
+                text = page
+
+            text = _safe_text(text)
+
+            if text:
+                result.append(text)
+
+    except Exception:
+        return []
+
+    return result[:MAX_DOCUMENT_PAGES]
+
+
+def _pages_to_document(pages: List[str]) -> str:
+    if not pages:
+        return ""
+
+    return "\n\n".join(
+        page.strip()
+        for page in pages
+        if _safe_text(page)
+    ).strip()
+
+
+def _document_to_pages(
+    document: str,
+    page_chars: int = DEFAULT_PAGE_CHARS,
+) -> List[str]:
+    """
+    Keeps existing explicit page boundaries where possible.
+    Long pages are split only when necessary.
+    """
+    document = _safe_text(document)
+
+    if not document:
+        return []
+
+    explicit = re.split(
+        r"\n\s*(?:PAGE\s+\d+|---\s*PAGE\s+\d+\s*---)\s*\n",
+        document,
+        flags=re.IGNORECASE,
+    )
+
+    if len(explicit) == 1:
+        explicit = [document]
+
+    pages: List[str] = []
+
+    for raw_page in explicit:
+        page = raw_page.strip()
+
+        if not page:
+            continue
+
+        if len(page) <= page_chars:
+            pages.append(page)
+            continue
+
+        start = 0
+
+        while start < len(page):
+            end = min(start + page_chars, len(page))
+
+            if end < len(page):
+                split_at = page.rfind("\n\n", start, end)
+
+                if split_at <= start:
+                    split_at = page.rfind("\n", start, end)
+
+                if split_at <= start:
+                    split_at = end
+
+                end = split_at
+
+            chunk = page[start:end].strip()
+
+            if chunk:
+                pages.append(chunk)
+
+            start = end
+
+    return pages[:MAX_DOCUMENT_PAGES]
 
 
 # ============================================================
@@ -74,1406 +296,1186 @@ class AdaResponseError(RuntimeError):
 
 class AdaResponse:
     """
-    Customer-facing Ada document intelligence.
+    Main customer-facing Ada intelligence layer.
 
-    Important architecture:
-
-        Customer request
-              ↓
-        Ada intelligence
-              ↓
-        Document generation
-              ↓
-        ONE standardization pass
-              ↓
-        Workspace / Review
-
-    Review:
-        standardized document
-              ↓
-        findings-only review
-              ↓
-        Review page
-
-    Correction:
-        standardized document
-              ↓
-        correction instruction
-              ↓
-        corrected document
-              ↓
-        ONE standardization pass
-              ↓
-        Review
+    The selected service provides context.
+    The customer's actual request remains the instruction.
     """
 
-    def __init__(self, service: str | None = None):
-        self.service = service
-        self.billing = BillingManager()
+    def __init__(
+        self,
+        model: Optional[str] = None,
+        api_key: Optional[str] = None,
+    ):
+        self._model = (
+            _safe_text(model)
+            or get_ada_model()
+        )
 
-        self.history: list[dict[str, str]] = []
-
-        self.active_document_text: str = ""
-        self.active_document_path: str | None = None
+        self._api_key = (
+            _safe_text(api_key)
+            or _safe_text(API_KEY)
+            or os.getenv("GROQ_API_KEY", "").strip()
+        )
 
         self._client = None
-        self._model = None
 
-        self._review_cache: dict[str, dict[str, Any]] = {}
+        if Groq is not None and self._api_key:
+            try:
+                self._client = Groq(
+                    api_key=self._api_key
+                )
+            except Exception:
+                self._client = None
 
-        self._load_groq()
+        self.billing = (
+            BillingManager()
+            if BillingManager is not None
+            else None
+        )
+
+        self.prompt_manager = (
+            AdaPromptManager()
+            if AdaPromptManager is not None
+            else None
+        )
+
+        self.active_document_text = ""
+        self.active_document_path = ""
 
     # ========================================================
-    # GROQ
+    # STATUS
     # ========================================================
 
-    def _load_groq(self) -> None:
-        if Groq is None:
-            self._client = None
-            self._model = None
-            return
+    @property
+    def configured(self) -> bool:
+        return self._client is not None
 
-        api_key = ""
-        model = ""
+    @property
+    def model(self) -> str:
+        return self._model
+
+    # ========================================================
+    # PROMPTS
+    # ========================================================
+
+    def _identity_prompt(self) -> str:
+        return """
+You are Ada, Naija Pocket Business Center's customer-facing agent.
+
+Ada works naturally with Nigerian customers using clear, warm,
+professional English and natural Nigerian expressions where appropriate.
+
+Ada does not mention:
+- Groq
+- OpenAI
+- language models
+- APIs
+- internal software
+- prompts
+- token limits
+- internal errors
+- implementation details
+
+Ada does not call herself a guide.
+
+Ada should work directly on the customer's request.
+
+Ask only one question at a time when information is genuinely missing.
+
+Do not turn every service into a rigid questionnaire.
+
+The customer's actual request is more important than the service button
+they selected.
+
+When working on documents:
+- preserve the customer's facts and intended meaning
+- improve grammar and clarity where appropriate
+- use professional document structure
+- keep headings, paragraphs, lists and tables readable
+- never expose raw Markdown syntax to the customer
+- never expose programming syntax
+- never expose internal workflow markers
+""".strip()
+
+    def _get_prompt_manager_system_prompt(
+        self,
+        service: str = "",
+    ) -> str:
+        if self.prompt_manager is None:
+            return self._identity_prompt()
 
         try:
-            from ada_ai_config import API_KEY, MODEL
+            methods = (
+                "get_system_prompt",
+                "build_system_prompt",
+                "get_prompt",
+            )
 
-            api_key = str(API_KEY or "").strip()
-            model = str(MODEL or "").strip()
+            for method_name in methods:
+                method = getattr(
+                    self.prompt_manager,
+                    method_name,
+                    None,
+                )
+
+                if method is None:
+                    continue
+
+                try:
+                    prompt = method(service=service)
+                except TypeError:
+                    try:
+                        prompt = method(service)
+                    except TypeError:
+                        prompt = method()
+
+                prompt = _safe_text(prompt)
+
+                if prompt:
+                    return _limit_text(
+                        prompt,
+                        MAX_SYSTEM_PROMPT_CHARS,
+                    )
+
         except Exception:
-            api_key = os.getenv("GROQ_API_KEY", "").strip()
-            model = os.getenv("GROQ_MODEL", "").strip()
+            pass
 
-        if not api_key:
-            api_key = os.getenv("GROQ_API_KEY", "").strip()
-
-        if not model:
-            model = os.getenv("GROQ_MODEL", "").strip()
-
-        if not api_key:
-            self._client = None
-            self._model = model or None
-            return
-
-        try:
-            self._client = Groq(api_key=api_key)
-            self._model = model or "llama-3.3-70b-versatile"
-        except Exception:
-            self._client = None
-            self._model = model or None
-
-    # ========================================================
-    # SERVICE
-    # ========================================================
-
-    def set_service(self, service: str | None) -> None:
-        if service:
-            self.service = self.normalize_service(service)
-
-    @staticmethod
-    def normalize_service(service: Any) -> str:
-        if service is None:
-            return ""
-
-        text = str(service).strip()
-
-        if not text:
-            return ""
-
-        text = re.sub(r"\s+", " ", text)
-        return text
+        return self._identity_prompt()
 
     # ========================================================
     # BILLING CONTEXT
     # ========================================================
 
-    def get_billing_context(self, service: str | None = None) -> str:
-        resolved = self.normalize_service(service or self.service)
-
-        if not resolved:
+    def get_billing_context(
+        self,
+        service: str,
+    ) -> str:
+        if self.billing is None:
             return ""
 
-        try:
-            data = self.billing.get_service(resolved)
+        resolved = _safe_text(service)
 
-            if not isinstance(data, dict):
+        try:
+            item = self.billing.get_service(resolved)
+
+            if not item:
                 return ""
 
-            price = data.get("price")
-            billing = data.get("billing")
+            if isinstance(item, dict):
+                price = item.get("price")
+                billing = item.get("billing")
 
-            parts: list[str] = []
+                parts = []
 
-            if price is not None:
-                parts.append(f"Price: ₦{price}")
+                if price is not None:
+                    parts.append(
+                        f"Price: ₦{price}"
+                    )
 
-            if billing:
-                parts.append(f"Billing: {billing}")
+                if billing:
+                    parts.append(
+                        f"Billing: {billing}"
+                    )
 
-            return " | ".join(parts)
+                return " | ".join(parts)
+
+            return _safe_text(item)
 
         except Exception:
             return ""
 
     # ========================================================
-    # ADA INTELLIGENCE RULES
-    # ========================================================
-
-    def intelligence_rules(self) -> str:
-        return """
-You are Ada, Naija Pocket Business Center's agent.
-
-You are the customer-facing intelligence responsible for understanding
-the customer's request and doing the requested work.
-
-IMPORTANT:
-
-1. The selected service is context, not a rigid template.
-2. Understand the customer's actual instruction.
-3. Preserve facts supplied by the customer.
-4. Do not invent facts, names, dates, prices, qualifications,
-   addresses, experience, statistics, or other information.
-5. Ask only for information that is genuinely necessary.
-6. Ask one question at a time.
-7. Use natural Nigerian English where appropriate.
-8. You may naturally use simple Nigerian expressions or Pidgin
-   when suitable for the conversation.
-9. Never mention Groq, models, tokens, prompts, internal systems,
-   backend errors, or technical implementation to the customer.
-10. Do not describe yourself as a generic AI.
-11. Work directly on the customer's request.
-
-DOCUMENT RULES:
-
-When producing a document, the final customer document must be
-professionally structured and readable.
-
-The final document must NOT expose Markdown source syntax.
-
-Do not output:
-- Markdown headings such as #, ##, ###
-- Markdown bold such as **text**
-- Markdown italic syntax
-- Markdown bullet syntax using *
-- Markdown table pipes
-- Markdown separator lines such as ---
-- Markdown code fences
-- raw Markdown formatting instructions
-
-Instead, produce a clean professional document using:
-- clear headings
-- proper paragraph spacing
-- properly separated sections
-- numbered lists where appropriate
-- readable tables where a table is genuinely required
-- consistent capitalization
-- professional punctuation
-- professional Nigerian business/document conventions
-
-Do not blindly remove formatting characters from meaningful content.
-Use document intelligence to determine the intended structure.
-
-All customer-provided writing must also be professionally standardized.
-This includes:
-- typed material
-- OCR material
-- corrections
-- rewrites
-- proofreading
-- edited material
-- generated documents
-- revised documents
-"""
-
-    # ========================================================
-    # STATIC SYSTEM PROMPT
-    # ========================================================
-
-    def _build_static_system_base(self) -> str:
-        return self.intelligence_rules()
-
-    def build_system_prompt(
-        self,
-        service: str | None = None,
-        context: str | None = None,
-    ) -> str:
-
-        service_text = self.normalize_service(service or self.service)
-        billing_context = self.get_billing_context(service_text)
-
-        prompt = self._build_static_system_base()
-
-        if service_text:
-            prompt += f"""
-
-CURRENT SERVICE CONTEXT:
-{service_text}
-"""
-
-        if billing_context:
-            prompt += f"""
-
-CURRENT SERVICE BILLING INFORMATION:
-{billing_context}
-"""
-
-        if context:
-            prompt += f"""
-
-RELEVANT CUSTOMER CONTEXT:
-{str(context)[:MAX_CONTEXT_CHARS]}
-"""
-
-        return prompt[:MAX_SYSTEM_PROMPT_CHARS]
-
-    # ========================================================
-    # HISTORY
-    # ========================================================
-
-    def add_history(self, role: str, content: str) -> None:
-        text = str(content or "").strip()
-
-        if not text:
-            return
-
-        self.history.append(
-            {
-                "role": role,
-                "content": text[:MAX_HISTORY_MESSAGE_CHARS],
-            }
-        )
-
-        if len(self.history) > MAX_HISTORY_MESSAGES:
-            self.history = self.history[-MAX_HISTORY_MESSAGES:]
-
-    def clear_history(self) -> None:
-        self.history.clear()
-
-    # ========================================================
-    # GROQ CALL
+    # GROQ
     # ========================================================
 
     def call_groq(
         self,
-        system_prompt: str,
-        user_prompt: str,
+        messages: List[Dict[str, str]],
         output_tokens: int,
     ) -> str:
-
         if self._client is None:
-            raise AdaResponseError(
-                "Groq intelligence is not configured."
+            raise RuntimeError(
+                "Ada intelligence is not configured."
             )
 
-        if not self._model:
-            raise AdaResponseError(
-                "Groq model is not configured."
-            )
-
-        messages: list[dict[str, str]] = [
-            {
-                "role": "system",
-                "content": system_prompt[:MAX_SYSTEM_PROMPT_CHARS],
-            }
-        ]
-
-        for item in self.history[-MAX_HISTORY_MESSAGES:]:
-            role = item.get("role", "user")
-            content = item.get("content", "")
-
-            if role not in {"user", "assistant"}:
-                continue
-
-            messages.append(
-                {
-                    "role": role,
-                    "content": str(content)[:MAX_HISTORY_MESSAGE_CHARS],
-                }
-            )
-
-        messages.append(
-            {
-                "role": "user",
-                "content": user_prompt,
-            }
+        response = self._client.chat.completions.create(
+            model=self._model,
+            messages=messages,
+            temperature=0.2,
+            max_completion_tokens=output_tokens,
         )
 
-        try:
-            response = self._client.chat.completions.create(
-                model=self._model,
-                messages=messages,
-                temperature=0.2,
-                max_completion_tokens=output_tokens,
+        text = _extract_response_text(response)
+
+        if not text:
+            raise RuntimeError(
+                "Ada returned an empty response."
             )
 
-            choices = getattr(response, "choices", None)
-
-            if not choices:
-                raise AdaResponseError(
-                    "Groq returned no response."
-                )
-
-            message = getattr(choices[0], "message", None)
-
-            if message is None:
-                raise AdaResponseError(
-                    "Groq returned an invalid response."
-                )
-
-            content = getattr(message, "content", None)
-
-            if content is None:
-                raise AdaResponseError(
-                    "Groq returned empty content."
-                )
-
-            result = str(content).strip()
-
-            if not result:
-                raise AdaResponseError(
-                    "Groq returned empty content."
-                )
-
-            return result
-
-        except AdaResponseError:
-            raise
-
-        except Exception as error:
-            raise AdaResponseError(
-                f"Groq request failed: {error}"
-            ) from error
+        return _clean_model_output(text)
 
     # ========================================================
-    # STANDARDIZATION PROMPT
+    # SERVICE NORMALISATION
     # ========================================================
 
-    def build_standardization_prompt(
+    def normalize_service(
         self,
-        document: str,
-        service: str | None = None,
-        purpose: str = "final customer document",
+        service: Any,
     ) -> str:
+        value = _safe_text(service)
 
-        service_text = self.normalize_service(service or self.service)
+        if not value:
+            return "general service"
 
+        value = re.sub(
+            r"[_\-]+",
+            " ",
+            value,
+        )
+
+        value = re.sub(
+            r"\s+",
+            " ",
+            value,
+        )
+
+        return value.strip()
+
+    def find_service_in_message(
+        self,
+        message: str,
+    ) -> str:
+        text = _safe_text(message).lower()
+
+        service_terms = [
+            "cv",
+            "resume",
+            "cover letter",
+            "assignment",
+            "project",
+            "typing",
+            "printing",
+            "translation",
+            "grammar",
+            "proofreading",
+            "business proposal",
+            "business plan",
+            "letter",
+            "document",
+            "pdf",
+        ]
+
+        for term in service_terms:
+            if term in text:
+                return term
+
+        return ""
+
+    # ========================================================
+    # PRICE RESPONSE
+    # ========================================================
+
+    def detect_price_request(
+        self,
+        message: str,
+    ) -> bool:
+        text = _safe_text(message).lower()
+
+        price_terms = [
+            "price",
+            "cost",
+            "how much",
+            "fee",
+            "charge",
+            "payment",
+            "pay",
+            "₦",
+            "naira",
+        ]
+
+        return any(
+            term in text
+            for term in price_terms
+        )
+
+    def generate_price_response(
+        self,
+        service: str,
+    ) -> str:
+        context = self.get_billing_context(service)
+
+        if context:
+            return (
+                f"Ada, Naija Pocket Business Center's agent, "
+                f"will begin working on your request immediately.\n\n"
+                f"For {self.normalize_service(service)}, "
+                f"the current service details are {context}."
+            )
+
+        return (
+            "Ada, Naija Pocket Business Center's agent, "
+            "will begin working on your request immediately.\n\n"
+            "Please tell me what you need done, and I will work from "
+            "your actual request."
+        )
+
+    # ========================================================
+    # DOCUMENT STANDARDIZATION
+    # ========================================================
+
+    def _standardization_system_prompt(
+        self,
+        service: str,
+    ) -> str:
         return f"""
-STANDARDIZE THE DOCUMENT BELOW.
+You are Ada, Naija Pocket Business Center's professional document
+standardization specialist.
 
-Purpose:
-{purpose}
+Service context:
+{self.normalize_service(service)}
 
-Service:
-{service_text or "Document service"}
+Your task is to standardize the supplied document intelligently.
 
-Your task is to use document intelligence to transform the supplied
-document into a clean, professional, customer-ready document.
+This is NOT a request to rewrite the customer's facts.
 
-CRITICAL REQUIREMENTS:
+Preserve:
+- names
+- dates
+- amounts
+- companies
+- addresses
+- locations
+- facts
+- intended meaning
+- requested information
+- legitimate tables and lists
 
-- Preserve every important fact and meaning.
-- Do not invent information.
-- Do not remove meaningful customer information.
-- Correct grammar and obvious spelling errors where appropriate.
-- Improve professional structure.
-- Separate headings from body text.
-- Separate labels such as "To:", "From:", "Date:" properly.
-- Preserve numbered lists.
-- Preserve useful bullet/list structure.
-- Present tables as readable professional tables.
-- Restore sensible paragraph spacing.
-- Prevent headings and paragraphs from running together.
-- Do not output Markdown source syntax.
-- Do not use # or ## headings.
-- Do not use **bold** syntax.
-- Do not use Markdown table pipes.
-- Do not use Markdown separator lines.
-- Do not use code fences.
-- Do not add commentary before or after the document.
-- Return ONLY the complete standardized document.
+Improve:
+- grammar
+- spelling
+- punctuation
+- spacing
+- paragraph separation
+- heading hierarchy
+- professional structure
+- readability
+- consistency
+- presentation
 
-The output is going directly to the customer-facing Workspace/Review
-document area, so it must already be professionally readable.
+IMPORTANT OUTPUT RULES:
 
-DOCUMENT TO STANDARDIZE:
+Return ONLY the complete standardized document.
 
-{document[:DEFAULT_PAGE_CHARS]}
-"""
+Do NOT return an explanation.
 
-    # ========================================================
-    # INTELLIGENT STANDARDIZATION
-    # ========================================================
+Do NOT use raw Markdown source syntax.
+
+Do NOT use:
+- **
+- ##
+- ###
+- Markdown pipe tables
+- ``` code fences
+- Markdown horizontal rules such as ---
+- Markdown link syntax
+- raw Markdown bullet syntax
+
+Headings should be represented as ordinary clean text on their own lines.
+
+Lists should be readable ordinary numbered or bulleted content,
+without exposing Markdown source syntax.
+
+Tables should be represented as clean readable document tables or
+clearly structured rows and columns without Markdown pipe syntax.
+
+Keep sensible blank lines between sections.
+
+Never collapse labels, headings and paragraphs together.
+
+Never add facts that are not supported by the supplied document.
+
+If the supplied document is already professional, preserve its wording
+and only improve what is genuinely necessary.
+""".strip()
+
+    def intelligently_standardize_page(
+        self,
+        page: str,
+        service: str,
+    ) -> str:
+        page = _safe_text(page)
+
+        if not page:
+            return ""
+
+        system = self._standardization_system_prompt(service)
+
+        user = f"""
+Standardize the following document page.
+
+SERVICE:
+{self.normalize_service(service)}
+
+DOCUMENT PAGE:
+{page}
+""".strip()
+
+        messages = [
+            {
+                "role": "system",
+                "content": _limit_text(
+                    system,
+                    MAX_SYSTEM_PROMPT_CHARS,
+                ),
+            },
+            {
+                "role": "user",
+                "content": _limit_text(
+                    user,
+                    GENERATION_REQUEST_CHARS,
+                ),
+            },
+        ]
+
+        return self.call_groq(
+            messages,
+            GENERATION_OUTPUT_TOKENS,
+        )
 
     def intelligently_standardize_pages(
         self,
-        pages: list[dict[str, Any]],
-        service: str | None = None,
-        purpose: str = "final customer document",
-    ) -> list[dict[str, Any]]:
-
-        normalized = self.normalize_document_pages(pages)
+        pages: List[str],
+        service: str,
+    ) -> List[str]:
+        normalized = _normalise_pages(pages)
 
         if not normalized:
             return []
 
-        standardized_pages: list[dict[str, Any]] = []
+        standardized: List[str] = []
 
-        for index, page in enumerate(normalized, start=1):
-
-            content = str(page.get("content", "")).strip()
-
-            if not content:
-                continue
-
-            prompt = self.build_standardization_prompt(
-                document=content,
-                service=service,
-                purpose=purpose,
-            )
-
-            result = self.call_groq(
-                system_prompt=self.build_system_prompt(service),
-                user_prompt=prompt,
-                output_tokens=GENERATION_OUTPUT_TOKENS,
-            )
-
-            result = result.strip()
-
-            if not result:
-                raise AdaResponseError(
-                    f"Standardization returned empty content for page {index}."
+        for page in normalized:
+            try:
+                result = self.intelligently_standardize_page(
+                    page,
+                    service,
                 )
 
-            standardized_pages.append(
-                {
-                    "page_number": index,
-                    "content": result,
-                }
-            )
+                result = _clean_model_output(result)
 
-        return standardized_pages
+                if result:
+                    standardized.append(result)
+                else:
+                    standardized.append(page)
+
+            except Exception:
+                # Preserve the document rather than destroying it if a
+                # single standardization call fails.
+                standardized.append(page)
+
+        return standardized[:MAX_DOCUMENT_PAGES]
 
     def intelligently_standardize_document(
         self,
         document: str,
-        service: str | None = None,
-        purpose: str = "final customer document",
+        service: str,
     ) -> str:
+        pages = _document_to_pages(document)
 
-        text = str(document or "").strip()
-
-        if not text:
-            raise AdaResponseError(
-                "There is no document content to standardize."
-            )
-
-        pages = self.document_to_pages(text)
+        if not pages:
+            return ""
 
         standardized_pages = self.intelligently_standardize_pages(
-            pages=pages,
-            service=service,
-            purpose=purpose,
+            pages,
+            service,
         )
 
-        if not standardized_pages:
-            raise AdaResponseError(
-                "Document standardization returned no usable pages."
-            )
-
-        standardized = self.assemble_document(
+        return _pages_to_document(
             standardized_pages
-        ).strip()
-
-        if not standardized:
-            raise AdaResponseError(
-                "Document standardization returned empty content."
-            )
-
-        self.active_document_text = standardized
-
-        return standardized
+        )
 
     # ========================================================
-    # GENERATION PROMPT
+    # GENERATION
     # ========================================================
 
-    def build_generation_prompt(
+    def _generation_system_prompt(
         self,
-        instruction: str,
-        service: str | None = None,
-        context: str | None = None,
-        source_document: str | None = None,
+        service: str,
     ) -> str:
+        billing = self.get_billing_context(service)
 
-        service_text = self.normalize_service(service or self.service)
+        billing_text = (
+            f"\nService billing context: {billing}"
+            if billing
+            else ""
+        )
 
-        prompt = f"""
-WORK ON THE CUSTOMER'S REQUEST.
+        return f"""
+{self._identity_prompt()}
 
-SERVICE:
-{service_text or "Not specified"}
+You are now working on a document request.
 
-CUSTOMER REQUEST:
-{instruction[:GENERATION_REQUEST_CHARS]}
-"""
+Selected service:
+{self.normalize_service(service)}
+{billing_text}
 
-        if context:
-            prompt += f"""
+Understand the customer's actual request before producing the document.
 
-CONTEXT:
-{context[:MAX_CONTEXT_CHARS]}
-"""
+Create a complete professional document when enough information has
+been provided.
 
-        if source_document:
-            prompt += f"""
+Do not invent personal facts.
 
-SOURCE MATERIAL:
+If information is genuinely required before the document can be
+created, ask one clear question instead.
 
-{source_document[:GENERATION_REQUEST_CHARS]}
-
-Use the source material as the authoritative source of facts.
-Preserve its meaning while performing the customer's requested work.
-"""
-
-        prompt += """
-
-If this is a document task, return the complete finished document.
-
-Do not explain what you are doing.
-Do not provide a draft followed by commentary.
-Do not mention internal systems.
-
-The final document will go through Ada's professional
-standardization stage before reaching the customer.
-"""
-
-        return prompt[:GENERATION_REQUEST_CHARS]
-
-    # ========================================================
-    # DOCUMENT GENERATION
-    # ========================================================
+When producing the document, use clean document structure.
+Do not expose raw Markdown source syntax.
+""".strip()
 
     def generate_document(
         self,
-        instruction: str,
-        service: str | None = None,
-        context: str | None = None,
-        source_document: str | None = None,
-        progress_callback: Callable[[dict[str, Any]], None] | None = None,
-    ) -> dict[str, Any]:
+        service: str,
+        user_message: str,
+        history: Optional[List[Dict[str, str]]] = None,
+        context: str = "",
+    ) -> Dict[str, Any]:
+        service = self.normalize_service(service)
 
-        instruction = str(instruction or "").strip()
-
-        if not instruction:
-            raise AdaResponseError(
-                "No document instruction was supplied."
-            )
-
-        resolved_service = self.normalize_service(
-            service or self.service
+        user_message = _limit_text(
+            user_message,
+            MAX_USER_MESSAGE_CHARS,
         )
 
-        prompt = self.build_generation_prompt(
-            instruction=instruction,
-            service=resolved_service,
-            context=context,
-            source_document=source_document,
+        context = _limit_text(
+            context,
+            MAX_CONTEXT_CHARS,
         )
 
-        generated_parts: list[str] = []
-
-        current_prompt = prompt
-
-        for part_number in range(1, MAX_GENERATION_PARTS + 1):
-
-            result = self.call_groq(
-                system_prompt=self.build_system_prompt(
-                    resolved_service,
-                    context,
+        messages: List[Dict[str, str]] = [
+            {
+                "role": "system",
+                "content": _limit_text(
+                    self._generation_system_prompt(service),
+                    MAX_SYSTEM_PROMPT_CHARS,
                 ),
-                user_prompt=current_prompt,
-                output_tokens=GENERATION_OUTPUT_TOKENS,
-            ).strip()
+            }
+        ]
 
-            if not result:
-                break
+        if history:
+            safe_history = history[
+                -MAX_HISTORY_MESSAGES:
+            ]
 
-            result = result.replace(
-                END_OF_DOCUMENT_MARKER,
-                ""
-            ).strip()
+            for item in safe_history:
+                if not isinstance(item, dict):
+                    continue
 
-            result = result.replace(
-                CONTINUE_MARKER,
-                ""
-            ).strip()
+                role = item.get("role")
 
-            generated_parts.append(result)
+                if role not in (
+                    "user",
+                    "assistant",
+                ):
+                    continue
 
-            if progress_callback:
-                try:
-                    progress_callback(
+                content = _limit_text(
+                    item.get("content", ""),
+                    MAX_HISTORY_MESSAGE_CHARS,
+                )
+
+                if content:
+                    messages.append(
                         {
-                            "type": "generation_progress",
-                            "part": part_number,
-                            "total": MAX_GENERATION_PARTS,
+                            "role": role,
+                            "content": content,
                         }
                     )
-                except Exception:
-                    pass
 
-            lower = result.lower()
+        user_parts = []
 
-            if (
-                END_OF_DOCUMENT_MARKER.lower() in lower
-                or len(result) < GENERATION_OUTPUT_TOKENS * 2
-            ):
-                break
-
-            tail = result[-CONTINUATION_TAIL_CHARS:]
-
-            current_prompt = f"""
-Continue the document from exactly where you stopped.
-
-Do not repeat previous content.
-
-Return only the remaining document content.
-
-When the entire document is finished, end with:
-{END_OF_DOCUMENT_MARKER}
-
-DOCUMENT TAIL:
-
-{tail}
-"""
-
-        generated_document = "\n\n".join(
-            part for part in generated_parts if part.strip()
-        ).strip()
-
-        if not generated_document:
-            raise AdaResponseError(
-                "Ada generated no usable document."
+        if context:
+            user_parts.append(
+                f"Relevant context:\n{context}"
             )
 
-        # IMPORTANT:
-        # Generation performs ONE standardization pass.
-        standardized_document = (
-            self.intelligently_standardize_document(
-                generated_document,
-                service=resolved_service,
-                purpose="final customer document before Workspace and Review",
-            )
+        user_parts.append(
+            f"Customer request:\n{user_message}"
         )
 
-        self.active_document_text = standardized_document
-
-        pages = self.document_to_pages(
-            standardized_document
+        messages.append(
+            {
+                "role": "user",
+                "content": _limit_text(
+                    "\n\n".join(user_parts),
+                    GENERATION_REQUEST_CHARS,
+                ),
+            }
         )
+
+        raw = self.call_groq(
+            messages,
+            GENERATION_OUTPUT_TOKENS,
+        )
+
+        # ONE standardization pass after generation.
+        standardized = self.intelligently_standardize_document(
+            raw,
+            service,
+        )
+
+        if not standardized:
+            standardized = raw
+
+        self.active_document_text = standardized
 
         return {
             "success": True,
-            "document": standardized_document,
-            "document_text": standardized_document,
-            "pages": pages,
-            "document_pages": pages,
-            "service": resolved_service,
+            "service": service,
+            "content": standardized,
+            "document": standardized,
+            "pages": _document_to_pages(
+                standardized
+            ),
         }
-
-    # ========================================================
-    # DOCUMENT PAGE HELPERS
-    # ========================================================
-
-    @staticmethod
-    def document_to_pages(
-        document: str,
-        page_chars: int = DEFAULT_PAGE_CHARS,
-    ) -> list[dict[str, Any]]:
-
-        text = str(document or "").strip()
-
-        if not text:
-            return []
-
-        if page_chars <= 0:
-            page_chars = DEFAULT_PAGE_CHARS
-
-        paragraphs = re.split(
-            r"\n\s*\n",
-            text,
-        )
-
-        pages: list[dict[str, Any]] = []
-        current: list[str] = []
-        current_length = 0
-
-        for paragraph in paragraphs:
-
-            paragraph = paragraph.strip()
-
-            if not paragraph:
-                continue
-
-            paragraph_length = len(paragraph)
-
-            if (
-                current
-                and current_length + paragraph_length + 2 > page_chars
-            ):
-                pages.append(
-                    {
-                        "page_number": len(pages) + 1,
-                        "content": "\n\n".join(current).strip(),
-                    }
-                )
-
-                current = []
-                current_length = 0
-
-            current.append(paragraph)
-            current_length += paragraph_length + 2
-
-        if current:
-            pages.append(
-                {
-                    "page_number": len(pages) + 1,
-                    "content": "\n\n".join(current).strip(),
-                }
-            )
-
-        return pages[:MAX_DOCUMENT_PAGES]
-
-    @staticmethod
-    def normalize_document_pages(
-        pages: Any,
-    ) -> list[dict[str, Any]]:
-
-        if not isinstance(pages, list):
-            return []
-
-        normalized: list[dict[str, Any]] = []
-
-        for index, page in enumerate(pages, start=1):
-
-            if isinstance(page, str):
-                content = page.strip()
-
-            elif isinstance(page, dict):
-                content = str(
-                    page.get("content")
-                    or page.get("text")
-                    or page.get("page_content")
-                    or ""
-                ).strip()
-
-            else:
-                continue
-
-            if not content:
-                continue
-
-            normalized.append(
-                {
-                    "page_number": index,
-                    "content": content,
-                }
-            )
-
-        return normalized[:MAX_DOCUMENT_PAGES]
-
-    @staticmethod
-    def assemble_document(
-        pages: list[dict[str, Any]],
-    ) -> str:
-
-        normalized = AdaResponse.normalize_document_pages(
-            pages
-        )
-
-        return "\n\n".join(
-            page["content"]
-            for page in normalized
-            if page.get("content")
-        ).strip()
-
-    # ========================================================
-    # REVIEW CACHE
-    # ========================================================
-
-    def _review_cache_key(
-        self,
-        pages: list[dict[str, Any]],
-        service: str | None = None,
-    ) -> str:
-
-        document = self.assemble_document(pages)
-
-        raw = (
-            f"{self.normalize_service(service or self.service)}"
-            f"\n{document}"
-        )
-
-        return hashlib.sha256(
-            raw.encode("utf-8")
-        ).hexdigest()
 
     # ========================================================
     # REVIEW
     # ========================================================
 
-    def review_document_pages(
+    def _review_system_prompt(
         self,
-        pages: list[dict[str, Any]],
-        service: str | None = None,
-        context: str | None = None,
-        customer_request: str | None = None,
-        event: str | None = None,
-        progress_callback: Callable[[dict[str, Any]], None] | None = None,
-    ) -> dict[str, Any]:
+        service: str,
+    ) -> str:
+        return f"""
+You are Ada reviewing a professional document for the customer.
 
-        """
-        IMPORTANT:
+Service:
+{self.normalize_service(service)}
 
-        The pages arriving here are already the authoritative,
-        standardized customer document.
+The document supplied to you has already been standardized.
 
-        Review does NOT standardize them again.
+Do NOT rewrite or return the document.
 
-        Review does NOT ask Groq to reproduce the entire document.
+Return ONLY review findings.
 
-        Groq returns findings only.
-        """
+Check:
+- missing information
+- contradictions
+- obvious factual inconsistencies
+- grammar or wording issues that still matter
+- professional presentation issues
+- unclear sections
+- obvious calculation inconsistencies
+- whether the customer's stated purpose is satisfied
 
-        normalized_pages = self.normalize_document_pages(
-            pages
-        )
+Do not invent problems.
+
+If the document is satisfactory, say that it is ready.
+
+Your response MUST use exactly these markers:
+
+[FINDINGS_START]
+your concise findings here
+[FINDINGS_END]
+
+Do not place the document between the markers.
+""".strip()
+
+    def review_document(
+        self,
+        service: str,
+        pages: Any,
+        title: str = "",
+        context: str = "",
+    ) -> Dict[str, Any]:
+        service = self.normalize_service(service)
+
+        normalized_pages = _normalise_pages(pages)
 
         if not normalized_pages:
-            raise AdaResponseError(
-                "There is no document available for review."
-            )
+            return {
+                "success": False,
+                "status": "error",
+                "findings": "There is no document available to review.",
+                "pages": [],
+            }
 
-        # The incoming standardized document is authoritative.
-        document = self.assemble_document(
+        # IMPORTANT:
+        # Do NOT standardize again here.
+        # The incoming pages are already the canonical standardized
+        # document from generation or correction.
+        document = _pages_to_document(
             normalized_pages
         )
 
-        if not document:
-            raise AdaResponseError(
-                "The document available for review is empty."
+        review_payload = f"""
+SERVICE:
+{service}
+
+TITLE:
+{_safe_text(title)}
+
+CONTEXT:
+{_limit_text(context, MAX_CONTEXT_CHARS)}
+
+DOCUMENT TO REVIEW:
+{document}
+""".strip()
+
+        messages = [
+            {
+                "role": "system",
+                "content": _limit_text(
+                    self._review_system_prompt(service),
+                    MAX_SYSTEM_PROMPT_CHARS,
+                ),
+            },
+            {
+                "role": "user",
+                "content": _limit_text(
+                    review_payload,
+                    REVIEW_REQUEST_CHARS,
+                ),
+            },
+        ]
+
+        try:
+            raw = self.call_groq(
+                messages,
+                REVIEW_OUTPUT_TOKENS,
             )
 
-        cache_key = self._review_cache_key(
-            normalized_pages,
-            service,
-        )
-
-        cached = self._review_cache.get(cache_key)
-
-        if cached:
-            return cached
-
-        # ----------------------------------------------------
-        # FINDINGS ONLY
-        # ----------------------------------------------------
-
-        review_source = document[:REVIEW_REQUEST_CHARS]
-
-        review_prompt = f"""
-REVIEW THE COMPLETE STANDARDIZED DOCUMENT BELOW.
-
-Your task is to identify genuine issues that should be corrected
-before customer approval.
-
-IMPORTANT:
-
-- Do NOT reproduce the document.
-- Do NOT rewrite the document.
-- Do NOT return the complete document.
-- Do NOT return Markdown.
-- Do NOT use #, **, | tables, or --- separators.
-- Do NOT invent problems.
-- Do NOT complain about placeholders such as [Your Company Name]
-  when they are clearly intentional placeholders.
-- Check grammar, spelling, clarity, consistency, numbering,
-  professional structure, obvious omissions and contradictions.
-- Preserve the customer's meaning.
-
-Return ONLY findings.
-
-Use this exact format:
-
-FINDINGS_START
-PAGE 1: finding
-PAGE 2: finding
-FINDINGS_END
-
-If there are no genuine issues, return:
-
-FINDINGS_START
-NO ISSUES FOUND
-FINDINGS_END
-
-DOCUMENT:
-
-{review_source}
-"""
-
-        findings_response = self.call_groq(
-            system_prompt=self.build_system_prompt(
-                service,
-                context,
-            ),
-            user_prompt=review_prompt[:REVIEW_REQUEST_CHARS],
-            output_tokens=REVIEW_OUTPUT_TOKENS,
-        ).strip()
-
-        findings = self._extract_findings(
-            findings_response
-        )
-
-        review_pages: list[dict[str, Any]] = []
-
-        for index, page in enumerate(
-            normalized_pages,
-            start=1,
-        ):
-
-            page_finding = findings.get(
-                index,
-                "No issues found."
+            match = re.search(
+                r"FINDINGS_START(.*?)FINDINGS_END",
+                raw,
+                flags=re.IGNORECASE | re.DOTALL,
             )
 
-            review_page = {
-                "page_number": index,
-                "content": page["content"],
-                "text": page["content"],
-                "page_content": page["content"],
-                "review": page_finding,
+            if match:
+                findings = match.group(1).strip()
+            else:
+                findings = raw.strip()
+
+            return {
+                "success": True,
                 "status": "reviewed",
-                "error": None,
+                "findings": findings,
+                "pages": normalized_pages,
+                "document": document,
+                "title": _safe_text(title),
             }
 
-            review_pages.append(
-                review_page
-            )
-
-            if progress_callback:
-                try:
-                    progress_callback(
-                        {
-                            "type": "page_completed",
-                            "page_number": index,
-                            "position": index,
-                            "total": len(normalized_pages),
-                            "review": page_finding,
-                            "content": page["content"],
-                        }
-                    )
-                except Exception:
-                    pass
-
-        assembled_review = "\n\n".join(
-            f"Page {page['page_number']}: "
-            f"{page['review']}"
-            for page in review_pages
-        )
-
-        result = {
-            "success": True,
-            "pages": review_pages,
-            "document_pages": normalized_pages,
-            "document_text": document,
-            "assembled_review": assembled_review,
-            "findings": findings,
-            "status": "review_complete",
-        }
-
-        self._review_cache[cache_key] = result
-
-        if progress_callback:
-            try:
-                progress_callback(
-                    {
-                        "type": "review_completed",
-                        "total": len(normalized_pages),
-                        "assembled_review": assembled_review,
-                    }
-                )
-            except Exception:
-                pass
-
-        return result
-
-    # ========================================================
-    # REVIEW FINDINGS PARSER
-    # ========================================================
-
-    @staticmethod
-    def _extract_findings(
-        response: str,
-    ) -> dict[int, str]:
-
-        text = str(response or "").strip()
-
-        if not text:
-            return {}
-
-        match = re.search(
-            r"FINDINGS_START(.*?)(?:FINDINGS_END|$)",
-            text,
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-
-        if match:
-            body = match.group(1).strip()
-        else:
-            body = text
-
-        if not body:
-            return {}
-
-        if "NO ISSUES FOUND" in body.upper():
-            return {}
-
-        findings: dict[int, str] = {}
-
-        pattern = re.compile(
-            r"(?:^|\n)\s*PAGE\s+(\d+)\s*:\s*(.*?)(?=\n\s*PAGE\s+\d+\s*:|\Z)",
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-
-        for match in pattern.finditer(body):
-
-            try:
-                page_number = int(
-                    match.group(1)
-                )
-            except (TypeError, ValueError):
-                continue
-
-            finding = match.group(2).strip()
-
-            if finding:
-                findings[page_number] = finding
-
-        if not findings and body:
-            findings[1] = body
-
-        return findings
-
-    # ========================================================
-    # REVIEW ASSEMBLY
-    # ========================================================
-
-    @staticmethod
-    def assemble_review(
-        review_pages: list[dict[str, Any]],
-    ) -> str:
-
-        normalized = AdaResponse.normalize_document_pages(
-            review_pages
-        )
-
-        parts: list[str] = []
-
-        for page in normalized:
-            review = str(
-                page.get("review")
-                or "No issues found."
-            ).strip()
-
-            parts.append(
-                f"Page {page['page_number']}: {review}"
-            )
-
-        return "\n\n".join(parts).strip()
+        except Exception as exc:
+            return {
+                "success": False,
+                "status": "error",
+                "findings": (
+                    "The document is available, but the review "
+                    "could not be completed at this time."
+                ),
+                "error": str(exc),
+                "pages": normalized_pages,
+                "document": document,
+                "title": _safe_text(title),
+            }
 
     # ========================================================
     # CORRECTION
     # ========================================================
 
+    def _correction_system_prompt(
+        self,
+        service: str,
+    ) -> str:
+        return f"""
+You are Ada, Naija Pocket Business Center's document correction
+specialist.
+
+Service:
+{self.normalize_service(service)}
+
+Apply the customer's requested correction to the supplied document.
+
+Rules:
+- preserve all correct existing information
+- preserve names, dates, amounts and facts unless the customer
+  explicitly asks for a change
+- make only the requested corrections plus necessary grammar,
+  punctuation and structural corrections
+- do not invent facts
+- return the complete corrected document
+- do not explain what you changed
+- do not use raw Markdown source syntax
+- do not use code fences
+- do not use Markdown pipe tables
+- do not use raw Markdown heading syntax
+""".strip()
+
     def correct_document(
         self,
-        pages: list[dict[str, Any]] | None = None,
-        correction: str = "",
-        service: str | None = None,
-        context: str | None = None,
-        progress_callback: Callable[[dict[str, Any]], None] | None = None,
-        **kwargs: Any,
-    ) -> dict[str, Any]:
+        service: str,
+        pages: Any,
+        correction: str,
+        context: str = "",
+    ) -> Dict[str, Any]:
+        service = self.normalize_service(service)
 
-        """
-        CORRECTION FLOW:
+        normalized_pages = _normalise_pages(pages)
 
-        Existing standardized document
-                  ↓
-        Customer correction
-                  ↓
-        Groq applies correction
-                  ↓
-        ONE intelligent standardization pass
-                  ↓
-        Corrected standardized document
-        """
+        if not normalized_pages:
+            return {
+                "success": False,
+                "status": "error",
+                "message": "There is no document available for correction.",
+                "pages": [],
+            }
 
-        instruction = str(
-            correction
-            or kwargs.get("instruction")
-            or kwargs.get("message")
-            or ""
-        ).strip()
-
-        if not instruction:
-            raise AdaResponseError(
-                "Correction instruction is empty."
-            )
-
-        normalized_pages = self.normalize_document_pages(
-            pages or kwargs.get("document_pages")
+        correction = _limit_text(
+            correction,
+            MAX_USER_MESSAGE_CHARS,
         )
 
-        if not normalized_pages:
-            if self.active_document_text:
-                normalized_pages = self.document_to_pages(
-                    self.active_document_text
-                )
-
-        if not normalized_pages:
-            raise AdaResponseError(
-                "There is no document available for correction."
-            )
-
-        # IMPORTANT:
-        # DO NOT standardize here.
-        #
-        # The document arriving from Review is already standardized.
-        #
-        current_document = self.assemble_document(
+        document = _pages_to_document(
             normalized_pages
         )
 
-        if not current_document:
-            raise AdaResponseError(
-                "The current document is empty."
-            )
-
-        service_text = self.normalize_service(
-            service or self.service
-        )
-
-        correction_prompt = f"""
-APPLY THE CUSTOMER'S CORRECTION TO THE DOCUMENT.
-
+        correction_payload = f"""
 SERVICE:
-{service_text or "Document service"}
+{service}
 
-CUSTOMER CORRECTION:
-{instruction[:CORRECTION_REQUEST_CHARS]}
+CONTEXT:
+{_limit_text(context, MAX_CONTEXT_CHARS)}
 
-CURRENT DOCUMENT:
-{current_document[:CORRECTION_REQUEST_CHARS]}
+CURRENT STANDARDIZED DOCUMENT:
+{document}
 
-INSTRUCTIONS:
+CUSTOMER'S CORRECTION:
+{correction}
 
-1. Apply the customer's correction accurately.
-2. Preserve all other correct information.
-3. Do not invent facts.
-4. Do not remove unrelated content.
-5. Return the complete corrected document.
-6. Do not return an explanation.
-7. Do not describe the changes.
-8. Do not use Markdown source syntax.
-9. Do not use # headings.
-10. Do not use **bold** syntax.
-11. Do not use Markdown table pipes.
-12. Do not use --- separators.
-13. Return ONLY the complete corrected document.
+Return the complete corrected document.
+""".strip()
 
-The corrected document will receive one final professional
-standardization pass after this correction.
-"""
+        messages = [
+            {
+                "role": "system",
+                "content": _limit_text(
+                    self._correction_system_prompt(service),
+                    MAX_SYSTEM_PROMPT_CHARS,
+                ),
+            },
+            {
+                "role": "user",
+                "content": _limit_text(
+                    correction_payload,
+                    CORRECTION_REQUEST_CHARS,
+                ),
+            },
+        ]
 
-        corrected_raw = self.call_groq(
-            system_prompt=self.build_system_prompt(
-                service_text,
-                context,
-            ),
-            user_prompt=correction_prompt[
-                :CORRECTION_REQUEST_CHARS
-            ],
-            output_tokens=CORRECTION_OUTPUT_TOKENS,
-        ).strip()
-
-        if not corrected_raw:
-            raise AdaResponseError(
-                "Ada returned no corrected document."
+        try:
+            corrected = self.call_groq(
+                messages,
+                CORRECTION_OUTPUT_TOKENS,
             )
 
-        # ----------------------------------------------------
-        # ONE AND ONLY ONE STANDARDIZATION PASS AFTER
-        # CORRECTION
-        # ----------------------------------------------------
-
-        corrected_document = (
-            self.intelligently_standardize_document(
-                corrected_raw,
-                service=service_text,
-                purpose="corrected final customer document",
-            )
-        )
-
-        if not corrected_document:
-            raise AdaResponseError(
-                "The corrected document could not be standardized."
+            # ONE standardization pass after correction.
+            standardized = self.intelligently_standardize_document(
+                corrected,
+                service,
             )
 
-        self.active_document_text = corrected_document
+            if not standardized:
+                standardized = corrected
 
-        corrected_pages = self.document_to_pages(
-            corrected_document
-        )
+            self.active_document_text = standardized
 
-        if not corrected_pages:
-            raise AdaResponseError(
-                "The corrected document contains no usable pages."
-            )
+            return {
+                "success": True,
+                "status": "corrected",
+                "document": standardized,
+                "content": standardized,
+                "pages": _document_to_pages(
+                    standardized
+                ),
+            }
 
-        if progress_callback:
-            try:
-                progress_callback(
-                    {
-                        "type": "correction_completed",
-                        "document_text": corrected_document,
-                        "pages": corrected_pages,
-                        "total": len(corrected_pages),
-                    }
-                )
-            except Exception:
-                pass
-
-        # Clear old review cache because the document changed.
-        self._review_cache.clear()
-
-        return {
-            "success": True,
-            "document": corrected_document,
-            "document_text": corrected_document,
-            "pages": corrected_pages,
-            "document_pages": corrected_pages,
-            "service": service_text,
-            "status": "corrected",
-        }
+        except Exception as exc:
+            return {
+                "success": False,
+                "status": "error",
+                "message": (
+                    "The correction could not be completed at this time."
+                ),
+                "error": str(exc),
+                "pages": normalized_pages,
+                "document": document,
+            }
 
     # ========================================================
-    # NORMAL ADA CHAT
+    # NORMAL CUSTOMER CHAT
+    # ========================================================
+
+    def process_message(
+        self,
+        message: str,
+        service: str = "",
+        history: Optional[List[Dict[str, str]]] = None,
+        context: str = "",
+    ) -> Dict[str, Any]:
+        message = _safe_text(message)
+        service = self.normalize_service(service)
+
+        if not message:
+            return {
+                "success": True,
+                "response": (
+                    "Ada, Naija Pocket Business Center's agent, "
+                    "will begin working on your request immediately. "
+                    "Please tell me what you need done."
+                ),
+            }
+
+        if self.detect_price_request(message):
+            service_from_message = self.find_service_in_message(
+                message
+            )
+
+            if service_from_message:
+                service = self.normalize_service(
+                    service_from_message
+                )
+
+            if service:
+                return {
+                    "success": True,
+                    "response": self.generate_price_response(
+                        service
+                    ),
+                }
+
+        system = self._get_prompt_manager_system_prompt(
+            service
+        )
+
+        billing = self.get_billing_context(
+            service
+        )
+
+        if billing:
+            system = (
+                f"{system}\n\n"
+                f"Current service billing context: {billing}"
+            )
+
+        messages: List[Dict[str, str]] = [
+            {
+                "role": "system",
+                "content": _limit_text(
+                    system,
+                    MAX_SYSTEM_PROMPT_CHARS,
+                ),
+            }
+        ]
+
+        if history:
+            for item in history[
+                -MAX_HISTORY_MESSAGES:
+            ]:
+                if not isinstance(item, dict):
+                    continue
+
+                role = item.get("role")
+
+                if role not in (
+                    "user",
+                    "assistant",
+                ):
+                    continue
+
+                content = _limit_text(
+                    item.get("content", ""),
+                    MAX_HISTORY_MESSAGE_CHARS,
+                )
+
+                if content:
+                    messages.append(
+                        {
+                            "role": role,
+                            "content": content,
+                        }
+                    )
+
+        user_parts = []
+
+        if context:
+            user_parts.append(
+                f"Context:\n{_limit_text(context, MAX_CONTEXT_CHARS)}"
+            )
+
+        if service:
+            user_parts.append(
+                f"Selected service: {service}"
+            )
+
+        user_parts.append(
+            f"Customer message:\n{_limit_text(message, MAX_USER_MESSAGE_CHARS)}"
+        )
+
+        messages.append(
+            {
+                "role": "user",
+                "content": _limit_text(
+                    "\n\n".join(user_parts),
+                    GENERATION_REQUEST_CHARS,
+                ),
+            }
+        )
+
+        try:
+            response = self.call_groq(
+                messages,
+                GENERATION_OUTPUT_TOKENS,
+            )
+
+            return {
+                "success": True,
+                "response": response,
+                "content": response,
+            }
+
+        except Exception as exc:
+            return {
+                "success": False,
+                "response": (
+                    "Ada is temporarily unable to complete that "
+                    "request. Please try again shortly."
+                ),
+                "error": str(exc),
+            }
+
+    # ========================================================
+    # ALIASES / EVENT HELPERS
     # ========================================================
 
     def respond(
         self,
         message: str,
-        service: str | None = None,
-        context: str | None = None,
-        event: str | None = None,
-        **kwargs: Any,
-    ) -> str:
-
-        user_message = str(message or "").strip()
-
-        if not user_message:
-            return (
-                "Please tell Ada what you would like help with."
-            )
-
-        resolved_service = self.normalize_service(
-            service or self.service
+        service: str = "",
+        history: Optional[List[Dict[str, str]]] = None,
+        context: str = "",
+    ) -> Dict[str, Any]:
+        return self.process_message(
+            message=message,
+            service=service,
+            history=history,
+            context=context,
         )
 
-        system_prompt = self.build_system_prompt(
-            resolved_service,
-            context,
+    def handle_message(
+        self,
+        message: str,
+        service: str = "",
+        history: Optional[List[Dict[str, str]]] = None,
+        context: str = "",
+    ) -> Dict[str, Any]:
+        return self.process_message(
+            message=message,
+            service=service,
+            history=history,
+            context=context,
         )
 
-        result = self.call_groq(
-            system_prompt=system_prompt,
-            user_prompt=user_message[
-                :MAX_USER_MESSAGE_CHARS
-            ],
-            output_tokens=CORRECTION_OUTPUT_TOKENS,
-        )
+    def set_document_context(
+        self,
+        text: str = "",
+        path: str = "",
+    ) -> None:
+        self.active_document_text = _safe_text(text)
+        self.active_document_path = _safe_text(path)
 
-        self.add_history(
-            "user",
-            user_message,
-        )
+    def clear_document_context(self) -> None:
+        self.active_document_text = ""
+        self.active_document_path = ""
 
-        self.add_history(
-            "assistant",
-            result,
-        )
-
-        return result
-
-    # ========================================================
-    # EVENT HELPERS
-    # ========================================================
-
-    @staticmethod
-    def is_review_event(event: Any) -> bool:
-        text = str(event or "").strip().lower()
-
-        return text in {
-            "review",
-            "send_for_review",
-            "review_document",
-            "start_review",
-        }
-
-    @staticmethod
-    def is_correction_event(event: Any) -> bool:
-        text = str(event or "").strip().lower()
-
-        return text in {
-            "correction",
-            "apply_correction",
-            "correct_document",
-            "review_correction",
+    def health(self) -> Dict[str, Any]:
+        return {
+            "success": True,
+            "configured": self.configured,
+            "model": self._model,
+            "intelligence": "AdaResponse",
+            "architecture": "intelligence-first",
         }
 
 
 # ============================================================
-# SIMPLE DIAGNOSTIC
+# OPTIONAL MODULE-LEVEL CONVENIENCE
 # ============================================================
 
-if __name__ == "__main__":
+_default_ada: Optional[AdaResponse] = None
 
-    print("AdaResponse diagnostic")
-    print("----------------------")
 
-    try:
-        ada = AdaResponse()
+def get_ada_response() -> AdaResponse:
+    global _default_ada
 
-        print(
-            "Groq client:",
-            "connected" if ada._client else "not connected",
-        )
+    if _default_ada is None:
+        _default_ada = AdaResponse()
 
-        print(
-            "Groq model:",
-            ada._model or "not configured",
-        )
+    return _default_ada
 
-        print(
-            "Service:",
-            ada.service or "not set",
-        )
 
-    except Exception as error:
-        print(
-            "AdaResponse error:",
-            type(error).__name__,
-            str(error),
-        )
-        traceback.print_exc()
+def process_message(
+    message: str,
+    service: str = "",
+    history: Optional[List[Dict[str, str]]] = None,
+    context: str = "",
+) -> Dict[str, Any]:
+    return get_ada_response().process_message(
+        message=message,
+        service=service,
+        history=history,
+        context=context,
+    )
+
+
+def generate_document(
+    service: str,
+    user_message: str,
+    history: Optional[List[Dict[str, str]]] = None,
+    context: str = "",
+) -> Dict[str, Any]:
+    return get_ada_response().generate_document(
+        service=service,
+        user_message=user_message,
+        history=history,
+        context=context,
+    )
+
+
+def review_document(
+    service: str,
+    pages: Any,
+    title: str = "",
+    context: str = "",
+) -> Dict[str, Any]:
+    return get_ada_response().review_document(
+        service=service,
+        pages=pages,
+        title=title,
+        context=context,
+    )
+
+
+def correct_document(
+    service: str,
+    pages: Any,
+    correction: str,
+    context: str = "",
+) -> Dict[str, Any]:
+    return get_ada_response().correct_document(
+        service=service,
+        pages=pages,
+        correction=correction,
+        context=context,
+    )
