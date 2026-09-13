@@ -1210,7 +1210,7 @@ async def chat(request: Chat):
 # REVIEW
 # ============================================================
 
-@app.get("/api/review")@app.get("/api/review")
+@app.get("/api/review")
 async def get_review(job_id: str):
     job = _jobs.get(job_id)
     if not job:
