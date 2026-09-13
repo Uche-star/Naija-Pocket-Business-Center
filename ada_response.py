@@ -2,41 +2,17 @@
 Naija Pocket Business Center
 INTELLIGENCE-FIRST DOCUMENT ENGINE
 
-COMPLETE REPLACEMENT
-============================================================
+COMPLETE REPLACEMENT: ada_response.py
 
-CORE PRINCIPLE
---------------
-The selected service is context.
-
-The customer request is the instruction.
-
-Supplied material is source material.
-
-The intelligence decides how to understand, write, organize,
-format and complete the requested work.
-
-This file does not impose service-specific document templates.
-
-Groq is responsible for the actual document intelligence.
-
-APPLICATION RESPONSIBILITIES
-----------------------------
-- send the customer's request
-- provide available context/source material
-- preserve generated content
-- continue long documents when necessary
-- intelligently standardize document content before display
-- paginate locally
-- review the complete document
-- apply requested corrections
-- intelligently standardize corrected content
-
-The application does not attempt to decide the document's
-internal structure or formatting.
-
-RAW MARKDOWN MUST NOT BE CUSTOMER-FACING.
-Formatting and standardization are decided by intelligence.
+Purpose:
+- Ada is the intelligence layer.
+- Documents are professionally standardized before Workspace/Review.
+- Review examines the already-standardized document.
+- Review does NOT regenerate the complete document.
+- Customer corrections are applied first, then standardized once.
+- No review_prompt.py import.
+- Groq token-limit constants remain unchanged.
+- No blind Markdown stripping or mechanical document rewriting.
 """
 
 from __future__ import annotations
@@ -56,50 +32,12 @@ from billing_manager import BillingManager
 
 
 # ============================================================
-# CONFIGURATION
-# ============================================================
-
-DEFAULT_MODEL = "llama-3.1-8b-instant"
-
-MODEL = (
-    os.getenv("GROQ_MODEL")
-    or DEFAULT_MODEL
-).strip()
-
-API_KEY = (
-    os.getenv("GROQ_API_KEY")
-    or os.getenv("GROQ_APIKEY")
-    or ""
-).strip()
-
-EXPOSE_ERRORS_TO_CLIENT = (
-    os.getenv(
-        "ADA_EXPOSE_ERRORS",
-        "false",
-    )
-    .strip()
-    .lower()
-    in {
-        "1",
-        "true",
-        "yes",
-        "on",
-    }
-)
-
-
-# ============================================================
-# OPERATION SETTINGS
-#
-# IMPORTANT:
-# These Groq/token settings are intentionally unchanged.
+# EXISTING TOKEN / REQUEST LIMITS — DO NOT CHANGE
 # ============================================================
 
 MAX_SYSTEM_PROMPT_CHARS = 5000
-
 MAX_HISTORY_MESSAGES = 4
 MAX_HISTORY_MESSAGE_CHARS = 900
-
 MAX_USER_MESSAGE_CHARS = 4500
 MAX_CONTEXT_CHARS = 1800
 
@@ -123,531 +61,11 @@ CONTINUATION_TAIL_CHARS = 3000
 
 
 # ============================================================
-# EVENTS
+# ERRORS
 # ============================================================
 
-REVIEW_EVENTS = {
-    "review",
-    "review_requested",
-    "review_called",
-    "open_review",
-    "review_page",
-    "review_document",
-    "send_for_review",
-    "send_review",
-}
-
-CORRECTION_EVENTS = {
-    "review_correction",
-    "document_correction",
-    "revise_work",
-    "correction",
-}
-
-
-# ============================================================
-# ERROR
-# ============================================================
-
-class AdaResponseError(Exception):
-
-    def __init__(
-        self,
-        message: str,
-        *,
-        stage: str,
-        category: str = "APPLICATION",
-        status_code: int | None = None,
-        original: Exception | None = None,
-    ):
-        super().__init__(message)
-
-        self.stage = stage
-        self.category = category
-        self.status_code = status_code
-        self.original = original
-
-
-# ============================================================
-# GROQ CLIENT
-# ============================================================
-
-_client = None
-
-
-def get_client():
-
-    global _client
-
-    if _client is not None:
-        return _client
-
-    if Groq is None:
-
-        raise AdaResponseError(
-            "The groq package is not installed.",
-            stage="CLIENT_INITIALIZATION",
-            category="CONFIGURATION",
-        )
-
-    if not API_KEY:
-
-        raise AdaResponseError(
-            "GROQ_API_KEY is missing.",
-            stage="CLIENT_INITIALIZATION",
-            category="CONFIGURATION",
-        )
-
-    try:
-
-        _client = Groq(
-            api_key=API_KEY
-        )
-
-        return _client
-
-    except Exception as error:
-
-        raise AdaResponseError(
-            "Groq client initialization failed.",
-            stage="CLIENT_INITIALIZATION",
-            category="GROQ_CLIENT",
-            original=error,
-        ) from error
-
-
-def get_ada_model() -> str:
-    return MODEL
-
-
-def is_configured() -> bool:
-
-    return (
-        Groq is not None
-        and bool(API_KEY)
-    )
-
-
-# ============================================================
-# TEXT UTILITIES
-# ============================================================
-
-def safe_text(
-    value: Any,
-    preserve_lines: bool = False,
-) -> str:
-
-    if value is None:
-        return ""
-
-    if isinstance(value, str):
-        text = value
-    else:
-        text = str(value)
-
-    if preserve_lines:
-        return text.strip()
-
-    return text.strip()
-
-
-def compact_text(
-    value: Any,
-    maximum: int,
-) -> str:
-
-    text = safe_text(value)
-
-    if not text:
-        return ""
-
-    if len(text) <= maximum:
-        return text
-
-    if maximum < 100:
-        return text[:maximum]
-
-    marker = (
-        "\n\n"
-        "[CONTEXT COMPACTED]"
-        "\n\n"
-    )
-
-    available = maximum - len(marker)
-
-    if available <= 0:
-        return text[:maximum]
-
-    first = int(
-        available * 0.65
-    )
-
-    last = available - first
-
-    return (
-        text[:first]
-        + marker
-        + text[-last:]
-    )
-
-
-def compact_document_text(
-    value: Any,
-    maximum: int,
-) -> str:
-
-    text = safe_text(
-        value,
-        preserve_lines=True,
-    )
-
-    if not text:
-        return ""
-
-    if len(text) <= maximum:
-        return text
-
-    marker = (
-        "\n\n"
-        "[DOCUMENT CONTEXT COMPACTED]"
-        "\n\n"
-    )
-
-    available = maximum - len(marker)
-
-    if available <= 0:
-        return text[:maximum]
-
-    first = int(
-        available * 0.65
-    )
-
-    last = available - first
-
-    return (
-        text[:first]
-        + marker
-        + text[-last:]
-    )
-
-
-def split_for_pagination(
-    text: str,
-    maximum: int,
-) -> list[str]:
-
-    text = safe_text(
-        text,
-        preserve_lines=True,
-    )
-
-    if not text:
-        return []
-
-    if len(text) <= maximum:
-        return [text]
-
-    parts: list[str] = []
-
-    start = 0
-    length = len(text)
-
-    while start < length:
-
-        remaining = length - start
-
-        if remaining <= maximum:
-
-            part = (
-                text[start:]
-                .strip()
-            )
-
-            if part:
-                parts.append(part)
-
-            break
-
-        end = start + maximum
-
-        window = text[start:end]
-
-        candidates = [
-            window.rfind("\n\n"),
-            window.rfind("\n"),
-            window.rfind(". "),
-            window.rfind("? "),
-            window.rfind("! "),
-            window.rfind(" "),
-        ]
-
-        usable = [
-            position
-            for position in candidates
-            if position >= int(
-                maximum * 0.55
-            )
-        ]
-
-        boundary = (
-            max(usable)
-            if usable
-            else maximum
-        )
-
-        part = (
-            text[
-                start:
-                start + boundary
-            ]
-            .strip()
-        )
-
-        if part:
-            parts.append(part)
-
-        next_start = start + boundary
-
-        if next_start <= start:
-            next_start = end
-
-        start = next_start
-
-    return parts
-
-
-def sha256_text(
-    text: str,
-) -> str:
-
-    return hashlib.sha256(
-        safe_text(text).encode(
-            "utf-8"
-        )
-    ).hexdigest()
-
-
-# ============================================================
-# MINIMAL LOCAL CLEANUP
-#
-# This is intentionally NOT a Markdown-removal function.
-# Intelligence handles document formatting.
-# ============================================================
-
-def normalize_document_formatting(
-    text: str,
-) -> str:
-
-    text = safe_text(
-        text,
-        preserve_lines=True,
-    )
-
-    if not text:
-        return ""
-
-    text = text.replace(
-        "\r\n",
-        "\n",
-    )
-
-    text = text.replace(
-        "\r",
-        "\n",
-    )
-
-    text = re.sub(
-        r"[ \t]+\n",
-        "\n",
-        text,
-    )
-
-    text = re.sub(
-        r"\n{5,}",
-        "\n\n\n",
-        text,
-    )
-
-    return text.strip()
-
-
-# ============================================================
-# GENERATION MARKERS
-# ============================================================
-
-def contains_end_marker(
-    text: str,
-) -> bool:
-
-    return (
-        END_OF_DOCUMENT_MARKER.lower()
-        in safe_text(text).lower()
-    )
-
-
-def contains_continue_marker(
-    text: str,
-) -> bool:
-
-    return (
-        CONTINUE_MARKER.lower()
-        in safe_text(text).lower()
-    )
-
-
-def remove_generation_markers(
-    text: str,
-) -> str:
-
-    cleaned = safe_text(
-        text,
-        preserve_lines=True,
-    )
-
-    if not cleaned:
-        return ""
-
-    cleaned = re.sub(
-        re.escape(
-            END_OF_DOCUMENT_MARKER
-        ),
-        "",
-        cleaned,
-        flags=re.IGNORECASE,
-    )
-
-    cleaned = re.sub(
-        re.escape(
-            CONTINUE_MARKER
-        ),
-        "",
-        cleaned,
-        flags=re.IGNORECASE,
-    )
-
-    return normalize_document_formatting(
-        cleaned
-    )
-
-
-# ============================================================
-# ERROR CLASSIFICATION
-# ============================================================
-
-def classify_error(
-    error: Exception,
-) -> str:
-
-    status = getattr(
-        error,
-        "status_code",
-        None,
-    )
-
-    message = safe_text(
-        error
-    ).lower()
-
-    if status == 429:
-        return "GROQ_RATE_LIMIT"
-
-    if status == 401:
-        return "GROQ_AUTHENTICATION"
-
-    if status == 403:
-        return "GROQ_PERMISSION"
-
-    if status == 404:
-        return "GROQ_NOT_FOUND"
-
-    if status == 400:
-        return "GROQ_BAD_REQUEST"
-
-    if status == 413:
-        return "GROQ_REQUEST_TOO_LARGE"
-
-    if status and status >= 500:
-        return "GROQ_SERVER_ERROR"
-
-    if "timeout" in message:
-        return "NETWORK"
-
-    if "connection" in message:
-        return "NETWORK"
-
-    return "GROQ_REQUEST_ERROR"
-
-
-def log_error(
-    title: str,
-    error: Exception,
-    *,
-    stage: str,
-):
-
-    print()
-    print("=" * 78)
-    print("INTELLIGENCE ERROR")
-    print("=" * 78)
-
-    print(
-        "Title:",
-        title,
-    )
-
-    print(
-        "Stage:",
-        stage,
-    )
-
-    print(
-        "Category:",
-        classify_error(error),
-    )
-
-    print(
-        "Model:",
-        MODEL,
-    )
-
-    print(
-        "API key configured:",
-        bool(API_KEY),
-    )
-
-    print(
-        "Error:",
-        compact_text(
-            error,
-            1200,
-        ),
-    )
-
-    traceback.print_exc()
-
-    print(
-        "=" * 78
-    )
-
-    print()
-
-
-def client_error_message(
-    error: Exception,
-) -> str:
-
-    if not EXPOSE_ERRORS_TO_CLIENT:
-
-        return (
-            "I could not process your request "
-            "right now. Please try again."
-        )
-
-    return (
-        "Technical error detected.\n\n"
-        f"Category: {classify_error(error)}\n"
-        f"Error: {compact_text(error, 800)}"
-    )
+class AdaResponseError(RuntimeError):
+    """Controlled Ada response error."""
 
 
 # ============================================================
@@ -655,499 +73,282 @@ def client_error_message(
 # ============================================================
 
 class AdaResponse:
+    """
+    Customer-facing Ada document intelligence.
 
-    def __init__(
-        self,
-        service: str | None = None,
-    ):
+    Important architecture:
 
-        self.service = (
-            safe_text(service)
-            or None
-        )
+        Customer request
+              ↓
+        Ada intelligence
+              ↓
+        Document generation
+              ↓
+        ONE standardization pass
+              ↓
+        Workspace / Review
 
-        self.billing = (
-            BillingManager()
-        )
+    Review:
+        standardized document
+              ↓
+        findings-only review
+              ↓
+        Review page
 
-        self.history: list[
-            dict[str, str]
-        ] = []
+    Correction:
+        standardized document
+              ↓
+        correction instruction
+              ↓
+        corrected document
+              ↓
+        ONE standardization pass
+              ↓
+        Review
+    """
 
-        self._system_prompt_cache: dict[
-            str,
-            str
-        ] = {}
+    def __init__(self, service: str | None = None):
+        self.service = service
+        self.billing = BillingManager()
 
-        self._review_cache: dict[
-            str,
-            dict
-        ] = {}
+        self.history: list[dict[str, str]] = []
 
+        self.active_document_text: str = ""
+        self.active_document_path: str | None = None
+
+        self._client = None
+        self._model = None
+
+        self._review_cache: dict[str, dict[str, Any]] = {}
+
+        self._load_groq()
+
+    # ========================================================
+    # GROQ
+    # ========================================================
+
+    def _load_groq(self) -> None:
+        if Groq is None:
+            self._client = None
+            self._model = None
+            return
+
+        api_key = ""
+        model = ""
+
+        try:
+            from ada_ai_config import API_KEY, MODEL
+
+            api_key = str(API_KEY or "").strip()
+            model = str(MODEL or "").strip()
+        except Exception:
+            api_key = os.getenv("GROQ_API_KEY", "").strip()
+            model = os.getenv("GROQ_MODEL", "").strip()
+
+        if not api_key:
+            api_key = os.getenv("GROQ_API_KEY", "").strip()
+
+        if not model:
+            model = os.getenv("GROQ_MODEL", "").strip()
+
+        if not api_key:
+            self._client = None
+            self._model = model or None
+            return
+
+        try:
+            self._client = Groq(api_key=api_key)
+            self._model = model or "llama-3.3-70b-versatile"
+        except Exception:
+            self._client = None
+            self._model = model or None
 
     # ========================================================
     # SERVICE
     # ========================================================
 
-    def set_service(
-        self,
-        service: str | None,
-    ):
-
-        service = safe_text(
-            service
-        )
-
+    def set_service(self, service: str | None) -> None:
         if service:
-            self.service = service
+            self.service = self.normalize_service(service)
 
+    @staticmethod
+    def normalize_service(service: Any) -> str:
+        if service is None:
+            return ""
 
-    def normalize_service(
-        self,
-        service: str | None,
-    ) -> str | None:
+        text = str(service).strip()
 
-        service = safe_text(
-            service
-        )
+        if not text:
+            return ""
 
-        if not service:
-            return self.service
-
-        try:
-
-            normalized = (
-                self.billing.normalize_service(
-                    service
-                )
-            )
-
-            return (
-                safe_text(
-                    normalized
-                )
-                or service
-            )
-
-        except Exception as error:
-
-            log_error(
-                "SERVICE NORMALIZATION FAILED",
-                error,
-                stage="SERVICE_NORMALIZATION",
-            )
-
-            return service
-
+        text = re.sub(r"\s+", " ", text)
+        return text
 
     # ========================================================
-    # BILLING
+    # BILLING CONTEXT
     # ========================================================
 
-    def get_billing_context(
-        self,
-        service: str | None,
-    ) -> str:
+    def get_billing_context(self, service: str | None = None) -> str:
+        resolved = self.normalize_service(service or self.service)
 
-        service = (
-            self.normalize_service(
-                service
-            )
-        )
-
-        if not service:
+        if not resolved:
             return ""
 
         try:
+            data = self.billing.get_service(resolved)
 
-            item = (
-                self.billing.get_service(
-                    service
-                )
-            )
+            if not isinstance(data, dict):
+                return ""
 
-        except Exception as error:
+            price = data.get("price")
+            billing = data.get("billing")
 
-            log_error(
-                "BILLING LOOKUP FAILED",
-                error,
-                stage="BILLING_LOOKUP",
-            )
+            parts: list[str] = []
 
-            return (
-                "OFFICIAL BILLING INFORMATION\n"
-                "Billing information is unavailable.\n"
-                "Do not invent pricing."
-            )
+            if price is not None:
+                parts.append(f"Price: ₦{price}")
 
-        if not item:
+            if billing:
+                parts.append(f"Billing: {billing}")
 
-            return (
-                "OFFICIAL BILLING INFORMATION\n"
-                "No billing record was found.\n"
-                "Do not invent pricing."
-            )
+            return " | ".join(parts)
 
-        price = item.get(
-            "price",
-            0,
-        )
-
-        billing_type = item.get(
-            "billing"
-        )
-
-        if billing_type == "fixed":
-
-            pricing = (
-                f"Official price: ₦{price:,}\n"
-                "Billing type: fixed"
-            )
-
-        elif billing_type == "per_page":
-
-            pricing = (
-                f"Official price: ₦{price:,} per page\n"
-                "Billing type: per_page"
-            )
-
-        elif billing_type == "quotation":
-
-            pricing = (
-                "Official price: quotation required\n"
-                "Billing type: quotation"
-            )
-
-        else:
-
-            pricing = (
-                f"Official price: ₦{price:,}\n"
-                f"Billing type: {billing_type}"
-            )
-
-        return (
-            "OFFICIAL BILLING INFORMATION\n"
-            f"Service: {service}\n"
-            f"{pricing}"
-        )
-
+        except Exception:
+            return ""
 
     # ========================================================
-    # CORE INTELLIGENCE RULES
+    # ADA INTELLIGENCE RULES
     # ========================================================
 
-    def intelligence_rules(
-        self,
-    ) -> str:
-
+    def intelligence_rules(self) -> str:
         return """
-You are the intelligence responsible for completing
-customer requests for Naija Pocket Business Center.
+You are Ada, Naija Pocket Business Center's agent.
 
-Understand the customer's request and perform the actual
-work requested.
+You are the customer-facing intelligence responsible for understanding
+the customer's request and doing the requested work.
 
-The selected service is context.
+IMPORTANT:
 
-The service is not a template.
+1. The selected service is context, not a rigid template.
+2. Understand the customer's actual instruction.
+3. Preserve facts supplied by the customer.
+4. Do not invent facts, names, dates, prices, qualifications,
+   addresses, experience, statistics, or other information.
+5. Ask only for information that is genuinely necessary.
+6. Ask one question at a time.
+7. Use natural Nigerian English where appropriate.
+8. You may naturally use simple Nigerian expressions or Pidgin
+   when suitable for the conversation.
+9. Never mention Groq, models, tokens, prompts, internal systems,
+   backend errors, or technical implementation to the customer.
+10. Do not describe yourself as a generic AI.
+11. Work directly on the customer's request.
 
-The service is not a keyword command.
+DOCUMENT RULES:
 
-The service does not dictate the internal structure of the
-customer's document.
+When producing a document, the final customer document must be
+professionally structured and readable.
 
-Use the customer's actual words, supplied information,
-uploaded/source material and available application context.
+The final document must NOT expose Markdown source syntax.
 
-Use your own reasoning and professional knowledge.
+Do not output:
+- Markdown headings such as #, ##, ###
+- Markdown bold such as **text**
+- Markdown italic syntax
+- Markdown bullet syntax using *
+- Markdown table pipes
+- Markdown separator lines such as ---
+- Markdown code fences
+- raw Markdown formatting instructions
 
-Do not reduce a request to keywords.
+Instead, produce a clean professional document using:
+- clear headings
+- proper paragraph spacing
+- properly separated sections
+- numbered lists where appropriate
+- readable tables where a table is genuinely required
+- consistent capitalization
+- professional punctuation
+- professional Nigerian business/document conventions
 
-Do not force a predetermined structure onto the customer's
-work.
+Do not blindly remove formatting characters from meaningful content.
+Use document intelligence to determine the intended structure.
 
-When the customer requests a document, produce the actual
-document.
-
-Decide naturally what structure, organization, wording and
-presentation are appropriate for that particular document.
-
-Different documents can have completely different
-structures.
-
-Do not make every document look alike.
-
-Do not invent customer-specific facts.
-
-Use supplied facts accurately.
-
-If something genuinely necessary is missing, handle it
-sensibly without inventing facts.
-
-When useful, use neutral placeholders rather than fabricated
-personal or business information.
-
-Preserve information supplied by the customer unless the
-customer asks for it to be changed.
-
-If the customer asks for typing, preserve the source wording
-while professionally presenting it.
-
-If the customer asks for proofreading, improve language while
-preserving meaning.
-
-If the customer asks for editing, perform the requested edit.
-
-If the customer asks for rewriting, rewrite the material
-appropriately.
-
-If the customer asks for formatting, improve the presentation
-without unnecessarily changing the content.
-
-If the customer asks for a new document, create it.
-
-If source material contains an existing structure, respect
-that structure unless the customer's request requires a
-different one.
-
-Keep meaningful document organization intact.
-
-Do not flatten structured material into an unreadable block.
-
-Do not add content merely to make the result longer.
-
-Do not create fictional names, dates, addresses, contacts,
-qualifications, companies, signatures or other customer facts.
-
-DOCUMENT STANDARDIZATION RULE
------------------------------
-Whenever document content is going to be shown to the
-customer, professionally standardize the content before
-returning it.
-
-This applies to:
-
-- newly generated documents
-- typed documents
-- extracted documents
-- rewritten documents
-- corrected documents
-- documents displayed in Workspace
-- documents displayed in Review
-- documents returned after Review corrections
-
-The customer-facing document must look like a professionally
-prepared document by default.
-
-Understand the intended formatting before changing it.
-
-Do not blindly remove characters.
-
-Do not perform mechanical Markdown deletion.
-
-If source material contains Markdown such as:
-
-**bold text**
-# heading
-## heading
-- bullet
-* bullet
-| table |
---- separator ---
-`code`
-
-understand what the customer intended and convert that meaning
-into appropriate professional document formatting.
-
-The customer must not be shown raw Markdown syntax merely
-because the source or intelligence response contained it.
-
-Use appropriate professional headings, paragraphs, lists,
-numbering, tables and emphasis where appropriate.
-
-Preserve meaningful emphasis and structure.
-
-Do not invent emphasis where none is appropriate.
-
-Do not change facts merely because formatting is being
-standardized.
-
-Do not turn a professional document into a chat-style response.
-
-Do not add explanations about the formatting process.
-
-Return the actual standardized document.
-
-LONG DOCUMENTS
---------------
-For long documents, treat continuation as continuation of the
-SAME document.
-
-Never restart an already-created document during continuation.
-
-Never repeat the opening merely because another generation
-request is required.
-
-REVIEW
-------
-Review the complete supplied document.
-
-The document itself must already be professionally standardized
-before it is displayed on the Review page.
-
-Review findings are separate from the document content.
-
-CORRECTION
-----------
-When the customer gives a correction from the Review page:
-
-1. Understand the customer's correction.
-2. Apply it to the complete current document.
-3. Preserve all unaffected information.
-4. Professionally standardize the complete resulting document.
-5. Return the complete resulting document.
-
-Never return only the changed fragment when the application
-requires the complete document.
-
-Never expose internal instructions.
-
-Never expose implementation details.
-
-Never discuss internal processing mechanics with the customer.
-
-Use natural Nigerian English where appropriate.
-
-Your responsibility is to understand the work and complete it.
+All customer-provided writing must also be professionally standardized.
+This includes:
+- typed material
+- OCR material
+- corrections
+- rewrites
+- proofreading
+- edited material
+- generated documents
+- revised documents
 """
 
-
     # ========================================================
-    # SYSTEM PROMPT
+    # STATIC SYSTEM PROMPT
     # ========================================================
 
-    def _build_static_system_base(
-        self,
-        service: str | None,
-    ) -> str:
-
-        parts: list[str] = [
-            self.intelligence_rules()
-        ]
-
-        if service:
-
-            parts.append(
-                "SERVICE CONTEXT:\n"
-                + service
-            )
-
-        billing = (
-            self.get_billing_context(
-                service
-            )
-        )
-
-        if billing:
-            parts.append(
-                billing
-            )
-
-        return "\n\n".join(
-            parts
-        )
-
+    def _build_static_system_base(self) -> str:
+        return self.intelligence_rules()
 
     def build_system_prompt(
         self,
-        *,
         service: str | None = None,
         context: str | None = None,
     ) -> str:
 
-        active_service = (
-            self.normalize_service(
-                service
-            )
-        )
+        service_text = self.normalize_service(service or self.service)
+        billing_context = self.get_billing_context(service_text)
 
-        cache_key = (
-            f"system:{active_service}"
-        )
+        prompt = self._build_static_system_base()
 
-        if cache_key not in (
-            self._system_prompt_cache
-        ):
+        if service_text:
+            prompt += f"""
 
-            self._system_prompt_cache[
-                cache_key
-            ] = (
-                self._build_static_system_base(
-                    active_service
-                )
-            )
+CURRENT SERVICE CONTEXT:
+{service_text}
+"""
 
-        parts = [
-            self._system_prompt_cache[
-                cache_key
-            ]
-        ]
+        if billing_context:
+            prompt += f"""
+
+CURRENT SERVICE BILLING INFORMATION:
+{billing_context}
+"""
 
         if context:
+            prompt += f"""
 
-            parts.append(
-                "APPLICATION CONTEXT:\n"
-                + compact_text(
-                    context,
-                    MAX_CONTEXT_CHARS,
-                )
-            )
+RELEVANT CUSTOMER CONTEXT:
+{str(context)[:MAX_CONTEXT_CHARS]}
+"""
 
-        return compact_text(
-            "\n\n".join(parts),
-            MAX_SYSTEM_PROMPT_CHARS,
-        )
-
+        return prompt[:MAX_SYSTEM_PROMPT_CHARS]
 
     # ========================================================
     # HISTORY
     # ========================================================
 
-    def add_history(
-        self,
-        role: str,
-        content: str,
-    ):
+    def add_history(self, role: str, content: str) -> None:
+        text = str(content or "").strip()
 
-        role = safe_text(
-            role
-        )
-
-        content = safe_text(
-            content
-        )
-
-        if not role or not content:
+        if not text:
             return
 
         self.history.append(
             {
                 "role": role,
-                "content": content,
+                "content": text[:MAX_HISTORY_MESSAGE_CHARS],
             }
         )
 
-        self.history = (
-            self.history[
-                -MAX_HISTORY_MESSAGES:
-            ]
-        )
+        if len(self.history) > MAX_HISTORY_MESSAGES:
+            self.history = self.history[-MAX_HISTORY_MESSAGES:]
 
-
-    def clear_history(self):
-
+    def clear_history(self) -> None:
         self.history.clear()
-
 
     # ========================================================
     # GROQ CALL
@@ -1155,511 +356,243 @@ Your responsibility is to understand the work and complete it.
 
     def call_groq(
         self,
-        *,
-        messages: list[
-            dict[str, str]
-        ],
+        system_prompt: str,
+        user_prompt: str,
         output_tokens: int,
-        stage: str,
-        event: str | None = None,
-        include_history: bool = False,
     ) -> str:
 
-        client = get_client()
-
-        print()
-        print("=" * 78)
-        print("INTELLIGENCE REQUEST")
-        print("=" * 78)
-
-        print(
-            "Stage:",
-            stage,
-        )
-
-        print(
-            "Model:",
-            MODEL,
-        )
-
-        print(
-            "Messages:",
-            len(messages),
-        )
-
-        print(
-            "Output token allowance:",
-            output_tokens,
-        )
-
-        if event:
-
-            print(
-                "Event:",
-                event,
+        if self._client is None:
+            raise AdaResponseError(
+                "Groq intelligence is not configured."
             )
 
-        print(
-            "=" * 78
-        )
+        if not self._model:
+            raise AdaResponseError(
+                "Groq model is not configured."
+            )
 
-        temperature = (
-            0.6
-            if stage in {
-                "DOCUMENT_GENERATION",
-                "DOCUMENT_CORRECTION",
-                "DOCUMENT_STANDARDIZATION",
+        messages: list[dict[str, str]] = [
+            {
+                "role": "system",
+                "content": system_prompt[:MAX_SYSTEM_PROMPT_CHARS],
             }
-            else 0.2
+        ]
+
+        for item in self.history[-MAX_HISTORY_MESSAGES:]:
+            role = item.get("role", "user")
+            content = item.get("content", "")
+
+            if role not in {"user", "assistant"}:
+                continue
+
+            messages.append(
+                {
+                    "role": role,
+                    "content": str(content)[:MAX_HISTORY_MESSAGE_CHARS],
+                }
+            )
+
+        messages.append(
+            {
+                "role": "user",
+                "content": user_prompt,
+            }
         )
 
         try:
-
-            response = (
-                client.chat.completions.create(
-                    model=MODEL,
-                    messages=messages,
-                    temperature=temperature,
-                    max_completion_tokens=output_tokens,
-                )
+            response = self._client.chat.completions.create(
+                model=self._model,
+                messages=messages,
+                temperature=0.2,
+                max_completion_tokens=output_tokens,
             )
+
+            choices = getattr(response, "choices", None)
+
+            if not choices:
+                raise AdaResponseError(
+                    "Groq returned no response."
+                )
+
+            message = getattr(choices[0], "message", None)
+
+            if message is None:
+                raise AdaResponseError(
+                    "Groq returned an invalid response."
+                )
+
+            content = getattr(message, "content", None)
+
+            if content is None:
+                raise AdaResponseError(
+                    "Groq returned empty content."
+                )
+
+            result = str(content).strip()
+
+            if not result:
+                raise AdaResponseError(
+                    "Groq returned empty content."
+                )
+
+            return result
+
+        except AdaResponseError:
+            raise
 
         except Exception as error:
-
-            log_error(
-                "GROQ REQUEST FAILED",
-                error,
-                stage=stage,
-            )
-
             raise AdaResponseError(
-                str(error),
-                stage=stage,
-                category=classify_error(error),
-                status_code=getattr(
-                    error,
-                    "status_code",
-                    None,
-                ),
-                original=error,
+                f"Groq request failed: {error}"
             ) from error
 
-        if not response:
-
-            raise AdaResponseError(
-                "No intelligence response returned.",
-                stage=stage,
-                category="EMPTY_RESPONSE",
-            )
-
-        if not response.choices:
-
-            raise AdaResponseError(
-                "No intelligence choice returned.",
-                stage=stage,
-                category="EMPTY_RESPONSE",
-            )
-
-        message_object = (
-            response.choices[0].message
-        )
-
-        content = safe_text(
-            getattr(
-                message_object,
-                "content",
-                None,
-            ),
-            preserve_lines=True,
-        )
-
-        if not content:
-
-            raise AdaResponseError(
-                "Intelligence returned empty content.",
-                stage=stage,
-                category="EMPTY_RESPONSE",
-            )
-
-        print(
-            "Response characters:",
-            len(content),
-        )
-
-        return content
-
-
     # ========================================================
-    # DOCUMENT STANDARDIZATION
-    #
-    # Intelligence performs the standardization.
-    #
-    # Python does NOT blindly remove Markdown.
-    #
-    # One standardization pass is made after generation and
-    # one after an actual correction.
+    # STANDARDIZATION PROMPT
     # ========================================================
 
     def build_standardization_prompt(
         self,
-        *,
-        service: str,
-        page_content: str,
-        page_number: int,
-        total_pages: int,
-        reason: str,
+        document: str,
+        service: str | None = None,
+        purpose: str = "final customer document",
     ) -> str:
 
-        return (
-            "PROFESSIONALLY STANDARDIZE THIS DOCUMENT PAGE.\n\n"
+        service_text = self.normalize_service(service or self.service)
 
-            "This is an internal document-formatting operation.\n\n"
+        return f"""
+STANDARDIZE THE DOCUMENT BELOW.
 
-            "The document content is supplied by the customer or "
-            "was already generated from the customer's request.\n\n"
+Purpose:
+{purpose}
 
-            "Preserve the meaning and facts while making the page "
-            "professionally formatted for direct customer display.\n\n"
+Service:
+{service_text or "Document service"}
 
-            "IMPORTANT:\n"
-            "Use intelligence to understand intended formatting.\n"
-            "Do not mechanically delete Markdown characters.\n"
-            "Do not perform blind replacements.\n"
-            "Do not invent information.\n"
-            "Do not rewrite the document unnecessarily.\n"
-            "Do not shorten the document.\n"
-            "Do not summarize the document.\n"
-            "Do not explain your changes.\n\n"
+Your task is to use document intelligence to transform the supplied
+document into a clean, professional, customer-ready document.
 
-            "If the source contains Markdown formatting such as "
-            "**bold**, # headings, Markdown bullets, Markdown "
-            "tables, backticks or horizontal separators, understand "
-            "the intended presentation and convert it into normal "
-            "professional document presentation.\n\n"
+CRITICAL REQUIREMENTS:
 
-            "Raw Markdown syntax must not be exposed to the customer "
-            "unless the customer explicitly requested Markdown as "
-            "the document format.\n\n"
+- Preserve every important fact and meaning.
+- Do not invent information.
+- Do not remove meaningful customer information.
+- Correct grammar and obvious spelling errors where appropriate.
+- Improve professional structure.
+- Separate headings from body text.
+- Separate labels such as "To:", "From:", "Date:" properly.
+- Preserve numbered lists.
+- Preserve useful bullet/list structure.
+- Present tables as readable professional tables.
+- Restore sensible paragraph spacing.
+- Prevent headings and paragraphs from running together.
+- Do not output Markdown source syntax.
+- Do not use # or ## headings.
+- Do not use **bold** syntax.
+- Do not use Markdown table pipes.
+- Do not use Markdown separator lines.
+- Do not use code fences.
+- Do not add commentary before or after the document.
+- Return ONLY the complete standardized document.
 
-            "Preserve:\n"
-            "- names\n"
-            "- dates\n"
-            "- addresses\n"
-            "- amounts\n"
-            "- contact details\n"
-            "- facts\n"
-            "- paragraphs\n"
-            "- meaningful structure\n"
-            "- customer wording where the service requires it\n\n"
+The output is going directly to the customer-facing Workspace/Review
+document area, so it must already be professionally readable.
 
-            "Improve where appropriate:\n"
-            "- headings\n"
-            "- spacing\n"
-            "- paragraph separation\n"
-            "- list presentation\n"
-            "- numbering\n"
-            "- table presentation\n"
-            "- punctuation\n"
-            "- spelling\n"
-            "- grammar\n"
-            "- professional consistency\n\n"
+DOCUMENT TO STANDARDIZE:
 
-            "Do not add a title simply because the page does not "
-            "have one.\n\n"
+{document[:DEFAULT_PAGE_CHARS]}
+"""
 
-            "Do not remove information simply because it is unusual.\n\n"
-
-            "SERVICE CONTEXT:\n"
-            + safe_text(service)
-            + "\n\n"
-
-            "DOCUMENT PAGE:\n"
-            + str(page_number)
-            + " of "
-            + str(total_pages)
-            + "\n\n"
-
-            "REASON FOR THIS STANDARDIZATION:\n"
-            + safe_text(reason)
-            + "\n\n"
-
-            "PAGE CONTENT:\n"
-            + safe_text(
-                page_content,
-                preserve_lines=True,
-            )
-            + "\n\n"
-
-            "RETURN ONLY THE STANDARDIZED PAGE CONTENT.\n"
-            "Do not add commentary.\n"
-            "Do not add code fences.\n"
-            "Do not add DOCUMENT_START or DOCUMENT_END.\n"
-            "Do not add PAGE labels unless the supplied page "
-            "content itself genuinely requires one."
-        )
-
+    # ========================================================
+    # INTELLIGENT STANDARDIZATION
+    # ========================================================
 
     def intelligently_standardize_pages(
         self,
-        *,
         pages: list[dict[str, Any]],
-        service: str | None,
-        reason: str,
-        context: str | None = None,
-        progress_callback: Callable[
-            [dict[str, Any]],
-            None
-        ] | None = None,
+        service: str | None = None,
+        purpose: str = "final customer document",
     ) -> list[dict[str, Any]]:
 
-        normalized_pages = (
-            self.normalize_document_pages(
-                pages
-            )
-        )
+        normalized = self.normalize_document_pages(pages)
 
-        if not normalized_pages:
+        if not normalized:
             return []
 
-        active_service = (
-            self.normalize_service(
-                service
-            )
-            or safe_text(service)
-            or self.service
-            or "General Business Center Service"
-        )
+        standardized_pages: list[dict[str, Any]] = []
 
-        total_pages = len(
-            normalized_pages
-        )
+        for index, page in enumerate(normalized, start=1):
 
-        standardized_pages: list[
-            dict[str, Any]
-        ] = []
-
-        base_system = self.build_system_prompt(
-            service=active_service,
-            context=context,
-        )
-
-        formatting_system = (
-            base_system
-            + "\n\n"
-            + """
-DOCUMENT DISPLAY STANDARDIZATION IS REQUIRED.
-
-The content returned from this operation is going directly
-to a customer-facing document page.
-
-Understand and standardize its formatting.
-
-Do not expose raw Markdown syntax.
-
-Do not blindly remove characters.
-
-Use intelligence to distinguish actual document content from
-markup used to represent formatting.
-
-Return only the finished page.
-"""
-        )
-
-        for index, page in enumerate(
-            normalized_pages,
-            start=1,
-        ):
-
-            content = normalize_document_formatting(
-                page.get("content")
-            )
+            content = str(page.get("content", "")).strip()
 
             if not content:
                 continue
 
-            prompt = (
-                self.build_standardization_prompt(
-                    service=active_service,
-                    page_content=content,
-                    page_number=page.get(
-                        "page_number",
-                        index,
-                    ),
-                    total_pages=total_pages,
-                    reason=reason,
-                )
+            prompt = self.build_standardization_prompt(
+                document=content,
+                service=service,
+                purpose=purpose,
             )
 
-            standardized = self.call_groq(
-                messages=[
-                    {
-                        "role":
-                            "system",
-
-                        "content":
-                            formatting_system,
-                    },
-                    {
-                        "role":
-                            "user",
-
-                        "content":
-                            prompt,
-                    },
-                ],
-                output_tokens=(
-                    GENERATION_OUTPUT_TOKENS
-                ),
-                stage="DOCUMENT_STANDARDIZATION",
-                event=None,
-                include_history=False,
+            result = self.call_groq(
+                system_prompt=self.build_system_prompt(service),
+                user_prompt=prompt,
+                output_tokens=GENERATION_OUTPUT_TOKENS,
             )
 
-            standardized = safe_text(
-                standardized,
-                preserve_lines=True,
-            )
+            result = result.strip()
 
-            if not standardized:
-
+            if not result:
                 raise AdaResponseError(
-                    "Document standardization returned empty content.",
-                    stage="DOCUMENT_STANDARDIZATION",
-                    category="EMPTY_STANDARDIZED_PAGE",
-                )
-
-            standardized = (
-                remove_generation_markers(
-                    standardized
-                )
-            )
-
-            standardized = (
-                normalize_document_formatting(
-                    standardized
-                )
-            )
-
-            if not standardized:
-
-                raise AdaResponseError(
-                    "Document standardization produced an empty page.",
-                    stage="DOCUMENT_STANDARDIZATION",
-                    category="EMPTY_STANDARDIZED_PAGE",
+                    f"Standardization returned empty content for page {index}."
                 )
 
             standardized_pages.append(
                 {
-                    "page_number":
-                        page.get(
-                            "page_number",
-                            index,
-                        ),
-
-                    "content":
-                        standardized,
-
-                    "status":
-                        "ready",
+                    "page_number": index,
+                    "content": result,
                 }
             )
 
-            if progress_callback:
-
-                progress_callback(
-                    {
-                        "type":
-                            "document_standardization_progress",
-
-                        "page_number":
-                            page.get(
-                                "page_number",
-                                index,
-                            ),
-
-                        "total_pages":
-                            total_pages,
-
-                        "status":
-                            "standardized",
-
-                        "internal":
-                            True,
-                    }
-                )
-
         return standardized_pages
-
 
     def intelligently_standardize_document(
         self,
-        *,
         document: str,
-        service: str | None,
-        reason: str,
-        context: str | None = None,
-        progress_callback: Callable[
-            [dict[str, Any]],
-            None
-        ] | None = None,
-    ) -> tuple[
-        str,
-        list[dict[str, Any]],
-    ]:
+        service: str | None = None,
+        purpose: str = "final customer document",
+    ) -> str:
 
-        document = normalize_document_formatting(
-            document
-        )
+        text = str(document or "").strip()
 
-        if not document:
-
+        if not text:
             raise AdaResponseError(
-                "There is no document to standardize.",
-                stage="DOCUMENT_STANDARDIZATION",
-                category="EMPTY_DOCUMENT",
+                "There is no document content to standardize."
             )
 
-        pages = self.document_to_pages(
-            document
-        )
+        pages = self.document_to_pages(text)
 
-        standardized_pages = (
-            self.intelligently_standardize_pages(
-                pages=pages,
-                service=service,
-                reason=reason,
-                context=context,
-                progress_callback=progress_callback,
-            )
+        standardized_pages = self.intelligently_standardize_pages(
+            pages=pages,
+            service=service,
+            purpose=purpose,
         )
 
         if not standardized_pages:
-
             raise AdaResponseError(
-                "Document standardization produced no pages.",
-                stage="DOCUMENT_STANDARDIZATION",
-                category="EMPTY_STANDARDIZED_DOCUMENT",
+                "Document standardization returned no usable pages."
             )
 
-        standardized_document = (
-            self.assemble_document(
-                standardized_pages
-            )
-        )
+        standardized = self.assemble_document(
+            standardized_pages
+        ).strip()
 
-        if not standardized_document:
-
+        if not standardized:
             raise AdaResponseError(
-                "Document standardization produced no content.",
-                stage="DOCUMENT_STANDARDIZATION",
-                category="EMPTY_STANDARDIZED_DOCUMENT",
+                "Document standardization returned empty content."
             )
 
-        return (
-            standardized_document,
-            standardized_pages,
-        )
+        self.active_document_text = standardized
 
+        return standardized
 
     # ========================================================
     # GENERATION PROMPT
@@ -1667,682 +600,303 @@ Return only the finished page.
 
     def build_generation_prompt(
         self,
-        *,
-        service: str,
-        customer_request: str,
-        supplied_material: str = "",
-        previous_tail: str = "",
-        continuation: bool = False,
+        instruction: str,
+        service: str | None = None,
+        context: str | None = None,
+        source_document: str | None = None,
     ) -> str:
 
-        if continuation:
+        service_text = self.normalize_service(service or self.service)
 
-            previous_tail_text = compact_document_text(
-                previous_tail,
-                CONTINUATION_TAIL_CHARS,
-            )
+        prompt = f"""
+WORK ON THE CUSTOMER'S REQUEST.
 
-            return (
-                "CONTINUE THE SAME DOCUMENT.\n\n"
+SERVICE:
+{service_text or "Not specified"}
 
-                "The previous generation already contains "
-                "part of the document.\n\n"
+CUSTOMER REQUEST:
+{instruction[:GENERATION_REQUEST_CHARS]}
+"""
 
-                "Continue from where it ended.\n\n"
+        if context:
+            prompt += f"""
 
-                "Do not restart the document.\n"
-                "Do not repeat the opening.\n"
-                "Do not create a second document.\n"
-                "Do not summarize the previous part.\n"
-                "Do not explain what you are doing.\n\n"
+CONTEXT:
+{context[:MAX_CONTEXT_CHARS]}
+"""
 
-                "Maintain the facts and established content "
-                "of the existing document.\n\n"
+        if source_document:
+            prompt += f"""
 
-                "CURRENT ENDING OF THE DOCUMENT:\n"
-                + previous_tail_text
-                + "\n\n"
+SOURCE MATERIAL:
 
-                "Use professional document formatting.\n"
-                "Do not expose raw Markdown formatting.\n\n"
+{source_document[:GENERATION_REQUEST_CHARS]}
 
-                "If the document is complete, finish with:\n"
-                + END_OF_DOCUMENT_MARKER
-                + "\n\n"
+Use the source material as the authoritative source of facts.
+Preserve its meaning while performing the customer's requested work.
+"""
 
-                "If more continuation is genuinely required, "
-                "finish with:\n"
-                + CONTINUE_MARKER
-                + "\n\n"
+        prompt += """
 
-                "Return the document content and the marker."
-            )
+If this is a document task, return the complete finished document.
 
-        supplied_material_text = compact_document_text(
-            supplied_material,
-            2500,
-        )
+Do not explain what you are doing.
+Do not provide a draft followed by commentary.
+Do not mention internal systems.
 
-        customer_request_text = compact_text(
-            customer_request,
-            4000,
-        )
+The final document will go through Ada's professional
+standardization stage before reaching the customer.
+"""
 
-        return (
-            "COMPLETE THE CUSTOMER'S REQUEST.\n\n"
-
-            "SERVICE CONTEXT:\n"
-            + safe_text(service)
-            + "\n\n"
-
-            "CUSTOMER REQUEST:\n"
-            + customer_request_text
-            + "\n\n"
-
-            "SUPPLIED MATERIAL:\n"
-            + supplied_material_text
-            + "\n\n"
-
-            "Use your own intelligence to determine what the "
-            "customer is asking for and complete the work.\n\n"
-
-            "If the request is for a document, produce the "
-            "actual document rather than an outline, plan or "
-            "explanation.\n\n"
-
-            "Determine the appropriate structure yourself.\n\n"
-
-            "Do not force the work into a service template.\n\n"
-
-            "Do not invent customer facts.\n\n"
-
-            "Preserve supplied information accurately.\n\n"
-
-            "Professionally format the document before returning it.\n"
-            "Do not expose raw Markdown syntax as customer-facing "
-            "document formatting.\n"
-            "Use intelligence to understand headings, emphasis, "
-            "lists, tables, spacing and document structure.\n\n"
-
-            "If the complete document is finished, end with:\n"
-            + END_OF_DOCUMENT_MARKER
-            + "\n\n"
-
-            "If genuine continuation is required, end with:\n"
-            + CONTINUE_MARKER
-            + "\n\n"
-
-            "Return the actual work and the marker."
-        )
-
+        return prompt[:GENERATION_REQUEST_CHARS]
 
     # ========================================================
     # DOCUMENT GENERATION
-    #
-    # FLOW:
-    # Groq generation
-    #       ↓
-    # one intelligent standardization pass
-    #       ↓
-    # standardized pages
-    #       ↓
-    # Workspace
     # ========================================================
 
     def generate_document(
         self,
-        *,
-        service: str | None,
-        customer_request: str,
-        supplied_material: str = "",
+        instruction: str,
+        service: str | None = None,
         context: str | None = None,
-        progress_callback: Callable[
-            [dict[str, Any]],
-            None
-        ] | None = None,
+        source_document: str | None = None,
+        progress_callback: Callable[[dict[str, Any]], None] | None = None,
     ) -> dict[str, Any]:
 
-        active_service = (
-            self.normalize_service(
-                service
-            )
-            or safe_text(service)
-            or self.service
-            or "General Business Center Service"
-        )
+        instruction = str(instruction or "").strip()
 
-        customer_request = safe_text(
-            customer_request
-        )
-
-        supplied_material = safe_text(
-            supplied_material,
-            preserve_lines=True,
-        )
-
-        if not customer_request:
-
+        if not instruction:
             raise AdaResponseError(
-                "No customer request was supplied.",
-                stage="GENERATION_INTAKE",
-                category="EMPTY_REQUEST",
+                "No document instruction was supplied."
             )
 
-        system_prompt = (
-            self.build_system_prompt(
-                service=active_service,
-                context=context,
-            )
+        resolved_service = self.normalize_service(
+            service or self.service
         )
 
-        document_parts: list[str] = []
+        prompt = self.build_generation_prompt(
+            instruction=instruction,
+            service=resolved_service,
+            context=context,
+            source_document=source_document,
+        )
 
-        completed = False
+        generated_parts: list[str] = []
 
-        for part_number in range(
-            1,
-            MAX_GENERATION_PARTS + 1,
-        ):
+        current_prompt = prompt
 
-            current_document = (
-                "\n\n".join(
-                    document_parts
-                ).strip()
-            )
+        for part_number in range(1, MAX_GENERATION_PARTS + 1):
 
-            previous_tail = (
-                current_document[
-                    -CONTINUATION_TAIL_CHARS:
-                ]
-                if current_document
-                else ""
-            )
-
-            prompt = (
-                self.build_generation_prompt(
-                    service=active_service,
-                    customer_request=customer_request,
-                    supplied_material=(
-                        supplied_material
-                        if part_number == 1
-                        else ""
-                    ),
-                    previous_tail=previous_tail,
-                    continuation=bool(
-                        document_parts
-                    ),
-                )
-            )
-
-            generated = self.call_groq(
-                messages=[
-                    {
-                        "role":
-                            "system",
-
-                        "content":
-                            system_prompt,
-                    },
-                    {
-                        "role":
-                            "user",
-
-                        "content":
-                            compact_text(
-                                prompt,
-                                GENERATION_REQUEST_CHARS,
-                            ),
-                    },
-                ],
-                output_tokens=(
-                    GENERATION_OUTPUT_TOKENS
+            result = self.call_groq(
+                system_prompt=self.build_system_prompt(
+                    resolved_service,
+                    context,
                 ),
-                stage="DOCUMENT_GENERATION",
-                event=None,
-                include_history=False,
-            )
+                user_prompt=current_prompt,
+                output_tokens=GENERATION_OUTPUT_TOKENS,
+            ).strip()
 
-            generated = safe_text(
-                generated,
-                preserve_lines=True,
-            )
-
-            if not generated:
-
-                raise AdaResponseError(
-                    "Generation returned empty content.",
-                    stage="DOCUMENT_GENERATION",
-                    category="EMPTY_GENERATION_PART",
-                )
-
-            is_complete = (
-                contains_end_marker(
-                    generated
-                )
-            )
-
-            clean_part = (
-                remove_generation_markers(
-                    generated
-                )
-            )
-
-            if clean_part:
-
-                document_parts.append(
-                    clean_part
-                )
-
-            current_document = (
-                "\n\n".join(
-                    document_parts
-                ).strip()
-            )
-
-            print(
-                "[GEN]",
-                f"part={part_number}",
-                f"chars={len(current_document)}",
-                f"complete={is_complete}",
-            )
-
-            if progress_callback:
-
-                progress_callback(
-                    {
-                        "type":
-                            "generation_progress",
-
-                        "part":
-                            part_number,
-
-                        "status":
-                            (
-                                "completed"
-                                if is_complete
-                                else "continuing"
-                            ),
-
-                        "content_length":
-                            len(current_document),
-
-                        "internal":
-                            True,
-                    }
-                )
-
-            if is_complete:
-
-                completed = True
+            if not result:
                 break
 
-        if not completed:
+            result = result.replace(
+                END_OF_DOCUMENT_MARKER,
+                ""
+            ).strip()
 
+            result = result.replace(
+                CONTINUE_MARKER,
+                ""
+            ).strip()
+
+            generated_parts.append(result)
+
+            if progress_callback:
+                try:
+                    progress_callback(
+                        {
+                            "type": "generation_progress",
+                            "part": part_number,
+                            "total": MAX_GENERATION_PARTS,
+                        }
+                    )
+                except Exception:
+                    pass
+
+            lower = result.lower()
+
+            if (
+                END_OF_DOCUMENT_MARKER.lower() in lower
+                or len(result) < GENERATION_OUTPUT_TOKENS * 2
+            ):
+                break
+
+            tail = result[-CONTINUATION_TAIL_CHARS:]
+
+            current_prompt = f"""
+Continue the document from exactly where you stopped.
+
+Do not repeat previous content.
+
+Return only the remaining document content.
+
+When the entire document is finished, end with:
+{END_OF_DOCUMENT_MARKER}
+
+DOCUMENT TAIL:
+
+{tail}
+"""
+
+        generated_document = "\n\n".join(
+            part for part in generated_parts if part.strip()
+        ).strip()
+
+        if not generated_document:
             raise AdaResponseError(
-                "Document generation did not complete.",
-                stage="DOCUMENT_GENERATION",
-                category="GENERATION_INCOMPLETE",
+                "Ada generated no usable document."
             )
 
-        document_text = (
-            normalize_document_formatting(
-                "\n\n".join(
-                    document_parts
-                )
+        # IMPORTANT:
+        # Generation performs ONE standardization pass.
+        standardized_document = (
+            self.intelligently_standardize_document(
+                generated_document,
+                service=resolved_service,
+                purpose="final customer document before Workspace and Review",
             )
         )
 
-        if not document_text:
+        self.active_document_text = standardized_document
 
-            raise AdaResponseError(
-                "No document content was generated.",
-                stage="DOCUMENT_GENERATION",
-                category="EMPTY_DOCUMENT",
-            )
-
-        # Workspace receives ONLY the standardized document.
-
-        (
-            document_text,
-            pages,
-        ) = self.intelligently_standardize_document(
-            document=document_text,
-            service=active_service,
-            reason=(
-                "Prepare the completed document for direct "
-                "customer display in Workspace."
-            ),
-            context=context,
-            progress_callback=progress_callback,
+        pages = self.document_to_pages(
+            standardized_document
         )
 
-        if not pages:
-
-            raise AdaResponseError(
-                "Document was generated but no standardized "
-                "pages could be created.",
-                stage="DOCUMENT_PAGINATION",
-                category="EMPTY_PAGE_COLLECTION",
-            )
-
-        result = {
-            "type":
-                "document_completed",
-
-            "status":
-                "completed",
-
-            "service":
-                active_service,
-
-            "document_text":
-                document_text,
-
-            "document":
-                document_text,
-
-            "pages":
-                pages,
-
-            "total_pages":
-                len(pages),
+        return {
+            "success": True,
+            "document": standardized_document,
+            "document_text": standardized_document,
+            "pages": pages,
+            "document_pages": pages,
+            "service": resolved_service,
         }
 
-        if progress_callback:
-            progress_callback(result)
-
-        return result
-
-
     # ========================================================
-    # LOCAL PAGINATION
+    # DOCUMENT PAGE HELPERS
     # ========================================================
 
     @staticmethod
     def document_to_pages(
-        document_text: str,
+        document: str,
+        page_chars: int = DEFAULT_PAGE_CHARS,
     ) -> list[dict[str, Any]]:
 
-        document_text = (
-            normalize_document_formatting(
-                document_text
-            )
-        )
+        text = str(document or "").strip()
 
-        if not document_text:
+        if not text:
             return []
 
-        page_pattern = re.compile(
-            r"(?:^|\n)"
-            r"(?:={2,}\s*)?"
-            r"PAGE\s+(\d+)"
-            r"(?:\s*={2,})?"
-            r"\s*(?:\n|$)",
-            re.IGNORECASE,
+        if page_chars <= 0:
+            page_chars = DEFAULT_PAGE_CHARS
+
+        paragraphs = re.split(
+            r"\n\s*\n",
+            text,
         )
 
-        matches = list(
-            page_pattern.finditer(
-                document_text
-            )
-        )
+        pages: list[dict[str, Any]] = []
+        current: list[str] = []
+        current_length = 0
 
-        if matches:
+        for paragraph in paragraphs:
 
-            pages: list[
-                dict[str, Any]
-            ] = []
+            paragraph = paragraph.strip()
 
-            for index, match in enumerate(
-                matches
+            if not paragraph:
+                continue
+
+            paragraph_length = len(paragraph)
+
+            if (
+                current
+                and current_length + paragraph_length + 2 > page_chars
             ):
-
-                start = match.end()
-
-                end = (
-                    matches[index + 1].start()
-                    if index + 1 < len(matches)
-                    else len(document_text)
-                )
-
-                content = (
-                    document_text[
-                        start:end
-                    ].strip()
-                )
-
-                if not content:
-                    continue
-
-                try:
-                    page_number = int(
-                        match.group(1)
-                    )
-                except Exception:
-                    page_number = len(pages) + 1
-
                 pages.append(
                     {
-                        "page_number":
-                            page_number,
-
-                        "content":
-                            content,
-
-                        "status":
-                            "ready",
+                        "page_number": len(pages) + 1,
+                        "content": "\n\n".join(current).strip(),
                     }
                 )
 
-            if pages:
-                return pages
+                current = []
+                current_length = 0
 
-        parts = (
-            split_for_pagination(
-                document_text,
-                DEFAULT_PAGE_CHARS,
-            )
-        )
+            current.append(paragraph)
+            current_length += paragraph_length + 2
 
-        return [
-            {
-                "page_number":
-                    index,
-
-                "content":
-                    part,
-
-                "status":
-                    "ready",
-            }
-
-            for index, part in enumerate(
-                parts,
-                start=1,
+        if current:
+            pages.append(
+                {
+                    "page_number": len(pages) + 1,
+                    "content": "\n\n".join(current).strip(),
+                }
             )
 
-            if part
-        ]
-
-
-    # ========================================================
-    # NORMALIZE EXISTING PAGES
-    # ========================================================
+        return pages[:MAX_DOCUMENT_PAGES]
 
     @staticmethod
     def normalize_document_pages(
         pages: Any,
     ) -> list[dict[str, Any]]:
 
-        if pages is None:
+        if not isinstance(pages, list):
             return []
 
-        if isinstance(
-            pages,
-            str,
-        ):
+        normalized: list[dict[str, Any]] = []
 
-            return (
-                AdaResponse.document_to_pages(
-                    pages
-                )
-            )
+        for index, page in enumerate(pages, start=1):
 
-        if not isinstance(
-            pages,
-            list,
-        ):
+            if isinstance(page, str):
+                content = page.strip()
 
-            pages = [pages]
+            elif isinstance(page, dict):
+                content = str(
+                    page.get("content")
+                    or page.get("text")
+                    or page.get("page_content")
+                    or ""
+                ).strip()
 
-        result: list[
-            dict[str, Any]
-        ] = []
-
-        for index, item in enumerate(
-            pages,
-            start=1,
-        ):
-
-            if isinstance(
-                item,
-                str,
-            ):
-
-                content = (
-                    normalize_document_formatting(
-                        item
-                    )
-                )
-
-                if content:
-
-                    result.append(
-                        {
-                            "page_number":
-                                index,
-
-                            "content":
-                                content,
-
-                            "status":
-                                "ready",
-                        }
-                    )
-
+            else:
                 continue
 
-            if isinstance(
-                item,
-                dict,
-            ):
+            if not content:
+                continue
 
-                content = safe_text(
-                    item.get("content")
-                    or item.get("text")
-                    or item.get("page_content")
-                    or item.get("document_text"),
-                    preserve_lines=True,
-                )
+            normalized.append(
+                {
+                    "page_number": index,
+                    "content": content,
+                }
+            )
 
-                content = (
-                    normalize_document_formatting(
-                        content
-                    )
-                )
-
-                if not content:
-                    continue
-
-                try:
-
-                    page_number = int(
-                        item.get(
-                            "page_number",
-                            index,
-                        )
-                    )
-
-                except Exception:
-
-                    page_number = index
-
-                status = (
-                    safe_text(
-                        item.get(
-                            "status",
-                            "ready",
-                        )
-                    )
-                    or "ready"
-                )
-
-                result.append(
-                    {
-                        "page_number":
-                            page_number,
-
-                        "content":
-                            content,
-
-                        "status":
-                            status,
-                    }
-                )
-
-        return sorted(
-            result,
-            key=lambda item:
-                int(
-                    item["page_number"]
-                ),
-        )
-
-
-    # ========================================================
-    # ASSEMBLE DOCUMENT
-    # ========================================================
+        return normalized[:MAX_DOCUMENT_PAGES]
 
     @staticmethod
     def assemble_document(
-        pages: list[
-            dict[str, Any]
-        ],
+        pages: list[dict[str, Any]],
     ) -> str:
 
-        if not pages:
-            return ""
-
-        ordered = sorted(
-            pages,
-            key=lambda item:
-                int(
-                    item.get(
-                        "page_number",
-                        0,
-                    )
-                ),
+        normalized = AdaResponse.normalize_document_pages(
+            pages
         )
 
-        parts: list[str] = []
-
-        for page in ordered:
-
-            content = (
-                normalize_document_formatting(
-                    page.get("content")
-                )
-            )
-
-            if content:
-                parts.append(content)
-
-        return (
-            "\n\n".join(
-                parts
-            ).strip()
-        )
-
+        return "\n\n".join(
+            page["content"]
+            for page in normalized
+            if page.get("content")
+        ).strip()
 
     # ========================================================
     # REVIEW CACHE
@@ -2350,552 +904,265 @@ Return only the finished page.
 
     def _review_cache_key(
         self,
-        *,
-        pages: list[dict],
-        service: str | None,
-        context: str | None,
+        pages: list[dict[str, Any]],
+        service: str | None = None,
     ) -> str:
 
-        document = (
-            self.assemble_document(
-                pages
-            )
+        document = self.assemble_document(pages)
+
+        raw = (
+            f"{self.normalize_service(service or self.service)}"
+            f"\n{document}"
         )
 
-        document_hash = (
-            sha256_text(
-                document
-            )
-        )
-
-        job_id = ""
-        version = ""
-
-        if context:
-
-            job_match = re.search(
-                r"job_id[:=]\s*"
-                r"([a-zA-Z0-9\-_]+)",
-                context,
-            )
-
-            version_match = re.search(
-                r"version[:=]\s*"
-                r"([a-zA-Z0-9\._-]+)",
-                context,
-            )
-
-            if job_match:
-                job_id = job_match.group(1)
-
-            if version_match:
-                version = version_match.group(1)
-
-        return sha256_text(
-            "|".join(
-                [
-                    job_id,
-                    version,
-                    document_hash,
-                    safe_text(service),
-                ]
-            )
-        )
-
+        return hashlib.sha256(
+            raw.encode("utf-8")
+        ).hexdigest()
 
     # ========================================================
-    # COMPLETE DOCUMENT REVIEW
-    #
-    # IMPORTANT:
-    #
-    # Review DOES NOT standardize again.
-    #
-    # The pages arriving here are the already-standardized
-    # pages produced for Workspace.
-    #
-    # Review asks Groq for FINDINGS ONLY.
-    #
-    # This prevents:
-    #
-    # Generation
-    #   -> standardization
-    #   -> Review standardization
-    #   -> Review returned-document standardization
-    #
-    # and prevents the 700-token review response from trying
-    # to contain an entire long document.
+    # REVIEW
     # ========================================================
 
     def review_document_pages(
         self,
-        *,
-        pages: list[Any],
+        pages: list[dict[str, Any]],
         service: str | None = None,
         context: str | None = None,
-        customer_request: str = "",
-        event: str = "review",
-        progress_callback: Callable[
-            [dict[str, Any]],
-            None
-        ] | None = None,
+        customer_request: str | None = None,
+        event: str | None = None,
+        progress_callback: Callable[[dict[str, Any]], None] | None = None,
     ) -> dict[str, Any]:
 
-        normalized = (
-            self.normalize_document_pages(
-                pages
-            )
+        """
+        IMPORTANT:
+
+        The pages arriving here are already the authoritative,
+        standardized customer document.
+
+        Review does NOT standardize them again.
+
+        Review does NOT ask Groq to reproduce the entire document.
+
+        Groq returns findings only.
+        """
+
+        normalized_pages = self.normalize_document_pages(
+            pages
         )
 
-        if not normalized:
-
+        if not normalized_pages:
             raise AdaResponseError(
-                "No complete document was supplied for review.",
-                stage="REVIEW_INTAKE",
-                category="EMPTY_DOCUMENT",
+                "There is no document available for review."
             )
 
-        # Incoming pages are the canonical standardized pages
-        # produced by generation/correction.
-
-        complete_document = (
-            self.assemble_document(
-                normalized
-            )
+        # The incoming standardized document is authoritative.
+        document = self.assemble_document(
+            normalized_pages
         )
 
-        if not complete_document:
-
+        if not document:
             raise AdaResponseError(
-                "The supplied review document is empty.",
-                stage="REVIEW_INTAKE",
-                category="EMPTY_DOCUMENT",
+                "The document available for review is empty."
             )
 
-        total_pages = len(
-            normalized
+        cache_key = self._review_cache_key(
+            normalized_pages,
+            service,
         )
 
-        cache_key = (
-            self._review_cache_key(
-                pages=normalized,
-                service=service,
-                context=context,
-            )
-        )
+        cached = self._review_cache.get(cache_key)
 
-        if cache_key in self._review_cache:
-
-            cached = (
-                self._review_cache[
-                    cache_key
-                ]
-            )
-
-            if progress_callback:
-
-                for card in cached.get(
-                    "pages",
-                    [],
-                ):
-
-                    progress_callback(
-                        card
-                    )
-
-                progress_callback(
-                    cached
-                )
-
+        if cached:
             return cached
 
-        system_prompt = (
-            self.build_system_prompt(
-                service=service,
-                context=context,
-            )
-        )
+        # ----------------------------------------------------
+        # FINDINGS ONLY
+        # ----------------------------------------------------
 
-        # Review is findings-only.
-        #
-        # We deliberately do NOT ask Groq to reproduce the
-        # complete document. The existing 700-token review
-        # allowance is therefore sufficient for findings and
-        # is not used to regenerate the document.
+        review_source = document[:REVIEW_REQUEST_CHARS]
 
-        review_document_text = compact_document_text(
-            complete_document,
-            REVIEW_REQUEST_CHARS - 2500,
-        )
+        review_prompt = f"""
+REVIEW THE COMPLETE STANDARDIZED DOCUMENT BELOW.
 
-        review_customer_request = compact_text(
-            customer_request,
-            2500,
-        )
+Your task is to identify genuine issues that should be corrected
+before customer approval.
 
-        review_prompt = (
-            "REVIEW THE COMPLETE CUSTOMER DOCUMENT.\n\n"
+IMPORTANT:
 
-            "The document supplied below is already professionally "
-            "standardized and is the canonical customer-facing "
-            "document.\n\n"
+- Do NOT reproduce the document.
+- Do NOT rewrite the document.
+- Do NOT return the complete document.
+- Do NOT return Markdown.
+- Do NOT use #, **, | tables, or --- separators.
+- Do NOT invent problems.
+- Do NOT complain about placeholders such as [Your Company Name]
+  when they are clearly intentional placeholders.
+- Check grammar, spelling, clarity, consistency, numbering,
+  professional structure, obvious omissions and contradictions.
+- Preserve the customer's meaning.
 
-            "DO NOT rewrite the document.\n"
-            "DO NOT reproduce the document.\n"
-            "DO NOT summarize the document.\n"
-            "DO NOT add Markdown formatting.\n"
-            "DO NOT return the document content.\n\n"
+Return ONLY findings.
 
-            "Find genuine issues that should be considered before "
-            "customer approval.\n\n"
+Use this exact format:
 
-            "Check intelligently for things such as:\n"
-            "- missing or inconsistent information\n"
-            "- obvious spelling or grammar problems\n"
-            "- contradictory information\n"
-            "- incomplete sections where completion is genuinely "
-            "required\n"
-            "- obvious formatting or organization problems\n"
-            "- inconsistencies with the customer's request\n\n"
+FINDINGS_START
+PAGE 1: finding
+PAGE 2: finding
+FINDINGS_END
 
-            "Do not invent problems.\n"
-            "Do not criticize valid stylistic choices merely "
-            "because they differ from a template.\n\n"
+If there are no genuine issues, return:
 
-            "RETURN FINDINGS ONLY.\n\n"
+FINDINGS_START
+NO ISSUES FOUND
+FINDINGS_END
 
-            "Use this format:\n"
-            "PAGE 1: finding\n"
-            "PAGE 2: finding\n\n"
+DOCUMENT:
 
-            "For document-wide findings use:\n"
-            "DOCUMENT: finding\n\n"
+{review_source}
+"""
 
-            "If there are no genuine issues, return exactly:\n"
-            "NO ISSUES FOUND\n\n"
-
-            "CUSTOMER REQUEST:\n"
-            + review_customer_request
-            + "\n\n"
-
-            "COMPLETE STANDARDIZED DOCUMENT:\n"
-            + review_document_text
-        )
-
-        if progress_callback:
-
-            progress_callback(
-                {
-                    "type":
-                        "review_started",
-
-                    "total_pages":
-                        total_pages,
-
-                    "status":
-                        "processing",
-                }
-            )
-
-        review = self.call_groq(
-            messages=[
-                {
-                    "role":
-                        "system",
-
-                    "content":
-                        system_prompt,
-                },
-                {
-                    "role":
-                        "user",
-
-                    "content":
-                        compact_text(
-                            review_prompt,
-                            REVIEW_REQUEST_CHARS,
-                        ),
-                },
-            ],
-            output_tokens=(
-                REVIEW_OUTPUT_TOKENS
+        findings_response = self.call_groq(
+            system_prompt=self.build_system_prompt(
+                service,
+                context,
             ),
-            stage="DOCUMENT_REVIEW",
-            event=event,
-            include_history=False,
+            user_prompt=review_prompt[:REVIEW_REQUEST_CHARS],
+            output_tokens=REVIEW_OUTPUT_TOKENS,
+        ).strip()
+
+        findings = self._extract_findings(
+            findings_response
         )
 
-        review = safe_text(
-            review,
-            preserve_lines=True,
-        )
+        review_pages: list[dict[str, Any]] = []
 
-        if not review:
-
-            raise AdaResponseError(
-                "Review returned empty content.",
-                stage="DOCUMENT_REVIEW",
-                category="EMPTY_REVIEW",
-            )
-
-        findings_text = review
-
-        # If an old/incorrect model response happens to contain
-        # legacy wrappers, extract only the findings section.
-        findings_match = re.search(
-            r"FINDINGS_START(.*?)FINDINGS_END",
-            review,
-            re.DOTALL | re.IGNORECASE,
-        )
-
-        if findings_match:
-
-            findings_text = (
-                findings_match.group(1)
-                .strip()
-            )
-
-        # Never replace the canonical document with Review
-        # output. The document remains the already-standardized
-        # document supplied by Workspace.
-
-        doc_text = complete_document
-
-        page_reviews = (
-            self._parse_review_by_page(
-                findings_text,
-                total_pages,
-            )
-        )
-
-        page_results: list[
-            dict[str, Any]
-        ] = []
-
-        for position, page in enumerate(
-            normalized,
+        for index, page in enumerate(
+            normalized_pages,
             start=1,
         ):
 
-            page_number = (
-                page["page_number"]
+            page_finding = findings.get(
+                index,
+                "No issues found."
             )
 
-            findings = (
-                page_reviews.get(
-                    page_number,
-                    "",
-                )
-            )
-
-            if not findings:
-
-                findings = (
-                    "No page-specific issues identified."
-                )
-
-            standardized_page_content = (
-                normalize_document_formatting(
-                    page["content"]
-                )
-            )
-
-            card = {
-                "type":
-                    "review_card",
-
-                "page_number":
-                    page_number,
-
-                "position":
-                    position,
-
-                "total_pages":
-                    total_pages,
-
-                # Canonical standardized page.
-                "content":
-                    standardized_page_content,
-
-                "text":
-                    standardized_page_content,
-
-                "page_content":
-                    standardized_page_content,
-
-                "review":
-                    findings,
-
-                "status":
-                    "reviewed",
+            review_page = {
+                "page_number": index,
+                "content": page["content"],
+                "text": page["content"],
+                "page_content": page["content"],
+                "review": page_finding,
+                "status": "reviewed",
+                "error": None,
             }
 
-            page_results.append(
-                card
+            review_pages.append(
+                review_page
             )
 
             if progress_callback:
-                progress_callback(
-                    card
-                )
+                try:
+                    progress_callback(
+                        {
+                            "type": "page_completed",
+                            "page_number": index,
+                            "position": index,
+                            "total": len(normalized_pages),
+                            "review": page_finding,
+                            "content": page["content"],
+                        }
+                    )
+                except Exception:
+                    pass
+
+        assembled_review = "\n\n".join(
+            f"Page {page['page_number']}: "
+            f"{page['review']}"
+            for page in review_pages
+        )
 
         result = {
-            "type":
-                "review_completed",
-
-            "status":
-                "completed",
-
-            "total_pages":
-                total_pages,
-
-            "pages":
-                page_results,
-
-            "assembled_review":
-                self.assemble_review(
-                    page_results,
-                    document_review=findings_text,
-                ),
-
-            "document":
-                doc_text,
-
-            "document_text":
-                doc_text,
-
-            "review":
-                findings_text,
-
-            "review_calls":
-                1,
+            "success": True,
+            "pages": review_pages,
+            "document_pages": normalized_pages,
+            "document_text": document,
+            "assembled_review": assembled_review,
+            "findings": findings,
+            "status": "review_complete",
         }
 
-        self._review_cache[
-            cache_key
-        ] = result
+        self._review_cache[cache_key] = result
 
         if progress_callback:
-            progress_callback(result)
+            try:
+                progress_callback(
+                    {
+                        "type": "review_completed",
+                        "total": len(normalized_pages),
+                        "assembled_review": assembled_review,
+                    }
+                )
+            except Exception:
+                pass
 
         return result
 
-
     # ========================================================
-    # REVIEW PARSER
+    # REVIEW FINDINGS PARSER
     # ========================================================
 
     @staticmethod
-    def _parse_review_by_page(
-        review: str,
-        total_pages: int,
+    def _extract_findings(
+        response: str,
     ) -> dict[int, str]:
 
-        review = safe_text(
-            review,
-            preserve_lines=True,
+        text = str(response or "").strip()
+
+        if not text:
+            return {}
+
+        match = re.search(
+            r"FINDINGS_START(.*?)(?:FINDINGS_END|$)",
+            text,
+            flags=re.IGNORECASE | re.DOTALL,
         )
 
-        results: dict[
-            int, str
-        ] = {}
+        if match:
+            body = match.group(1).strip()
+        else:
+            body = text
 
-        if not review:
-            return results
+        if not body:
+            return {}
 
-        if review.upper().strip() == "NO ISSUES FOUND":
-            return results
+        if "NO ISSUES FOUND" in body.upper():
+            return {}
+
+        findings: dict[int, str] = {}
 
         pattern = re.compile(
-            r"(?im)^\s*PAGE\s+(\d+)\s*:"
-            r"\s*(.*?)(?=^\s*PAGE\s+\d+\s*:"
-            r"|^\s*DOCUMENT\s*:|\Z)",
-            re.MULTILINE | re.DOTALL,
+            r"(?:^|\n)\s*PAGE\s+(\d+)\s*:\s*(.*?)(?=\n\s*PAGE\s+\d+\s*:|\Z)",
+            flags=re.IGNORECASE | re.DOTALL,
         )
 
-        for match in pattern.finditer(
-            review
-        ):
+        for match in pattern.finditer(body):
 
             try:
-
                 page_number = int(
                     match.group(1)
                 )
-
-            except Exception:
-
+            except (TypeError, ValueError):
                 continue
 
-            if (
-                page_number < 1
-                or page_number > total_pages
-            ):
-                continue
-
-            finding = safe_text(
-                match.group(2),
-                preserve_lines=True,
-            )
+            finding = match.group(2).strip()
 
             if finding:
+                findings[page_number] = finding
 
-                results[
-                    page_number
-                ] = finding
+        if not findings and body:
+            findings[1] = body
 
-        document_pattern = re.compile(
-            r"(?is)(?:^|\n)"
-            r"\s*DOCUMENT\s*:\s*(.*)$"
-        )
-
-        document_match = (
-            document_pattern.search(
-                review
-            )
-        )
-
-        if document_match:
-
-            document_finding = safe_text(
-                document_match.group(1),
-                preserve_lines=True,
-            )
-
-            if document_finding:
-
-                for page_number in range(
-                    1,
-                    total_pages + 1,
-                ):
-
-                    existing = (
-                        results.get(
-                            page_number
-                        )
-                    )
-
-                    if existing:
-
-                        results[
-                            page_number
-                        ] = (
-                            existing
-                            + "\n\n"
-                            + "Document-wide:\n"
-                            + document_finding
-                        )
-
-                    else:
-
-                        results[
-                            page_number
-                        ] = (
-                            "Document-wide:\n"
-                            + document_finding
-                        )
-
-        return results
-
+        return findings
 
     # ========================================================
     # REVIEW ASSEMBLY
@@ -2903,574 +1170,310 @@ Return only the finished page.
 
     @staticmethod
     def assemble_review(
-        pages: list[
-            dict[str, Any]
-        ],
-        document_review: str = "",
+        review_pages: list[dict[str, Any]],
     ) -> str:
 
-        document_review = safe_text(
-            document_review,
-            preserve_lines=True,
-        )
-
-        if document_review:
-
-            return (
-                "COMPLETE DOCUMENT REVIEW\n\n"
-                + document_review
-            )
-
-        ordered = sorted(
-            pages,
-            key=lambda item:
-                int(
-                    item.get(
-                        "page_number",
-                        0,
-                    )
-                ),
+        normalized = AdaResponse.normalize_document_pages(
+            review_pages
         )
 
         parts: list[str] = []
 
-        for page in ordered:
-
-            review = safe_text(
-                page.get("review"),
-                preserve_lines=True,
-            )
-
-            if not review:
-                continue
+        for page in normalized:
+            review = str(
+                page.get("review")
+                or "No issues found."
+            ).strip()
 
             parts.append(
-                "PAGE "
-                + str(
-                    page.get(
-                        "page_number"
-                    )
-                )
-                + "\n\n"
-                + review
+                f"Page {page['page_number']}: {review}"
             )
 
-        if not parts:
-
-            return (
-                "The complete document was reviewed "
-                "and no review findings were returned."
-            )
-
-        return (
-            "COMPLETE DOCUMENT REVIEW\n\n"
-            + "\n\n".join(parts)
-        )
-
+        return "\n\n".join(parts).strip()
 
     # ========================================================
     # CORRECTION
-    #
-    # FLOW:
-    #
-    # Existing standardized Review document
-    #       ↓
-    # customer correction
-    #       ↓
-    # Groq correction
-    #       ↓
-    # one intelligent standardization pass
-    #       ↓
-    # standardized Review document
-    #
-    # There is NO unnecessary standardization before the
-    # correction because the Review document is already the
-    # standardized canonical document.
     # ========================================================
 
     def correct_document(
         self,
-        *,
-        document_pages: list[Any],
-        correction: str,
-        service: str | None,
-        context: str | None,
-        progress_callback: Callable[
-            [dict[str, Any]],
-            None
-        ] | None = None,
+        pages: list[dict[str, Any]] | None = None,
+        correction: str = "",
+        service: str | None = None,
+        context: str | None = None,
+        progress_callback: Callable[[dict[str, Any]], None] | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
 
-        pages = (
-            self.normalize_document_pages(
-                document_pages
-            )
-        )
+        """
+        CORRECTION FLOW:
 
-        if not pages:
+        Existing standardized document
+                  ↓
+        Customer correction
+                  ↓
+        Groq applies correction
+                  ↓
+        ONE intelligent standardization pass
+                  ↓
+        Corrected standardized document
+        """
 
-            raise AdaResponseError(
-                "There is no document to correct.",
-                stage="CORRECTION_INTAKE",
-                category="EMPTY_DOCUMENT",
-            )
-
-        correction = safe_text(
+        instruction = str(
             correction
+            or kwargs.get("instruction")
+            or kwargs.get("message")
+            or ""
+        ).strip()
+
+        if not instruction:
+            raise AdaResponseError(
+                "Correction instruction is empty."
+            )
+
+        normalized_pages = self.normalize_document_pages(
+            pages or kwargs.get("document_pages")
         )
 
-        if not correction:
+        if not normalized_pages:
+            if self.active_document_text:
+                normalized_pages = self.document_to_pages(
+                    self.active_document_text
+                )
 
+        if not normalized_pages:
             raise AdaResponseError(
-                "Correction instruction is empty.",
-                stage="CORRECTION_INTAKE",
-                category="EMPTY_CORRECTION",
+                "There is no document available for correction."
             )
 
-        # These pages are already the standardized document
-        # displayed in Review. Do not spend another Groq call
-        # standardizing them before applying the correction.
-
-        current_document = (
-            self.assemble_document(
-                pages
-            )
+        # IMPORTANT:
+        # DO NOT standardize here.
+        #
+        # The document arriving from Review is already standardized.
+        #
+        current_document = self.assemble_document(
+            normalized_pages
         )
 
         if not current_document:
-
             raise AdaResponseError(
-                "The current document contains no usable content.",
-                stage="CORRECTION_INTAKE",
-                category="EMPTY_DOCUMENT",
+                "The current document is empty."
             )
 
-        active_service = (
-            self.normalize_service(
-                service
-            )
-            or safe_text(service)
-            or self.service
-            or "General Business Center Service"
+        service_text = self.normalize_service(
+            service or self.service
         )
 
-        system_prompt = (
-            self.build_system_prompt(
-                service=active_service,
-                context=context,
-            )
-        )
+        correction_prompt = f"""
+APPLY THE CUSTOMER'S CORRECTION TO THE DOCUMENT.
 
-        correction_text = compact_text(
-            correction,
-            4500,
-        )
+SERVICE:
+{service_text or "Document service"}
 
-        current_document_text = compact_document_text(
-            current_document,
-            7000,
-        )
+CUSTOMER CORRECTION:
+{instruction[:CORRECTION_REQUEST_CHARS]}
 
-        prompt = (
-            "APPLY THE CUSTOMER CORRECTION TO THE COMPLETE "
-            "CURRENT DOCUMENT.\n\n"
+CURRENT DOCUMENT:
+{current_document[:CORRECTION_REQUEST_CHARS]}
 
-            "SERVICE CONTEXT:\n"
-            + active_service
-            + "\n\n"
+INSTRUCTIONS:
 
-            "CUSTOMER CORRECTION:\n"
-            + correction_text
-            + "\n\n"
+1. Apply the customer's correction accurately.
+2. Preserve all other correct information.
+3. Do not invent facts.
+4. Do not remove unrelated content.
+5. Return the complete corrected document.
+6. Do not return an explanation.
+7. Do not describe the changes.
+8. Do not use Markdown source syntax.
+9. Do not use # headings.
+10. Do not use **bold** syntax.
+11. Do not use Markdown table pipes.
+12. Do not use --- separators.
+13. Return ONLY the complete corrected document.
 
-            "CURRENT COMPLETE DOCUMENT:\n"
-            + current_document_text
-            + "\n\n"
+The corrected document will receive one final professional
+standardization pass after this correction.
+"""
 
-            "INSTRUCTIONS:\n"
-            "1. Understand the customer's correction.\n"
-            "2. Apply it to the complete document.\n"
-            "3. Preserve all unaffected information.\n"
-            "4. Do not invent facts.\n"
-            "5. Return the COMPLETE corrected document.\n"
-            "6. Do not return only the changed paragraph.\n"
-            "7. Do not summarize.\n"
-            "8. Do not explain your changes.\n"
-            "9. Do not expose raw Markdown formatting.\n"
-            "10. The complete result will be professionally "
-            "standardized before it is returned to the customer."
-        )
-
-        corrected = self.call_groq(
-            messages=[
-                {
-                    "role":
-                        "system",
-
-                    "content":
-                        system_prompt,
-                },
-                {
-                    "role":
-                        "user",
-
-                    "content":
-                        compact_text(
-                            prompt,
-                            CORRECTION_REQUEST_CHARS,
-                        ),
-                },
-            ],
-            output_tokens=(
-                CORRECTION_OUTPUT_TOKENS
+        corrected_raw = self.call_groq(
+            system_prompt=self.build_system_prompt(
+                service_text,
+                context,
             ),
-            stage="DOCUMENT_CORRECTION",
-            event="document_correction",
-            include_history=False,
-        )
+            user_prompt=correction_prompt[
+                :CORRECTION_REQUEST_CHARS
+            ],
+            output_tokens=CORRECTION_OUTPUT_TOKENS,
+        ).strip()
 
-        corrected = safe_text(
-            corrected,
-            preserve_lines=True,
-        )
-
-        if not corrected:
-
+        if not corrected_raw:
             raise AdaResponseError(
-                "Correction returned empty content.",
-                stage="DOCUMENT_CORRECTION",
-                category="EMPTY_CORRECTION_RESULT",
+                "Ada returned no corrected document."
             )
 
-        corrected = (
-            remove_generation_markers(
-                corrected
+        # ----------------------------------------------------
+        # ONE AND ONLY ONE STANDARDIZATION PASS AFTER
+        # CORRECTION
+        # ----------------------------------------------------
+
+        corrected_document = (
+            self.intelligently_standardize_document(
+                corrected_raw,
+                service=service_text,
+                purpose="corrected final customer document",
             )
         )
 
-        corrected_pages = (
-            self.document_to_pages(
-                corrected
+        if not corrected_document:
+            raise AdaResponseError(
+                "The corrected document could not be standardized."
             )
+
+        self.active_document_text = corrected_document
+
+        corrected_pages = self.document_to_pages(
+            corrected_document
         )
 
         if not corrected_pages:
-
             raise AdaResponseError(
-                "Corrected document could not be paginated.",
-                stage="DOCUMENT_CORRECTION",
-                category="EMPTY_CORRECTED_DOCUMENT",
+                "The corrected document contains no usable pages."
             )
-
-        # One final intelligence standardization pass after
-        # the correction.
-
-        (
-            corrected_document,
-            standardized_corrected_pages,
-        ) = self.intelligently_standardize_document(
-            document=(
-                self.assemble_document(
-                    corrected_pages
-                )
-            ),
-            service=active_service,
-            reason=(
-                "Apply final professional standardization after "
-                "the customer correction. The complete corrected "
-                "document is going back to the Review page and "
-                "must be customer-ready by default."
-            ),
-            context=context,
-            progress_callback=progress_callback,
-        )
-
-        if not standardized_corrected_pages:
-
-            raise AdaResponseError(
-                "Corrected document could not be standardized.",
-                stage="DOCUMENT_CORRECTION",
-                category="EMPTY_STANDARDIZED_CORRECTION",
-            )
-
-        # The review cache may contain the previous version.
-        # Do not allow that previous version to be reused after
-        # a correction.
-
-        self._review_cache.clear()
-
-        result = {
-            "type":
-                "correction_completed",
-
-            "status":
-                "completed",
-
-            "total_pages":
-                len(
-                    standardized_corrected_pages
-                ),
-
-            "pages":
-                standardized_corrected_pages,
-
-            "document_text":
-                corrected_document,
-
-            "document":
-                corrected_document,
-        }
 
         if progress_callback:
-            progress_callback(result)
+            try:
+                progress_callback(
+                    {
+                        "type": "correction_completed",
+                        "document_text": corrected_document,
+                        "pages": corrected_pages,
+                        "total": len(corrected_pages),
+                    }
+                )
+            except Exception:
+                pass
 
-        return result
+        # Clear old review cache because the document changed.
+        self._review_cache.clear()
 
+        return {
+            "success": True,
+            "document": corrected_document,
+            "document_text": corrected_document,
+            "pages": corrected_pages,
+            "document_pages": corrected_pages,
+            "service": service_text,
+            "status": "corrected",
+        }
 
     # ========================================================
-    # NORMAL CHAT
+    # NORMAL ADA CHAT
     # ========================================================
 
     def respond(
         self,
         message: str,
         service: str | None = None,
-        event: str | None = None,
         context: str | None = None,
+        event: str | None = None,
+        **kwargs: Any,
     ) -> str:
 
-        message = safe_text(
-            message
-        )
+        user_message = str(message or "").strip()
 
-        if not message:
-
+        if not user_message:
             return (
-                "Please tell me what you "
-                "would like me to help you with."
+                "Please tell Ada what you would like help with."
             )
 
-        if service:
-            self.set_service(service)
-
-        active_service = (
-            self.normalize_service(
-                self.service
-            )
+        resolved_service = self.normalize_service(
+            service or self.service
         )
 
-        system_prompt = (
-            self.build_system_prompt(
-                service=active_service,
-                context=context,
-            )
+        system_prompt = self.build_system_prompt(
+            resolved_service,
+            context,
         )
 
-        messages: list[
-            dict[str, str]
-        ] = [
-            {
-                "role":
-                    "system",
-
-                "content":
-                    system_prompt,
-            }
-        ]
-
-        for item in self.history[
-            -MAX_HISTORY_MESSAGES:
-        ]:
-
-            messages.append(
-                {
-                    "role":
-                        item["role"],
-
-                    "content":
-                        compact_text(
-                            item["content"],
-                            MAX_HISTORY_MESSAGE_CHARS,
-                        ),
-                }
-            )
-
-        if event:
-
-            messages.append(
-                {
-                    "role":
-                        "system",
-
-                    "content":
-                        "APPLICATION EVENT: "
-                        + safe_text(event),
-                }
-            )
-
-        messages.append(
-            {
-                "role":
-                    "user",
-
-                "content":
-                    compact_text(
-                        message,
-                        MAX_USER_MESSAGE_CHARS,
-                    ),
-            }
-        )
-
-        response = self.call_groq(
-            messages=messages,
-            output_tokens=450,
-            stage="NORMAL_RESPONSE",
-            event=event,
-            include_history=True,
+        result = self.call_groq(
+            system_prompt=system_prompt,
+            user_prompt=user_message[
+                :MAX_USER_MESSAGE_CHARS
+            ],
+            output_tokens=CORRECTION_OUTPUT_TOKENS,
         )
 
         self.add_history(
             "user",
-            message,
+            user_message,
         )
 
         self.add_history(
             "assistant",
-            response,
+            result,
         )
 
-        return response
-
+        return result
 
     # ========================================================
     # EVENT HELPERS
     # ========================================================
 
     @staticmethod
-    def is_review_event(
-        event: str | None,
-    ) -> bool:
+    def is_review_event(event: Any) -> bool:
+        text = str(event or "").strip().lower()
 
-        return (
-            safe_text(
-                event
-            ).lower()
-            in REVIEW_EVENTS
-        )
-
+        return text in {
+            "review",
+            "send_for_review",
+            "review_document",
+            "start_review",
+        }
 
     @staticmethod
-    def is_correction_event(
-        event: str | None,
-    ) -> bool:
+    def is_correction_event(event: Any) -> bool:
+        text = str(event or "").strip().lower()
 
-        return (
-            safe_text(
-                event
-            ).lower()
-            in CORRECTION_EVENTS
-        )
+        return text in {
+            "correction",
+            "apply_correction",
+            "correct_document",
+            "review_correction",
+        }
 
 
 # ============================================================
-# DIAGNOSTIC
+# SIMPLE DIAGNOSTIC
 # ============================================================
 
 if __name__ == "__main__":
 
-    print()
-    print("=" * 78)
-    print("NAIJA POCKET BUSINESS CENTER")
-    print("INTELLIGENCE-FIRST DOCUMENT ENGINE")
-    print("=" * 78)
+    print("AdaResponse diagnostic")
+    print("----------------------")
 
-    print(
-        "Model:",
-        MODEL,
-    )
+    try:
+        ada = AdaResponse()
 
-    print(
-        "Groq package:",
-        "READY"
-        if Groq is not None
-        else "MISSING",
-    )
+        print(
+            "Groq client:",
+            "connected" if ada._client else "not connected",
+        )
 
-    print(
-        "API key:",
-        "CONFIGURED"
-        if API_KEY
-        else "MISSING",
-    )
+        print(
+            "Groq model:",
+            ada._model or "not configured",
+        )
 
-    print(
-        "Document structure:",
-        "INTELLIGENCE DECIDES",
-    )
+        print(
+            "Service:",
+            ada.service or "not set",
+        )
 
-    print(
-        "Service templates:",
-        "NOT USED",
-    )
-
-    print(
-        "Keyword document control:",
-        "NOT USED",
-    )
-
-    print(
-        "Local pagination:",
-        "ENABLED",
-    )
-
-    print(
-        "Intelligent standardization:",
-        "ENABLED",
-    )
-
-    print(
-        "Workspace standardization:",
-        "ENABLED",
-    )
-
-    print(
-        "Review:",
-        "FINDINGS ONLY",
-    )
-
-    print(
-        "Review page document:",
-        "USES CANONICAL STANDARDIZED DOCUMENT",
-    )
-
-    print(
-        "Review re-standardization:",
-        "NOT REPEATED",
-    )
-
-    print(
-        "Correction re-standardization:",
-        "ONE FINAL PASS",
-    )
-
-    print(
-        "Generation continuation:",
-        "ENABLED",
-    )
-
-    print(
-        "Document formatting rules:",
-        "INTELLIGENCE-FIRST",
-    )
-
-    print(
-        "Groq token settings:",
-        "UNCHANGED",
-    )
-
-    print(
-        "Review prompt import:",
-        "NOT USED",
-    )
-
-    print("=" * 78)
+    except Exception as error:
+        print(
+            "AdaResponse error:",
+            type(error).__name__,
+            str(error),
+        )
+        traceback.print_exc()
