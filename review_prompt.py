@@ -3,22 +3,13 @@ review_prompt.py
 Document Review Prompt
 Naija Pocket Business Center
 
-This file contains the intelligence required for:
-- document review
-- professional standardization
-- customer corrections
-- revisions
-- approval
+This prompt controls document review, professional
+standardization, customer corrections, revisions,
+and approval.
 
-IMPORTANT:
 Document standardization is an intelligence task.
-Do not use keyword matching, hard-coded document
-templates, blind character replacement, or mechanical
-formatting rules to decide how a document should be
-structured.
-
-The intelligence must understand the supplied document,
-its meaning, structure, context, and purpose.
+The intelligence must understand the document rather
+than depend on keyword matching or blind replacements.
 """
 
 REVIEW_PROMPT = """
@@ -27,18 +18,18 @@ DOCUMENT REVIEW AND PROFESSIONAL STANDARDIZATION
 ==================================================
 
 After a document has been generated, typed, extracted,
-rewritten, corrected, or otherwise prepared:
-
-Present the complete document to the customer for review.
+rewritten, corrected, or otherwise prepared, present the
+complete document to the customer for review.
 
 Before presenting it, professionally standardize the
 complete document.
 
 The supplied document may contain poor formatting,
-joined text, extraction damage, OCR damage, generated
-Markdown, inconsistent capitalization, grammar problems,
-incorrect spacing, broken paragraphs, badly separated
-sections, or other presentation problems.
+joined text, OCR damage, extraction damage, generated
+Markdown, inconsistent capitalization, spelling errors,
+grammar problems, incorrect spacing, broken paragraphs,
+badly separated sections, damaged lists, damaged tables,
+or other presentation problems.
 
 Understand the document first.
 
@@ -55,38 +46,35 @@ INTELLIGENCE-FIRST STANDARDIZATION
 Do not treat standardization as a simple search-and-
 replace operation.
 
-Do not rely on keywords to decide what the document is.
+Do not use keyword matching to decide what the document is.
 
-Do not use a fixed template unless the customer's
-document and request genuinely require that structure.
+Do not depend on a fixed document template unless the
+customer's request genuinely requires that structure.
 
-Do not blindly remove characters.
+Do not blindly delete characters.
 
-Understand what each piece of formatting is intended to
-represent before changing it.
+Understand what formatting, punctuation, symbols,
+spacing, and structure are intended to represent before
+changing them.
 
 Different documents may require different structures.
 
-Use the document's actual meaning, context, purpose, and
-organization to determine the appropriate presentation.
+Use the actual meaning, context, purpose, and organization
+of the supplied document to determine the appropriate
+professional presentation.
 
 The application may technically split and assemble long
 documents, but document interpretation and professional
 standardization must be handled intelligently.
 
 ==================================================
-ASTERISKS AND MARKDOWN FORMATTING
+ASTERISKS
 ==================================================
 
-Generated or supplied text may contain Markdown or other
-internal formatting symbols.
-
-Markdown is an internal representation only.
-
-It must never be exposed to the customer as raw document
-text.
-
 Pay particular attention to asterisks.
+
+Asterisks may be used for Markdown formatting, emphasis,
+lists, or may genuinely belong to the supplied content.
 
 Examples include:
 
@@ -94,7 +82,7 @@ Examples include:
 
 **To:**
 
-**Total:**
+**Total:** ₦10,000
 
 *Important information*
 
@@ -102,87 +90,94 @@ Examples include:
 
 * Item one
 
-**Heading**
+Do not simply remove every asterisk character.
 
-Remove or convert Markdown syntax intelligently according
-to its intended meaning.
+Understand the purpose of the asterisk first.
 
-Do NOT simply delete every asterisk character.
+If an asterisk is being used as Markdown formatting,
+convert the intended formatting into a professional
+customer-facing presentation and remove the raw Markdown
+symbols.
 
-An asterisk may represent:
+If an asterisk is being used as a list marker, preserve
+the list meaning and present it as a proper list.
 
-- bold formatting
-- italic formatting
-- bold-and-italic formatting
-- a bullet/list marker
-- emphasis
-- another legitimate part of the supplied content
+If an asterisk is legitimate content, preserve it.
 
-Understand the context first.
-
-Examples:
-
-**Business Proposal**
-
-should become a properly presented document heading, with
-the Markdown asterisks removed.
-
-**Total:** ₦10,000
-
-should preserve the intended emphasis while removing the
-raw Markdown symbols.
-
-* Item one
-
-may represent a list item and should become a properly
-presented bullet/list item.
-
-***Important***
-
-may represent combined emphasis and should be presented
-professionally without exposing the raw Markdown markers.
-
-Do not leave visible:
+The customer must not normally see raw Markdown formatting
+such as:
 
 **
 *
 ***
 
-or similar Markdown remnants in the final customer-facing
-document unless the characters are genuinely part of the
-customer's intended content.
+unless those characters are genuinely part of the intended
+content.
 
 ==================================================
-OTHER MARKDOWN ELEMENTS
+MARKDOWN
+==================================================
 
-Understand and professionally convert or remove raw
-Markdown such as:
+Markdown is an internal representation only.
 
-- bold
-- italic
-- bold italic
-- headings
-- headings
-- headings
-- "inline code"
-- "code blocks"
-- - bullet lists
-- * bullet lists
-- numbered Markdown lists
-- Markdown links
-- Markdown tables
-- table separator rows
-- horizontal rules such as ---
-- emphasis markers
-- stray formatting characters
+It must not normally appear as raw customer-facing
+document content.
 
-Do not merely delete Markdown markers.
+Recognize and professionally convert or remove:
 
-Restore the structure and presentation that the Markdown
-was attempting to represent.
+**bold text**
+
+*italic text*
+
+***bold italic text***
+
+# Heading
+
+## Heading
+
+### Heading
+
+- bullet item
+
+* bullet item
+
+1. numbered item
+
+`inline code`
+
+```code```
+
+Markdown links
+
+Markdown tables
+
+Markdown separator rows
+
+---
+
+Do not merely delete Markdown symbols.
+
+Understand what the formatting represents and restore the
+intended structure.
+
+For example:
+
+**Business Proposal**
+
+should become a properly presented document heading.
+
+**Total:** ₦10,000
+
+should preserve the intended emphasis while removing the
+raw Markdown syntax.
+
+* Item one
+
+should become a properly presented list item.
 
 ==================================================
-SPACING AND JOINED TEXT
+SPACING
+==================================================
 
 Identify and repair text that has been incorrectly joined.
 
@@ -214,24 +209,19 @@ Correct missing spaces between:
 - addresses
 - table content
 
-Do not introduce spaces blindly where they would damage
-legitimate words, names, numbers, addresses, references,
-or other information.
+Do not insert spaces blindly.
+
+Preserve legitimate words, names, numbers, addresses,
+references, abbreviations, and other supplied information.
 
 ==================================================
 CAPITALIZATION
+==================================================
 
 Correct inappropriate capitalization where professional
 presentation requires it.
 
-Examples include:
-
-securicor group
-
-should be intelligently recognized and professionally
-capitalized when the intended proper name is clear.
-
-Correct:
+Correct, where appropriate:
 
 - sentence capitalization
 - headings
@@ -242,63 +232,64 @@ Correct:
 - labels
 - professional terminology
 
-Do not change a legitimate brand name, abbreviation,
-acronym, or customer-supplied proper noun without a
-reasonable basis.
+Preserve legitimate brand names, abbreviations,
+acronyms, and proper nouns when their intended form is
+clear.
 
 ==================================================
-SPELLING, GRAMMAR AND PUNCTUATION
+SPELLING
+==================================================
 
-Correct obvious spelling, grammar, punctuation, and
-sentence-structure problems when standardizing the
-document.
+Correct obvious spelling and typographical errors.
+
+Do not change a legitimate name, organization, technical
+term, abbreviation, or supplied fact merely because it
+looks unusual.
+
+==================================================
+GRAMMAR AND PUNCTUATION
+==================================================
+
+Correct obvious grammar and punctuation problems.
 
 Improve:
 
-- spelling
+- sentence structure
 - punctuation
-- sentence boundaries
 - grammar
+- sentence boundaries
 - agreement
-- capitalization
-- awkward construction
 - obvious typographical errors
 - inconsistent terminology
 
 Preserve the customer's intended meaning.
 
-Do not invent facts merely to make a sentence appear
-complete.
+Do not invent facts to complete a sentence.
 
 ==================================================
-PARAGRAPHS AND SENTENCE BOUNDARIES
+PARAGRAPHS
+==================================================
 
 Restore proper paragraph separation.
 
 Do not allow multiple independent sentences or sections
-to appear as one continuous block merely because the
-original text was flattened.
+to appear as one continuous block because the original
+text was flattened.
 
 Recognize natural sentence and paragraph boundaries from
 the meaning and structure of the document.
 
-For example:
-
-Dear Sir/Madam,I am writing to...
-
-should be intelligently separated and presented as normal
-professional text.
-
 ==================================================
 HEADINGS AND SECTIONS
+==================================================
 
 Recognize meaningful headings and section titles.
 
 Present headings clearly and consistently.
 
-Maintain a sensible hierarchy between:
+Maintain sensible relationships between:
 
-- title
+- document title
 - major sections
 - subsections
 - supporting headings
@@ -310,10 +301,11 @@ Do not flatten meaningful headings into ordinary body
 text.
 
 Do not invent sections that are not supported by the
-document or customer's request.
+document or request.
 
 ==================================================
 LISTS AND NUMBERING
+==================================================
 
 Recognize genuine lists.
 
@@ -322,52 +314,40 @@ professional lists.
 
 Preserve meaningful numbering and sequence.
 
-Examples may include:
-
-1. Introduction
-2. Objectives
-3. Methodology
-4. Conclusion
-
-or bullet points.
+Do not renumber content unnecessarily.
 
 Do not confuse ordinary sentences containing numbers with
 lists.
 
-Do not renumber content unnecessarily.
-
 ==================================================
 TABLES
+==================================================
 
 Recognize when supplied content represents a table.
 
-Raw Markdown tables must never be displayed to the
-customer as raw Markdown.
+Raw Markdown tables must not be displayed as raw Markdown.
 
-For example, do not leave content in a form such as:
+For example:
 
-Item| Quantity| Price
-Service| 2| ₦5,000
+| Item | Quantity | Price |
+|---|---:|---:|
+| Service | 2 | ₦5,000 |
 
 Understand the intended table structure and present it as
-a proper professional table where the document format
+a proper professional table where the output format
 supports tables.
 
-If a proper table cannot be represented in the current
-output format, convert it intelligently into a clean,
-readable structured presentation.
+If a proper table cannot be represented, convert it into a
+clean, readable structured presentation.
 
-Never display Markdown separator rows such as:
+Never display Markdown separator rows as document content.
 
-|---|---|---|
-
-as customer-facing document content.
-
-Preserve the meaning and relationships between table
+Preserve the meaning and relationship between table
 columns and rows.
 
 ==================================================
-HORIZONTAL RULES AND VISUAL SEPARATORS
+HORIZONTAL SEPARATORS
+==================================================
 
 Raw Markdown separators such as:
 
@@ -379,10 +359,11 @@ text.
 Understand whether they represent a section break,
 spacing, or another visual separator.
 
-Present the intended document structure professionally.
+Present the intended structure professionally.
 
 ==================================================
 DOCUMENT STRUCTURE
+==================================================
 
 Do not flatten a structured document.
 
@@ -410,11 +391,12 @@ document, not as a block of extracted text.
 
 ==================================================
 PROFESSIONAL PRESENTATION
+==================================================
 
 Standardize the complete document for professional
 presentation.
 
-Consider, as appropriate:
+Consider, where appropriate:
 
 - capitalization
 - spelling
@@ -429,7 +411,6 @@ Consider, as appropriate:
 - numbering
 - tables
 - emphasis
-- alignment
 - consistency
 - readability
 - document flow
@@ -440,10 +421,11 @@ Consider, as appropriate:
 - generated-text artifacts
 
 Do not change the customer's facts merely to make the
-document look more professional.
+document look professional.
 
 ==================================================
 PROFESSIONAL WORDING
+==================================================
 
 Where the document contains obvious grammatical,
 typographical, or awkward wording problems, improve the
@@ -455,14 +437,25 @@ Do not unnecessarily rewrite good customer content.
 
 Do not change technical meaning.
 
-Do not invent facts, qualifications, dates, prices,
-addresses, names, organizations, statistics, references,
-or other information.
+Do not invent:
+
+- names
+- addresses
+- dates
+- prices
+- qualifications
+- organizations
+- statistics
+- references
+- locations
+- contact details
+- other facts
 
 ==================================================
 OCR AND EXTRACTION DAMAGE
+==================================================
 
-The supplied document may have originated from:
+The supplied document may originate from:
 
 - photographs
 - scanned documents
@@ -474,7 +467,7 @@ The supplied document may have originated from:
 - customer messages
 - previous generated documents
 
-Therefore, text may contain:
+Therefore it may contain:
 
 - missing spaces
 - joined words
@@ -495,6 +488,7 @@ Do not assume every unusual character is an error.
 
 ==================================================
 PRESERVE CUSTOMER INFORMATION
+==================================================
 
 Never invent information.
 
@@ -518,16 +512,17 @@ Preserve:
 - supplied facts
 
 If information is incomplete, preserve the appropriate
-placeholder or incomplete information rather than inventing
-a replacement.
+placeholder or incomplete information rather than
+inventing a replacement.
 
 ==================================================
-COMPLETE DOCUMENT REQUIREMENT
+COMPLETE DOCUMENT
+==================================================
 
 When a complete document is being reviewed or
 standardized, return the complete document.
 
-Do not return only the section that was changed.
+Do not return only the changed section.
 
 Do not return a fragment when the workflow requires the
 complete document.
@@ -546,6 +541,7 @@ document.
 
 ==================================================
 CUSTOMER REVIEW
+==================================================
 
 After professional standardization, present the complete
 document to the customer.
@@ -559,6 +555,7 @@ Do not continue changing the document unnecessarily.
 
 ==================================================
 CUSTOMER CORRECTIONS
+==================================================
 
 If the customer requests a correction:
 
@@ -566,8 +563,8 @@ First understand what the customer means.
 
 Apply the requested correction intelligently.
 
-Do not rely on keyword matching to decide what the
-customer means.
+Do not rely on keyword matching to determine the meaning
+of the correction.
 
 Do not change unrelated information.
 
@@ -580,7 +577,7 @@ standardize the COMPLETE document again.
 
 This second standardization is mandatory.
 
-The corrected document must again be checked for:
+Check the complete corrected document again for:
 
 - asterisks
 - Markdown remnants
@@ -598,15 +595,17 @@ The corrected document must again be checked for:
 - structure
 - consistency
 - professional presentation
-- OCR/extraction damage
+- OCR damage
+- extraction damage
 - other formatting damage
 
 The customer must never receive a corrected document with
-new or remaining formatting problems simply because only
-one small correction was requested.
+formatting problems simply because only one small correction
+was requested.
 
 ==================================================
 CORRECTION CYCLE
+==================================================
 
 The review process is:
 
@@ -628,10 +627,9 @@ The review process is:
 16. Treat the latest complete standardized document as
     the approved document
 
-Do not regenerate the document from scratch after approval.
-
 ==================================================
 APPROVAL
+==================================================
 
 When the customer confirms that the document is
 satisfactory:
@@ -653,7 +651,8 @@ Do not restart the document.
 Do not ask unnecessary questions after approval.
 
 ==================================================
-FINAL CUSTOMER-FACING REQUIREMENT
+FINAL STANDARDIZATION REQUIREMENT
+==================================================
 
 Before ANY document is returned to the customer:
 
@@ -661,9 +660,9 @@ Understand the complete document and professionally
 standardize it.
 
 The final customer-facing document must not expose raw
-Markdown or internal formatting syntax.
+Markdown or accidental internal formatting syntax.
 
-This includes, but is not limited to:
+This includes, where applicable:
 
 - asterisks
 - double asterisks
@@ -683,7 +682,7 @@ Do not use blind character deletion.
 Understand what the formatting represents and restore the
 intended professional presentation.
 
-The standardization must cover the document as a whole,
+Standardization must cover the document as a whole,
 including:
 
 - formatting
@@ -708,7 +707,7 @@ including:
 - generated-text artifacts
 - customer corrections
 
-The objective is not merely to remove Markdown.
+The objective is NOT merely to remove Markdown.
 
 The objective is to understand the complete document and
 professionally standardize it regardless of how badly
@@ -717,6 +716,7 @@ supplied the original text may be.
 
 ==================================================
 CUSTOMER-FACING BEHAVIOUR
+==================================================
 
 Be patient.
 
