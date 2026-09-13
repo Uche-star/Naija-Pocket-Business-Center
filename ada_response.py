@@ -30,7 +30,7 @@ APPLICATION RESPONSIBILITIES
 - paginate locally
 - review the complete document
 - apply requested corrections
-- intelligently standardize corrected content again
+- intelligently standardize corrected content
 
 The application does not attempt to decide the document's
 internal structure or formatting.
@@ -963,7 +963,7 @@ The customer must not be shown raw Markdown syntax merely
 because the source or intelligence response contained it.
 
 Use appropriate professional headings, paragraphs, lists,
-numbering, spacing, tables and emphasis where appropriate.
+numbering, tables and emphasis where appropriate.
 
 Preserve meaningful emphasis and structure.
 
@@ -1292,14 +1292,12 @@ Your responsibility is to understand the work and complete it.
     # ========================================================
     # DOCUMENT STANDARDIZATION
     #
-    # IMPORTANT:
-    # This does NOT remove Markdown with Python.
+    # Intelligence performs the standardization.
     #
-    # Intelligence receives each page and decides what the
-    # intended professional formatting should be.
+    # Python does NOT blindly remove Markdown.
     #
-    # The existing GENERATION_OUTPUT_TOKENS value is reused.
-    # No token-limit constant is changed.
+    # One standardization pass is made after generation and
+    # one after an actual correction.
     # ========================================================
 
     def build_standardization_prompt(
@@ -1320,9 +1318,8 @@ Your responsibility is to understand the work and complete it.
             "The document content is supplied by the customer or "
             "was already generated from the customer's request.\n\n"
 
-            "Your task is to preserve the meaning and facts while "
-            "making the page professionally formatted for direct "
-            "customer display.\n\n"
+            "Preserve the meaning and facts while making the page "
+            "professionally formatted for direct customer display.\n\n"
 
             "IMPORTANT:\n"
             "Use intelligence to understand intended formatting.\n"
@@ -1455,7 +1452,7 @@ DOCUMENT DISPLAY STANDARDIZATION IS REQUIRED.
 The content returned from this operation is going directly
 to a customer-facing document page.
 
-Before returning it, understand and standardize its formatting.
+Understand and standardize its formatting.
 
 Do not expose raw Markdown syntax.
 
@@ -1510,8 +1507,6 @@ Return only the finished page.
                             prompt,
                     },
                 ],
-                # IMPORTANT:
-                # Existing token value is reused unchanged.
                 output_tokens=(
                     GENERATION_OUTPUT_TOKENS
                 ),
@@ -1783,6 +1778,15 @@ Return only the finished page.
 
     # ========================================================
     # DOCUMENT GENERATION
+    #
+    # FLOW:
+    # Groq generation
+    #       ↓
+    # one intelligent standardization pass
+    #       ↓
+    # standardized pages
+    #       ↓
+    # Workspace
     # ========================================================
 
     def generate_document(
@@ -1875,12 +1879,14 @@ Return only the finished page.
                     {
                         "role":
                             "system",
+
                         "content":
                             system_prompt,
                     },
                     {
                         "role":
                             "user",
+
                         "content":
                             compact_text(
                                 prompt,
@@ -1994,14 +2000,7 @@ Return only the finished page.
                 category="EMPTY_DOCUMENT",
             )
 
-        # ====================================================
-        # IMPORTANT:
-        #
-        # Workspace must NEVER receive the raw generated
-        # document.
-        #
-        # Standardize it first using intelligence.
-        # ====================================================
+        # Workspace receives ONLY the standardized document.
 
         (
             document_text,
@@ -2406,6 +2405,25 @@ Return only the finished page.
 
     # ========================================================
     # COMPLETE DOCUMENT REVIEW
+    #
+    # IMPORTANT:
+    #
+    # Review DOES NOT standardize again.
+    #
+    # The pages arriving here are the already-standardized
+    # pages produced for Workspace.
+    #
+    # Review asks Groq for FINDINGS ONLY.
+    #
+    # This prevents:
+    #
+    # Generation
+    #   -> standardization
+    #   -> Review standardization
+    #   -> Review returned-document standardization
+    #
+    # and prevents the 700-token review response from trying
+    # to contain an entire long document.
     # ========================================================
 
     def review_document_pages(
@@ -2436,51 +2454,25 @@ Return only the finished page.
                 category="EMPTY_DOCUMENT",
             )
 
-        # ====================================================
-        # REVIEW FIX:
-        #
-        # The incoming Workspace document is standardized
-        # again before Review uses it.
-        #
-        # This means Review never deliberately works from
-        # the raw Markdown version.
-        # ====================================================
+        # Incoming pages are the canonical standardized pages
+        # produced by generation/correction.
 
-        (
-            standardized_document,
-            standardized_pages,
-        ) = self.intelligently_standardize_document(
-            document=(
-                self.assemble_document(
-                    normalized
-                )
-            ),
-            service=service,
-            reason=(
-                "Prepare the complete document for the Review "
-                "page. Every customer-facing page must be "
-                "professionally standardized before display."
-            ),
-            context=context,
-            progress_callback=progress_callback,
+        complete_document = (
+            self.assemble_document(
+                normalized
+            )
         )
 
-        if not standardized_pages:
+        if not complete_document:
 
             raise AdaResponseError(
-                "The standardized document contains no pages.",
+                "The supplied review document is empty.",
                 stage="REVIEW_INTAKE",
-                category="EMPTY_STANDARDIZED_DOCUMENT",
+                category="EMPTY_DOCUMENT",
             )
-
-        normalized = standardized_pages
 
         total_pages = len(
             normalized
-        )
-
-        complete_document = (
-            standardized_document
         )
 
         cache_key = (
@@ -2523,61 +2515,63 @@ Return only the finished page.
             )
         )
 
+        # Review is findings-only.
+        #
+        # We deliberately do NOT ask Groq to reproduce the
+        # complete document. The existing 700-token review
+        # allowance is therefore sufficient for findings and
+        # is not used to regenerate the document.
+
         review_document_text = compact_document_text(
             complete_document,
-            8500,
+            REVIEW_REQUEST_CHARS - 2500,
         )
 
         review_customer_request = compact_text(
             customer_request,
-            3000,
+            2500,
         )
-
-        review_service = safe_text(
-            service
-        )
-
-        # ====================================================
-        # IMPORTANT:
-        #
-        # The old instruction said:
-        #
-        # "Return the entire document exactly as provided."
-        #
-        # That preserved raw Markdown.
-        #
-        # It is now explicitly replaced with an intelligence
-        # standardization instruction.
-        # ====================================================
 
         review_prompt = (
-            "REVIEW THE COMPLETE STANDARDIZED DOCUMENT.\n\n"
+            "REVIEW THE COMPLETE CUSTOMER DOCUMENT.\n\n"
 
-            "The supplied document has already been processed "
-            "for professional customer-facing formatting.\n\n"
+            "The document supplied below is already professionally "
+            "standardized and is the canonical customer-facing "
+            "document.\n\n"
 
-            "Do not convert it back into Markdown.\n"
-            "Do not add Markdown syntax.\n"
-            "Do not return raw formatting markers.\n\n"
+            "DO NOT rewrite the document.\n"
+            "DO NOT reproduce the document.\n"
+            "DO NOT summarize the document.\n"
+            "DO NOT add Markdown formatting.\n"
+            "DO NOT return the document content.\n\n"
 
-            "RETURN BOTH:\n\n"
+            "Find genuine issues that should be considered before "
+            "customer approval.\n\n"
 
-            "PART 1 - COMPLETE DOCUMENT:\n"
-            "Return the complete document in its professionally "
-            "standardized form.\n"
-            "START WITH: DOCUMENT_START\n"
-            "END WITH: DOCUMENT_END\n\n"
+            "Check intelligently for things such as:\n"
+            "- missing or inconsistent information\n"
+            "- obvious spelling or grammar problems\n"
+            "- contradictory information\n"
+            "- incomplete sections where completion is genuinely "
+            "required\n"
+            "- obvious formatting or organization problems\n"
+            "- inconsistencies with the customer's request\n\n"
 
-            "PART 2 - FINDINGS:\n"
-            "List any genuine issues using PAGE N: finding.\n"
-            "If there are no genuine issues, write "
-            "NO ISSUES FOUND.\n"
-            "START WITH: FINDINGS_START\n"
-            "END WITH: FINDINGS_END\n\n"
+            "Do not invent problems.\n"
+            "Do not criticize valid stylistic choices merely "
+            "because they differ from a template.\n\n"
 
-            "SERVICE CONTEXT:\n"
-            + review_service
-            + "\n\n"
+            "RETURN FINDINGS ONLY.\n\n"
+
+            "Use this format:\n"
+            "PAGE 1: finding\n"
+            "PAGE 2: finding\n\n"
+
+            "For document-wide findings use:\n"
+            "DOCUMENT: finding\n\n"
+
+            "If there are no genuine issues, return exactly:\n"
+            "NO ISSUES FOUND\n\n"
 
             "CUSTOMER REQUEST:\n"
             + review_customer_request
@@ -2643,70 +2637,15 @@ Return only the finished page.
                 category="EMPTY_REVIEW",
             )
 
-        # ====================================================
-        # REVIEW PARSING
-        # ====================================================
-
-        doc_text = complete_document
         findings_text = review
 
-        document_match = re.search(
-            r"DOCUMENT_START(.*?)DOCUMENT_END",
-            review,
-            re.DOTALL | re.IGNORECASE,
-        )
-
+        # If an old/incorrect model response happens to contain
+        # legacy wrappers, extract only the findings section.
         findings_match = re.search(
             r"FINDINGS_START(.*?)FINDINGS_END",
             review,
             re.DOTALL | re.IGNORECASE,
         )
-
-        if document_match:
-
-            extracted_document = (
-                document_match.group(1)
-                .strip()
-            )
-
-            if extracted_document:
-
-                # Do NOT trust this as the final display version
-                # until intelligence standardizes it again.
-                extracted_pages = (
-                    self.document_to_pages(
-                        extracted_document
-                    )
-                )
-
-                if extracted_pages:
-
-                    (
-                        doc_text,
-                        standardized_after_review,
-                    ) = self.intelligently_standardize_document(
-                        document=extracted_document,
-                        service=service,
-                        reason=(
-                            "Finalize the complete document "
-                            "after Review intelligence has "
-                            "returned it. The customer-facing "
-                            "Review page must contain only "
-                            "professionally standardized content."
-                        ),
-                        context=context,
-                        progress_callback=progress_callback,
-                    )
-
-                    if standardized_after_review:
-
-                        normalized = (
-                            standardized_after_review
-                        )
-
-                        total_pages = len(
-                            normalized
-                        )
 
         if findings_match:
 
@@ -2715,29 +2654,11 @@ Return only the finished page.
                 .strip()
             )
 
-        doc_text = normalize_document_formatting(
-            doc_text
-        )
+        # Never replace the canonical document with Review
+        # output. The document remains the already-standardized
+        # document supplied by Workspace.
 
-        findings_text = safe_text(
-            findings_text,
-            preserve_lines=True,
-        )
-
-        # ====================================================
-        # CRITICAL REVIEW FIX:
-        #
-        # Page cards MUST use the standardized document pages.
-        #
-        # The old code used:
-        #
-        #     page["content"]
-        #
-        # from the original incoming pages.
-        #
-        # That allowed raw Markdown to survive even if the
-        # intelligence had produced a cleaned document.
-        # ====================================================
+        doc_text = complete_document
 
         page_reviews = (
             self._parse_review_by_page(
@@ -2791,8 +2712,7 @@ Return only the finished page.
                 "total_pages":
                     total_pages,
 
-                # IMPORTANT:
-                # These all point to the standardized page.
+                # Canonical standardized page.
                 "content":
                     standardized_page_content,
 
@@ -2855,9 +2775,7 @@ Return only the finished page.
         ] = result
 
         if progress_callback:
-            progress_callback(
-                result
-            )
+            progress_callback(result)
 
         return result
 
@@ -2884,7 +2802,7 @@ Return only the finished page.
         if not review:
             return results
 
-        if review.upper() == "NO ISSUES FOUND":
+        if review.upper().strip() == "NO ISSUES FOUND":
             return results
 
         pattern = re.compile(
@@ -3052,6 +2970,22 @@ Return only the finished page.
 
     # ========================================================
     # CORRECTION
+    #
+    # FLOW:
+    #
+    # Existing standardized Review document
+    #       ↓
+    # customer correction
+    #       ↓
+    # Groq correction
+    #       ↓
+    # one intelligent standardization pass
+    #       ↓
+    # standardized Review document
+    #
+    # There is NO unnecessary standardization before the
+    # correction because the Review document is already the
+    # standardized canonical document.
     # ========================================================
 
     def correct_document(
@@ -3093,28 +3027,14 @@ Return only the finished page.
                 category="EMPTY_CORRECTION",
             )
 
-        # ====================================================
-        # The current Review document is standardized before
-        # correction processing.
-        # ====================================================
+        # These pages are already the standardized document
+        # displayed in Review. Do not spend another Groq call
+        # standardizing them before applying the correction.
 
-        (
-            current_document,
-            pages,
-        ) = self.intelligently_standardize_document(
-            document=(
-                self.assemble_document(
-                    pages
-                )
-            ),
-            service=service,
-            reason=(
-                "Ensure the current Review document is "
-                "standardized before applying the customer's "
-                "correction."
-            ),
-            context=context,
-            progress_callback=progress_callback,
+        current_document = (
+            self.assemble_document(
+                pages
+            )
         )
 
         if not current_document:
@@ -3150,17 +3070,6 @@ Return only the finished page.
             current_document,
             7000,
         )
-
-        # ====================================================
-        # CORRECTION:
-        #
-        # The customer's correction is an instruction.
-        #
-        # The complete current document is the source.
-        #
-        # After applying the correction, the complete result
-        # goes through intelligent standardization again.
-        # ====================================================
 
         prompt = (
             "APPLY THE CUSTOMER CORRECTION TO THE COMPLETE "
@@ -3253,13 +3162,8 @@ Return only the finished page.
                 category="EMPTY_CORRECTED_DOCUMENT",
             )
 
-        # ====================================================
-        # MANDATORY SECOND STANDARDIZATION
-        #
-        # This is what ensures a correction typed on Review
-        # cannot leave the document with raw Markdown or
-        # inconsistent formatting.
-        # ====================================================
+        # One final intelligence standardization pass after
+        # the correction.
 
         (
             corrected_document,
@@ -3288,6 +3192,12 @@ Return only the finished page.
                 stage="DOCUMENT_CORRECTION",
                 category="EMPTY_STANDARDIZED_CORRECTION",
             )
+
+        # The review cache may contain the previous version.
+        # Do not allow that previous version to be reused after
+        # a correction.
+
+        self._review_cache.clear()
 
         result = {
             "type":
@@ -3525,17 +3435,22 @@ if __name__ == "__main__":
 
     print(
         "Review:",
-        "COMPLETE DOCUMENT",
+        "FINDINGS ONLY",
     )
 
     print(
-        "Review page standardization:",
-        "ENABLED",
+        "Review page document:",
+        "USES CANONICAL STANDARDIZED DOCUMENT",
+    )
+
+    print(
+        "Review re-standardization:",
+        "NOT REPEATED",
     )
 
     print(
         "Correction re-standardization:",
-        "ENABLED",
+        "ONE FINAL PASS",
     )
 
     print(
