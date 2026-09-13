@@ -726,6 +726,79 @@ def build_context(
 # INTELLIGENCE RESULT EXTRACTION
 # ============================================================
 
+# ============================================================
+# REVIEW DOCUMENT STANDARDIZATION / POLISHING INSTRUCTION
+# ============================================================
+#
+# Everything that reaches the Review page must be standardized,
+# professionally formatted, and highly polished by default.
+#
+# This applies both to newly created work and to every customer
+# correction/revision made from the Review page.
+#
+# This is an intelligence instruction only. It does not alter
+# the Review UI or any Review workflow component.
+# ============================================================
+
+REVIEW_STANDARDIZATION_PROMPT = """
+REVIEW-PAGE DOCUMENT STANDARDIZATION REQUIREMENT:
+
+Everything that reaches the Review page must be standardized,
+properly formatted, professionally polished, and presentation-ready
+by default.
+
+This applies to:
+- newly generated documents;
+- customer-provided content;
+- uploaded document content;
+- rewritten content;
+- grammar corrections;
+- customer corrections;
+- customer revision instructions;
+- corrected versions of an existing document;
+- any content returned after a Review-page correction.
+
+Never return raw, rough, poorly structured, inconsistent, or
+unfinished customer text simply because the customer supplied it
+that way.
+
+Preserve the customer's intended meaning, facts, names, figures,
+instructions, and requested content, but automatically improve the
+presentation and writing wherever appropriate.
+
+By default:
+- correct grammar, spelling, punctuation, and sentence structure;
+- improve clarity, flow, and readability;
+- standardize headings, paragraphs, spacing, numbering, and lists;
+- use consistent professional formatting;
+- remove unnecessary repetition and awkward wording;
+- maintain a coherent document structure;
+- make the document look professionally prepared;
+- preserve the appropriate tone and purpose of the service;
+- do not invent facts or information that the customer did not provide;
+- do not remove important customer information merely to make the
+  document shorter;
+- do not expose internal AI, model, prompt, or system terminology.
+
+CUSTOMER CORRECTIONS:
+
+When a customer makes a correction or revision from the Review page,
+treat the customer's instruction as the requested change, then
+re-standardize and professionally polish the resulting document
+before returning it to Review.
+
+A customer correction must NOT cause the document to become rough,
+inconsistent, badly formatted, or less professional.
+
+The final corrected version must therefore contain both:
+1. the customer's requested correction; and
+2. the same standard of professional formatting, writing quality,
+   consistency, and polish applied to the rest of the document.
+
+The Review page should always receive the best standardized and
+polished version available, not the customer's raw edited version.
+"""
+
 _TEXT_KEYS = (
     "document_text",
     "prepared_work",
@@ -991,6 +1064,7 @@ async def create_document_with_intelligence(
         "message": customer_request,
         "original_request": customer_request,
         "create_work": True,
+        "review_standardization_prompt": REVIEW_STANDARDIZATION_PROMPT,
     }
 
     attempted: list[str] = []
@@ -1039,6 +1113,7 @@ async def create_document_with_intelligence(
                 "service": request.service,
                 "event": request.event,
                 "context": context,
+                "review_standardization_prompt": REVIEW_STANDARDIZATION_PROMPT,
             },
         )
 
@@ -1522,6 +1597,7 @@ async def run_review(
                 "progress_callback": review_callback(
                     job_id
                 ),
+                "review_standardization_prompt": REVIEW_STANDARDIZATION_PROMPT,
             },
         )
 
@@ -2860,6 +2936,7 @@ async def correct(
                         "context"
                     ),
                     "progress_callback": None,
+                    "review_standardization_prompt": REVIEW_STANDARDIZATION_PROMPT,
                 },
             )
 
