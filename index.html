@@ -490,10 +490,6 @@ body{
     color:#F4D58D;
 }
 
-.value:nth-of-type(2){
-    color:#70D1C1;
-}
-
 .value.luxury-value .luxury-main{
     color:#FFF4D6;
 }
@@ -563,64 +559,86 @@ body{
     flex:0 0 auto;
 }
 
+/* =========================================================
+   LUXURY WHITE BOARD
+========================================================= */
+
 .value.luxury-value{
+    position:relative;
+    width:calc(100% - 12px);
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:3px;
-    padding:2px 8px;
-    color:#f5f1e6;
+    gap:5px;
+    padding:12px 12px;
+    color:#171717;
     font-family:Georgia,"Times New Roman",serif;
     font-size:clamp(11px,3vw,22px);
     font-weight:400;
-    line-height:1.08;
-    letter-spacing:clamp(.8px,.25vw,2.5px);
+    line-height:1.14;
+    letter-spacing:clamp(.5px,.18vw,2px);
     text-transform:uppercase;
-    text-shadow:0 2px 12px rgba(212,175,55,.12);
+    background:
+        linear-gradient(
+            145deg,
+            #fffefb 0%,
+            #f8f5ec 50%,
+            #eee9dc 100%
+        );
+    border:1px solid rgba(212,175,55,.78);
+    border-radius:6px;
+    box-shadow:
+        0 7px 22px rgba(0,0,0,.52),
+        0 0 18px rgba(212,175,55,.08),
+        inset 0 1px 0 rgba(255,255,255,.95),
+        inset 0 -1px 0 rgba(0,0,0,.06);
+    text-shadow:none;
 }
 
 .value.luxury-value::before{
     content:"";
-    width:clamp(31px,9vw,71px);
+    width:clamp(35px,9vw,72px);
     height:1px;
     margin-bottom:1px;
     background:
         linear-gradient(
             90deg,
             transparent,
-            #d4af37,
+            #b9912e,
             transparent
         );
 }
 
 .value.luxury-value .luxury-main{
     display:block;
-    font-weight:600;
-    letter-spacing:clamp(.7px,.22vw,2px);
+    color:#111111;
+    font-weight:700;
+    letter-spacing:clamp(.4px,.16vw,1.8px);
 }
 
 .value.luxury-value .luxury-sub{
     display:block;
+    color:#343434;
     font-size:1em;
     font-weight:400;
-    letter-spacing:clamp(1px,.3vw,3px);
+    letter-spacing:clamp(.7px,.22vw,2.3px);
     text-transform:uppercase;
 }
 
 .value.luxury-value::after{
     content:"";
-    width:clamp(46px,13vw,96px);
+    width:clamp(50px,13vw,100px);
     height:1px;
     margin-top:1px;
     background:
         linear-gradient(
             90deg,
             transparent,
-            #d4af37,
+            #b9912e,
             transparent
         );
-    opacity:.55;
+    opacity:.8;
 }
 
 /* =========================================================
@@ -640,57 +658,36 @@ body{
 }
 
 /* =========================================================
-   MOVING BRAND LINE
+   ENJOY THE BEST — REPLACES MOVING DOCUMENT PEOPLE
 ========================================================= */
 
 .document-people-window{
     width:100%;
     overflow:hidden;
     margin:0;
-    padding:2px 0;
+    padding:5px 0;
     flex:0 0 auto;
-    border-top:1px solid rgba(212,175,55,.045);
-    border-bottom:1px solid rgba(212,175,55,.045);
+    border-top:1px solid rgba(212,175,55,.20);
+    border-bottom:1px solid rgba(212,175,55,.20);
 }
 
 .document-people-track{
-    display:inline-flex;
+    display:flex;
     align-items:center;
-    flex-wrap:nowrap;
-    width:max-content;
-    white-space:nowrap;
+    justify-content:center;
+    width:100%;
     color:#E8C96A;
     font-family:Georgia,"Times New Roman",serif;
     font-size:clamp(12px,3vw,23px);
     font-weight:700;
     letter-spacing:clamp(1px,.35vw,3px);
-    animation:documentPeopleMove 22s linear infinite;
-    will-change:transform;
     text-shadow:0 0 12px rgba(212,175,55,.08);
 }
 
 .document-people-track .tagline-text{
-    display:inline-block;
+    display:block;
     flex:0 0 auto;
     white-space:nowrap;
-}
-
-.document-people-track .wide-gap{
-    display:inline-block;
-    width:360px;
-    min-width:360px;
-    height:1px;
-    flex:0 0 360px;
-}
-
-@keyframes documentPeopleMove{
-    0%{
-        transform:translateX(100vw);
-    }
-
-    100%{
-        transform:translateX(calc(-100% - 100vw));
-    }
 }
 
 /* =========================================================
@@ -1046,9 +1043,10 @@ body{
     }
 
     .value.luxury-value{
+        width:calc(100% - 6px);
         font-size:11.5px;
-        gap:2px;
-        padding:1px 5px;
+        gap:3px;
+        padding:9px 6px;
     }
 
     .value.luxury-value .luxury-sub{
@@ -1062,12 +1060,6 @@ body{
     .document-people-track{
         font-size:12px;
         letter-spacing:1.4px;
-    }
-
-    .document-people-track .wide-gap{
-        width:270px;
-        min-width:270px;
-        flex-basis:270px;
     }
 
     .service-instruction{
@@ -1150,7 +1142,10 @@ body{
     }
 
     .value.luxury-value{
+        width:calc(100% - 4px);
         font-size:9.8px;
+        padding:7px 4px;
+        gap:2px;
     }
 
     .services-title{
@@ -1159,12 +1154,6 @@ body{
 
     .document-people-track{
         font-size:10.5px;
-    }
-
-    .document-people-track .wide-gap{
-        width:230px;
-        min-width:230px;
-        flex-basis:230px;
     }
 
     .service-instruction{
@@ -1205,7 +1194,9 @@ body{
     }
 
     .value.luxury-value{
+        width:calc(100% - 24px);
         font-size:clamp(18px,2.35vw,23px);
+        padding:14px 20px;
     }
 
     .services-title{
@@ -1214,12 +1205,6 @@ body{
 
     .document-people-track{
         font-size:clamp(20px,3vw,27px);
-    }
-
-    .document-people-track .wide-gap{
-        width:620px;
-        min-width:620px;
-        flex-basis:620px;
     }
 
     .service-button{
@@ -1242,8 +1227,7 @@ body{
 @media(prefers-reduced-motion:reduce){
 
     .page::before,
-    .welcome-half::before,
-    .document-people-track{
+    .welcome-half::before{
         animation:none;
     }
 
@@ -1337,35 +1321,41 @@ body{
             FAST • CONVENIENT • OPEN 24/7
         </div>
 
-        <div class="value">
-            PREPARE YOUR DOCUMENTS IN MINUTES
-        </div>
+        <!-- =================================================
+             NEW LUXURY WHITE BOARD
+        ================================================== -->
 
         <div class="value luxury-value">
 
             <span class="luxury-main">
-                DO EVERYTHING CONCERNING YOUR DOCUMENTS
+                THIS WEB APP PROFESSIONALLY TYPES AND PREPARES
             </span>
 
             <span class="luxury-sub">
-                FROM YOUR PHONE, WHEREVER YOU ARE
+                YOUR DOCUMENTS IN MINUTES, USING JUST YOUR PHONE
             </span>
 
         </div>
+
+        <!-- =================================================
+             EXISTING DOCUMENT HUB TITLE
+        ================================================== -->
 
         <div class="services-title">
             ENJOY THE BEST IN DOCUMENT PROCESSING
         </div>
+
+        <!-- =================================================
+             FORMER MOVING DOCUMENT PEOPLE POSITION
+        ================================================== -->
 
         <div class="document-people-window">
 
             <div class="document-people-track">
 
                 <span class="tagline-text">
-                    THE DOCUMENT PEOPLE
+                    ENJOY THE BEST IN DOCUMENT PROCESSING
                 </span>
-
-                <span class="wide-gap"></span>
 
             </div>
 
