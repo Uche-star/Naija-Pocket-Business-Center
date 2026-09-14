@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Naija Pocket Business Center</title>
-
-<style>
+<title>Naija Pocket Business Center</title><style>
 *{
     box-sizing:border-box;
 }
@@ -444,8 +441,6 @@ body{
     flex:0 0 auto;
 }
 
-/* Fine metallic highlight */
-
 .brand-name::after{
     content:"";
     position:absolute;
@@ -491,15 +486,11 @@ body{
 }
 
 .value.luxury-value .luxury-main{
-    color:#FFF4D6;
+    color:#111111;
 }
 
 .value.luxury-value .luxury-sub{
-    color:#8FB8E8;
-}
-
-.services-title{
-    color:#E8B4A8;
+    color:#343434;
 }
 
 /* =========================================================
@@ -560,24 +551,25 @@ body{
 }
 
 /* =========================================================
-   LUXURY WHITE BOARD
+   LUXURY WHITE BOARD — LARGER / EASIER TO READ
 ========================================================= */
 
 .value.luxury-value{
     position:relative;
-    width:calc(100% - 12px);
+    width:calc(100% - 8px);
+    min-height:clamp(88px,15vw,145px);
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:5px;
-    padding:12px 12px;
+    gap:10px;
+    padding:22px 18px;
     color:#171717;
     font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(11px,3vw,22px);
+    font-size:clamp(15px,4vw,29px);
     font-weight:400;
-    line-height:1.14;
-    letter-spacing:clamp(.5px,.18vw,2px);
+    line-height:1.3;
+    letter-spacing:clamp(.4px,.12vw,1.5px);
     text-transform:uppercase;
     background:
         linear-gradient(
@@ -586,21 +578,21 @@ body{
             #f8f5ec 50%,
             #eee9dc 100%
         );
-    border:1px solid rgba(212,175,55,.78);
-    border-radius:6px;
+    border:1px solid rgba(212,175,55,.82);
+    border-radius:8px;
     box-shadow:
-        0 7px 22px rgba(0,0,0,.52),
-        0 0 18px rgba(212,175,55,.08),
-        inset 0 1px 0 rgba(255,255,255,.95),
+        0 10px 30px rgba(0,0,0,.58),
+        0 0 22px rgba(212,175,55,.10),
+        inset 0 1px 0 rgba(255,255,255,.98),
         inset 0 -1px 0 rgba(0,0,0,.06);
     text-shadow:none;
 }
 
 .value.luxury-value::before{
     content:"";
-    width:clamp(35px,9vw,72px);
+    width:clamp(45px,11vw,90px);
     height:1px;
-    margin-bottom:1px;
+    margin-bottom:3px;
     background:
         linear-gradient(
             90deg,
@@ -612,25 +604,27 @@ body{
 
 .value.luxury-value .luxury-main{
     display:block;
+    width:100%;
     color:#111111;
     font-weight:700;
-    letter-spacing:clamp(.4px,.16vw,1.8px);
+    letter-spacing:clamp(.3px,.10vw,1.4px);
 }
 
 .value.luxury-value .luxury-sub{
     display:block;
+    width:100%;
     color:#343434;
     font-size:1em;
     font-weight:400;
-    letter-spacing:clamp(.7px,.22vw,2.3px);
+    letter-spacing:clamp(.5px,.14vw,1.7px);
     text-transform:uppercase;
 }
 
 .value.luxury-value::after{
     content:"";
-    width:clamp(50px,13vw,100px);
+    width:clamp(60px,15vw,115px);
     height:1px;
-    margin-top:1px;
+    margin-top:3px;
     background:
         linear-gradient(
             90deg,
@@ -642,30 +636,14 @@ body{
 }
 
 /* =========================================================
-   DOCUMENT HUB TITLE
-========================================================= */
-
-.services-title{
-    width:100%;
-    margin:0;
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:clamp(12px,3vw,23px);
-    font-weight:700;
-    line-height:1.1;
-    letter-spacing:clamp(.8px,.25vw,2px);
-    text-transform:uppercase;
-    text-shadow:0 2px 12px rgba(212,175,55,.07);
-}
-
-/* =========================================================
-   ENJOY THE BEST — REPLACES MOVING DOCUMENT PEOPLE
+   MOVING LINE — ENJOY THE BEST IN DOCUMENT PROCESSING
 ========================================================= */
 
 .document-people-window{
     width:100%;
     overflow:hidden;
     margin:0;
-    padding:5px 0;
+    padding:6px 0;
     flex:0 0 auto;
     border-top:1px solid rgba(212,175,55,.20);
     border-bottom:1px solid rgba(212,175,55,.20);
@@ -674,20 +652,34 @@ body{
 .document-people-track{
     display:flex;
     align-items:center;
-    justify-content:center;
-    width:100%;
+    justify-content:flex-start;
+    width:max-content;
+    min-width:100%;
     color:#E8C96A;
     font-family:Georgia,"Times New Roman",serif;
     font-size:clamp(12px,3vw,23px);
     font-weight:700;
     letter-spacing:clamp(1px,.35vw,3px);
     text-shadow:0 0 12px rgba(212,175,55,.08);
+    animation:documentPeopleMove 12s linear infinite;
 }
 
 .document-people-track .tagline-text{
     display:block;
     flex:0 0 auto;
     white-space:nowrap;
+    padding-right:70px;
+}
+
+@keyframes documentPeopleMove{
+
+    0%{
+        transform:translateX(100vw);
+    }
+
+    100%{
+        transform:translateX(-100%);
+    }
 }
 
 /* =========================================================
@@ -1043,18 +1035,25 @@ body{
     }
 
     .value.luxury-value{
-        width:calc(100% - 6px);
-        font-size:11.5px;
-        gap:3px;
-        padding:9px 6px;
+        width:calc(100% - 4px);
+        min-height:92px;
+        font-size:14px;
+        line-height:1.32;
+        gap:7px;
+        padding:15px 9px;
+    }
+
+    .value.luxury-value .luxury-main,
+    .value.luxury-value .luxury-sub{
+        width:100%;
     }
 
     .value.luxury-value .luxury-sub{
-        letter-spacing:1px;
+        letter-spacing:.8px;
     }
 
-    .services-title{
-        font-size:12px;
+    .document-people-window{
+        padding:5px 0;
     }
 
     .document-people-track{
@@ -1142,14 +1141,16 @@ body{
     }
 
     .value.luxury-value{
-        width:calc(100% - 4px);
-        font-size:9.8px;
-        padding:7px 4px;
-        gap:2px;
+        width:calc(100% - 2px);
+        min-height:82px;
+        font-size:11.5px;
+        line-height:1.28;
+        padding:11px 5px;
+        gap:5px;
     }
 
-    .services-title{
-        font-size:10.5px;
+    .value.luxury-value .luxury-sub{
+        letter-spacing:.6px;
     }
 
     .document-people-track{
@@ -1194,13 +1195,11 @@ body{
     }
 
     .value.luxury-value{
-        width:calc(100% - 24px);
-        font-size:clamp(18px,2.35vw,23px);
-        padding:14px 20px;
-    }
-
-    .services-title{
-        font-size:clamp(19px,2.6vw,25px);
+        width:calc(100% - 16px);
+        min-height:145px;
+        font-size:clamp(20px,2.5vw,30px);
+        padding:25px 28px;
+        gap:11px;
     }
 
     .document-people-track{
@@ -1231,279 +1230,261 @@ body{
         animation:none;
     }
 
+    .document-people-track{
+        animation:none;
+        transform:none;
+        width:100%;
+        justify-content:center;
+    }
+
     .service-button,
     .customer-care-button{
         transition:none;
     }
 }
-</style>
-</head>
+</style></head><body><div class="page"><section class="welcome-half"><!-- =====================================================
+     CUSTOMER CARE
+====================================================== -->
 
-<body>
+<div class="customer-care">
 
-<div class="page">
+    <button
+        type="button"
+        class="customer-care-button"
+        id="customerCareButton"
+        aria-expanded="false"
+        aria-controls="customerCarePanel"
+    >
+        CUSTOMER CARE
+    </button>
 
-<section class="welcome-half">
+    <div
+        class="customer-care-panel"
+        id="customerCarePanel"
+    >
 
-    <!-- =====================================================
-         CUSTOMER CARE
-    ====================================================== -->
+        <div class="customer-care-heading">
+            CONTACT CUSTOMER CARE
+        </div>
 
-    <div class="customer-care">
-
-        <button
-            type="button"
-            class="customer-care-button"
-            id="customerCareButton"
-            aria-expanded="false"
-            aria-controls="customerCarePanel"
+        <a
+            class="customer-care-link"
+            href="https://wa.me/2348057073891"
+            target="_blank"
+            rel="noopener noreferrer"
         >
-            CUSTOMER CARE
-        </button>
+            WHATSAPP CARE CHAT
+        </a>
 
-        <div
-            class="customer-care-panel"
-            id="customerCarePanel"
+        <a
+            class="customer-care-link"
+            href="tel:+2348057073891"
         >
+            CALL CUSTOMER CARE
+        </a>
 
-            <div class="customer-care-heading">
-                CONTACT CUSTOMER CARE
-            </div>
+        <span class="customer-care-number">
+            +234 805 707 3891
+        </span>
 
-            <a
-                class="customer-care-link"
-                href="https://wa.me/2348057073891"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                WHATSAPP CARE CHAT
-            </a>
+    </div>
+</div>
 
-            <a
-                class="customer-care-link"
-                href="tel:+2348057073891"
-            >
-                CALL CUSTOMER CARE
-            </a>
+<!-- =====================================================
+     WELCOME CONTENT
+====================================================== -->
 
-            <span class="customer-care-number">
-                +234 805 707 3891
-            </span>
+<div class="welcome-content">
 
-        </div>
+    <h1 class="brand-name">
+
+        <span class="green">
+            NAIJA POCKET
+        </span>
+
+        <br>
+
+        BUSINESS
+
+        <span class="gold">
+            CENTER
+        </span>
+
+    </h1>
+
+    <div class="gold-divider"></div>
+
+    <div class="value">
+        FAST • CONVENIENT • OPEN 24/7
     </div>
 
-    <!-- =====================================================
-         WELCOME CONTENT
-    ====================================================== -->
+    <!-- =================================================
+         LUXURY WHITE BOARD
+    ================================================== -->
 
-    <div class="welcome-content">
+    <div class="value luxury-value">
 
-        <h1 class="brand-name">
+        <span class="luxury-main">
+            THIS WEB APP PROFESSIONALLY TYPES AND PREPARES
+        </span>
 
-            <span class="green">
-                NAIJA POCKET
-            </span>
-
-            <br>
-
-            BUSINESS
-
-            <span class="gold">
-                CENTER
-            </span>
-
-        </h1>
-
-        <div class="gold-divider"></div>
-
-        <div class="value">
-            FAST • CONVENIENT • OPEN 24/7
-        </div>
-
-        <!-- =================================================
-             NEW LUXURY WHITE BOARD
-        ================================================== -->
-
-        <div class="value luxury-value">
-
-            <span class="luxury-main">
-                THIS WEB APP PROFESSIONALLY TYPES AND PREPARES
-            </span>
-
-            <span class="luxury-sub">
-                YOUR DOCUMENTS IN MINUTES, USING JUST YOUR PHONE
-            </span>
-
-        </div>
-
-        <!-- =================================================
-             EXISTING DOCUMENT HUB TITLE
-        ================================================== -->
-
-        <div class="services-title">
-            ENJOY THE BEST IN DOCUMENT PROCESSING
-        </div>
-
-        <!-- =================================================
-             FORMER MOVING DOCUMENT PEOPLE POSITION
-        ================================================== -->
-
-        <div class="document-people-window">
-
-            <div class="document-people-track">
-
-                <span class="tagline-text">
-                    ENJOY THE BEST IN DOCUMENT PROCESSING
-                </span>
-
-            </div>
-
-        </div>
+        <span class="luxury-sub">
+            YOUR DOCUMENTS IN MINUTES, USING JUST YOUR PHONE
+        </span>
 
     </div>
 
-</section>
+    <!-- =================================================
+         MOVING BRAND LINE
+    ================================================== -->
 
-<section class="services-half">
+    <div class="document-people-window">
 
-    <div class="service-instruction">
-        TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
-    </div>
+        <div class="document-people-track">
 
-    <div class="services">
-
-        <button type="button" class="service-button" data-service="Document Typing">
-            Document Typing
-        </button>
-
-        <button type="button" class="service-button" data-service="Document Formatting">
-            Document Formatting
-        </button>
-
-        <button type="button" class="service-button" data-service="Document Editing">
-            Document Editing
-        </button>
-
-        <button type="button" class="service-button" data-service="Grammar Correction">
-            Grammar Correction
-        </button>
-
-        <button type="button" class="service-button" data-service="Assignments">
-            Assignments
-        </button>
-
-        <button type="button" class="service-button" data-service="Projects">
-            Projects
-        </button>
-
-        <button type="button" class="service-button" data-service="Research Assistance">
-            Research Assistance
-        </button>
-
-        <button type="button" class="service-button" data-service="Seminar Papers">
-            Seminar Papers
-        </button>
-
-        <button type="button" class="service-button" data-service="CVs & Résumés">
-            CVs & Résumés
-        </button>
-
-        <button type="button" class="service-button" data-service="Cover Letters">
-            Cover Letters
-        </button>
-
-        <button type="button" class="service-button" data-service="Business Proposals">
-            Business Proposals
-        </button>
-
-        <button type="button" class="service-button" data-service="Company Profiles">
-            Company Profiles
-        </button>
-
-        <button type="button" class="service-button" data-service="Invoices">
-            Invoices
-        </button>
-
-        <button type="button" class="service-button" data-service="Quotations">
-            Quotations
-        </button>
-
-        <button type="button" class="service-button" data-service="Meeting Minutes">
-            Meeting Minutes
-        </button>
-
-        <button type="button" class="service-button" data-service="AI Writing Assistance">
-            AI Writing Assistance
-        </button>
-
-        <button type="button" class="service-button" data-service="Document Rewriting">
-            Document Rewriting
-        </button>
-
-        <button type="button" class="service-button" data-service="Translation">
-            Translation
-        </button>
-
-        <button type="button" class="service-button" data-service="PDF Conversion">
-            PDF Conversion
-        </button>
-
-        <button type="button" class="service-button" data-service="Topic Explanations">
-            Topic Explanations
-        </button>
-
-        <button type="button" class="service-button" data-service="Printing Preparation">
-            Printing Preparation
-        </button>
-
-        <button type="button" class="service-button" data-service="Excel Spreadsheets">
-            Excel Spreadsheets
-        </button>
-
-        <button type="button" class="service-button" data-service="Data Entry">
-            Data Entry
-        </button>
-
-        <button type="button" class="service-button" data-service="Data Analysis">
-            Data Analysis
-        </button>
-
-        <button type="button" class="service-button" data-service="Presentations">
-            Presentations
-        </button>
-
-        <button type="button" class="service-button" data-service="Document Summarization">
-            Document Summarization
-        </button>
-
-        <button type="button" class="service-button" data-service="Business Letters & Letterhead">
-            Business Letters & Letterhead
-        </button>
-
-        <div class="luxury-tagline">
-
-            <span class="brand-signature">
-
-                <span class="brand-main">
-                    NAIJA POCKET BUSINESS CENTER
-                </span>
-
-                <span class="brand-sub">
-                    YOUR BUSINESS CENTER IN YOUR POCKET
-                </span>
-
+            <span class="tagline-text">
+                ENJOY THE BEST IN DOCUMENT PROCESSING
             </span>
 
         </div>
 
     </div>
-
-</section>
 
 </div>
 
-<script>
+</section><section class="services-half"><div class="service-instruction">
+    TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
+</div>
+
+<div class="services">
+
+    <button type="button" class="service-button" data-service="Document Typing">
+        Document Typing
+    </button>
+
+    <button type="button" class="service-button" data-service="Document Formatting">
+        Document Formatting
+    </button>
+
+    <button type="button" class="service-button" data-service="Document Editing">
+        Document Editing
+    </button>
+
+    <button type="button" class="service-button" data-service="Grammar Correction">
+        Grammar Correction
+    </button>
+
+    <button type="button" class="service-button" data-service="Assignments">
+        Assignments
+    </button>
+
+    <button type="button" class="service-button" data-service="Projects">
+        Projects
+    </button>
+
+    <button type="button" class="service-button" data-service="Research Assistance">
+        Research Assistance
+    </button>
+
+    <button type="button" class="service-button" data-service="Seminar Papers">
+        Seminar Papers
+    </button>
+
+    <button type="button" class="service-button" data-service="CVs & Résumés">
+        CVs & Résumés
+    </button>
+
+    <button type="button" class="service-button" data-service="Cover Letters">
+        Cover Letters
+    </button>
+
+    <button type="button" class="service-button" data-service="Business Proposals">
+        Business Proposals
+    </button>
+
+    <button type="button" class="service-button" data-service="Company Profiles">
+        Company Profiles
+    </button>
+
+    <button type="button" class="service-button" data-service="Invoices">
+        Invoices
+    </button>
+
+    <button type="button" class="service-button" data-service="Quotations">
+        Quotations
+    </button>
+
+    <button type="button" class="service-button" data-service="Meeting Minutes">
+        Meeting Minutes
+    </button>
+
+    <button type="button" class="service-button" data-service="AI Writing Assistance">
+        AI Writing Assistance
+    </button>
+
+    <button type="button" class="service-button" data-service="Document Rewriting">
+        Document Rewriting
+    </button>
+
+    <button type="button" class="service-button" data-service="Translation">
+        Translation
+    </button>
+
+    <button type="button" class="service-button" data-service="PDF Conversion">
+        PDF Conversion
+    </button>
+
+    <button type="button" class="service-button" data-service="Topic Explanations">
+        Topic Explanations
+    </button>
+
+    <button type="button" class="service-button" data-service="Printing Preparation">
+        Printing Preparation
+    </button>
+
+    <button type="button" class="service-button" data-service="Excel Spreadsheets">
+        Excel Spreadsheets
+    </button>
+
+    <button type="button" class="service-button" data-service="Data Entry">
+        Data Entry
+    </button>
+
+    <button type="button" class="service-button" data-service="Data Analysis">
+        Data Analysis
+    </button>
+
+    <button type="button" class="service-button" data-service="Presentations">
+        Presentations
+    </button>
+
+    <button type="button" class="service-button" data-service="Document Summarization">
+        Document Summarization
+    </button>
+
+    <button type="button" class="service-button" data-service="Business Letters & Letterhead">
+        Business Letters & Letterhead
+    </button>
+
+    <div class="luxury-tagline">
+
+        <span class="brand-signature">
+
+            <span class="brand-main">
+                NAIJA POCKET BUSINESS CENTER
+            </span>
+
+            <span class="brand-sub">
+                YOUR BUSINESS CENTER IN YOUR POCKET
+            </span>
+
+        </span>
+
+    </div>
+
+</div>
+
+</section></div><script>
 "use strict";
 
 const serviceButtons =
@@ -1753,7 +1734,5 @@ if(
         }
     );
 }
-</script>
-
-</body>
+</script></body>
 </html>
