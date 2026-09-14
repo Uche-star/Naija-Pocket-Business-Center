@@ -18,7 +18,7 @@ try:
 except Exception:
     Document = None
 
-APP_VERSION = "payment-product-first-v7-independent-payment-actions"
+APP_VERSION = "payment-product-first-v8-payment-page-contract"
 BASE_DIR = Path(__file__).resolve().parent
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -352,7 +352,7 @@ def upsert_product(data: dict) -> dict:
     return get_product(service, title) or {}
 
 
-def ensure_payment_record(product: dict) -> dict:
+def ensure_payment_record(product: dict, payment_method: str = "bank_transfer") -> dict:
     service = clean(product.get("service"))
     title = clean(product.get("document_title"))
     key = business_key(service, title)
@@ -373,7 +373,7 @@ def ensure_payment_record(product: dict) -> dict:
              payment_method,payment_status,document_version,document_filename,document_pages,
              document_text,created_at,updated_at)
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                  (key, service, title, *values, "bank_transfer", "payment_ready", timestamp, timestamp))
+                  (key, service, title, *values, clean(payment_method) or "bank_transfer", "payment_ready", timestamp, timestamp))
     c.commit()
     c.close()
     return get_payment(service, title) or {}
@@ -439,7 +439,6 @@ def public_product(product: Optional[dict]) -> dict:
     payment = get_payment(clean(product.get("service")), clean(product.get("document_title")))
     return {
         "found": True,
-        "id": product.get("id"),
         "service": product.get("service"),
         "document_title": product.get("document_title"),
         "customer_name": product.get("customer_name"),
@@ -617,7 +616,7 @@ def payment_create(body: PaymentCreateRequest, request: Request):
         product = get_product(service, title) or product
 
     # Payment record is prepared here, not by I HAVE MADE PAYMENT.
-    payment = ensure_payment_record(product)
+    payment = ensure_payment_record(product, body.payment_method)
     return {
         "ok": True,
         "message": "Payment prepared successfully. Your exact reviewed document is saved.",
@@ -650,12 +649,24 @@ def payment_report(body: PaymentReportRequest):
     if not payment:
         raise HTTPException(status_code=404, detail="PAYMENT_NOT_PREPARED")
 
+    current_status = clean(payment.get("payment_status")).lower()
+    if current_status in {"payment_verified", "verified", "approved", "paid", "completed", "complete"}:
+        return {"ok": True,
+                "message": "Payment has already been verified.",
+                "product": public_product(product), "payment": payment,
+                "saved_document": True,
+                "payment_reported": True,
+                "payment_verified": True,
+                "download_unlocked": bool(product.get("download_unlocked"))}
+
     payment = update_payment(service, title, "payment_reported",
                              reported_at=now_iso(), notes=body.note)
     return {"ok": True,
             "message": "Payment reported. Customer Care will verify it.",
             "product": public_product(product), "payment": payment,
             "saved_document": True,
+            "payment_reported": True,
+            "payment_verified": False,
             "download_unlocked": bool(product.get("download_unlocked"))}
 
 
@@ -671,13 +682,29 @@ def payment_status(service: str, title: str, request: Request):
 
 @app.post("/api/payment/complete")
 def payment_complete(body: PaymentCompleteRequest):
+    """Compatibility alias for the customer payment-report action.
+
+    This route must never create a payment record and must never verify or
+    unlock a payment. Customer Care verification is a separate operation.
+    """
     product = get_product(body.service, body.document_title)
     if not product:
-        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+        raise HTTPException(status_code=404, detail="PAYMENT_NOT_PREPARED")
     product = repair_saved_snapshot(product)
-    payment = update_payment(body.service, body.document_title, "payment_verified", verified_at=now_iso())
-    return {"ok": True, "message": "Payment marked verified.", "product": public_product(product),
-            "payment": payment, "download_unlocked": bool(product.get("download_unlocked"))}
+    payment = get_payment(body.service, body.document_title)
+    if not payment:
+        raise HTTPException(status_code=404, detail="PAYMENT_NOT_PREPARED")
+    current_status = clean(payment.get("payment_status")).lower()
+    if current_status in {"payment_verified", "verified", "approved", "paid", "completed", "complete"}:
+        return {"ok": True, "message": "Payment has already been verified.",
+                "product": public_product(product), "payment": payment,
+                "payment_reported": True, "payment_verified": True,
+                "download_unlocked": bool(product.get("download_unlocked"))}
+    payment = update_payment(body.service, body.document_title, "payment_reported", reported_at=now_iso())
+    return {"ok": True, "message": "Payment reported. Customer Care will verify it.",
+            "product": public_product(product), "payment": payment,
+            "payment_reported": True, "payment_verified": False,
+            "download_unlocked": bool(product.get("download_unlocked"))}
 
 
 @app.get("/api/customer-care/payments")
@@ -696,9 +723,13 @@ def customer_care_verify(body: PaymentCompleteRequest, x_back_office_key: str = 
     if not product:
         raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
     product = repair_saved_snapshot(product)
+    payment = get_payment(body.service, body.document_title)
+    if not payment:
+        raise HTTPException(status_code=404, detail="PAYMENT_NOT_PREPARED")
     payment = update_payment(body.service, body.document_title, "payment_verified", verified_at=now_iso())
     return {"ok": True, "message": "Payment verified. Download still requires activation.",
             "product": public_product(product), "payment": payment,
+            "payment_verified": True,
             "download_unlocked": bool(product.get("download_unlocked"))}
 
 
@@ -776,9 +807,13 @@ def back_office_payment_verify(body: PaymentCompleteRequest, x_back_office_key: 
     if not product:
         raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
     product = repair_saved_snapshot(product)
+    payment = get_payment(body.service, body.document_title)
+    if not payment:
+        raise HTTPException(status_code=404, detail="PAYMENT_NOT_PREPARED")
     payment = update_payment(body.service, body.document_title, "payment_verified", verified_at=now_iso())
     return {"ok": True, "message": "Payment verified. Activate download separately when ready.",
             "product": public_product(product), "payment": payment,
+            "payment_verified": True,
             "download_unlocked": bool(product.get("download_unlocked"))}
 
 
@@ -793,6 +828,9 @@ def back_office_activate(body: BackOfficeActivateRequest, x_back_office_key: str
     product = repair_saved_snapshot(product)
     if not existing_saved_file(product):
         raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
+    payment = get_payment(body.service, body.document_title)
+    if not payment or clean(payment.get("payment_status")).lower() not in {"payment_verified", "verified", "approved", "paid", "completed", "complete"}:
+        raise HTTPException(status_code=409, detail="PAYMENT_NOT_VERIFIED")
     product = activate_download(body.service, body.document_title)
     return {"ok": True, "message": "Download activated.", "product": public_product(product),
             "download_unlocked": True}
