@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-APP_VERSION = "payment-product-first-v9-back-office-full-delivery"
+APP_VERSION = "payment-product-first-v10-back-office-full-delivery"
 BASE_DIR = Path(__file__).resolve().parent
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -854,6 +854,23 @@ def back_office_jobs(x_back_office_key: str = Header(default="")):
     return {"ok": True, "jobs": [dict(row) for row in rows]}
 
 
+@app.get("/api/back-office/payment-channels")
+def back_office_payment_channels_endpoint(service: str, title: str, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    payment = get_payment(service, title)
+    return {
+        "ok": True,
+        "service": product.get("service"),
+        "document_title": product.get("document_title"),
+        "payment": payment,
+        "payment_channels": back_office_payment_channels(product, payment),
+    }
+
+
 @app.get("/api/back-office/payment")
 def back_office_payment(service: str, title: str, request: Request, x_back_office_key: str = Header(default="")):
     require_back_office(x_back_office_key)
@@ -990,6 +1007,20 @@ def prepare_delivery(body: DeliveryRequest, request: Request):
     return {"ok": True, "channel": selected, "product": public_product(product)}
 
 
+@app.get("/api/back-office/delivery-channels")
+def back_office_delivery_channels_endpoint(service: str, title: str, request: Request, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    return {
+        "ok": True,
+        "product": back_office_product(product),
+        "delivery": back_office_delivery_channels(request, product),
+    }
+
+
 @app.get("/api/back-office/delivery")
 def back_office_delivery(service: str, title: str, channel: str, request: Request,
                          x_back_office_key: str = Header(default="")):
@@ -1063,15 +1094,16 @@ def back_office_delivery_post(body: DeliveryRequest, request: Request,
     if not product:
         raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
     product = repair_saved_snapshot(product)
-    if not bool(product.get("download_unlocked")):
-        raise HTTPException(status_code=403, detail="DOWNLOAD_NOT_UNLOCKED")
-    selected = select_channel(delivery_channels(request, product), body.channel)
+    # Back Office delivery is independent of customer download activation.
+    # Customer Service may retrieve/send the saved document even when payment
+    # has not yet been verified or the customer download is still locked.
+    selected = select_channel(back_office_delivery_channels(request, product), body.channel)
     if not selected:
         raise HTTPException(status_code=404, detail="DELIVERY_CHANNEL_NOT_FOUND")
     log_delivery(product, selected["id"], "ready", {"url": selected.get("url")})
     return {"ok": True, "status": "ready", "channel": selected,
             "product": back_office_product(product),
-            "message": "The exact saved document is ready through this channel."}
+            "message": "The exact saved document is ready for Back Office delivery through this channel."}
 
 
 if __name__ == "__main__":
