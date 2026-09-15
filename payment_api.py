@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-APP_VERSION = "payment-product-first-v11-exact-approved-document-back-office-delivery"
+APP_VERSION = "payment-product-first-v12-exact-approved-document-back-office-delivery"
 BASE_DIR = Path(__file__).resolve().parent
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -544,6 +544,8 @@ def public_product(product: Optional[dict]) -> dict:
         "document_version": product.get("document_version"),
         "document_filename": product.get("document_filename"),
         "document_pages": product.get("document_pages") or 0,
+        "document_preview_pages": clean_saved_document_payload(from_json(product.get("document_payload"), {})).get("pages", []),
+        "document_preview_text": clean_saved_document_payload(from_json(product.get("document_payload"), {})).get("document_text", ""),
         "document_saved_path": str(saved) if saved else clean(product.get("document_saved_path")),
         "document_saved_at": product.get("document_saved_at"),
         "saved_document": bool(saved),
@@ -670,6 +672,11 @@ def payment_create(body: PaymentCreateRequest, request: Request):
     if float(body.amount) <= 0:
         raise HTTPException(status_code=400, detail="VALID_PAYMENT_AMOUNT_REQUIRED")
 
+    # The approved document already belongs to this service + title.
+    # MAKE PAYMENT must use that saved document when the browser does not resend
+    # the full payload. It must never manufacture a different document.
+    existing_product = get_product(service, title)
+    existing_payload = normalize_payload(from_json(existing_product.get("document_payload"), {})) if existing_product else {}
     incoming = from_json(body.document_payload, {})
     if not isinstance(incoming, dict):
         incoming = {}
@@ -682,13 +689,23 @@ def payment_create(body: PaymentCreateRequest, request: Request):
             "document_version": body.document_version,
         }
     else:
-        # Preserve any document fields sent alongside a payload.
         incoming.setdefault("pages", body.pages if body.pages is not None else body.document_pages)
         incoming.setdefault("document_text", first(body.document_text, body.documentText, body.text, body.content))
         incoming.setdefault("filename", first(body.filename, body.document_filename))
         incoming.setdefault("document_version", body.document_version)
 
     payload = normalize_payload(incoming)
+    if (not payload["pages"] and not payload["document_text"]) and existing_product:
+        # Prefer the exact approved payload already stored.
+        payload = existing_payload
+    if not payload["pages"] and not payload["document_text"]:
+        payment_existing = get_payment(service, title)
+        if payment_existing:
+            payload = normalize_payload({
+                "document_text": payment_existing.get("document_text"),
+                "filename": payment_existing.get("document_filename"),
+                "document_version": payment_existing.get("document_version"),
+            })
     if not payload["pages"] and not payload["document_text"]:
         raise HTTPException(status_code=400, detail="DOCUMENT_TEXT_REQUIRED")
 
