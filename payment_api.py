@@ -249,9 +249,8 @@ def public_delivery_url(request: Request, service: str, title: str) -> str:
 def back_office_delivery_channels(request: Request, product: dict) -> dict:
     """Back Office delivery choices. Customer-facing links never contain the Back Office key.
 
-    Email intentionally opens the official branded email-delivery page rather than a
-    mailto link. This prevents the raw signed URL from being placed in an email.
-    The branded page sends the real HTML email through SMTP when configured.
+    Email opens the email-delivery page rather than a mailto link. This prevents the raw signed URL from being placed in the email.
+    The page sends a simple HTML email through SMTP when configured.
     """
     service = clean(product.get("service"))
     title = clean(product.get("document_title"))
@@ -1317,14 +1316,13 @@ def _smtp_configured() -> bool:
     return bool(clean(os.getenv("SMTP_HOST")) and clean(os.getenv("SMTP_USERNAME")) and clean(os.getenv("SMTP_PASSWORD")) and clean(os.getenv("SMTP_FROM")))
 
 
-def _luxury_email_html(title: str, service: str, download_url: str) -> str:
+def _simple_email_html(title: str, service: str, download_url: str) -> str:
     safe_title = html_escape(title)
     safe_service = html_escape(service)
     safe_url = html_escape(download_url, quote=True)
-    return f"""<!doctype html><html><body style="margin:0;background:#080808;color:#f5f0e6;font-family:Arial,sans-serif;padding:32px 16px"><div style="max-width:560px;margin:auto;border:1px solid #c8a96b;background:#101010;padding:36px 26px;text-align:center"><div style="font-size:12px;letter-spacing:4px;color:#e0c98f;text-transform:uppercase">NAIJA POCKET BUSINESS CENTER</div><div style="margin:24px 0 12px;font-family:Georgia,serif;font-size:30px">Document Ready</div><div style="color:#aaa;font-size:11px;letter-spacing:2px;text-transform:uppercase">{safe_service}</div><div style="margin:12px 0 24px;font-family:Georgia,serif;font-size:19px;color:#eee7db">{safe_title}</div><p style="color:#b9b2a5;line-height:1.7;font-size:13px">Your approved document has been securely prepared for delivery.</p><a href="{safe_url}" style="display:inline-block;margin-top:18px;padding:17px 30px;background:#e0c98f;color:#111;text-decoration:none;font-weight:bold;letter-spacing:2px;font-size:12px">DOWNLOAD DOCUMENT</a><p style="margin-top:28px;color:#777;font-size:10px;letter-spacing:1px">Secure document delivery · Naija Pocket Business Center</p></div></body></html>"""
+    return f"""<!doctype html><html><body style="margin:0;padding:24px;font-family:Arial,sans-serif;color:#222;background:#fff"><div style="max-width:560px;margin:0 auto"><h2 style="margin:0 0 16px">Your document is ready</h2><p style="margin:0 0 8px"><strong>Service:</strong> {safe_service}</p><p style="margin:0 0 24px"><strong>Document:</strong> {safe_title}</p><p style="margin:0 0 20px">Your document is ready for download.</p><a href="{safe_url}" style="display:inline-block;padding:12px 18px;background:#c00;color:#fff;text-decoration:none;font-weight:bold">DOWNLOAD DOCUMENT</a></div></body></html>"""
 
-
-def _send_luxury_email(recipient: str, title: str, service: str, download_url: str) -> None:
+def _send_simple_email(recipient: str, title: str, service: str, download_url: str) -> None:
     if not _smtp_configured():
         raise HTTPException(status_code=503, detail="EMAIL_DELIVERY_NOT_CONFIGURED")
     host = clean(os.getenv("SMTP_HOST"))
@@ -1337,8 +1335,8 @@ def _send_luxury_email(recipient: str, title: str, service: str, download_url: s
     msg["Subject"] = "Your document is ready — Naija Pocket Business Center"
     msg["From"] = sender
     msg["To"] = recipient
-    msg.set_content("Your document is ready. Please open this email in an HTML-capable email client and use the DOWNLOAD DOCUMENT button.")
-    msg.add_alternative(_luxury_email_html(title, service, download_url), subtype="html")
+    msg.set_content("Your document is ready. Please open this email and select DOWNLOAD DOCUMENT to download it.")
+    msg.add_alternative(_simple_email_html(title, service, download_url), subtype="html")
     if use_ssl:
         with smtplib.SMTP_SSL(host, port, timeout=30) as server:
             server.login(username, password)
@@ -1351,15 +1349,14 @@ def _send_luxury_email(recipient: str, title: str, service: str, download_url: s
             server.login(username, password)
             server.send_message(msg)
 
-
-def _luxury_email_delivery_page(title: str, service: str, token: str, request: Request, message: str = "") -> str:
+def _simple_email_delivery_page(title: str, service: str, token: str, request: Request, message: str = "") -> str:
     safe_title = html_escape(title)
     safe_service = html_escape(service)
     safe_message = html_escape(message)
     action = html_escape(f"{api_base(request)}/api/email-delivery/send", quote=True)
     hidden_token = html_escape(token, quote=True)
-    return f"""<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Email Delivery | Naija Pocket Business Center</title><style>body{{margin:0;min-height:100vh;background:#080808;color:#f5f0e6;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}}.card{{width:min(100%,540px);border:1px solid rgba(200,169,107,.35);background:#101010;padding:38px 25px;text-align:center;box-shadow:0 28px 80px #000}}.brand{{font-size:11px;letter-spacing:4px;color:#e0c98f;text-transform:uppercase}}h1{{font:400 32px Georgia,serif;margin:25px 0 10px}}.service{{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#aaa}}.title{{font:18px Georgia,serif;color:#eee7db;margin:10px 0 24px}}.note{{color:#aaa;font-size:13px;line-height:1.7}}input{{width:100%;box-sizing:border-box;margin:18px 0 14px;padding:16px;background:#090909;border:1px solid #555;color:#fff;font-size:15px}}button{{width:100%;padding:17px;border:0;background:#e0c98f;color:#111;font-weight:bold;letter-spacing:2px;font-size:12px}}.msg{{margin-bottom:16px;color:#e0c98f;font-size:12px}}</style></head><body><main class="card"><div class="brand">Naija Pocket Business Center</div><h1>Official Email Delivery</h1><div class="service">{safe_service}</div><div class="title">{safe_title}</div>{f'<div class="msg">{safe_message}</div>' if safe_message else ''}<div class="note">Enter the customer's email address. The customer will receive a branded email with a secure <b>DOWNLOAD DOCUMENT</b> button. The technical download address is never placed in the email message.</div><form method="get" action="{action}"><input type="hidden" name="token" value="{hidden_token}"><input type="email" name="recipient" placeholder="Customer email address" required autocomplete="email"><button type="submit">SEND DOCUMENT</button></form></main></body></html>"""
-
+    message_html = f'<div class="msg">{safe_message}</div>' if safe_message else ''
+    return f"""<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Email Delivery</title><style>body{{margin:0;min-height:100vh;background:#fff;color:#222;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}}.card{{width:min(100%,540px);border:1px solid #ddd;background:#fff;padding:28px 22px;box-sizing:border-box}}h1{{font-size:24px;margin:0 0 14px}}.service,.title{{margin-bottom:8px}}.note{{color:#555;font-size:14px;line-height:1.6;margin:18px 0}}input{{width:100%;box-sizing:border-box;margin:8px 0 12px;padding:14px;border:1px solid #bbb;font-size:15px}}button{{width:100%;padding:14px;border:0;background:#c00;color:#fff;font-weight:bold;font-size:14px}}.msg{{margin-bottom:16px;color:#b00000;font-size:13px}}</style></head><body><main class="card"><h1>Email Delivery</h1><div class="service"><strong>Service:</strong> {safe_service}</div><div class="title"><strong>Document:</strong> {safe_title}</div>{message_html}<div class="note">Enter the customer's email address. The customer will receive the document with a clickable <strong>DOWNLOAD DOCUMENT</strong> link. The raw download address will not be shown in the email.</div><form method="get" action="{action}"><input type="hidden" name="token" value="{hidden_token}"><input type="email" name="recipient" placeholder="Customer email address" required autocomplete="email"><button type="submit">SEND DOCUMENT</button></form></main></body></html>"""
 
 @app.get("/api/email-delivery", response_class=HTMLResponse)
 def email_delivery_page(token: str, request: Request):
@@ -1370,7 +1367,7 @@ def email_delivery_page(token: str, request: Request):
     product = repair_saved_snapshot(product)
     if not existing_saved_file(product):
         raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
-    return HTMLResponse(_luxury_email_delivery_page(title, service, token, request))
+    return HTMLResponse(_simple_email_delivery_page(title, service, token, request))
 
 
 @app.get("/api/email-delivery/send", response_class=HTMLResponse)
@@ -1384,15 +1381,15 @@ def email_delivery_send(token: str, recipient: str, request: Request):
         raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
     recipient = clean(recipient)
     if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", recipient):
-        return HTMLResponse(_luxury_email_delivery_page(title, service, token, request, "Please enter a valid customer email address."), status_code=400)
+        return HTMLResponse(_simple_email_delivery_page(title, service, token, request, "Please enter a valid customer email address."), status_code=400)
     try:
-        _send_luxury_email(recipient, title, service, public_delivery_url(request, service, title))
+        _send_simple_email(recipient, title, service, public_delivery_url(request, service, title))
         log_delivery(product, "email", "sent", {"recipient": recipient})
-        return HTMLResponse(_luxury_email_delivery_page(title, service, token, request, "The official branded email has been sent successfully."))
+        return HTMLResponse(_simple_email_delivery_page(title, service, token, request, "The email has been sent successfully."))
     except HTTPException:
-        return HTMLResponse(_luxury_email_delivery_page(title, service, token, request, "Email delivery is not configured on the server yet."), status_code=503)
+        return HTMLResponse(_simple_email_delivery_page(title, service, token, request, "Email delivery is not configured on the server yet."), status_code=503)
     except Exception:
-        return HTMLResponse(_luxury_email_delivery_page(title, service, token, request, "Email delivery could not be completed. Please try again."), status_code=502)
+        return HTMLResponse(_simple_email_delivery_page(title, service, token, request, "Email delivery could not be completed. Please try again."), status_code=502)
 
 
 @app.get("/api/delivery-file")
