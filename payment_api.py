@@ -8,6 +8,9 @@ import re
 import sqlite3
 import urllib.parse
 import zipfile
+import base64
+import hashlib
+import hmac
 from xml.sax.saxutils import escape as xml_escape
 
 from fastapi import FastAPI, Header, HTTPException, Request
@@ -161,15 +164,61 @@ def back_office_product(product: Optional[dict]) -> dict:
     return result
 
 
+def public_delivery_token(service: str, title: str) -> str:
+    """Create a signed customer-delivery token without exposing the Back Office key."""
+    payload = to_json({
+        "service": clean(service),
+        "title": clean(title),
+    }).encode("utf-8")
+    encoded = base64.urlsafe_b64encode(payload).decode("ascii").rstrip("=")
+    signature = hmac.new(
+        BACK_OFFICE_ADMIN_KEY.encode("utf-8"),
+        encoded.encode("ascii"),
+        hashlib.sha256,
+    ).hexdigest()
+    return encoded + "." + signature
+
+
+def decode_public_delivery_token(token: str) -> tuple[str, str]:
+    """Validate a customer-delivery token and return service + title."""
+    raw = clean(token)
+    if "." not in raw:
+        raise HTTPException(status_code=401, detail="INVALID_DELIVERY_LINK")
+    encoded, signature = raw.rsplit(".", 1)
+    expected = hmac.new(
+        BACK_OFFICE_ADMIN_KEY.encode("utf-8"),
+        encoded.encode("ascii"),
+        hashlib.sha256,
+    ).hexdigest()
+    if not hmac.compare_digest(signature, expected):
+        raise HTTPException(status_code=401, detail="INVALID_DELIVERY_LINK")
+    try:
+        padded = encoded + "=" * (-len(encoded) % 4)
+        payload = json.loads(base64.urlsafe_b64decode(padded.encode("ascii")).decode("utf-8"))
+    except Exception:
+        raise HTTPException(status_code=401, detail="INVALID_DELIVERY_LINK")
+    service = clean(payload.get("service"))
+    title = clean(payload.get("title"))
+    if not service or not title:
+        raise HTTPException(status_code=401, detail="INVALID_DELIVERY_LINK")
+    return service, title
+
+
+def public_delivery_url(request: Request, service: str, title: str) -> str:
+    token = public_delivery_token(service, title)
+    return f"{api_base(request)}/api/delivery-file?token={urllib.parse.quote(token)}"
+
+
 def back_office_delivery_channels(request: Request, product: dict) -> dict:
     """Delivery choices for Back Office.  These never depend on customer unlock."""
     service = clean(product.get("service"))
     title = clean(product.get("document_title"))
-    file_url = (f"{api_base(request)}/api/back-office/delivery-file?service="
-                f"{urllib.parse.quote(service)}&title={urllib.parse.quote(title)}")
+    # Back Office itself remains protected, but the link sent to a customer
+    # must NOT require the Back Office key.  Use a signed delivery URL instead.
+    file_url = public_delivery_url(request, service, title)
     share_text = (f"{title} — {service}\n"
-                  "Naija Pocket Business Center document is ready for Customer Service delivery.\n"
-                  f"Download the saved file from the Back Office: {file_url}")
+                  "Naija Pocket Business Center document is ready for delivery.\n"
+                  f"Download your document here: {file_url}")
     return {
         "available": bool(existing_saved_file(product)),
         "document_saved": bool(existing_saved_file(product)),
@@ -177,19 +226,19 @@ def back_office_delivery_channels(request: Request, product: dict) -> dict:
         "channels": [
             {"id": "phone", "name": "Download to Phone", "type": "download",
              "available": bool(existing_saved_file(product)), "url": file_url,
-             "requires_back_office_key": True},
+             "requires_back_office_key": False},
             {"id": "whatsapp", "name": "WhatsApp", "type": "share",
              "available": bool(existing_saved_file(product)),
              "url": "https://wa.me/?text=" + urllib.parse.quote(share_text),
-             "note": "Customer Service can download the saved file from Back Office and send it directly to the customer."},
+             "note": "Customer Service can open the signed delivery link or download the saved file and send it directly to the customer."},
             {"id": "email", "name": "Email", "type": "share",
              "available": bool(existing_saved_file(product)),
              "url": "mailto:?subject=" + urllib.parse.quote(title + " — Naija Pocket Business Center") + "&body=" + urllib.parse.quote(share_text),
-             "note": "Download the saved file from Back Office and attach it to the customer email."},
+             "note": "Use the signed delivery link or download the exact saved file and attach it to the customer email."},
             {"id": "telegram", "name": "Telegram", "type": "share",
              "available": bool(existing_saved_file(product)),
              "url": "https://t.me/share/url?url=" + urllib.parse.quote(file_url) + "&text=" + urllib.parse.quote(title),
-             "note": "Customer Service can download the saved file and send it through Telegram."},
+             "note": "Use the signed delivery link or download the exact saved file and send it through Telegram."},
             {"id": "google_drive", "name": "Google Drive", "type": "share",
              "available": bool(existing_saved_file(product)),
              "url": "https://drive.google.com/drive/my-drive",
@@ -1028,6 +1077,26 @@ def back_office_delivery(service: str, title: str, channel: str, request: Reques
         raise HTTPException(status_code=404, detail="DELIVERY_CHANNEL_NOT_FOUND")
     log_delivery(product, selected["id"], "ready", {"url": selected.get("url")})
     return {"ok": True, "channel": selected, "product": back_office_product(product)}
+
+
+@app.get("/api/delivery-file")
+def public_delivery_file(token: str):
+    """Customer delivery endpoint.
+
+    This is intentionally separate from /api/back-office/delivery-file.
+    The Back Office key is never required to open a delivery link sent to a
+    customer through WhatsApp, email or Telegram.
+    """
+    service, title = decode_public_delivery_token(token)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    saved = existing_saved_file(product)
+    if not saved:
+        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
+    media = "application/vnd.openxmlformats-officedocument.wordprocessingml.document" if saved.suffix.lower() == ".docx" else "application/octet-stream"
+    return FileResponse(str(saved), filename=saved.name, media_type=media)
 
 
 @app.get("/api/back-office/delivery-file")
