@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-APP_VERSION = "payment-product-first-v10-back-office-full-delivery"
+APP_VERSION = "payment-product-first-v11-exact-approved-document-back-office-delivery"
 BASE_DIR = Path(__file__).resolve().parent
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -143,39 +143,6 @@ def normalize_payload(value: Any) -> dict:
         "page_count": len(page_list),
     }
 
-
-
-def clean_saved_document_pages(pages: list[str]) -> list[str]:
-    """Remove only obvious UI separator artifacts from the saved document.
-
-    The payment/delivery API must preserve the reviewed document itself.  The
-    only automatic cleanup here is a line made entirely of three asterisks,
-    which is a known preview/UI separator artifact.  Legitimate document text
-    is otherwise left untouched.
-    """
-    cleaned: list[str] = []
-    for page in pages:
-        lines = []
-        for line in str(page).splitlines():
-            if clean(line) == "***":
-                continue
-            lines.append(line)
-        cleaned_page = "\n".join(lines).strip()
-        if cleaned_page:
-            cleaned.append(cleaned_page)
-    return cleaned
-
-
-def clean_saved_document_payload(payload: dict) -> dict:
-    """Return the reviewed document payload without UI-only *** separators."""
-    normalized = normalize_payload(payload)
-    pages = clean_saved_document_pages(normalized["pages"])
-    text = "\n\n".join(pages) if pages else normalized["document_text"]
-    text_lines = [line for line in str(text).splitlines() if clean(line) != "***"]
-    text = "\n".join(text_lines).strip()
-    if not pages and text:
-        pages = [text]
-    return {**normalized, "pages": pages, "document_text": text, "page_count": len(pages)}
 
 
 def back_office_product(product: Optional[dict]) -> dict:
@@ -342,39 +309,49 @@ def existing_saved_file(product: Optional[dict]) -> Optional[Path]:
     return path if path.exists() and path.is_file() else None
 
 
-def _format_saved_text(text: str) -> list[str]:
-    text = str(text or "").replace("**", "")
-    markers = ["← Previous Page", "Next Page →", "## Review Your Complete Service", "Review Your Complete Service", "Review statusREADY", "Review status", "AMOUNT TO PAY", "💳 MAKE PAYMENT", "Apply Correction", "Payment preparation failed:"]
-    found = [text.find(x) for x in markers if text.find(x) >= 0]
-    if found:
-        text = text[:min(found)]
-    out=[]
-    for raw in text.replace("\r", "").split("\n"):
-        line=raw.strip()
-        if not line or line in {"***","GO","READY","Review status","AMOUNT TO PAY","💳 MAKE PAYMENT","Apply Correction"}:
-            continue
-        if re.fullmatch(r"Page\s+\d+\s+of\s+\d+", line, re.I):
-            continue
-        out.append(line)
-    return out
-
 
 def clean_saved_document_payload(payload: dict) -> dict:
-    payload=dict(payload or {})
-    raw_pages=payload.get("pages")
-    if not isinstance(raw_pages,list): raw_pages=[raw_pages] if raw_pages else []
-    pages=[]
-    for page in raw_pages:
-        lines=_format_saved_text(str(page))
-        if lines: pages.append("\n".join(lines))
-    text=_format_saved_text(payload.get("document_text",""))
-    document_text="\n\n".join(pages) if pages else "\n".join(text)
-    payload["pages"]=pages; payload["document_text"]=document_text; payload["page_count"]=len(pages) or (1 if document_text else 0)
-    return payload
+    """Normalize the approved document payload without changing its content."""
+    normalized = normalize_payload(dict(payload or {}))
+    pages = normalized.get("pages") or []
+    text = normalized.get("document_text") or ""
+    if not pages and text:
+        pages = [text]
+    if not text and pages:
+        text = "\n\n".join(str(x) for x in pages)
+    normalized["pages"] = [str(x) for x in pages]
+    normalized["document_text"] = str(text)
+    normalized["page_count"] = len(normalized["pages"])
+    return normalized
+
+
+def _split_inline_markup(text: str) -> list[tuple[str, bool]]:
+    """Preserve Review-style **bold** as actual bold in the DOCX."""
+    value = str(text)
+    runs: list[tuple[str, bool]] = []
+    pattern = re.compile(r"(\*\*.*?\*\*)")
+    pos = 0
+    for match in pattern.finditer(value):
+        if match.start() > pos:
+            runs.append((value[pos:match.start()], False))
+        runs.append((match.group(0)[2:-2], True))
+        pos = match.end()
+    if pos < len(value):
+        runs.append((value[pos:], False))
+    return runs or [(value, False)]
 
 
 def _docx_p(text: str) -> str:
-    return '<w:p><w:r><w:t xml:space="preserve">'+xml_escape(text)+'</w:t></w:r></w:p>'
+    raw = str(text).replace("\r", "")
+    heading = re.match(r"^\s*(#{1,6})\s+(.*)$", raw)
+    if heading:
+        raw = heading.group(2)
+    runs = []
+    for value, bold in _split_inline_markup(raw):
+        rpr = '<w:rPr><w:b/></w:rPr>' if bold else ''
+        runs.append('<w:r>'+rpr+'<w:t xml:space="preserve">'+xml_escape(value)+'</w:t></w:r>')
+    ppr = '<w:pPr><w:pStyle w:val="Heading1"/></w:pPr>' if heading else ''
+    return '<w:p>'+ppr+''.join(runs)+'</w:p>'
 
 
 def make_docx(path: Path, title: str, page_list: list[str]) -> Path:
