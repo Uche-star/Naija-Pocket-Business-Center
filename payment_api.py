@@ -1,4 +1,4 @@
-("""Naija Pocket Business Center - complete payment, saved-document and delivery API."""
+"""Naija Pocket Business Center - complete payment, saved-document and delivery API."""
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Any, Optional
