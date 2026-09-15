@@ -7,18 +7,15 @@ import os
 import re
 import sqlite3
 import urllib.parse
+import zipfile
+from xml.sax.saxutils import escape as xml_escape
 
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-try:
-    from docx import Document
-except Exception:
-    Document = None
-
-APP_VERSION = "payment-product-first-v8-back-office-document-viewer"
+APP_VERSION = "payment-product-first-v9-back-office-full-delivery"
 BASE_DIR = Path(__file__).resolve().parent
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -345,20 +342,54 @@ def existing_saved_file(product: Optional[dict]) -> Optional[Path]:
     return path if path.exists() and path.is_file() else None
 
 
+def _format_saved_text(text: str) -> list[str]:
+    text = str(text or "").replace("**", "")
+    markers = ["← Previous Page", "Next Page →", "## Review Your Complete Service", "Review Your Complete Service", "Review statusREADY", "Review status", "AMOUNT TO PAY", "💳 MAKE PAYMENT", "Apply Correction", "Payment preparation failed:"]
+    found = [text.find(x) for x in markers if text.find(x) >= 0]
+    if found:
+        text = text[:min(found)]
+    out=[]
+    for raw in text.replace("\r", "").split("\n"):
+        line=raw.strip()
+        if not line or line in {"***","GO","READY","Review status","AMOUNT TO PAY","💳 MAKE PAYMENT","Apply Correction"}:
+            continue
+        if re.fullmatch(r"Page\s+\d+\s+of\s+\d+", line, re.I):
+            continue
+        out.append(line)
+    return out
+
+
+def clean_saved_document_payload(payload: dict) -> dict:
+    payload=dict(payload or {})
+    raw_pages=payload.get("pages")
+    if not isinstance(raw_pages,list): raw_pages=[raw_pages] if raw_pages else []
+    pages=[]
+    for page in raw_pages:
+        lines=_format_saved_text(str(page))
+        if lines: pages.append("\n".join(lines))
+    text=_format_saved_text(payload.get("document_text",""))
+    document_text="\n\n".join(pages) if pages else "\n".join(text)
+    payload["pages"]=pages; payload["document_text"]=document_text; payload["page_count"]=len(pages) or (1 if document_text else 0)
+    return payload
+
+
+def _docx_p(text: str) -> str:
+    return '<w:p><w:r><w:t xml:space="preserve">'+xml_escape(text)+'</w:t></w:r></w:p>'
+
+
 def make_docx(path: Path, title: str, page_list: list[str]) -> Path:
-    if Document is None:
-        raise HTTPException(status_code=500, detail="PYTHON_DOCX_NOT_INSTALLED")
     path.parent.mkdir(parents=True, exist_ok=True)
-    document = Document()
-    document.add_heading(title or "Naija Pocket Business Center Document", level=1)
-    for index, page in enumerate(page_list, 1):
-        if index > 1:
-            document.add_page_break()
-        if len(page_list) > 1:
-            document.add_paragraph(f"PAGE {index}")
-        for line in str(page).splitlines():
-            document.add_paragraph(line)
-    document.save(str(path))
+    pages=clean_saved_document_payload({"pages":page_list}).get("pages",[])
+    if not pages: raise HTTPException(status_code=400, detail="SAVED_DOCUMENT_CONTENT_MISSING")
+    body=[]
+    for i,page in enumerate(pages):
+        if i: body.append('<w:p><w:r><w:br w:type="page"/></w:r></w:p>')
+        body.extend(_docx_p(line) for line in page.splitlines() if line.strip())
+    document_xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+''.join(body)+'<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>'
+    content_types='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'
+    root_rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'
+    with zipfile.ZipFile(path,"w",zipfile.ZIP_DEFLATED) as z:
+        z.writestr("[Content_Types].xml",content_types); z.writestr("_rels/.rels",root_rels); z.writestr("word/document.xml",document_xml)
     return path
 
 
@@ -795,24 +826,23 @@ def back_office_login(x_back_office_key: str = Header(default="")):
     return {"ok": True, "authenticated": True, "message": "Customer Care Back Office access granted."}
 
 
+def back_office_payment_channels(product: dict, payment: Optional[dict]) -> list[dict]:
+    method=clean((payment or {}).get("payment_method") or "bank_transfer") or "bank_transfer"
+    return [
+        {"id":"bank_transfer","name":"Bank Transfer","type":"payment","available":True,"selected":method=="bank_transfer"},
+        {"id":"cash_manual","name":"Cash / Manual Payment","type":"payment","available":True,"selected":method in {"cash","manual","cash_manual"}},
+        {"id":"recorded_method","name":"Recorded Payment Method","type":"payment","available":True,"selected":True,"value":method}
+    ]
+
 @app.get("/api/back-office/payments")
-def back_office_payments(x_back_office_key: str = Header(default="")):
+def back_office_payments(request: Request, x_back_office_key: str = Header(default="")):
     require_back_office(x_back_office_key)
-    c = db(PRODUCT_DB_PATH)
-    rows = c.execute("SELECT * FROM document_products ORDER BY updated_at DESC,id DESC").fetchall()
-    c.close()
-    items = []
+    c=db(PRODUCT_DB_PATH); rows=c.execute("SELECT * FROM document_products ORDER BY updated_at DESC,id DESC").fetchall(); c.close()
+    items=[]
     for row in rows:
-        product = repair_saved_snapshot(dict(row))
-        items.append(back_office_product(product))
-    saved_count = sum(1 for item in items if item.get("saved_document"))
-    return {"ok": True, "payments": items, "records": items, "items": items,
-            "documents": items,
-            "summary": {"saved": saved_count,
-                        "total_documents": len(items),
-                        "reported": sum(1 for item in items if item["payment_reported"]),
-                        "verified": sum(1 for item in items if item["payment_verified"]),
-                        "activated": sum(1 for item in items if item["download_unlocked"])}}
+        product=repair_saved_snapshot(dict(row)); payment=get_payment(product.get("service"),product.get("document_title")); item=back_office_product(product)
+        item["payment"]=payment; item["payment_channels"]=back_office_payment_channels(product,payment); item["delivery"]=back_office_delivery_channels(request,product); items.append(item)
+    return {"ok":True,"payments":items,"records":items,"items":items,"documents":items,"summary":{"saved":sum(1 for x in items if x.get("saved_document")),"total_documents":len(items),"reported":sum(1 for x in items if x["payment_reported"]),"verified":sum(1 for x in items if x["payment_verified"]),"activated":sum(1 for x in items if x["download_unlocked"])}}
 
 
 @app.get("/api/back-office/jobs")
@@ -825,13 +855,13 @@ def back_office_jobs(x_back_office_key: str = Header(default="")):
 
 
 @app.get("/api/back-office/payment")
-def back_office_payment(service: str, title: str, x_back_office_key: str = Header(default="")):
+def back_office_payment(service: str, title: str, request: Request, x_back_office_key: str = Header(default="")):
     require_back_office(x_back_office_key)
     product = get_product(service, title)
     if not product:
         raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
     product = repair_saved_snapshot(product)
-    return {"ok": True, "product": back_office_product(product), "payment": get_payment(service, title)}
+    return {"ok": True, "product": back_office_product(product), "payment": get_payment(service, title), "payment_channels": back_office_payment_channels(product, get_payment(service, title)), "delivery": back_office_delivery_channels(request, product)}
 
 
 @app.get("/api/back-office/document-info")
@@ -857,12 +887,21 @@ def back_office_document(service: str, title: str, x_back_office_key: str = Head
     if not product:
         raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
     product = repair_saved_snapshot(product)
-    payload = normalize_payload(from_json(product.get("document_payload"), {}))
+    payload = clean_saved_document_payload(from_json(product.get("document_payload"), {}))
     return {"ok": True, "service": product["service"], "document_title": product["document_title"],
             "filename": product.get("document_filename"), "pages": payload["pages"],
             "page_count": payload["page_count"], "document_text": payload["document_text"],
             "saved_document": bool(existing_saved_file(product)),
             "download_unlocked": bool(product.get("download_unlocked"))}
+
+
+@app.get("/api/back-office/document-content")
+def back_office_document_content(service: str, title: str, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product=get_product(service,title)
+    if not product: raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product=repair_saved_snapshot(product); payload=clean_saved_document_payload(from_json(product.get("document_payload"), {}))
+    return {"ok":True,"service":product["service"],"document_title":product["document_title"],"filename":product.get("document_filename"),"pages":payload["pages"],"page_count":payload["page_count"],"document_text":payload["document_text"],"saved_document":bool(existing_saved_file(product)),"customer_download_unlocked":bool(product.get("download_unlocked"))}
 
 
 @app.post("/api/back-office/payment/verify")
@@ -944,7 +983,7 @@ def prepare_delivery(body: DeliveryRequest, request: Request):
     if not product:
         raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
     product = repair_saved_snapshot(product)
-    selected = select_channel(back_office_delivery_channels(request, product), body.channel)
+    selected = select_channel(delivery_channels(request, product), body.channel)
     if not selected:
         raise HTTPException(status_code=404, detail="DELIVERY_CHANNEL_NOT_FOUND")
     log_delivery(product, selected["id"], "prepared", {"url": selected.get("url")})
