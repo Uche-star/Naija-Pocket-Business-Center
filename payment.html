@@ -3,1743 +3,1431 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-<title>Payment — Naija Pocket Business Center</title>
+<title>Payment & Delivery | Naija Pocket Business Center</title>
 
 <style>
-    :root {
-        --black: #070707;
-        --black-2: #101010;
-        --panel: #151515;
-        --panel-2: #1b1b1b;
-        --panel-3: #222222;
-        --white: #ffffff;
-        --muted: #a9a9a9;
-        --muted-2: #777777;
-        --red: #c5162e;
-        --red-dark: #8e0d1e;
-        --gold: #d6b56a;
-        --gold-soft: #f1d99b;
-        --green: #27c47d;
-        --orange: #e69b45;
-        --border: rgba(255,255,255,.09);
-        --shadow: 0 24px 70px rgba(0,0,0,.45);
-        --radius: 22px;
-    }
-
-    * {
-        box-sizing: border-box;
-    }
-
-    html {
-        scroll-behavior: smooth;
-    }
-
-    body {
-        margin: 0;
-        min-height: 100vh;
-        background:
-            radial-gradient(
-                circle at top right,
-                rgba(197,22,46,.12),
-                transparent 35%
-            ),
-            radial-gradient(
-                circle at bottom left,
-                rgba(214,181,106,.07),
-                transparent 30%
-            ),
-            var(--black);
-        color: var(--white);
-        font-family:
-            Inter,
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            Arial,
-            sans-serif;
-        -webkit-font-smoothing: antialiased;
-    }
-
-    button,
-    input,
-    textarea {
-        font: inherit;
-    }
-
-    button {
-        cursor: pointer;
-    }
-
-    .page {
-        width: min(100%, 980px);
-        margin: 0 auto;
-        padding:
-            max(20px, env(safe-area-inset-top))
-            16px
-            max(40px, env(safe-area-inset-bottom));
-    }
-
-    .topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        padding: 8px 0 22px;
-    }
-
-    .brand {
-        display: flex;
-        align-items: center;
-        gap: 11px;
-    }
-
-    .brand-mark {
-        width: 42px;
-        height: 42px;
-        border-radius: 13px;
-        display: grid;
-        place-items: center;
-        background:
-            linear-gradient(
-                145deg,
-                var(--red),
-                var(--red-dark)
-            );
-        box-shadow:
-            0 12px 30px rgba(197,22,46,.22);
-        font-weight: 900;
-        letter-spacing: -.04em;
-    }
-
-    .brand-copy strong {
-        display: block;
-        font-size: 14px;
-        letter-spacing: .02em;
-    }
-
-    .brand-copy span {
-        display: block;
-        margin-top: 3px;
-        color: var(--muted);
-        font-size: 11px;
-    }
-
-    .top-status {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        border: 1px solid var(--border);
-        background: rgba(255,255,255,.035);
-        border-radius: 999px;
-        padding: 8px 11px;
-        color: #d8d8d8;
-        font-size: 11px;
-        white-space: nowrap;
-    }
-
-    .status-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: var(--green);
-        box-shadow: 0 0 12px rgba(39,196,125,.6);
-    }
-
-    .hero {
-        position: relative;
-        overflow: hidden;
-        padding: 34px 25px;
-        border: 1px solid var(--border);
-        border-radius: 30px;
-        background:
-            linear-gradient(
-                145deg,
-                rgba(255,255,255,.06),
-                rgba(255,255,255,.015)
-            );
-        box-shadow: var(--shadow);
-    }
-
-    .hero::after {
-        content: "";
-        position: absolute;
-        width: 250px;
-        height: 250px;
-        right: -100px;
-        top: -110px;
-        border-radius: 50%;
-        background: rgba(197,22,46,.12);
-        filter: blur(3px);
-        pointer-events: none;
-    }
-
-    .eyebrow {
-        color: var(--gold-soft);
-        text-transform: uppercase;
-        letter-spacing: .16em;
-        font-size: 10px;
-        font-weight: 800;
-        margin-bottom: 11px;
-    }
-
-    h1 {
-        margin: 0;
-        max-width: 720px;
-        font-size: clamp(27px, 7vw, 46px);
-        line-height: 1.03;
-        letter-spacing: -.045em;
-    }
-
-    .hero p {
-        margin: 15px 0 0;
-        max-width: 690px;
-        color: #bcbcbc;
-        font-size: 14px;
-        line-height: 1.65;
-    }
-
-    .hero-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 22px;
-    }
-
-    .pill {
-        padding: 8px 11px;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        background: rgba(255,255,255,.035);
-        color: #d3d3d3;
-        font-size: 11px;
-    }
-
-    .main {
-        display: grid;
-        gap: 16px;
-        margin-top: 16px;
-    }
-
-    .card {
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        background:
-            linear-gradient(
-                150deg,
-                rgba(255,255,255,.055),
-                rgba(255,255,255,.018)
-            );
-        box-shadow: 0 18px 50px rgba(0,0,0,.25);
-        padding: 21px;
-    }
-
-    .card-title {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 14px;
-        margin-bottom: 18px;
-    }
-
-    .card-title h2 {
-        margin: 0;
-        font-size: 17px;
-        letter-spacing: -.02em;
-    }
-
-    .card-title p {
-        margin: 5px 0 0;
-        color: var(--muted);
-        font-size: 12px;
-        line-height: 1.5;
-    }
-
-    .section-label {
-        color: var(--muted-2);
-        text-transform: uppercase;
-        letter-spacing: .12em;
-        font-size: 9px;
-        font-weight: 800;
-        margin-bottom: 7px;
-    }
-
-    .document-summary {
-        display: grid;
-        gap: 10px;
-    }
-
-    .summary-row {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 18px;
-        padding: 13px 0;
-        border-bottom: 1px solid rgba(255,255,255,.055);
-    }
-
-    .summary-row:last-child {
-        border-bottom: 0;
-    }
-
-    .summary-row span:first-child {
-        color: var(--muted);
-        font-size: 12px;
-    }
-
-    .summary-row strong {
-        text-align: right;
-        font-size: 13px;
-        word-break: break-word;
-    }
-
-    .price {
-        font-size: 25px !important;
-        color: var(--gold-soft);
-        letter-spacing: -.03em;
-    }
-
-    .progress-shell {
-        margin-top: 18px;
-    }
-
-    .progress-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 8px;
-        font-size: 11px;
-        color: var(--muted);
-    }
-
-    .progress-track {
-        width: 100%;
-        height: 6px;
-        border-radius: 99px;
-        overflow: hidden;
-        background: #292929;
-    }
-
-    .progress-fill {
-        height: 100%;
-        width: 0;
-        border-radius: inherit;
-        background:
-            linear-gradient(
-                90deg,
-                var(--red),
-                var(--gold)
-            );
-        transition: width .35s ease;
-    }
-
-    .bank-box {
-        border: 1px solid rgba(214,181,106,.2);
-        background:
-            linear-gradient(
-                135deg,
-                rgba(214,181,106,.08),
-                rgba(255,255,255,.02)
-            );
-        border-radius: 18px;
-        padding: 18px;
-    }
-
-    .bank-head {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 14px;
-    }
-
-    .bank-icon {
-        width: 34px;
-        height: 34px;
-        border-radius: 11px;
-        display: grid;
-        place-items: center;
-        background: rgba(214,181,106,.12);
-        color: var(--gold-soft);
-    }
-
-    .bank-head strong {
-        font-size: 13px;
-    }
-
-    .bank-head span {
-        display: block;
-        margin-top: 2px;
-        color: var(--muted);
-        font-size: 10px;
-    }
-
-    .bank-detail {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 9px 0;
-        border-bottom: 1px solid rgba(255,255,255,.06);
-        font-size: 12px;
-    }
-
-    .bank-detail:last-child {
-        border-bottom: 0;
-    }
-
-    .bank-detail span {
-        color: var(--muted);
-    }
-
-    .bank-detail strong {
-        text-align: right;
-    }
-
-    .notice {
-        display: none;
-        padding: 13px 15px;
-        border-radius: 15px;
-        margin-bottom: 14px;
-        font-size: 12px;
-        line-height: 1.55;
-    }
-
-    .notice.show {
-        display: block;
-    }
-
-    .notice.info {
-        border: 1px solid rgba(255,255,255,.08);
-        background: rgba(255,255,255,.04);
-        color: #d6d6d6;
-    }
-
-    .notice.success {
-        border: 1px solid rgba(39,196,125,.25);
-        background: rgba(39,196,125,.07);
-        color: #b9f0d6;
-    }
-
-    .notice.warning {
-        border: 1px solid rgba(230,155,69,.25);
-        background: rgba(230,155,69,.07);
-        color: #f3d1a5;
-    }
-
-    .notice.error {
-        border: 1px solid rgba(197,22,46,.28);
-        background: rgba(197,22,46,.08);
-        color: #ffc0ca;
-    }
-
-    .actions {
-        display: grid;
-        gap: 10px;
-        margin-top: 17px;
-    }
-
-    .btn {
-        width: 100%;
-        min-height: 49px;
-        border: 0;
-        border-radius: 15px;
-        padding: 13px 16px;
-        font-weight: 800;
-        font-size: 12px;
-        letter-spacing: .01em;
-        transition:
-            transform .15s ease,
-            opacity .15s ease,
-            border-color .15s ease;
-    }
-
-    .btn:active {
-        transform: scale(.985);
-    }
-
-    .btn:disabled {
-        cursor: not-allowed;
-        opacity: .38;
-    }
-
-    .btn-primary {
-        color: #fff;
-        background:
-            linear-gradient(
-                135deg,
-                var(--red),
-                #9d1023
-            );
-        box-shadow:
-            0 13px 30px rgba(197,22,46,.18);
-    }
-
-    .btn-secondary {
-        color: #eee;
-        border: 1px solid var(--border);
-        background: rgba(255,255,255,.045);
-    }
-
-    .btn-gold {
-        color: #17120a;
-        background:
-            linear-gradient(
-                135deg,
-                var(--gold-soft),
-                var(--gold)
-            );
-    }
-
-    .btn-danger {
-        color: #fff;
-        border: 1px solid rgba(197,22,46,.28);
-        background: rgba(197,22,46,.09);
-    }
-
-    .button-grid {
-        display: grid;
-        gap: 10px;
-    }
-
-    .delivery-intro {
-        margin-bottom: 17px;
-        color: var(--muted);
-        font-size: 12px;
-        line-height: 1.6;
-    }
-
-    .delivery-grid {
-        display: grid;
-        gap: 10px;
-    }
-
-    .delivery-card {
-        position: relative;
-        overflow: hidden;
-        border: 1px solid rgba(255,255,255,.075);
-        border-radius: 18px;
-        background:
-            linear-gradient(
-                145deg,
-                rgba(255,255,255,.055),
-                rgba(255,255,255,.015)
-            );
-        padding: 16px;
-        transition:
-            transform .18s ease,
-            border-color .18s ease,
-            background .18s ease;
-    }
-
-    .delivery-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(214,181,106,.25);
-    }
-
-    .delivery-card.locked {
-        opacity: .62;
-    }
-
-    .delivery-top {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .delivery-icon {
-        flex: 0 0 auto;
-        width: 43px;
-        height: 43px;
-        border-radius: 14px;
-        display: grid;
-        place-items: center;
-        background:
-            linear-gradient(
-                145deg,
-                rgba(197,22,46,.15),
-                rgba(214,181,106,.08)
-            );
-        border: 1px solid rgba(255,255,255,.07);
-        font-size: 19px;
-    }
-
-    .delivery-name {
-        font-weight: 800;
-        font-size: 13px;
-    }
-
-    .delivery-desc {
-        margin-top: 3px;
-        color: var(--muted);
-        font-size: 10px;
-        line-height: 1.45;
-    }
-
-    .delivery-status {
-        margin-left: auto;
-        color: var(--muted-2);
-        font-size: 9px;
-        text-transform: uppercase;
-        letter-spacing: .09em;
-    }
-
-    .delivery-actions {
-        margin-top: 13px;
-        display: flex;
-        gap: 8px;
-    }
-
-    .delivery-button {
-        flex: 1;
-        min-height: 41px;
-        border-radius: 12px;
-        border: 1px solid rgba(255,255,255,.08);
-        background: rgba(255,255,255,.04);
-        color: #fff;
-        font-weight: 800;
-        font-size: 10px;
-    }
-
-    .delivery-button.primary {
-        background:
-            linear-gradient(
-                135deg,
-                rgba(197,22,46,.95),
-                rgba(139,13,30,.95)
-            );
-        border-color: transparent;
-    }
-
-    .delivery-button:disabled {
-        opacity: .35;
-        cursor: not-allowed;
-    }
-
-    .drive-note {
-        margin-top: 9px;
-        color: var(--muted-2);
-        font-size: 9px;
-        line-height: 1.5;
-    }
-
-    .bo-lock {
-        padding: 17px;
-        border-radius: 17px;
-        border: 1px solid rgba(214,181,106,.18);
-        background: rgba(214,181,106,.045);
-    }
-
-    .bo-lock label {
-        display: block;
-        color: var(--muted);
-        font-size: 11px;
-        margin-bottom: 7px;
-    }
-
-    .input {
-        width: 100%;
-        min-height: 48px;
-        border-radius: 13px;
-        border: 1px solid rgba(255,255,255,.1);
-        background: #0c0c0c;
-        color: #fff;
-        padding: 12px 13px;
-        outline: none;
-    }
-
-    .input:focus {
-        border-color: rgba(214,181,106,.45);
-        box-shadow: 0 0 0 3px rgba(214,181,106,.06);
-    }
-
-    .bo-summary {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        margin: 15px 0;
-    }
-
-    .bo-stat {
-        padding: 13px 10px;
-        border: 1px solid rgba(255,255,255,.07);
-        border-radius: 15px;
-        background: rgba(255,255,255,.025);
-    }
-
-    .bo-stat strong {
-        display: block;
-        font-size: 20px;
-        letter-spacing: -.04em;
-    }
-
-    .bo-stat span {
-        display: block;
-        margin-top: 4px;
-        color: var(--muted);
-        font-size: 9px;
-        text-transform: uppercase;
-        letter-spacing: .08em;
-    }
-
-    .record-list {
-        display: grid;
-        gap: 10px;
-    }
-
-    .record {
-        border: 1px solid rgba(255,255,255,.07);
-        border-radius: 17px;
-        background: rgba(255,255,255,.025);
-        padding: 15px;
-    }
-
-    .record-main {
-        display: flex;
-        justify-content: space-between;
-        gap: 14px;
-    }
-
-    .record-title {
-        font-weight: 800;
-        font-size: 13px;
-        line-height: 1.4;
-    }
-
-    .record-service {
-        color: var(--gold-soft);
-        font-size: 10px;
-        margin-top: 4px;
-    }
-
-    .record-meta {
-        margin-top: 11px;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 7px;
-    }
-
-    .record-meta div {
-        padding: 9px;
-        border-radius: 11px;
-        background: rgba(0,0,0,.2);
-    }
-
-    .record-meta span {
-        display: block;
-        color: var(--muted-2);
-        font-size: 8px;
-        text-transform: uppercase;
-        letter-spacing: .08em;
-    }
-
-    .record-meta strong {
-        display: block;
-        margin-top: 3px;
-        font-size: 10px;
-        word-break: break-word;
-    }
-
-    .record-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-top: 11px;
-    }
-
-    .record-status {
-        display: inline-flex;
-        align-items: center;
-        border-radius: 999px;
-        padding: 6px 8px;
-        font-size: 8px;
-        text-transform: uppercase;
-        letter-spacing: .07em;
-        white-space: nowrap;
-        border: 1px solid rgba(255,255,255,.08);
-        background: rgba(255,255,255,.03);
-        color: var(--muted);
-    }
-
-    .record-status.activated {
-        color: #a9f0cb;
-        border-color: rgba(39,196,125,.2);
-        background: rgba(39,196,125,.06);
-    }
-
-    .record-status.verified {
-        color: #f2db9d;
-        border-color: rgba(214,181,106,.2);
-        background: rgba(214,181,106,.06);
-    }
-
-    .record-status.reported {
-        color: #f3c48f;
-        border-color: rgba(230,155,69,.2);
-        background: rgba(230,155,69,.06);
-    }
-
-    .document-viewer {
-        display: none;
-        margin-top: 14px;
-    }
-
-    .document-viewer.show {
-        display: block;
-    }
-
-    .document-content {
-        white-space: pre-wrap;
-        max-height: 460px;
-        overflow: auto;
-        padding: 16px;
-        border-radius: 15px;
-        background: #0b0b0b;
-        border: 1px solid rgba(255,255,255,.07);
-        color: #d8d8d8;
-        font-family:
-            ui-monospace,
-            SFMono-Regular,
-            Menlo,
-            Consolas,
-            monospace;
-        font-size: 11px;
-        line-height: 1.65;
-    }
-
-    .empty {
-        padding: 25px 15px;
-        text-align: center;
-        color: var(--muted);
-        font-size: 12px;
-        border: 1px dashed rgba(255,255,255,.09);
-        border-radius: 16px;
-    }
-
-    .footer {
-        padding: 24px 5px 0;
-        text-align: center;
-        color: #666;
-        font-size: 10px;
-        line-height: 1.6;
-    }
-
-    .footer strong {
-        color: #999;
-    }
-
-    .hidden {
-        display: none !important;
-    }
-
-    @media (min-width: 700px) {
-
-        .page {
-            padding-left: 24px;
-            padding-right: 24px;
-        }
-
-        .main {
-            grid-template-columns: minmax(0, 1fr) minmax(300px, .78fr);
-            align-items: start;
-        }
-
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
-        .delivery-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .actions {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .button-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
+:root{
+    --black:#050505;
+    --black2:#090909;
+    --panel:#101010;
+    --panel2:#171717;
+    --panel3:#1d1d1d;
+    --gold:#d4af37;
+    --gold2:#f0cf63;
+    --gold3:#fff0a8;
+    --green:#008000;
+    --green2:#00a000;
+    --red:#b00020;
+    --white:#fff;
+    --muted:#999;
+    --muted2:#6f6f6f;
+    --line:rgba(212,175,55,.24);
+    --line2:rgba(255,255,255,.08);
+    --shadow:0 25px 70px rgba(0,0,0,.55);
+}
+
+*{
+    box-sizing:border-box;
+}
+
+html{
+    min-height:100%;
+    background:var(--black);
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 50% -10%, rgba(212,175,55,.10), transparent 34%),
+        linear-gradient(180deg,#050505 0%,#080808 50%,#050505 100%);
+    color:var(--white);
+    font-family:Arial,Helvetica,sans-serif;
+    -webkit-font-smoothing:antialiased;
+}
+
+button,
+input,
+textarea{
+    font:inherit;
+}
+
+button{
+    -webkit-tap-highlight-color:transparent;
+}
+
+.hidden{
+    display:none !important;
+}
+
+/* =========================================================
+   MAIN HEADER
+========================================================= */
+
+.header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    padding:
+        calc(16px + env(safe-area-inset-top))
+        18px
+        16px;
+    background:rgba(5,5,5,.92);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--line);
+}
+
+.header-inner{
+    width:min(760px,100%);
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+}
+
+.brand{
+    min-width:0;
+}
+
+.brand-name{
+    color:var(--gold2);
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:18px;
+    font-weight:700;
+    letter-spacing:.3px;
+}
+
+.brand-subtitle{
+    margin-top:4px;
+    color:#a5a5a5;
+    font-size:12px;
+}
+
+.secure-badge{
+    flex-shrink:0;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:7px 10px;
+    color:var(--gold2);
+    font-size:10px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+/* =========================================================
+   CUSTOMER PAGE
+========================================================= */
+
+.customer-page{
+    width:min(760px,100%);
+    margin:auto;
+    padding:24px 16px 55px;
+}
+
+.hero{
+    text-align:center;
+    padding:12px 4px 28px;
+}
+
+.hero-kicker{
+    color:var(--gold);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+}
+
+.hero h1{
+    margin:10px 0 10px;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(29px,8vw,46px);
+    line-height:1.06;
+    font-weight:500;
+}
+
+.hero p{
+    max-width:590px;
+    margin:0 auto;
+    color:#aaa;
+    font-size:14px;
+    line-height:1.7;
+}
+
+/* =========================================================
+   SIMPLE ORDER SUMMARY
+========================================================= */
+
+.order-card{
+    position:relative;
+    overflow:hidden;
+    margin-bottom:16px;
+    padding:22px;
+    background:
+        linear-gradient(145deg,rgba(212,175,55,.09),transparent 38%),
+        linear-gradient(180deg,#141414,#0e0e0e);
+    border:1px solid var(--line);
+    border-radius:22px;
+    box-shadow:var(--shadow);
+}
+
+.order-card::after{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    right:-90px;
+    top:-100px;
+    border-radius:50%;
+    border:1px solid rgba(212,175,55,.10);
+}
+
+.order-label{
+    color:var(--gold);
+    font-size:10px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    font-weight:700;
+}
+
+.order-title{
+    margin-top:9px;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:22px;
+    line-height:1.25;
+}
+
+.order-service{
+    margin-top:6px;
+    color:#aaa;
+    font-size:13px;
+}
+
+.order-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:18px;
+}
+
+.info-mini{
+    padding:13px;
+    background:rgba(255,255,255,.035);
+    border:1px solid var(--line2);
+    border-radius:13px;
+}
+
+.info-mini span{
+    display:block;
+    color:#777;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.info-mini strong{
+    display:block;
+    margin-top:5px;
+    color:#eee;
+    font-size:13px;
+    word-break:break-word;
+}
+
+/* =========================================================
+   STATUS STEPPER
+========================================================= */
+
+.status-card{
+    margin-bottom:16px;
+    padding:20px;
+    background:var(--panel);
+    border:1px solid var(--line2);
+    border-radius:20px;
+}
+
+.section-heading{
+    margin-bottom:15px;
+}
+
+.section-heading h2{
+    margin:0;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:21px;
+    font-weight:500;
+}
+
+.section-heading p{
+    margin:6px 0 0;
+    color:#8d8d8d;
+    font-size:12px;
+    line-height:1.55;
+}
+
+.progress-track{
+    position:relative;
+    display:flex;
+    justify-content:space-between;
+    margin-top:22px;
+}
+
+.progress-track::before{
+    content:"";
+    position:absolute;
+    left:12px;
+    right:12px;
+    top:12px;
+    height:2px;
+    background:#303030;
+}
+
+.progress-line{
+    position:absolute;
+    left:12px;
+    top:12px;
+    width:0;
+    height:2px;
+    background:linear-gradient(90deg,var(--gold),var(--gold2));
+    transition:width .35s ease;
+}
+
+.progress-step{
+    position:relative;
+    z-index:2;
+    width:25%;
+    text-align:center;
+}
+
+.progress-dot{
+    width:25px;
+    height:25px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    border:1px solid #3b3b3b;
+    background:#101010;
+    color:#666;
+    font-size:10px;
+    font-weight:700;
+}
+
+.progress-step.active .progress-dot,
+.progress-step.complete .progress-dot{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:#050505;
+}
+
+.progress-name{
+    margin-top:8px;
+    color:#777;
+    font-size:9px;
+    line-height:1.25;
+}
+
+.progress-step.active .progress-name,
+.progress-step.complete .progress-name{
+    color:#ddd;
+}
+
+/* =========================================================
+   PAYMENT EXPERIENCE
+========================================================= */
+
+.payment-experience{
+    position:fixed;
+    inset:0;
+    z-index:200;
+    display:none;
+    overflow-y:auto;
+    padding:
+        calc(12px + env(safe-area-inset-top))
+        12px
+        calc(24px + env(safe-area-inset-bottom));
+    background:rgba(0,0,0,.84);
+    backdrop-filter:blur(15px);
+}
+
+.payment-experience.open{
+    display:block;
+}
+
+.experience-shell{
+    width:min(700px,100%);
+    margin:auto;
+    background:
+        radial-gradient(circle at 100% 0%,rgba(212,175,55,.09),transparent 30%),
+        linear-gradient(180deg,#111 0%,#090909 100%);
+    border:1px solid var(--line);
+    border-radius:26px;
+    box-shadow:0 35px 100px rgba(0,0,0,.8);
+    overflow:hidden;
+}
+
+.experience-top{
+    position:sticky;
+    top:0;
+    z-index:4;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    padding:17px 18px;
+    background:rgba(12,12,12,.95);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--line2);
+}
+
+.experience-title{
+    min-width:0;
+}
+
+.experience-title small{
+    display:block;
+    color:var(--gold);
+    font-size:9px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+}
+
+.experience-title strong{
+    display:block;
+    margin-top:4px;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:19px;
+    font-weight:500;
+}
+
+.close-experience{
+    width:38px;
+    height:38px;
+    flex-shrink:0;
+    border:1px solid #333;
+    border-radius:50%;
+    background:#151515;
+    color:#ddd;
+    cursor:pointer;
+    font-size:20px;
+}
+
+.experience-body{
+    padding:20px 16px 28px;
+}
+
+.experience-intro{
+    padding:4px 2px 20px;
+}
+
+.experience-intro h2{
+    margin:0;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:28px;
+    font-weight:500;
+}
+
+.experience-intro p{
+    margin:9px 0 0;
+    color:#999;
+    font-size:13px;
+    line-height:1.7;
+}
+
+/* =========================================================
+   PREMIUM CARDS
+========================================================= */
+
+.lux-card{
+    margin-bottom:13px;
+    padding:19px;
+    background:linear-gradient(180deg,#151515,#101010);
+    border:1px solid var(--line2);
+    border-radius:20px;
+}
+
+.lux-card.gold-border{
+    border-color:var(--line);
+}
+
+.card-number{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:25px;
+    height:25px;
+    margin-right:8px;
+    border-radius:50%;
+    background:rgba(212,175,55,.13);
+    border:1px solid var(--line);
+    color:var(--gold2);
+    font-size:10px;
+    font-weight:700;
+    vertical-align:middle;
+}
+
+.lux-title{
+    display:inline;
+    color:#f4f4f4;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:19px;
+    font-weight:500;
+}
+
+.lux-description{
+    margin:9px 0 16px;
+    color:#909090;
+    font-size:12px;
+    line-height:1.65;
+}
+
+/* =========================================================
+   AMOUNT
+========================================================= */
+
+.amount-display{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:15px;
+    margin:15px 0;
+    padding:18px;
+    border-radius:16px;
+    background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(255,255,255,.025));
+    border:1px solid rgba(212,175,55,.18);
+}
+
+.amount-label{
+    color:#999;
+    font-size:11px;
+}
+
+.amount-value{
+    margin-top:5px;
+    color:var(--gold2);
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:29px;
+}
+
+.currency{
+    color:#777;
+    font-size:10px;
+}
+
+/* =========================================================
+   BANK DETAILS
+========================================================= */
+
+.bank-card{
+    padding:16px;
+    background:#0b0b0b;
+    border:1px solid #282828;
+    border-radius:15px;
+}
+
+.bank-row{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    padding:11px 0;
+    border-bottom:1px solid #202020;
+}
+
+.bank-row:last-child{
+    border-bottom:0;
+    padding-bottom:0;
+}
+
+.bank-row:first-child{
+    padding-top:0;
+}
+
+.bank-label{
+    color:#777;
+    font-size:11px;
+}
+
+.bank-value{
+    color:#eee;
+    font-size:12px;
+    font-weight:600;
+    text-align:right;
+    word-break:break-word;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary-button,
+.report-button,
+.download-button{
+    width:100%;
+    min-height:50px;
+    margin-top:14px;
+    padding:13px 17px;
+    border:0;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:700;
+    letter-spacing:.7px;
+    transition:transform .15s ease,opacity .15s ease;
+}
+
+.primary-button{
+    background:linear-gradient(135deg,var(--gold),var(--gold2));
+    color:#090909;
+    box-shadow:0 8px 25px rgba(212,175,55,.14);
+}
+
+.report-button{
+    background:var(--gold);
+    color:#090909;
+}
+
+.download-button{
+    background:linear-gradient(135deg,var(--green),var(--green2));
+    color:#fff;
+}
+
+.primary-button:active,
+.report-button:active,
+.download-button:active{
+    transform:scale(.98);
+}
+
+.primary-button:disabled,
+.report-button:disabled,
+.download-button:disabled{
+    opacity:.38;
+    cursor:not-allowed;
+    transform:none;
+}
+
+/* =========================================================
+   REPORT
+========================================================= */
+
+.note-input{
+    width:100%;
+    min-height:88px;
+    resize:vertical;
+    padding:13px;
+    background:#090909;
+    color:#eee;
+    border:1px solid #292929;
+    border-radius:13px;
+    outline:none;
+}
+
+.note-input:focus{
+    border-color:var(--gold);
+}
+
+.note-input::placeholder{
+    color:#606060;
+}
+
+/* =========================================================
+   DOCUMENT
+========================================================= */
+
+.document-meta{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+    margin-top:15px;
+}
+
+.document-meta-item{
+    padding:12px;
+    background:#0b0b0b;
+    border:1px solid #242424;
+    border-radius:12px;
+}
+
+.document-meta-item span{
+    display:block;
+    color:#666;
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.document-meta-item strong{
+    display:block;
+    margin-top:5px;
+    color:#ddd;
+    font-size:12px;
+    word-break:break-word;
+}
+
+.document-preview{
+    max-height:260px;
+    overflow:auto;
+    margin-top:13px;
+    padding:15px;
+    background:#080808;
+    border:1px solid #222;
+    border-radius:13px;
+    color:#aaa;
+    font-size:11px;
+    line-height:1.7;
+    white-space:pre-wrap;
+}
+
+.saved-status{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:13px;
+    color:#aaa;
+    font-size:11px;
+}
+
+.saved-status-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#666;
+}
+
+.saved-status.ready .saved-status-dot{
+    background:var(--gold);
+}
+
+.saved-status.active .saved-status-dot{
+    background:#00a000;
+}
+
+/* =========================================================
+   DELIVERY CHANNELS
+========================================================= */
+
+.channel-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:15px;
+}
+
+.channel{
+    padding:15px;
+    background:#0c0c0c;
+    border:1px solid #252525;
+    border-radius:15px;
+}
+
+.channel-icon{
+    font-size:20px;
+}
+
+.channel-name{
+    margin-top:8px;
+    color:#eee;
+    font-size:13px;
+    font-weight:700;
+}
+
+.channel-status{
+    margin-top:4px;
+    color:#777;
+    font-size:10px;
+    line-height:1.4;
+}
+
+.channel.available{
+    border-color:rgba(212,175,55,.25);
+}
+
+.channel.available .channel-status{
+    color:var(--gold2);
+}
+
+/* =========================================================
+   SIMPLE EXPLANATION
+========================================================= */
+
+.explain-box{
+    margin-top:14px;
+    padding:15px;
+    background:rgba(212,175,55,.055);
+    border-left:2px solid var(--gold);
+    border-radius:0 13px 13px 0;
+}
+
+.explain-box strong{
+    color:#ddd;
+    font-size:12px;
+}
+
+.explain-box p{
+    margin:6px 0 0;
+    color:#888;
+    font-size:11px;
+    line-height:1.65;
+}
+
+/* =========================================================
+   STATUS MESSAGE
+========================================================= */
+
+.message{
+    display:none;
+    margin:13px 0;
+    padding:13px 14px;
+    border-radius:12px;
+    font-size:12px;
+    line-height:1.55;
+}
+
+.message.show{
+    display:block;
+}
+
+.message.info{
+    color:#ddd;
+    background:#151515;
+    border:1px solid #303030;
+}
+
+.message.success{
+    color:#bff0bf;
+    background:rgba(0,128,0,.12);
+    border:1px solid rgba(0,160,0,.3);
+}
+
+.message.error{
+    color:#ffc0c0;
+    background:rgba(176,0,32,.12);
+    border:1px solid rgba(176,0,32,.3);
+}
+
+/* =========================================================
+   ORIGINAL PAGE FALLBACK / BACK OFFICE
+========================================================= */
+
+#customerPaymentView{
+    width:100%;
+}
+
+.customer-hidden-controls{
+    display:none;
+}
+
+.back-office-page{
+    width:min(1000px,100%);
+    margin:auto;
+    padding:25px 16px 60px;
+}
+
+.bo-card{
+    margin-bottom:15px;
+    padding:20px;
+    background:#101010;
+    border:1px solid #242424;
+    border-radius:18px;
+}
+
+.bo-card h2{
+    margin:0 0 14px;
+    font-family:Georgia,"Times New Roman",serif;
+    font-weight:500;
+}
+
+.bo-input{
+    width:100%;
+    padding:13px;
+    margin-bottom:10px;
+    background:#080808;
+    color:#fff;
+    border:1px solid #303030;
+    border-radius:10px;
+    outline:none;
+}
+
+.bo-button{
+    padding:12px 16px;
+    margin:5px 5px 5px 0;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:#151515;
+    color:#eee;
+    cursor:pointer;
+}
+
+.bo-button.gold{
+    background:var(--gold);
+    color:#050505;
+}
+
+.bo-summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.bo-stat{
+    padding:15px;
+    background:#0a0a0a;
+    border:1px solid #222;
+    border-radius:12px;
+}
+
+.bo-stat span{
+    display:block;
+    color:#666;
+    font-size:10px;
+}
+
+.bo-stat strong{
+    display:block;
+    margin-top:5px;
+    font-size:20px;
+}
+
+.bo-record{
+    margin-top:10px;
+    padding:15px;
+    background:#0a0a0a;
+    border:1px solid #222;
+    border-radius:13px;
+}
+
+.bo-record-title{
+    color:#eee;
+    font-weight:700;
+}
+
+.bo-record-meta{
+    margin-top:5px;
+    color:#777;
+    font-size:11px;
+    line-height:1.6;
+}
+
+.bo-actions{
+    margin-top:10px;
+}
+
+.bo-document{
+    max-height:450px;
+    overflow:auto;
+    padding:15px;
+    background:#070707;
+    border:1px solid #252525;
+    border-radius:12px;
+    white-space:pre-wrap;
+    color:#ccc;
+    font-size:12px;
+    line-height:1.65;
+}
+
+@media(max-width:480px){
+    .order-grid,
+    .document-meta,
+    .channel-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .progress-name{
+        font-size:8px;
+    }
+
+    .experience-body{
+        padding-left:13px;
+        padding-right:13px;
+    }
+}
 </style>
 </head>
 
 <body>
 
-<div class="page">
-
-    <header class="topbar">
-
+<header class="header">
+    <div class="header-inner">
         <div class="brand">
-
-            <div class="brand-mark">
-                NP
-            </div>
-
-            <div class="brand-copy">
-                <strong>Naija Pocket Business Center</strong>
-                <span>Secure document payment & delivery</span>
-            </div>
-
+            <div class="brand-name">Naija Pocket Business Center</div>
+            <div class="brand-subtitle">Secure payment and document delivery</div>
         </div>
-
-        <div class="top-status">
-            <span class="status-dot"></span>
-            Secure
-        </div>
-
-    </header>
+        <div class="secure-badge">Secure</div>
+    </div>
+</header>
 
 
-    <!-- ======================================================
-         HERO
-    ======================================================= -->
+<!-- =========================================================
+     CUSTOMER VIEW
+========================================================= -->
 
-    <section class="hero">
+<section id="customerPaymentView" class="customer-page">
 
-        <div class="eyebrow" id="heroEyebrow">
-            Document service
-        </div>
-
-        <h1 id="heroTitle">
-            Your document is almost ready.
-        </h1>
-
-        <p id="heroDescription">
-            Your reviewed document is securely saved. Complete payment,
-            allow Customer Care to verify it, and your exact saved document
-            will become available for delivery.
+    <div class="hero">
+        <div class="hero-kicker">Your Order</div>
+        <h1>Payment &amp; Delivery</h1>
+        <p>
+            Your document is prepared for you. Complete payment,
+            confirm it, and Customer Care will activate your delivery.
         </p>
+    </div>
 
-        <div class="hero-meta">
 
-            <div class="pill">
-                Exact saved document
-            </div>
+    <!-- ORDER SUMMARY -->
 
-            <div class="pill">
-                Customer Care verified
-            </div>
+    <div class="order-card">
+        <div class="order-label">Document</div>
 
-            <div class="pill">
-                Multiple delivery channels
-            </div>
-
+        <div id="mainDocumentTitle" class="order-title">
+            Your document
         </div>
 
-    </section>
+        <div id="mainService" class="order-service">
+            Service
+        </div>
+
+        <div class="order-grid">
+            <div class="info-mini">
+                <span>Pages</span>
+                <strong id="mainPages">—</strong>
+            </div>
+
+            <div class="info-mini">
+                <span>Amount</span>
+                <strong id="mainAmount">₦0</strong>
+            </div>
+        </div>
+    </div>
 
 
-    <!-- ======================================================
-         CUSTOMER AREA
-    ======================================================= -->
+    <!-- STATUS -->
 
-    <main
-        id="customerArea"
-        class="main"
-    >
+    <div class="status-card">
+        <div class="section-heading">
+            <h2>Order status</h2>
+            <p id="mainStatusText">
+                Your order is ready for payment.
+            </p>
+        </div>
 
-        <section class="card">
+        <div class="progress-track">
+            <div id="progressLine" class="progress-line"></div>
 
-            <div class="card-title">
+            <div id="stepPayment" class="progress-step active">
+                <div class="progress-dot">1</div>
+                <div class="progress-name">Payment</div>
+            </div>
+
+            <div id="stepReported" class="progress-step">
+                <div class="progress-dot">2</div>
+                <div class="progress-name">Payment reported</div>
+            </div>
+
+            <div id="stepConfirmed" class="progress-step">
+                <div class="progress-dot">3</div>
+                <div class="progress-name">Confirmed</div>
+            </div>
+
+            <div id="stepDownload" class="progress-step">
+                <div class="progress-dot">4</div>
+                <div class="progress-name">Download ready</div>
+            </div>
+        </div>
+    </div>
+
+
+    <button id="makePaymentButton" class="primary-button">
+        MAKE PAYMENT
+    </button>
+
+    <div id="message" class="message"></div>
+
+    <button id="backButton" class="primary-button" style="display:none;background:#171717;color:#ddd;border:1px solid #333;">
+        BACK
+    </button>
+
+</section>
+
+
+<!-- =========================================================
+     CUSTOMER PAYMENT & DELIVERY EXPERIENCE
+========================================================= -->
+
+<div id="paymentExperience" class="payment-experience">
+
+    <div class="experience-shell">
+
+        <div class="experience-top">
+            <div class="experience-title">
+                <small>Naija Pocket Business Center</small>
+                <strong>Payment &amp; Delivery</strong>
+            </div>
+
+            <button id="closeExperience" class="close-experience" aria-label="Close">
+                ×
+            </button>
+        </div>
+
+
+        <div class="experience-body">
+
+            <div class="experience-intro">
+                <h2>Complete Your Order</h2>
+                <p>
+                    Everything you need is here. Make your payment,
+                    tell us when you have paid, and Customer Care will
+                    confirm it and activate your document delivery.
+                </p>
+            </div>
+
+
+            <!-- =================================================
+                 STEP 1 — PAYMENT
+            ================================================== -->
+
+            <div class="lux-card gold-border">
 
                 <div>
-                    <h2>Document Summary</h2>
-                    <p>
-                        The document below is the saved reviewed version.
-                    </p>
+                    <span class="card-number">1</span>
+                    <span class="lux-title">Make Payment</span>
                 </div>
 
-                <div
-                    class="record-status"
-                    id="customerStatus"
-                >
-                    Ready
-                </div>
+                <p class="lux-description">
+                    Use the payment details below to make your payment.
+                    Your document will remain safely saved while your
+                    payment is being confirmed.
+                </p>
 
-            </div>
-
-
-            <div
-                id="customerNotice"
-                class="notice"
-            ></div>
-
-
-            <div class="document-summary">
-
-                <div class="summary-row">
-
-                    <span>Service</span>
-
-                    <strong id="serviceValue">
-                        —
-                    </strong>
-
-                </div>
-
-
-                <div class="summary-row">
-
-                    <span>Document title</span>
-
-                    <strong id="titleValue">
-                        —
-                    </strong>
-
-                </div>
-
-
-                <div class="summary-row">
-
-                    <span>File</span>
-
-                    <strong id="filenameValue">
-                        —
-                    </strong>
-
-                </div>
-
-
-                <div class="summary-row">
-
-                    <span>Pages</span>
-
-                    <strong id="pagesValue">
-                        —
-                    </strong>
-
-                </div>
-
-
-                <div class="summary-row">
-
-                    <span>Amount</span>
-
-                    <strong
-                        class="price"
-                        id="amountValue"
-                    >
-                        ₦0
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="progress-shell">
-
-                <div class="progress-top">
-
-                    <span id="progressLabel">
-                        Ready
-                    </span>
-
-                    <strong id="progressPercent">
-                        0%
-                    </strong>
-
-                </div>
-
-                <div class="progress-track">
-
-                    <div
-                        class="progress-fill"
-                        id="progressFill"
-                    ></div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==================================================
-             PAYMENT
-        =================================================== -->
-
-        <section class="card">
-
-            <div class="card-title">
-
-                <div>
-                    <h2>Payment</h2>
-                    <p>
-                        Your saved document is preserved while payment is
-                        being completed.
-                    </p>
-                </div>
-
-            </div>
-
-
-            <div class="bank-box">
-
-                <div class="bank-head">
-
-                    <div class="bank-icon">
-                        ₦
-                    </div>
-
+                <div class="amount-display">
                     <div>
-                        <strong>Bank Transfer</strong>
-                        <span>
-                            Use the business payment details below.
-                        </span>
+                        <div class="amount-label">Amount to pay</div>
+                        <div id="experienceAmount" class="amount-value">₦0</div>
+                    </div>
+                    <div class="currency">NGN</div>
+                </div>
+
+                <div id="bankCard" class="bank-card">
+
+                    <div class="bank-row">
+                        <div class="bank-label">Bank</div>
+                        <div id="bankName" class="bank-value">
+                            Contact Customer Care
+                        </div>
+                    </div>
+
+                    <div class="bank-row">
+                        <div class="bank-label">Account Name</div>
+                        <div id="accountName" class="bank-value">
+                            Naija Pocket Business Center
+                        </div>
+                    </div>
+
+                    <div class="bank-row">
+                        <div class="bank-label">Account Number</div>
+                        <div id="accountNumber" class="bank-value">
+                            Contact Customer Care
+                        </div>
                     </div>
 
                 </div>
 
-
-                <div class="bank-detail">
-                    <span>Bank</span>
-                    <strong>Your Business Bank</strong>
-                </div>
-
-                <div class="bank-detail">
-                    <span>Account Name</span>
-                    <strong>
-                        Naija Pocket Business Center
-                    </strong>
-                </div>
-
-                <div class="bank-detail">
-                    <span>Account Number</span>
-                    <strong>
-                        0000000000
-                    </strong>
-                </div>
-
-                <div class="bank-detail">
-                    <span>Amount</span>
-                    <strong id="bankAmount">
-                        ₦0
-                    </strong>
-                </div>
-
-            </div>
-
-
-            <div class="actions">
-
-                <button
-                    class="btn btn-primary"
-                    id="createPaymentBtn"
-                    onclick="createPayment()"
-                >
-                    PREPARE PAYMENT
+                <button id="experienceMakePaymentButton" class="primary-button">
+                    MAKE PAYMENT
                 </button>
 
-                <button
-                    class="btn btn-secondary"
-                    id="reportPaymentBtn"
-                    onclick="reportPayment()"
-                    disabled
-                >
+            </div>
+
+
+            <!-- =================================================
+                 STEP 2 — REPORT PAYMENT
+            ================================================== -->
+
+            <div id="reportCard" class="lux-card">
+
+                <div>
+                    <span class="card-number">2</span>
+                    <span class="lux-title">I Have Made Payment</span>
+                </div>
+
+                <p class="lux-description">
+                    After making the transfer, tap the button below.
+                    You can also add a short note if you want to tell
+                    us anything about the payment.
+                </p>
+
+                <textarea
+                    id="paymentNote"
+                    class="note-input"
+                    placeholder="Optional: add a short payment note"
+                ></textarea>
+
+                <button id="reportButton" class="report-button" disabled>
                     I HAVE MADE PAYMENT
                 </button>
 
             </div>
 
-        </section>
 
+            <!-- =================================================
+                 STEP 3 — SAVED DOCUMENT
+            ================================================== -->
 
-        <!-- ==================================================
-             DELIVERY
-        =================================================== -->
-
-        <section
-            class="card full-width"
-            id="deliverySection"
-        >
-
-            <div class="card-title">
+            <div class="lux-card">
 
                 <div>
-                    <h2>Receive Your Document</h2>
-
-                    <p>
-                        Choose how you want to receive the exact saved
-                        document.
-                    </p>
+                    <span class="card-number">3</span>
+                    <span class="lux-title">Your Saved Document</span>
                 </div>
 
-                <div
-                    class="record-status"
-                    id="deliveryStatus"
-                >
-                    Locked
+                <p class="lux-description">
+                    This is the exact document prepared for you.
+                    We do not create a different document after payment.
+                </p>
+
+                <div class="document-meta">
+
+                    <div class="document-meta-item">
+                        <span>Service</span>
+                        <strong id="experienceService">—</strong>
+                    </div>
+
+                    <div class="document-meta-item">
+                        <span>Pages</span>
+                        <strong id="experiencePages">—</strong>
+                    </div>
+
+                    <div class="document-meta-item">
+                        <span>Title</span>
+                        <strong id="experienceDocumentTitle">—</strong>
+                    </div>
+
+                    <div class="document-meta-item">
+                        <span>File</span>
+                        <strong id="experienceFilename">—</strong>
+                    </div>
+
                 </div>
 
+                <div id="savedStatus" class="saved-status">
+                    <span class="saved-status-dot"></span>
+                    <span id="savedStatusText">
+                        Your reviewed document is ready.
+                    </span>
+                </div>
+
+                <div id="documentPreview" class="document-preview">
+                    Your document preview will appear here.
+                </div>
+
+                <button id="downloadButton" class="download-button" disabled>
+                    DOWNLOAD DOCUMENT
+                </button>
+
             </div>
 
 
-            <div
-                id="deliveryNotice"
-                class="notice info show"
-            >
-                Download and delivery become available after Customer Care
-                verifies your payment and activates your document.
-            </div>
-
-
-            <div class="delivery-grid">
-
-                <!-- PHONE -->
-
-                <article
-                    class="delivery-card locked"
-                    id="delivery-download"
-                >
-
-                    <div class="delivery-top">
-
-                        <div class="delivery-icon">
-                            ↓
-                        </div>
-
-                        <div>
-                            <div class="delivery-name">
-                                Download to Phone
-                            </div>
-
-                            <div class="delivery-desc">
-                                Save the exact document directly to your
-                                phone.
-                            </div>
-                        </div>
-
-                        <div
-                            class="delivery-status"
-                            id="downloadStatus"
-                        >
-                            Locked
-                        </div>
-
-                    </div>
-
-                    <div class="delivery-actions">
-
-                        <button
-                            class="delivery-button primary"
-                            id="downloadBtn"
-                            onclick="downloadDocument()"
-                            disabled
-                        >
-                            DOWNLOAD
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- WHATSAPP -->
-
-                <article
-                    class="delivery-card locked"
-                    id="delivery-whatsapp"
-                >
-
-                    <div class="delivery-top">
-
-                        <div class="delivery-icon">
-                            W
-                        </div>
-
-                        <div>
-                            <div class="delivery-name">
-                                WhatsApp
-                            </div>
-
-                            <div class="delivery-desc">
-                                Share the exact saved-document link through
-                                WhatsApp.
-                            </div>
-                        </div>
-
-                        <div
-                            class="delivery-status"
-                            id="whatsappStatus"
-                        >
-                            Locked
-                        </div>
-
-                    </div>
-
-                    <div class="delivery-actions">
-
-                        <button
-                            class="delivery-button primary"
-                            id="whatsappBtn"
-                            onclick="openDelivery('whatsapp')"
-                            disabled
-                        >
-                            OPEN WHATSAPP
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- EMAIL -->
-
-                <article
-                    class="delivery-card locked"
-                    id="delivery-email"
-                >
-
-                    <div class="delivery-top">
-
-                        <div class="delivery-icon">
-                            @
-                        </div>
-
-                        <div>
-                            <div class="delivery-name">
-                                Email
-                            </div>
-
-                            <div class="delivery-desc">
-                                Open your email app with the saved-document
-                                link prepared.
-                            </div>
-                        </div>
-
-                        <div
-                            class="delivery-status"
-                            id="emailStatus"
-                        >
-                            Locked
-                        </div>
-
-                    </div>
-
-                    <div class="delivery-actions">
-
-                        <button
-                            class="delivery-button primary"
-                            id="emailBtn"
-                            onclick="openDelivery('email')"
-                            disabled
-                        >
-                            OPEN EMAIL
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- TELEGRAM -->
-
-                <article
-                    class="delivery-card locked"
-                    id="delivery-telegram"
-                >
-
-                    <div class="delivery-top">
-
-                        <div class="delivery-icon">
-                            T
-                        </div>
-
-                        <div>
-                            <div class="delivery-name">
-                                Telegram
-                            </div>
-
-                            <div class="delivery-desc">
-                                Share the exact saved-document link through
-                                Telegram.
-                            </div>
-                        </div>
-
-                        <div
-                            class="delivery-status"
-                            id="telegramStatus"
-                        >
-                            Locked
-                        </div>
-
-                    </div>
-
-                    <div class="delivery-actions">
-
-                        <button
-                            class="delivery-button primary"
-                            id="telegramBtn"
-                            onclick="openDelivery('telegram')"
-                            disabled
-                        >
-                            OPEN TELEGRAM
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- GOOGLE DRIVE -->
-
-                <article
-                    class="delivery-card locked"
-                    id="delivery-google_drive"
-                >
-
-                    <div class="delivery-top">
-
-                        <div class="delivery-icon">
-                            G
-                        </div>
-
-                        <div>
-                            <div class="delivery-name">
-                                Google Drive
-                            </div>
-
-                            <div class="delivery-desc">
-                                Open Drive and save the exact downloaded
-                                document there.
-                            </div>
-                        </div>
-
-                        <div
-                            class="delivery-status"
-                            id="googleDriveStatus"
-                        >
-                            Locked
-                        </div>
-
-                    </div>
-
-                    <div class="delivery-actions">
-
-                        <button
-                            class="delivery-button"
-                            id="driveDownloadBtn"
-                            onclick="downloadDocument()"
-                            disabled
-                        >
-                            1. DOWNLOAD
-                        </button>
-
-                        <button
-                            class="delivery-button primary"
-                            id="driveBtn"
-                            onclick="openDelivery('google_drive')"
-                            disabled
-                        >
-                            2. OPEN DRIVE
-                        </button>
-
-                    </div>
-
-                    <div class="drive-note">
-                        Google Drive does not receive an automatic upload
-                        from this page. Download the exact file first, then
-                        upload that same file to your Drive.
-                    </div>
-
-                </article>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==================================================
-             CUSTOMER CARE
-        =================================================== -->
-
-        <section class="card">
-
-            <div class="card-title">
+            <!-- =================================================
+                 STEP 4 — DELIVERY CHANNELS
+            ================================================== -->
+
+            <div class="lux-card">
 
                 <div>
-                    <h2>Customer Care</h2>
-
-                    <p>
-                        Payment verification and download activation are
-                        handled separately for your protection.
-                    </p>
+                    <span class="card-number">4</span>
+                    <span class="lux-title">Choose How to Receive It</span>
                 </div>
 
-            </div>
+                <p class="lux-description">
+                    Once Customer Care activates your delivery, your
+                    document can be received through the available
+                    delivery channels.
+                </p>
 
-            <div class="actions">
+                <div class="channel-grid">
 
-                <button
-                    class="btn btn-secondary"
-                    onclick="openBackOffice()"
-                >
-                    CUSTOMER CARE BACK OFFICE
-                </button>
-
-                <button
-                    class="btn btn-secondary"
-                    onclick="goWorkspace()"
-                >
-                    RETURN TO WORKSPACE
-                </button>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- ======================================================
-         BACK OFFICE
-    ======================================================= -->
-
-    <main
-        id="backOfficeArea"
-        class="main hidden"
-    >
-
-        <section class="card full-width">
-
-            <div class="card-title">
-
-                <div>
-                    <div class="eyebrow">
-                        Customer Care
-                    </div>
-
-                    <h2>
-                        Back Office
-                    </h2>
-
-                    <p>
-                        Verify payments, inspect the saved document and
-                        activate delivery.
-                    </p>
-                </div>
-
-                <div
-                    class="record-status"
-                    id="boConnectionStatus"
-                >
-                    Locked
-                </div>
-
-            </div>
-
-
-            <div
-                id="boNotice"
-                class="notice"
-            ></div>
-
-
-            <div
-                id="boLoginBox"
-                class="bo-lock"
-            >
-
-                <label for="boAdminKey">
-                    Back Office Key
-                </label>
-
-                <input
-                    class="input"
-                    id="boAdminKey"
-                    type="password"
-                    autocomplete="off"
-                    placeholder="Enter Back Office key"
-                >
-
-                <div class="actions">
-
-                    <button
-                        class="btn btn-gold"
-                        onclick="loginBackOffice()"
-                    >
-                        ENTER CUSTOMER CARE
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="boContent"
-                class="hidden"
-            >
-
-                <div class="bo-summary">
-
-                    <div class="bo-stat">
-
-                        <strong id="boSavedCount">
-                            0
-                        </strong>
-
-                        <span>
-                            Saved
-                        </span>
-
-                    </div>
-
-                    <div class="bo-stat">
-
-                        <strong id="boReportedCount">
-                            0
-                        </strong>
-
-                        <span>
-                            Reported
-                        </span>
-
-                    </div>
-
-                    <div class="bo-stat">
-
-                        <strong id="boActivatedCount">
-                            0
-                        </strong>
-
-                        <span>
-                            Activated
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="button-grid">
-
-                    <button
-                        class="btn btn-primary"
-                        onclick="loadBackOffice()"
-                    >
-                        LOAD SAVED DOCUMENTS
-                    </button>
-
-                    <button
-                        class="btn btn-secondary"
-                        onclick="loadBackOffice()"
-                    >
-                        REFRESH BACK OFFICE
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="recordList"
-                    class="record-list"
-                    style="margin-top:15px;"
-                ></div>
-
-
-                <div
-                    id="documentViewer"
-                    class="document-viewer"
-                >
-
-                    <div class="card-title">
-
-                        <div>
-                            <h2>
-                                Saved Document
-                            </h2>
-
-                            <p id="viewerMeta">
-                                —
-                            </p>
+                    <div id="channelPhone" class="channel available">
+                        <div class="channel-icon">↓</div>
+                        <div class="channel-name">Phone Download</div>
+                        <div class="channel-status">
+                            Download directly to your phone after activation.
                         </div>
-
                     </div>
 
-                    <div
-                        id="documentContent"
-                        class="document-content"
-                    ></div>
+                    <div class="channel">
+                        <div class="channel-icon">✉</div>
+                        <div class="channel-name">Email</div>
+                        <div class="channel-status">
+                            Available when email delivery is activated.
+                        </div>
+                    </div>
+
+                    <div class="channel">
+                        <div class="channel-icon">◉</div>
+                        <div class="channel-name">WhatsApp</div>
+                        <div class="channel-status">
+                            Available when WhatsApp delivery is activated.
+                        </div>
+                    </div>
+
+                    <div class="channel">
+                        <div class="channel-icon">➤</div>
+                        <div class="channel-name">Telegram</div>
+                        <div class="channel-status">
+                            Available when Telegram delivery is activated.
+                        </div>
+                    </div>
+
+                    <div class="channel">
+                        <div class="channel-icon">□</div>
+                        <div class="channel-name">Google Drive</div>
+                        <div class="channel-status">
+                            Available when Drive delivery is activated.
+                        </div>
+                    </div>
 
                 </div>
 
             </div>
 
-        </section>
 
+            <!-- =================================================
+                 SIMPLE EXPLANATION
+            ================================================== -->
 
-        <section class="card">
+            <div class="explain-box">
+                <strong>Why is my download locked?</strong>
 
-            <div class="actions">
-
-                <button
-                    class="btn btn-secondary"
-                    onclick="exitBackOffice()"
-                >
-                    EXIT BACK OFFICE
-                </button>
-
-                <button
-                    class="btn btn-danger"
-                    onclick="goWorkspace()"
-                >
-                    RETURN TO WORKSPACE
-                </button>
-
+                <p>
+                    Your document is already prepared and protected.
+                    Customer Care first confirms your payment and then
+                    activates delivery. This makes sure the exact
+                    document you approved is the one you receive.
+                </p>
             </div>
 
-        </section>
 
-    </main>
+            <div id="experienceMessage" class="message"></div>
 
-
-    <footer class="footer">
-
-        <strong>
-            Naija Pocket Business Center
-        </strong>
-
-        <br>
-
-        Your document remains saved while payment and delivery are being
-        completed.
-
-    </footer>
-
+        </div>
+    </div>
 </div>
 
 
+<!-- =========================================================
+     BACK OFFICE VIEW
+========================================================= -->
+
+<section id="backOfficeView" class="back-office-page hidden">
+
+    <div class="hero">
+        <div class="hero-kicker">Private Area</div>
+        <h1>Customer Care</h1>
+        <p>
+            Payment verification and document delivery management.
+        </p>
+    </div>
+
+    <div class="bo-card">
+
+        <h2>Back Office Access</h2>
+
+        <input
+            id="backOfficeKey"
+            class="bo-input"
+            type="password"
+            placeholder="Enter Back Office key"
+        >
+
+        <button id="backOfficeLoadButton" class="bo-button gold">
+            OPEN
+        </button>
+
+        <button id="backOfficeRefreshButton" class="bo-button">
+            REFRESH
+        </button>
+
+        <button id="backOfficeExitButton" class="bo-button">
+            EXIT
+        </button>
+
+    </div>
+
+
+    <div id="backOfficeContent" class="hidden">
+
+        <div class="bo-card">
+
+            <h2>Overview</h2>
+
+            <div class="bo-summary">
+
+                <div class="bo-stat">
+                    <span>Total</span>
+                    <strong id="boTotal">0</strong>
+                </div>
+
+                <div class="bo-stat">
+                    <span>Pending</span>
+                    <strong id="boPending">0</strong>
+                </div>
+
+                <div class="bo-stat">
+                    <span>Activated</span>
+                    <strong id="boActivated">0</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bo-card">
+
+            <h2>Saved Documents</h2>
+
+            <div id="boRecords">
+                No records loaded.
+            </div>
+
+        </div>
+
+
+        <div id="boDocumentCard" class="bo-card hidden">
+
+            <h2>Saved Document</h2>
+
+            <div id="boDocumentInfo" class="bo-record-meta"></div>
+
+            <div id="boDocumentText" class="bo-document"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
 <script>
-/* ============================================================
+"use strict";
+
+/* =========================================================
    CONFIGURATION
-============================================================ */
+========================================================= */
 
-const PAYMENT_API_BASE =
-    "https://naija-pocket-payment-api.onrender.com";
+const PAYMENT_API_BASE = "https://naija-pocket-payment-api.onrender.com";
 
-const LOCAL_BACK_OFFICE_KEY =
-    "NPBC-2026";
-
-const SNAPSHOT_KEYS = [
-    "npb_payment_review_snapshot",
-    "payment_review_snapshot"
-];
+const LOCAL_BACK_OFFICE_KEY = "NPBC-2026";
 
 
-/* ============================================================
+/* =========================================================
    STATE
-============================================================ */
+========================================================= */
 
+let snapshot = null;
 let versionId = "";
 let service = "";
 let documentTitle = "";
 let amount = 0;
-
 let customerId = "";
-let customerName = "";
-
 let filename = "";
-let pages = 1;
+let pages = 0;
 let documentText = "";
 
 let paymentStatus = "";
@@ -1748,663 +1436,753 @@ let paymentReported = false;
 let paymentVerified = false;
 let downloadUnlocked = false;
 
-let deliveryChannels = [];
-
-let backOfficeAuthenticated = false;
-let backOfficeRecords = [];
+let createInProgress = false;
+let reportInProgress = false;
 
 
-/* ============================================================
+/* =========================================================
    DOM HELPERS
-============================================================ */
+========================================================= */
 
-function $(id) {
+function $(id){
     return document.getElementById(id);
 }
 
 
-function escapeHtml(value) {
-
+function escapeHtml(value){
     return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 }
 
 
-function formatMoney(value) {
+function showMessage(text,type="info"){
+    const box = $("message");
 
-    const number =
-        Number(value || 0);
+    if(!box){
+        return;
+    }
 
-    return "₦" +
-        number.toLocaleString(
-            "en-NG",
-            {
-                maximumFractionDigits: 2
-            }
-        );
+    box.textContent = text;
+    box.className = "message show " + type;
 }
 
 
-function showNotice(
-    elementId,
-    message,
-    type = "info"
-) {
+function showExperienceMessage(text,type="info"){
+    const box = $("experienceMessage");
 
-    const element = $(elementId);
+    if(!box){
+        return;
+    }
 
-    if (!element) return;
-
-    element.textContent = message;
-
-    element.className =
-        "notice show " + type;
+    box.textContent = text;
+    box.className = "message show " + type;
 }
 
 
-function hideNotice(elementId) {
+function clearExperienceMessage(){
+    const box = $("experienceMessage");
 
-    const element = $(elementId);
-
-    if (!element) return;
-
-    element.className =
-        "notice";
+    if(box){
+        box.textContent = "";
+        box.className = "message";
+    }
 }
 
 
-/* ============================================================
-   URL / SNAPSHOT
-============================================================ */
+function formatAmount(value){
+    const number = Number(value || 0);
 
-function getUrlParams() {
-
-    return new URLSearchParams(
-        window.location.search
-    );
+    return "₦" + number.toLocaleString("en-NG",{
+        minimumFractionDigits:0,
+        maximumFractionDigits:2
+    });
 }
 
 
-function isBackOfficeMode() {
+/* =========================================================
+   URL PARAMETERS
+========================================================= */
 
-    const params =
-        getUrlParams();
+const params = new URLSearchParams(window.location.search);
 
-    return (
-        params.get("mode") === "back_office"
-        ||
-        params.get("back_office") === "1"
-    );
-}
+const isBackOffice =
+    params.get("mode") === "back_office" ||
+    params.get("back_office") === "1";
 
 
-function readSnapshot() {
+/* =========================================================
+   SNAPSHOT LOADING
+========================================================= */
 
-    const params =
-        getUrlParams();
-
-    const snapshotKeys = [
-        ...SNAPSHOT_KEYS
-    ];
-
+function getSnapshotKeys(){
     const jobId =
         params.get("job_id") ||
-        params.get("jobId") ||
+        params.get("version_id") ||
         "";
 
-    if (jobId) {
+    const keys = [];
 
-        snapshotKeys.unshift(
-            `npb_payment_review_snapshot_${jobId}`
-        );
-
-        snapshotKeys.unshift(
-            `payment_review_snapshot_${jobId}`
-        );
+    if(jobId){
+        keys.push("npb_payment_review_snapshot_" + jobId);
     }
 
+    keys.push(
+        "npb_payment_review_snapshot",
+        "payment_review_snapshot_" + jobId,
+        "payment_review_snapshot"
+    );
 
-    for (const key of snapshotKeys) {
-
-        try {
-
-            const sessionValue =
-                sessionStorage.getItem(key);
-
-            if (sessionValue) {
-
-                const parsed =
-                    JSON.parse(sessionValue);
-
-                if (parsed) {
-                    return parsed;
-                }
-            }
-
-        } catch (error) {
-            console.warn(
-                "Session snapshot read failed",
-                error
-            );
-        }
-
-
-        try {
-
-            const localValue =
-                localStorage.getItem(key);
-
-            if (localValue) {
-
-                const parsed =
-                    JSON.parse(localValue);
-
-                if (parsed) {
-                    return parsed;
-                }
-            }
-
-        } catch (error) {
-            console.warn(
-                "Local snapshot read failed",
-                error
-            );
-        }
-    }
-
-    return null;
+    return [...new Set(keys.filter(Boolean))];
 }
 
 
-function normalizeSnapshot(snapshot) {
+function loadSnapshot(){
+    const keys = getSnapshotKeys();
 
-    if (!snapshot) {
-        return {};
+    for(const key of keys){
+        try{
+            const raw = localStorage.getItem(key);
+
+            if(!raw){
+                continue;
+            }
+
+            const parsed = JSON.parse(raw);
+
+            if(parsed && typeof parsed === "object"){
+                snapshot = parsed;
+                break;
+            }
+
+        }catch(error){
+            console.warn("Snapshot could not be read:",error);
+        }
     }
 
-    const result = {
-        ...snapshot
-    };
+    if(!snapshot){
+        snapshot = {};
+    }
+
+    versionId =
+        snapshot.version_id ||
+        snapshot.versionId ||
+        params.get("version_id") ||
+        params.get("job_id") ||
+        "";
 
     service =
         snapshot.service ||
-        snapshot.service_name ||
-        snapshot.serviceName ||
+        params.get("service") ||
         "";
 
     documentTitle =
         snapshot.document_title ||
         snapshot.documentTitle ||
         snapshot.title ||
+        params.get("title") ||
         "";
 
     amount =
         Number(
             snapshot.amount ||
-            snapshot.price ||
+            snapshot.total_amount ||
+            params.get("amount") ||
             0
         );
-
-    versionId =
-        snapshot.version_id ||
-        snapshot.versionId ||
-        snapshot.document_version ||
-        snapshot.documentVersion ||
-        "";
 
     customerId =
         snapshot.customer_id ||
         snapshot.customerId ||
         "";
 
-    customerName =
-        snapshot.customer_name ||
-        snapshot.customerName ||
-        snapshot.customer ||
-        "";
-
     filename =
         snapshot.filename ||
         snapshot.document_filename ||
-        snapshot.documentFilename ||
-        "Naija_Pocket_Document.docx";
+        snapshot.name ||
+        "document";
 
     pages =
         Number(
             snapshot.pages ||
             snapshot.document_pages ||
-            snapshot.page_count ||
-            1
+            0
         );
-
 
     documentText =
         snapshot.document_text ||
         snapshot.documentText ||
         snapshot.text ||
-        snapshot.content ||
         "";
 
+    paymentStatus =
+        snapshot.payment_status ||
+        snapshot.paymentStatus ||
+        "";
 
-    if (
-        !documentText &&
-        Array.isArray(snapshot.pages)
-    ) {
+    paymentStarted =
+        snapshot.payment_started === true ||
+        snapshot.paymentStarted === true;
 
-        documentText =
-            snapshot.pages
-                .map(page => {
+    paymentReported =
+        snapshot.payment_reported === true ||
+        snapshot.paymentReported === true;
 
-                    if (
-                        page &&
-                        typeof page === "object"
-                    ) {
+    paymentVerified =
+        snapshot.payment_verified === true ||
+        snapshot.paymentVerified === true;
 
-                        return (
-                            page.text ||
-                            page.content ||
-                            ""
-                        );
-                    }
-
-                    return String(
-                        page || ""
-                    );
-                })
-                .filter(Boolean)
-                .join("\n\n");
-    }
-
-
-    if (
-        Array.isArray(snapshot.document_pages)
-    ) {
-
-        const joined =
-            snapshot.document_pages
-                .map(page => {
-
-                    if (
-                        page &&
-                        typeof page === "object"
-                    ) {
-
-                        return (
-                            page.text ||
-                            page.content ||
-                            ""
-                        );
-                    }
-
-                    return String(
-                        page || ""
-                    );
-                })
-                .filter(Boolean)
-                .join("\n\n");
-
-        if (joined) {
-            documentText = joined;
-        }
-    }
-
-
-    return result;
+    downloadUnlocked =
+        snapshot.download_unlocked === true ||
+        snapshot.downloadUnlocked === true;
 }
 
 
-/* ============================================================
-   INITIALIZATION
-============================================================ */
+/* =========================================================
+   SNAPSHOT SAVE
+========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
+function saveSnapshot(){
+    if(!snapshot || typeof snapshot !== "object"){
+        snapshot = {};
+    }
 
-        if (isBackOfficeMode()) {
+    snapshot.service = service;
+    snapshot.document_title = documentTitle;
+    snapshot.amount = amount;
+    snapshot.customer_id = customerId;
+    snapshot.filename = filename;
+    snapshot.pages = pages;
+    snapshot.document_text = documentText;
+    snapshot.version_id = versionId;
 
-            showBackOffice();
+    snapshot.payment_status = paymentStatus;
+    snapshot.payment_started = paymentStarted;
+    snapshot.payment_reported = paymentReported;
+    snapshot.payment_verified = paymentVerified;
+    snapshot.download_unlocked = downloadUnlocked;
 
-            return;
-        }
-
-        showCustomer();
-
-        const snapshot =
-            readSnapshot();
-
-        if (!snapshot) {
-
-            showNotice(
-                "customerNotice",
-                "Your saved document details could not be found on this device. Please return to the workspace and open the payment page again.",
-                "warning"
-            );
-
-            updateCustomerDisplay();
-
-            return;
-        }
-
-        normalizeSnapshot(
-            snapshot
+    try{
+        localStorage.setItem(
+            "npb_payment_review_snapshot",
+            JSON.stringify(snapshot)
         );
 
-        updateCustomerDisplay();
+        if(versionId){
+            localStorage.setItem(
+                "npb_payment_review_snapshot_" + versionId,
+                JSON.stringify(snapshot)
+            );
+        }
 
-        await refreshCustomerStatus();
+    }catch(error){
+        console.warn("Could not save payment snapshot:",error);
     }
-);
-
-
-/* ============================================================
-   CUSTOMER / BACK OFFICE MODE
-============================================================ */
-
-function showCustomer() {
-
-    $("customerArea")
-        .classList.remove("hidden");
-
-    $("backOfficeArea")
-        .classList.add("hidden");
 }
 
 
-function showBackOffice() {
+/* =========================================================
+   API RESPONSE HELPERS
+========================================================= */
 
-    $("customerArea")
-        .classList.add("hidden");
+function extractPaymentVerified(data){
+    if(!data || typeof data !== "object"){
+        return false;
+    }
 
-    $("backOfficeArea")
-        .classList.remove("hidden");
+    if(data.payment_verified === true){
+        return true;
+    }
 
-    $("heroEyebrow").textContent =
-        "Customer Care";
+    if(data.payment && data.payment.payment_verified === true){
+        return true;
+    }
 
-    $("heroTitle").textContent =
-        "Customer Care Back Office";
+    const status =
+        data.status ||
+        (data.payment && data.payment.status) ||
+        "";
 
-    $("heroDescription").textContent =
-        "Verify saved customer payments, inspect the exact saved document and activate delivery when everything is confirmed.";
+    return [
+        "verified",
+        "payment_verified",
+        "confirmed",
+        "paid"
+    ].includes(String(status).toLowerCase());
 }
 
 
-/* ============================================================
+function extractDownloadUnlocked(data){
+    if(!data || typeof data !== "object"){
+        return false;
+    }
+
+    if(data.download_unlocked === true){
+        return true;
+    }
+
+    if(
+        data.payment &&
+        data.payment.download_unlocked === true
+    ){
+        return true;
+    }
+
+    if(
+        data.product &&
+        data.product.download_unlocked === true
+    ){
+        return true;
+    }
+
+    return false;
+}
+
+
+function extractPaymentStatus(data){
+    if(!data || typeof data !== "object"){
+        return "";
+    }
+
+    return String(
+        data.payment_status ||
+        data.status ||
+        (data.payment && data.payment.status) ||
+        ""
+    );
+}
+
+
+/* =========================================================
    CUSTOMER DISPLAY
-============================================================ */
+========================================================= */
 
-function updateCustomerDisplay() {
+function updateCustomerSummary(){
 
-    $("serviceValue").textContent =
+    $("mainDocumentTitle").textContent =
+        documentTitle || "Your document";
+
+    $("mainService").textContent =
+        service || "Service";
+
+    $("mainPages").textContent =
+        pages ? String(pages) : "—";
+
+    $("mainAmount").textContent =
+        formatAmount(amount);
+}
+
+
+function updateExperienceDetails(){
+
+    $("experienceAmount").textContent =
+        formatAmount(amount);
+
+    $("experienceService").textContent =
         service || "—";
 
-    $("titleValue").textContent =
+    $("experiencePages").textContent =
+        pages ? String(pages) : "—";
+
+    $("experienceDocumentTitle").textContent =
         documentTitle || "—";
 
-    $("filenameValue").textContent =
-        filename || "—";
-
-    $("pagesValue").textContent =
-        pages || 1;
-
-    $("amountValue").textContent =
-        formatMoney(amount);
-
-    $("bankAmount").textContent =
-        formatMoney(amount);
+    $("experienceFilename").textContent =
+        filename || "document";
 
 
-    let label = "Ready";
-    let percent = 0;
-    let statusClass = "";
+    const preview = $("documentPreview");
 
-
-    if (downloadUnlocked) {
-
-        label =
-            "Download Unlocked";
-
-        percent = 100;
-
-        statusClass =
-            "activated";
-
-    } else if (paymentVerified) {
-
-        label =
-            "Payment Verified — Awaiting Activation";
-
-        percent = 90;
-
-        statusClass =
-            "verified";
-
-    } else if (paymentReported) {
-
-        label =
-            "Payment Reported — Awaiting Verification";
-
-        percent = 75;
-
-        statusClass =
-            "reported";
-
-    } else if (paymentStarted) {
-
-        label =
-            "Payment Ready";
-
-        percent = 55;
-
+    if(documentText){
+        preview.textContent = documentText;
+    }else{
+        preview.textContent =
+            "Your reviewed document is ready. The exact saved document will be delivered after payment confirmation and activation.";
     }
-
-
-    $("customerStatus").textContent =
-        label;
-
-    $("customerStatus").className =
-        "record-status " +
-        statusClass;
-
-
-    $("progressLabel").textContent =
-        label;
-
-    $("progressPercent").textContent =
-        percent + "%";
-
-    $("progressFill").style.width =
-        percent + "%";
-
-
-    $("createPaymentBtn").disabled =
-        paymentStarted;
-
-    $("reportPaymentBtn").disabled =
-        !paymentStarted ||
-        paymentReported;
-
-
-    if (downloadUnlocked) {
-
-        showNotice(
-            "customerNotice",
-            "Payment has been verified and Customer Care has activated your saved document. You can now receive the exact approved file.",
-            "success"
-        );
-
-    } else if (paymentVerified) {
-
-        showNotice(
-            "customerNotice",
-            "Payment is verified. Customer Care still needs to activate download before the document can be released.",
-            "warning"
-        );
-
-    } else if (paymentReported) {
-
-        showNotice(
-            "customerNotice",
-            "Payment has been reported successfully. Customer Care will verify it before activating your document.",
-            "info"
-        );
-
-    } else if (paymentStarted) {
-
-        showNotice(
-            "customerNotice",
-            "Payment has been prepared. After you make the transfer, use the payment report button below.",
-            "info"
-        );
-
-    }
-
-
-    updateDeliveryUI();
 }
 
 
-/* ============================================================
-   PAYMENT CREATE
-============================================================ */
+function setProgress(step){
 
-async function createPayment() {
+    const steps = [
+        $("stepPayment"),
+        $("stepReported"),
+        $("stepConfirmed"),
+        $("stepDownload")
+    ];
 
-    if (!service) {
+    steps.forEach((item,index)=>{
+        item.classList.remove("active","complete");
 
-        showNotice(
-            "customerNotice",
-            "The service information is missing. Please return to the workspace and open payment again.",
+        if(index < step){
+            item.classList.add("complete");
+        }
+
+        if(index === step){
+            item.classList.add("active");
+        }
+    });
+
+    const percentage =
+        step <= 0 ? 0 :
+        step === 1 ? 33 :
+        step === 2 ? 66 :
+        100;
+
+    $("progressLine").style.width =
+        percentage + "%";
+}
+
+
+function updateSavedDocumentStatus(){
+
+    const status = $("savedStatus");
+    const text = $("savedStatusText");
+
+    status.classList.remove("ready","active");
+
+    if(downloadUnlocked){
+        status.classList.add("active");
+
+        text.textContent =
+            "Download activated. Your exact saved document is ready.";
+    }
+    else if(paymentVerified){
+        status.classList.add("ready");
+
+        text.textContent =
+            "Payment confirmed. Customer Care is completing delivery activation.";
+    }
+    else if(paymentStarted){
+        status.classList.add("ready");
+
+        text.textContent =
+            "Your exact reviewed document has been saved.";
+    }
+    else{
+        status.classList.add("ready");
+
+        text.textContent =
+            "Your reviewed document is ready for payment.";
+    }
+}
+
+
+function updatePaymentDisplay(){
+
+    updateCustomerSummary();
+    updateExperienceDetails();
+    updateSavedDocumentStatus();
+
+
+    const makeButton =
+        $("makePaymentButton");
+
+    const experienceMakeButton =
+        $("experienceMakePaymentButton");
+
+    const reportButton =
+        $("reportButton");
+
+    const downloadButton =
+        $("downloadButton");
+
+
+    if(downloadUnlocked){
+
+        setProgress(3);
+
+        $("mainStatusText").textContent =
+            "Download activated. Your document is ready.";
+
+        makeButton.textContent =
+            "PAYMENT COMPLETED";
+
+        makeButton.disabled = true;
+
+        experienceMakeButton.textContent =
+            "PAYMENT COMPLETED";
+
+        experienceMakeButton.disabled = true;
+
+        reportButton.textContent =
+            "PAYMENT CONFIRMED";
+
+        reportButton.disabled = true;
+
+        downloadButton.disabled = false;
+
+        downloadButton.textContent =
+            "DOWNLOAD DOCUMENT";
+
+        return;
+    }
+
+
+    if(paymentVerified){
+
+        setProgress(2);
+
+        $("mainStatusText").textContent =
+            "Payment confirmed — Customer Care is activating your download.";
+
+        makeButton.textContent =
+            "PAYMENT VERIFIED";
+
+        makeButton.disabled = true;
+
+        experienceMakeButton.textContent =
+            "PAYMENT VERIFIED";
+
+        experienceMakeButton.disabled = true;
+
+        reportButton.textContent =
+            "PAYMENT VERIFIED";
+
+        reportButton.disabled = true;
+
+        downloadButton.disabled = true;
+
+        downloadButton.textContent =
+            "DOWNLOAD LOCKED";
+
+        return;
+    }
+
+
+    if(paymentReported){
+
+        setProgress(1);
+
+        $("mainStatusText").textContent =
+            "Payment reported — awaiting confirmation.";
+
+        makeButton.textContent =
+            "PAYMENT REPORTED";
+
+        makeButton.disabled = true;
+
+        experienceMakeButton.textContent =
+            "PAYMENT REPORTED";
+
+        experienceMakeButton.disabled = true;
+
+        reportButton.textContent =
+            "PAYMENT REPORTED";
+
+        reportButton.disabled = true;
+
+        downloadButton.disabled = true;
+
+        downloadButton.textContent =
+            "DOWNLOAD LOCKED";
+
+        return;
+    }
+
+
+    if(paymentStarted){
+
+        setProgress(0);
+
+        $("mainStatusText").textContent =
+            "Payment is ready. Complete your transfer, then tell us when you have paid.";
+
+        makeButton.textContent =
+            "PAYMENT READY";
+
+        makeButton.disabled = true;
+
+        experienceMakeButton.textContent =
+            "PAYMENT READY";
+
+        experienceMakeButton.disabled = true;
+
+        reportButton.disabled = false;
+
+        downloadButton.disabled = true;
+
+        downloadButton.textContent =
+            "DOWNLOAD LOCKED";
+
+        return;
+    }
+
+
+    setProgress(0);
+
+    $("mainStatusText").textContent =
+        "Your order is ready for payment.";
+
+    makeButton.textContent =
+        "MAKE PAYMENT";
+
+    makeButton.disabled = false;
+
+    experienceMakeButton.textContent =
+        "MAKE PAYMENT";
+
+    experienceMakeButton.disabled = false;
+
+    reportButton.disabled = true;
+
+    downloadButton.disabled = true;
+
+    downloadButton.textContent =
+        "DOWNLOAD LOCKED";
+}
+
+
+/* =========================================================
+   OPEN / CLOSE EXPERIENCE
+========================================================= */
+
+function openPaymentExperience(){
+
+    clearExperienceMessage();
+
+    updatePaymentDisplay();
+
+    $("paymentExperience").classList.add("open");
+
+    document.body.style.overflow = "hidden";
+}
+
+
+function closePaymentExperience(){
+
+    $("paymentExperience").classList.remove("open");
+
+    document.body.style.overflow = "";
+}
+
+
+/* =========================================================
+   CREATE PAYMENT
+========================================================= */
+
+async function createPayment(){
+
+    if(createInProgress){
+        return;
+    }
+
+    if(!service || !documentTitle){
+        showExperienceMessage(
+            "Your document details are missing. Please return and open the payment page again.",
+            "error"
+        );
+
+        showMessage(
+            "Your document details are missing. Please return and open the payment page again.",
             "error"
         );
 
         return;
     }
 
+    if(!pages){
+        pages = Number(snapshot.pages || snapshot.document_pages || 1);
+    }
 
-    if (!documentTitle) {
-
-        showNotice(
-            "customerNotice",
-            "The document title is missing. Please return to the workspace and open payment again.",
+    if(!amount || amount <= 0){
+        showExperienceMessage(
+            "The payment amount is not available yet. Please contact Customer Care.",
             "error"
         );
 
         return;
     }
 
-
-    if (!documentText) {
-
-        showNotice(
-            "customerNotice",
-            "The reviewed document content is missing. The document must be saved before payment can be prepared.",
-            "error"
-        );
-
-        return;
+    if(!documentText){
+        documentText =
+            snapshot.document_text ||
+            snapshot.documentText ||
+            snapshot.text ||
+            "";
     }
 
+    createInProgress = true;
 
-    if (
-        !amount ||
-        amount <= 0
-    ) {
+    const buttons = [
+        $("makePaymentButton"),
+        $("experienceMakePaymentButton")
+    ];
 
-        showNotice(
-            "customerNotice",
-            "The document price is not available yet.",
-            "error"
+    buttons.forEach(button=>{
+        button.disabled = true;
+        button.textContent = "PREPARING PAYMENT...";
+    });
+
+    clearExperienceMessage();
+
+    try{
+
+        const response = await fetch(
+            PAYMENT_API_BASE + "/api/payment/create",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+
+                    customer_name:
+                        snapshot.customer_name ||
+                        snapshot.customerName ||
+                        "Customer",
+
+                    customer_id:
+                        customerId,
+
+                    service:
+                        service,
+
+                    document_title:
+                        documentTitle,
+
+                    amount:
+                        amount,
+
+                    currency:
+                        "NGN",
+
+                    payment_method:
+                        "bank_transfer",
+
+                    document_version:
+                        versionId,
+
+                    pages:
+                        pages,
+
+                    document_pages:
+                        pages,
+
+                    document_text:
+                        documentText,
+
+                    filename:
+                        filename,
+
+                    document_filename:
+                        filename
+
+                })
+            }
         );
-
-        return;
-    }
-
-
-    const button =
-        $("createPaymentBtn");
-
-    button.disabled = true;
-
-    button.textContent =
-        "SAVING DOCUMENT & PREPARING PAYMENT…";
-
-
-    try {
-
-        const response =
-            await fetch(
-                PAYMENT_API_BASE +
-                "/api/payment/create",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            customer_name:
-                                customerName,
-
-                            customer_id:
-                                customerId,
-
-                            service:
-                                service,
-
-                            document_title:
-                                documentTitle,
-
-                            amount:
-                                amount,
-
-                            currency:
-                                "NGN",
-
-                            payment_method:
-                                "bank_transfer",
-
-                            document_version:
-                                versionId,
-
-                            version_id:
-                                versionId,
-
-                            pages:
-                                pages,
-
-                            document_pages:
-                                pages,
-
-                            document_text:
-                                documentText,
-
-                            filename:
-                                filename,
-
-                            document_filename:
-                                filename
-
-                        })
-                }
-            );
 
 
         const data =
-            await response.json()
-                .catch(() => ({}));
+            await response.json().catch(()=>({}));
 
 
-        if (!response.ok) {
+        if(!response.ok){
 
             throw new Error(
                 data.detail ||
@@ -2417,122 +2195,138 @@ async function createPayment() {
         paymentStarted = true;
 
         paymentStatus =
-            data.product?.payment_status ||
+            extractPaymentStatus(data) ||
             "created";
 
-        downloadUnlocked =
-            Boolean(
-                data.product?.download_unlocked
-            );
+        paymentReported =
+            data.payment_reported === true ||
+            false;
 
         paymentVerified =
-            Boolean(
-                data.product?.payment_verified
-            );
+            extractPaymentVerified(data);
 
-        paymentReported =
-            Boolean(
-                data.product?.payment_reported
-            );
+        /*
+         * IMPORTANT:
+         * Payment verification must NOT automatically unlock
+         * the customer's download.
+         *
+         * Only Customer Care activation can unlock it.
+         */
+        downloadUnlocked =
+            extractDownloadUnlocked(data);
 
+        saveSnapshot();
 
-        showNotice(
-            "customerNotice",
-            "Your exact reviewed document has been saved and payment is ready. Make the bank transfer, then select “I HAVE MADE PAYMENT”.",
+        updatePaymentDisplay();
+
+        showExperienceMessage(
+            "Payment is ready. Make the transfer using the details above, then tap “I HAVE MADE PAYMENT”.",
             "success"
         );
 
-
-        updateCustomerDisplay();
-
-
-    } catch (error) {
-
-        console.error(
-            "createPayment:",
-            error
+        showMessage(
+            "Payment is ready. Follow the instructions to complete your payment.",
+            "success"
         );
 
-        showNotice(
-            "customerNotice",
+    }catch(error){
+
+        console.error(error);
+
+        showExperienceMessage(
             error.message ||
             "Payment preparation failed. Please try again.",
             "error"
         );
 
-        button.disabled =
-            false;
+        showMessage(
+            error.message ||
+            "Payment preparation failed. Please try again.",
+            "error"
+        );
 
-        button.textContent =
-            "PREPARE PAYMENT";
+        updatePaymentDisplay();
+
+    }finally{
+
+        createInProgress = false;
     }
 }
 
 
-/* ============================================================
+/* =========================================================
    REPORT PAYMENT
-============================================================ */
+========================================================= */
 
-async function reportPayment() {
+async function reportPayment(){
 
-    if (!service || !documentTitle) {
+    if(reportInProgress){
+        return;
+    }
 
-        showNotice(
-            "customerNotice",
-            "The saved document information is missing.",
+    if(!paymentStarted){
+        showExperienceMessage(
+            "Please prepare your payment first.",
             "error"
         );
 
         return;
     }
 
+    if(!service || !documentTitle){
+        showExperienceMessage(
+            "Your document details are missing.",
+            "error"
+        );
 
-    const button =
-        $("reportPaymentBtn");
+        return;
+    }
+
+    reportInProgress = true;
+
+    const button = $("reportButton");
 
     button.disabled = true;
+    button.textContent = "SENDING...";
 
-    button.textContent =
-        "REPORTING PAYMENT…";
+    clearExperienceMessage();
+
+    try{
+
+        const note =
+            $("paymentNote").value.trim();
 
 
-    try {
+        const response = await fetch(
+            PAYMENT_API_BASE + "/api/payment/report",
+            {
+                method:"POST",
 
-        const response =
-            await fetch(
-                PAYMENT_API_BASE +
-                "/api/payment/report",
-                {
-                    method: "POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                body:JSON.stringify({
 
-                    body:
-                        JSON.stringify({
+                    service:
+                        service,
 
-                            service:
-                                service,
+                    document_title:
+                        documentTitle,
 
-                            document_title:
-                                documentTitle,
+                    note:
+                        note
 
-                            note:
-                                "Customer reported bank transfer."
-
-                        })
-                }
-            );
+                })
+            }
+        );
 
 
         const data =
-            await response.json()
-                .catch(() => ({}));
+            await response.json().catch(()=>({}));
 
 
-        if (!response.ok) {
+        if(!response.ok){
 
             throw new Error(
                 data.detail ||
@@ -2545,1340 +2339,738 @@ async function reportPayment() {
         paymentReported = true;
 
         paymentStatus =
+            extractPaymentStatus(data) ||
             "reported";
 
+        paymentVerified =
+            extractPaymentVerified(data) ||
+            paymentVerified;
 
-        if (
-            data.product
-        ) {
+        /*
+         * Reporting payment does not unlock download.
+         */
+        downloadUnlocked =
+            extractDownloadUnlocked(data) ||
+            downloadUnlocked;
 
-            paymentVerified =
-                Boolean(
-                    data.product
-                        .payment_verified
-                );
+        saveSnapshot();
 
-            downloadUnlocked =
-                Boolean(
-                    data.product
-                        .download_unlocked
-                );
-        }
+        updatePaymentDisplay();
 
-
-        showNotice(
-            "customerNotice",
-            "Payment reported successfully. Customer Care will verify the transfer before activating your document.",
+        showExperienceMessage(
+            "Thank you. Your payment has been reported. Customer Care will confirm it and activate your download.",
             "success"
         );
 
-
-        updateCustomerDisplay();
-
-        await refreshCustomerStatus();
-
-
-    } catch (error) {
-
-        console.error(
-            "reportPayment:",
-            error
+        showMessage(
+            "Payment reported successfully. Awaiting confirmation.",
+            "success"
         );
 
-        showNotice(
-            "customerNotice",
+    }catch(error){
+
+        console.error(error);
+
+        showExperienceMessage(
             error.message ||
-            "Payment report failed. Please try again.",
+            "We could not record your payment report. Please try again.",
             "error"
         );
 
-        button.disabled =
-            false;
-
-        button.textContent =
-            "I HAVE MADE PAYMENT";
-    }
-}
-
-
-/* ============================================================
-   CUSTOMER STATUS
-============================================================ */
-
-async function refreshCustomerStatus() {
-
-    if (
-        !service ||
-        !documentTitle
-    ) {
-        return;
-    }
-
-
-    try {
-
-        const query =
-            new URLSearchParams({
-
-                service:
-                    service,
-
-                title:
-                    documentTitle
-
-            });
-
-
-        const response =
-            await fetch(
-                PAYMENT_API_BASE +
-                "/api/payment/status?" +
-                query.toString()
-            );
-
-
-        const data =
-            await response.json()
-                .catch(() => ({}));
-
-
-        if (!response.ok) {
-            return;
-        }
-
-
-        const product =
-            data.product ||
-            {};
-
-
-        paymentStatus =
-            product.payment_status ||
-            paymentStatus ||
-            "";
-
-
-        paymentStarted =
-            Boolean(
-                paymentStarted ||
-                paymentStatus
-            );
-
-
-        paymentReported =
-            Boolean(
-                product.payment_reported
-            );
-
-
-        paymentVerified =
-            Boolean(
-                product.payment_verified
-            );
-
-
-        downloadUnlocked =
-            Boolean(
-                product.download_unlocked
-            );
-
-
-        updateCustomerDisplay();
-
-
-        if (
-            downloadUnlocked
-        ) {
-
-            await loadDeliveryChannels();
-        }
-
-
-    } catch (error) {
-
-        console.warn(
-            "Status refresh failed:",
-            error
+        showMessage(
+            error.message ||
+            "We could not record your payment report. Please try again.",
+            "error"
         );
+
+        button.disabled = false;
+        button.textContent = "I HAVE MADE PAYMENT";
+
+    }finally{
+
+        reportInProgress = false;
     }
 }
 
 
-/* ============================================================
+/* =========================================================
    DOWNLOAD
-============================================================ */
+========================================================= */
 
-function downloadDocument() {
+function downloadDocument(){
 
-    if (!downloadUnlocked) {
-
-        showNotice(
-            "deliveryNotice",
-            "Download is still locked. Customer Care must verify payment and activate your saved document first.",
-            "warning"
-        );
-
-        return;
-    }
-
-
-    if (
-        !service ||
-        !documentTitle
-    ) {
-
-        showNotice(
-            "deliveryNotice",
-            "The saved document information is missing.",
+    if(!service || !documentTitle){
+        showExperienceMessage(
+            "Your document details are missing.",
             "error"
         );
 
         return;
     }
 
+    if(!downloadUnlocked){
 
-    const query =
-        new URLSearchParams({
+        showExperienceMessage(
+            "Your download is still locked. Customer Care must confirm your payment and activate delivery first.",
+            "info"
+        );
 
-            service:
-                service,
-
-            title:
-                documentTitle
-
-        });
-
+        return;
+    }
 
     const url =
         PAYMENT_API_BASE +
-        "/api/download?" +
-        query.toString();
+        "/api/download?service=" +
+        encodeURIComponent(service) +
+        "&title=" +
+        encodeURIComponent(documentTitle);
 
-
-    window.location.href =
-        url;
+    window.location.href = url;
 }
 
 
-/* ============================================================
-   DELIVERY CHANNELS
-============================================================ */
+/* =========================================================
+   BACK OFFICE ACCESS
+========================================================= */
 
-async function loadDeliveryChannels() {
+function checkLocalBackOfficeKey(){
 
-    if (
-        !service ||
-        !documentTitle
-    ) {
-        return;
-    }
+    const entered =
+        $("backOfficeKey").value.trim();
 
-
-    try {
-
-        const query =
-            new URLSearchParams({
-
-                service:
-                    service,
-
-                title:
-                    documentTitle
-
-            });
-
-
-        const response =
-            await fetch(
-                PAYMENT_API_BASE +
-                "/api/delivery/channels?" +
-                query.toString()
-            );
-
-
-        const data =
-            await response.json()
-                .catch(() => ({}));
-
-
-        if (!response.ok) {
-            return;
-        }
-
-
-        deliveryChannels =
-            data.channels ||
-            [];
-
-
-        updateDeliveryUI();
-
-
-    } catch (error) {
-
-        console.warn(
-            "Delivery channels failed:",
-            error
-        );
-    }
+    return entered === LOCAL_BACK_OFFICE_KEY;
 }
 
 
-function getChannel(id) {
+async function loadBackOffice(){
 
-    return deliveryChannels.find(
-        channel =>
-            channel.id === id
-    );
-}
+    if(!checkLocalBackOfficeKey()){
 
-
-function updateDeliveryUI() {
-
-    const channelIds = [
-        "download",
-        "whatsapp",
-        "email",
-        "telegram",
-        "google_drive"
-    ];
-
-
-    channelIds.forEach(
-        id => {
-
-            const card =
-                $("delivery-" + id);
-
-            if (!card) {
-                return;
-            }
-
-
-            const available =
-                downloadUnlocked;
-
-
-            card.classList.toggle(
-                "locked",
-                !available
-            );
-
-
-            const statusElement =
-                id === "google_drive"
-                    ? $("googleDriveStatus")
-                    : $(id + "Status");
-
-
-            if (statusElement) {
-
-                statusElement.textContent =
-                    available
-                        ? "Ready"
-                        : "Locked";
-            }
-
-
-            const buttonMap = {
-
-                download:
-                    "downloadBtn",
-
-                whatsapp:
-                    "whatsappBtn",
-
-                email:
-                    "emailBtn",
-
-                telegram:
-                    "telegramBtn",
-
-                google_drive:
-                    "driveBtn"
-            };
-
-
-            const button =
-                $(buttonMap[id]);
-
-
-            if (button) {
-
-                button.disabled =
-                    !available;
-            }
-
-
-            if (
-                id === "google_drive"
-            ) {
-
-                const driveDownload =
-                    $("driveDownloadBtn");
-
-                if (driveDownload) {
-
-                    driveDownload.disabled =
-                        !available;
-                }
-            }
-        }
-    );
-
-
-    $("deliveryStatus").textContent =
-        downloadUnlocked
-            ? "Ready"
-            : "Locked";
-
-    $("deliveryStatus").className =
-        "record-status " +
-        (
-            downloadUnlocked
-                ? "activated"
-                : ""
-        );
-
-
-    if (downloadUnlocked) {
-
-        showNotice(
-            "deliveryNotice",
-            "Your saved document is ready. Choose any delivery channel below.",
-            "success"
-        );
-
-    } else {
-
-        showNotice(
-            "deliveryNotice",
-            "Delivery channels are reserved for your saved document. They become active after Customer Care verifies payment and activates download.",
-            "info"
-        );
-    }
-}
-
-
-async function openDelivery(
-    channelId
-) {
-
-    if (!downloadUnlocked) {
-
-        showNotice(
-            "deliveryNotice",
-            "This delivery channel is still locked until Customer Care activates your document.",
-            "warning"
-        );
+        alert("Invalid Back Office key.");
 
         return;
     }
 
+    $("backOfficeContent").classList.remove("hidden");
 
-    let channel =
-        getChannel(channelId);
-
-
-    if (!channel) {
-
-        await loadDeliveryChannels();
-
-        channel =
-            getChannel(channelId);
-    }
-
-
-    if (!channel) {
-
-        showNotice(
-            "deliveryNotice",
-            "The delivery channel could not be prepared. Please refresh and try again.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    try {
-
-        await fetch(
-            PAYMENT_API_BASE +
-            "/api/delivery/prepare",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body:
-                    JSON.stringify({
-
-                        service:
-                            service,
-
-                        document_title:
-                            documentTitle,
-
-                        channel:
-                            channelId
-
-                    })
-            }
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "Delivery logging failed:",
-            error
-        );
-    }
-
-
-    if (
-        channelId ===
-        "google_drive"
-    ) {
-
-        showNotice(
-            "deliveryNotice",
-            "First download your exact saved document, then upload that same file into Google Drive.",
-            "success"
-        );
-    }
-
-
-    window.open(
-        channel.action_url,
-        "_blank",
-        "noopener"
-    );
+    await refreshBackOffice();
 }
 
 
-/* ============================================================
-   BACK OFFICE
-============================================================ */
-
-function openBackOffice() {
-
-    window.location.href =
-        window.location.pathname +
-        "?mode=back_office";
-}
-
-
-function loginBackOffice() {
+async function refreshBackOffice(){
 
     const key =
-        $("boAdminKey")
-            .value
-            .trim();
+        $("backOfficeKey").value.trim();
 
-
-    if (
-        key !==
-        LOCAL_BACK_OFFICE_KEY
-    ) {
-
-        showNotice(
-            "boNotice",
-            "Invalid Customer Care key.",
-            "error"
-        );
-
+    if(!key){
         return;
     }
 
+    const container =
+        $("boRecords");
 
-    backOfficeAuthenticated =
-        true;
+    container.innerHTML =
+        "Loading saved documents...";
 
+    try{
 
-    $("boLoginBox")
-        .classList.add(
-            "hidden"
-        );
-
-    $("boContent")
-        .classList.remove(
-            "hidden"
-        );
-
-    $("boConnectionStatus")
-        .textContent =
-        "Authenticated";
-
-    $("boConnectionStatus")
-        .className =
-        "record-status activated";
-
-
-    showNotice(
-        "boNotice",
-        "Customer Care access granted.",
-        "success"
-    );
-
-
-    loadBackOffice();
-}
-
-
-async function loadBackOffice() {
-
-    if (!backOfficeAuthenticated) {
-
-        return;
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                PAYMENT_API_BASE +
-                "/api/back-office/payments",
-                {
-                    headers: {
-                        "X-Back-Office-Key":
-                            LOCAL_BACK_OFFICE_KEY
-                    }
+        const response = await fetch(
+            PAYMENT_API_BASE +
+            "/api/back-office/payments",
+            {
+                headers:{
+                    "X-Back-Office-Key":key
                 }
-            );
+            }
+        );
 
 
         const data =
-            await response.json()
-                .catch(() => ({}));
+            await response.json().catch(()=>({}));
 
 
-        if (!response.ok) {
+        if(!response.ok){
 
             throw new Error(
                 data.detail ||
-                "Could not load saved documents."
+                data.message ||
+                "Could not load Back Office records."
             );
         }
 
 
-        backOfficeRecords =
-            data.payments ||
-            data.records ||
-            data.items ||
-            [];
+        const records =
+            Array.isArray(data) ?
+            data :
+            (
+                data.records ||
+                data.payments ||
+                data.items ||
+                []
+            );
 
 
-        renderBackOfficeRecords();
+        renderBackOfficeRecords(records);
 
+    }catch(error){
 
-        showNotice(
-            "boNotice",
-            "Saved documents refreshed successfully.",
-            "success"
-        );
+        console.error(error);
 
-
-    } catch (error) {
-
-        console.error(
-            "Back Office:",
-            error
-        );
-
-        showNotice(
-            "boNotice",
-            error.message ||
-            "Could not load Customer Care records.",
-            "error"
-        );
+        container.innerHTML =
+            '<div class="message show error">' +
+            escapeHtml(
+                error.message ||
+                "Could not load records."
+            ) +
+            "</div>";
     }
 }
 
 
-function renderBackOfficeRecords() {
+function renderBackOfficeRecords(records){
 
-    const list =
-        $("recordList");
+    const container =
+        $("boRecords");
 
-
-    const records =
-        backOfficeRecords;
-
-
-    $("boSavedCount")
-        .textContent =
+    $("boTotal").textContent =
         records.length;
 
 
-    $("boReportedCount")
-        .textContent =
-        records.filter(
-            record =>
-                Boolean(
-                    record.reported
-                )
-                ||
-                record.payment_status ===
-                    "reported"
-                ||
-                record.payment_reported
-        ).length;
+    let pending = 0;
+    let activated = 0;
 
 
-    $("boActivatedCount")
-        .textContent =
-        records.filter(
-            record =>
-                Boolean(
-                    record.activated
-                )
-                ||
-                Boolean(
-                    record.download_unlocked
-                )
-                ||
-                Boolean(
-                    record.download_activated
-                )
-        ).length;
+    if(!records.length){
+
+        container.innerHTML =
+            '<div class="bo-record">No saved documents found.</div>';
+
+        $("boPending").textContent = "0";
+        $("boActivated").textContent = "0";
+
+        return;
+    }
 
 
-    if (!records.length) {
+    container.innerHTML = "";
 
-        list.innerHTML = `
-            <div class="empty">
-                No saved documents have been found yet.
+
+    records.forEach((record,index)=>{
+
+        const verified =
+            record.payment_verified === true ||
+            (
+                record.payment &&
+                record.payment.payment_verified === true
+            );
+
+
+        const unlocked =
+            record.download_unlocked === true ||
+            (
+                record.product &&
+                record.product.download_unlocked === true
+            ) ||
+            (
+                record.payment &&
+                record.payment.download_unlocked === true
+            );
+
+
+        if(!unlocked){
+            pending++;
+        }else{
+            activated++;
+        }
+
+
+        const recordBox =
+            document.createElement("div");
+
+        recordBox.className =
+            "bo-record";
+
+
+        const recordService =
+            record.service ||
+            "";
+
+
+        const recordTitle =
+            record.document_title ||
+            record.title ||
+            "";
+
+
+        const recordPages =
+            record.pages ||
+            record.document_pages ||
+            "—";
+
+
+        recordBox.innerHTML = `
+
+            <div class="bo-record-title">
+                ${escapeHtml(recordTitle || "Untitled document")}
+            </div>
+
+            <div class="bo-record-meta">
+                Service: ${escapeHtml(recordService || "—")}<br>
+                Pages: ${escapeHtml(recordPages)}<br>
+                Payment: ${verified ? "Verified" : "Awaiting confirmation"}<br>
+                Download: ${unlocked ? "Activated" : "Locked"}
+            </div>
+
+            <div class="bo-actions">
+
+                <button
+                    class="bo-button"
+                    data-action="view"
+                    data-index="${index}"
+                >
+                    VIEW DOCUMENT
+                </button>
+
+                <button
+                    class="bo-button gold"
+                    data-action="activate"
+                    data-index="${index}"
+                    ${unlocked ? "disabled" : ""}
+                >
+                    ${unlocked ? "DOWNLOAD ACTIVATED" : "ACTIVATE DOWNLOAD"}
+                </button>
+
             </div>
         `;
 
-        return;
-    }
+
+        container.appendChild(recordBox);
+    });
 
 
-    list.innerHTML =
-        records.map(
-            (record, index) =>
-                renderRecord(
-                    record,
-                    index
-                )
-        ).join("");
+    $("boPending").textContent =
+        pending;
+
+    $("boActivated").textContent =
+        activated;
+
+
+    container
+        .querySelectorAll("[data-action='view']")
+        .forEach(button=>{
+
+            button.addEventListener("click",()=>{
+
+                const index =
+                    Number(button.dataset.index);
+
+                recordDocument(
+                    records[index]
+                );
+            });
+        });
+
+
+    container
+        .querySelectorAll("[data-action='activate']")
+        .forEach(button=>{
+
+            button.addEventListener("click",()=>{
+
+                const index =
+                    Number(button.dataset.index);
+
+                activateBackOfficeDownload(
+                    records[index],
+                    button
+                );
+            });
+        });
 }
 
 
-function renderRecord(
-    record,
-    index
-) {
+/* =========================================================
+   BACK OFFICE DOCUMENT VIEW
+========================================================= */
 
-    const recordService =
-        record.service ||
-        "";
+function getSavedDocumentForDisplay(record){
 
-    const recordTitle =
-        record.document_title ||
-        record.documentTitle ||
-        record.title ||
-        "";
-
-    const recordFilename =
-        record.filename ||
-        record.document_filename ||
-        "";
-
-    const recordPages =
-        record.pages ||
-        record.document_pages ||
-        1;
-
-    const recordAmount =
-        Number(
-            record.amount ||
-            0
-        );
-
-
-    const activated =
-        Boolean(
-            record.download_unlocked
-        )
-        ||
-        Boolean(
-            record.download_activated
-        )
-        ||
-        Boolean(
-            record.activated
-        );
-
-
-    const verified =
-        Boolean(
-            record.payment_verified
-        )
-        ||
-        Boolean(
-            record.verified
-        )
-        ||
-        record.payment_status ===
-            "verified";
-
-
-    const reported =
-        Boolean(
-            record.payment_reported
-        )
-        ||
-        Boolean(
-            record.reported
-        )
-        ||
-        record.payment_status ===
-            "reported";
-
-
-    let status =
-        "Saved — Awaiting Customer Payment";
-
-    let statusClass = "";
-
-
-    if (activated) {
-
-        status =
-            "Download Activated";
-
-        statusClass =
-            "activated";
-
-    } else if (verified) {
-
-        status =
-            "Payment Verified — Awaiting Activation";
-
-        statusClass =
-            "verified";
-
-    } else if (reported) {
-
-        status =
-            "Payment Reported — Awaiting Verification";
-
-        statusClass =
-            "reported";
+    if(!record){
+        return "";
     }
 
-
-    return `
-
-        <article class="record">
-
-            <div class="record-main">
-
-                <div>
-
-                    <div class="record-title">
-                        ${escapeHtml(
-                            recordTitle ||
-                            "Untitled document"
-                        )}
-                    </div>
-
-                    <div class="record-service">
-                        ${escapeHtml(
-                            recordService ||
-                            "Service"
-                        )}
-                    </div>
-
-                </div>
-
-                <div class="record-status ${statusClass}">
-                    ${escapeHtml(status)}
-                </div>
-
-            </div>
+    return (
+        record.document_text ||
+        record.document_payload ||
+        (
+            record.product &&
+            (
+                record.product.document_text ||
+                record.product.document_payload
+            )
+        ) ||
+        ""
+    );
+}
 
 
-            <div class="record-meta">
+function recordDocument(record){
 
-                <div>
-                    <span>Amount</span>
-                    <strong>
-                        ${formatMoney(recordAmount)}
-                    </strong>
-                </div>
+    if(!record){
+        return;
+    }
 
-                <div>
-                    <span>Pages</span>
-                    <strong>
-                        ${escapeHtml(recordPages)}
-                    </strong>
-                </div>
-
-                <div>
-                    <span>Filename</span>
-                    <strong>
-                        ${escapeHtml(
-                            recordFilename ||
-                            "Saved document"
-                        )}
-                    </strong>
-                </div>
-
-                <div>
-                    <span>Version</span>
-                    <strong>
-                        ${escapeHtml(
-                            record.document_version ||
-                            "—"
-                        )}
-                    </strong>
-                </div>
-
-            </div>
+    const text =
+        getSavedDocumentForDisplay(record);
 
 
-            <div class="record-actions">
-
-                <button
-                    class="delivery-button"
-                    onclick="viewSavedDocument(${index})"
-                >
-                    VIEW SAVED DOCUMENT
-                </button>
+    $("boDocumentCard")
+        .classList.remove("hidden");
 
 
-                ${
-                    activated
-                    ? `
-                        <button
-                            class="delivery-button primary"
-                            onclick="openBackOfficeFile(${index})"
-                        >
-                            DOWNLOAD FILE
-                        </button>
-                    `
-                    : verified
-                    ? `
-                        <button
-                            class="delivery-button primary"
-                            onclick="activateRecord(${index})"
-                        >
-                            ACTIVATE DOWNLOAD
-                        </button>
-                    `
-                    : `
-                        <button
-                            class="delivery-button"
-                            onclick="verifyRecord(${index})"
-                        >
-                            VERIFY PAYMENT
-                        </button>
-                    `
-                }
+    $("boDocumentInfo").innerHTML = `
 
-            </div>
+        <strong>
+            ${escapeHtml(
+                record.document_title ||
+                record.title ||
+                "Document"
+            )}
+        </strong><br>
 
-        </article>
+        Service:
+        ${escapeHtml(record.service || "—")}
+        <br>
+
+        Pages:
+        ${escapeHtml(
+            record.pages ||
+            record.document_pages ||
+            "—"
+        )}
+
     `;
+
+
+    $("boDocumentText").textContent =
+        text ||
+        "No document text is available in this record.";
 }
 
 
-/* ============================================================
-   BACK OFFICE VIEW SAVED DOCUMENT
-============================================================ */
+/* =========================================================
+   BACK OFFICE DOWNLOAD ACTIVATION
+========================================================= */
 
-async function viewSavedDocument(
-    index
-) {
+async function activateBackOfficeDownload(record,button){
 
-    const record =
-        backOfficeRecords[index];
+    const key =
+        $("backOfficeKey").value.trim();
 
 
-    if (!record) {
+    if(!key){
+        alert("Enter the Back Office key.");
+
         return;
     }
 
 
-    const recordService =
-        record.service ||
-        "";
-
-    const recordTitle =
-        record.document_title ||
-        record.documentTitle ||
-        record.title ||
-        "";
-
-
-    try {
-
-        const query =
-            new URLSearchParams({
-
-                service:
-                    recordService,
-
-                title:
-                    recordTitle
-
-            });
-
-
-        const response =
-            await fetch(
-                PAYMENT_API_BASE +
-                "/api/back-office/document?" +
-                query.toString(),
-                {
-                    headers: {
-                        "X-Back-Office-Key":
-                            LOCAL_BACK_OFFICE_KEY
-                    }
-                }
-            );
-
-
-        const data =
-            await response.json()
-                .catch(() => ({}));
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.detail ||
-                "Could not load saved document."
-            );
-        }
-
-
-        $("documentViewer")
-            .classList.add(
-                "show"
-            );
-
-
-        $("viewerMeta")
-            .textContent =
-            `${recordService} • ${recordTitle}`;
-
-
-        $("documentContent")
-            .textContent =
-            data.document_text ||
-            "The saved document has no text preview available.";
-
-
-        $("documentViewer")
-            .scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-
-    } catch (error) {
-
-        showNotice(
-            "boNotice",
-            error.message ||
-            "Could not load the saved document.",
-            "error"
-        );
-    }
-}
-
-
-/* ============================================================
-   VERIFY RECORD
-============================================================ */
-
-async function verifyRecord(
-    index
-) {
-
-    const record =
-        backOfficeRecords[index];
-
-
-    if (!record) {
+    if(!record){
         return;
     }
 
 
-    const recordService =
+    const serviceValue =
         record.service ||
         "";
 
-    const recordTitle =
+
+    const titleValue =
         record.document_title ||
-        record.documentTitle ||
         record.title ||
         "";
 
 
-    try {
+    if(!serviceValue || !titleValue){
 
-        const response =
-            await fetch(
-                PAYMENT_API_BASE +
-                "/api/back-office/payment/verify",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-
-                        "X-Back-Office-Key":
-                            LOCAL_BACK_OFFICE_KEY
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            service:
-                                recordService,
-
-                            document_title:
-                                recordTitle,
-
-                            verified:
-                                true
-
-                        })
-                }
-            );
-
-
-        const data =
-            await response.json()
-                .catch(() => ({}));
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.detail ||
-                "Payment verification failed."
-            );
-        }
-
-
-        showNotice(
-            "boNotice",
-            "Payment verified. Download activation is still required.",
-            "success"
+        alert(
+            "This saved document does not contain the required service and title."
         );
 
-
-        await loadBackOffice();
-
-
-    } catch (error) {
-
-        showNotice(
-            "boNotice",
-            error.message ||
-            "Payment verification failed.",
-            "error"
-        );
-    }
-}
-
-
-/* ============================================================
-   ACTIVATE RECORD
-============================================================ */
-
-async function activateRecord(
-    index
-) {
-
-    const record =
-        backOfficeRecords[index];
-
-
-    if (!record) {
         return;
     }
 
 
-    const recordService =
-        record.service ||
-        "";
-
-    const recordTitle =
-        record.document_title ||
-        record.documentTitle ||
-        record.title ||
-        "";
+    button.disabled = true;
+    button.textContent = "ACTIVATING...";
 
 
-    try {
+    try{
 
-        const response =
-            await fetch(
-                PAYMENT_API_BASE +
-                "/api/back-office/activate-download",
-                {
-                    method: "POST",
+        const response = await fetch(
+            PAYMENT_API_BASE +
+            "/api/back-office/activate-download",
+            {
+                method:"POST",
 
-                    headers: {
-                        "Content-Type":
-                            "application/json",
+                headers:{
+                    "Content-Type":"application/json",
+                    "X-Back-Office-Key":key
+                },
 
-                        "X-Back-Office-Key":
-                            LOCAL_BACK_OFFICE_KEY
-                    },
+                body:JSON.stringify({
 
-                    body:
-                        JSON.stringify({
+                    service:
+                        serviceValue,
 
-                            service:
-                                recordService,
+                    document_title:
+                        titleValue,
 
-                            document_title:
-                                recordTitle,
+                    verified:
+                        true
 
-                            verified:
-                                true
-
-                        })
-                }
-            );
+                })
+            }
+        );
 
 
         const data =
-            await response.json()
-                .catch(() => ({}));
+            await response.json().catch(()=>({}));
 
 
-        if (!response.ok) {
+        if(!response.ok){
 
             throw new Error(
                 data.detail ||
+                data.message ||
                 "Download activation failed."
             );
         }
 
 
-        showNotice(
-            "boNotice",
-            "Download activated successfully. The customer can now receive the exact saved document.",
-            "success"
-        );
+        button.textContent =
+            "DOWNLOAD ACTIVATED";
 
 
-        await loadBackOffice();
+        await refreshBackOffice();
 
+    }catch(error){
 
-    } catch (error) {
+        console.error(error);
 
-        showNotice(
-            "boNotice",
+        alert(
             error.message ||
-            "Download activation failed.",
-            "error"
+            "Download activation failed."
         );
+
+        button.disabled = false;
+        button.textContent =
+            "ACTIVATE DOWNLOAD";
     }
 }
 
 
-/* ============================================================
-   BACK OFFICE DOWNLOAD
-============================================================ */
+/* =========================================================
+   BACK OFFICE MODE
+========================================================= */
 
-function openBackOfficeFile(
-    index
-) {
+function showBackOffice(){
 
-    const record =
-        backOfficeRecords[index];
+    $("customerPaymentView")
+        .classList.add("hidden");
+
+    $("backOfficeView")
+        .classList.remove("hidden");
+
+    $("backOfficeContent")
+        .classList.add("hidden");
+}
 
 
-    if (!record) {
-        return;
+function showCustomer(){
+
+    $("backOfficeView")
+        .classList.add("hidden");
+
+    $("customerPaymentView")
+        .classList.remove("hidden");
+}
+
+
+/* =========================================================
+   BANK DETAILS
+   ---------------------------------------------------------
+   Keep your existing bank details here if they were already
+   being supplied by the payment API/page.
+========================================================= */
+
+function loadBankDetails(){
+
+    const bank =
+        snapshot.bank_name ||
+        snapshot.bankName ||
+        snapshot.payment_bank ||
+        "";
+
+    const accountName =
+        snapshot.account_name ||
+        snapshot.accountName ||
+        "";
+
+    const accountNumber =
+        snapshot.account_number ||
+        snapshot.accountNumber ||
+        "";
+
+
+    if(bank){
+        $("bankName").textContent =
+            bank;
     }
 
+    if(accountName){
+        $("accountName").textContent =
+            accountName;
+    }
 
-    const recordService =
-        record.service ||
-        "";
-
-    const recordTitle =
-        record.document_title ||
-        record.documentTitle ||
-        record.title ||
-        "";
-
-
-    const query =
-        new URLSearchParams({
-
-            service:
-                recordService,
-
-            title:
-                recordTitle
-
-        });
-
-
-    window.open(
-        PAYMENT_API_BASE +
-        "/api/back-office/delivery-file?" +
-        query.toString(),
-        "_blank",
-        "noopener"
-    );
+    if(accountNumber){
+        $("accountNumber").textContent =
+            accountNumber;
+    }
 }
 
 
-/* ============================================================
-   NAVIGATION
-============================================================ */
+/* =========================================================
+   EVENT LISTENERS
+========================================================= */
 
-function exitBackOffice() {
-
-    window.location.href =
-        window.location.pathname;
-}
-
-
-function goWorkspace() {
-
-    window.location.href =
-        "/workspace.html";
-}
-
-
-/* ============================================================
-   BACK OFFICE KEY ENTER
-============================================================ */
-
-$("boAdminKey")
+$("makePaymentButton")
     .addEventListener(
-        "keydown",
-        event => {
+        "click",
+        openPaymentExperience
+    );
 
-            if (
-                event.key ===
-                "Enter"
-            ) {
 
-                loginBackOffice();
+$("experienceMakePaymentButton")
+    .addEventListener(
+        "click",
+        createPayment
+    );
+
+
+$("reportButton")
+    .addEventListener(
+        "click",
+        reportPayment
+    );
+
+
+$("downloadButton")
+    .addEventListener(
+        "click",
+        downloadDocument
+    );
+
+
+$("closeExperience")
+    .addEventListener(
+        "click",
+        closePaymentExperience
+    );
+
+
+$("paymentExperience")
+    .addEventListener(
+        "click",
+        function(event){
+
+            if(event.target === $("paymentExperience")){
+                closePaymentExperience();
             }
+
         }
     );
+
+
+$("backOfficeLoadButton")
+    .addEventListener(
+        "click",
+        loadBackOffice
+    );
+
+
+$("backOfficeRefreshButton")
+    .addEventListener(
+        "click",
+        refreshBackOffice
+    );
+
+
+$("backOfficeExitButton")
+    .addEventListener(
+        "click",
+        function(){
+
+            showCustomer();
+
+            const url =
+                new URL(window.location.href);
+
+            url.searchParams.delete("mode");
+            url.searchParams.delete("back_office");
+
+            window.history.replaceState(
+                {},
+                "",
+                url.toString()
+            );
+        }
+    );
+
+
+$("backButton")
+    .addEventListener(
+        "click",
+        function(){
+
+            if(document.referrer){
+                history.back();
+            }else{
+                window.location.href =
+                    "conversation.html";
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+function initialize(){
+
+    loadSnapshot();
+
+    loadBankDetails();
+
+    updateCustomerSummary();
+
+    updateExperienceDetails();
+
+    updatePaymentDisplay();
+
+
+    if(isBackOffice){
+        showBackOffice();
+    }else{
+        showCustomer();
+    }
+}
+
+
+initialize();
+
 </script>
 
 </body>
