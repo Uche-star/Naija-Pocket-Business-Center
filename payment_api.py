@@ -15,7 +15,7 @@ from xml.sax.saxutils import escape as xml_escape
 
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field
 
 APP_VERSION = "payment-product-first-v12-exact-approved-document-back-office-delivery"
@@ -38,6 +38,14 @@ def now_iso() -> str:
 
 def clean(value: Any) -> str:
     return "" if value is None else str(value).strip()
+
+
+def html_escape(value: Any, quote: bool = False) -> str:
+    text = clean(value)
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    if quote:
+        text = text.replace('"', "&quot;").replace("'", "&#x27;")
+    return text
 
 
 def key_part(value: Any) -> str:
@@ -148,13 +156,54 @@ def normalize_payload(value: Any) -> dict:
 
 
 
+def _clean_customer_document_text(text: str) -> str:
+    """Return customer/Back Office document text without Markdown marker characters.
+
+    Formatting markers are presentation syntax only. The actual words remain
+    unchanged; DOCX generation still converts bold/italic markers to real
+    Word formatting.
+    """
+    raw = str(text).replace("\r\n", "\n").replace("\r", "\n")
+    cleaned_lines: list[str] = []
+    for line in raw.split("\n"):
+        line = re.sub(r"^\s*#{1,6}\s+", "", line)
+        line = re.sub(r"\*\*(.*?)\*\*", r"\1", line)
+        line = re.sub(r"\*(.*?)\*", r"\1", line)
+        cleaned_lines.append(line)
+
+    # Restore paragraph boundaries that were accidentally glued together.
+    result: list[str] = []
+    for line in cleaned_lines:
+        line = line.strip()
+        if not line:
+            if result and result[-1] != "":
+                result.append("")
+            continue
+        # Separate consecutive numbered items when a saved payload lost newlines.
+        line = re.sub(r"(?<!^)(\s+)(?=(?:\d+\.)\s+\*?\*?[A-Z])", "\n", line)
+        parts = line.split("\n")
+        for part in parts:
+            part = part.strip()
+            if part:
+                result.append(part)
+    return "\n".join(result).strip()
+
+
+def _customer_display_payload(payload: dict) -> dict:
+    normalized = normalize_payload(dict(payload or {}))
+    pages = [_clean_customer_document_text(page) for page in (normalized.get("pages") or [])]
+    pages = [page for page in pages if page]
+    text = "\n\n".join(pages) if pages else _clean_customer_document_text(normalized.get("document_text", ""))
+    return {**normalized, "pages": pages, "document_text": text, "page_count": len(pages)}
+
+
 def back_office_product(product: Optional[dict]) -> dict:
     """Full Back Office representation, including the complete saved document."""
     result = public_product(product)
     if not product:
         result.update({"pages": [], "document_text": "", "page_count": 0})
         return result
-    payload = clean_saved_document_payload(from_json(product.get("document_payload"), {}))
+    payload = _customer_display_payload(from_json(product.get("document_payload"), {}))
     result.update({
         "pages": payload["pages"],
         "document_text": payload["document_text"],
@@ -200,7 +249,7 @@ def back_office_delivery_channels(request: Request, product: dict) -> dict:
     service = clean(product.get("service"))
     title = clean(product.get("document_title"))
     file_url = public_delivery_url(request, service, title)
-    share_text = "Download your document:\n" + file_url
+    share_text = "Your document is ready.\n\nDownload your document:\n" + file_url
     return {
         "available": bool(existing_saved_file(product)),
         "document_saved": bool(existing_saved_file(product)),
@@ -590,10 +639,8 @@ def update_payment(service: str, title: str, status: Optional[str] = None, **fie
 
 def repair_saved_snapshot(product: dict) -> dict:
     current = get_product(clean(product.get("service")), clean(product.get("document_title"))) or product
-    if existing_saved_file(current):
-        return current
-
     payload = normalize_payload(from_json(current.get("document_payload"), {}))
+
     if not payload["pages"] and not payload["document_text"]:
         payment = get_payment(clean(current.get("service")), clean(current.get("document_title")))
         if payment:
@@ -605,6 +652,17 @@ def repair_saved_snapshot(product: dict) -> dict:
 
     if not payload["pages"] and not payload["document_text"]:
         raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_CONTENT_MISSING")
+
+    existing = existing_saved_file(current)
+    if existing:
+        # Repair only presentation artifacts in an already-saved document.
+        # The approved words are taken directly from the saved payload; no AI
+        # rewriting or content change is performed.
+        raw_text = "\n".join(payload.get("pages") or [payload.get("document_text", "")])
+        if "**" in raw_text or re.search(r"(?<!\*)\*(?!\*)", raw_text):
+            make_docx(existing, clean(current.get("document_title")),
+                      payload["pages"] or [payload["document_text"]])
+        return current
 
     path = save_exact_snapshot(clean(current.get("service")), clean(current.get("document_title")),
                                payload, current)
@@ -1124,9 +1182,109 @@ def back_office_delivery(service: str, title: str, channel: str, request: Reques
     return {"ok": True, "channel": selected, "product": back_office_product(product)}
 
 
+def _public_download_button_url(request: Request, token: str) -> str:
+    return f"{api_base(request)}/api/delivery-file/download?token={urllib.parse.quote(token)}"
+
+
+def _luxury_delivery_page(title: str, service: str, download_url: str) -> str:
+    safe_title = html_escape(clean(title) or "Your Document")
+    safe_service = html_escape(clean(service) or "Document Service")
+    safe_download = html_escape(download_url, quote=True)
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090909">
+<title>Document Ready | Naija Pocket Business Center</title>
+<style>
+:root {{
+  --black:#080808; --deep:#101010; --ivory:#f5f0e6; --muted:#b9b2a5;
+  --gold:#c8a96b; --gold2:#e0c98f; --line:rgba(200,169,107,.28);
+}}
+* {{ box-sizing:border-box; }}
+html,body {{ margin:0; min-height:100%; }}
+body {{
+  min-height:100vh; background:radial-gradient(circle at 50% 12%, #1b1b1b 0, var(--black) 45%, #050505 100%);
+  color:var(--ivory); font-family: Georgia, 'Times New Roman', serif;
+  display:flex; align-items:center; justify-content:center; padding:24px 16px;
+}}
+.shell {{ width:min(100%, 560px); }}
+.brand {{ text-align:center; margin-bottom:28px; }}
+.brand-mark {{
+  width:48px; height:48px; margin:0 auto 14px; border:1px solid var(--gold);
+  border-radius:50%; display:grid; place-items:center; color:var(--gold2);
+  font-size:19px; letter-spacing:.08em;
+}}
+.brand-name {{ font-size:12px; letter-spacing:.28em; text-transform:uppercase; color:#e8dfd0; }}
+.card {{
+  position:relative; overflow:hidden; border:1px solid var(--line);
+  background:linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
+  box-shadow:0 28px 80px rgba(0,0,0,.48); padding:38px 26px 30px; text-align:center;
+}}
+.card:before {{ content:""; position:absolute; top:0; left:12%; right:12%; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); }}
+.eyebrow {{ font-family:Arial, sans-serif; font-size:10px; letter-spacing:.25em; color:var(--gold2); text-transform:uppercase; margin-bottom:15px; }}
+h1 {{ margin:0; font-size:clamp(28px,7vw,42px); line-height:1.08; font-weight:400; letter-spacing:-.02em; }}
+.rule {{ width:54px; height:1px; background:var(--gold); margin:22px auto; opacity:.8; }}
+.service {{ font-family:Arial,sans-serif; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }}
+.title {{ font-size:18px; line-height:1.5; color:#eee7db; margin:0 auto; max-width:430px; }}
+.note {{ font-family:Arial,sans-serif; color:#a9a39a; font-size:12px; line-height:1.7; margin:20px auto 27px; max-width:400px; }}
+.download {{
+  display:flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:58px;
+  background:linear-gradient(135deg, var(--gold2), var(--gold)); color:#111; text-decoration:none;
+  font-family:Arial,sans-serif; font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  box-shadow:0 12px 30px rgba(200,169,107,.15);
+}}
+.download:hover {{ transform:translateY(-1px); filter:brightness(1.05); box-shadow:0 16px 38px rgba(200,169,107,.22); }}
+.download:active {{ transform:translateY(0); }}
+.icon {{ font-size:17px; line-height:1; }}
+.footer {{ text-align:center; margin-top:22px; font-family:Arial,sans-serif; font-size:10px; letter-spacing:.08em; color:#77736c; line-height:1.7; }}
+.footer strong {{ color:#9b958b; font-weight:500; }}
+@media (max-width:420px) {{ .card {{ padding:32px 20px 25px; }} .brand {{ margin-bottom:22px; }} }}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="brand">
+    <div class="brand-mark">NP</div>
+    <div class="brand-name">Naija Pocket Business Center</div>
+  </div>
+  <section class="card" aria-label="Document download">
+    <div class="eyebrow">Document Ready</div>
+    <h1>Your document is ready.</h1>
+    <div class="rule"></div>
+    <div class="service">{safe_service}</div>
+    <p class="title">{safe_title}</p>
+    <p class="note">Your approved document is securely prepared for delivery. Use the button below to download your document.</p>
+    <a class="download" href="{safe_download}">
+      <span class="icon">↓</span> Download Document
+    </a>
+  </section>
+  <div class="footer">Secure document access · <strong>Naija Pocket Business Center</strong></div>
+</main>
+</body>
+</html>"""
+
+
 @app.get("/api/delivery-file")
-def public_delivery_file(token: str):
-    """Customer-facing signed delivery link. No Back Office key is accepted or exposed."""
+def public_delivery_file(token: str, request: Request):
+    """Luxury customer-facing signed delivery page. No Back Office key is accepted or exposed."""
+    service, title = _read_public_delivery_token(token)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    saved = existing_saved_file(product)
+    if not saved:
+        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
+    download_url = _public_download_button_url(request, token)
+    return HTMLResponse(_luxury_delivery_page(title, service, download_url))
+
+
+@app.get("/api/delivery-file/download")
+def public_delivery_file_download(token: str):
+    """Actual customer document download. Signed token only; no Back Office key."""
     service, title = _read_public_delivery_token(token)
     product = get_product(service, title)
     if not product:
