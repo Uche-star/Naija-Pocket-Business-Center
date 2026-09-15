@@ -365,6 +365,30 @@ def get_product(service: str, title: str) -> Optional[dict]:
     return as_dict(row)
 
 
+def get_latest_product_for_service(service: str) -> Optional[dict]:
+    service = clean(service)
+    if not service:
+        return None
+    c = db(PRODUCT_DB_PATH)
+    row = c.execute(
+        "SELECT * FROM document_products WHERE lower(trim(service)) = lower(trim(?)) ORDER BY updated_at DESC, id DESC LIMIT 1",
+        (service,),
+    ).fetchone()
+    c.close()
+    return as_dict(row)
+
+
+def resolve_payment_title(service: str, supplied_title: str, existing_product: Optional[dict] = None) -> str:
+    """Resolve the existing document title without interpreting document content."""
+    title = clean(supplied_title)
+    if title:
+        return title
+    product = existing_product or get_latest_product_for_service(service)
+    if product:
+        return clean(product.get("document_title"))
+    return ""
+
+
 def get_single_product() -> Optional[dict]:
     c = db(PRODUCT_DB_PATH)
     row = c.execute("SELECT * FROM document_products ORDER BY updated_at DESC, id DESC LIMIT 1").fetchone()
@@ -812,7 +836,7 @@ class PaymentCreateRequest(BaseModel):
     customer_name: str = ""
     customer_id: str = ""
     service: str
-    document_title: str
+    document_title: str = ""
     amount: float
     currency: str = "NGN"
     payment_method: str = "bank_transfer"
@@ -941,7 +965,8 @@ def payment_create(body: PaymentCreateRequest, request: Request):
     I HAVE MADE PAYMENT must never call this operation.
     """
     service = clean(body.service)
-    title = clean(body.document_title)
+    existing_product = get_product(service, clean(body.document_title)) if clean(body.document_title) else None
+    title = resolve_payment_title(service, body.document_title, existing_product)
     if not service or not title:
         raise HTTPException(status_code=400, detail="SERVICE_AND_TITLE_REQUIRED")
     if float(body.amount) <= 0:
@@ -950,7 +975,7 @@ def payment_create(body: PaymentCreateRequest, request: Request):
     # The approved document already belongs to this service + title.
     # MAKE PAYMENT must use that saved document when the browser does not resend
     # the full payload. It must never manufacture a different document.
-    existing_product = get_product(service, title)
+    existing_product = existing_product or get_product(service, title)
     existing_payload = normalize_payload(from_json(existing_product.get("document_payload"), {})) if existing_product else {}
     incoming = from_json(body.document_payload, {})
     if not isinstance(incoming, dict):
@@ -1505,11 +1530,10 @@ def back_office_delivery_email(body: EmailDeliveryRequest, request: Request,
     saved = existing_saved_file(product)
     if not saved:
         raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
-    # Recipient email uses the normal public download route.
-    # The Back Office key is used only by the Back Office endpoint above;
-    # it is never included in, required by, or exposed through the recipient link.
-    recipient_download_url = download_url(request, service, title)
-    send_luxury_email(recipient, title, service, recipient_download_url)
+    token = _public_delivery_token(service, title)
+    # The URL is embedded behind the button in the HTML email; it is not shown as raw text.
+    download_url = _public_download_button_url(request, token)
+    send_luxury_email(recipient, title, service, download_url)
     log_delivery(product, "email", "sent", {"recipient_email": recipient})
     return {
         "ok": True,
