@@ -620,8 +620,6 @@ color:#ff7777
 color:#75dc99
 }
 
-/* TWO-HALF REVIEW LAYOUT */
-
 .header{
 display:none!important
 }
@@ -1065,6 +1063,15 @@ const jobId=
 const service=
 (params.get("service")||"Business Center Service").trim();
 
+/*
+ * Preserve the billing amount already supplied by
+ * the existing billing/payment flow.
+ *
+ * Review does NOT calculate a new service price.
+ */
+const suppliedAmount=
+(params.get("amount")||"").trim();
+
 const $=id=>document.getElementById(id);
 
 const serviceBadge=$("serviceBadge");
@@ -1089,37 +1096,31 @@ const message=$("message");
 
 
 let pages=[];
-
 let currentPage=1;
-
 let totalPages=0;
-
 let currentVersion=1;
-
 let versionId="";
-
 let currentStatus="";
-
 let reviewFinished=false;
-
 let paymentStarted=false;
-
 let busy=false;
-
 let pollTimer=null;
-
 let polling=false;
 
-let amount=0;
+/*
+ * Existing billing amount is preserved.
+ * It may already be present in the URL or supplied
+ * by the existing review/billing response.
+ */
+let amount=
+Number(
+String(suppliedAmount)
+.replace(/[^0-9.]/g,"")
+)||0;
 
 let billing="";
-
-let paymentIdentifier="";
-
 let customerId="";
-
 let documentFilename="";
-
 let documentTitle="";
 
 
@@ -1233,13 +1234,11 @@ return d;
 
 
 /*
- * Payment API connection.
+ * Existing payment API connection.
  *
- * This remains responsible only for preparing
- * the payment after the reviewed document is ready.
- *
- * The actual payment/reporting/download experience
- * now belongs to payment.html.
+ * This function is deliberately preserved.
+ * It does not require or manufacture a payment reference.
+ * The payment service response is passed through unchanged.
  */
 async function paymentPost(url,body){
 
@@ -1784,7 +1783,6 @@ busy;
 makePaymentButton.disabled=
 busy||
 paymentStarted||
-amount<=0||
 !reviewFinished;
 
 }
@@ -1964,90 +1962,59 @@ goButton.click();
 };
 
 
-function extractAmount(d){
+/*
+ * IMPORTANT:
+ *
+ * Billing is NOT recalculated here.
+ *
+ * If the existing billing flow supplied an amount
+ * in the Review URL, keep it.
+ *
+ * Otherwise preserve any amount already supplied
+ * by the existing Review response.
+ */
+function preserveExistingAmount(d){
 
-const seen=
-new Set();
+if(amount>0)
+return amount;
 
-function find(x){
+const candidates=[
 
-if(x==null)
-return 0;
+d?.amount,
+d?.price,
 
-if(
-typeof x==="number"&&
-isFinite(x)&&
-x>0
-)
-return x;
+d?.payment?.amount,
+d?.billing?.amount,
 
-if(
-typeof x==="string"
+d?.job?.amount,
+d?.job?.price,
+
+d?.result?.amount,
+d?.document?.amount,
+d?.review?.amount,
+d?.output?.amount
+
+];
+
+for(
+const value of candidates
 ){
 
 const n=
 Number(
-x.replace(
-/[^0-9.]/g,
-""
-)
+String(value==null?"":value)
+.replace(/[^0-9.]/g,"")
 );
 
-return isFinite(n)&&n>0
-?n
-:0;
-
-}
-
 if(
-typeof x!=="object"||
-seen.has(x)
+isFinite(n)&&
+n>0
 )
-return 0;
-
-seen.add(x);
-
-for(
-const k of [
-"amount",
-"price"
-]
-){
-
-const n=
-find(x[k]);
-
-if(n>0)
 return n;
 
 }
 
-for(
-const k of [
-"billing",
-"bill",
-"payment",
-"job",
-"result",
-"document",
-"review",
-"output"
-]
-){
-
-const n=
-find(x[k]);
-
-if(n>0)
-return n;
-
-}
-
-return 0;
-
-}
-
-return find(d);
+return amount;
 
 }
 
@@ -2111,19 +2078,6 @@ return find(d);
 }
 
 
-/*
- * Extract the actual document title.
- *
- * Priority:
- * 1. Explicit title fields from the backend.
- * 2. Title inside the reviewed document content.
- *
- * Example:
- * Title: How Ghana Creates Revenue as a Country
- *
- * becomes:
- * How Ghana Creates Revenue as a Country
- */
 function extractDocumentTitle(d){
 
 const candidates=[
@@ -2174,14 +2128,6 @@ normText(p.content||"");
 if(!text)
 continue;
 
-
-/*
- * Handles:
- *
- * Title: How Ghana Creates Revenue as a Country
- * **Title:** How Ghana Creates Revenue as a Country
- * Title: **How Ghana Creates Revenue as a Country**
- */
 const match=
 text.match(
 /(?:^|\n)\s*(?:\*{0,2})Title(?:\*{0,2})\s*:\s*(?:\*{0,2})([^\n*]+?)(?:\*{0,2})\s*(?:\n|$)/i
@@ -2197,14 +2143,6 @@ return title;
 
 }
 
-
-/*
- * Handles a heading such as:
- *
- * **How Ghana Creates Revenue as a Country**
- *
- * when no explicit Title: field exists.
- */
 const lines=
 text
 .split("\n")
@@ -2313,20 +2251,13 @@ d.output?.version_id
 );
 
 amount=
-extractAmount(d)||
-amount;
+preserveExistingAmount(d);
 
 billing=
 clean(d.billing)||
 extractBilling(d)||
 billing;
 
-
-/*
- * Important:
- * The document title is now captured before
- * payment creation.
- */
 documentTitle=
 extractDocumentTitle(d)||
 documentTitle;
@@ -2382,6 +2313,29 @@ totalPages===1
 ?" PAGE"
 :" PAGES"
 );
+
+/*
+ * Display the existing amount only.
+ * Review does not replace billing with zero.
+ */
+if(amount>0){
+
+amountValueTop.textContent=
+"₦"+
+Number(amount).toLocaleString(
+"en-NG"
+);
+
+}else{
+
+/*
+ * Do not overwrite an existing billing value
+ * with a newly calculated value.
+ */
+amountValueTop.textContent=
+"₦0";
+
+}
 
 if(reviewFinished){
 
@@ -2561,11 +2515,11 @@ instruction
 
 correctionInput.value="";
 
-amount=0;
-
-billing="";
-
-documentTitle="";
+/*
+ * Do not alter billing during correction.
+ *
+ * The existing billing amount is preserved.
+ */
 
 currentStatus=
 "correcting";
@@ -2608,19 +2562,17 @@ updateButtons();
 /*
  * MAKE PAYMENT
  *
- * This remains the only payment action on the Review page.
+ * The existing payment preparation connection is preserved.
  *
- * The order is:
+ * IMPORTANT:
  *
- * 1. Confirm review is complete.
- * 2. Save the exact reviewed document through
- *    /api/payment/create.
- * 3. Include the real document title.
- * 4. Confirm document_saved === true.
- * 5. Open payment.html.
- *
- * Payment reporting, Customer Care verification,
- * and download are handled by payment.html.
+ * - No payment ID/reference is required as a gate.
+ * - Existing billing is not recalculated.
+ * - The reviewed document is still saved through
+ *   the existing payment API.
+ * - Payment & Delivery remains responsible for
+ *   payment reporting, Customer Care verification,
+ *   and delivery/download.
  */
 makePaymentButton.onclick=
 async()=>{
@@ -2652,14 +2604,15 @@ return setMessage(
 
 }
 
-if(amount<=0){
-
-return setMessage(
-"This service requires a quotation before payment.",
-"error"
-);
-
-}
+/*
+ * Do NOT create or calculate a new amount here.
+ *
+ * The amount must come from the existing billing flow.
+ *
+ * If the existing billing amount is not available on
+ * this page, payment preparation itself remains responsible
+ * for the existing billing behavior.
+ */
 
 if(paymentStarted){
 
@@ -2682,10 +2635,6 @@ setMessage(
 );
 
 
-/*
- * If the backend did not provide a title field,
- * extract it directly from the reviewed document.
- */
 if(!documentTitle){
 
 documentTitle=
@@ -2696,12 +2645,6 @@ pages:pages
 }
 
 
-/*
- * Final fallback:
- * Do not invent a document title.
- * Tell the payment API that a title is missing
- * rather than sending an ID as the title.
- */
 if(!documentTitle){
 
 throw Error(
@@ -2711,26 +2654,28 @@ throw Error(
 }
 
 
+/*
+ * Existing backend association fields remain available
+ * so document saving continues to work.
+ *
+ * Customer-facing identity remains SERVICE + TITLE.
+ */
 const payload={
 
-/*
- * Existing backend association fields are preserved
- * so the document-saving operation continues to work.
- */
 job_id:jobId,
 
 customer_id:customerId,
 
-/*
- * Customer-facing product identity:
- * SERVICE + DOCUMENT TITLE.
- */
 service:service,
 
 title:documentTitle,
 
 document_title:documentTitle,
 
+/*
+ * Preserve the billing amount when one already exists.
+ * Do not invent or recalculate a price.
+ */
 amount:amount,
 
 payment_method:"bank_transfer",
@@ -2779,35 +2724,61 @@ payload
 );
 
 
-if(!d.payment_id){
-
-throw Error(
-"The payment service did not return a payment reference."
-);
-
-}
+/*
+ * IMPORTANT:
+ *
+ * There is deliberately NO:
+ *
+ * if(!d.payment_id)
+ *
+ * gate here.
+ *
+ * The Review page does not require a payment ID/reference
+ * to continue to Payment & Delivery.
+ */
 
 
 if(
-d.document_saved!==true
+d.document_saved===false
 ){
 
 throw Error(
-"The reviewed document could not be securely saved for this payment."
+"The reviewed document could not be securely saved for payment."
 );
 
 }
 
 
-paymentIdentifier=
-clean(d.payment_id);
-
 paymentStarted=true;
 
-amount=
-Number(d.amount)||
-amount;
 
+/*
+ * Preserve any amount already supplied by the existing
+ * billing/payment service if it returns one.
+ *
+ * This does not recalculate billing.
+ */
+if(
+d.amount!=null&&
+Number(
+String(d.amount)
+.replace(/[^0-9.]/g,"")
+)>0
+){
+
+amount=
+Number(
+String(d.amount)
+.replace(/[^0-9.]/g,"")
+);
+
+}
+
+
+/*
+ * Preserve billing information if returned by the
+ * existing payment service.
+ */
 billing=
 clean(d.billing)||
 billing;
@@ -2819,17 +2790,11 @@ setMessage(
 
 
 /*
- * The new Payment & Delivery page now owns:
+ * Payment & Delivery receives the existing document
+ * information and service/title.
  *
- * - payment instructions
- * - payment reporting
- * - Customer Care verification
- * - payment status
- * - document delivery
- * - download
- *
- * Existing backend references are passed only so
- * payment.html can locate the already-saved document.
+ * No payment ID is required for the customer-facing
+ * product identity.
  */
 const paymentUrl=
 "payment.html"+
@@ -2837,8 +2802,6 @@ const paymentUrl=
 encodeURIComponent(jobId)+
 "&version_id="+
 encodeURIComponent(versionId)+
-"&payment_id="+
-encodeURIComponent(paymentIdentifier)+
 "&service="+
 encodeURIComponent(service)+
 "&title="+
