@@ -4,2458 +4,218 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Review Your Complete Service — Naija Pocket Business Center</title>
-
 <style>
-:root{
-  --black:#020202;
-  --black2:#050505;
-  --black3:#080807;
-  --panel:#0b0b0a;
-  --panel2:#10100e;
-  --panel3:#151410;
-
-  --gold:#d4af37;
-  --gold2:#efd36a;
-  --gold3:#fff0a8;
-  --champagne:#f4d58d;
-  --cream:#fff7df;
-
-  --green:#168047;
-  --green2:#58c98a;
-
-  --white:#fff;
-  --muted:#85827a;
-  --muted2:#aaa59a;
-
-  --line:rgba(255,255,255,.075);
-  --gold-line:rgba(212,175,55,.18);
-  --gold-line-strong:rgba(212,175,55,.40);
-
-  --red:#9d0000;
-  --blue:#0878e8;
-}
-
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
-
-html,
-body{
-  width:100%;
-  height:100%;
-  margin:0;
-  padding:0;
-
-  background:
-    radial-gradient(
-      circle at 50% -12%,
-      rgba(212,175,55,.095),
-      transparent 33%
-    ),
-    radial-gradient(
-      circle at 5% 85%,
-      rgba(22,128,71,.035),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 100% 100%,
-      rgba(212,175,55,.025),
-      transparent 30%
-    ),
-    #020202;
-
-  color:var(--white);
-
-  font-family:
-    Inter,
-    Montserrat,
-    Arial,
-    sans-serif;
-}
-
-body{
-  overflow:hidden;
-}
-
-button,
-textarea,
-input{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-button:disabled{
-  opacity:.42;
-  cursor:not-allowed;
-}
-
-/* ============================================================
-   HIDDEN ORIGINAL HEADER
-   ============================================================ */
-
-.header{
-  display:none!important;
-}
-
-/* ============================================================
-   LUXURY REVIEW FRAME
-   ============================================================ */
-
-.main{
-  position:fixed!important;
-  inset:0!important;
-
-  width:100%!important;
-  max-width:1240px!important;
-
-  margin:0 auto!important;
-  padding:0!important;
-
-  display:grid!important;
-  grid-template-rows:52% 48%!important;
-
-  gap:0!important;
-  overflow:hidden!important;
-
-  background:
-    linear-gradient(
-      180deg,
-      #050505 0%,
-      #080806 48%,
-      #030303 100%
-    );
-
-  box-shadow:
-    inset 0 0 0 1px rgba(212,175,55,.045),
-    0 0 80px rgba(0,0,0,.8);
-}
-
-.main::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index:50;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(212,175,55,.018),
-      transparent
-    );
-
-  mix-blend-mode:screen;
-}
-
-/* ============================================================
-   DOCUMENT REVIEW CHAMBER
-   ============================================================ */
-
-.review-card{
-  grid-row:1;
-
-  min-height:0!important;
-  height:100%!important;
-
-  display:flex!important;
-  flex-direction:column!important;
-
-  position:relative;
-
-  overflow:hidden!important;
-
-  border-radius:0!important;
-  border:0!important;
-
-  background:
-    radial-gradient(
-      ellipse at 50% 0%,
-      rgba(212,175,55,.065),
-      transparent 48%
-    ),
-    linear-gradient(
-      180deg,
-      #090909,
-      #050505
-    );
-}
-
-.review-card::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-
-  height:1px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent 4%,
-      rgba(212,175,55,.18),
-      rgba(255,239,168,.70),
-      rgba(212,175,55,.18),
-      transparent 96%
-    );
-
-  z-index:10;
-}
-
-.review-card::after{
-  content:"";
-  position:absolute;
-  top:18px;
-  left:50%;
-
-  width:280px;
-  height:80px;
-
-  transform:translateX(-50%);
-
-  background:
-    radial-gradient(
-      ellipse,
-      rgba(212,175,55,.06),
-      transparent 70%
-    );
-
-  pointer-events:none;
-}
-
-/* ============================================================
-   DOCUMENT HEADER
-   ============================================================ */
-
-.document-card-header{
-  flex:0 0 auto;
-
-  min-height:57px;
-
-  padding:9px 17px 12px!important;
-
-  position:relative;
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  gap:15px;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(22,21,18,.98),
-      rgba(9,9,8,.98)
-    );
-
-  border-bottom:
-    1px solid rgba(212,175,55,.16);
-
-  box-shadow:
-    0 8px 22px rgba(0,0,0,.22);
-}
-
-.document-card-header::before{
-  content:"NAIJA POCKET BUSINESS CENTER";
-
-  position:absolute;
-  left:17px;
-  bottom:4px;
-
-  color:
-    rgba(212,175,55,.25);
-
-  font-family:
-    Arial,
-    sans-serif;
-
-  font-size:5.5px;
-  font-weight:900;
-
-  letter-spacing:2.8px;
-
-  pointer-events:none;
-}
-
-.document-card-header::after{
-  content:"";
-
-  position:absolute;
-  right:17px;
-  bottom:0;
-
-  width:88px;
-  height:1px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      var(--gold)
-    );
-
-  opacity:.48;
-}
-
-.document-heading{
-  min-width:0;
-  padding-bottom:5px;
-}
-
-.document-heading h3{
-  margin:0;
-
-  color:
-    var(--champagne);
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size:17px;
-  line-height:1.1;
-  font-weight:500;
-
-  letter-spacing:.2px;
-
-  text-shadow:
-    0 1px 18px rgba(212,175,55,.08);
-}
-
-.page-count{
-  flex:0 0 auto;
-
-  padding:6px 10px;
-
-  border:
-    1px solid rgba(212,175,55,.25);
-
-  border-radius:20px;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(212,175,55,.075),
-      rgba(212,175,55,.025)
-    );
-
-  color:
-    #cfc6ad;
-
-  font-size:7.5px;
-  font-weight:900;
-
-  letter-spacing:1.3px;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.025);
-}
-
-/* ============================================================
-   DOCUMENT SCROLL AREA
-   ============================================================ */
-
-.document-scroll{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  height:auto!important;
-
-  padding:15px 13px 9px!important;
-
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-
-  -webkit-overflow-scrolling:touch;
-
-  overscroll-behavior:contain;
-
-  background:
-    radial-gradient(
-      ellipse at 50% 0%,
-      rgba(255,255,255,.018),
-      transparent 55%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,.005),
-      transparent
-    );
-}
-
-.document-scroll::-webkit-scrollbar{
-  width:4px;
-}
-
-.document-scroll::-webkit-scrollbar-track{
-  background:#030303;
-}
-
-.document-scroll::-webkit-scrollbar-thumb{
-  background:
-    linear-gradient(
-      180deg,
-      #8a7228,
-      #322b18
-    );
-
-  border-radius:20px;
-}
-
-/* ============================================================
-   DOCUMENT PAGE
-   ============================================================ */
-
-.page-viewer{
-  width:100%;
-  max-width:900px;
-
-  margin:0 auto;
-}
-
-.document-page{
-  position:relative;
-
-  width:100%;
-  min-height:620px;
-
-  padding:46px 40px 62px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff 0%,
-      #fdfdfc 100%
-    );
-
-  color:#111;
-
-  border-radius:3px;
-
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.95),
-    0 10px 35px rgba(0,0,0,.50),
-    0 28px 65px rgba(0,0,0,.25);
-
-  overflow:visible;
-
-  user-select:text;
-  -webkit-user-select:text;
-
-  cursor:default;
-
-  transform:translateZ(0);
-}
-
-.document-page::before{
-  content:"";
-
-  position:absolute;
-  inset:8px;
-
-  border:
-    1px solid rgba(0,0,0,.045);
-
-  pointer-events:none;
-}
-
-.document-page::after{
-  content:"";
-
-  position:absolute;
-
-  top:8px;
-  left:8px;
-
-  width:46px;
-  height:46px;
-
-  border-top:
-    1px solid rgba(0,0,0,.11);
-
-  border-left:
-    1px solid rgba(0,0,0,.11);
-
-  pointer-events:none;
-}
-
-.page-number-inside{
-  color:#777;
-
-  font-family:
-    Arial,
-    sans-serif;
-
-  font-size:8px;
-
-  text-align:center;
-
-  margin-bottom:27px;
-
-  letter-spacing:1.8px;
-
-  font-weight:600;
-}
-
-.page-content{
-  width:100%;
-
-  color:#111;
-
-  font-family:
-    "Times New Roman",
-    Georgia,
-    serif;
-
-  font-size:14px;
-  line-height:1.75;
-
-  white-space:pre-wrap;
-
-  overflow-wrap:anywhere;
-
-  word-break:normal;
-}
-
-.page-content p{
-  margin-top:0;
-  margin-bottom:12px;
-}
-
-.page-content h1,
-.page-content h2,
-.page-content h3,
-.page-content h4,
-.page-content h5,
-.page-content h6{
-  color:inherit;
-
-  font-family:inherit;
-
-  line-height:1.25;
-
-  margin-top:16px;
-  margin-bottom:10px;
-}
-
-.page-content h1{
-  font-size:2em;
-}
-
-.page-content h2{
-  font-size:1.6em;
-}
-
-.page-content h3{
-  font-size:1.35em;
-}
-
-.page-content h4{
-  font-size:1.15em;
-}
-
-.page-content strong,
-.page-content b{
-  font-weight:700;
-}
-
-.page-content em,
-.page-content i{
-  font-style:italic;
-}
-
-.page-content u{
-  text-decoration:underline;
-}
-
-.page-content ul,
-.page-content ol{
-  margin-top:8px;
-  margin-bottom:12px;
-  padding-left:28px;
-}
-
-.page-content li{
-  margin-bottom:4px;
-}
-
-.page-content blockquote{
-  margin:12px 0;
-  padding-left:14px;
-  border-left:3px solid #aaa;
-}
-
-.page-content hr{
-  border:0;
-  border-top:1px solid #999;
-  margin:18px 0;
-}
-
-.page-content table{
-  width:100%;
-  border-collapse:collapse;
-  margin:14px 0;
-
-  font-family:inherit;
-  font-size:inherit;
-}
-
-.page-content th,
-.page-content td{
-  border:1px solid #555;
-  padding:6px 8px;
-
-  vertical-align:top;
-  text-align:left;
-}
-
-.page-content th{
-  font-weight:700;
-}
-
-.page-content pre{
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  font-family:monospace;
-}
-
-/* ============================================================
-   LOADING / EMPTY
-   ============================================================ */
-
-.empty-page{
-  min-height:500px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  padding:30px;
-
-  color:#777;
-
-  font-family:Arial,sans-serif;
-  font-size:12px;
-
-  text-align:center;
-}
-
-.loading{
-  min-height:500px;
-
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-
-  gap:12px;
-
-  color:#918d82;
-
-  font-size:11px;
-
-  text-align:center;
-}
-
-.spinner{
-  width:30px;
-  height:30px;
-
-  border:
-    1px solid rgba(255,255,255,.09);
-
-  border-top-color:
-    var(--gold2);
-
-  border-right-color:
-    rgba(244,213,141,.55);
-
-  border-radius:50%;
-
-  animation:
-    spin .8s linear infinite;
-
-  box-shadow:
-    0 0 20px rgba(212,175,55,.07);
-}
-
-@keyframes spin{
-  to{
-    transform:rotate(360deg);
-  }
-}
-
-/* ============================================================
-   DOCUMENT NAVIGATION
-   ============================================================ */
-
-.page-navigation{
-  display:grid;
-
-  grid-template-columns:
-    1fr auto 1fr;
-
-  align-items:center;
-
-  gap:8px;
-
-  max-width:900px;
-
-  margin:11px auto 0;
-}
-
-.nav-button{
-  min-height:43px;
-
-  border:
-    1px solid rgba(212,175,55,.15);
-
-  border-radius:7px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #181815,
-      #0d0d0c
-    );
-
-  color:#e7e2d5;
-
-  font-size:8.5px;
-  font-weight:900;
-
-  letter-spacing:.45px;
-
-  transition:
-    border-color .2s ease,
-    background .2s ease,
-    color .2s ease,
-    transform .2s ease,
-    box-shadow .2s ease;
-}
-
-.nav-button:hover:not(:disabled){
-  border-color:
-    rgba(212,175,55,.42);
-
-  color:
-    var(--gold2);
-
-  background:
-    linear-gradient(
-      180deg,
-      #1d1c17,
-      #10100e
-    );
-
-  box-shadow:
-    0 5px 18px rgba(0,0,0,.22);
-}
-
-.nav-button:active:not(:disabled){
-  transform:translateY(1px);
-}
-
-.nav-button.next{
-  background:
-    linear-gradient(
-      180deg,
-      #1d1c17,
-      #11110f
-    );
-}
-
-.page-indicator{
-  min-width:92px;
-
-  color:#d6c887;
-
-  text-align:center;
-
-  font-size:8px;
-  font-weight:900;
-
-  letter-spacing:1px;
-}
-
-/* ============================================================
-   GO TO PAGE
-   ============================================================ */
-
-.go-row{
-  display:flex;
-
-  gap:7px;
-
-  max-width:900px;
-
-  margin:8px auto 0;
-}
-
-.page-number-input{
-  flex:1;
-
-  min-width:0;
-
-  height:37px;
-
-  padding:0 11px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #10100f,
-      #0a0a09
-    );
-
-  border:
-    1px solid rgba(255,255,255,.09);
-
-  border-radius:7px;
-
-  color:#fff;
-
-  outline:none;
-
-  font-size:9px;
-}
-
-.page-number-input::placeholder{
-  color:#625f58;
-}
-
-.page-number-input:focus{
-  border-color:
-    rgba(212,175,55,.42);
-
-  box-shadow:
-    0 0 0 2px rgba(212,175,55,.04);
-}
-
-.go-button{
-  width:70px;
-
-  border:
-    1px solid rgba(240,207,98,.50);
-
-  border-radius:7px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #edd05d,
-      #c59f2b
-    );
-
-  color:#080808;
-
-  font-size:8.5px;
-  font-weight:900;
-
-  letter-spacing:.9px;
-
-  box-shadow:
-    0 5px 15px rgba(212,175,55,.08);
-}
-
-.go-button:hover{
-  background:
-    linear-gradient(
-      180deg,
-      #f6dc75,
-      #d4af37
-    );
-}
-
-/* ============================================================
-   PAGE REVIEW
-   ============================================================ */
-
-.page-review{
-  margin:8px auto 0;
-
-  max-width:900px;
-
-  padding:12px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(212,175,55,.055),
-      rgba(255,255,255,.012)
-    );
-
-  border:
-    1px solid rgba(212,175,55,.15);
-
-  border-radius:8px;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.018);
-}
-
-.page-review-title{
-  color:#d9bf62;
-
-  font-size:7.5px;
-  font-weight:900;
-
-  letter-spacing:1.7px;
-
-  margin-bottom:5px;
-}
-
-.page-review-text{
-  color:#aaa69d;
-
-  font-size:9px;
-  line-height:1.55;
-
-  white-space:pre-wrap;
-
-  overflow-wrap:anywhere;
-}
-
-/* ============================================================
-   ACTION / CONTROL CHAMBER
-   ============================================================ */
-
-.action-area{
-  grid-row:2;
-
-  min-height:0!important;
-  height:100%!important;
-
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-
-  padding:9px 12px 22px!important;
-
-  position:relative;
-
-  background:
-    radial-gradient(
-      ellipse at 50% 0%,
-      rgba(212,175,55,.055),
-      transparent 43%
-    ),
-    linear-gradient(
-      180deg,
-      #070706,
-      #030303
-    );
-
-  border-top:
-    1px solid rgba(212,175,55,.48)!important;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.025);
-}
-
-.action-area::before{
-  content:"";
-
-  position:absolute;
-
-  top:0;
-  left:50%;
-
-  width:320px;
-  height:1px;
-
-  transform:translateX(-50%);
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(255,239,168,.65),
-      transparent
-    );
-
-  pointer-events:none;
-}
-
-.action-area::-webkit-scrollbar{
-  width:4px;
-}
-
-.action-area::-webkit-scrollbar-track{
-  background:#030303;
-}
-
-.action-area::-webkit-scrollbar-thumb{
-  background:#3c3420;
-  border-radius:20px;
-}
-
-/* ============================================================
-   REVIEW STATUS PANEL
-   ============================================================ */
-
-.action-area .top-panel{
-  margin:0 0 8px!important;
-
-  padding:11px 13px 10px!important;
-
-  background:
-    radial-gradient(
-      circle at 100% 0%,
-      rgba(212,175,55,.045),
-      transparent 35%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(20,19,16,.99),
-      rgba(8,8,7,.99)
-    );
-
-  border:
-    1px solid rgba(212,175,55,.18);
-
-  border-radius:9px;
-
-  position:relative;
-
-  overflow:hidden;
-
-  box-shadow:
-    0 7px 24px rgba(0,0,0,.22),
-    inset 0 1px 0 rgba(255,255,255,.018);
-}
-
-.action-area .top-panel::before{
-  content:"";
-
-  position:absolute;
-
-  top:0;
-  left:0;
-
-  width:2px;
-  height:100%;
-
-  background:
-    linear-gradient(
-      180deg,
-      var(--gold2),
-      rgba(212,175,55,.10)
-    );
-}
-
-.action-area .top-panel::after{
-  content:"NPBC";
-
-  position:absolute;
-
-  right:13px;
-  top:10px;
-
-  color:
-    rgba(212,175,55,.105);
-
-  font-family:
-    Georgia,
-    serif;
-
-  font-size:9px;
-  font-weight:700;
-
-  letter-spacing:3px;
-
-  pointer-events:none;
-}
-
-.review-title{
-  margin:0;
-
-  color:#f5ead0;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size:18px;
-  line-height:1.2;
-
-  font-weight:500;
-
-  letter-spacing:.05px;
-}
-
-.review-subtitle{
-  margin:4px 0 0;
-
-  max-width:760px;
-
-  color:#8f8c84;
-
-  font-size:9px;
-
-  line-height:1.5;
-}
-
-.status-row{
-  display:flex;
-
-  align-items:center;
-  justify-content:space-between;
-
-  gap:8px;
-
-  margin-top:9px;
-}
-
-.status-label{
-  color:#77756f;
-
-  font-size:7.5px;
-
-  text-transform:uppercase;
-
-  letter-spacing:1.2px;
-
-  font-weight:800;
-}
-
-.status-value{
-  color:var(--gold2);
-
-  font-size:9px;
-
-  font-weight:900;
-
-  letter-spacing:.9px;
-
-  text-shadow:
-    0 0 14px rgba(212,175,55,.08);
-}
-
-.progress-shell{
-  margin-top:6px;
-
-  width:100%;
-  height:4px;
-
-  background:#1c1b18;
-
-  border-radius:20px;
-
-  overflow:hidden;
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.025);
-}
-
-.progress-bar{
-  width:0%;
-  height:100%;
-
-  background:
-    linear-gradient(
-      90deg,
-      #96741a,
-      var(--gold2),
-      #fff0a8
-    );
-
-  box-shadow:
-    0 0 9px rgba(212,175,55,.22);
-
-  transition:
-    width .25s ease;
-}
-
-.progress-text{
-  margin-top:4px;
-
-  color:#66645f;
-
-  font-size:7.5px;
-
-  text-align:right;
-}
-
-/* ============================================================
-   AMOUNT / PRIMARY COMMAND PANEL
-   ============================================================ */
-
-.action-area .top-amount-card{
-  margin:0 0 8px!important;
-
-  padding:8px!important;
-
-  background:
-    radial-gradient(
-      circle at 0% 50%,
-      rgba(212,175,55,.04),
-      transparent 35%
-    ),
-    linear-gradient(
-      135deg,
-      #13120f,
-      #080807
-    );
-
-  border:
-    1px solid rgba(212,175,55,.28);
-
-  border-radius:9px;
-
-  text-align:left;
-
-  box-shadow:
-    0 7px 22px rgba(0,0,0,.26),
-    inset 0 1px 0 rgba(255,255,255,.018);
-}
-
-.action-area .top-amount-head{
-  gap:9px!important;
-}
-
-.action-area .top-amount-card>.top-amount-head>div:first-child{
-  flex:0 0 118px!important;
-  text-align:center;
-}
-
-.top-amount-label{
-  color:#77746a;
-
-  font-size:7px;
-
-  font-weight:900;
-
-  letter-spacing:1.7px;
-}
-
-.top-amount-value{
-  margin-top:3px;
-
-  color:#f0cf62;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size:27px;
-
-  line-height:1;
-
-  font-weight:500;
-
-  text-shadow:
-    0 0 18px rgba(212,175,55,.08);
-}
-
-/* ============================================================
-   THREE MAIN ACTIONS
-   ============================================================ */
-
-.top-action-buttons{
-  display:grid;
-
-  grid-template-columns:
-    repeat(3,minmax(0,1fr));
-
-  gap:5px;
-
-  flex:1;
-
-  max-width:680px;
-}
-
-.top-action-buttons button{
-  width:100%;
-
-  min-height:40px;
-  height:40px;
-
-  padding:4px 5px;
-
-  border-radius:6px;
-
-  font-size:8px;
-  font-weight:900;
-
-  line-height:1.05;
-
-  letter-spacing:.5px;
-
-  transition:
-    transform .18s ease,
-    filter .18s ease,
-    border-color .18s ease,
-    box-shadow .18s ease;
-}
-
-.top-action-buttons button:not(:disabled):hover{
-  filter:brightness(1.08);
-
-  box-shadow:
-    0 5px 16px rgba(0,0,0,.25);
-}
-
-.top-action-buttons button:not(:disabled):active{
-  transform:translateY(1px);
-}
-
-/* ============================================================
-   PAYMENT BUTTON
-   ============================================================ */
-
-.make-payment-button{
-  background:
-    linear-gradient(
-      135deg,
-      #f1d35f,
-      #c49d28
-    )!important;
-
-  color:#090909!important;
-
-  border:0!important;
-
-  box-shadow:
-    0 4px 16px rgba(212,175,55,.10);
-}
-
-.make-payment-button:hover:not(:disabled){
-  background:
-    linear-gradient(
-      135deg,
-      #f8df76,
-      #d4af37
-    )!important;
-}
-
-/* ============================================================
-   CONFIRM PAYMENT
-   ============================================================ */
-
-.confirm-payment-button{
-  background:
-    linear-gradient(
-      135deg,
-      #168047,
-      #0a5d33
-    )!important;
-
-  color:#fff!important;
-
-  border:0!important;
-
-  box-shadow:
-    0 4px 16px rgba(22,128,71,.10);
-}
-
-/* ============================================================
-   DOWNLOAD
-   ============================================================ */
-
-.download-button{
-  background:
-    linear-gradient(
-      135deg,
-      #0878e8,
-      #005fc1
-    )!important;
-
-  color:#fff!important;
-
-  border:0!important;
-}
-
-.download-button:disabled{
-  background:
-    linear-gradient(
-      135deg,
-      #3f3f3d,
-      #292928
-    )!important;
-
-  color:#aaa!important;
-
-  opacity:1!important;
-}
-
-.download-button.active{
-  background:
-    linear-gradient(
-      135deg,
-      #1688f5,
-      #0068d1
-    )!important;
-
-  color:#fff!important;
-
-  cursor:pointer;
-
-  box-shadow:
-    0 5px 18px rgba(8,120,232,.14);
-}
-
-/* ============================================================
-   CORRECTION AREA
-   ============================================================ */
-
-.correction-box{
-  display:grid;
-
-  grid-template-columns:
-    1fr auto;
-
-  gap:7px;
-
-  align-items:end;
-
-  margin-top:7px!important;
-}
-
-.correction-input{
-  width:100%;
-
-  height:42px;
-  min-height:42px;
-  max-height:100px;
-
-  resize:none;
-
-  padding:10px 11px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #11110f,
-      #090908
-    );
-
-  border:
-    1px solid rgba(255,255,255,.08);
-
-  border-radius:7px;
-
-  color:#fff;
-
-  outline:none;
-
-  font-size:9px;
-  line-height:1.4;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.012);
-}
-
-.correction-input::placeholder{
-  color:#65635e;
-}
-
-.correction-input:focus{
-  border-color:
-    rgba(212,175,55,.34);
-
-  box-shadow:
-    0 0 0 2px rgba(212,175,55,.035),
-    inset 0 1px 0 rgba(255,255,255,.012);
-}
-
-.correction-button{
-  min-width:130px;
-  min-height:42px;
-
-  border:
-    1px solid rgba(212,175,55,.28);
-
-  border-radius:7px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #171612,
-      #0c0c0b
-    );
-
-  color:#d9bd5d;
-
-  font-size:8px;
-
-  font-weight:900;
-
-  letter-spacing:.5px;
-
-  transition:
-    background .18s ease,
-    border-color .18s ease,
-    box-shadow .18s ease;
-}
-
-.correction-button:hover:not(:disabled){
-  border-color:
-    rgba(212,175,55,.48);
-
-  background:
-    #191814;
-
-  box-shadow:
-    0 4px 14px rgba(0,0,0,.20);
-}
-
-/* ============================================================
-   SECURE PAYMENT PANEL
-   ============================================================ */
-
-.payment-section{
-  display:block;
-
-  margin-top:8px!important;
-
-  padding:10px!important;
-
-  background:
-    radial-gradient(
-      circle at 100% 0%,
-      rgba(212,175,55,.04),
-      transparent 38%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(19,18,15,.99),
-      rgba(8,8,7,.99)
-    );
-
-  border:
-    1px solid rgba(212,175,55,.25);
-
-  border-radius:9px;
-
-  position:relative;
-
-  overflow:hidden;
-
-  box-shadow:
-    0 7px 22px rgba(0,0,0,.20);
-}
-
-.payment-section::before{
-  content:"";
-
-  position:absolute;
-
-  top:0;
-  left:0;
-  right:0;
-
-  height:1px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(240,207,98,.55),
-      transparent
-    );
-}
-
-.payment-section::after{
-  content:"SECURE";
-
-  position:absolute;
-
-  right:11px;
-  top:9px;
-
-  color:
-    rgba(212,175,55,.10);
-
-  font-size:6px;
-
-  font-weight:900;
-
-  letter-spacing:2px;
-}
-
-.payment-title{
-  color:#e8ce70;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size:11px;
-
-  font-weight:500;
-
-  letter-spacing:.9px;
-}
-
-.payment-subtitle{
-  margin-top:3px;
-
-  color:#77746c;
-
-  font-size:8px;
-
-  line-height:1.5;
-
-  max-width:900px;
-}
-
-.payment-details{
-  margin-top:7px;
-
-  padding:7px 8px;
-
-  color:#bcb8ad;
-
-  white-space:pre-wrap;
-
-  font-size:8px;
-
-  line-height:1.5;
-
-  background:
-    rgba(255,255,255,.018);
-
-  border-left:
-    1px solid rgba(212,175,55,.20);
-
-  border-radius:0 4px 4px 0;
-}
-
-.payment-message{
-  margin-top:6px;
-
-  padding:7px 8px;
-
-  color:#66645e;
-
-  font-size:8px;
-
-  text-align:center;
-
-  line-height:1.45;
-
-  border:
-    1px solid transparent;
-
-  border-radius:5px;
-}
-
-.payment-message.payment-ready{
-  color:#75dc99!important;
-
-  background:
-    rgba(22,128,71,.055);
-
-  border:
-    1px solid rgba(117,220,153,.18);
-}
-
-.payment-message.payment-waiting{
-  color:#e1c45c!important;
-
-  background:
-    rgba(212,175,55,.045);
-
-  border:
-    1px solid rgba(212,175,55,.17);
-}
-
-.payment-message.payment-locked{
-  color:#777!important;
-
-  background:
-    rgba(255,255,255,.012);
-}
-
-/* ============================================================
-   BACK OFFICE
-   ============================================================ */
-
-.back-office-button{
-  display:block;
-
-  width:max-content;
-
-  margin:6px auto 0;
-
-  padding:3px 8px;
-
-  min-height:19px;
-
-  border:
-    1px solid rgba(212,175,55,.16);
-
-  border-radius:20px;
-
-  background:
-    rgba(255,255,255,.012);
-
-  color:#625f58;
-
-  font-size:6.5px;
-
-  line-height:1;
-
-  font-weight:800;
-
-  letter-spacing:.9px;
-
-  opacity:.58;
-
-  transition:
-    color .18s ease,
-    border-color .18s ease,
-    opacity .18s ease,
-    background .18s ease;
-}
-
-.back-office-button:hover{
-  color:#d5bc62;
-
-  border-color:
-    rgba(212,175,55,.38);
-
-  background:
-    rgba(212,175,55,.025);
-
-  opacity:1;
-}
-
-/* ============================================================
-   STATUS MESSAGE
-   ============================================================ */
-
-.message{
-  flex:0 0 auto;
-
-  min-height:18px;
-
-  margin-top:3px;
-
-  color:#77746c;
-
-  font-size:8px;
-
-  text-align:center;
-}
-
-.message.error{
-  color:#ff7777;
-}
-
-.message.success{
-  color:#75dc99;
-}
-
-/* ============================================================
-   PAYMENT POPUP / LUXURY PAYMENT CHAMBER
-   ============================================================ */
-
-.payment-modal{
-  position:fixed;
-
-  inset:0;
-
-  z-index:1000;
-
-  display:none;
-
-  align-items:center;
-  justify-content:center;
-
-  padding:15px;
-
-  background:
-    radial-gradient(
-      circle at 50% 35%,
-      rgba(212,175,55,.045),
-      transparent 34%
-    ),
-    rgba(0,0,0,.88);
-
-  backdrop-filter:blur(10px);
-}
-
-.payment-modal.show{
-  display:flex;
-}
-
-.payment-modal-card{
-  width:100%;
-  max-width:445px;
-  max-height:92vh;
-
-  overflow-y:auto;
-
-  position:relative;
-
-  padding:19px;
-
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(212,175,55,.07),
-      transparent 46%
-    ),
-    linear-gradient(
-      180deg,
-      #11110f,
-      #080807
-    );
-
-  border:
-    1px solid rgba(212,175,55,.44);
-
-  border-radius:13px;
-
-  box-shadow:
-    0 25px 80px rgba(0,0,0,.78),
-    0 0 0 1px rgba(255,255,255,.018),
-    0 0 60px rgba(212,175,55,.035);
-}
-
-.payment-modal-card::before{
-  content:"NAIJA POCKET BUSINESS CENTER";
-
-  position:absolute;
-
-  top:11px;
-  left:15px;
-
-  color:
-    rgba(212,175,55,.15);
-
-  font-family:
-    Arial,
-    sans-serif;
-
-  font-size:5px;
-
-  letter-spacing:2.4px;
-}
-
-.payment-modal-card::after{
-  content:"";
-
-  position:absolute;
-
-  top:0;
-  left:15%;
-  right:15%;
-
-  height:1px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(255,240,168,.65),
-      transparent
-    );
-}
-
-.payment-modal-title{
-  color:#efd579;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size:18px;
-
-  font-weight:500;
-
-  text-align:center;
-
-  letter-spacing:.4px;
-
-  text-shadow:
-    0 0 18px rgba(212,175,55,.08);
-}
-
-.payment-modal-subtitle{
-  margin-top:6px;
-
-  color:#85827a;
-
-  font-size:8px;
-
-  line-height:1.55;
-
-  text-align:center;
-}
-
-.bank-box{
-  margin-top:13px;
-
-  padding:13px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #060606,
-      #030303
-    );
-
-  border:
-    1px solid rgba(212,175,55,.22);
-
-  border-radius:8px;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.015);
-}
-
-.bank-row{
-  display:flex;
-
-  justify-content:space-between;
-
-  gap:12px;
-
-  padding:8px 0;
-
-  border-bottom:
-    1px solid rgba(255,255,255,.055);
-}
-
-.bank-row:last-child{
-  border-bottom:0;
-}
-
-.bank-label{
-  color:#706e68;
-
-  font-size:8px;
-
-  font-weight:800;
-
-  letter-spacing:.6px;
-}
-
-.bank-value{
-  color:#e6e1d5;
-
-  font-size:9px;
-
-  font-weight:900;
-
-  text-align:right;
-
-  word-break:break-word;
-}
-
-.modal-amount{
-  margin-top:11px;
-
-  padding:10px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(212,175,55,.075),
-      rgba(255,255,255,.015)
-    );
-
-  border:
-    1px solid rgba(212,175,55,.20);
-
-  border-radius:8px;
-
-  text-align:center;
-}
-
-.modal-amount-label{
-  color:#716e65;
-
-  font-size:7px;
-
-  font-weight:800;
-
-  letter-spacing:1.3px;
-}
-
-.modal-amount-value{
-  margin-top:3px;
-
-  color:#f0cf62;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size:27px;
-
-  font-weight:500;
-}
-
-.payment-input-group{
-  margin-top:11px;
-}
-
-.payment-input-label{
-  display:block;
-
-  margin-bottom:5px;
-
-  color:#858179;
-
-  font-size:7px;
-
-  font-weight:900;
-
-  letter-spacing:1px;
-}
-
-.payment-note-input{
-  width:100%;
-
-  min-height:67px;
-
-  padding:10px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #151513,
-      #0d0d0c
-    );
-
-  border:
-    1px solid rgba(255,255,255,.09);
-
-  border-radius:6px;
-
-  color:#fff;
-
-  outline:none;
-
-  font-size:9px;
-
-  resize:vertical;
-}
-
-.payment-note-input:focus{
-  border-color:
-    rgba(212,175,55,.34);
-}
-
-.modal-buttons{
-  display:grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
-  gap:7px;
-
-  margin-top:13px;
-}
-
-.modal-button{
-  min-height:43px;
-
-  border-radius:7px;
-
-  font-size:8px;
-
-  font-weight:900;
-
-  letter-spacing:.55px;
-}
-
-.modal-close{
-  background:
-    #191918;
-
-  color:#ddd;
-
-  border:
-    1px solid rgba(255,255,255,.10);
-}
-
-.modal-report{
-  background:
-    linear-gradient(
-      135deg,
-      #168047,
-      #0b6035
-    );
-
-  color:#fff;
-
-  border:0;
-
-  box-shadow:
-    0 5px 17px rgba(22,128,71,.10);
-}
-
-.modal-status{
-  margin-top:9px;
-
-  min-height:15px;
-
-  padding:5px;
-
-  color:#74716a;
-
-  font-size:8px;
-
-  line-height:1.4;
-
-  text-align:center;
-}
-
-.modal-status.error{
-  color:#ff7777;
-}
-
-.modal-status.success{
-  color:#75dc99;
-}
-
-/* ============================================================
-   MOBILE
-   ============================================================ */
+:root{--black:#050505;--panel:#111;--line:rgba(255,255,255,.12);--gold:#d4af37;--gold2:#f0cf62;--white:#fff;--muted:#a2a2a2;--red:#9d0000;--green:#008000}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;width:100%;height:100%;background:var(--black);color:var(--white);font-family:Inter,Arial,sans-serif}
+body{overflow:hidden}
+button,textarea,input{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+
+.header{width:100%;height:66px;background:#000;border-bottom:1px solid var(--line);padding:11px 12px;position:fixed;top:0;left:0;right:0;z-index:200}
+.header-inner{width:100%;max-width:950px;height:100%;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{min-width:0}
+.brand-title{margin:0;color:var(--gold2);font-family:Montserrat,Arial,sans-serif;font-size:18px;line-height:1.15;font-weight:900}
+.brand-subtitle{margin-top:3px;color:#aaa;font-size:10px}
+.service-badge{flex:0 0 auto;max-width:45%;padding:7px 9px;border:1px solid rgba(212,175,55,.4);border-radius:8px;color:var(--gold2);background:#111;font-size:9px;font-weight:800;text-align:center}
+
+.main{position:fixed;top:66px;left:0;right:0;bottom:0;width:100%;max-width:1100px;margin:auto;padding:10px 5px 0;display:flex;flex-direction:column;overflow:hidden}
+.top-amount-card{flex:0 0 auto;margin:0 0 8px;padding:7px 8px;background:#111;border:1px solid rgba(212,175,55,.45);border-radius:13px;text-align:left}
+.top-amount-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.top-action-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;flex:1;max-width:650px}
+.top-action-buttons button{width:100%;min-height:38px;height:38px;padding:4px 5px;border-radius:8px;font-size:9px;font-weight:900;line-height:1.05}
+.top-amount-card> .top-amount-head>div:first-child{flex:0 0 108px;text-align:center}
+.top-amount-label{color:#aaa;font-size:10px;font-weight:900;letter-spacing:.8px}
+.top-amount-value{margin-top:2px;color:var(--gold2);font-size:27px;font-weight:900}
+
+.top-panel{flex:0 0 auto;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:11px 13px;margin-bottom:8px}
+.review-title{margin:0;color:#fff;font-family:Montserrat,Arial,sans-serif;font-size:17px;font-weight:900}
+.review-subtitle{margin:4px 0 0;color:#aaa;font-size:10px;line-height:1.45}
+.status-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.status-label{color:#aaa;font-size:9px}
+.status-value{color:var(--gold2);font-size:10px;font-weight:900}
+.progress-shell{margin-top:6px;width:100%;height:6px;background:#242424;border-radius:20px;overflow:hidden}
+.progress-bar{width:0%;height:100%;background:var(--gold);transition:width .25s ease}
+.progress-text{margin-top:4px;color:#888;font-size:9px;text-align:right}
+
+.review-card{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:#0b0b0b;border:1px solid rgba(212,175,55,.22);border-radius:13px;overflow:hidden}
+.document-card-header{flex:0 0 auto;padding:10px 11px 8px;background:#111;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.document-heading h3{margin:0;color:var(--gold2);font-size:13px;font-weight:900}
+.page-count{color:#aaa;font-size:10px;font-weight:800}
+.document-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:5px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.document-scroll::-webkit-scrollbar{width:5px}
+.document-scroll::-webkit-scrollbar-track{background:#090909}
+.document-scroll::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:20px}
+.page-viewer{width:100%}
+.document-page{position:relative;width:100%;min-height:620px;background:#fff;color:#111;border-radius:2px;box-shadow:0 8px 35px rgba(0,0,0,.45);padding:42px 30px 58px;overflow:visible;user-select:text;-webkit-user-select:text;cursor:default}
+.page-number-inside{color:#777;font-family:Arial,sans-serif;font-size:9px;text-align:center;margin-bottom:24px}
+.page-content{width:100%;color:#111;font-family:"Times New Roman",Georgia,serif;font-size:14px;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal}
+.page-content p{margin-top:0;margin-bottom:12px}
+.page-content h1,.page-content h2,.page-content h3,.page-content h4,.page-content h5,.page-content h6{color:inherit;font-family:inherit;line-height:1.25;margin-top:16px;margin-bottom:10px}
+.page-content h1{font-size:2em}
+.page-content h2{font-size:1.6em}
+.page-content h3{font-size:1.35em}
+.page-content h4{font-size:1.15em}
+.page-content strong,.page-content b{font-weight:700}
+.page-content em,.page-content i{font-style:italic}
+.page-content u{text-decoration:underline}
+.page-content ul,.page-content ol{margin-top:8px;margin-bottom:12px;padding-left:28px}
+.page-content li{margin-bottom:4px}
+.page-content blockquote{margin:12px 0;padding-left:14px;border-left:3px solid #aaa}
+.page-content hr{border:0;border-top:1px solid #999;margin:18px 0}
+.page-content table{width:100%;border-collapse:collapse;margin:14px 0;font-family:inherit;font-size:inherit}
+.page-content th,.page-content td{border:1px solid #555;padding:6px 8px;vertical-align:top;text-align:left}
+.page-content th{font-weight:700}
+.page-content pre{white-space:pre-wrap;overflow-wrap:anywhere;font-family:monospace}
+.empty-page{min-height:500px;display:flex;align-items:center;justify-content:center;color:#777;font-family:Arial,sans-serif;font-size:12px;text-align:center}
+.loading{min-height:500px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#999;font-size:11px;text-align:center}
+.spinner{width:29px;height:29px;border:3px solid #333;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.page-navigation{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:7px;margin-top:9px}
+.nav-button{min-height:43px;border:1px solid rgba(255,255,255,.14);border-radius:8px;background:#181818;color:#fff;font-size:10px;font-weight:900}
+.nav-button.next{background:#252525}
+.page-indicator{min-width:85px;color:var(--gold2);text-align:center;font-size:10px;font-weight:900}
+.go-row{display:flex;gap:7px;margin-top:7px}
+.page-number-input{flex:1;min-width:0;height:39px;background:#151515;border:1px solid var(--line);border-radius:8px;color:#fff;padding:0 10px;outline:none;font-size:11px}
+.go-button{width:75px;border:0;border-radius:8px;background:var(--gold);color:#000;font-size:10px;font-weight:900}
+.page-review{margin-top:8px;padding:11px;background:#101010;border:1px solid var(--line);border-radius:10px}
+.page-review-title{color:var(--gold2);font-size:10px;font-weight:900;margin-bottom:5px}
+.page-review-text{color:#bbb;font-size:10px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+
+.action-area{flex:0 0 auto;background:#080808;border-top:1px solid var(--line);padding:8px 10px 9px;box-shadow:0 -8px 25px rgba(0,0,0,.45);position:relative;z-index:20}
+.correction-box{display:grid;grid-template-columns:1fr auto;gap:7px;align-items:end}
+.correction-input{width:100%;height:43px;min-height:43px;max-height:100px;resize:none;padding:11px;background:#171717;border:1px solid rgba(255,255,255,.14);border-radius:8px;color:#fff;outline:none;font-size:11px;line-height:1.4}
+.correction-button{min-width:125px;min-height:43px;border:1px solid rgba(212,175,55,.38);border-radius:8px;background:#171717;color:var(--gold2);font-size:10px;font-weight:900}
+.make-payment-button{background:#d4af37;color:#000;border:0}
+.confirm-payment-button{background:#008000;color:#fff;border:0}
+.download-button{background:#007bff;color:#fff;border:0}
+.download-button:disabled{background:#666;color:#fff;opacity:1}
+.download-button.active{background:#007bff;color:#fff;cursor:pointer}
+.payment-section{display:block;margin-top:7px;padding:10px;background:#111;border:1px solid rgba(212,175,55,.4);border-radius:10px}
+.payment-title{color:var(--gold2);font-size:12px;font-weight:900}
+.payment-subtitle{margin-top:3px;color:#888;font-size:9px;line-height:1.45}
+.amount-box{margin-top:7px;padding:10px;border-radius:8px;background:#050505;border:1px solid rgba(212,175,55,.25);text-align:center}
+.amount-label{display:block;color:#999;font-size:9px;font-weight:800}
+.amount-value{display:block;margin-top:2px;color:var(--gold2);font-size:24px;font-weight:900}
+.payment-details{margin-top:7px;color:#ddd;white-space:pre-wrap;font-size:10px;line-height:1.5}
+.payment-id{margin-top:6px;color:#aaa;font-size:9px;word-break:break-all}
+.confirm-payment-button:disabled{background:#008000;color:#fff;opacity:1}
+.make-payment-button:disabled{background:#d4af37;color:#000;opacity:1}
+.download-button:disabled{background:#666;color:#fff;opacity:1}
+.payment-message{margin-top:7px;color:#888;font-size:9px;text-align:center;line-height:1.45}
+.message{flex:0 0 auto;min-height:17px;margin-top:2px;color:#888;font-size:9px;text-align:center}
+.message.error{color:#ff7777}
+.message.success{color:#75dc99}
 
 @media(max-width:600px){
-
-  .main{
-    grid-template-rows:51% 49%!important;
-  }
-
-  .document-card-header{
-    min-height:48px;
-
-    padding:7px 10px 10px!important;
-  }
-
-  .document-card-header::before{
-    left:10px;
-    letter-spacing:1.8px;
-  }
-
-  .document-card-header::after{
-    right:10px;
-    width:58px;
-  }
-
-  .document-heading{
-    padding-bottom:4px;
-  }
-
-  .document-heading h3{
-    font-size:14px;
-  }
-
-  .page-count{
-    padding:5px 7px;
-
-    font-size:7px;
-
-    letter-spacing:.85px;
-  }
-
-  .document-scroll{
-    padding:9px 5px 5px!important;
-  }
-
-  .document-page{
-    min-height:560px!important;
-
-    padding:29px 17px 42px!important;
-
-    border-radius:3px;
-  }
-
-  .document-page::before{
-    inset:5px;
-  }
-
-  .document-page::after{
-    top:5px;
-    left:5px;
-
-    width:27px;
-    height:27px;
-  }
-
-  .page-content{
-    font-size:13px!important;
-    line-height:1.65!important;
-  }
-
-  .page-number-inside{
-    font-size:7px;
-
-    margin-bottom:19px;
-  }
-
-  .page-navigation{
-    margin-top:7px!important;
-
-    gap:5px;
-  }
-
-  .nav-button{
-    min-height:38px!important;
-
-    font-size:7.5px!important;
-  }
-
-  .page-indicator{
-    min-width:66px;
-
-    font-size:7px;
-  }
-
-  .go-row{
-    margin-top:5px!important;
-  }
-
-  .page-number-input{
-    height:35px!important;
-
-    font-size:9px;
-  }
-
-  .go-button{
-    width:64px!important;
-  }
-
-  .page-review{
-    margin-top:5px!important;
-
-    padding:9px;
-  }
-
-  .page-review-title{
-    font-size:7px;
-  }
-
-  .page-review-text{
-    font-size:8px;
-  }
-
-  .action-area{
-    padding:5px 5px 18px!important;
-  }
-
-  .action-area .top-panel{
-    padding:8px 9px!important;
-  }
-
-  .action-area .review-title{
-    font-size:15px!important;
-  }
-
-  .action-area .review-subtitle{
-    font-size:8px!important;
-
-    margin-top:3px!important;
-  }
-
-  .action-area .status-row{
-    margin-top:6px!important;
-  }
-
-  .action-area .progress-shell{
-    margin-top:4px!important;
-
-    height:4px!important;
-  }
-
-  .action-area .progress-text{
-    margin-top:3px!important;
-
-    font-size:7px!important;
-  }
-
-  .action-area .top-amount-card{
-    padding:6px!important;
-  }
-
-  .action-area .top-amount-head{
-    align-items:center!important;
-  }
-
-  .action-area .top-amount-card>.top-amount-head>div:first-child{
-    flex:0 0 74px!important;
-  }
-
-  .action-area .top-amount-label{
-    font-size:6.5px!important;
-  }
-
-  .action-area .top-amount-value{
-    font-size:20px!important;
-  }
-
-  .action-area .top-action-buttons{
-    gap:3px!important;
-  }
-
-  .action-area .top-action-buttons button{
-    min-height:38px!important;
-
-    height:38px!important;
-
-    font-size:6.7px!important;
-
-    padding:3px 2px!important;
-  }
-
-  .action-area .correction-box{
-    grid-template-columns:
-      1fr auto!important;
-
-    gap:5px!important;
-  }
-
-  .action-area .correction-input{
-    height:38px!important;
-
-    min-height:38px!important;
-
-    padding:8px!important;
-
-    font-size:8.5px!important;
-  }
-
-  .action-area .correction-button{
-    min-width:105px!important;
-
-    min-height:38px!important;
-
-    font-size:7.5px!important;
-  }
-
-  .action-area .payment-section{
-    padding:8px!important;
-  }
-
-  .action-area .payment-title{
-    font-size:10px!important;
-  }
-
-  .action-area .payment-subtitle,
-  .action-area .payment-details,
-  .action-area .payment-message{
-    font-size:7.7px!important;
-
-    line-height:1.35!important;
-  }
-
-  .back-office-button{
-    margin-top:4px;
-
-    padding:2px 6px;
-
-    min-height:17px;
-
-    font-size:5.8px;
-  }
-
-  .payment-modal{
-    padding:10px;
-  }
-
-  .payment-modal-card{
-    padding:13px;
-
-    border-radius:10px;
-  }
-
-  .payment-modal-title{
-    font-size:14px;
-  }
-
-  .payment-modal-subtitle{
-    font-size:7.7px;
-  }
-
-  .bank-row{
-    padding:6px 0;
-  }
-
-  .bank-label{
-    font-size:7px;
-  }
-
-  .bank-value{
-    font-size:8px;
-  }
-
-  .modal-amount-value{
-    font-size:23px;
-  }
-
-  .modal-buttons{
-    grid-template-columns:1fr;
-  }
+.main{padding:8px 3px 0}
+.top-panel{padding:9px 11px;margin-bottom:7px}
+.review-title{font-size:15px}
+.review-subtitle{font-size:9px}
+.document-scroll{padding:3px}
+.document-page{min-height:560px;padding:28px 16px 40px}
+.page-content{font-size:13px;line-height:1.65}
+.page-content table{font-size:11px}
+.page-content th,.page-content td{padding:4px 5px}
+.correction-box{grid-template-columns:1fr}
+.correction-button{width:100%}
+.action-area{padding:7px 8px 8px}
+.top-amount-card{padding:6px 5px}
+.top-amount-head{gap:5px}
+.top-amount-card> .top-amount-head>div:first-child{flex:0 0 78px}
+.top-amount-value{font-size:20px}
+.top-action-buttons{gap:4px}
+.top-action-buttons button{min-height:36px;height:36px;font-size:8px;padding:3px 2px;border-radius:7px}
 }
 
-/* ============================================================
-   VERY SMALL PHONES
-   ============================================================ */
+@media(min-width:800px){
+.document-page{max-width:820px;margin:auto;min-height:1050px;padding:65px 70px 75px}
+.page-content{font-size:15px;line-height:1.8}
+}
 
-@media(max-width:380px){
+/* CORPORATE PAYMENT PANEL */
+.payment-section{background:linear-gradient(180deg,#141414 0%,#0d0d0d 100%)!important;border:1px solid rgba(212,175,55,.34)!important;border-radius:12px!important;padding:10px 11px!important;box-shadow:0 5px 18px rgba(0,0,0,.22)}
+.payment-title{display:flex;align-items:center;gap:7px;color:#f0cf62!important;font-size:11px!important;letter-spacing:.7px}
+.payment-title:before{content:"";width:4px;height:15px;border-radius:4px;background:#d4af37;display:block}
+.payment-subtitle{margin-top:5px!important;color:#999!important;font-size:8.5px!important;line-height:1.45!important}
+.payment-details{margin-top:8px!important;padding:8px 9px;background:#090909;border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#d8d8d8!important;font-size:9px!important;line-height:1.5!important}
+.payment-id{margin-top:6px!important;padding:6px 8px;background:#101010;border-radius:6px;color:#8f8f8f!important;font-size:8px!important;word-break:break-all}
+.payment-message{margin-top:7px!important;padding:6px 7px;border-radius:6px;background:#090909;color:#999!important;font-size:8.5px!important;line-height:1.4!important;text-align:left!important}
+.payment-message.payment-ready{color:#75dc99!important;border:1px solid rgba(117,220,153,.2)}
+.payment-message.payment-waiting{color:#f0cf62!important;border:1px solid rgba(212,175,55,.18)}
+.payment-message.payment-locked{color:#999!important}
 
-  .main{
-    grid-template-rows:50% 50%!important;
-  }
+@media(max-width:600px){
+.payment-section{padding:8px!important}
+.payment-title{font-size:9px!important}
+.payment-subtitle{font-size:7.5px!important}
+.payment-details{font-size:8px!important;padding:7px 8px!important}
+.payment-message{font-size:7.5px!important}
+}
 
-  .document-heading h3{
-    font-size:13px;
-  }
+/* TWO-HALF REVIEW LAYOUT */
+.header{display:none!important}
+.main{
+ position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;
+ width:100%!important;max-width:1100px!important;margin:0 auto!important;padding:0!important;
+ display:grid!important;grid-template-rows:50% 50%!important;gap:0!important;overflow:hidden!important
+}
+.review-card{
+ grid-row:1;min-height:0!important;height:100%!important;display:flex!important;flex-direction:column!important;
+ border-radius:0!important;overflow:hidden!important
+}
+.document-card-header{padding:8px 10px!important}
+.document-scroll{flex:1 1 auto!important;min-height:0!important;height:auto!important;padding:5px!important;overflow-y:auto!important;overflow-x:hidden!important}
+.action-area{
+ grid-row:2;min-height:0!important;height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;
+ padding:7px 8px 18px!important;border-top:2px solid var(--gold)!important;box-shadow:none!important
+}
+.action-area .top-panel{margin:0 0 6px!important;padding:7px 9px!important}
+.action-area .top-amount-card{margin:0 0 6px!important;padding:6px!important}
+.action-area .top-amount-head{gap:6px!important}
+.action-area .top-action-buttons{max-width:none!important}
+.action-area .correction-box{margin-top:6px!important}
+.action-area .payment-section{margin-top:6px!important}
+.message{position:absolute!important;left:5px!important;right:5px!important;bottom:1px!important;z-index:50!important;background:rgba(0,0,0,.92)!important}
+.make-payment-button{background:#d4af37!important;color:#000!important;border:0!important}
+.confirm-payment-button{background:#008000!important;color:#fff!important;border:0!important}
+.download-button{background:#007bff!important;color:#fff!important;border:0!important}
+.download-button:disabled{background:#666!important;color:#fff!important;opacity:1!important}
 
-  .page-count{
-    font-size:6.5px;
-  }
-
-  .document-page{
-    padding-left:14px!important;
-    padding-right:14px!important;
-  }
-
-  .page-content{
-    font-size:12.5px!important;
-  }
-
-  .action-area .review-title{
-    font-size:14px!important;
-  }
-
-  .action-area .top-amount-card>.top-amount-head>div:first-child{
-    flex:0 0 65px!important;
-  }
-
-  .action-area .top-amount-value{
-    font-size:18px!important;
-  }
-
-  .action-area .top-action-buttons button{
-    font-size:6.2px!important;
-  }
-
-  .action-area .correction-button{
-    min-width:96px!important;
-    font-size:7px!important;
-  }
+@media(max-width:600px){
+.main{grid-template-rows:50% 50%!important}
+.document-page{min-height:560px!important;padding:28px 16px 40px!important}
+.page-content{font-size:13px!important;line-height:1.65!important}
+.action-area{padding:5px 5px 18px!important}
+.action-area .top-panel{padding:6px 8px!important}
+.action-area .review-title{font-size:14px!important}
+.action-area .review-subtitle{font-size:8px!important;margin-top:2px!important}
+.action-area .status-row{margin-top:5px!important}
+.action-area .progress-shell{margin-top:4px!important;height:5px!important}
+.action-area .progress-text{margin-top:3px!important;font-size:8px!important}
+.action-area .top-amount-head{align-items:center!important}
+.action-area .top-amount-card>.top-amount-head>div:first-child{flex:0 0 72px!important}
+.action-area .top-amount-label{font-size:8px!important}
+.action-area .top-amount-value{font-size:19px!important}
+.action-area .top-action-buttons{gap:3px!important}
+.action-area .top-action-buttons button{min-height:38px!important;height:38px!important;font-size:8px!important;padding:3px 2px!important}
+.action-area .correction-box{grid-template-columns:1fr auto!important;gap:5px!important}
+.action-area .correction-input{height:38px!important;min-height:38px!important;padding:8px!important;font-size:9px!important}
+.action-area .correction-button{min-width:105px!important;min-height:38px!important;font-size:8px!important}
+.action-area .payment-section{padding:7px!important}
+.action-area .payment-title{font-size:10px!important}
+.action-area .payment-subtitle,.action-area .payment-details,.action-area .payment-message{font-size:8px!important;line-height:1.3!important}
+.action-area .payment-id{font-size:8px!important}
+.page-navigation{margin-top:7px!important}
+.nav-button{min-height:38px!important;font-size:9px!important}
+.go-row{margin-top:5px!important}
+.page-number-input{height:35px!important}
+.go-button{width:65px!important}
 }
 </style>
 </head>
-
 <body>
 
 <span id="serviceBadge" style="display:none">Service</span>
@@ -2463,3237 +223,1375 @@ button:disabled{
 <main class="main">
 
 <section class="review-card">
-
 <div class="document-card-header">
-  <div class="document-heading">
-    <h3>Your Complete Document</h3>
-  </div>
-
-  <div id="pageCount" class="page-count">
-    0 PAGES
-  </div>
+<div class="document-heading"><h3>Your Complete Document</h3></div>
+<div id="pageCount" class="page-count">0 PAGES</div>
 </div>
 
 <div id="documentScroll" class="document-scroll">
-
-  <div id="pageViewer" class="page-viewer">
-    <div class="loading">
-      <div class="spinner"></div>
-      <div>Your service is being carefully prepared.</div>
-    </div>
-  </div>
-
-  <div class="page-navigation">
-
-    <button
-      id="previousButton"
-      class="nav-button"
-      type="button"
-      disabled
-    >
-      ← Previous Page
-    </button>
-
-    <div
-      id="pageIndicator"
-      class="page-indicator"
-    >
-      Page 0 of 0
-    </div>
-
-    <button
-      id="nextButton"
-      class="nav-button next"
-      type="button"
-      disabled
-    >
-      Next Page →
-    </button>
-
-  </div>
-
-  <div class="go-row">
-
-    <input
-      id="pageNumberInput"
-      class="page-number-input"
-      type="number"
-      min="1"
-      placeholder="Enter page number"
-    >
-
-    <button
-      id="goButton"
-      class="go-button"
-      type="button"
-    >
-      GO
-    </button>
-
-  </div>
-
-  <div
-    id="pageReview"
-    class="page-review"
-    style="display:none"
-  >
-    <div class="page-review-title">
-      PAGE REVIEW
-    </div>
-
-    <div
-      id="pageReviewText"
-      class="page-review-text"
-    ></div>
-  </div>
-
+<div id="pageViewer" class="page-viewer">
+<div class="loading">
+<div class="spinner"></div>
+<div>Your service is being carefully prepared.</div>
+</div>
 </div>
 
-</section>
+<div class="page-navigation">
+<button id="previousButton" class="nav-button" type="button" disabled>← Previous Page</button>
+<div id="pageIndicator" class="page-indicator">Page 0 of 0</div>
+<button id="nextButton" class="nav-button next" type="button" disabled>Next Page →</button>
+</div>
 
+<div class="go-row">
+<input id="pageNumberInput" class="page-number-input" type="number" min="1" placeholder="Enter page number">
+<button id="goButton" class="go-button" type="button">GO</button>
+</div>
+
+<div id="pageReview" class="page-review" style="display:none">
+<div class="page-review-title">PAGE REVIEW</div>
+<div id="pageReviewText" class="page-review-text"></div>
+</div>
+</div>
+</section>
 
 <section class="action-area">
 
 <section class="top-panel">
-
-  <h2 class="review-title">
-    Review Your Complete Service
-  </h2>
-
-  <p class="review-subtitle">
-    Review every page. Make any necessary correction, then pay and download after Customer Care verifies your payment.
-  </p>
-
-  <div class="status-row">
-
-    <span class="status-label">
-      Review status
-    </span>
-
-    <span
-      id="statusValue"
-      class="status-value"
-    >
-      Preparing...
-    </span>
-
-  </div>
-
-  <div class="progress-shell">
-    <div
-      id="progressBar"
-      class="progress-bar"
-    ></div>
-  </div>
-
-  <div
-    id="progressText"
-    class="progress-text"
-  >
-    Preparing the document...
-  </div>
-
+<h2 class="review-title">Review Your Complete Service</h2>
+<p class="review-subtitle">Review every page. Make any necessary correction, then pay and download after Customer Care verifies your payment.</p>
+<div class="status-row">
+<span class="status-label">Review status</span>
+<span id="statusValue" class="status-value">Preparing...</span>
+</div>
+<div class="progress-shell">
+<div id="progressBar" class="progress-bar"></div>
+</div>
+<div id="progressText" class="progress-text">Preparing the document...</div>
 </section>
-
 
 <section class="top-amount-card">
+<div class="top-amount-head">
+<div>
+<div class="top-amount-label">AMOUNT TO PAY</div>
+<div id="amountValueTop" class="top-amount-value">₦0</div>
+</div>
 
-  <div class="top-amount-head">
-
-    <div>
-
-      <div class="top-amount-label">
-        AMOUNT TO PAY
-      </div>
-
-      <div
-        id="amountValueTop"
-        class="top-amount-value"
-      >
-        ₦0
-      </div>
-
-    </div>
-
-
-    <div class="top-action-buttons">
-
-      <button
-        id="makePaymentButton"
-        class="make-payment-button"
-        type="button"
-      >
-        MAKE PAYMENT
-      </button>
-
-      <button
-        id="paymentButton"
-        class="confirm-payment-button"
-        type="button"
-        disabled
-      >
-        I HAVE MADE PAYMENT
-      </button>
-
-      <button
-        id="downloadButton"
-        class="download-button"
-        type="button"
-        disabled
-      >
-        🔒 DOWNLOAD DOCUMENT
-      </button>
-
-    </div>
-
-  </div>
-
+<div class="top-action-buttons">
+<button id="makePaymentButton" class="make-payment-button" type="button">💳 MAKE PAYMENT</button>
+<button id="paymentButton" class="confirm-payment-button" type="button" disabled>✓ I HAVE MADE PAYMENT</button>
+<button id="downloadButton" class="download-button" type="button" disabled>🔒 DOWNLOAD DOCUMENT</button>
+</div>
+</div>
 </section>
-
 
 <div class="correction-box">
-
-  <textarea
-    id="correctionInput"
-    class="correction-input"
-    placeholder="Want anything changed? Tell us what to correct..."
-  ></textarea>
-
-  <button
-    id="correctionButton"
-    class="correction-button"
-    type="button"
-  >
-    Apply Correction
-  </button>
-
+<textarea id="correctionInput" class="correction-input" placeholder="Want anything changed? Tell us what to correct..."></textarea>
+<button id="correctionButton" class="correction-button" type="button">Apply Correction</button>
 </div>
 
-
-<section
-  id="paymentSection"
-  class="payment-section"
->
-
-  <div class="payment-title">
-    SECURE PAYMENT &amp; DOWNLOAD
-  </div>
-
-  <div class="payment-subtitle">
-    Your approved document is saved securely before payment begins. Make your bank transfer here, report the payment, and Customer Care will verify it before your download is released.
-  </div>
-
-  <div
-    id="paymentDetails"
-    class="payment-details"
-  >
-    Payment setup is ready.
-  </div>
-
-  <div
-    id="paymentMessage"
-    class="payment-message payment-locked"
-  >
-    Download is currently locked. Payment verification is required before the document can be released.
-  </div>
+<section id="paymentSection" class="payment-section">
+<div class="payment-title">SECURE PAYMENT &amp; DOWNLOAD</div>
+<div class="payment-subtitle">Your approved document is saved securely before payment begins. Complete payment, report it on the payment page, and Customer Care will verify it before your download is released.</div>
+<div id="paymentDetails" class="payment-details">Payment setup is ready. Your payment reference will appear here after payment is initiated.</div>
+<div id="paymentId" class="payment-id" style="display:none"></div>
+<div id="paymentMessage" class="payment-message payment-locked">Download is currently locked. Payment verification is required before the document can be released.</div>
+</section>
 
 </section>
 
-
-<button
-  id="backOfficeButton"
-  class="back-office-button"
-  type="button"
->
-  BACK OFFICE
-</button>
-
-</section>
-
-
-<div
-  id="message"
-  class="message"
-></div>
+<div id="message" class="message"></div>
 
 </main>
-
-
-<!-- ==========================================================
-     PAYMENT POPUP
-     ========================================================== -->
-
-<div
-  id="paymentModal"
-  class="payment-modal"
->
-
-  <div class="payment-modal-card">
-
-    <div class="payment-modal-title">
-      MAKE PAYMENT
-    </div>
-
-    <div class="payment-modal-subtitle">
-      Your exact reviewed document has been securely saved for this payment.
-      Make your bank transfer using the account details below.
-    </div>
-
-    <div class="modal-amount">
-
-      <div class="modal-amount-label">
-        AMOUNT TO PAY
-      </div>
-
-      <div
-        id="modalAmount"
-        class="modal-amount-value"
-      >
-        ₦0
-      </div>
-
-    </div>
-
-
-    <div class="bank-box">
-
-      <div class="bank-row">
-        <span class="bank-label">
-          Bank
-        </span>
-
-        <span class="bank-value">
-          Your Business Bank
-        </span>
-      </div>
-
-      <div class="bank-row">
-        <span class="bank-label">
-          Account Name
-        </span>
-
-        <span class="bank-value">
-          Naija Pocket Business Center
-        </span>
-      </div>
-
-      <div class="bank-row">
-        <span class="bank-label">
-          Account Number
-        </span>
-
-        <span class="bank-value">
-          0000000000
-        </span>
-      </div>
-
-    </div>
-
-
-    <div class="payment-input-group">
-
-      <label
-        class="payment-input-label"
-        for="paymentNoteInput"
-      >
-        NOTE (OPTIONAL)
-      </label>
-
-      <textarea
-        id="paymentNoteInput"
-        class="payment-note-input"
-        placeholder="Optional note for Customer Care"
-      ></textarea>
-
-    </div>
-
-
-    <div
-      id="modalStatus"
-      class="modal-status"
-    >
-      Payment is ready. Make your bank transfer, then tap I HAVE MADE PAYMENT.
-    </div>
-
-
-    <div class="modal-buttons">
-
-      <button
-        id="closePaymentModal"
-        class="modal-button modal-close"
-        type="button"
-      >
-        CLOSE
-      </button>
-
-      <button
-        id="modalReportButton"
-        class="modal-button modal-report"
-        type="button"
-      >
-        I HAVE MADE PAYMENT
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
 
 <script>
 "use strict";
 
+const API_BASE="";
+const PAYMENT_API_BASE="https://naija-pocket-payment-api.onrender.com";
 
-/* ============================================================
-   API CONFIGURATION
-   ============================================================ */
+const params=new URLSearchParams(location.search);
+const jobId=(params.get("job_id")||"").trim();
+const service=(params.get("service")||"Business Center Service").trim();
 
-const API_BASE = "";
+const $=id=>document.getElementById(id);
 
-const PAYMENT_API_BASE =
-  "https://naija-pocket-payment-api.onrender.com";
+const serviceBadge=$("serviceBadge"),
+statusValue=$("statusValue"),
+progressBar=$("progressBar"),
+progressText=$("progressText"),
+pageCount=$("pageCount"),
+amountValueTop=$("amountValueTop"),
+documentScroll=$("documentScroll"),
+pageViewer=$("pageViewer"),
+previousButton=$("previousButton"),
+nextButton=$("nextButton"),
+pageIndicator=$("pageIndicator"),
+pageNumberInput=$("pageNumberInput"),
+goButton=$("goButton"),
+pageReview=$("pageReview"),
+pageReviewText=$("pageReviewText"),
+correctionInput=$("correctionInput"),
+correctionButton=$("correctionButton"),
+paymentSection=$("paymentSection"),
+paymentDetails=$("paymentDetails"),
+paymentId=$("paymentId"),
+makePaymentButton=$("makePaymentButton"),
+paymentButton=$("paymentButton"),
+downloadButton=$("downloadButton"),
+paymentMessage=$("paymentMessage"),
+message=$("message");
 
-
-/* ============================================================
-   URL / SERVICE CONTEXT
-   ============================================================ */
-
-const params = new URLSearchParams(location.search);
-
-const jobId =
-  (params.get("job_id") || "").trim();
-
-const service =
-  (
-    params.get("service") ||
-    params.get("selected_service") ||
-    "Business Center Service"
-  ).trim();
-
-
-let documentTitle =
-  (
-    params.get("title") ||
-    params.get("document_title") ||
-    params.get("documentTitle") ||
-    params.get("work_title") ||
-    params.get("workTitle") ||
-    params.get("document_name") ||
-    params.get("documentName") ||
-    params.get("subject") ||
-    ""
-  ).trim();
-
-
-/* ============================================================
-   DOM
-   ============================================================ */
-
-const $ = id => document.getElementById(id);
-
-const serviceBadge = $("serviceBadge");
-const statusValue = $("statusValue");
-const progressBar = $("progressBar");
-const progressText = $("progressText");
-const pageCount = $("pageCount");
-const amountValueTop = $("amountValueTop");
-const documentScroll = $("documentScroll");
-const pageViewer = $("pageViewer");
-const previousButton = $("previousButton");
-const nextButton = $("nextButton");
-const pageIndicator = $("pageIndicator");
-const pageNumberInput = $("pageNumberInput");
-const goButton = $("goButton");
-const pageReview = $("pageReview");
-const pageReviewText = $("pageReviewText");
-const correctionInput = $("correctionInput");
-const correctionButton = $("correctionButton");
-const paymentDetails = $("paymentDetails");
-const makePaymentButton = $("makePaymentButton");
-const paymentButton = $("paymentButton");
-const downloadButton = $("downloadButton");
-const paymentMessage = $("paymentMessage");
-const message = $("message");
-
-const backOfficeButton = $("backOfficeButton");
-
-const paymentModal = $("paymentModal");
-const modalAmount = $("modalAmount");
-const paymentNoteInput = $("paymentNoteInput");
-const modalStatus = $("modalStatus");
-const closePaymentModal = $("closePaymentModal");
-const modalReportButton = $("modalReportButton");
-
-
-/* ============================================================
-   STATE
-   ============================================================ */
-
-let pages = [];
-let currentPage = 1;
-let totalPages = 0;
-let currentVersion = 1;
-let versionId = "";
-let currentStatus = "";
-let reviewFinished = false;
-
-let paid = false;
-let paymentStarted = false;
-let paymentPending = false;
-let downloadUnlocked = false;
-
-let busy = false;
-
-let pollTimer = null;
-let polling = false;
-let paymentPollTimer = null;
-
-let amount = 0;
-let billing = "";
-
-let customerId = "";
-let documentFilename = "";
-
-
-/* ============================================================
-   HELPERS
-   ============================================================ */
+let pages=[],
+currentPage=1,
+totalPages=0,
+currentVersion=1,
+versionId="",
+currentStatus="",
+reviewFinished=false,
+paid=false,
+paymentStarted=false,
+paymentPending=false,
+busy=false,
+pollTimer=null,
+polling=false,
+paymentPollTimer=null,
+amount=0,
+billing="",
+paymentIdentifier="",
+customerId="",
+documentFilename="";
 
 function clean(v){
-  return v == null ? "" : String(v).trim();
+return v==null?"":String(v).trim();
 }
 
 function setMessage(t,type=""){
-  message.textContent = t || "";
-  message.className =
-    "message" + (type ? " " + type : "");
+message.textContent=t||"";
+message.className="message"+(type?" "+type:"");
 }
 
 function setStatus(t){
-  statusValue.textContent =
-    t || "Preparing...";
+statusValue.textContent=t||"Preparing...";
 }
 
 function state(){
-  return clean(currentStatus).toLowerCase();
+return clean(currentStatus).toLowerCase();
 }
 
 function complete(d){
-  return !!d &&
-    (
-      state() === "review_complete" ||
-      d.review_finished === true
-    );
+return !!d&&(state()==="review_complete"||d.review_finished===true);
 }
-
-
-/* ============================================================
-   DOCUMENT TITLE
-   ============================================================ */
-
-const TITLE_KEYS = [
-  "document_title",
-  "documentTitle",
-  "document_name",
-  "documentName",
-  "work_title",
-  "workTitle",
-  "work_name",
-  "workName",
-  "title",
-  "subject"
-];
-
-const TITLE_WRAPPER_KEYS = [
-  "data",
-  "payload",
-  "response",
-  "result",
-  "review",
-  "job",
-  "job_data",
-  "jobData",
-  "document",
-  "document_data",
-  "documentData",
-  "output",
-  "service",
-  "service_data",
-  "serviceData",
-  "details",
-  "record",
-  "item"
-];
-
-function validDocumentTitle(value){
-
-  const v = clean(value);
-
-  if(!v)return "";
-
-  if(
-    /^NPB[-_]/i.test(v) ||
-    /^job[-_ ]?\d+$/i.test(v) ||
-    /^payment[-_ ]?/i.test(v) ||
-    /^version[-_ ]?/i.test(v) ||
-    /^\d+$/.test(v)
-  ){
-    return "";
-  }
-
-  if(
-    v.toLowerCase() ===
-    clean(service).toLowerCase()
-  ){
-    return "";
-  }
-
-  return v;
-}
-
-function extractDocumentTitle(d){
-
-  const directCandidates = [
-
-    d?.document_title,
-    d?.documentTitle,
-    d?.document_name,
-    d?.documentName,
-    d?.work_title,
-    d?.workTitle,
-    d?.work_name,
-    d?.workName,
-    d?.title,
-    d?.subject,
-
-    d?.document?.document_title,
-    d?.document?.documentTitle,
-    d?.document?.document_name,
-    d?.document?.documentName,
-    d?.document?.work_title,
-    d?.document?.workTitle,
-    d?.document?.title,
-    d?.document?.subject,
-
-    d?.result?.document_title,
-    d?.result?.documentTitle,
-    d?.result?.document_name,
-    d?.result?.documentName,
-    d?.result?.work_title,
-    d?.result?.workTitle,
-    d?.result?.title,
-    d?.result?.subject,
-
-    d?.review?.document_title,
-    d?.review?.documentTitle,
-    d?.review?.document_name,
-    d?.review?.documentName,
-    d?.review?.work_title,
-    d?.review?.workTitle,
-    d?.review?.title,
-    d?.review?.subject,
-
-    d?.output?.document_title,
-    d?.output?.documentTitle,
-    d?.output?.document_name,
-    d?.output?.documentName,
-    d?.output?.work_title,
-    d?.output?.workTitle,
-    d?.output?.title,
-    d?.output?.subject,
-
-    d?.job?.document_title,
-    d?.job?.documentTitle,
-    d?.job?.document_name,
-    d?.job?.documentName,
-    d?.job?.work_title,
-    d?.job?.workTitle,
-    d?.job?.title,
-    d?.job?.subject
-  ];
-
-  for(const value of directCandidates){
-
-    const v =
-      validDocumentTitle(value);
-
-    if(v)return v;
-  }
-
-  const visited = new Set();
-
-  function walk(value,depth){
-
-    if(
-      value == null ||
-      depth > 8
-    ){
-      return "";
-    }
-
-    if(
-      typeof value !== "object"
-    ){
-      return "";
-    }
-
-    if(visited.has(value)){
-      return "";
-    }
-
-    visited.add(value);
-
-    for(const key of TITLE_KEYS){
-
-      if(
-        Object.prototype.hasOwnProperty.call(
-          value,
-          key
-        )
-      ){
-
-        const found =
-          validDocumentTitle(
-            value[key]
-          );
-
-        if(found)return found;
-      }
-    }
-
-    for(const key of TITLE_WRAPPER_KEYS){
-
-      if(
-        Object.prototype.hasOwnProperty.call(
-          value,
-          key
-        )
-      ){
-
-        const found =
-          walk(
-            value[key],
-            depth + 1
-          );
-
-        if(found)return found;
-      }
-    }
-
-    for(const key of Object.keys(value)){
-
-      if(
-        TITLE_KEYS.includes(key) ||
-        TITLE_WRAPPER_KEYS.includes(key)
-      ){
-        continue;
-      }
-
-      const child =
-        value[key];
-
-      if(
-        child &&
-        typeof child === "object"
-      ){
-
-        const found =
-          walk(
-            child,
-            depth + 1
-          );
-
-        if(found)return found;
-      }
-    }
-
-    return "";
-  }
-
-  return walk(d,0);
-}
-
-function extractTitleFromPageContent(){
-
-  if(!Array.isArray(pages) || !pages.length){
-    return "";
-  }
-
-  for(const p of pages){
-
-    const raw =
-      clean(p?.content);
-
-    if(!raw)continue;
-
-    const temp =
-      document.createElement("div");
-
-    temp.innerHTML = raw;
-
-    const text =
-      clean(
-        temp.textContent ||
-        temp.innerText ||
-        ""
-      );
-
-    if(!text)continue;
-
-    const lines =
-      text
-        .split(/\n+/)
-        .map(x => clean(x))
-        .filter(Boolean);
-
-    if(!lines.length)continue;
-
-    const generic = new Set([
-      "page",
-      "document",
-      "document title",
-      "untitled",
-      "your document",
-      "your complete document",
-      "business center service"
-    ]);
-
-    for(const line of lines){
-
-      if(
-        line.length < 3 ||
-        line.length > 180
-      ){
-        continue;
-      }
-
-      if(
-        generic.has(
-          line.toLowerCase()
-        )
-      ){
-        continue;
-      }
-
-      if(
-        /^(page|date|service|customer|job|payment|version)\s*[:#-]/i.test(line)
-      ){
-        continue;
-      }
-
-      const words =
-        line.split(/\s+/).length;
-
-      if(words > 18){
-        continue;
-      }
-
-      return line;
-    }
-  }
-
-  return "";
-}
-
-function ensureDocumentTitle(d){
-
-  if(documentTitle){
-    return documentTitle;
-  }
-
-  const found =
-    extractDocumentTitle(d);
-
-  if(found){
-
-    documentTitle =
-      found;
-
-    return documentTitle;
-  }
-
-  const pageTitle =
-    extractTitleFromPageContent();
-
-  if(pageTitle){
-
-    documentTitle =
-      pageTitle;
-
-    return documentTitle;
-  }
-
-  return "";
-}
-
-
-/* ============================================================
-   MAIN API
-   ============================================================ */
 
 async function apiGet(url){
-
-  const r = await fetch(
-    API_BASE + url,
-    {cache:"no-store"}
-  );
-
-  const d = await r.json().catch(() => ({}));
-
-  if(!r.ok){
-    throw Error(
-      d.error_message ||
-      d.error ||
-      d.message ||
-      "Unable to load the document."
-    );
-  }
-
-  return d;
+const r=await fetch(API_BASE+url,{cache:"no-store"});
+const d=await r.json().catch(()=>({}));
+if(!r.ok)throw Error(d.error_message||d.error||d.message||"Unable to load the document.");
+return d;
 }
 
 async function apiPost(url,body){
-
-  const r = await fetch(
-    API_BASE + url,
-    {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify(body || {})
-    }
-  );
-
-  const d = await r.json().catch(() => ({}));
-
-  if(!r.ok || d.success === false){
-
-    throw Error(
-      d.error_message ||
-      d.error ||
-      d.message ||
-      "The request could not be completed."
-    );
-  }
-
-  return d;
+const r=await fetch(API_BASE+url,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(body||{})
+});
+const d=await r.json().catch(()=>({}));
+if(!r.ok||d.success===false)
+throw Error(d.error_message||d.error||d.message||"The request could not be completed.");
+return d;
 }
 
-
-/* ============================================================
-   PAYMENT API
-   ============================================================ */
-
-async function paymentGet(url){
-
-  let r;
-
-  try{
-
-    r = await fetch(
-      PAYMENT_API_BASE + url,
-      {cache:"no-store"}
-    );
-
-  }catch(e){
-
-    throw Error(
-      "The payment service could not be reached. Please check your internet connection and try again."
-    );
-  }
-
-  const text = await r.text();
-
-  let d = {};
-
-  try{
-    d = text ? JSON.parse(text) : {};
-  }catch(_e){
-    d = {raw:text};
-  }
-
-  if(!r.ok){
-
-    const code =
-      clean(d.error_code || d.code);
-
-    const detail =
-      d.error_message ||
-      d.error ||
-      d.message ||
-      code ||
-      "";
-
-    const error = new Error(
-      detail ||
-      "Payment status could not be checked."
-    );
-
-    error.status = r.status;
-    error.code = code;
-
-    throw error;
-  }
-
-  return d;
-}
-
+/* Payment API connection used only after the Review document is ready. */
 async function paymentPost(url,body){
+let r;
 
-  let r;
-
-  try{
-
-    r = await fetch(
-      PAYMENT_API_BASE + url,
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify(body || {})
-      }
-    );
-
-  }catch(e){
-
-    throw Error(
-      "The payment service could not be reached. Please check your internet connection and try again."
-    );
-  }
-
-  const text = await r.text();
-
-  let d = {};
-
-  try{
-    d = text ? JSON.parse(text) : {};
-  }catch(_e){
-    d = {raw:text};
-  }
-
-  if(
-    !r.ok ||
-    d.ok === false ||
-    d.success === false
-  ){
-
-    const detail =
-      d.error_message ||
-      d.error ||
-      d.message ||
-      (
-        d.detail &&
-        typeof d.detail === "string"
-          ? d.detail
-          : ""
-      ) ||
-      ((d.raw || "").slice(0,220));
-
-    const error = new Error(
-      detail
-        ? "Payment preparation failed: " + detail
-        : "Payment preparation failed (HTTP " +
-          r.status +
-          "). Please try again."
-    );
-
-    error.status = r.status;
-
-    throw error;
-  }
-
-  return d;
+try{
+r=await fetch(PAYMENT_API_BASE+url,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(body||{})
+});
+}catch(e){
+throw Error("The payment service could not be reached. Please check your internet connection and try again.");
 }
 
+const text=await r.text();
+let d={};
 
-/* ============================================================
-   PAGE DATA
-   ============================================================ */
+try{
+d=text?JSON.parse(text):{};
+}catch(_e){
+d={raw:text};
+}
+
+if(
+!r.ok||
+d.ok===false||
+d.success===false
+){
+const detail=
+d.error_message||
+d.error||
+d.message||
+(d.detail&&typeof d.detail==="string"?d.detail:"")||
+((d.raw||"").slice(0,220));
+
+throw Error(
+detail
+?"Payment preparation failed: "+detail
+:"Payment preparation failed (HTTP "+r.status+"). Please try again."
+);
+}
+
+return d;
+}
 
 function normalizePages(d){
+let s=[];
 
-  let s = [];
+if(Array.isArray(d?.review_pages)&&d.review_pages.length)
+s=d.review_pages;
+else if(Array.isArray(d?.document_pages)&&d.document_pages.length)
+s=d.document_pages;
+else if(Array.isArray(d?.pages)&&d.pages.length)
+s=d.pages;
 
-  if(
-    Array.isArray(d?.review_pages) &&
-    d.review_pages.length
-  ){
-    s = d.review_pages;
-
-  }else if(
-    Array.isArray(d?.document_pages) &&
-    d.document_pages.length
-  ){
-    s = d.document_pages;
-
-  }else if(
-    Array.isArray(d?.pages) &&
-    d.pages.length
-  ){
-    s = d.pages;
-  }
-
-  return s
-    .map((x,i) => ({
-      page_number:
-        Number(x.page_number) || i + 1,
-
-      position:
-        Number(x.position) || i + 1,
-
-      status:
-        clean(x.status) || "queued",
-
-      content:
-        x.content == null
-          ? ""
-          : String(x.content),
-
-      review:
-        clean(x.review),
-
-      error:
-        clean(x.error)
-    }))
-    .sort((a,b) => a.position - b.position);
+return s.map((x,i)=>({
+page_number:Number(x.page_number)||i+1,
+position:Number(x.position)||i+1,
+status:clean(x.status)||"queued",
+content:x.content==null?"":String(x.content),
+review:clean(x.review),
+error:clean(x.error)
+})).sort((a,b)=>a.position-b.position);
 }
 
 function extractPages(d){
+let x=normalizePages(d);
 
-  let x = normalizePages(d);
+if(x.length)return x;
 
-  if(x.length)return x;
-
-  for(
-    const c of [
-      d?.document,
-      d?.result,
-      d?.review,
-      d?.output,
-      d?.data,
-      d?.payload,
-      d?.job_data,
-      d?.jobData
-    ]
-  ){
-
-    if(
-      c &&
-      typeof c === "object"
-    ){
-
-      x = normalizePages(c);
-
-      if(x.length)return x;
-    }
-  }
-
-  return [];
+for(const c of [d?.document,d?.result,d?.review,d?.output]){
+if(c&&typeof c==="object"){
+x=normalizePages(c);
+if(x.length)return x;
+}
 }
 
+return [];
+}
 
-/* ============================================================
-   DOCUMENT SANITIZATION
-   ============================================================ */
-
-const allowedTags = new Set([
-  "DIV",
-  "P",
-  "BR",
-  "SPAN",
-  "STRONG",
-  "B",
-  "EM",
-  "I",
-  "U",
-  "S",
-  "STRIKE",
-  "H1",
-  "H2",
-  "H3",
-  "H4",
-  "H5",
-  "H6",
-  "UL",
-  "OL",
-  "LI",
-  "BLOCKQUOTE",
-  "HR",
-  "TABLE",
-  "THEAD",
-  "TBODY",
-  "TFOOT",
-  "TR",
-  "TH",
-  "TD",
-  "PRE",
-  "SUP",
-  "SUB"
+const allowedTags=new Set([
+"DIV","P","BR","SPAN","STRONG","B","EM","I","U","S","STRIKE",
+"H1","H2","H3","H4","H5","H6","UL","OL","LI","BLOCKQUOTE",
+"HR","TABLE","THEAD","TBODY","TFOOT","TR","TH","TD","PRE","SUP","SUB"
 ]);
 
-const allowedAttrs = new Set([
-  "style",
-  "align",
-  "colspan",
-  "rowspan"
+const allowedAttrs=new Set([
+"style","align","colspan","rowspan"
 ]);
 
-const allowedStyles = new Set([
-  "color",
-  "background-color",
-  "font-family",
-  "font-size",
-  "font-weight",
-  "font-style",
-  "text-decoration",
-  "text-align",
-  "text-indent",
-  "line-height",
-  "letter-spacing",
-  "margin",
-  "margin-top",
-  "margin-right",
-  "margin-bottom",
-  "margin-left",
-  "padding",
-  "padding-top",
-  "padding-right",
-  "padding-bottom",
-  "padding-left",
-  "vertical-align",
-  "width",
-  "max-width",
-  "border",
-  "border-top",
-  "border-right",
-  "border-bottom",
-  "border-left",
-  "background"
+const allowedStyles=new Set([
+"color","background-color","font-family","font-size","font-weight",
+"font-style","text-decoration","text-align","text-indent","line-height",
+"letter-spacing","margin","margin-top","margin-right","margin-bottom",
+"margin-left","padding","padding-top","padding-right","padding-bottom",
+"padding-left","vertical-align","width","max-width","border",
+"border-top","border-right","border-bottom","border-left","background"
 ]);
 
 function normText(v){
-
-  return String(v == null ? "" : v)
-    .replace(/\r\n/g,"\n")
-    .replace(/\r/g,"\n")
-    .replace(/\u00a0/g," ")
-    .replace(/^\s*#{1,6}\s+/gm,"")
-    .replace(/\n{5,}/g,"\n\n")
-    .trim();
+return String(v==null?"":v)
+.replace(/\r\n/g,"\n")
+.replace(/\r/g,"\n")
+.replace(/\u00a0/g," ")
+.replace(/^\s*#{1,6}\s+/gm,"")
+.replace(/\n{5,}/g,"\n\n")
+.trim();
 }
 
 function safeStyle(s){
+let out=[];
 
-  let out = [];
+for(const d of String(s||"").split(";")){
+const i=d.indexOf(":");
+if(i<0)continue;
 
-  for(
-    const d of String(s || "").split(";")
-  ){
+const p=d.slice(0,i).trim().toLowerCase();
+const v=d.slice(i+1).trim();
 
-    const i = d.indexOf(":");
+if(
+allowedStyles.has(p)&&
+!/javascript:|expression\(|url\(|@import/i.test(v)
+){
+out.push(p+":"+v);
+}
+}
 
-    if(i < 0)continue;
-
-    const p =
-      d.slice(0,i)
-        .trim()
-        .toLowerCase();
-
-    const v =
-      d.slice(i+1).trim();
-
-    if(
-      allowedStyles.has(p) &&
-      !/javascript:|expression\(|url\(|@import/i.test(v)
-    ){
-      out.push(p + ":" + v);
-    }
-  }
-
-  return out.join(";");
+return out.join(";");
 }
 
 function renderPlain(t){
+const f=document.createDocumentFragment();
+const lines=normText(t).split("\n");
 
-  const f =
-    document.createDocumentFragment();
+lines.forEach((line,i)=>{
+if(line===""){
+f.appendChild(document.createElement("br"));
+return;
+}
 
-  const lines =
-    normText(t).split("\n");
+const parts=line.split(/(\*\*[^*]+\*\*)/g);
 
-  lines.forEach((line,i) => {
+parts.forEach(p=>{
+if(!p)return;
 
-    if(line === ""){
-      f.appendChild(
-        document.createElement("br")
-      );
-      return;
-    }
+if(p.startsWith("**")&&p.endsWith("**")){
+const e=document.createElement("strong");
+e.textContent=p.slice(2,-2);
+f.appendChild(e);
+}else{
+f.appendChild(document.createTextNode(p.replace(/^\*+|\*+$/g,"")));
+}
+});
 
-    const parts =
-      line.split(/(\*\*[^*]+\*\*)/g);
+if(i<lines.length-1)
+f.appendChild(document.createElement("br"));
+});
 
-    parts.forEach(p => {
-
-      if(!p)return;
-
-      if(
-        p.startsWith("**") &&
-        p.endsWith("**")
-      ){
-
-        const e =
-          document.createElement("strong");
-
-        e.textContent =
-          p.slice(2,-2);
-
-        f.appendChild(e);
-
-      }else{
-
-        f.appendChild(
-          document.createTextNode(
-            p.replace(/^\*+|\*+$/g,"")
-          )
-        );
-      }
-    });
-
-    if(i < lines.length - 1){
-      f.appendChild(
-        document.createElement("br")
-      );
-    }
-  });
-
-  return f;
+return f;
 }
 
 function sanitizeHtml(src){
+if(!/<[a-z][\s\S]*>/i.test(String(src||"")))
+return renderPlain(src);
 
-  if(
-    !/<[a-z][\s\S]*>/i.test(
-      String(src || "")
-    )
-  ){
-    return renderPlain(src);
-  }
+const doc=new DOMParser().parseFromString(String(src),"text/html");
+const out=document.createDocumentFragment();
 
-  const doc =
-    new DOMParser()
-      .parseFromString(
-        String(src),
-        "text/html"
-      );
-
-  const out =
-    document.createDocumentFragment();
-
-  function walk(n,parent){
-
-    if(n.nodeType === Node.TEXT_NODE){
-
-      parent.appendChild(
-        document.createTextNode(
-          normText(n.nodeValue || "")
-        )
-      );
-
-      return;
-    }
-
-    if(n.nodeType !== Node.ELEMENT_NODE)return;
-
-    const tag =
-      n.tagName.toUpperCase();
-
-    if([
-      "SCRIPT",
-      "STYLE",
-      "IFRAME",
-      "OBJECT",
-      "EMBED",
-      "FORM",
-      "INPUT",
-      "BUTTON",
-      "TEXTAREA",
-      "SELECT",
-      "VIDEO",
-      "AUDIO"
-    ].includes(tag)){
-      return;
-    }
-
-    if(!allowedTags.has(tag)){
-
-      for(
-        const c of n.childNodes
-      ){
-        walk(c,parent);
-      }
-
-      return;
-    }
-
-    const e =
-      document.createElement(
-        tag.toLowerCase()
-      );
-
-    for(
-      const a of n.attributes
-    ){
-
-      const name =
-        a.name.toLowerCase();
-
-      const v =
-        a.value || "";
-
-      if(!allowedAttrs.has(name))continue;
-
-      if(name === "style"){
-
-        const s = safeStyle(v);
-
-        if(s)e.setAttribute("style",s);
-
-      }else if(
-        name === "align" &&
-        [
-          "left",
-          "center",
-          "right",
-          "justify"
-        ].includes(
-          v.toLowerCase().trim()
-        )
-      ){
-
-        e.setAttribute(
-          "align",
-          v.toLowerCase().trim()
-        );
-
-      }else if(
-        (
-          name === "colspan" ||
-          name === "rowspan"
-        ) &&
-        /^\d+$/.test(v) &&
-        +v > 0 &&
-        +v <= 100
-      ){
-
-        e.setAttribute(name,v);
-      }
-    }
-
-    for(
-      const c of n.childNodes
-    ){
-      walk(c,e);
-    }
-
-    parent.appendChild(e);
-  }
-
-  for(
-    const c of doc.body.childNodes
-  ){
-    walk(c,out);
-  }
-
-  return out;
+function walk(n,parent){
+if(n.nodeType===Node.TEXT_NODE){
+parent.appendChild(document.createTextNode(normText(n.nodeValue||"")));
+return;
 }
 
+if(n.nodeType!==Node.ELEMENT_NODE)return;
 
-/* ============================================================
-   AMOUNT / BILLING
-   ============================================================ */
+const tag=n.tagName.toUpperCase();
+
+if([
+"SCRIPT","STYLE","IFRAME","OBJECT","EMBED","FORM",
+"INPUT","BUTTON","TEXTAREA","SELECT","VIDEO","AUDIO"
+].includes(tag))return;
+
+if(!allowedTags.has(tag)){
+for(const c of n.childNodes)walk(c,parent);
+return;
+}
+
+const e=document.createElement(tag.toLowerCase());
+
+for(const a of n.attributes){
+const name=a.name.toLowerCase();
+const v=a.value||"";
+
+if(!allowedAttrs.has(name))continue;
+
+if(name==="style"){
+const s=safeStyle(v);
+if(s)e.setAttribute("style",s);
+}
+else if(
+name==="align"&&
+["left","center","right","justify"].includes(v.toLowerCase().trim())
+){
+e.setAttribute("align",v.toLowerCase().trim());
+}
+else if(
+(name==="colspan"||name==="rowspan")&&
+/^\d+$/.test(v)&&
++v>0&&
++v<=100
+){
+e.setAttribute(name,v);
+}
+}
+
+for(const c of n.childNodes)
+walk(c,e);
+
+parent.appendChild(e);
+}
+
+for(const c of doc.body.childNodes)
+walk(c,out);
+
+return out;
+}
+
+function updateButtons(){
+previousButton.disabled=busy||currentPage<=1;
+nextButton.disabled=busy||currentPage>=totalPages||!totalPages;
+correctionButton.disabled=busy;
+
+makePaymentButton.disabled=
+busy||
+paymentStarted||
+amount<=0||
+!reviewFinished;
+
+paymentButton.disabled=
+busy||
+!paymentStarted||
+!paymentPending||
+paid;
+
+downloadButton.disabled=busy||!paid;
+downloadButton.classList.toggle("active",paid);
+}
+
+function renderPage(){
+pageViewer.innerHTML="";
+
+if(!pages.length){
+pageViewer.innerHTML=
+'<div class="loading"><div class="spinner"></div><div>Your service is being carefully prepared.</div></div>';
+
+pageIndicator.textContent="Page 0 of 0";
+updateButtons();
+return;
+}
+
+const p=pages[currentPage-1];
+
+if(!p){
+pageViewer.innerHTML=
+'<div class="empty-page">This document page is not available yet.</div>';
+return;
+}
+
+const a=document.createElement("article");
+a.className="document-page";
+
+const n=document.createElement("div");
+n.className="page-number-inside";
+n.textContent="PAGE "+p.page_number;
+
+const c=document.createElement("div");
+c.className="page-content";
+c.appendChild(
+sanitizeHtml(p.content||"This page is still being prepared.")
+);
+
+a.append(n,c);
+pageViewer.appendChild(a);
+
+pageIndicator.textContent=`Page ${currentPage} of ${totalPages}`;
+
+if(p.review||p.error){
+pageReview.style.display="block";
+pageReviewText.textContent=
+p.error
+?"Page information:\n\n"+normText(p.error)
+:normText(p.review);
+}else{
+pageReview.style.display="none";
+}
+
+updateButtons();
+}
+
+function showPage(n){
+if(!totalPages)return;
+
+currentPage=Math.max(
+1,
+Math.min(totalPages,Math.floor(Number(n)||1))
+);
+
+renderPage();
+
+documentScroll.scrollTo({
+top:0,
+behavior:"smooth"
+});
+}
+
+previousButton.onclick=()=>showPage(currentPage-1);
+nextButton.onclick=()=>showPage(currentPage+1);
+
+goButton.onclick=()=>{
+const n=Number(pageNumberInput.value);
+
+if(
+!Number.isInteger(n)||
+n<1||
+n>totalPages
+){
+return setMessage(
+"Enter a page number from 1 to "+totalPages+".",
+"error"
+);
+}
+
+setMessage("");
+showPage(n);
+};
+
+pageNumberInput.onkeydown=e=>{
+if(e.key==="Enter"){
+e.preventDefault();
+goButton.click();
+}
+};
 
 function extractAmount(d){
+const seen=new Set();
 
-  const seen = new Set();
+function find(x){
+if(x==null)return 0;
 
-  function find(x){
+if(
+typeof x==="number"&&
+isFinite(x)&&
+x>0
+)return x;
 
-    if(x == null)return 0;
+if(typeof x==="string"){
+const n=Number(
+x.replace(/[^0-9.]/g,"")
+);
+return isFinite(n)&&n>0?n:0;
+}
 
-    if(
-      typeof x === "number" &&
-      isFinite(x) &&
-      x > 0
-    ){
-      return x;
-    }
+if(typeof x!=="object"||seen.has(x))
+return 0;
 
-    if(typeof x === "string"){
+seen.add(x);
 
-      const n =
-        Number(
-          x.replace(/[^0-9.]/g,"")
-        );
+for(const k of ["amount","price"]){
+const n=find(x[k]);
+if(n>0)return n;
+}
 
-      return isFinite(n) && n > 0
-        ? n
-        : 0;
-    }
+for(const k of [
+"billing","bill","payment","job",
+"result","document","review","output"
+]){
+const n=find(x[k]);
+if(n>0)return n;
+}
 
-    if(
-      typeof x !== "object" ||
-      seen.has(x)
-    ){
-      return 0;
-    }
+return 0;
+}
 
-    seen.add(x);
-
-    for(
-      const k of ["amount","price"]
-    ){
-
-      const n = find(x[k]);
-
-      if(n > 0)return n;
-    }
-
-    for(
-      const k of [
-        "billing",
-        "bill",
-        "payment",
-        "job",
-        "result",
-        "document",
-        "review",
-        "output"
-      ]
-    ){
-
-      const n = find(x[k]);
-
-      if(n > 0)return n;
-    }
-
-    return 0;
-  }
-
-  return find(d);
+return find(d);
 }
 
 function extractBilling(d){
+const seen=new Set();
 
-  const seen = new Set();
+function find(x){
+if(x==null)return "";
 
-  function find(x){
+if(typeof x==="string")
+return x.trim();
 
-    if(x == null)return "";
+if(typeof x!=="object"||seen.has(x))
+return "";
 
-    if(typeof x === "string"){
-      return x.trim();
-    }
+seen.add(x);
 
-    if(
-      typeof x !== "object" ||
-      seen.has(x)
-    ){
-      return "";
-    }
+if(
+typeof x.billing==="string"&&
+x.billing.trim()
+)
+return x.billing.trim();
 
-    seen.add(x);
-
-    if(
-      typeof x.billing === "string" &&
-      x.billing.trim()
-    ){
-      return x.billing.trim();
-    }
-
-    for(
-      const k of [
-        "billing",
-        "bill",
-        "payment",
-        "job",
-        "result",
-        "document",
-        "review",
-        "output"
-      ]
-    ){
-
-      const v = find(x[k]);
-
-      if(v)return v;
-    }
-
-    return "";
-  }
-
-  return find(d);
+for(const k of [
+"billing","bill","payment","job",
+"result","document","review","output"
+]){
+const v=find(x[k]);
+if(v)return v;
 }
 
+return "";
+}
 
-/* ============================================================
-   PAYMENT UI
-   ============================================================ */
-
-function updateButtons(){
-
-  previousButton.disabled =
-    busy ||
-    currentPage <= 1;
-
-  nextButton.disabled =
-    busy ||
-    currentPage >= totalPages ||
-    !totalPages;
-
-  correctionButton.disabled =
-    busy;
-
-  makePaymentButton.disabled =
-    busy ||
-    paymentStarted ||
-    amount <= 0 ||
-    !reviewFinished;
-
-  paymentButton.disabled =
-    busy ||
-    !paymentStarted ||
-    paymentPending ||
-    paid;
-
-  downloadButton.disabled =
-    busy ||
-    !downloadUnlocked;
-
-  downloadButton.classList.toggle(
-    "active",
-    downloadUnlocked
-  );
+return find(d);
 }
 
 function updatePaymentPanel(){
 
-  amountValueTop.textContent =
-    amount > 0
-      ? "₦" + amount.toLocaleString()
-      : "Quotation required";
+amountValueTop.textContent=
+amount>0
+?"₦"+amount.toLocaleString()
+:"Quotation required";
 
-  modalAmount.textContent =
-    amount > 0
-      ? "₦" + amount.toLocaleString()
-      : "Quotation required";
+if(paid){
 
-  if(downloadUnlocked){
+paymentDetails.textContent=
+"Service: "+(service||"Business Center Service")+
+"\nPayment status: VERIFIED"+
+"\nYour approved document is ready for download.";
 
-    paymentDetails.textContent =
-      "Service: " +
-      (service || "Business Center Service") +
-      "\nDocument: " +
-      (documentTitle || "Approved Document") +
-      "\nPayment status: VERIFIED" +
-      "\nDownload status: UNLOCKED";
+paymentMessage.className=
+"payment-message payment-ready";
 
-    paymentMessage.className =
-      "payment-message payment-ready";
+paymentMessage.textContent=
+"Payment verified by Customer Care. Your approved document is now available for download.";
 
-    paymentMessage.textContent =
-      "Payment verified by Customer Care. Your approved document is now available for download.";
+}
+else if(paymentPending){
 
-    makePaymentButton.textContent =
-      "✓ PAYMENT VERIFIED";
+paymentDetails.textContent=
+"Service: "+(service||"Business Center Service")+
+"\nAmount: ₦"+Number(amount||0).toLocaleString()+
+"\nPayment status: AWAITING VERIFICATION";
 
-  }else if(paymentPending){
+paymentMessage.className=
+"payment-message payment-waiting";
 
-    paymentDetails.textContent =
-      "Service: " +
-      (service || "Business Center Service") +
-      "\nDocument: " +
-      (documentTitle || "Approved Document") +
-      "\nAmount: ₦" +
-      Number(amount || 0).toLocaleString() +
-      "\nPayment status: AWAITING VERIFICATION";
+paymentMessage.textContent=
+"Payment Reported — Awaiting Verification. Customer Care will verify your payment before download is unlocked.";
 
-    paymentMessage.className =
-      "payment-message payment-waiting";
+}
+else if(paymentStarted){
 
-    paymentMessage.textContent =
-      "Payment Reported — Awaiting Verification. Customer Care will verify your payment before download is unlocked.";
+paymentDetails.textContent=
+"Service: "+(service||"Business Center Service")+
+"\nAmount: ₦"+Number(amount||0).toLocaleString()+
+"\nPayment status: PAYMENT INITIATED";
 
-    makePaymentButton.textContent =
-      "✓ PAYMENT REPORTED";
+paymentMessage.className=
+"payment-message payment-waiting";
 
-  }else if(paymentStarted){
+paymentMessage.textContent=
+"Payment has been initiated. Complete payment on the payment page, then report your payment there.";
 
-    paymentDetails.textContent =
-      "Service: " +
-      (service || "Business Center Service") +
-      "\nDocument: " +
-      (documentTitle || "Approved Document") +
-      "\nAmount: ₦" +
-      Number(amount || 0).toLocaleString() +
-      "\nPayment status: PAYMENT READY";
+}
+else{
 
-    paymentMessage.className =
-      "payment-message payment-waiting";
+paymentDetails.textContent=
+"Service: "+(service||"Business Center Service")+
+"\nAmount: "+
+(amount>0?"₦"+amount.toLocaleString():"Quotation required")+
+"\nPayment status: NOT STARTED";
 
-    paymentMessage.textContent =
-      "Your exact reviewed document is saved and ready. Make your bank transfer, then report it here.";
+paymentMessage.className=
+"payment-message payment-locked";
 
-    makePaymentButton.textContent =
-      "✓ PAYMENT READY";
-
-  }else{
-
-    paymentDetails.textContent =
-      "Service: " +
-      (service || "Business Center Service") +
-      "\nDocument: " +
-      (documentTitle || "Document title required") +
-      "\nAmount: " +
-      (
-        amount > 0
-          ? "₦" + amount.toLocaleString()
-          : "Quotation required"
-      ) +
-      "\nPayment status: NOT STARTED";
-
-    paymentMessage.className =
-      "payment-message payment-locked";
-
-    paymentMessage.textContent =
-      amount > 0
-        ? (
-          documentTitle
-            ? "Your exact reviewed document will be securely saved when you select MAKE PAYMENT."
-            : "The document title could not be identified. Payment cannot be started yet."
-        )
-        : "A quotation is required before payment can be started.";
-
-    makePaymentButton.textContent =
-      "MAKE PAYMENT";
-  }
-
-  if(downloadUnlocked){
-
-    downloadButton.disabled = false;
-
-    downloadButton.classList.add(
-      "active"
-    );
-
-    downloadButton.textContent =
-      "DOWNLOAD DOCUMENT";
-
-  }else{
-
-    downloadButton.disabled = true;
-
-    downloadButton.classList.remove(
-      "active"
-    );
-
-    downloadButton.textContent =
-      "🔒 DOWNLOAD DOCUMENT";
-  }
-
-  paymentButton.disabled =
-    busy ||
-    !paymentStarted ||
-    paymentPending ||
-    paid;
-
-  updateButtons();
+paymentMessage.textContent=
+amount>0
+?"Your approved document will be securely saved when you select Make Payment. Download remains locked until Customer Care verifies payment."
+:"A quotation is required before payment can be started.";
 }
 
-
-/* ============================================================
-   PAGE RENDERING
-   ============================================================ */
-
-function renderPage(){
-
-  pageViewer.innerHTML = "";
-
-  if(!pages.length){
-
-    pageViewer.innerHTML =
-      '<div class="loading">' +
-      '<div class="spinner"></div>' +
-      '<div>Your service is being carefully prepared.</div>' +
-      '</div>';
-
-    pageIndicator.textContent =
-      "Page 0 of 0";
-
-    updateButtons();
-
-    return;
-  }
-
-  const p =
-    pages[currentPage - 1];
-
-  if(!p){
-
-    pageViewer.innerHTML =
-      '<div class="empty-page">' +
-      'This document page is not available yet.' +
-      '</div>';
-
-    return;
-  }
-
-  const a =
-    document.createElement("article");
-
-  a.className =
-    "document-page";
-
-  const n =
-    document.createElement("div");
-
-  n.className =
-    "page-number-inside";
-
-  n.textContent =
-    "PAGE " + p.page_number;
-
-  const c =
-    document.createElement("div");
-
-  c.className =
-    "page-content";
-
-  c.appendChild(
-    sanitizeHtml(
-      p.content ||
-      "This page is still being prepared."
-    )
-  );
-
-  a.append(n,c);
-
-  pageViewer.appendChild(a);
-
-  pageIndicator.textContent =
-    `Page ${currentPage} of ${totalPages}`;
-
-  if(p.review || p.error){
-
-    pageReview.style.display =
-      "block";
-
-    pageReviewText.textContent =
-      p.error
-        ? "Page information:\n\n" +
-          normText(p.error)
-        : normText(p.review);
-
-  }else{
-
-    pageReview.style.display =
-      "none";
-  }
-
-  updateButtons();
+if(paymentIdentifier){
+paymentId.style.display="block";
+paymentId.textContent="Payment reference: "+paymentIdentifier;
+}else{
+paymentId.style.display="none";
+paymentId.textContent="";
 }
 
-function showPage(n){
+makePaymentButton.style.display="block";
 
-  if(!totalPages)return;
+/*
+ * The old Review-page I HAVE MADE PAYMENT button is not used
+ * to replace the new Payment & Delivery page.
+ */
+paymentButton.style.display="none";
 
-  currentPage =
-    Math.max(
-      1,
-      Math.min(
-        totalPages,
-        Math.floor(Number(n) || 1)
-      )
-    );
+makePaymentButton.textContent=
+paid
+?"✓ PAYMENT VERIFIED"
+:
+paymentStarted
+?"✓ PAYMENT INITIATED"
+:
+"MAKE PAYMENT";
 
-  renderPage();
-
-  documentScroll.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
+if(paid){
+downloadButton.disabled=false;
+downloadButton.classList.add("active");
+downloadButton.textContent="DOWNLOAD DOCUMENT";
+}else{
+downloadButton.disabled=true;
+downloadButton.classList.remove("active");
+downloadButton.textContent="🔒 DOWNLOAD DOCUMENT";
 }
 
-previousButton.onclick =
-  () => showPage(currentPage - 1);
-
-nextButton.onclick =
-  () => showPage(currentPage + 1);
-
-goButton.onclick = () => {
-
-  const n =
-    Number(pageNumberInput.value);
-
-  if(
-    !Number.isInteger(n) ||
-    n < 1 ||
-    n > totalPages
-  ){
-
-    return setMessage(
-      "Enter a page number from 1 to " +
-      totalPages +
-      ".",
-      "error"
-    );
-  }
-
-  setMessage("");
-
-  showPage(n);
-};
-
-pageNumberInput.onkeydown = e => {
-
-  if(e.key === "Enter"){
-
-    e.preventDefault();
-
-    goButton.click();
-  }
-};
-
-
-/* ============================================================
-   APPLY JOB
-   ============================================================ */
+updateButtons();
+}
 
 function applyJob(d){
 
-  currentStatus =
-    clean(d.status);
+currentStatus=clean(d.status);
 
-  reviewFinished =
-    complete(d);
+reviewFinished=complete(d);
 
-  const p =
-    extractPages(d);
+customerId=
+clean(
+d.customer_id||
+d.customerId||
+d.job?.customer_id||
+d.document?.customer_id||
+d.result?.customer_id||
+d.output?.customer_id
+)||
+customerId;
 
-  if(p.length){
+documentFilename=
+clean(
+d.filename||
+d.document_filename||
+d.document?.filename||
+d.result?.filename||
+d.output?.filename
+)||
+documentFilename;
 
-    pages = p;
-    totalPages = p.length;
+const p=extractPages(d);
 
-  }else{
-
-    totalPages =
-      Number(
-        d.total_pages ||
-        d.totalPages
-      ) || 0;
-  }
-
-  ensureDocumentTitle(d);
-
-  customerId =
-    clean(
-      d.customer_id ||
-      d.customerId ||
-      d.job?.customer_id ||
-      d.document?.customer_id ||
-      d.result?.customer_id ||
-      d.output?.customer_id
-    ) ||
-    customerId;
-
-  documentFilename =
-    clean(
-      d.filename ||
-      d.document_filename ||
-      d.document?.filename ||
-      d.result?.filename ||
-      d.output?.filename
-    ) ||
-    documentFilename;
-
-  currentVersion =
-    Number(
-      d.current_version ||
-      d.currentVersion ||
-      d.version ||
-      d.document_version
-    ) || 1;
-
-  versionId =
-    clean(
-      d.version_id ||
-      d.versionId ||
-      d.document_version_id ||
-      d.documentVersionId ||
-      d.document_version ||
-      d.current_version_id ||
-      d.currentVersionId ||
-      d.document?.version_id ||
-      d.result?.version_id ||
-      d.output?.version_id
-    );
-
-  amount =
-    extractAmount(d) ||
-    amount;
-
-  billing =
-    clean(d.billing) ||
-    extractBilling(d) ||
-    billing;
-
-  paid =
-    !!(
-      d.payment_verified ||
-      d.paymentVerified
-    );
-
-  downloadUnlocked =
-    !!(
-      d.download_unlocked ||
-      d.downloadUnlocked ||
-      d.download_activated ||
-      d.downloadActivated
-    );
-
-  paymentPending =
-    !!(
-      d.payment_pending ||
-      d.payment_reported ||
-      d.paymentReported ||
-      d.awaiting_verification ||
-      d.awaitingVerification
-    );
-
-  paymentStarted =
-    !!(
-      d.payment_started ||
-      d.paymentStarted ||
-      paymentPending ||
-      paid ||
-      downloadUnlocked
-    );
-
-  if(totalPages){
-
-    currentPage =
-      Math.max(
-        1,
-        Math.min(
-          currentPage,
-          totalPages
-        )
-      );
-  }
-
-  const pr =
-    d.progress || {};
-
-  const done =
-    Number(pr.completed) || 0;
-
-  const tot =
-    Number(pr.total) ||
-    totalPages ||
-    0;
-
-  let pct =
-    tot
-      ? Math.round(done / tot * 100)
-      : 0;
-
-  if(
-    reviewFinished &&
-    totalPages
-  ){
-    pct = 100;
-  }
-
-  progressBar.style.width =
-    Math.max(
-      0,
-      Math.min(100,pct)
-    ) + "%";
-
-  pageCount.textContent =
-    totalPages +
-    (
-      totalPages === 1
-        ? " PAGE"
-        : " PAGES"
-    );
-
-  if(reviewFinished){
-
-    setStatus("READY");
-
-    progressText.textContent =
-      "Your document is ready to review and download after payment.";
-
-  }else if(
-    state() === "reviewing"
-  ){
-
-    setStatus("REVIEWING");
-
-    progressText.textContent =
-      done +
-      " of " +
-      tot +
-      " pages reviewed.";
-
-  }else if(
-    state() === "correcting"
-  ){
-
-    setStatus("CORRECTING");
-
-    progressText.textContent =
-      "Your correction is being applied.";
-
-  }else if(
-    state() === "review_error" ||
-    state() === "correction_error"
-  ){
-
-    setStatus("ERROR");
-
-    progressText.textContent =
-      "The document review encountered an error.";
-
-  }else{
-
-    setStatus(
-      currentStatus
-        ? currentStatus.toUpperCase()
-        : "PREPARING"
-    );
-  }
-
-  renderPage();
-
-  updatePaymentPanel();
+if(p.length){
+pages=p;
+totalPages=p.length;
+}else{
+totalPages=
+Number(d.total_pages||d.totalPages)||0;
 }
 
+currentVersion=
+Number(
+d.current_version||
+d.currentVersion||
+d.version||
+d.document_version
+)||1;
 
-/* ============================================================
-   PAYMENT STATUS
-   ============================================================ */
+versionId=
+clean(
+d.version_id||
+d.versionId||
+d.document_version_id||
+d.documentVersionId||
+d.document_version||
+d.current_version_id||
+d.currentVersionId||
+d.document?.version_id||
+d.result?.version_id||
+d.output?.version_id
+);
 
-function isProductNotFound(error){
+paid=!!d.paid;
+paymentPending=!!d.payment_pending;
+paymentStarted=
+paymentPending||
+!!d.payment_id;
 
-  const code =
-    clean(
-      error?.code ||
-      error?.message
-    ).toUpperCase();
+amount=extractAmount(d)||amount;
 
-  return (
-    Number(error?.status) === 404 ||
-    code.includes("PRODUCT_NOT_FOUND") ||
-    code.includes("PRODUCT NOT FOUND")
-  );
+billing=
+clean(d.billing)||
+extractBilling(d)||
+billing;
+
+paymentIdentifier=
+clean(d.payment_id)||
+paymentIdentifier;
+
+if(totalPages)
+currentPage=
+Math.max(
+1,
+Math.min(currentPage,totalPages)
+);
+
+const pr=d.progress||{};
+const done=Number(pr.completed)||0;
+const tot=Number(pr.total)||totalPages||0;
+
+let pct=
+tot
+?Math.round(done/tot*100)
+:0;
+
+if(reviewFinished&&totalPages)
+pct=100;
+
+progressBar.style.width=
+Math.max(0,Math.min(100,pct))+"%";
+
+pageCount.textContent=
+totalPages+
+(totalPages===1?" PAGE":" PAGES");
+
+if(reviewFinished){
+setStatus("READY");
+progressText.textContent=
+"Your document is ready to review and download after payment.";
+}
+else if(state()==="reviewing"){
+setStatus("REVIEWING");
+progressText.textContent=
+done+" of "+tot+" pages reviewed.";
+}
+else if(state()==="correcting"){
+setStatus("CORRECTING");
+progressText.textContent=
+"Your correction is being applied.";
+}
+else if(
+state()==="review_error"||
+state()==="correction_error"
+){
+setStatus("ERROR");
+progressText.textContent=
+"The document review encountered an error.";
+}
+else{
+setStatus(
+currentStatus
+?currentStatus.toUpperCase()
+:"PREPARING"
+);
 }
 
+renderPage();
+updatePaymentPanel();
+}
 
 async function loadPaymentState(){
 
-  if(!service || !documentTitle){
-    return null;
-  }
+if(!versionId&&!paymentIdentifier)
+return null;
 
-  try{
+try{
 
-    const d =
-      await paymentGet(
-        "/api/payment/status?service=" +
-        encodeURIComponent(service) +
-        "&title=" +
-        encodeURIComponent(documentTitle)
-      );
+let q=
+paymentIdentifier
+?
+"?payment_id="+encodeURIComponent(paymentIdentifier)
+:
+"?job_id="+encodeURIComponent(jobId)+
+"&version_id="+encodeURIComponent(versionId);
 
-    const p =
-      d.product &&
-      typeof d.product === "object"
-        ? d.product
-        : d;
+const d=
+await fetch(
+PAYMENT_API_BASE+"/api/payment/status"+q,
+{cache:"no-store"}
+).then(async r=>{
 
-    const paymentStatus =
-      clean(
-        d.payment_status ||
-        p.payment_status ||
-        d.status ||
-        p.status
-      ).toLowerCase();
+const x=await r.json().catch(()=>({}));
 
-    amount =
-      Number(
-        d.amount ||
-        p.amount
-      ) ||
-      amount;
+if(!r.ok)
+throw Error(
+x.error_message||
+x.error||
+x.message||
+"Unable to check payment status."
+);
 
-    billing =
-      clean(
-        d.billing ||
-        p.billing
-      ) ||
-      billing;
+return x;
+});
 
-    paid =
-      !!(
-        d.payment_verified ||
-        d.paymentVerified ||
-        p.payment_verified ||
-        p.paymentVerified
-      );
+const p=
+d.payment&&
+typeof d.payment==="object"
+?d.payment
+:{};
 
-    downloadUnlocked =
-      !!(
-        d.download_unlocked ||
-        d.downloadUnlocked ||
-        p.download_unlocked ||
-        p.downloadUnlocked
-      );
+if(d.ok||d.success){
 
-    paymentPending =
-      !paid &&
-      !downloadUnlocked &&
-      (
-        !!(
-          d.payment_reported ||
-          d.paymentReported ||
-          p.payment_reported ||
-          p.paymentReported
-        ) ||
-        [
-          "reported",
-          "payment_reported",
-          "verification_pending",
-          "awaiting_verification",
-          "pending_verification",
-          "pending"
-        ].includes(paymentStatus)
-      );
+paymentIdentifier=
+clean(
+d.payment_id||
+p.payment_id
+)||
+paymentIdentifier;
 
-    paymentStarted =
-      true;
+const status=
+clean(
+d.payment_status||
+d.status||
+p.payment_status
+).toLowerCase();
 
-    updatePaymentPanel();
+paid=!!(
+d.paid||
+d.payment_verified||
+d.download_unlocked||
+p.paid||
+p.payment_verified||
+p.download_unlocked
+);
 
-    return d;
+paymentPending=
+!paid&&
+[
+"pending",
+"reported",
+"payment_reported",
+"verification_pending",
+"awaiting_verification",
+"pending_verification",
+"payment_pending"
+].includes(status);
 
-  }catch(e){
+paymentStarted=
+paymentStarted||
+paymentPending||
+!!paymentIdentifier||
+paid;
 
-    if(isProductNotFound(e)){
+amount=
+Number(d.amount||p.amount)||
+amount;
 
-      paymentStarted = false;
-      paymentPending = false;
-      paid = false;
-      downloadUnlocked = false;
+billing=
+clean(d.billing||p.billing)||
+billing;
 
-      updatePaymentPanel();
+updatePaymentPanel();
 
-      return null;
-    }
-
-    return null;
-  }
+return d;
 }
 
+}catch(e){
 
-/* ============================================================
-   LOAD REVIEW JOB
-   ============================================================ */
+if(paymentStarted||paymentIdentifier){
+
+paymentMessage.className=
+"payment-message payment-waiting";
+
+paymentMessage.textContent=
+"Payment status could not be checked right now. Your payment record has not been removed. Please try again shortly.";
+}
+
+return null;
+}
+
+return null;
+}
 
 async function loadJob(){
+const d=
+await apiGet(
+"/api/review?job_id="+encodeURIComponent(jobId)
+);
 
-  const d =
-    await apiGet(
-      "/api/review?job_id=" +
-      encodeURIComponent(jobId)
-    );
+applyJob(d);
 
-  applyJob(d);
+await loadPaymentState();
 
-  if(documentTitle){
-
-    await loadPaymentState();
-  }
-
-  return d;
+return d;
 }
-
-
-/* ============================================================
-   PAYMENT POLLING
-   ============================================================ */
 
 function startPaymentPolling(){
 
-  if(paymentPollTimer)return;
+if(paymentPollTimer)
+return;
 
-  const poll = async () => {
+const poll=async()=>{
 
-    paymentPollTimer = null;
+paymentPollTimer=null;
 
-    if(
-      !paymentStarted ||
-      downloadUnlocked
-    ){
-      return;
-    }
+if(!paymentStarted||paid)
+return;
 
-    await loadPaymentState();
+const d=await loadPaymentState();
 
-    if(
-      paymentStarted &&
-      !downloadUnlocked
-    ){
+if(!paid)
+paymentPollTimer=setTimeout(poll,2000);
+};
 
-      paymentPollTimer =
-        setTimeout(
-          poll,
-          5000
-        );
-    }
-  };
-
-  paymentPollTimer =
-    setTimeout(
-      poll,
-      5000
-    );
+paymentPollTimer=setTimeout(poll,2000);
 }
-
-
-/* ============================================================
-   REVIEW POLLING
-   ============================================================ */
 
 function startPolling(){
 
-  if(polling)return;
+if(polling)
+return;
 
-  polling = true;
+polling=true;
 
-  const poll = async () => {
+const poll=async()=>{
 
-    try{
+try{
 
-      const d =
-        await loadJob();
+const d=await loadJob();
 
-      if(
-        complete(d) &&
-        extractPages(d).length
-      ){
-
-        polling = false;
-        return;
-      }
-
-      if(
-        [
-          "review_error",
-          "correction_error"
-        ].includes(state())
-      ){
-
-        polling = false;
-        return;
-      }
-
-      pollTimer =
-        setTimeout(
-          poll,
-          1200
-        );
-
-    }catch(e){
-
-      polling = false;
-
-      if(!pages.length){
-
-        setMessage(
-          e.message,
-          "error"
-        );
-      }
-    }
-  };
-
-  poll();
+if(
+complete(d)&&
+extractPages(d).length
+){
+polling=false;
+return;
 }
 
+if(
+["review_error","correction_error"].includes(state())
+){
+polling=false;
+return;
+}
 
-/* ============================================================
-   CORRECTION
-   ============================================================ */
+pollTimer=setTimeout(poll,1200);
 
-correctionButton.onclick =
-  async () => {
+}catch(e){
 
-    const instruction =
-      clean(
-        correctionInput.value
-      );
+polling=false;
 
-    if(!instruction){
-
-      return setMessage(
-        "Please write the correction or change you want.",
-        "error"
-      );
-    }
-
-    try{
-
-      busy = true;
-
-      updateButtons();
-
-      setMessage(
-        "Applying your correction..."
-      );
-
-      await apiPost(
-        "/api/correct",
-        {
-          job_id:jobId,
-          instruction:instruction
-        }
-      );
-
-      correctionInput.value = "";
-
-      paid = false;
-      paymentStarted = false;
-      paymentPending = false;
-      downloadUnlocked = false;
-
-      amount = 0;
-      billing = "";
-
-      if(paymentPollTimer){
-
-        clearTimeout(
-          paymentPollTimer
-        );
-
-        paymentPollTimer = null;
-      }
-
-      currentStatus =
-        "correcting";
-
-      pages = [];
-      totalPages = 0;
-      currentPage = 1;
-
-      renderPage();
-
-      updatePaymentPanel();
-
-      setMessage(
-        "Your correction has started.",
-        "success"
-      );
-
-      startPolling();
-
-    }catch(e){
-
-      setMessage(
-        e.message,
-        "error"
-      );
-
-    }finally{
-
-      busy = false;
-
-      updateButtons();
-    }
-  };
-
-
-/* ============================================================
-   BACK OFFICE
-   ============================================================ */
-
-backOfficeButton.onclick = () => {
-
-  window.location.href =
-    "/payment.html?back_office=1";
+if(!pages.length)
+setMessage(e.message,"error");
+}
 };
 
-
-/* ============================================================
-   OPEN PAYMENT POPUP
-   ============================================================ */
-
-function openPaymentModal(){
-
-  modalAmount.textContent =
-    amount > 0
-      ? "₦" + amount.toLocaleString()
-      : "Quotation required";
-
-  modalStatus.className =
-    "modal-status";
-
-  if(downloadUnlocked){
-
-    modalStatus.className =
-      "modal-status success";
-
-    modalStatus.textContent =
-      "Payment has been verified and your document is unlocked.";
-
-    modalReportButton.disabled = true;
-
-  }else if(paymentPending){
-
-    modalStatus.textContent =
-      "Payment has already been reported. Customer Care is verifying it.";
-
-    modalReportButton.disabled = true;
-
-  }else{
-
-    modalStatus.textContent =
-      "Make your bank transfer using the account details above, then tap I HAVE MADE PAYMENT.";
-
-    modalReportButton.disabled =
-      false;
-  }
-
-  paymentModal.classList.add("show");
+poll();
 }
 
-function closePaymentPopup(){
+correctionButton.onclick=async()=>{
 
-  paymentModal.classList.remove(
-    "show"
-  );
+const instruction=
+clean(correctionInput.value);
+
+if(!instruction)
+return setMessage(
+"Please write the correction or change you want.",
+"error"
+);
+
+try{
+
+busy=true;
+updateButtons();
+
+setMessage("Applying your correction...");
+
+await apiPost(
+"/api/correct",
+{
+job_id:jobId,
+instruction
+}
+);
+
+correctionInput.value="";
+
+paid=false;
+paymentStarted=false;
+paymentPending=false;
+paymentIdentifier="";
+amount=0;
+billing="";
+
+if(paymentPollTimer){
+clearTimeout(paymentPollTimer);
+paymentPollTimer=null;
 }
 
+currentStatus="correcting";
+pages=[];
+totalPages=0;
+currentPage=1;
 
-/* ============================================================
-   CREATE PAYMENT / SAVE EXACT DOCUMENT
-   ============================================================ */
+renderPage();
+updatePaymentPanel();
 
-async function createPayment(){
+setMessage(
+"Your correction has started.",
+"success"
+);
 
-  if(!reviewFinished){
+startPolling();
 
-    throw Error(
-      "Please wait until the complete document review is ready."
-    );
-  }
+}catch(e){
 
-  if(!jobId){
+setMessage(e.message,"error");
 
-    throw Error(
-      "This document job could not be identified."
-    );
-  }
+}finally{
 
-  if(!versionId){
-
-    throw Error(
-      "The current document version could not be identified. Please refresh Review and try again."
-    );
-  }
-
-  if(!documentTitle){
-
-    const recoveredTitle =
-      extractTitleFromPageContent();
-
-    if(recoveredTitle){
-
-      documentTitle =
-        recoveredTitle;
-    }
-  }
-
-  if(!documentTitle){
-
-    throw Error(
-      "The document title could not be identified. Please refresh Review and try again."
-    );
-  }
-
-  if(amount <= 0){
-
-    throw Error(
-      "This service requires a quotation before payment."
-    );
-  }
-
-  if(!pages.length){
-
-    throw Error(
-      "The complete reviewed document is not available yet."
-    );
-  }
-
-  if(paymentStarted){
-
-    const existing =
-      await loadPaymentState();
-
-    if(existing){
-
-      return existing;
-    }
-
-    paymentStarted = false;
-    paymentPending = false;
-    paid = false;
-    downloadUnlocked = false;
-  }
-
-  const payload = {
-
-    customer_name:
-      "",
-
-    customer_id:
-      customerId || undefined,
-
-    service:
-      service || "Business Center Service",
-
-    document_title:
-      documentTitle,
-
-    amount:
-      amount,
-
-    currency:
-      "NGN",
-
-    payment_method:
-      "bank_transfer",
-
-    document_version:
-      versionId,
-
-    pages:
-      pages.map(p => ({
-        page_number:
-          p.page_number,
-
-        position:
-          p.position,
-
-        content:
-          p.content,
-
-        review:
-          p.review,
-
-        status:
-          p.status
-      })),
-
-    document_pages:
-      pages.length,
-
-    document_text:
-      pages
-        .map(p => p.content || "")
-        .join("\n\n"),
-
-    filename:
-      documentFilename ||
-      (
-        documentTitle
-          .replace(/[^\w.-]+/g,"_")
-          .replace(/^_+|_+$/g,"")
-          .slice(0,80) +
-        ".docx"
-      ),
-
-    document_filename:
-      documentFilename ||
-      (
-        documentTitle
-          .replace(/[^\w.-]+/g,"_")
-          .replace(/^_+|_+$/g,"")
-          .slice(0,80) +
-        ".docx"
-      )
-  };
-
-  const d =
-    await paymentPost(
-      "/api/payment/create",
-      payload
-    );
-
-  if(d.document_saved === false){
-
-    throw Error(
-      "The reviewed document could not be securely saved for this payment."
-    );
-  }
-
-  if(
-    d.document_saved !== true &&
-    !(
-      d.product?.document_saved === true ||
-      d.product_ready === true ||
-      d.product?.product_ready === true
-    )
-  ){
-
-    throw Error(
-      "The payment service did not confirm that the exact reviewed document was saved."
-    );
-  }
-
-  paymentStarted = true;
-  paymentPending = false;
-  paid = false;
-  downloadUnlocked = false;
-
-  amount =
-    Number(
-      d.amount ||
-      d.product?.amount
-    ) ||
-    amount;
-
-  billing =
-    clean(
-      d.billing ||
-      d.product?.billing
-    ) ||
-    billing;
-
-  if(
-    d.download_unlocked === true ||
-    d.product?.download_unlocked === true
-  ){
-    downloadUnlocked = true;
-    paid =
-      !!(
-        d.payment_verified ||
-        d.product?.payment_verified
-      );
-  }
-
-  updatePaymentPanel();
-
-  return d;
+busy=false;
+updateButtons();
 }
+};
 
+/*
+ * IMPORTANT:
+ * This keeps the existing document-saving/payment-preparation
+ * operation first.
+ *
+ * Only after the payment API confirms that the exact reviewed
+ * document has been saved and a payment reference exists do we
+ * open the new payment.html page.
+ */
+makePaymentButton.onclick=async()=>{
 
-/* ============================================================
-   MAKE PAYMENT
-   ============================================================ */
+if(!reviewFinished)
+return setMessage(
+"Please wait until the complete document review is ready.",
+"error"
+);
 
-makePaymentButton.onclick =
-  async () => {
+if(!jobId)
+return setMessage(
+"This document job could not be identified.",
+"error"
+);
 
-    if(!reviewFinished){
+if(!versionId)
+return setMessage(
+"The current document version could not be identified. Please refresh Review and try again.",
+"error"
+);
 
-      return setMessage(
-        "Please wait until the complete document review is ready.",
-        "error"
-      );
-    }
+if(amount<=0)
+return setMessage(
+"This service requires a quotation before payment.",
+"error"
+);
 
-    if(!jobId){
+if(paymentStarted&&paymentIdentifier)
+return setMessage(
+"Payment has already been initiated. Continue on the payment page.",
+"success"
+);
 
-      return setMessage(
-        "This document job could not be identified.",
-        "error"
-      );
-    }
+try{
 
-    if(!versionId){
+busy=true;
+updateButtons();
 
-      return setMessage(
-        "The current document version could not be identified. Please refresh Review and try again.",
-        "error"
-      );
-    }
+setMessage(
+"Saving your exact reviewed document and preparing payment...",
+"success"
+);
 
-    if(!documentTitle){
+const payload={
+job_id:jobId,
+customer_id:customerId,
+service:service,
+amount:amount,
+payment_method:"bank_transfer",
+version_id:versionId,
+document_version:versionId,
+document_status:currentStatus,
+review_finished:reviewFinished,
+total_pages:pages.length,
 
-      const recoveredTitle =
-        extractTitleFromPageContent();
+pages:pages.map(p=>({
+page_number:p.page_number,
+position:p.position,
+content:p.content,
+review:p.review,
+status:p.status
+})),
 
-      if(recoveredTitle){
+document_text:
+pages.map(p=>p.content||"").join("\n\n"),
 
-        documentTitle =
-          recoveredTitle;
+filename:
+documentFilename||
+("naija_pocket_"+jobId+".docx")
+};
 
-        updatePaymentPanel();
-      }
-    }
+const d=
+await paymentPost(
+"/api/payment/create",
+payload
+);
 
-    if(!documentTitle){
+if(!d.payment_id)
+throw Error(
+"The payment service did not return a payment ID."
+);
 
-      return setMessage(
-        "The document title could not be identified. Please refresh Review and try again.",
-        "error"
-      );
-    }
+if(d.document_saved!==true)
+throw Error(
+"The reviewed document could not be securely saved for this payment."
+);
 
-    if(amount <= 0){
+paymentIdentifier=
+clean(d.payment_id);
 
-      return setMessage(
-        "This service requires a quotation before payment.",
-        "error"
-      );
-    }
+paymentStarted=true;
+paymentPending=false;
 
-    if(paymentStarted){
+amount=
+Number(d.amount)||
+amount;
 
-      openPaymentModal();
+billing=
+clean(d.billing)||
+billing;
 
-      return;
-    }
+updatePaymentPanel();
 
-    try{
+setMessage(
+"Your reviewed document is securely saved. Opening the payment page...",
+"success"
+);
 
-      busy = true;
+/*
+ * THIS IS THE ONLY NEW CONNECTION:
+ * Review → payment.html
+ *
+ * The saved document/payment reference is passed along.
+ */
+const paymentUrl=
+"payment.html"+
+"?job_id="+encodeURIComponent(jobId)+
+"&version_id="+encodeURIComponent(versionId)+
+"&payment_id="+encodeURIComponent(paymentIdentifier)+
+"&service="+encodeURIComponent(service)+
+"&amount="+encodeURIComponent(amount);
 
-      updateButtons();
+window.location.href=paymentUrl;
 
-      setMessage(
-        "Saving your exact reviewed document and preparing payment...",
-        "success"
-      );
+}catch(e){
 
-      await createPayment();
+setMessage(
+e.message,
+"error"
+);
 
-      setMessage(
-        "Your exact reviewed document is securely saved. Complete your bank transfer using the account details shown.",
-        "success"
-      );
+}finally{
 
-      openPaymentModal();
-
-    }catch(e){
-
-      setMessage(
-        e.message,
-        "error"
-      );
-
-    }finally{
-
-      busy = false;
-
-      updateButtons();
-    }
-  };
-
-
-/* ============================================================
-   REPORT PAYMENT
-   ============================================================ */
-
-async function reportPayment(){
-
-  if(!paymentStarted){
-
-    throw Error(
-      "Payment has not been prepared yet. Tap MAKE PAYMENT first."
-    );
-  }
-
-  if(!service){
-
-    throw Error(
-      "The service could not be identified."
-    );
-  }
-
-  if(!documentTitle){
-
-    throw Error(
-      "The document title could not be identified."
-    );
-  }
-
-  const note =
-    clean(
-      paymentNoteInput.value
-    );
-
-  const body = {
-
-    service:
-      service,
-
-    document_title:
-      documentTitle,
-
-    note:
-      note
-  };
-
-  const d =
-    await paymentPost(
-      "/api/payment/report",
-      body
-    );
-
-  paymentPending = true;
-  paid = false;
-  paymentStarted = true;
-
-  updatePaymentPanel();
-
-  return d;
+busy=false;
+updateButtons();
 }
-
-
-/* ============================================================
-   I HAVE MADE PAYMENT
-   ============================================================ */
-
-async function submitPaymentReport(){
-
-  if(!paymentStarted){
-
-    throw Error(
-      "Tap MAKE PAYMENT first so your exact document can be prepared for payment."
-    );
-  }
-
-  if(downloadUnlocked){
-
-    closePaymentPopup();
-
-    setMessage(
-      "Payment has already been verified and your document is unlocked.",
-      "success"
-    );
-
-    return;
-  }
-
-  if(paymentPending){
-
-    modalStatus.className =
-      "modal-status";
-
-    modalStatus.textContent =
-      "Payment has already been reported. Customer Care is verifying it.";
-
-    return;
-  }
-
-  modalReportButton.disabled = true;
-
-  modalStatus.className =
-    "modal-status";
-
-  modalStatus.textContent =
-    "Reporting your payment...";
-
-  try{
-
-    await reportPayment();
-
-    modalStatus.className =
-      "modal-status success";
-
-    modalStatus.textContent =
-      "Payment reported successfully. Customer Care will verify your payment before download is unlocked.";
-
-    setMessage(
-      "Payment Reported — Awaiting Verification.",
-      "success"
-    );
-
-    updatePaymentPanel();
-
-    startPaymentPolling();
-
-  }catch(e){
-
-    modalStatus.className =
-      "modal-status error";
-
-    modalStatus.textContent =
-      e.message;
-
-    setMessage(
-      e.message,
-      "error"
-    );
-
-  }finally{
-
-    modalReportButton.disabled =
-      false;
-
-    updateButtons();
-
-    if(paymentPending){
-
-      modalReportButton.disabled =
-        true;
-    }
-  }
-}
-
-paymentButton.onclick =
-  () => {
-
-    if(!paymentStarted){
-
-      return setMessage(
-        "Tap MAKE PAYMENT first, then complete your bank transfer.",
-        "error"
-      );
-    }
-
-    openPaymentModal();
-  };
-
-modalReportButton.onclick =
-  submitPaymentReport;
-
-closePaymentModal.onclick =
-  closePaymentPopup;
-
-paymentModal.onclick =
-  e => {
-
-    if(
-      e.target === paymentModal
-    ){
-      closePaymentPopup();
-    }
-  };
-
-
-/* ============================================================
-   DOWNLOAD
-   ============================================================ */
-
-downloadButton.onclick =
-  async () => {
-
-    if(!downloadUnlocked){
-
-      return setMessage(
-        "Download is locked until Customer Care verifies your payment and unlocks the document.",
-        "error"
-      );
-    }
-
-    if(!service){
-
-      return setMessage(
-        "The service could not be identified.",
-        "error"
-      );
-    }
-
-    if(!documentTitle){
-
-      return setMessage(
-        "The document title could not be identified.",
-        "error"
-      );
-    }
-
-    const u =
-      PAYMENT_API_BASE +
-      "/api/download?service=" +
-      encodeURIComponent(service) +
-      "&title=" +
-      encodeURIComponent(documentTitle);
-
-    setMessage(
-      "Preparing your verified document..."
-    );
-
-    try{
-
-      const r =
-        await fetch(
-          u,
-          {
-            method:"GET",
-            cache:"no-store"
-          }
-        );
-
-      if(!r.ok){
-
-        const d =
-          await r.json().catch(
-            () => ({})
-          );
-
-        throw Error(
-          d.error_message ||
-          d.error ||
-          d.message ||
-          (
-            r.status === 403
-              ? "Download remains locked until Customer Care verifies your payment."
-              : "The document could not be downloaded."
-          )
-        );
-      }
-
-      const blob =
-        await r.blob();
-
-      if(!blob.size){
-
-        throw Error(
-          "The saved document is empty."
-        );
-      }
-
-      const url =
-        URL.createObjectURL(blob);
-
-      const a =
-        document.createElement("a");
-
-      a.href = url;
-
-      a.download =
-        documentFilename ||
-        (
-          documentTitle
-            .replace(/[^\w.-]+/g,"_")
-            .replace(/^_+|_+$/g,"")
-            .slice(0,80) +
-          ".docx"
-        );
-
-      a.rel =
-        "noopener";
-
-      document.body.appendChild(a);
-
-      a.click();
-
-      a.remove();
-
-      setTimeout(
-        () => URL.revokeObjectURL(url),
-        5000
-      );
-
-      setMessage(
-        "Your verified document is ready.",
-        "success"
-      );
-
-    }catch(e){
-
-      setMessage(
-        e.message,
-        "error"
-      );
-    }
-  };
-
-
-/* ============================================================
-   START
-   ============================================================ */
+};
+
+/*
+ * Kept intact as a safe fallback for the existing Review state.
+ * The new Payment & Delivery page is now opened by MAKE PAYMENT.
+ */
+paymentButton.onclick=async()=>{
+
+if(!paymentStarted)
+return setMessage(
+"Tap MAKE PAYMENT first, then complete your payment.",
+"error"
+);
+
+if(!paymentPending&&!paid)
+return setMessage(
+"Your payment report is not pending. Please contact Customer Care.",
+"error"
+);
+
+if(paid)
+return setMessage(
+"Payment has already been verified.",
+"success"
+);
+
+paymentMessage.textContent=
+"Payment reported. Customer Care will verify the payment before download is unlocked.";
+
+setMessage(
+"Your payment has been reported. Please wait for Customer Care verification.",
+"success"
+);
+
+updatePaymentPanel();
+
+startPaymentPolling();
+};
+
+downloadButton.onclick=()=>{
+
+if(!paid)
+return setMessage(
+"Download is locked until Customer Care verifies your payment.",
+"error"
+);
+
+if(!versionId)
+return setMessage(
+"The current document version could not be identified.",
+"error"
+);
+
+const q=
+paymentIdentifier
+?
+"?payment_id="+encodeURIComponent(paymentIdentifier)
+:
+"?job_id="+encodeURIComponent(jobId)+
+"&version_id="+encodeURIComponent(versionId);
+
+const u=
+PAYMENT_API_BASE+
+"/api/download"+
+q;
+
+const a=document.createElement("a");
+
+a.href=u;
+a.download="";
+a.rel="noopener";
+
+document.body.appendChild(a);
+a.click();
+a.remove();
+};
 
 async function start(){
 
-  serviceBadge.textContent =
-    service;
+serviceBadge.textContent=service;
 
-  if(!jobId){
+if(!jobId){
 
-    setStatus(
-      "NO DOCUMENT"
-    );
+setStatus("NO DOCUMENT");
 
-    pageViewer.innerHTML =
-      '<div class="empty-page">' +
-      'No document job was supplied.' +
-      '</div>';
+pageViewer.innerHTML=
+'<div class="empty-page">No document job was supplied.</div>';
 
-    setMessage(
-      "This review page needs a document job.",
-      "error"
-    );
+setMessage(
+"This review page needs a document job.",
+"error"
+);
 
-    return;
-  }
+return;
+}
 
-  try{
+try{
 
-    const d =
-      await loadJob();
+const d=await loadJob();
 
-    if(
-      !complete(d) &&
-      ![
-        "review_error",
-        "correction_error"
-      ].includes(state())
-    ){
+if(
+!complete(d)&&
+!["review_error","correction_error"].includes(state())
+){
+startPolling();
+}
 
-      startPolling();
-    }
+if(paymentStarted&&!paid)
+startPaymentPolling();
 
-    if(
-      paymentStarted &&
-      !downloadUnlocked &&
-      !paymentPending
-    ){
+}catch(e){
 
-      startPaymentPolling();
-    }
+setStatus("ERROR");
 
-  }catch(e){
+setMessage(
+e.message,
+"error"
+);
 
-    setStatus(
-      "ERROR"
-    );
-
-    setMessage(
-      e.message,
-      "error"
-    );
-
-    pageViewer.innerHTML =
-      '<div class="empty-page">' +
-      String(e.message)
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;") +
-      '</div>';
-  }
+pageViewer.innerHTML=
+'<div class="empty-page">'+
+String(e.message)
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")+
+'</div>';
+}
 }
 
 start();
-
 </script>
 
 </body>
-</html> 
+</html>
