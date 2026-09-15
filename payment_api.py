@@ -1,4 +1,4 @@
-"""Naija Pocket Business Center - complete payment, saved-document and delivery API."""
+("""Naija Pocket Business Center - complete payment, saved-document and delivery API."""
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Any, Optional
@@ -249,7 +249,7 @@ def back_office_delivery_channels(request: Request, product: dict) -> dict:
     service = clean(product.get("service"))
     title = clean(product.get("document_title"))
     file_url = public_delivery_url(request, service, title)
-    share_text = "Your document is ready.\n\nDownload your document:\n" + file_url
+    share_text = "NAIJA POCKET BUSINESS CENTER\n\nYour document is ready.\n\nDownload your document:\n" + file_url
     return {
         "available": bool(existing_saved_file(product)),
         "document_saved": bool(existing_saved_file(product)),
