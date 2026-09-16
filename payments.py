@@ -1,155 +1,1769 @@
-from database import execute_query, fetch_all, fetch_one
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Naija Pocket Business Center</title>
 
+<style>
+*{
+    box-sizing:border-box;
+}
 
-# ==========================================================
-# CREATE PAYMENT RECORD
-# ==========================================================
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
 
-def create_payment(job_id, amount, payment_method):
-    """
-    Creates a new payment record for a job.
-    """
+body{
+    background:#020202;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+}
 
-    query = """
-    INSERT INTO payments
-    (
-        job_id,
-        amount,
-        payment_method
-    )
-    VALUES (?, ?, ?)
-    """
+/* =========================================================
+   PAGE — DEEP LUXURY ATMOSPHERE
+========================================================= */
 
-    return execute_query(
-        query,
-        (
-            job_id,
-            amount,
-            payment_method
-        )
-    )
+.page{
+    position:relative;
+    width:100%;
+    height:100vh;
+    height:100dvh;
+    padding:max(4px,env(safe-area-inset-top)) 4px max(4px,env(safe-area-inset-bottom)) 4px;
+    display:flex;
+    flex-direction:column;
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(212,175,55,.085),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 8% 45%,
+            rgba(31,164,99,.055),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 92% 75%,
+            rgba(180,130,55,.035),
+            transparent 25%
+        ),
+        linear-gradient(
+            145deg,
+            #010101 0%,
+            #070707 43%,
+            #020202 100%
+        );
+    overflow:hidden;
+}
 
+/* Subtle cinematic light sweep */
 
+.page::before{
+    content:"";
+    position:absolute;
+    inset:-30%;
+    background:
+        radial-gradient(
+            ellipse at 50% 20%,
+            rgba(255,236,170,.025),
+            transparent 25%
+        );
+    pointer-events:none;
+    animation:ambientBreath 8s ease-in-out infinite;
+}
 
-# ==========================================================
-# GET ALL PAYMENTS
-# ==========================================================
+@keyframes ambientBreath{
+    0%,100%{
+        opacity:.55;
+        transform:scale(1);
+    }
+    50%{
+        opacity:1;
+        transform:scale(1.05);
+    }
+}
 
-def get_all_payments():
-    """
-    Returns all payment records.
-    """
+/* =========================================================
+   ELEGANT GOLD PARTICLE / FIREWORK AMBIENCE
+========================================================= */
 
-    query = """
-    SELECT *
-    FROM payments
-    ORDER BY id DESC
-    """
+.welcome-half::marker{
+    display:none;
+}
 
-    return fetch_all(query)
+.welcome-half{
+    position:relative;
+    width:100%;
+    height:50%;
+    flex:0 0 50%;
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+    overflow:hidden;
+    padding:10px 14px 10px;
+    text-align:center;
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(212,175,55,.075),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 18% 70%,
+            rgba(31,164,99,.055),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 82% 25%,
+            rgba(212,175,55,.045),
+            transparent 22%
+        ),
+        radial-gradient(
+            ellipse at 50% 35%,
+            #202020 0%,
+            #0e0e0e 42%,
+            #050505 78%,
+            #000 100%
+        );
+    border:1px solid rgba(212,175,55,.34);
+    border-bottom:2px solid rgba(212,175,55,.82);
+    border-radius:10px;
+    box-shadow:
+        inset 0 0 55px rgba(255,255,255,.025),
+        inset 0 -18px 35px rgba(0,0,0,.28),
+        0 8px 35px rgba(0,0,0,.68);
+}
 
+/* Firework burst 1 */
 
+.welcome-half::before{
+    content:"";
+    position:absolute;
+    top:10%;
+    left:50%;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:#f4d58d;
+    box-shadow:
+        0 -38px 0 -1px rgba(244,213,141,.7),
+        0 38px 0 -1px rgba(244,213,141,.7),
+        -38px 0 0 -1px rgba(244,213,141,.7),
+        38px 0 0 -1px rgba(244,213,141,.7),
+        -27px -27px 0 -1px rgba(244,213,141,.55),
+        27px -27px 0 -1px rgba(244,213,141,.55),
+        -27px 27px 0 -1px rgba(244,213,141,.55),
+        27px 27px 0 -1px rgba(244,213,141,.55),
+        0 -67px 0 -1px rgba(212,175,55,.22),
+        0 67px 0 -1px rgba(212,175,55,.22),
+        -67px 0 0 -1px rgba(212,175,55,.22),
+        67px 0 0 -1px rgba(212,175,55,.22);
+    opacity:.34;
+    filter:blur(.15px);
+    animation:
+        fireworkPulse 5.5s ease-in-out infinite,
+        fireworkRotate 14s linear infinite;
+    pointer-events:none;
+}
 
-# ==========================================================
-# GET PAYMENT BY ID
-# ==========================================================
+/* Inner frame + second atmospheric burst */
 
-def get_payment(payment_id):
-    """
-    Finds a payment using payment ID.
-    """
+.welcome-half::after{
+    content:"";
+    position:absolute;
+    inset:7px;
+    border:1px solid rgba(212,175,55,.20);
+    border-radius:7px;
+    box-shadow:
+        inset 0 0 28px rgba(212,175,55,.018);
+    pointer-events:none;
+}
 
-    query = """
-    SELECT *
-    FROM payments
-    WHERE id = ?
-    """
+@keyframes fireworkPulse{
+    0%,100%{
+        opacity:.18;
+        transform:scale(.82);
+    }
+    35%{
+        opacity:.5;
+        transform:scale(1.06);
+    }
+    55%{
+        opacity:.28;
+        transform:scale(.92);
+    }
+}
 
-    return fetch_one(
-        query,
-        (payment_id,)
-    )
+@keyframes fireworkRotate{
+    from{
+        rotate:0deg;
+    }
+    to{
+        rotate:360deg;
+    }
+}
 
+/* =========================================================
+   CUSTOMER CARE — LUXURY EDGE CONTROL
+========================================================= */
 
+.customer-care{
+    position:absolute;
+    top:2px;
+    right:8px;
+    z-index:30;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+}
 
-# ==========================================================
-# GET PAYMENTS FOR A JOB
-# ==========================================================
+.customer-care-button{
+    appearance:none;
+    position:relative;
+    min-width:145px;
+    padding:7px 13px 8px;
+    border:1px solid rgba(212,175,55,.58);
+    border-top:0;
+    border-radius:0 0 5px 5px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(212,175,55,.12),
+            rgba(9,9,9,.97) 48%,
+            rgba(0,0,0,.99)
+        );
+    color:#f1d77b;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(8px,1.8vw,11px);
+    font-weight:700;
+    letter-spacing:clamp(1px,.3vw,2.2px);
+    line-height:1;
+    text-transform:uppercase;
+    text-align:center;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(255,255,255,.055);
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
 
-def get_job_payments(job_id):
-    """
-    Returns all payments connected to a specific job.
-    """
+.customer-care-button::before{
+    content:"";
+    display:block;
+    width:34px;
+    height:1px;
+    margin:0 auto 5px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #f1d77b 50%,
+            transparent
+        );
+}
 
-    query = """
-    SELECT *
-    FROM payments
-    WHERE job_id = ?
-    ORDER BY id DESC
-    """
+.customer-care-button::after{
+    content:"";
+    position:absolute;
+    left:20%;
+    right:20%;
+    bottom:3px;
+    height:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(31,164,99,.8),
+            transparent
+        );
+}
 
-    return fetch_all(
-        query,
-        (job_id,)
-    )
+.customer-care-button:hover,
+.customer-care-button:focus-visible{
+    color:#fff;
+    border-color:rgba(212,175,55,.88);
+    background:
+        linear-gradient(
+            180deg,
+            rgba(212,175,55,.18),
+            rgba(10,10,10,.98) 48%,
+            rgba(0,0,0,.99)
+        );
+    box-shadow:
+        0 6px 22px rgba(0,0,0,.65),
+        0 0 18px rgba(212,175,55,.09),
+        inset 0 1px 0 rgba(255,255,255,.07);
+    outline:none;
+}
 
+.customer-care-button:active{
+    transform:translateY(1px);
+}
 
+.customer-care-panel{
+    display:none;
+    width:196px;
+    margin-top:7px;
+    padding:8px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(21,21,21,.995),
+            rgba(2,2,2,.995)
+        );
+    border:1px solid rgba(212,175,55,.44);
+    border-radius:5px;
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.82),
+        0 0 20px rgba(212,175,55,.04),
+        inset 0 1px 0 rgba(255,255,255,.04);
+}
 
-# ==========================================================
-# UPDATE PAYMENT STATUS
-# ==========================================================
+.customer-care-panel.open{
+    display:block;
+}
 
-def update_payment_status(payment_id, status):
-    """
-    Updates payment status.
+.customer-care-heading{
+    padding:3px 4px 7px;
+    color:#f7f2e5;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.7px;
+    line-height:1.2;
+    text-align:center;
+    text-transform:uppercase;
+    border-bottom:1px solid rgba(212,175,55,.23);
+}
 
-    Examples:
-    pending
-    paid
-    cancelled
-    """
+.customer-care-link{
+    display:block;
+    margin-top:6px;
+    padding:8px 6px;
+    color:#d4af37;
+    text-decoration:none;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.9px;
+    line-height:1.1;
+    text-align:center;
+    text-transform:uppercase;
+    border:1px solid rgba(255,255,255,.065);
+    border-radius:3px;
+    background:rgba(255,255,255,.018);
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease;
+}
 
-    query = """
-    UPDATE payments
-    SET payment_status = ?
-    WHERE id = ?
-    """
+.customer-care-link:first-of-type{
+    color:#39B87F;
+}
 
-    return execute_query(
-        query,
-        (
-            status,
-            payment_id
-        )
-    )
+.customer-care-link:hover,
+.customer-care-link:focus-visible{
+    color:#fff;
+    background:rgba(212,175,55,.07);
+    border-color:rgba(212,175,55,.38);
+    outline:none;
+}
 
+.customer-care-number{
+    display:block;
+    margin-top:5px;
+    color:rgba(255,255,255,.55);
+    font-size:8px;
+    font-weight:400;
+    letter-spacing:1px;
+    line-height:1;
+    text-align:center;
+}
 
+/* =========================================================
+   WELCOME CONTENT
+========================================================= */
 
-# ==========================================================
-# DELETE PAYMENT
-# ==========================================================
+.welcome-content{
+    position:relative;
+    z-index:2;
+    width:100%;
+    height:100%;
+    max-width:1200px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-evenly;
+    overflow:hidden;
+    padding:4px 0;
+}
 
-def delete_payment(payment_id):
-    """
-    Removes a payment record.
-    """
+/* =========================================================
+   BRAND
+========================================================= */
 
-    query = """
-    DELETE FROM payments
-    WHERE id = ?
-    """
+.brand-kicker{
+    margin:0;
+    color:#d4af37;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(9px,2vw,14px);
+    font-weight:400;
+    letter-spacing:clamp(3px,1vw,7px);
+    text-transform:uppercase;
+    opacity:.9;
+}
 
-    return execute_query(
-        query,
-        (payment_id,)
-    )
+.brand-name{
+    position:relative;
+    width:100%;
+    margin:8px 0 0;
+    color:#fff;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(28px,8vw,65px);
+    font-weight:700;
+    line-height:1.08;
+    letter-spacing:clamp(1px,.5vw,4px);
+    text-transform:uppercase;
+    text-shadow:
+        0 2px 25px rgba(0,0,0,.8),
+        0 0 35px rgba(255,255,255,.025);
+    flex:0 0 auto;
+}
 
+/* Fine metallic highlight */
 
+.brand-name::after{
+    content:"";
+    position:absolute;
+    left:20%;
+    right:20%;
+    bottom:-5px;
+    height:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(212,175,55,.18),
+            rgba(255,244,214,.42),
+            rgba(212,175,55,.18),
+            transparent
+        );
+}
 
-# ==========================================================
-# TEST FILE
-# ==========================================================
+/* =========================================================
+   BRAND COLOURS
+========================================================= */
 
-if __name__ == "__main__":
+.brand-name .green{
+    color:#39B87F;
+    text-shadow:
+        0 0 18px rgba(57,184,127,.13),
+        0 2px 25px rgba(0,0,0,.8);
+}
 
-    print("Payments module is working correctly.")
+.brand-name .gold{
+    color:#E8C96A;
+    text-shadow:
+        0 0 18px rgba(232,201,106,.15),
+        0 2px 25px rgba(0,0,0,.8);
+}
+
+.brand-kicker{
+    color:#C2A6E8;
+}
+
+.value:first-of-type{
+    color:#F4D58D;
+}
+
+.value:nth-of-type(2){
+    color:#70D1C1;
+}
+
+.value.luxury-value .luxury-main{
+    color:#FFF4D6;
+}
+
+.value.luxury-value .luxury-sub{
+    color:#8FB8E8;
+}
+
+.services-title{
+    color:#E8B4A8;
+}
+
+/* =========================================================
+   GOLD ORNAMENT
+========================================================= */
+
+.gold-divider{
+    width:clamp(76px,22vw,151px);
+    height:1px;
+    margin:0;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #D4AF37 25%,
+            #F4D878 50%,
+            #D4AF37 75%,
+            transparent
+        );
+    position:relative;
+    flex:0 0 auto;
+    box-shadow:0 0 8px rgba(212,175,55,.13);
+}
+
+.gold-divider::before,
+.gold-divider::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:6px;
+    height:6px;
+    border:1px solid #d4af37;
+    transform:translateY(-50%) rotate(45deg);
+    box-shadow:0 0 7px rgba(212,175,55,.16);
+}
+
+.gold-divider::before{
+    left:8%;
+}
+
+.gold-divider::after{
+    right:8%;
+}
+
+/* =========================================================
+   BRAND PROMISE
+========================================================= */
+
+.value{
+    width:100%;
+    margin:0;
+    color:#f4f1e8;
+    font-size:clamp(12px,3vw,22px);
+    font-weight:600;
+    line-height:1.15;
+    letter-spacing:clamp(.2px,.15vw,1px);
+    flex:0 0 auto;
+}
+
+.value.luxury-value{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    padding:2px 8px;
+    color:#f5f1e6;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(11px,3vw,22px);
+    font-weight:400;
+    line-height:1.08;
+    letter-spacing:clamp(.8px,.25vw,2.5px);
+    text-transform:uppercase;
+    text-shadow:0 2px 12px rgba(212,175,55,.12);
+}
+
+.value.luxury-value::before{
+    content:"";
+    width:clamp(31px,9vw,71px);
+    height:1px;
+    margin-bottom:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
+        );
+}
+
+.value.luxury-value .luxury-main{
+    display:block;
+    font-weight:600;
+    letter-spacing:clamp(.7px,.22vw,2px);
+}
+
+.value.luxury-value .luxury-sub{
+    display:block;
+    font-size:1em;
+    font-weight:400;
+    letter-spacing:clamp(1px,.3vw,3px);
+    text-transform:uppercase;
+}
+
+.value.luxury-value::after{
+    content:"";
+    width:clamp(46px,13vw,96px);
+    height:1px;
+    margin-top:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
+        );
+    opacity:.55;
+}
+
+/* =========================================================
+   DOCUMENT HUB TITLE
+========================================================= */
+
+.services-title{
+    width:100%;
+    margin:0;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(12px,3vw,23px);
+    font-weight:700;
+    line-height:1.1;
+    letter-spacing:clamp(.8px,.25vw,2px);
+    text-transform:uppercase;
+    text-shadow:0 2px 12px rgba(212,175,55,.07);
+}
+
+/* =========================================================
+   MOVING BRAND LINE
+========================================================= */
+
+.document-people-window{
+    width:100%;
+    overflow:hidden;
+    margin:0;
+    padding:2px 0;
+    flex:0 0 auto;
+    border-top:1px solid rgba(212,175,55,.045);
+    border-bottom:1px solid rgba(212,175,55,.045);
+}
+
+.document-people-track{
+    display:inline-flex;
+    align-items:center;
+    flex-wrap:nowrap;
+    width:max-content;
+    white-space:nowrap;
+    color:#E8C96A;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(12px,3vw,23px);
+    font-weight:700;
+    letter-spacing:clamp(1px,.35vw,3px);
+    animation:documentPeopleMove 22s linear infinite;
+    will-change:transform;
+    text-shadow:0 0 12px rgba(212,175,55,.08);
+}
+
+.document-people-track .tagline-text{
+    display:inline-block;
+    flex:0 0 auto;
+    white-space:nowrap;
+}
+
+.document-people-track .wide-gap{
+    display:inline-block;
+    width:360px;
+    min-width:360px;
+    height:1px;
+    flex:0 0 360px;
+}
+
+@keyframes documentPeopleMove{
+    0%{
+        transform:translateX(100vw);
+    }
+
+    100%{
+        transform:translateX(calc(-100% - 100vw));
+    }
+}
+
+/* =========================================================
+   SERVICES SECTION
+========================================================= */
+
+.services-half{
+    position:relative;
+    width:100%;
+    height:50%;
+    flex:0 0 50%;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    padding-top:5px;
+}
+
+/* =========================================================
+   IMPORTANT SERVICE INSTRUCTION
+========================================================= */
+
+.service-instruction{
+    position:relative;
+    width:100%;
+    flex:0 0 auto;
+    margin:0 0 5px;
+    padding:5px 8px 7px;
+    color:#FFFDF5;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(12px,3vw,20px);
+    font-weight:700;
+    line-height:1.15;
+    text-align:center;
+    letter-spacing:clamp(.4px,.16vw,1.2px);
+    text-transform:uppercase;
+    text-shadow:0 1px 8px rgba(212,175,106,.30);
+    border-top:1px solid rgba(212,175,106,.70);
+    border-bottom:1px solid rgba(212,175,106,.45);
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(212,175,55,.025),
+            transparent
+        );
+}
+
+/* =========================================================
+   SERVICE GRID
+========================================================= */
+
+.services{
+    width:100%;
+    flex:1 1 auto;
+    min-height:0;
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-template-rows:repeat(10,minmax(0,1fr));
+    gap:4px;
+    overflow:hidden;
+    padding:1px 1px 0;
+}
+
+/* =========================================================
+   SERVICE BUTTON
+========================================================= */
+
+.service-button{
+    position:relative;
+    width:100%;
+    min-width:0;
+    min-height:0;
+    padding:3px 5px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.040),
+            rgba(255,255,255,.008)
+        );
+    color:#f4f2eb;
+    border:1px solid rgba(255,255,255,.065);
+    border-radius:5px;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:clamp(10px,2.5vw,17px);
+    font-weight:700;
+    line-height:1.02;
+    letter-spacing:clamp(.05px,.08vw,.5px);
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    white-space:normal;
+    overflow:hidden;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.025),
+        inset 0 -1px 0 rgba(0,0,0,.4);
+    transition:
+        color .18s ease,
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease;
+}
+
+.service-button::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(255,255,255,.025),
+            transparent 50%
+        );
+    pointer-events:none;
+}
+
+.service-button::after{
+    content:"";
+    position:absolute;
+    left:25%;
+    right:25%;
+    bottom:1px;
+    height:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37,
+            transparent
+        );
+    opacity:.65;
+    pointer-events:none;
+    transition:
+        left .18s ease,
+        right .18s ease,
+        opacity .18s ease;
+}
+
+/* =========================================================
+   LUXURY SERVICE COLOUR PALETTE
+========================================================= */
+
+.service-button:nth-child(1){color:#F4D58D;}
+.service-button:nth-child(2){color:#FFF4D6;}
+.service-button:nth-child(3){color:#E8B4A8;}
+.service-button:nth-child(4){color:#39B87F;}
+.service-button:nth-child(5){color:#D9E0E5;}
+.service-button:nth-child(6){color:#D99A62;}
+.service-button:nth-child(7){color:#8FB8E8;}
+.service-button:nth-child(8){color:#E8C96A;}
+.service-button:nth-child(9){color:#B99BE8;}
+.service-button:nth-child(10){color:#70D1C1;}
+.service-button:nth-child(11){color:#F4D58D;}
+.service-button:nth-child(12){color:#D9E0E5;}
+.service-button:nth-child(13){color:#E8B4A8;}
+.service-button:nth-child(14){color:#39B87F;}
+.service-button:nth-child(15){color:#FFF4D6;}
+.service-button:nth-child(16){color:#D99A62;}
+.service-button:nth-child(17){color:#8FB8E8;}
+.service-button:nth-child(18){color:#E8C96A;}
+.service-button:nth-child(19){color:#B99BE8;}
+.service-button:nth-child(20){color:#70D1C1;}
+.service-button:nth-child(21){color:#F4D58D;}
+.service-button:nth-child(22){color:#39B87F;}
+.service-button:nth-child(23){color:#D9E0E5;}
+.service-button:nth-child(24){color:#D99A62;}
+.service-button:nth-child(25){color:#8FB8E8;}
+.service-button:nth-child(26){color:#E8C96A;}
+.service-button:nth-child(27){color:#E8B4A8;}
+.service-button:nth-child(28){color:#FFF4D6;}
+
+.service-button:hover,
+.service-button:focus-visible{
+    color:#d4af37;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(212,175,55,.105),
+            rgba(31,164,99,.045)
+        );
+    border-color:rgba(212,175,55,.34);
+    box-shadow:
+        0 0 15px rgba(212,175,55,.065),
+        inset 0 1px 0 rgba(255,255,255,.045);
+    transform:translateY(-1px);
+    outline:none;
+}
+
+.service-button:hover::after,
+.service-button:focus-visible::after{
+    left:12%;
+    right:12%;
+    opacity:1;
+}
+
+.service-button:active{
+    color:#d4af37;
+    transform:scale(.96);
+}
+
+.service-button.working{
+    color:#d4af37;
+    border-color:rgba(212,175,55,.55);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(212,175,55,.10),
+            rgba(212,175,55,.025)
+        );
+    box-shadow:
+        0 0 17px rgba(212,175,55,.075),
+        inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.service-button:disabled{
+    cursor:wait;
+    opacity:.42;
+}
+
+/* =========================================================
+   FINAL BRAND SIGNATURE
+========================================================= */
+
+.luxury-tagline{
+    grid-column:1 / -1;
+    grid-row:10;
+    position:relative;
+    width:100%;
+    min-width:0;
+    padding:2px 6px;
+    color:#d4af37;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(8px,2.1vw,17px);
+    font-weight:700;
+    line-height:1.05;
+    letter-spacing:clamp(.3px,.15vw,1.4px);
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-transform:uppercase;
+}
+
+.luxury-tagline::before,
+.luxury-tagline::after{
+    content:"";
+    height:1px;
+    flex:1 1 auto;
+    min-width:8px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d4af37
+        );
+    opacity:.65;
+}
+
+.luxury-tagline::after{
+    background:
+        linear-gradient(
+            90deg,
+            #d4af37,
+            transparent
+        );
+}
+
+.luxury-tagline .brand-signature{
+    flex:0 1 auto;
+    min-width:0;
+    padding:0 8px;
+}
+
+.luxury-tagline .brand-main{
+    font-weight:800;
+    letter-spacing:clamp(.4px,.18vw,1.8px);
+}
+
+.luxury-tagline .brand-sub{
+    display:block;
+    margin-top:1px;
+    font-weight:400;
+    letter-spacing:clamp(.3px,.15vw,1.3px);
+    color:#e7d6a4;
+}
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media(max-width:430px){
+
+    .page{
+        padding-left:3px;
+        padding-right:3px;
+    }
+
+    .welcome-half{
+        padding:6px 8px 7px;
+        border-radius:8px;
+    }
+
+    .welcome-half::after{
+        inset:5px;
+    }
+
+    .customer-care{
+        top:1px;
+        right:7px;
+    }
+
+    .customer-care-button{
+        min-width:124px;
+        padding:6px 8px 7px;
+        font-size:8px;
+        letter-spacing:1.2px;
+    }
+
+    .customer-care-button::before{
+        width:28px;
+        margin-bottom:4px;
+    }
+
+    .customer-care-panel{
+        width:176px;
+    }
+
+    .brand-kicker{
+        font-size:8px;
+        letter-spacing:3px;
+    }
+
+    .brand-name{
+        font-size:28px;
+        letter-spacing:1px;
+        line-height:1.08;
+        margin-top:8px;
+    }
+
+    .gold-divider{
+        width:83px;
+    }
+
+    .value{
+        font-size:12px;
+        line-height:1.12;
+    }
+
+    .value.luxury-value{
+        font-size:11.5px;
+        gap:2px;
+        padding:1px 5px;
+    }
+
+    .value.luxury-value .luxury-sub{
+        letter-spacing:1px;
+    }
+
+    .services-title{
+        font-size:12px;
+    }
+
+    .document-people-track{
+        font-size:12px;
+        letter-spacing:1.4px;
+    }
+
+    .document-people-track .wide-gap{
+        width:270px;
+        min-width:270px;
+        flex-basis:270px;
+    }
+
+    .service-instruction{
+        font-size:11.5px;
+        font-weight:700;
+        line-height:1.15;
+        letter-spacing:.45px;
+        padding:4px 4px 5px;
+        margin-bottom:3px;
+    }
+
+    .services{
+        gap:3px;
+    }
+
+    .service-button{
+        padding:2px 3px;
+        font-size:11px;
+    }
+
+    .luxury-tagline{
+        font-size:8.5px;
+        padding:2px 2px;
+    }
+
+    .luxury-tagline .brand-signature{
+        padding:0 4px;
+    }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media(max-width:360px){
+
+    .welcome-half{
+        padding:5px 6px 6px;
+    }
+
+    .customer-care{
+        top:0;
+        right:5px;
+    }
+
+    .customer-care-button{
+        min-width:108px;
+        padding:5px 6px 6px;
+        font-size:7px;
+        letter-spacing:1px;
+    }
+
+    .customer-care-button::before{
+        width:24px;
+        margin-bottom:3px;
+    }
+
+    .customer-care-panel{
+        width:160px;
+    }
+
+    .brand-kicker{
+        font-size:7px;
+        letter-spacing:2.5px;
+    }
+
+    .brand-name{
+        font-size:24px;
+        letter-spacing:.8px;
+        line-height:1.08;
+        margin-top:8px;
+    }
+
+    .gold-divider{
+        width:69px;
+    }
+
+    .value{
+        font-size:10px;
+    }
+
+    .value.luxury-value{
+        font-size:9.8px;
+    }
+
+    .services-title{
+        font-size:10.5px;
+    }
+
+    .document-people-track{
+        font-size:10.5px;
+    }
+
+    .document-people-track .wide-gap{
+        width:230px;
+        min-width:230px;
+        flex-basis:230px;
+    }
+
+    .service-instruction{
+        font-size:10px;
+    }
+
+    .services{
+        gap:2px;
+    }
+
+    .service-button{
+        padding:1px 2px;
+        font-size:10px;
+    }
+
+    .luxury-tagline{
+        font-size:7.5px;
+    }
+
+    .luxury-tagline .brand-signature{
+        padding:0 2px;
+    }
+}
+
+/* =========================================================
+   TABLET / DESKTOP
+========================================================= */
+
+@media(min-width:700px){
+
+    .brand-name{
+        font-size:clamp(43px,6vw,67px);
+        margin-top:12px;
+    }
+
+    .value{
+        font-size:clamp(18px,2.5vw,24px);
+    }
+
+    .value.luxury-value{
+        font-size:clamp(18px,2.35vw,23px);
+    }
+
+    .services-title{
+        font-size:clamp(19px,2.6vw,25px);
+    }
+
+    .document-people-track{
+        font-size:clamp(20px,3vw,27px);
+    }
+
+    .document-people-track .wide-gap{
+        width:620px;
+        min-width:620px;
+        flex-basis:620px;
+    }
+
+    .service-button{
+        font-size:16px;
+    }
+
+    .services{
+        gap:5px;
+    }
+
+    .luxury-tagline{
+        font-size:clamp(13px,1.8vw,17px);
+    }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+    .page::before,
+    .welcome-half::before,
+    .document-people-track{
+        animation:none;
+    }
+
+    .service-button,
+    .customer-care-button{
+        transition:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+<section class="welcome-half">
+
+    <!-- =====================================================
+         CUSTOMER CARE
+    ====================================================== -->
+
+    <div class="customer-care">
+
+        <button
+            type="button"
+            class="customer-care-button"
+            id="customerCareButton"
+            aria-expanded="false"
+            aria-controls="customerCarePanel"
+        >
+            CUSTOMER CARE
+        </button>
+
+        <div
+            class="customer-care-panel"
+            id="customerCarePanel"
+        >
+
+            <div class="customer-care-heading">
+                CONTACT CUSTOMER CARE
+            </div>
+
+            <a
+                class="customer-care-link"
+                href="https://wa.me/2348057073891"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                WHATSAPP CARE CHAT
+            </a>
+
+            <a
+                class="customer-care-link"
+                href="tel:+2348057073891"
+            >
+                CALL CUSTOMER CARE
+            </a>
+
+            <span class="customer-care-number">
+                +234 805 707 3891
+            </span>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         WELCOME CONTENT
+    ====================================================== -->
+
+    <div class="welcome-content">
+
+        <h1 class="brand-name">
+
+            <span class="green">
+                NAIJA POCKET
+            </span>
+
+            <br>
+
+            BUSINESS
+
+            <span class="gold">
+                CENTER
+            </span>
+
+        </h1>
+
+        <div class="gold-divider"></div>
+
+        <div class="value">
+            FAST • CONVENIENT • OPEN 24/7
+        </div>
+
+        <div class="value">
+            PREPARE YOUR DOCUMENTS IN MINUTES
+        </div>
+
+        <div class="value luxury-value">
+
+            <span class="luxury-main">
+                DO EVERYTHING CONCERNING YOUR DOCUMENTS
+            </span>
+
+            <span class="luxury-sub">
+                FROM YOUR PHONE, WHEREVER YOU ARE
+            </span>
+
+        </div>
+
+        <div class="services-title">
+            ENJOY THE BEST IN DOCUMENT PROCESSING
+        </div>
+
+        <div class="document-people-window">
+
+            <div class="document-people-track">
+
+                <span class="tagline-text">
+                    THE DOCUMENT PEOPLE
+                </span>
+
+                <span class="wide-gap"></span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="services-half">
+
+    <div class="service-instruction">
+        TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
+    </div>
+
+    <div class="services">
+
+        <button type="button" class="service-button" data-service="Document Typing">
+            Document Typing
+        </button>
+
+        <button type="button" class="service-button" data-service="Document Formatting">
+            Document Formatting
+        </button>
+
+        <button type="button" class="service-button" data-service="Document Editing">
+            Document Editing
+        </button>
+
+        <button type="button" class="service-button" data-service="Grammar Correction">
+            Grammar Correction
+        </button>
+
+        <button type="button" class="service-button" data-service="Assignments">
+            Assignments
+        </button>
+
+        <button type="button" class="service-button" data-service="Projects">
+            Projects
+        </button>
+
+        <button type="button" class="service-button" data-service="Research Assistance">
+            Research Assistance
+        </button>
+
+        <button type="button" class="service-button" data-service="Seminar Papers">
+            Seminar Papers
+        </button>
+
+        <button type="button" class="service-button" data-service="CVs & Résumés">
+            CVs & Résumés
+        </button>
+
+        <button type="button" class="service-button" data-service="Cover Letters">
+            Cover Letters
+        </button>
+
+        <button type="button" class="service-button" data-service="Business Proposals">
+            Business Proposals
+        </button>
+
+        <button type="button" class="service-button" data-service="Company Profiles">
+            Company Profiles
+        </button>
+
+        <button type="button" class="service-button" data-service="Invoices">
+            Invoices
+        </button>
+
+        <button type="button" class="service-button" data-service="Quotations">
+            Quotations
+        </button>
+
+        <button type="button" class="service-button" data-service="Meeting Minutes">
+            Meeting Minutes
+        </button>
+
+        <button type="button" class="service-button" data-service="AI Writing Assistance">
+            AI Writing Assistance
+        </button>
+
+        <button type="button" class="service-button" data-service="Document Rewriting">
+            Document Rewriting
+        </button>
+
+        <button type="button" class="service-button" data-service="Translation">
+            Translation
+        </button>
+
+        <button type="button" class="service-button" data-service="PDF Conversion">
+            PDF Conversion
+        </button>
+
+        <button type="button" class="service-button" data-service="Topic Explanations">
+            Topic Explanations
+        </button>
+
+        <button type="button" class="service-button" data-service="Printing Preparation">
+            Printing Preparation
+        </button>
+
+        <button type="button" class="service-button" data-service="Excel Spreadsheets">
+            Excel Spreadsheets
+        </button>
+
+        <button type="button" class="service-button" data-service="Data Entry">
+            Data Entry
+        </button>
+
+        <button type="button" class="service-button" data-service="Data Analysis">
+            Data Analysis
+        </button>
+
+        <button type="button" class="service-button" data-service="Presentations">
+            Presentations
+        </button>
+
+        <button type="button" class="service-button" data-service="Document Summarization">
+            Document Summarization
+        </button>
+
+        <button type="button" class="service-button" data-service="Business Letters & Letterhead">
+            Business Letters & Letterhead
+        </button>
+
+        <div class="luxury-tagline">
+
+            <span class="brand-signature">
+
+                <span class="brand-main">
+                    NAIJA POCKET BUSINESS CENTER
+                </span>
+
+                <span class="brand-sub">
+                    YOUR BUSINESS CENTER IN YOUR POCKET
+                </span>
+
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+</div>
+
+<script>
+"use strict";
+
+const serviceButtons =
+    document.querySelectorAll(".service-button");
+
+let requestInProgress = false;
+
+function releaseServiceButtons(){
+
+    requestInProgress = false;
+
+    serviceButtons.forEach(function(button){
+
+        button.disabled = false;
+
+        button.classList.remove("working");
+
+    });
+}
+
+function cryptoRandomId(){
+
+    if(
+        window.crypto &&
+        window.crypto.randomUUID
+    ){
+
+        return window.crypto.randomUUID();
+
+    }
+
+    return(
+        Date.now().toString(36) +
+        Math.random()
+            .toString(36)
+            .substring(2)
+    );
+}
+
+function openWorkspace(service,button){
+
+    if(
+        requestInProgress ||
+        !service
+    ){
+
+        return;
+
+    }
+
+    requestInProgress = true;
+
+    button.classList.add("working");
+
+    serviceButtons.forEach(function(otherButton){
+
+        if(otherButton !== button){
+
+            otherButton.disabled = true;
+
+        }
+
+    });
+
+    let customerId =
+        localStorage.getItem(
+            "npbc_customer_id"
+        );
+
+    if(!customerId){
+
+        customerId =
+            "customer_" +
+            cryptoRandomId();
+
+        localStorage.setItem(
+            "npbc_customer_id",
+            customerId
+        );
+
+    }
+
+    localStorage.setItem(
+        "selectedService",
+        service
+    );
+
+    const workspaceUrl =
+        "workspace.html?service=" +
+        encodeURIComponent(service) +
+        "&customer_id=" +
+        encodeURIComponent(customerId);
+
+    window.location.assign(
+        workspaceUrl
+    );
+}
+
+serviceButtons.forEach(function(button){
+
+    button.addEventListener(
+        "click",
+        function(){
+
+            const service =
+                button.getAttribute(
+                    "data-service"
+                );
+
+            openWorkspace(
+                service,
+                button
+            );
+
+        }
+    );
+
+});
+
+releaseServiceButtons();
+
+window.addEventListener(
+    "pageshow",
+    function(){
+
+        releaseServiceButtons();
+
+    }
+);
+
+document.addEventListener(
+    "visibilitychange",
+    function(){
+
+        if(
+            document.visibilityState ===
+            "visible"
+        ){
+
+            releaseServiceButtons();
+
+        }
+
+    }
+);
+
+/* =========================================================
+   CUSTOMER CARE
+========================================================= */
+
+const customerCareButton =
+    document.getElementById(
+        "customerCareButton"
+    );
+
+const customerCarePanel =
+    document.getElementById(
+        "customerCarePanel"
+    );
+
+function closeCustomerCare(){
+
+    if(!customerCarePanel){
+
+        return;
+
+    }
+
+    customerCarePanel.classList.remove(
+        "open"
+    );
+
+    if(customerCareButton){
+
+        customerCareButton.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+    }
+}
+
+if(
+    customerCareButton &&
+    customerCarePanel
+){
+
+    customerCareButton.addEventListener(
+        "click",
+        function(event){
+
+            event.stopPropagation();
+
+            const isOpen =
+                customerCarePanel.classList.contains(
+                    "open"
+                );
+
+            if(isOpen){
+
+                closeCustomerCare();
+
+            }else{
+
+                customerCarePanel.classList.add(
+                    "open"
+                );
+
+                customerCareButton.setAttribute(
+                    "aria-expanded",
+                    "true"
+                );
+
+            }
+
+        }
+    );
+
+    customerCarePanel.addEventListener(
+        "click",
+        function(event){
+
+            event.stopPropagation();
+
+        }
+    );
+
+    document.addEventListener(
+        "click",
+        function(){
+
+            closeCustomerCare();
+
+        }
+    );
+
+    document.addEventListener(
+        "keydown",
+        function(event){
+
+            if(event.key === "Escape"){
+
+                closeCustomerCare();
+
+            }
+
+        }
+    );
+}
+</script>
+
+</body>
+</html> 
