@@ -46,8 +46,6 @@ button{cursor:pointer}
   letter-spacing:.06em
 }
 
-.topbar-office:active{background:#242424}
-
 .brand{font-weight:800;font-size:20px}
 .subbrand{font-size:13px;color:#aaa;margin-top:4px}
 
@@ -191,7 +189,6 @@ button{cursor:pointer}
 .error{color:#ff8c8c}
 .success{color:#8ff0b4}
 
-/* Saved-document attachment */
 .document-attachment{
   display:flex;
   align-items:center;
@@ -249,7 +246,6 @@ button{cursor:pointer}
   color:#aaa
 }
 
-/* Back Office */
 #backOfficeView{
   background:#070707;
   min-height:100vh
@@ -375,7 +371,6 @@ button{cursor:pointer}
 .record-actions button.green{background:#0b7a3b}
 
 .bo-document{
-  white-space:normal;
   background:#0c0c0c;
   border:1px solid #292929;
   border-radius:14px;
@@ -396,23 +391,12 @@ button{cursor:pointer}
 
 .doc-page:last-child{margin-bottom:0}
 
-.doc-page h1,
-.doc-page h2,
-.doc-page h3,
-.doc-page h4,
-.doc-page h5,
-.doc-page h6{
-  margin:0 0 12px;
-  line-height:1.25
-}
-
 .doc-page p{
   margin:0 0 10px;
   white-space:pre-wrap
 }
 
 .doc-page p:last-child{margin-bottom:0}
-.doc-page strong{font-weight:800}
 
 .bo-delivery{
   display:grid;
@@ -485,31 +469,10 @@ button{cursor:pointer}
   color:#111;
   border-radius:4px;
   padding:22px 20px;
-  margin-bottom:0;
   line-height:1.55;
-  box-shadow:0 4px 18px rgba(0,0,0,.22);
   height:260px;
   overflow:hidden
 }
-
-.customer-document-page:last-child{margin-bottom:0}
-
-.customer-document-page h1,
-.customer-document-page h2,
-.customer-document-page h3,
-.customer-document-page h4,
-.customer-document-page h5,
-.customer-document-page h6{
-  margin:0 0 12px;
-  line-height:1.25
-}
-
-.customer-document-page p{
-  margin:0 0 10px;
-  white-space:pre-wrap
-}
-
-.customer-document-page strong{font-weight:800}
 
 .preview-page-label{
   font-size:10px;
@@ -524,9 +487,6 @@ button{cursor:pointer}
   padding:20px;
   text-align:center
 }
-
-.backoffice-entry{margin-top:10px}
-.hidden-file{display:none}
 
 @media(max-width:650px){
   .actions,
@@ -554,9 +514,6 @@ button{cursor:pointer}
 
 <body>
 
-<!-- =========================
-     CUSTOMER VIEW
-========================= -->
 <div id="customerPaymentView" class="page">
 
   <div class="topbar">
@@ -564,6 +521,7 @@ button{cursor:pointer}
       <div class="brand">Naija Pocket Business Center</div>
       <div class="subbrand">Payment & Delivery</div>
     </div>
+
     <button id="openBackOfficeButton" class="topbar-office" type="button">
       BACK OFFICE
     </button>
@@ -579,33 +537,39 @@ button{cursor:pointer}
     <section id="paymentExperience">
 
       <section class="card">
+
         <div class="label">Service</div>
         <div id="serviceValue" class="value">Loading...</div>
 
         <div style="height:12px"></div>
 
-        <div class="label">Document</div>
+        <div class="label">Document Title</div>
         <div id="titleValue" class="value">Loading...</div>
 
         <div id="paymentStatus" class="status">
           Loading payment status...
         </div>
+
       </section>
 
       <section class="card saved-preview-card">
 
         <div class="preview-head">
+
           <div>
             <div class="label">Saved Document</div>
-            <h2 id="savedPreviewTitle">Your reviewed document</h2>
+
+            <h2 id="savedPreviewTitle">
+              Loading document title...
+            </h2>
           </div>
 
           <div class="saved-badge">SAVED</div>
+
         </div>
 
         <div class="preview-note">
-          This is the saved document prepared for your payment.
-          Review the evidence below before you continue.
+          This is the exact saved document prepared for your payment.
         </div>
 
         <div id="customerDocumentPreview" class="customer-document-preview">
@@ -614,7 +578,6 @@ button{cursor:pointer}
           </div>
         </div>
 
-        <!-- CUSTOMER DOCUMENT ATTACHMENT -->
         <a
           id="customerDocumentAttachment"
           class="document-attachment locked"
@@ -624,6 +587,7 @@ button{cursor:pointer}
           <div class="attachment-icon">📎</div>
 
           <div class="attachment-main">
+
             <div id="customerAttachmentName" class="attachment-name">
               Saved document
             </div>
@@ -631,9 +595,11 @@ button{cursor:pointer}
             <div id="customerAttachmentNote" class="attachment-note">
               Download will be available after Customer Care activates it.
             </div>
+
           </div>
 
           <div class="attachment-arrow">›</div>
+
         </a>
 
       </section>
@@ -644,29 +610,17 @@ button{cursor:pointer}
 
         <div id="amountValue" class="amount">₦0</div>
 
-        <div
-          id="billingValue"
-          class="muted"
-          style="margin-top:6px"
-        >
+        <div id="billingValue" class="muted" style="margin-top:6px">
           Payment amount will appear here.
         </div>
 
         <div class="actions">
 
-          <button
-            id="makePaymentButton"
-            class="btn"
-            type="button"
-          >
+          <button id="makePaymentButton" class="btn" type="button">
             MAKE PAYMENT
           </button>
 
-          <button
-            id="reportPaymentButton"
-            class="btn secondary"
-            type="button"
-          >
+          <button id="reportPaymentButton" class="btn secondary" type="button">
             I HAVE MADE PAYMENT
           </button>
 
@@ -684,15 +638,10 @@ button{cursor:pointer}
 
         <div class="notice">
           Use the official bank details provided by Naija Pocket Business Center
-          for your transfer. This page does not invent or change the business
-          bank details.
+          for your transfer.
         </div>
 
-        <div
-          id="bankDetails"
-          class="status"
-          style="margin-top:10px"
-        >
+        <div id="bankDetails" class="status" style="margin-top:10px">
           Bank details will be shown here when supplied by the payment service.
         </div>
 
@@ -728,10 +677,7 @@ button{cursor:pointer}
 
         <div id="customerDelivery" class="delivery-grid"></div>
 
-        <div
-          id="customerDeliveryNote"
-          class="status"
-        >
+        <div id="customerDeliveryNote" class="status">
           Download remains locked until Customer Care verifies the payment.
         </div>
 
@@ -742,9 +688,6 @@ button{cursor:pointer}
 </div>
 
 
-<!-- =========================
-     BACK OFFICE VIEW
-========================= -->
 <div id="backOfficeView" class="hidden">
 
   <div class="bo-header">
@@ -753,6 +696,7 @@ button{cursor:pointer}
 
       <div>
         <div class="bo-title">Back Office</div>
+
         <div class="subbrand">
           Saved documents, payment status & delivery
         </div>
@@ -804,22 +748,14 @@ button{cursor:pointer}
 
     <section id="boRecords"></section>
 
-    <section
-      id="boDocumentPanel"
-      class="card hidden"
-    >
+    <section id="boDocumentPanel" class="card hidden">
 
       <h2 id="boDocumentTitle">
         Saved Document
       </h2>
 
-      <div
-        id="boDocumentMeta"
-        class="muted"
-        style="margin-bottom:12px"
-      ></div>
+      <div id="boDocumentMeta" class="muted" style="margin-bottom:12px"></div>
 
-      <!-- BACK OFFICE DOCUMENT ATTACHMENT -->
       <a
         id="boDocumentAttachment"
         class="document-attachment"
@@ -829,23 +765,18 @@ button{cursor:pointer}
 
         <div class="attachment-main">
 
-          <div
-            id="boAttachmentName"
-            class="attachment-name"
-          >
+          <div id="boAttachmentName" class="attachment-name">
             Saved document
           </div>
 
-          <div
-            id="boAttachmentNote"
-            class="attachment-note"
-          >
+          <div id="boAttachmentNote" class="attachment-note">
             Tap to download the exact saved document.
           </div>
 
         </div>
 
         <div class="attachment-arrow">›</div>
+
       </a>
 
       <div
@@ -856,26 +787,16 @@ button{cursor:pointer}
 
     </section>
 
-    <section
-      id="boDeliveryPanel"
-      class="card hidden"
-    >
+    <section id="boDeliveryPanel" class="card hidden">
 
       <h2>Back Office Delivery Channels</h2>
 
-      <div
-        class="notice"
-        style="margin-bottom:12px"
-      >
-        Back Office can retrieve and send the exact saved document even when
-        customer download is still locked. Payment verification is a customer
-        download gate, not a Back Office retrieval gate.
+      <div class="notice" style="margin-bottom:12px">
+        Back Office can read and download the exact saved document.
+        Customer download activation is only the customer-side gate.
       </div>
 
-      <div
-        id="boDeliveryGrid"
-        class="bo-delivery"
-      ></div>
+      <div id="boDeliveryGrid" class="bo-delivery"></div>
 
     </section>
 
@@ -891,29 +812,36 @@ button{cursor:pointer}
 <script>
 "use strict";
 
-const PAYMENT_API_BASE="https://naija-pocket-payment-api.onrender.com";
-const LOCAL_BACK_OFFICE_KEY="NPBC-2026";
-const CUSTOMER_CARE_PHONE="+234 805 707 3891";
+const PAYMENT_API_BASE=
+  "https://naija-pocket-payment-api.onrender.com";
 
-const params=new URLSearchParams(location.search);
-const mode=(params.get("mode")||"").trim().toLowerCase();
+const params=
+  new URLSearchParams(location.search);
 
-const serviceParam=(params.get("service")||"").trim();
+const mode=
+  (params.get("mode")||"").trim().toLowerCase();
 
-const titleParam=(
-  params.get("title")||
-  params.get("document_title")||
-  ""
-).trim();
+let service=
+  (
+    params.get("service")||
+    params.get("service_name")||
+    ""
+  ).trim();
 
-let service=serviceParam;
-let documentTitle=titleParam;
+let documentTitle=
+  (
+    params.get("title")||
+    params.get("document_title")||
+    params.get("documentTitle")||
+    params.get("name")||
+    ""
+  ).trim();
+
 let amount=0;
-let paymentPrepared=false;
+let paymentStatusData=null;
 let paymentReported=false;
 let paymentVerified=false;
 let downloadUnlocked=false;
-let paymentStatusData=null;
 
 const $=id=>document.getElementById(id);
 
@@ -926,74 +854,178 @@ function esc(v){
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
-    .replace(/\"/g,"&quot;")
+    .replace(/"/g,"&quot;")
 }
 
 function money(v){
   const n=Number(v)||0;
-  return n>0?"₦"+n.toLocaleString():"₦0"
+  return n>0
+    ?"₦"+n.toLocaleString()
+    :"₦0"
 }
 
 function boKey(){
   return clean($("backOfficeKey").value)
 }
 
-function clearBackOfficeKey(){
-  $("backOfficeKey").value=""
-}
-
 async function api(path,options={}){
-  const r=await fetch(
-    PAYMENT_API_BASE+path,
-    {
-      cache:"no-store",
-      ...options
-    }
-  );
+  const r=
+    await fetch(
+      PAYMENT_API_BASE+path,
+      {
+        cache:"no-store",
+        ...options
+      }
+    );
 
-  const d=await r.json().catch(()=>({}));
+  const d=
+    await r.json().catch(()=>({}));
 
   if(!r.ok){
+
     throw new Error(
       d.detail||
       d.message||
       d.error||
       "The payment service could not complete this request."
-    );
+    )
   }
 
   return d
 }
 
+
+/* =========================
+   IDENTITY RECOVERY
+========================= */
+
+function recoverPaymentIdentity(){
+
+  if(service&&documentTitle)
+    return true;
+
+  const serviceKeys=[
+    "NPBC_PAYMENT_SERVICE",
+    "NPBC_SERVICE",
+    "service"
+  ];
+
+  const titleKeys=[
+    "NPBC_PAYMENT_DOCUMENT_TITLE",
+    "NPBC_DOCUMENT_TITLE",
+    "NPBC_TITLE",
+    "document_title",
+    "documentTitle",
+    "title"
+  ];
+
+  try{
+
+    if(!service){
+
+      for(const key of serviceKeys){
+
+        const v=
+          clean(
+            sessionStorage.getItem(key)||
+            localStorage.getItem(key)
+          );
+
+        if(v){
+          service=v;
+          break
+        }
+      }
+    }
+
+    if(!documentTitle){
+
+      for(const key of titleKeys){
+
+        const v=
+          clean(
+            sessionStorage.getItem(key)||
+            localStorage.getItem(key)
+          );
+
+        if(v){
+          documentTitle=v;
+          break
+        }
+      }
+    }
+
+  }catch(e){}
+
+  if(!service||!documentTitle){
+
+    try{
+
+      const ref=
+        clean(document.referrer);
+
+      if(ref){
+
+        const refUrl=
+          new URL(ref,location.href);
+
+        if(!service){
+
+          service=
+            clean(
+              refUrl.searchParams.get("service")||
+              refUrl.searchParams.get("service_name")||
+              ""
+            );
+        }
+
+        if(!documentTitle){
+
+          documentTitle=
+            clean(
+              refUrl.searchParams.get("title")||
+              refUrl.searchParams.get("document_title")||
+              refUrl.searchParams.get("documentTitle")||
+              refUrl.searchParams.get("name")||
+              ""
+            );
+        }
+      }
+
+    }catch(e){}
+  }
+
+  try{
+
+    if(service)
+      sessionStorage.setItem(
+        "NPBC_PAYMENT_SERVICE",
+        service
+      );
+
+    if(documentTitle)
+      sessionStorage.setItem(
+        "NPBC_PAYMENT_DOCUMENT_TITLE",
+        documentTitle
+      );
+
+  }catch(e){}
+
+  return !!service&&!!documentTitle
+}
+
 function customerIdentity(){
-  if(!service||!documentTitle)return false;
-  return true
+  return recoverPaymentIdentity()
 }
 
 function setCustomerMessage(text,type=""){
-  $("paymentMessage").textContent=text||"";
-  $("paymentMessage").className="status"+(type?" "+type:"")
-}
 
-function renderBankDetails(data){
+  $("paymentMessage").textContent=
+    text||"";
 
-  const c=
-    data&&data.payment_channels
-      ?data.payment_channels.channels
-      :[];
-
-  const bank=c.find(
-    x=>String(x.id).toLowerCase().includes("bank")
-  );
-
-  if(bank&&bank.details){
-    $("bankDetails").textContent=bank.details
-  }else if(bank&&bank.note){
-    $("bankDetails").textContent=bank.note
-  }else{
-    $("bankDetails").textContent=
-      "Bank details will be shown here when supplied by the payment service."
-  }
+  $("paymentMessage").className=
+    "status"+
+    (type?" "+type:"")
 }
 
 
@@ -1003,16 +1035,22 @@ function renderBankDetails(data){
 
 function renderCustomerAttachment(){
 
-  const link=$("customerDocumentAttachment");
-  const name=$("customerAttachmentName");
-  const note=$("customerAttachmentNote");
+  const link=
+    $("customerDocumentAttachment");
+
+  const name=
+    $("customerAttachmentName");
+
+  const note=
+    $("customerAttachmentNote");
 
   const filename=
     documentTitle
       ?documentTitle+".docx"
       :"Saved document.docx";
 
-  name.textContent=filename;
+  name.textContent=
+    filename;
 
   if(downloadUnlocked){
 
@@ -1024,7 +1062,10 @@ function renderCustomerAttachment(){
       encodeURIComponent(documentTitle);
 
     link.classList.remove("locked");
-    link.removeAttribute("aria-disabled");
+
+    link.removeAttribute(
+      "aria-disabled"
+    );
 
     note.textContent=
       "Tap the attachment to download the exact saved document.";
@@ -1034,10 +1075,180 @@ function renderCustomerAttachment(){
     link.href="#";
 
     link.classList.add("locked");
-    link.setAttribute("aria-disabled","true");
+
+    link.setAttribute(
+      "aria-disabled",
+      "true"
+    );
 
     note.textContent=
       "Download will be available after Customer Care activates it.";
+  }
+}
+
+
+/* =========================
+   DOCUMENT DISPLAY
+   NO MARKDOWN
+   NO ASTERISKS
+========================= */
+
+function cleanDocumentText(text){
+
+  let value=
+    String(text||"")
+      .replace(/\r/g,"");
+
+  value=
+    value.replace(
+      /\*\*/g,
+      ""
+    );
+
+  value=
+    value.replace(
+      /^#{1,6}\s*/gm,
+      ""
+    );
+
+  value=
+    value.replace(
+      /^\s*[-*+]\s+/gm,
+      ""
+    );
+
+  return value
+}
+
+function renderPlainDocument(text){
+
+  const value=
+    cleanDocumentText(text);
+
+  const lines=
+    value.split("\n");
+
+  let html="";
+  let paragraph=[];
+
+  function flush(){
+
+    if(!paragraph.length)
+      return;
+
+    html+=
+      "<p>"+
+      paragraph
+        .map(x=>esc(x))
+        .join("<br>")+
+      "</p>";
+
+    paragraph=[]
+  }
+
+  for(const line of lines){
+
+    if(!line.trim()){
+
+      flush();
+
+      continue
+    }
+
+    paragraph.push(line)
+  }
+
+  flush();
+
+  return html||
+    "<p>No saved document content.</p>"
+}
+
+function renderCustomerDocument(p){
+
+  const box=
+    $("customerDocumentPreview");
+
+  const title=
+    p.document_title||
+    documentTitle||
+    "Saved Document";
+
+  $("savedPreviewTitle").textContent=
+    title;
+
+  let pages=
+    Array.isArray(p.document_preview_pages)
+      ?p.document_preview_pages
+      :[];
+
+  if(!pages.length&&p.document_preview_text)
+    pages=[
+      p.document_preview_text
+    ];
+
+  if(!pages.length){
+
+    box.innerHTML=
+      '<div class="preview-empty">'+
+      'Your saved document content is not available yet.'+
+      '</div>';
+
+    return
+  }
+
+  const firstPage=
+    typeof pages[0]==="object"
+      ?(
+        pages[0].content||
+        pages[0].text||
+        ""
+      )
+      :pages[0];
+
+  box.innerHTML=
+    '<div class="customer-document-page">'+
+      '<div class="preview-page-label">'+
+        'Saved document'+
+      '</div>'+
+      renderPlainDocument(firstPage)+
+    '</div>'
+}
+
+
+/* =========================
+   BANK DETAILS
+========================= */
+
+function renderBankDetails(data){
+
+  const c=
+    data&&data.payment_channels
+      ?data.payment_channels.channels
+      :[];
+
+  const bank=
+    c.find(
+      x=>
+        String(x.id)
+          .toLowerCase()
+          .includes("bank")
+    );
+
+  if(bank&&bank.details){
+
+    $("bankDetails").textContent=
+      bank.details;
+
+  }else if(bank&&bank.note){
+
+    $("bankDetails").textContent=
+      bank.note;
+
+  }else{
+
+    $("bankDetails").textContent=
+      "Bank details will be shown here when supplied by the payment service.";
   }
 }
 
@@ -1048,25 +1259,33 @@ function renderCustomerAttachment(){
 
 function renderCustomerDelivery(data){
 
-  const box=$("customerDelivery");
+  const box=
+    $("customerDelivery");
 
   box.innerHTML="";
 
-  const channels=(data&&data.channels)||[];
+  const channels=
+    (data&&data.channels)||[];
 
   if(!channels.length){
+
     box.innerHTML=
-      '<div class="notice">No delivery option is available yet.</div>';
+      '<div class="notice">'+
+      'No delivery option is available yet.'+
+      '</div>';
+
     return
   }
 
   channels.forEach(ch=>{
 
-    const d=document.createElement("div");
+    const d=
+      document.createElement("div");
 
     d.className="channel";
 
-    const available=!!ch.available;
+    const available=
+      !!ch.available;
 
     d.innerHTML=
       '<strong>'+
@@ -1101,53 +1320,6 @@ function renderCustomerDelivery(data){
 
 
 /* =========================
-   CUSTOMER DOCUMENT PREVIEW
-========================= */
-
-function renderCustomerDocument(p){
-
-  const box=$("customerDocumentPreview");
-
-  const title=
-    p.document_title||
-    documentTitle||
-    "Your reviewed document";
-
-  $("savedPreviewTitle").textContent=title;
-
-  let pages=
-    Array.isArray(p.document_preview_pages)
-      ?p.document_preview_pages
-      :[];
-
-  if(!pages.length&&p.document_preview_text){
-    pages=[p.document_preview_text]
-  }
-
-  if(!pages.length){
-
-    box.innerHTML=
-      '<div class="preview-empty">'+
-      'Your saved document evidence is not available yet.'+
-      '</div>';
-
-    return
-  }
-
-  const firstPage=
-    typeof pages[0]==="object"
-      ?(pages[0].content||pages[0].text||"")
-      :pages[0];
-
-  box.innerHTML=
-    '<div class="customer-document-page">'+
-    '<div class="preview-page-label">Saved document evidence</div>'+
-    renderDocMarkup(firstPage)+
-    '</div>';
-}
-
-
-/* =========================
    CUSTOMER LOAD
 ========================= */
 
@@ -1155,8 +1327,11 @@ async function loadCustomer(){
 
   if(!customerIdentity()){
 
-    $("serviceValue").textContent="Document not specified";
-    $("titleValue").textContent="Return to Review";
+    $("serviceValue").textContent=
+      "Document not specified";
+
+    $("titleValue").textContent=
+      "Return to Review";
 
     setCustomerMessage(
       "This payment page needs the service and document title.",
@@ -1168,22 +1343,32 @@ async function loadCustomer(){
     return
   }
 
-  $("serviceValue").textContent=service;
-  $("titleValue").textContent=documentTitle;
+  $("serviceValue").textContent=
+    service;
+
+  $("titleValue").textContent=
+    documentTitle;
+
+  $("savedPreviewTitle").textContent=
+    documentTitle;
 
   try{
 
-    const d=await api(
-      "/api/payment/status?service="+
-      encodeURIComponent(service)+
-      "&title="+
-      encodeURIComponent(documentTitle)
-    );
+    const d=
+      await api(
+        "/api/payment/status?service="+
+        encodeURIComponent(service)+
+        "&title="+
+        encodeURIComponent(documentTitle)
+      );
 
     paymentStatusData=d;
 
-    const p=d.product||{};
-    const pay=d.payment||{};
+    const p=
+      d.product||{};
+
+    const pay=
+      d.payment||{};
 
     amount=
       Number(
@@ -1192,15 +1377,14 @@ async function loadCustomer(){
         0
       );
 
-    paymentPrepared=
-      !!pay||
-      !!p.saved_document;
-
     paymentReported=
       !!(
         p.payment_reported||
         pay.reported_at||
-        String(pay.payment_status||"").toLowerCase()==="payment_reported"
+        String(
+          pay.payment_status||
+          ""
+        ).toLowerCase()==="payment_reported"
       );
 
     paymentVerified=
@@ -1215,14 +1399,18 @@ async function loadCustomer(){
           "completed",
           "complete"
         ].includes(
-          String(pay.payment_status||"").toLowerCase()
+          String(
+            pay.payment_status||
+            ""
+          ).toLowerCase()
         )
       );
 
     downloadUnlocked=
       !!p.download_unlocked;
 
-    $("amountValue").textContent=money(amount);
+    $("amountValue").textContent=
+      money(amount);
 
     $("billingValue").textContent=
       amount>0
@@ -1234,9 +1422,7 @@ async function loadCustomer(){
         ?"Payment verified by Customer Care. Download is available."
         :paymentReported
           ?"Payment reported. Customer Care will verify it before download is unlocked."
-          :paymentPrepared
-            ?"Payment is prepared. Complete the transfer, then tap I HAVE MADE PAYMENT."
-            :"Payment has not been started.";
+          :"Payment has not been reported yet.";
 
     setCustomerMessage(
       paymentVerified
@@ -1244,10 +1430,14 @@ async function loadCustomer(){
         :paymentReported
           ?"Your payment has been reported. Please wait for Customer Care verification."
           :"Payment has not been reported yet.",
-      paymentVerified?"success":""
+      paymentVerified
+        ?"success"
+        :""
     );
 
-    renderCustomerDelivery(d.delivery||{});
+    renderCustomerDelivery(
+      d.delivery||{}
+    );
 
     renderBankDetails(d);
 
@@ -1264,7 +1454,7 @@ async function loadCustomer(){
 
     $("customerDocumentPreview").innerHTML=
       '<div class="preview-empty">'+
-      'Unable to load the saved document evidence.'+
+      'Unable to load the saved document.'+
       '</div>';
 
     renderCustomerAttachment()
@@ -1274,10 +1464,7 @@ async function loadCustomer(){
 
 /* =========================
    MAKE PAYMENT
-   PRESERVED
 ========================= */
-
-/* MAKE PAYMENT — preserved as the payment creation operation. */
 
 async function createPayment(){
 
@@ -1295,7 +1482,8 @@ async function createPayment(){
 
   try{
 
-    $("makePaymentButton").disabled=true;
+    $("makePaymentButton").disabled=
+      true;
 
     const status=
       paymentStatusData||
@@ -1306,8 +1494,8 @@ async function createPayment(){
         encodeURIComponent(documentTitle)
       );
 
-    const p=status.product||{};
-    const pay=status.payment||{};
+    const p=
+      status.product||{};
 
     const pages=
       p.document_preview_pages||
@@ -1340,14 +1528,15 @@ async function createPayment(){
         {
           method:"POST",
           headers:{
-            "Content-Type":"application/json"
+            "Content-Type":
+              "application/json"
           },
-          body:JSON.stringify(payload)
+          body:
+            JSON.stringify(payload)
         }
       );
 
     paymentStatusData=d;
-    paymentPrepared=true;
 
     amount=
       Number(
@@ -1356,7 +1545,8 @@ async function createPayment(){
       )||
       amount;
 
-    $("amountValue").textContent=money(amount);
+    $("amountValue").textContent=
+      money(amount);
 
     $("paymentStatus").textContent=
       "Payment prepared. Complete your payment, then tap I HAVE MADE PAYMENT.";
@@ -1366,7 +1556,9 @@ async function createPayment(){
       "success"
     );
 
-    renderCustomerDelivery(d.delivery||{});
+    renderCustomerDelivery(
+      d.delivery||{}
+    );
 
     renderBankDetails(d);
 
@@ -1377,21 +1569,19 @@ async function createPayment(){
     setCustomerMessage(
       e.message,
       "error"
-    )
+    );
 
   }finally{
 
-    $("makePaymentButton").disabled=false
+    $("makePaymentButton").disabled=
+      false
   }
 }
 
 
 /* =========================
    I HAVE MADE PAYMENT
-   PRESERVED
 ========================= */
-
-/* I HAVE MADE PAYMENT — preserved as the payment-report operation only. */
 
 async function reportPayment(){
 
@@ -1403,7 +1593,8 @@ async function reportPayment(){
 
   try{
 
-    $("reportPaymentButton").disabled=true;
+    $("reportPaymentButton").disabled=
+      true;
 
     const d=
       await api(
@@ -1411,21 +1602,28 @@ async function reportPayment(){
         {
           method:"POST",
           headers:{
-            "Content-Type":"application/json"
+            "Content-Type":
+              "application/json"
           },
-          body:JSON.stringify({
-            service:service,
-            document_title:documentTitle,
-            note:
-              "Customer reported payment from Payment & Delivery page."
-          })
+          body:
+            JSON.stringify({
+              service:service,
+              document_title:documentTitle,
+              note:
+                "Customer reported payment from Payment & Delivery page."
+            })
         }
       );
 
     paymentStatusData=d;
+
     paymentReported=true;
-    paymentVerified=!!d.payment_verified;
-    downloadUnlocked=!!d.download_unlocked;
+
+    paymentVerified=
+      !!d.payment_verified;
+
+    downloadUnlocked=
+      !!d.download_unlocked;
 
     $("paymentStatus").textContent=
       paymentVerified
@@ -1446,17 +1644,18 @@ async function reportPayment(){
     setCustomerMessage(
       e.message,
       "error"
-    )
+    );
 
   }finally{
 
-    $("reportPaymentButton").disabled=false
+    $("reportPaymentButton").disabled=
+      false
   }
 }
 
 
 /* =========================
-   CUSTOMER DELIVERY
+   CUSTOMER DOWNLOAD
 ========================= */
 
 async function customerDelivery(ch){
@@ -1488,11 +1687,14 @@ async function customerDelivery(ch){
           "Download remains locked until Customer Care verifies the payment."
         );
 
-      const blob=await r.blob();
+      const blob=
+        await r.blob();
 
-      const a=document.createElement("a");
+      const a=
+        document.createElement("a");
 
-      a.href=URL.createObjectURL(blob);
+      a.href=
+        URL.createObjectURL(blob);
 
       a.download=
         (documentTitle||"document")+
@@ -1529,23 +1731,24 @@ async function customerDelivery(ch){
 
 
 /* =========================
-   CUSTOMER ATTACHMENT CLICK
+   CUSTOMER ATTACHMENT LOCK
 ========================= */
 
-$("customerDocumentAttachment").onclick=function(e){
+$("customerDocumentAttachment").onclick=
+  function(e){
 
-  if(!downloadUnlocked){
+    if(!downloadUnlocked){
 
-    e.preventDefault();
+      e.preventDefault();
 
-    setCustomerMessage(
-      "Download remains locked until Customer Care verifies the payment.",
-      "error"
-    );
+      setCustomerMessage(
+        "Download remains locked until Customer Care verifies the payment.",
+        "error"
+      );
 
-    return
-  }
-};
+      return
+    }
+  };
 
 
 /* =========================
@@ -1554,9 +1757,13 @@ $("customerDocumentAttachment").onclick=function(e){
 
 function showBackOffice(){
 
-  $("customerPaymentView").classList.add("hidden");
+  $("customerPaymentView")
+    .classList
+    .add("hidden");
 
-  $("backOfficeView").classList.remove("hidden");
+  $("backOfficeView")
+    .classList
+    .remove("hidden");
 
   $("backOfficeKey").value="";
 
@@ -1567,18 +1774,24 @@ function showBackOffice(){
 
 function showCustomer(){
 
-  $("backOfficeView").classList.add("hidden");
+  $("backOfficeView")
+    .classList
+    .add("hidden");
 
-  $("customerPaymentView").classList.remove("hidden");
+  $("customerPaymentView")
+    .classList
+    .remove("hidden");
 
   loadCustomer()
 }
 
 function setBoMessage(text,type=""){
 
-  const e=$("boMessage");
+  const e=
+    $("boMessage");
 
-  e.textContent=text;
+  e.textContent=
+    text;
 
   e.className=
     "status"+
@@ -1589,13 +1802,20 @@ function setBoMessage(text,type=""){
 function boHeaders(){
 
   return {
-    "X-Back-Office-Key":boKey()
+    "X-Back-Office-Key":
+      boKey()
   }
 }
 
+
+/* =========================
+   BACK OFFICE SUMMARY
+========================= */
+
 function renderSummary(summary){
 
-  const s=summary||{};
+  const s=
+    summary||{};
 
   $("boSummary").innerHTML=
     '<div class="box">'+
@@ -1622,90 +1842,9 @@ function renderSummary(summary){
 
 
 /* =========================
-   DOCUMENT MARKUP
+   BACK OFFICE DOCUMENT TEXT
+   PLAIN TEXT ONLY
 ========================= */
-
-function renderDocMarkup(text){
-
-  const lines=
-    String(text||"")
-      .replace(/\r/g,"")
-      .split("\n");
-
-  let html="";
-  let para=[];
-
-  function flush(){
-
-    if(!para.length)return;
-
-    html+=
-      "<p>"+
-      para.join("<br>")+
-      "</p>";
-
-    para=[]
-  }
-
-  for(const line0 of lines){
-
-    const line=line0.trim();
-
-    if(!line){
-
-      flush();
-
-      continue
-    }
-
-    const h=
-      line.match(/^#{1,6}\s+(.+)$/);
-
-    if(h){
-
-      flush();
-
-      const level=
-        Math.min(
-          6,
-          (line.match(/^#+/)||["#"])[0].length
-        );
-
-      html+=
-        "<h"+
-        level+
-        ">"+
-        inlineMarkup(h[1])+
-        "</h"+
-        level+
-        ">";
-
-    }else{
-
-      para.push(
-        inlineMarkup(line)
-      )
-    }
-  }
-
-  flush();
-
-  return html||
-    "<p>No saved document content.</p>"
-}
-
-function inlineMarkup(t){
-
-  let x=esc(t);
-
-  x=
-    x.replace(
-      /\*\*(.+?)\*\*/g,
-      "<strong>$1</strong>"
-    );
-
-  return x
-}
 
 function renderPages(pages,text){
 
@@ -1718,17 +1857,24 @@ function renderPages(pages,text){
     list.map(
       (p,i)=>
         '<div class="doc-page">'+
+
           '<div style="font-size:11px;color:#777;margin-bottom:12px">'+
             'Page '+
             (i+1)+
             ' of '+
             list.length+
           '</div>'+
-          renderDocMarkup(
+
+          renderPlainDocument(
             typeof p==="object"
-              ?(p.content||p.text||"")
+              ?(
+                p.content||
+                p.text||
+                ""
+              )
               :p
           )+
+
         '</div>'
     ).join("")
 }
@@ -1744,11 +1890,14 @@ function renderBackOfficeAttachment(
   filename=""
 ){
 
-  const link=$("boDocumentAttachment");
+  const link=
+    $("boDocumentAttachment");
 
-  const name=$("boAttachmentName");
+  const name=
+    $("boAttachmentName");
 
-  const note=$("boAttachmentNote");
+  const note=
+    $("boAttachmentNote");
 
   const finalName=
     filename||
@@ -1758,7 +1907,8 @@ function renderBackOfficeAttachment(
         :"Saved document.docx"
     );
 
-  name.textContent=finalName;
+  name.textContent=
+    finalName;
 
   note.textContent=
     "Tap the attachment to download the exact saved document.";
@@ -1794,7 +1944,7 @@ function renderBackOfficeAttachment(
 
 
 /* =========================
-   VIEW SAVED DOCUMENT
+   VIEW COMPLETE SAVED DOCUMENT
 ========================= */
 
 async function viewSavedRecord(
@@ -1815,11 +1965,14 @@ async function viewSavedRecord(
         "&title="+
         encodeURIComponent(title),
         {
-          headers:boHeaders()
+          headers:
+            boHeaders()
         }
       );
 
-    $("boDocumentPanel").classList.remove("hidden");
+    $("boDocumentPanel")
+      .classList
+      .remove("hidden");
 
     $("boDocumentTitle").textContent=
       d.document_title||
@@ -1839,8 +1992,7 @@ async function viewSavedRecord(
     renderBackOfficeAttachment(
       serviceName,
       title,
-      d.filename||
-      ""
+      d.filename||""
     );
 
     await loadBoDelivery(
@@ -1853,10 +2005,11 @@ async function viewSavedRecord(
       "success"
     );
 
-    $("boDocumentPanel").scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
+    $("boDocumentPanel")
+      .scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
 
   }catch(e){
 
@@ -1888,16 +2041,20 @@ async function loadBoDelivery(
         encodeURIComponent(title),
         {
           headers:{
-            "X-Back-Office-Key":key
+            "X-Back-Office-Key":
+              key
           }
         }
       );
 
-    const grid=$("boDeliveryGrid");
+    const grid=
+      $("boDeliveryGrid");
 
     grid.innerHTML="";
 
-    $("boDeliveryPanel").classList.remove("hidden");
+    $("boDeliveryPanel")
+      .classList
+      .remove("hidden");
 
     (
       d.delivery&&
@@ -1905,9 +2062,11 @@ async function loadBoDelivery(
       []
     ).forEach(ch=>{
 
-      const box=document.createElement("div");
+      const box=
+        document.createElement("div");
 
-      box.className="channel";
+      box.className=
+        "channel";
 
       box.innerHTML=
         '<strong>'+
@@ -1920,7 +2079,9 @@ async function loadBoDelivery(
         )+
         '</span>'+
         '<button type="button" class="'+
-        (ch.id==="phone"?"":"secondary")+
+        (ch.id==="phone"
+          ?""
+          :"secondary")+
         '">'+
         esc(ch.name)+
         '</button>';
@@ -1957,22 +2118,23 @@ async function boDeliver(
 
   try{
 
-    const d=
-      await api(
-        "/api/back-office/delivery",
-        {
-          method:"POST",
-          headers:{
-            ...boHeaders(),
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({
+    await api(
+      "/api/back-office/delivery",
+      {
+        method:"POST",
+        headers:{
+          ...boHeaders(),
+          "Content-Type":
+            "application/json"
+        },
+        body:
+          JSON.stringify({
             service:serviceName,
             document_title:title,
             channel:ch.id
           })
-        }
-      );
+      }
+    );
 
     if(ch.id==="phone"){
 
@@ -2008,7 +2170,7 @@ async function boDeliver(
 
 
 /* =========================
-   BACK OFFICE EXACT FILE
+   BACK OFFICE EXACT DOWNLOAD
 ========================= */
 
 async function downloadBackOffice(
@@ -2031,7 +2193,8 @@ async function downloadBackOffice(
       encodeURIComponent(title),
       {
         headers:{
-          "X-Back-Office-Key":key
+          "X-Back-Office-Key":
+            key
         },
         cache:"no-store"
       }
@@ -2086,24 +2249,26 @@ async function activateRecord(
 
   try{
 
-    button.disabled=true;
+    button.disabled=
+      true;
 
-    const d=
-      await api(
-        "/api/back-office/activate-download",
-        {
-          method:"POST",
-          headers:{
-            ...boHeaders(),
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({
+    await api(
+      "/api/back-office/activate-download",
+      {
+        method:"POST",
+        headers:{
+          ...boHeaders(),
+          "Content-Type":
+            "application/json"
+        },
+        body:
+          JSON.stringify({
             service:serviceName,
             document_title:title,
             verified:true
           })
-        }
-      );
+      }
+    );
 
     setBoMessage(
       "Customer download has been activated for this saved document.",
@@ -2124,7 +2289,8 @@ async function activateRecord(
       "error"
     );
 
-    button.disabled=false
+    button.disabled=
+      false
   }
 }
 
@@ -2135,7 +2301,8 @@ async function activateRecord(
 
 function renderRecords(data){
 
-  const box=$("boRecords");
+  const box=
+    $("boRecords");
 
   box.innerHTML="";
 
@@ -2158,7 +2325,8 @@ function renderRecords(data){
 
   products.forEach(r=>{
 
-    const p=r.product||r;
+    const p=
+      r.product||r;
 
     const serviceName=
       clean(p.service);
@@ -2186,7 +2354,8 @@ function renderRecords(data){
     const el=
       document.createElement("article");
 
-    el.className="record";
+    el.className=
+      "record";
 
     el.innerHTML=
       '<div class="record-main">'+
@@ -2257,7 +2426,11 @@ function renderRecords(data){
         '</button>'+
 
         '<button type="button" class="'+
-          (unlocked?"green":"")+
+          (
+            unlocked
+              ?"green"
+              :""
+          )+
           ' activate-btn">'+
           (
             unlocked
@@ -2268,7 +2441,9 @@ function renderRecords(data){
 
       '</div>';
 
-    el.querySelector(".view-btn").onclick=
+    el.querySelector(
+      ".view-btn"
+    ).onclick=
       ()=>viewSavedRecord(
         serviceName,
         title
@@ -2306,11 +2481,6 @@ async function loadBackOffice(){
 
   try{
 
-    localStorage.setItem(
-      "NPBC_BACK_OFFICE_KEY",
-      boKey()
-    );
-
     setBoMessage(
       "Loading Back Office records..."
     );
@@ -2319,7 +2489,8 @@ async function loadBackOffice(){
       await api(
         "/api/back-office/payments",
         {
-          headers:boHeaders()
+          headers:
+            boHeaders()
         }
       );
 
