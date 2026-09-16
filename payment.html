@@ -5,82 +5,582 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Payment & Delivery — Naija Pocket Business Center</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;padding:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#090909;color:#fff}body{min-height:100vh}.hidden{display:none!important}
-button,input{font:inherit}button{cursor:pointer}.page{min-height:100vh;background:#090909}.topbar{padding:16px;background:#000;border-bottom:1px solid #262626;position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:12px}.topbar-office{border:1px solid #3b3b3b;background:#171717;color:#fff;border-radius:10px;padding:9px 11px;font-size:11px;font-weight:900;letter-spacing:.06em}.topbar-office:active{background:#242424}.brand{font-weight:800;font-size:20px}.subbrand{font-size:13px;color:#aaa;margin-top:4px}.wrap{width:min(980px,100%);margin:0 auto;padding:18px 14px 36px}.hero{border:1px solid #292929;background:#111;border-radius:18px;padding:20px;margin-bottom:14px}.hero h1{margin:0 0 8px;font-size:27px}.hero p{margin:0;color:#c8c8c8;line-height:1.55}.card{background:#111;border:1px solid #292929;border-radius:18px;padding:18px;margin-bottom:14px}.card h2{margin:0 0 12px;font-size:20px}.label{color:#aaa;font-size:12px;text-transform:uppercase;letter-spacing:.08em}.value{font-size:20px;font-weight:800;margin-top:5px}.amount{font-size:36px;font-weight:900;margin-top:5px}.muted{color:#aaa;line-height:1.5}.status{padding:12px 14px;border-radius:12px;background:#181818;border:1px solid #2b2b2b;margin-top:12px;white-space:pre-wrap;line-height:1.45}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.btn{border:0;border-radius:12px;padding:14px 15px;font-weight:800;background:#e50914;color:#fff}.btn.secondary{background:#262626}.btn.green{background:#0b7a3b}.btn:disabled{opacity:.45;cursor:not-allowed}.contact{display:grid;grid-template-columns:1fr 1fr;gap:10px}.contact a{display:block;text-decoration:none;color:#fff;background:#191919;border:1px solid #303030;border-radius:12px;padding:13px}.contact small{display:block;color:#999;margin-top:3px}.delivery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.channel{background:#191919;border:1px solid #303030;border-radius:14px;padding:14px}.channel strong{display:block;margin-bottom:5px}.channel span{display:block;color:#aaa;font-size:12px;line-height:1.4}.channel button{margin-top:10px;width:100%;padding:10px;border:0;border-radius:10px;background:#e50914;color:#fff;font-weight:800}.channel button.secondary{background:#303030}.notice{padding:12px;border-radius:12px;background:#161616;border:1px solid #2c2c2c;color:#bbb;line-height:1.5}.error{color:#ff8c8c}.success{color:#8ff0b4}
-#backOfficeView{background:#070707;min-height:100vh}.bo-header{background:#000;padding:18px 16px;border-bottom:1px solid #262626;position:sticky;top:0;z-index:20}.bo-head-row{display:flex;justify-content:space-between;gap:12px;align-items:center}.bo-title{font-size:23px;font-weight:900}.bo-controls{display:grid;grid-template-columns:1fr auto auto;gap:9px;margin-top:13px}.bo-controls input{min-width:0;background:#151515;border:1px solid #333;color:#fff;border-radius:10px;padding:12px}.bo-controls button{border:0;border-radius:10px;padding:12px 14px;background:#e50914;color:#fff;font-weight:800}.bo-controls button.secondary{background:#282828}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}.summary .box{background:#111;border:1px solid #292929;border-radius:14px;padding:14px}.summary .n{font-size:25px;font-weight:900}.summary .t{font-size:11px;color:#999;text-transform:uppercase;margin-top:3px}.record{background:#111;border:1px solid #2c2c2c;border-radius:16px;margin-bottom:12px;overflow:hidden}.record-main{padding:15px}.record-title{font-size:18px;font-weight:900}.record-service{color:#aaa;margin-top:4px}.record-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.mini{background:#181818;border-radius:10px;padding:10px}.mini b{display:block;font-size:12px}.mini span{display:block;color:#aaa;font-size:12px;margin-top:3px}.record-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 15px 15px}.record-actions button{border:0;border-radius:10px;padding:11px;background:#e50914;color:#fff;font-weight:800}.record-actions button.secondary{background:#303030}.record-actions button.green{background:#0b7a3b}.bo-document{white-space:normal;background:#0c0c0c;border:1px solid #292929;border-radius:14px;padding:18px;line-height:1.65;overflow:auto}.doc-page{background:#fff;color:#111;border-radius:4px;padding:28px 24px;margin-bottom:14px;min-height:180px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.doc-page:last-child{margin-bottom:0}.doc-page h1,.doc-page h2,.doc-page h3,.doc-page h4,.doc-page h5,.doc-page h6{margin:0 0 12px;line-height:1.25}.doc-page p{margin:0 0 10px;white-space:pre-wrap}.doc-page p:last-child{margin-bottom:0}.doc-page strong{font-weight:800}.bo-delivery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bo-delivery .channel{display:flex;flex-direction:column}.bo-delivery .channel button{margin-top:auto}.bo-footer{color:#777;font-size:12px;text-align:center;padding:25px 10px}.saved-preview-card{padding:0;overflow:hidden}.preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 18px 10px}.preview-head h2{margin:5px 0 0;font-size:20px}.saved-badge{font-size:10px;font-weight:900;letter-spacing:.1em;padding:7px 9px;border-radius:999px;background:#201b0b;border:1px solid #66551e;color:#e7cc70}.preview-note{padding:0 18px 14px;color:#999;font-size:12px;line-height:1.5}.customer-document-preview{margin:0 12px 12px;padding:12px;background:#0a0a0a;border:1px solid #292929;border-radius:14px;max-height:310px;overflow:hidden}.customer-document-page{background:#fff;color:#111;border-radius:4px;padding:22px 20px;margin-bottom:0;line-height:1.55;box-shadow:0 4px 18px rgba(0,0,0,.22);height:260px;overflow:hidden}.customer-document-page:last-child{margin-bottom:0}.customer-document-page h1,.customer-document-page h2,.customer-document-page h3,.customer-document-page h4,.customer-document-page h5,.customer-document-page h6{margin:0 0 12px;line-height:1.25}.customer-document-page p{margin:0 0 10px;white-space:pre-wrap}.customer-document-page strong{font-weight:800}.preview-page-label{font-size:10px;color:#777;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em}.preview-empty{color:#aaa;padding:20px;text-align:center}.backoffice-entry{margin-top:10px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#090909;color:#fff}
+body{min-height:100vh}
+.hidden{display:none!important}
+button,input{font:inherit}
+button{cursor:pointer}
+.page{min-height:100vh;background:#090909}
+.topbar{
+  padding:16px;
+  background:#000;
+  border-bottom:1px solid #262626;
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px
+}
+.topbar-office{
+  border:1px solid #3b3b3b;
+  background:#171717;
+  color:#fff;
+  border-radius:10px;
+  padding:9px 11px;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.06em
+}
+.topbar-office:active{background:#242424}
+.brand{font-weight:800;font-size:20px}
+.subbrand{font-size:13px;color:#aaa;margin-top:4px}
+.wrap{width:min(980px,100%);margin:0 auto;padding:18px 14px 36px}
+.hero{border:1px solid #292929;background:#111;border-radius:18px;padding:20px;margin-bottom:14px}
+.hero h1{margin:0 0 8px;font-size:27px}
+.hero p{margin:0;color:#c8c8c8;line-height:1.55}
+.card{background:#111;border:1px solid #292929;border-radius:18px;padding:18px;margin-bottom:14px}
+.card h2{margin:0 0 12px;font-size:20px}
+.label{color:#aaa;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.value{font-size:20px;font-weight:800;margin-top:5px}
+.amount{font-size:36px;font-weight:900;margin-top:5px}
+.muted{color:#aaa;line-height:1.5}
+.status{
+  padding:12px 14px;
+  border-radius:12px;
+  background:#181818;
+  border:1px solid #2b2b2b;
+  margin-top:12px;
+  white-space:pre-wrap;
+  line-height:1.45
+}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.btn{border:0;border-radius:12px;padding:14px 15px;font-weight:800;background:#e50914;color:#fff}
+.btn.secondary{background:#262626}
+.btn.green{background:#0b7a3b}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.contact a{
+  display:block;
+  text-decoration:none;
+  color:#fff;
+  background:#191919;
+  border:1px solid #303030;
+  border-radius:12px;
+  padding:13px
+}
+.contact small{display:block;color:#999;margin-top:3px}
+.delivery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.channel{background:#191919;border:1px solid #303030;border-radius:14px;padding:14px}
+.channel strong{display:block;margin-bottom:5px}
+.channel span{display:block;color:#aaa;font-size:12px;line-height:1.4}
+.channel button{
+  margin-top:10px;
+  width:100%;
+  padding:10px;
+  border:0;
+  border-radius:10px;
+  background:#e50914;
+  color:#fff;
+  font-weight:800
+}
+.channel button.secondary{background:#303030}
+.notice{
+  padding:12px;
+  border-radius:12px;
+  background:#161616;
+  border:1px solid #2c2c2c;
+  color:#bbb;
+  line-height:1.5
+}
+.error{color:#ff8c8c}
+.success{color:#8ff0b4}
+
+#backOfficeView{background:#070707;min-height:100vh}
+.bo-header{
+  background:#000;
+  padding:18px 16px;
+  border-bottom:1px solid #262626;
+  position:sticky;
+  top:0;
+  z-index:20
+}
+.bo-head-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center
+}
+.bo-title{font-size:23px;font-weight:900}
+.bo-controls{
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  gap:9px;
+  margin-top:13px
+}
+.bo-controls input{
+  min-width:0;
+  background:#151515;
+  border:1px solid #333;
+  color:#fff;
+  border-radius:10px;
+  padding:12px
+}
+.bo-controls button{
+  border:0;
+  border-radius:10px;
+  padding:12px 14px;
+  background:#e50914;
+  color:#fff;
+  font-weight:800
+}
+.bo-controls button.secondary{background:#282828}
+.summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+  margin-bottom:14px
+}
+.summary .box{
+  background:#111;
+  border:1px solid #292929;
+  border-radius:14px;
+  padding:14px
+}
+.summary .n{font-size:25px;font-weight:900}
+.summary .t{font-size:11px;color:#999;text-transform:uppercase;margin-top:3px}
+.record{
+  background:#111;
+  border:1px solid #2c2c2c;
+  border-radius:16px;
+  margin-bottom:12px;
+  overflow:hidden
+}
+.record-main{padding:15px}
+.record-title{font-size:18px;font-weight:900}
+.record-service{color:#aaa;margin-top:4px}
+.record-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:12px
+}
+.mini{background:#181818;border-radius:10px;padding:10px}
+.mini b{display:block;font-size:12px}
+.mini span{display:block;color:#aaa;font-size:12px;margin-top:3px}
+.record-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:0 15px 15px
+}
+.record-actions button{
+  border:0;
+  border-radius:10px;
+  padding:11px;
+  background:#e50914;
+  color:#fff;
+  font-weight:800
+}
+.record-actions button.secondary{background:#303030}
+.record-actions button.green{background:#0b7a3b}
+.bo-document{
+  white-space:normal;
+  background:#0c0c0c;
+  border:1px solid #292929;
+  border-radius:14px;
+  padding:18px;
+  line-height:1.65;
+  overflow:auto
+}
+.doc-page{
+  background:#fff;
+  color:#111;
+  border-radius:4px;
+  padding:28px 24px;
+  margin-bottom:14px;
+  min-height:180px;
+  box-shadow:0 2px 10px rgba(0,0,0,.25)
+}
+.doc-page:last-child{margin-bottom:0}
+.doc-page h1,.doc-page h2,.doc-page h3,.doc-page h4,.doc-page h5,.doc-page h6{
+  margin:0 0 12px;
+  line-height:1.25
+}
+.doc-page p{margin:0 0 10px;white-space:pre-wrap}
+.doc-page p:last-child{margin-bottom:0}
+.doc-page strong{font-weight:800}
+.bo-delivery{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px
+}
+.bo-delivery .channel{display:flex;flex-direction:column}
+.bo-delivery .channel button{margin-top:auto}
+.bo-footer{color:#777;font-size:12px;text-align:center;padding:25px 10px}
+.saved-preview-card{padding:0;overflow:hidden}
+.preview-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:18px 18px 10px
+}
+.preview-head h2{margin:5px 0 0;font-size:20px}
+.saved-badge{
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.1em;
+  padding:7px 9px;
+  border-radius:999px;
+  background:#201b0b;
+  border:1px solid #66551e;
+  color:#e7cc70
+}
+.preview-note{padding:0 18px 14px;color:#999;font-size:12px;line-height:1.5}
+.customer-document-preview{
+  margin:0 12px 12px;
+  padding:12px;
+  background:#0a0a0a;
+  border:1px solid #292929;
+  border-radius:14px;
+  max-height:310px;
+  overflow:hidden
+}
+.customer-document-page{
+  background:#fff;
+  color:#111;
+  border-radius:4px;
+  padding:22px 20px;
+  margin-bottom:0;
+  line-height:1.55;
+  box-shadow:0 4px 18px rgba(0,0,0,.22);
+  height:260px;
+  overflow:hidden
+}
+.customer-document-page:last-child{margin-bottom:0}
+.customer-document-page h1,
+.customer-document-page h2,
+.customer-document-page h3,
+.customer-document-page h4,
+.customer-document-page h5,
+.customer-document-page h6{
+  margin:0 0 12px;
+  line-height:1.25
+}
+.customer-document-page p{margin:0 0 10px;white-space:pre-wrap}
+.customer-document-page strong{font-weight:800}
+.preview-page-label{
+  font-size:10px;
+  color:#777;
+  margin-bottom:12px;
+  text-transform:uppercase;
+  letter-spacing:.06em
+}
+.preview-empty{color:#aaa;padding:20px;text-align:center}
+.backoffice-entry{margin-top:10px}
+
+.bo-email-box{
+  background:#161616;
+  border:1px solid #303030;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px
+}
+.bo-email-box label{
+  display:block;
+  color:#fff;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:7px
+}
+.bo-email-box .email-help{
+  color:#999;
+  font-size:12px;
+  line-height:1.45;
+  margin-bottom:10px
+}
+.bo-email-box input{
+  width:100%;
+  background:#0d0d0d;
+  border:1px solid #3a3a3a;
+  color:#fff;
+  border-radius:10px;
+  padding:12px;
+  outline:none
+}
+.bo-email-box input:focus{border-color:#e50914}
+.bo-email-box input::placeholder{color:#777}
+
 .hidden-file{display:none}
-@media(max-width:650px){.actions,.contact,.delivery-grid,.bo-controls,.bo-delivery,.record-grid{grid-template-columns:1fr}.summary{grid-template-columns:repeat(3,1fr)}.summary .box{padding:10px}.summary .n{font-size:20px}.hero h1{font-size:23px}.amount{font-size:32px}.record-actions{grid-template-columns:1fr}.bo-head-row{align-items:flex-start;flex-direction:column}}
+
+@media(max-width:650px){
+  .actions,
+  .contact,
+  .delivery-grid,
+  .bo-controls,
+  .bo-delivery,
+  .record-grid{
+    grid-template-columns:1fr
+  }
+  .summary{grid-template-columns:repeat(3,1fr)}
+  .summary .box{padding:10px}
+  .summary .n{font-size:20px}
+  .hero h1{font-size:23px}
+  .amount{font-size:32px}
+  .record-actions{grid-template-columns:1fr}
+  .bo-head-row{align-items:flex-start;flex-direction:column}
+}
 </style>
 </head>
+
 <body>
+
 <div id="customerPaymentView" class="page">
-  <div class="topbar"><div><div class="brand">Naija Pocket Business Center</div><div class="subbrand">Payment & Delivery</div></div><button id="openBackOfficeButton" class="topbar-office" type="button">BACK OFFICE</button></div>
+
+  <div class="topbar">
+    <div>
+      <div class="brand">Naija Pocket Business Center</div>
+      <div class="subbrand">Payment & Delivery</div>
+    </div>
+    <button id="openBackOfficeButton" class="topbar-office" type="button">BACK OFFICE</button>
+  </div>
+
   <main class="wrap">
+
     <section class="hero">
       <h1>Payment & Delivery</h1>
       <p>Your saved document is prepared for payment and delivery.</p>
     </section>
 
     <section id="paymentExperience">
+
       <section class="card">
-        <div class="label">Service</div><div id="serviceValue" class="value">Loading...</div>
-        <div style="height:12px"></div><div class="label">Document</div><div id="titleValue" class="value">Loading...</div>
-        <div id="paymentStatus" class="status">Loading payment status...</div>
+        <div class="label">Service</div>
+        <div id="serviceValue" class="value">Loading...</div>
+
+        <div style="height:12px"></div>
+
+        <div class="label">Document</div>
+        <div id="titleValue" class="value">Loading...</div>
+
+        <div id="paymentStatus" class="status">
+          Loading payment status...
+        </div>
       </section>
 
       <section class="card saved-preview-card">
-        <div class="preview-head"><div><div class="label">Saved Document</div><h2 id="savedPreviewTitle">Your reviewed document</h2></div><div class="saved-badge">SAVED</div></div>
-        <div class="preview-note">This is the saved document prepared for your payment. Review the evidence below before you continue.</div>
-        <div id="customerDocumentPreview" class="customer-document-preview"><div class="preview-empty">Loading your saved document...</div></div>
+
+        <div class="preview-head">
+          <div>
+            <div class="label">Saved Document</div>
+            <h2 id="savedPreviewTitle">Your reviewed document</h2>
+          </div>
+
+          <div class="saved-badge">SAVED</div>
+        </div>
+
+        <div class="preview-note">
+          This is the saved document prepared for your payment.
+          Review the evidence below before you continue.
+        </div>
+
+        <div id="customerDocumentPreview" class="customer-document-preview">
+          <div class="preview-empty">
+            Loading your saved document...
+          </div>
+        </div>
+
       </section>
 
       <section class="card">
-        <div class="label">Amount to Pay</div><div id="amountValue" class="amount">₦0</div>
-        <div id="billingValue" class="muted" style="margin-top:6px">Payment amount will appear here.</div>
+
+        <div class="label">Amount to Pay</div>
+        <div id="amountValue" class="amount">₦0</div>
+
+        <div id="billingValue" class="muted" style="margin-top:6px">
+          Payment amount will appear here.
+        </div>
+
         <div class="actions">
-          <button id="makePaymentButton" class="btn" type="button">MAKE PAYMENT</button>
-          <button id="reportPaymentButton" class="btn secondary" type="button">I HAVE MADE PAYMENT</button>
+          <button id="makePaymentButton" class="btn" type="button">
+            MAKE PAYMENT
+          </button>
+
+          <button id="reportPaymentButton" class="btn secondary" type="button">
+            I HAVE MADE PAYMENT
+          </button>
         </div>
-        <div id="paymentMessage" class="status">Payment has not been started.</div>
+
+        <div id="paymentMessage" class="status">
+          Payment has not been started.
+        </div>
+
       </section>
 
       <section class="card">
+
         <h2>Bank Transfer</h2>
-        <div class="notice">Use the official bank details provided by Naija Pocket Business Center for your transfer. This page does not invent or change the business bank details.</div>
-        <div id="bankDetails" class="status" style="margin-top:10px">Bank details will be shown here when supplied by the payment service.</div>
-      </section>
 
-      <section class="card">
-        <h2>Customer Care</h2>
-        <div class="contact">
-          <a href="tel:+2348057073891"><b>Phone</b><small>+234 805 707 3891</small></a>
-          <a href="https://wa.me/2348057073891" target="_blank" rel="noopener"><b>WhatsApp</b><small>+234 805 707 3891</small></a>
+        <div class="notice">
+          Use the official bank details provided by Naija Pocket Business Center
+          for your transfer. This page does not invent or change the business bank details.
         </div>
+
+        <div id="bankDetails" class="status" style="margin-top:10px">
+          Bank details will be shown here when supplied by the payment service.
+        </div>
+
       </section>
 
       <section class="card">
-        <h2>Document Delivery</h2>
-        <div id="customerDelivery" class="delivery-grid"></div>
-        <div id="customerDeliveryNote" class="status">Download remains locked until Customer Care verifies the payment.</div>
+
+        <h2>Customer Care</h2>
+
+        <div class="contact">
+
+          <a href="tel:+2348057073891">
+            <b>Phone</b>
+            <small>+234 805 707 3891</small>
+          </a>
+
+          <a href="https://wa.me/2348057073891" target="_blank" rel="noopener">
+            <b>WhatsApp</b>
+            <small>+234 805 707 3891</small>
+          </a>
+
+        </div>
+
       </section>
+
+      <section class="card">
+
+        <h2>Document Delivery</h2>
+
+        <div id="customerDelivery" class="delivery-grid"></div>
+
+        <div id="customerDeliveryNote" class="status">
+          Download remains locked until Customer Care verifies the payment.
+        </div>
+
+      </section>
+
     </section>
+
   </main>
 </div>
+
 
 <div id="backOfficeView" class="hidden">
+
   <div class="bo-header">
-    <div class="bo-head-row"><div><div class="bo-title">Back Office</div><div class="subbrand">Saved documents, payment status & delivery</div></div><button id="exitBackOffice" class="btn secondary" type="button">CUSTOMER VIEW</button></div>
-    <div class="bo-controls"><input id="backOfficeKey" type="password" autocomplete="off" placeholder="Back Office key"><button id="loadBackOfficeButton" type="button">LOAD RECORDS</button><button id="refreshBackOfficeButton" class="secondary" type="button">REFRESH</button></div>
+
+    <div class="bo-head-row">
+
+      <div>
+        <div class="bo-title">Back Office</div>
+        <div class="subbrand">
+          Saved documents, payment status & delivery
+        </div>
+      </div>
+
+      <button id="exitBackOffice" class="btn secondary" type="button">
+        CUSTOMER VIEW
+      </button>
+
+    </div>
+
+    <div class="bo-controls">
+
+      <input
+        id="backOfficeKey"
+        type="password"
+        autocomplete="off"
+        placeholder="Back Office key"
+      >
+
+      <button id="loadBackOfficeButton" type="button">
+        LOAD RECORDS
+      </button>
+
+      <button id="refreshBackOfficeButton" class="secondary" type="button">
+        REFRESH
+      </button>
+
+    </div>
+
     <div id="boMessage" class="status hidden"></div>
+
   </div>
+
+
   <main class="wrap">
+
     <div id="boSummary" class="summary"></div>
+
     <section id="boRecords"></section>
-    <section id="boDocumentPanel" class="card hidden"><h2 id="boDocumentTitle">Saved Document</h2><div id="boDocumentMeta" class="muted" style="margin-bottom:12px"></div><div id="boDocumentText" class="bo-document"></div></section>
-    <section id="boDeliveryPanel" class="card hidden"><h2>Back Office Delivery Channels</h2><div class="notice" style="margin-bottom:12px">Back Office can retrieve and send the exact saved document even when customer download is still locked. Payment verification is a customer download gate, not a Back Office retrieval gate.</div><div id="boDeliveryGrid" class="bo-delivery"></div></section>
+
+
+    <section id="boDocumentPanel" class="card hidden">
+
+      <h2 id="boDocumentTitle">Saved Document</h2>
+
+      <div id="boDocumentMeta" class="muted" style="margin-bottom:12px"></div>
+
+      <div id="boDocumentText" class="bo-document"></div>
+
+    </section>
+
+
+    <section id="boDeliveryPanel" class="card hidden">
+
+      <h2>Back Office Delivery Channels</h2>
+
+      <div class="notice" style="margin-bottom:12px">
+        Back Office can retrieve and send the exact saved document even when
+        customer download is still locked. Payment verification is a customer
+        download gate, not a Back Office retrieval gate.
+      </div>
+
+      <!--
+        Email recipient is entered here by Back Office.
+        Other delivery channels are unchanged.
+      -->
+      <div id="boEmailRecipientBox" class="bo-email-box hidden">
+
+        <label for="boRecipientEmail">
+          Customer Email Address
+        </label>
+
+        <div class="email-help">
+          Enter the customer's email address before choosing Email.
+          The exact saved document will be attached to the email.
+        </div>
+
+        <input
+          id="boRecipientEmail"
+          type="email"
+          inputmode="email"
+          autocomplete="email"
+          placeholder="customer@example.com"
+        >
+
+      </div>
+
+      <div id="boDeliveryGrid" class="bo-delivery"></div>
+
+    </section>
+
   </main>
-  <div class="bo-footer">Naija Pocket Business Center • Back Office</div>
+
+  <div class="bo-footer">
+    Naija Pocket Business Center • Back Office
+  </div>
+
 </div>
+
 
 <script>
 "use strict";
@@ -88,6 +588,7 @@ button,input{font:inherit}button{cursor:pointer}.page{min-height:100vh;backgroun
 const PAYMENT_API_BASE="https://naija-pocket-payment-api.onrender.com";
 const LOCAL_BACK_OFFICE_KEY="NPBC-2026";
 const CUSTOMER_CARE_PHONE="+234 805 707 3891";
+
 const params=new URLSearchParams(location.search);
 const mode=(params.get("mode")||"").trim().toLowerCase();
 const serviceParam=(params.get("service")||"").trim();
@@ -104,9 +605,11 @@ let service=serviceParam,
 
 const $=id=>document.getElementById(id);
 
+
 function clean(v){
   return v==null?"":String(v).trim()
 }
+
 
 function esc(v){
   return String(v??"")
@@ -116,107 +619,196 @@ function esc(v){
     .replace(/\"/g,"&quot;")
 }
 
+
 function money(v){
   const n=Number(v)||0;
   return n>0?"₦"+n.toLocaleString():"₦0"
 }
 
+
 function boKey(){
   return clean($("backOfficeKey").value)
 }
+
 
 function clearBackOfficeKey(){
   $("backOfficeKey").value=""
 }
 
+
 async function api(path,options={}){
-  const r=await fetch(PAYMENT_API_BASE+path,{cache:"no-store",...options});
+  const r=await fetch(
+    PAYMENT_API_BASE+path,
+    {
+      cache:"no-store",
+      ...options
+    }
+  );
+
   const d=await r.json().catch(()=>({}));
-  if(!r.ok)throw new Error(d.detail||d.message||d.error||"The payment service could not complete this request.");
+
+  if(!r.ok)
+    throw new Error(
+      d.detail||
+      d.message||
+      d.error||
+      "The payment service could not complete this request."
+    );
+
   return d
 }
 
+
 function customerIdentity(){
-  if(!service||!documentTitle)return false;
+  if(!service||!documentTitle)
+    return false;
+
   return true
 }
+
 
 function setCustomerMessage(text,type=""){
   $("paymentMessage").textContent=text||"";
   $("paymentMessage").className="status"+(type?" "+type:"")
 }
 
+
 function renderBankDetails(data){
-  const c=data&&data.payment_channels?data.payment_channels.channels:[];
-  const bank=c.find(x=>String(x.id).toLowerCase().includes("bank"));
+
+  const c=
+    data&&data.payment_channels?
+    data.payment_channels.channels:
+    [];
+
+  const bank=
+    c.find(x=>String(x.id).toLowerCase().includes("bank"));
+
   if(bank&&bank.details){
+
     $("bankDetails").textContent=bank.details
+
   }else if(bank&&bank.note){
+
     $("bankDetails").textContent=bank.note
+
   }else{
-    $("bankDetails").textContent="Bank details will be shown here when supplied by the payment service."
+
+    $("bankDetails").textContent=
+      "Bank details will be shown here when supplied by the payment service."
+
   }
 }
 
+
 function renderCustomerDelivery(data){
+
   const box=$("customerDelivery");
+
   box.innerHTML="";
+
   const channels=(data&&data.channels)||[];
 
   if(!channels.length){
-    box.innerHTML='<div class="notice">No delivery option is available yet.</div>';
+
+    box.innerHTML=
+      '<div class="notice">No delivery option is available yet.</div>';
+
     return
   }
 
   channels.forEach(ch=>{
+
     const d=document.createElement("div");
+
     d.className="channel";
+
     const available=!!ch.available;
 
     d.innerHTML=
       '<strong>'+esc(ch.name)+'</strong>'+
-      '<span>'+esc(ch.note||((ch.id==="phone")?
-      (available?"Download your verified document.":"Waiting for Customer Care verification.") :
-      "Use this delivery option after download is unlocked."))+'</span>'+
-      '<button type="button" '+(available?"":"disabled")+'>'+esc(ch.name)+'</button>';
+      '<span>'+
+      esc(
+        ch.note||
+        (
+          ch.id==="phone"?
+          (
+            available?
+            "Download your verified document.":
+            "Waiting for Customer Care verification."
+          ):
+          "Use this delivery option after download is unlocked."
+        )
+      )+
+      '</span>'+
+      '<button type="button" '+
+      (available?"":"disabled")+
+      '>'+
+      esc(ch.name)+
+      '</button>';
 
-    d.querySelector("button").onclick=()=>customerDelivery(ch);
+    d.querySelector("button").onclick=
+      ()=>customerDelivery(ch);
+
     box.appendChild(d)
+
   })
 }
 
+
 function renderCustomerDocument(p){
+
   const box=$("customerDocumentPreview");
-  const title=p.document_title||documentTitle||"Your reviewed document";
+
+  const title=
+    p.document_title||
+    documentTitle||
+    "Your reviewed document";
 
   $("savedPreviewTitle").textContent=title;
 
-  let pages=Array.isArray(p.document_preview_pages)?p.document_preview_pages:[];
+  let pages=
+    Array.isArray(p.document_preview_pages)?
+    p.document_preview_pages:
+    [];
 
   if(!pages.length&&p.document_preview_text)
     pages=[p.document_preview_text];
 
   if(!pages.length){
-    box.innerHTML='<div class="preview-empty">Your saved document evidence is not available yet.</div>';
+
+    box.innerHTML=
+      '<div class="preview-empty">'+
+      'Your saved document evidence is not available yet.'+
+      '</div>';
+
     return
   }
 
-  const firstPage=typeof pages[0]==="object"?
+  const firstPage=
+    typeof pages[0]==="object"?
     (pages[0].content||pages[0].text||""):
     pages[0];
 
   box.innerHTML=
     '<div class="customer-document-page">'+
-    '<div class="preview-page-label">Saved document evidence</div>'+
-    renderDocMarkup(firstPage)+
+      '<div class="preview-page-label">Saved document evidence</div>'+
+      renderDocMarkup(firstPage)+
     '</div>'
 }
 
+
 async function loadCustomer(){
+
   if(!customerIdentity()){
+
     $("serviceValue").textContent="Document not specified";
     $("titleValue").textContent="Return to Review";
-    setCustomerMessage("This payment page needs the service and document title.","error");
+
+    setCustomerMessage(
+      "This payment page needs the service and document title.",
+      "error"
+    );
+
     return
   }
 
@@ -224,9 +816,12 @@ async function loadCustomer(){
   $("titleValue").textContent=documentTitle;
 
   try{
+
     const d=await api(
-      "/api/payment/status?service="+encodeURIComponent(service)+
-      "&title="+encodeURIComponent(documentTitle)
+      "/api/payment/status?service="+
+      encodeURIComponent(service)+
+      "&title="+
+      encodeURIComponent(documentTitle)
     );
 
     paymentStatusData=d;
@@ -234,9 +829,16 @@ async function loadCustomer(){
     const p=d.product||{};
     const pay=d.payment||{};
 
-    amount=Number(p.amount||pay.amount||0);
+    amount=
+      Number(
+        p.amount||
+        pay.amount||
+        0
+      );
 
-    paymentPrepared=!!pay||!!p.saved_document;
+    paymentPrepared=
+      !!pay||
+      !!p.saved_document;
 
     paymentReported=!!(
       p.payment_reported||
@@ -247,8 +849,16 @@ async function loadCustomer(){
     paymentVerified=!!(
       p.payment_verified||
       pay.verified_at||
-      ["payment_verified","verified","approved","paid","completed","complete"]
-        .includes(String(pay.payment_status||"").toLowerCase())
+      [
+        "payment_verified",
+        "verified",
+        "approved",
+        "paid",
+        "completed",
+        "complete"
+      ].includes(
+        String(pay.payment_status||"").toLowerCase()
+      )
     );
 
     downloadUnlocked=!!p.download_unlocked;
@@ -283,34 +893,57 @@ async function loadCustomer(){
     renderCustomerDocument(p)
 
   }catch(e){
+
     setCustomerMessage(e.message,"error");
+
     $("customerDocumentPreview").innerHTML=
-      '<div class="preview-empty">Unable to load the saved document evidence.</div>'
+      '<div class="preview-empty">'+
+      'Unable to load the saved document evidence.'+
+      '</div>'
   }
 }
 
+
 /* MAKE PAYMENT — preserved as the payment creation operation. */
 async function createPayment(){
+
   if(!customerIdentity())
-    return setCustomerMessage("The service and document title are required.","error");
+    return setCustomerMessage(
+      "The service and document title are required.",
+      "error"
+    );
 
   if(amount<=0)
-    return setCustomerMessage("A valid payment amount is not available yet.","error");
+    return setCustomerMessage(
+      "A valid payment amount is not available yet.",
+      "error"
+    );
 
   try{
+
     $("makePaymentButton").disabled=true;
 
-    const status=paymentStatusData||
+    const status=
+      paymentStatusData||
       await api(
-        "/api/payment/status?service="+encodeURIComponent(service)+
-        "&title="+encodeURIComponent(documentTitle)
+        "/api/payment/status?service="+
+        encodeURIComponent(service)+
+        "&title="+
+        encodeURIComponent(documentTitle)
       );
 
     const p=status.product||{};
     const pay=status.payment||{};
 
-    const pages=p.document_preview_pages||p.pages||[];
-    const documentText=p.document_preview_text||p.document_text||"";
+    const pages=
+      p.document_preview_pages||
+      p.pages||
+      [];
+
+    const documentText=
+      p.document_preview_text||
+      p.document_text||
+      "";
 
     const payload={
       service:service,
@@ -327,19 +960,26 @@ async function createPayment(){
       filename:p.document_filename||"document.docx"
     };
 
-    const d=await api("/api/payment/create",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(payload)
-    });
+    const d=await api(
+      "/api/payment/create",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify(payload)
+      }
+    );
 
     paymentStatusData=d;
     paymentPrepared=true;
 
-    amount=Number(
-      (d.payment||{}).amount||
-      (d.product||{}).amount
-    )||amount;
+    amount=
+      Number(
+        (d.payment||{}).amount||
+        (d.product||{}).amount
+      )||
+      amount;
 
     $("amountValue").textContent=money(amount);
 
@@ -355,29 +995,44 @@ async function createPayment(){
     renderBankDetails(d)
 
   }catch(e){
+
     setCustomerMessage(e.message,"error")
+
   }finally{
+
     $("makePaymentButton").disabled=false
+
   }
 }
 
+
 /* I HAVE MADE PAYMENT — preserved as the payment-report operation only. */
 async function reportPayment(){
+
   if(!customerIdentity())
-    return setCustomerMessage("The service and document title are required.","error");
+    return setCustomerMessage(
+      "The service and document title are required.",
+      "error"
+    );
 
   try{
+
     $("reportPaymentButton").disabled=true;
 
-    const d=await api("/api/payment/report",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        service:service,
-        document_title:documentTitle,
-        note:"Customer reported payment from Payment & Delivery page."
-      })
-    });
+    const d=await api(
+      "/api/payment/report",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          service:service,
+          document_title:documentTitle,
+          note:"Customer reported payment from Payment & Delivery page."
+        })
+      }
+    );
 
     paymentStatusData=d;
     paymentReported=true;
@@ -399,13 +1054,19 @@ async function reportPayment(){
     await loadCustomer()
 
   }catch(e){
+
     setCustomerMessage(e.message,"error")
+
   }finally{
+
     $("reportPaymentButton").disabled=false
+
   }
 }
 
+
 async function customerDelivery(ch){
+
   if(!ch.available)
     return setCustomerMessage(
       "This delivery option is still locked until Customer Care verifies the payment.",
@@ -413,13 +1074,18 @@ async function customerDelivery(ch){
     );
 
   if(ch.id==="phone"){
+
     try{
+
       const r=await fetch(
-        PAYMENT_API_BASE+"/api/download?service="+
+        PAYMENT_API_BASE+
+        "/api/download?service="+
         encodeURIComponent(service)+
         "&title="+
         encodeURIComponent(documentTitle),
-        {cache:"no-store"}
+        {
+          cache:"no-store"
+        }
       );
 
       if(!r.ok)
@@ -428,78 +1094,142 @@ async function customerDelivery(ch){
         );
 
       const blob=await r.blob();
+
       const a=document.createElement("a");
 
       a.href=URL.createObjectURL(blob);
       a.download=(documentTitle||"document")+".docx";
 
       document.body.appendChild(a);
+
       a.click();
+
       a.remove();
 
-      setTimeout(()=>URL.revokeObjectURL(a.href),1500)
+      setTimeout(
+        ()=>URL.revokeObjectURL(a.href),
+        1500
+      )
 
     }catch(e){
+
       setCustomerMessage(e.message,"error")
+
     }
+
   }else if(ch.url){
-    window.open(ch.url,"_blank","noopener")
+
+    window.open(
+      ch.url,
+      "_blank",
+      "noopener"
+    )
+
   }
 }
 
+
 function showBackOffice(){
+
   $("customerPaymentView").classList.add("hidden");
   $("backOfficeView").classList.remove("hidden");
+
   $("backOfficeKey").value="";
-  setBoMessage("Enter the Back Office key, then choose an operation.")
+
+  setBoMessage(
+    "Enter the Back Office key, then choose an operation."
+  )
 }
 
+
 function showCustomer(){
+
   $("backOfficeView").classList.add("hidden");
   $("customerPaymentView").classList.remove("hidden");
+
   loadCustomer()
 }
 
+
 function setBoMessage(text,type=""){
+
   const e=$("boMessage");
+
   e.textContent=text;
-  e.className="status"+(type?" "+type:"")+(text?"":" hidden")
+
+  e.className=
+    "status"+
+    (type?" "+type:"")+
+    (text?"":" hidden")
 }
+
 
 function boHeaders(){
-  return {"X-Back-Office-Key":boKey()}
+
+  return {
+    "X-Back-Office-Key":boKey()
+  }
 }
 
+
 function renderSummary(summary){
+
   const s=summary||{};
 
   $("boSummary").innerHTML=
-    '<div class="box"><div class="n">'+Number(s.saved||0)+'</div><div class="t">Saved</div></div>'+
-    '<div class="box"><div class="n">'+Number(s.reported||0)+'</div><div class="t">Reported</div></div>'+
-    '<div class="box"><div class="n">'+Number(s.activated||0)+'</div><div class="t">Activated</div></div>'
+    '<div class="box">'+
+      '<div class="n">'+Number(s.saved||0)+'</div>'+
+      '<div class="t">Saved</div>'+
+    '</div>'+
+    '<div class="box">'+
+      '<div class="n">'+Number(s.reported||0)+'</div>'+
+      '<div class="t">Reported</div>'+
+    '</div>'+
+    '<div class="box">'+
+      '<div class="n">'+Number(s.activated||0)+'</div>'+
+      '<div class="t">Activated</div>'+
+    '</div>'
 }
 
+
 function renderDocMarkup(text){
-  const lines=String(text||"").replace(/\r/g,"").split("\n");
-  let html="",para=[];
+
+  const lines=
+    String(text||"")
+    .replace(/\r/g,"")
+    .split("\n");
+
+  let html="";
+  let para=[];
 
   function flush(){
-    if(!para.length)return;
-    html+="<p>"+para.join("<br>")+"</p>";
+
+    if(!para.length)
+      return;
+
+    html+=
+      "<p>"+
+      para.join("<br>")+
+      "</p>";
+
     para=[]
   }
 
   for(const line0 of lines){
+
     const line=line0.trim();
 
     if(!line){
+
       flush();
+
       continue
     }
 
     const h=line.match(/^#{1,6}\s+(.+)$/);
 
     if(h){
+
       flush();
 
       const level=Math.min(
@@ -507,26 +1237,42 @@ function renderDocMarkup(text){
         (line.match(/^#+/)||["#"])[0].length
       );
 
-      html+="<h"+level+">"+
+      html+=
+        "<h"+level+">"+
         inlineMarkup(h[1])+
         "</h"+level+">"
+
     }else{
-      para.push(inlineMarkup(line))
+
+      para.push(
+        inlineMarkup(line)
+      )
+
     }
   }
 
   flush();
 
-  return html||"<p>No saved document content.</p>"
+  return html||
+    "<p>No saved document content.</p>"
 }
 
+
 function inlineMarkup(t){
+
   let x=esc(t);
-  x=x.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
+
+  x=x.replace(
+    /\*\*(.+?)\*\*/g,
+    "<strong>$1</strong>"
+  );
+
   return x
 }
 
+
 function renderPages(pages,text){
+
   const list=
     Array.isArray(pages)&&pages.length?
     pages:
@@ -534,35 +1280,51 @@ function renderPages(pages,text){
 
   $("boDocumentText").innerHTML=
     list.map((p,i)=>
+
       '<div class="doc-page">'+
-      '<div style="font-size:11px;color:#777;margin-bottom:12px">Page '+
-      (i+1)+' of '+list.length+
-      '</div>'+
-      renderDocMarkup(
-        typeof p==="object"?
-        (p.content||p.text||""):
-        p
-      )+
+
+        '<div style="font-size:11px;color:#777;margin-bottom:12px">'+
+        'Page '+
+        (i+1)+
+        ' of '+
+        list.length+
+        '</div>'+
+
+        renderDocMarkup(
+          typeof p==="object"?
+          (p.content||p.text||""):
+          p
+        )+
+
       '</div>'
+
     ).join("")
 }
 
+
 async function viewSavedRecord(serviceName,title){
+
   try{
-    setBoMessage("Loading the complete saved document...");
+
+    setBoMessage(
+      "Loading the complete saved document..."
+    );
 
     const d=await api(
       "/api/back-office/document?service="+
       encodeURIComponent(serviceName)+
       "&title="+
       encodeURIComponent(title),
-      {headers:boHeaders()}
+      {
+        headers:boHeaders()
+      }
     );
 
     $("boDocumentPanel").classList.remove("hidden");
 
     $("boDocumentTitle").textContent=
-      d.document_title||title;
+      d.document_title||
+      title;
 
     $("boDocumentMeta").textContent=
       (d.service||serviceName)+
@@ -570,9 +1332,15 @@ async function viewSavedRecord(serviceName,title){
       Number(d.page_count||0)+
       " page(s) • exact saved document";
 
-    renderPages(d.pages,d.document_text);
+    renderPages(
+      d.pages,
+      d.document_text
+    );
 
-    await loadBoDelivery(serviceName,title);
+    await loadBoDelivery(
+      serviceName,
+      title
+    );
 
     setBoMessage(
       "Complete saved document loaded.",
@@ -585,69 +1353,148 @@ async function viewSavedRecord(serviceName,title){
     })
 
   }catch(e){
-    setBoMessage(e.message,"error")
+
+    setBoMessage(
+      e.message,
+      "error"
+    )
+
   }
 }
 
-async function loadBoDelivery(serviceName,title,key=boKey()){
+
+async function loadBoDelivery(
+  serviceName,
+  title,
+  key=boKey()
+){
+
   try{
+
     const d=await api(
       "/api/back-office/delivery-channels?service="+
       encodeURIComponent(serviceName)+
       "&title="+
       encodeURIComponent(title),
-      {headers:{"X-Back-Office-Key":key}}
+      {
+        headers:{
+          "X-Back-Office-Key":key
+        }
+      }
     );
 
     const grid=$("boDeliveryGrid");
 
     grid.innerHTML="";
+
     $("boDeliveryPanel").classList.remove("hidden");
 
+    /*
+     * Show the email recipient field whenever the Back Office
+     * delivery panel is open.
+     *
+     * It is used only by the Email delivery action.
+     */
+    $("boEmailRecipientBox").classList.remove("hidden");
+
     (d.delivery&&d.delivery.channels||[]).forEach(ch=>{
+
       const box=document.createElement("div");
+
       box.className="channel";
 
       box.innerHTML=
-        '<strong>'+esc(ch.name)+'</strong>'+
-        '<span>'+esc(ch.note||"Back Office delivery option.")+'</span>'+
+        '<strong>'+
+        esc(ch.name)+
+        '</strong>'+
+        '<span>'+
+        esc(
+          ch.note||
+          "Back Office delivery option."
+        )+
+        '</span>'+
         '<button type="button" class="'+
         (ch.id==="phone"?"":"secondary")+
-        '">'+esc(ch.name)+'</button>';
+        '">'+
+        esc(ch.name)+
+        '</button>';
 
       box.querySelector("button").onclick=
-        ()=>boDeliver(serviceName,title,ch);
+        ()=>boDeliver(
+          serviceName,
+          title,
+          ch
+        );
 
       grid.appendChild(box)
+
     })
 
   }catch(e){
-    setBoMessage(e.message,"error")
+
+    setBoMessage(
+      e.message,
+      "error"
+    )
+
   }
 }
+
 
 /*
  * BACK OFFICE DELIVERY
  *
- * Only the Email request now supplies recipient_email.
- * The exact saved document is still selected and attached
- * by payment_api.py.
+ * The Email action now takes the recipient email
+ * directly from the Back Office email field.
+ *
+ * The backend still selects and attaches the exact
+ * saved document.
  */
-async function boDeliver(serviceName,title,ch,recipientEmail=""){
+async function boDeliver(
+  serviceName,
+  title,
+  ch,
+  recipientEmail=""
+){
+
   try{
 
     /*
-     * Email recipient comes from the existing Back Office
-     * record data when available.
+     * Only Email uses the recipient email field.
+     * Other delivery channels remain unchanged.
      */
     if(ch.id==="email"){
-      recipientEmail=clean(recipientEmail);
+
+      recipientEmail=
+        clean(
+          recipientEmail||
+          $("boRecipientEmail").value
+        );
 
       if(!recipientEmail){
+
         setBoMessage(
-          "The customer's email address is not available in the saved Back Office record.",
+          "Enter the customer's email address before choosing Email.",
           "error"
         );
+
+        $("boRecipientEmail").focus();
+
+        return
+      }
+
+      const emailPattern=
+        /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+      if(!emailPattern.test(recipientEmail)){
+
+        setBoMessage(
+          "Enter a valid customer email address.",
+          "error"
+        );
+
+        $("boRecipientEmail").focus();
+
         return
       }
     }
@@ -659,11 +1506,13 @@ async function boDeliver(serviceName,title,ch,recipientEmail=""){
     };
 
     /*
-     * This is the required field for the Back Office Email
-     * delivery endpoint.
+     * Required by the existing Back Office Email endpoint.
      */
     if(ch.id==="email"){
-      payload.recipient_email=recipientEmail;
+
+      payload.recipient_email=
+        recipientEmail;
+
     }
 
     const d=await api(
@@ -679,35 +1528,63 @@ async function boDeliver(serviceName,title,ch,recipientEmail=""){
     );
 
     if(ch.id==="phone"){
-      await downloadBackOffice(serviceName,title)
+
+      await downloadBackOffice(
+        serviceName,
+        title
+      )
+
     }else if(ch.url){
-      window.open(ch.url,"_blank","noopener")
+
+      window.open(
+        ch.url,
+        "_blank",
+        "noopener"
+      )
+
     }
 
     if(ch.id==="email"){
+
       setBoMessage(
         "The exact saved document has been sent to "+
         recipientEmail+
         " by email.",
         "success"
       )
+
     }else{
+
       setBoMessage(
         "The exact saved document is ready for Back Office delivery through "+
         ch.name+
         ".",
         "success"
       )
+
     }
 
   }catch(e){
-    setBoMessage(e.message,"error")
+
+    setBoMessage(
+      e.message,
+      "error"
+    )
+
   }
 }
 
-async function downloadBackOffice(serviceName,title,key=boKey()){
+
+async function downloadBackOffice(
+  serviceName,
+  title,
+  key=boKey()
+){
+
   if(!key)
-    throw new Error("Enter the Back Office key first.");
+    throw new Error(
+      "Enter the Back Office key first."
+    );
 
   const r=await fetch(
     PAYMENT_API_BASE+
@@ -716,13 +1593,20 @@ async function downloadBackOffice(serviceName,title,key=boKey()){
     "&title="+
     encodeURIComponent(title),
     {
-      headers:{"X-Back-Office-Key":key},
+      headers:{
+        "X-Back-Office-Key":key
+      },
       cache:"no-store"
     }
   );
 
   if(!r.ok){
-    const d=await r.json().catch(()=>({}));
+
+    const d=
+      await r.json().catch(
+        ()=>({})
+      );
+
     throw new Error(
       d.detail||
       "Back Office document download failed."
@@ -730,20 +1614,36 @@ async function downloadBackOffice(serviceName,title,key=boKey()){
   }
 
   const blob=await r.blob();
+
   const a=document.createElement("a");
 
   a.href=URL.createObjectURL(blob);
-  a.download=(title||"document")+".docx";
+
+  a.download=
+    (title||"document")+
+    ".docx";
 
   document.body.appendChild(a);
+
   a.click();
+
   a.remove();
 
-  setTimeout(()=>URL.revokeObjectURL(a.href),1500)
+  setTimeout(
+    ()=>URL.revokeObjectURL(a.href),
+    1500
+  )
 }
 
-async function activateRecord(serviceName,title,button){
+
+async function activateRecord(
+  serviceName,
+  title,
+  button
+){
+
   try{
+
     button.disabled=true;
 
     const d=await api(
@@ -767,48 +1667,82 @@ async function activateRecord(serviceName,title,button){
       "success"
     );
 
-    button.textContent="DOWNLOAD ACTIVE";
+    button.textContent=
+      "DOWNLOAD ACTIVE";
+
     button.classList.add("green");
 
     await loadBackOffice()
 
   }catch(e){
-    setBoMessage(e.message,"error");
+
+    setBoMessage(
+      e.message,
+      "error"
+    );
+
     button.disabled=false
+
   }
 }
 
+
 function renderRecords(data){
+
   const box=$("boRecords");
+
   box.innerHTML="";
 
-  const products=data.products||data.records||[];
+  const products=
+    data.products||
+    data.records||
+    [];
 
   if(!products.length){
+
     box.innerHTML=
-      '<div class="card"><div class="notice">No saved payment records were found.</div></div>';
+      '<div class="card">'+
+        '<div class="notice">'+
+        'No saved payment records were found.'+
+        '</div>'+
+      '</div>';
+
     return
   }
 
   products.forEach(r=>{
+
     const p=r.product||r;
-    const serviceName=clean(p.service);
-    const title=clean(p.document_title||p.title);
-    const payment=r.payment||{};
+
+    const serviceName=
+      clean(p.service);
+
+    const title=
+      clean(
+        p.document_title||
+        p.title
+      );
+
+    const payment=
+      r.payment||
+      {};
 
     /*
-     * Read the customer's existing email from the Back Office
-     * record. No new customer/job identifier is introduced.
+     * Keep reading an existing email if the API supplies one.
+     * The manual Back Office email field remains available
+     * when the record does not contain an email.
      */
-    const customerEmail=clean(
-      p.customer_email||
-      p.email||
-      payment.customer_email||
-      payment.email||
-      ""
-    );
+    const customerEmail=
+      clean(
+        p.customer_email||
+        p.email||
+        payment.customer_email||
+        payment.email||
+        ""
+      );
 
-    const unlocked=!!p.download_unlocked;
+    const unlocked=
+      !!p.download_unlocked;
 
     const status=
       p.payment_verified?
@@ -817,81 +1751,151 @@ function renderRecords(data){
       "Awaiting Verification":
       "Not Reported";
 
-    const el=document.createElement("article");
+    const el=
+      document.createElement("article");
+
     el.className="record";
 
     el.innerHTML=
       '<div class="record-main">'+
+
         '<div class="record-title">'+
-          esc(title||"Untitled document")+
+          esc(
+            title||
+            "Untitled document"
+          )+
         '</div>'+
+
         '<div class="record-service">'+
-          esc(serviceName||"Service")+
+          esc(
+            serviceName||
+            "Service"
+          )+
         '</div>'+
+
         '<div class="record-grid">'+
+
           '<div class="mini">'+
             '<b>Amount</b>'+
-            '<span>'+money(p.amount||payment.amount)+'</span>'+
+            '<span>'+
+              money(
+                p.amount||
+                payment.amount
+              )+
+            '</span>'+
           '</div>'+
+
           '<div class="mini">'+
             '<b>Payment</b>'+
-            '<span>'+esc(status)+'</span>'+
+            '<span>'+
+              esc(status)+
+            '</span>'+
           '</div>'+
+
           '<div class="mini">'+
             '<b>Saved</b>'+
-            '<span>'+(p.saved_document?"Yes":"No")+'</span>'+
+            '<span>'+
+              (p.saved_document?"Yes":"No")+
+            '</span>'+
           '</div>'+
+
           '<div class="mini">'+
             '<b>Customer Download</b>'+
-            '<span>'+(unlocked?"Active":"Locked")+'</span>'+
+            '<span>'+
+              (unlocked?"Active":"Locked")+
+            '</span>'+
           '</div>'+
+
         '</div>'+
+
       '</div>'+
+
       '<div class="record-actions">'+
-        '<button type="button" class="secondary view-btn">VIEW DOCUMENT</button>'+
+
+        '<button type="button" class="secondary view-btn">'+
+          'VIEW DOCUMENT'+
+        '</button>'+
+
         '<button type="button" class="'+
           (unlocked?"green":"")+
           ' activate-btn">'+
-          (unlocked?"DOWNLOAD ACTIVE":"ACTIVATE DOWNLOAD")+
+          (unlocked?
+            "DOWNLOAD ACTIVE":
+            "ACTIVATE DOWNLOAD")+
         '</button>'+
+
       '</div>';
 
-    el.querySelector(".view-btn").onclick=
-      ()=>viewSavedRecord(serviceName,title);
+    el.querySelector(
+      ".view-btn"
+    ).onclick=
+      ()=>viewSavedRecord(
+        serviceName,
+        title
+      );
 
-    const ab=el.querySelector(".activate-btn");
+    const ab=
+      el.querySelector(
+        ".activate-btn"
+      );
 
     if(unlocked){
-      ab.onclick=()=>viewSavedRecord(serviceName,title)
+
+      ab.onclick=
+        ()=>viewSavedRecord(
+          serviceName,
+          title
+        )
+
     }else{
-      ab.onclick=()=>activateRecord(serviceName,title,ab)
+
+      ab.onclick=
+        ()=>activateRecord(
+          serviceName,
+          title,
+          ab
+        )
+
     }
 
     /*
-     * Keep the existing customer email attached to the record
-     * so the Email delivery action can pass it to boDeliver().
+     * Preserve any existing email information
+     * on the Back Office record.
      */
-    el.dataset.customerEmail=customerEmail;
+    el.dataset.customerEmail=
+      customerEmail;
 
     box.appendChild(el)
+
   })
 }
 
+
 async function loadBackOffice(){
+
   try{
+
     localStorage.setItem(
       "NPBC_BACK_OFFICE_KEY",
       boKey()
     );
 
-    setBoMessage("Loading Back Office records...");
+    setBoMessage(
+      "Loading Back Office records..."
+    );
 
     const d=await api(
       "/api/back-office/payments",
-      {headers:boHeaders()}
+      {
+        headers:boHeaders()
+      }
     );
 
-    renderSummary(d.summary||{});
+    renderSummary(
+      d.summary||
+      {}
+    );
+
     renderRecords(d);
 
     setBoMessage(
@@ -900,21 +1904,40 @@ async function loadBackOffice(){
     )
 
   }catch(e){
-    setBoMessage(e.message,"error")
+
+    setBoMessage(
+      e.message,
+      "error"
+    )
+
   }
 }
 
-$("openBackOfficeButton").onclick=showBackOffice;
-$("makePaymentButton").onclick=createPayment;
-$("reportPaymentButton").onclick=reportPayment;
-$("loadBackOfficeButton").onclick=loadBackOffice;
-$("refreshBackOfficeButton").onclick=loadBackOffice;
-$("exitBackOffice").onclick=showCustomer;
+
+$("openBackOfficeButton").onclick=
+  showBackOffice;
+
+$("makePaymentButton").onclick=
+  createPayment;
+
+$("reportPaymentButton").onclick=
+  reportPayment;
+
+$("loadBackOfficeButton").onclick=
+  loadBackOffice;
+
+$("refreshBackOfficeButton").onclick=
+  loadBackOffice;
+
+$("exitBackOffice").onclick=
+  showCustomer;
+
 
 if(mode==="back_office")
   showBackOffice();
 else
   loadCustomer();
+
 </script>
 </body>
 </html>
