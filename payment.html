@@ -84,6 +84,7 @@ button,input{font:inherit}button{cursor:pointer}.page{min-height:100vh;backgroun
 
 <script>
 "use strict";
+
 const PAYMENT_API_BASE="https://naija-pocket-payment-api.onrender.com";
 const LOCAL_BACK_OFFICE_KEY="NPBC-2026";
 const CUSTOMER_CARE_PHONE="+234 805 707 3891";
@@ -91,65 +92,829 @@ const params=new URLSearchParams(location.search);
 const mode=(params.get("mode")||"").trim().toLowerCase();
 const serviceParam=(params.get("service")||"").trim();
 const titleParam=(params.get("title")||params.get("document_title")||"").trim();
-let service=serviceParam,documentTitle=titleParam,amount=0,paymentPrepared=false,paymentReported=false,paymentVerified=false,downloadUnlocked=false,paymentStatusData=null;
+
+let service=serviceParam,
+    documentTitle=titleParam,
+    amount=0,
+    paymentPrepared=false,
+    paymentReported=false,
+    paymentVerified=false,
+    downloadUnlocked=false,
+    paymentStatusData=null;
+
 const $=id=>document.getElementById(id);
-function clean(v){return v==null?"":String(v).trim()}
-function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;")}
-function money(v){const n=Number(v)||0;return n>0?"₦"+n.toLocaleString():"₦0"}
-function boKey(){return clean($("backOfficeKey").value)}
-function clearBackOfficeKey(){$("backOfficeKey").value=""}
-async function api(path,options={}){const r=await fetch(PAYMENT_API_BASE+path,{cache:"no-store",...options});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.detail||d.message||d.error||"The payment service could not complete this request.");return d}
-function customerIdentity(){if(!service||!documentTitle)return false;return true}
-function setCustomerMessage(text,type=""){$("paymentMessage").textContent=text||"";$('paymentMessage').className="status"+(type?" "+type:"")}
-function renderBankDetails(data){const c=data&&data.payment_channels?data.payment_channels.channels:[];const bank=c.find(x=>String(x.id).toLowerCase().includes("bank"));if(bank&&bank.details){$("bankDetails").textContent=bank.details}else if(bank&&bank.note){$("bankDetails").textContent=bank.note}else{$("bankDetails").textContent="Bank details will be shown here when supplied by the payment service."}}
-function renderCustomerDelivery(data){const box=$("customerDelivery");box.innerHTML="";const channels=(data&&data.channels)||[];if(!channels.length){box.innerHTML='<div class="notice">No delivery option is available yet.</div>';return}channels.forEach(ch=>{const d=document.createElement("div");d.className="channel";const available=!!ch.available;d.innerHTML='<strong>'+esc(ch.name)+'</strong><span>'+esc(ch.note||((ch.id==="phone")?(available?"Download your verified document.":"Waiting for Customer Care verification."):"Use this delivery option after download is unlocked."))+'</span><button type="button" '+(available?"":"disabled")+'>'+esc(ch.name)+'</button>';d.querySelector("button").onclick=()=>customerDelivery(ch);box.appendChild(d)})}
+
+function clean(v){
+  return v==null?"":String(v).trim()
+}
+
+function esc(v){
+  return String(v??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/\"/g,"&quot;")
+}
+
+function money(v){
+  const n=Number(v)||0;
+  return n>0?"₦"+n.toLocaleString():"₦0"
+}
+
+function boKey(){
+  return clean($("backOfficeKey").value)
+}
+
+function clearBackOfficeKey(){
+  $("backOfficeKey").value=""
+}
+
+async function api(path,options={}){
+  const r=await fetch(PAYMENT_API_BASE+path,{cache:"no-store",...options});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(d.detail||d.message||d.error||"The payment service could not complete this request.");
+  return d
+}
+
+function customerIdentity(){
+  if(!service||!documentTitle)return false;
+  return true
+}
+
+function setCustomerMessage(text,type=""){
+  $("paymentMessage").textContent=text||"";
+  $("paymentMessage").className="status"+(type?" "+type:"")
+}
+
+function renderBankDetails(data){
+  const c=data&&data.payment_channels?data.payment_channels.channels:[];
+  const bank=c.find(x=>String(x.id).toLowerCase().includes("bank"));
+  if(bank&&bank.details){
+    $("bankDetails").textContent=bank.details
+  }else if(bank&&bank.note){
+    $("bankDetails").textContent=bank.note
+  }else{
+    $("bankDetails").textContent="Bank details will be shown here when supplied by the payment service."
+  }
+}
+
+function renderCustomerDelivery(data){
+  const box=$("customerDelivery");
+  box.innerHTML="";
+  const channels=(data&&data.channels)||[];
+
+  if(!channels.length){
+    box.innerHTML='<div class="notice">No delivery option is available yet.</div>';
+    return
+  }
+
+  channels.forEach(ch=>{
+    const d=document.createElement("div");
+    d.className="channel";
+    const available=!!ch.available;
+
+    d.innerHTML=
+      '<strong>'+esc(ch.name)+'</strong>'+
+      '<span>'+esc(ch.note||((ch.id==="phone")?
+      (available?"Download your verified document.":"Waiting for Customer Care verification.") :
+      "Use this delivery option after download is unlocked."))+'</span>'+
+      '<button type="button" '+(available?"":"disabled")+'>'+esc(ch.name)+'</button>';
+
+    d.querySelector("button").onclick=()=>customerDelivery(ch);
+    box.appendChild(d)
+  })
+}
+
 function renderCustomerDocument(p){
   const box=$("customerDocumentPreview");
   const title=p.document_title||documentTitle||"Your reviewed document";
+
   $("savedPreviewTitle").textContent=title;
+
   let pages=Array.isArray(p.document_preview_pages)?p.document_preview_pages:[];
-  if(!pages.length&&p.document_preview_text)pages=[p.document_preview_text];
-  if(!pages.length){box.innerHTML='<div class="preview-empty">Your saved document evidence is not available yet.</div>';return}
-  const firstPage=typeof pages[0]==="object"?(pages[0].content||pages[0].text||""):pages[0];
-  box.innerHTML='<div class="customer-document-page"><div class="preview-page-label">Saved document evidence</div>'+renderDocMarkup(firstPage)+'</div>';
+
+  if(!pages.length&&p.document_preview_text)
+    pages=[p.document_preview_text];
+
+  if(!pages.length){
+    box.innerHTML='<div class="preview-empty">Your saved document evidence is not available yet.</div>';
+    return
+  }
+
+  const firstPage=typeof pages[0]==="object"?
+    (pages[0].content||pages[0].text||""):
+    pages[0];
+
+  box.innerHTML=
+    '<div class="customer-document-page">'+
+    '<div class="preview-page-label">Saved document evidence</div>'+
+    renderDocMarkup(firstPage)+
+    '</div>'
 }
 
-async function loadCustomer(){if(!customerIdentity()){$("serviceValue").textContent="Document not specified";$("titleValue").textContent="Return to Review";setCustomerMessage("This payment page needs the service and document title.","error");return}$("serviceValue").textContent=service;$("titleValue").textContent=documentTitle;try{const d=await api("/api/payment/status?service="+encodeURIComponent(service)+"&title="+encodeURIComponent(documentTitle));paymentStatusData=d;const p=d.product||{};const pay=d.payment||{};amount=Number(p.amount||pay.amount||0);paymentPrepared=!!pay||!!p.saved_document;paymentReported=!!(p.payment_reported||pay.reported_at||String(pay.payment_status||"").toLowerCase()==="payment_reported");paymentVerified=!!(p.payment_verified||pay.verified_at||["payment_verified","verified","approved","paid","completed","complete"].includes(String(pay.payment_status||"").toLowerCase()));downloadUnlocked=!!p.download_unlocked;$("amountValue").textContent=money(amount);$("billingValue").textContent=amount>0?"Pay the amount shown above, then tap I HAVE MADE PAYMENT.":"A quotation is required before payment.";$("paymentStatus").textContent=paymentVerified?"Payment verified by Customer Care. Download is available.":paymentReported?"Payment reported. Customer Care will verify it before download is unlocked.":paymentPrepared?"Payment is prepared. Complete the transfer, then tap I HAVE MADE PAYMENT.":"Payment has not been started.";setCustomerMessage(paymentVerified?"Payment verified. Your document is now available for download.":paymentReported?"Your payment has been reported. Please wait for Customer Care verification.":"Payment has not been reported yet.",paymentVerified?"success":"");renderCustomerDelivery(d.delivery||{});renderBankDetails(d);renderCustomerDocument(p)}catch(e){setCustomerMessage(e.message,"error");$("customerDocumentPreview").innerHTML='<div class="preview-empty">Unable to load the saved document evidence.</div>'}}
+async function loadCustomer(){
+  if(!customerIdentity()){
+    $("serviceValue").textContent="Document not specified";
+    $("titleValue").textContent="Return to Review";
+    setCustomerMessage("This payment page needs the service and document title.","error");
+    return
+  }
+
+  $("serviceValue").textContent=service;
+  $("titleValue").textContent=documentTitle;
+
+  try{
+    const d=await api(
+      "/api/payment/status?service="+encodeURIComponent(service)+
+      "&title="+encodeURIComponent(documentTitle)
+    );
+
+    paymentStatusData=d;
+
+    const p=d.product||{};
+    const pay=d.payment||{};
+
+    amount=Number(p.amount||pay.amount||0);
+
+    paymentPrepared=!!pay||!!p.saved_document;
+
+    paymentReported=!!(
+      p.payment_reported||
+      pay.reported_at||
+      String(pay.payment_status||"").toLowerCase()==="payment_reported"
+    );
+
+    paymentVerified=!!(
+      p.payment_verified||
+      pay.verified_at||
+      ["payment_verified","verified","approved","paid","completed","complete"]
+        .includes(String(pay.payment_status||"").toLowerCase())
+    );
+
+    downloadUnlocked=!!p.download_unlocked;
+
+    $("amountValue").textContent=money(amount);
+
+    $("billingValue").textContent=
+      amount>0?
+      "Pay the amount shown above, then tap I HAVE MADE PAYMENT.":
+      "A quotation is required before payment.";
+
+    $("paymentStatus").textContent=
+      paymentVerified?
+      "Payment verified by Customer Care. Download is available.":
+      paymentReported?
+      "Payment reported. Customer Care will verify it before download is unlocked.":
+      paymentPrepared?
+      "Payment is prepared. Complete the transfer, then tap I HAVE MADE PAYMENT.":
+      "Payment has not been started.";
+
+    setCustomerMessage(
+      paymentVerified?
+      "Payment verified. Your document is now available for download.":
+      paymentReported?
+      "Your payment has been reported. Please wait for Customer Care verification.":
+      "Payment has not been reported yet.",
+      paymentVerified?"success":""
+    );
+
+    renderCustomerDelivery(d.delivery||{});
+    renderBankDetails(d);
+    renderCustomerDocument(p)
+
+  }catch(e){
+    setCustomerMessage(e.message,"error");
+    $("customerDocumentPreview").innerHTML=
+      '<div class="preview-empty">Unable to load the saved document evidence.</div>'
+  }
+}
 
 /* MAKE PAYMENT — preserved as the payment creation operation. */
-async function createPayment(){if(!customerIdentity())return setCustomerMessage("The service and document title are required.","error");if(amount<=0)return setCustomerMessage("A valid payment amount is not available yet.","error");try{$("makePaymentButton").disabled=true;const status=paymentStatusData||await api("/api/payment/status?service="+encodeURIComponent(service)+"&title="+encodeURIComponent(documentTitle));const p=status.product||{};const pay=status.payment||{};const pages=p.document_preview_pages||p.pages||[];const documentText=p.document_preview_text||p.document_text||"";const payload={service:service,document_title:documentTitle,customer_name:p.customer_name||"",customer_id:p.customer_id||"",amount:amount,currency:p.currency||"NGN",payment_method:"bank_transfer",document_version:p.document_version||"",pages:pages,document_pages:pages,document_text:documentText,filename:p.document_filename||"document.docx"};const d=await api("/api/payment/create",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});paymentStatusData=d;paymentPrepared=true;amount=Number((d.payment||{}).amount||(d.product||{}).amount)||amount;$("amountValue").textContent=money(amount);$("paymentStatus").textContent="Payment prepared. Complete your payment, then tap I HAVE MADE PAYMENT.";setCustomerMessage("Your saved document is prepared for payment and delivery.","success");renderCustomerDelivery(d.delivery||{});renderBankDetails(d)}catch(e){setCustomerMessage(e.message,"error")}finally{$("makePaymentButton").disabled=false}}
+async function createPayment(){
+  if(!customerIdentity())
+    return setCustomerMessage("The service and document title are required.","error");
+
+  if(amount<=0)
+    return setCustomerMessage("A valid payment amount is not available yet.","error");
+
+  try{
+    $("makePaymentButton").disabled=true;
+
+    const status=paymentStatusData||
+      await api(
+        "/api/payment/status?service="+encodeURIComponent(service)+
+        "&title="+encodeURIComponent(documentTitle)
+      );
+
+    const p=status.product||{};
+    const pay=status.payment||{};
+
+    const pages=p.document_preview_pages||p.pages||[];
+    const documentText=p.document_preview_text||p.document_text||"";
+
+    const payload={
+      service:service,
+      document_title:documentTitle,
+      customer_name:p.customer_name||"",
+      customer_id:p.customer_id||"",
+      amount:amount,
+      currency:p.currency||"NGN",
+      payment_method:"bank_transfer",
+      document_version:p.document_version||"",
+      pages:pages,
+      document_pages:pages,
+      document_text:documentText,
+      filename:p.document_filename||"document.docx"
+    };
+
+    const d=await api("/api/payment/create",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+
+    paymentStatusData=d;
+    paymentPrepared=true;
+
+    amount=Number(
+      (d.payment||{}).amount||
+      (d.product||{}).amount
+    )||amount;
+
+    $("amountValue").textContent=money(amount);
+
+    $("paymentStatus").textContent=
+      "Payment prepared. Complete your payment, then tap I HAVE MADE PAYMENT.";
+
+    setCustomerMessage(
+      "Your saved document is prepared for payment and delivery.",
+      "success"
+    );
+
+    renderCustomerDelivery(d.delivery||{});
+    renderBankDetails(d)
+
+  }catch(e){
+    setCustomerMessage(e.message,"error")
+  }finally{
+    $("makePaymentButton").disabled=false
+  }
+}
 
 /* I HAVE MADE PAYMENT — preserved as the payment-report operation only. */
-async function reportPayment(){if(!customerIdentity())return setCustomerMessage("The service and document title are required.","error");try{$("reportPaymentButton").disabled=true;const d=await api("/api/payment/report",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({service:service,document_title:documentTitle,note:"Customer reported payment from Payment & Delivery page."})});paymentStatusData=d;paymentReported=true;paymentVerified=!!d.payment_verified;downloadUnlocked=!!d.download_unlocked;$("paymentStatus").textContent=paymentVerified?"Payment is already verified.":"Payment reported. Customer Care will verify it before customer download is unlocked.";setCustomerMessage(paymentVerified?"Payment has already been verified.":"Your payment has been reported. Customer Care will verify it before download is unlocked.","success");await loadCustomer()}catch(e){setCustomerMessage(e.message,"error")}finally{$("reportPaymentButton").disabled=false}}
-async function customerDelivery(ch){if(!ch.available)return setCustomerMessage("This delivery option is still locked until Customer Care verifies the payment.","error");if(ch.id==="phone"){try{const r=await fetch(PAYMENT_API_BASE+"/api/download?service="+encodeURIComponent(service)+"&title="+encodeURIComponent(documentTitle),{cache:"no-store"});if(!r.ok)throw new Error("Download remains locked until Customer Care verifies the payment.");const blob=await r.blob();const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(documentTitle||"document")+".docx";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}catch(e){setCustomerMessage(e.message,"error")}}else if(ch.url)window.open(ch.url,"_blank","noopener")}
+async function reportPayment(){
+  if(!customerIdentity())
+    return setCustomerMessage("The service and document title are required.","error");
+
+  try{
+    $("reportPaymentButton").disabled=true;
+
+    const d=await api("/api/payment/report",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        service:service,
+        document_title:documentTitle,
+        note:"Customer reported payment from Payment & Delivery page."
+      })
+    });
+
+    paymentStatusData=d;
+    paymentReported=true;
+    paymentVerified=!!d.payment_verified;
+    downloadUnlocked=!!d.download_unlocked;
+
+    $("paymentStatus").textContent=
+      paymentVerified?
+      "Payment is already verified.":
+      "Payment reported. Customer Care will verify it before customer download is unlocked.";
+
+    setCustomerMessage(
+      paymentVerified?
+      "Payment has already been verified.":
+      "Your payment has been reported. Customer Care will verify it before download is unlocked.",
+      "success"
+    );
+
+    await loadCustomer()
+
+  }catch(e){
+    setCustomerMessage(e.message,"error")
+  }finally{
+    $("reportPaymentButton").disabled=false
+  }
+}
+
+async function customerDelivery(ch){
+  if(!ch.available)
+    return setCustomerMessage(
+      "This delivery option is still locked until Customer Care verifies the payment.",
+      "error"
+    );
+
+  if(ch.id==="phone"){
+    try{
+      const r=await fetch(
+        PAYMENT_API_BASE+"/api/download?service="+
+        encodeURIComponent(service)+
+        "&title="+
+        encodeURIComponent(documentTitle),
+        {cache:"no-store"}
+      );
+
+      if(!r.ok)
+        throw new Error(
+          "Download remains locked until Customer Care verifies the payment."
+        );
+
+      const blob=await r.blob();
+      const a=document.createElement("a");
+
+      a.href=URL.createObjectURL(blob);
+      a.download=(documentTitle||"document")+".docx";
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      setTimeout(()=>URL.revokeObjectURL(a.href),1500)
+
+    }catch(e){
+      setCustomerMessage(e.message,"error")
+    }
+  }else if(ch.url){
+    window.open(ch.url,"_blank","noopener")
+  }
+}
 
 function showBackOffice(){
-  $("customerPaymentView").classList.add("hidden");$("backOfficeView").classList.remove("hidden");
+  $("customerPaymentView").classList.add("hidden");
+  $("backOfficeView").classList.remove("hidden");
   $("backOfficeKey").value="";
-  setBoMessage("Enter the Back Office key, then choose an operation.");
+  setBoMessage("Enter the Back Office key, then choose an operation.")
 }
-function showCustomer(){$("backOfficeView").classList.add("hidden");$("customerPaymentView").classList.remove("hidden");loadCustomer()}
-function setBoMessage(text,type=""){const e=$("boMessage");e.textContent=text;e.className="status"+(type?" "+type:"")+(text?"":" hidden")}
-function boHeaders(){return {"X-Back-Office-Key":boKey()}}
-function renderSummary(summary){const s=summary||{};$("boSummary").innerHTML='<div class="box"><div class="n">'+Number(s.saved||0)+'</div><div class="t">Saved</div></div><div class="box"><div class="n">'+Number(s.reported||0)+'</div><div class="t">Reported</div></div><div class="box"><div class="n">'+Number(s.activated||0)+'</div><div class="t">Activated</div></div>'}
-function renderDocMarkup(text){const lines=String(text||"").replace(/\r/g,"").split("\n");let html="",para=[];function flush(){if(!para.length)return;html+="<p>"+para.join("<br>")+"</p>";para=[]}for(const line0 of lines){const line=line0.trim();if(!line){flush();continue}const h=line.match(/^#{1,6}\s+(.+)$/);if(h){flush();const level=Math.min(6,(line.match(/^#+/)||["#"])[0].length);html+="<h"+level+">"+inlineMarkup(h[1])+"</h"+level+">"}else para.push(inlineMarkup(line))}flush();return html||"<p>No saved document content.</p>"}
-function inlineMarkup(t){let x=esc(t);x=x.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");return x}
-function renderPages(pages,text){const list=Array.isArray(pages)&&pages.length?pages:[String(text||"")];$("boDocumentText").innerHTML=list.map((p,i)=>'<div class="doc-page"><div style="font-size:11px;color:#777;margin-bottom:12px">Page '+(i+1)+' of '+list.length+'</div>'+renderDocMarkup(typeof p==="object"?(p.content||p.text||""):p)+'</div>').join("")}
-async function viewSavedRecord(serviceName,title){try{setBoMessage("Loading the complete saved document...");const d=await api("/api/back-office/document?service="+encodeURIComponent(serviceName)+"&title="+encodeURIComponent(title),{headers:boHeaders()});$("boDocumentPanel").classList.remove("hidden");$("boDocumentTitle").textContent=d.document_title||title;$("boDocumentMeta").textContent=(d.service||serviceName)+" • "+Number(d.page_count||0)+" page(s) • exact saved document";renderPages(d.pages,d.document_text);await loadBoDelivery(serviceName,title);setBoMessage("Complete saved document loaded.","success");$("boDocumentPanel").scrollIntoView({behavior:"smooth",block:"start"})}catch(e){setBoMessage(e.message,"error")}}
-async function loadBoDelivery(serviceName,title,key=boKey()){try{const d=await api("/api/back-office/delivery-channels?service="+encodeURIComponent(serviceName)+"&title="+encodeURIComponent(title),{headers:{"X-Back-Office-Key":key}});const grid=$("boDeliveryGrid");grid.innerHTML="";$("boDeliveryPanel").classList.remove("hidden");(d.delivery&&d.delivery.channels||[]).forEach(ch=>{const box=document.createElement("div");box.className="channel";box.innerHTML='<strong>'+esc(ch.name)+'</strong><span>'+esc(ch.note||"Back Office delivery option.")+'</span><button type="button" class="'+(ch.id==="phone"?"":"secondary")+'">'+esc(ch.name)+'</button>';box.querySelector("button").onclick=()=>boDeliver(serviceName,title,ch);grid.appendChild(box)})}catch(e){setBoMessage(e.message,"error")}}
-async function boDeliver(serviceName,title,ch){try{const d=await api("/api/back-office/delivery",{method:"POST",headers:{...boHeaders(),"Content-Type":"application/json"},body:JSON.stringify({service:serviceName,document_title:title,channel:ch.id})});if(ch.id==="phone"){await downloadBackOffice(serviceName,title)}else if(ch.url){window.open(ch.url,"_blank","noopener")}setBoMessage("The exact saved document is ready for Back Office delivery through "+ch.name+".","success")}catch(e){setBoMessage(e.message,"error")}}
-async function downloadBackOffice(serviceName,title,key=boKey()){if(!key)throw new Error("Enter the Back Office key first.");const r=await fetch(PAYMENT_API_BASE+"/api/back-office/delivery-file?service="+encodeURIComponent(serviceName)+"&title="+encodeURIComponent(title),{headers:{"X-Back-Office-Key":key},cache:"no-store"});if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.detail||"Back Office document download failed.")}const blob=await r.blob();const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(title||"document")+".docx";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
-async function activateRecord(serviceName,title,button){try{button.disabled=true;const d=await api("/api/back-office/activate-download",{method:"POST",headers:{...boHeaders(),"Content-Type":"application/json"},body:JSON.stringify({service:serviceName,document_title:title,verified:true})});setBoMessage("Customer download has been activated for this saved document.","success");button.textContent="DOWNLOAD ACTIVE";button.classList.add("green");await loadBackOffice()}catch(e){setBoMessage(e.message,"error");button.disabled=false}}
-function renderRecords(data){const box=$("boRecords");box.innerHTML="";const products=data.products||data.records||[];if(!products.length){box.innerHTML='<div class="card"><div class="notice">No saved payment records were found.</div></div>';return}products.forEach(r=>{const p=r.product||r;const serviceName=clean(p.service),title=clean(p.document_title||p.title);const payment=r.payment||{};const unlocked=!!p.download_unlocked;const status=p.payment_verified?"Verified":p.payment_reported?"Awaiting Verification":"Not Reported";const el=document.createElement("article");el.className="record";el.innerHTML='<div class="record-main"><div class="record-title">'+esc(title||"Untitled document")+'</div><div class="record-service">'+esc(serviceName||"Service")+'</div><div class="record-grid"><div class="mini"><b>Amount</b><span>'+money(p.amount||payment.amount)+'</span></div><div class="mini"><b>Payment</b><span>'+esc(status)+'</span></div><div class="mini"><b>Saved</b><span>'+(p.saved_document?"Yes":"No")+'</span></div><div class="mini"><b>Customer Download</b><span>'+(unlocked?"Active":"Locked")+'</span></div></div></div><div class="record-actions"><button type="button" class="secondary view-btn">VIEW DOCUMENT</button><button type="button" class="'+(unlocked?"green":"")+' activate-btn">'+(unlocked?"DOWNLOAD ACTIVE":"ACTIVATE DOWNLOAD")+'</button></div>';
-  el.querySelector(".view-btn").onclick=()=>viewSavedRecord(serviceName,title);const ab=el.querySelector(".activate-btn");if(unlocked){ab.onclick=()=>viewSavedRecord(serviceName,title)}else ab.onclick=()=>activateRecord(serviceName,title,ab);box.appendChild(el)})}
-async function loadBackOffice(){try{localStorage.setItem("NPBC_BACK_OFFICE_KEY",boKey());setBoMessage("Loading Back Office records...");const d=await api("/api/back-office/payments",{headers:boHeaders()});renderSummary(d.summary||{});renderRecords(d);setBoMessage("Back Office records loaded.","success")}catch(e){setBoMessage(e.message,"error")}}
+
+function showCustomer(){
+  $("backOfficeView").classList.add("hidden");
+  $("customerPaymentView").classList.remove("hidden");
+  loadCustomer()
+}
+
+function setBoMessage(text,type=""){
+  const e=$("boMessage");
+  e.textContent=text;
+  e.className="status"+(type?" "+type:"")+(text?"":" hidden")
+}
+
+function boHeaders(){
+  return {"X-Back-Office-Key":boKey()}
+}
+
+function renderSummary(summary){
+  const s=summary||{};
+
+  $("boSummary").innerHTML=
+    '<div class="box"><div class="n">'+Number(s.saved||0)+'</div><div class="t">Saved</div></div>'+
+    '<div class="box"><div class="n">'+Number(s.reported||0)+'</div><div class="t">Reported</div></div>'+
+    '<div class="box"><div class="n">'+Number(s.activated||0)+'</div><div class="t">Activated</div></div>'
+}
+
+function renderDocMarkup(text){
+  const lines=String(text||"").replace(/\r/g,"").split("\n");
+  let html="",para=[];
+
+  function flush(){
+    if(!para.length)return;
+    html+="<p>"+para.join("<br>")+"</p>";
+    para=[]
+  }
+
+  for(const line0 of lines){
+    const line=line0.trim();
+
+    if(!line){
+      flush();
+      continue
+    }
+
+    const h=line.match(/^#{1,6}\s+(.+)$/);
+
+    if(h){
+      flush();
+
+      const level=Math.min(
+        6,
+        (line.match(/^#+/)||["#"])[0].length
+      );
+
+      html+="<h"+level+">"+
+        inlineMarkup(h[1])+
+        "</h"+level+">"
+    }else{
+      para.push(inlineMarkup(line))
+    }
+  }
+
+  flush();
+
+  return html||"<p>No saved document content.</p>"
+}
+
+function inlineMarkup(t){
+  let x=esc(t);
+  x=x.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
+  return x
+}
+
+function renderPages(pages,text){
+  const list=
+    Array.isArray(pages)&&pages.length?
+    pages:
+    [String(text||"")];
+
+  $("boDocumentText").innerHTML=
+    list.map((p,i)=>
+      '<div class="doc-page">'+
+      '<div style="font-size:11px;color:#777;margin-bottom:12px">Page '+
+      (i+1)+' of '+list.length+
+      '</div>'+
+      renderDocMarkup(
+        typeof p==="object"?
+        (p.content||p.text||""):
+        p
+      )+
+      '</div>'
+    ).join("")
+}
+
+async function viewSavedRecord(serviceName,title){
+  try{
+    setBoMessage("Loading the complete saved document...");
+
+    const d=await api(
+      "/api/back-office/document?service="+
+      encodeURIComponent(serviceName)+
+      "&title="+
+      encodeURIComponent(title),
+      {headers:boHeaders()}
+    );
+
+    $("boDocumentPanel").classList.remove("hidden");
+
+    $("boDocumentTitle").textContent=
+      d.document_title||title;
+
+    $("boDocumentMeta").textContent=
+      (d.service||serviceName)+
+      " • "+
+      Number(d.page_count||0)+
+      " page(s) • exact saved document";
+
+    renderPages(d.pages,d.document_text);
+
+    await loadBoDelivery(serviceName,title);
+
+    setBoMessage(
+      "Complete saved document loaded.",
+      "success"
+    );
+
+    $("boDocumentPanel").scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    })
+
+  }catch(e){
+    setBoMessage(e.message,"error")
+  }
+}
+
+async function loadBoDelivery(serviceName,title,key=boKey()){
+  try{
+    const d=await api(
+      "/api/back-office/delivery-channels?service="+
+      encodeURIComponent(serviceName)+
+      "&title="+
+      encodeURIComponent(title),
+      {headers:{"X-Back-Office-Key":key}}
+    );
+
+    const grid=$("boDeliveryGrid");
+
+    grid.innerHTML="";
+    $("boDeliveryPanel").classList.remove("hidden");
+
+    (d.delivery&&d.delivery.channels||[]).forEach(ch=>{
+      const box=document.createElement("div");
+      box.className="channel";
+
+      box.innerHTML=
+        '<strong>'+esc(ch.name)+'</strong>'+
+        '<span>'+esc(ch.note||"Back Office delivery option.")+'</span>'+
+        '<button type="button" class="'+
+        (ch.id==="phone"?"":"secondary")+
+        '">'+esc(ch.name)+'</button>';
+
+      box.querySelector("button").onclick=
+        ()=>boDeliver(serviceName,title,ch);
+
+      grid.appendChild(box)
+    })
+
+  }catch(e){
+    setBoMessage(e.message,"error")
+  }
+}
+
+/*
+ * BACK OFFICE DELIVERY
+ *
+ * Only the Email request now supplies recipient_email.
+ * The exact saved document is still selected and attached
+ * by payment_api.py.
+ */
+async function boDeliver(serviceName,title,ch,recipientEmail=""){
+  try{
+
+    /*
+     * Email recipient comes from the existing Back Office
+     * record data when available.
+     */
+    if(ch.id==="email"){
+      recipientEmail=clean(recipientEmail);
+
+      if(!recipientEmail){
+        setBoMessage(
+          "The customer's email address is not available in the saved Back Office record.",
+          "error"
+        );
+        return
+      }
+    }
+
+    const payload={
+      service:serviceName,
+      document_title:title,
+      channel:ch.id
+    };
+
+    /*
+     * This is the required field for the Back Office Email
+     * delivery endpoint.
+     */
+    if(ch.id==="email"){
+      payload.recipient_email=recipientEmail;
+    }
+
+    const d=await api(
+      "/api/back-office/delivery",
+      {
+        method:"POST",
+        headers:{
+          ...boHeaders(),
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify(payload)
+      }
+    );
+
+    if(ch.id==="phone"){
+      await downloadBackOffice(serviceName,title)
+    }else if(ch.url){
+      window.open(ch.url,"_blank","noopener")
+    }
+
+    if(ch.id==="email"){
+      setBoMessage(
+        "The exact saved document has been sent to "+
+        recipientEmail+
+        " by email.",
+        "success"
+      )
+    }else{
+      setBoMessage(
+        "The exact saved document is ready for Back Office delivery through "+
+        ch.name+
+        ".",
+        "success"
+      )
+    }
+
+  }catch(e){
+    setBoMessage(e.message,"error")
+  }
+}
+
+async function downloadBackOffice(serviceName,title,key=boKey()){
+  if(!key)
+    throw new Error("Enter the Back Office key first.");
+
+  const r=await fetch(
+    PAYMENT_API_BASE+
+    "/api/back-office/delivery-file?service="+
+    encodeURIComponent(serviceName)+
+    "&title="+
+    encodeURIComponent(title),
+    {
+      headers:{"X-Back-Office-Key":key},
+      cache:"no-store"
+    }
+  );
+
+  if(!r.ok){
+    const d=await r.json().catch(()=>({}));
+    throw new Error(
+      d.detail||
+      "Back Office document download failed."
+    )
+  }
+
+  const blob=await r.blob();
+  const a=document.createElement("a");
+
+  a.href=URL.createObjectURL(blob);
+  a.download=(title||"document")+".docx";
+
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(()=>URL.revokeObjectURL(a.href),1500)
+}
+
+async function activateRecord(serviceName,title,button){
+  try{
+    button.disabled=true;
+
+    const d=await api(
+      "/api/back-office/activate-download",
+      {
+        method:"POST",
+        headers:{
+          ...boHeaders(),
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          service:serviceName,
+          document_title:title,
+          verified:true
+        })
+      }
+    );
+
+    setBoMessage(
+      "Customer download has been activated for this saved document.",
+      "success"
+    );
+
+    button.textContent="DOWNLOAD ACTIVE";
+    button.classList.add("green");
+
+    await loadBackOffice()
+
+  }catch(e){
+    setBoMessage(e.message,"error");
+    button.disabled=false
+  }
+}
+
+function renderRecords(data){
+  const box=$("boRecords");
+  box.innerHTML="";
+
+  const products=data.products||data.records||[];
+
+  if(!products.length){
+    box.innerHTML=
+      '<div class="card"><div class="notice">No saved payment records were found.</div></div>';
+    return
+  }
+
+  products.forEach(r=>{
+    const p=r.product||r;
+    const serviceName=clean(p.service);
+    const title=clean(p.document_title||p.title);
+    const payment=r.payment||{};
+
+    /*
+     * Read the customer's existing email from the Back Office
+     * record. No new customer/job identifier is introduced.
+     */
+    const customerEmail=clean(
+      p.customer_email||
+      p.email||
+      payment.customer_email||
+      payment.email||
+      ""
+    );
+
+    const unlocked=!!p.download_unlocked;
+
+    const status=
+      p.payment_verified?
+      "Verified":
+      p.payment_reported?
+      "Awaiting Verification":
+      "Not Reported";
+
+    const el=document.createElement("article");
+    el.className="record";
+
+    el.innerHTML=
+      '<div class="record-main">'+
+        '<div class="record-title">'+
+          esc(title||"Untitled document")+
+        '</div>'+
+        '<div class="record-service">'+
+          esc(serviceName||"Service")+
+        '</div>'+
+        '<div class="record-grid">'+
+          '<div class="mini">'+
+            '<b>Amount</b>'+
+            '<span>'+money(p.amount||payment.amount)+'</span>'+
+          '</div>'+
+          '<div class="mini">'+
+            '<b>Payment</b>'+
+            '<span>'+esc(status)+'</span>'+
+          '</div>'+
+          '<div class="mini">'+
+            '<b>Saved</b>'+
+            '<span>'+(p.saved_document?"Yes":"No")+'</span>'+
+          '</div>'+
+          '<div class="mini">'+
+            '<b>Customer Download</b>'+
+            '<span>'+(unlocked?"Active":"Locked")+'</span>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="record-actions">'+
+        '<button type="button" class="secondary view-btn">VIEW DOCUMENT</button>'+
+        '<button type="button" class="'+
+          (unlocked?"green":"")+
+          ' activate-btn">'+
+          (unlocked?"DOWNLOAD ACTIVE":"ACTIVATE DOWNLOAD")+
+        '</button>'+
+      '</div>';
+
+    el.querySelector(".view-btn").onclick=
+      ()=>viewSavedRecord(serviceName,title);
+
+    const ab=el.querySelector(".activate-btn");
+
+    if(unlocked){
+      ab.onclick=()=>viewSavedRecord(serviceName,title)
+    }else{
+      ab.onclick=()=>activateRecord(serviceName,title,ab)
+    }
+
+    /*
+     * Keep the existing customer email attached to the record
+     * so the Email delivery action can pass it to boDeliver().
+     */
+    el.dataset.customerEmail=customerEmail;
+
+    box.appendChild(el)
+  })
+}
+
+async function loadBackOffice(){
+  try{
+    localStorage.setItem(
+      "NPBC_BACK_OFFICE_KEY",
+      boKey()
+    );
+
+    setBoMessage("Loading Back Office records...");
+
+    const d=await api(
+      "/api/back-office/payments",
+      {headers:boHeaders()}
+    );
+
+    renderSummary(d.summary||{});
+    renderRecords(d);
+
+    setBoMessage(
+      "Back Office records loaded.",
+      "success"
+    )
+
+  }catch(e){
+    setBoMessage(e.message,"error")
+  }
+}
+
 $("openBackOfficeButton").onclick=showBackOffice;
 $("makePaymentButton").onclick=createPayment;
 $("reportPaymentButton").onclick=reportPayment;
 $("loadBackOfficeButton").onclick=loadBackOffice;
 $("refreshBackOfficeButton").onclick=loadBackOffice;
 $("exitBackOffice").onclick=showCustomer;
-if(mode==="back_office")showBackOffice();else loadCustomer();
+
+if(mode==="back_office")
+  showBackOffice();
+else
+  loadCustomer();
 </script>
 </body>
 </html>
