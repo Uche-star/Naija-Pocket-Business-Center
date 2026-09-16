@@ -544,10 +544,6 @@ button{cursor:pointer}
         download gate, not a Back Office retrieval gate.
       </div>
 
-      <!--
-        Email recipient is entered here by Back Office.
-        Other delivery channels are unchanged.
-      -->
       <div id="boEmailRecipientBox" class="bo-email-box hidden">
 
         <label for="boRecipientEmail">
@@ -561,9 +557,12 @@ button{cursor:pointer}
 
         <input
           id="boRecipientEmail"
+          name="boRecipientEmail"
           type="email"
           inputmode="email"
-          autocomplete="email"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
           placeholder="customer@example.com"
         >
 
@@ -602,6 +601,8 @@ let service=serviceParam,
     paymentVerified=false,
     downloadUnlocked=false,
     paymentStatusData=null;
+
+let currentBoCustomerEmail="";
 
 const $=id=>document.getElementById(id);
 
@@ -1302,13 +1303,27 @@ function renderPages(pages,text){
 }
 
 
-async function viewSavedRecord(serviceName,title){
+async function viewSavedRecord(serviceName,title,customerEmail=""){
 
   try{
 
     setBoMessage(
       "Loading the complete saved document..."
     );
+
+    /*
+     * Store the customer email for this exact
+     * service + document record.
+     */
+    currentBoCustomerEmail=
+      clean(customerEmail);
+
+    /*
+     * Put the stored customer email into the
+     * actual visible Back Office email field.
+     */
+    $("boRecipientEmail").value=
+      currentBoCustomerEmail;
 
     const d=await api(
       "/api/back-office/document?service="+
@@ -1319,6 +1334,28 @@ async function viewSavedRecord(serviceName,title){
         headers:boHeaders()
       }
     );
+
+    /*
+     * If the document endpoint also supplies an
+     * email, use it as the actual field value.
+     */
+    const returnedCustomerEmail=
+      clean(
+        d.customer_email||
+        d.email||
+        (d.customer||{}).email||
+        ""
+      );
+
+    if(returnedCustomerEmail){
+
+      currentBoCustomerEmail=
+        returnedCustomerEmail;
+
+      $("boRecipientEmail").value=
+        returnedCustomerEmail;
+
+    }
 
     $("boDocumentPanel").classList.remove("hidden");
 
@@ -1390,12 +1427,17 @@ async function loadBoDelivery(
     $("boDeliveryPanel").classList.remove("hidden");
 
     /*
-     * Show the email recipient field whenever the Back Office
-     * delivery panel is open.
-     *
-     * It is used only by the Email delivery action.
+     * Always show the real email recipient field
+     * whenever Back Office delivery is open.
      */
     $("boEmailRecipientBox").classList.remove("hidden");
+
+    /*
+     * Keep the currently selected customer's email
+     * in the actual field.
+     */
+    $("boRecipientEmail").value=
+      currentBoCustomerEmail;
 
     (d.delivery&&d.delivery.channels||[]).forEach(ch=>{
 
@@ -1444,11 +1486,8 @@ async function loadBoDelivery(
 /*
  * BACK OFFICE DELIVERY
  *
- * The Email action now takes the recipient email
- * directly from the Back Office email field.
- *
- * The backend still selects and attaches the exact
- * saved document.
+ * Email always reads the actual customer email
+ * input immediately before the request is sent.
  */
 async function boDeliver(
   serviceName,
@@ -1460,15 +1499,17 @@ async function boDeliver(
   try{
 
     /*
-     * Only Email uses the recipient email field.
-     * Other delivery channels remain unchanged.
+     * Only Email uses the customer email field.
+     * All other delivery channels remain unchanged.
      */
     if(ch.id==="email"){
 
+      const emailField=
+        $("boRecipientEmail");
+
       recipientEmail=
         clean(
-          recipientEmail||
-          $("boRecipientEmail").value
+          emailField.value
         );
 
       if(!recipientEmail){
@@ -1478,7 +1519,7 @@ async function boDeliver(
           "error"
         );
 
-        $("boRecipientEmail").focus();
+        emailField.focus();
 
         return
       }
@@ -1493,10 +1534,16 @@ async function boDeliver(
           "error"
         );
 
-        $("boRecipientEmail").focus();
+        emailField.focus();
 
         return
       }
+
+      /*
+       * Keep the exact value used by the request.
+       */
+      currentBoCustomerEmail=
+        recipientEmail;
     }
 
     const payload={
@@ -1506,12 +1553,15 @@ async function boDeliver(
     };
 
     /*
-     * Required by the existing Back Office Email endpoint.
+     * The Back Office Email endpoint requires
+     * recipient_email in the JSON request body.
      */
     if(ch.id==="email"){
 
       payload.recipient_email=
-        recipientEmail;
+        clean(
+          $("boRecipientEmail").value
+        );
 
     }
 
@@ -1548,7 +1598,7 @@ async function boDeliver(
 
       setBoMessage(
         "The exact saved document has been sent to "+
-        recipientEmail+
+        clean($("boRecipientEmail").value)+
         " by email.",
         "success"
       )
@@ -1727,11 +1777,6 @@ function renderRecords(data){
       r.payment||
       {};
 
-    /*
-     * Keep reading an existing email if the API supplies one.
-     * The manual Back Office email field remains available
-     * when the record does not contain an email.
-     */
     const customerEmail=
       clean(
         p.customer_email||
@@ -1831,7 +1876,8 @@ function renderRecords(data){
     ).onclick=
       ()=>viewSavedRecord(
         serviceName,
-        title
+        title,
+        customerEmail
       );
 
     const ab=
@@ -1844,7 +1890,8 @@ function renderRecords(data){
       ab.onclick=
         ()=>viewSavedRecord(
           serviceName,
-          title
+          title,
+          customerEmail
         )
 
     }else{
@@ -1858,10 +1905,6 @@ function renderRecords(data){
 
     }
 
-    /*
-     * Preserve any existing email information
-     * on the Back Office record.
-     */
     el.dataset.customerEmail=
       customerEmail;
 
