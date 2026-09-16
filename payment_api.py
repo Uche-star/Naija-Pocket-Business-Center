@@ -1501,6 +1501,69 @@ def require_back_office(key: str) -> None:
         )
 
 
+def _file_download_headers(filename: str) -> dict[str, str]:
+    """
+    Headers used when returning the exact saved document.
+
+    The filename is taken from the actual saved file and is never
+    replaced with the service name or another generated title.
+    """
+    safe_name = safe_filename(filename)
+
+    encoded_name = urllib.parse.quote(
+        safe_name,
+        safe="",
+    )
+
+    header_name = safe_name.replace(
+        '"',
+        "_",
+    )
+
+    return {
+        "Content-Disposition": (
+            f'attachment; filename="{header_name}"; '
+            f"filename*=UTF-8''{encoded_name}"
+        ),
+        "Cache-Control": (
+            "no-store, no-cache, must-revalidate, max-age=0"
+        ),
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Content-Type-Options": "nosniff",
+    }
+
+
+def _saved_file_response(saved: Path) -> FileResponse:
+    """
+    Return the exact existing saved file as a browser download.
+
+    No document is regenerated here.
+    No title is changed here.
+    """
+
+    suffix = saved.suffix.casefold()
+
+    if suffix == ".docx":
+        media = (
+            "application/"
+            "vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+
+    elif suffix == ".pdf":
+        media = "application/pdf"
+
+    else:
+        media = "application/octet-stream"
+
+    return FileResponse(
+        str(saved),
+        filename=safe_filename(saved.name),
+        media_type=media,
+        headers=_file_download_headers(saved.name),
+    )
+
+
 class PaymentCreateRequest(BaseModel):
     customer_name: str = ""
     customer_id: str = ""
@@ -2482,17 +2545,7 @@ def download_document(
     c.commit()
     c.close()
 
-    media = (
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        if saved.suffix.lower() == ".docx"
-        else "application/octet-stream"
-    )
-
-    return FileResponse(
-        str(saved),
-        filename=saved.name,
-        media_type=media,
-    )
+    return _saved_file_response(saved)
 
 
 @app.get("/api/delivery/channels")
@@ -2950,6 +3003,12 @@ def public_delivery_file(
             detail="PRODUCT_NOT_FOUND",
         )
 
+    if not bool(product.get("download_unlocked")):
+        raise HTTPException(
+            status_code=403,
+            detail="DOWNLOAD_NOT_UNLOCKED",
+        )
+
     product = repair_saved_snapshot(product)
 
     saved = existing_saved_file(product)
@@ -2960,22 +3019,7 @@ def public_delivery_file(
             detail="SAVED_DOCUMENT_FILE_MISSING",
         )
 
-    suffix = saved.suffix.casefold()
-
-    media = (
-        "application/"
-        "vnd.openxmlformats-officedocument.wordprocessingml.document"
-        if suffix == ".docx"
-        else "application/pdf"
-        if suffix == ".pdf"
-        else "application/octet-stream"
-    )
-
-    return FileResponse(
-        str(saved),
-        filename=saved.name,
-        media_type=media,
-    )
+    return _saved_file_response(saved)
 
 
 @app.get("/api/back-office/delivery-file")
@@ -3007,18 +3051,7 @@ def back_office_delivery_file(
             detail="SAVED_DOCUMENT_FILE_MISSING",
         )
 
-    media = (
-        "application/"
-        "vnd.openxmlformats-officedocument.wordprocessingml.document"
-        if saved.suffix.lower() == ".docx"
-        else "application/octet-stream"
-    )
-
-    return FileResponse(
-        str(saved),
-        filename=saved.name,
-        media_type=media,
-    )
+    return _saved_file_response(saved)
 
 
 @app.get("/api/back-office/delivery-history")
