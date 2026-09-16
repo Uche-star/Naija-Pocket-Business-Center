@@ -42,9 +42,7 @@ html,body{
 body{overflow-x:hidden}
 
 button,input,textarea{font:inherit}
-
 button{cursor:pointer}
-
 .hidden{display:none!important}
 
 .app{
@@ -252,7 +250,7 @@ button{cursor:pointer}
 .backoffice-header{
   position:sticky;
   top:0;
-  z-index:5;
+  z-index:20;
   background:rgba(5,5,5,.97);
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
@@ -536,7 +534,9 @@ button{cursor:pointer}
   line-height:1.5;
 }
 
-/* BACK OFFICE */
+/* =========================================================
+   BACK OFFICE
+   ========================================================= */
 
 .backoffice-form{
   margin-top:16px;
@@ -660,8 +660,123 @@ button{cursor:pointer}
   margin-top:10px;
 }
 
+/* =========================================================
+   NEW BACK OFFICE DOCUMENT READING WINDOW
+   ========================================================= */
+
 .saved-document-panel{
   margin-top:16px;
+}
+
+.document-reader-window{
+  margin-top:16px;
+  border:1px solid rgba(212,175,55,.38);
+  border-radius:14px;
+  overflow:hidden;
+  background:#080808;
+  box-shadow:
+    0 18px 50px rgba(0,0,0,.5),
+    inset 0 0 0 1px rgba(255,255,255,.02);
+}
+
+.document-reader-header{
+  padding:14px;
+  background:#101010;
+  border-bottom:1px solid rgba(212,175,55,.2);
+}
+
+.document-reader-label{
+  color:var(--gold2);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+
+.document-reader-title{
+  margin-top:6px;
+  color:var(--white);
+  font-size:16px;
+  font-weight:800;
+  word-break:break-word;
+}
+
+.document-reader-meta{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+.document-reader-body{
+  height:62vh;
+  min-height:360px;
+  max-height:720px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:22px 18px 40px;
+  background:#111;
+  -webkit-overflow-scrolling:touch;
+}
+
+.document-reader-page{
+  width:100%;
+  max-width:760px;
+  margin:0 auto 22px;
+  padding:30px 24px;
+  min-height:180px;
+  background:#fff;
+  color:#111;
+  border-radius:3px;
+  box-shadow:0 5px 20px rgba(0,0,0,.35);
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:14px;
+  line-height:1.75;
+}
+
+.document-reader-page:last-child{
+  margin-bottom:0;
+}
+
+.document-reader-empty{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:300px;
+  padding:30px;
+  text-align:center;
+  color:var(--muted);
+  line-height:1.7;
+  font-size:13px;
+}
+
+.document-reader-loading{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:300px;
+  color:var(--gold2);
+  font-size:13px;
+  text-align:center;
+}
+
+.document-reader-footer{
+  padding:12px 14px;
+  background:#0d0d0d;
+  border-top:1px solid rgba(255,255,255,.07);
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+.document-reader-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
 }
 
 .history{
@@ -681,6 +796,7 @@ button{cursor:pointer}
 }
 
 @media(min-width:700px){
+
   .summary-grid{
     grid-template-columns:repeat(3,1fr);
   }
@@ -691,6 +807,15 @@ button{cursor:pointer}
 
   .delivery-grid{
     grid-template-columns:1fr 1fr;
+  }
+
+  .document-reader-body{
+    height:68vh;
+  }
+
+  .document-reader-page{
+    padding:40px 45px;
+    font-size:15px;
   }
 }
 </style>
@@ -1094,24 +1219,85 @@ No records loaded.
 </section>
 
 
+<!-- =========================================================
+     ACTUAL BACK OFFICE DOCUMENT READING WINDOW
+     ========================================================= -->
+
 <section
 class="lux-card saved-document-panel hidden"
 id="backOfficeDocumentPanel">
 
-<h2 class="card-title">Saved Document</h2>
+<div class="section-heading">
 
-<div class="preview-box">
+<div class="section-number">📄</div>
 
-<div class="preview-watermark">
-EXACT SAVED DOCUMENT
+<div>
+<h2>Saved Customer Document</h2>
+
+<div
+id="backOfficeDocumentTitle"
+style="margin-top:4px;color:var(--muted);font-size:12px;">
+No document selected
+</div>
+
+</div>
+
+</div>
+
+
+<div class="document-reader-window">
+
+<div class="document-reader-header">
+
+<div class="document-reader-label">
+EXACT SAVED CUSTOMER DOCUMENT
 </div>
 
 <div
-class="document-preview"
-id="backOfficeDocumentPreview">
+class="document-reader-title"
+id="documentReaderTitle">
+Loading document...
+</div>
+
+<div
+class="document-reader-meta"
+id="documentReaderMeta">
+The Back Office is reading the saved document.
 </div>
 
 </div>
+
+
+<div
+class="document-reader-body"
+id="backOfficeDocumentReader">
+
+<div class="document-reader-loading">
+Loading the exact saved customer document...
+</div>
+
+</div>
+
+
+<div class="document-reader-footer">
+
+This window is for Back Office review. The document shown here is the saved customer document returned by the Back Office document service.
+
+<div class="document-reader-actions">
+
+<button
+type="button"
+class="secondary-button"
+id="closeDocumentReader">
+CLOSE DOCUMENT
+</button>
+
+</div>
+
+</div>
+
+</div>
+
 
 <div
 class="message"
@@ -1211,6 +1397,7 @@ function $(id){
 }
 
 function safeJsonParse(value){
+
     if(typeof value !== "string"){
         return value;
     }
@@ -1223,6 +1410,7 @@ function safeJsonParse(value){
 }
 
 function money(value){
+
     const n = numberValue(value);
 
     if(!n){
@@ -1233,6 +1421,7 @@ function money(value){
 }
 
 function escapeHtml(value){
+
     return String(value ?? "")
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
@@ -1242,6 +1431,7 @@ function escapeHtml(value){
 }
 
 function showMessage(elementId,text,type=""){
+
     const element = $(elementId);
 
     if(!element){
@@ -1261,6 +1451,7 @@ function showMessage(elementId,text,type=""){
 }
 
 function apiError(error){
+
     if(!error){
         return "Temporary service problem. Please try again.";
     }
@@ -1289,19 +1480,24 @@ function readSnapshot(){
     for(const key of snapshotKeys){
 
         try{
+
             const value =
                 localStorage.getItem(key);
 
             if(value){
+
                 sources.push(
                     safeJsonParse(value) || value
                 );
             }
+
         }catch{}
     }
 
     try{
+
         if(window.name){
+
             const parsed =
                 safeJsonParse(window.name);
 
@@ -1309,27 +1505,34 @@ function readSnapshot(){
                 sources.push(parsed);
             }
         }
+
     }catch{}
 
     try{
+
         const querySnapshot =
             params.get("snapshot");
 
         if(querySnapshot){
+
             sources.push(
                 safeJsonParse(
                     decodeURIComponent(querySnapshot)
                 )
             );
         }
+
     }catch{}
 
     for(const candidate of sources){
 
-        if(candidate &&
-           typeof candidate === "object"){
+        if(
+            candidate &&
+            typeof candidate === "object"
+        ){
 
             snapshot = candidate;
+
             return candidate;
         }
     }
@@ -1342,8 +1545,10 @@ function firstValue(objects,keys){
 
     for(const object of objects){
 
-        if(!object ||
-           typeof object !== "object"){
+        if(
+            !object ||
+            typeof object !== "object"
+        ){
             continue;
         }
 
@@ -1357,6 +1562,7 @@ function firstValue(objects,keys){
                 value !== null &&
                 clean(value) !== ""
             ){
+
                 return value;
             }
         }
@@ -1368,8 +1574,10 @@ function firstValue(objects,keys){
 
 function extractDocumentPayload(source){
 
-    if(!source ||
-       typeof source !== "object"){
+    if(
+        !source ||
+        typeof source !== "object"
+    ){
         return {};
     }
 
@@ -1449,8 +1657,10 @@ function normalizePages(value){
                     return item;
                 }
 
-                if(item &&
-                   typeof item === "object"){
+                if(
+                    item &&
+                    typeof item === "object"
+                ){
 
                     return clean(
                         item.text ||
@@ -1507,7 +1717,11 @@ function extractDocumentState(){
         clean(
             firstValue(
                 candidates,
-                ["service","service_name","serviceName"]
+                [
+                    "service",
+                    "service_name",
+                    "serviceName"
+                ]
             )
         );
 
@@ -1650,8 +1864,10 @@ async function apiPost(path,payload){
 
 function extractPaymentObject(data){
 
-    if(!data ||
-       typeof data !== "object"){
+    if(
+        !data ||
+        typeof data !== "object"
+    ){
         return {};
     }
 
@@ -1668,8 +1884,10 @@ function extractPaymentObject(data){
 
 function extractProductObject(data){
 
-    if(!data ||
-       typeof data !== "object"){
+    if(
+        !data ||
+        typeof data !== "object"
+    ){
         return {};
     }
 
@@ -1744,8 +1962,10 @@ function extractDownloadUnlocked(data){
 
 function applyServerState(data){
 
-    if(!data ||
-       typeof data !== "object"){
+    if(
+        !data ||
+        typeof data !== "object"
+    ){
         return;
     }
 
@@ -1797,6 +2017,7 @@ function applyServerState(data){
         );
 
     if(Array.isArray(product.document_pages)){
+
         pages =
             normalizePages(
                 product.document_pages
@@ -1804,6 +2025,7 @@ function applyServerState(data){
     }
 
     if(clean(product.document_text)){
+
         documentText =
             clean(product.document_text);
     }
@@ -1926,24 +2148,36 @@ function updateProgress(){
     if(paymentVerified){
 
         bar.style.width = "100%";
+
         status.textContent =
             "Payment verified — document ready to be sent";
-        text.textContent = "3 of 3";
+
+        text.textContent =
+            "3 of 3";
+
         return;
     }
 
     if(paymentStarted){
 
         bar.style.width = "60%";
+
         status.textContent =
             "Make payment & contact Customer Service";
-        text.textContent = "2 of 3";
+
+        text.textContent =
+            "2 of 3";
+
         return;
     }
 
     bar.style.width = "25%";
-    status.textContent = "Payment details";
-    text.textContent = "1 of 3";
+
+    status.textContent =
+        "Payment details";
+
+    text.textContent =
+        "1 of 3";
 }
 
 
@@ -2041,6 +2275,7 @@ async function createPayment(){
     if(button){
 
         button.disabled = true;
+
         button.textContent =
             "PREPARING PAYMENT...";
     }
@@ -2110,7 +2345,10 @@ async function createPayment(){
 
         applyServerState(data);
 
-        if(data && data.saved_document === true){
+        if(
+            data &&
+            data.saved_document === true
+        ){
             paymentStarted = true;
         }
 
@@ -2174,11 +2412,22 @@ async function refreshPaymentStatus(){
         const query =
             new URLSearchParams();
 
-        query.set("service",service);
-        query.set("title",documentTitle);
+        query.set(
+            "service",
+            service
+        );
+
+        query.set(
+            "title",
+            documentTitle
+        );
 
         if(customerId){
-            query.set("customer_id",customerId);
+
+            query.set(
+                "customer_id",
+                customerId
+            );
         }
 
         const data =
@@ -2270,7 +2519,10 @@ async function apiGetWithHeaders(path){
         safeJsonParse(text);
 
     if(!response.ok){
-        throw new Error(apiError(data || text));
+
+        throw new Error(
+            apiError(data || text)
+        );
     }
 
     return data;
@@ -2296,7 +2548,10 @@ async function apiPostWithHeaders(path,payload){
         safeJsonParse(text);
 
     if(!response.ok){
-        throw new Error(apiError(data || text));
+
+        throw new Error(
+            apiError(data || text)
+        );
     }
 
     return data;
@@ -2319,12 +2574,6 @@ async function backOfficeLogin(){
         );
     }
 
-    /*
-      Use the actual Back Office login endpoint first.
-      The key is still sent through the normal Back Office
-      headers for all subsequent operations.
-    */
-
     try{
 
         return await apiPostWithHeaders(
@@ -2338,18 +2587,15 @@ async function backOfficeLogin(){
 
     }catch(error){
 
-        /*
-          Some versions of the API authenticate directly
-          through X-Back-Office-Key. Do not block the
-          Back Office if login endpoint is not present.
-        */
-
         if(
             String(error.message || "")
                 .toLowerCase()
                 .includes("404")
         ){
-            return {authenticated:true};
+
+            return {
+                authenticated:true
+            };
         }
 
         throw error;
@@ -2756,6 +3002,7 @@ Ready.
 function recordPayload(record){
 
     return {
+
         service:
             recordService(record),
 
@@ -2766,10 +3013,129 @@ function recordPayload(record){
 
 
 /* ============================================================
+   DOCUMENT READER
+   ============================================================ */
+
+function clearDocumentReader(){
+
+    const reader =
+        $("backOfficeDocumentReader");
+
+    if(reader){
+
+        reader.innerHTML =
+            `
+            <div class="document-reader-loading">
+                Loading the exact saved customer document...
+            </div>
+            `;
+    }
+
+    $("documentReaderTitle").textContent =
+        "Loading document...";
+
+    $("documentReaderMeta").textContent =
+        "The Back Office is reading the saved document.";
+
+    $("backOfficeDocumentTitle").textContent =
+        "Loading document...";
+}
+
+
+function makeReaderPages(text,serverPages){
+
+    let normalized =
+        normalizePages(serverPages);
+
+    if(!normalized.length && text){
+
+        /*
+          If the API returned one continuous document,
+          show it as one readable document page.
+        */
+
+        normalized = [text];
+    }
+
+    if(!normalized.length){
+        return [];
+    }
+
+    return normalized;
+}
+
+
+function renderDocumentReader(
+    title,
+    serviceName,
+    text,
+    serverPages
+){
+
+    const reader =
+        $("backOfficeDocumentReader");
+
+    const pagesToRender =
+        makeReaderPages(
+            text,
+            serverPages
+        );
+
+    $("documentReaderTitle").textContent =
+        title || "Saved customer document";
+
+    $("backOfficeDocumentTitle").textContent =
+        title || "Saved customer document";
+
+    $("documentReaderMeta").textContent =
+        serviceName
+            ? "Service: " + serviceName
+            : "Exact saved customer document";
+
+    if(!reader){
+        return;
+    }
+
+    reader.innerHTML = "";
+
+    if(!pagesToRender.length){
+
+        reader.innerHTML =
+            `
+            <div class="document-reader-empty">
+                The saved document was found, but no readable document text was returned by the document service.
+            </div>
+            `;
+
+        return;
+    }
+
+    pagesToRender.forEach(
+        (pageText,index) => {
+
+            const page =
+                document.createElement("div");
+
+            page.className =
+                "document-reader-page";
+
+            page.textContent =
+                pageText;
+
+            reader.appendChild(page);
+        }
+    );
+}
+
+
+/* ============================================================
    VIEW EXACT SAVED DOCUMENT
    ============================================================ */
 
-async function viewSavedRecord(record,index){
+async function viewSavedRecord(
+    record,
+    index
+){
 
     if(!record){
         return;
@@ -2781,13 +3147,19 @@ async function viewSavedRecord(record,index){
     const panel =
         $("backOfficeDocumentPanel");
 
-    const preview =
-        $("backOfficeDocumentPreview");
+    clearDocumentReader();
+
+    panel.classList.remove("hidden");
+
+    panel.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+
+    const payload =
+        recordPayload(record);
 
     try{
-
-        const payload =
-            recordPayload(record);
 
         const query =
             new URLSearchParams();
@@ -2808,6 +3180,11 @@ async function viewSavedRecord(record,index){
                 query.toString()
             );
 
+        /*
+          Accept all existing response shapes used
+          by the current payment API.
+        */
+
         const documentData =
             data?.document ||
             data?.saved_document ||
@@ -2820,46 +3197,104 @@ async function viewSavedRecord(record,index){
                 documentData
             );
 
-        const recordPages =
+        const serverPages =
             normalizePages(
                 extracted.pages
             );
 
-        const text =
+        let text =
             clean(
                 extracted.documentText
-            ) ||
-            recordPages.join("\n\n") ||
-            clean(
-                documentData.document_text ||
-                documentData.documentText ||
-                documentData.text ||
-                documentData.content ||
-                ""
             );
 
-        preview.textContent =
-            text ||
-            "Saved document content is not available.";
+        if(!text){
+
+            text =
+                clean(
+                    documentData.document_text ||
+                    documentData.documentText ||
+                    documentData.text ||
+                    documentData.content ||
+                    ""
+                );
+        }
+
+        /*
+          If the document endpoint returned no text,
+          use the same saved record already loaded
+          in Back Office.
+        */
+
+        if(!text && !serverPages.length){
+
+            const recordPayloadData =
+                extractDocumentPayload(record);
+
+            const fallbackPages =
+                normalizePages(
+                    recordPayloadData.pages
+                );
+
+            text =
+                clean(
+                    recordPayloadData.documentText
+                ) ||
+                fallbackPages.join("\n\n") ||
+                clean(
+                    record.document_text ||
+                    record.documentText ||
+                    record.text ||
+                    record.content ||
+                    ""
+                );
+
+            renderDocumentReader(
+                payload.document_title,
+                payload.service,
+                text,
+                fallbackPages
+            );
+
+        }else{
+
+            renderDocumentReader(
+                payload.document_title,
+                payload.service,
+                text,
+                serverPages
+            );
+        }
+
+        showMessage(
+            "documentActionMessage",
+            "Saved customer document loaded for Back Office reading.",
+            "success"
+        );
 
     }catch(error){
 
+        console.warn(
+            "Saved document endpoint:",
+            error
+        );
+
         /*
-          Fall back to the exact content already contained
-          in the payment record if the document endpoint
-          does not return text.
+          Fall back to document information already
+          returned with the Back Office record.
         */
 
-        const payload =
+        const recordDocument =
             extractDocumentPayload(record);
 
         const recordPages =
             normalizePages(
-                payload.pages
+                recordDocument.pages
             );
 
-        preview.textContent =
-            clean(payload.documentText) ||
+        const fallbackText =
+            clean(
+                recordDocument.documentText
+            ) ||
             recordPages.join("\n\n") ||
             clean(
                 record.document_text ||
@@ -2867,21 +3302,31 @@ async function viewSavedRecord(record,index){
                 record.text ||
                 record.content ||
                 ""
-            ) ||
-            "Saved document content is not available.";
+            );
 
-        console.warn(
-            "Saved document endpoint:",
-            error
+        renderDocumentReader(
+            payload.document_title,
+            payload.service,
+            fallbackText,
+            recordPages
+        );
+
+        showMessage(
+            "documentActionMessage",
+            "The document service did not return additional content. Showing the document content already saved with this Back Office record.",
+            "warning"
         );
     }
+}
 
-    panel.classList.remove("hidden");
 
-    panel.scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-    });
+function closeDocumentReader(){
+
+    $("backOfficeDocumentPanel")
+        .classList.add("hidden");
+
+    selectedBackOfficeRecord =
+        null;
 }
 
 
@@ -2889,7 +3334,10 @@ async function viewSavedRecord(record,index){
    VERIFY PAYMENT
    ============================================================ */
 
-async function verifyPayment(record,index){
+async function verifyPayment(
+    record,
+    index
+){
 
     if(!record){
         return;
@@ -2912,6 +3360,7 @@ async function verifyPayment(record,index){
             );
 
         if(status){
+
             status.textContent =
                 clean(
                     result?.message
@@ -2947,7 +3396,10 @@ async function verifyPayment(record,index){
    REJECT PAYMENT
    ============================================================ */
 
-async function rejectPayment(record,index){
+async function rejectPayment(
+    record,
+    index
+){
 
     if(!record){
         return;
@@ -2980,6 +3432,7 @@ async function rejectPayment(record,index){
         $("status-" + index);
 
     if(status){
+
         status.textContent =
             "Rejecting payment...";
     }
@@ -2996,6 +3449,7 @@ async function rejectPayment(record,index){
             );
 
         if(status){
+
             status.textContent =
                 clean(result?.message) ||
                 "Payment rejected.";
@@ -3029,7 +3483,10 @@ async function rejectPayment(record,index){
    ACTIVATE CUSTOMER DOWNLOAD
    ============================================================ */
 
-async function activateDownload(record,index){
+async function activateDownload(
+    record,
+    index
+){
 
     if(!record){
         return;
@@ -3039,6 +3496,7 @@ async function activateDownload(record,index){
         $("status-" + index);
 
     if(status){
+
         status.textContent =
             "Activating customer download...";
     }
@@ -3055,6 +3513,7 @@ async function activateDownload(record,index){
             );
 
         if(status){
+
             status.textContent =
                 clean(result?.message) ||
                 "Customer download activated.";
@@ -3125,6 +3584,7 @@ async function deliverRecord(
     }
 
     if(status){
+
         status.textContent =
             "Preparing " +
             channel +
@@ -3172,24 +3632,10 @@ async function deliverRecord(
 
         if(deliveryUrl){
 
-            if(channel === "phone"){
-
-                window.open(
-                    deliveryUrl,
-                    "_blank"
-                );
-
-            }else if(
-                channel === "whatsapp" ||
-                channel === "telegram" ||
-                channel === "drive"
-            ){
-
-                window.open(
-                    deliveryUrl,
-                    "_blank"
-                );
-            }
+            window.open(
+                deliveryUrl,
+                "_blank"
+            );
         }
 
         await loadDeliveryHistory(
@@ -3306,71 +3752,89 @@ async function handleBackOfficeAction(
     switch(action){
 
         case "view":
+
             await viewSavedRecord(
                 record,
                 index
             );
+
             break;
 
         case "verify":
+
             await verifyPayment(
                 record,
                 index
             );
+
             break;
 
         case "reject":
+
             await rejectPayment(
                 record,
                 index
             );
+
             break;
 
         case "activate":
+
             await activateDownload(
                 record,
                 index
             );
+
             break;
 
         case "phone":
+
             await deliverRecord(
                 record,
                 index,
                 "phone"
             );
+
             break;
 
         case "whatsapp":
+
             await deliverRecord(
                 record,
                 index,
                 "whatsapp"
             );
+
             break;
 
         case "email":
+
             await deliverRecord(
                 record,
                 index,
                 "email"
             );
+
             break;
 
         case "telegram":
+
             await deliverRecord(
                 record,
                 index,
                 "telegram"
             );
+
             break;
 
         case "drive":
+
             await deliverRecord(
                 record,
                 index,
                 "drive"
             );
+
             break;
     }
 }
@@ -3386,11 +3850,13 @@ $("makePaymentButton")
         openPaymentExperience
     );
 
+
 $("experienceMakePaymentButton")
     .addEventListener(
         "click",
         createPayment
     );
+
 
 $("closeExperience")
     .addEventListener(
@@ -3398,11 +3864,13 @@ $("closeExperience")
         closePaymentExperience
     );
 
+
 $("backOfficeButton")
     .addEventListener(
         "click",
         showBackOffice
     );
+
 
 $("exitBackOffice")
     .addEventListener(
@@ -3410,17 +3878,27 @@ $("exitBackOffice")
         exitBackOffice
     );
 
+
 $("loadBackOfficeButton")
     .addEventListener(
         "click",
         loadBackOffice
     );
 
+
 $("refreshBackOfficeButton")
     .addEventListener(
         "click",
         loadBackOffice
     );
+
+
+$("closeDocumentReader")
+    .addEventListener(
+        "click",
+        closeDocumentReader
+    );
+
 
 $("backOfficeKey")
     .addEventListener(
@@ -3459,6 +3937,7 @@ function initialize(){
     }
 
     if(service && documentTitle){
+
         refreshPaymentStatus();
     }
 
@@ -3470,6 +3949,7 @@ function initialize(){
                 service &&
                 documentTitle
             ){
+
                 refreshPaymentStatus();
             }
 
@@ -3477,6 +3957,7 @@ function initialize(){
         15000
     );
 }
+
 
 initialize();
 
