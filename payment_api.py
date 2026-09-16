@@ -25,6 +25,57 @@ from pydantic import BaseModel
 APP_VERSION = "payment-product-first-v12-exact-approved-document-back-office-delivery"
 
 BASE_DIR = Path(__file__).resolve().parent
+
+
+def _load_local_env() -> None:
+    """
+    Load simple KEY=VALUE settings from a local .env file.
+
+    Existing system environment variables are never overwritten.
+    No external dotenv package is required.
+    """
+    env_path = BASE_DIR / ".env"
+
+    if not env_path.exists() or not env_path.is_file():
+        return
+
+    try:
+        for raw_line in env_path.read_text(
+            encoding="utf-8"
+        ).splitlines():
+            line = raw_line.strip()
+
+            if (
+                not line
+                or line.startswith("#")
+                or "=" not in line
+            ):
+                continue
+
+            key, value = line.split("=", 1)
+
+            key = key.strip()
+            value = value.strip()
+
+            if not key:
+                continue
+
+            if (
+                len(value) >= 2
+                and value[0] == value[-1]
+                and value[0] in {"'", '"'}
+            ):
+                value = value[1:-1]
+
+            if not os.getenv(key):
+                os.environ[key] = value
+
+    except Exception:
+        pass
+
+
+_load_local_env()
+
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
