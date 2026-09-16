@@ -15,26 +15,21 @@
   --gold:#d4af37;
   --gold2:#f0cf63;
   --gold3:#ffe7a0;
-  --white:#ffffff;
+  --white:#fff;
   --muted:#a5a5a5;
   --muted2:#777;
   --line:rgba(212,175,55,.22);
   --green:#008000;
-  --green2:#00a000;
-  --red:#b00020;
-  --red2:#d00028;
   --success:#31c56b;
   --warning:#e5b94b;
   --danger:#e05a5a;
+  --red:#b00020;
   --shadow:0 24px 70px rgba(0,0,0,.55);
 }
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
-html,
-body{
+html,body{
   margin:0;
   padding:0;
   width:100%;
@@ -44,23 +39,13 @@ body{
   font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
 }
 
-body{
-  overflow-x:hidden;
-}
+body{overflow-x:hidden}
 
-button,
-input,
-textarea{
-  font:inherit;
-}
+button,input,textarea{font:inherit}
 
-button{
-  cursor:pointer;
-}
+button{cursor:pointer}
 
-.hidden{
-  display:none !important;
-}
+.hidden{display:none!important}
 
 .app{
   width:100%;
@@ -75,7 +60,9 @@ button{
   border-bottom:1px solid var(--line);
 }
 
-.topbar-inner{
+.topbar-inner,
+.experience-header-inner,
+.backoffice-header-inner{
   max-width:900px;
   margin:0 auto;
   display:flex;
@@ -84,15 +71,10 @@ button{
   gap:12px;
 }
 
-.brand{
-  min-width:0;
-}
-
 .brand-title{
   color:var(--gold2);
   font-size:18px;
   font-weight:800;
-  line-height:1.2;
 }
 
 .brand-subtitle{
@@ -102,7 +84,6 @@ button{
 }
 
 .top-action{
-  flex:0 0 auto;
   border:1px solid var(--line);
   background:var(--panel2);
   color:var(--gold2);
@@ -189,7 +170,6 @@ button{
   color:#050505;
   font-weight:900;
   font-size:15px;
-  letter-spacing:.02em;
 }
 
 .primary-button:disabled{
@@ -201,6 +181,24 @@ button{
   border:1px solid var(--line);
   background:var(--panel3);
   color:var(--gold2);
+  border-radius:10px;
+  padding:11px 14px;
+  font-weight:700;
+}
+
+.danger-button{
+  border:1px solid rgba(224,90,90,.4);
+  background:#241010;
+  color:#ffb5b5;
+  border-radius:10px;
+  padding:11px 14px;
+  font-weight:700;
+}
+
+.success-button{
+  border:1px solid rgba(49,197,107,.4);
+  background:#0c2115;
+  color:#b8f2cb;
   border-radius:10px;
   padding:11px 14px;
   font-weight:700;
@@ -218,9 +216,7 @@ button{
   line-height:1.5;
 }
 
-.message.show{
-  display:block;
-}
+.message.show{display:block}
 
 .message.success{
   border-color:rgba(49,197,107,.4);
@@ -261,16 +257,6 @@ button{
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
   padding:14px 16px;
-}
-
-.experience-header-inner,
-.backoffice-header-inner{
-  max-width:900px;
-  margin:0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
 }
 
 .experience-title,
@@ -346,7 +332,6 @@ button{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
 }
 
 .progress-status{
@@ -386,16 +371,13 @@ button{
 
 .order-line{
   display:flex;
-  align-items:flex-start;
   justify-content:space-between;
   gap:16px;
   padding:10px 0;
   border-bottom:1px solid rgba(255,255,255,.06);
 }
 
-.order-line:last-child{
-  border-bottom:0;
-}
+.order-line:last-child{border-bottom:0}
 
 .order-label{
   color:var(--muted);
@@ -554,6 +536,8 @@ button{
   line-height:1.5;
 }
 
+/* BACK OFFICE */
+
 .backoffice-form{
   margin-top:16px;
   display:flex;
@@ -561,15 +545,20 @@ button{
   flex-wrap:wrap;
 }
 
-.backoffice-input{
-  flex:1 1 220px;
-  min-width:0;
+.backoffice-input,
+.delivery-input,
+.reject-input{
+  width:100%;
   border:1px solid var(--line);
   border-radius:10px;
   padding:12px;
   outline:none;
   background:var(--panel2);
   color:var(--white);
+}
+
+.backoffice-input{
+  flex:1 1 220px;
 }
 
 .backoffice-actions{
@@ -604,9 +593,7 @@ button{
   font-weight:900;
 }
 
-.records{
-  margin-top:16px;
-}
+.records{margin-top:16px}
 
 .record{
   padding:14px;
@@ -623,10 +610,10 @@ button{
 }
 
 .record-meta{
-  margin-top:5px;
+  margin-top:7px;
   color:var(--muted);
   font-size:11px;
-  line-height:1.5;
+  line-height:1.6;
 }
 
 .record-actions{
@@ -636,8 +623,61 @@ button{
   margin-top:12px;
 }
 
+.backoffice-status{
+  margin-top:12px;
+  padding:10px;
+  border-radius:9px;
+  background:#090909;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.delivery-panel{
+  margin-top:14px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--panel3);
+}
+
+.delivery-title{
+  color:var(--gold2);
+  font-weight:900;
+  font-size:13px;
+}
+
+.delivery-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  margin-top:12px;
+}
+
+.delivery-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+
 .saved-document-panel{
   margin-top:16px;
+}
+
+.history{
+  margin-top:12px;
+}
+
+.history-item{
+  padding:10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+.history-item:last-child{
+  border-bottom:0;
 }
 
 @media(min-width:700px){
@@ -648,6 +688,10 @@ button{
   .steps{
     grid-template-columns:repeat(3,1fr);
   }
+
+  .delivery-grid{
+    grid-template-columns:1fr 1fr;
+  }
 }
 </style>
 </head>
@@ -656,527 +700,436 @@ button{
 
 <div class="app">
 
-  <!-- CUSTOMER PAYMENT VIEW -->
-  <section id="customerPaymentView">
+<!-- =========================================================
+     CUSTOMER PAYMENT VIEW
+     ========================================================= -->
 
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">
-          <div class="brand-title">Naija Pocket Business Center</div>
-          <div class="brand-subtitle">Secure payment and document delivery</div>
-        </div>
+<section id="customerPaymentView">
 
-        <button
-          type="button"
-          class="top-action"
-          id="backOfficeButton">
-          Back Office
-        </button>
-      </div>
-    </header>
+<header class="topbar">
+<div class="topbar-inner">
 
-    <main class="page">
-      <div class="page-inner">
+<div>
+<div class="brand-title">Naija Pocket Business Center</div>
+<div class="brand-subtitle">Secure payment and document delivery</div>
+</div>
 
-        <section class="lux-card">
+<button
+type="button"
+class="top-action"
+id="backOfficeButton">
+Back Office
+</button>
 
-          <h1 class="card-title">Payment &amp; Delivery</h1>
+</div>
+</header>
 
-          <p class="card-subtitle">
-            Your document is saved. Make your payment, then contact Customer Service to confirm your payment. Customer Service will verify the payment and send your exact saved document.
-          </p>
+<main class="page">
+<div class="page-inner">
 
-          <div class="summary-grid">
+<section class="lux-card">
 
-            <div class="summary-item">
-              <div class="summary-label">Service</div>
-              <div class="summary-value" id="baseService">—</div>
-            </div>
+<h1 class="card-title">Payment &amp; Delivery</h1>
 
-            <div class="summary-item">
-              <div class="summary-label">Document</div>
-              <div class="summary-value" id="baseTitle">—</div>
-            </div>
+<p class="card-subtitle">
+Your document is saved. Make your payment, then contact Customer Service to confirm your payment. Customer Service will verify the payment and send your exact saved document.
+</p>
 
-            <div class="summary-item">
-              <div class="summary-label">Amount</div>
-              <div class="summary-value amount-value" id="baseAmount">—</div>
-            </div>
+<div class="summary-grid">
 
-          </div>
+<div class="summary-item">
+<div class="summary-label">Service</div>
+<div class="summary-value" id="baseService">—</div>
+</div>
 
-          <button
-            type="button"
-            class="primary-button"
-            id="makePaymentButton">
-            MAKE PAYMENT
-          </button>
+<div class="summary-item">
+<div class="summary-label">Document</div>
+<div class="summary-value" id="baseTitle">—</div>
+</div>
 
-          <div class="message" id="baseMessage"></div>
+<div class="summary-item">
+<div class="summary-label">Amount</div>
+<div class="summary-value amount-value" id="baseAmount">—</div>
+</div>
 
-        </section>
+</div>
 
-      </div>
-    </main>
+<button
+type="button"
+class="primary-button"
+id="makePaymentButton">
+MAKE PAYMENT
+</button>
 
-  </section>
+<div class="message" id="baseMessage"></div>
 
+</section>
 
-  <!-- PAYMENT EXPERIENCE -->
-  <section id="paymentExperience" class="hidden">
+</div>
+</main>
 
-    <div class="experience-shell">
+</section>
 
-      <header class="experience-header">
-        <div class="experience-header-inner">
 
-          <div class="experience-title">
-            Payment &amp; Delivery
-          </div>
+<!-- =========================================================
+     CUSTOMER PAYMENT EXPERIENCE
+     ========================================================= -->
 
-          <button
-            type="button"
-            class="close-button"
-            id="closeExperience"
-            aria-label="Close">
-            ×
-          </button>
+<section id="paymentExperience" class="hidden">
 
-        </div>
-      </header>
+<div class="experience-shell">
 
+<header class="experience-header">
+<div class="experience-header-inner">
 
-      <main class="experience-content">
+<div class="experience-title">
+Payment &amp; Delivery
+</div>
 
-        <div class="kicker">
-          One simple page
-        </div>
+<button
+type="button"
+class="close-button"
+id="closeExperience">
+×
+</button>
 
-        <h1>
-          Everything you need is here.
-        </h1>
+</div>
+</header>
 
-        <p class="intro">
-          Make your payment, contact Customer Service to confirm your payment, and Customer Service will verify the payment and send your exact saved document.
-        </p>
+<main class="experience-content">
 
+<div class="kicker">One simple page</div>
 
-        <!-- PROGRESS -->
-        <section class="progress-card">
+<h1>Everything you need is here.</h1>
 
-          <div class="progress-track">
-            <div
-              class="progress-bar"
-              id="progressBar">
-            </div>
-          </div>
+<p class="intro">
+Make your payment, contact Customer Service to confirm your payment, and Customer Service will verify the payment and send your exact saved document.
+</p>
 
-          <div class="progress-row">
+<section class="progress-card">
 
-            <div
-              class="progress-status"
-              id="statusText">
-              Payment details
-            </div>
+<div class="progress-track">
+<div class="progress-bar" id="progressBar"></div>
+</div>
 
-            <div
-              class="progress-text"
-              id="progressText">
-              1 of 3
-            </div>
+<div class="progress-row">
 
-          </div>
+<div class="progress-status" id="statusText">
+Payment details
+</div>
 
-        </section>
+<div class="progress-text" id="progressText">
+1 of 3
+</div>
 
+</div>
+</section>
 
-        <!-- ORDER -->
-        <section class="lux-card">
 
-          <div class="section-heading">
+<section class="lux-card">
 
-            <div class="section-number">
-              1
-            </div>
+<div class="section-heading">
+<div class="section-number">1</div>
+<h2>Your order</h2>
+</div>
 
-            <h2>
-              Your order
-            </h2>
+<div style="margin-top:12px">
 
-          </div>
+<div class="order-line">
+<div class="order-label">Service</div>
+<div class="order-value" id="experienceService">—</div>
+</div>
 
-          <div style="margin-top:12px;">
+<div class="order-line">
+<div class="order-label">Document title</div>
+<div class="order-value" id="experienceTitle">—</div>
+</div>
 
-            <div class="order-line">
-              <div class="order-label">Service</div>
-              <div class="order-value" id="experienceService">—</div>
-            </div>
+<div class="order-line">
+<div class="order-label">Amount</div>
+<div class="order-value" id="experienceAmount">—</div>
+</div>
 
-            <div class="order-line">
-              <div class="order-label">Document title</div>
-              <div class="order-value" id="experienceTitle">—</div>
-            </div>
+</div>
+</section>
 
-            <div class="order-line">
-              <div class="order-label">Amount</div>
-              <div class="order-value" id="experienceAmount">—</div>
-            </div>
 
-          </div>
+<section class="lux-card">
 
-        </section>
+<div class="section-heading">
+<div class="section-number">2</div>
+<h2>Make your payment</h2>
+</div>
 
+<div class="payment-method">
 
-        <!-- PAYMENT -->
-        <section class="lux-card">
+<div class="payment-method-title">
+BANK TRANSFER
+</div>
 
-          <div class="section-heading">
+<div class="payment-instruction">
+Please make payment using the payment details provided by Naija Pocket Business Center. Pay the exact amount shown above. After making the transfer, contact Customer Service immediately and let us know that you have made payment.
+</div>
 
-            <div class="section-number">
-              2
-            </div>
+<button
+type="button"
+class="primary-button"
+id="experienceMakePaymentButton">
+PREPARE PAYMENT
+</button>
 
-            <h2>
-              Make your payment
-            </h2>
+<div
+class="payment-status"
+id="paymentStatusBox">
+Payment details have not yet been prepared.
+</div>
 
-          </div>
+</div>
+</section>
 
-          <div class="payment-method">
 
-            <div class="payment-method-title">
-              BANK TRANSFER
-            </div>
+<section class="lux-card">
 
-            <div class="payment-instruction">
-              Please make payment using the payment details provided by Naija Pocket Business Center. Pay the exact amount shown above.
-              After making the transfer, contact Customer Service immediately and let us know that you have made payment.
-            </div>
+<div class="section-heading">
+<div class="section-number">3</div>
+<h2>Contact Customer Service</h2>
+</div>
 
-            <button
-              type="button"
-              class="primary-button"
-              id="experienceMakePaymentButton">
-              PREPARE PAYMENT
-            </button>
+<div class="customer-service">
 
-            <div
-              class="payment-status"
-              id="paymentStatusBox">
-              Payment details have not yet been prepared.
-            </div>
+<div class="customer-service-title">
+After you make payment
+</div>
 
-          </div>
+<div class="customer-service-text">
+Contact Customer Service and tell us that you have made payment. Customer Service will verify your payment and arrange the delivery of your exact saved document.
+</div>
 
-        </section>
+<div
+class="customer-service-contact"
+id="customerServiceContact">
+CUSTOMER_SERVICE_CONTACT
+</div>
 
+</div>
+</section>
 
-        <!-- CUSTOMER SERVICE -->
-        <section class="lux-card">
 
-          <div class="section-heading">
+<section class="lux-card">
 
-            <div class="section-number">
-              3
-            </div>
+<div class="section-heading">
+<div class="section-number">4</div>
+<h2>Your saved document</h2>
+</div>
 
-            <h2>
-              Contact Customer Service
-            </h2>
+<div class="preview-box">
 
-          </div>
+<div class="preview-watermark">
+SAVED DOCUMENT — PREVIEW
+</div>
 
-          <div class="customer-service">
+<div
+class="document-preview"
+id="documentPreview">
+Your saved document preview will appear here.
+</div>
 
-            <div class="customer-service-title">
-              After you make payment
-            </div>
+</div>
 
-            <div class="customer-service-text">
-              Contact Customer Service and tell us that you have made payment. Customer Service will verify your payment and arrange the delivery of your exact saved document.
-            </div>
+<div class="preview-note">
+Your exact reviewed document is securely saved. Customer Service will send this same document to you after your payment is verified.
+</div>
 
-            <div
-              class="customer-service-contact"
-              id="customerServiceContact">
-              CUSTOMER_SERVICE_CONTACT
-            </div>
+</section>
 
-          </div>
 
-        </section>
+<section class="lux-card">
 
+<div class="section-heading">
+<div class="section-number">✓</div>
+<h2>How it works</h2>
+</div>
 
-        <!-- SAVED DOCUMENT -->
-        <section class="lux-card">
+<div class="steps">
 
-          <div class="section-heading">
+<div class="step">
+<div class="step-number">1</div>
+<div>
+<div class="step-title">Make payment</div>
+<div class="step-text">Pay the exact amount shown on this page.</div>
+</div>
+</div>
 
-            <div class="section-number">
-              4
-            </div>
+<div class="step">
+<div class="step-number">2</div>
+<div>
+<div class="step-title">Contact Customer Service</div>
+<div class="step-text">Tell Customer Service that you have made payment.</div>
+</div>
+</div>
 
-            <h2>
-              Your saved document
-            </h2>
+<div class="step">
+<div class="step-number">3</div>
+<div>
+<div class="step-title">Payment verified &amp; document sent</div>
+<div class="step-text">Customer Service verifies the payment and sends your exact saved document.</div>
+</div>
+</div>
 
-          </div>
+</div>
+</section>
 
-          <div class="preview-box">
+<div class="message" id="message"></div>
 
-            <div class="preview-watermark">
-              SAVED DOCUMENT — PREVIEW
-            </div>
+</main>
+</div>
 
-            <div
-              class="document-preview"
-              id="documentPreview">
-              Your saved document preview will appear here.
-            </div>
+</section>
 
-          </div>
 
-          <div class="preview-note">
-            Your exact reviewed document is securely saved. Customer Service will send this same document to you after your payment is verified.
-          </div>
+<!-- =========================================================
+     BACK OFFICE
+     ========================================================= -->
 
-        </section>
+<section id="backOfficeView" class="hidden">
 
+<div class="backoffice-shell">
 
-        <!-- HOW IT WORKS -->
-        <section class="lux-card">
+<header class="backoffice-header">
 
-          <div class="section-heading">
+<div class="backoffice-header-inner">
 
-            <div class="section-number">
-              ✓
-            </div>
+<div>
+<div class="backoffice-title">Back Office</div>
+<div class="brand-subtitle">
+Payment verification and document delivery
+</div>
+</div>
 
-            <h2>
-              How it works
-            </h2>
+<button
+type="button"
+class="close-button"
+id="exitBackOffice">
+×
+</button>
 
-          </div>
+</div>
 
-          <div class="steps">
+</header>
 
-            <div class="step">
 
-              <div class="step-number">
-                1
-              </div>
+<main class="backoffice-content">
 
-              <div>
-                <div class="step-title">
-                  Make payment
-                </div>
+<section class="lux-card">
 
-                <div class="step-text">
-                  Pay the exact amount shown on this page.
-                </div>
-              </div>
+<h2 class="card-title">Back Office</h2>
 
-            </div>
+<p class="card-subtitle">
+Load saved customer records, verify payments, activate customer downloads and deliver the exact saved document.
+</p>
 
+<div class="backoffice-form">
 
-            <div class="step">
+<input
+type="password"
+class="backoffice-input"
+id="backOfficeKey"
+placeholder="Back Office access key"
+autocomplete="off">
 
-              <div class="step-number">
-                2
-              </div>
+<div class="backoffice-actions">
 
-              <div>
-                <div class="step-title">
-                  Contact Customer Service
-                </div>
+<button
+type="button"
+class="secondary-button"
+id="loadBackOfficeButton">
+LOAD RECORDS
+</button>
 
-                <div class="step-text">
-                  Tell Customer Service that you have made payment.
-                </div>
-              </div>
+<button
+type="button"
+class="secondary-button"
+id="refreshBackOfficeButton">
+REFRESH
+</button>
 
-            </div>
+</div>
 
+</div>
 
-            <div class="step">
+<div class="message" id="backOfficeMessage"></div>
 
-              <div class="step-number">
-                3
-              </div>
+<div class="stats">
 
-              <div>
-                <div class="step-title">
-                  Payment verified &amp; document sent
-                </div>
+<div class="stat">
+<div class="stat-label">Saved</div>
+<div class="stat-value" id="savedStat">0</div>
+</div>
 
-                <div class="step-text">
-                  Customer Service verifies the payment and sends your exact saved document.
-                </div>
-              </div>
+<div class="stat">
+<div class="stat-label">Reported</div>
+<div class="stat-value" id="reportedStat">0</div>
+</div>
 
-            </div>
+<div class="stat">
+<div class="stat-label">Activated</div>
+<div class="stat-value" id="activatedStat">0</div>
+</div>
 
-          </div>
+</div>
 
-        </section>
+</section>
 
 
-        <div class="message" id="message"></div>
+<section class="lux-card">
 
-      </main>
+<h2 class="card-title">Records</h2>
 
-    </div>
+<div
+class="records"
+id="backOfficeRecords">
+No records loaded.
+</div>
 
-  </section>
+</section>
 
 
-  <!-- BACK OFFICE -->
-  <section id="backOfficeView" class="hidden">
+<section
+class="lux-card saved-document-panel hidden"
+id="backOfficeDocumentPanel">
 
-    <div class="backoffice-shell">
+<h2 class="card-title">Saved Document</h2>
 
-      <header class="backoffice-header">
+<div class="preview-box">
 
-        <div class="backoffice-header-inner">
+<div class="preview-watermark">
+EXACT SAVED DOCUMENT
+</div>
 
-          <div>
-            <div class="backoffice-title">
-              Back Office
-            </div>
+<div
+class="document-preview"
+id="backOfficeDocumentPreview">
+</div>
 
-            <div class="brand-subtitle">
-              Payment verification and saved documents
-            </div>
-          </div>
+</div>
 
-          <button
-            type="button"
-            class="close-button"
-            id="exitBackOffice"
-            aria-label="Close">
-            ×
-          </button>
+<div
+class="message"
+id="documentActionMessage">
+</div>
 
-        </div>
+</section>
 
-      </header>
+</main>
 
+</div>
 
-      <main class="backoffice-content">
-
-        <section class="lux-card">
-
-          <h2 class="card-title">
-            Back Office
-          </h2>
-
-          <p class="card-subtitle">
-            Access saved customer records and verify payment information.
-          </p>
-
-          <div class="backoffice-form">
-
-            <input
-              type="password"
-              class="backoffice-input"
-              id="backOfficeKey"
-              placeholder="Back Office access key"
-              autocomplete="off">
-
-            <div class="backoffice-actions">
-
-              <button
-                type="button"
-                class="secondary-button"
-                id="loadBackOfficeButton">
-                LOAD RECORDS
-              </button>
-
-              <button
-                type="button"
-                class="secondary-button"
-                id="refreshBackOfficeButton">
-                REFRESH
-              </button>
-
-            </div>
-
-          </div>
-
-          <div class="message" id="backOfficeMessage"></div>
-
-          <div class="stats">
-
-            <div class="stat">
-              <div class="stat-label">Saved</div>
-              <div class="stat-value" id="savedStat">0</div>
-            </div>
-
-            <div class="stat">
-              <div class="stat-label">Reported</div>
-              <div class="stat-value" id="reportedStat">0</div>
-            </div>
-
-            <div class="stat">
-              <div class="stat-label">Activated</div>
-              <div class="stat-value" id="activatedStat">0</div>
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <section class="lux-card">
-
-          <h2 class="card-title">
-            Records
-          </h2>
-
-          <div
-            class="records"
-            id="backOfficeRecords">
-            No records loaded.
-          </div>
-
-        </section>
-
-
-        <section
-          class="lux-card saved-document-panel hidden"
-          id="backOfficeDocumentPanel">
-
-          <h2 class="card-title">
-            Saved Document
-          </h2>
-
-          <div
-            class="preview-box"
-            style="margin-top:14px;">
-
-            <div class="preview-watermark">
-              SAVED DOCUMENT
-            </div>
-
-            <div
-              class="document-preview"
-              id="backOfficeDocumentPreview">
-            </div>
-
-          </div>
-
-        </section>
-
-      </main>
-
-    </div>
-
-  </section>
+</section>
 
 </div>
 
 
-<script id="ii8qxm">
+<script>
 "use strict";
 
 /* ============================================================
@@ -1189,17 +1142,12 @@ const PAYMENT_API_BASE =
 const LOCAL_BACK_OFFICE_KEY =
     "NPBC-2026";
 
-/*
-  IMPORTANT:
-  Replace only this value with the real Customer Service contact.
-  Do not change the surrounding code.
-*/
 const CUSTOMER_SERVICE_CONTACT =
     "CUSTOMER_SERVICE_CONTACT";
 
 
 /* ============================================================
-   URL / SNAPSHOT STATE
+   URL / STATE
    ============================================================ */
 
 const params =
@@ -1241,6 +1189,8 @@ let downloadUnlocked = false;
 let createInProgress = false;
 
 let backOfficeRecords = [];
+
+let selectedBackOfficeRecord = null;
 
 
 /* ============================================================
@@ -1291,11 +1241,7 @@ function escapeHtml(value){
         .replace(/'/g,"&#039;");
 }
 
-function showMessage(
-    elementId,
-    text,
-    type=""
-){
+function showMessage(elementId,text,type=""){
     const element = $(elementId);
 
     if(!element){
@@ -1392,10 +1338,7 @@ function readSnapshot(){
 }
 
 
-function firstValue(
-    objects,
-    keys
-){
+function firstValue(objects,keys){
 
     for(const object of objects){
 
@@ -1498,19 +1441,17 @@ function extractDocumentPayload(source){
 function normalizePages(value){
 
     if(Array.isArray(value)){
+
         return value
             .map(item => {
 
-                if(
-                    typeof item === "string"
-                ){
+                if(typeof item === "string"){
                     return item;
                 }
 
-                if(
-                    item &&
-                    typeof item === "object"
-                ){
+                if(item &&
+                   typeof item === "object"){
+
                     return clean(
                         item.text ||
                         item.content ||
@@ -1566,11 +1507,7 @@ function extractDocumentState(){
         clean(
             firstValue(
                 candidates,
-                [
-                    "service",
-                    "service_name",
-                    "serviceName"
-                ]
+                ["service","service_name","serviceName"]
             )
         );
 
@@ -1626,31 +1563,29 @@ function extractDocumentState(){
         clean(payload.documentText);
 
     if(!documentText && pages.length){
-        documentText =
-            pages.join("\n\n");
+        documentText = pages.join("\n\n");
     }
 
     if(!documentText){
 
-        const directText =
-            firstValue(
-                candidates,
-                [
-                    "document_text",
-                    "documentText",
-                    "text",
-                    "content"
-                ]
-            );
-
         documentText =
-            clean(directText);
+            clean(
+                firstValue(
+                    candidates,
+                    [
+                        "document_text",
+                        "documentText",
+                        "text",
+                        "content"
+                    ]
+                )
+            );
     }
 }
 
 
 /* ============================================================
-   API
+   CUSTOMER API
    ============================================================ */
 
 async function apiGet(path){
@@ -1673,20 +1608,14 @@ async function apiGet(path){
         safeJsonParse(text);
 
     if(!response.ok){
-
-        throw new Error(
-            apiError(data || text)
-        );
+        throw new Error(apiError(data || text));
     }
 
     return data;
 }
 
 
-async function apiPost(
-    path,
-    payload
-){
+async function apiPost(path,payload){
 
     const response =
         await fetch(
@@ -1708,10 +1637,7 @@ async function apiPost(
         safeJsonParse(text);
 
     if(!response.ok){
-
-        throw new Error(
-            apiError(data || text)
-        );
+        throw new Error(apiError(data || text));
     }
 
     return data;
@@ -1719,7 +1645,7 @@ async function apiPost(
 
 
 /* ============================================================
-   PAYMENT STATE EXTRACTION
+   PAYMENT STATE
    ============================================================ */
 
 function extractPaymentObject(data){
@@ -1816,10 +1742,6 @@ function extractDownloadUnlocked(data){
 }
 
 
-/* ============================================================
-   APPLY SERVER STATE
-   ============================================================ */
-
 function applyServerState(data){
 
     if(!data ||
@@ -1874,26 +1796,16 @@ function applyServerState(data){
             filename
         );
 
-    if(
-        Array.isArray(
-            product.document_pages
-        )
-    ){
+    if(Array.isArray(product.document_pages)){
         pages =
             normalizePages(
                 product.document_pages
             );
     }
 
-    if(
-        clean(
-            product.document_text
-        )
-    ){
+    if(clean(product.document_text)){
         documentText =
-            clean(
-                product.document_text
-            );
+            clean(product.document_text);
     }
 
     paymentStatus =
@@ -1915,11 +1827,6 @@ function applyServerState(data){
     paymentVerified =
         extractPaymentVerified(data);
 
-    /*
-      Customer download is no longer part of the customer flow.
-      Keep the state variable for compatibility with the existing
-      API architecture, but do not expose it in the customer UI.
-    */
     downloadUnlocked =
         extractDownloadUnlocked(data);
 
@@ -1930,7 +1837,7 @@ function applyServerState(data){
 
 
 /* ============================================================
-   DISPLAY
+   CUSTOMER DISPLAY
    ============================================================ */
 
 function updateBaseDisplay(){
@@ -1942,9 +1849,7 @@ function updateBaseDisplay(){
         documentTitle || "—";
 
     $("baseAmount").textContent =
-        amount
-            ? money(amount)
-            : "—";
+        amount ? money(amount) : "—";
 }
 
 
@@ -1957,9 +1862,7 @@ function updateExperienceDisplay(){
         documentTitle || "—";
 
     $("experienceAmount").textContent =
-        amount
-            ? money(amount)
-            : "—";
+        amount ? money(amount) : "—";
 
     $("customerServiceContact").textContent =
         CUSTOMER_SERVICE_CONTACT;
@@ -1983,7 +1886,7 @@ function updateExperienceDisplay(){
         if(paymentVerified){
 
             statusBox.textContent =
-                "Payment has been verified by Customer Service. Your saved document is ready for Customer Service to send to you.";
+                "Payment has been verified by Customer Service. Your saved document is ready to be sent.";
 
         }else if(paymentStarted){
 
@@ -2002,34 +1905,19 @@ function updateExperienceDisplay(){
 
     if(prepareButton){
 
-        if(paymentStarted){
-
-            prepareButton.textContent =
-                "PAYMENT DETAILS READY";
-
-        }else{
-
-            prepareButton.textContent =
-                "PREPARE PAYMENT";
-        }
+        prepareButton.textContent =
+            paymentStarted
+                ? "PAYMENT DETAILS READY"
+                : "PREPARE PAYMENT";
     }
 }
 
 
-/* ============================================================
-   PROGRESS
-   ============================================================ */
-
 function updateProgress(){
 
-    const bar =
-        $("progressBar");
-
-    const status =
-        $("statusText");
-
-    const text =
-        $("progressText");
+    const bar = $("progressBar");
+    const status = $("statusText");
+    const text = $("progressText");
 
     if(!bar || !status || !text){
         return;
@@ -2037,56 +1925,39 @@ function updateProgress(){
 
     if(paymentVerified){
 
-        bar.style.width =
-            "100%";
-
+        bar.style.width = "100%";
         status.textContent =
             "Payment verified — document ready to be sent";
-
-        text.textContent =
-            "3 of 3";
-
+        text.textContent = "3 of 3";
         return;
     }
 
     if(paymentStarted){
 
-        bar.style.width =
-            "60%";
-
+        bar.style.width = "60%";
         status.textContent =
             "Make payment & contact Customer Service";
-
-        text.textContent =
-            "2 of 3";
-
+        text.textContent = "2 of 3";
         return;
     }
 
-    bar.style.width =
-        "25%";
-
-    status.textContent =
-        "Payment details";
-
-    text.textContent =
-        "1 of 3";
+    bar.style.width = "25%";
+    status.textContent = "Payment details";
+    text.textContent = "1 of 3";
 }
 
 
 /* ============================================================
-   OPEN / CLOSE EXPERIENCE
+   PAYMENT EXPERIENCE
    ============================================================ */
 
 function openPaymentExperience(){
 
     $("customerPaymentView")
-        .classList
-        .add("hidden");
+        .classList.add("hidden");
 
     $("paymentExperience")
-        .classList
-        .remove("hidden");
+        .classList.remove("hidden");
 
     updateBaseDisplay();
     updateExperienceDisplay();
@@ -2099,19 +1970,17 @@ function openPaymentExperience(){
 function closePaymentExperience(){
 
     $("paymentExperience")
-        .classList
-        .add("hidden");
+        .classList.add("hidden");
 
     $("customerPaymentView")
-        .classList
-        .remove("hidden");
+        .classList.remove("hidden");
 
     window.scrollTo(0,0);
 }
 
 
 /* ============================================================
-   CREATE PAYMENT
+   EXISTING PAYMENT CREATION
    ============================================================ */
 
 async function createPayment(){
@@ -2153,10 +2022,7 @@ async function createPayment(){
         return;
     }
 
-    if(
-        !documentText &&
-        !pages.length
-    ){
+    if(!documentText && !pages.length){
 
         showMessage(
             "message",
@@ -2167,17 +2033,14 @@ async function createPayment(){
         return;
     }
 
-    createInProgress =
-        true;
+    createInProgress = true;
 
     const button =
         $("experienceMakePaymentButton");
 
     if(button){
 
-        button.disabled =
-            true;
-
+        button.disabled = true;
         button.textContent =
             "PREPARING PAYMENT...";
     }
@@ -2193,9 +2056,7 @@ async function createPayment(){
         const payload = {
 
             customer_name:
-                clean(
-                    params.get("customer_name")
-                ),
+                clean(params.get("customer_name")),
 
             customer_id:
                 customerId,
@@ -2241,29 +2102,20 @@ async function createPayment(){
             }
         };
 
-
         const data =
             await apiPost(
                 "/api/payment/create",
                 payload
             );
 
-
         applyServerState(data);
 
-
-        if(
-            data &&
-            data.saved_document === true
-        ){
-            paymentStarted =
-                true;
+        if(data && data.saved_document === true){
+            paymentStarted = true;
         }
-
 
         updateExperienceDisplay();
         updateProgress();
-
 
         showMessage(
             "message",
@@ -2271,13 +2123,11 @@ async function createPayment(){
             "success"
         );
 
-
         showMessage(
             "baseMessage",
             "Payment details are ready. Make the payment, then contact Customer Service to confirm your payment.",
             "success"
         );
-
 
     }catch(error){
 
@@ -2294,13 +2144,11 @@ async function createPayment(){
 
     }finally{
 
-        createInProgress =
-            false;
+        createInProgress = false;
 
         if(button){
 
-            button.disabled =
-                false;
+            button.disabled = false;
 
             button.textContent =
                 paymentStarted
@@ -2312,15 +2160,12 @@ async function createPayment(){
 
 
 /* ============================================================
-   PAYMENT STATUS REFRESH
+   PAYMENT STATUS
    ============================================================ */
 
 async function refreshPaymentStatus(){
 
-    if(
-        !service ||
-        !documentTitle
-    ){
+    if(!service || !documentTitle){
         return;
     }
 
@@ -2329,21 +2174,11 @@ async function refreshPaymentStatus(){
         const query =
             new URLSearchParams();
 
-        query.set(
-            "service",
-            service
-        );
-
-        query.set(
-            "title",
-            documentTitle
-        );
+        query.set("service",service);
+        query.set("title",documentTitle);
 
         if(customerId){
-            query.set(
-                "customer_id",
-                customerId
-            );
+            query.set("customer_id",customerId);
         }
 
         const data =
@@ -2356,11 +2191,6 @@ async function refreshPaymentStatus(){
 
     }catch(error){
 
-        /*
-          Background refresh failure is intentionally silent.
-          Customer-facing payment UI should not expose backend errors.
-        */
-
         console.warn(
             "Payment status refresh:",
             error
@@ -2370,22 +2200,19 @@ async function refreshPaymentStatus(){
 
 
 /* ============================================================
-   BACK OFFICE
+   BACK OFFICE VIEW
    ============================================================ */
 
 function showBackOffice(){
 
     $("customerPaymentView")
-        .classList
-        .add("hidden");
+        .classList.add("hidden");
 
     $("paymentExperience")
-        .classList
-        .add("hidden");
+        .classList.add("hidden");
 
     $("backOfficeView")
-        .classList
-        .remove("hidden");
+        .classList.remove("hidden");
 
     window.scrollTo(0,0);
 }
@@ -2394,37 +2221,33 @@ function showBackOffice(){
 function exitBackOffice(){
 
     $("backOfficeView")
-        .classList
-        .add("hidden");
+        .classList.add("hidden");
 
     $("customerPaymentView")
-        .classList
-        .remove("hidden");
+        .classList.remove("hidden");
 
     window.scrollTo(0,0);
+}
+
+
+function getBackOfficeKey(){
+
+    return clean(
+        $("backOfficeKey").value
+    ) || LOCAL_BACK_OFFICE_KEY;
 }
 
 
 function backOfficeHeaders(){
 
     const key =
-        clean(
-            $("backOfficeKey").value
-        ) ||
-        LOCAL_BACK_OFFICE_KEY;
+        getBackOfficeKey();
 
     return {
-        "Accept":
-            "application/json",
-
-        "Content-Type":
-            "application/json",
-
-        "X-Back-Office-Key":
-            key,
-
-        "X-Admin-Key":
-            key
+        "Accept":"application/json",
+        "Content-Type":"application/json",
+        "X-Back-Office-Key":key,
+        "X-Admin-Key":key
     };
 }
 
@@ -2436,8 +2259,7 @@ async function apiGetWithHeaders(path){
             PAYMENT_API_BASE + path,
             {
                 method:"GET",
-                headers:
-                    backOfficeHeaders()
+                headers:backOfficeHeaders()
             }
         );
 
@@ -2448,30 +2270,22 @@ async function apiGetWithHeaders(path){
         safeJsonParse(text);
 
     if(!response.ok){
-
-        throw new Error(
-            apiError(data || text)
-        );
+        throw new Error(apiError(data || text));
     }
 
     return data;
 }
 
 
-async function apiPostWithHeaders(
-    path,
-    payload
-){
+async function apiPostWithHeaders(path,payload){
 
     const response =
         await fetch(
             PAYMENT_API_BASE + path,
             {
                 method:"POST",
-                headers:
-                    backOfficeHeaders(),
-                body:
-                    JSON.stringify(payload)
+                headers:backOfficeHeaders(),
+                body:JSON.stringify(payload)
             }
         );
 
@@ -2482,184 +2296,202 @@ async function apiPostWithHeaders(
         safeJsonParse(text);
 
     if(!response.ok){
-
-        throw new Error(
-            apiError(data || text)
-        );
+        throw new Error(apiError(data || text));
     }
 
     return data;
 }
 
 
-function renderBackOffice(data){
+/* ============================================================
+   BACK OFFICE LOGIN
+   ============================================================ */
 
-    const records =
-        Array.isArray(data)
-            ? data
-            : (
-                data?.records ||
-                data?.payments ||
-                data?.data ||
-                []
-            );
+async function backOfficeLogin(){
 
-    backOfficeRecords =
-        Array.isArray(records)
-            ? records
-            : [];
+    const key =
+        getBackOfficeKey();
 
-    const saved =
-        backOfficeRecords.length;
+    if(!key){
 
-    const reported =
-        backOfficeRecords.filter(
-            record =>
-                Boolean(
-                    record.payment_reported ??
-                    record.paymentReported ??
-                    record.reported
-                )
-        ).length;
-
-    const activated =
-        backOfficeRecords.filter(
-            record =>
-                Boolean(
-                    record.download_unlocked ??
-                    record.downloadUnlocked ??
-                    record.activated
-                )
-        ).length;
-
-    $("savedStat").textContent =
-        String(saved);
-
-    $("reportedStat").textContent =
-        String(reported);
-
-    $("activatedStat").textContent =
-        String(activated);
-
-
-    const container =
-        $("backOfficeRecords");
-
-    if(!backOfficeRecords.length){
-
-        container.innerHTML =
-            "No records loaded.";
-
-        return;
+        throw new Error(
+            "Back Office access key is required."
+        );
     }
 
+    /*
+      Use the actual Back Office login endpoint first.
+      The key is still sent through the normal Back Office
+      headers for all subsequent operations.
+    */
 
-    container.innerHTML =
-        backOfficeRecords.map(
-            (record,index) => {
+    try{
 
-                const title =
-                    clean(
-                        record.document_title ||
-                        record.documentTitle ||
-                        record.title ||
-                        "Untitled document"
-                    );
-
-                const serviceName =
-                    clean(
-                        record.service ||
-                        record.service_name ||
-                        "Service"
-                    );
-
-                const customer =
-                    clean(
-                        record.customer_id ||
-                        record.customerId ||
-                        record.customer_name ||
-                        record.customerName ||
-                        "Customer"
-                    );
-
-                const status =
-                    clean(
-                        record.status ||
-                        record.payment_status ||
-                        record.paymentStatus ||
-                        "unknown"
-                    );
-
-                return `
-                    <div class="record">
-
-                        <div class="record-title">
-                            ${escapeHtml(title)}
-                        </div>
-
-                        <div class="record-meta">
-                            Service: ${escapeHtml(serviceName)}<br>
-                            Customer: ${escapeHtml(customer)}<br>
-                            Payment: ${escapeHtml(status)}
-                        </div>
-
-                        <div class="record-actions">
-
-                            <button
-                                type="button"
-                                class="secondary-button"
-                                data-view-record="${index}">
-                                VIEW DOCUMENT
-                            </button>
-
-                        </div>
-
-                    </div>
-                `;
+        return await apiPostWithHeaders(
+            "/api/back-office/login",
+            {
+                key:key,
+                admin_key:key,
+                back_office_key:key
             }
-        ).join("");
+        );
 
+    }catch(error){
 
-    container
-        .querySelectorAll(
-            "[data-view-record]"
-        )
-        .forEach(button => {
+        /*
+          Some versions of the API authenticate directly
+          through X-Back-Office-Key. Do not block the
+          Back Office if login endpoint is not present.
+        */
 
-            button.addEventListener(
-                "click",
-                () => {
+        if(
+            String(error.message || "")
+                .toLowerCase()
+                .includes("404")
+        ){
+            return {authenticated:true};
+        }
 
-                    const index =
-                        Number(
-                            button.dataset.viewRecord
-                        );
-
-                    viewSavedRecord(
-                        backOfficeRecords[index]
-                    );
-                }
-            );
-        });
+        throw error;
+    }
 }
 
+
+/* ============================================================
+   BACK OFFICE RECORD EXTRACTION
+   ============================================================ */
+
+function extractRecords(data){
+
+    if(Array.isArray(data)){
+        return data;
+    }
+
+    if(Array.isArray(data?.records)){
+        return data.records;
+    }
+
+    if(Array.isArray(data?.payments)){
+        return data.payments;
+    }
+
+    if(Array.isArray(data?.jobs)){
+        return data.jobs;
+    }
+
+    if(Array.isArray(data?.data)){
+        return data.data;
+    }
+
+    return [];
+}
+
+
+function recordService(record){
+
+    return clean(
+        record?.service ||
+        record?.service_name ||
+        record?.serviceName ||
+        ""
+    );
+}
+
+
+function recordTitle(record){
+
+    return clean(
+        record?.document_title ||
+        record?.documentTitle ||
+        record?.title ||
+        record?.name ||
+        ""
+    );
+}
+
+
+function recordCustomer(record){
+
+    return clean(
+        record?.customer_id ||
+        record?.customerId ||
+        record?.customer_name ||
+        record?.customerName ||
+        record?.customer ||
+        ""
+    );
+}
+
+
+function recordPaymentStatus(record){
+
+    return clean(
+        record?.payment_status ||
+        record?.paymentStatus ||
+        record?.status ||
+        "Not Reported"
+    );
+}
+
+
+function recordReported(record){
+
+    return Boolean(
+        record?.payment_reported ??
+        record?.paymentReported ??
+        record?.reported ??
+        false
+    );
+}
+
+
+function recordVerified(record){
+
+    return Boolean(
+        record?.payment_verified ??
+        record?.paymentVerified ??
+        record?.verified ??
+        false
+    );
+}
+
+
+function recordActivated(record){
+
+    return Boolean(
+        record?.download_unlocked ??
+        record?.downloadUnlocked ??
+        record?.activated ??
+        false
+    );
+}
+
+
+/* ============================================================
+   LOAD BACK OFFICE RECORDS
+   ============================================================ */
 
 async function loadBackOffice(){
 
     showMessage(
         "backOfficeMessage",
-        "Loading Back Office records...",
+        "Checking Back Office access...",
         "warning"
     );
 
     try{
 
+        await backOfficeLogin();
+
         const data =
             await apiGetWithHeaders(
-                "/api/back-office/records"
+                "/api/back-office/payments"
             );
 
-        renderBackOffice(data);
+        backOfficeRecords =
+            extractRecords(data);
+
+        renderBackOffice();
 
         showMessage(
             "backOfficeMessage",
@@ -2683,11 +2515,268 @@ async function loadBackOffice(){
 }
 
 
-function viewSavedRecord(record){
+/* ============================================================
+   RENDER RECORDS
+   ============================================================ */
+
+function renderBackOffice(){
+
+    const records =
+        backOfficeRecords;
+
+    const saved =
+        records.length;
+
+    const reported =
+        records.filter(
+            recordReported
+        ).length;
+
+    const activated =
+        records.filter(
+            recordActivated
+        ).length;
+
+    $("savedStat").textContent =
+        String(saved);
+
+    $("reportedStat").textContent =
+        String(reported);
+
+    $("activatedStat").textContent =
+        String(activated);
+
+    const container =
+        $("backOfficeRecords");
+
+    if(!records.length){
+
+        container.innerHTML =
+            "No saved records found.";
+
+        return;
+    }
+
+    container.innerHTML =
+        records.map(
+            (record,index) => {
+
+                const serviceName =
+                    recordService(record) ||
+                    "Service";
+
+                const title =
+                    recordTitle(record) ||
+                    "Untitled document";
+
+                const customer =
+                    recordCustomer(record) ||
+                    "Customer";
+
+                const status =
+                    recordPaymentStatus(record);
+
+                const reported =
+                    recordReported(record);
+
+                const verified =
+                    recordVerified(record);
+
+                const activated =
+                    recordActivated(record);
+
+                return `
+<div class="record">
+
+<div class="record-title">
+${escapeHtml(title)}
+</div>
+
+<div class="record-meta">
+Service: ${escapeHtml(serviceName)}<br>
+Customer: ${escapeHtml(customer)}<br>
+Payment: ${escapeHtml(status)}<br>
+Reported: ${reported ? "Yes" : "No"}<br>
+Verified: ${verified ? "Yes" : "No"}<br>
+Customer Download: ${activated ? "Activated" : "Locked"}
+</div>
+
+<div class="record-actions">
+
+<button
+type="button"
+class="secondary-button"
+data-action="view"
+data-index="${index}">
+VIEW DOCUMENT
+</button>
+
+<button
+type="button"
+class="success-button"
+data-action="verify"
+data-index="${index}">
+VERIFY PAYMENT
+</button>
+
+<button
+type="button"
+class="danger-button"
+data-action="reject"
+data-index="${index}">
+REJECT PAYMENT
+</button>
+
+<button
+type="button"
+class="success-button"
+data-action="activate"
+data-index="${index}">
+ACTIVATE CUSTOMER DOWNLOAD
+</button>
+
+</div>
+
+<div
+class="delivery-panel"
+id="delivery-${index}">
+
+<div class="delivery-title">
+DOCUMENT DELIVERY
+</div>
+
+<div class="delivery-grid">
+
+<input
+type="email"
+class="delivery-input"
+id="email-${index}"
+placeholder="Customer email for Email delivery"
+autocomplete="email">
+
+<input
+type="text"
+class="reject-input"
+id="reason-${index}"
+placeholder="Rejection reason (only if rejecting)">
+
+</div>
+
+<div class="delivery-actions">
+
+<button
+type="button"
+class="secondary-button"
+data-action="phone"
+data-index="${index}">
+DOWNLOAD TO PHONE
+</button>
+
+<button
+type="button"
+class="secondary-button"
+data-action="whatsapp"
+data-index="${index}">
+WHATSAPP
+</button>
+
+<button
+type="button"
+class="secondary-button"
+data-action="email"
+data-index="${index}">
+EMAIL
+</button>
+
+<button
+type="button"
+class="secondary-button"
+data-action="telegram"
+data-index="${index}">
+TELEGRAM
+</button>
+
+<button
+type="button"
+class="secondary-button"
+data-action="drive"
+data-index="${index}">
+GOOGLE DRIVE
+</button>
+
+</div>
+
+<div
+class="backoffice-status"
+id="status-${index}">
+Ready.
+</div>
+
+</div>
+
+</div>
+`;
+            }
+        ).join("");
+
+    container
+        .querySelectorAll("[data-action]")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const index =
+                        Number(
+                            button.dataset.index
+                        );
+
+                    const action =
+                        button.dataset.action;
+
+                    const record =
+                        backOfficeRecords[index];
+
+                    handleBackOfficeAction(
+                        action,
+                        record,
+                        index
+                    );
+                }
+            );
+        });
+}
+
+
+/* ============================================================
+   RECORD IDENTIFIERS
+   ============================================================ */
+
+function recordPayload(record){
+
+    return {
+        service:
+            recordService(record),
+
+        document_title:
+            recordTitle(record)
+    };
+}
+
+
+/* ============================================================
+   VIEW EXACT SAVED DOCUMENT
+   ============================================================ */
+
+async function viewSavedRecord(record,index){
 
     if(!record){
         return;
     }
+
+    selectedBackOfficeRecord =
+        record;
 
     const panel =
         $("backOfficeDocumentPanel");
@@ -2695,36 +2784,99 @@ function viewSavedRecord(record){
     const preview =
         $("backOfficeDocumentPreview");
 
-    const payload =
-        extractDocumentPayload(
-            record
+    try{
+
+        const payload =
+            recordPayload(record);
+
+        const query =
+            new URLSearchParams();
+
+        query.set(
+            "service",
+            payload.service
         );
 
-    const recordPages =
-        normalizePages(
-            payload.pages
+        query.set(
+            "title",
+            payload.document_title
         );
 
-    const recordText =
-        clean(
-            payload.documentText
-        ) ||
-        recordPages.join("\n\n") ||
-        clean(
-            record.document_text ||
-            record.documentText ||
-            record.text ||
-            record.content ||
-            ""
+        const data =
+            await apiGetWithHeaders(
+                "/api/back-office/document?" +
+                query.toString()
+            );
+
+        const documentData =
+            data?.document ||
+            data?.saved_document ||
+            data?.data ||
+            data ||
+            {};
+
+        const extracted =
+            extractDocumentPayload(
+                documentData
+            );
+
+        const recordPages =
+            normalizePages(
+                extracted.pages
+            );
+
+        const text =
+            clean(
+                extracted.documentText
+            ) ||
+            recordPages.join("\n\n") ||
+            clean(
+                documentData.document_text ||
+                documentData.documentText ||
+                documentData.text ||
+                documentData.content ||
+                ""
+            );
+
+        preview.textContent =
+            text ||
+            "Saved document content is not available.";
+
+    }catch(error){
+
+        /*
+          Fall back to the exact content already contained
+          in the payment record if the document endpoint
+          does not return text.
+        */
+
+        const payload =
+            extractDocumentPayload(record);
+
+        const recordPages =
+            normalizePages(
+                payload.pages
+            );
+
+        preview.textContent =
+            clean(payload.documentText) ||
+            recordPages.join("\n\n") ||
+            clean(
+                record.document_text ||
+                record.documentText ||
+                record.text ||
+                record.content ||
+                ""
+            ) ||
+            "Saved document content is not available.";
+
+        console.warn(
+            "Saved document endpoint:",
+            error
         );
+    }
 
-    preview.textContent =
-        recordText ||
-        "Saved document content is not available in this record.";
-
-    panel.classList.remove(
-        "hidden"
-    );
+    panel.classList.remove("hidden");
 
     panel.scrollIntoView({
         behavior:"smooth",
@@ -2734,7 +2886,498 @@ function viewSavedRecord(record){
 
 
 /* ============================================================
-   EVENT LISTENERS
+   VERIFY PAYMENT
+   ============================================================ */
+
+async function verifyPayment(record,index){
+
+    if(!record){
+        return;
+    }
+
+    const status =
+        $("status-" + index);
+
+    if(status){
+        status.textContent =
+            "Verifying payment...";
+    }
+
+    try{
+
+        const result =
+            await apiPostWithHeaders(
+                "/api/back-office/payment/verify",
+                recordPayload(record)
+            );
+
+        if(status){
+            status.textContent =
+                clean(
+                    result?.message
+                ) ||
+                "Payment verified successfully.";
+        }
+
+        showMessage(
+            "backOfficeMessage",
+            "Payment verified. Refreshing Back Office.",
+            "success"
+        );
+
+        await loadBackOffice();
+
+    }catch(error){
+
+        if(status){
+            status.textContent =
+                apiError(error);
+        }
+
+        showMessage(
+            "backOfficeMessage",
+            apiError(error),
+            "error"
+        );
+    }
+}
+
+
+/* ============================================================
+   REJECT PAYMENT
+   ============================================================ */
+
+async function rejectPayment(record,index){
+
+    if(!record){
+        return;
+    }
+
+    const reasonInput =
+        $("reason-" + index);
+
+    const reason =
+        clean(
+            reasonInput?.value
+        );
+
+    if(!reason){
+
+        if(reasonInput){
+            reasonInput.focus();
+        }
+
+        showMessage(
+            "backOfficeMessage",
+            "Enter the rejection reason before rejecting the payment.",
+            "warning"
+        );
+
+        return;
+    }
+
+    const status =
+        $("status-" + index);
+
+    if(status){
+        status.textContent =
+            "Rejecting payment...";
+    }
+
+    try{
+
+        const result =
+            await apiPostWithHeaders(
+                "/api/back-office/payment/reject",
+                {
+                    ...recordPayload(record),
+                    reason:reason
+                }
+            );
+
+        if(status){
+            status.textContent =
+                clean(result?.message) ||
+                "Payment rejected.";
+        }
+
+        showMessage(
+            "backOfficeMessage",
+            "Payment rejected. Refreshing Back Office.",
+            "success"
+        );
+
+        await loadBackOffice();
+
+    }catch(error){
+
+        if(status){
+            status.textContent =
+                apiError(error);
+        }
+
+        showMessage(
+            "backOfficeMessage",
+            apiError(error),
+            "error"
+        );
+    }
+}
+
+
+/* ============================================================
+   ACTIVATE CUSTOMER DOWNLOAD
+   ============================================================ */
+
+async function activateDownload(record,index){
+
+    if(!record){
+        return;
+    }
+
+    const status =
+        $("status-" + index);
+
+    if(status){
+        status.textContent =
+            "Activating customer download...";
+    }
+
+    try{
+
+        const result =
+            await apiPostWithHeaders(
+                "/api/back-office/activate-download",
+                {
+                    ...recordPayload(record),
+                    verified:true
+                }
+            );
+
+        if(status){
+            status.textContent =
+                clean(result?.message) ||
+                "Customer download activated.";
+        }
+
+        showMessage(
+            "backOfficeMessage",
+            "Customer download has been activated.",
+            "success"
+        );
+
+        await loadBackOffice();
+
+    }catch(error){
+
+        if(status){
+            status.textContent =
+                apiError(error);
+        }
+
+        showMessage(
+            "backOfficeMessage",
+            apiError(error),
+            "error"
+        );
+    }
+}
+
+
+/* ============================================================
+   DELIVERY
+   ============================================================ */
+
+async function deliverRecord(
+    record,
+    index,
+    channel
+){
+
+    if(!record){
+        return;
+    }
+
+    const status =
+        $("status-" + index);
+
+    let recipientEmail = "";
+
+    if(channel === "email"){
+
+        recipientEmail =
+            clean(
+                $("email-" + index)?.value
+            );
+
+        if(!recipientEmail){
+
+            showMessage(
+                "backOfficeMessage",
+                "Enter the customer's email address before using Email delivery.",
+                "warning"
+            );
+
+            $("email-" + index)?.focus();
+
+            return;
+        }
+    }
+
+    if(status){
+        status.textContent =
+            "Preparing " +
+            channel +
+            " delivery...";
+    }
+
+    try{
+
+        const result =
+            await apiPostWithHeaders(
+                "/api/back-office/delivery",
+                {
+                    ...recordPayload(record),
+                    channel:channel,
+                    recipient_email:recipientEmail
+                }
+            );
+
+        const deliveryUrl =
+            clean(
+                result?.url ||
+                result?.delivery_url ||
+                result?.deliveryUrl ||
+                result?.download_url ||
+                result?.downloadUrl ||
+                ""
+            );
+
+        const message =
+            clean(
+                result?.message
+            ) ||
+            "Delivery action completed.";
+
+        if(status){
+            status.textContent =
+                message;
+        }
+
+        showMessage(
+            "backOfficeMessage",
+            message,
+            "success"
+        );
+
+        if(deliveryUrl){
+
+            if(channel === "phone"){
+
+                window.open(
+                    deliveryUrl,
+                    "_blank"
+                );
+
+            }else if(
+                channel === "whatsapp" ||
+                channel === "telegram" ||
+                channel === "drive"
+            ){
+
+                window.open(
+                    deliveryUrl,
+                    "_blank"
+                );
+            }
+        }
+
+        await loadDeliveryHistory(
+            record,
+            index
+        );
+
+    }catch(error){
+
+        if(status){
+            status.textContent =
+                apiError(error);
+        }
+
+        showMessage(
+            "backOfficeMessage",
+            apiError(error),
+            "error"
+        );
+    }
+}
+
+
+/* ============================================================
+   DELIVERY HISTORY
+   ============================================================ */
+
+async function loadDeliveryHistory(
+    record,
+    index
+){
+
+    try{
+
+        const query =
+            new URLSearchParams();
+
+        query.set(
+            "service",
+            recordService(record)
+        );
+
+        query.set(
+            "title",
+            recordTitle(record)
+        );
+
+        const data =
+            await apiGetWithHeaders(
+                "/api/back-office/delivery-history?" +
+                query.toString()
+            );
+
+        const history =
+            Array.isArray(data)
+                ? data
+                : (
+                    data?.history ||
+                    data?.records ||
+                    data?.data ||
+                    []
+                );
+
+        const status =
+            $("status-" + index);
+
+        if(
+            status &&
+            history.length
+        ){
+
+            const latest =
+                history[history.length - 1];
+
+            const channel =
+                clean(
+                    latest?.channel
+                );
+
+            const time =
+                clean(
+                    latest?.created_at ||
+                    latest?.createdAt ||
+                    latest?.timestamp ||
+                    ""
+                );
+
+            status.textContent =
+                "Last delivery: " +
+                (channel || "completed") +
+                (time ? " — " + time : "");
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Delivery history:",
+            error
+        );
+    }
+}
+
+
+/* ============================================================
+   ACTION ROUTER
+   ============================================================ */
+
+async function handleBackOfficeAction(
+    action,
+    record,
+    index
+){
+
+    switch(action){
+
+        case "view":
+            await viewSavedRecord(
+                record,
+                index
+            );
+            break;
+
+        case "verify":
+            await verifyPayment(
+                record,
+                index
+            );
+            break;
+
+        case "reject":
+            await rejectPayment(
+                record,
+                index
+            );
+            break;
+
+        case "activate":
+            await activateDownload(
+                record,
+                index
+            );
+            break;
+
+        case "phone":
+            await deliverRecord(
+                record,
+                index,
+                "phone"
+            );
+            break;
+
+        case "whatsapp":
+            await deliverRecord(
+                record,
+                index,
+                "whatsapp"
+            );
+            break;
+
+        case "email":
+            await deliverRecord(
+                record,
+                index,
+                "email"
+            );
+            break;
+
+        case "telegram":
+            await deliverRecord(
+                record,
+                index,
+                "telegram"
+            );
+            break;
+
+        case "drive":
+            await deliverRecord(
+                record,
+                index,
+                "drive"
+            );
+            break;
+    }
+}
+
+
+/* ============================================================
+   EVENTS
    ============================================================ */
 
 $("makePaymentButton")
@@ -2743,13 +3386,11 @@ $("makePaymentButton")
         openPaymentExperience
     );
 
-
 $("experienceMakePaymentButton")
     .addEventListener(
         "click",
         createPayment
     );
-
 
 $("closeExperience")
     .addEventListener(
@@ -2757,13 +3398,11 @@ $("closeExperience")
         closePaymentExperience
     );
 
-
 $("backOfficeButton")
     .addEventListener(
         "click",
         showBackOffice
     );
-
 
 $("exitBackOffice")
     .addEventListener(
@@ -2771,18 +3410,27 @@ $("exitBackOffice")
         exitBackOffice
     );
 
-
 $("loadBackOfficeButton")
     .addEventListener(
         "click",
         loadBackOffice
     );
 
-
 $("refreshBackOfficeButton")
     .addEventListener(
         "click",
         loadBackOffice
+    );
+
+$("backOfficeKey")
+    .addEventListener(
+        "keydown",
+        event => {
+
+            if(event.key === "Enter"){
+                loadBackOffice();
+            }
+        }
     );
 
 
@@ -2800,27 +3448,19 @@ function initialize(){
     updateExperienceDisplay();
     updateProgress();
 
-
     if(isBackOfficeMode){
 
         $("customerPaymentView")
-            .classList
-            .add("hidden");
+            .classList.add("hidden");
 
         showBackOffice();
 
         return;
     }
 
-
-    if(
-        service &&
-        documentTitle
-    ){
-
+    if(service && documentTitle){
         refreshPaymentStatus();
     }
-
 
     setInterval(
         () => {
@@ -2837,7 +3477,6 @@ function initialize(){
         15000
     );
 }
-
 
 initialize();
 
