@@ -4,120 +4,559 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Payment & Delivery — Naija Pocket Business Center</title>
+
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#090909;color:#fff}
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#090909;
+  color:#fff
+}
 body{min-height:100vh}
 .hidden{display:none!important}
 button,input{font:inherit}
 button{cursor:pointer}
+
 .page{min-height:100vh;background:#090909}
-.topbar{padding:16px;background:#000;border-bottom:1px solid #262626;position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.topbar-office{border:1px solid #3b3b3b;background:#171717;color:#fff;border-radius:10px;padding:9px 11px;font-size:11px;font-weight:900;letter-spacing:.06em}
+
+.topbar{
+  padding:16px;
+  background:#000;
+  border-bottom:1px solid #262626;
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px
+}
+
+.topbar-office{
+  border:1px solid #3b3b3b;
+  background:#171717;
+  color:#fff;
+  border-radius:10px;
+  padding:9px 11px;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.06em
+}
+
 .topbar-office:active{background:#242424}
+
 .brand{font-weight:800;font-size:20px}
 .subbrand{font-size:13px;color:#aaa;margin-top:4px}
-.wrap{width:min(980px,100%);margin:0 auto;padding:18px 14px 36px}
-.hero{border:1px solid #292929;background:#111;border-radius:18px;padding:20px;margin-bottom:14px}
+
+.wrap{
+  width:min(980px,100%);
+  margin:0 auto;
+  padding:18px 14px 36px
+}
+
+.hero{
+  border:1px solid #292929;
+  background:#111;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:14px
+}
+
 .hero h1{margin:0 0 8px;font-size:27px}
 .hero p{margin:0;color:#c8c8c8;line-height:1.55}
-.card{background:#111;border:1px solid #292929;border-radius:18px;padding:18px;margin-bottom:14px}
+
+.card{
+  background:#111;
+  border:1px solid #292929;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:14px
+}
+
 .card h2{margin:0 0 12px;font-size:20px}
-.label{color:#aaa;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+
+.label{
+  color:#aaa;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.08em
+}
+
 .value{font-size:20px;font-weight:800;margin-top:5px}
 .amount{font-size:36px;font-weight:900;margin-top:5px}
 .muted{color:#aaa;line-height:1.5}
-.status{padding:12px 14px;border-radius:12px;background:#181818;border:1px solid #2b2b2b;margin-top:12px;white-space:pre-wrap;line-height:1.45}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
-.btn{border:0;border-radius:12px;padding:14px 15px;font-weight:800;background:#e50914;color:#fff}
+
+.status{
+  padding:12px 14px;
+  border-radius:12px;
+  background:#181818;
+  border:1px solid #2b2b2b;
+  margin-top:12px;
+  white-space:pre-wrap;
+  line-height:1.45
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px
+}
+
+.btn{
+  border:0;
+  border-radius:12px;
+  padding:14px 15px;
+  font-weight:800;
+  background:#e50914;
+  color:#fff
+}
+
 .btn.secondary{background:#262626}
 .btn.green{background:#0b7a3b}
 .btn:disabled{opacity:.45;cursor:not-allowed}
-.contact{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.contact a{display:block;text-decoration:none;color:#fff;background:#191919;border:1px solid #303030;border-radius:12px;padding:13px}
-.contact small{display:block;color:#999;margin-top:3px}
-.delivery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.channel{background:#191919;border:1px solid #303030;border-radius:14px;padding:14px}
-.channel strong{display:block;margin-bottom:5px}
-.channel span{display:block;color:#aaa;font-size:12px;line-height:1.4}
-.channel button{margin-top:10px;width:100%;padding:10px;border:0;border-radius:10px;background:#e50914;color:#fff;font-weight:800}
+
+.contact{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px
+}
+
+.contact a{
+  display:block;
+  text-decoration:none;
+  color:#fff;
+  background:#191919;
+  border:1px solid #303030;
+  border-radius:12px;
+  padding:13px
+}
+
+.contact small{
+  display:block;
+  color:#999;
+  margin-top:3px
+}
+
+.delivery-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px
+}
+
+.channel{
+  background:#191919;
+  border:1px solid #303030;
+  border-radius:14px;
+  padding:14px
+}
+
+.channel strong{
+  display:block;
+  margin-bottom:5px
+}
+
+.channel span{
+  display:block;
+  color:#aaa;
+  font-size:12px;
+  line-height:1.4
+}
+
+.channel button{
+  margin-top:10px;
+  width:100%;
+  padding:10px;
+  border:0;
+  border-radius:10px;
+  background:#e50914;
+  color:#fff;
+  font-weight:800
+}
+
 .channel button.secondary{background:#303030}
-.notice{padding:12px;border-radius:12px;background:#161616;border:1px solid #2c2c2c;color:#bbb;line-height:1.5}
+
+.notice{
+  padding:12px;
+  border-radius:12px;
+  background:#161616;
+  border:1px solid #2c2c2c;
+  color:#bbb;
+  line-height:1.5
+}
+
 .error{color:#ff8c8c}
 .success{color:#8ff0b4}
-.email-box{background:#161616;border:1px solid #303030;border-radius:14px;padding:14px;margin-bottom:14px}
-.email-box label{display:block;color:#fff;font-size:13px;font-weight:800;margin-bottom:7px}
-.email-box .email-help{color:#999;font-size:12px;line-height:1.45;margin-bottom:10px}
-.email-box input{width:100%;background:#0d0d0d;border:1px solid #3a3a3a;color:#fff;border-radius:10px;padding:12px;outline:none}
-.email-box input:focus{border-color:#e50914}
-.email-box input::placeholder{color:#777}
-#backOfficeView{background:#070707;min-height:100vh}
-.bo-header{background:#000;padding:18px 16px;border-bottom:1px solid #262626;position:sticky;top:0;z-index:20}
-.bo-head-row{display:flex;justify-content:space-between;gap:12px;align-items:center}
+
+/* Saved-document attachment */
+.document-attachment{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  text-decoration:none;
+  color:#fff;
+  background:#191919;
+  border:1px solid #3a3a3a;
+  border-radius:14px;
+  padding:14px;
+  margin-top:12px
+}
+
+.document-attachment:active{background:#242424}
+
+.document-attachment.locked{
+  opacity:.55;
+  cursor:not-allowed
+}
+
+.attachment-icon{
+  width:42px;
+  height:42px;
+  flex:0 0 42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:11px;
+  background:#252525;
+  font-size:21px
+}
+
+.attachment-main{
+  min-width:0;
+  flex:1
+}
+
+.attachment-name{
+  font-weight:900;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
+
+.attachment-note{
+  color:#999;
+  font-size:12px;
+  line-height:1.4;
+  margin-top:3px
+}
+
+.attachment-arrow{
+  font-size:25px;
+  color:#aaa
+}
+
+/* Back Office */
+#backOfficeView{
+  background:#070707;
+  min-height:100vh
+}
+
+.bo-header{
+  background:#000;
+  padding:18px 16px;
+  border-bottom:1px solid #262626;
+  position:sticky;
+  top:0;
+  z-index:20
+}
+
+.bo-head-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center
+}
+
 .bo-title{font-size:23px;font-weight:900}
-.bo-controls{display:grid;grid-template-columns:1fr auto auto;gap:9px;margin-top:13px}
-.bo-controls input{min-width:0;background:#151515;border:1px solid #333;color:#fff;border-radius:10px;padding:12px}
-.bo-controls button{border:0;border-radius:10px;padding:12px 14px;background:#e50914;color:#fff;font-weight:800}
+
+.bo-controls{
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  gap:9px;
+  margin-top:13px
+}
+
+.bo-controls input{
+  min-width:0;
+  background:#151515;
+  border:1px solid #333;
+  color:#fff;
+  border-radius:10px;
+  padding:12px
+}
+
+.bo-controls button{
+  border:0;
+  border-radius:10px;
+  padding:12px 14px;
+  background:#e50914;
+  color:#fff;
+  font-weight:800
+}
+
 .bo-controls button.secondary{background:#282828}
-.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
-.summary .box{background:#111;border:1px solid #292929;border-radius:14px;padding:14px}
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+  margin-bottom:14px
+}
+
+.summary .box{
+  background:#111;
+  border:1px solid #292929;
+  border-radius:14px;
+  padding:14px
+}
+
 .summary .n{font-size:25px;font-weight:900}
-.summary .t{font-size:11px;color:#999;text-transform:uppercase;margin-top:3px}
-.record{background:#111;border:1px solid #2c2c2c;border-radius:16px;margin-bottom:12px;overflow:hidden}
+.summary .t{
+  font-size:11px;
+  color:#999;
+  text-transform:uppercase;
+  margin-top:3px
+}
+
+.record{
+  background:#111;
+  border:1px solid #2c2c2c;
+  border-radius:16px;
+  margin-bottom:12px;
+  overflow:hidden
+}
+
 .record-main{padding:15px}
 .record-title{font-size:18px;font-weight:900}
 .record-service{color:#aaa;margin-top:4px}
-.record-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
-.mini{background:#181818;border-radius:10px;padding:10px}
+
+.record-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:12px
+}
+
+.mini{
+  background:#181818;
+  border-radius:10px;
+  padding:10px
+}
+
 .mini b{display:block;font-size:12px}
-.mini span{display:block;color:#aaa;font-size:12px;margin-top:3px}
-.record-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 15px 15px}
-.record-actions button{border:0;border-radius:10px;padding:11px;background:#e50914;color:#fff;font-weight:800}
+.mini span{
+  display:block;
+  color:#aaa;
+  font-size:12px;
+  margin-top:3px
+}
+
+.record-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:0 15px 15px
+}
+
+.record-actions button{
+  border:0;
+  border-radius:10px;
+  padding:11px;
+  background:#e50914;
+  color:#fff;
+  font-weight:800
+}
+
 .record-actions button.secondary{background:#303030}
 .record-actions button.green{background:#0b7a3b}
-.bo-document{white-space:normal;background:#0c0c0c;border:1px solid #292929;border-radius:14px;padding:18px;line-height:1.65;overflow:auto}
-.doc-page{background:#fff;color:#111;border-radius:4px;padding:28px 24px;margin-bottom:14px;min-height:180px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+
+.bo-document{
+  white-space:normal;
+  background:#0c0c0c;
+  border:1px solid #292929;
+  border-radius:14px;
+  padding:18px;
+  line-height:1.65;
+  overflow:auto
+}
+
+.doc-page{
+  background:#fff;
+  color:#111;
+  border-radius:4px;
+  padding:28px 24px;
+  margin-bottom:14px;
+  min-height:180px;
+  box-shadow:0 2px 10px rgba(0,0,0,.25)
+}
+
 .doc-page:last-child{margin-bottom:0}
-.doc-page p{margin:0 0 10px;white-space:pre-wrap}
+
+.doc-page h1,
+.doc-page h2,
+.doc-page h3,
+.doc-page h4,
+.doc-page h5,
+.doc-page h6{
+  margin:0 0 12px;
+  line-height:1.25
+}
+
+.doc-page p{
+  margin:0 0 10px;
+  white-space:pre-wrap
+}
+
 .doc-page p:last-child{margin-bottom:0}
-.bo-delivery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.bo-delivery .channel{display:flex;flex-direction:column}
+.doc-page strong{font-weight:800}
+
+.bo-delivery{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px
+}
+
+.bo-delivery .channel{
+  display:flex;
+  flex-direction:column
+}
+
 .bo-delivery .channel button{margin-top:auto}
-.bo-footer{color:#777;font-size:12px;text-align:center;padding:25px 10px}
-.saved-preview-card{padding:0;overflow:hidden}
-.preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 18px 10px}
-.preview-head h2{margin:5px 0 0;font-size:20px}
-.saved-badge{font-size:10px;font-weight:900;letter-spacing:.1em;padding:7px 9px;border-radius:999px;background:#201b0b;border:1px solid #66551e;color:#e7cc70}
-.preview-note{padding:0 18px 14px;color:#999;font-size:12px;line-height:1.5}
-.customer-document-preview{margin:0 12px 12px;padding:12px;background:#0a0a0a;border:1px solid #292929;border-radius:14px;max-height:310px;overflow:hidden}
-.customer-document-page{background:#fff;color:#111;border-radius:4px;padding:22px 20px;margin-bottom:0;line-height:1.55;box-shadow:0 4px 18px rgba(0,0,0,.22);height:260px;overflow:hidden}
-.customer-document-page p{margin:0 0 10px;white-space:pre-wrap}
-.customer-document-page p:last-child{margin-bottom:0}
-.preview-page-label{font-size:10px;color:#777;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em}
-.preview-empty{color:#aaa;padding:20px;text-align:center}
+
+.bo-footer{
+  color:#777;
+  font-size:12px;
+  text-align:center;
+  padding:25px 10px
+}
+
+.saved-preview-card{
+  padding:0;
+  overflow:hidden
+}
+
+.preview-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:18px 18px 10px
+}
+
+.preview-head h2{
+  margin:5px 0 0;
+  font-size:20px
+}
+
+.saved-badge{
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.1em;
+  padding:7px 9px;
+  border-radius:999px;
+  background:#201b0b;
+  border:1px solid #66551e;
+  color:#e7cc70
+}
+
+.preview-note{
+  padding:0 18px 14px;
+  color:#999;
+  font-size:12px;
+  line-height:1.5
+}
+
+.customer-document-preview{
+  margin:0 12px 12px;
+  padding:12px;
+  background:#0a0a0a;
+  border:1px solid #292929;
+  border-radius:14px;
+  max-height:310px;
+  overflow:hidden
+}
+
+.customer-document-page{
+  background:#fff;
+  color:#111;
+  border-radius:4px;
+  padding:22px 20px;
+  margin-bottom:0;
+  line-height:1.55;
+  box-shadow:0 4px 18px rgba(0,0,0,.22);
+  height:260px;
+  overflow:hidden
+}
+
+.customer-document-page:last-child{margin-bottom:0}
+
+.customer-document-page h1,
+.customer-document-page h2,
+.customer-document-page h3,
+.customer-document-page h4,
+.customer-document-page h5,
+.customer-document-page h6{
+  margin:0 0 12px;
+  line-height:1.25
+}
+
+.customer-document-page p{
+  margin:0 0 10px;
+  white-space:pre-wrap
+}
+
+.customer-document-page strong{font-weight:800}
+
+.preview-page-label{
+  font-size:10px;
+  color:#777;
+  margin-bottom:12px;
+  text-transform:uppercase;
+  letter-spacing:.06em
+}
+
+.preview-empty{
+  color:#aaa;
+  padding:20px;
+  text-align:center
+}
+
 .backoffice-entry{margin-top:10px}
-.bo-email-box{background:#161616;border:1px solid #303030;border-radius:14px;padding:14px;margin-bottom:12px}
-.bo-email-box label{display:block;color:#fff;font-size:13px;font-weight:800;margin-bottom:7px}
-.bo-email-box .email-help{color:#999;font-size:12px;line-height:1.45;margin-bottom:10px}
-.bo-email-box input{width:100%;background:#0d0d0d;border:1px solid #3a3a3a;color:#fff;border-radius:10px;padding:12px;outline:none}
-.bo-email-box input:focus{border-color:#e50914}
-.bo-email-box input::placeholder{color:#777}
 .hidden-file{display:none}
+
 @media(max-width:650px){
-  .actions,.contact,.delivery-grid,.bo-controls,.bo-delivery,.record-grid{grid-template-columns:1fr}
+  .actions,
+  .contact,
+  .delivery-grid,
+  .bo-controls,
+  .bo-delivery,
+  .record-grid{
+    grid-template-columns:1fr
+  }
+
   .summary{grid-template-columns:repeat(3,1fr)}
   .summary .box{padding:10px}
   .summary .n{font-size:20px}
   .hero h1{font-size:23px}
   .amount{font-size:32px}
   .record-actions{grid-template-columns:1fr}
-  .bo-head-row{align-items:flex-start;flex-direction:column}
+  .bo-head-row{
+    align-items:flex-start;
+    flex-direction:column
+  }
 }
 </style>
 </head>
 
 <body>
 
+<!-- =========================
+     CUSTOMER VIEW
+========================= -->
 <div id="customerPaymentView" class="page">
 
   <div class="topbar">
@@ -125,7 +564,9 @@ button{cursor:pointer}
       <div class="brand">Naija Pocket Business Center</div>
       <div class="subbrand">Payment & Delivery</div>
     </div>
-    <button id="openBackOfficeButton" class="topbar-office" type="button">BACK OFFICE</button>
+    <button id="openBackOfficeButton" class="topbar-office" type="button">
+      BACK OFFICE
+    </button>
   </div>
 
   <main class="wrap">
@@ -173,52 +614,62 @@ button{cursor:pointer}
           </div>
         </div>
 
-      </section>
+        <!-- CUSTOMER DOCUMENT ATTACHMENT -->
+        <a
+          id="customerDocumentAttachment"
+          class="document-attachment locked"
+          href="#"
+          aria-disabled="true"
+        >
+          <div class="attachment-icon">📎</div>
 
-      <section class="card">
+          <div class="attachment-main">
+            <div id="customerAttachmentName" class="attachment-name">
+              Saved document
+            </div>
 
-        <div class="label">Customer Email Address</div>
-
-        <div class="email-box" style="margin-top:10px;margin-bottom:0">
-
-          <label for="customerEmail">Email Address</label>
-
-          <div class="email-help">
-            Enter the email address where your completed document can be delivered.
+            <div id="customerAttachmentNote" class="attachment-note">
+              Download will be available after Customer Care activates it.
+            </div>
           </div>
 
-          <input
-            id="customerEmail"
-            name="customerEmail"
-            type="email"
-            inputmode="email"
-            autocomplete="email"
-            autocapitalize="none"
-            spellcheck="false"
-            placeholder="customer@example.com"
-          >
-
-        </div>
+          <div class="attachment-arrow">›</div>
+        </a>
 
       </section>
 
       <section class="card">
 
         <div class="label">Amount to Pay</div>
+
         <div id="amountValue" class="amount">₦0</div>
 
-        <div id="billingValue" class="muted" style="margin-top:6px">
+        <div
+          id="billingValue"
+          class="muted"
+          style="margin-top:6px"
+        >
           Payment amount will appear here.
         </div>
 
         <div class="actions">
-          <button id="makePaymentButton" class="btn" type="button">
+
+          <button
+            id="makePaymentButton"
+            class="btn"
+            type="button"
+          >
             MAKE PAYMENT
           </button>
 
-          <button id="reportPaymentButton" class="btn secondary" type="button">
+          <button
+            id="reportPaymentButton"
+            class="btn secondary"
+            type="button"
+          >
             I HAVE MADE PAYMENT
           </button>
+
         </div>
 
         <div id="paymentMessage" class="status">
@@ -233,10 +684,15 @@ button{cursor:pointer}
 
         <div class="notice">
           Use the official bank details provided by Naija Pocket Business Center
-          for your transfer. This page does not invent or change the business bank details.
+          for your transfer. This page does not invent or change the business
+          bank details.
         </div>
 
-        <div id="bankDetails" class="status" style="margin-top:10px">
+        <div
+          id="bankDetails"
+          class="status"
+          style="margin-top:10px"
+        >
           Bank details will be shown here when supplied by the payment service.
         </div>
 
@@ -253,7 +709,11 @@ button{cursor:pointer}
             <small>+234 805 707 3891</small>
           </a>
 
-          <a href="https://wa.me/2348057073891" target="_blank" rel="noopener">
+          <a
+            href="https://wa.me/2348057073891"
+            target="_blank"
+            rel="noopener"
+          >
             <b>WhatsApp</b>
             <small>+234 805 707 3891</small>
           </a>
@@ -268,18 +728,23 @@ button{cursor:pointer}
 
         <div id="customerDelivery" class="delivery-grid"></div>
 
-        <div id="customerDeliveryNote" class="status">
+        <div
+          id="customerDeliveryNote"
+          class="status"
+        >
           Download remains locked until Customer Care verifies the payment.
         </div>
 
       </section>
 
     </section>
-
   </main>
 </div>
 
 
+<!-- =========================
+     BACK OFFICE VIEW
+========================= -->
 <div id="backOfficeView" class="hidden">
 
   <div class="bo-header">
@@ -293,7 +758,11 @@ button{cursor:pointer}
         </div>
       </div>
 
-      <button id="exitBackOffice" class="btn secondary" type="button">
+      <button
+        id="exitBackOffice"
+        class="btn secondary"
+        type="button"
+      >
         CUSTOMER VIEW
       </button>
 
@@ -308,11 +777,18 @@ button{cursor:pointer}
         placeholder="Back Office key"
       >
 
-      <button id="loadBackOfficeButton" type="button">
+      <button
+        id="loadBackOfficeButton"
+        type="button"
+      >
         LOAD RECORDS
       </button>
 
-      <button id="refreshBackOfficeButton" class="secondary" type="button">
+      <button
+        id="refreshBackOfficeButton"
+        class="secondary"
+        type="button"
+      >
         REFRESH
       </button>
 
@@ -322,59 +798,84 @@ button{cursor:pointer}
 
   </div>
 
-
   <main class="wrap">
 
     <div id="boSummary" class="summary"></div>
 
     <section id="boRecords"></section>
 
-    <section id="boDocumentPanel" class="card hidden">
+    <section
+      id="boDocumentPanel"
+      class="card hidden"
+    >
 
-      <h2 id="boDocumentTitle">Saved Document</h2>
+      <h2 id="boDocumentTitle">
+        Saved Document
+      </h2>
 
-      <div id="boDocumentMeta" class="muted" style="margin-bottom:12px"></div>
+      <div
+        id="boDocumentMeta"
+        class="muted"
+        style="margin-bottom:12px"
+      ></div>
 
-      <div id="boDocumentText" class="bo-document"></div>
+      <!-- BACK OFFICE DOCUMENT ATTACHMENT -->
+      <a
+        id="boDocumentAttachment"
+        class="document-attachment"
+        href="#"
+      >
+        <div class="attachment-icon">📎</div>
+
+        <div class="attachment-main">
+
+          <div
+            id="boAttachmentName"
+            class="attachment-name"
+          >
+            Saved document
+          </div>
+
+          <div
+            id="boAttachmentNote"
+            class="attachment-note"
+          >
+            Tap to download the exact saved document.
+          </div>
+
+        </div>
+
+        <div class="attachment-arrow">›</div>
+      </a>
+
+      <div
+        id="boDocumentText"
+        class="bo-document"
+        style="margin-top:14px"
+      ></div>
 
     </section>
 
-
-    <section id="boDeliveryPanel" class="card hidden">
+    <section
+      id="boDeliveryPanel"
+      class="card hidden"
+    >
 
       <h2>Back Office Delivery Channels</h2>
 
-      <div class="notice" style="margin-bottom:12px">
+      <div
+        class="notice"
+        style="margin-bottom:12px"
+      >
         Back Office can retrieve and send the exact saved document even when
         customer download is still locked. Payment verification is a customer
         download gate, not a Back Office retrieval gate.
       </div>
 
-      <div id="boEmailRecipientBox" class="bo-email-box">
-
-        <label for="boRecipientEmail">
-          Customer Email Address
-        </label>
-
-        <div class="email-help">
-          Enter the customer's email address before choosing Email.
-          The exact saved document will be attached to the email.
-        </div>
-
-        <input
-          id="boRecipientEmail"
-          name="boRecipientEmail"
-          type="email"
-          inputmode="email"
-          autocomplete="off"
-          autocapitalize="none"
-          spellcheck="false"
-          placeholder="customer@example.com"
-        >
-
-      </div>
-
-      <div id="boDeliveryGrid" class="bo-delivery"></div>
+      <div
+        id="boDeliveryGrid"
+        class="bo-delivery"
+      ></div>
 
     </section>
 
@@ -397,40 +898,28 @@ const CUSTOMER_CARE_PHONE="+234 805 707 3891";
 const params=new URLSearchParams(location.search);
 const mode=(params.get("mode")||"").trim().toLowerCase();
 
-const serviceParam=
-  (
-    params.get("service")||
-    params.get("service_name")||
-    ""
-  ).trim();
+const serviceParam=(params.get("service")||"").trim();
 
-const titleParam=
-  (
-    params.get("title")||
-    params.get("document_title")||
-    params.get("documentTitle")||
-    params.get("name")||
-    ""
-  ).trim();
+const titleParam=(
+  params.get("title")||
+  params.get("document_title")||
+  ""
+).trim();
 
-let service=serviceParam,
-    documentTitle=titleParam,
-    amount=0,
-    paymentPrepared=false,
-    paymentReported=false,
-    paymentVerified=false,
-    downloadUnlocked=false,
-    paymentStatusData=null;
-
-let currentBoCustomerEmail="";
+let service=serviceParam;
+let documentTitle=titleParam;
+let amount=0;
+let paymentPrepared=false;
+let paymentReported=false;
+let paymentVerified=false;
+let downloadUnlocked=false;
+let paymentStatusData=null;
 
 const $=id=>document.getElementById(id);
-
 
 function clean(v){
   return v==null?"":String(v).trim()
 }
-
 
 function esc(v){
   return String(v??"")
@@ -440,168 +929,20 @@ function esc(v){
     .replace(/\"/g,"&quot;")
 }
 
-
 function money(v){
   const n=Number(v)||0;
   return n>0?"₦"+n.toLocaleString():"₦0"
 }
 
-
 function boKey(){
   return clean($("backOfficeKey").value)
 }
-
 
 function clearBackOfficeKey(){
   $("backOfficeKey").value=""
 }
 
-
-/*
- * Recover the SAME service/title already supplied to the
- * Payment & Delivery page without changing the payment API
- * or the MAKE PAYMENT operation.
- *
- * The URL remains the first source.
- * Browser storage and the previous page are only fallback
- * sources when the handoff omitted the title parameter.
- */
-function recoverPaymentIdentity(){
-
-  if(service&&documentTitle)
-    return true;
-
-  const storageKeys=[
-    "NPBC_PAYMENT_SERVICE",
-    "NPBC_SERVICE",
-    "service"
-  ];
-
-  const titleKeys=[
-    "NPBC_PAYMENT_DOCUMENT_TITLE",
-    "NPBC_DOCUMENT_TITLE",
-    "NPBC_TITLE",
-    "document_title",
-    "documentTitle",
-    "title"
-  ];
-
-  try{
-
-    if(!service){
-
-      for(const key of storageKeys){
-
-        const v=
-          clean(
-            sessionStorage.getItem(key)||
-            localStorage.getItem(key)
-          );
-
-        if(v){
-          service=v;
-          break
-        }
-      }
-    }
-
-    if(!documentTitle){
-
-      for(const key of titleKeys){
-
-        const v=
-          clean(
-            sessionStorage.getItem(key)||
-            localStorage.getItem(key)
-          );
-
-        if(v){
-          documentTitle=v;
-          break
-        }
-      }
-    }
-
-  }catch(e){
-    /* Storage may be unavailable. Continue to referrer. */
-  }
-
-  /*
-   * If the previous page already carried the service/title
-   * in its own URL, recover them from that handoff as a
-   * final browser-side fallback.
-   */
-  if(!service||!documentTitle){
-
-    try{
-
-      const ref=
-        clean(document.referrer);
-
-      if(ref){
-
-        const refUrl=
-          new URL(
-            ref,
-            location.href
-          );
-
-        if(!service){
-
-          service=
-            clean(
-              refUrl.searchParams.get("service")||
-              refUrl.searchParams.get("service_name")||
-              ""
-            );
-        }
-
-        if(!documentTitle){
-
-          documentTitle=
-            clean(
-              refUrl.searchParams.get("title")||
-              refUrl.searchParams.get("document_title")||
-              refUrl.searchParams.get("documentTitle")||
-              refUrl.searchParams.get("name")||
-              ""
-            );
-        }
-      }
-
-    }catch(e){
-      /* Keep the original values if referrer parsing fails. */
-    }
-  }
-
-  /*
-   * Preserve the recovered identity for this payment session.
-   * This does not create or alter a payment.
-   */
-  try{
-
-    if(service)
-      sessionStorage.setItem(
-        "NPBC_PAYMENT_SERVICE",
-        service
-      );
-
-    if(documentTitle)
-      sessionStorage.setItem(
-        "NPBC_PAYMENT_DOCUMENT_TITLE",
-        documentTitle
-      );
-
-  }catch(e){
-    /* Storage is optional. */
-  }
-
-  return !!service&&!!documentTitle
-}
-
-
 async function api(path,options={}){
-
   const r=await fetch(
     PAYMENT_API_BASE+path,
     {
@@ -612,61 +953,98 @@ async function api(path,options={}){
 
   const d=await r.json().catch(()=>({}));
 
-  if(!r.ok)
+  if(!r.ok){
     throw new Error(
       d.detail||
       d.message||
       d.error||
       "The payment service could not complete this request."
     );
+  }
 
   return d
 }
 
-
 function customerIdentity(){
-
-  recoverPaymentIdentity();
-
-  if(!service||!documentTitle)
-    return false;
-
+  if(!service||!documentTitle)return false;
   return true
 }
-
 
 function setCustomerMessage(text,type=""){
   $("paymentMessage").textContent=text||"";
   $("paymentMessage").className="status"+(type?" "+type:"")
 }
 
-
 function renderBankDetails(data){
 
   const c=
-    data&&data.payment_channels?
-    data.payment_channels.channels:
-    [];
+    data&&data.payment_channels
+      ?data.payment_channels.channels
+      :[];
 
-  const bank=
-    c.find(x=>String(x.id).toLowerCase().includes("bank"));
+  const bank=c.find(
+    x=>String(x.id).toLowerCase().includes("bank")
+  );
 
   if(bank&&bank.details){
-
     $("bankDetails").textContent=bank.details
-
   }else if(bank&&bank.note){
-
     $("bankDetails").textContent=bank.note
-
   }else{
-
     $("bankDetails").textContent=
       "Bank details will be shown here when supplied by the payment service."
-
   }
 }
 
+
+/* =========================
+   CUSTOMER ATTACHMENT
+========================= */
+
+function renderCustomerAttachment(){
+
+  const link=$("customerDocumentAttachment");
+  const name=$("customerAttachmentName");
+  const note=$("customerAttachmentNote");
+
+  const filename=
+    documentTitle
+      ?documentTitle+".docx"
+      :"Saved document.docx";
+
+  name.textContent=filename;
+
+  if(downloadUnlocked){
+
+    link.href=
+      PAYMENT_API_BASE+
+      "/api/download?service="+
+      encodeURIComponent(service)+
+      "&title="+
+      encodeURIComponent(documentTitle);
+
+    link.classList.remove("locked");
+    link.removeAttribute("aria-disabled");
+
+    note.textContent=
+      "Tap the attachment to download the exact saved document.";
+
+  }else{
+
+    link.href="#";
+
+    link.classList.add("locked");
+    link.setAttribute("aria-disabled","true");
+
+    note.textContent=
+      "Download will be available after Customer Care activates it.";
+  }
+}
+
+
+/* =========================
+   CUSTOMER DELIVERY
+========================= */
 
 function renderCustomerDelivery(data){
 
@@ -677,10 +1055,8 @@ function renderCustomerDelivery(data){
   const channels=(data&&data.channels)||[];
 
   if(!channels.length){
-
     box.innerHTML=
       '<div class="notice">No delivery option is available yet.</div>';
-
     return
   }
 
@@ -693,18 +1069,20 @@ function renderCustomerDelivery(data){
     const available=!!ch.available;
 
     d.innerHTML=
-      '<strong>'+esc(ch.name)+'</strong>'+
+      '<strong>'+
+      esc(ch.name)+
+      '</strong>'+
       '<span>'+
       esc(
         ch.note||
         (
-          ch.id==="phone"?
-          (
-            available?
-            "Download your verified document.":
-            "Waiting for Customer Care verification."
-          ):
-          "Use this delivery option after download is unlocked."
+          ch.id==="phone"
+            ?(
+              available
+                ?"Download your verified document."
+                :"Waiting for Customer Care verification."
+            )
+            :"Use this delivery option after download is unlocked."
         )
       )+
       '</span>'+
@@ -718,10 +1096,13 @@ function renderCustomerDelivery(data){
       ()=>customerDelivery(ch);
 
     box.appendChild(d)
-
   })
 }
 
+
+/* =========================
+   CUSTOMER DOCUMENT PREVIEW
+========================= */
 
 function renderCustomerDocument(p){
 
@@ -735,12 +1116,13 @@ function renderCustomerDocument(p){
   $("savedPreviewTitle").textContent=title;
 
   let pages=
-    Array.isArray(p.document_preview_pages)?
-    p.document_preview_pages:
-    [];
+    Array.isArray(p.document_preview_pages)
+      ?p.document_preview_pages
+      :[];
 
-  if(!pages.length&&p.document_preview_text)
-    pages=[p.document_preview_text];
+  if(!pages.length&&p.document_preview_text){
+    pages=[p.document_preview_text]
+  }
 
   if(!pages.length){
 
@@ -753,21 +1135,23 @@ function renderCustomerDocument(p){
   }
 
   const firstPage=
-    typeof pages[0]==="object"?
-    (pages[0].content||pages[0].text||""):
-    pages[0];
+    typeof pages[0]==="object"
+      ?(pages[0].content||pages[0].text||"")
+      :pages[0];
 
   box.innerHTML=
     '<div class="customer-document-page">'+
-      '<div class="preview-page-label">Saved document evidence</div>'+
-      renderDocMarkup(firstPage)+
-    '</div>'
+    '<div class="preview-page-label">Saved document evidence</div>'+
+    renderDocMarkup(firstPage)+
+    '</div>';
 }
 
 
-async function loadCustomer(){
+/* =========================
+   CUSTOMER LOAD
+========================= */
 
-  recoverPaymentIdentity();
+async function loadCustomer(){
 
   if(!customerIdentity()){
 
@@ -778,6 +1162,8 @@ async function loadCustomer(){
       "This payment page needs the service and document title.",
       "error"
     );
+
+    renderCustomerAttachment();
 
     return
   }
@@ -810,87 +1196,89 @@ async function loadCustomer(){
       !!pay||
       !!p.saved_document;
 
-    paymentReported=!!(
-      p.payment_reported||
-      pay.reported_at||
-      String(pay.payment_status||"").toLowerCase()==="payment_reported"
-    );
-
-    paymentVerified=!!(
-      p.payment_verified||
-      pay.verified_at||
-      [
-        "payment_verified",
-        "verified",
-        "approved",
-        "paid",
-        "completed",
-        "complete"
-      ].includes(
-        String(pay.payment_status||"").toLowerCase()
-      )
-    );
-
-    downloadUnlocked=!!p.download_unlocked;
-
-    const storedCustomerEmail=
-      clean(
-        p.customer_email||
-        p.email||
-        pay.customer_email||
-        pay.email||
-        ""
+    paymentReported=
+      !!(
+        p.payment_reported||
+        pay.reported_at||
+        String(pay.payment_status||"").toLowerCase()==="payment_reported"
       );
 
-    if(storedCustomerEmail){
+    paymentVerified=
+      !!(
+        p.payment_verified||
+        pay.verified_at||
+        [
+          "payment_verified",
+          "verified",
+          "approved",
+          "paid",
+          "completed",
+          "complete"
+        ].includes(
+          String(pay.payment_status||"").toLowerCase()
+        )
+      );
 
-      $("customerEmail").value=
-        storedCustomerEmail;
-
-    }
+    downloadUnlocked=
+      !!p.download_unlocked;
 
     $("amountValue").textContent=money(amount);
 
     $("billingValue").textContent=
-      amount>0?
-      "Pay the amount shown above, then tap I HAVE MADE PAYMENT.":
-      "A quotation is required before payment.";
+      amount>0
+        ?"Pay the amount shown above, then tap I HAVE MADE PAYMENT."
+        :"A quotation is required before payment.";
 
     $("paymentStatus").textContent=
-      paymentVerified?
-      "Payment verified by Customer Care. Download is available.":
-      paymentReported?
-      "Payment reported. Customer Care will verify it before download is unlocked.":
-      paymentPrepared?
-      "Payment is prepared. Complete the transfer, then tap I HAVE MADE PAYMENT.":
-      "Payment has not been started.";
+      paymentVerified
+        ?"Payment verified by Customer Care. Download is available."
+        :paymentReported
+          ?"Payment reported. Customer Care will verify it before download is unlocked."
+          :paymentPrepared
+            ?"Payment is prepared. Complete the transfer, then tap I HAVE MADE PAYMENT."
+            :"Payment has not been started.";
 
     setCustomerMessage(
-      paymentVerified?
-      "Payment verified. Your document is now available for download.":
-      paymentReported?
-      "Payment reported. Please wait for Customer Care verification.":
-      "Payment has not been reported yet.",
+      paymentVerified
+        ?"Payment verified. Your document is now available for download."
+        :paymentReported
+          ?"Your payment has been reported. Please wait for Customer Care verification."
+          :"Payment has not been reported yet.",
       paymentVerified?"success":""
     );
 
     renderCustomerDelivery(d.delivery||{});
+
     renderBankDetails(d);
-    renderCustomerDocument(p)
+
+    renderCustomerDocument(p);
+
+    renderCustomerAttachment();
 
   }catch(e){
 
-    setCustomerMessage(e.message,"error");
+    setCustomerMessage(
+      e.message,
+      "error"
+    );
 
     $("customerDocumentPreview").innerHTML=
       '<div class="preview-empty">'+
       'Unable to load the saved document evidence.'+
-      '</div>'
+      '</div>';
+
+    renderCustomerAttachment()
   }
 }
 
 
+/* =========================
+   MAKE PAYMENT
+   PRESERVED
+========================= */
+
 /* MAKE PAYMENT — preserved as the payment creation operation. */
+
 async function createPayment(){
 
   if(!customerIdentity())
@@ -904,24 +1292,6 @@ async function createPayment(){
       "A valid payment amount is not available yet.",
       "error"
     );
-
-  const customerEmail=
-    clean(
-      $("customerEmail").value
-    );
-
-  if(customerEmail){
-
-    const emailPattern=
-      /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-
-    if(!emailPattern.test(customerEmail))
-      return setCustomerMessage(
-        "Enter a valid email address.",
-        "error"
-      );
-
-  }
 
   try{
 
@@ -954,7 +1324,6 @@ async function createPayment(){
       document_title:documentTitle,
       customer_name:p.customer_name||"",
       customer_id:p.customer_id||"",
-      customer_email:customerEmail,
       amount:amount,
       currency:p.currency||"NGN",
       payment_method:"bank_transfer",
@@ -965,16 +1334,17 @@ async function createPayment(){
       filename:p.document_filename||"document.docx"
     };
 
-    const d=await api(
-      "/api/payment/create",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify(payload)
-      }
-    );
+    const d=
+      await api(
+        "/api/payment/create",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify(payload)
+        }
+      );
 
     paymentStatusData=d;
     paymentPrepared=true;
@@ -997,21 +1367,32 @@ async function createPayment(){
     );
 
     renderCustomerDelivery(d.delivery||{});
-    renderBankDetails(d)
+
+    renderBankDetails(d);
+
+    renderCustomerAttachment();
 
   }catch(e){
 
-    setCustomerMessage(e.message,"error")
+    setCustomerMessage(
+      e.message,
+      "error"
+    )
 
   }finally{
 
     $("makePaymentButton").disabled=false
-
   }
 }
 
 
+/* =========================
+   I HAVE MADE PAYMENT
+   PRESERVED
+========================= */
+
 /* I HAVE MADE PAYMENT — preserved as the payment-report operation only. */
+
 async function reportPayment(){
 
   if(!customerIdentity())
@@ -1024,20 +1405,22 @@ async function reportPayment(){
 
     $("reportPaymentButton").disabled=true;
 
-    const d=await api(
-      "/api/payment/report",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          service:service,
-          document_title:documentTitle,
-          note:"Customer reported payment from Payment & Delivery page."
-        })
-      }
-    );
+    const d=
+      await api(
+        "/api/payment/report",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            service:service,
+            document_title:documentTitle,
+            note:
+              "Customer reported payment from Payment & Delivery page."
+          })
+        }
+      );
 
     paymentStatusData=d;
     paymentReported=true;
@@ -1045,30 +1428,36 @@ async function reportPayment(){
     downloadUnlocked=!!d.download_unlocked;
 
     $("paymentStatus").textContent=
-      paymentVerified?
-      "Payment is already verified.":
-      "Payment reported. Customer Care will verify it before customer download is unlocked.";
+      paymentVerified
+        ?"Payment is already verified."
+        :"Payment reported. Customer Care will verify it before customer download is unlocked.";
 
     setCustomerMessage(
-      paymentVerified?
-      "Payment has already been verified.":
-      "Your payment has been reported. Customer Care will verify it before download is unlocked.",
+      paymentVerified
+        ?"Payment has already been verified."
+        :"Your payment has been reported. Customer Care will verify it before download is unlocked.",
       "success"
     );
 
-    await loadCustomer()
+    await loadCustomer();
 
   }catch(e){
 
-    setCustomerMessage(e.message,"error")
+    setCustomerMessage(
+      e.message,
+      "error"
+    )
 
   }finally{
 
     $("reportPaymentButton").disabled=false
-
   }
 }
 
+
+/* =========================
+   CUSTOMER DELIVERY
+========================= */
 
 async function customerDelivery(ch){
 
@@ -1082,16 +1471,17 @@ async function customerDelivery(ch){
 
     try{
 
-      const r=await fetch(
-        PAYMENT_API_BASE+
-        "/api/download?service="+
-        encodeURIComponent(service)+
-        "&title="+
-        encodeURIComponent(documentTitle),
-        {
-          cache:"no-store"
-        }
-      );
+      const r=
+        await fetch(
+          PAYMENT_API_BASE+
+          "/api/download?service="+
+          encodeURIComponent(service)+
+          "&title="+
+          encodeURIComponent(documentTitle),
+          {
+            cache:"no-store"
+          }
+        );
 
       if(!r.ok)
         throw new Error(
@@ -1103,7 +1493,10 @@ async function customerDelivery(ch){
       const a=document.createElement("a");
 
       a.href=URL.createObjectURL(blob);
-      a.download=(documentTitle||"document")+".docx";
+
+      a.download=
+        (documentTitle||"document")+
+        ".docx";
 
       document.body.appendChild(a);
 
@@ -1114,12 +1507,14 @@ async function customerDelivery(ch){
       setTimeout(
         ()=>URL.revokeObjectURL(a.href),
         1500
-      )
+      );
 
     }catch(e){
 
-      setCustomerMessage(e.message,"error")
-
+      setCustomerMessage(
+        e.message,
+        "error"
+      )
     }
 
   }else if(ch.url){
@@ -1129,14 +1524,38 @@ async function customerDelivery(ch){
       "_blank",
       "noopener"
     )
-
   }
 }
 
 
+/* =========================
+   CUSTOMER ATTACHMENT CLICK
+========================= */
+
+$("customerDocumentAttachment").onclick=function(e){
+
+  if(!downloadUnlocked){
+
+    e.preventDefault();
+
+    setCustomerMessage(
+      "Download remains locked until Customer Care verifies the payment.",
+      "error"
+    );
+
+    return
+  }
+};
+
+
+/* =========================
+   BACK OFFICE
+========================= */
+
 function showBackOffice(){
 
   $("customerPaymentView").classList.add("hidden");
+
   $("backOfficeView").classList.remove("hidden");
 
   $("backOfficeKey").value="";
@@ -1146,15 +1565,14 @@ function showBackOffice(){
   )
 }
 
-
 function showCustomer(){
 
   $("backOfficeView").classList.add("hidden");
+
   $("customerPaymentView").classList.remove("hidden");
 
   loadCustomer()
 }
-
 
 function setBoMessage(text,type=""){
 
@@ -1168,7 +1586,6 @@ function setBoMessage(text,type=""){
     (text?"":" hidden")
 }
 
-
 function boHeaders(){
 
   return {
@@ -1176,45 +1593,51 @@ function boHeaders(){
   }
 }
 
-
 function renderSummary(summary){
 
   const s=summary||{};
 
   $("boSummary").innerHTML=
     '<div class="box">'+
-      '<div class="n">'+Number(s.saved||0)+'</div>'+
+      '<div class="n">'+
+        Number(s.saved||0)+
+      '</div>'+
       '<div class="t">Saved</div>'+
     '</div>'+
+
     '<div class="box">'+
-      '<div class="n">'+Number(s.reported||0)+'</div>'+
+      '<div class="n">'+
+        Number(s.reported||0)+
+      '</div>'+
       '<div class="t">Reported</div>'+
     '</div>'+
+
     '<div class="box">'+
-      '<div class="n">'+Number(s.activated||0)+'</div>'+
+      '<div class="n">'+
+        Number(s.activated||0)+
+      '</div>'+
       '<div class="t">Activated</div>'+
     '</div>'
 }
 
 
-/*
- * Display the saved document as plain saved text.
- * No Markdown conversion is performed here.
- */
+/* =========================
+   DOCUMENT MARKUP
+========================= */
+
 function renderDocMarkup(text){
 
   const lines=
     String(text||"")
-    .replace(/\r/g,"")
-    .split("\n");
+      .replace(/\r/g,"")
+      .split("\n");
 
   let html="";
   let para=[];
 
   function flush(){
 
-    if(!para.length)
-      return;
+    if(!para.length)return;
 
     html+=
       "<p>"+
@@ -1226,18 +1649,43 @@ function renderDocMarkup(text){
 
   for(const line0 of lines){
 
-    const line=line0;
+    const line=line0.trim();
 
-    if(!line.trim()){
+    if(!line){
 
       flush();
 
       continue
     }
 
-    para.push(
-      esc(line)
-    )
+    const h=
+      line.match(/^#{1,6}\s+(.+)$/);
+
+    if(h){
+
+      flush();
+
+      const level=
+        Math.min(
+          6,
+          (line.match(/^#+/)||["#"])[0].length
+        );
+
+      html+=
+        "<h"+
+        level+
+        ">"+
+        inlineMarkup(h[1])+
+        "</h"+
+        level+
+        ">";
+
+    }else{
+
+      para.push(
+        inlineMarkup(line)
+      )
+    }
   }
 
   flush();
@@ -1246,39 +1694,113 @@ function renderDocMarkup(text){
     "<p>No saved document content.</p>"
 }
 
+function inlineMarkup(t){
+
+  let x=esc(t);
+
+  x=
+    x.replace(
+      /\*\*(.+?)\*\*/g,
+      "<strong>$1</strong>"
+    );
+
+  return x
+}
 
 function renderPages(pages,text){
 
   const list=
-    Array.isArray(pages)&&pages.length?
-    pages:
-    [String(text||"")];
+    Array.isArray(pages)&&pages.length
+      ?pages
+      :[String(text||"")];
 
   $("boDocumentText").innerHTML=
-    list.map((p,i)=>
-
-      '<div class="doc-page">'+
-
-        '<div style="font-size:11px;color:#777;margin-bottom:12px">'+
-        'Page '+
-        (i+1)+
-        ' of '+
-        list.length+
-        '</div>'+
-
-        renderDocMarkup(
-          typeof p==="object"?
-          (p.content||p.text||""):
-          p
-        )+
-
-      '</div>'
-
+    list.map(
+      (p,i)=>
+        '<div class="doc-page">'+
+          '<div style="font-size:11px;color:#777;margin-bottom:12px">'+
+            'Page '+
+            (i+1)+
+            ' of '+
+            list.length+
+          '</div>'+
+          renderDocMarkup(
+            typeof p==="object"
+              ?(p.content||p.text||"")
+              :p
+          )+
+        '</div>'
     ).join("")
 }
 
 
-async function viewSavedRecord(serviceName,title,customerEmail=""){
+/* =========================
+   BACK OFFICE ATTACHMENT
+========================= */
+
+function renderBackOfficeAttachment(
+  serviceName,
+  title,
+  filename=""
+){
+
+  const link=$("boDocumentAttachment");
+
+  const name=$("boAttachmentName");
+
+  const note=$("boAttachmentNote");
+
+  const finalName=
+    filename||
+    (
+      title
+        ?title+".docx"
+        :"Saved document.docx"
+    );
+
+  name.textContent=finalName;
+
+  note.textContent=
+    "Tap the attachment to download the exact saved document.";
+
+  link.href="#";
+
+  link.onclick=
+    async function(e){
+
+      e.preventDefault();
+
+      try{
+
+        await downloadBackOffice(
+          serviceName,
+          title
+        );
+
+        setBoMessage(
+          "The exact saved document has been downloaded.",
+          "success"
+        );
+
+      }catch(error){
+
+        setBoMessage(
+          error.message,
+          "error"
+        )
+      }
+    };
+}
+
+
+/* =========================
+   VIEW SAVED DOCUMENT
+========================= */
+
+async function viewSavedRecord(
+  serviceName,
+  title
+){
 
   try{
 
@@ -1286,39 +1808,16 @@ async function viewSavedRecord(serviceName,title,customerEmail=""){
       "Loading the complete saved document..."
     );
 
-    currentBoCustomerEmail=
-      clean(customerEmail);
-
-    $("boRecipientEmail").value=
-      currentBoCustomerEmail;
-
-    const d=await api(
-      "/api/back-office/document?service="+
-      encodeURIComponent(serviceName)+
-      "&title="+
-      encodeURIComponent(title),
-      {
-        headers:boHeaders()
-      }
-    );
-
-    const returnedCustomerEmail=
-      clean(
-        d.customer_email||
-        d.email||
-        (d.customer||{}).email||
-        ""
+    const d=
+      await api(
+        "/api/back-office/document?service="+
+        encodeURIComponent(serviceName)+
+        "&title="+
+        encodeURIComponent(title),
+        {
+          headers:boHeaders()
+        }
       );
-
-    if(returnedCustomerEmail){
-
-      currentBoCustomerEmail=
-        returnedCustomerEmail;
-
-      $("boRecipientEmail").value=
-        returnedCustomerEmail;
-
-    }
 
     $("boDocumentPanel").classList.remove("hidden");
 
@@ -1337,6 +1836,13 @@ async function viewSavedRecord(serviceName,title,customerEmail=""){
       d.document_text
     );
 
+    renderBackOfficeAttachment(
+      serviceName,
+      title,
+      d.filename||
+      ""
+    );
+
     await loadBoDelivery(
       serviceName,
       title
@@ -1350,7 +1856,7 @@ async function viewSavedRecord(serviceName,title,customerEmail=""){
     $("boDocumentPanel").scrollIntoView({
       behavior:"smooth",
       block:"start"
-    })
+    });
 
   }catch(e){
 
@@ -1358,10 +1864,13 @@ async function viewSavedRecord(serviceName,title,customerEmail=""){
       e.message,
       "error"
     )
-
   }
 }
 
+
+/* =========================
+   BACK OFFICE DELIVERY
+========================= */
 
 async function loadBoDelivery(
   serviceName,
@@ -1371,17 +1880,18 @@ async function loadBoDelivery(
 
   try{
 
-    const d=await api(
-      "/api/back-office/delivery-channels?service="+
-      encodeURIComponent(serviceName)+
-      "&title="+
-      encodeURIComponent(title),
-      {
-        headers:{
-          "X-Back-Office-Key":key
+    const d=
+      await api(
+        "/api/back-office/delivery-channels?service="+
+        encodeURIComponent(serviceName)+
+        "&title="+
+        encodeURIComponent(title),
+        {
+          headers:{
+            "X-Back-Office-Key":key
+          }
         }
-      }
-    );
+      );
 
     const grid=$("boDeliveryGrid");
 
@@ -1389,12 +1899,11 @@ async function loadBoDelivery(
 
     $("boDeliveryPanel").classList.remove("hidden");
 
-    $("boEmailRecipientBox").classList.remove("hidden");
-
-    $("boRecipientEmail").value=
-      currentBoCustomerEmail;
-
-    (d.delivery&&d.delivery.channels||[]).forEach(ch=>{
+    (
+      d.delivery&&
+      d.delivery.channels||
+      []
+    ).forEach(ch=>{
 
       const box=document.createElement("div");
 
@@ -1424,7 +1933,6 @@ async function loadBoDelivery(
         );
 
       grid.appendChild(box)
-
     })
 
   }catch(e){
@@ -1433,94 +1941,45 @@ async function loadBoDelivery(
       e.message,
       "error"
     )
-
   }
 }
 
 
+/* =========================
+   BACK OFFICE DELIVERY
+========================= */
+
 async function boDeliver(
   serviceName,
   title,
-  ch,
-  recipientEmail=""
+  ch
 ){
 
   try{
 
-    if(ch.id==="email"){
-
-      const emailField=
-        $("boRecipientEmail");
-
-      recipientEmail=
-        clean(
-          emailField.value
-        );
-
-      if(!recipientEmail){
-
-        setBoMessage(
-          "Enter the customer's email address before choosing Email.",
-          "error"
-        );
-
-        emailField.focus();
-
-        return
-      }
-
-      const emailPattern=
-        /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-
-      if(!emailPattern.test(recipientEmail)){
-
-        setBoMessage(
-          "Enter a valid customer email address.",
-          "error"
-        );
-
-        emailField.focus();
-
-        return
-      }
-
-      currentBoCustomerEmail=
-        recipientEmail;
-    }
-
-    const payload={
-      service:serviceName,
-      document_title:title,
-      channel:ch.id
-    };
-
-    if(ch.id==="email"){
-
-      payload.recipient_email=
-        clean(
-          $("boRecipientEmail").value
-        );
-
-    }
-
-    const d=await api(
-      "/api/back-office/delivery",
-      {
-        method:"POST",
-        headers:{
-          ...boHeaders(),
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify(payload)
-      }
-    );
+    const d=
+      await api(
+        "/api/back-office/delivery",
+        {
+          method:"POST",
+          headers:{
+            ...boHeaders(),
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            service:serviceName,
+            document_title:title,
+            channel:ch.id
+          })
+        }
+      );
 
     if(ch.id==="phone"){
 
       await downloadBackOffice(
         serviceName,
         title
-      )
+      );
 
     }else if(ch.url){
 
@@ -1529,28 +1988,14 @@ async function boDeliver(
         "_blank",
         "noopener"
       )
-
     }
 
-    if(ch.id==="email"){
-
-      setBoMessage(
-        "The exact saved document has been sent to "+
-        clean($("boRecipientEmail").value)+
-        " by email.",
-        "success"
-      )
-
-    }else{
-
-      setBoMessage(
-        "The exact saved document is ready for Back Office delivery through "+
-        ch.name+
-        ".",
-        "success"
-      )
-
-    }
+    setBoMessage(
+      "The exact saved document is ready for Back Office delivery through "+
+      ch.name+
+      ".",
+      "success"
+    );
 
   }catch(e){
 
@@ -1558,10 +2003,13 @@ async function boDeliver(
       e.message,
       "error"
     )
-
   }
 }
 
+
+/* =========================
+   BACK OFFICE EXACT FILE
+========================= */
 
 async function downloadBackOffice(
   serviceName,
@@ -1574,26 +2022,25 @@ async function downloadBackOffice(
       "Enter the Back Office key first."
     );
 
-  const r=await fetch(
-    PAYMENT_API_BASE+
-    "/api/back-office/delivery-file?service="+
-    encodeURIComponent(serviceName)+
-    "&title="+
-    encodeURIComponent(title),
-    {
-      headers:{
-        "X-Back-Office-Key":key
-      },
-      cache:"no-store"
-    }
-  );
+  const r=
+    await fetch(
+      PAYMENT_API_BASE+
+      "/api/back-office/delivery-file?service="+
+      encodeURIComponent(serviceName)+
+      "&title="+
+      encodeURIComponent(title),
+      {
+        headers:{
+          "X-Back-Office-Key":key
+        },
+        cache:"no-store"
+      }
+    );
 
   if(!r.ok){
 
     const d=
-      await r.json().catch(
-        ()=>({})
-      );
+      await r.json().catch(()=>({}));
 
     throw new Error(
       d.detail||
@@ -1601,11 +2048,14 @@ async function downloadBackOffice(
     )
   }
 
-  const blob=await r.blob();
+  const blob=
+    await r.blob();
 
-  const a=document.createElement("a");
+  const a=
+    document.createElement("a");
 
-  a.href=URL.createObjectURL(blob);
+  a.href=
+    URL.createObjectURL(blob);
 
   a.download=
     (title||"document")+
@@ -1624,6 +2074,10 @@ async function downloadBackOffice(
 }
 
 
+/* =========================
+   ACTIVATE CUSTOMER DOWNLOAD
+========================= */
+
 async function activateRecord(
   serviceName,
   title,
@@ -1634,21 +2088,22 @@ async function activateRecord(
 
     button.disabled=true;
 
-    const d=await api(
-      "/api/back-office/activate-download",
-      {
-        method:"POST",
-        headers:{
-          ...boHeaders(),
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          service:serviceName,
-          document_title:title,
-          verified:true
-        })
-      }
-    );
+    const d=
+      await api(
+        "/api/back-office/activate-download",
+        {
+          method:"POST",
+          headers:{
+            ...boHeaders(),
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            service:serviceName,
+            document_title:title,
+            verified:true
+          })
+        }
+      );
 
     setBoMessage(
       "Customer download has been activated for this saved document.",
@@ -1660,7 +2115,7 @@ async function activateRecord(
 
     button.classList.add("green");
 
-    await loadBackOffice()
+    await loadBackOffice();
 
   }catch(e){
 
@@ -1670,10 +2125,13 @@ async function activateRecord(
     );
 
     button.disabled=false
-
   }
 }
 
+
+/* =========================
+   BACK OFFICE RECORDS
+========================= */
 
 function renderRecords(data){
 
@@ -1691,7 +2149,7 @@ function renderRecords(data){
     box.innerHTML=
       '<div class="card">'+
         '<div class="notice">'+
-        'No saved payment records were found.'+
+          'No saved payment records were found.'+
         '</div>'+
       '</div>';
 
@@ -1715,24 +2173,15 @@ function renderRecords(data){
       r.payment||
       {};
 
-    const customerEmail=
-      clean(
-        p.customer_email||
-        p.email||
-        payment.customer_email||
-        payment.email||
-        ""
-      );
-
     const unlocked=
       !!p.download_unlocked;
 
     const status=
-      p.payment_verified?
-      "Verified":
-      p.payment_reported?
-      "Awaiting Verification":
-      "Not Reported";
+      p.payment_verified
+        ?"Verified"
+        :p.payment_reported
+          ?"Awaiting Verification"
+          :"Not Reported";
 
     const el=
       document.createElement("article");
@@ -1778,14 +2227,22 @@ function renderRecords(data){
           '<div class="mini">'+
             '<b>Saved</b>'+
             '<span>'+
-              (p.saved_document?"Yes":"No")+
+              (
+                p.saved_document
+                  ?"Yes"
+                  :"No"
+              )+
             '</span>'+
           '</div>'+
 
           '<div class="mini">'+
             '<b>Customer Download</b>'+
             '<span>'+
-              (unlocked?"Active":"Locked")+
+              (
+                unlocked
+                  ?"Active"
+                  :"Locked"
+              )+
             '</span>'+
           '</div>'+
 
@@ -1802,20 +2259,19 @@ function renderRecords(data){
         '<button type="button" class="'+
           (unlocked?"green":"")+
           ' activate-btn">'+
-          (unlocked?
-            "DOWNLOAD ACTIVE":
-            "ACTIVATE DOWNLOAD")+
+          (
+            unlocked
+              ?"DOWNLOAD ACTIVE"
+              :"ACTIVATE DOWNLOAD"
+          )+
         '</button>'+
 
       '</div>';
 
-    el.querySelector(
-      ".view-btn"
-    ).onclick=
+    el.querySelector(".view-btn").onclick=
       ()=>viewSavedRecord(
         serviceName,
-        title,
-        customerEmail
+        title
       );
 
     const ab=
@@ -1828,9 +2284,8 @@ function renderRecords(data){
       ab.onclick=
         ()=>viewSavedRecord(
           serviceName,
-          title,
-          customerEmail
-        )
+          title
+        );
 
     }else{
 
@@ -1840,14 +2295,9 @@ function renderRecords(data){
           title,
           ab
         )
-
     }
 
-    el.dataset.customerEmail=
-      customerEmail;
-
     box.appendChild(el)
-
   })
 }
 
@@ -1865,16 +2315,16 @@ async function loadBackOffice(){
       "Loading Back Office records..."
     );
 
-    const d=await api(
-      "/api/back-office/payments",
-      {
-        headers:boHeaders()
-      }
-    );
+    const d=
+      await api(
+        "/api/back-office/payments",
+        {
+          headers:boHeaders()
+        }
+      );
 
     renderSummary(
-      d.summary||
-      {}
+      d.summary||{}
     );
 
     renderRecords(d);
@@ -1882,7 +2332,7 @@ async function loadBackOffice(){
     setBoMessage(
       "Back Office records loaded.",
       "success"
-    )
+    );
 
   }catch(e){
 
@@ -1890,10 +2340,13 @@ async function loadBackOffice(){
       e.message,
       "error"
     )
-
   }
 }
 
+
+/* =========================
+   BUTTONS
+========================= */
 
 $("openBackOfficeButton").onclick=
   showBackOffice;
@@ -1914,17 +2367,16 @@ $("exitBackOffice").onclick=
   showCustomer;
 
 
+/* =========================
+   START
+========================= */
+
 if(mode==="back_office")
   showBackOffice();
 else
   loadCustomer();
 
 </script>
+
 </body>
 </html>
-
-The important change is not inside "createPayment()". That function remains the same payment-creation operation.
-
-The fix is the new identity recovery before "loadCustomer()"/"customerIdentity()" runs. It accepts the title under the existing names plus common handoff/storage forms, so the Payment & Delivery page doesn't immediately discard the document identity.
-
-Replace only "payment.html" with this file and test the same MAKE PAYMENT path again.
