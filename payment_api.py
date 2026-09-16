@@ -412,46 +412,111 @@ def clean_saved_document_payload(payload: dict) -> dict:
     return normalized
 
 
-def _docx_p(text: str) -> str:
-    """Write approved review text literally into DOCX.
+def _split_inline_markup(text: str) -> list[tuple[str, bool, bool]]:
+    """Render Review Markdown-style bold and italic as real DOCX formatting.
 
-    No Markdown parsing, heading detection, cleanup, or rewriting is performed.
-    The text supplied by the approved Review document is preserved as text.
+    The approved document content is not rewritten. Only presentation markers
+    already present in the approved text are converted into DOCX formatting.
     """
+    value = str(text)
+    runs: list[tuple[str, bool, bool]] = []
+    pattern = re.compile(r"(\*\*.*?\*\*|\*.*?\*)")
+    pos = 0
+
+    for match in pattern.finditer(value):
+        if match.start() > pos:
+            runs.append((value[pos:match.start()], False, False))
+
+        token = match.group(0)
+        if token.startswith("**") and token.endswith("**"):
+            runs.append((token[2:-2], True, False))
+        else:
+            runs.append((token[1:-1], False, True))
+        pos = match.end()
+
+    if pos < len(value):
+        runs.append((value[pos:], False, False))
+
+    return runs or [(value, False, False)]
+
+
+def _docx_p(text: str) -> str:
     raw = str(text).replace("\r", "")
-    return '<w:p><w:r><w:t xml:space="preserve">' + xml_escape(raw) + '</w:t></w:r></w:p>'
+
+    # Review content can arrive with Markdown heading markers.
+    heading = re.match(r"^\s*(#{1,6})\s+(.*)$", raw)
+    if heading:
+        raw = heading.group(2)
+
+    runs = []
+    for value, bold, italic in _split_inline_markup(raw):
+        flags = []
+        if bold:
+            flags.append("<w:b/>")
+        if italic:
+            flags.append("<w:i/>")
+        rpr = "<w:rPr>" + "".join(flags) + "</w:rPr>" if flags else ""
+        runs.append(
+            '<w:r>' + rpr +
+            '<w:t xml:space="preserve">' + xml_escape(value) +
+            '</w:t></w:r>'
+        )
+
+    ppr = '<w:pPr><w:pStyle w:val="Heading1"/></w:pPr>' if heading else ''
+    return '<w:p>' + ppr + ''.join(runs) + '</w:p>'
 
 
 def _prepare_docx_paragraphs(page: str) -> list[str]:
-    """Preserve the approved page exactly as supplied by Review.
+    """Keep approved paragraph structure while repairing glued subsection text.
 
-    Only line endings are normalized for the DOCX XML container. No content,
-    whitespace, Markdown markers, headings, or paragraph boundaries are changed.
+    Some saved Review payloads contain:
+        1.1 *Direct Taxes*Ghana ...
+
+    where the paragraph separator was lost before the save operation. We do
+    not change the wording; we only restore the missing paragraph boundary
+    after a closed italic subsection label.
     """
     raw = str(page).replace("\r\n", "\n").replace("\r", "\n")
-    return raw.split("\n")
+    lines = raw.split("\n")
+    output: list[str] = []
+
+    for line in lines:
+        line = line.strip()
+        if not line:
+            if output and output[-1] != "":
+                output.append("")
+            continue
+
+        # A numbered subsection followed immediately by italic text and then
+        # body text is two paragraphs in the approved document.
+        repaired = re.match(
+            r"^(\s*\d+\.\d+\s+\*[^*\n]+\*)(\S.*)$",
+            line
+        )
+        if repaired:
+            output.append(repaired.group(1))
+            output.append(repaired.group(2))
+            continue
+
+        output.append(line)
+
+    return output
+
 
 
 def make_docx(path: Path, title: str, page_list: list[str]) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    pages = [str(x) for x in (page_list or [])]
-    if not pages:
-        raise HTTPException(status_code=400, detail="SAVED_DOCUMENT_CONTENT_MISSING")
-
+    pages=clean_saved_document_payload({"pages":page_list}).get("pages",[])
+    if not pages: raise HTTPException(status_code=400, detail="SAVED_DOCUMENT_CONTENT_MISSING")
     body=[]
     for i,page in enumerate(pages):
-        if i:
-            body.append('<w:p><w:r><w:br w:type="page"/></w:r></w:p>')
-        for line in _prepare_docx_paragraphs(page):
-            body.append(_docx_p(line))
-
+        if i: body.append('<w:p><w:r><w:br w:type="page"/></w:r></w:p>')
+        body.extend(_docx_p(line) for line in _prepare_docx_paragraphs(page) if line.strip())
     document_xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+''.join(body)+'<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>'
     content_types='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'
     root_rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'
     with zipfile.ZipFile(path,"w",zipfile.ZIP_DEFLATED) as z:
-        z.writestr("[Content_Types].xml",content_types)
-        z.writestr("_rels/.rels",root_rels)
-        z.writestr("word/document.xml",document_xml)
+        z.writestr("[Content_Types].xml",content_types); z.writestr("_rels/.rels",root_rels); z.writestr("word/document.xml",document_xml)
     return path
 
 
@@ -1163,7 +1228,7 @@ def back_office_delivery(service: str, title: str, channel: str, request: Reques
 
 
 def _public_download_button_url(request: Request, token: str) -> str:
-    return f"{api_base(request)}/api/delivery-file?token={urllib.parse.quote(token)}"
+    return f"{api_base(request)}/api/delivery-file/download?token={urllib.parse.quote(token)}"
 
 
 def _luxury_delivery_page(title: str, service: str, download_url: str) -> str:
@@ -1251,77 +1316,37 @@ def _smtp_configured() -> bool:
     return bool(clean(os.getenv("SMTP_HOST")) and clean(os.getenv("SMTP_USERNAME")) and clean(os.getenv("SMTP_PASSWORD")) and clean(os.getenv("SMTP_FROM")))
 
 
-def _document_attachment(product: dict) -> tuple[Path, bytes, str, str]:
-    """Return the exact already-saved document as a reusable attachment.
-
-    This is the global delivery source for email, WhatsApp providers, and any
-    future channel that accepts file attachments. It never rebuilds the
-    document from text/payload and never performs Markdown conversion.
-    """
-    saved = existing_saved_file(product)
-    if not saved:
-        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
-    try:
-        data = saved.read_bytes()
-    except OSError:
-        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_UNREADABLE")
-    if not data:
-        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_EMPTY")
-    suffix = saved.suffix.lower()
-    media_types = {
-        ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        ".pdf": "application/pdf",
-        ".doc": "application/msword",
-        ".rtf": "application/rtf",
-        ".txt": "text/plain; charset=utf-8",
-        ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    }
-    media_type = media_types.get(suffix, "application/octet-stream")
-    return saved, data, media_type, saved.name
-
-
-def _service_thank_you_email_html(title: str, service: str) -> str:
+def _simple_email_html(title: str, service: str) -> str:
     safe_title = html_escape(title)
     safe_service = html_escape(service)
-    return f"""<!doctype html><html><body style="margin:0;padding:24px;font-family:Arial,sans-serif;color:#222;background:#f7f7f7"><div style="max-width:600px;margin:0 auto;background:#fff;border:1px solid #e5e5e5;padding:30px 24px"><div style="font-size:20px;font-weight:700;margin-bottom:20px">Naija Pocket Business Center</div><h2 style="margin:0 0 16px">Thank you for choosing us</h2><p style="margin:0 0 12px;line-height:1.6">Your <strong>{safe_service}</strong> service has been completed.</p><p style="margin:0 0 12px;line-height:1.6">Your completed document is attached to this email.</p><p style="margin:0 0 24px;line-height:1.6"><strong>Document:</strong> {safe_title}</p><p style="margin:0;line-height:1.6">Thank you for using Naija Pocket Business Center. We appreciate your business.</p></div></body></html>"""
+    return f"""<!doctype html><html><body style="margin:0;padding:24px;font-family:Arial,sans-serif;color:#222;background:#fff"><div style="max-width:560px;margin:0 auto"><h2 style="margin:0 0 16px">Naija Pocket Business Center</h2><p style="margin:0 0 16px">Thank you for choosing Naija Pocket Business Center.</p><p style="margin:0 0 16px">Your <strong>{safe_service}</strong> has been completed and is now ready for you.</p><p style="margin:0 0 16px">Your completed document is attached to this message for you to download and keep.</p><p style="margin:0 0 8px"><strong>Attached document:</strong></p><p style="margin:0 0 20px">{safe_title}</p><p style="margin:0">Thank you for trusting Naija Pocket Business Center. We appreciate your business and look forward to serving you again.</p></div></body></html>"""
 
-
-def _send_simple_email(recipient: str, title: str, service: str, product: dict) -> None:
-    """Send the exact saved document as a real email attachment.
-
-    No customer download URL is used. The attachment is the same saved file
-    held by the Back Office delivery record.
-    """
+def _send_simple_email(recipient: str, title: str, service: str, saved: Path) -> None:
     if not _smtp_configured():
         raise HTTPException(status_code=503, detail="EMAIL_DELIVERY_NOT_CONFIGURED")
-    saved, data, media_type, filename = _document_attachment(product)
+    if not saved or not saved.exists():
+        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
     host = clean(os.getenv("SMTP_HOST"))
     port = int(os.getenv("SMTP_PORT", "587"))
     username = clean(os.getenv("SMTP_USERNAME"))
     password = clean(os.getenv("SMTP_PASSWORD"))
     sender = clean(os.getenv("SMTP_FROM"))
     use_ssl = clean(os.getenv("SMTP_USE_SSL", "false")).casefold() == "true"
-
     msg = EmailMessage()
-    msg["Subject"] = f"Thank you — your {clean(service)} is ready | Naija Pocket Business Center"
+    msg["Subject"] = "Your document is ready — Naija Pocket Business Center"
     msg["From"] = sender
     msg["To"] = recipient
-    msg.set_content(
-        f"Thank you for choosing Naija Pocket Business Center.\n\n"
-        f"Your {clean(service)} service has been completed.\n"
-        f"Your completed document is attached to this email.\n\n"
-        f"Document: {clean(title)}\n\n"
-        f"Thank you for using Naija Pocket Business Center. We appreciate your business."
-    )
-    msg.add_alternative(_service_thank_you_email_html(title, service), subtype="html")
-
-    if "/" in media_type:
-        maintype, subtype = media_type.split("/", 1)
+    msg.set_content(f"Thank you for choosing Naija Pocket Business Center.\n\nYour {clean(service)} has been completed and is now ready for you.\n\nYour completed document is attached to this message for you to download and keep.\n\nAttached document: {saved.name}\n\nThank you for trusting Naija Pocket Business Center. We appreciate your business and look forward to serving you again.")
+    msg.add_alternative(_simple_email_html(title, service), subtype="html")
+    suffix = saved.suffix.lower()
+    if suffix == ".docx":
+        maintype, subtype = "application", "vnd.openxmlformats-officedocument.wordprocessingml.document"
+    elif suffix == ".pdf":
+        maintype, subtype = "application", "pdf"
     else:
         maintype, subtype = "application", "octet-stream"
-    msg.add_attachment(data, maintype=maintype, subtype=subtype, filename=filename)
-
+    with open(saved, "rb") as fh:
+        msg.add_attachment(fh.read(), maintype=maintype, subtype=subtype, filename=saved.name)
     if use_ssl:
         with smtplib.SMTP_SSL(host, port, timeout=30) as server:
             server.login(username, password)
@@ -1341,7 +1366,7 @@ def _simple_email_delivery_page(title: str, service: str, token: str, request: R
     action = html_escape(f"{api_base(request)}/api/email-delivery/send", quote=True)
     hidden_token = html_escape(token, quote=True)
     message_html = f'<div class="msg">{safe_message}</div>' if safe_message else ''
-    return f"""<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Email Delivery</title><style>body{{margin:0;min-height:100vh;background:#fff;color:#222;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}}.card{{width:min(100%,540px);border:1px solid #ddd;background:#fff;padding:28px 22px;box-sizing:border-box}}h1{{font-size:24px;margin:0 0 14px}}.service,.title{{margin-bottom:8px}}.note{{color:#555;font-size:14px;line-height:1.6;margin:18px 0}}input{{width:100%;box-sizing:border-box;margin:8px 0 12px;padding:14px;border:1px solid #bbb;font-size:15px}}button{{width:100%;padding:14px;border:0;background:#c00;color:#fff;font-weight:bold;font-size:14px}}.msg{{margin-bottom:16px;color:#b00000;font-size:13px}}</style></head><body><main class="card"><h1>Email Delivery</h1><div class="service"><strong>Service:</strong> {safe_service}</div><div class="title"><strong>Document:</strong> {safe_title}</div>{message_html}<div class="note">Enter the customer's email address. The customer will receive a branded thank-you email with the completed document attached directly. No Back Office key is required for the customer.</div><form method="get" action="{action}"><input type="hidden" name="token" value="{hidden_token}"><input type="email" name="recipient" placeholder="Customer email address" required autocomplete="email"><button type="submit">SEND DOCUMENT</button></form></main></body></html>"""
+    return f"""<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Email Delivery</title><style>body{{margin:0;min-height:100vh;background:#fff;color:#222;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}}.card{{width:min(100%,540px);border:1px solid #ddd;background:#fff;padding:28px 22px;box-sizing:border-box}}h1{{font-size:24px;margin:0 0 14px}}.service,.title{{margin-bottom:8px}}.note{{color:#555;font-size:14px;line-height:1.6;margin:18px 0}}input{{width:100%;box-sizing:border-box;margin:8px 0 12px;padding:14px;border:1px solid #bbb;font-size:15px}}button{{width:100%;padding:14px;border:0;background:#c00;color:#fff;font-weight:bold;font-size:14px}}.msg{{margin-bottom:16px;color:#b00000;font-size:13px}}</style></head><body><main class="card"><h1>Email Delivery</h1><div class="service"><strong>Service:</strong> {safe_service}</div><div class="title"><strong>Document:</strong> {safe_title}</div>{message_html}<div class="note">Enter the customer's email address. The customer will receive the document with a clickable <strong>DOWNLOAD DOCUMENT</strong> link. The raw download address will not be shown in the email.</div><form method="get" action="{action}"><input type="hidden" name="token" value="{hidden_token}"><input type="email" name="recipient" placeholder="Customer email address" required autocomplete="email"><button type="submit">SEND DOCUMENT</button></form></main></body></html>"""
 
 @app.get("/api/email-delivery", response_class=HTMLResponse)
 def email_delivery_page(token: str, request: Request):
@@ -1349,8 +1374,8 @@ def email_delivery_page(token: str, request: Request):
     product = get_product(service, title)
     if not product:
         raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
-    product = repair_saved_snapshot(product)
-    if not existing_saved_file(product):
+    saved = existing_saved_file(product)
+    if not saved:
         raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
     return HTMLResponse(_simple_email_delivery_page(title, service, token, request))
 
@@ -1361,14 +1386,14 @@ def email_delivery_send(token: str, recipient: str, request: Request):
     product = get_product(service, title)
     if not product:
         raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
-    product = repair_saved_snapshot(product)
-    if not existing_saved_file(product):
+    saved = existing_saved_file(product)
+    if not saved:
         raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
     recipient = clean(recipient)
     if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", recipient):
         return HTMLResponse(_simple_email_delivery_page(title, service, token, request, "Please enter a valid customer email address."), status_code=400)
     try:
-        _send_simple_email(recipient, title, service, product)
+        _send_simple_email(recipient, title, service, saved)
         log_delivery(product, "email", "sent", {"recipient": recipient})
         return HTMLResponse(_simple_email_delivery_page(title, service, token, request, "The email has been sent successfully."))
     except HTTPException:
@@ -1378,22 +1403,18 @@ def email_delivery_send(token: str, recipient: str, request: Request):
 
 
 @app.get("/api/delivery-file")
-def public_delivery_file(token: str):
-    """Direct customer download of the exact saved approved document.
-
-    The signed token identifies the already-saved service + title. This endpoint
-    never regenerates, reformats, parses, or alters the approved document.
-    No Back Office key is accepted or exposed.
-    """
+def public_delivery_file(token: str, request: Request):
+    """Luxury customer-facing signed delivery page. No Back Office key is accepted or exposed."""
     service, title = _read_public_delivery_token(token)
     product = get_product(service, title)
     if not product:
         raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
     saved = existing_saved_file(product)
     if not saved:
         raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
-    media = "application/vnd.openxmlformats-officedocument.wordprocessingml.document" if saved.suffix.lower() == ".docx" else "application/octet-stream"
-    return FileResponse(str(saved), filename=saved.name, media_type=media)
+    download_url = _public_download_button_url(request, token)
+    return HTMLResponse(_luxury_delivery_page(title, service, download_url))
 
 
 @app.get("/api/delivery-file/download")
