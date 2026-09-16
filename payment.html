@@ -534,10 +534,6 @@ button{cursor:pointer}
   line-height:1.5;
 }
 
-/* =========================================================
-   BACK OFFICE
-   ========================================================= */
-
 .backoffice-form{
   margin-top:16px;
   display:flex;
@@ -659,10 +655,6 @@ button{cursor:pointer}
   gap:8px;
   margin-top:10px;
 }
-
-/* =========================================================
-   NEW BACK OFFICE DOCUMENT READING WINDOW
-   ========================================================= */
 
 .saved-document-panel{
   margin-top:16px;
@@ -825,10 +817,6 @@ button{cursor:pointer}
 
 <div class="app">
 
-<!-- =========================================================
-     CUSTOMER PAYMENT VIEW
-     ========================================================= -->
-
 <section id="customerPaymentView">
 
 <header class="topbar">
@@ -895,11 +883,6 @@ MAKE PAYMENT
 
 </section>
 
-
-<!-- =========================================================
-     CUSTOMER PAYMENT EXPERIENCE
-     ========================================================= -->
-
 <section id="paymentExperience" class="hidden">
 
 <div class="experience-shell">
@@ -950,7 +933,6 @@ Payment details
 </div>
 </section>
 
-
 <section class="lux-card">
 
 <div class="section-heading">
@@ -977,7 +959,6 @@ Payment details
 
 </div>
 </section>
-
 
 <section class="lux-card">
 
@@ -1012,7 +993,6 @@ Payment details have not yet been prepared.
 </div>
 </section>
 
-
 <section class="lux-card">
 
 <div class="section-heading">
@@ -1038,7 +1018,6 @@ CUSTOMER_SERVICE_CONTACT
 
 </div>
 </section>
-
 
 <section class="lux-card">
 
@@ -1066,7 +1045,6 @@ Your exact reviewed document is securely saved. Customer Service will send this 
 </div>
 
 </section>
-
 
 <section class="lux-card">
 
@@ -1111,11 +1089,6 @@ Your exact reviewed document is securely saved. Customer Service will send this 
 
 </section>
 
-
-<!-- =========================================================
-     BACK OFFICE
-     ========================================================= -->
-
 <section id="backOfficeView" class="hidden">
 
 <div class="backoffice-shell">
@@ -1141,7 +1114,6 @@ id="exitBackOffice">
 </div>
 
 </header>
-
 
 <main class="backoffice-content">
 
@@ -1205,7 +1177,6 @@ REFRESH
 
 </section>
 
-
 <section class="lux-card">
 
 <h2 class="card-title">Records</h2>
@@ -1217,11 +1188,6 @@ No records loaded.
 </div>
 
 </section>
-
-
-<!-- =========================================================
-     ACTUAL BACK OFFICE DOCUMENT READING WINDOW
-     ========================================================= -->
 
 <section
 class="lux-card saved-document-panel hidden"
@@ -1243,7 +1209,6 @@ No document selected
 </div>
 
 </div>
-
 
 <div class="document-reader-window">
 
@@ -1267,7 +1232,6 @@ The Back Office is reading the saved document.
 
 </div>
 
-
 <div
 class="document-reader-body"
 id="backOfficeDocumentReader">
@@ -1277,7 +1241,6 @@ Loading the exact saved customer document...
 </div>
 
 </div>
-
 
 <div class="document-reader-footer">
 
@@ -1298,7 +1261,6 @@ CLOSE DOCUMENT
 
 </div>
 
-
 <div
 class="message"
 id="documentActionMessage">
@@ -1314,13 +1276,8 @@ id="documentActionMessage">
 
 </div>
 
-
 <script>
 "use strict";
-
-/* ============================================================
-   CONFIGURATION
-   ============================================================ */
 
 const PAYMENT_API_BASE =
     "https://naija-pocket-payment-api.onrender.com";
@@ -1330,11 +1287,6 @@ const LOCAL_BACK_OFFICE_KEY =
 
 const CUSTOMER_SERVICE_CONTACT =
     "CUSTOMER_SERVICE_CONTACT";
-
-
-/* ============================================================
-   URL / STATE
-   ============================================================ */
 
 const params =
     new URLSearchParams(window.location.search);
@@ -1352,7 +1304,12 @@ const snapshotKeys = [
     "savedDocument",
     "customerDocument",
     "npbcSnapshot",
-    "documentData"
+    "documentData",
+    "reviewSnapshot",
+    "serviceSnapshot",
+    "completeDocument",
+    "completedDocument",
+    "documentState"
 ];
 
 let snapshot = null;
@@ -1486,9 +1443,13 @@ function readSnapshot(){
 
             if(value){
 
-                sources.push(
-                    safeJsonParse(value) || value
-                );
+                const parsed =
+                    safeJsonParse(value);
+
+                if(parsed){
+                    sources.push(parsed);
+                }
+
             }
 
         }catch{}
@@ -1508,21 +1469,125 @@ function readSnapshot(){
 
     }catch{}
 
-    try{
+    /*
+      Also recover state from the query string.
+      This allows the review page to pass the document
+      directly to Payment & Delivery without depending
+      on one particular localStorage key.
+    */
 
-        const querySnapshot =
-            params.get("snapshot");
+    const queryObjectKeys = [
+        "document",
+        "documentData",
+        "document_data",
+        "snapshot",
+        "state",
+        "data",
+        "payload"
+    ];
 
-        if(querySnapshot){
+    for(const key of queryObjectKeys){
 
-            sources.push(
-                safeJsonParse(
-                    decodeURIComponent(querySnapshot)
-                )
-            );
+        try{
+
+            const raw =
+                params.get(key);
+
+            if(raw){
+
+                let parsed =
+                    safeJsonParse(raw);
+
+                if(!parsed){
+
+                    parsed =
+                        safeJsonParse(
+                            decodeURIComponent(raw)
+                        );
+                }
+
+                if(parsed){
+                    sources.push(parsed);
+                }
+            }
+
+        }catch{}
+    }
+
+    /*
+      Direct query-string fields are kept as a separate
+      source so the title/service/amount survive even
+      when no JSON snapshot was passed.
+    */
+
+    const directQuery = {};
+
+    const queryFieldMap = {
+        service:[
+            "service",
+            "service_name",
+            "serviceName"
+        ],
+        document_title:[
+            "document_title",
+            "documentTitle",
+            "title",
+            "documentName",
+            "document_name"
+        ],
+        amount:[
+            "amount",
+            "price",
+            "total",
+            "total_amount",
+            "totalAmount"
+        ],
+        customer_id:[
+            "customer_id",
+            "customerId"
+        ],
+        document_text:[
+            "document_text",
+            "documentText",
+            "text",
+            "content"
+        ],
+        filename:[
+            "filename",
+            "document_filename",
+            "documentFilename",
+            "file_name",
+            "fileName"
+        ],
+        document_version:[
+            "document_version",
+            "documentVersion",
+            "version_id",
+            "versionId",
+            "version"
+        ]
+    };
+
+    for(const target of Object.keys(queryFieldMap)){
+
+        for(const key of queryFieldMap[target]){
+
+            const value =
+                params.get(key);
+
+            if(clean(value)){
+
+                directQuery[target] =
+                    value;
+
+                break;
+            }
         }
+    }
 
-    }catch{}
+    if(Object.keys(directQuery).length){
+        sources.push(directQuery);
+    }
 
     for(const candidate of sources){
 
@@ -1540,6 +1605,252 @@ function readSnapshot(){
     return null;
 }
 
+
+/* ============================================================
+   DEEP STATE SEARCH
+   ============================================================ */
+
+function collectObjects(root,limit=1000){
+
+    const result = [];
+    const queue = [{value:root,depth:0}];
+    const seen = new WeakSet();
+
+    while(queue.length && result.length < limit){
+
+        const item =
+            queue.shift();
+
+        const value =
+            item.value;
+
+        if(
+            !value ||
+            typeof value !== "object"
+        ){
+            continue;
+        }
+
+        if(seen.has(value)){
+            continue;
+        }
+
+        seen.add(value);
+
+        result.push(value);
+
+        if(item.depth >= 7){
+            continue;
+        }
+
+        if(Array.isArray(value)){
+
+            for(const child of value){
+
+                if(
+                    child &&
+                    typeof child === "object"
+                ){
+
+                    queue.push({
+                        value:child,
+                        depth:item.depth + 1
+                    });
+                }
+            }
+
+        }else{
+
+            for(const key of Object.keys(value)){
+
+                const child =
+                    value[key];
+
+                if(
+                    child &&
+                    typeof child === "object"
+                ){
+
+                    queue.push({
+                        value:child,
+                        depth:item.depth + 1
+                    });
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+
+function findDeepValue(root,keys){
+
+    const wanted =
+        new Set(
+            keys.map(
+                key => String(key).toLowerCase()
+            )
+        );
+
+    const objects =
+        collectObjects(root);
+
+    /*
+      First pass: prefer exact non-empty matches.
+    */
+
+    for(const object of objects){
+
+        for(const key of Object.keys(object)){
+
+            if(
+                wanted.has(
+                    String(key).toLowerCase()
+                )
+            ){
+
+                const value =
+                    object[key];
+
+                if(
+                    value !== undefined &&
+                    value !== null &&
+                    clean(value) !== ""
+                ){
+
+                    return value;
+                }
+            }
+        }
+    }
+
+    return "";
+}
+
+
+function findDeepText(root,keys){
+
+    const value =
+        findDeepValue(
+            root,
+            keys
+        );
+
+    if(
+        typeof value === "string" ||
+        typeof value === "number"
+    ){
+        return clean(value);
+    }
+
+    return "";
+}
+
+
+/*
+  This specifically prevents a generic field such as
+  "name" from winning before a real document title.
+*/
+
+function findDocumentTitle(root){
+
+    const strongKeys = [
+        "document_title",
+        "documentTitle",
+        "document_name",
+        "documentName",
+        "saved_document_title",
+        "savedDocumentTitle",
+        "completed_document_title",
+        "completedDocumentTitle",
+        "review_document_title",
+        "reviewDocumentTitle"
+    ];
+
+    let title =
+        findDeepText(
+            root,
+            strongKeys
+        );
+
+    if(title){
+        return title;
+    }
+
+    /*
+      Look at common document containers.
+    */
+
+    const containers = [];
+
+    const objects =
+        collectObjects(root);
+
+    for(const object of objects){
+
+        for(const key of [
+            "document",
+            "saved_document",
+            "savedDocument",
+            "complete_document",
+            "completeDocument",
+            "completed_document",
+            "completedDocument",
+            "document_data",
+            "documentData",
+            "document_payload",
+            "documentPayload",
+            "review",
+            "reviewData",
+            "review_data",
+            "payload"
+        ]){
+
+            const value =
+                object[key];
+
+            if(
+                value &&
+                typeof value === "object"
+            ){
+
+                containers.push(value);
+            }
+        }
+    }
+
+    for(const container of containers){
+
+        title =
+            findDeepText(
+                container,
+                strongKeys
+            );
+
+        if(title){
+            return title;
+        }
+    }
+
+    /*
+      Last fallback: generic title fields, but only
+      when they contain something meaningful.
+    */
+
+    return findDeepText(
+        root,
+        [
+            "title",
+            "name"
+        ]
+    );
+}
+
+
+/* ============================================================
+   GENERIC VALUE SEARCH
+   ============================================================ */
 
 function firstValue(objects,keys){
 
@@ -1572,6 +1883,10 @@ function firstValue(objects,keys){
 }
 
 
+/* ============================================================
+   DOCUMENT PAYLOAD EXTRACTION
+   ============================================================ */
+
 function extractDocumentPayload(source){
 
     if(
@@ -1586,13 +1901,22 @@ function extractDocumentPayload(source){
         source.document,
         source.saved_document,
         source.savedDocument,
+        source.complete_document,
+        source.completeDocument,
+        source.completed_document,
+        source.completedDocument,
+        source.document_data,
+        source.documentData,
         source.payload,
         source.document_payload,
         source.documentPayload,
-        source.data
+        source.data,
+        source.review,
+        source.reviewData,
+        source.review_data
     ].filter(Boolean);
 
-    const pagesValue =
+    let pagesValue =
         firstValue(
             candidates,
             [
@@ -1602,18 +1926,21 @@ function extractDocumentPayload(source){
             ]
         );
 
-    const textValue =
+    let textValue =
         firstValue(
             candidates,
             [
                 "document_text",
                 "documentText",
                 "text",
-                "content"
+                "content",
+                "body",
+                "document_content",
+                "documentContent"
             ]
         );
 
-    const filenameValue =
+    let filenameValue =
         firstValue(
             candidates,
             [
@@ -1625,7 +1952,7 @@ function extractDocumentPayload(source){
             ]
         );
 
-    const versionValue =
+    let versionValue =
         firstValue(
             candidates,
             [
@@ -1694,6 +2021,10 @@ function normalizePages(value){
 }
 
 
+/* ============================================================
+   EXTRACT DOCUMENT STATE — FIXED
+   ============================================================ */
+
 function extractDocumentState(){
 
     const root =
@@ -1702,46 +2033,48 @@ function extractDocumentState(){
     const payload =
         extractDocumentPayload(root);
 
-    const candidates = [
-        root,
-        root.document,
-        root.saved_document,
-        root.savedDocument,
-        root.product,
-        root.payment,
-        root.data,
-        payload
-    ].filter(Boolean);
+    const objects =
+        collectObjects(root);
+
+    /*
+      SERVICE
+    */
 
     service =
         clean(
-            firstValue(
-                candidates,
+            findDeepText(
+                root,
                 [
                     "service",
                     "service_name",
-                    "serviceName"
+                    "serviceName",
+                    "selected_service",
+                    "selectedService"
                 ]
             )
         );
+
+    /*
+      DOCUMENT TITLE
+
+      This is the important fix.
+      The title is now searched deeply through the
+      complete review/document state.
+    */
 
     documentTitle =
         clean(
-            firstValue(
-                candidates,
-                [
-                    "document_title",
-                    "documentTitle",
-                    "title",
-                    "name"
-                ]
-            )
+            findDocumentTitle(root)
         );
+
+    /*
+      AMOUNT
+    */
 
     amount =
         numberValue(
-            firstValue(
-                candidates,
+            findDeepValue(
+                root,
                 [
                     "amount",
                     "price",
@@ -1752,10 +2085,14 @@ function extractDocumentState(){
             )
         );
 
+    /*
+      CUSTOMER
+    */
+
     customerId =
         clean(
-            firstValue(
-                candidates,
+            findDeepText(
+                root,
                 [
                     "customer_id",
                     "customerId",
@@ -1763,6 +2100,10 @@ function extractDocumentState(){
                 ]
             )
         );
+
+    /*
+      DOCUMENT PAYLOAD
+    */
 
     filename =
         clean(payload.filename);
@@ -1776,24 +2117,98 @@ function extractDocumentState(){
     documentText =
         clean(payload.documentText);
 
-    if(!documentText && pages.length){
-        documentText = pages.join("\n\n");
-    }
+    /*
+      If payload extraction did not find text,
+      search the entire review state.
+    */
 
     if(!documentText){
 
         documentText =
-            clean(
-                firstValue(
-                    candidates,
-                    [
-                        "document_text",
-                        "documentText",
-                        "text",
-                        "content"
-                    ]
-                )
+            findDeepText(
+                root,
+                [
+                    "document_text",
+                    "documentText",
+                    "text",
+                    "content",
+                    "body",
+                    "document_content",
+                    "documentContent"
+                ]
             );
+    }
+
+    if(!pages.length){
+
+        const deepPages =
+            findDeepValue(
+                root,
+                [
+                    "pages",
+                    "document_pages",
+                    "documentPages"
+                ]
+            );
+
+        pages =
+            normalizePages(
+                deepPages
+            );
+    }
+
+    if(!documentText && pages.length){
+        documentText =
+            pages.join("\n\n");
+    }
+
+    /*
+      Last title fallback from the actual visible
+      document heading pattern.
+    */
+
+    if(!documentTitle && documentText){
+
+        const lines =
+            documentText
+                .split(/\r?\n/)
+                .map(line => clean(line))
+                .filter(Boolean);
+
+        if(lines.length){
+
+            const firstLine =
+                lines[0];
+
+            /*
+              Do not blindly use a paragraph as title.
+              The document supplied by the review page
+              has a strong heading at the beginning.
+            */
+
+            if(
+                firstLine.length >= 5 &&
+                firstLine.length <= 180 &&
+                !/[.!?]$/.test(firstLine)
+            ){
+
+                documentTitle =
+                    firstLine;
+            }
+        }
+    }
+
+    /*
+      Keep a useful fallback filename-derived title.
+    */
+
+    if(!documentTitle && filename){
+
+        documentTitle =
+            filename
+                .replace(/\.[^/.]+$/,"")
+                .replace(/[_-]+/g," ")
+                .trim();
     }
 }
 
@@ -2333,7 +2748,8 @@ async function createPayment(){
                 pages:pages,
                 document_text:documentText,
                 filename:filename,
-                document_version:versionId
+                document_version:versionId,
+                document_title:documentTitle
             }
         };
 
@@ -3049,11 +3465,6 @@ function makeReaderPages(text,serverPages){
 
     if(!normalized.length && text){
 
-        /*
-          If the API returned one continuous document,
-          show it as one readable document page.
-        */
-
         normalized = [text];
     }
 
@@ -3111,7 +3522,7 @@ function renderDocumentReader(
     }
 
     pagesToRender.forEach(
-        (pageText,index) => {
+        pageText => {
 
             const page =
                 document.createElement("div");
@@ -3180,11 +3591,6 @@ async function viewSavedRecord(
                 query.toString()
             );
 
-        /*
-          Accept all existing response shapes used
-          by the current payment API.
-        */
-
         const documentData =
             data?.document ||
             data?.saved_document ||
@@ -3218,12 +3624,6 @@ async function viewSavedRecord(
                     ""
                 );
         }
-
-        /*
-          If the document endpoint returned no text,
-          use the same saved record already loaded
-          in Back Office.
-        */
 
         if(!text && !serverPages.length){
 
@@ -3277,11 +3677,6 @@ async function viewSavedRecord(
             "Saved document endpoint:",
             error
         );
-
-        /*
-          Fall back to document information already
-          returned with the Back Office record.
-        */
 
         const recordDocument =
             extractDocumentPayload(record);
@@ -3850,13 +4245,11 @@ $("makePaymentButton")
         openPaymentExperience
     );
 
-
 $("experienceMakePaymentButton")
     .addEventListener(
         "click",
         createPayment
     );
-
 
 $("closeExperience")
     .addEventListener(
@@ -3864,13 +4257,11 @@ $("closeExperience")
         closePaymentExperience
     );
 
-
 $("backOfficeButton")
     .addEventListener(
         "click",
         showBackOffice
     );
-
 
 $("exitBackOffice")
     .addEventListener(
@@ -3878,13 +4269,11 @@ $("exitBackOffice")
         exitBackOffice
     );
 
-
 $("loadBackOfficeButton")
     .addEventListener(
         "click",
         loadBackOffice
     );
-
 
 $("refreshBackOfficeButton")
     .addEventListener(
@@ -3892,13 +4281,11 @@ $("refreshBackOfficeButton")
         loadBackOffice
     );
 
-
 $("closeDocumentReader")
     .addEventListener(
         "click",
         closeDocumentReader
     );
-
 
 $("backOfficeKey")
     .addEventListener(
@@ -3957,7 +4344,6 @@ function initialize(){
         15000
     );
 }
-
 
 initialize();
 
