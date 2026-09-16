@@ -98,6 +98,38 @@ button{cursor:pointer}
 .error{color:#ff8c8c}
 .success{color:#8ff0b4}
 
+.email-box{
+  background:#161616;
+  border:1px solid #303030;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:14px
+}
+.email-box label{
+  display:block;
+  color:#fff;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:7px
+}
+.email-box .email-help{
+  color:#999;
+  font-size:12px;
+  line-height:1.45;
+  margin-bottom:10px
+}
+.email-box input{
+  width:100%;
+  background:#0d0d0d;
+  border:1px solid #3a3a3a;
+  color:#fff;
+  border-radius:10px;
+  padding:12px;
+  outline:none
+}
+.email-box input:focus{border-color:#e50914}
+.email-box input::placeholder{color:#777}
+
 #backOfficeView{background:#070707;min-height:100vh}
 .bo-header{
   background:#000;
@@ -205,13 +237,8 @@ button{cursor:pointer}
   box-shadow:0 2px 10px rgba(0,0,0,.25)
 }
 .doc-page:last-child{margin-bottom:0}
-.doc-page h1,.doc-page h2,.doc-page h3,.doc-page h4,.doc-page h5,.doc-page h6{
-  margin:0 0 12px;
-  line-height:1.25
-}
 .doc-page p{margin:0 0 10px;white-space:pre-wrap}
 .doc-page p:last-child{margin-bottom:0}
-.doc-page strong{font-weight:800}
 .bo-delivery{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -260,18 +287,11 @@ button{cursor:pointer}
   height:260px;
   overflow:hidden
 }
-.customer-document-page:last-child{margin-bottom:0}
-.customer-document-page h1,
-.customer-document-page h2,
-.customer-document-page h3,
-.customer-document-page h4,
-.customer-document-page h5,
-.customer-document-page h6{
-  margin:0 0 12px;
-  line-height:1.25
+.customer-document-page p{
+  margin:0 0 10px;
+  white-space:pre-wrap
 }
-.customer-document-page p{margin:0 0 10px;white-space:pre-wrap}
-.customer-document-page strong{font-weight:800}
+.customer-document-page p:last-child{margin-bottom:0}
 .preview-page-label{
   font-size:10px;
   color:#777;
@@ -391,6 +411,35 @@ button{cursor:pointer}
           <div class="preview-empty">
             Loading your saved document...
           </div>
+        </div>
+
+      </section>
+
+      <section class="card">
+
+        <div class="label">Customer Email Address</div>
+
+        <div class="email-box" style="margin-top:10px;margin-bottom:0">
+
+          <label for="customerEmail">
+            Email Address
+          </label>
+
+          <div class="email-help">
+            Enter the email address where your completed document can be delivered.
+          </div>
+
+          <input
+            id="customerEmail"
+            name="customerEmail"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            autocapitalize="none"
+            spellcheck="false"
+            placeholder="customer@example.com"
+          >
+
         </div>
 
       </section>
@@ -544,7 +593,7 @@ button{cursor:pointer}
         download gate, not a Back Office retrieval gate.
       </div>
 
-      <div id="boEmailRecipientBox" class="bo-email-box hidden">
+      <div id="boEmailRecipientBox" class="bo-email-box">
 
         <label for="boRecipientEmail">
           Customer Email Address
@@ -864,6 +913,22 @@ async function loadCustomer(){
 
     downloadUnlocked=!!p.download_unlocked;
 
+    const storedCustomerEmail=
+      clean(
+        p.customer_email||
+        p.email||
+        pay.customer_email||
+        pay.email||
+        ""
+      );
+
+    if(storedCustomerEmail){
+
+      $("customerEmail").value=
+        storedCustomerEmail;
+
+    }
+
     $("amountValue").textContent=money(amount);
 
     $("billingValue").textContent=
@@ -884,7 +949,7 @@ async function loadCustomer(){
       paymentVerified?
       "Payment verified. Your document is now available for download.":
       paymentReported?
-      "Your payment has been reported. Please wait for Customer Care verification.":
+      "Payment reported. Please wait for Customer Care verification.":
       "Payment has not been reported yet.",
       paymentVerified?"success":""
     );
@@ -920,6 +985,24 @@ async function createPayment(){
       "error"
     );
 
+  const customerEmail=
+    clean(
+      $("customerEmail").value
+    );
+
+  if(customerEmail){
+
+    const emailPattern=
+      /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+    if(!emailPattern.test(customerEmail))
+      return setCustomerMessage(
+        "Enter a valid email address.",
+        "error"
+      );
+
+  }
+
   try{
 
     $("makePaymentButton").disabled=true;
@@ -951,6 +1034,7 @@ async function createPayment(){
       document_title:documentTitle,
       customer_name:p.customer_name||"",
       customer_id:p.customer_id||"",
+      customer_email:customerEmail,
       amount:amount,
       currency:p.currency||"NGN",
       payment_method:"bank_transfer",
@@ -1193,6 +1277,10 @@ function renderSummary(summary){
 }
 
 
+/*
+ * Display the saved document as plain saved text.
+ * No Markdown conversion is performed here.
+ */
 function renderDocMarkup(text){
 
   const lines=
@@ -1218,57 +1306,24 @@ function renderDocMarkup(text){
 
   for(const line0 of lines){
 
-    const line=line0.trim();
+    const line=line0;
 
-    if(!line){
+    if(!line.trim()){
 
       flush();
 
       continue
     }
 
-    const h=line.match(/^#{1,6}\s+(.+)$/);
-
-    if(h){
-
-      flush();
-
-      const level=Math.min(
-        6,
-        (line.match(/^#+/)||["#"])[0].length
-      );
-
-      html+=
-        "<h"+level+">"+
-        inlineMarkup(h[1])+
-        "</h"+level+">"
-
-    }else{
-
-      para.push(
-        inlineMarkup(line)
-      )
-
-    }
+    para.push(
+      esc(line)
+    )
   }
 
   flush();
 
   return html||
     "<p>No saved document content.</p>"
-}
-
-
-function inlineMarkup(t){
-
-  let x=esc(t);
-
-  x=x.replace(
-    /\*\*(.+?)\*\*/g,
-    "<strong>$1</strong>"
-  );
-
-  return x
 }
 
 
@@ -1311,17 +1366,9 @@ async function viewSavedRecord(serviceName,title,customerEmail=""){
       "Loading the complete saved document..."
     );
 
-    /*
-     * Store the customer email for this exact
-     * service + document record.
-     */
     currentBoCustomerEmail=
       clean(customerEmail);
 
-    /*
-     * Put the stored customer email into the
-     * actual visible Back Office email field.
-     */
     $("boRecipientEmail").value=
       currentBoCustomerEmail;
 
@@ -1335,10 +1382,6 @@ async function viewSavedRecord(serviceName,title,customerEmail=""){
       }
     );
 
-    /*
-     * If the document endpoint also supplies an
-     * email, use it as the actual field value.
-     */
     const returnedCustomerEmail=
       clean(
         d.customer_email||
@@ -1426,16 +1469,8 @@ async function loadBoDelivery(
 
     $("boDeliveryPanel").classList.remove("hidden");
 
-    /*
-     * Always show the real email recipient field
-     * whenever Back Office delivery is open.
-     */
     $("boEmailRecipientBox").classList.remove("hidden");
 
-    /*
-     * Keep the currently selected customer's email
-     * in the actual field.
-     */
     $("boRecipientEmail").value=
       currentBoCustomerEmail;
 
@@ -1483,12 +1518,6 @@ async function loadBoDelivery(
 }
 
 
-/*
- * BACK OFFICE DELIVERY
- *
- * Email always reads the actual customer email
- * input immediately before the request is sent.
- */
 async function boDeliver(
   serviceName,
   title,
@@ -1498,10 +1527,6 @@ async function boDeliver(
 
   try{
 
-    /*
-     * Only Email uses the customer email field.
-     * All other delivery channels remain unchanged.
-     */
     if(ch.id==="email"){
 
       const emailField=
@@ -1539,9 +1564,6 @@ async function boDeliver(
         return
       }
 
-      /*
-       * Keep the exact value used by the request.
-       */
       currentBoCustomerEmail=
         recipientEmail;
     }
@@ -1552,10 +1574,6 @@ async function boDeliver(
       channel:ch.id
     };
 
-    /*
-     * The Back Office Email endpoint requires
-     * recipient_email in the JSON request body.
-     */
     if(ch.id==="email"){
 
       payload.recipient_email=
