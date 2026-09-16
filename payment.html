@@ -1,3777 +1,1111 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#050505">
-<title>Payment & Delivery — Naija Pocket Business Center</title>
-
-<style>
-:root{
-    --black:#050505;
-    --black2:#080808;
-    --panel:#101010;
-    --panel2:#151515;
-    --panel3:#1b1b1b;
-    --gold:#d4af37;
-    --gold2:#f0cf63;
-    --gold3:#ffe7a0;
-    --white:#ffffff;
-    --muted:#a5a5a5;
-    --muted2:#777;
-    --line:rgba(212,175,55,.22);
-    --green:#008000;
-    --green2:#00a000;
-    --red:#b00020;
-    --red2:#d00028;
-    --success:#31c56b;
-    --warning:#e5b94b;
-    --danger:#e05a5a;
-    --shadow:0 24px 70px rgba(0,0,0,.55);
-}
-
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
-
-html,
-body{
-    margin:0;
-    padding:0;
-    min-height:100%;
-    background:var(--black);
-    color:var(--white);
-    font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
-}
-
-body{
-    min-height:100vh;
-}
-
-button,
-a{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-.hidden{
-    display:none !important;
-}
-
-/* ============================================================
-   BASE PAGE
-   ============================================================ */
-
-#customerPaymentView{
-    min-height:100vh;
-    background:
-        radial-gradient(circle at 50% -10%, rgba(212,175,55,.12), transparent 36%),
-        linear-gradient(180deg,#050505 0%,#080808 100%);
-}
-
-.topbar{
-    min-height:74px;
-    padding:
-        calc(16px + env(safe-area-inset-top))
-        18px
-        16px;
-    border-bottom:1px solid rgba(212,175,55,.16);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:14px;
-}
-
-.brand{
-    min-width:0;
-}
-
-.brand-name{
-    font-size:15px;
-    font-weight:800;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    color:var(--gold2);
-}
-
-.brand-subtitle{
-    margin-top:4px;
-    font-size:11px;
-    color:var(--muted);
-}
-
-.top-action{
-    border:1px solid var(--line);
-    background:rgba(212,175,55,.07);
-    color:var(--gold2);
-    border-radius:999px;
-    padding:9px 13px;
-    font-size:11px;
-    font-weight:800;
-    letter-spacing:.04em;
-}
-
-.base-shell{
-    width:min(720px,100%);
-    margin:0 auto;
-    padding:22px 16px 40px;
-}
-
-.base-card{
-    background:
-        linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.01)),
-        var(--panel);
-    border:1px solid rgba(212,175,55,.18);
-    border-radius:25px;
-    padding:24px;
-    box-shadow:var(--shadow);
-}
-
-.base-kicker{
-    color:var(--gold);
-    font-size:11px;
-    font-weight:900;
-    letter-spacing:.16em;
-    text-transform:uppercase;
-}
-
-.base-title{
-    margin:10px 0 7px;
-    font-size:28px;
-    line-height:1.1;
-    letter-spacing:-.03em;
-}
-
-.base-description{
-    color:var(--muted);
-    font-size:14px;
-    line-height:1.65;
-}
-
-.base-summary{
-    margin-top:20px;
-    display:grid;
-    gap:10px;
-}
-
-.summary-row{
-    padding:14px;
-    background:var(--panel2);
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:15px;
-}
-
-.summary-label{
-    color:var(--muted2);
-    font-size:10px;
-    font-weight:800;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-}
-
-.summary-value{
-    margin-top:5px;
-    color:var(--white);
-    font-size:15px;
-    font-weight:700;
-    overflow-wrap:anywhere;
-}
-
-.summary-amount{
-    color:var(--gold2);
-    font-size:22px;
-    font-weight:900;
-}
-
-.primary-button{
-    width:100%;
-    min-height:56px;
-    border:0;
-    border-radius:17px;
-    margin-top:20px;
-    background:
-        linear-gradient(135deg,var(--gold2),var(--gold));
-    color:#080808;
-    font-size:14px;
-    font-weight:950;
-    letter-spacing:.08em;
-    box-shadow:0 14px 35px rgba(212,175,55,.20);
-}
-
-.primary-button:active{
-    transform:scale(.985);
-}
-
-.secondary-button{
-    width:100%;
-    min-height:50px;
-    margin-top:10px;
-    border:1px solid rgba(255,255,255,.13);
-    border-radius:15px;
-    background:var(--panel2);
-    color:var(--white);
-    font-size:13px;
-    font-weight:800;
-}
-
-/* ============================================================
-   FULL SCREEN PAYMENT & DELIVERY EXPERIENCE
-   ============================================================ */
-
-#paymentExperience{
-    position:fixed;
-    inset:0;
-    z-index:9999;
-    display:none;
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
-    background:
-        radial-gradient(circle at 50% -15%,rgba(212,175,55,.17),transparent 33%),
-        radial-gradient(circle at 100% 35%,rgba(176,0,32,.08),transparent 35%),
-        #050505;
-}
-
-#paymentExperience.open{
-    display:block;
-}
-
-.experience-inner{
-    width:min(760px,100%);
-    min-height:100vh;
-    margin:0 auto;
-    padding:
-        calc(14px + env(safe-area-inset-top))
-        15px
-        calc(38px + env(safe-area-inset-bottom));
-}
-
-.experience-header{
-    position:sticky;
-    top:0;
-    z-index:10;
-    margin:0 -15px;
-    padding:
-        8px 15px
-        14px;
-    background:rgba(5,5,5,.91);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    border-bottom:1px solid rgba(212,175,55,.12);
-}
-
-.experience-header-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-}
-
-.experience-brand{
-    min-width:0;
-}
-
-.experience-brand-small{
-    color:var(--gold);
-    font-size:10px;
-    font-weight:900;
-    letter-spacing:.15em;
-    text-transform:uppercase;
-}
-
-.experience-title{
-    margin-top:4px;
-    font-size:20px;
-    font-weight:900;
-    letter-spacing:-.02em;
-}
-
-.close-experience{
-    width:42px;
-    height:42px;
-    flex:0 0 42px;
-    border-radius:50%;
-    border:1px solid rgba(255,255,255,.13);
-    background:#111;
-    color:#fff;
-    font-size:24px;
-    line-height:1;
-}
-
-.experience-intro{
-    padding:22px 2px 15px;
-}
-
-.experience-intro-kicker{
-    color:var(--gold2);
-    font-size:10px;
-    font-weight:900;
-    letter-spacing:.18em;
-    text-transform:uppercase;
-}
-
-.experience-intro h1{
-    margin:8px 0 8px;
-    font-size:34px;
-    line-height:1.02;
-    letter-spacing:-.045em;
-}
-
-.experience-intro p{
-    margin:0;
-    color:var(--muted);
-    font-size:14px;
-    line-height:1.65;
-}
-
-/* ============================================================
-   PROGRESS
-   ============================================================ */
-
-.progress-card{
-    padding:17px;
-    margin:0 0 13px;
-    border:1px solid rgba(212,175,55,.18);
-    border-radius:20px;
-    background:
-        linear-gradient(145deg,rgba(212,175,55,.06),rgba(255,255,255,.015)),
-        var(--panel);
-}
-
-.progress-line{
-    height:4px;
-    background:#272727;
-    border-radius:999px;
-    overflow:hidden;
-}
-
-#progressBar{
-    width:12%;
-    height:100%;
-    border-radius:999px;
-    background:linear-gradient(90deg,var(--gold),var(--gold2));
-    transition:width .35s ease;
-}
-
-.progress-label{
-    margin-top:10px;
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    color:var(--muted);
-    font-size:11px;
-}
-
-#progressText{
-    color:var(--gold2);
-    font-weight:800;
-}
-
-/* ============================================================
-   PREMIUM SECTIONS
-   ============================================================ */
-
-.lux-card{
-    margin-top:13px;
-    padding:20px;
-    border-radius:22px;
-    border:1px solid rgba(255,255,255,.08);
-    background:
-        linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012)),
-        var(--panel);
-    box-shadow:0 16px 45px rgba(0,0,0,.20);
-}
-
-.gold-card{
-    border-color:rgba(212,175,55,.24);
-}
-
-.section-number{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:29px;
-    height:29px;
-    border-radius:50%;
-    background:rgba(212,175,55,.13);
-    border:1px solid rgba(212,175,55,.34);
-    color:var(--gold2);
-    font-size:11px;
-    font-weight:900;
-}
-
-.section-heading{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.section-title{
-    font-size:17px;
-    font-weight:900;
-    letter-spacing:-.015em;
-}
-
-.section-copy{
-    margin:12px 0 0;
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.65;
-}
-
-/* ============================================================
-   ORDER
-   ============================================================ */
-
-.order-grid{
-    margin-top:16px;
-    display:grid;
-    gap:10px;
-}
-
-.order-item{
-    padding:13px 14px;
-    border-radius:15px;
-    background:#151515;
-    border:1px solid rgba(255,255,255,.06);
-}
-
-.order-label{
-    color:var(--muted2);
-    font-size:9px;
-    font-weight:900;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-}
-
-.order-value{
-    margin-top:5px;
-    color:#fff;
-    font-size:14px;
-    line-height:1.45;
-    font-weight:750;
-    overflow-wrap:anywhere;
-}
-
-.order-value.amount{
-    color:var(--gold2);
-    font-size:25px;
-    font-weight:950;
-}
-
-/* ============================================================
-   PAYMENT
-   ============================================================ */
-
-.payment-method{
-    margin-top:16px;
-    padding:16px;
-    border-radius:17px;
-    background:
-        linear-gradient(135deg,rgba(212,175,55,.08),rgba(212,175,55,.025));
-    border:1px solid rgba(212,175,55,.20);
-}
-
-.payment-method-title{
-    color:var(--gold2);
-    font-size:12px;
-    font-weight:900;
-    letter-spacing:.05em;
-}
-
-.payment-method-copy{
-    margin-top:7px;
-    color:#c5c5c5;
-    font-size:12px;
-    line-height:1.6;
-}
-
-.payment-instruction{
-    margin-top:12px;
-    padding:13px;
-    border-radius:13px;
-    background:#0d0d0d;
-    color:#ddd;
-    font-size:12px;
-    line-height:1.65;
-}
-
-.payment-instruction strong{
-    color:#fff;
-}
-
-.make-payment-action{
-    margin-top:15px;
-}
-
-.report-button{
-    width:100%;
-    min-height:56px;
-    border:1px solid rgba(212,175,55,.5);
-    border-radius:17px;
-    background:
-        linear-gradient(135deg,rgba(212,175,55,.17),rgba(212,175,55,.06));
-    color:var(--gold2);
-    font-size:13px;
-    font-weight:950;
-    letter-spacing:.07em;
-}
-
-.report-button:disabled{
-    opacity:.45;
-    cursor:not-allowed;
-}
-
-.payment-status-box{
-    margin-top:13px;
-    padding:14px;
-    border-radius:15px;
-    background:#0d0d0d;
-    border:1px solid rgba(255,255,255,.06);
-}
-
-.payment-status-title{
-    font-size:12px;
-    font-weight:900;
-    color:#fff;
-}
-
-.payment-status-copy{
-    margin-top:5px;
-    font-size:11px;
-    line-height:1.55;
-    color:var(--muted);
-}
-
-.status-pill{
-    display:inline-flex;
-    margin-top:10px;
-    padding:6px 9px;
-    border-radius:999px;
-    font-size:9px;
-    font-weight:900;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    background:#202020;
-    color:#bbb;
-}
-
-.status-pill.success{
-    background:rgba(49,197,107,.11);
-    color:#65dd91;
-}
-
-.status-pill.warning{
-    background:rgba(229,185,75,.10);
-    color:#f0cf63;
-}
-
-.status-pill.danger{
-    background:rgba(224,90,90,.10);
-    color:#f18484;
-}
-
-/* ============================================================
-   SAVED DOCUMENT
-   ============================================================ */
-
-.document-card{
-    margin-top:16px;
-    padding:16px;
-    border-radius:18px;
-    background:#0c0c0c;
-    border:1px solid rgba(212,175,55,.15);
-}
-
-.document-head{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:12px;
-}
-
-.document-icon{
-    width:45px;
-    height:45px;
-    border-radius:13px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(212,175,55,.10);
-    border:1px solid rgba(212,175,55,.25);
-    color:var(--gold2);
-    font-size:21px;
-}
-
-.document-name{
-    flex:1;
-    min-width:0;
-}
-
-.document-name strong{
-    display:block;
-    font-size:14px;
-    line-height:1.4;
-    overflow-wrap:anywhere;
-}
-
-.document-name span{
-    display:block;
-    margin-top:4px;
-    color:var(--muted);
-    font-size:10px;
-}
-
-.saved-badge{
-    white-space:nowrap;
-    padding:6px 8px;
-    border-radius:999px;
-    background:rgba(49,197,107,.10);
-    color:#68df94;
-    font-size:9px;
-    font-weight:900;
-}
-
-.document-meta{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-top:13px;
-}
-
-.meta-box{
-    padding:10px;
-    border-radius:12px;
-    background:#151515;
-}
-
-.meta-label{
-    color:var(--muted2);
-    font-size:8px;
-    font-weight:900;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-}
-
-.meta-value{
-    margin-top:4px;
-    color:#eee;
-    font-size:11px;
-    font-weight:750;
-}
-
-.document-preview{
-    position:relative;
-    margin-top:13px;
-    max-height:220px;
-    overflow:hidden;
-    padding:15px;
-    border-radius:14px;
-    background:#f7f7f7;
-    color:#181818;
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:12px;
-    line-height:1.65;
-}
-
-.document-preview::after{
-    content:"PREVIEW • NAIJA POCKET BUSINESS CENTER";
-    position:absolute;
-    left:0;
-    right:0;
-    top:50%;
-    transform:rotate(-22deg);
-    text-align:center;
-    font-family:Arial,sans-serif;
-    font-size:15px;
-    font-weight:900;
-    letter-spacing:.1em;
-    color:rgba(120,0,0,.10);
-    pointer-events:none;
-}
-
-.document-preview-content{
-    position:relative;
-    z-index:1;
-    white-space:pre-wrap;
-}
-
-.preview-note{
-    margin-top:8px;
-    color:var(--muted2);
-    font-size:10px;
-    line-height:1.5;
-}
-
-/* ============================================================
-   DELIVERY
-   ============================================================ */
-
-.delivery-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-top:16px;
-}
-
-.delivery-option{
-    position:relative;
-    min-height:116px;
-    padding:15px;
-    border-radius:17px;
-    border:1px solid rgba(255,255,255,.08);
-    background:#121212;
-    color:#fff;
-    text-align:left;
-    transition:.2s ease;
-}
-
-.delivery-option:not(:disabled):active{
-    transform:scale(.98);
-}
-
-.delivery-option:disabled{
-    opacity:.42;
-    cursor:not-allowed;
-}
-
-.delivery-icon{
-    width:34px;
-    height:34px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:10px;
-    background:rgba(212,175,55,.09);
-    color:var(--gold2);
-    font-size:17px;
-}
-
-.delivery-name{
-    margin-top:11px;
-    font-size:12px;
-    font-weight:900;
-}
-
-.delivery-status{
-    margin-top:4px;
-    color:var(--muted);
-    font-size:9px;
-    line-height:1.4;
-}
-
-.delivery-lock{
-    position:absolute;
-    top:12px;
-    right:12px;
-    font-size:11px;
-    color:#777;
-}
-
-.delivery-option.available{
-    border-color:rgba(49,197,107,.25);
-}
-
-.delivery-option.available .delivery-lock{
-    color:#65dd91;
-}
-
-/* ============================================================
-   DOWNLOAD
-   ============================================================ */
-
-.download-card{
-    margin-top:13px;
-    padding:20px;
-    border-radius:22px;
-    border:1px solid rgba(212,175,55,.26);
-    background:
-        radial-gradient(circle at 50% 0,rgba(212,175,55,.12),transparent 50%),
-        #111;
-    text-align:center;
-}
-
-.download-symbol{
-    width:58px;
-    height:58px;
-    margin:0 auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:18px;
-    background:rgba(212,175,55,.10);
-    border:1px solid rgba(212,175,55,.28);
-    color:var(--gold2);
-    font-size:26px;
-}
-
-.download-title{
-    margin-top:13px;
-    font-size:18px;
-    font-weight:950;
-}
-
-.download-copy{
-    margin:7px auto 0;
-    max-width:470px;
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.6;
-}
-
-.download-button{
-    width:100%;
-    min-height:57px;
-    margin-top:16px;
-    border:0;
-    border-radius:17px;
-    background:linear-gradient(135deg,var(--green2),var(--green));
-    color:#fff;
-    font-size:13px;
-    font-weight:950;
-    letter-spacing:.06em;
-    box-shadow:0 15px 35px rgba(0,128,0,.18);
-}
-
-.download-button:disabled{
-    background:#272727;
-    color:#777;
-    box-shadow:none;
-    cursor:not-allowed;
-}
-
-/* ============================================================
-   SIMPLE EXPLANATION
-   ============================================================ */
-
-.how-it-works{
-    display:grid;
-    gap:9px;
-    margin-top:15px;
-}
-
-.simple-step{
-    display:flex;
-    align-items:flex-start;
-    gap:12px;
-    padding:13px;
-    border-radius:15px;
-    background:#121212;
-    border:1px solid rgba(255,255,255,.06);
-}
-
-.simple-step-number{
-    width:27px;
-    height:27px;
-    flex:0 0 27px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(212,175,55,.10);
-    border:1px solid rgba(212,175,55,.22);
-    color:var(--gold2);
-    font-size:10px;
-    font-weight:900;
-}
-
-.simple-step-title{
-    font-size:12px;
-    font-weight:900;
-}
-
-.simple-step-copy{
-    margin-top:3px;
-    color:var(--muted);
-    font-size:10px;
-    line-height:1.5;
-}
-
-/* ============================================================
-   MESSAGE
-   ============================================================ */
-
-#message{
-    margin-top:13px;
-    padding:13px;
-    border-radius:14px;
-    display:none;
-    font-size:12px;
-    line-height:1.55;
-}
-
-#message.show{
-    display:block;
-}
-
-#message.info{
-    background:rgba(212,175,55,.08);
-    border:1px solid rgba(212,175,55,.18);
-    color:#e9d58d;
-}
-
-#message.success{
-    background:rgba(49,197,107,.08);
-    border:1px solid rgba(49,197,107,.18);
-    color:#7be8a0;
-}
-
-#message.error{
-    background:rgba(224,90,90,.08);
-    border:1px solid rgba(224,90,90,.18);
-    color:#f18a8a;
-}
-
-/* ============================================================
-   BACK OFFICE
-   ============================================================ */
-
-#backOfficeView{
-    min-height:100vh;
-    display:none;
-    background:#070707;
-}
-
-.bo-shell{
-    width:min(1000px,100%);
-    margin:0 auto;
-    padding:25px 16px 50px;
-}
-
-.bo-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:15px;
-    margin-bottom:20px;
-}
-
-.bo-title{
-    font-size:28px;
-    font-weight:950;
-}
-
-.bo-subtitle{
-    margin-top:6px;
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.5;
-}
-
-.bo-panel{
-    background:#111;
-    border:1px solid rgba(212,175,55,.16);
-    border-radius:20px;
-    padding:18px;
-    margin-top:14px;
-}
-
-.bo-input{
-    width:100%;
-    min-height:50px;
-    padding:0 14px;
-    border-radius:13px;
-    border:1px solid rgba(255,255,255,.10);
-    background:#080808;
-    color:#fff;
-    outline:none;
-}
-
-.bo-actions{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin-top:10px;
-}
-
-.bo-button{
-    min-height:45px;
-    padding:0 14px;
-    border-radius:12px;
-    border:1px solid rgba(212,175,55,.25);
-    background:#171717;
-    color:#fff;
-    font-size:11px;
-    font-weight:800;
-}
-
-.bo-button.gold{
-    background:var(--gold);
-    color:#050505;
-}
-
-.bo-summary{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:9px;
-}
-
-.bo-stat{
-    padding:14px;
-    border-radius:14px;
-    background:#171717;
-    border:1px solid rgba(255,255,255,.06);
-}
-
-.bo-stat-label{
-    color:var(--muted2);
-    font-size:9px;
-    text-transform:uppercase;
-    font-weight:900;
-}
-
-.bo-stat-value{
-    margin-top:5px;
-    color:var(--gold2);
-    font-size:22px;
-    font-weight:950;
-}
-
-.bo-record{
-    margin-top:10px;
-    padding:15px;
-    border-radius:15px;
-    background:#171717;
-    border:1px solid rgba(255,255,255,.06);
-}
-
-.bo-record-title{
-    font-size:14px;
-    font-weight:900;
-}
-
-.bo-record-service{
-    margin-top:4px;
-    color:var(--gold2);
-    font-size:11px;
-}
-
-.bo-record-meta{
-    margin-top:8px;
-    color:var(--muted);
-    font-size:10px;
-    line-height:1.6;
-}
-
-.bo-record-actions{
-    display:flex;
-    gap:7px;
-    flex-wrap:wrap;
-    margin-top:11px;
-}
-
-.bo-document{
-    margin-top:10px;
-    padding:15px;
-    background:#f7f7f7;
-    color:#171717;
-    border-radius:13px;
-    white-space:pre-wrap;
-    max-height:400px;
-    overflow:auto;
-    font-family:Georgia,serif;
-    font-size:12px;
-    line-height:1.6;
-}
-
-@media(max-width:430px){
-    .experience-intro h1{
-        font-size:30px;
-    }
-
-    .delivery-grid{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .bo-summary{
-        grid-template-columns:1fr 1fr 1fr;
-    }
-
-    .base-title{
-        font-size:25px;
-    }
-}
-</style>
-</head>
-
-<body>
-
-<!-- ============================================================
-     CUSTOMER BASE PAGE
-     ============================================================ -->
-
-<section id="customerPaymentView">
-
-    <header class="topbar">
-        <div class="brand">
-            <div class="brand-name">Naija Pocket Business Center</div>
-            <div class="brand-subtitle">
-                Secure payment and document delivery
-            </div>
-        </div>
-
-        <button
-            type="button"
-            class="top-action"
-            id="backOfficeButton">
-            Customer Care
-        </button>
-    </header>
-
-    <main class="base-shell">
-
-        <section class="base-card">
-
-            <div class="base-kicker">
-                Your finished work
-            </div>
-
-            <h1 class="base-title">
-                Payment &amp; Delivery
-            </h1>
-
-            <p class="base-description">
-                Your reviewed document is being prepared for payment and
-                delivery. Tap the button below to open your complete
-                Payment &amp; Delivery page.
-            </p>
-
-            <div class="base-summary">
-
-                <div class="summary-row">
-                    <div class="summary-label">Service</div>
-                    <div class="summary-value" id="baseService">
-                        Preparing...
-                    </div>
-                </div>
-
-                <div class="summary-row">
-                    <div class="summary-label">Document</div>
-                    <div class="summary-value" id="baseTitle">
-                        Preparing...
-                    </div>
-                </div>
-
-                <div class="summary-row">
-                    <div class="summary-label">Amount</div>
-                    <div class="summary-value summary-amount"
-                         id="baseAmount">
-                        ₦0
-                    </div>
-                </div>
-
-            </div>
-
-            <button
-                type="button"
-                class="primary-button"
-                id="makePaymentButton">
-                MAKE PAYMENT
-            </button>
-
-        </section>
-
-    </main>
-</section>
-
-
-<!-- ============================================================
-     FULL SCREEN PAYMENT & DELIVERY PAGE
-     IMPORTANT:
-     This is the ONLY customer payment experience.
-     There is no legacy payment popup.
-     ============================================================ -->
-
-<section id="paymentExperience" aria-hidden="true">
-
-    <div class="experience-inner">
-
-        <header class="experience-header">
-
-            <div class="experience-header-row">
-
-                <div class="experience-brand">
-                    <div class="experience-brand-small">
-                        Naija Pocket Business Center
-                    </div>
-
-                    <div class="experience-title">
-                        Payment &amp; Delivery
-                    </div>
-                </div>
-
-                <button
-                    type="button"
-                    class="close-experience"
-                    id="closeExperience"
-                    aria-label="Close">
-                    ×
-                </button>
-
-            </div>
-
-        </header>
-
-
-        <div class="experience-intro">
-
-            <div class="experience-intro-kicker">
-                One simple page
-            </div>
-
-            <h1>
-                Everything you need is here.
-            </h1>
-
-            <p>
-                Make your payment, tell us when you have paid,
-                see your saved document, and get it through your
-                preferred delivery option — all from this page.
-            </p>
-
-        </div>
-
-
-        <!-- PROGRESS -->
-
-        <div class="progress-card">
-
-            <div class="progress-line">
-                <div id="progressBar"></div>
-            </div>
-
-            <div class="progress-label">
-                <span id="statusText">
-                    Payment required
-                </span>
-
-                <span id="progressText">
-                    1 of 5
-                </span>
-            </div>
-
-        </div>
-
-
-        <!-- ======================================================
-             1. YOUR ORDER
-             ====================================================== -->
-
-        <section class="lux-card gold-card">
-
-            <div class="section-heading">
-                <span class="section-number">1</span>
-                <div class="section-title">
-                    Your order
-                </div>
-            </div>
-
-            <p class="section-copy">
-                This is the work you reviewed and approved.
-                The same saved document will be used for your final
-                delivery.
-            </p>
-
-            <div class="order-grid">
-
-                <div class="order-item">
-                    <div class="order-label">Service</div>
-                    <div class="order-value" id="experienceService">
-                        Preparing...
-                    </div>
-                </div>
-
-                <div class="order-item">
-                    <div class="order-label">Document title</div>
-                    <div class="order-value" id="experienceTitle">
-                        Preparing...
-                    </div>
-                </div>
-
-                <div class="order-item">
-                    <div class="order-label">Amount to pay</div>
-                    <div class="order-value amount"
-                         id="experienceAmount">
-                        ₦0
-                    </div>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ======================================================
-             2. MAKE PAYMENT
-             ====================================================== -->
-
-        <section class="lux-card">
-
-            <div class="section-heading">
-                <span class="section-number">2</span>
-                <div class="section-title">
-                    Make your payment
-                </div>
-            </div>
-
-            <p class="section-copy">
-                Start the payment preparation below. Your exact reviewed
-                document will be securely saved before you report that
-                you have paid.
-            </p>
-
-            <div class="payment-method">
-
-                <div class="payment-method-title">
-                    BANK TRANSFER
-                </div>
-
-                <div class="payment-method-copy">
-                    Your payment amount is shown clearly above.
-                    Use the payment instructions supplied by
-                    Naija Pocket Business Center.
-                </div>
-
-                <div class="payment-instruction">
-                    <strong>Important:</strong>
-                    Please pay the exact amount shown on this page.
-                    After making the transfer, return here and tap
-                    <strong>I HAVE MADE PAYMENT</strong>.
-                </div>
-
-            </div>
-
-            <button
-                type="button"
-                class="primary-button make-payment-action"
-                id="experienceMakePaymentButton">
-                PREPARE PAYMENT
-            </button>
-
-            <div class="payment-status-box">
-
-                <div class="payment-status-title">
-                    Payment status
-                </div>
-
-                <div class="payment-status-copy"
-                     id="paymentStatusCopy">
-                    Payment has not been started.
-                </div>
-
-                <div
-                    class="status-pill"
-                    id="paymentStatusPill">
-                    NOT STARTED
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ======================================================
-             3. I HAVE MADE PAYMENT
-             ====================================================== -->
-
-        <section class="lux-card">
-
-            <div class="section-heading">
-                <span class="section-number">3</span>
-                <div class="section-title">
-                    Tell us you have paid
-                </div>
-            </div>
-
-            <p class="section-copy">
-                Once you have completed the transfer, tap the button
-                below. Customer Care will verify the payment.
-                Download is not unlocked automatically until
-                Customer Care activates it.
-            </p>
-
-            <button
-                type="button"
-                class="report-button"
-                id="reportButton"
-                disabled>
-                I HAVE MADE PAYMENT
-            </button>
-
-            <div class="payment-status-box">
-
-                <div class="payment-status-title">
-                    What happens next?
-                </div>
-
-                <div class="payment-status-copy">
-                    We will check your payment. Once it is verified,
-                    Customer Care will activate your document download.
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ======================================================
-             4. SAVED DOCUMENT
-             ====================================================== -->
-
-        <section class="lux-card">
-
-            <div class="section-heading">
-                <span class="section-number">4</span>
-                <div class="section-title">
-                    Your saved document
-                </div>
-            </div>
-
-            <p class="section-copy">
-                Your exact reviewed document is saved for delivery.
-                We do not need to recreate it after payment.
-            </p>
-
-            <div class="document-card">
-
-                <div class="document-head">
-
-                    <div class="document-icon">
-                        ▣
-                    </div>
-
-                    <div class="document-name">
-                        <strong id="documentFilename">
-                            Your document
-                        </strong>
-
-                        <span id="documentServiceLabel">
-                            Preparing...
-                        </span>
-                    </div>
-
-                    <div class="saved-badge"
-                         id="savedBadge">
-                        SAVED
-                    </div>
-
-                </div>
-
-                <div class="document-meta">
-
-                    <div class="meta-box">
-                        <div class="meta-label">
-                            Pages
-                        </div>
-
-                        <div class="meta-value"
-                             id="documentPages">
-                            —
-                        </div>
-                    </div>
-
-                    <div class="meta-box">
-                        <div class="meta-label">
-                            Status
-                        </div>
-
-                        <div class="meta-value"
-                             id="documentSavedStatus">
-                            Preparing...
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="document-preview">
-                    <div
-                        class="document-preview-content"
-                        id="documentPreview">
-                        Your saved document preview will appear here.
-                    </div>
-                </div>
-
-                <div class="preview-note">
-                    This is a protected preview. The final document
-                    becomes downloadable only after Customer Care
-                    activates your download.
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ======================================================
-             5. DELIVERY
-             ====================================================== -->
-
-        <section class="lux-card">
-
-            <div class="section-heading">
-                <span class="section-number">5</span>
-                <div class="section-title">
-                    Choose how you want your document
-                </div>
-            </div>
-
-            <p class="section-copy">
-                After payment is verified and download is activated,
-                you can receive the same saved document through
-                your preferred channel.
-            </p>
-
-            <div class="delivery-grid">
-
-                <button
-                    type="button"
-                    class="delivery-option"
-                    id="deliveryPhone"
-                    data-channel="phone"
-                    disabled>
-
-                    <div class="delivery-icon">↓</div>
-
-                    <div class="delivery-name">
-                        Download to Phone
-                    </div>
-
-                    <div class="delivery-status"
-                         id="deliveryPhoneStatus">
-                        Waiting for activation
-                    </div>
-
-                    <span class="delivery-lock"
-                          id="deliveryPhoneLock">
-                        🔒
-                    </span>
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="delivery-option"
-                    id="deliveryEmail"
-                    data-channel="email"
-                    disabled>
-
-                    <div class="delivery-icon">✉</div>
-
-                    <div class="delivery-name">
-                        Email
-                    </div>
-
-                    <div class="delivery-status"
-                         id="deliveryEmailStatus">
-                        Waiting for activation
-                    </div>
-
-                    <span class="delivery-lock"
-                          id="deliveryEmailLock">
-                        🔒
-                    </span>
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="delivery-option"
-                    id="deliveryWhatsApp"
-                    data-channel="whatsapp"
-                    disabled>
-
-                    <div class="delivery-icon">◉</div>
-
-                    <div class="delivery-name">
-                        WhatsApp
-                    </div>
-
-                    <div class="delivery-status"
-                         id="deliveryWhatsAppStatus">
-                        Waiting for activation
-                    </div>
-
-                    <span class="delivery-lock"
-                          id="deliveryWhatsAppLock">
-                        🔒
-                    </span>
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="delivery-option"
-                    id="deliveryTelegram"
-                    data-channel="telegram"
-                    disabled>
-
-                    <div class="delivery-icon">➤</div>
-
-                    <div class="delivery-name">
-                        Telegram
-                    </div>
-
-                    <div class="delivery-status"
-                         id="deliveryTelegramStatus">
-                        Waiting for activation
-                    </div>
-
-                    <span class="delivery-lock"
-                          id="deliveryTelegramLock">
-                        🔒
-                    </span>
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="delivery-option"
-                    id="deliveryDrive"
-                    data-channel="google_drive"
-                    disabled>
-
-                    <div class="delivery-icon">☁</div>
-
-                    <div class="delivery-name">
-                        Google Drive
-                    </div>
-
-                    <div class="delivery-status"
-                         id="deliveryDriveStatus">
-                        Waiting for activation
-                    </div>
-
-                    <span class="delivery-lock"
-                          id="deliveryDriveLock">
-                        🔒
-                    </span>
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- ======================================================
-             DOWNLOAD
-             ====================================================== -->
-
-        <section class="download-card">
-
-            <div class="download-symbol">
-                ↓
-            </div>
-
-            <div class="download-title">
-                Your document download
-            </div>
-
-            <div class="download-copy"
-                 id="downloadCopy">
-                After Customer Care verifies your payment and activates
-                your download, this button will become active.
-            </div>
-
-            <button
-                type="button"
-                class="download-button"
-                id="downloadButton"
-                disabled>
-                DOWNLOAD DOCUMENT
-            </button>
-
-        </section>
-
-
-        <!-- ======================================================
-             HOW IT WORKS
-             ====================================================== -->
-
-        <section class="lux-card">
-
-            <div class="section-heading">
-                <div class="section-title">
-                    Simple as this
-                </div>
-            </div>
-
-            <div class="how-it-works">
-
-                <div class="simple-step">
-                    <div class="simple-step-number">1</div>
-
-                    <div>
-                        <div class="simple-step-title">
-                            Make payment
-                        </div>
-
-                        <div class="simple-step-copy">
-                            Prepare your payment and pay the exact
-                            amount shown for your document.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="simple-step">
-                    <div class="simple-step-number">2</div>
-
-                    <div>
-                        <div class="simple-step-title">
-                            Tell us you have paid
-                        </div>
-
-                        <div class="simple-step-copy">
-                            Tap I HAVE MADE PAYMENT so Customer Care
-                            knows to check your payment.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="simple-step">
-                    <div class="simple-step-number">3</div>
-
-                    <div>
-                        <div class="simple-step-title">
-                            Customer Care verifies
-                        </div>
-
-                        <div class="simple-step-copy">
-                            Your payment is checked before download
-                            access is activated.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="simple-step">
-                    <div class="simple-step-number">4</div>
-
-                    <div>
-                        <div class="simple-step-title">
-                            Get your document
-                        </div>
-
-                        <div class="simple-step-copy">
-                            Download the exact saved document or use
-                            one of the available delivery channels.
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <div id="message"></div>
-
-    </div>
-</section>
-
-
-<!-- ============================================================
-     BACK OFFICE
-     ============================================================ -->
-
-<section id="backOfficeView">
-
-    <div class="bo-shell">
-
-        <div class="bo-header">
-
-            <div>
-                <div class="experience-brand-small">
-                    NAIJA POCKET BUSINESS CENTER
-                </div>
-
-                <div class="bo-title">
-                    Customer Care
-                </div>
-
-                <div class="bo-subtitle">
-                    Payment verification, saved documents and
-                    download activation.
-                </div>
-            </div>
-
-            <button
-                type="button"
-                class="bo-button"
-                id="exitBackOfficeButton">
-                Exit
-            </button>
-
-        </div>
-
-
-        <div class="bo-panel">
-
-            <input
-                type="password"
-                id="backOfficeKey"
-                class="bo-input"
-                placeholder="Customer Care access key"
-                autocomplete="off">
-
-            <div class="bo-actions">
-
-                <button
-                    type="button"
-                    class="bo-button gold"
-                    id="loadBackOfficeButton">
-                    LOAD RECORDS
-                </button>
-
-                <button
-                    type="button"
-                    class="bo-button"
-                    id="refreshBackOfficeButton">
-                    REFRESH
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="bo-panel hidden"
-             id="boRecordsPanel">
-
-            <div class="bo-summary">
-
-                <div class="bo-stat">
-                    <div class="bo-stat-label">
-                        Saved
-                    </div>
-
-                    <div class="bo-stat-value"
-                         id="boSavedCount">
-                        0
-                    </div>
-                </div>
-
-                <div class="bo-stat">
-                    <div class="bo-stat-label">
-                        Reported
-                    </div>
-
-                    <div class="bo-stat-value"
-                         id="boReportedCount">
-                        0
-                    </div>
-                </div>
-
-                <div class="bo-stat">
-                    <div class="bo-stat-label">
-                        Activated
-                    </div>
-
-                    <div class="bo-stat-value"
-                         id="boActivatedCount">
-                        0
-                    </div>
-                </div>
-
-            </div>
-
-            <div id="boRecords"></div>
-
-        </div>
-
-
-        <div class="bo-panel hidden"
-             id="boDocumentPanel">
-
-            <div class="section-title">
-                Saved document
-            </div>
-
-            <div class="bo-subtitle"
-                 id="boDocumentHeading">
-                —
-            </div>
-
-            <div class="bo-document"
-                 id="boDocumentText">
-                No document selected.
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<script>
-"use strict";
-
-/* ============================================================
-   CONFIGURATION
-   ============================================================ */
-
-const PAYMENT_API_BASE =
-    "https://naija-pocket-payment-api.onrender.com";
-
-const LOCAL_BACK_OFFICE_KEY =
-    "NPBC-2026";
-
-
-/* ============================================================
-   URL / SNAPSHOT
-   ============================================================ */
-
-const params = new URLSearchParams(location.search);
-
-const initialMode =
-    clean(params.get("mode"));
-
-const isBackOfficeMode =
-    initialMode === "back_office" ||
-    params.get("back_office") === "1";
-
-const snapshotKeys = [
-    "npb_payment_review_snapshot_" +
-        clean(params.get("job_id")),
-
-    "npb_payment_review_snapshot",
-
-    "payment_review_snapshot_" +
-        clean(params.get("job_id")),
-
-    "payment_review_snapshot"
-];
-
-let snapshot = null;
-
-let versionId =
-    clean(params.get("version_id")) ||
-    clean(params.get("versionId"));
-
-let service =
-    clean(params.get("service"));
-
-let documentTitle =
-    clean(params.get("title")) ||
-    clean(params.get("document_title"));
-
-let amount =
-    numberValue(params.get("amount"));
-
-let customerId =
-    clean(params.get("customer_id"));
-
-let filename = "";
-
-let pages = [];
-
-let documentText = "";
-
-let paymentStatus = "";
-
-let paymentStarted = false;
-
-let paymentReported = false;
-
-let paymentVerified = false;
-
-let downloadUnlocked = false;
-
-let createInProgress = false;
-
-let reportInProgress = false;
-
-let lastDelivery = null;
-
-let backOfficeRecords = [];
-
-
-/* ============================================================
-   HELPERS
-   ============================================================ */
-
-function clean(value){
-    return value == null
-        ? ""
-        : String(value).trim();
-}
-
-function numberValue(value){
-    const n = Number(value);
-    return Number.isFinite(n) ? n : 0;
-}
-
-function $(id){
-    return document.getElementById(id);
-}
-
-function safeJsonParse(value){
-    try{
-        return JSON.parse(value);
-    }catch{
-        return null;
-    }
-}
-
-function money(value){
-    const n = numberValue(value);
-
-    return "₦" + n.toLocaleString(
-        "en-NG",
-        {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2
-        }
-    );
-}
-
-function escapeHtml(value){
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
-
-function showMessage(text,type="info"){
-    const box = $("message");
-
-    if(!box){
-        return;
-    }
-
-    box.textContent = text || "";
-
-    box.className =
-        text
-            ? "show " + type
-            : "";
-}
-
-function apiError(data,fallback){
-    if(!data){
-        return fallback;
-    }
-
-    return clean(
-        data.detail ||
-        data.error_message ||
-        data.message ||
-        data.error
-    ) || fallback;
-}
-
-
-/* ============================================================
-   SNAPSHOT RECOVERY
-   ============================================================ */
-
-function readSnapshot(){
-
-    for(const key of snapshotKeys){
-
-        if(!key ||
-           key.endsWith("_") ||
-           key === "npb_payment_review_snapshot_" ||
-           key === "payment_review_snapshot_"){
-            continue;
-        }
-
-        try{
-
-            const raw =
-                localStorage.getItem(key);
-
-            if(!raw){
-                continue;
-            }
-
-            const parsed =
-                safeJsonParse(raw);
-
-            if(parsed){
-                return parsed;
-            }
-
-        }catch{
-            /* continue */
-        }
-    }
-
-    return null;
-}
-
-function firstValue(...values){
-
-    for(const value of values){
-
-        if(value === null ||
-           value === undefined){
-            continue;
-        }
-
-        if(typeof value === "string" &&
-           !value.trim()){
-            continue;
-        }
-
-        if(Array.isArray(value) &&
-           value.length === 0){
-            continue;
-        }
-
-        return value;
-    }
-
-    return "";
-}
-
-function extractDocumentPayload(source){
-
-    if(!source ||
-       typeof source !== "object"){
-        return {};
-    }
-
-    const payload =
-        source.document_payload ||
-        source.documentPayload ||
-        source.payload ||
-        source.document ||
-        {};
-
-    if(payload &&
-       typeof payload === "object" &&
-       !Array.isArray(payload)){
-        return payload;
-    }
-
-    return {};
-}
-
-function normalizePages(value){
-
-    if(!Array.isArray(value)){
-        return [];
-    }
-
-    return value
-        .map((item,index)=>{
-
-            if(typeof item === "string"){
-                return {
-                    page_number:index + 1,
-                    content:item
-                };
-            }
-
-            if(!item ||
-               typeof item !== "object"){
-                return null;
-            }
-
-            return {
-                page_number:
-                    numberValue(
-                        item.page_number ||
-                        item.page ||
-                        item.number ||
-                        index + 1
-                    ) || index + 1,
-
-                content:
-                    clean(
-                        firstValue(
-                            item.content,
-                            item.text,
-                            item.page_text
-                        )
-                    )
-            };
-
-        })
-        .filter(Boolean);
-}
-
-function extractDocumentState(){
-
-    const source =
-        snapshot || {};
-
-    const payload =
-        extractDocumentPayload(source);
-
-    const product =
-        source.product &&
-        typeof source.product === "object"
-            ? source.product
-            : {};
-
-    const document =
-        source.document &&
-        typeof source.document === "object"
-            ? source.document
-            : {};
-
-    service =
-        service ||
-        clean(
-            firstValue(
-                source.service,
-                product.service,
-                document.service
-            )
-        );
-
-    documentTitle =
-        documentTitle ||
-        clean(
-            firstValue(
-                source.document_title,
-                source.documentTitle,
-                product.document_title,
-                document.document_title,
-                document.title,
-                source.title
-            )
-        );
-
-    amount =
-        amount ||
-        numberValue(
-            firstValue(
-                source.amount,
-                product.amount,
-                document.amount
-            )
-        );
-
-    versionId =
-        versionId ||
-        clean(
-            firstValue(
-                source.version_id,
-                source.versionId,
-                product.document_version,
-                document.version_id,
-                document.version
-            )
-        );
-
-    customerId =
-        customerId ||
-        clean(
-            firstValue(
-                source.customer_id,
-                source.customerId,
-                product.customer_id
-            )
-        );
-
-    filename =
-        clean(
-            firstValue(
-                source.filename,
-                source.document_filename,
-                source.documentFilename,
-                product.document_filename,
-                document.filename,
-                payload.filename
-            )
-        );
-
-    const possiblePages =
-        firstValue(
-            source.pages,
-            source.document_pages,
-            source.documentPages,
-            payload.pages,
-            document.pages,
-            product.document_pages
-        );
-
-    pages =
-        normalizePages(possiblePages);
-
-    documentText =
-        clean(
-            firstValue(
-                source.document_text,
-                source.documentText,
-                source.text,
-                source.content,
-                payload.document_text,
-                payload.documentText,
-                payload.text,
-                document.document_text,
-                document.documentText,
-                document.text
-            )
-        );
-
-    if(!documentText && pages.length){
-
-        documentText =
-            pages
-                .map(page=>page.content)
-                .filter(Boolean)
-                .join("\n\n");
-    }
-}
-
-
-/* ============================================================
-   API
-   ============================================================ */
-
-async function apiGet(path){
-
-    const response =
-        await fetch(
-            PAYMENT_API_BASE + path,
-            {
-                method:"GET",
-                cache:"no-store",
-                headers:{
-                    "Accept":"application/json"
-                }
-            }
-        );
-
-    const data =
-        await response
-            .json()
-            .catch(()=>({}));
-
-    if(!response.ok){
-        throw new Error(
-            apiError(
-                data,
-                "The request could not be completed."
-            )
-        );
-    }
-
-    return data;
-}
-
-async function apiPost(path,body,headers={}){
-
-    const response =
-        await fetch(
-            PAYMENT_API_BASE + path,
-            {
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json",
-                    ...headers
-                },
-                body:JSON.stringify(body || {})
-            }
-        );
-
-    const data =
-        await response
-            .json()
-            .catch(()=>({}));
-
-    if(!response.ok){
-
-        throw new Error(
-            apiError(
-                data,
-                "The request could not be completed."
-            )
-        );
-    }
-
-    return data;
-}
-
-
-/* ============================================================
-   EXTRACT PAYMENT STATE
-   ============================================================ */
-
-function extractPaymentObject(data){
-
-    if(data &&
-       data.payment &&
-       typeof data.payment === "object"){
-        return data.payment;
-    }
-
-    return {};
-}
-
-function extractProductObject(data){
-
-    if(data &&
-       data.product &&
-       typeof data.product === "object"){
-        return data.product;
-    }
-
-    return {};
-}
-
-function extractPaymentStatus(data){
-
-    const payment =
-        extractPaymentObject(data);
-
-    const product =
-        extractProductObject(data);
-
-    return clean(
-        firstValue(
-            payment.payment_status,
-            payment.status,
-            data && data.payment_status,
-            data && data.status,
-            product.payment_status,
-            paymentStatus
-        )
-    ).toLowerCase();
-}
-
-function extractPaymentReported(data){
-
-    const payment =
-        extractPaymentObject(data);
-
-    const product =
-        extractProductObject(data);
-
-    return Boolean(
-        data &&
-        (
-            data.payment_reported === true ||
-            payment.reported_at ||
-            product.payment_reported === true ||
-            paymentStatus === "payment_reported"
-        )
-    );
-}
-
-function extractPaymentVerified(data){
-
-    const payment =
-        extractPaymentObject(data);
-
-    const product =
-        extractProductObject(data);
-
-    const status =
-        clean(
-            firstValue(
-                payment.payment_status,
-                payment.status,
-                data && data.payment_status,
-                data && data.status
-            )
-        ).toLowerCase();
-
-    return Boolean(
-        data &&
-        (
-            data.payment_verified === true ||
-            payment.verified_at ||
-            product.payment_verified === true ||
-            [
-                "verified",
-                "payment_verified",
-                "payment_confirmed",
-                "confirmed",
-                "approved"
-            ].includes(status)
-        )
-    );
-}
-
-function extractDownloadUnlocked(data){
-
-    const product =
-        extractProductObject(data);
-
-    return Boolean(
-        data &&
-        (
-            data.download_unlocked === true ||
-            product.download_unlocked === true
-        )
-    );
-}
-
-
-/* ============================================================
-   APPLY SERVER STATE
-   ============================================================ */
-
-function applyServerState(data){
-
-    const product =
-        extractProductObject(data);
-
-    const payment =
-        extractPaymentObject(data);
-
-    if(product.service){
-        service =
-            clean(product.service);
-    }
-
-    if(product.document_title){
-        documentTitle =
-            clean(product.document_title);
-    }
-
-    if(product.amount !== undefined &&
-       product.amount !== null){
-        amount =
-            numberValue(product.amount);
-    }
-
-    if(product.document_version){
-        versionId =
-            clean(product.document_version);
-    }
-
-    if(product.document_filename){
-        filename =
-            clean(product.document_filename);
-    }
-
-    if(product.document_pages){
-        if(typeof product.document_pages === "number"){
-            pages =
-                pages.length
-                    ? pages
-                    : [];
-        }
-    }
-
-    paymentStatus =
-        extractPaymentStatus(data);
-
-    paymentStarted =
-        paymentStatus !== "" &&
-        paymentStatus !== "payment_not_started";
-
-    paymentReported =
-        extractPaymentReported(data) ||
-        paymentReported;
-
-    paymentVerified =
-        extractPaymentVerified(data);
-
-    /*
-       IMPORTANT:
-       Payment verification does NOT automatically unlock download.
-       Customer Care must activate download separately.
-    */
-    downloadUnlocked =
-        extractDownloadUnlocked(data);
-
-    const payload =
-        data &&
-        data.delivery
-            ? data.delivery
-            : null;
-
-    if(payload){
-        lastDelivery =
-            payload;
-    }
-
-    updateBaseDisplay();
-    updateExperienceDisplay();
-    updateProgress();
-    updateDeliveryDisplay();
-}
-
-
-/* ============================================================
-   BASE DISPLAY
-   ============================================================ */
-
-function updateBaseDisplay(){
-
-    $("baseService").textContent =
-        service || "Your selected service";
-
-    $("baseTitle").textContent =
-        documentTitle || "Your reviewed document";
-
-    $("baseAmount").textContent =
-        money(amount);
-}
-
-
-/* ============================================================
-   EXPERIENCE DISPLAY
-   ============================================================ */
-
-function updateExperienceDisplay(){
-
-    $("experienceService").textContent =
-        service || "Your selected service";
-
-    $("experienceTitle").textContent =
-        documentTitle || "Your reviewed document";
-
-    $("experienceAmount").textContent =
-        money(amount);
-
-    $("documentFilename").textContent =
-        filename ||
-        documentTitle ||
-        "Your saved document";
-
-    $("documentServiceLabel").textContent =
-        service || "Naija Pocket Business Center";
-
-    $("documentPages").textContent =
-        pages.length
-            ? String(pages.length)
-            : "Saved document";
-
-    $("documentSavedStatus").textContent =
-        "Securely saved";
-
-    $("documentPreview").textContent =
-        documentText
-            ? documentText.slice(0,5000)
-            : "Your exact reviewed document is saved and ready for delivery.";
-
-    $("reportButton").disabled =
-        !paymentStarted ||
-        reportInProgress ||
-        paymentReported;
-
-    if(paymentReported){
-
-        $("paymentStatusCopy").textContent =
-            paymentVerified
-                ? "Your payment has been verified."
-                : "Your payment has been reported. Customer Care is checking it.";
-
-    }else if(paymentStarted){
-
-        $("paymentStatusCopy").textContent =
-            "Payment is prepared. Complete the transfer, then tap I HAVE MADE PAYMENT.";
-
-    }else{
-
-        $("paymentStatusCopy").textContent =
-            "Payment has not been started yet.";
-    }
-
-    if(paymentVerified){
-
-        $("paymentStatusPill").textContent =
-            downloadUnlocked
-                ? "VERIFIED & ACTIVATED"
-                : "PAYMENT VERIFIED";
-
-        $("paymentStatusPill").className =
-            "status-pill success";
-
-    }else if(paymentReported){
-
-        $("paymentStatusPill").textContent =
-            "AWAITING VERIFICATION";
-
-        $("paymentStatusPill").className =
-            "status-pill warning";
-
-    }else if(paymentStarted){
-
-        $("paymentStatusPill").textContent =
-            "PAYMENT READY";
-
-        $("paymentStatusPill").className =
-            "status-pill warning";
-
-    }else{
-
-        $("paymentStatusPill").textContent =
-            "NOT STARTED";
-
-        $("paymentStatusPill").className =
-            "status-pill";
-    }
-
-    $("experienceMakePaymentButton").disabled =
-        createInProgress ||
-        paymentStarted;
-
-    $("experienceMakePaymentButton").textContent =
-        paymentStarted
-            ? "PAYMENT PREPARED"
-            : "PREPARE PAYMENT";
-
-    if(downloadUnlocked){
-
-        $("downloadCopy").textContent =
-            "Your download has been activated by Customer Care. You can now download the exact saved document.";
-
-    }else if(paymentVerified){
-
-        $("downloadCopy").textContent =
-            "Your payment is verified. Customer Care still needs to activate the download before the document can be downloaded.";
-
-    }else if(paymentReported){
-
-        $("downloadCopy").textContent =
-            "Your payment report has been received. Download will remain locked until Customer Care verifies and activates it.";
-
-    }else{
-
-        $("downloadCopy").textContent =
-            "After Customer Care verifies your payment and activates your download, this button will become active.";
-    }
-
-    $("downloadButton").disabled =
-        !downloadUnlocked;
-}
-
-
-/* ============================================================
-   PROGRESS
-   ============================================================ */
-
-function updateProgress(){
-
-    let percent = 12;
-    let text = "1 of 5";
-    let label = "Payment required";
-
-    if(paymentStarted){
-        percent = 28;
-        text = "2 of 5";
-        label = "Payment prepared";
-    }
-
-    if(paymentReported){
-        percent = 50;
-        text = "3 of 5";
-        label = "Payment reported";
-    }
-
-    if(paymentVerified){
-        percent = 72;
-        text = "4 of 5";
-        label = "Payment verified";
-    }
-
-    if(downloadUnlocked){
-        percent = 100;
-        text = "5 of 5";
-        label = "Document ready";
-    }
-
-    $("progressBar").style.width =
-        percent + "%";
-
-    $("progressText").textContent =
-        text;
-
-    $("statusText").textContent =
-        label;
-}
-
-
-/* ============================================================
-   DELIVERY
-   ============================================================ */
-
-const deliveryElements = {
-    phone:{
-        button:"deliveryPhone",
-        status:"deliveryPhoneStatus",
-        lock:"deliveryPhoneLock"
-    },
-
-    email:{
-        button:"deliveryEmail",
-        status:"deliveryEmailStatus",
-        lock:"deliveryEmailLock"
-    },
-
-    whatsapp:{
-        button:"deliveryWhatsApp",
-        status:"deliveryWhatsAppStatus",
-        lock:"deliveryWhatsAppLock"
-    },
-
-    telegram:{
-        button:"deliveryTelegram",
-        status:"deliveryTelegramStatus",
-        lock:"deliveryTelegramLock"
-    },
-
-    google_drive:{
-        button:"deliveryDrive",
-        status:"deliveryDriveStatus",
-        lock:"deliveryDriveLock"
-    }
-};
-
-function updateDeliveryDisplay(){
-
-    const channels =
-        lastDelivery &&
-        Array.isArray(lastDelivery.channels)
-            ? lastDelivery.channels
-            : [];
-
-    for(const [id,refs] of Object.entries(deliveryElements)){
-
-        const button =
-            $(refs.button);
-
-        const status =
-            $(refs.status);
-
-        const lock =
-            $(refs.lock);
-
-        if(!button){
-            continue;
-        }
-
-        const channel =
-            channels.find(
-                item =>
-                    clean(item.id) === id
-            );
-
-        const available =
-            Boolean(
-                downloadUnlocked &&
-                (
-                    !channel ||
-                    channel.available !== false
-                )
-            );
-
-        button.disabled =
-            !available;
-
-        button.classList.toggle(
-            "available",
-            available
-        );
-
-        lock.textContent =
-            available
-                ? "✓"
-                : "🔒";
-
-        if(available){
-
-            status.textContent =
-                channel &&
-                channel.note
-                    ? channel.note
-                    : "Ready to use";
-
-        }else{
-
-            status.textContent =
-                paymentVerified
-                    ? "Waiting for activation"
-                    : "Available after payment verification";
-        }
-    }
-}
-
-
-/* ============================================================
-   OPEN / CLOSE NEW FULL SCREEN PAGE
-   ============================================================ */
-
-function openPaymentExperience(){
-
-    /*
-       This is intentionally the ONLY action of the customer
-       MAKE PAYMENT button.
-
-       There is NO old payment modal.
-       There is NO old payment-details popup.
-    */
-
-    $("paymentExperience").classList.add("open");
-
-    $("paymentExperience")
-        .setAttribute("aria-hidden","false");
-
-    document.body.style.overflow =
-        "hidden";
-
-    updateBaseDisplay();
-    updateExperienceDisplay();
-    updateProgress();
-    updateDeliveryDisplay();
-
-    setTimeout(
-        ()=>window.scrollTo(0,0),
-        0
-    );
-}
-
-function closePaymentExperience(){
-
-    $("paymentExperience")
-        .classList.remove("open");
-
-    $("paymentExperience")
-        .setAttribute("aria-hidden","true");
-
-    document.body.style.overflow =
-        "";
-}
-
-
-/* ============================================================
-   MAKE PAYMENT
-   ============================================================ */
-
-async function createPayment(){
-
-    if(createInProgress){
-        return;
-    }
-
-    if(!service){
-        showMessage(
-            "We could not identify the service for this document.",
-            "error"
-        );
-        return;
-    }
-
-    if(!documentTitle){
-        showMessage(
-            "We could not identify the document title.",
-            "error"
-        );
-        return;
-    }
-
-    if(!amount || amount <= 0){
-        showMessage(
-            "The payment amount is not available yet. Please return to Review and try again.",
-            "error"
-        );
-        return;
-    }
-
-    if(!documentText && !pages.length){
-        showMessage(
-            "Your reviewed document could not be found. Please return to Review and try again.",
-            "error"
-        );
-        return;
-    }
-
-    createInProgress = true;
-
-    updateExperienceDisplay();
-
-    showMessage(
-        "Preparing your payment and securely saving your exact reviewed document...",
-        "info"
-    );
-
-    try{
-
-        const documentPayload = {
-            pages: pages,
-            document_text: documentText,
-            filename:
-                filename ||
-                documentTitle,
-            document_version:
-                versionId
-        };
-
-        const body = {
-            customer_name:
-                clean(
-                    snapshot &&
-                    (
-                        snapshot.customer_name ||
-                        snapshot.customerName
-                    )
-                ),
-
-            customer_id:
-                customerId,
-
-            service:
-                service,
-
-            document_title:
-                documentTitle,
-
-            amount:
-                amount,
-
-            currency:
-                "NGN",
-
-            payment_method:
-                "bank_transfer",
-
-            document_version:
-                versionId,
-
-            pages:
-                pages,
-
-            document_pages:
-                pages,
-
-            document_text:
-                documentText,
-
-            filename:
-                filename ||
-                documentTitle,
-
-            document_filename:
-                filename ||
-                documentTitle,
-
-            document_payload:
-                documentPayload
-        };
-
-        const data =
-            await apiPost(
-                "/api/payment/create",
-                body
-            );
-
-        applyServerState(data);
-
-        if(
-            data &&
-            data.saved_document === true
-        ){
-            $("documentSavedStatus").textContent =
-                "Saved securely";
-        }
-
-        showMessage(
-            "Payment is ready. Complete the transfer, then tap I HAVE MADE PAYMENT.",
-            "success"
-        );
-
-    }catch(error){
-
-        showMessage(
-            error.message ||
-            "Payment preparation failed. Please try again.",
-            "error"
-        );
-
-    }finally{
-
-        createInProgress = false;
-
-        updateExperienceDisplay();
-        updateProgress();
-    }
-}
-
-
-/* ============================================================
-   I HAVE MADE PAYMENT
-   ============================================================ */
-
-async function reportPayment(){
-
-    if(reportInProgress){
-        return;
-    }
-
-    if(!paymentStarted){
-
-        showMessage(
-            "Please tap MAKE PAYMENT and prepare your payment first.",
-            "error"
-        );
-
-        return;
-    }
-
-    if(!service || !documentTitle){
-
-        showMessage(
-            "Your payment information is incomplete. Please return to Review and try again.",
-            "error"
-        );
-
-        return;
-    }
-
-    reportInProgress = true;
-
-    updateExperienceDisplay();
-
-    showMessage(
-        "Your payment report is being sent to Customer Care...",
-        "info"
-    );
-
-    try{
-
-        const data =
-            await apiPost(
-                "/api/payment/report",
-                {
-                    service:
-                        service,
-
-                    document_title:
-                        documentTitle,
-
-                    note:
-                        "Customer reported payment from Payment & Delivery page."
-                }
-            );
-
-        applyServerState(data);
-
-        paymentReported = true;
-
-        showMessage(
-            paymentVerified
-                ? "Your payment has already been verified."
-                : "Payment reported successfully. Customer Care will verify it before download is activated.",
-            "success"
-        );
-
-        updateExperienceDisplay();
-        updateProgress();
-
-    }catch(error){
-
-        showMessage(
-            error.message ||
-            "We could not record your payment report. Please try again.",
-            "error"
-        );
-
-    }finally{
-
-        reportInProgress = false;
-
-        updateExperienceDisplay();
-        updateProgress();
-    }
-}
-
-
-/* ============================================================
-   PAYMENT STATUS REFRESH
-   ============================================================ */
-
-async function refreshPaymentStatus(){
-
-    if(!service || !documentTitle){
-        return;
-    }
-
-    try{
-
-        const query =
-            "?service=" +
-            encodeURIComponent(service) +
-            "&title=" +
-            encodeURIComponent(documentTitle);
-
-        const data =
-            await apiGet(
-                "/api/payment/status" +
-                query
-            );
-
-        applyServerState(data);
-
-    }catch{
-        /*
-           Do not interrupt the customer's page when a background
-           status check temporarily fails.
-        */
-    }
-}
-
-
-/* ============================================================
-   DOWNLOAD
-   ============================================================ */
-
-function downloadDocument(){
-
-    if(!downloadUnlocked){
-
-        showMessage(
-            "Download is still locked. Customer Care must activate your download after verifying your payment.",
-            "error"
-        );
-
-        return;
-    }
-
-    if(!service || !documentTitle){
-
-        showMessage(
-            "The document information is incomplete.",
-            "error"
-        );
-
-        return;
-    }
-
-    const url =
-        PAYMENT_API_BASE +
-        "/api/download?service=" +
-        encodeURIComponent(service) +
-        "&title=" +
-        encodeURIComponent(documentTitle);
-
-    window.location.href =
-        url;
-}
-
-
-/* ============================================================
-   DELIVERY CHANNEL ACTION
-   ============================================================ */
-
-function channelUrl(channelId){
-
-    if(
-        lastDelivery &&
-        Array.isArray(lastDelivery.channels)
-    ){
-
-        const found =
-            lastDelivery.channels.find(
-                item =>
-                    clean(item.id) === channelId
-            );
-
-        if(found && found.url){
-            return found.url;
-        }
-    }
-
-    const downloadUrl =
-        PAYMENT_API_BASE +
-        "/api/download?service=" +
-        encodeURIComponent(service) +
-        "&title=" +
-        encodeURIComponent(documentTitle);
-
-    const shareText =
-        encodeURIComponent(
-            documentTitle +
-            " — " +
-            service +
-            "\nNaija Pocket Business Center document download:\n" +
-            downloadUrl
-        );
-
-    if(channelId === "phone"){
-        return downloadUrl;
-    }
-
-    if(channelId === "whatsapp"){
-        return "https://wa.me/?text=" + shareText;
-    }
-
-    if(channelId === "email"){
-
-        return (
-            "mailto:?subject=" +
-            encodeURIComponent(
-                documentTitle +
-                " — Naija Pocket Business Center"
-            ) +
-            "&body=" +
-            shareText
-        );
-    }
-
-    if(channelId === "telegram"){
-
-        return (
-            "https://t.me/share/url?url=" +
-            encodeURIComponent(downloadUrl) +
-            "&text=" +
-            encodeURIComponent(documentTitle)
-        );
-    }
-
-    if(channelId === "google_drive"){
-        return "https://drive.google.com/drive/my-drive";
-    }
-
-    return "";
-}
-
-function openDeliveryChannel(channelId){
-
-    if(!downloadUnlocked){
-
-        showMessage(
-            "This delivery option becomes available after Customer Care activates your download.",
-            "error"
-        );
-
-        return;
-    }
-
-    const url =
-        channelUrl(channelId);
-
-    if(!url){
-
-        showMessage(
-            "This delivery option is not available right now.",
-            "error"
-        );
-
-        return;
-    }
-
-    if(channelId === "phone"){
-
-        window.location.href =
-            url;
-
-        return;
-    }
-
-    window.open(
-        url,
-        "_blank",
-        "noopener,noreferrer"
-    );
-}
-
-
-/* ============================================================
-   BACK OFFICE
-   ============================================================ */
-
-function showBackOffice(){
-
-    $("customerPaymentView")
-        .style.display = "none";
-
-    $("paymentExperience")
-        .classList.remove("open");
-
-    $("backOfficeView")
-        .style.display = "block";
-
-    document.body.style.overflow =
-        "";
-
-    const savedKey =
-        sessionStorage.getItem(
-            "npbc_back_office_key"
-        );
-
-    if(savedKey){
-        $("backOfficeKey").value =
-            savedKey;
-    }
-}
-
-function exitBackOffice(){
-
-    $("backOfficeView")
-        .style.display = "none";
-
-    $("customerPaymentView")
-        .style.display = "block";
-}
-
-function backOfficeHeaders(){
-
-    const key =
-        clean(
-            $("backOfficeKey").value
-        );
-
+"""Naija Pocket Business Center - complete payment, saved-document and delivery API."""
+from pathlib import Path
+from datetime import datetime, timezone
+from typing import Any, Optional
+import json
+import os
+import re
+import sqlite3
+import urllib.parse
+import zipfile
+from xml.sax.saxutils import escape as xml_escape
+
+from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
+
+APP_VERSION = "payment-product-first-v10-back-office-full-delivery"
+BASE_DIR = Path(__file__).resolve().parent
+DOWNLOAD_DIR = BASE_DIR / "downloads"
+DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
+PRODUCT_DB_PATH = BASE_DIR / "product_delivery.db"
+PAYMENT_DB_PATH = BASE_DIR / "payment_gateway.db"
+BACK_OFFICE_ADMIN_KEY = "NPBC-2026"
+PUBLIC_API_BASE_URL = os.getenv("PUBLIC_API_BASE_URL", "").strip()
+
+app = FastAPI(title="Naija Pocket Business Center Payment API", version=APP_VERSION)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False,
+                   allow_methods=["*"], allow_headers=["*"])
+
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def clean(value: Any) -> str:
+    return "" if value is None else str(value).strip()
+
+
+def key_part(value: Any) -> str:
+    return re.sub(r"\s+", " ", clean(value).casefold())
+
+
+def business_key(service: Any, title: Any) -> str:
+    return f"{key_part(service)}::{key_part(title)}"
+
+
+def first(*values: Any) -> str:
+    for value in values:
+        if clean(value):
+            return clean(value)
+    return ""
+
+
+def db(path: Path) -> sqlite3.Connection:
+    connection = sqlite3.connect(str(path), timeout=30)
+    connection.row_factory = sqlite3.Row
+    return connection
+
+
+def as_dict(row: Optional[sqlite3.Row]) -> Optional[dict]:
+    return dict(row) if row is not None else None
+
+
+def to_json(value: Any) -> str:
+    return json.dumps(value, ensure_ascii=False)
+
+
+def from_json(value: Any, default: Any = None) -> Any:
+    if isinstance(value, (dict, list)):
+        return value
+    text = clean(value)
+    if not text:
+        return default
+    try:
+        return json.loads(text)
+    except Exception:
+        return default
+
+
+def safe_filename(value: Any, default: str = "document.docx") -> str:
+    name = Path(clean(value) or default).name
+    name = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", name)
+    name = re.sub(r"\s+", " ", name).strip(" .") or default
+    if not name.lower().endswith((".docx", ".pdf")):
+        name += ".docx"
+    return name
+
+
+def safe_folder(value: Any, default: str = "document") -> str:
+    name = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", clean(value) or default)
+    name = re.sub(r"\s+", " ", name).strip(" .")
+    return name[:120] or default
+
+
+def normalize_pages(value: Any) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        text = value.strip()
+        if not text:
+            return []
+        parsed = from_json(text)
+        if isinstance(parsed, (list, dict)):
+            return normalize_pages(parsed)
+        return [text]
+    if isinstance(value, dict):
+        for key in ("pages", "page_text", "document_pages", "content", "text"):
+            if key in value:
+                return normalize_pages(value[key])
+        return [json.dumps(value, ensure_ascii=False)]
+    if isinstance(value, list):
+        result = []
+        for item in value:
+            if isinstance(item, dict):
+                text = first(item.get("text"), item.get("content"), item.get("page_text"))
+                if text:
+                    result.append(text)
+            elif clean(item):
+                result.append(clean(item))
+        return result
+    return [clean(value)] if clean(value) else []
+
+
+def normalize_payload(value: Any) -> dict:
+    payload = value if isinstance(value, dict) else {"document_text": clean(value)}
+    raw_pages = payload.get("pages") if payload.get("pages") is not None else payload.get("document_pages")
+    page_list = normalize_pages(raw_pages)
+    text = first(payload.get("document_text"), payload.get("documentText"),
+                 payload.get("text"), payload.get("content"))
+    if not page_list and text:
+        page_list = [text]
+    if not text and page_list:
+        text = "\n\n".join(page_list)
+    filename = safe_filename(first(payload.get("filename"), payload.get("document_filename"),
+                                   payload.get("documentFilename")) or "document.docx")
     return {
-        "X-Back-Office-Key":
-            key
-    };
-}
-
-async function loadBackOffice(){
-
-    const key =
-        clean(
-            $("backOfficeKey").value
-        );
-
-    if(!key){
-
-        alert(
-            "Enter the Customer Care access key."
-        );
-
-        return;
+        "pages": page_list,
+        "document_text": text,
+        "filename": filename,
+        "document_version": first(payload.get("document_version"), payload.get("documentVersion"),
+                                   payload.get("version")),
+        "page_count": len(page_list),
     }
 
-    try{
 
-        const data =
-            await apiGetWithHeaders(
-                "/api/back-office/payments",
-                {
-                    "X-Back-Office-Key":
-                        key
-                }
-            );
 
-        sessionStorage.setItem(
-            "npbc_back_office_key",
-            key
-        );
+def clean_saved_document_pages(pages: list[str]) -> list[str]:
+    """Remove only obvious UI separator artifacts from the saved document.
 
-        backOfficeRecords =
-            Array.isArray(data.payments)
-                ? data.payments
-                : (
-                    Array.isArray(data.records)
-                        ? data.records
-                        : (
-                            Array.isArray(data.items)
-                                ? data.items
-                                : []
-                        )
-                );
+    The payment/delivery API must preserve the reviewed document itself.  The
+    only automatic cleanup here is a line made entirely of three asterisks,
+    which is a known preview/UI separator artifact.  Legitimate document text
+    is otherwise left untouched.
+    """
+    cleaned: list[str] = []
+    for page in pages:
+        lines = []
+        for line in str(page).splitlines():
+            if clean(line) == "***":
+                continue
+            lines.append(line)
+        cleaned_page = "\n".join(lines).strip()
+        if cleaned_page:
+            cleaned.append(cleaned_page)
+    return cleaned
 
-        renderBackOffice(
-            data.summary || {}
-        );
 
-        $("boRecordsPanel")
-            .classList.remove("hidden");
+def clean_saved_document_payload(payload: dict) -> dict:
+    """Return the reviewed document payload without UI-only *** separators."""
+    normalized = normalize_payload(payload)
+    pages = clean_saved_document_pages(normalized["pages"])
+    text = "\n\n".join(pages) if pages else normalized["document_text"]
+    text_lines = [line for line in str(text).splitlines() if clean(line) != "***"]
+    text = "\n".join(text_lines).strip()
+    if not pages and text:
+        pages = [text]
+    return {**normalized, "pages": pages, "document_text": text, "page_count": len(pages)}
 
-    }catch(error){
 
-        alert(
-            error.message ||
-            "Customer Care records could not be loaded."
-        );
-    }
-}
+def back_office_product(product: Optional[dict]) -> dict:
+    """Full Back Office representation, including the complete saved document."""
+    result = public_product(product)
+    if not product:
+        result.update({"pages": [], "document_text": "", "page_count": 0})
+        return result
+    payload = clean_saved_document_payload(from_json(product.get("document_payload"), {}))
+    result.update({
+        "pages": payload["pages"],
+        "document_text": payload["document_text"],
+        "page_count": payload["page_count"],
+        "document_ready_for_back_office": bool(existing_saved_file(product)),
+    })
+    return result
 
-async function apiGetWithHeaders(
-    path,
-    headers={}
-){
 
-    const response =
-        await fetch(
-            PAYMENT_API_BASE + path,
-            {
-                method:"GET",
-                cache:"no-store",
-                headers:{
-                    "Accept":"application/json",
-                    ...headers
-                }
-            }
-        );
-
-    const data =
-        await response
-            .json()
-            .catch(()=>({}));
-
-    if(!response.ok){
-
-        throw new Error(
-            apiError(
-                data,
-                "Customer Care access failed."
-            )
-        );
-    }
-
-    return data;
-}
-
-async function apiPostWithHeaders(
-    path,
-    body,
-    headers={}
-){
-
-    const response =
-        await fetch(
-            PAYMENT_API_BASE + path,
-            {
-                method:"POST",
-                cache:"no-store",
-                headers:{
-                    "Content-Type":"application/json",
-                    ...headers
-                },
-                body:JSON.stringify(body || {})
-            }
-        );
-
-    const data =
-        await response
-            .json()
-            .catch(()=>({}));
-
-    if(!response.ok){
-
-        throw new Error(
-            apiError(
-                data,
-                "The Customer Care request failed."
-            )
-        );
+def back_office_delivery_channels(request: Request, product: dict) -> dict:
+    """Delivery choices for Back Office.  These never depend on customer unlock."""
+    service = clean(product.get("service"))
+    title = clean(product.get("document_title"))
+    file_url = (f"{api_base(request)}/api/back-office/delivery-file?service="
+                f"{urllib.parse.quote(service)}&title={urllib.parse.quote(title)}")
+    share_text = (f"{title} — {service}\n"
+                  "Naija Pocket Business Center document is ready for Customer Service delivery.\n"
+                  f"Download the saved file from the Back Office: {file_url}")
+    return {
+        "available": bool(existing_saved_file(product)),
+        "document_saved": bool(existing_saved_file(product)),
+        "customer_download_unlocked": bool(product.get("download_unlocked")),
+        "channels": [
+            {"id": "phone", "name": "Download to Phone", "type": "download",
+             "available": bool(existing_saved_file(product)), "url": file_url,
+             "requires_back_office_key": True},
+            {"id": "whatsapp", "name": "WhatsApp", "type": "share",
+             "available": bool(existing_saved_file(product)),
+             "url": "https://wa.me/?text=" + urllib.parse.quote(share_text),
+             "note": "Customer Service can download the saved file from Back Office and send it directly to the customer."},
+            {"id": "email", "name": "Email", "type": "share",
+             "available": bool(existing_saved_file(product)),
+             "url": "mailto:?subject=" + urllib.parse.quote(title + " — Naija Pocket Business Center") + "&body=" + urllib.parse.quote(share_text),
+             "note": "Download the saved file from Back Office and attach it to the customer email."},
+            {"id": "telegram", "name": "Telegram", "type": "share",
+             "available": bool(existing_saved_file(product)),
+             "url": "https://t.me/share/url?url=" + urllib.parse.quote(file_url) + "&text=" + urllib.parse.quote(title),
+             "note": "Customer Service can download the saved file and send it through Telegram."},
+            {"id": "google_drive", "name": "Google Drive", "type": "share",
+             "available": bool(existing_saved_file(product)),
+             "url": "https://drive.google.com/drive/my-drive",
+             "note": "Download the exact saved file first, then upload that same file to Google Drive."},
+        ]
     }
 
-    return data;
-}
 
-function renderBackOffice(summary){
+def init_databases() -> None:
+    c = db(PRODUCT_DB_PATH)
+    c.execute("""CREATE TABLE IF NOT EXISTS document_products (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        business_key TEXT NOT NULL UNIQUE,
+        service TEXT NOT NULL,
+        document_title TEXT NOT NULL,
+        customer_name TEXT,
+        customer_id TEXT,
+        amount REAL DEFAULT 0,
+        currency TEXT DEFAULT 'NGN',
+        document_version TEXT,
+        document_filename TEXT,
+        document_pages INTEGER DEFAULT 0,
+        document_payload TEXT,
+        document_saved_path TEXT,
+        document_saved_at TEXT,
+        download_unlocked INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        activated_at TEXT,
+        downloaded_at TEXT,
+        download_count INTEGER DEFAULT 0,
+        notes TEXT
+    )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS delivery_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        business_key TEXT NOT NULL,
+        service TEXT NOT NULL,
+        document_title TEXT NOT NULL,
+        channel TEXT NOT NULL,
+        status TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        details TEXT
+    )""")
+    c.commit()
+    c.close()
 
-    $("boSavedCount").textContent =
-        numberValue(
-            summary.saved
-        );
+    c = db(PAYMENT_DB_PATH)
+    c.execute("""CREATE TABLE IF NOT EXISTS payment_orders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        business_key TEXT NOT NULL UNIQUE,
+        service TEXT NOT NULL,
+        document_title TEXT NOT NULL,
+        customer_name TEXT,
+        customer_id TEXT,
+        amount REAL DEFAULT 0,
+        currency TEXT DEFAULT 'NGN',
+        payment_method TEXT,
+        payment_status TEXT DEFAULT 'payment_ready',
+        document_version TEXT,
+        document_filename TEXT,
+        document_pages INTEGER DEFAULT 0,
+        document_text TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        reported_at TEXT,
+        verified_at TEXT,
+        rejected_at TEXT,
+        notes TEXT
+    )""")
+    c.commit()
+    c.close()
 
-    $("boReportedCount").textContent =
-        numberValue(
-            summary.reported
-        );
 
-    $("boActivatedCount").textContent =
-        numberValue(
-            summary.activated
-        );
+@app.on_event("startup")
+def startup() -> None:
+    init_databases()
 
-    const container =
-        $("boRecords");
 
-    container.innerHTML = "";
+def get_product(service: str, title: str) -> Optional[dict]:
+    c = db(PRODUCT_DB_PATH)
+    row = c.execute("SELECT * FROM document_products WHERE business_key = ?",
+                    (business_key(service, title),)).fetchone()
+    c.close()
+    return as_dict(row)
 
-    if(!backOfficeRecords.length){
 
-        container.innerHTML =
-            '<div class="bo-subtitle">No saved records found.</div>';
+def get_single_product() -> Optional[dict]:
+    c = db(PRODUCT_DB_PATH)
+    row = c.execute("SELECT * FROM document_products ORDER BY updated_at DESC, id DESC LIMIT 1").fetchone()
+    c.close()
+    return as_dict(row)
 
-        return;
+
+def get_product_or_single(service: str, title: str) -> Optional[dict]:
+    # Exact service + title is always preferred. The single-record fallback is
+    # retained only for compatibility with older one-document databases.
+    return get_product(service, title) or get_single_product()
+
+
+def get_payment(service: str, title: str) -> Optional[dict]:
+    c = db(PAYMENT_DB_PATH)
+    row = c.execute("SELECT * FROM payment_orders WHERE business_key = ?",
+                    (business_key(service, title),)).fetchone()
+    c.close()
+    return as_dict(row)
+
+
+def existing_saved_file(product: Optional[dict]) -> Optional[Path]:
+    if not product:
+        return None
+    raw = clean(product.get("document_saved_path"))
+    if not raw:
+        return None
+    path = Path(raw)
+    if not path.is_absolute():
+        path = BASE_DIR / path
+    return path if path.exists() and path.is_file() else None
+
+
+def _format_saved_text(text: str) -> list[str]:
+    text = str(text or "").replace("**", "")
+    markers = ["← Previous Page", "Next Page →", "## Review Your Complete Service", "Review Your Complete Service", "Review statusREADY", "Review status", "AMOUNT TO PAY", "💳 MAKE PAYMENT", "Apply Correction", "Payment preparation failed:"]
+    found = [text.find(x) for x in markers if text.find(x) >= 0]
+    if found:
+        text = text[:min(found)]
+    out=[]
+    for raw in text.replace("\r", "").split("\n"):
+        line=raw.strip()
+        if not line or line in {"***","GO","READY","Review status","AMOUNT TO PAY","💳 MAKE PAYMENT","Apply Correction"}:
+            continue
+        if re.fullmatch(r"Page\s+\d+\s+of\s+\d+", line, re.I):
+            continue
+        out.append(line)
+    return out
+
+
+def clean_saved_document_payload(payload: dict) -> dict:
+    payload=dict(payload or {})
+    raw_pages=payload.get("pages")
+    if not isinstance(raw_pages,list): raw_pages=[raw_pages] if raw_pages else []
+    pages=[]
+    for page in raw_pages:
+        lines=_format_saved_text(str(page))
+        if lines: pages.append("\n".join(lines))
+    text=_format_saved_text(payload.get("document_text",""))
+    document_text="\n\n".join(pages) if pages else "\n".join(text)
+    payload["pages"]=pages; payload["document_text"]=document_text; payload["page_count"]=len(pages) or (1 if document_text else 0)
+    return payload
+
+
+def _docx_p(text: str) -> str:
+    return '<w:p><w:r><w:t xml:space="preserve">'+xml_escape(text)+'</w:t></w:r></w:p>'
+
+
+def make_docx(path: Path, title: str, page_list: list[str]) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    pages=clean_saved_document_payload({"pages":page_list}).get("pages",[])
+    if not pages: raise HTTPException(status_code=400, detail="SAVED_DOCUMENT_CONTENT_MISSING")
+    body=[]
+    for i,page in enumerate(pages):
+        if i: body.append('<w:p><w:r><w:br w:type="page"/></w:r></w:p>')
+        body.extend(_docx_p(line) for line in page.splitlines() if line.strip())
+    document_xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+''.join(body)+'<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>'
+    content_types='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'
+    root_rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'
+    with zipfile.ZipFile(path,"w",zipfile.ZIP_DEFLATED) as z:
+        z.writestr("[Content_Types].xml",content_types); z.writestr("_rels/.rels",root_rels); z.writestr("word/document.xml",document_xml)
+    return path
+
+
+def save_exact_snapshot(service: str, title: str, payload: dict,
+                        existing_product: Optional[dict] = None) -> Path:
+    existing = existing_saved_file(existing_product)
+    if existing:
+        return existing
+
+    normalized = clean_saved_document_payload(payload)
+    if not normalized["pages"] and not normalized["document_text"]:
+        raise HTTPException(status_code=400, detail="SAVED_DOCUMENT_CONTENT_MISSING")
+
+    folder = DOWNLOAD_DIR / safe_folder(service) / safe_folder(title)
+    folder.mkdir(parents=True, exist_ok=True)
+    filename = safe_filename(normalized["filename"])
+    if filename.lower().endswith(".pdf"):
+        filename = Path(filename).stem + ".docx"
+    target = folder / filename
+
+    # Never overwrite a valid saved artifact.
+    if target.exists() and target.is_file():
+        return target
+    return make_docx(target, title, normalized["pages"] or [normalized["document_text"]])
+
+
+def store_saved_path(service: str, title: str, path: Path) -> None:
+    c = db(PRODUCT_DB_PATH)
+    c.execute("""UPDATE document_products
+                 SET document_saved_path = ?,
+                     document_saved_at = COALESCE(document_saved_at, ?),
+                     updated_at = ?
+                 WHERE business_key = ?""",
+              (str(path), now_iso(), now_iso(), business_key(service, title)))
+    c.commit()
+    c.close()
+
+
+def extract_document_text(product: dict) -> str:
+    payload = clean_saved_document_payload(from_json(product.get("document_payload"), {}))
+    return payload["document_text"]
+
+
+def upsert_product(data: dict) -> dict:
+    service = clean(data.get("service"))
+    title = clean(data.get("document_title"))
+    if not service or not title:
+        raise HTTPException(status_code=400, detail="SERVICE_AND_TITLE_REQUIRED")
+
+    raw_payload = data.get("document_payload")
+    payload = normalize_payload(raw_payload if raw_payload is not None else data)
+    old = get_product(service, title)
+    key = business_key(service, title)
+    timestamp = now_iso()
+    c = db(PRODUCT_DB_PATH)
+
+    if old:
+        c.execute("""UPDATE document_products SET
+            customer_name=?, customer_id=?, amount=?, currency=?,
+            document_version=?, document_filename=?, document_pages=?,
+            document_payload=CASE WHEN COALESCE(document_saved_path,'')='' THEN ? ELSE document_payload END,
+            updated_at=? WHERE business_key=?""",
+                  (clean(data.get("customer_name")), clean(data.get("customer_id")),
+                   float(data.get("amount") or 0), clean(data.get("currency")) or "NGN",
+                   payload["document_version"], payload["filename"], payload["page_count"],
+                   to_json(payload), timestamp, key))
+    else:
+        c.execute("""INSERT INTO document_products
+            (business_key,service,document_title,customer_name,customer_id,amount,currency,
+             document_version,document_filename,document_pages,document_payload,created_at,updated_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                  (key, service, title, clean(data.get("customer_name")), clean(data.get("customer_id")),
+                   float(data.get("amount") or 0), clean(data.get("currency")) or "NGN",
+                   payload["document_version"], payload["filename"], payload["page_count"],
+                   to_json(payload), timestamp, timestamp))
+    c.commit()
+    c.close()
+    return get_product(service, title) or {}
+
+
+def ensure_payment_record(product: dict) -> dict:
+    service = clean(product.get("service"))
+    title = clean(product.get("document_title"))
+    key = business_key(service, title)
+    old = get_payment(service, title)
+    timestamp = now_iso()
+    values = (clean(product.get("customer_name")), clean(product.get("customer_id")),
+              float(product.get("amount") or 0), clean(product.get("currency")) or "NGN",
+              clean(product.get("document_version")), clean(product.get("document_filename")),
+              int(product.get("document_pages") or 0), extract_document_text(product))
+    c = db(PAYMENT_DB_PATH)
+    if old:
+        c.execute("""UPDATE payment_orders SET customer_name=?,customer_id=?,amount=?,currency=?,
+                     document_version=?,document_filename=?,document_pages=?,document_text=?,updated_at=?
+                     WHERE business_key=?""", values + (timestamp, key))
+    else:
+        c.execute("""INSERT INTO payment_orders
+            (business_key,service,document_title,customer_name,customer_id,amount,currency,
+             payment_method,payment_status,document_version,document_filename,document_pages,
+             document_text,created_at,updated_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                  (key, service, title, *values, "bank_transfer", "payment_ready", timestamp, timestamp))
+    c.commit()
+    c.close()
+    return get_payment(service, title) or {}
+
+
+def update_payment(service: str, title: str, status: Optional[str] = None, **fields: Any) -> Optional[dict]:
+    assignments = []
+    values = []
+    if status:
+        assignments.append("payment_status=?")
+        values.append(status)
+    for name, value in fields.items():
+        if name in {"reported_at", "verified_at", "rejected_at", "notes", "payment_method"}:
+            assignments.append(f"{name}=?")
+            values.append(value)
+    assignments.append("updated_at=?")
+    values.append(now_iso())
+    values.append(business_key(service, title))
+    c = db(PAYMENT_DB_PATH)
+    c.execute(f"UPDATE payment_orders SET {', '.join(assignments)} WHERE business_key=?", values)
+    c.commit()
+    c.close()
+    return get_payment(service, title)
+
+
+def repair_saved_snapshot(product: dict) -> dict:
+    current = get_product(clean(product.get("service")), clean(product.get("document_title"))) or product
+    if existing_saved_file(current):
+        return current
+
+    payload = normalize_payload(from_json(current.get("document_payload"), {}))
+    if not payload["pages"] and not payload["document_text"]:
+        payment = get_payment(clean(current.get("service")), clean(current.get("document_title")))
+        if payment:
+            payload = normalize_payload({
+                "document_text": payment.get("document_text"),
+                "filename": payment.get("document_filename"),
+                "document_version": payment.get("document_version"),
+            })
+
+    if not payload["pages"] and not payload["document_text"]:
+        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_CONTENT_MISSING")
+
+    path = save_exact_snapshot(clean(current.get("service")), clean(current.get("document_title")),
+                               payload, current)
+    store_saved_path(clean(current.get("service")), clean(current.get("document_title")), path)
+    return get_product(clean(current.get("service")), clean(current.get("document_title"))) or current
+
+
+def activate_download(service: str, title: str) -> dict:
+    c = db(PRODUCT_DB_PATH)
+    c.execute("""UPDATE document_products SET download_unlocked=1,activated_at=?,updated_at=?
+                 WHERE business_key=?""", (now_iso(), now_iso(), business_key(service, title)))
+    c.commit()
+    c.close()
+    return get_product(service, title) or {}
+
+
+def public_product(product: Optional[dict]) -> dict:
+    if not product:
+        return {"found": False, "saved_document": False, "download_unlocked": False}
+    saved = existing_saved_file(product)
+    payment = get_payment(clean(product.get("service")), clean(product.get("document_title")))
+    return {
+        "found": True,
+        "id": product.get("id"),
+        "service": product.get("service"),
+        "document_title": product.get("document_title"),
+        "customer_name": product.get("customer_name"),
+        "customer_id": product.get("customer_id"),
+        "amount": product.get("amount") or 0,
+        "currency": product.get("currency") or "NGN",
+        "document_version": product.get("document_version"),
+        "document_filename": product.get("document_filename"),
+        "document_pages": product.get("document_pages") or 0,
+        "document_saved_path": str(saved) if saved else clean(product.get("document_saved_path")),
+        "document_saved_at": product.get("document_saved_at"),
+        "saved_document": bool(saved),
+        "download_unlocked": bool(product.get("download_unlocked")),
+        "activated_at": product.get("activated_at"),
+        "download_count": product.get("download_count") or 0,
+        "payment_status": payment.get("payment_status") if payment else "payment_ready",
+        "payment_reported": bool(payment and payment.get("reported_at")),
+        "payment_verified": bool(payment and payment.get("verified_at")),
+        "payment_rejected": bool(payment and payment.get("rejected_at")),
     }
 
-    backOfficeRecords.forEach(
-        (record,index)=>{
 
-            const wrapper =
-                document.createElement("div");
+def api_base(request: Request) -> str:
+    return PUBLIC_API_BASE_URL.rstrip("/") or str(request.base_url).rstrip("/")
 
-            wrapper.className =
-                "bo-record";
 
-            const serviceName =
-                clean(
-                    record.service
-                );
+def download_url(request: Request, service: str, title: str) -> str:
+    return (f"{api_base(request)}/api/download?service="
+            f"{urllib.parse.quote(service)}&title={urllib.parse.quote(title)}")
 
-            const title =
-                clean(
-                    record.document_title
-                );
 
-            const amountValue =
-                numberValue(
-                    record.amount
-                );
+def delivery_channels(request: Request, product: dict) -> dict:
+    service = clean(product.get("service"))
+    title = clean(product.get("document_title"))
+    direct = download_url(request, service, title)
+    share_text = f"{title} — {service}\nNaija Pocket Business Center document download:\n{direct}"
+    return {"available": bool(product.get("download_unlocked")), "document_saved": bool(existing_saved_file(product)),
+            "channels": [
+                {"id":"phone","name":"Download to Phone","type":"download","available":bool(product.get("download_unlocked")),"url":direct},
+                {"id":"whatsapp","name":"WhatsApp","type":"share","available":bool(product.get("download_unlocked")),"url":"https://wa.me/?text="+urllib.parse.quote(share_text)},
+                {"id":"email","name":"Email","type":"share","available":bool(product.get("download_unlocked")),"url":"mailto:?subject="+urllib.parse.quote(title+" — Naija Pocket Business Center")+"&body="+urllib.parse.quote(share_text)},
+                {"id":"telegram","name":"Telegram","type":"share","available":bool(product.get("download_unlocked")),"url":"https://t.me/share/url?url="+urllib.parse.quote(direct)+"&text="+urllib.parse.quote(title)},
+                {"id":"google_drive","name":"Google Drive","type":"share","available":bool(product.get("download_unlocked")),"url":"https://drive.google.com/drive/my-drive","note":"Download the exact saved file first, then upload that same file to Google Drive."},
+            ]}
 
-            const reported =
-                Boolean(
-                    record.payment_reported
-                );
 
-            const verified =
-                Boolean(
-                    record.payment_verified
-                );
+def select_channel(data: dict, requested: str) -> Optional[dict]:
+    aliases = {"download":"phone","direct":"phone","phone":"phone","whatsapp":"whatsapp",
+               "email":"email","telegram":"telegram","drive":"google_drive","google drive":"google_drive",
+               "google_drive":"google_drive"}
+    wanted = aliases.get(clean(requested).casefold(), clean(requested).casefold())
+    return next((item for item in data.get("channels", []) if item["id"] == wanted), None)
 
-            const unlocked =
-                Boolean(
-                    record.download_unlocked
-                );
 
-            wrapper.innerHTML = `
-                <div class="bo-record-title">
-                    ${escapeHtml(title || "Untitled document")}
-                </div>
+def log_delivery(product: dict, channel: str, status: str, details: Optional[dict] = None) -> None:
+    c = db(PRODUCT_DB_PATH)
+    c.execute("""INSERT INTO delivery_events
+        (business_key,service,document_title,channel,status,created_at,details)
+        VALUES (?,?,?,?,?,?,?)""",
+              (business_key(product.get("service"), product.get("document_title")),
+               clean(product.get("service")), clean(product.get("document_title")), channel,
+               status, now_iso(), to_json(details or {})))
+    c.commit()
+    c.close()
 
-                <div class="bo-record-service">
-                    ${escapeHtml(serviceName || "Service")}
-                </div>
 
-                <div class="bo-record-meta">
-                    Amount: ${escapeHtml(money(amountValue))}<br>
-                    Saved: ${record.saved_document ? "Yes" : "No"}<br>
-                    Payment reported: ${reported ? "Yes" : "No"}<br>
-                    Payment verified: ${verified ? "Yes" : "No"}<br>
-                    Download activated: ${unlocked ? "Yes" : "No"}
-                </div>
+def require_back_office(key: str) -> None:
+    if clean(key) != BACK_OFFICE_ADMIN_KEY:
+        raise HTTPException(status_code=401, detail="INVALID_BACK_OFFICE_KEY")
 
-                <div class="bo-record-actions">
 
-                    <button
-                        type="button"
-                        class="bo-button"
-                        data-view-record="${index}">
-                        VIEW DOCUMENT
-                    </button>
+class PaymentCreateRequest(BaseModel):
+    customer_name: str = ""
+    customer_id: str = ""
+    service: str
+    document_title: str
+    amount: float
+    currency: str = "NGN"
+    payment_method: str = "bank_transfer"
+    document_version: str = ""
+    pages: Any = None
+    document_pages: Any = None
+    page_text: Any = None
+    document_text: str = ""
+    documentText: str = ""
+    text: str = ""
+    content: str = ""
+    filename: str = ""
+    document_filename: str = ""
+    document_payload: Any = None
 
-                    ${
-                        unlocked
-                        ? `
-                            <button
-                                type="button"
-                                class="bo-button"
-                                data-activated-record="${index}"
-                                disabled>
-                                DOWNLOAD ACTIVE
-                            </button>
-                        `
-                        : `
-                            <button
-                                type="button"
-                                class="bo-button gold"
-                                data-activate-record="${index}">
-                                ACTIVATE DOWNLOAD
-                            </button>
-                        `
-                    }
 
-                </div>
-            `;
+class PaymentReportRequest(BaseModel):
+    service: str
+    document_title: str
+    note: str = ""
 
-            container.appendChild(
-                wrapper
-            );
+
+class PaymentCompleteRequest(BaseModel):
+    service: str
+    document_title: str
+
+
+class BackOfficeActivateRequest(BaseModel):
+    service: str
+    document_title: str
+    verified: bool = True
+
+
+class BackOfficeRejectRequest(BaseModel):
+    service: str
+    document_title: str
+    reason: str = ""
+
+
+class DeliveryRequest(BaseModel):
+    service: str
+    document_title: str
+    channel: str
+
+
+@app.post("/api/payment/create")
+def payment_create(body: PaymentCreateRequest, request: Request):
+    """MAKE PAYMENT action only: save document + prepare payment.
+
+    This endpoint is deliberately separate from /api/payment/report.
+    I HAVE MADE PAYMENT must never call this operation.
+    """
+    service = clean(body.service)
+    title = clean(body.document_title)
+    if not service or not title:
+        raise HTTPException(status_code=400, detail="SERVICE_AND_TITLE_REQUIRED")
+    if float(body.amount) <= 0:
+        raise HTTPException(status_code=400, detail="VALID_PAYMENT_AMOUNT_REQUIRED")
+
+    incoming = from_json(body.document_payload, {})
+    if not isinstance(incoming, dict):
+        incoming = {}
+    if not incoming:
+        incoming = {
+            "pages": body.pages if body.pages is not None else body.document_pages,
+            "page_text": body.page_text,
+            "document_text": first(body.document_text, body.documentText, body.text, body.content),
+            "filename": first(body.filename, body.document_filename),
+            "document_version": body.document_version,
         }
-    );
+    else:
+        # Preserve any document fields sent alongside a payload.
+        incoming.setdefault("pages", body.pages if body.pages is not None else body.document_pages)
+        incoming.setdefault("document_text", first(body.document_text, body.documentText, body.text, body.content))
+        incoming.setdefault("filename", first(body.filename, body.document_filename))
+        incoming.setdefault("document_version", body.document_version)
 
-    container
-        .querySelectorAll(
-            "[data-view-record]"
-        )
-        .forEach(button=>{
+    payload = normalize_payload(incoming)
+    if not payload["pages"] and not payload["document_text"]:
+        raise HTTPException(status_code=400, detail="DOCUMENT_TEXT_REQUIRED")
 
-            button.addEventListener(
-                "click",
-                ()=>{
-                    viewSavedRecord(
-                        backOfficeRecords[
-                            Number(
-                                button.dataset.viewRecord
-                            )
-                        ]
-                    );
-                }
-            );
-        });
+    # MAKE PAYMENT creates the product record first, then saves the exact
+    # reviewed content. It does not depend on I HAVE MADE PAYMENT.
+    product = upsert_product({
+        "service": service,
+        "document_title": title,
+        "customer_name": body.customer_name,
+        "customer_id": body.customer_id,
+        "amount": body.amount,
+        "currency": body.currency or "NGN",
+        "document_version": body.document_version,
+        "document_payload": payload,
+    })
 
-    container
-        .querySelectorAll(
-            "[data-activate-record]"
-        )
-        .forEach(button=>{
+    saved = existing_saved_file(product)
+    if not saved:
+        saved = save_exact_snapshot(service, title, payload, product)
+        store_saved_path(service, title, saved)
+        product = get_product(service, title) or product
 
-            button.addEventListener(
-                "click",
-                ()=>{
-                    activateBackOfficeDownload(
-                        backOfficeRecords[
-                            Number(
-                                button.dataset.activateRecord
-                            )
-                        ],
-                        button
-                    );
-                }
-            );
-        });
-}
-
-async function viewSavedRecord(record){
-
-    if(!record){
-        return;
+    # Payment record is prepared here, not by I HAVE MADE PAYMENT.
+    payment = ensure_payment_record(product)
+    return {
+        "ok": True,
+        "message": "Payment prepared successfully. Your exact reviewed document is saved.",
+        "product": public_product(product),
+        "payment": payment,
+        "saved_document": True,
+        "download_unlocked": bool(product.get("download_unlocked")),
+        "delivery": delivery_channels(request, product),
     }
 
-    const serviceName =
-        clean(
-            record.service
-        );
 
-    const title =
-        clean(
-            record.document_title
-        );
+@app.post("/api/payment/report")
+def payment_report(body: PaymentReportRequest):
+    """I HAVE MADE PAYMENT action only: report an already-prepared payment.
 
-    try{
+    It does NOT create payment preparation. It does NOT replace MAKE PAYMENT.
+    """
+    service = clean(body.service)
+    title = clean(body.document_title)
+    product = get_product(service, title)
+    if not product:
+        # Deliberately do not create a payment here. The customer must first
+        # use MAKE PAYMENT.
+        raise HTTPException(status_code=404, detail="PAYMENT_NOT_PREPARED")
 
-        const key =
-            clean(
-                $("backOfficeKey").value
-            );
+    # Recover a stale saved path if necessary, but never create a payment
+    # record here if MAKE PAYMENT has not prepared one.
+    product = repair_saved_snapshot(product)
+    payment = get_payment(service, title)
+    if not payment:
+        raise HTTPException(status_code=404, detail="PAYMENT_NOT_PREPARED")
 
-        const query =
-            "?service=" +
-            encodeURIComponent(serviceName) +
-            "&title=" +
-            encodeURIComponent(title);
+    payment = update_payment(service, title, "payment_reported",
+                             reported_at=now_iso(), notes=body.note)
+    return {"ok": True,
+            "message": "Payment reported. Customer Care will verify it.",
+            "product": public_product(product), "payment": payment,
+            "saved_document": True,
+            "download_unlocked": bool(product.get("download_unlocked"))}
 
-        const data =
-            await apiGetWithHeaders(
-                "/api/back-office/document" +
-                query,
-                {
-                    "X-Back-Office-Key":
-                        key
-                }
-            );
 
-        $
+@app.get("/api/payment/status")
+def payment_status(service: str, title: str, request: Request):
+    product = get_product(service, title)
+    if not product:
+        return {"ok": True, "found": False, "product": public_product(None), "payment": None}
+    product = repair_saved_snapshot(product)
+    return {"ok": True, "found": True, "product": public_product(product),
+            "payment": get_payment(service, title), "delivery": delivery_channels(request, product)}
+
+
+@app.post("/api/payment/complete")
+def payment_complete(body: PaymentCompleteRequest):
+    product = get_product(body.service, body.document_title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    payment = update_payment(body.service, body.document_title, "payment_verified", verified_at=now_iso())
+    return {"ok": True, "message": "Payment marked verified.", "product": public_product(product),
+            "payment": payment, "download_unlocked": bool(product.get("download_unlocked"))}
+
+
+@app.get("/api/customer-care/payments")
+def customer_care_payments(x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    c = db(PAYMENT_DB_PATH)
+    rows = c.execute("SELECT * FROM payment_orders ORDER BY updated_at DESC,id DESC").fetchall()
+    c.close()
+    return {"ok": True, "payments": [dict(row) for row in rows]}
+
+
+@app.post("/api/customer-care/payment/verify")
+def customer_care_verify(body: PaymentCompleteRequest, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(body.service, body.document_title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    payment = update_payment(body.service, body.document_title, "payment_verified", verified_at=now_iso())
+    return {"ok": True, "message": "Payment verified. Download still requires activation.",
+            "product": public_product(product), "payment": payment,
+            "download_unlocked": bool(product.get("download_unlocked"))}
+
+
+@app.post("/api/back-office/login")
+def back_office_login(x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    return {"ok": True, "authenticated": True, "message": "Customer Care Back Office access granted."}
+
+
+def back_office_payment_channels(product: dict, payment: Optional[dict]) -> list[dict]:
+    method=clean((payment or {}).get("payment_method") or "bank_transfer") or "bank_transfer"
+    return [
+        {"id":"bank_transfer","name":"Bank Transfer","type":"payment","available":True,"selected":method=="bank_transfer"},
+        {"id":"cash_manual","name":"Cash / Manual Payment","type":"payment","available":True,"selected":method in {"cash","manual","cash_manual"}},
+        {"id":"recorded_method","name":"Recorded Payment Method","type":"payment","available":True,"selected":True,"value":method}
+    ]
+
+@app.get("/api/back-office/payments")
+def back_office_payments(request: Request, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    c=db(PRODUCT_DB_PATH); rows=c.execute("SELECT * FROM document_products ORDER BY updated_at DESC,id DESC").fetchall(); c.close()
+    items=[]
+    for row in rows:
+        product=repair_saved_snapshot(dict(row)); payment=get_payment(product.get("service"),product.get("document_title")); item=back_office_product(product)
+        item["payment"]=payment; item["payment_channels"]=back_office_payment_channels(product,payment); item["delivery"]=back_office_delivery_channels(request,product); items.append(item)
+    return {"ok":True,"payments":items,"records":items,"items":items,"documents":items,"summary":{"saved":sum(1 for x in items if x.get("saved_document")),"total_documents":len(items),"reported":sum(1 for x in items if x["payment_reported"]),"verified":sum(1 for x in items if x["payment_verified"]),"activated":sum(1 for x in items if x["download_unlocked"])}}
+
+
+@app.get("/api/back-office/jobs")
+def back_office_jobs(x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    c = db(PRODUCT_DB_PATH)
+    rows = c.execute("SELECT * FROM document_products ORDER BY updated_at DESC,id DESC").fetchall()
+    c.close()
+    return {"ok": True, "jobs": [dict(row) for row in rows]}
+
+
+@app.get("/api/back-office/payment-channels")
+def back_office_payment_channels_endpoint(service: str, title: str, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    payment = get_payment(service, title)
+    return {
+        "ok": True,
+        "service": product.get("service"),
+        "document_title": product.get("document_title"),
+        "payment": payment,
+        "payment_channels": back_office_payment_channels(product, payment),
+    }
+
+
+@app.get("/api/back-office/payment")
+def back_office_payment(service: str, title: str, request: Request, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    return {"ok": True, "product": back_office_product(product), "payment": get_payment(service, title), "payment_channels": back_office_payment_channels(product, get_payment(service, title)), "delivery": back_office_delivery_channels(request, product)}
+
+
+@app.get("/api/back-office/document-info")
+def back_office_document_info(service: str, title: str, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    saved = existing_saved_file(product)
+    payload = clean_saved_document_payload(from_json(product.get("document_payload"), {}))
+    return {"ok": True, "service": product["service"], "document_title": product["document_title"],
+            "filename": product.get("document_filename"), "pages": payload["page_count"],
+            "saved_document": bool(saved), "saved_path": str(saved) if saved else "",
+            "document_text": payload["document_text"], "document_pages": payload["pages"],
+            "download_unlocked": bool(product.get("download_unlocked"))}
+
+
+@app.get("/api/back-office/document")
+def back_office_document(service: str, title: str, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    payload = clean_saved_document_payload(from_json(product.get("document_payload"), {}))
+    return {"ok": True, "service": product["service"], "document_title": product["document_title"],
+            "filename": product.get("document_filename"), "pages": payload["pages"],
+            "page_count": payload["page_count"], "document_text": payload["document_text"],
+            "saved_document": bool(existing_saved_file(product)),
+            "download_unlocked": bool(product.get("download_unlocked"))}
+
+
+@app.get("/api/back-office/document-content")
+def back_office_document_content(service: str, title: str, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product=get_product(service,title)
+    if not product: raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product=repair_saved_snapshot(product); payload=clean_saved_document_payload(from_json(product.get("document_payload"), {}))
+    return {"ok":True,"service":product["service"],"document_title":product["document_title"],"filename":product.get("document_filename"),"pages":payload["pages"],"page_count":payload["page_count"],"document_text":payload["document_text"],"saved_document":bool(existing_saved_file(product)),"customer_download_unlocked":bool(product.get("download_unlocked"))}
+
+
+@app.post("/api/back-office/payment/verify")
+def back_office_payment_verify(body: PaymentCompleteRequest, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(body.service, body.document_title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    payment = update_payment(body.service, body.document_title, "payment_verified", verified_at=now_iso())
+    return {"ok": True, "message": "Payment verified. Activate download separately when ready.",
+            "product": public_product(product), "payment": payment,
+            "download_unlocked": bool(product.get("download_unlocked"))}
+
+
+@app.post("/api/back-office/activate-download")
+def back_office_activate(body: BackOfficeActivateRequest, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    if not body.verified:
+        raise HTTPException(status_code=400, detail="VERIFICATION_REQUIRED")
+    product = get_product(body.service, body.document_title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    if not existing_saved_file(product):
+        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
+    product = activate_download(body.service, body.document_title)
+    return {"ok": True, "message": "Download activated.", "product": public_product(product),
+            "download_unlocked": True}
+
+
+@app.post("/api/back-office/payment/reject")
+def back_office_reject(body: BackOfficeRejectRequest, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(body.service, body.document_title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    payment = update_payment(body.service, body.document_title, "payment_rejected",
+                             rejected_at=now_iso(), notes=body.reason)
+    return {"ok": True, "message": "Payment marked rejected.", "product": public_product(product),
+            "payment": payment, "download_unlocked": bool(product.get("download_unlocked"))}
+
+
+@app.get("/api/download")
+def download_document(service: str, title: str):
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    if not bool(product.get("download_unlocked")):
+        raise HTTPException(status_code=403, detail="DOWNLOAD_NOT_UNLOCKED")
+    product = repair_saved_snapshot(product)
+    saved = existing_saved_file(product)
+    if not saved:
+        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
+    c = db(PRODUCT_DB_PATH)
+    c.execute("""UPDATE document_products SET download_count=COALESCE(download_count,0)+1,
+                 downloaded_at=?,updated_at=? WHERE business_key=?""",
+              (now_iso(), now_iso(), business_key(service, title)))
+    c.commit()
+    c.close()
+    media = "application/vnd.openxmlformats-officedocument.wordprocessingml.document" if saved.suffix.lower() == ".docx" else "application/octet-stream"
+    return FileResponse(str(saved), filename=saved.name, media_type=media)
+
+
+@app.get("/api/delivery/channels")
+def get_delivery_channels(service: str, title: str, request: Request):
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    if not existing_saved_file(product):
+        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
+    return {"ok": True, "product": public_product(product), **delivery_channels(request, product)}
+
+
+@app.post("/api/delivery/prepare")
+def prepare_delivery(body: DeliveryRequest, request: Request):
+    product = get_product(body.service, body.document_title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    selected = select_channel(delivery_channels(request, product), body.channel)
+    if not selected:
+        raise HTTPException(status_code=404, detail="DELIVERY_CHANNEL_NOT_FOUND")
+    log_delivery(product, selected["id"], "prepared", {"url": selected.get("url")})
+    return {"ok": True, "channel": selected, "product": public_product(product)}
+
+
+@app.get("/api/back-office/delivery-channels")
+def back_office_delivery_channels_endpoint(service: str, title: str, request: Request, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    return {
+        "ok": True,
+        "product": back_office_product(product),
+        "delivery": back_office_delivery_channels(request, product),
+    }
+
+
+@app.get("/api/back-office/delivery")
+def back_office_delivery(service: str, title: str, channel: str, request: Request,
+                         x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    selected = select_channel(back_office_delivery_channels(request, product), channel)
+    if not selected:
+        raise HTTPException(status_code=404, detail="DELIVERY_CHANNEL_NOT_FOUND")
+    log_delivery(product, selected["id"], "ready", {"url": selected.get("url")})
+    return {"ok": True, "channel": selected, "product": back_office_product(product)}
+
+
+@app.get("/api/back-office/delivery-file")
+def back_office_delivery_file(service: str, title: str, x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(service, title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    saved = existing_saved_file(product)
+    if not saved:
+        raise HTTPException(status_code=404, detail="SAVED_DOCUMENT_FILE_MISSING")
+    media = "application/vnd.openxmlformats-officedocument.wordprocessingml.document" if saved.suffix.lower() == ".docx" else "application/octet-stream"
+    return FileResponse(str(saved), filename=saved.name, media_type=media)
+
+
+@app.get("/api/back-office/delivery-history")
+def delivery_history(service: Optional[str] = None, title: Optional[str] = None,
+                     x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    c = db(PRODUCT_DB_PATH)
+    if service and title:
+        rows = c.execute("SELECT * FROM delivery_events WHERE business_key=? ORDER BY created_at DESC,id DESC",
+                         (business_key(service, title),)).fetchall()
+    else:
+        rows = c.execute("SELECT * FROM delivery_events ORDER BY created_at DESC,id DESC").fetchall()
+    c.close()
+    return {"ok": True, "events": [dict(row) for row in rows]}
+
+
+@app.get("/api/product/status")
+def product_status(service: str, title: str, request: Request):
+    product = get_product(service, title)
+    if not product:
+        return {"ok": True, "found": False, "product": public_product(None)}
+    product = repair_saved_snapshot(product)
+    return {"ok": True, "found": True, "product": public_product(product),
+            "delivery": delivery_channels(request, product)}
+
+
+@app.get("/health")
+def health():
+    return {"ok": True, "service": "Naija Pocket Business Center Payment API",
+            "version": APP_VERSION, "back_office_key_configured": True}
+
+
+@app.get("/")
+def root():
+    return {"ok": True, "service": "Naija Pocket Business Center Payment API",
+            "version": APP_VERSION, "message": "Payment, saved-document, Customer Care and delivery API is running."}
+
+
+@app.post("/api/back-office/delivery")
+def back_office_delivery_post(body: DeliveryRequest, request: Request,
+                             x_back_office_key: str = Header(default="")):
+    require_back_office(x_back_office_key)
+    product = get_product(body.service, body.document_title)
+    if not product:
+        raise HTTPException(status_code=404, detail="PRODUCT_NOT_FOUND")
+    product = repair_saved_snapshot(product)
+    # Back Office delivery is independent of customer download activation.
+    # Customer Service may retrieve/send the saved document even when payment
+    # has not yet been verified or the customer download is still locked.
+    selected = select_channel(back_office_delivery_channels(request, product), body.channel)
+    if not selected:
+        raise HTTPException(status_code=404, detail="DELIVERY_CHANNEL_NOT_FOUND")
+    log_delivery(product, selected["id"], "ready", {"url": selected.get("url")})
+    return {"ok": True, "status": "ready", "channel": selected,
+            "product": back_office_product(product),
+            "message": "The exact saved document is ready for Back Office delivery through this channel."}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", "8000"))) 
