@@ -12,28 +12,8 @@ body{min-height:100vh}
 button,input{font:inherit}
 button{cursor:pointer}
 .page{min-height:100vh;background:#090909}
-.topbar{
-  padding:16px;
-  background:#000;
-  border-bottom:1px solid #262626;
-  position:sticky;
-  top:0;
-  z-index:10;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px
-}
-.topbar-office{
-  border:1px solid #3b3b3b;
-  background:#171717;
-  color:#fff;
-  border-radius:10px;
-  padding:9px 11px;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.06em
-}
+.topbar{padding:16px;background:#000;border-bottom:1px solid #262626;position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar-office{border:1px solid #3b3b3b;background:#171717;color:#fff;border-radius:10px;padding:9px 11px;font-size:11px;font-weight:900;letter-spacing:.06em}
 .topbar-office:active{background:#242424}
 .brand{font-weight:800;font-size:20px}
 .subbrand{font-size:13px;color:#aaa;margin-top:4px}
@@ -47,304 +27,84 @@ button{cursor:pointer}
 .value{font-size:20px;font-weight:800;margin-top:5px}
 .amount{font-size:36px;font-weight:900;margin-top:5px}
 .muted{color:#aaa;line-height:1.5}
-.status{
-  padding:12px 14px;
-  border-radius:12px;
-  background:#181818;
-  border:1px solid #2b2b2b;
-  margin-top:12px;
-  white-space:pre-wrap;
-  line-height:1.45
-}
+.status{padding:12px 14px;border-radius:12px;background:#181818;border:1px solid #2b2b2b;margin-top:12px;white-space:pre-wrap;line-height:1.45}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
 .btn{border:0;border-radius:12px;padding:14px 15px;font-weight:800;background:#e50914;color:#fff}
 .btn.secondary{background:#262626}
 .btn.green{background:#0b7a3b}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .contact{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.contact a{
-  display:block;
-  text-decoration:none;
-  color:#fff;
-  background:#191919;
-  border:1px solid #303030;
-  border-radius:12px;
-  padding:13px
-}
+.contact a{display:block;text-decoration:none;color:#fff;background:#191919;border:1px solid #303030;border-radius:12px;padding:13px}
 .contact small{display:block;color:#999;margin-top:3px}
 .delivery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .channel{background:#191919;border:1px solid #303030;border-radius:14px;padding:14px}
 .channel strong{display:block;margin-bottom:5px}
 .channel span{display:block;color:#aaa;font-size:12px;line-height:1.4}
-.channel button{
-  margin-top:10px;
-  width:100%;
-  padding:10px;
-  border:0;
-  border-radius:10px;
-  background:#e50914;
-  color:#fff;
-  font-weight:800
-}
+.channel button{margin-top:10px;width:100%;padding:10px;border:0;border-radius:10px;background:#e50914;color:#fff;font-weight:800}
 .channel button.secondary{background:#303030}
-.notice{
-  padding:12px;
-  border-radius:12px;
-  background:#161616;
-  border:1px solid #2c2c2c;
-  color:#bbb;
-  line-height:1.5
-}
+.notice{padding:12px;border-radius:12px;background:#161616;border:1px solid #2c2c2c;color:#bbb;line-height:1.5}
 .error{color:#ff8c8c}
 .success{color:#8ff0b4}
-
-.email-box{
-  background:#161616;
-  border:1px solid #303030;
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:14px
-}
-.email-box label{
-  display:block;
-  color:#fff;
-  font-size:13px;
-  font-weight:800;
-  margin-bottom:7px
-}
-.email-box .email-help{
-  color:#999;
-  font-size:12px;
-  line-height:1.45;
-  margin-bottom:10px
-}
-.email-box input{
-  width:100%;
-  background:#0d0d0d;
-  border:1px solid #3a3a3a;
-  color:#fff;
-  border-radius:10px;
-  padding:12px;
-  outline:none
-}
+.email-box{background:#161616;border:1px solid #303030;border-radius:14px;padding:14px;margin-bottom:14px}
+.email-box label{display:block;color:#fff;font-size:13px;font-weight:800;margin-bottom:7px}
+.email-box .email-help{color:#999;font-size:12px;line-height:1.45;margin-bottom:10px}
+.email-box input{width:100%;background:#0d0d0d;border:1px solid #3a3a3a;color:#fff;border-radius:10px;padding:12px;outline:none}
 .email-box input:focus{border-color:#e50914}
 .email-box input::placeholder{color:#777}
-
 #backOfficeView{background:#070707;min-height:100vh}
-.bo-header{
-  background:#000;
-  padding:18px 16px;
-  border-bottom:1px solid #262626;
-  position:sticky;
-  top:0;
-  z-index:20
-}
-.bo-head-row{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  align-items:center
-}
+.bo-header{background:#000;padding:18px 16px;border-bottom:1px solid #262626;position:sticky;top:0;z-index:20}
+.bo-head-row{display:flex;justify-content:space-between;gap:12px;align-items:center}
 .bo-title{font-size:23px;font-weight:900}
-.bo-controls{
-  display:grid;
-  grid-template-columns:1fr auto auto;
-  gap:9px;
-  margin-top:13px
-}
-.bo-controls input{
-  min-width:0;
-  background:#151515;
-  border:1px solid #333;
-  color:#fff;
-  border-radius:10px;
-  padding:12px
-}
-.bo-controls button{
-  border:0;
-  border-radius:10px;
-  padding:12px 14px;
-  background:#e50914;
-  color:#fff;
-  font-weight:800
-}
+.bo-controls{display:grid;grid-template-columns:1fr auto auto;gap:9px;margin-top:13px}
+.bo-controls input{min-width:0;background:#151515;border:1px solid #333;color:#fff;border-radius:10px;padding:12px}
+.bo-controls button{border:0;border-radius:10px;padding:12px 14px;background:#e50914;color:#fff;font-weight:800}
 .bo-controls button.secondary{background:#282828}
-.summary{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:9px;
-  margin-bottom:14px
-}
-.summary .box{
-  background:#111;
-  border:1px solid #292929;
-  border-radius:14px;
-  padding:14px
-}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.summary .box{background:#111;border:1px solid #292929;border-radius:14px;padding:14px}
 .summary .n{font-size:25px;font-weight:900}
 .summary .t{font-size:11px;color:#999;text-transform:uppercase;margin-top:3px}
-.record{
-  background:#111;
-  border:1px solid #2c2c2c;
-  border-radius:16px;
-  margin-bottom:12px;
-  overflow:hidden
-}
+.record{background:#111;border:1px solid #2c2c2c;border-radius:16px;margin-bottom:12px;overflow:hidden}
 .record-main{padding:15px}
 .record-title{font-size:18px;font-weight:900}
 .record-service{color:#aaa;margin-top:4px}
-.record-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
-  margin-top:12px
-}
+.record-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
 .mini{background:#181818;border-radius:10px;padding:10px}
 .mini b{display:block;font-size:12px}
 .mini span{display:block;color:#aaa;font-size:12px;margin-top:3px}
-.record-actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  padding:0 15px 15px
-}
-.record-actions button{
-  border:0;
-  border-radius:10px;
-  padding:11px;
-  background:#e50914;
-  color:#fff;
-  font-weight:800
-}
+.record-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 15px 15px}
+.record-actions button{border:0;border-radius:10px;padding:11px;background:#e50914;color:#fff;font-weight:800}
 .record-actions button.secondary{background:#303030}
 .record-actions button.green{background:#0b7a3b}
-.bo-document{
-  white-space:normal;
-  background:#0c0c0c;
-  border:1px solid #292929;
-  border-radius:14px;
-  padding:18px;
-  line-height:1.65;
-  overflow:auto
-}
-.doc-page{
-  background:#fff;
-  color:#111;
-  border-radius:4px;
-  padding:28px 24px;
-  margin-bottom:14px;
-  min-height:180px;
-  box-shadow:0 2px 10px rgba(0,0,0,.25)
-}
+.bo-document{white-space:normal;background:#0c0c0c;border:1px solid #292929;border-radius:14px;padding:18px;line-height:1.65;overflow:auto}
+.doc-page{background:#fff;color:#111;border-radius:4px;padding:28px 24px;margin-bottom:14px;min-height:180px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
 .doc-page:last-child{margin-bottom:0}
 .doc-page p{margin:0 0 10px;white-space:pre-wrap}
 .doc-page p:last-child{margin-bottom:0}
-.bo-delivery{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px
-}
+.bo-delivery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .bo-delivery .channel{display:flex;flex-direction:column}
 .bo-delivery .channel button{margin-top:auto}
 .bo-footer{color:#777;font-size:12px;text-align:center;padding:25px 10px}
 .saved-preview-card{padding:0;overflow:hidden}
-.preview-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  padding:18px 18px 10px
-}
+.preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 18px 10px}
 .preview-head h2{margin:5px 0 0;font-size:20px}
-.saved-badge{
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.1em;
-  padding:7px 9px;
-  border-radius:999px;
-  background:#201b0b;
-  border:1px solid #66551e;
-  color:#e7cc70
-}
+.saved-badge{font-size:10px;font-weight:900;letter-spacing:.1em;padding:7px 9px;border-radius:999px;background:#201b0b;border:1px solid #66551e;color:#e7cc70}
 .preview-note{padding:0 18px 14px;color:#999;font-size:12px;line-height:1.5}
-.customer-document-preview{
-  margin:0 12px 12px;
-  padding:12px;
-  background:#0a0a0a;
-  border:1px solid #292929;
-  border-radius:14px;
-  max-height:310px;
-  overflow:hidden
-}
-.customer-document-page{
-  background:#fff;
-  color:#111;
-  border-radius:4px;
-  padding:22px 20px;
-  margin-bottom:0;
-  line-height:1.55;
-  box-shadow:0 4px 18px rgba(0,0,0,.22);
-  height:260px;
-  overflow:hidden
-}
-.customer-document-page p{
-  margin:0 0 10px;
-  white-space:pre-wrap
-}
+.customer-document-preview{margin:0 12px 12px;padding:12px;background:#0a0a0a;border:1px solid #292929;border-radius:14px;max-height:310px;overflow:hidden}
+.customer-document-page{background:#fff;color:#111;border-radius:4px;padding:22px 20px;margin-bottom:0;line-height:1.55;box-shadow:0 4px 18px rgba(0,0,0,.22);height:260px;overflow:hidden}
+.customer-document-page p{margin:0 0 10px;white-space:pre-wrap}
 .customer-document-page p:last-child{margin-bottom:0}
-.preview-page-label{
-  font-size:10px;
-  color:#777;
-  margin-bottom:12px;
-  text-transform:uppercase;
-  letter-spacing:.06em
-}
+.preview-page-label{font-size:10px;color:#777;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em}
 .preview-empty{color:#aaa;padding:20px;text-align:center}
 .backoffice-entry{margin-top:10px}
-
-.bo-email-box{
-  background:#161616;
-  border:1px solid #303030;
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:12px
-}
-.bo-email-box label{
-  display:block;
-  color:#fff;
-  font-size:13px;
-  font-weight:800;
-  margin-bottom:7px
-}
-.bo-email-box .email-help{
-  color:#999;
-  font-size:12px;
-  line-height:1.45;
-  margin-bottom:10px
-}
-.bo-email-box input{
-  width:100%;
-  background:#0d0d0d;
-  border:1px solid #3a3a3a;
-  color:#fff;
-  border-radius:10px;
-  padding:12px;
-  outline:none
-}
+.bo-email-box{background:#161616;border:1px solid #303030;border-radius:14px;padding:14px;margin-bottom:12px}
+.bo-email-box label{display:block;color:#fff;font-size:13px;font-weight:800;margin-bottom:7px}
+.bo-email-box .email-help{color:#999;font-size:12px;line-height:1.45;margin-bottom:10px}
+.bo-email-box input{width:100%;background:#0d0d0d;border:1px solid #3a3a3a;color:#fff;border-radius:10px;padding:12px;outline:none}
 .bo-email-box input:focus{border-color:#e50914}
 .bo-email-box input::placeholder{color:#777}
-
 .hidden-file{display:none}
-
 @media(max-width:650px){
-  .actions,
-  .contact,
-  .delivery-grid,
-  .bo-controls,
-  .bo-delivery,
-  .record-grid{
-    grid-template-columns:1fr
-  }
+  .actions,.contact,.delivery-grid,.bo-controls,.bo-delivery,.record-grid{grid-template-columns:1fr}
   .summary{grid-template-columns:repeat(3,1fr)}
   .summary .box{padding:10px}
   .summary .n{font-size:20px}
@@ -421,9 +181,7 @@ button{cursor:pointer}
 
         <div class="email-box" style="margin-top:10px;margin-bottom:0">
 
-          <label for="customerEmail">
-            Email Address
-          </label>
+          <label for="customerEmail">Email Address</label>
 
           <div class="email-help">
             Enter the email address where your completed document can be delivered.
@@ -571,7 +329,6 @@ button{cursor:pointer}
 
     <section id="boRecords"></section>
 
-
     <section id="boDocumentPanel" class="card hidden">
 
       <h2 id="boDocumentTitle">Saved Document</h2>
@@ -639,8 +396,22 @@ const CUSTOMER_CARE_PHONE="+234 805 707 3891";
 
 const params=new URLSearchParams(location.search);
 const mode=(params.get("mode")||"").trim().toLowerCase();
-const serviceParam=(params.get("service")||"").trim();
-const titleParam=(params.get("title")||params.get("document_title")||"").trim();
+
+const serviceParam=
+  (
+    params.get("service")||
+    params.get("service_name")||
+    ""
+  ).trim();
+
+const titleParam=
+  (
+    params.get("title")||
+    params.get("document_title")||
+    params.get("documentTitle")||
+    params.get("name")||
+    ""
+  ).trim();
 
 let service=serviceParam,
     documentTitle=titleParam,
@@ -686,7 +457,151 @@ function clearBackOfficeKey(){
 }
 
 
+/*
+ * Recover the SAME service/title already supplied to the
+ * Payment & Delivery page without changing the payment API
+ * or the MAKE PAYMENT operation.
+ *
+ * The URL remains the first source.
+ * Browser storage and the previous page are only fallback
+ * sources when the handoff omitted the title parameter.
+ */
+function recoverPaymentIdentity(){
+
+  if(service&&documentTitle)
+    return true;
+
+  const storageKeys=[
+    "NPBC_PAYMENT_SERVICE",
+    "NPBC_SERVICE",
+    "service"
+  ];
+
+  const titleKeys=[
+    "NPBC_PAYMENT_DOCUMENT_TITLE",
+    "NPBC_DOCUMENT_TITLE",
+    "NPBC_TITLE",
+    "document_title",
+    "documentTitle",
+    "title"
+  ];
+
+  try{
+
+    if(!service){
+
+      for(const key of storageKeys){
+
+        const v=
+          clean(
+            sessionStorage.getItem(key)||
+            localStorage.getItem(key)
+          );
+
+        if(v){
+          service=v;
+          break
+        }
+      }
+    }
+
+    if(!documentTitle){
+
+      for(const key of titleKeys){
+
+        const v=
+          clean(
+            sessionStorage.getItem(key)||
+            localStorage.getItem(key)
+          );
+
+        if(v){
+          documentTitle=v;
+          break
+        }
+      }
+    }
+
+  }catch(e){
+    /* Storage may be unavailable. Continue to referrer. */
+  }
+
+  /*
+   * If the previous page already carried the service/title
+   * in its own URL, recover them from that handoff as a
+   * final browser-side fallback.
+   */
+  if(!service||!documentTitle){
+
+    try{
+
+      const ref=
+        clean(document.referrer);
+
+      if(ref){
+
+        const refUrl=
+          new URL(
+            ref,
+            location.href
+          );
+
+        if(!service){
+
+          service=
+            clean(
+              refUrl.searchParams.get("service")||
+              refUrl.searchParams.get("service_name")||
+              ""
+            );
+        }
+
+        if(!documentTitle){
+
+          documentTitle=
+            clean(
+              refUrl.searchParams.get("title")||
+              refUrl.searchParams.get("document_title")||
+              refUrl.searchParams.get("documentTitle")||
+              refUrl.searchParams.get("name")||
+              ""
+            );
+        }
+      }
+
+    }catch(e){
+      /* Keep the original values if referrer parsing fails. */
+    }
+  }
+
+  /*
+   * Preserve the recovered identity for this payment session.
+   * This does not create or alter a payment.
+   */
+  try{
+
+    if(service)
+      sessionStorage.setItem(
+        "NPBC_PAYMENT_SERVICE",
+        service
+      );
+
+    if(documentTitle)
+      sessionStorage.setItem(
+        "NPBC_PAYMENT_DOCUMENT_TITLE",
+        documentTitle
+      );
+
+  }catch(e){
+    /* Storage is optional. */
+  }
+
+  return !!service&&!!documentTitle
+}
+
+
 async function api(path,options={}){
+
   const r=await fetch(
     PAYMENT_API_BASE+path,
     {
@@ -710,6 +625,9 @@ async function api(path,options={}){
 
 
 function customerIdentity(){
+
+  recoverPaymentIdentity();
+
   if(!service||!documentTitle)
     return false;
 
@@ -848,6 +766,8 @@ function renderCustomerDocument(p){
 
 
 async function loadCustomer(){
+
+  recoverPaymentIdentity();
 
   if(!customerIdentity()){
 
@@ -2002,3 +1922,9 @@ else
 </script>
 </body>
 </html>
+
+The important change is not inside "createPayment()". That function remains the same payment-creation operation.
+
+The fix is the new identity recovery before "loadCustomer()"/"customerIdentity()" runs. It accepts the title under the existing names plus common handoff/storage forms, so the Payment & Delivery page doesn't immediately discard the document identity.
+
+Replace only "payment.html" with this file and test the same MAKE PAYMENT path again.
