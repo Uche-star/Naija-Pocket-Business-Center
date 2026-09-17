@@ -19,11 +19,9 @@
   --muted:#a5a5a5;
   --muted2:#777;
   --line:rgba(212,175,55,.22);
-  --green:#008000;
   --success:#31c56b;
   --warning:#e5b94b;
   --danger:#e05a5a;
-  --red:#b00020;
   --shadow:0 24px 70px rgba(0,0,0,.55);
 }
 
@@ -1279,6 +1277,10 @@ id="documentActionMessage">
 <script>
 "use strict";
 
+/* ============================================================
+   CONFIGURATION
+   ============================================================ */
+
 const PAYMENT_API_BASE =
     "https://naija-pocket-payment-api.onrender.com";
 
@@ -1298,6 +1300,11 @@ const isBackOfficeMode =
     initialMode === "backoffice" ||
     initialMode === "admin";
 
+
+/* ============================================================
+   STATE
+   ============================================================ */
+
 const snapshotKeys = [
     "paymentSnapshot",
     "documentSnapshot",
@@ -1309,7 +1316,11 @@ const snapshotKeys = [
     "serviceSnapshot",
     "completeDocument",
     "completedDocument",
-    "documentState"
+    "documentState",
+    "reviewedDocument",
+    "reviewed_document",
+    "finalDocument",
+    "final_document"
 ];
 
 let snapshot = null;
@@ -1345,8 +1356,21 @@ function clean(value){
 }
 
 function numberValue(value){
-    const n = Number(value);
-    return Number.isFinite(n) ? n : 0;
+
+    if(
+        typeof value === "string" &&
+        value.includes(",")
+    ){
+        value =
+            value.replace(/,/g,"");
+    }
+
+    const n =
+        Number(value);
+
+    return Number.isFinite(n)
+        ? n
+        : 0;
 }
 
 function $(id){
@@ -1368,13 +1392,15 @@ function safeJsonParse(value){
 
 function money(value){
 
-    const n = numberValue(value);
+    const n =
+        numberValue(value);
 
     if(!n){
         return "₦0";
     }
 
-    return "₦" + n.toLocaleString("en-NG");
+    return "₦" +
+        n.toLocaleString("en-NG");
 }
 
 function escapeHtml(value){
@@ -1387,16 +1413,24 @@ function escapeHtml(value){
         .replace(/'/g,"&#039;");
 }
 
-function showMessage(elementId,text,type=""){
+function showMessage(
+    elementId,
+    text,
+    type=""
+){
 
-    const element = $(elementId);
+    const element =
+        $(elementId);
 
     if(!element){
         return;
     }
 
-    element.textContent = text || "";
-    element.className = "message";
+    element.textContent =
+        text || "";
+
+    element.className =
+        "message";
 
     if(text){
         element.classList.add("show");
@@ -1434,6 +1468,12 @@ function readSnapshot(){
 
     const sources = [];
 
+    /*
+      Read all known localStorage locations.
+      We do not stop at the first object because an old
+      snapshot may exist beside the latest reviewed snapshot.
+    */
+
     for(const key of snapshotKeys){
 
         try{
@@ -1441,19 +1481,30 @@ function readSnapshot(){
             const value =
                 localStorage.getItem(key);
 
-            if(value){
-
-                const parsed =
-                    safeJsonParse(value);
-
-                if(parsed){
-                    sources.push(parsed);
-                }
-
+            if(!value){
+                continue;
             }
 
-        }catch{}
+            const parsed =
+                safeJsonParse(value);
+
+            if(parsed){
+                sources.push(parsed);
+            }
+
+        }catch(error){
+
+            console.warn(
+                "Snapshot read:",
+                key,
+                error
+            );
+        }
     }
+
+    /*
+      window.name recovery.
+    */
 
     try{
 
@@ -1470,10 +1521,7 @@ function readSnapshot(){
     }catch{}
 
     /*
-      Also recover state from the query string.
-      This allows the review page to pass the document
-      directly to Payment & Delivery without depending
-      on one particular localStorage key.
+      JSON snapshot passed in URL.
     */
 
     const queryObjectKeys = [
@@ -1483,7 +1531,9 @@ function readSnapshot(){
         "snapshot",
         "state",
         "data",
-        "payload"
+        "payload",
+        "review",
+        "reviewData"
     ];
 
     for(const key of queryObjectKeys){
@@ -1493,41 +1543,48 @@ function readSnapshot(){
             const raw =
                 params.get(key);
 
-            if(raw){
+            if(!raw){
+                continue;
+            }
 
-                let parsed =
-                    safeJsonParse(raw);
+            let parsed =
+                safeJsonParse(raw);
 
-                if(!parsed){
+            if(!parsed){
+
+                try{
 
                     parsed =
                         safeJsonParse(
                             decodeURIComponent(raw)
                         );
-                }
 
-                if(parsed){
-                    sources.push(parsed);
-                }
+                }catch{}
+            }
+
+            if(parsed){
+                sources.push(parsed);
             }
 
         }catch{}
     }
 
     /*
-      Direct query-string fields are kept as a separate
-      source so the title/service/amount survive even
-      when no JSON snapshot was passed.
+      Direct URL fields.
     */
 
     const directQuery = {};
 
     const queryFieldMap = {
+
         service:[
             "service",
             "service_name",
-            "serviceName"
+            "serviceName",
+            "selected_service",
+            "selectedService"
         ],
+
         document_title:[
             "document_title",
             "documentTitle",
@@ -1535,6 +1592,7 @@ function readSnapshot(){
             "documentName",
             "document_name"
         ],
+
         amount:[
             "amount",
             "price",
@@ -1542,16 +1600,20 @@ function readSnapshot(){
             "total_amount",
             "totalAmount"
         ],
+
         customer_id:[
             "customer_id",
             "customerId"
         ],
+
         document_text:[
             "document_text",
             "documentText",
             "text",
-            "content"
+            "content",
+            "body"
         ],
+
         filename:[
             "filename",
             "document_filename",
@@ -1559,18 +1621,29 @@ function readSnapshot(){
             "file_name",
             "fileName"
         ],
+
         document_version:[
             "document_version",
             "documentVersion",
             "version_id",
             "versionId",
             "version"
+        ],
+
+        pages:[
+            "pages",
+            "document_pages",
+            "documentPages"
         ]
     };
 
-    for(const target of Object.keys(queryFieldMap)){
+    for(
+        const target of Object.keys(queryFieldMap)
+    ){
 
-        for(const key of queryFieldMap[target]){
+        for(
+            const key of queryFieldMap[target]
+        ){
 
             const value =
                 params.get(key);
@@ -1585,38 +1658,167 @@ function readSnapshot(){
         }
     }
 
-    if(Object.keys(directQuery).length){
+    if(
+        Object.keys(directQuery).length
+    ){
+
         sources.push(directQuery);
     }
 
-    for(const candidate of sources){
+    /*
+      Choose the richest snapshot, rather than blindly
+      using the first old localStorage object.
+    */
 
-        if(
-            candidate &&
-            typeof candidate === "object"
+    if(sources.length){
+
+        let best =
+            sources[0];
+
+        let bestScore =
+            snapshotScore(best);
+
+        for(
+            let i = 1;
+            i < sources.length;
+            i++
         ){
 
-            snapshot = candidate;
+            const score =
+                snapshotScore(
+                    sources[i]
+                );
 
-            return candidate;
+            if(score > bestScore){
+
+                best =
+                    sources[i];
+
+                bestScore =
+                    score;
+            }
         }
+
+        snapshot =
+            best;
+
+        return best;
     }
 
-    return null;
+    snapshot = {};
+
+    return snapshot;
 }
 
 
 /* ============================================================
-   DEEP STATE SEARCH
+   SNAPSHOT QUALITY
    ============================================================ */
 
-function collectObjects(root,limit=1000){
+function snapshotScore(root){
+
+    if(
+        !root ||
+        typeof root !== "object"
+    ){
+        return 0;
+    }
+
+    let score = 0;
+
+    const title =
+        findDocumentTitle(root);
+
+    const text =
+        findDeepText(
+            root,
+            [
+                "document_text",
+                "documentText",
+                "text",
+                "content",
+                "body"
+            ]
+        );
+
+    const pagesValue =
+        findDeepValue(
+            root,
+            [
+                "pages",
+                "document_pages",
+                "documentPages"
+            ]
+        );
+
+    const serviceValue =
+        findDeepText(
+            root,
+            [
+                "service",
+                "service_name",
+                "serviceName",
+                "selected_service",
+                "selectedService"
+            ]
+        );
+
+    const amountValue =
+        numberValue(
+            findDeepValue(
+                root,
+                [
+                    "amount",
+                    "price",
+                    "total",
+                    "total_amount",
+                    "totalAmount"
+                ]
+            )
+        );
+
+    if(title) score += 10;
+    if(text) score += 10;
+    if(pagesValue) score += 8;
+    if(serviceValue) score += 5;
+    if(amountValue) score += 5;
+
+    if(
+        title &&
+        text
+    ){
+        score += 20;
+    }
+
+    return score;
+}
+
+
+/* ============================================================
+   DEEP OBJECT SEARCH
+   ============================================================ */
+
+function collectObjects(
+    root,
+    limit=1500
+){
 
     const result = [];
-    const queue = [{value:root,depth:0}];
-    const seen = new WeakSet();
 
-    while(queue.length && result.length < limit){
+    const queue = [
+        {
+            value:root,
+            depth:0
+        }
+    ];
+
+    const seen =
+        new WeakSet();
+
+    while(
+        queue.length &&
+        result.length < limit
+    ){
 
         const item =
             queue.shift();
@@ -1639,13 +1841,15 @@ function collectObjects(root,limit=1000){
 
         result.push(value);
 
-        if(item.depth >= 7){
+        if(item.depth >= 8){
             continue;
         }
 
         if(Array.isArray(value)){
 
-            for(const child of value){
+            for(
+                const child of value
+            ){
 
                 if(
                     child &&
@@ -1661,7 +1865,9 @@ function collectObjects(root,limit=1000){
 
         }else{
 
-            for(const key of Object.keys(value)){
+            for(
+                const key of Object.keys(value)
+            ){
 
                 const child =
                     value[key];
@@ -1684,29 +1890,35 @@ function collectObjects(root,limit=1000){
 }
 
 
-function findDeepValue(root,keys){
+function findDeepValue(
+    root,
+    keys
+){
 
     const wanted =
         new Set(
             keys.map(
-                key => String(key).toLowerCase()
+                key =>
+                    String(key)
+                        .toLowerCase()
             )
         );
 
     const objects =
         collectObjects(root);
 
-    /*
-      First pass: prefer exact non-empty matches.
-    */
+    for(
+        const object of objects
+    ){
 
-    for(const object of objects){
-
-        for(const key of Object.keys(object)){
+        for(
+            const key of Object.keys(object)
+        ){
 
             if(
                 wanted.has(
-                    String(key).toLowerCase()
+                    String(key)
+                        .toLowerCase()
                 )
             ){
 
@@ -1716,7 +1928,10 @@ function findDeepValue(root,keys){
                 if(
                     value !== undefined &&
                     value !== null &&
-                    clean(value) !== ""
+                    (
+                        typeof value === "object" ||
+                        clean(value) !== ""
+                    )
                 ){
 
                     return value;
@@ -1729,7 +1944,10 @@ function findDeepValue(root,keys){
 }
 
 
-function findDeepText(root,keys){
+function findDeepText(
+    root,
+    keys
+){
 
     const value =
         findDeepValue(
@@ -1741,6 +1959,7 @@ function findDeepText(root,keys){
         typeof value === "string" ||
         typeof value === "number"
     ){
+
         return clean(value);
     }
 
@@ -1748,113 +1967,14 @@ function findDeepText(root,keys){
 }
 
 
-/*
-  This specifically prevents a generic field such as
-  "name" from winning before a real document title.
-*/
+function firstValue(
+    objects,
+    keys
+){
 
-function findDocumentTitle(root){
-
-    const strongKeys = [
-        "document_title",
-        "documentTitle",
-        "document_name",
-        "documentName",
-        "saved_document_title",
-        "savedDocumentTitle",
-        "completed_document_title",
-        "completedDocumentTitle",
-        "review_document_title",
-        "reviewDocumentTitle"
-    ];
-
-    let title =
-        findDeepText(
-            root,
-            strongKeys
-        );
-
-    if(title){
-        return title;
-    }
-
-    /*
-      Look at common document containers.
-    */
-
-    const containers = [];
-
-    const objects =
-        collectObjects(root);
-
-    for(const object of objects){
-
-        for(const key of [
-            "document",
-            "saved_document",
-            "savedDocument",
-            "complete_document",
-            "completeDocument",
-            "completed_document",
-            "completedDocument",
-            "document_data",
-            "documentData",
-            "document_payload",
-            "documentPayload",
-            "review",
-            "reviewData",
-            "review_data",
-            "payload"
-        ]){
-
-            const value =
-                object[key];
-
-            if(
-                value &&
-                typeof value === "object"
-            ){
-
-                containers.push(value);
-            }
-        }
-    }
-
-    for(const container of containers){
-
-        title =
-            findDeepText(
-                container,
-                strongKeys
-            );
-
-        if(title){
-            return title;
-        }
-    }
-
-    /*
-      Last fallback: generic title fields, but only
-      when they contain something meaningful.
-    */
-
-    return findDeepText(
-        root,
-        [
-            "title",
-            "name"
-        ]
-    );
-}
-
-
-/* ============================================================
-   GENERIC VALUE SEARCH
-   ============================================================ */
-
-function firstValue(objects,keys){
-
-    for(const object of objects){
+    for(
+        const object of objects
+    ){
 
         if(
             !object ||
@@ -1863,7 +1983,9 @@ function firstValue(objects,keys){
             continue;
         }
 
-        for(const key of keys){
+        for(
+            const key of keys
+        ){
 
             const value =
                 object[key];
@@ -1884,7 +2006,437 @@ function firstValue(objects,keys){
 
 
 /* ============================================================
-   DOCUMENT PAYLOAD EXTRACTION
+   TITLE EXTRACTION — IMPORTANT FIX
+   ============================================================ */
+
+function cleanPossibleTitle(value){
+
+    let title =
+        clean(value);
+
+    if(!title){
+        return "";
+    }
+
+    /*
+      Remove common Markdown heading markers.
+    */
+
+    title =
+        title.replace(
+            /^#{1,6}\s*/,
+            ""
+        ).trim();
+
+    /*
+      Remove bold markers around a title.
+    */
+
+    title =
+        title.replace(
+            /^\*\*(.*?)\*\*$/,
+            "$1"
+        ).trim();
+
+    title =
+        title.replace(
+            /^__(.*?)__$/,
+            "$1"
+        ).trim();
+
+    /*
+      Remove common labels if they were stored with
+      the title.
+    */
+
+    title =
+        title.replace(
+            /^(document\s+title|title)\s*:\s*/i,
+            ""
+        ).trim();
+
+    return title;
+}
+
+
+function titleLooksValid(title){
+
+    title =
+        cleanPossibleTitle(title);
+
+    if(!title){
+        return false;
+    }
+
+    if(title.length < 3){
+        return false;
+    }
+
+    if(title.length > 220){
+        return false;
+    }
+
+    /*
+      These are not document titles.
+    */
+
+    const invalid = [
+        "page 1",
+        "page 1 of 1",
+        "complete document",
+        "your complete document",
+        "document",
+        "untitled document",
+        "saved document",
+        "review your complete service"
+    ];
+
+    if(
+        invalid.includes(
+            title.toLowerCase()
+        )
+    ){
+        return false;
+    }
+
+    return true;
+}
+
+
+function extractTitleFromText(text){
+
+    const source =
+        clean(text);
+
+    if(!source){
+        return "";
+    }
+
+    const lines =
+        source
+            .split(/\r?\n/)
+            .map(
+                line => clean(line)
+            )
+            .filter(Boolean);
+
+    /*
+      First priority:
+      Markdown heading.
+    */
+
+    for(
+        const line of lines.slice(0,30)
+    ){
+
+        if(
+            /^#{1,6}\s+/.test(line)
+        ){
+
+            const title =
+                cleanPossibleTitle(line);
+
+            if(titleLooksValid(title)){
+                return title;
+            }
+        }
+    }
+
+    /*
+      Second priority:
+      Bold heading.
+    */
+
+    for(
+        const line of lines.slice(0,30)
+    ){
+
+        if(
+            /^\*\*[^*]+\*\*$/.test(line)
+        ){
+
+            const title =
+                cleanPossibleTitle(line);
+
+            if(titleLooksValid(title)){
+                return title;
+            }
+        }
+    }
+
+    /*
+      Third priority:
+      A short first line that looks like a title.
+    */
+
+    for(
+        const line of lines.slice(0,12)
+    ){
+
+        const title =
+            cleanPossibleTitle(line);
+
+        if(!titleLooksValid(title)){
+            continue;
+        }
+
+        /*
+          Skip ordinary section headings if they occur
+          before the real document title.
+        */
+
+        if(
+            /^(introduction|conclusion|references|abstract|background)$/i
+                .test(title)
+        ){
+            continue;
+        }
+
+        /*
+          A long prose sentence is not treated as title.
+        */
+
+        if(
+            title.length > 140 &&
+            /[.!?]$/.test(title)
+        ){
+            continue;
+        }
+
+        return title;
+    }
+
+    return "";
+}
+
+
+function findDocumentTitle(root){
+
+    /*
+      Strong explicit title fields first.
+    */
+
+    const strongKeys = [
+        "document_title",
+        "documentTitle",
+        "document_name",
+        "documentName",
+        "saved_document_title",
+        "savedDocumentTitle",
+        "completed_document_title",
+        "completedDocumentTitle",
+        "review_document_title",
+        "reviewDocumentTitle",
+        "final_document_title",
+        "finalDocumentTitle"
+    ];
+
+    const directTitle =
+        findDeepText(
+            root,
+            strongKeys
+        );
+
+    if(
+        titleLooksValid(directTitle)
+    ){
+
+        return cleanPossibleTitle(
+            directTitle
+        );
+    }
+
+    /*
+      Search document containers.
+    */
+
+    const containers = [];
+
+    const objects =
+        collectObjects(root);
+
+    for(
+        const object of objects
+    ){
+
+        for(
+            const key of [
+                "document",
+                "saved_document",
+                "savedDocument",
+                "complete_document",
+                "completeDocument",
+                "completed_document",
+                "completedDocument",
+                "document_data",
+                "documentData",
+                "document_payload",
+                "documentPayload",
+                "review",
+                "reviewData",
+                "review_data",
+                "final_document",
+                "finalDocument",
+                "payload"
+            ]
+        ){
+
+            const value =
+                object[key];
+
+            if(
+                value &&
+                typeof value === "object"
+            ){
+
+                containers.push(value);
+            }
+        }
+    }
+
+    for(
+        const container of containers
+    ){
+
+        const title =
+            findDeepText(
+                container,
+                strongKeys
+            );
+
+        if(
+            titleLooksValid(title)
+        ){
+
+            return cleanPossibleTitle(
+                title
+            );
+        }
+    }
+
+    /*
+      IMPORTANT:
+      Search actual document text.
+      This catches the user's document:
+
+      How Nigeria Moved from Export to Consumption
+    */
+
+    const textCandidates = [];
+
+    for(
+        const object of objects
+    ){
+
+        for(
+            const key of [
+                "document_text",
+                "documentText",
+                "text",
+                "content",
+                "body",
+                "document_content",
+                "documentContent",
+                "saved_text",
+                "savedText"
+            ]
+        ){
+
+            const value =
+                object[key];
+
+            if(
+                typeof value === "string" &&
+                value.trim()
+            ){
+
+                textCandidates.push(value);
+            }
+        }
+    }
+
+    for(
+        const text of textCandidates
+    ){
+
+        const title =
+            extractTitleFromText(
+                text
+            );
+
+        if(title){
+            return title;
+        }
+    }
+
+    /*
+      Search pages themselves.
+    */
+
+    for(
+        const object of objects
+    ){
+
+        for(
+            const key of [
+                "pages",
+                "document_pages",
+                "documentPages"
+            ]
+        ){
+
+            const value =
+                object[key];
+
+            const pageList =
+                normalizePages(value);
+
+            if(!pageList.length){
+                continue;
+            }
+
+            const combined =
+                pageList.join("\n");
+
+            const title =
+                extractTitleFromText(
+                    combined
+                );
+
+            if(title){
+                return title;
+            }
+        }
+    }
+
+    /*
+      Generic title only as final fallback.
+    */
+
+    const genericTitle =
+        findDeepText(
+            root,
+            [
+                "title",
+                "name"
+            ]
+        );
+
+    if(
+        titleLooksValid(genericTitle)
+    ){
+
+        return cleanPossibleTitle(
+            genericTitle
+        );
+    }
+
+    return "";
+}
+
+
+/* ============================================================
+   DOCUMENT PAYLOAD
    ============================================================ */
 
 function extractDocumentPayload(source){
@@ -1893,6 +2445,7 @@ function extractDocumentPayload(source){
         !source ||
         typeof source !== "object"
     ){
+
         return {};
     }
 
@@ -1913,10 +2466,12 @@ function extractDocumentPayload(source){
         source.data,
         source.review,
         source.reviewData,
-        source.review_data
+        source.review_data,
+        source.final_document,
+        source.finalDocument
     ].filter(Boolean);
 
-    let pagesValue =
+    const pagesValue =
         firstValue(
             candidates,
             [
@@ -1926,7 +2481,7 @@ function extractDocumentPayload(source){
             ]
         );
 
-    let textValue =
+    const textValue =
         firstValue(
             candidates,
             [
@@ -1940,7 +2495,7 @@ function extractDocumentPayload(source){
             ]
         );
 
-    let filenameValue =
+    const filenameValue =
         firstValue(
             candidates,
             [
@@ -1952,7 +2507,7 @@ function extractDocumentPayload(source){
             ]
         );
 
-    let versionValue =
+    const versionValue =
         firstValue(
             candidates,
             [
@@ -1964,11 +2519,24 @@ function extractDocumentPayload(source){
             ]
         );
 
+    const titleValue =
+        firstValue(
+            candidates,
+            [
+                "document_title",
+                "documentTitle",
+                "title",
+                "document_name",
+                "documentName"
+            ]
+        );
+
     return {
         pages:pagesValue,
         documentText:textValue,
         filename:filenameValue,
-        versionId:versionValue
+        versionId:versionValue,
+        title:titleValue
     };
 }
 
@@ -1980,7 +2548,10 @@ function normalizePages(value){
         return value
             .map(item => {
 
-                if(typeof item === "string"){
+                if(
+                    typeof item === "string"
+                ){
+
                     return item;
                 }
 
@@ -1994,6 +2565,8 @@ function normalizePages(value){
                         item.content ||
                         item.page_text ||
                         item.pageText ||
+                        item.document_text ||
+                        item.documentText ||
                         ""
                     );
                 }
@@ -2022,7 +2595,7 @@ function normalizePages(value){
 
 
 /* ============================================================
-   EXTRACT DOCUMENT STATE — FIXED
+   EXTRACT COMPLETE DOCUMENT STATE
    ============================================================ */
 
 function extractDocumentState(){
@@ -2031,10 +2604,9 @@ function extractDocumentState(){
         snapshot || {};
 
     const payload =
-        extractDocumentPayload(root);
-
-    const objects =
-        collectObjects(root);
+        extractDocumentPayload(
+            root
+        );
 
     /*
       SERVICE
@@ -2055,17 +2627,23 @@ function extractDocumentState(){
         );
 
     /*
-      DOCUMENT TITLE
+      TITLE
 
-      This is the important fix.
-      The title is now searched deeply through the
-      complete review/document state.
+      Explicit title first, then document content.
     */
 
     documentTitle =
-        clean(
-            findDocumentTitle(root)
+        cleanPossibleTitle(
+            payload.title
         );
+
+    if(
+        !titleLooksValid(documentTitle)
+    ){
+
+        documentTitle =
+            findDocumentTitle(root);
+    }
 
     /*
       AMOUNT
@@ -2102,24 +2680,32 @@ function extractDocumentState(){
         );
 
     /*
-      DOCUMENT PAYLOAD
+      DOCUMENT FILE
     */
 
     filename =
-        clean(payload.filename);
+        clean(
+            payload.filename
+        );
 
     versionId =
-        clean(payload.versionId);
+        clean(
+            payload.versionId
+        );
 
     pages =
-        normalizePages(payload.pages);
+        normalizePages(
+            payload.pages
+        );
 
     documentText =
-        clean(payload.documentText);
+        clean(
+            payload.documentText
+        );
 
     /*
-      If payload extraction did not find text,
-      search the entire review state.
+      Search entire snapshot if payload did not provide
+      document text.
     */
 
     if(!documentText){
@@ -2139,6 +2725,10 @@ function extractDocumentState(){
             );
     }
 
+    /*
+      Search pages if necessary.
+    */
+
     if(!pages.length){
 
         const deepPages =
@@ -2157,64 +2747,100 @@ function extractDocumentState(){
             );
     }
 
-    if(!documentText && pages.length){
+    /*
+      Build document text from pages.
+    */
+
+    if(
+        !documentText &&
+        pages.length
+    ){
+
         documentText =
             pages.join("\n\n");
     }
 
     /*
-      Last title fallback from the actual visible
-      document heading pattern.
+      Final title recovery directly from the actual
+      reviewed document.
     */
 
-    if(!documentTitle && documentText){
+    if(!titleLooksValid(documentTitle)){
 
-        const lines =
-            documentText
-                .split(/\r?\n/)
-                .map(line => clean(line))
-                .filter(Boolean);
+        documentTitle =
+            extractTitleFromText(
+                documentText
+            );
+    }
 
-        if(lines.length){
+    if(
+        !titleLooksValid(documentTitle) &&
+        pages.length
+    ){
 
-            const firstLine =
-                lines[0];
-
-            /*
-              Do not blindly use a paragraph as title.
-              The document supplied by the review page
-              has a strong heading at the beginning.
-            */
-
-            if(
-                firstLine.length >= 5 &&
-                firstLine.length <= 180 &&
-                !/[.!?]$/.test(firstLine)
-            ){
-
-                documentTitle =
-                    firstLine;
-            }
-        }
+        documentTitle =
+            extractTitleFromText(
+                pages.join("\n")
+            );
     }
 
     /*
-      Keep a useful fallback filename-derived title.
+      Filename fallback.
     */
 
-    if(!documentTitle && filename){
+    if(
+        !filename &&
+        documentTitle
+    ){
 
-        documentTitle =
+        filename =
+            documentTitle
+                .replace(/[<>:"/\\|?*]+/g," ")
+                .replace(/\s+/g," ")
+                .trim()
+                .replace(/\s/g,"_") +
+            ".docx";
+    }
+
+    /*
+      Final filename fallback.
+    */
+
+    if(!filename){
+
+        filename =
+            "Naija_Pocket_Document.docx";
+    }
+
+    /*
+      If the title is still missing, use the filename
+      only as a last resort.
+    */
+
+    if(
+        !titleLooksValid(documentTitle) &&
+        filename
+    ){
+
+        const filenameTitle =
             filename
                 .replace(/\.[^/.]+$/,"")
                 .replace(/[_-]+/g," ")
                 .trim();
+
+        if(
+            titleLooksValid(filenameTitle)
+        ){
+
+            documentTitle =
+                filenameTitle;
+        }
     }
 }
 
 
 /* ============================================================
-   CUSTOMER API
+   API
    ============================================================ */
 
 async function apiGet(path){
@@ -2225,8 +2851,10 @@ async function apiGet(path){
             {
                 method:"GET",
                 headers:{
-                    "Accept":"application/json"
-                }
+                    "Accept":"application/json",
+                    "Cache-Control":"no-cache"
+                },
+                cache:"no-store"
             }
         );
 
@@ -2237,14 +2865,20 @@ async function apiGet(path){
         safeJsonParse(text);
 
     if(!response.ok){
-        throw new Error(apiError(data || text));
+
+        throw new Error(
+            apiError(data || text)
+        );
     }
 
     return data;
 }
 
 
-async function apiPost(path,payload){
+async function apiPost(
+    path,
+    payload
+){
 
     const response =
         await fetch(
@@ -2253,9 +2887,11 @@ async function apiPost(path,payload){
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json",
-                    "Accept":"application/json"
+                    "Accept":"application/json",
+                    "Cache-Control":"no-cache"
                 },
-                body:JSON.stringify(payload)
+                body:JSON.stringify(payload),
+                cache:"no-store"
             }
         );
 
@@ -2266,7 +2902,10 @@ async function apiPost(path,payload){
         safeJsonParse(text);
 
     if(!response.ok){
-        throw new Error(apiError(data || text));
+
+        throw new Error(
+            apiError(data || text)
+        );
     }
 
     return data;
@@ -2274,7 +2913,7 @@ async function apiPost(path,payload){
 
 
 /* ============================================================
-   PAYMENT STATE
+   PAYMENT RESPONSE HELPERS
    ============================================================ */
 
 function extractPaymentObject(data){
@@ -2283,6 +2922,7 @@ function extractPaymentObject(data){
         !data ||
         typeof data !== "object"
     ){
+
         return {};
     }
 
@@ -2303,6 +2943,7 @@ function extractProductObject(data){
         !data ||
         typeof data !== "object"
     ){
+
         return {};
     }
 
@@ -2319,7 +2960,9 @@ function extractProductObject(data){
 function extractPaymentStatus(data){
 
     const payment =
-        extractPaymentObject(data);
+        extractPaymentObject(
+            data
+        );
 
     return clean(
         payment.status ||
@@ -2333,7 +2976,9 @@ function extractPaymentStatus(data){
 function extractPaymentReported(data){
 
     const payment =
-        extractPaymentObject(data);
+        extractPaymentObject(
+            data
+        );
 
     return Boolean(
         payment.payment_reported ??
@@ -2348,7 +2993,9 @@ function extractPaymentReported(data){
 function extractPaymentVerified(data){
 
     const payment =
-        extractPaymentObject(data);
+        extractPaymentObject(
+            data
+        );
 
     return Boolean(
         payment.payment_verified ??
@@ -2363,7 +3010,9 @@ function extractPaymentVerified(data){
 function extractDownloadUnlocked(data){
 
     const payment =
-        extractPaymentObject(data);
+        extractPaymentObject(
+            data
+        );
 
     return Boolean(
         payment.download_unlocked ??
@@ -2385,10 +3034,14 @@ function applyServerState(data){
     }
 
     const product =
-        extractProductObject(data);
+        extractProductObject(
+            data
+        );
 
     const payment =
-        extractPaymentObject(data);
+        extractPaymentObject(
+            data
+        );
 
     service =
         clean(
@@ -2398,7 +3051,7 @@ function applyServerState(data){
         );
 
     documentTitle =
-        clean(
+        cleanPossibleTitle(
             product.document_title ||
             product.documentTitle ||
             data.document_title ||
@@ -2431,7 +3084,11 @@ function applyServerState(data){
             filename
         );
 
-    if(Array.isArray(product.document_pages)){
+    if(
+        Array.isArray(
+            product.document_pages
+        )
+    ){
 
         pages =
             normalizePages(
@@ -2439,14 +3096,22 @@ function applyServerState(data){
             );
     }
 
-    if(clean(product.document_text)){
+    if(
+        clean(
+            product.document_text
+        )
+    ){
 
         documentText =
-            clean(product.document_text);
+            clean(
+                product.document_text
+            );
     }
 
     paymentStatus =
-        extractPaymentStatus(data);
+        extractPaymentStatus(
+            data
+        );
 
     paymentStarted =
         Boolean(
@@ -2459,13 +3124,19 @@ function applyServerState(data){
         );
 
     paymentReported =
-        extractPaymentReported(data);
+        extractPaymentReported(
+            data
+        );
 
     paymentVerified =
-        extractPaymentVerified(data);
+        extractPaymentVerified(
+            data
+        );
 
     downloadUnlocked =
-        extractDownloadUnlocked(data);
+        extractDownloadUnlocked(
+            data
+        );
 
     updateBaseDisplay();
     updateExperienceDisplay();
@@ -2474,7 +3145,7 @@ function applyServerState(data){
 
 
 /* ============================================================
-   CUSTOMER DISPLAY
+   DISPLAY
    ============================================================ */
 
 function updateBaseDisplay(){
@@ -2486,7 +3157,9 @@ function updateBaseDisplay(){
         documentTitle || "—";
 
     $("baseAmount").textContent =
-        amount ? money(amount) : "—";
+        amount
+            ? money(amount)
+            : "—";
 }
 
 
@@ -2499,7 +3172,9 @@ function updateExperienceDisplay(){
         documentTitle || "—";
 
     $("experienceAmount").textContent =
-        amount ? money(amount) : "—";
+        amount
+            ? money(amount)
+            : "—";
 
     $("customerServiceContact").textContent =
         CUSTOMER_SERVICE_CONTACT;
@@ -2552,17 +3227,27 @@ function updateExperienceDisplay(){
 
 function updateProgress(){
 
-    const bar = $("progressBar");
-    const status = $("statusText");
-    const text = $("progressText");
+    const bar =
+        $("progressBar");
 
-    if(!bar || !status || !text){
+    const status =
+        $("statusText");
+
+    const text =
+        $("progressText");
+
+    if(
+        !bar ||
+        !status ||
+        !text
+    ){
         return;
     }
 
     if(paymentVerified){
 
-        bar.style.width = "100%";
+        bar.style.width =
+            "100%";
 
         status.textContent =
             "Payment verified — document ready to be sent";
@@ -2575,7 +3260,8 @@ function updateProgress(){
 
     if(paymentStarted){
 
-        bar.style.width = "60%";
+        bar.style.width =
+            "60%";
 
         status.textContent =
             "Make payment & contact Customer Service";
@@ -2586,7 +3272,8 @@ function updateProgress(){
         return;
     }
 
-    bar.style.width = "25%";
+    bar.style.width =
+        "25%";
 
     status.textContent =
         "Payment details";
@@ -2629,7 +3316,7 @@ function closePaymentExperience(){
 
 
 /* ============================================================
-   EXISTING PAYMENT CREATION
+   PAYMENT CREATION
    ============================================================ */
 
 async function createPayment(){
@@ -2637,6 +3324,14 @@ async function createPayment(){
     if(createInProgress){
         return;
     }
+
+    /*
+      Re-extract immediately before payment creation.
+      This makes sure the latest reviewed document state
+      is used rather than an older display state.
+    */
+
+    extractDocumentState();
 
     if(!service){
 
@@ -2649,11 +3344,41 @@ async function createPayment(){
         return;
     }
 
-    if(!documentTitle){
+    if(
+        !documentTitle ||
+        !titleLooksValid(documentTitle)
+    ){
+
+        /*
+          One last attempt directly from the visible
+          reviewed document text.
+        */
+
+        documentTitle =
+            extractTitleFromText(
+                documentText
+            );
+
+        if(
+            !documentTitle &&
+            pages.length
+        ){
+
+            documentTitle =
+                extractTitleFromText(
+                    pages.join("\n")
+                );
+        }
+    }
+
+    if(
+        !documentTitle ||
+        !titleLooksValid(documentTitle)
+    ){
 
         showMessage(
             "message",
-            "The document title is missing. Please return to your document page and try again.",
+            "The document title could not be identified. Please return to the completed document and try again.",
             "error"
         );
 
@@ -2671,7 +3396,10 @@ async function createPayment(){
         return;
     }
 
-    if(!documentText && !pages.length){
+    if(
+        !documentText &&
+        !pages.length
+    ){
 
         showMessage(
             "message",
@@ -2689,7 +3417,8 @@ async function createPayment(){
 
     if(button){
 
-        button.disabled = true;
+        button.disabled =
+            true;
 
         button.textContent =
             "PREPARING PAYMENT...";
@@ -2703,10 +3432,48 @@ async function createPayment(){
 
     try{
 
+        /*
+          Make absolutely sure page text exists.
+        */
+
+        if(
+            !documentText &&
+            pages.length
+        ){
+
+            documentText =
+                pages.join("\n\n");
+        }
+
+        /*
+          This is the exact reviewed document payload
+          that is sent to the API.
+        */
+
+        const exactReviewedPayload = {
+
+            pages:
+                pages.slice(),
+
+            document_text:
+                documentText,
+
+            filename:
+                filename,
+
+            document_version:
+                versionId,
+
+            document_title:
+                documentTitle
+        };
+
         const payload = {
 
             customer_name:
-                clean(params.get("customer_name")),
+                clean(
+                    params.get("customer_name")
+                ),
 
             customer_id:
                 customerId,
@@ -2730,10 +3497,10 @@ async function createPayment(){
                 versionId,
 
             pages:
-                pages,
+                pages.slice(),
 
             document_pages:
-                pages,
+                pages.slice(),
 
             document_text:
                 documentText,
@@ -2744,14 +3511,21 @@ async function createPayment(){
             document_filename:
                 filename,
 
-            document_payload:{
-                pages:pages,
-                document_text:documentText,
-                filename:filename,
-                document_version:versionId,
-                document_title:documentTitle
-            }
+            document_payload:
+                exactReviewedPayload
         };
+
+        console.log(
+            "Submitting exact reviewed document:",
+            {
+                service:payload.service,
+                document_title:payload.document_title,
+                amount:payload.amount,
+                pages:payload.pages.length,
+                document_text_length:
+                    payload.document_text.length
+            }
+        );
 
         const data =
             await apiPost(
@@ -2761,13 +3535,51 @@ async function createPayment(){
 
         applyServerState(data);
 
+        /*
+          Keep the local reviewed document as the current
+          document even if the API response only returns
+          summary fields.
+        */
+
+        if(
+            !documentText &&
+            pages.length
+        ){
+
+            documentText =
+                pages.join("\n\n");
+        }
+
         if(
             data &&
             data.saved_document === true
         ){
-            paymentStarted = true;
+
+            paymentStarted =
+                true;
         }
 
+        /*
+          Some API versions return a payment object
+          without saved_document. A successful create
+          response still means payment preparation began.
+        */
+
+        if(
+            data &&
+            (
+                data.payment ||
+                data.payment_record ||
+                data.payment_id ||
+                data.paymentId
+            )
+        ){
+
+            paymentStarted =
+                true;
+        }
+
+        updateBaseDisplay();
         updateExperienceDisplay();
         updateProgress();
 
@@ -2798,11 +3610,13 @@ async function createPayment(){
 
     }finally{
 
-        createInProgress = false;
+        createInProgress =
+            false;
 
         if(button){
 
-            button.disabled = false;
+            button.disabled =
+                false;
 
             button.textContent =
                 paymentStarted
@@ -2819,7 +3633,10 @@ async function createPayment(){
 
 async function refreshPaymentStatus(){
 
-    if(!service || !documentTitle){
+    if(
+        !service ||
+        !documentTitle
+    ){
         return;
     }
 
@@ -2865,7 +3682,7 @@ async function refreshPaymentStatus(){
 
 
 /* ============================================================
-   BACK OFFICE VIEW
+   BACK OFFICE
    ============================================================ */
 
 function showBackOffice(){
@@ -2899,7 +3716,8 @@ function getBackOfficeKey(){
 
     return clean(
         $("backOfficeKey").value
-    ) || LOCAL_BACK_OFFICE_KEY;
+    ) ||
+    LOCAL_BACK_OFFICE_KEY;
 }
 
 
@@ -2912,7 +3730,8 @@ function backOfficeHeaders(){
         "Accept":"application/json",
         "Content-Type":"application/json",
         "X-Back-Office-Key":key,
-        "X-Admin-Key":key
+        "X-Admin-Key":key,
+        "Cache-Control":"no-cache"
     };
 }
 
@@ -2924,7 +3743,8 @@ async function apiGetWithHeaders(path){
             PAYMENT_API_BASE + path,
             {
                 method:"GET",
-                headers:backOfficeHeaders()
+                headers:backOfficeHeaders(),
+                cache:"no-store"
             }
         );
 
@@ -2945,7 +3765,10 @@ async function apiGetWithHeaders(path){
 }
 
 
-async function apiPostWithHeaders(path,payload){
+async function apiPostWithHeaders(
+    path,
+    payload
+){
 
     const response =
         await fetch(
@@ -2953,7 +3776,8 @@ async function apiPostWithHeaders(path,payload){
             {
                 method:"POST",
                 headers:backOfficeHeaders(),
-                body:JSON.stringify(payload)
+                body:JSON.stringify(payload),
+                cache:"no-store"
             }
         );
 
@@ -3004,9 +3828,11 @@ async function backOfficeLogin(){
     }catch(error){
 
         if(
-            String(error.message || "")
-                .toLowerCase()
-                .includes("404")
+            String(
+                error.message || ""
+            )
+            .toLowerCase()
+            .includes("404")
         ){
 
             return {
@@ -3020,7 +3846,7 @@ async function backOfficeLogin(){
 
 
 /* ============================================================
-   BACK OFFICE RECORD EXTRACTION
+   BACK OFFICE RECORD HELPERS
    ============================================================ */
 
 function extractRecords(data){
@@ -3130,7 +3956,7 @@ function recordActivated(record){
 
 
 /* ============================================================
-   LOAD BACK OFFICE RECORDS
+   LOAD BACK OFFICE
    ============================================================ */
 
 async function loadBackOffice(){
@@ -3178,7 +4004,7 @@ async function loadBackOffice(){
 
 
 /* ============================================================
-   RENDER RECORDS
+   RENDER BACK OFFICE
    ============================================================ */
 
 function renderBackOffice(){
@@ -3412,7 +4238,7 @@ Ready.
 
 
 /* ============================================================
-   RECORD IDENTIFIERS
+   RECORD PAYLOAD
    ============================================================ */
 
 function recordPayload(record){
@@ -3458,18 +4284,23 @@ function clearDocumentReader(){
 }
 
 
-function makeReaderPages(text,serverPages){
+function makeReaderPages(
+    text,
+    serverPages
+){
 
     let normalized =
-        normalizePages(serverPages);
+        normalizePages(
+            serverPages
+        );
 
-    if(!normalized.length && text){
+    if(
+        !normalized.length &&
+        text
+    ){
 
-        normalized = [text];
-    }
-
-    if(!normalized.length){
-        return [];
+        normalized =
+            [text];
     }
 
     return normalized;
@@ -3493,10 +4324,12 @@ function renderDocumentReader(
         );
 
     $("documentReaderTitle").textContent =
-        title || "Saved customer document";
+        title ||
+        "Saved customer document";
 
     $("backOfficeDocumentTitle").textContent =
-        title || "Saved customer document";
+        title ||
+        "Saved customer document";
 
     $("documentReaderMeta").textContent =
         serviceName
@@ -3507,7 +4340,8 @@ function renderDocumentReader(
         return;
     }
 
-    reader.innerHTML = "";
+    reader.innerHTML =
+        "";
 
     if(!pagesToRender.length){
 
@@ -3525,7 +4359,9 @@ function renderDocumentReader(
         pageText => {
 
             const page =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             page.className =
                 "document-reader-page";
@@ -3533,14 +4369,16 @@ function renderDocumentReader(
             page.textContent =
                 pageText;
 
-            reader.appendChild(page);
+            reader.appendChild(
+                page
+            );
         }
     );
 }
 
 
 /* ============================================================
-   VIEW EXACT SAVED DOCUMENT
+   VIEW SAVED DOCUMENT
    ============================================================ */
 
 async function viewSavedRecord(
@@ -3560,7 +4398,9 @@ async function viewSavedRecord(
 
     clearDocumentReader();
 
-    panel.classList.remove("hidden");
+    panel.classList.remove(
+        "hidden"
+    );
 
     panel.scrollIntoView({
         behavior:"smooth",
@@ -3625,21 +4465,28 @@ async function viewSavedRecord(
                 );
         }
 
-        if(!text && !serverPages.length){
+        if(
+            !text &&
+            !serverPages.length
+        ){
 
-            const recordPayloadData =
-                extractDocumentPayload(record);
+            const recordDocument =
+                extractDocumentPayload(
+                    record
+                );
 
             const fallbackPages =
                 normalizePages(
-                    recordPayloadData.pages
+                    recordDocument.pages
                 );
 
             text =
                 clean(
-                    recordPayloadData.documentText
+                    recordDocument.documentText
                 ) ||
-                fallbackPages.join("\n\n") ||
+                fallbackPages.join(
+                    "\n\n"
+                ) ||
                 clean(
                     record.document_text ||
                     record.documentText ||
@@ -3679,7 +4526,9 @@ async function viewSavedRecord(
         );
 
         const recordDocument =
-            extractDocumentPayload(record);
+            extractDocumentPayload(
+                record
+            );
 
         const recordPages =
             normalizePages(
@@ -3690,7 +4539,9 @@ async function viewSavedRecord(
             clean(
                 recordDocument.documentText
             ) ||
-            recordPages.join("\n\n") ||
+            recordPages.join(
+                "\n\n"
+            ) ||
             clean(
                 record.document_text ||
                 record.documentText ||
@@ -3742,6 +4593,7 @@ async function verifyPayment(
         $("status-" + index);
 
     if(status){
+
         status.textContent =
             "Verifying payment...";
     }
@@ -3846,7 +4698,9 @@ async function rejectPayment(
         if(status){
 
             status.textContent =
-                clean(result?.message) ||
+                clean(
+                    result?.message
+                ) ||
                 "Payment rejected.";
         }
 
@@ -3910,7 +4764,9 @@ async function activateDownload(
         if(status){
 
             status.textContent =
-                clean(result?.message) ||
+                clean(
+                    result?.message
+                ) ||
                 "Customer download activated.";
         }
 
@@ -3925,6 +4781,7 @@ async function activateDownload(
     }catch(error){
 
         if(status){
+
             status.textContent =
                 apiError(error);
         }
@@ -3955,7 +4812,8 @@ async function deliverRecord(
     const status =
         $("status-" + index);
 
-    let recipientEmail = "";
+    let recipientEmail =
+        "";
 
     if(channel === "email"){
 
@@ -3994,7 +4852,8 @@ async function deliverRecord(
                 {
                     ...recordPayload(record),
                     channel:channel,
-                    recipient_email:recipientEmail
+                    recipient_email:
+                        recipientEmail
                 }
             );
 
@@ -4015,6 +4874,7 @@ async function deliverRecord(
             "Delivery action completed.";
 
         if(status){
+
             status.textContent =
                 message;
         }
@@ -4041,6 +4901,7 @@ async function deliverRecord(
     }catch(error){
 
         if(status){
+
             status.textContent =
                 apiError(error);
         }
@@ -4103,7 +4964,9 @@ async function loadDeliveryHistory(
         ){
 
             const latest =
-                history[history.length - 1];
+                history[
+                    history.length - 1
+                ];
 
             const channel =
                 clean(
@@ -4120,8 +4983,15 @@ async function loadDeliveryHistory(
 
             status.textContent =
                 "Last delivery: " +
-                (channel || "completed") +
-                (time ? " — " + time : "");
+                (
+                    channel ||
+                    "completed"
+                ) +
+                (
+                    time
+                        ? " — " + time
+                        : ""
+                );
         }
 
     }catch(error){
@@ -4309,6 +5179,29 @@ function initialize(){
 
     extractDocumentState();
 
+    /*
+      This is the important result for the document
+      supplied in the previous screen.
+
+      It should resolve to:
+
+      How Nigeria Moved from Export to Consumption
+    */
+
+    console.log(
+        "Payment page document state:",
+        {
+            service:service,
+            documentTitle:documentTitle,
+            amount:amount,
+            pages:pages.length,
+            documentTextLength:
+                documentText.length,
+            filename:filename,
+            versionId:versionId
+        }
+    );
+
     updateBaseDisplay();
     updateExperienceDisplay();
     updateProgress();
@@ -4323,7 +5216,10 @@ function initialize(){
         return;
     }
 
-    if(service && documentTitle){
+    if(
+        service &&
+        documentTitle
+    ){
 
         refreshPaymentStatus();
     }
