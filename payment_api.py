@@ -21,10 +21,9 @@ from pydantic import BaseModel
 # CONFIGURATION
 # ============================================================
 
-APP_VERSION = "payment-product-first-v11-back-office-document-read-download"
+APP_VERSION = "payment-product-first-v12-exact-reviewed-attachment"
 
 BASE_DIR = Path(__file__).resolve().parent
-
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -32,7 +31,6 @@ PRODUCT_DB_PATH = BASE_DIR / "product_delivery.db"
 PAYMENT_DB_PATH = BASE_DIR / "payment_gateway.db"
 
 BACK_OFFICE_ADMIN_KEY = "NPBC-2026"
-
 PUBLIC_API_BASE_URL = os.getenv("PUBLIC_API_BASE_URL", "").strip()
 
 
@@ -100,7 +98,6 @@ def from_json(value: Any, default: Any = None) -> Any:
         return value
 
     text = clean(value)
-
     if not text:
         return default
 
@@ -123,11 +120,7 @@ def safe_filename(
         name,
     )
 
-    name = re.sub(
-        r"\s+",
-        " ",
-        name,
-    ).strip(" .")
+    name = re.sub(r"\s+", " ", name).strip(" .")
 
     if not name:
         name = default
@@ -149,11 +142,7 @@ def safe_folder(
         clean(value) or default,
     )
 
-    name = re.sub(
-        r"\s+",
-        " ",
-        name,
-    ).strip(" .")
+    name = re.sub(r"\s+", " ", name).strip(" .")
 
     return name[:120] or default
 
@@ -190,7 +179,6 @@ def normalize_pages(value: Any) -> list[str]:
             "content",
             "text",
         ):
-
             if key in value:
                 return normalize_pages(value[key])
 
@@ -219,7 +207,6 @@ def normalize_pages(value: Any) -> list[str]:
                     result.append(text)
 
             elif clean(item):
-
                 result.append(clean(item))
 
         return result
@@ -232,9 +219,7 @@ def normalize_payload(value: Any) -> dict:
     payload = (
         value
         if isinstance(value, dict)
-        else {
-            "document_text": clean(value)
-        }
+        else {"document_text": clean(value)}
     )
 
     raw_pages = (
@@ -263,8 +248,7 @@ def normalize_payload(value: Any) -> dict:
             payload.get("filename"),
             payload.get("document_filename"),
             payload.get("documentFilename"),
-        )
-        or "document.docx"
+        ) or "document.docx"
     )
 
     return {
@@ -301,17 +285,17 @@ def _format_saved_text(text: Any) -> list[str]:
         "Payment preparation failed:",
     ]
 
-    found = []
+    positions = []
 
     for marker in markers:
 
         position = text.find(marker)
 
         if position >= 0:
-            found.append(position)
+            positions.append(position)
 
-    if found:
-        text = text[:min(found)]
+    if positions:
+        text = text[:min(positions)]
 
     output = []
 
@@ -352,12 +336,7 @@ def clean_saved_document_payload(payload: dict) -> dict:
     raw_pages = payload.get("pages")
 
     if not isinstance(raw_pages, list):
-
-        raw_pages = (
-            [raw_pages]
-            if raw_pages
-            else []
-        )
+        raw_pages = [raw_pages] if raw_pages else []
 
     pages = []
 
@@ -379,17 +358,11 @@ def clean_saved_document_payload(payload: dict) -> dict:
     )
 
     payload["pages"] = pages
-
     payload["document_text"] = document_text
-
     payload["page_count"] = (
         len(pages)
         if pages
-        else (
-            1
-            if document_text
-            else 0
-        )
+        else (1 if document_text else 0)
     )
 
     return payload
@@ -406,9 +379,7 @@ def existing_saved_file(
     if not product:
         return None
 
-    raw = clean(
-        product.get("document_saved_path")
-    )
+    raw = clean(product.get("document_saved_path"))
 
     if not raw:
         return None
@@ -457,10 +428,7 @@ def find_saved_file_from_product(
 
     if filename:
 
-        candidate = (
-            folder
-            / safe_filename(filename)
-        )
+        candidate = folder / safe_filename(filename)
 
         if candidate.exists() and candidate.is_file():
             return candidate
@@ -469,10 +437,7 @@ def find_saved_file_from_product(
 
             candidate = (
                 folder
-                / (
-                    candidate.stem
-                    + ".docx"
-                )
+                / f"{candidate.stem}.docx"
             )
 
             if candidate.exists() and candidate.is_file():
@@ -483,8 +448,7 @@ def find_saved_file_from_product(
             item
             for item in folder.iterdir()
             if item.is_file()
-            and item.suffix.lower()
-            in {".docx", ".pdf"}
+            and item.suffix.lower() in {".docx", ".pdf"}
         ],
         key=lambda item: item.stat().st_mtime,
         reverse=True,
@@ -515,10 +479,7 @@ def read_saved_docx(path: Path) -> dict:
 
     try:
 
-        with zipfile.ZipFile(
-            path,
-            "r",
-        ) as archive:
+        with zipfile.ZipFile(path, "r") as archive:
 
             xml = archive.read(
                 "word/document.xml"
@@ -528,6 +489,7 @@ def read_saved_docx(path: Path) -> dict:
             )
 
     except Exception:
+
         return {
             "pages": [],
             "document_text": "",
@@ -565,43 +527,20 @@ def read_saved_docx(path: Path) -> dict:
     )
 
     xml = (
-        xml.replace(
-            "&amp;",
-            "&",
-        )
-        .replace(
-            "&lt;",
-            "<",
-        )
-        .replace(
-            "&gt;",
-            ">",
-        )
-        .replace(
-            "&quot;",
-            '"',
-        )
-        .replace(
-            "&apos;",
-            "'",
-        )
-    )
-
-    text = xml.replace(
-        "\r",
-        "",
+        xml.replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", '"')
+        .replace("&apos;", "'")
     )
 
     lines = []
 
-    for line in text.split("\n"):
+    for line in xml.replace("\r", "").split("\n"):
 
         line = line.strip()
 
-        if not line:
-            continue
-
-        if line == "***":
+        if not line or line == "***":
             continue
 
         lines.append(line)
@@ -626,35 +565,26 @@ def read_actual_saved_document(
     product: dict,
 ) -> dict:
 
-    saved = find_saved_file_from_product(
-        product
-    )
+    saved = find_saved_file_from_product(product)
 
     if saved and saved.suffix.lower() == ".docx":
 
         content = read_saved_docx(saved)
 
         if content["document_text"]:
-
             return content
 
     payload = clean_saved_document_payload(
         from_json(
-            product.get(
-                "document_payload"
-            ),
+            product.get("document_payload"),
             {},
         )
     )
 
     return {
         "pages": payload["pages"],
-        "document_text": payload[
-            "document_text"
-        ],
-        "page_count": payload[
-            "page_count"
-        ],
+        "document_text": payload["document_text"],
+        "page_count": payload["page_count"],
     }
 
 
@@ -687,15 +617,10 @@ def make_docx(
     )
 
     cleaned = clean_saved_document_payload(
-        {
-            "pages": page_list
-        }
+        {"pages": page_list}
     )
 
-    pages = cleaned.get(
-        "pages",
-        [],
-    )
+    pages = cleaned.get("pages", [])
 
     if not pages:
         raise HTTPException(
@@ -708,6 +633,7 @@ def make_docx(
     for index, page in enumerate(pages):
 
         if index:
+
             body.append(
                 '<w:p>'
                 '<w:r>'
@@ -719,56 +645,41 @@ def make_docx(
         for line in page.splitlines():
 
             if line.strip():
-                body.append(
-                    _docx_p(line)
-                )
+                body.append(_docx_p(line))
 
     document_xml = (
-        '<?xml version="1.0" '
-        'encoding="UTF-8" '
-        'standalone="yes"?>'
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         '<w:document '
         'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
         '<w:body>'
         + "".join(body)
-        +
-        '<w:sectPr>'
+        + '<w:sectPr>'
         '<w:pgSz w:w="12240" w:h="15840"/>'
-        '<w:pgMar '
-        'w:top="1440" '
-        'w:right="1440" '
-        'w:bottom="1440" '
-        'w:left="1440"/>'
-        '</w:sectPr>'
-        '</w:body>'
-        '</w:document>'
+        '<w:pgMar w:top="1440" w:right="1440" '
+        'w:bottom="1440" w:left="1440"/>'
+        "</w:sectPr>"
+        "</w:body>"
+        "</w:document>"
     )
 
     content_types = (
-        '<?xml version="1.0" '
-        'encoding="UTF-8"?>'
-        '<Types '
-        'xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
         '<Default Extension="rels" '
         'ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
-        '<Default Extension="xml" '
-        'ContentType="application/xml"/>'
-        '<Override '
-        'PartName="/word/document.xml" '
+        '<Default Extension="xml" ContentType="application/xml"/>'
+        '<Override PartName="/word/document.xml" '
         'ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
-        '</Types>'
+        "</Types>"
     )
 
     root_rels = (
-        '<?xml version="1.0" '
-        'encoding="UTF-8"?>'
-        '<Relationships '
-        'xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
-        '<Relationship '
-        'Id="rId1" '
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        '<Relationship Id="rId1" '
         'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" '
         'Target="word/document.xml"/>'
-        '</Relationships>'
+        "</Relationships>"
     )
 
     with zipfile.ZipFile(
@@ -801,9 +712,7 @@ def make_docx(
 
 def init_databases() -> None:
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    connection = db(PRODUCT_DB_PATH)
 
     connection.execute(
         """
@@ -851,9 +760,7 @@ def init_databases() -> None:
     connection.commit()
     connection.close()
 
-    connection = db(
-        PAYMENT_DB_PATH
-    )
+    connection = db(PAYMENT_DB_PATH)
 
     connection.execute(
         """
@@ -900,22 +807,15 @@ def get_product(
     title: str,
 ) -> Optional[dict]:
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    connection = db(PRODUCT_DB_PATH)
 
     row = connection.execute(
         """
         SELECT *
         FROM document_products
-        WHERE business_key = ?
+        WHERE business_key=?
         """,
-        (
-            business_key(
-                service,
-                title,
-            ),
-        ),
+        (business_key(service, title),),
     ).fetchone()
 
     connection.close()
@@ -925,9 +825,7 @@ def get_product(
 
 def get_single_product() -> Optional[dict]:
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    connection = db(PRODUCT_DB_PATH)
 
     row = connection.execute(
         """
@@ -949,10 +847,7 @@ def get_product_or_single(
 ) -> Optional[dict]:
 
     return (
-        get_product(
-            service,
-            title,
-        )
+        get_product(service, title)
         or get_single_product()
     )
 
@@ -962,22 +857,15 @@ def get_payment(
     title: str,
 ) -> Optional[dict]:
 
-    connection = db(
-        PAYMENT_DB_PATH
-    )
+    connection = db(PAYMENT_DB_PATH)
 
     row = connection.execute(
         """
         SELECT *
         FROM payment_orders
-        WHERE business_key = ?
+        WHERE business_key=?
         """,
-        (
-            business_key(
-                service,
-                title,
-            ),
-        ),
+        (business_key(service, title),),
     ).fetchone()
 
     connection.close()
@@ -986,7 +874,7 @@ def get_payment(
 
 
 # ============================================================
-# SAVED DOCUMENT REPAIR
+# EXACT REVIEWED SNAPSHOT
 # ============================================================
 
 def save_exact_snapshot(
@@ -995,17 +883,15 @@ def save_exact_snapshot(
     payload: dict,
     existing_product: Optional[dict] = None,
 ) -> Path:
+    """
+    IMPORTANT:
+    The incoming reviewed payload is authoritative.
 
-    existing = find_saved_file_from_product(
-        existing_product
-    )
+    An existing saved file is NEVER returned here simply because
+    it already exists. The newest reviewed document replaces it.
+    """
 
-    if existing:
-        return existing
-
-    normalized = clean_saved_document_payload(
-        payload
-    )
+    normalized = clean_saved_document_payload(payload)
 
     if (
         not normalized["pages"]
@@ -1031,24 +917,46 @@ def save_exact_snapshot(
         normalized["filename"]
     )
 
+    # The current API creates a DOCX from the reviewed text/pages.
+    # If a payload says PDF, retain the existing API behavior of
+    # creating the saved text document as DOCX.
     if filename.lower().endswith(".pdf"):
-
-        filename = (
-            Path(filename).stem
-            + ".docx"
-        )
+        filename = Path(filename).stem + ".docx"
 
     target = folder / filename
 
-    if target.exists() and target.is_file():
-        return target
-
-    return make_docx(
-        target,
-        title,
-        normalized["pages"]
-        or [normalized["document_text"]],
+    # Write to a temporary file first, then replace the old saved
+    # document atomically. This prevents the old document from
+    # remaining as the current file.
+    temporary = target.with_name(
+        target.name + ".tmp"
     )
+
+    try:
+
+        if temporary.exists():
+            temporary.unlink()
+
+        make_docx(
+            temporary,
+            title,
+            normalized["pages"]
+            or [normalized["document_text"]],
+        )
+
+        temporary.replace(target)
+
+    except Exception:
+
+        try:
+            if temporary.exists():
+                temporary.unlink()
+        except Exception:
+            pass
+
+        raise
+
+    return target
 
 
 def store_saved_path(
@@ -1057,31 +965,23 @@ def store_saved_path(
     path: Path,
 ) -> None:
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    connection = db(PRODUCT_DB_PATH)
 
     timestamp = now_iso()
 
     connection.execute(
         """
         UPDATE document_products
-        SET document_saved_path = ?,
-            document_saved_at = COALESCE(
-                document_saved_at,
-                ?
-            ),
-            updated_at = ?
-        WHERE business_key = ?
+        SET document_saved_path=?,
+            document_saved_at=?,
+            updated_at=?
+        WHERE business_key=?
         """,
         (
             str(path),
             timestamp,
             timestamp,
-            business_key(
-                service,
-                title,
-            ),
+            business_key(service, title),
         ),
     )
 
@@ -1093,46 +993,35 @@ def extract_document_text(
     product: dict,
 ) -> str:
 
-    actual = read_actual_saved_document(
-        product
-    )
+    actual = read_actual_saved_document(product)
 
-    if actual["document_text"]:
-        return actual["document_text"]
-
-    return ""
+    return actual["document_text"] or ""
 
 
 def repair_saved_snapshot(
     product: dict,
 ) -> dict:
+    """
+    Existing saved file is the source of truth.
 
-    service = clean(
-        product.get("service")
-    )
+    If it exists, do not regenerate it from an older payment record.
+    Only create a file when there is no current saved file.
+    """
 
-    title = clean(
-        product.get("document_title")
-    )
+    service = clean(product.get("service"))
+    title = clean(product.get("document_title"))
 
     current = (
-        get_product(
-            service,
-            title,
-        )
+        get_product(service, title)
         or product
     )
 
-    saved = find_saved_file_from_product(
-        current
-    )
+    saved = existing_saved_file(current)
 
     if saved:
 
         current_path = clean(
-            current.get(
-                "document_saved_path"
-            )
+            current.get("document_saved_path")
         )
 
         if current_path != str(saved):
@@ -1144,24 +1033,22 @@ def repair_saved_snapshot(
             )
 
             current = (
-                get_product(
-                    service,
-                    title,
-                )
+                get_product(service, title)
                 or current
             )
 
         return current
 
+    # If the current database product has a payload, use it.
     payload = normalize_payload(
         from_json(
-            current.get(
-                "document_payload"
-            ),
+            current.get("document_payload"),
             {},
         )
     )
 
+    # Legacy recovery only. This is used when there is no saved file
+    # and the current product itself has no document payload.
     if (
         not payload["pages"]
         and not payload["document_text"]
@@ -1176,15 +1063,12 @@ def repair_saved_snapshot(
 
             payload = normalize_payload(
                 {
-                    "document_text": payment.get(
-                        "document_text"
-                    ),
-                    "filename": payment.get(
-                        "document_filename"
-                    ),
-                    "document_version": payment.get(
-                        "document_version"
-                    ),
+                    "document_text":
+                        payment.get("document_text"),
+                    "filename":
+                        payment.get("document_filename"),
+                    "document_version":
+                        payment.get("document_version"),
                 }
             )
 
@@ -1192,7 +1076,6 @@ def repair_saved_snapshot(
         not payload["pages"]
         and not payload["document_text"]
     ):
-
         raise HTTPException(
             status_code=404,
             detail="SAVED_DOCUMENT_CONTENT_MISSING",
@@ -1212,10 +1095,7 @@ def repair_saved_snapshot(
     )
 
     return (
-        get_product(
-            service,
-            title,
-        )
+        get_product(service, title)
         or current
     )
 
@@ -1226,24 +1106,16 @@ def repair_saved_snapshot(
 
 def upsert_product(data: dict) -> dict:
 
-    service = clean(
-        data.get("service")
-    )
-
-    title = clean(
-        data.get("document_title")
-    )
+    service = clean(data.get("service"))
+    title = clean(data.get("document_title"))
 
     if not service or not title:
-
         raise HTTPException(
             status_code=400,
             detail="SERVICE_AND_TITLE_REQUIRED",
         )
 
-    raw_payload = data.get(
-        "document_payload"
-    )
+    raw_payload = data.get("document_payload")
 
     payload = normalize_payload(
         raw_payload
@@ -1251,24 +1123,20 @@ def upsert_product(data: dict) -> dict:
         else data
     )
 
-    old = get_product(
-        service,
-        title,
-    )
+    old = get_product(service, title)
 
-    key = business_key(
-        service,
-        title,
-    )
-
+    key = business_key(service, title)
     timestamp = now_iso()
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    connection = db(PRODUCT_DB_PATH)
 
     if old:
 
+        # IMPORTANT:
+        # Always replace document_payload with the newest reviewed
+        # document. The old API deliberately preserved the old
+        # payload whenever a saved path existed, causing stale
+        # documents to remain in Back Office.
         connection.execute(
             """
             UPDATE document_products SET
@@ -1279,45 +1147,18 @@ def upsert_product(data: dict) -> dict:
                 document_version=?,
                 document_filename=?,
                 document_pages=?,
-                document_payload=CASE
-                    WHEN COALESCE(
-                        document_saved_path,
-                        ''
-                    )=''
-                    THEN ?
-                    ELSE document_payload
-                END,
+                document_payload=?,
                 updated_at=?
             WHERE business_key=?
             """,
             (
-                clean(
-                    data.get(
-                        "customer_name"
-                    )
-                ),
-                clean(
-                    data.get(
-                        "customer_id"
-                    )
-                ),
-                float(
-                    data.get("amount")
-                    or 0
-                ),
-                clean(
-                    data.get("currency")
-                )
-                or "NGN",
-                payload[
-                    "document_version"
-                ],
-                payload[
-                    "filename"
-                ],
-                payload[
-                    "page_count"
-                ],
+                clean(data.get("customer_name")),
+                clean(data.get("customer_id")),
+                float(data.get("amount") or 0),
+                clean(data.get("currency")) or "NGN",
+                payload["document_version"],
+                payload["filename"],
+                payload["page_count"],
                 to_json(payload),
                 timestamp,
                 key,
@@ -1344,40 +1185,19 @@ def upsert_product(data: dict) -> dict:
                 created_at,
                 updated_at
             )
-            VALUES
-            (?,?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
             (
                 key,
                 service,
                 title,
-                clean(
-                    data.get(
-                        "customer_name"
-                    )
-                ),
-                clean(
-                    data.get(
-                        "customer_id"
-                    )
-                ),
-                float(
-                    data.get("amount")
-                    or 0
-                ),
-                clean(
-                    data.get("currency")
-                )
-                or "NGN",
-                payload[
-                    "document_version"
-                ],
-                payload[
-                    "filename"
-                ],
-                payload[
-                    "page_count"
-                ],
+                clean(data.get("customer_name")),
+                clean(data.get("customer_id")),
+                float(data.get("amount") or 0),
+                clean(data.get("currency")) or "NGN",
+                payload["document_version"],
+                payload["filename"],
+                payload["page_count"],
                 to_json(payload),
                 timestamp,
                 timestamp,
@@ -1387,13 +1207,7 @@ def upsert_product(data: dict) -> dict:
     connection.commit()
     connection.close()
 
-    return (
-        get_product(
-            service,
-            title,
-        )
-        or {}
-    )
+    return get_product(service, title) or {}
 
 
 # ============================================================
@@ -1402,71 +1216,50 @@ def upsert_product(data: dict) -> dict:
 
 def ensure_payment_record(
     product: dict,
+    payment_method: str = "bank_transfer",
 ) -> dict:
 
-    service = clean(
-        product.get("service")
-    )
+    service = clean(product.get("service"))
+    title = clean(product.get("document_title"))
+    key = business_key(service, title)
 
-    title = clean(
-        product.get("document_title")
-    )
-
-    key = business_key(
-        service,
-        title,
-    )
-
-    old = get_payment(
-        service,
-        title,
-    )
-
+    old = get_payment(service, title)
     timestamp = now_iso()
 
-    values = (
-        clean(
-            product.get(
-                "customer_name"
-            )
-        ),
-        clean(
-            product.get(
-                "customer_id"
-            )
-        ),
-        float(
-            product.get("amount")
-            or 0
-        ),
-        clean(
-            product.get("currency")
-        )
-        or "NGN",
-        clean(
-            product.get(
-                "document_version"
-            )
-        ),
-        clean(
-            product.get(
-                "document_filename"
-            )
-        ),
-        int(
-            product.get(
-                "document_pages"
-            )
-            or 0
-        ),
-        extract_document_text(
-            product
-        ),
+    customer_name = clean(
+        product.get("customer_name")
     )
 
-    connection = db(
-        PAYMENT_DB_PATH
+    customer_id = clean(
+        product.get("customer_id")
     )
+
+    amount = float(
+        product.get("amount") or 0
+    )
+
+    currency = (
+        clean(product.get("currency"))
+        or "NGN"
+    )
+
+    document_version = clean(
+        product.get("document_version")
+    )
+
+    document_filename = clean(
+        product.get("document_filename")
+    )
+
+    document_pages = int(
+        product.get("document_pages") or 0
+    )
+
+    document_text = extract_document_text(product)
+
+    method = clean(payment_method) or "bank_transfer"
+
+    connection = db(PAYMENT_DB_PATH)
 
     if old:
 
@@ -1477,6 +1270,7 @@ def ensure_payment_record(
                 customer_id=?,
                 amount=?,
                 currency=?,
+                payment_method=?,
                 document_version=?,
                 document_filename=?,
                 document_pages=?,
@@ -1484,8 +1278,16 @@ def ensure_payment_record(
                 updated_at=?
             WHERE business_key=?
             """,
-            values
-            + (
+            (
+                customer_name,
+                customer_id,
+                amount,
+                currency,
+                method,
+                document_version,
+                document_filename,
+                document_pages,
+                document_text,
                 timestamp,
                 key,
             ),
@@ -1513,16 +1315,22 @@ def ensure_payment_record(
                 created_at,
                 updated_at
             )
-            VALUES
-            (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
             (
                 key,
                 service,
                 title,
-                *values,
-                "bank_transfer",
+                customer_name,
+                customer_id,
+                amount,
+                currency,
+                method,
                 "payment_ready",
+                document_version,
+                document_filename,
+                document_pages,
+                document_text,
                 timestamp,
                 timestamp,
             ),
@@ -1531,13 +1339,7 @@ def ensure_payment_record(
     connection.commit()
     connection.close()
 
-    return (
-        get_payment(
-            service,
-            title,
-        )
-        or {}
-    )
+    return get_payment(service, title) or {}
 
 
 def update_payment(
@@ -1552,10 +1354,7 @@ def update_payment(
 
     if status:
 
-        assignments.append(
-            "payment_status=?"
-        )
-
+        assignments.append("payment_status=?")
         values.append(status)
 
     for name, value in fields.items():
@@ -1568,35 +1367,19 @@ def update_payment(
             "payment_method",
         }:
 
-            assignments.append(
-                f"{name}=?"
-            )
-
+            assignments.append(f"{name}=?")
             values.append(value)
 
-    assignments.append(
-        "updated_at=?"
-    )
+    assignments.append("updated_at=?")
+    values.append(now_iso())
+    values.append(business_key(service, title))
 
-    values.append(
-        now_iso()
-    )
-
-    values.append(
-        business_key(
-            service,
-            title,
-        )
-    )
-
-    connection = db(
-        PAYMENT_DB_PATH
-    )
+    connection = db(PAYMENT_DB_PATH)
 
     connection.execute(
         f"""
         UPDATE payment_orders
-        SET {', '.join(assignments)}
+        SET {", ".join(assignments)}
         WHERE business_key=?
         """,
         values,
@@ -1605,10 +1388,7 @@ def update_payment(
     connection.commit()
     connection.close()
 
-    return get_payment(
-        service,
-        title,
-    )
+    return get_payment(service, title)
 
 
 # ============================================================
@@ -1627,22 +1407,21 @@ def public_product(
             "download_unlocked": False,
         }
 
-    saved = find_saved_file_from_product(
-        product
-    )
+    saved = find_saved_file_from_product(product)
 
     payment = get_payment(
         clean(product.get("service")),
         clean(product.get("document_title")),
     )
 
+    # NOTE:
+    # Internal database id and customer_id are deliberately NOT
+    # returned to the customer-facing API.
     return {
         "found": True,
-        "id": product.get("id"),
         "service": product.get("service"),
         "document_title": product.get("document_title"),
         "customer_name": product.get("customer_name"),
-        "customer_id": product.get("customer_id"),
         "amount": product.get("amount") or 0,
         "currency": product.get("currency") or "NGN",
         "document_version": product.get("document_version"),
@@ -1651,50 +1430,30 @@ def public_product(
         "document_saved_path": (
             str(saved)
             if saved
-            else clean(
-                product.get(
-                    "document_saved_path"
-                )
-            )
+            else clean(product.get("document_saved_path"))
         ),
         "document_saved_at": product.get(
             "document_saved_at"
         ),
         "saved_document": bool(saved),
         "download_unlocked": bool(
-            product.get(
-                "download_unlocked"
-            )
+            product.get("download_unlocked")
         ),
-        "activated_at": product.get(
-            "activated_at"
-        ),
-        "download_count": product.get(
-            "download_count"
-        )
-        or 0,
+        "activated_at": product.get("activated_at"),
+        "download_count": product.get("download_count") or 0,
         "payment_status": (
             payment.get("payment_status")
             if payment
             else "payment_ready"
         ),
         "payment_reported": bool(
-            payment
-            and payment.get(
-                "reported_at"
-            )
+            payment and payment.get("reported_at")
         ),
         "payment_verified": bool(
-            payment
-            and payment.get(
-                "verified_at"
-            )
+            payment and payment.get("verified_at")
         ),
         "payment_rejected": bool(
-            payment
-            and payment.get(
-                "rejected_at"
-            )
+            payment and payment.get("rejected_at")
         ),
     }
 
@@ -1705,9 +1464,7 @@ def back_office_product(
 
     if not product:
 
-        result = public_product(
-            None
-        )
+        result = public_product(None)
 
         result.update(
             {
@@ -1720,33 +1477,19 @@ def back_office_product(
 
         return result
 
-    product = (
-        repair_saved_snapshot(product)
-    )
+    product = repair_saved_snapshot(product)
 
-    result = public_product(
-        product
-    )
+    result = public_product(product)
 
-    document = read_actual_saved_document(
-        product
-    )
+    document = read_actual_saved_document(product)
 
     result.update(
         {
-            "pages": document[
-                "pages"
-            ],
-            "document_text": document[
-                "document_text"
-            ],
-            "page_count": document[
-                "page_count"
-            ],
+            "pages": document["pages"],
+            "document_text": document["document_text"],
+            "page_count": document["page_count"],
             "document_ready_for_back_office": bool(
-                find_saved_file_from_product(
-                    product
-                )
+                find_saved_file_from_product(product)
             ),
         }
     )
@@ -1758,15 +1501,11 @@ def back_office_product(
 # URLS
 # ============================================================
 
-def api_base(
-    request: Request,
-) -> str:
+def api_base(request: Request) -> str:
 
     return (
         PUBLIC_API_BASE_URL.rstrip("/")
-        or str(
-            request.base_url
-        ).rstrip("/")
+        or str(request.base_url).rstrip("/")
     )
 
 
@@ -1777,11 +1516,9 @@ def download_url(
 ) -> str:
 
     return (
-        f"{api_base(request)}"
-        f"/api/download?service="
-        f"{urllib.parse.quote(service)}"
-        f"&title="
-        f"{urllib.parse.quote(title)}"
+        f"{api_base(request)}/api/download"
+        f"?service={urllib.parse.quote(service)}"
+        f"&title={urllib.parse.quote(title)}"
     )
 
 
@@ -1794,18 +1531,23 @@ def delivery_channels(
     product: dict,
 ) -> dict:
 
-    service = clean(
-        product.get("service")
-    )
-
-    title = clean(
-        product.get("document_title")
-    )
+    service = clean(product.get("service"))
+    title = clean(product.get("document_title"))
 
     direct = download_url(
         request,
         service,
         title,
+    )
+
+    saved_file = find_saved_file_from_product(product)
+
+    filename = (
+        saved_file.name
+        if saved_file
+        else safe_filename(
+            product.get("document_filename")
+        )
     )
 
     share_text = (
@@ -1815,16 +1557,10 @@ def delivery_channels(
     )
 
     unlocked = bool(
-        product.get(
-            "download_unlocked"
-        )
+        product.get("download_unlocked")
     )
 
-    saved = bool(
-        find_saved_file_from_product(
-            product
-        )
-    )
+    saved = bool(saved_file)
 
     return {
         "available": unlocked,
@@ -1835,6 +1571,8 @@ def delivery_channels(
                 "name": "Download to Phone",
                 "type": "download",
                 "available": unlocked,
+                "attachment": True,
+                "filename": filename,
                 "url": direct,
             },
             {
@@ -1844,9 +1582,7 @@ def delivery_channels(
                 "available": unlocked,
                 "url":
                     "https://wa.me/?text="
-                    + urllib.parse.quote(
-                        share_text
-                    ),
+                    + urllib.parse.quote(share_text),
             },
             {
                 "id": "email",
@@ -1860,9 +1596,7 @@ def delivery_channels(
                         + " — Naija Pocket Business Center"
                     )
                     + "&body="
-                    + urllib.parse.quote(
-                        share_text
-                    ),
+                    + urllib.parse.quote(share_text),
             },
             {
                 "id": "telegram",
@@ -1871,13 +1605,9 @@ def delivery_channels(
                 "available": unlocked,
                 "url":
                     "https://t.me/share/url?url="
-                    + urllib.parse.quote(
-                        direct
-                    )
+                    + urllib.parse.quote(direct)
                     + "&text="
-                    + urllib.parse.quote(
-                        title
-                    ),
+                    + urllib.parse.quote(title),
             },
             {
                 "id": "google_drive",
@@ -1902,20 +1632,14 @@ def back_office_delivery_channels(
     product: dict,
 ) -> dict:
 
-    service = clean(
-        product.get("service")
-    )
-
-    title = clean(
-        product.get("document_title")
-    )
+    service = clean(product.get("service"))
+    title = clean(product.get("document_title"))
 
     file_url = (
         f"{api_base(request)}"
-        f"/api/back-office/delivery-file?service="
-        f"{urllib.parse.quote(service)}"
-        f"&title="
-        f"{urllib.parse.quote(title)}"
+        f"/api/back-office/delivery-file"
+        f"?service={urllib.parse.quote(service)}"
+        f"&title={urllib.parse.quote(title)}"
     )
 
     share_text = (
@@ -1925,19 +1649,14 @@ def back_office_delivery_channels(
         f"Download the saved file: {file_url}"
     )
 
-    saved = bool(
-        find_saved_file_from_product(
-            product
-        )
-    )
+    saved_file = find_saved_file_from_product(product)
+    saved = bool(saved_file)
 
     return {
         "available": saved,
         "document_saved": saved,
         "customer_download_unlocked": bool(
-            product.get(
-                "download_unlocked"
-            )
+            product.get("download_unlocked")
         ),
         "channels": [
             {
@@ -1945,6 +1664,13 @@ def back_office_delivery_channels(
                 "name": "Download to Phone",
                 "type": "download",
                 "available": saved,
+                "attachment": True,
+                "filename":
+                    saved_file.name
+                    if saved_file
+                    else safe_filename(
+                        product.get("document_filename")
+                    ),
                 "url": file_url,
                 "requires_back_office_key": True,
             },
@@ -1955,9 +1681,7 @@ def back_office_delivery_channels(
                 "available": saved,
                 "url":
                     "https://wa.me/?text="
-                    + urllib.parse.quote(
-                        share_text
-                    ),
+                    + urllib.parse.quote(share_text),
             },
             {
                 "id": "email",
@@ -1971,9 +1695,7 @@ def back_office_delivery_channels(
                         + " — Naija Pocket Business Center"
                     )
                     + "&body="
-                    + urllib.parse.quote(
-                        share_text
-                    ),
+                    + urllib.parse.quote(share_text),
             },
             {
                 "id": "telegram",
@@ -1982,13 +1704,9 @@ def back_office_delivery_channels(
                 "available": saved,
                 "url":
                     "https://t.me/share/url?url="
-                    + urllib.parse.quote(
-                        file_url
-                    )
+                    + urllib.parse.quote(file_url)
                     + "&text="
-                    + urllib.parse.quote(
-                        title
-                    ),
+                    + urllib.parse.quote(title),
             },
             {
                 "id": "google_drive",
@@ -2029,10 +1747,7 @@ def select_channel(
     return next(
         (
             item
-            for item in data.get(
-                "channels",
-                [],
-            )
+            for item in data.get("channels", [])
             if item["id"] == wanted
         ),
         None,
@@ -2046,9 +1761,7 @@ def log_delivery(
     details: Optional[dict] = None,
 ) -> None:
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    connection = db(PRODUCT_DB_PATH)
 
     connection.execute(
         """
@@ -2067,24 +1780,14 @@ def log_delivery(
         (
             business_key(
                 product.get("service"),
-                product.get(
-                    "document_title"
-                ),
+                product.get("document_title"),
             ),
-            clean(
-                product.get("service")
-            ),
-            clean(
-                product.get(
-                    "document_title"
-                )
-            ),
+            clean(product.get("service")),
+            clean(product.get("document_title")),
             channel,
             status,
             now_iso(),
-            to_json(
-                details or {}
-            ),
+            to_json(details or {}),
         ),
     )
 
@@ -2096,9 +1799,7 @@ def log_delivery(
 # BACK OFFICE AUTHENTICATION
 # ============================================================
 
-def require_back_office(
-    key: str,
-) -> None:
+def require_back_office(key: str) -> None:
 
     if clean(key) != BACK_OFFICE_ADMIN_KEY:
 
@@ -2219,63 +1920,59 @@ def payment_create(
                 body.pages
                 if body.pages is not None
                 else body.document_pages,
-
-            "page_text":
-                body.page_text,
-
-            "document_text":
-                first(
-                    body.document_text,
-                    body.documentText,
-                    body.text,
-                    body.content,
-                ),
-
-            "filename":
-                first(
-                    body.filename,
-                    body.document_filename,
-                ),
-
-            "document_version":
-                body.document_version,
-        }
-
-    else:
-
-        incoming.setdefault(
-            "pages",
-            body.pages
-            if body.pages is not None
-            else body.document_pages,
-        )
-
-        incoming.setdefault(
-            "document_text",
-            first(
+            "page_text": body.page_text,
+            "document_text": first(
                 body.document_text,
                 body.documentText,
                 body.text,
                 body.content,
             ),
-        )
-
-        incoming.setdefault(
-            "filename",
-            first(
+            "filename": first(
                 body.filename,
                 body.document_filename,
             ),
-        )
+            "document_version": body.document_version,
+        }
 
-        incoming.setdefault(
-            "document_version",
-            body.document_version,
-        )
+    else:
 
-    payload = normalize_payload(
-        incoming
-    )
+        if incoming.get("pages") is None:
+
+            incoming["pages"] = (
+                body.pages
+                if body.pages is not None
+                else body.document_pages
+            )
+
+        if not clean(
+            incoming.get("document_text")
+        ):
+
+            incoming["document_text"] = first(
+                body.document_text,
+                body.documentText,
+                body.text,
+                body.content,
+            )
+
+        if not clean(
+            incoming.get("filename")
+        ):
+
+            incoming["filename"] = first(
+                body.filename,
+                body.document_filename,
+            )
+
+        if not clean(
+            incoming.get("document_version")
+        ):
+
+            incoming["document_version"] = (
+                body.document_version
+            )
+
+    payload = normalize_payload(incoming)
 
     if (
         not payload["pages"]
@@ -2287,54 +1984,44 @@ def payment_create(
             detail="DOCUMENT_TEXT_REQUIRED",
         )
 
+    # 1. Store the newest reviewed document payload.
     product = upsert_product(
         {
             "service": service,
             "document_title": title,
-            "customer_name":
-                body.customer_name,
-            "customer_id":
-                body.customer_id,
-            "amount":
-                body.amount,
-            "currency":
-                body.currency or "NGN",
-            "document_version":
-                body.document_version,
-            "document_payload":
-                payload,
+            "customer_name": body.customer_name,
+            "customer_id": body.customer_id,
+            "amount": body.amount,
+            "currency": body.currency or "NGN",
+            "document_version": body.document_version,
+            "document_payload": payload,
         }
     )
 
-    saved = find_saved_file_from_product(
-        product
+    # 2. ALWAYS save/replace the exact newest reviewed snapshot.
+    saved = save_exact_snapshot(
+        service,
+        title,
+        payload,
+        product,
     )
 
-    if not saved:
+    # 3. Make this exact physical file the current saved document.
+    store_saved_path(
+        service,
+        title,
+        saved,
+    )
 
-        saved = save_exact_snapshot(
-            service,
-            title,
-            payload,
-            product,
-        )
+    product = (
+        get_product(service, title)
+        or product
+    )
 
-        store_saved_path(
-            service,
-            title,
-            saved,
-        )
-
-        product = (
-            get_product(
-                service,
-                title,
-            )
-            or product
-        )
-
+    # 4. Payment record uses the newly saved document.
     payment = ensure_payment_record(
-        product
+        product,
+        body.payment_method,
     )
 
     return {
@@ -2346,14 +2033,10 @@ def payment_create(
             public_product(product),
         "payment":
             payment,
-        "saved_document":
-            True,
-        "download_unlocked":
-            bool(
-                product.get(
-                    "download_unlocked"
-                )
-            ),
+        "saved_document": True,
+        "download_unlocked": bool(
+            product.get("download_unlocked")
+        ),
         "delivery":
             delivery_channels(
                 request,
@@ -2374,10 +2057,7 @@ def payment_report(
     service = clean(body.service)
     title = clean(body.document_title)
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -2386,14 +2066,9 @@ def payment_report(
             detail="PAYMENT_NOT_PREPARED",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
-    payment = get_payment(
-        service,
-        title,
-    )
+    payment = get_payment(service, title)
 
     if not payment:
 
@@ -2419,14 +2094,10 @@ def payment_report(
             public_product(product),
         "payment":
             payment,
-        "saved_document":
-            True,
-        "download_unlocked":
-            bool(
-                product.get(
-                    "download_unlocked"
-                )
-            ),
+        "saved_document": True,
+        "download_unlocked": bool(
+            product.get("download_unlocked")
+        ),
     }
 
 
@@ -2441,35 +2112,27 @@ def payment_status(
     request: Request,
 ):
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
         return {
             "ok": True,
             "found": False,
-            "product":
-                public_product(None),
+            "product": public_product(None),
             "payment": None,
         }
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
     return {
         "ok": True,
         "found": True,
-        "product":
-            public_product(product),
-        "payment":
-            get_payment(
-                service,
-                title,
-            ),
+        "product": public_product(product),
+        "payment": get_payment(
+            service,
+            title,
+        ),
         "delivery":
             delivery_channels(
                 request,
@@ -2499,9 +2162,7 @@ def payment_complete(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
     payment = update_payment(
         body.service,
@@ -2512,18 +2173,12 @@ def payment_complete(
 
     return {
         "ok": True,
-        "message":
-            "Payment marked verified.",
-        "product":
-            public_product(product),
-        "payment":
-            payment,
-        "download_unlocked":
-            bool(
-                product.get(
-                    "download_unlocked"
-                )
-            ),
+        "message": "Payment marked verified.",
+        "product": public_product(product),
+        "payment": payment,
+        "download_unlocked": bool(
+            product.get("download_unlocked")
+        ),
     }
 
 
@@ -2533,20 +2188,15 @@ def payment_complete(
 
 @app.post("/api/back-office/login")
 def back_office_login(
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
     return {
         "ok": True,
         "authenticated": True,
-        "message":
-            "Back Office access granted.",
+        "message": "Back Office access granted.",
     }
 
 
@@ -2560,9 +2210,7 @@ def back_office_payment_channels(
 ) -> list[dict]:
 
     method = clean(
-        (payment or {}).get(
-            "payment_method"
-        )
+        (payment or {}).get("payment_method")
         or "bank_transfer"
     ) or "bank_transfer"
 
@@ -2572,27 +2220,22 @@ def back_office_payment_channels(
             "name": "Bank Transfer",
             "type": "payment",
             "available": True,
-            "selected":
-                method == "bank_transfer",
+            "selected": method == "bank_transfer",
         },
         {
             "id": "cash_manual",
-            "name":
-                "Cash / Manual Payment",
+            "name": "Cash / Manual Payment",
             "type": "payment",
             "available": True,
-            "selected":
-                method
-                in {
-                    "cash",
-                    "manual",
-                    "cash_manual",
-                },
+            "selected": method in {
+                "cash",
+                "manual",
+                "cash_manual",
+            },
         },
         {
             "id": "recorded_method",
-            "name":
-                "Recorded Payment Method",
+            "name": "Recorded Payment Method",
             "type": "payment",
             "available": True,
             "selected": True,
@@ -2608,18 +2251,12 @@ def back_office_payment_channels(
 @app.get("/api/back-office/payments")
 def back_office_payments(
     request: Request,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    connection = db(PRODUCT_DB_PATH)
 
     rows = connection.execute(
         """
@@ -2635,20 +2272,14 @@ def back_office_payments(
 
     for row in rows:
 
-        product = repair_saved_snapshot(
-            dict(row)
-        )
+        product = repair_saved_snapshot(dict(row))
 
         payment = get_payment(
             product.get("service"),
-            product.get(
-                "document_title"
-            ),
+            product.get("document_title"),
         )
 
-        item = back_office_product(
-            product
-        )
+        item = back_office_product(product)
 
         item["payment"] = payment
 
@@ -2675,40 +2306,27 @@ def back_office_payments(
         "items": items,
         "documents": items,
         "summary": {
-            "saved":
-                sum(
-                    1
-                    for item in items
-                    if item.get(
-                        "saved_document"
-                    )
-                ),
-            "total_documents":
-                len(items),
-            "reported":
-                sum(
-                    1
-                    for item in items
-                    if item.get(
-                        "payment_reported"
-                    )
-                ),
-            "verified":
-                sum(
-                    1
-                    for item in items
-                    if item.get(
-                        "payment_verified"
-                    )
-                ),
-            "activated":
-                sum(
-                    1
-                    for item in items
-                    if item.get(
-                        "download_unlocked"
-                    )
-                ),
+            "saved": sum(
+                1
+                for item in items
+                if item.get("saved_document")
+            ),
+            "total_documents": len(items),
+            "reported": sum(
+                1
+                for item in items
+                if item.get("payment_reported")
+            ),
+            "verified": sum(
+                1
+                for item in items
+                if item.get("payment_verified")
+            ),
+            "activated": sum(
+                1
+                for item in items
+                if item.get("download_unlocked")
+            ),
         },
     }
 
@@ -2719,18 +2337,12 @@ def back_office_payments(
 
 @app.get("/api/back-office/jobs")
 def back_office_jobs(
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    connection = db(PRODUCT_DB_PATH)
 
     rows = connection.execute(
         """
@@ -2744,10 +2356,7 @@ def back_office_jobs(
 
     return {
         "ok": True,
-        "jobs": [
-            dict(row)
-            for row in rows
-        ],
+        "jobs": [dict(row) for row in rows],
     }
 
 
@@ -2760,19 +2369,12 @@ def back_office_payment(
     service: str,
     title: str,
     request: Request,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -2781,23 +2383,14 @@ def back_office_payment(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
-    payment = get_payment(
-        service,
-        title,
-    )
+    payment = get_payment(service, title)
 
     return {
         "ok": True,
-        "product":
-            back_office_product(
-                product
-            ),
-        "payment":
-            payment,
+        "product": back_office_product(product),
+        "payment": payment,
         "payment_channels":
             back_office_payment_channels(
                 product,
@@ -2819,19 +2412,12 @@ def back_office_payment(
 def back_office_document_info(
     service: str,
     title: str,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -2840,52 +2426,24 @@ def back_office_document_info(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
-    saved = find_saved_file_from_product(
-        product
-    )
-
-    document = read_actual_saved_document(
-        product
-    )
+    saved = find_saved_file_from_product(product)
+    document = read_actual_saved_document(product)
 
     return {
         "ok": True,
-        "service":
-            product["service"],
-        "document_title":
-            product["document_title"],
-        "filename":
-            product.get(
-                "document_filename"
-            ),
-        "pages":
-            document[
-                "page_count"
-            ],
-        "saved_document":
-            bool(saved),
-        "saved_path":
-            str(saved)
-            if saved
-            else "",
-        "document_text":
-            document[
-                "document_text"
-            ],
-        "document_pages":
-            document[
-                "pages"
-            ],
-        "download_unlocked":
-            bool(
-                product.get(
-                    "download_unlocked"
-                )
-            ),
+        "service": product["service"],
+        "document_title": product["document_title"],
+        "filename": product.get("document_filename"),
+        "pages": document["page_count"],
+        "saved_document": bool(saved),
+        "saved_path": str(saved) if saved else "",
+        "document_text": document["document_text"],
+        "document_pages": document["pages"],
+        "download_unlocked": bool(
+            product.get("download_unlocked")
+        ),
     }
 
 
@@ -2897,19 +2455,12 @@ def back_office_document_info(
 def back_office_document(
     service: str,
     title: str,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -2918,52 +2469,24 @@ def back_office_document(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
-    document = read_actual_saved_document(
-        product
-    )
-
-    saved = find_saved_file_from_product(
-        product
-    )
+    document = read_actual_saved_document(product)
+    saved = find_saved_file_from_product(product)
 
     return {
         "ok": True,
-        "service":
-            product["service"],
-        "document_title":
-            product["document_title"],
-        "filename":
-            product.get(
-                "document_filename"
-            ),
-        "pages":
-            document[
-                "pages"
-            ],
-        "page_count":
-            document[
-                "page_count"
-            ],
-        "document_text":
-            document[
-                "document_text"
-            ],
-        "saved_document":
-            bool(saved),
-        "saved_path":
-            str(saved)
-            if saved
-            else "",
-        "download_unlocked":
-            bool(
-                product.get(
-                    "download_unlocked"
-                )
-            ),
+        "service": product["service"],
+        "document_title": product["document_title"],
+        "filename": product.get("document_filename"),
+        "pages": document["pages"],
+        "page_count": document["page_count"],
+        "document_text": document["document_text"],
+        "saved_document": bool(saved),
+        "saved_path": str(saved) if saved else "",
+        "download_unlocked": bool(
+            product.get("download_unlocked")
+        ),
     }
 
 
@@ -2975,19 +2498,12 @@ def back_office_document(
 def back_office_document_content(
     service: str,
     title: str,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -2996,52 +2512,24 @@ def back_office_document_content(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
-    document = read_actual_saved_document(
-        product
-    )
-
-    saved = find_saved_file_from_product(
-        product
-    )
+    document = read_actual_saved_document(product)
+    saved = find_saved_file_from_product(product)
 
     return {
         "ok": True,
-        "service":
-            product["service"],
-        "document_title":
-            product["document_title"],
-        "filename":
-            product.get(
-                "document_filename"
-            ),
-        "pages":
-            document[
-                "pages"
-            ],
-        "page_count":
-            document[
-                "page_count"
-            ],
-        "document_text":
-            document[
-                "document_text"
-            ],
-        "saved_document":
-            bool(saved),
-        "saved_path":
-            str(saved)
-            if saved
-            else "",
-        "customer_download_unlocked":
-            bool(
-                product.get(
-                    "download_unlocked"
-                )
-            ),
+        "service": product["service"],
+        "document_title": product["document_title"],
+        "filename": product.get("document_filename"),
+        "pages": document["pages"],
+        "page_count": document["page_count"],
+        "document_text": document["document_text"],
+        "saved_document": bool(saved),
+        "saved_path": str(saved) if saved else "",
+        "customer_download_unlocked": bool(
+            product.get("download_unlocked")
+        ),
     }
 
 
@@ -3052,14 +2540,10 @@ def back_office_document_content(
 @app.post("/api/back-office/payment/verify")
 def back_office_payment_verify(
     body: PaymentCompleteRequest,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
     product = get_product(
         body.service,
@@ -3073,9 +2557,7 @@ def back_office_payment_verify(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
     payment = update_payment(
         body.service,
@@ -3089,16 +2571,11 @@ def back_office_payment_verify(
         "message":
             "Payment verified. "
             "Activate download separately when ready.",
-        "product":
-            public_product(product),
-        "payment":
-            payment,
-        "download_unlocked":
-            bool(
-                product.get(
-                    "download_unlocked"
-                )
-            ),
+        "product": public_product(product),
+        "payment": payment,
+        "download_unlocked": bool(
+            product.get("download_unlocked")
+        ),
     }
 
 
@@ -3110,19 +2587,12 @@ def back_office_payment_verify(
 def back_office_payment_channels_endpoint(
     service: str,
     title: str,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -3131,27 +2601,15 @@ def back_office_payment_channels_endpoint(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
-    payment = get_payment(
-        service,
-        title,
-    )
+    payment = get_payment(service, title)
 
     return {
         "ok": True,
-        "service":
-            product.get(
-                "service"
-            ),
-        "document_title":
-            product.get(
-                "document_title"
-            ),
-        "payment":
-            payment,
+        "service": product.get("service"),
+        "document_title": product.get("document_title"),
+        "payment": payment,
         "payment_channels":
             back_office_payment_channels(
                 product,
@@ -3169,9 +2627,7 @@ def activate_download(
     title: str,
 ) -> dict:
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    connection = db(PRODUCT_DB_PATH)
 
     timestamp = now_iso()
 
@@ -3186,36 +2642,23 @@ def activate_download(
         (
             timestamp,
             timestamp,
-            business_key(
-                service,
-                title,
-            ),
+            business_key(service, title),
         ),
     )
 
     connection.commit()
     connection.close()
 
-    return (
-        get_product(
-            service,
-            title,
-        )
-        or {}
-    )
+    return get_product(service, title) or {}
 
 
 @app.post("/api/back-office/activate-download")
 def back_office_activate(
     body: BackOfficeActivateRequest,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
     if not body.verified:
 
@@ -3236,13 +2679,9 @@ def back_office_activate(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
-    if not find_saved_file_from_product(
-        product
-    ):
+    if not find_saved_file_from_product(product):
 
         raise HTTPException(
             status_code=404,
@@ -3256,12 +2695,9 @@ def back_office_activate(
 
     return {
         "ok": True,
-        "message":
-            "Download activated.",
-        "product":
-            public_product(product),
-        "download_unlocked":
-            True,
+        "message": "Download activated.",
+        "product": public_product(product),
+        "download_unlocked": True,
     }
 
 
@@ -3272,14 +2708,10 @@ def back_office_activate(
 @app.post("/api/back-office/payment/reject")
 def back_office_reject(
     body: BackOfficeRejectRequest,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
     product = get_product(
         body.service,
@@ -3303,24 +2735,52 @@ def back_office_reject(
 
     return {
         "ok": True,
-        "message":
-            "Payment marked rejected.",
-        "product":
-            public_product(product),
-        "payment":
-            payment,
-        "download_unlocked":
-            bool(
-                product.get(
-                    "download_unlocked"
-                )
-            ),
+        "message": "Payment marked rejected.",
+        "product": public_product(product),
+        "payment": payment,
+        "download_unlocked": bool(
+            product.get("download_unlocked")
+        ),
     }
 
 
 # ============================================================
-# CUSTOMER DOWNLOAD
+# CUSTOMER DOWNLOAD / ATTACHMENT
 # ============================================================
+
+def _file_media_type(path: Path) -> str:
+
+    suffix = path.suffix.lower()
+
+    if suffix == ".docx":
+
+        return (
+            "application/vnd.openxmlformats-officedocument."
+            "wordprocessingml.document"
+        )
+
+    if suffix == ".pdf":
+        return "application/pdf"
+
+    return "application/octet-stream"
+
+
+def _attachment_response(path: Path) -> FileResponse:
+
+    return FileResponse(
+        path=str(path),
+        filename=path.name,
+        media_type=_file_media_type(path),
+        content_disposition_type="attachment",
+        headers={
+            "Cache-Control":
+                "no-store, no-cache, must-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
 
 @app.get("/api/download")
 def download_document(
@@ -3328,10 +2788,7 @@ def download_document(
     title: str,
 ):
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -3341,9 +2798,7 @@ def download_document(
         )
 
     if not bool(
-        product.get(
-            "download_unlocked"
-        )
+        product.get("download_unlocked")
     ):
 
         raise HTTPException(
@@ -3351,13 +2806,11 @@ def download_document(
             detail="DOWNLOAD_NOT_UNLOCKED",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    # This does NOT replace an existing current saved document.
+    # It only repairs the record if no saved file exists.
+    product = repair_saved_snapshot(product)
 
-    saved = find_saved_file_from_product(
-        product
-    )
+    saved = find_saved_file_from_product(product)
 
     if not saved:
 
@@ -3366,57 +2819,45 @@ def download_document(
             detail="SAVED_DOCUMENT_FILE_MISSING",
         )
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    timestamp = now_iso()
+
+    connection = db(PRODUCT_DB_PATH)
 
     connection.execute(
         """
         UPDATE document_products
         SET download_count=
-                COALESCE(
-                    download_count,
-                    0
-                ) + 1,
+                COALESCE(download_count, 0) + 1,
             downloaded_at=?,
             updated_at=?
         WHERE business_key=?
         """,
         (
-            now_iso(),
-            now_iso(),
-            business_key(
-                service,
-                title,
-            ),
+            timestamp,
+            timestamp,
+            business_key(service, title),
         ),
     )
 
     connection.commit()
     connection.close()
 
-    if saved.suffix.lower() == ".docx":
+    # IMPORTANT:
+    # This is the exact same physical saved file used by Back Office.
+    return _attachment_response(saved)
 
-        media = (
-            "application/vnd.openxmlformats-officedocument."
-            "wordprocessingml.document"
-        )
 
-    elif saved.suffix.lower() == ".pdf":
+# Explicit customer attachment alias.
+# It uses the exact same file and the same lock.
+@app.get("/api/customer/attachment")
+def customer_attachment(
+    service: str,
+    title: str,
+):
 
-        media = "application/pdf"
-
-    else:
-
-        media = (
-            "application/octet-stream"
-        )
-
-    return FileResponse(
-        path=str(saved),
-        filename=saved.name,
-        media_type=media,
-        content_disposition_type="attachment",
+    return download_document(
+        service=service,
+        title=title,
     )
 
 
@@ -3431,10 +2872,7 @@ def get_delivery_channels(
     request: Request,
 ):
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -3443,13 +2881,9 @@ def get_delivery_channels(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
-    if not find_saved_file_from_product(
-        product
-    ):
+    if not find_saved_file_from_product(product):
 
         raise HTTPException(
             status_code=404,
@@ -3458,8 +2892,7 @@ def get_delivery_channels(
 
     return {
         "ok": True,
-        "product":
-            public_product(product),
+        "product": public_product(product),
         **delivery_channels(
             request,
             product,
@@ -3485,9 +2918,7 @@ def prepare_delivery(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
     selected = select_channel(
         delivery_channels(
@@ -3508,18 +2939,13 @@ def prepare_delivery(
         product,
         selected["id"],
         "prepared",
-        {
-            "url":
-                selected.get("url")
-        },
+        {"url": selected.get("url")},
     )
 
     return {
         "ok": True,
-        "channel":
-            selected,
-        "product":
-            public_product(product),
+        "channel": selected,
+        "product": public_product(product),
     }
 
 
@@ -3532,19 +2958,12 @@ def back_office_delivery_channels_endpoint(
     service: str,
     title: str,
     request: Request,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -3553,16 +2972,11 @@ def back_office_delivery_channels_endpoint(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
     return {
         "ok": True,
-        "product":
-            back_office_product(
-                product
-            ),
+        "product": back_office_product(product),
         "delivery":
             back_office_delivery_channels(
                 request,
@@ -3577,19 +2991,12 @@ def back_office_delivery(
     title: str,
     channel: str,
     request: Request,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -3598,9 +3005,7 @@ def back_office_delivery(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
     selected = select_channel(
         back_office_delivery_channels(
@@ -3621,20 +3026,13 @@ def back_office_delivery(
         product,
         selected["id"],
         "ready",
-        {
-            "url":
-                selected.get("url")
-        },
+        {"url": selected.get("url")},
     )
 
     return {
         "ok": True,
-        "channel":
-            selected,
-        "product":
-            back_office_product(
-                product
-            ),
+        "channel": selected,
+        "product": back_office_product(product),
     }
 
 
@@ -3646,19 +3044,12 @@ def back_office_delivery(
 def back_office_delivery_file(
     service: str,
     title: str,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
@@ -3667,13 +3058,9 @@ def back_office_delivery_file(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
-    saved = find_saved_file_from_product(
-        product
-    )
+    saved = find_saved_file_from_product(product)
 
     if not saved:
 
@@ -3682,29 +3069,10 @@ def back_office_delivery_file(
             detail="SAVED_DOCUMENT_FILE_MISSING",
         )
 
-    if saved.suffix.lower() == ".docx":
-
-        media = (
-            "application/vnd.openxmlformats-officedocument."
-            "wordprocessingml.document"
-        )
-
-    elif saved.suffix.lower() == ".pdf":
-
-        media = "application/pdf"
-
-    else:
-
-        media = (
-            "application/octet-stream"
-        )
-
-    return FileResponse(
-        path=str(saved),
-        filename=saved.name,
-        media_type=media,
-        content_disposition_type="attachment",
-    )
+    # IMPORTANT:
+    # Back Office receives the exact same physical file that
+    # customer download receives.
+    return _attachment_response(saved)
 
 
 # ============================================================
@@ -3715,18 +3083,12 @@ def back_office_delivery_file(
 def delivery_history(
     service: Optional[str] = None,
     title: Optional[str] = None,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    connection = db(
-        PRODUCT_DB_PATH
-    )
+    connection = db(PRODUCT_DB_PATH)
 
     if service and title:
 
@@ -3738,10 +3100,7 @@ def delivery_history(
             ORDER BY created_at DESC, id DESC
             """,
             (
-                business_key(
-                    service,
-                    title,
-                ),
+                business_key(service, title),
             ),
         ).fetchall()
 
@@ -3759,10 +3118,7 @@ def delivery_history(
 
     return {
         "ok": True,
-        "events": [
-            dict(row)
-            for row in rows
-        ],
+        "events": [dict(row) for row in rows],
     }
 
 
@@ -3777,29 +3133,22 @@ def product_status(
     request: Request,
 ):
 
-    product = get_product(
-        service,
-        title,
-    )
+    product = get_product(service, title)
 
     if not product:
 
         return {
             "ok": True,
             "found": False,
-            "product":
-                public_product(None),
+            "product": public_product(None),
         }
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
     return {
         "ok": True,
         "found": True,
-        "product":
-            public_product(product),
+        "product": public_product(product),
         "delivery":
             delivery_channels(
                 request,
@@ -3814,18 +3163,12 @@ def product_status(
 
 @app.get("/api/customer-care/payments")
 def customer_care_payments_compatibility(
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
-    connection = db(
-        PAYMENT_DB_PATH
-    )
+    connection = db(PAYMENT_DB_PATH)
 
     rows = connection.execute(
         """
@@ -3839,24 +3182,17 @@ def customer_care_payments_compatibility(
 
     return {
         "ok": True,
-        "payments": [
-            dict(row)
-            for row in rows
-        ],
+        "payments": [dict(row) for row in rows],
     }
 
 
 @app.post("/api/customer-care/payment/verify")
 def customer_care_verify_compatibility(
     body: PaymentCompleteRequest,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
     product = get_product(
         body.service,
@@ -3870,9 +3206,7 @@ def customer_care_verify_compatibility(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
     payment = update_payment(
         body.service,
@@ -3886,16 +3220,11 @@ def customer_care_verify_compatibility(
         "message":
             "Payment verified. "
             "Download still requires activation.",
-        "product":
-            public_product(product),
-        "payment":
-            payment,
-        "download_unlocked":
-            bool(
-                product.get(
-                    "download_unlocked"
-                )
-            ),
+        "product": public_product(product),
+        "payment": payment,
+        "download_unlocked": bool(
+            product.get("download_unlocked")
+        ),
     }
 
 
@@ -3907,14 +3236,10 @@ def customer_care_verify_compatibility(
 def back_office_delivery_post(
     body: DeliveryRequest,
     request: Request,
-    x_back_office_key: str = Header(
-        default=""
-    ),
+    x_back_office_key: str = Header(default=""),
 ):
 
-    require_back_office(
-        x_back_office_key
-    )
+    require_back_office(x_back_office_key)
 
     product = get_product(
         body.service,
@@ -3928,9 +3253,7 @@ def back_office_delivery_post(
             detail="PRODUCT_NOT_FOUND",
         )
 
-    product = repair_saved_snapshot(
-        product
-    )
+    product = repair_saved_snapshot(product)
 
     selected = select_channel(
         back_office_delivery_channels(
@@ -3951,21 +3274,14 @@ def back_office_delivery_post(
         product,
         selected["id"],
         "ready",
-        {
-            "url":
-                selected.get("url")
-        },
+        {"url": selected.get("url")},
     )
 
     return {
         "ok": True,
         "status": "ready",
-        "channel":
-            selected,
-        "product":
-            back_office_product(
-                product
-            ),
+        "channel": selected,
+        "product": back_office_product(product),
         "message":
             "The exact saved document is ready "
             "for Back Office delivery through this channel.",
@@ -3983,10 +3299,8 @@ def health():
         "ok": True,
         "service":
             "Naija Pocket Business Center Payment API",
-        "version":
-            APP_VERSION,
-        "back_office_key_configured":
-            True,
+        "version": APP_VERSION,
+        "back_office_key_configured": True,
     }
 
 
@@ -3997,8 +3311,7 @@ def root():
         "ok": True,
         "service":
             "Naija Pocket Business Center Payment API",
-        "version":
-            APP_VERSION,
+        "version": APP_VERSION,
         "message":
             "Payment, saved-document, Back Office "
             "and delivery API is running.",
@@ -4017,9 +3330,6 @@ if __name__ == "__main__":
         app,
         host="0.0.0.0",
         port=int(
-            os.getenv(
-                "PORT",
-                "8000",
-            )
+            os.getenv("PORT", "8000")
         ),
     )
