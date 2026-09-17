@@ -173,6 +173,21 @@ button{cursor:pointer}
   cursor:not-allowed;
 }
 
+.download-button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  margin-top:14px;
+  padding:15px 18px;
+  border-radius:12px;
+  background:linear-gradient(180deg,var(--gold2),var(--gold));
+  color:#050505;
+  font-weight:900;
+  font-size:15px;
+  text-decoration:none;
+}
+
 .secondary-button{
   border:1px solid var(--line);
   background:var(--panel3);
@@ -227,6 +242,27 @@ button{cursor:pointer}
 .message.warning{
   border-color:rgba(229,185,75,.4);
   color:#ffe7a0;
+}
+
+.download-ready{
+  border-color:rgba(49,197,107,.45);
+  background:linear-gradient(180deg,#101b14,#0c100d);
+}
+
+.download-ready .card-title{
+  color:#b8f2cb;
+}
+
+.download-file{
+  margin-top:10px;
+  padding:12px;
+  border-radius:10px;
+  background:#080808;
+  border:1px solid rgba(49,197,107,.22);
+  color:var(--white);
+  font-size:13px;
+  line-height:1.5;
+  word-break:break-word;
 }
 
 #paymentExperience,
@@ -664,9 +700,7 @@ button{cursor:pointer}
   border-radius:14px;
   overflow:hidden;
   background:#080808;
-  box-shadow:
-    0 18px 50px rgba(0,0,0,.5),
-    inset 0 0 0 1px rgba(255,255,255,.02);
+  box-shadow:0 18px 50px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.02);
 }
 
 .document-reader-header{
@@ -786,27 +820,11 @@ button{cursor:pointer}
 }
 
 @media(min-width:700px){
-
-  .summary-grid{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .steps{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .delivery-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .document-reader-body{
-    height:68vh;
-  }
-
-  .document-reader-page{
-    padding:40px 45px;
-    font-size:15px;
-  }
+  .summary-grid{grid-template-columns:repeat(3,1fr)}
+  .steps{grid-template-columns:repeat(3,1fr)}
+  .delivery-grid{grid-template-columns:1fr 1fr}
+  .document-reader-body{height:68vh}
+  .document-reader-page{padding:40px 45px;font-size:15px}
 }
 </style>
 </head>
@@ -825,10 +843,7 @@ button{cursor:pointer}
 <div class="brand-subtitle">Secure payment and document delivery</div>
 </div>
 
-<button
-type="button"
-class="top-action"
-id="backOfficeButton">
+<button type="button" class="top-action" id="backOfficeButton">
 Back Office
 </button>
 
@@ -865,10 +880,7 @@ Your document is saved. Make your payment, then contact Customer Service to conf
 
 </div>
 
-<button
-type="button"
-class="primary-button"
-id="makePaymentButton">
+<button type="button" class="primary-button" id="makePaymentButton">
 MAKE PAYMENT
 </button>
 
@@ -876,10 +888,52 @@ MAKE PAYMENT
 
 </section>
 
+<!-- ========================================================
+     CUSTOMER ACTUAL DOCUMENT DOWNLOAD
+     ======================================================== -->
+
+<section class="lux-card download-ready hidden" id="customerDownloadPanel">
+
+<div class="section-heading">
+
+<div class="section-number">✓</div>
+
+<div>
+<h2>Your document is ready</h2>
+</div>
+
+</div>
+
+<p class="card-subtitle">
+Your exact saved document has been activated for download.
+</p>
+
+<div class="download-file" id="customerDownloadFilename">
+Your saved document
+</div>
+
+<a
+id="customerDownloadButton"
+class="download-button"
+href="#"
+target="_blank"
+rel="noopener">
+DOWNLOAD MY DOCUMENT
+</a>
+
+<div class="message" id="customerDownloadMessage"></div>
+
+</section>
+
 </div>
 </main>
 
 </section>
+
+
+<!-- ============================================================
+     PAYMENT EXPERIENCE
+     ============================================================ -->
 
 <section id="paymentExperience" class="hidden">
 
@@ -892,10 +946,7 @@ MAKE PAYMENT
 Payment &amp; Delivery
 </div>
 
-<button
-type="button"
-class="close-button"
-id="closeExperience">
+<button type="button" class="close-button" id="closeExperience">
 ×
 </button>
 
@@ -975,16 +1026,11 @@ BANK TRANSFER
 Please make payment using the payment details provided by Naija Pocket Business Center. Pay the exact amount shown above. After making the transfer, contact Customer Service immediately and let us know that you have made payment.
 </div>
 
-<button
-type="button"
-class="primary-button"
-id="experienceMakePaymentButton">
+<button type="button" class="primary-button" id="experienceMakePaymentButton">
 PREPARE PAYMENT
 </button>
 
-<div
-class="payment-status"
-id="paymentStatusBox">
+<div class="payment-status" id="paymentStatusBox">
 Payment details have not yet been prepared.
 </div>
 
@@ -1008,9 +1054,7 @@ After you make payment
 Contact Customer Service and tell us that you have made payment. Customer Service will verify your payment and arrange the delivery of your exact saved document.
 </div>
 
-<div
-class="customer-service-contact"
-id="customerServiceContact">
+<div class="customer-service-contact" id="customerServiceContact">
 CUSTOMER_SERVICE_CONTACT
 </div>
 
@@ -1030,9 +1074,7 @@ CUSTOMER_SERVICE_CONTACT
 SAVED DOCUMENT — PREVIEW
 </div>
 
-<div
-class="document-preview"
-id="documentPreview">
+<div class="document-preview" id="documentPreview">
 Your saved document preview will appear here.
 </div>
 
@@ -1041,6 +1083,39 @@ Your saved document preview will appear here.
 <div class="preview-note">
 Your exact reviewed document is securely saved. Customer Service will send this same document to you after your payment is verified.
 </div>
+
+</section>
+
+<!-- CUSTOMER DOWNLOAD ALSO AVAILABLE INSIDE PAYMENT EXPERIENCE -->
+
+<section class="lux-card download-ready hidden" id="experienceDownloadPanel">
+
+<div class="section-heading">
+
+<div class="section-number">✓</div>
+
+<div>
+<h2>Your document is ready</h2>
+</div>
+
+</div>
+
+<p class="card-subtitle">
+Your exact saved document has been activated for download.
+</p>
+
+<div class="download-file" id="experienceDownloadFilename">
+Your saved document
+</div>
+
+<a
+id="experienceDownloadButton"
+class="download-button"
+href="#"
+target="_blank"
+rel="noopener">
+DOWNLOAD MY DOCUMENT
+</a>
 
 </section>
 
@@ -1087,6 +1162,11 @@ Your exact reviewed document is securely saved. Customer Service will send this 
 
 </section>
 
+
+<!-- ============================================================
+     BACK OFFICE
+     ============================================================ -->
+
 <section id="backOfficeView" class="hidden">
 
 <div class="backoffice-shell">
@@ -1102,10 +1182,7 @@ Payment verification and document delivery
 </div>
 </div>
 
-<button
-type="button"
-class="close-button"
-id="exitBackOffice">
+<button type="button" class="close-button" id="exitBackOffice">
 ×
 </button>
 
@@ -1134,17 +1211,11 @@ autocomplete="off">
 
 <div class="backoffice-actions">
 
-<button
-type="button"
-class="secondary-button"
-id="loadBackOfficeButton">
+<button type="button" class="secondary-button" id="loadBackOfficeButton">
 LOAD RECORDS
 </button>
 
-<button
-type="button"
-class="secondary-button"
-id="refreshBackOfficeButton">
+<button type="button" class="secondary-button" id="refreshBackOfficeButton">
 REFRESH
 </button>
 
@@ -1179,17 +1250,13 @@ REFRESH
 
 <h2 class="card-title">Records</h2>
 
-<div
-class="records"
-id="backOfficeRecords">
+<div class="records" id="backOfficeRecords">
 No records loaded.
 </div>
 
 </section>
 
-<section
-class="lux-card saved-document-panel hidden"
-id="backOfficeDocumentPanel">
+<section class="lux-card saved-document-panel hidden" id="backOfficeDocumentPanel">
 
 <div class="section-heading">
 
@@ -1198,8 +1265,7 @@ id="backOfficeDocumentPanel">
 <div>
 <h2>Saved Customer Document</h2>
 
-<div
-id="backOfficeDocumentTitle"
+<div id="backOfficeDocumentTitle"
 style="margin-top:4px;color:var(--muted);font-size:12px;">
 No document selected
 </div>
@@ -1216,23 +1282,17 @@ No document selected
 EXACT SAVED CUSTOMER DOCUMENT
 </div>
 
-<div
-class="document-reader-title"
-id="documentReaderTitle">
+<div class="document-reader-title" id="documentReaderTitle">
 Loading document...
 </div>
 
-<div
-class="document-reader-meta"
-id="documentReaderMeta">
+<div class="document-reader-meta" id="documentReaderMeta">
 The Back Office is reading the saved document.
 </div>
 
 </div>
 
-<div
-class="document-reader-body"
-id="backOfficeDocumentReader">
+<div class="document-reader-body" id="backOfficeDocumentReader">
 
 <div class="document-reader-loading">
 Loading the exact saved customer document...
@@ -1246,10 +1306,7 @@ This window is for Back Office review. The document shown here is the saved cust
 
 <div class="document-reader-actions">
 
-<button
-type="button"
-class="secondary-button"
-id="closeDocumentReader">
+<button type="button" class="secondary-button" id="closeDocumentReader">
 CLOSE DOCUMENT
 </button>
 
@@ -1259,10 +1316,7 @@ CLOSE DOCUMENT
 
 </div>
 
-<div
-class="message"
-id="documentActionMessage">
-</div>
+<div class="message" id="documentActionMessage"></div>
 
 </section>
 
@@ -1273,6 +1327,7 @@ id="documentActionMessage">
 </section>
 
 </div>
+
 
 <script>
 "use strict";
@@ -1361,16 +1416,12 @@ function numberValue(value){
         typeof value === "string" &&
         value.includes(",")
     ){
-        value =
-            value.replace(/,/g,"");
+        value = value.replace(/,/g,"");
     }
 
-    const n =
-        Number(value);
+    const n = Number(value);
 
-    return Number.isFinite(n)
-        ? n
-        : 0;
+    return Number.isFinite(n) ? n : 0;
 }
 
 function $(id){
@@ -1392,15 +1443,13 @@ function safeJsonParse(value){
 
 function money(value){
 
-    const n =
-        numberValue(value);
+    const n = numberValue(value);
 
     if(!n){
         return "₦0";
     }
 
-    return "₦" +
-        n.toLocaleString("en-NG");
+    return "₦" + n.toLocaleString("en-NG");
 }
 
 function escapeHtml(value){
@@ -1413,24 +1462,16 @@ function escapeHtml(value){
         .replace(/'/g,"&#039;");
 }
 
-function showMessage(
-    elementId,
-    text,
-    type=""
-){
+function showMessage(elementId,text,type=""){
 
-    const element =
-        $(elementId);
+    const element = $(elementId);
 
     if(!element){
         return;
     }
 
-    element.textContent =
-        text || "";
-
-    element.className =
-        "message";
+    element.textContent = text || "";
+    element.className = "message";
 
     if(text){
         element.classList.add("show");
@@ -1461,18 +1502,127 @@ function apiError(error){
 
 
 /* ============================================================
+   CUSTOMER / BACK OFFICE ACTUAL DOWNLOAD URL
+   ============================================================ */
+
+function buildDownloadUrl(
+    serviceName = service,
+    title = documentTitle
+){
+
+    const cleanService =
+        clean(serviceName);
+
+    const cleanTitle =
+        clean(title);
+
+    if(
+        !cleanService ||
+        !cleanTitle
+    ){
+        return "";
+    }
+
+    const query =
+        new URLSearchParams();
+
+    /*
+      The canonical product identity is ONLY:
+      service + document title.
+
+      "title" is the normal API parameter.
+      "document_title" is also supplied for compatibility
+      with API versions using that parameter name.
+    */
+
+    query.set(
+        "service",
+        cleanService
+    );
+
+    query.set(
+        "title",
+        cleanTitle
+    );
+
+    query.set(
+        "document_title",
+        cleanTitle
+    );
+
+    return (
+        PAYMENT_API_BASE +
+        "/api/download?" +
+        query.toString()
+    );
+}
+
+
+/*
+  Open the actual saved document download.
+
+  This is intentionally a direct browser navigation.
+  The API must return the saved file with Content-Disposition:
+  attachment.
+
+  No fetch/blob reconstruction is used here.
+*/
+
+function openDownload(
+    serviceName,
+    title,
+    statusElementId=""
+){
+
+    const url =
+        buildDownloadUrl(
+            serviceName,
+            title
+        );
+
+    if(!url){
+
+        if(statusElementId){
+
+            showMessage(
+                "backOfficeMessage",
+                "The service or document title required for download is missing.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    if(statusElementId){
+
+        const status =
+            $(statusElementId);
+
+        if(status){
+
+            status.textContent =
+                "Opening the exact saved document download...";
+        }
+    }
+
+    /*
+      Direct browser navigation is deliberate.
+      It allows the server's Content-Disposition header
+      to control the actual attachment download.
+    */
+
+    window.location.href = url;
+}
+
+
+/* ============================================================
    SNAPSHOT RECOVERY
    ============================================================ */
 
 function readSnapshot(){
 
     const sources = [];
-
-    /*
-      Read all known localStorage locations.
-      We do not stop at the first object because an old
-      snapshot may exist beside the latest reviewed snapshot.
-    */
 
     for(const key of snapshotKeys){
 
@@ -1502,10 +1652,6 @@ function readSnapshot(){
         }
     }
 
-    /*
-      window.name recovery.
-    */
-
     try{
 
         if(window.name){
@@ -1519,10 +1665,6 @@ function readSnapshot(){
         }
 
     }catch{}
-
-    /*
-      JSON snapshot passed in URL.
-    */
 
     const queryObjectKeys = [
         "document",
@@ -1553,12 +1695,10 @@ function readSnapshot(){
             if(!parsed){
 
                 try{
-
                     parsed =
                         safeJsonParse(
                             decodeURIComponent(raw)
                         );
-
                 }catch{}
             }
 
@@ -1568,10 +1708,6 @@ function readSnapshot(){
 
         }catch{}
     }
-
-    /*
-      Direct URL fields.
-    */
 
     const directQuery = {};
 
@@ -1637,52 +1773,31 @@ function readSnapshot(){
         ]
     };
 
-    for(
-        const target of Object.keys(queryFieldMap)
-    ){
+    for(const target of Object.keys(queryFieldMap)){
 
-        for(
-            const key of queryFieldMap[target]
-        ){
+        for(const key of queryFieldMap[target]){
 
             const value =
                 params.get(key);
 
             if(clean(value)){
 
-                directQuery[target] =
-                    value;
-
+                directQuery[target] = value;
                 break;
             }
         }
     }
 
-    if(
-        Object.keys(directQuery).length
-    ){
-
+    if(Object.keys(directQuery).length){
         sources.push(directQuery);
     }
 
-    /*
-      Choose the richest snapshot, rather than blindly
-      using the first old localStorage object.
-    */
-
     if(sources.length){
 
-        let best =
-            sources[0];
+        let best = sources[0];
+        let bestScore = snapshotScore(best);
 
-        let bestScore =
-            snapshotScore(best);
-
-        for(
-            let i = 1;
-            i < sources.length;
-            i++
-        ){
+        for(let i=1;i<sources.length;i++){
 
             const score =
                 snapshotScore(
@@ -1691,22 +1806,16 @@ function readSnapshot(){
 
             if(score > bestScore){
 
-                best =
-                    sources[i];
-
-                bestScore =
-                    score;
+                best = sources[i];
+                bestScore = score;
             }
         }
 
-        snapshot =
-            best;
-
+        snapshot = best;
         return best;
     }
 
     snapshot = {};
-
     return snapshot;
 }
 
@@ -1783,10 +1892,7 @@ function snapshotScore(root){
     if(serviceValue) score += 5;
     if(amountValue) score += 5;
 
-    if(
-        title &&
-        text
-    ){
+    if(title && text){
         score += 20;
     }
 
@@ -1798,10 +1904,7 @@ function snapshotScore(root){
    DEEP OBJECT SEARCH
    ============================================================ */
 
-function collectObjects(
-    root,
-    limit=1500
-){
+function collectObjects(root,limit=1500){
 
     const result = [];
 
@@ -1812,8 +1915,7 @@ function collectObjects(
         }
     ];
 
-    const seen =
-        new WeakSet();
+    const seen = new WeakSet();
 
     while(
         queue.length &&
@@ -1838,7 +1940,6 @@ function collectObjects(
         }
 
         seen.add(value);
-
         result.push(value);
 
         if(item.depth >= 8){
@@ -1847,9 +1948,7 @@ function collectObjects(
 
         if(Array.isArray(value)){
 
-            for(
-                const child of value
-            ){
+            for(const child of value){
 
                 if(
                     child &&
@@ -1865,9 +1964,7 @@ function collectObjects(
 
         }else{
 
-            for(
-                const key of Object.keys(value)
-            ){
+            for(const key of Object.keys(value)){
 
                 const child =
                     value[key];
@@ -1889,36 +1986,26 @@ function collectObjects(
     return result;
 }
 
-
-function findDeepValue(
-    root,
-    keys
-){
+function findDeepValue(root,keys){
 
     const wanted =
         new Set(
             keys.map(
                 key =>
-                    String(key)
-                        .toLowerCase()
+                    String(key).toLowerCase()
             )
         );
 
     const objects =
         collectObjects(root);
 
-    for(
-        const object of objects
-    ){
+    for(const object of objects){
 
-        for(
-            const key of Object.keys(object)
-        ){
+        for(const key of Object.keys(object)){
 
             if(
                 wanted.has(
-                    String(key)
-                        .toLowerCase()
+                    String(key).toLowerCase()
                 )
             ){
 
@@ -1943,11 +2030,7 @@ function findDeepValue(
     return "";
 }
 
-
-function findDeepText(
-    root,
-    keys
-){
+function findDeepText(root,keys){
 
     const value =
         findDeepValue(
@@ -1966,15 +2049,9 @@ function findDeepText(
     return "";
 }
 
+function firstValue(objects,keys){
 
-function firstValue(
-    objects,
-    keys
-){
-
-    for(
-        const object of objects
-    ){
+    for(const object of objects){
 
         if(
             !object ||
@@ -1983,9 +2060,7 @@ function firstValue(
             continue;
         }
 
-        for(
-            const key of keys
-        ){
+        for(const key of keys){
 
             const value =
                 object[key];
@@ -2006,31 +2081,22 @@ function firstValue(
 
 
 /* ============================================================
-   TITLE EXTRACTION — IMPORTANT FIX
+   TITLE EXTRACTION
    ============================================================ */
 
 function cleanPossibleTitle(value){
 
-    let title =
-        clean(value);
+    let title = clean(value);
 
     if(!title){
         return "";
     }
-
-    /*
-      Remove common Markdown heading markers.
-    */
 
     title =
         title.replace(
             /^#{1,6}\s*/,
             ""
         ).trim();
-
-    /*
-      Remove bold markers around a title.
-    */
 
     title =
         title.replace(
@@ -2044,11 +2110,6 @@ function cleanPossibleTitle(value){
             "$1"
         ).trim();
 
-    /*
-      Remove common labels if they were stored with
-      the title.
-    */
-
     title =
         title.replace(
             /^(document\s+title|title)\s*:\s*/i,
@@ -2057,7 +2118,6 @@ function cleanPossibleTitle(value){
 
     return title;
 }
-
 
 function titleLooksValid(title){
 
@@ -2068,17 +2128,9 @@ function titleLooksValid(title){
         return false;
     }
 
-    if(title.length < 3){
+    if(title.length < 3 || title.length > 220){
         return false;
     }
-
-    if(title.length > 220){
-        return false;
-    }
-
-    /*
-      These are not document titles.
-    */
 
     const invalid = [
         "page 1",
@@ -2102,7 +2154,6 @@ function titleLooksValid(title){
     return true;
 }
 
-
 function extractTitleFromText(text){
 
     const source =
@@ -2115,23 +2166,12 @@ function extractTitleFromText(text){
     const lines =
         source
             .split(/\r?\n/)
-            .map(
-                line => clean(line)
-            )
+            .map(line => clean(line))
             .filter(Boolean);
 
-    /*
-      First priority:
-      Markdown heading.
-    */
+    for(const line of lines.slice(0,30)){
 
-    for(
-        const line of lines.slice(0,30)
-    ){
-
-        if(
-            /^#{1,6}\s+/.test(line)
-        ){
+        if(/^#{1,6}\s+/.test(line)){
 
             const title =
                 cleanPossibleTitle(line);
@@ -2142,18 +2182,9 @@ function extractTitleFromText(text){
         }
     }
 
-    /*
-      Second priority:
-      Bold heading.
-    */
+    for(const line of lines.slice(0,30)){
 
-    for(
-        const line of lines.slice(0,30)
-    ){
-
-        if(
-            /^\*\*[^*]+\*\*$/.test(line)
-        ){
+        if(/^\*\*[^*]+\*\*$/.test(line)){
 
             const title =
                 cleanPossibleTitle(line);
@@ -2164,14 +2195,7 @@ function extractTitleFromText(text){
         }
     }
 
-    /*
-      Third priority:
-      A short first line that looks like a title.
-    */
-
-    for(
-        const line of lines.slice(0,12)
-    ){
+    for(const line of lines.slice(0,12)){
 
         const title =
             cleanPossibleTitle(line);
@@ -2180,21 +2204,12 @@ function extractTitleFromText(text){
             continue;
         }
 
-        /*
-          Skip ordinary section headings if they occur
-          before the real document title.
-        */
-
         if(
             /^(introduction|conclusion|references|abstract|background)$/i
                 .test(title)
         ){
             continue;
         }
-
-        /*
-          A long prose sentence is not treated as title.
-        */
 
         if(
             title.length > 140 &&
@@ -2209,12 +2224,7 @@ function extractTitleFromText(text){
     return "";
 }
 
-
 function findDocumentTitle(root){
-
-    /*
-      Strong explicit title fields first.
-    */
 
     const strongKeys = [
         "document_title",
@@ -2237,110 +2247,28 @@ function findDocumentTitle(root){
             strongKeys
         );
 
-    if(
-        titleLooksValid(directTitle)
-    ){
-
-        return cleanPossibleTitle(
-            directTitle
-        );
+    if(titleLooksValid(directTitle)){
+        return cleanPossibleTitle(directTitle);
     }
-
-    /*
-      Search document containers.
-    */
-
-    const containers = [];
 
     const objects =
         collectObjects(root);
 
-    for(
-        const object of objects
-    ){
-
-        for(
-            const key of [
-                "document",
-                "saved_document",
-                "savedDocument",
-                "complete_document",
-                "completeDocument",
-                "completed_document",
-                "completedDocument",
-                "document_data",
-                "documentData",
-                "document_payload",
-                "documentPayload",
-                "review",
-                "reviewData",
-                "review_data",
-                "final_document",
-                "finalDocument",
-                "payload"
-            ]
-        ){
-
-            const value =
-                object[key];
-
-            if(
-                value &&
-                typeof value === "object"
-            ){
-
-                containers.push(value);
-            }
-        }
-    }
-
-    for(
-        const container of containers
-    ){
-
-        const title =
-            findDeepText(
-                container,
-                strongKeys
-            );
-
-        if(
-            titleLooksValid(title)
-        ){
-
-            return cleanPossibleTitle(
-                title
-            );
-        }
-    }
-
-    /*
-      IMPORTANT:
-      Search actual document text.
-      This catches the user's document:
-
-      How Nigeria Moved from Export to Consumption
-    */
-
     const textCandidates = [];
 
-    for(
-        const object of objects
-    ){
+    for(const object of objects){
 
-        for(
-            const key of [
-                "document_text",
-                "documentText",
-                "text",
-                "content",
-                "body",
-                "document_content",
-                "documentContent",
-                "saved_text",
-                "savedText"
-            ]
-        ){
+        for(const key of [
+            "document_text",
+            "documentText",
+            "text",
+            "content",
+            "body",
+            "document_content",
+            "documentContent",
+            "saved_text",
+            "savedText"
+        ]){
 
             const value =
                 object[key];
@@ -2355,35 +2283,23 @@ function findDocumentTitle(root){
         }
     }
 
-    for(
-        const text of textCandidates
-    ){
+    for(const text of textCandidates){
 
         const title =
-            extractTitleFromText(
-                text
-            );
+            extractTitleFromText(text);
 
         if(title){
             return title;
         }
     }
 
-    /*
-      Search pages themselves.
-    */
+    for(const object of objects){
 
-    for(
-        const object of objects
-    ){
-
-        for(
-            const key of [
-                "pages",
-                "document_pages",
-                "documentPages"
-            ]
-        ){
+        for(const key of [
+            "pages",
+            "document_pages",
+            "documentPages"
+        ]){
 
             const value =
                 object[key];
@@ -2395,12 +2311,9 @@ function findDocumentTitle(root){
                 continue;
             }
 
-            const combined =
-                pageList.join("\n");
-
             const title =
                 extractTitleFromText(
-                    combined
+                    pageList.join("\n")
                 );
 
             if(title){
@@ -2408,10 +2321,6 @@ function findDocumentTitle(root){
             }
         }
     }
-
-    /*
-      Generic title only as final fallback.
-    */
 
     const genericTitle =
         findDeepText(
@@ -2422,13 +2331,8 @@ function findDocumentTitle(root){
             ]
         );
 
-    if(
-        titleLooksValid(genericTitle)
-    ){
-
-        return cleanPossibleTitle(
-            genericTitle
-        );
+    if(titleLooksValid(genericTitle)){
+        return cleanPossibleTitle(genericTitle);
     }
 
     return "";
@@ -2445,7 +2349,6 @@ function extractDocumentPayload(source){
         !source ||
         typeof source !== "object"
     ){
-
         return {};
     }
 
@@ -2540,7 +2443,6 @@ function extractDocumentPayload(source){
     };
 }
 
-
 function normalizePages(value){
 
     if(Array.isArray(value)){
@@ -2548,10 +2450,7 @@ function normalizePages(value){
         return value
             .map(item => {
 
-                if(
-                    typeof item === "string"
-                ){
-
+                if(typeof item === "string"){
                     return item;
                 }
 
@@ -2595,7 +2494,7 @@ function normalizePages(value){
 
 
 /* ============================================================
-   EXTRACT COMPLETE DOCUMENT STATE
+   DOCUMENT STATE
    ============================================================ */
 
 function extractDocumentState(){
@@ -2604,13 +2503,7 @@ function extractDocumentState(){
         snapshot || {};
 
     const payload =
-        extractDocumentPayload(
-            root
-        );
-
-    /*
-      SERVICE
-    */
+        extractDocumentPayload(root);
 
     service =
         clean(
@@ -2626,28 +2519,14 @@ function extractDocumentState(){
             )
         );
 
-    /*
-      TITLE
-
-      Explicit title first, then document content.
-    */
-
     documentTitle =
         cleanPossibleTitle(
             payload.title
         );
 
-    if(
-        !titleLooksValid(documentTitle)
-    ){
-
-        documentTitle =
-            findDocumentTitle(root);
+    if(!titleLooksValid(documentTitle)){
+        documentTitle = findDocumentTitle(root);
     }
-
-    /*
-      AMOUNT
-    */
 
     amount =
         numberValue(
@@ -2663,10 +2542,6 @@ function extractDocumentState(){
             )
         );
 
-    /*
-      CUSTOMER
-    */
-
     customerId =
         clean(
             findDeepText(
@@ -2679,34 +2554,17 @@ function extractDocumentState(){
             )
         );
 
-    /*
-      DOCUMENT FILE
-    */
-
     filename =
-        clean(
-            payload.filename
-        );
+        clean(payload.filename);
 
     versionId =
-        clean(
-            payload.versionId
-        );
+        clean(payload.versionId);
 
     pages =
-        normalizePages(
-            payload.pages
-        );
+        normalizePages(payload.pages);
 
     documentText =
-        clean(
-            payload.documentText
-        );
-
-    /*
-      Search entire snapshot if payload did not provide
-      document text.
-    */
+        clean(payload.documentText);
 
     if(!documentText){
 
@@ -2725,31 +2583,20 @@ function extractDocumentState(){
             );
     }
 
-    /*
-      Search pages if necessary.
-    */
-
     if(!pages.length){
-
-        const deepPages =
-            findDeepValue(
-                root,
-                [
-                    "pages",
-                    "document_pages",
-                    "documentPages"
-                ]
-            );
 
         pages =
             normalizePages(
-                deepPages
+                findDeepValue(
+                    root,
+                    [
+                        "pages",
+                        "document_pages",
+                        "documentPages"
+                    ]
+                )
             );
     }
-
-    /*
-      Build document text from pages.
-    */
 
     if(
         !documentText &&
@@ -2759,11 +2606,6 @@ function extractDocumentState(){
         documentText =
             pages.join("\n\n");
     }
-
-    /*
-      Final title recovery directly from the actual
-      reviewed document.
-    */
 
     if(!titleLooksValid(documentTitle)){
 
@@ -2784,10 +2626,6 @@ function extractDocumentState(){
             );
     }
 
-    /*
-      Filename fallback.
-    */
-
     if(
         !filename &&
         documentTitle
@@ -2802,20 +2640,9 @@ function extractDocumentState(){
             ".docx";
     }
 
-    /*
-      Final filename fallback.
-    */
-
     if(!filename){
-
-        filename =
-            "Naija_Pocket_Document.docx";
+        filename = "Naija_Pocket_Document.docx";
     }
-
-    /*
-      If the title is still missing, use the filename
-      only as a last resort.
-    */
 
     if(
         !titleLooksValid(documentTitle) &&
@@ -2828,12 +2655,8 @@ function extractDocumentState(){
                 .replace(/[_-]+/g," ")
                 .trim();
 
-        if(
-            titleLooksValid(filenameTitle)
-        ){
-
-            documentTitle =
-                filenameTitle;
+        if(titleLooksValid(filenameTitle)){
+            documentTitle = filenameTitle;
         }
     }
 }
@@ -2874,11 +2697,7 @@ async function apiGet(path){
     return data;
 }
 
-
-async function apiPost(
-    path,
-    payload
-){
+async function apiPost(path,payload){
 
     const response =
         await fetch(
@@ -2922,7 +2741,6 @@ function extractPaymentObject(data){
         !data ||
         typeof data !== "object"
     ){
-
         return {};
     }
 
@@ -2936,14 +2754,12 @@ function extractPaymentObject(data){
     );
 }
 
-
 function extractProductObject(data){
 
     if(
         !data ||
         typeof data !== "object"
     ){
-
         return {};
     }
 
@@ -2956,13 +2772,10 @@ function extractProductObject(data){
     );
 }
 
-
 function extractPaymentStatus(data){
 
     const payment =
-        extractPaymentObject(
-            data
-        );
+        extractPaymentObject(data);
 
     return clean(
         payment.status ||
@@ -2972,13 +2785,10 @@ function extractPaymentStatus(data){
     ).toLowerCase();
 }
 
-
 function extractPaymentReported(data){
 
     const payment =
-        extractPaymentObject(
-            data
-        );
+        extractPaymentObject(data);
 
     return Boolean(
         payment.payment_reported ??
@@ -2989,13 +2799,10 @@ function extractPaymentReported(data){
     );
 }
 
-
 function extractPaymentVerified(data){
 
     const payment =
-        extractPaymentObject(
-            data
-        );
+        extractPaymentObject(data);
 
     return Boolean(
         payment.payment_verified ??
@@ -3007,22 +2814,37 @@ function extractPaymentVerified(data){
 }
 
 
+/*
+  IMPORTANT:
+  Download activation can be returned by the payment object,
+  product object, nested data object, or top level.
+*/
+
 function extractDownloadUnlocked(data){
 
     const payment =
-        extractPaymentObject(
-            data
-        );
+        extractPaymentObject(data);
+
+    const product =
+        extractProductObject(data);
 
     return Boolean(
         payment.download_unlocked ??
         payment.downloadUnlocked ??
+        product.download_unlocked ??
+        product.downloadUnlocked ??
         data?.download_unlocked ??
         data?.downloadUnlocked ??
+        data?.data?.download_unlocked ??
+        data?.data?.downloadUnlocked ??
         false
     );
 }
 
+
+/* ============================================================
+   SERVER STATE
+   ============================================================ */
 
 function applyServerState(data){
 
@@ -3034,14 +2856,10 @@ function applyServerState(data){
     }
 
     const product =
-        extractProductObject(
-            data
-        );
+        extractProductObject(data);
 
     const payment =
-        extractPaymentObject(
-            data
-        );
+        extractPaymentObject(data);
 
     service =
         clean(
@@ -3084,34 +2902,20 @@ function applyServerState(data){
             filename
         );
 
-    if(
-        Array.isArray(
-            product.document_pages
-        )
-    ){
-
+    if(Array.isArray(product.document_pages)){
         pages =
             normalizePages(
                 product.document_pages
             );
     }
 
-    if(
-        clean(
-            product.document_text
-        )
-    ){
-
+    if(clean(product.document_text)){
         documentText =
-            clean(
-                product.document_text
-            );
+            clean(product.document_text);
     }
 
     paymentStatus =
-        extractPaymentStatus(
-            data
-        );
+        extractPaymentStatus(data);
 
     paymentStarted =
         Boolean(
@@ -3124,22 +2928,17 @@ function applyServerState(data){
         );
 
     paymentReported =
-        extractPaymentReported(
-            data
-        );
+        extractPaymentReported(data);
 
     paymentVerified =
-        extractPaymentVerified(
-            data
-        );
+        extractPaymentVerified(data);
 
     downloadUnlocked =
-        extractDownloadUnlocked(
-            data
-        );
+        extractDownloadUnlocked(data);
 
     updateBaseDisplay();
     updateExperienceDisplay();
+    updateCustomerDownloadDisplay();
     updateProgress();
 }
 
@@ -3157,9 +2956,95 @@ function updateBaseDisplay(){
         documentTitle || "—";
 
     $("baseAmount").textContent =
-        amount
-            ? money(amount)
-            : "—";
+        amount ? money(amount) : "—";
+}
+
+
+/*
+  This controls the ACTUAL customer download link.
+
+  It is hidden until the server says the customer download
+  has been activated.
+*/
+
+function updateCustomerDownloadDisplay(){
+
+    const panels = [
+        $("customerDownloadPanel"),
+        $("experienceDownloadPanel")
+    ];
+
+    const buttons = [
+        $("customerDownloadButton"),
+        $("experienceDownloadButton")
+    ];
+
+    const filenames = [
+        $("customerDownloadFilename"),
+        $("experienceDownloadFilename")
+    ];
+
+    const url =
+        buildDownloadUrl(
+            service,
+            documentTitle
+        );
+
+    const displayFilename =
+        filename ||
+        (
+            documentTitle
+                ? documentTitle + ".docx"
+                : "Your saved document"
+        );
+
+    for(const filenameElement of filenames){
+
+        if(filenameElement){
+
+            filenameElement.textContent =
+                displayFilename;
+        }
+    }
+
+    for(const button of buttons){
+
+        if(!button){
+            continue;
+        }
+
+        if(
+            downloadUnlocked &&
+            url
+        ){
+
+            button.href = url;
+            button.classList.remove("hidden");
+
+        }else{
+
+            button.href = "#";
+        }
+    }
+
+    for(const panel of panels){
+
+        if(!panel){
+            continue;
+        }
+
+        if(
+            downloadUnlocked &&
+            url
+        ){
+
+            panel.classList.remove("hidden");
+
+        }else{
+
+            panel.classList.add("hidden");
+        }
+    }
 }
 
 
@@ -3172,9 +3057,7 @@ function updateExperienceDisplay(){
         documentTitle || "—";
 
     $("experienceAmount").textContent =
-        amount
-            ? money(amount)
-            : "—";
+        amount ? money(amount) : "—";
 
     $("customerServiceContact").textContent =
         CUSTOMER_SERVICE_CONTACT;
@@ -3193,12 +3076,17 @@ function updateExperienceDisplay(){
     const statusBox =
         $("paymentStatusBox");
 
-    if(statusBox){
+    if(status){
 
-        if(paymentVerified){
+        if(downloadUnlocked){
 
             statusBox.textContent =
-                "Payment has been verified by Customer Service. Your saved document is ready to be sent.";
+                "Your exact saved document has been activated and is ready for download.";
+
+        }else if(paymentVerified){
+
+            statusBox.textContent =
+                "Payment has been verified by Customer Service. Your saved document is awaiting download activation.";
 
         }else if(paymentStarted){
 
@@ -3236,21 +3124,29 @@ function updateProgress(){
     const text =
         $("progressText");
 
-    if(
-        !bar ||
-        !status ||
-        !text
-    ){
+    if(!bar || !status || !text){
+        return;
+    }
+
+    if(downloadUnlocked){
+
+        bar.style.width = "100%";
+
+        status.textContent =
+            "Document ready for download";
+
+        text.textContent =
+            "3 of 3";
+
         return;
     }
 
     if(paymentVerified){
 
-        bar.style.width =
-            "100%";
+        bar.style.width = "100%";
 
         status.textContent =
-            "Payment verified — document ready to be sent";
+            "Payment verified — document awaiting download activation";
 
         text.textContent =
             "3 of 3";
@@ -3260,8 +3156,7 @@ function updateProgress(){
 
     if(paymentStarted){
 
-        bar.style.width =
-            "60%";
+        bar.style.width = "60%";
 
         status.textContent =
             "Make payment & contact Customer Service";
@@ -3272,8 +3167,7 @@ function updateProgress(){
         return;
     }
 
-    bar.style.width =
-        "25%";
+    bar.style.width = "25%";
 
     status.textContent =
         "Payment details";
@@ -3297,11 +3191,11 @@ function openPaymentExperience(){
 
     updateBaseDisplay();
     updateExperienceDisplay();
+    updateCustomerDownloadDisplay();
     updateProgress();
 
     window.scrollTo(0,0);
 }
-
 
 function closePaymentExperience(){
 
@@ -3310,6 +3204,8 @@ function closePaymentExperience(){
 
     $("customerPaymentView")
         .classList.remove("hidden");
+
+    updateCustomerDownloadDisplay();
 
     window.scrollTo(0,0);
 }
@@ -3324,12 +3220,6 @@ async function createPayment(){
     if(createInProgress){
         return;
     }
-
-    /*
-      Re-extract immediately before payment creation.
-      This makes sure the latest reviewed document state
-      is used rather than an older display state.
-    */
 
     extractDocumentState();
 
@@ -3348,11 +3238,6 @@ async function createPayment(){
         !documentTitle ||
         !titleLooksValid(documentTitle)
     ){
-
-        /*
-          One last attempt directly from the visible
-          reviewed document text.
-        */
 
         documentTitle =
             extractTitleFromText(
@@ -3417,11 +3302,8 @@ async function createPayment(){
 
     if(button){
 
-        button.disabled =
-            true;
-
-        button.textContent =
-            "PREPARING PAYMENT...";
+        button.disabled = true;
+        button.textContent = "PREPARING PAYMENT...";
     }
 
     showMessage(
@@ -3432,10 +3314,6 @@ async function createPayment(){
 
     try{
 
-        /*
-          Make absolutely sure page text exists.
-        */
-
         if(
             !documentText &&
             pages.length
@@ -3444,11 +3322,6 @@ async function createPayment(){
             documentText =
                 pages.join("\n\n");
         }
-
-        /*
-          This is the exact reviewed document payload
-          that is sent to the API.
-        */
 
         const exactReviewedPayload = {
 
@@ -3535,12 +3408,6 @@ async function createPayment(){
 
         applyServerState(data);
 
-        /*
-          Keep the local reviewed document as the current
-          document even if the API response only returns
-          summary fields.
-        */
-
         if(
             !documentText &&
             pages.length
@@ -3555,15 +3422,8 @@ async function createPayment(){
             data.saved_document === true
         ){
 
-            paymentStarted =
-                true;
+            paymentStarted = true;
         }
-
-        /*
-          Some API versions return a payment object
-          without saved_document. A successful create
-          response still means payment preparation began.
-        */
 
         if(
             data &&
@@ -3575,12 +3435,12 @@ async function createPayment(){
             )
         ){
 
-            paymentStarted =
-                true;
+            paymentStarted = true;
         }
 
         updateBaseDisplay();
         updateExperienceDisplay();
+        updateCustomerDownloadDisplay();
         updateProgress();
 
         showMessage(
@@ -3610,13 +3470,11 @@ async function createPayment(){
 
     }finally{
 
-        createInProgress =
-            false;
+        createInProgress = false;
 
         if(button){
 
-            button.disabled =
-                false;
+            button.disabled = false;
 
             button.textContent =
                 paymentStarted
@@ -3645,22 +3503,11 @@ async function refreshPaymentStatus(){
         const query =
             new URLSearchParams();
 
-        query.set(
-            "service",
-            service
-        );
-
-        query.set(
-            "title",
-            documentTitle
-        );
+        query.set("service",service);
+        query.set("title",documentTitle);
 
         if(customerId){
-
-            query.set(
-                "customer_id",
-                customerId
-            );
+            query.set("customer_id",customerId);
         }
 
         const data =
@@ -3699,7 +3546,6 @@ function showBackOffice(){
     window.scrollTo(0,0);
 }
 
-
 function exitBackOffice(){
 
     $("backOfficeView")
@@ -3708,18 +3554,17 @@ function exitBackOffice(){
     $("customerPaymentView")
         .classList.remove("hidden");
 
+    updateCustomerDownloadDisplay();
+
     window.scrollTo(0,0);
 }
-
 
 function getBackOfficeKey(){
 
     return clean(
         $("backOfficeKey").value
-    ) ||
-    LOCAL_BACK_OFFICE_KEY;
+    ) || LOCAL_BACK_OFFICE_KEY;
 }
-
 
 function backOfficeHeaders(){
 
@@ -3734,7 +3579,6 @@ function backOfficeHeaders(){
         "Cache-Control":"no-cache"
     };
 }
-
 
 async function apiGetWithHeaders(path){
 
@@ -3764,11 +3608,7 @@ async function apiGetWithHeaders(path){
     return data;
 }
 
-
-async function apiPostWithHeaders(
-    path,
-    payload
-){
+async function apiPostWithHeaders(path,payload){
 
     const response =
         await fetch(
@@ -3828,11 +3668,9 @@ async function backOfficeLogin(){
     }catch(error){
 
         if(
-            String(
-                error.message || ""
-            )
-            .toLowerCase()
-            .includes("404")
+            String(error.message || "")
+                .toLowerCase()
+                .includes("404")
         ){
 
             return {
@@ -3874,7 +3712,6 @@ function extractRecords(data){
     return [];
 }
 
-
 function recordService(record){
 
     return clean(
@@ -3884,7 +3721,6 @@ function recordService(record){
         ""
     );
 }
-
 
 function recordTitle(record){
 
@@ -3896,7 +3732,6 @@ function recordTitle(record){
         ""
     );
 }
-
 
 function recordCustomer(record){
 
@@ -3910,7 +3745,6 @@ function recordCustomer(record){
     );
 }
 
-
 function recordPaymentStatus(record){
 
     return clean(
@@ -3920,7 +3754,6 @@ function recordPaymentStatus(record){
         "Not Reported"
     );
 }
-
 
 function recordReported(record){
 
@@ -3932,7 +3765,6 @@ function recordReported(record){
     );
 }
 
-
 function recordVerified(record){
 
     return Boolean(
@@ -3942,7 +3774,6 @@ function recordVerified(record){
         false
     );
 }
-
 
 function recordActivated(record){
 
@@ -4004,7 +3835,7 @@ async function loadBackOffice(){
 
 
 /* ============================================================
-   RENDER BACK OFFICE
+   BACK OFFICE RECORD RENDERING
    ============================================================ */
 
 function renderBackOffice(){
@@ -4012,27 +3843,18 @@ function renderBackOffice(){
     const records =
         backOfficeRecords;
 
-    const saved =
-        records.length;
-
-    const reported =
-        records.filter(
-            recordReported
-        ).length;
-
-    const activated =
-        records.filter(
-            recordActivated
-        ).length;
-
     $("savedStat").textContent =
-        String(saved);
+        String(records.length);
 
     $("reportedStat").textContent =
-        String(reported);
+        String(
+            records.filter(recordReported).length
+        );
 
     $("activatedStat").textContent =
-        String(activated);
+        String(
+            records.filter(recordActivated).length
+        );
 
     const container =
         $("backOfficeRecords");
@@ -4072,6 +3894,11 @@ function renderBackOffice(){
 
                 const activated =
                     recordActivated(record);
+
+                /*
+                  The DOWNLOAD TO PHONE button below is now
+                  a direct download of the exact saved file.
+                */
 
                 return `
 <div class="record">
@@ -4244,7 +4071,6 @@ Ready.
 function recordPayload(record){
 
     return {
-
         service:
             recordService(record),
 
@@ -4283,29 +4109,21 @@ function clearDocumentReader(){
         "Loading document...";
 }
 
-
-function makeReaderPages(
-    text,
-    serverPages
-){
+function makeReaderPages(text,serverPages){
 
     let normalized =
-        normalizePages(
-            serverPages
-        );
+        normalizePages(serverPages);
 
     if(
         !normalized.length &&
         text
     ){
 
-        normalized =
-            [text];
+        normalized = [text];
     }
 
     return normalized;
 }
-
 
 function renderDocumentReader(
     title,
@@ -4324,12 +4142,10 @@ function renderDocumentReader(
         );
 
     $("documentReaderTitle").textContent =
-        title ||
-        "Saved customer document";
+        title || "Saved customer document";
 
     $("backOfficeDocumentTitle").textContent =
-        title ||
-        "Saved customer document";
+        title || "Saved customer document";
 
     $("documentReaderMeta").textContent =
         serviceName
@@ -4340,8 +4156,7 @@ function renderDocumentReader(
         return;
     }
 
-    reader.innerHTML =
-        "";
+    reader.innerHTML = "";
 
     if(!pagesToRender.length){
 
@@ -4359,9 +4174,7 @@ function renderDocumentReader(
         pageText => {
 
             const page =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
             page.className =
                 "document-reader-page";
@@ -4369,9 +4182,7 @@ function renderDocumentReader(
             page.textContent =
                 pageText;
 
-            reader.appendChild(
-                page
-            );
+            reader.appendChild(page);
         }
     );
 }
@@ -4381,10 +4192,7 @@ function renderDocumentReader(
    VIEW SAVED DOCUMENT
    ============================================================ */
 
-async function viewSavedRecord(
-    record,
-    index
-){
+async function viewSavedRecord(record,index){
 
     if(!record){
         return;
@@ -4398,9 +4206,7 @@ async function viewSavedRecord(
 
     clearDocumentReader();
 
-    panel.classList.remove(
-        "hidden"
-    );
+    panel.classList.remove("hidden");
 
     panel.scrollIntoView({
         behavior:"smooth",
@@ -4471,9 +4277,7 @@ async function viewSavedRecord(
         ){
 
             const recordDocument =
-                extractDocumentPayload(
-                    record
-                );
+                extractDocumentPayload(record);
 
             const fallbackPages =
                 normalizePages(
@@ -4484,9 +4288,7 @@ async function viewSavedRecord(
                 clean(
                     recordDocument.documentText
                 ) ||
-                fallbackPages.join(
-                    "\n\n"
-                ) ||
+                fallbackPages.join("\n\n") ||
                 clean(
                     record.document_text ||
                     record.documentText ||
@@ -4526,9 +4328,7 @@ async function viewSavedRecord(
         );
 
         const recordDocument =
-            extractDocumentPayload(
-                record
-            );
+            extractDocumentPayload(record);
 
         const recordPages =
             normalizePages(
@@ -4539,9 +4339,7 @@ async function viewSavedRecord(
             clean(
                 recordDocument.documentText
             ) ||
-            recordPages.join(
-                "\n\n"
-            ) ||
+            recordPages.join("\n\n") ||
             clean(
                 record.document_text ||
                 record.documentText ||
@@ -4565,7 +4363,6 @@ async function viewSavedRecord(
     }
 }
 
-
 function closeDocumentReader(){
 
     $("backOfficeDocumentPanel")
@@ -4580,10 +4377,7 @@ function closeDocumentReader(){
    VERIFY PAYMENT
    ============================================================ */
 
-async function verifyPayment(
-    record,
-    index
-){
+async function verifyPayment(record,index){
 
     if(!record){
         return;
@@ -4593,7 +4387,6 @@ async function verifyPayment(
         $("status-" + index);
 
     if(status){
-
         status.textContent =
             "Verifying payment...";
     }
@@ -4609,9 +4402,7 @@ async function verifyPayment(
         if(status){
 
             status.textContent =
-                clean(
-                    result?.message
-                ) ||
+                clean(result?.message) ||
                 "Payment verified successfully.";
         }
 
@@ -4643,10 +4434,7 @@ async function verifyPayment(
    REJECT PAYMENT
    ============================================================ */
 
-async function rejectPayment(
-    record,
-    index
-){
+async function rejectPayment(record,index){
 
     if(!record){
         return;
@@ -4656,9 +4444,7 @@ async function rejectPayment(
         $("reason-" + index);
 
     const reason =
-        clean(
-            reasonInput?.value
-        );
+        clean(reasonInput?.value);
 
     if(!reason){
 
@@ -4679,7 +4465,6 @@ async function rejectPayment(
         $("status-" + index);
 
     if(status){
-
         status.textContent =
             "Rejecting payment...";
     }
@@ -4698,9 +4483,7 @@ async function rejectPayment(
         if(status){
 
             status.textContent =
-                clean(
-                    result?.message
-                ) ||
+                clean(result?.message) ||
                 "Payment rejected.";
         }
 
@@ -4732,10 +4515,7 @@ async function rejectPayment(
    ACTIVATE CUSTOMER DOWNLOAD
    ============================================================ */
 
-async function activateDownload(
-    record,
-    index
-){
+async function activateDownload(record,index){
 
     if(!record){
         return;
@@ -4764,9 +4544,7 @@ async function activateDownload(
         if(status){
 
             status.textContent =
-                clean(
-                    result?.message
-                ) ||
+                clean(result?.message) ||
                 "Customer download activated.";
         }
 
@@ -4799,21 +4577,36 @@ async function activateDownload(
    DELIVERY
    ============================================================ */
 
-async function deliverRecord(
-    record,
-    index,
-    channel
-){
+async function deliverRecord(record,index,channel){
 
     if(!record){
+        return;
+    }
+
+    /*
+      DOWNLOAD TO PHONE is deliberately different from the
+      other delivery channels.
+
+      It goes directly to the canonical /api/download endpoint
+      and does NOT create a delivery record or regenerate the
+      document.
+    */
+
+    if(channel === "phone"){
+
+        openDownload(
+            recordService(record),
+            recordTitle(record),
+            "status-" + index
+        );
+
         return;
     }
 
     const status =
         $("status-" + index);
 
-    let recipientEmail =
-        "";
+    let recipientEmail = "";
 
     if(channel === "email"){
 
@@ -4868,15 +4661,11 @@ async function deliverRecord(
             );
 
         const message =
-            clean(
-                result?.message
-            ) ||
+            clean(result?.message) ||
             "Delivery action completed.";
 
         if(status){
-
-            status.textContent =
-                message;
+            status.textContent = message;
         }
 
         showMessage(
@@ -4901,7 +4690,6 @@ async function deliverRecord(
     }catch(error){
 
         if(status){
-
             status.textContent =
                 apiError(error);
         }
@@ -4919,10 +4707,7 @@ async function deliverRecord(
    DELIVERY HISTORY
    ============================================================ */
 
-async function loadDeliveryHistory(
-    record,
-    index
-){
+async function loadDeliveryHistory(record,index){
 
     try{
 
@@ -4964,14 +4749,10 @@ async function loadDeliveryHistory(
         ){
 
             const latest =
-                history[
-                    history.length - 1
-                ];
+                history[history.length - 1];
 
             const channel =
-                clean(
-                    latest?.channel
-                );
+                clean(latest?.channel);
 
             const time =
                 clean(
@@ -4983,15 +4764,8 @@ async function loadDeliveryHistory(
 
             status.textContent =
                 "Last delivery: " +
-                (
-                    channel ||
-                    "completed"
-                ) +
-                (
-                    time
-                        ? " — " + time
-                        : ""
-                );
+                (channel || "completed") +
+                (time ? " — " + time : "");
         }
 
     }catch(error){
@@ -5017,89 +4791,59 @@ async function handleBackOfficeAction(
     switch(action){
 
         case "view":
-
-            await viewSavedRecord(
-                record,
-                index
-            );
-
+            await viewSavedRecord(record,index);
             break;
 
         case "verify":
-
-            await verifyPayment(
-                record,
-                index
-            );
-
+            await verifyPayment(record,index);
             break;
 
         case "reject":
-
-            await rejectPayment(
-                record,
-                index
-            );
-
+            await rejectPayment(record,index);
             break;
 
         case "activate":
-
-            await activateDownload(
-                record,
-                index
-            );
-
+            await activateDownload(record,index);
             break;
 
         case "phone":
-
             await deliverRecord(
                 record,
                 index,
                 "phone"
             );
-
             break;
 
         case "whatsapp":
-
             await deliverRecord(
                 record,
                 index,
                 "whatsapp"
             );
-
             break;
 
         case "email":
-
             await deliverRecord(
                 record,
                 index,
                 "email"
             );
-
             break;
 
         case "telegram":
-
             await deliverRecord(
                 record,
                 index,
                 "telegram"
             );
-
             break;
 
         case "drive":
-
             await deliverRecord(
                 record,
                 index,
                 "drive"
             );
-
             break;
     }
 }
@@ -5179,15 +4923,6 @@ function initialize(){
 
     extractDocumentState();
 
-    /*
-      This is the important result for the document
-      supplied in the previous screen.
-
-      It should resolve to:
-
-      How Nigeria Moved from Export to Consumption
-    */
-
     console.log(
         "Payment page document state:",
         {
@@ -5198,12 +4933,18 @@ function initialize(){
             documentTextLength:
                 documentText.length,
             filename:filename,
-            versionId:versionId
+            versionId:versionId,
+            downloadUrl:
+                buildDownloadUrl(
+                    service,
+                    documentTitle
+                )
         }
     );
 
     updateBaseDisplay();
     updateExperienceDisplay();
+    updateCustomerDownloadDisplay();
     updateProgress();
 
     if(isBackOfficeMode){
