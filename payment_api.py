@@ -44,6 +44,7 @@ CUSTOMER:
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from typing import Any, Optional
+
 import json
 import os
 import re
@@ -51,6 +52,7 @@ import secrets
 import sqlite3
 import urllib.parse
 import zipfile
+
 from xml.sax.saxutils import escape as xml_escape
 
 from fastapi import FastAPI, Header, HTTPException, Request
@@ -63,7 +65,7 @@ from pydantic import BaseModel
 # CONFIGURATION
 # ============================================================
 
-APP_VERSION = "payment-product-first-v15-canonical-document-attachment"
+APP_VERSION = "payment-product-first-v16-canonical-document-attachment"
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -75,7 +77,10 @@ PAYMENT_DB_PATH = BASE_DIR / "payment_gateway.db"
 
 BACK_OFFICE_ADMIN_KEY = "NPBC-2026"
 
-PUBLIC_API_BASE_URL = os.getenv("PUBLIC_API_BASE_URL", "").strip()
+PUBLIC_API_BASE_URL = os.getenv(
+    "PUBLIC_API_BASE_URL",
+    "",
+).strip()
 
 # Back Office browser download links are temporary.
 BACK_OFFICE_DOWNLOAD_TOKEN_MINUTES = 60
@@ -112,10 +117,17 @@ def clean(value: Any) -> str:
 
 
 def key_part(value: Any) -> str:
-    return re.sub(r"\s+", " ", clean(value).casefold())
+    return re.sub(
+        r"\s+",
+        " ",
+        clean(value).casefold(),
+    )
 
 
-def business_key(service: Any, title: Any) -> str:
+def business_key(
+    service: Any,
+    title: Any,
+) -> str:
     return f"{key_part(service)}::{key_part(title)}"
 
 
@@ -127,20 +139,31 @@ def first(*values: Any) -> str:
 
 
 def db(path: Path) -> sqlite3.Connection:
-    connection = sqlite3.connect(str(path), timeout=30)
+    connection = sqlite3.connect(
+        str(path),
+        timeout=30,
+    )
     connection.row_factory = sqlite3.Row
     return connection
 
 
-def as_dict(row: Optional[sqlite3.Row]) -> Optional[dict]:
+def as_dict(
+    row: Optional[sqlite3.Row],
+) -> Optional[dict]:
     return dict(row) if row is not None else None
 
 
 def to_json(value: Any) -> str:
-    return json.dumps(value, ensure_ascii=False)
+    return json.dumps(
+        value,
+        ensure_ascii=False,
+    )
 
 
-def from_json(value: Any, default: Any = None) -> Any:
+def from_json(
+    value: Any,
+    default: Any = None,
+) -> Any:
     if isinstance(value, (dict, list)):
         return value
 
@@ -163,8 +186,9 @@ def safe_filename(
     value: Any,
     default: str = "document.docx",
 ) -> str:
-
-    name = Path(clean(value) or default).name
+    name = Path(
+        clean(value) or default
+    ).name
 
     name = re.sub(
         r'[<>:"/\\|?*\x00-\x1f]',
@@ -181,7 +205,9 @@ def safe_filename(
     if not name:
         name = default
 
-    if not name.lower().endswith((".docx", ".pdf")):
+    if not name.lower().endswith(
+        (".docx", ".pdf")
+    ):
         name += ".docx"
 
     return name
@@ -191,7 +217,6 @@ def safe_folder(
     value: Any,
     default: str = "document",
 ) -> str:
-
     name = re.sub(
         r'[<>:"/\\|?*\x00-\x1f]',
         "_",
@@ -212,12 +237,10 @@ def safe_folder(
 # ============================================================
 
 def normalize_pages(value: Any) -> list[str]:
-
     if value is None:
         return []
 
     if isinstance(value, str):
-
         text = value.strip()
 
         if not text:
@@ -231,7 +254,6 @@ def normalize_pages(value: Any) -> list[str]:
         return [text]
 
     if isinstance(value, dict):
-
         for key in (
             "pages",
             "page_text",
@@ -240,7 +262,9 @@ def normalize_pages(value: Any) -> list[str]:
             "text",
         ):
             if key in value:
-                return normalize_pages(value[key])
+                return normalize_pages(
+                    value[key]
+                )
 
         return [
             json.dumps(
@@ -250,13 +274,10 @@ def normalize_pages(value: Any) -> list[str]:
         ]
 
     if isinstance(value, list):
-
         result = []
 
         for item in value:
-
             if isinstance(item, dict):
-
                 text = first(
                     item.get("text"),
                     item.get("content"),
@@ -267,20 +288,24 @@ def normalize_pages(value: Any) -> list[str]:
                     result.append(text)
 
             elif clean(item):
-
                 result.append(clean(item))
 
         return result
 
-    return [clean(value)] if clean(value) else []
+    return (
+        [clean(value)]
+        if clean(value)
+        else []
+    )
 
 
 def normalize_payload(value: Any) -> dict:
-
     payload = (
         value
         if isinstance(value, dict)
-        else {"document_text": clean(value)}
+        else {
+            "document_text": clean(value)
+        }
     )
 
     raw_pages = (
@@ -289,7 +314,9 @@ def normalize_payload(value: Any) -> dict:
         else payload.get("document_pages")
     )
 
-    page_list = normalize_pages(raw_pages)
+    page_list = normalize_pages(
+        raw_pages
+    )
 
     text = first(
         payload.get("document_text"),
@@ -302,7 +329,9 @@ def normalize_payload(value: Any) -> dict:
         page_list = [text]
 
     if not text and page_list:
-        text = "\n\n".join(page_list)
+        text = "\n\n".join(
+            page_list
+        )
 
     filename = safe_filename(
         first(
@@ -326,9 +355,13 @@ def normalize_payload(value: Any) -> dict:
     }
 
 
-def clean_saved_document_payload(payload: dict) -> dict:
+def clean_saved_document_payload(
+    payload: dict,
+) -> dict:
     """
-    Normalize the approved document payload without changing its content.
+    Normalize the approved document payload.
+
+    This does not regenerate an existing canonical document.
     """
 
     normalized = normalize_payload(
@@ -336,7 +369,10 @@ def clean_saved_document_payload(payload: dict) -> dict:
     )
 
     pages = normalized.get("pages") or []
-    text = normalized.get("document_text") or ""
+
+    text = normalized.get(
+        "document_text"
+    ) or ""
 
     if not pages and text:
         pages = [text]
@@ -352,13 +388,172 @@ def clean_saved_document_payload(payload: dict) -> dict:
         for x in pages
     ]
 
-    normalized["document_text"] = str(text)
+    normalized["document_text"] = str(
+        text
+    )
 
     normalized["page_count"] = len(
         normalized["pages"]
     )
 
     return normalized
+
+
+# ============================================================
+# MARKDOWN CLEANUP FOR NEW DOCX FILES
+# ============================================================
+
+def clean_markdown_line(
+    text: Any,
+) -> str:
+    """
+    Remove common Markdown syntax from document text before
+    writing a newly-created canonical DOCX.
+
+    This is only used while creating a NEW canonical file.
+    Existing canonical files are never rewritten.
+    """
+
+    value = str(text).replace(
+        "\r",
+        "",
+    )
+
+    # Remove fenced-code markers.
+    if value.strip().startswith("```"):
+        return ""
+
+    # Markdown headings:
+    # ### Heading -> Heading
+    value = re.sub(
+        r"^\s*#{1,6}\s+",
+        "",
+        value,
+    )
+
+    # Markdown unordered lists:
+    # - item
+    # * item
+    # + item
+    value = re.sub(
+        r"^\s*[-*+]\s+",
+        "",
+        value,
+    )
+
+    # Markdown ordered lists:
+    # 1. item
+    # 1) item
+    value = re.sub(
+        r"^\s*\d+[.)]\s+",
+        "",
+        value,
+    )
+
+    # Markdown blockquote:
+    # > text -> text
+    value = re.sub(
+        r"^\s*>\s?",
+        "",
+        value,
+    )
+
+    # Markdown horizontal rules.
+    if re.fullmatch(
+        r"\s*([-*_])(?:\s*\1){2,}\s*",
+        value,
+    ):
+        return ""
+
+    # Markdown links:
+    # [text](url) -> text
+    value = re.sub(
+        r"([^]+)\](?:[^()]|\([^()]*)*\)",
+        r"\1",
+        value,
+    )
+
+    # Bold / italic markers.
+    value = value.replace(
+        "**",
+        "",
+    )
+
+    value = value.replace(
+        "__",
+        "",
+    )
+
+    # Single emphasis markers are removed only when they
+    # are being used as obvious Markdown delimiters.
+    value = re.sub(
+        r"(?<!\w)\*([^*\n]+)\*(?!\w)",
+        r"\1",
+        value,
+    )
+
+    value = re.sub(
+        r"(?<!\w)_([^_\n]+)_(?!\w)",
+        r"\1",
+        value,
+    )
+
+    # Inline code.
+    value = re.sub(
+        r"`([^`\n]+)`",
+        r"\1",
+        value,
+    )
+
+    return value
+
+
+def clean_markdown_text(
+    text: Any,
+) -> str:
+    """
+    Clean Markdown formatting from an entire page/document.
+    """
+
+    raw = str(text or "").replace(
+        "\r",
+        "",
+    )
+
+    cleaned_lines = []
+
+    for line in raw.splitlines():
+        cleaned = clean_markdown_line(
+            line
+        )
+
+        if cleaned == "":
+            cleaned_lines.append("")
+        else:
+            cleaned_lines.append(
+                cleaned
+            )
+
+    return "\n".join(
+        cleaned_lines
+    )
+
+
+def clean_markdown_pages(
+    pages: list[str],
+) -> list[str]:
+    """
+    Clean Markdown syntax from newly generated document pages.
+    """
+
+    result = []
+
+    for page in pages:
+        result.append(
+            clean_markdown_text(page)
+        )
+
+    return result
 
 
 # ============================================================
@@ -535,7 +730,10 @@ def get_product_or_single(
 ) -> Optional[dict]:
 
     return (
-        get_product(service, title)
+        get_product(
+            service,
+            title,
+        )
         or get_single_product()
     )
 
@@ -591,11 +789,13 @@ def existing_saved_file(
     if not path.is_absolute():
         path = BASE_DIR / path
 
-    return (
-        path
-        if path.exists() and path.is_file()
-        else None
-    )
+    if (
+        path.exists()
+        and path.is_file()
+    ):
+        return path
+
+    return None
 
 
 # ============================================================
@@ -606,18 +806,23 @@ def _split_inline_markup(
     text: str,
 ) -> list[tuple[str, bool]]:
 
-    value = str(text)
+    value = clean_markdown_text(
+        text
+    )
 
     runs: list[tuple[str, bool]] = []
 
+    # Any remaining double-star syntax is
+    # treated as plain text after cleanup.
     pattern = re.compile(
         r"(\*\*.*?\*\*)"
     )
 
     pos = 0
 
-    for match in pattern.finditer(value):
-
+    for match in pattern.finditer(
+        value
+    ):
         if match.start() > pos:
             runs.append(
                 (
@@ -653,27 +858,24 @@ def _split_inline_markup(
     ]
 
 
-def _docx_p(text: str) -> str:
+def _docx_p(
+    text: str,
+) -> str:
 
-    raw = str(text).replace(
-        "\r",
-        "",
+    raw = clean_markdown_line(
+        text
     )
 
-    heading = re.match(
-        r"^\s*(#{1,6})\s+(.*)$",
-        raw,
-    )
-
-    if heading:
-        raw = heading.group(2)
+    if not raw.strip():
+        return ""
 
     runs = []
 
-    for value, bold in _split_inline_markup(raw):
-
+    for value, bold in _split_inline_markup(
+        raw
+    ):
         rpr = (
-            '<w:rPr><w:b/></w:rPr>'
+            "<w:rPr><w:b/></w:rPr>"
             if bold
             else ""
         )
@@ -686,15 +888,8 @@ def _docx_p(text: str) -> str:
             + "</w:t></w:r>"
         )
 
-    ppr = (
-        '<w:pPr><w:pStyle w:val="Heading1"/></w:pPr>'
-        if heading
-        else ""
-    )
-
     return (
         "<w:p>"
-        + ppr
         + "".join(runs)
         + "</w:p>"
     )
@@ -711,14 +906,16 @@ def make_docx(
         exist_ok=True,
     )
 
-    pages = clean_saved_document_payload(
-        {
-            "pages": page_list
-        }
-    ).get(
-        "pages",
-        [],
+    # This function is called only when a NEW
+    # canonical document needs to be created.
+    pages = clean_markdown_pages(
+        page_list
     )
+
+    pages = [
+        page
+        for page in pages
+    ]
 
     if not pages:
         raise HTTPException(
@@ -735,11 +932,15 @@ def make_docx(
                 '<w:p><w:r><w:br w:type="page"/></w:r></w:p>'
             )
 
-        body.extend(
-            _docx_p(line)
-            for line in page.splitlines()
-            if line.strip()
-        )
+        for line in page.splitlines():
+            paragraph = _docx_p(
+                line
+            )
+
+            if paragraph:
+                body.append(
+                    paragraph
+                )
 
     document_xml = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -747,7 +948,7 @@ def make_docx(
         'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
         "<w:body>"
         + "".join(body)
-        + '<w:sectPr>'
+        + "<w:sectPr>"
         '<w:pgSz w:w="12240" w:h="15840"/>'
         '<w:pgMar w:top="1440" w:right="1440" '
         'w:bottom="1440" w:left="1440"/>'
@@ -812,6 +1013,7 @@ def save_exact_snapshot(
     existing_product: Optional[dict] = None,
 ) -> Path:
 
+    # NEVER regenerate an existing canonical file.
     existing = existing_saved_file(
         existing_product
     )
@@ -856,14 +1058,21 @@ def save_exact_snapshot(
     target = folder / filename
 
     # Never overwrite a valid saved artifact.
-    if target.exists() and target.is_file():
+    if (
+        target.exists()
+        and target.is_file()
+    ):
         return target
 
     return make_docx(
         target,
         title,
         normalized["pages"]
-        or [normalized["document_text"]],
+        or [
+            normalized[
+                "document_text"
+            ]
+        ],
     )
 
 
@@ -920,10 +1129,14 @@ def extract_document_text(
         )
     )
 
-    return payload["document_text"]
+    return payload[
+        "document_text"
+    ]
 
 
-def upsert_product(data: dict) -> dict:
+def upsert_product(
+    data: dict,
+) -> dict:
 
     service = clean(
         data.get("service")
@@ -1247,11 +1460,9 @@ def update_payment(
     values = []
 
     if status:
-
         assignments.append(
             "payment_status=?"
         )
-
         values.append(status)
 
     for name, value in fields.items():
@@ -1312,14 +1523,13 @@ def update_payment(
 def repair_saved_snapshot(
     product: dict,
 ) -> dict:
-
     """
     Resolve an already-existing canonical file.
 
     NEVER generates a new document.
 
-    Verification, activation, status and delivery may only discover
-    the existing canonical artifact.
+    Verification, activation, status and delivery may only
+    discover the existing canonical artifact.
     """
 
     current = (
@@ -1359,7 +1569,10 @@ def repair_saved_snapshot(
         )
     )
 
-    if folder.exists() and folder.is_dir():
+    if (
+        folder.exists()
+        and folder.is_dir()
+    ):
 
         candidates = sorted(
             [
@@ -1368,7 +1581,10 @@ def repair_saved_snapshot(
                 if (
                     x.is_file()
                     and x.suffix.lower()
-                    in {".docx", ".pdf"}
+                    in {
+                        ".docx",
+                        ".pdf",
+                    }
                 )
             ],
             key=lambda x: x.stat().st_mtime,
@@ -1424,6 +1640,8 @@ def activate_download(
     title: str,
 ) -> dict:
 
+    timestamp = now_iso()
+
     c = db(PRODUCT_DB_PATH)
 
     c.execute(
@@ -1435,8 +1653,8 @@ def activate_download(
         WHERE business_key=?
         """,
         (
-            now_iso(),
-            now_iso(),
+            timestamp,
+            timestamp,
             business_key(
                 service,
                 title,
@@ -1465,7 +1683,6 @@ def public_product(
 ) -> dict:
 
     if not product:
-
         return {
             "found": False,
             "saved_document": False,
@@ -1492,7 +1709,9 @@ def public_product(
     return {
         "found": True,
         "id": product.get("id"),
-        "service": product.get("service"),
+        "service": product.get(
+            "service"
+        ),
         "document_title": product.get(
             "document_title"
         ),
@@ -1532,7 +1751,9 @@ def public_product(
         "document_saved_at": product.get(
             "document_saved_at"
         ),
-        "saved_document": bool(saved),
+        "saved_document": bool(
+            saved
+        ),
         "download_unlocked": bool(
             product.get(
                 "download_unlocked"
@@ -1618,7 +1839,9 @@ def delivery_channels(
     )
 
     title = clean(
-        product.get("document_title")
+        product.get(
+            "document_title"
+        )
     )
 
     direct = download_url(
@@ -1758,13 +1981,19 @@ def create_back_office_download_token(
         )
     )
 
-    if not existing_saved_file(product):
+    saved = existing_saved_file(
+        product
+    )
+
+    if not saved:
         raise HTTPException(
             status_code=404,
             detail="SAVED_DOCUMENT_FILE_MISSING",
         )
 
-    token = secrets.token_urlsafe(32)
+    token = secrets.token_urlsafe(
+        32
+    )
 
     created = datetime.now(
         timezone.utc
@@ -1779,6 +2008,7 @@ def create_back_office_download_token(
 
     c = db(PRODUCT_DB_PATH)
 
+    # Remove expired tokens.
     c.execute(
         """
         DELETE FROM back_office_download_tokens
@@ -1883,7 +2113,10 @@ def validate_back_office_download_token(
             detail="INVALID_BACK_OFFICE_DOWNLOAD_TOKEN",
         )
 
-    if datetime.now(timezone.utc) >= expires:
+    if (
+        datetime.now(timezone.utc)
+        >= expires
+    ):
 
         c.execute(
             """
@@ -1917,7 +2150,10 @@ def record_back_office_token_download(
     c.execute(
         """
         UPDATE back_office_download_tokens
-        SET download_count=COALESCE(download_count,0)+1,
+        SET download_count=COALESCE(
+                download_count,
+                0
+            ) + 1,
             last_downloaded_at=?
         WHERE token=?
         """,
@@ -1961,13 +2197,13 @@ def back_office_delivery_channels(
     file_url = ""
 
     if saved:
-
-        # IMPORTANT:
-        # This URL contains a temporary delivery token.
-        # It does NOT expose the Back Office admin key.
-        file_url = create_back_office_download_token(
-            request,
-            product,
+        # Temporary token only.
+        # Back Office admin key is NOT exposed in this URL.
+        file_url = (
+            create_back_office_download_token(
+                request,
+                product,
+            )
         )
 
     share_text = (
@@ -2174,7 +2410,6 @@ def require_back_office(
 ) -> None:
 
     if clean(key) != BACK_OFFICE_ADMIN_KEY:
-
         raise HTTPException(
             status_code=401,
             detail="INVALID_BACK_OFFICE_KEY",
@@ -2186,7 +2421,6 @@ def require_back_office(
 # ============================================================
 
 class PaymentCreateRequest(BaseModel):
-
     customer_name: str = ""
     customer_id: str = ""
     service: str
@@ -2208,34 +2442,29 @@ class PaymentCreateRequest(BaseModel):
 
 
 class PaymentReportRequest(BaseModel):
-
     service: str
     document_title: str
     note: str = ""
 
 
 class PaymentCompleteRequest(BaseModel):
-
     service: str
     document_title: str
 
 
 class BackOfficeActivateRequest(BaseModel):
-
     service: str
     document_title: str
     verified: bool = True
 
 
 class BackOfficeRejectRequest(BaseModel):
-
     service: str
     document_title: str
     reason: str = ""
 
 
 class DeliveryRequest(BaseModel):
-
     service: str
     document_title: str
     channel: str
@@ -2268,14 +2497,12 @@ def payment_create(
     )
 
     if not service or not title:
-
         raise HTTPException(
             status_code=400,
             detail="SERVICE_AND_TITLE_REQUIRED",
         )
 
     if float(body.amount) <= 0:
-
         raise HTTPException(
             status_code=400,
             detail="VALID_PAYMENT_AMOUNT_REQUIRED",
@@ -2356,7 +2583,6 @@ def payment_create(
         not payload["pages"]
         and not payload["document_text"]
     ):
-
         raise HTTPException(
             status_code=400,
             detail="DOCUMENT_TEXT_REQUIRED",
@@ -2465,7 +2691,6 @@ def payment_report(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PAYMENT_NOT_PREPARED",
@@ -2481,7 +2706,6 @@ def payment_report(
     )
 
     if not payment:
-
         raise HTTPException(
             status_code=404,
             detail="PAYMENT_NOT_PREPARED",
@@ -2531,7 +2755,6 @@ def payment_status(
     )
 
     if not product:
-
         return {
             "ok": True,
             "found": False,
@@ -2577,7 +2800,6 @@ def payment_complete(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -2663,7 +2885,6 @@ def customer_care_verify(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -2746,8 +2967,10 @@ def back_office_payment_channels(
             "name": "Bank Transfer",
             "type": "payment",
             "available": True,
-            "selected": method
-            == "bank_transfer",
+            "selected": (
+                method
+                == "bank_transfer"
+            ),
         },
         {
             "id": "cash_manual",
@@ -2779,7 +3002,6 @@ def back_office_payment_channels(
 def back_office_product(
     product: Optional[dict],
 ) -> dict:
-
     """
     Full Back Office representation, including the complete
     saved document content.
@@ -2813,7 +3035,9 @@ def back_office_product(
 
     result.update(
         {
-            "pages": payload["pages"],
+            "pages": payload[
+                "pages"
+            ],
             "document_text": payload[
                 "document_text"
             ],
@@ -2868,7 +3092,9 @@ def back_office_payments(
         )
 
         payment = get_payment(
-            product.get("service"),
+            product.get(
+                "service"
+            ),
             product.get(
                 "document_title"
             ),
@@ -2993,7 +3219,6 @@ def back_office_payment_channels_endpoint(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3046,7 +3271,6 @@ def back_office_payment(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3105,7 +3329,6 @@ def back_office_document_info(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3130,7 +3353,9 @@ def back_office_document_info(
 
     return {
         "ok": True,
-        "service": product["service"],
+        "service": product[
+            "service"
+        ],
         "document_title": product[
             "document_title"
         ],
@@ -3140,7 +3365,9 @@ def back_office_document_info(
         "pages": payload[
             "page_count"
         ],
-        "saved_document": bool(saved),
+        "saved_document": bool(
+            saved
+        ),
         "saved_path": (
             str(saved)
             if saved
@@ -3179,7 +3406,6 @@ def back_office_document(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3200,14 +3426,18 @@ def back_office_document(
 
     return {
         "ok": True,
-        "service": product["service"],
+        "service": product[
+            "service"
+        ],
         "document_title": product[
             "document_title"
         ],
         "filename": product.get(
             "document_filename"
         ),
-        "pages": payload["pages"],
+        "pages": payload[
+            "pages"
+        ],
         "page_count": payload[
             "page_count"
         ],
@@ -3246,7 +3476,6 @@ def back_office_document_content(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3267,14 +3496,18 @@ def back_office_document_content(
 
     return {
         "ok": True,
-        "service": product["service"],
+        "service": product[
+            "service"
+        ],
         "document_title": product[
             "document_title"
         ],
         "filename": product.get(
             "document_filename"
         ),
-        "pages": payload["pages"],
+        "pages": payload[
+            "pages"
+        ],
         "page_count": payload[
             "page_count"
         ],
@@ -3316,7 +3549,6 @@ def back_office_payment_verify(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3368,7 +3600,6 @@ def back_office_activate(
     )
 
     if not body.verified:
-
         raise HTTPException(
             status_code=400,
             detail="VERIFICATION_REQUIRED",
@@ -3380,7 +3611,6 @@ def back_office_activate(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3393,7 +3623,6 @@ def back_office_activate(
     if not existing_saved_file(
         product
     ):
-
         raise HTTPException(
             status_code=404,
             detail="SAVED_DOCUMENT_FILE_MISSING",
@@ -3436,7 +3665,6 @@ def back_office_reject(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3473,9 +3701,19 @@ def canonical_file_response(
     path: Path,
     attachment: bool = True,
 ) -> FileResponse:
+    """
+    Return the ACTUAL physical canonical file.
 
-    if not path.exists() or not path.is_file():
+    No regeneration.
+    No reconstruction.
+    No Markdown conversion.
+    No document rewriting.
+    """
 
+    if (
+        not path.exists()
+        or not path.is_file()
+    ):
         raise HTTPException(
             status_code=404,
             detail="SAVED_DOCUMENT_FILE_MISSING",
@@ -3497,7 +3735,9 @@ def canonical_file_response(
 
     else:
 
-        media = "application/octet-stream"
+        media = (
+            "application/octet-stream"
+        )
 
     disposition = (
         "attachment"
@@ -3505,7 +3745,13 @@ def canonical_file_response(
         else "inline"
     )
 
-    safe_name = path.name
+    # IMPORTANT:
+    # This must be a real Python string.
+    # The Gmail-corrupted [path.name](...) expression
+    # has been removed.
+    safe_name = safe_filename(
+        path.name
+    )
 
     safe_name = safe_name.replace(
         "\\",
@@ -3527,23 +3773,25 @@ def canonical_file_response(
         "_",
     )
 
+    headers = {
+        "Content-Disposition": (
+            f'{disposition}; '
+            f'filename="{safe_name}"'
+        ),
+        "Cache-Control": (
+            "no-store, no-cache, "
+            "must-revalidate, max-age=0"
+        ),
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Content-Type-Options": "nosniff",
+    }
+
     return FileResponse(
         path=str(path),
         filename=safe_name,
         media_type=media,
-        headers={
-            "Content-Disposition": (
-                f'{disposition}; '
-                f'filename="{safe_name}"'
-            ),
-            "Cache-Control": (
-                "no-store, no-cache, "
-                "must-revalidate, max-age=0"
-            ),
-            "Pragma": "no-cache",
-            "Expires": "0",
-            "X-Content-Type-Options": "nosniff",
-        },
+        headers=headers,
     )
 
 
@@ -3563,19 +3811,18 @@ def download_document(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
         )
 
-    # Customer download remains locked until Back Office activation.
+    # Customer download remains locked until
+    # Back Office activation.
     if not bool(
         product.get(
             "download_unlocked"
         )
     ):
-
         raise HTTPException(
             status_code=403,
             detail="DOWNLOAD_NOT_UNLOCKED",
@@ -3590,7 +3837,6 @@ def download_document(
     )
 
     if not saved:
-
         raise HTTPException(
             status_code=404,
             detail="SAVED_DOCUMENT_FILE_MISSING",
@@ -3623,8 +3869,9 @@ def download_document(
     c.close()
 
     # IMPORTANT:
-    # Return the actual existing canonical file.
+    # Return the actual existing canonical physical file.
     # Nothing is regenerated here.
+
     return canonical_file_response(
         saved,
         attachment=True,
@@ -3648,7 +3895,6 @@ def get_delivery_channels(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3661,7 +3907,6 @@ def get_delivery_channels(
     if not existing_saved_file(
         product
     ):
-
         raise HTTPException(
             status_code=404,
             detail="SAVED_DOCUMENT_FILE_MISSING",
@@ -3691,7 +3936,6 @@ def prepare_delivery(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3710,7 +3954,6 @@ def prepare_delivery(
     )
 
     if not selected:
-
         raise HTTPException(
             status_code=404,
             detail="DELIVERY_CHANNEL_NOT_FOUND",
@@ -3760,7 +4003,6 @@ def back_office_delivery_channels_endpoint(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3809,7 +4051,6 @@ def back_office_delivery(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3828,7 +4069,6 @@ def back_office_delivery(
     )
 
     if not selected:
-
         raise HTTPException(
             status_code=404,
             detail="DELIVERY_CHANNEL_NOT_FOUND",
@@ -3868,7 +4108,6 @@ def back_office_delivery_file(
         default=""
     ),
 ):
-
     """
     Back Office actual-file endpoint.
 
@@ -3882,7 +4121,7 @@ def back_office_delivery_file(
     """
 
     # --------------------------------------------------------
-    # TOKEN PATH
+    # TEMPORARY TOKEN PATH
     # --------------------------------------------------------
 
     if clean(token):
@@ -3911,7 +4150,6 @@ def back_office_delivery_file(
         )
 
         if not product:
-
             raise HTTPException(
                 status_code=404,
                 detail="PRODUCT_NOT_FOUND",
@@ -3926,12 +4164,12 @@ def back_office_delivery_file(
         )
 
         if not saved:
-
             raise HTTPException(
                 status_code=404,
                 detail="SAVED_DOCUMENT_FILE_MISSING",
             )
 
+        # Record the successful physical-file download.
         record_back_office_token_download(
             token
         )
@@ -3945,6 +4183,9 @@ def back_office_delivery_file(
             },
         )
 
+        # CRITICAL:
+        # This returns the exact physical file stored on disk.
+        # FileResponse streams the binary DOCX/PDF as an attachment.
         return canonical_file_response(
             saved,
             attachment=True,
@@ -3964,7 +4205,6 @@ def back_office_delivery_file(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -3979,7 +4219,6 @@ def back_office_delivery_file(
     )
 
     if not saved:
-
         raise HTTPException(
             status_code=404,
             detail="SAVED_DOCUMENT_FILE_MISSING",
@@ -4074,7 +4313,6 @@ def product_status(
     )
 
     if not product:
-
         return {
             "ok": True,
             "found": False,
@@ -4157,7 +4395,6 @@ def back_office_delivery_post(
     )
 
     if not product:
-
         raise HTTPException(
             status_code=404,
             detail="PRODUCT_NOT_FOUND",
@@ -4169,6 +4406,7 @@ def back_office_delivery_post(
 
     # Back Office delivery is independent of customer
     # download activation.
+
     selected = select_channel(
         back_office_delivery_channels(
             request,
@@ -4178,7 +4416,6 @@ def back_office_delivery_post(
     )
 
     if not selected:
-
         raise HTTPException(
             status_code=404,
             detail="DELIVERY_CHANNEL_NOT_FOUND",
