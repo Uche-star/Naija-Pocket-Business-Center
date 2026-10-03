@@ -1,11 +1,18 @@
 """
 Naija Pocket Business Center
-Complete payment, saved-document and delivery API.
+Complete payment, saved-document, product and branded email delivery API.
 
 CANONICAL RULE:
 - Document saved once as canonical file
 - All downloads return that exact file
 - No regeneration during download
+
+PRODUCT / EMAIL TEST RULE:
+- Product creation is independent of payment.
+- Branded email delivery is independent of payment.
+- Email delivery sends the exact canonical saved file.
+- Email delivery does NOT unlock customer download.
+- Email delivery does NOT create a payment record.
 """
 
 from pathlib import Path
@@ -25,8 +32,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+# ============================================================
+# BRANDED EMAIL DELIVERY
+# ============================================================
+#
+# This module is separate from payment.
+#
+# It is responsible only for sending the exact saved document
+# through the configured branded email service.
+#
+# The API key remains in Render Environment Variables.
+#
+from email_delivery import send_document_email
 
-APP_VERSION = "payment-product-canonical-v18-review-compatible"
+
+APP_VERSION = "payment-product-canonical-v19-product-email"
 
 BASE_DIR = Path(__file__).resolve().parent
 DOWNLOAD_DIR = BASE_DIR / "downloads"
@@ -166,7 +186,6 @@ def _strip_md(text: str) -> str:
 
     text = str(text)
 
-    # Code blocks.
     text = re.sub(
         r"```.*?```",
         "",
@@ -174,10 +193,8 @@ def _strip_md(text: str) -> str:
         flags=re.DOTALL,
     )
 
-    # Inline backticks.
     text = text.replace("`", "")
 
-    # Headings.
     text = re.sub(
         r"^\s{0,3}#{1,6}\s+",
         "",
@@ -185,7 +202,6 @@ def _strip_md(text: str) -> str:
         flags=re.MULTILINE,
     )
 
-    # Horizontal rules.
     text = re.sub(
         r"^\s*[-*_]{3,}\s*$",
         "",
@@ -193,7 +209,6 @@ def _strip_md(text: str) -> str:
         flags=re.MULTILINE,
     )
 
-    # Blockquotes.
     text = re.sub(
         r"^\s*>\s*",
         "",
@@ -201,7 +216,6 @@ def _strip_md(text: str) -> str:
         flags=re.MULTILINE,
     )
 
-    # Bold.
     text = re.sub(
         r"\*\*(.*?)\*\*",
         r"\1",
@@ -214,7 +228,6 @@ def _strip_md(text: str) -> str:
         text,
     )
 
-    # Italic.
     text = re.sub(
         r"\*(.*?)\*",
         r"\1",
@@ -227,14 +240,12 @@ def _strip_md(text: str) -> str:
         text,
     )
 
-    # Markdown links.
     text = re.sub(
         r"\[(.*?)\]\(.*?\)",
         r"\1",
         text,
     )
 
-    # Unordered list markers.
     text = re.sub(
         r"^\s*[-*+]\s+",
         "",
@@ -242,7 +253,6 @@ def _strip_md(text: str) -> str:
         flags=re.MULTILINE,
     )
 
-    # Ordered list markers.
     text = re.sub(
         r"^\s*\d+\.\s+",
         "",
@@ -250,10 +260,8 @@ def _strip_md(text: str) -> str:
         flags=re.MULTILINE,
     )
 
-    # Table pipes.
     text = text.replace("|", " ")
 
-    # Excess spaces.
     text = re.sub(
         r" {2,}",
         " ",
@@ -778,7 +786,6 @@ def save_exact_snapshot(
     existing_product: Optional[dict] = None,
 ) -> Path:
 
-    # Preserve an already-established canonical file.
     existing_file = existing_saved_file(
         existing_product or get_product(
             service,
@@ -789,7 +796,6 @@ def save_exact_snapshot(
     if existing_file is not None:
         return existing_file
 
-    # Preserve legacy existing product file.
     service_clean = clean(service)
     title_clean = clean(title)
 
@@ -1792,6 +1798,54 @@ class PaymentCreateRequest(BaseModel):
         extra = "allow"
 
 
+class ProductCreateRequest(BaseModel):
+    """
+    PAYMENT-FREE PRODUCT CREATION.
+
+    This endpoint is intentionally separate from payment.
+
+    It saves the exact product/document and prepares the
+    canonical document file.
+
+    It does NOT:
+    - create payment records
+    - verify payment
+    - unlock download
+    - report payment
+    """
+
+    service: Optional[str] = ""
+    document_title: Optional[str] = ""
+    document_payload: Any = None
+
+    customer_name: str = ""
+    customer_email: str = ""
+    customer_phone: str = ""
+    amount: str = ""
+    currency: str = "NGN"
+    job_id: str = ""
+
+    class Config:
+        extra = "allow"
+
+
+class EmailDeliveryRequest(BaseModel):
+    """
+    BRANDED EMAIL DELIVERY.
+
+    Email delivery is independent of payment.
+
+    recipient_email is optional because the saved product's
+    customer_email is used when recipient_email is omitted.
+    """
+
+    service: str
+    document_title: str
+    recipient_email: str = ""
+    customer_name: str = ""
+    subject: str = ""
+
+
 class PaymentReportRequest(BaseModel):
     service: str
     document_title: str
@@ -1829,43 +1883,15 @@ class DeliveryRequest(BaseModel):
 
 
 # ============================================================
-# MAKE PAYMENT
+# FLEXIBLE PRODUCT INPUT EXTRACTION
+#
+# Used ONLY by the new payment-free product endpoint.
+# Existing payment endpoint remains independent.
 # ============================================================
 
-@app.post("/api/payment/create")
-async def create_payment(
-    request: Request,
-):
-    """
-    MAKE PAYMENT.
-
-    Review is not changed.
-
-    This endpoint accepts the existing Review request and
-    normalizes its fields internally.
-
-    Behavior:
-    - Saves the reviewed document if not already saved.
-    - Creates/prepares payment record.
-    - Does NOT verify payment.
-    - Does NOT unlock customer download.
-    - Does NOT regenerate an existing canonical document.
-    """
-
-    try:
-        incoming = await request.json()
-
-    except Exception:
-        raise HTTPException(
-            status_code=400,
-            detail="INVALID_PAYMENT_REQUEST",
-        )
-
-    if not isinstance(incoming, dict):
-        raise HTTPException(
-            status_code=400,
-            detail="INVALID_PAYMENT_REQUEST",
-        )
+def extract_product_request(
+    incoming: dict,
+) -> dict:
 
     # --------------------------------------------------------
     # SERVICE
@@ -2097,9 +2123,78 @@ async def create_payment(
         incoming.get("jobId"),
     )
 
-    # --------------------------------------------------------
-    # REQUIRED PAYMENT PRODUCT DATA
-    # --------------------------------------------------------
+    return {
+        "service": service,
+        "document_title": document_title,
+        "document_payload": document_payload,
+        "customer_name": customer_name,
+        "customer_email": customer_email,
+        "customer_phone": customer_phone,
+        "amount": amount,
+        "currency": currency,
+        "job_id": job_id,
+    }
+
+
+# ============================================================
+# PRODUCT CREATION — PAYMENT FREE
+# ============================================================
+
+@app.post("/api/product/create")
+async def create_product(
+    request: Request,
+):
+    """
+    PAYMENT-FREE PRODUCT CREATION.
+
+    This is the first step of the new product/email test.
+
+    Flow:
+
+        Review
+           ↓
+        /api/product/create
+           ↓
+        Canonical document saved
+           ↓
+        /api/delivery/email
+           ↓
+        Branded NPBC email
+
+    IMPORTANT:
+    This endpoint does NOT create a payment record.
+    """
+
+    try:
+        incoming = await request.json()
+
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="INVALID_PRODUCT_REQUEST",
+        )
+
+    if not isinstance(incoming, dict):
+        raise HTTPException(
+            status_code=400,
+            detail="INVALID_PRODUCT_REQUEST",
+        )
+
+    data = extract_product_request(
+        incoming
+    )
+
+    service = clean(
+        data.get("service")
+    )
+
+    document_title = clean(
+        data.get("document_title")
+    )
+
+    document_payload = data.get(
+        "document_payload"
+    )
 
     if not service:
         raise HTTPException(
@@ -2120,8 +2215,623 @@ async def create_payment(
         )
 
     # --------------------------------------------------------
-    # EXISTING PRODUCT/PAYMENT FLOW
+    # SAVE PRODUCT ONLY
+    #
+    # IMPORTANT:
+    # upsert_product() writes only to product_delivery.db.
+    # No payment record is created here.
     # --------------------------------------------------------
+
+    product = upsert_product(
+        service=service,
+        title=document_title,
+        payload=document_payload,
+        customer_name=clean(
+            data.get("customer_name")
+        ),
+        customer_email=clean(
+            data.get("customer_email")
+        ),
+        customer_phone=clean(
+            data.get("customer_phone")
+        ),
+        amount=clean(
+            data.get("amount")
+        ),
+        currency=clean(
+            data.get("currency")
+        ) or "NGN",
+        job_id=clean(
+            data.get("job_id")
+        ),
+    )
+
+    # --------------------------------------------------------
+    # ESTABLISH / RECOVER CANONICAL FILE
+    # --------------------------------------------------------
+
+    saved_path = repair_saved_snapshot(
+        product
+    )
+
+    if saved_path is None:
+
+        saved_path = save_exact_snapshot(
+            service,
+            document_title,
+            document_payload,
+            product,
+        )
+
+        store_saved_path(
+            clean(
+                product.get(
+                    "business_key"
+                )
+            ),
+            saved_path,
+        )
+
+    product = get_product(
+        service,
+        document_title,
+    )
+
+    if product is None:
+        raise HTTPException(
+            status_code=500,
+            detail="PRODUCT_NOT_FOUND_AFTER_SAVE",
+        )
+
+    saved_path = existing_saved_file(
+        product
+    )
+
+    if saved_path is None:
+        raise HTTPException(
+            status_code=500,
+            detail="CANONICAL_DOCUMENT_NOT_SAVED",
+        )
+
+    return {
+        "ok": True,
+        "message": "PRODUCT_SAVED",
+        "product": public_product(product),
+        "saved_document": True,
+        "filename": saved_path.name,
+        "payment": None,
+    }
+
+
+# ============================================================
+# BRANDED EMAIL DELIVERY
+# ============================================================
+
+@app.post("/api/delivery/email")
+def deliver_product_by_email(
+    body: EmailDeliveryRequest,
+):
+    """
+    BRANDED NPBC EMAIL DELIVERY.
+
+    This endpoint deliberately does NOT:
+    - create payment records
+    - verify payment
+    - unlock customer download
+    - modify payment status
+    - regenerate the document
+
+    It sends the exact canonical saved document.
+
+    Product identity:
+        service + document title
+    """
+
+    service = clean(
+        body.service
+    )
+
+    document_title = clean(
+        body.document_title
+    )
+
+    if not service:
+        raise HTTPException(
+            status_code=400,
+            detail="SERVICE_REQUIRED",
+        )
+
+    if not document_title:
+        raise HTTPException(
+            status_code=400,
+            detail="DOCUMENT_TITLE_REQUIRED",
+        )
+
+    # --------------------------------------------------------
+    # LOOK UP PRODUCT ONLY
+    # --------------------------------------------------------
+
+    product = get_product(
+        service,
+        document_title,
+    )
+
+    if not product:
+        raise HTTPException(
+            status_code=404,
+            detail="PRODUCT_NOT_FOUND",
+        )
+
+    # --------------------------------------------------------
+    # RECOVER EXACT CANONICAL FILE
+    # --------------------------------------------------------
+
+    saved_path = repair_saved_snapshot(
+        product
+    )
+
+    if saved_path is None:
+        raise HTTPException(
+            status_code=404,
+            detail="SAVED_DOCUMENT_NOT_FOUND",
+        )
+
+    if not saved_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="SAVED_DOCUMENT_NOT_FOUND",
+        )
+
+    if not saved_path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail="SAVED_DOCUMENT_PATH_IS_NOT_FILE",
+        )
+
+    # --------------------------------------------------------
+    # RECIPIENT
+    #
+    # Explicit recipient wins.
+    # Otherwise use the customer's saved email.
+    # --------------------------------------------------------
+
+    recipient_email = first(
+        body.recipient_email,
+        product.get("customer_email"),
+    )
+
+    if not recipient_email:
+        raise HTTPException(
+            status_code=400,
+            detail="RECIPIENT_EMAIL_REQUIRED",
+        )
+
+    # Basic email validation.
+    if (
+        "@" not in recipient_email
+        or "." not in recipient_email.rsplit(
+            "@",
+            1,
+        )[-1]
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="INVALID_RECIPIENT_EMAIL",
+        )
+
+    customer_name = first(
+        body.customer_name,
+        product.get("customer_name"),
+    )
+
+    subject = clean(
+        body.subject
+    )
+
+    # --------------------------------------------------------
+    # SEND EXACT CANONICAL DOCUMENT
+    #
+    # email_delivery.py handles:
+    # - NPBC branding
+    # - Resend authentication
+    # - HTML email
+    # - plain-text fallback
+    # - attachment encoding
+    #
+    # No payment operation happens here.
+    # --------------------------------------------------------
+
+    try:
+
+        result = send_document_email(
+            recipient_email=recipient_email,
+            document_path=str(saved_path),
+            service=service,
+            document_title=document_title,
+            customer_name=customer_name,
+            subject=subject or None,
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+
+        log_delivery(
+            business_key_value=clean(
+                product.get(
+                    "business_key"
+                )
+            ),
+            channel="email",
+            status="failed",
+            recipient=recipient_email,
+            detail=str(exc)[:1000],
+        )
+
+        raise HTTPException(
+            status_code=502,
+            detail="EMAIL_DELIVERY_FAILED",
+        )
+
+    # --------------------------------------------------------
+    # DELIVERY RESULT
+    # --------------------------------------------------------
+
+    if isinstance(result, dict):
+
+        message_id = first(
+            result.get("message_id"),
+            result.get("id"),
+            result.get("email_id"),
+        )
+
+        delivery_ok = result.get(
+            "ok",
+            True,
+        )
+
+        provider_detail = first(
+            result.get("message"),
+            result.get("detail"),
+        )
+
+    else:
+
+        message_id = clean(
+            result
+        )
+
+        delivery_ok = True
+        provider_detail = ""
+
+    if not delivery_ok:
+
+        detail = (
+            provider_detail
+            or "EMAIL_DELIVERY_FAILED"
+        )
+
+        log_delivery(
+            business_key_value=clean(
+                product.get(
+                    "business_key"
+                )
+            ),
+            channel="email",
+            status="failed",
+            recipient=recipient_email,
+            detail=detail[:1000],
+        )
+
+        raise HTTPException(
+            status_code=502,
+            detail="EMAIL_DELIVERY_FAILED",
+        )
+
+    log_delivery(
+        business_key_value=clean(
+            product.get(
+                "business_key"
+            )
+        ),
+        channel="email",
+        status="sent",
+        recipient=recipient_email,
+        detail=(
+            message_id
+            or "EMAIL_SENT"
+        ),
+    )
+
+    # Reload product so the response represents the current
+    # canonical product state.
+    product = get_product(
+        service,
+        document_title,
+    )
+
+    return {
+        "ok": True,
+        "message": "EMAIL_SENT",
+        "product": public_product(product),
+        "delivery": {
+            "channel": "email",
+            "recipient": recipient_email,
+            "filename": saved_path.name,
+            "message_id": message_id,
+        },
+        "payment": None,
+        "download_unlocked": bool(
+            product.get(
+                "download_unlocked"
+            )
+        ),
+    }
+
+
+# ============================================================
+# MAKE PAYMENT
+# ============================================================
+
+@app.post("/api/payment/create")
+async def create_payment(
+    request: Request,
+):
+    """
+    MAKE PAYMENT.
+
+    Review is not changed.
+
+    This endpoint accepts the existing Review request and
+    normalizes its fields internally.
+
+    Behavior:
+    - Saves the reviewed document if not already saved.
+    - Creates/prepares payment record.
+    - Does NOT verify payment.
+    - Does NOT unlock customer download.
+    - Does NOT regenerate an existing canonical document.
+
+    NOTE:
+    This is the existing payment flow.
+    The new /api/product/create endpoint above is separate.
+    """
+
+    try:
+        incoming = await request.json()
+
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="INVALID_PAYMENT_REQUEST",
+        )
+
+    if not isinstance(incoming, dict):
+        raise HTTPException(
+            status_code=400,
+            detail="INVALID_PAYMENT_REQUEST",
+        )
+
+    service = first(
+        incoming.get("service"),
+        incoming.get("service_name"),
+        incoming.get("serviceName"),
+    )
+
+    if not service:
+        product_data = incoming.get(
+            "product"
+        )
+
+        if isinstance(
+            product_data,
+            dict,
+        ):
+            service = first(
+                product_data.get("service"),
+                product_data.get("service_name"),
+                product_data.get("serviceName"),
+            )
+
+    document_title = first(
+        incoming.get("document_title"),
+        incoming.get("documentTitle"),
+        incoming.get("title"),
+        incoming.get("document_title_text"),
+    )
+
+    if not document_title:
+        document_data = incoming.get(
+            "document"
+        )
+
+        if isinstance(
+            document_data,
+            dict,
+        ):
+            document_title = first(
+                document_data.get(
+                    "document_title"
+                ),
+                document_data.get(
+                    "documentTitle"
+                ),
+                document_data.get(
+                    "title"
+                ),
+            )
+
+    if not document_title:
+        product_data = incoming.get(
+            "product"
+        )
+
+        if isinstance(
+            product_data,
+            dict,
+        ):
+            document_title = first(
+                product_data.get(
+                    "document_title"
+                ),
+                product_data.get(
+                    "documentTitle"
+                ),
+                product_data.get(
+                    "title"
+                ),
+            )
+
+    document_payload = incoming.get(
+        "document_payload"
+    )
+
+    if document_payload is None:
+        document_payload = incoming.get(
+            "documentPayload"
+        )
+
+    if document_payload is None:
+        document_payload = incoming.get(
+            "document"
+        )
+
+    if document_payload is None:
+        document_payload = incoming.get(
+            "payload"
+        )
+
+    if document_payload is None:
+        document_payload = incoming.get(
+            "document_data"
+        )
+
+    if document_payload is None:
+        document_payload = incoming.get(
+            "documentData"
+        )
+
+    if document_payload is None:
+
+        possible_fields = (
+            "pages",
+            "page_text",
+            "document_pages",
+            "document_text",
+            "documentText",
+            "text",
+            "content",
+            "filename",
+            "document_filename",
+            "documentFilename",
+        )
+
+        extracted = {}
+
+        for field in possible_fields:
+            if field in incoming:
+                extracted[field] = incoming.get(
+                    field
+                )
+
+        if extracted:
+            document_payload = extracted
+
+    if isinstance(
+        document_payload,
+        str,
+    ):
+
+        parsed_payload = from_json(
+            document_payload
+        )
+
+        if isinstance(
+            parsed_payload,
+            dict,
+        ):
+            document_payload = parsed_payload
+
+        elif isinstance(
+            parsed_payload,
+            list,
+        ):
+            document_payload = {
+                "pages": parsed_payload
+            }
+
+        else:
+            document_payload = {
+                "document_text": clean(
+                    document_payload
+                )
+            }
+
+    if isinstance(
+        document_payload,
+        list,
+    ):
+        document_payload = {
+            "pages": document_payload
+        }
+
+    if not isinstance(
+        document_payload,
+        dict,
+    ):
+        document_payload = {}
+
+    customer_name = first(
+        incoming.get("customer_name"),
+        incoming.get("customerName"),
+    )
+
+    customer_email = first(
+        incoming.get("customer_email"),
+        incoming.get("customerEmail"),
+        incoming.get("email"),
+    )
+
+    customer_phone = first(
+        incoming.get("customer_phone"),
+        incoming.get("customerPhone"),
+        incoming.get("phone"),
+    )
+
+    amount = first(
+        incoming.get("amount"),
+        incoming.get("total"),
+        incoming.get("price"),
+    )
+
+    currency = first(
+        incoming.get("currency"),
+        incoming.get("payment_currency"),
+    ) or "NGN"
+
+    job_id = first(
+        incoming.get("job_id"),
+        incoming.get("jobId"),
+    )
+
+    if not service:
+        raise HTTPException(
+            status_code=400,
+            detail="SERVICE_REQUIRED",
+        )
+
+    if not document_title:
+        raise HTTPException(
+            status_code=400,
+            detail="DOCUMENT_TITLE_REQUIRED",
+        )
+
+    if not document_payload:
+        raise HTTPException(
+            status_code=400,
+            detail="DOCUMENT_PAYLOAD_REQUIRED",
+        )
 
     product = upsert_product(
         service=service,
@@ -3493,8 +4203,8 @@ def root():
         "service": "Naija Pocket Business Center",
         "version": APP_VERSION,
         "message": (
-            "Payment and document delivery "
-            "API is running."
+            "Payment, product and document "
+            "delivery API is running."
         ),
     }
 
