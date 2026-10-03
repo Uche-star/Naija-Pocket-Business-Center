@@ -796,7 +796,7 @@ Review Your Complete Service
 </h2>
 
 <p class="review-subtitle">
-Review every page. Make any necessary correction, then receive your completed document by email.
+Review every page. Make any necessary correction, then pay and continue to Payment &amp; Delivery.
 </p>
 
 <div class="status-row">
@@ -888,55 +888,7 @@ Apply Correction
 <script>
 "use strict";
 
-/*
-============================================================
-NPBC REVIEW PAGE
-PRODUCT SAVE + BRANDED EMAIL TEST
-============================================================
-
-THIS TEST FLOW:
-
-Review
-  ↓
-Exact reviewed document
-  ↓
-POST /api/product/create
-  ↓
-Canonical document saved
-  ↓
-POST /api/delivery/email
-  ↓
-Branded Resend email
-  ↓
-Customer receives exact saved document
-
-IMPORTANT:
-
-This test does NOT call:
-
-/api/payment/create
-
-It does NOT:
-
-- create a payment record
-- verify payment
-- unlock download
-- regenerate the document
-- reconstruct the document during delivery
-
-The payment API remains separate.
-============================================================
-*/
-
-
 const API_BASE="";
-
-/*
- * Payment API is no longer called by this Review test.
- *
- * It remains defined here only so the existing deployment
- * architecture is not confused with the new delivery flow.
- */
 const PAYMENT_API_BASE="https://naija-pocket-payment-api.onrender.com";
 
 const params=new URLSearchParams(location.search);
@@ -983,10 +935,9 @@ let currentVersion=1;
 let versionId="";
 let currentStatus="";
 let reviewFinished=false;
-
+let paymentStarted=false;
 let productSaved=false;
 let emailSent=false;
-
 let busy=false;
 let pollTimer=null;
 let polling=false;
@@ -1002,7 +953,6 @@ let customerId="";
 let customerName="";
 let customerEmail=suppliedEmail;
 let customerPhone="";
-
 let documentFilename="";
 let documentTitle="";
 
@@ -1037,12 +987,6 @@ d.review_finished===true
 }
 
 
-/*
-============================================================
-GENERAL API
-============================================================
-*/
-
 async function apiGet(url){
 
 const r=await fetch(
@@ -1076,27 +1020,32 @@ API_BASE+url,
 {
 method:"POST",
 headers:{
-"Content-Type":"application/json",
-"Accept":"application/json"
+"Content-Type":"application/json"
 },
-body:JSON.stringify(body||{}),
-cache:"no-store"
+body:JSON.stringify(body||{})
 }
 );
 
 const d=await r.json().catch(()=>({}));
 
-if(!r.ok || d.success===false || d.ok===false){
+if(!r.ok){
 
 throw Error(
 d.error_message||
 d.error||
 d.message||
-(
-typeof d.detail==="string"
-?d.detail
-:"The request could not be completed."
-)
+"The request could not be completed."
+);
+
+}
+
+if(d.success===false || d.ok===false){
+
+throw Error(
+d.error_message||
+d.error||
+d.message||
+"The request could not be completed."
 );
 
 }
@@ -1104,12 +1053,6 @@ typeof d.detail==="string"
 return d;
 }
 
-
-/*
-============================================================
-MARKDOWN / TEXT CLEANING
-============================================================
-*/
 
 function cleanMarkdownText(value){
 
@@ -1423,12 +1366,6 @@ return fragment;
 }
 
 
-/*
-============================================================
-PAGE EXTRACTION
-============================================================
-*/
-
 function normalizePages(d){
 
 let source=[];
@@ -1510,12 +1447,6 @@ return [];
 }
 
 
-/*
-============================================================
-BUTTON STATE
-============================================================
-*/
-
 function updateButtons(){
 
 previousButton.disabled=
@@ -1536,12 +1467,6 @@ emailSent;
 
 }
 
-
-/*
-============================================================
-PAGE RENDERING
-============================================================
-*/
 
 function renderPage(){
 
@@ -1698,12 +1623,6 @@ goButton.click();
 };
 
 
-/*
-============================================================
-AMOUNT / BILLING
-============================================================
-*/
-
 function preserveExistingAmount(d){
 
 if(amount>0)
@@ -1788,76 +1707,10 @@ return "";
 
 
 /*
-============================================================
-CUSTOMER DETAILS
-============================================================
-*/
-
-function extractCustomerDetails(d){
-
-const candidates=[
-d,
-d?.customer,
-d?.job,
-d?.document,
-d?.result,
-d?.review,
-d?.output
-];
-
-for(const source of candidates){
-
-if(!source || typeof source!=="object")
-continue;
-
-customerName=
-customerName ||
-clean(
-source.customer_name||
-source.customerName||
-source.name||
-source.full_name||
-source.fullName
-);
-
-customerEmail=
-customerEmail ||
-clean(
-source.customer_email||
-source.customerEmail||
-source.recipient_email||
-source.recipientEmail||
-source.email
-);
-
-customerPhone=
-customerPhone ||
-clean(
-source.customer_phone||
-source.customerPhone||
-source.phone||
-source.phone_number||
-source.phoneNumber
-);
-
-customerId=
-customerId ||
-clean(
-source.customer_id||
-source.customerId
-);
-
-}
-
-}
-
-
-/*
-============================================================
-DOCUMENT TITLE EXTRACTION
-============================================================
-*/
-
+ * DOCUMENT TITLE EXTRACTION
+ *
+ * Kept from the supplied working Review page.
+ */
 function extractDocumentTitle(d){
 
 const candidates=[
@@ -1904,12 +1757,6 @@ const text=normText(page.content||"");
 if(!text)
 continue;
 
-
-/*
- * Explicit:
- *
- * Title: My Document
- */
 const explicit=text.match(
 /(?:^|\n)\s*Title\s*:\s*([^\n]+)/i
 );
@@ -1923,17 +1770,6 @@ return title;
 
 }
 
-
-/*
- * Handles:
- *
- * My Title
- * Introduction
- *
- * and:
- *
- * My TitleIntroduction
- */
 const introductionMatch=text.match(
 /^(.{8,180}?)(?:\s*)Introduction\b/i
 );
@@ -1961,10 +1797,6 @@ return title;
 
 }
 
-
-/*
- * Early Introduction fallback.
- */
 const earlyIntroduction=text.match(
 /^([\s\S]{8,250}?)(?:\s*)Introduction\b/i
 );
@@ -1993,10 +1825,6 @@ return title;
 
 }
 
-
-/*
- * Normal first-line fallback.
- */
 const lines=text
 .split("\n")
 .map(x=>clean(x))
@@ -2025,10 +1853,6 @@ return first;
 
 }
 
-
-/*
- * Existing subject-based fallback retained.
- */
 for(const line of lines.slice(0,15)){
 
 const candidate=line
@@ -2056,10 +1880,77 @@ return "";
 
 
 /*
-============================================================
-APPLY REVIEW JOB
-============================================================
-*/
+ * CUSTOMER INFORMATION
+ *
+ * This only reads information already returned by the
+ * existing review response. It does not change review logic.
+ */
+function extractCustomerInformation(d){
+
+const sources=[
+d,
+d?.customer,
+d?.job,
+d?.document,
+d?.result,
+d?.review,
+d?.output
+];
+
+for(const source of sources){
+
+if(!source || typeof source!=="object")
+continue;
+
+if(!customerName){
+
+customerName=clean(
+source.customer_name||
+source.customerName||
+source.name||
+source.full_name||
+source.fullName
+);
+
+}
+
+if(!customerEmail){
+
+customerEmail=clean(
+source.customer_email||
+source.customerEmail||
+source.recipient_email||
+source.recipientEmail||
+source.email
+);
+
+}
+
+if(!customerPhone){
+
+customerPhone=clean(
+source.customer_phone||
+source.customerPhone||
+source.phone||
+source.phone_number||
+source.phoneNumber
+);
+
+}
+
+if(!customerId){
+
+customerId=clean(
+source.customer_id||
+source.customerId
+);
+
+}
+
+}
+
+}
+
 
 function applyJob(d){
 
@@ -2067,7 +1958,18 @@ currentStatus=clean(d.status);
 
 reviewFinished=complete(d);
 
-extractCustomerDetails(d);
+extractCustomerInformation(d);
+
+customerId=
+clean(
+d.customer_id ||
+d.customerId ||
+d.job?.customer_id ||
+d.document?.customer_id ||
+d.result?.customer_id ||
+d.output?.customer_id
+) ||
+customerId;
 
 documentFilename=
 clean(
@@ -2188,7 +2090,7 @@ if(reviewFinished){
 setStatus("READY");
 
 progressText.textContent=
-"Your document is ready to review and send by email.";
+"Your document is ready to review and continue to payment.";
 
 }
 else if(state()==="reviewing"){
@@ -2236,12 +2138,6 @@ updateButtons();
 
 }
 
-
-/*
-============================================================
-LOAD / POLL
-============================================================
-*/
 
 async function loadJob(){
 
@@ -2319,12 +2215,6 @@ poll();
 }
 
 
-/*
-============================================================
-CORRECTION
-============================================================
-*/
-
 correctionButton.onclick=async()=>{
 
 const instruction=clean(
@@ -2399,21 +2289,37 @@ updateButtons();
 
 /*
 ============================================================
-EXACT PRODUCT PAYLOAD
+NEW PRODUCT SAVE + BRANDED EMAIL FLOW
 ============================================================
 
-This payload is sent to /api/product/create.
+IMPORTANT:
 
-The Payment API receives the reviewed document exactly once
-for product creation.
+This replaces ONLY the old payment-preparation action.
 
-No payment is created here.
+It does NOT call:
+
+/api/payment/create
+
+It calls:
+
+/api/product/create
+
+then:
+
+/api/delivery/email
+
+The Payment API remains responsible for creating the
+canonical saved document and sending it through Resend.
+
+No payment record is created.
+No payment is verified.
+No download is unlocked.
 ============================================================
 */
 
-function buildProductPayload(){
+async function saveReviewedProduct(){
 
-return {
+const payload={
 
 job_id:jobId,
 
@@ -2470,30 +2376,8 @@ documentFilename ||
 
 };
 
-}
-
-
-/*
-============================================================
-PRODUCT SAVE
-============================================================
-
-IMPORTANT:
-
-This is NOT /api/payment/create.
-
-It must not create a payment record.
-
-It only establishes the canonical product/document.
-============================================================
-*/
-
-async function saveProduct(){
-
-const payload=buildProductPayload();
-
 const data=await apiPost(
-"https://naija-pocket-payment-api.onrender.com/api/product/create",
+PAYMENT_API_BASE+"/api/product/create",
 payload
 );
 
@@ -2513,35 +2397,19 @@ return data;
 }
 
 
-/*
-============================================================
-BRANDED EMAIL DELIVERY
-============================================================
-
-The Payment API's /api/delivery/email endpoint is responsible
-for calling Resend and attaching the exact canonical file.
-
-This Review page does NOT send the file itself.
-
-It simply asks the Payment API to deliver the already-saved
-canonical document.
-
-No payment lookup is performed.
-No download unlock is performed.
-============================================================
-*/
-
 async function sendBrandedEmail(){
 
 if(!customerEmail){
 
 throw Error(
-"No customer email address was found. Please return to the document form and provide the email address for delivery."
+"No customer email address was found for this document."
 );
 
 }
 
-const payload={
+const data=await apiPost(
+PAYMENT_API_BASE+"/api/delivery/email",
+{
 
 service:service,
 
@@ -2556,11 +2424,7 @@ subject:
 documentTitle+
 " — Naija Pocket Business Center"
 
-};
-
-const data=await apiPost(
-"https://naija-pocket-payment-api.onrender.com/api/delivery/email",
-payload
+}
 );
 
 if(data.ok!==true){
@@ -2581,16 +2445,7 @@ return data;
 
 /*
 ============================================================
-MAIN TEST BUTTON
-============================================================
-
-TEMPORARY TEST ACTION:
-
 SEND DOCUMENT BY EMAIL
-
-It deliberately does NOT call:
-
-/api/payment/create
 ============================================================
 */
 
@@ -2626,7 +2481,7 @@ return setMessage(
 if(emailSent){
 
 return setMessage(
-"The document has already been sent to the customer email address.",
+"The document has already been sent by email.",
 "success"
 );
 
@@ -2662,17 +2517,15 @@ throw Error(
 
 
 /*
- * STEP 1
- *
- * Save the exact reviewed product.
+ * STEP 1:
+ * Save the exact reviewed document as the product.
  */
-await saveProduct();
+await saveReviewedProduct();
 
 
 /*
- * STEP 2
- *
- * Send the exact canonical document by branded email.
+ * STEP 2:
+ * Send the exact canonical saved file.
  */
 setMessage(
 "Your document is saved. Sending your branded email...",
@@ -2681,33 +2534,26 @@ setMessage(
 
 const delivery=await sendBrandedEmail();
 
-
-const returnedRecipient=
+const recipient=
 clean(
 delivery?.delivery?.recipient
 ) ||
 customerEmail;
 
-
-setMessage(
-"Your completed document has been sent by branded email to "+
-returnedRecipient+".",
-"success"
-);
+setStatus("DELIVERED");
 
 progressText.textContent=
 "Your completed document has been sent by branded email.";
 
-setStatus("DELIVERED");
+setMessage(
+"Your completed document has been sent to "+
+recipient+".",
+"success"
+);
 
 }
 catch(e){
 
-/*
- * If product save succeeded but email failed,
- * do NOT recreate the product and do NOT regenerate
- * the document on retry.
- */
 if(productSaved){
 
 setMessage(
@@ -2738,12 +2584,6 @@ updateButtons();
 
 };
 
-
-/*
-============================================================
-START
-============================================================
-*/
 
 async function start(){
 
