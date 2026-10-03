@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Review Your Complete Service — Naija Pocket Business Center</title>
-
-<style>
+<title>Review Your Complete Service — Naija Pocket Business Center</title><style>
 :root{
 --black:#050505;
 --panel:#111;
@@ -356,21 +353,10 @@ margin-top:16px;
 margin-bottom:10px
 }
 
-.page-content h1{
-font-size:2em
-}
-
-.page-content h2{
-font-size:1.6em
-}
-
-.page-content h3{
-font-size:1.35em
-}
-
-.page-content h4{
-font-size:1.15em
-}
+.page-content h1{font-size:2em}
+.page-content h2{font-size:1.6em}
+.page-content h3{font-size:1.35em}
+.page-content h4{font-size:1.15em}
 
 .page-content strong,
 .page-content b{
@@ -839,218 +825,147 @@ font-size:15px;
 line-height:1.8
 }
 }
-</style>
-</head>
+</style></head><body><span id="serviceBadge" style="display:none">Service</span>
 
-<body>
-
-<span id="serviceBadge" style="display:none">Service</span>
-
-<main class="main">
-
-<section class="review-card">
-
-<div class="document-card-header">
-
-<div class="document-heading">
+<main class="main"><section class="review-card"><div class="document-card-header"><div class="document-heading">
 <h3>Your Complete Document</h3>
-</div>
-
-<div id="pageCount" class="page-count">
+</div><div id="pageCount" class="page-count">
 0 PAGES
-</div>
-
-</div>
-
-<div id="documentScroll" class="document-scroll">
-
-<div id="pageViewer" class="page-viewer">
-
-<div class="loading">
+</div></div><div id="documentScroll" class="document-scroll"><div id="pageViewer" class="page-viewer"><div class="loading">
 <div class="spinner"></div>
 <div>Your service is being carefully prepared.</div>
-</div>
-
-</div>
-
-<div class="page-navigation">
-
-<button
+</div></div><div class="page-navigation"><button
 id="previousButton"
 class="nav-button"
 type="button"
 disabled
->
+
+«»
+
 ← Previous Page
 </button>
 
 <div id="pageIndicator" class="page-indicator">
 Page 0 of 0
-</div>
-
-<button
+</div><button
 id="nextButton"
 class="nav-button next"
 type="button"
 disabled
->
+
+«»
+
 Next Page →
 </button>
 
-</div>
-
-<div class="go-row">
-
-<input
+</div><div class="go-row"><input
 id="pageNumberInput"
 class="page-number-input"
 type="number"
 min="1"
 placeholder="Enter page number"
->
+
+«»
 
 <button
 id="goButton"
 class="go-button"
 type="button"
->
+
+«»
+
 GO
 </button>
 
-</div>
-
-<div
+</div><div
 id="pageReview"
 class="page-review"
 style="display:none"
->
-
-<div class="page-review-title">
+><div class="page-review-title">
 PAGE REVIEW
-</div>
-
-<div
+</div><div
 id="pageReviewText"
 class="page-review-text"
-></div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<section class="action-area">
-
-<section class="top-panel">
-
-<h2 class="review-title">
+></div></div></div></section><section class="action-area"><section class="top-panel"><h2 class="review-title">
 Review Your Complete Service
-</h2>
-
-<p class="review-subtitle">
+</h2><p class="review-subtitle">
 Review every page. Make any necessary correction, then pay and continue to Payment &amp; Delivery.
-</p>
-
-<div class="status-row">
-
-<span class="status-label">
+</p><div class="status-row"><span class="status-label">
 Review status
-</span>
-
-<span
+</span><span
 id="statusValue"
 class="status-value"
->
+
+«»
+
 Preparing...
 </span>
 
-</div>
-
-<div class="progress-shell">
-
-<div
+</div><div class="progress-shell"><div
 id="progressBar"
 class="progress-bar"
-></div>
-
-</div>
-
-<div
+></div></div><div
 id="progressText"
 class="progress-text"
 >
 Preparing the document...
-</div>
-
-</section>
-
-
-<section class="top-amount-card">
-
-<div class="top-amount-head">
-
-<div>
-
-<div class="top-amount-label">
+</div></section><section class="top-amount-card"><div class="top-amount-head"><div><div class="top-amount-label">
 AMOUNT TO PAY
-</div>
-
-<div
+</div><div
 id="amountValueTop"
 class="top-amount-value"
 >
 ₦0
-</div>
-
-</div>
-
-<div class="top-action-buttons">
-
-<button
+</div></div><div class="top-action-buttons"><button
 id="makePaymentButton"
 class="make-payment-button"
 type="button"
->
+
+«»
+
 💳 MAKE PAYMENT
 </button>
 
-</div>
-
-</div>
-
-</section>
-
-
-<div class="correction-box">
-
-<textarea
+</div></div></section><div class="correction-box"><textarea
 id="correctionInput"
 class="correction-input"
 placeholder="Want anything changed? Tell us what to correct..."
-></textarea>
-
-<button
+></textarea><button
 id="correctionButton"
 class="correction-button"
 type="button"
->
+
+«»
+
 Apply Correction
 </button>
 
-</div>
-
-</section>
-
-
-<div id="message" class="message"></div>
-
-</main>
-
-
-<script>
+</div></section><div id="message" class="message"></div></main><script>
 "use strict";
+
+/*
+ * REVIEW PAGE
+ *
+ * PURPOSE
+ * -------
+ * This page reviews the finished document and starts the
+ * existing payment flow.
+ *
+ * PAYMENT FLOW
+ * ------------
+ * Review
+ *   ↓
+ * MAKE PAYMENT
+ *   ↓
+ * /api/payment/create
+ *   ↓
+ * payment.html
+ *
+ * PAYMENT VERIFICATION AND DELIVERY ARE NOT PERFORMED HERE.
+ *
+ * The payment API remains responsible for saving the exact
+ * reviewed document and preparing the payment record.
+ */
 
 const API_BASE="";
 const PAYMENT_API_BASE="https://naija-pocket-payment-api.onrender.com";
@@ -1063,12 +978,6 @@ const jobId=
 const service=
 (params.get("service")||"Business Center Service").trim();
 
-/*
- * Preserve the billing amount already supplied by
- * the existing billing/payment flow.
- *
- * Review does NOT calculate a new service price.
- */
 const suppliedAmount=
 (params.get("amount")||"").trim();
 
@@ -1094,7 +1003,6 @@ const correctionButton=$("correctionButton");
 const makePaymentButton=$("makePaymentButton");
 const message=$("message");
 
-
 let pages=[];
 let currentPage=1;
 let totalPages=0;
@@ -1107,11 +1015,6 @@ let busy=false;
 let pollTimer=null;
 let polling=false;
 
-/*
- * Existing billing amount is preserved.
- * It may already be present in the URL or supplied
- * by the existing review/billing response.
- */
 let amount=
 Number(
 String(suppliedAmount)
@@ -1170,12 +1073,17 @@ d.review_finished===true
 }
 
 
+/*
+ * Existing Workspace/Ada API GET.
+ */
 async function apiGet(url){
 
 const r=
 await fetch(
 API_BASE+url,
-{cache:"no-store"}
+{
+cache:"no-store"
+}
 );
 
 const d=
@@ -1197,6 +1105,9 @@ return d;
 }
 
 
+/*
+ * Existing Workspace/Ada API POST.
+ */
 async function apiPost(url,body){
 
 const r=
@@ -1234,76 +1145,115 @@ return d;
 
 
 /*
- * Existing payment API connection.
+ * PAYMENT API CONNECTION
  *
- * This function is deliberately preserved.
- * It does not require or manufacture a payment reference.
- * The payment service response is passed through unchanged.
+ * This connects ONLY to the existing payment API.
+ *
+ * It does not:
+ * - verify payment
+ * - unlock download
+ * - create a payment reference for the customer
+ * - send email
+ *
+ * It only prepares the payment and saves the exact
+ * reviewed document through the existing API.
  */
 async function paymentPost(url,body){
 
-let r;
+const controller=
+new AbortController();
+
+const timeout=
+setTimeout(
+()=>controller.abort(),
+60000
+);
+
+let response;
 
 try{
 
-r=
+response=
 await fetch(
 PAYMENT_API_BASE+url,
 {
 method:"POST",
 headers:{
-"Content-Type":"application/json"
+"Content-Type":"application/json",
+"Accept":"application/json"
 },
-body:JSON.stringify(body||{})
+body:JSON.stringify(body||{}),
+cache:"no-store",
+mode:"cors",
+signal:controller.signal
 }
 );
 
 }catch(e){
 
+clearTimeout(timeout);
+
+if(e&&e.name==="AbortError"){
+
 throw Error(
-"The payment service could not be reached. Please check your internet connection and try again."
+"The payment service took too long to respond. Please try MAKE PAYMENT again."
 );
 
 }
 
-const text=
-await r.text();
+throw Error(
+"Payment preparation could not connect to the payment service. Please try again."
+);
 
-let d={};
+}
+
+clearTimeout(timeout);
+
+const responseText=
+await response.text();
+
+let data={};
+
+if(responseText){
 
 try{
 
-d=
-text
-?JSON.parse(text)
-:{};
+data=
+JSON.parse(responseText);
 
-}catch(_e){
+}catch(e){
 
-d={
-raw:text
+data={
+raw:responseText
 };
 
 }
 
-if(
-!r.ok||
-d.ok===false||
-d.success===false
-){
+}
+
+
+/*
+ * Important:
+ *
+ * An HTTP response means the payment service was reached.
+ * Therefore HTTP/API errors are reported separately from
+ * network failures.
+ */
+if(!response.ok){
 
 const detail=
-d.error_message||
-d.error||
-d.message||
+data.error_message||
+data.error||
+data.message||
 (
-d.detail&&
-typeof d.detail==="string"
-?d.detail
+typeof data.detail==="string"
+?data.detail
 :""
 )||
 (
-(d.raw||"").slice(0,220)
+typeof data.raw==="string"
+?data.raw.slice(0,300)
+:""
 );
 
 throw Error(
@@ -1311,110 +1261,242 @@ detail
 ?
 "Payment preparation failed: "+detail
 :
-"Payment preparation failed (HTTP "+r.status+"). Please try again."
-);
-
-}
-
-return d;
-
-}
-
-
-function normalizePages(d){
-
-let s=[];
-
-if(
-Array.isArray(d?.review_pages)&&
-d.review_pages.length
-){
-
-s=d.review_pages;
-
-}
-else if(
-Array.isArray(d?.document_pages)&&
-d.document_pages.length
-){
-
-s=d.document_pages;
-
-}
-else if(
-Array.isArray(d?.pages)&&
-d.pages.length
-){
-
-s=d.pages;
-
-}
-
-return s
-.map((x,i)=>({
-
-page_number:
-Number(x.page_number)||i+1,
-
-position:
-Number(x.position)||i+1,
-
-status:
-clean(x.status)||"queued",
-
-content:
-x.content==null
-?""
-:String(x.content),
-
-review:
-clean(x.review),
-
-error:
-clean(x.error)
-
-}))
-.sort(
-(a,b)=>
-a.position-b.position
+"Payment preparation failed. The payment service returned HTTP "+response.status+"."
 );
 
 }
 
 
-function extractPages(d){
-
-let x=
-normalizePages(d);
-
-if(x.length)
-return x;
-
-for(
-const c of [
-d?.document,
-d?.result,
-d?.review,
-d?.output
-]
+/*
+ * The current payment API uses:
+ *
+ * {
+ *   ok:true,
+ *   message:"PAYMENT_PREPARED",
+ *   product:{...},
+ *   payment:{...},
+ *   payment_verified:false,
+ *   download_unlocked:false
+ * }
+ *
+ * Therefore success is determined from `ok`, not from
+ * an unrelated `document_saved` field.
+ */
+if(
+data.ok===false||
+data.success===false
 ){
+
+throw Error(
+data.error_message||
+data.error||
+data.message||
+"Payment preparation could not be completed."
+);
+
+}
+
+return data;
+
+}
+
+
+/*
+ * DOCUMENT CLEANING
+ *
+ * The Review viewer must not expose raw Markdown.
+ *
+ * This function cleans Markdown presentation markers while
+ * preserving the actual document words.
+ */
+function cleanMarkdownText(value){
+
+let text=
+String(value==null?"":value)
+.replace(/\r\n/g,"\n")
+.replace(/\r/g,"\n")
+.replace(/\u00a0/g," ");
+
+
+/*
+ * Remove fenced code markers/content.
+ */
+text=
+text.replace(
+/```[\s\S]*?```/g,
+""
+);
+
+
+/*
+ * Remove heading markers.
+ */
+text=
+text.replace(
+/^\s{0,3}#{1,6}\s+/gm,
+""
+);
+
+
+/*
+ * Remove horizontal Markdown rules.
+ */
+text=
+text.replace(
+/^\s*(?:[-*_]\s*){3,}$/gm,
+""
+);
+
+
+/*
+ * Remove blockquote markers.
+ */
+text=
+text.replace(
+/^\s*>\s?/gm,
+""
+);
+
+
+/*
+ * Convert Markdown links to visible text.
+ */
+text=
+text.replace(
+/(.*?)(?:[^()]|\([^()]*)*\)/g,
+"$1"
+);
+
+
+/*
+ * Remove bold/italic/strike markers.
+ *
+ * Repeated passes handle combinations such as:
+ * **Title:** and ***Title***
+ */
+for(let i=0;i<3;i++){
+
+text=
+text
+.replace(/\*\*\*(.*?)\*\*\*/g,"$1")
+.replace(/___(.*?)___/g,"$1")
+.replace(/\*\*(.*?)\*\*/g,"$1")
+.replace(/__(.*?)__/g,"$1")
+.replace(/~~(.*?)~~/g,"$1")
+.replace(/\*(.*?)\*/g,"$1")
+.replace(/_(.*?)_/g,"$1");
+
+}
+
+
+/*
+ * Remove Markdown list markers without deleting the
+ * actual list text.
+ */
+text=
+text.replace(
+/^\s*[-*+]\s+/gm,
+""
+);
+
+text=
+text.replace(
+/^\s*\d+\.\s+/gm,
+""
+);
+
+
+/*
+ * Remove leftover table separators.
+ */
+text=
+text.replace(
+/^\s*\|?[\s:|-]+\|?\s*$/gm,
+""
+);
+
+
+/*
+ * Turn Markdown table pipes into spacing rather than
+ * exposing the raw pipe syntax.
+ */
+text=
+text.replace(
+/\|/g,
+" "
+);
+
+
+/*
+ * Remove excessive spaces without destroying newlines.
+ */
+text=
+text.replace(
+/[ \t]{2,}/g,
+" "
+);
+
+text=
+text.replace(
+/\n{4,}/g,
+"\n\n\n"
+);
+
+return text.trim();
+
+}
+
+
+function normText(v){
+
+return cleanMarkdownText(v);
+
+}
+
+
+/*
+ * Convert plain cleaned text to safe DOM nodes.
+ *
+ * No HTML from the document is interpreted here.
+ */
+function renderPlain(t){
+
+const fragment=
+document.createDocumentFragment();
+
+const lines=
+normText(t).split("\n");
+
+lines.forEach((line,index)=>{
+
+if(line===""){
+
+fragment.appendChild(
+document.createElement("br")
+);
+
+return;
+
+}
+
+fragment.appendChild(
+document.createTextNode(line)
+);
 
 if(
-c&&
-typeof c==="object"
+index<
+lines.length-1
 ){
 
-x=
-normalizePages(c);
-
-if(x.length)
-return x;
+fragment.appendChild(
+document.createElement("br")
+);
 
 }
 
-}
+});
 
-return [];
+return fragment;
 
 }
 
@@ -1477,48 +1559,38 @@ new Set([
 ]);
 
 
-function normText(v){
-
-return String(v==null?"":v)
-.replace(/\r\n/g,"\n")
-.replace(/\r/g,"\n")
-.replace(/\u00a0/g," ")
-.replace(/^\s*#{1,6}\s+/gm,"")
-.replace(/\n{5,}/g,"\n\n")
-.trim();
-
-}
-
-
 function safeStyle(s){
 
-let out=[];
+const out=[];
 
 for(
-const d of String(s||"").split(";")
+const declaration of String(s||"").split(";")
 ){
 
-const i=d.indexOf(":");
+const i=
+declaration.indexOf(":");
 
 if(i<0)
 continue;
 
-const p=
-d.slice(0,i)
+const property=
+declaration
+.slice(0,i)
 .trim()
 .toLowerCase();
 
-const v=
-d.slice(i+1)
+const value=
+declaration
+.slice(i+1)
 .trim();
 
 if(
-allowedStyles.has(p)&&
-!/javascript:|expression\(|url\(|@import/i.test(v)
+allowedStyles.has(property)&&
+!/javascript:|expression\(|url\(|@import/i.test(value)
 ){
 
 out.push(
-p+":"+v
+property+":"+value
 );
 
 }
@@ -1530,125 +1602,66 @@ return out.join(";");
 }
 
 
-function renderPlain(t){
-
-const f=
-document.createDocumentFragment();
-
-const lines=
-normText(t).split("\n");
-
-lines.forEach((line,i)=>{
-
-if(line===""){
-
-f.appendChild(
-document.createElement("br")
-);
-
-return;
-
-}
-
-const parts=
-line.split(
-/(\*\*[^*]+\*\*)/g
-);
-
-parts.forEach(p=>{
-
-if(!p)
-return;
-
-if(
-p.startsWith("**")&&
-p.endsWith("**")
-){
-
-const e=
-document.createElement("strong");
-
-e.textContent=
-p.slice(2,-2);
-
-f.appendChild(e);
-
-}else{
-
-f.appendChild(
-document.createTextNode(
-p.replace(/^\*+|\*+$/g,"")
-)
-);
-
-}
-
-});
-
-if(
-i<
-lines.length-1
-){
-
-f.appendChild(
-document.createElement("br")
-);
-
-}
-
-});
-
-return f;
-
-}
-
-
+/*
+ * Safe HTML rendering.
+ *
+ * If the source is not HTML, Markdown is cleaned and
+ * rendered as plain text.
+ */
 function sanitizeHtml(src){
 
+const raw=
+String(src==null?"":src);
+
 if(
-!/<[a-z][\s\S]*>/i.test(
-String(src||"")
-)
+!/<[a-z][\s\S]*>/i.test(raw)
 ){
 
-return renderPlain(src);
+return renderPlain(raw);
 
 }
 
 const doc=
 new DOMParser()
 .parseFromString(
-String(src),
+raw,
 "text/html"
 );
 
-const out=
+const fragment=
 document.createDocumentFragment();
 
 
-function walk(n,parent){
+function walk(node,parent){
 
 if(
-n.nodeType===Node.TEXT_NODE
+node.nodeType===Node.TEXT_NODE
 ){
 
-parent.appendChild(
-document.createTextNode(
-normText(n.nodeValue||"")
-)
+const cleaned=
+cleanMarkdownText(
+node.nodeValue||""
 );
+
+if(cleaned){
+
+parent.appendChild(
+document.createTextNode(cleaned)
+);
+
+}
 
 return;
 
 }
 
 if(
-n.nodeType!==Node.ELEMENT_NODE
+node.nodeType!==Node.ELEMENT_NODE
 )
 return;
 
 const tag=
-n.tagName.toUpperCase();
+node.tagName.toUpperCase();
 
 if([
 "SCRIPT",
@@ -1669,28 +1682,31 @@ return;
 if(!allowedTags.has(tag)){
 
 for(
-const c of n.childNodes
-)
-walk(c,parent);
+const child of node.childNodes
+){
+
+walk(child,parent);
+
+}
 
 return;
 
 }
 
-const e=
+const element=
 document.createElement(
 tag.toLowerCase()
 );
 
 for(
-const a of n.attributes
+const attribute of node.attributes
 ){
 
 const name=
-a.name.toLowerCase();
+attribute.name.toLowerCase();
 
-const v=
-a.value||"";
+const value=
+attribute.value||"";
 
 if(
 !allowedAttrs.has(name)
@@ -1699,14 +1715,17 @@ continue;
 
 if(name==="style"){
 
-const s=
-safeStyle(v);
+const style=
+safeStyle(value);
 
-if(s)
-e.setAttribute(
+if(style){
+
+element.setAttribute(
 "style",
-s
+style
 );
+
+}
 
 }
 else if(
@@ -1717,13 +1736,13 @@ name==="align"&&
 "right",
 "justify"
 ].includes(
-v.toLowerCase().trim()
+value.toLowerCase().trim()
 )
 ){
 
-e.setAttribute(
+element.setAttribute(
 "align",
-v.toLowerCase().trim()
+value.toLowerCase().trim()
 );
 
 }
@@ -1732,14 +1751,14 @@ else if(
 name==="colspan"||
 name==="rowspan"
 )&&
-/^\d+$/.test(v)&&
-+v>0&&
-+v<=100
+/^\d+$/.test(value)&&
+Number(value)>0&&
+Number(value)<=100
 ){
 
-e.setAttribute(
+element.setAttribute(
 name,
-v
+value
 );
 
 }
@@ -1747,21 +1766,125 @@ v
 }
 
 for(
-const c of n.childNodes
-)
-walk(c,e);
+const child of node.childNodes
+){
 
-parent.appendChild(e);
+walk(child,element);
+
+}
+
+parent.appendChild(element);
 
 }
 
 
 for(
-const c of doc.body.childNodes
-)
-walk(c,out);
+const child of doc.body.childNodes
+){
 
-return out;
+walk(child,fragment);
+
+}
+
+return fragment;
+
+}
+
+
+function normalizePages(d){
+
+let source=[];
+
+if(
+Array.isArray(d?.review_pages)&&
+d.review_pages.length
+){
+
+source=d.review_pages;
+
+}
+else if(
+Array.isArray(d?.document_pages)&&
+d.document_pages.length
+){
+
+source=d.document_pages;
+
+}
+else if(
+Array.isArray(d?.pages)&&
+d.pages.length
+){
+
+source=d.pages;
+
+}
+
+return source
+.map((x,index)=>({
+
+page_number:
+Number(x?.page_number)||index+1,
+
+position:
+Number(x?.position)||index+1,
+
+status:
+clean(x?.status)||"queued",
+
+content:
+x?.content==null
+?""
+:String(x.content),
+
+review:
+clean(x?.review),
+
+error:
+clean(x?.error)
+
+}))
+.sort(
+(a,b)=>
+a.position-b.position
+);
+
+}
+
+
+function extractPages(d){
+
+let result=
+normalizePages(d);
+
+if(result.length)
+return result;
+
+for(
+const candidate of [
+d?.document,
+d?.result,
+d?.review,
+d?.output
+]
+){
+
+if(
+candidate&&
+typeof candidate==="object"
+){
+
+result=
+normalizePages(candidate);
+
+if(result.length)
+return result;
+
+}
+
+}
+
+return [];
 
 }
 
@@ -1809,70 +1932,73 @@ return;
 
 }
 
-const p=
+const page=
 pages[currentPage-1];
 
-if(!p){
+if(!page){
 
 pageViewer.innerHTML=
 '<div class="empty-page">'+
 "This document page is not available yet."+
-"</div>";
+'</div>';
 
 return;
 
 }
 
-const a=
+const article=
 document.createElement("article");
 
-a.className=
+article.className=
 "document-page";
 
-const n=
+const pageNumber=
 document.createElement("div");
 
-n.className=
+pageNumber.className=
 "page-number-inside";
 
-n.textContent=
-"PAGE "+p.page_number;
+pageNumber.textContent=
+"PAGE "+page.page_number;
 
-const c=
+const content=
 document.createElement("div");
 
-c.className=
+content.className=
 "page-content";
 
-c.appendChild(
+content.appendChild(
 sanitizeHtml(
-p.content||
+page.content||
 "This page is still being prepared."
 )
 );
 
-a.append(n,c);
+article.append(
+pageNumber,
+content
+);
 
-pageViewer.appendChild(a);
+pageViewer.appendChild(article);
 
 pageIndicator.textContent=
 `Page ${currentPage} of ${totalPages}`;
 
 if(
-p.review||
-p.error
+page.review||
+page.error
 ){
 
 pageReview.style.display=
 "block";
 
 pageReviewText.textContent=
-p.error
+page.error
 ?
 "Page information:\n\n"+
-normText(p.error)
+normText(page.error)
 :
-normText(p.review);
+normText(page.review);
 
 }else{
 
@@ -1886,7 +2012,7 @@ updateButtons();
 }
 
 
-function showPage(n){
+function showPage(number){
 
 if(!totalPages)
 return;
@@ -1896,7 +2022,7 @@ Math.max(
 1,
 Math.min(
 totalPages,
-Math.floor(Number(n)||1)
+Math.floor(Number(number)||1)
 )
 );
 
@@ -1911,27 +2037,21 @@ behavior:"smooth"
 
 
 previousButton.onclick=
-()=>showPage(
-currentPage-1
-);
+()=>showPage(currentPage-1);
 
 nextButton.onclick=
-()=>showPage(
-currentPage+1
-);
+()=>showPage(currentPage+1);
 
 
 goButton.onclick=()=>{
 
-const n=
-Number(
-pageNumberInput.value
-);
+const number=
+Number(pageNumberInput.value);
 
 if(
-!Number.isInteger(n)||
-n<1||
-n>totalPages
+!Number.isInteger(number)||
+number<1||
+number>totalPages
 ){
 
 return setMessage(
@@ -1944,7 +2064,7 @@ totalPages+".",
 
 setMessage("");
 
-showPage(n);
+showPage(number);
 
 };
 
@@ -1963,15 +2083,10 @@ goButton.click();
 
 
 /*
- * IMPORTANT:
+ * Preserve the billing amount already supplied by the
+ * existing billing flow.
  *
- * Billing is NOT recalculated here.
- *
- * If the existing billing flow supplied an amount
- * in the Review URL, keep it.
- *
- * Otherwise preserve any amount already supplied
- * by the existing Review response.
+ * Review does not calculate a service price.
  */
 function preserveExistingAmount(d){
 
@@ -2000,17 +2115,17 @@ for(
 const value of candidates
 ){
 
-const n=
+const number=
 Number(
 String(value==null?"":value)
 .replace(/[^0-9.]/g,"")
 );
 
 if(
-isFinite(n)&&
-n>0
+isFinite(number)&&
+number>0
 )
-return n;
+return number;
 
 }
 
@@ -2024,32 +2139,32 @@ function extractBilling(d){
 const seen=
 new Set();
 
-function find(x){
+function find(value){
 
-if(x==null)
+if(value==null)
 return "";
 
 if(
-typeof x==="string"
+typeof value==="string"
 )
-return x.trim();
+return value.trim();
 
 if(
-typeof x!=="object"||
-seen.has(x)
+typeof value!=="object"||
+seen.has(value)
 )
 return "";
 
-seen.add(x);
+seen.add(value);
 
 if(
-typeof x.billing==="string"&&
-x.billing.trim()
+typeof value.billing==="string"&&
+value.billing.trim()
 )
-return x.billing.trim();
+return value.billing.trim();
 
 for(
-const k of [
+const key of [
 "billing",
 "bill",
 "payment",
@@ -2061,11 +2176,11 @@ const k of [
 ]
 ){
 
-const v=
-find(x[k]);
+const found=
+find(value[key]);
 
-if(v)
-return v;
+if(found)
+return found;
 
 }
 
@@ -2108,7 +2223,7 @@ const value of candidates
 ){
 
 const title=
-clean(value);
+cleanMarkdownText(value);
 
 if(title)
 return title;
@@ -2119,18 +2234,18 @@ const sourcePages=
 extractPages(d);
 
 for(
-const p of sourcePages
+const page of sourcePages
 ){
 
 const text=
-normText(p.content||"");
+normText(page.content||"");
 
 if(!text)
 continue;
 
 const match=
 text.match(
-/(?:^|\n)\s*(?:\*{0,2})Title(?:\*{0,2})\s*:\s*(?:\*{0,2})([^\n*]+?)(?:\*{0,2})\s*(?:\n|$)/i
+/(?:^|\n)\s*Title\s*:\s*([^\n]+?)(?:\n|$)/i
 );
 
 if(match){
@@ -2155,9 +2270,9 @@ const line of lines.slice(0,15)
 
 const candidate=
 line
-.replace(/^\*{1,3}/,"")
-.replace(/\*{1,3}$/,"")
 .replace(/^#+\s*/,"")
+.replace(/^\*+/,"")
+.replace(/\*+$/,"")
 .trim();
 
 if(
@@ -2208,15 +2323,16 @@ d.output?.filename
 )||
 documentFilename;
 
-const p=
+const extractedPages=
 extractPages(d);
 
-if(p.length){
+if(extractedPages.length){
 
-pages=p;
+pages=
+extractedPages;
 
 totalPages=
-p.length;
+extractedPages.length;
 
 }else{
 
@@ -2275,34 +2391,35 @@ totalPages
 
 }
 
-const pr=
+const progress=
 d.progress||{};
 
-const done=
-Number(pr.completed)||0;
+const completed=
+Number(progress.completed)||0;
 
-const tot=
-Number(pr.total)||
+const total=
+Number(progress.total)||
 totalPages||
 0;
 
-let pct=
-tot
-?Math.round(done/tot*100)
+let percent=
+total
+?
+Math.round(completed/total*100)
 :0;
 
 if(
 reviewFinished&&
 totalPages
 )
-pct=100;
+percent=100;
 
 progressBar.style.width=
 Math.max(
 0,
 Math.min(
 100,
-pct
+percent
 )
 )+"%";
 
@@ -2310,28 +2427,20 @@ pageCount.textContent=
 totalPages+
 (
 totalPages===1
-?" PAGE"
-:" PAGES"
+?
+" PAGE"
+:
+" PAGES"
 );
 
-/*
- * Display the existing amount only.
- * Review does not replace billing with zero.
- */
 if(amount>0){
 
 amountValueTop.textContent=
 "₦"+
-Number(amount).toLocaleString(
-"en-NG"
-);
+Number(amount).toLocaleString("en-NG");
 
 }else{
 
-/*
- * Do not overwrite an existing billing value
- * with a newly calculated value.
- */
 amountValueTop.textContent=
 "₦0";
 
@@ -2352,9 +2461,9 @@ state()==="reviewing"
 setStatus("REVIEWING");
 
 progressText.textContent=
-done+
+completed+
 " of "+
-tot+
+total+
 " pages reviewed.";
 
 }
@@ -2400,15 +2509,15 @@ updateButtons();
 
 async function loadJob(){
 
-const d=
+const data=
 await apiGet(
 "/api/review?job_id="+
 encodeURIComponent(jobId)
 );
 
-applyJob(d);
+applyJob(data);
 
-return d;
+return data;
 
 }
 
@@ -2424,12 +2533,12 @@ const poll=async()=>{
 
 try{
 
-const d=
+const data=
 await loadJob();
 
 if(
-complete(d)&&
-extractPages(d).length
+complete(data)&&
+extractPages(data).length
 ){
 
 polling=false;
@@ -2463,11 +2572,14 @@ poll,
 
 polling=false;
 
-if(!pages.length)
+if(!pages.length){
+
 setMessage(
 e.message,
 "error"
 );
+
+}
 
 }
 
@@ -2478,6 +2590,11 @@ poll();
 }
 
 
+/*
+ * CORRECTION
+ *
+ * Billing remains untouched.
+ */
 correctionButton.onclick=
 async()=>{
 
@@ -2514,12 +2631,6 @@ instruction
 );
 
 correctionInput.value="";
-
-/*
- * Do not alter billing during correction.
- *
- * The existing billing amount is preserved.
- */
 
 currentStatus=
 "correcting";
@@ -2562,17 +2673,16 @@ updateButtons();
 /*
  * MAKE PAYMENT
  *
- * The existing payment preparation connection is preserved.
- *
  * IMPORTANT:
  *
- * - No payment ID/reference is required as a gate.
- * - Existing billing is not recalculated.
- * - The reviewed document is still saved through
- *   the existing payment API.
- * - Payment & Delivery remains responsible for
- *   payment reporting, Customer Care verification,
- *   and delivery/download.
+ * This does NOT verify payment.
+ * This does NOT unlock delivery.
+ * This does NOT send email.
+ *
+ * It only prepares the existing payment record and saves
+ * the exact reviewed document through the payment API.
+ *
+ * After successful preparation, payment.html opens.
  */
 makePaymentButton.onclick=
 async()=>{
@@ -2604,16 +2714,6 @@ return setMessage(
 
 }
 
-/*
- * Do NOT create or calculate a new amount here.
- *
- * The amount must come from the existing billing flow.
- *
- * If the existing billing amount is not available on
- * this page, payment preparation itself remains responsible
- * for the existing billing behavior.
- */
-
 if(paymentStarted){
 
 return setMessage(
@@ -2634,7 +2734,6 @@ setMessage(
 "success"
 );
 
-
 if(!documentTitle){
 
 documentTitle=
@@ -2643,7 +2742,6 @@ pages:pages
 });
 
 }
-
 
 if(!documentTitle){
 
@@ -2655,10 +2753,12 @@ throw Error(
 
 
 /*
- * Existing backend association fields remain available
- * so document saving continues to work.
+ * Customer-facing product identity remains:
  *
- * Customer-facing identity remains SERVICE + TITLE.
+ * SERVICE + DOCUMENT TITLE
+ *
+ * Technical job/version fields are retained only where
+ * the existing backend needs them for association.
  */
 const payload={
 
@@ -2672,10 +2772,6 @@ title:documentTitle,
 
 document_title:documentTitle,
 
-/*
- * Preserve the billing amount when one already exists.
- * Do not invent or recalculate a price.
- */
 amount:amount,
 
 payment_method:"bank_transfer",
@@ -2691,23 +2787,25 @@ review_finished:reviewFinished,
 total_pages:pages.length,
 
 pages:
-pages.map(p=>({
+pages.map(page=>({
 
-page_number:p.page_number,
+page_number:page.page_number,
 
-position:p.position,
+position:page.position,
 
-content:p.content,
+content:
+cleanMarkdownText(page.content),
 
-review:p.review,
+review:
+cleanMarkdownText(page.review),
 
-status:p.status
+status:page.status
 
 })),
 
 document_text:
 pages
-.map(p=>p.content||"")
+.map(page=>cleanMarkdownText(page.content||""))
 .join("\n\n"),
 
 filename:
@@ -2717,7 +2815,7 @@ documentFilename||
 };
 
 
-const d=
+const data=
 await paymentPost(
 "/api/payment/create",
 payload
@@ -2727,60 +2825,62 @@ payload
 /*
  * IMPORTANT:
  *
- * There is deliberately NO:
+ * The payment API's successful response is:
  *
- * if(!d.payment_id)
+ * ok:true
+ * message:"PAYMENT_PREPARED"
  *
- * gate here.
+ * It does NOT expose a `document_saved` field.
  *
- * The Review page does not require a payment ID/reference
- * to continue to Payment & Delivery.
+ * Therefore we do NOT reject a successful API response
+ * because `document_saved` is missing.
  */
-
-
 if(
-d.document_saved===false
+data.ok!==true
 ){
 
 throw Error(
-"The reviewed document could not be securely saved for payment."
+"Payment preparation did not return a successful confirmation."
 );
 
 }
-
 
 paymentStarted=true;
 
 
 /*
- * Preserve any amount already supplied by the existing
- * billing/payment service if it returns one.
+ * Preserve an amount returned by the existing payment
+ * service if it provides one.
  *
- * This does not recalculate billing.
+ * No new price is calculated.
  */
-if(
-d.amount!=null&&
+if(data.amount!=null){
+
+const returnedAmount=
 Number(
-String(d.amount)
+String(data.amount)
 .replace(/[^0-9.]/g,"")
-)>0
+);
+
+if(
+isFinite(returnedAmount)&&
+returnedAmount>0
 ){
 
 amount=
-Number(
-String(d.amount)
-.replace(/[^0-9.]/g,"")
-);
+returnedAmount;
+
+amountValueTop.textContent=
+"₦"+
+Number(amount).toLocaleString("en-NG");
+
+}
 
 }
 
 
-/*
- * Preserve billing information if returned by the
- * existing payment service.
- */
 billing=
-clean(d.billing)||
+clean(data.billing)||
 billing;
 
 setMessage(
@@ -2790,11 +2890,9 @@ setMessage(
 
 
 /*
- * Payment & Delivery receives the existing document
- * information and service/title.
+ * Payment & Delivery remains the existing customer page.
  *
- * No payment ID is required for the customer-facing
- * product identity.
+ * No payment ID is used as the customer's product identity.
  */
 const paymentUrl=
 "payment.html"+
@@ -2814,8 +2912,16 @@ paymentUrl;
 
 }catch(e){
 
+/*
+ * IMPORTANT:
+ *
+ * The actual error from the payment bridge is displayed.
+ * A genuine HTTP/API failure is no longer disguised as
+ * an internet/network error.
+ */
 setMessage(
-e.message,
+e.message||
+"Payment preparation could not be completed. Please try again.",
 "error"
 );
 
@@ -2830,6 +2936,9 @@ updateButtons();
 };
 
 
+/*
+ * PAGE START
+ */
 async function start(){
 
 serviceBadge.textContent=
@@ -2844,7 +2953,7 @@ setStatus(
 pageViewer.innerHTML=
 '<div class="empty-page">'+
 "No document was supplied for review."+
-"</div>";
+'</div>';
 
 setMessage(
 "This review page needs a document.",
@@ -2857,11 +2966,11 @@ return;
 
 try{
 
-const d=
+const data=
 await loadJob();
 
 if(
-!complete(d)&&
+!complete(data)&&
 ![
 "review_error",
 "correction_error"
@@ -2890,16 +2999,13 @@ pageViewer.innerHTML=
 String(e.message)
 .replaceAll("<","&lt;")
 .replaceAll(">","&gt;")+
-"</div>";
+'</div>';
 
 }
 
 }
-
 
 start();
 
-</script>
-
-</body>
+</script></body>
 </html>
