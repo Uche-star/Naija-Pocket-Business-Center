@@ -975,7 +975,6 @@ d.review_finished===true
 }
 
 
-/* Existing Workspace/Ada GET */
 async function apiGet(url){
 
 const r=await fetch(
@@ -1002,7 +1001,6 @@ return d;
 }
 
 
-/* Existing Workspace/Ada POST */
 async function apiPost(url,body){
 
 const r=await fetch(
@@ -1033,12 +1031,6 @@ return d;
 }
 
 
-/*
- * PAYMENT API
- *
- * Only prepares payment and saves the reviewed document.
- * Verification and delivery remain outside this page.
- */
 async function paymentPost(url,body){
 
 const controller=new AbortController();
@@ -1143,12 +1135,6 @@ return data;
 }
 
 
-/*
- * CLEAN MARKDOWN
- *
- * This deliberately uses only normal JavaScript regexes.
- * No HTML parsing is involved for plain document text.
- */
 function cleanMarkdownText(value){
 
 let text=String(value==null?"":value)
@@ -1156,31 +1142,19 @@ let text=String(value==null?"":value)
 .replace(/\r/g,"\n")
 .replace(/\u00a0/g," ");
 
-
-/* Remove fenced-code markers/content. */
 text=text.replace(/```[\s\S]*?```/g,"");
 
-
-/* Markdown headings. */
 text=text.replace(/^\s{0,3}#{1,6}\s+/gm,"");
 
-
-/* Markdown horizontal rules. */
 text=text.replace(/^\s*(?:[-*_]\s*){3,}$/gm,"");
 
-
-/* Markdown blockquotes. */
 text=text.replace(/^\s*>\s?/gm,"");
 
-
-/* Markdown links: [visible text](url) -> visible text */
 text=text.replace(
 /\[([^\]]+)\]\((?:[^()]|\([^()]*\))*\)/g,
 "$1"
 );
 
-
-/* Bold / italic / strike markers. */
 for(let i=0;i<3;i++){
 
 text=text
@@ -1194,28 +1168,18 @@ text=text
 
 }
 
-
-/* Markdown list markers. */
 text=text.replace(/^\s*[-*+]\s+/gm,"");
 text=text.replace(/^\s*\d+\.\s+/gm,"");
 
-
-/* Remove table separator rows. */
 text=text.replace(
 /^\s*\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)+\|?\s*$/gm,
 ""
 );
 
-
-/* Table pipes are presentation syntax, not document text. */
 text=text.replace(/\|/g," ");
 
-
-/* Excessive horizontal whitespace. */
 text=text.replace(/[ \t]{2,}/g," ");
 
-
-/* Excessive blank lines. */
 text=text.replace(/\n{4,}/g,"\n\n\n");
 
 return text.trim();
@@ -1227,9 +1191,6 @@ return cleanMarkdownText(v);
 }
 
 
-/*
- * Plain text renderer.
- */
 function renderPlain(t){
 
 const fragment=document.createDocumentFragment();
@@ -1352,12 +1313,6 @@ return out.join(";");
 }
 
 
-/*
- * Safe HTML renderer.
- *
- * Existing legitimate HTML formatting is preserved.
- * Markdown text inside text nodes is cleaned.
- */
 function sanitizeHtml(src){
 
 const raw=String(src==null?"":src);
@@ -1748,10 +1703,6 @@ goButton.click();
 };
 
 
-/*
- * Review does not calculate prices.
- * It preserves the amount supplied by the existing flow.
- */
 function preserveExistingAmount(d){
 
 if(amount>0)
@@ -1838,6 +1789,22 @@ return find(d);
 }
 
 
+/*
+ * DOCUMENT TITLE EXTRACTION
+ *
+ * Priority:
+ * 1. Explicit title fields.
+ * 2. "Title:" line.
+ * 3. Title immediately before "Introduction".
+ * 4. First meaningful line.
+ *
+ * The Introduction rule is important because the current
+ * document can arrive as:
+ *
+ * Why Nigeria is Poor in the Midst of AbundanceIntroductionNigeria...
+ *
+ * In that case the title is everything before "Introduction".
+ */
 function extractDocumentTitle(d){
 
 const candidates=[
@@ -1854,12 +1821,15 @@ d?.document?.documentTitle,
 
 d?.result?.title,
 d?.result?.document_title,
+d?.result?.documentTitle,
 
 d?.review?.title,
 d?.review?.document_title,
+d?.review?.documentTitle,
 
 d?.output?.title,
-d?.output?.document_title
+d?.output?.document_title,
+d?.output?.documentTitle
 
 ];
 
@@ -1881,24 +1851,138 @@ const text=normText(page.content||"");
 if(!text)
 continue;
 
-const match=text.match(
-/(?:^|\n)\s*Title\s*:\s*([^\n]+?)(?:\n|$)/i
+
+/*
+ * Explicit:
+ *
+ * Title: My Document
+ */
+const explicit=text.match(
+/(?:^|\n)\s*Title\s*:\s*([^\n]+)/i
 );
 
-if(match){
+if(explicit){
 
-const title=clean(match[1]);
+const title=clean(explicit[1]);
 
 if(title)
 return title;
 
 }
 
+
+/*
+ * IMPORTANT:
+ *
+ * Handles both:
+ *
+ * My Title
+ * Introduction
+ *
+ * and:
+ *
+ * My TitleIntroduction
+ *
+ * The second form is the problem currently seen
+ * in the Review page.
+ */
+const introductionMatch=text.match(
+/^(.{8,180}?)(?:\s*)Introduction\b/i
+);
+
+if(introductionMatch){
+
+let title=clean(
+introductionMatch[1]
+);
+
+title=title
+.replace(/^#+\s*/,"")
+.replace(/^[*_\s]+/,"")
+.replace(/[*_\s]+$/,"")
+.trim();
+
+if(
+title.length>=8 &&
+title.length<=180
+){
+
+return title;
+
+}
+
+}
+
+
+/*
+ * If Introduction is not found at the very beginning,
+ * search the first 250 characters for a plausible title
+ * immediately before it.
+ */
+const earlyIntroduction=text.match(
+/^([\s\S]{8,250}?)(?:\s*)Introduction\b/i
+);
+
+if(earlyIntroduction){
+
+let title=clean(
+earlyIntroduction[1]
+);
+
+title=title
+.replace(/\s+/g," ")
+.replace(/^#+\s*/,"")
+.replace(/^[*_\s]+/,"")
+.replace(/[*_\s]+$/,"")
+.trim();
+
+if(
+title.length>=8 &&
+title.length<=180
+){
+
+return title;
+
+}
+
+}
+
+
+/*
+ * Normal first-line fallback.
+ */
 const lines=text
 .split("\n")
 .map(x=>clean(x))
 .filter(Boolean);
 
+if(lines.length){
+
+let first=lines[0];
+
+first=first
+.replace(/^#+\s*/,"")
+.replace(/^[*_\s]+/,"")
+.replace(/[*_\s]+$/,"")
+.trim();
+
+if(
+first.length>=8 &&
+first.length<=180 &&
+!/^page\s+\d+/i.test(first) &&
+!/^your complete document$/i.test(first)
+){
+
+return first;
+
+}
+
+}
+
+
+/*
+ * Existing subject-based fallback retained.
+ */
 for(const line of lines.slice(0,15)){
 
 const candidate=line
@@ -2186,9 +2270,6 @@ poll();
 }
 
 
-/*
- * CORRECTION
- */
 correctionButton.onclick=async()=>{
 
 const instruction=clean(
@@ -2261,19 +2342,6 @@ updateButtons();
 };
 
 
-/*
- * MAKE PAYMENT
- *
- * Review
- *   ↓
- * payment API
- *   ↓
- * payment.html
- *
- * No payment verification happens here.
- * No download unlock happens here.
- * No email is sent here.
- */
 makePaymentButton.onclick=async()=>{
 
 if(!reviewFinished){
@@ -2341,14 +2409,6 @@ throw Error(
 }
 
 
-/*
- * Product identity remains:
- *
- * service + document title
- *
- * Technical fields remain only because the current
- * payment API accepts/uses them for document association.
- */
 const payload={
 
 job_id:jobId,
@@ -2405,14 +2465,6 @@ const data=await paymentPost(
 payload
 );
 
-
-/*
- * Current payment API success response uses:
- *
- * ok:true
- *
- * It does NOT use document_saved.
- */
 if(data.ok!==true){
 
 throw Error(
@@ -2423,11 +2475,6 @@ throw Error(
 
 paymentStarted=true;
 
-
-/*
- * Preserve any amount returned by the existing
- * payment service. Do not calculate a new price.
- */
 if(data.amount!=null){
 
 const returnedAmount=
@@ -2461,9 +2508,6 @@ setMessage(
 );
 
 
-/*
- * Existing Payment & Delivery page.
- */
 const paymentUrl=
 "payment.html"+
 "?job_id="+
@@ -2500,9 +2544,6 @@ updateButtons();
 };
 
 
-/*
- * START REVIEW
- */
 async function start(){
 
 serviceBadge.textContent=service;
