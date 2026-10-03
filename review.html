@@ -796,7 +796,7 @@ Review Your Complete Service
 </h2>
 
 <p class="review-subtitle">
-Review every page. Make any necessary correction, then pay and continue to Payment &amp; Delivery.
+Review every page. Make any necessary correction, then receive your completed document by email.
 </p>
 
 <div class="status-row">
@@ -854,7 +854,7 @@ class="top-amount-value">
 id="makePaymentButton"
 class="make-payment-button"
 type="button">
-💳 MAKE PAYMENT
+📧 SEND DOCUMENT BY EMAIL
 </button>
 
 </div>
@@ -888,7 +888,55 @@ Apply Correction
 <script>
 "use strict";
 
+/*
+============================================================
+NPBC REVIEW PAGE
+PRODUCT SAVE + BRANDED EMAIL TEST
+============================================================
+
+THIS TEST FLOW:
+
+Review
+  ↓
+Exact reviewed document
+  ↓
+POST /api/product/create
+  ↓
+Canonical document saved
+  ↓
+POST /api/delivery/email
+  ↓
+Branded Resend email
+  ↓
+Customer receives exact saved document
+
+IMPORTANT:
+
+This test does NOT call:
+
+/api/payment/create
+
+It does NOT:
+
+- create a payment record
+- verify payment
+- unlock download
+- regenerate the document
+- reconstruct the document during delivery
+
+The payment API remains separate.
+============================================================
+*/
+
+
 const API_BASE="";
+
+/*
+ * Payment API is no longer called by this Review test.
+ *
+ * It remains defined here only so the existing deployment
+ * architecture is not confused with the new delivery flow.
+ */
 const PAYMENT_API_BASE="https://naija-pocket-payment-api.onrender.com";
 
 const params=new URLSearchParams(location.search);
@@ -898,6 +946,13 @@ const jobId=(params.get("job_id")||"").trim();
 const service=(params.get("service")||"Business Center Service").trim();
 
 const suppliedAmount=(params.get("amount")||"").trim();
+
+const suppliedEmail=(
+params.get("email")||
+params.get("customer_email")||
+params.get("customerEmail")||
+""
+).trim();
 
 const $=id=>document.getElementById(id);
 
@@ -928,7 +983,10 @@ let currentVersion=1;
 let versionId="";
 let currentStatus="";
 let reviewFinished=false;
-let paymentStarted=false;
+
+let productSaved=false;
+let emailSent=false;
+
 let busy=false;
 let pollTimer=null;
 let polling=false;
@@ -941,6 +999,10 @@ String(suppliedAmount)
 
 let billing="";
 let customerId="";
+let customerName="";
+let customerEmail=suppliedEmail;
+let customerPhone="";
+
 let documentFilename="";
 let documentTitle="";
 
@@ -975,6 +1037,12 @@ d.review_finished===true
 }
 
 
+/*
+============================================================
+GENERAL API
+============================================================
+*/
+
 async function apiGet(url){
 
 const r=await fetch(
@@ -1008,21 +1076,27 @@ API_BASE+url,
 {
 method:"POST",
 headers:{
-"Content-Type":"application/json"
+"Content-Type":"application/json",
+"Accept":"application/json"
 },
-body:JSON.stringify(body||{})
+body:JSON.stringify(body||{}),
+cache:"no-store"
 }
 );
 
 const d=await r.json().catch(()=>({}));
 
-if(!r.ok || d.success===false){
+if(!r.ok || d.success===false || d.ok===false){
 
 throw Error(
 d.error_message||
 d.error||
 d.message||
-"The request could not be completed."
+(
+typeof d.detail==="string"
+?d.detail
+:"The request could not be completed."
+)
 );
 
 }
@@ -1031,109 +1105,11 @@ return d;
 }
 
 
-async function paymentPost(url,body){
-
-const controller=new AbortController();
-
-const timeout=setTimeout(
-()=>controller.abort(),
-60000
-);
-
-let response;
-
-try{
-
-response=await fetch(
-PAYMENT_API_BASE+url,
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Accept":"application/json"
-},
-body:JSON.stringify(body||{}),
-cache:"no-store",
-mode:"cors",
-signal:controller.signal
-}
-);
-
-}catch(e){
-
-clearTimeout(timeout);
-
-if(e&&e.name==="AbortError"){
-
-throw Error(
-"The payment service took too long to respond. Please try MAKE PAYMENT again."
-);
-
-}
-
-throw Error(
-"Payment preparation could not connect to the payment service. Please try again."
-);
-
-}
-
-clearTimeout(timeout);
-
-const responseText=await response.text();
-
-let data={};
-
-if(responseText){
-
-try{
-data=JSON.parse(responseText);
-}catch(e){
-data={raw:responseText};
-}
-
-}
-
-if(!response.ok){
-
-const detail=
-data.error_message||
-data.error||
-data.message||
-(
-typeof data.detail==="string"
-?data.detail
-:""
-)||
-(
-typeof data.raw==="string"
-?data.raw.slice(0,300)
-:""
-);
-
-throw Error(
-detail
-?
-"Payment preparation failed: "+detail
-:
-"Payment preparation failed. The payment service returned HTTP "+response.status+"."
-);
-
-}
-
-if(data.ok===false || data.success===false){
-
-throw Error(
-data.error_message||
-data.error||
-data.message||
-"Payment preparation could not be completed."
-);
-
-}
-
-return data;
-}
-
+/*
+============================================================
+MARKDOWN / TEXT CLEANING
+============================================================
+*/
 
 function cleanMarkdownText(value){
 
@@ -1447,6 +1423,12 @@ return fragment;
 }
 
 
+/*
+============================================================
+PAGE EXTRACTION
+============================================================
+*/
+
 function normalizePages(d){
 
 let source=[];
@@ -1528,6 +1510,12 @@ return [];
 }
 
 
+/*
+============================================================
+BUTTON STATE
+============================================================
+*/
+
 function updateButtons(){
 
 previousButton.disabled=
@@ -1543,10 +1531,17 @@ correctionButton.disabled=busy;
 
 makePaymentButton.disabled=
 busy ||
-paymentStarted ||
-!reviewFinished;
+!reviewFinished ||
+emailSent;
+
 }
 
+
+/*
+============================================================
+PAGE RENDERING
+============================================================
+*/
 
 function renderPage(){
 
@@ -1703,6 +1698,12 @@ goButton.click();
 };
 
 
+/*
+============================================================
+AMOUNT / BILLING
+============================================================
+*/
+
 function preserveExistingAmount(d){
 
 if(amount>0)
@@ -1785,26 +1786,78 @@ return found;
 return "";
 }
 
-return find(d);
+
+/*
+============================================================
+CUSTOMER DETAILS
+============================================================
+*/
+
+function extractCustomerDetails(d){
+
+const candidates=[
+d,
+d?.customer,
+d?.job,
+d?.document,
+d?.result,
+d?.review,
+d?.output
+];
+
+for(const source of candidates){
+
+if(!source || typeof source!=="object")
+continue;
+
+customerName=
+customerName ||
+clean(
+source.customer_name||
+source.customerName||
+source.name||
+source.full_name||
+source.fullName
+);
+
+customerEmail=
+customerEmail ||
+clean(
+source.customer_email||
+source.customerEmail||
+source.recipient_email||
+source.recipientEmail||
+source.email
+);
+
+customerPhone=
+customerPhone ||
+clean(
+source.customer_phone||
+source.customerPhone||
+source.phone||
+source.phone_number||
+source.phoneNumber
+);
+
+customerId=
+customerId ||
+clean(
+source.customer_id||
+source.customerId
+);
+
+}
+
 }
 
 
 /*
- * DOCUMENT TITLE EXTRACTION
- *
- * Priority:
- * 1. Explicit title fields.
- * 2. "Title:" line.
- * 3. Title immediately before "Introduction".
- * 4. First meaningful line.
- *
- * The Introduction rule is important because the current
- * document can arrive as:
- *
- * Why Nigeria is Poor in the Midst of AbundanceIntroductionNigeria...
- *
- * In that case the title is everything before "Introduction".
- */
+============================================================
+DOCUMENT TITLE EXTRACTION
+============================================================
+*/
+
 function extractDocumentTitle(d){
 
 const candidates=[
@@ -1872,9 +1925,7 @@ return title;
 
 
 /*
- * IMPORTANT:
- *
- * Handles both:
+ * Handles:
  *
  * My Title
  * Introduction
@@ -1882,9 +1933,6 @@ return title;
  * and:
  *
  * My TitleIntroduction
- *
- * The second form is the problem currently seen
- * in the Review page.
  */
 const introductionMatch=text.match(
 /^(.{8,180}?)(?:\s*)Introduction\b/i
@@ -1915,9 +1963,7 @@ return title;
 
 
 /*
- * If Introduction is not found at the very beginning,
- * search the first 250 characters for a plausible title
- * immediately before it.
+ * Early Introduction fallback.
  */
 const earlyIntroduction=text.match(
 /^([\s\S]{8,250}?)(?:\s*)Introduction\b/i
@@ -2009,22 +2055,19 @@ return "";
 }
 
 
+/*
+============================================================
+APPLY REVIEW JOB
+============================================================
+*/
+
 function applyJob(d){
 
 currentStatus=clean(d.status);
 
 reviewFinished=complete(d);
 
-customerId=
-clean(
-d.customer_id ||
-d.customerId ||
-d.job?.customer_id ||
-d.document?.customer_id ||
-d.result?.customer_id ||
-d.output?.customer_id
-) ||
-customerId;
+extractCustomerDetails(d);
 
 documentFilename=
 clean(
@@ -2145,7 +2188,7 @@ if(reviewFinished){
 setStatus("READY");
 
 progressText.textContent=
-"Your document is ready to review and continue to payment.";
+"Your document is ready to review and send by email.";
 
 }
 else if(state()==="reviewing"){
@@ -2193,6 +2236,12 @@ updateButtons();
 
 }
 
+
+/*
+============================================================
+LOAD / POLL
+============================================================
+*/
 
 async function loadJob(){
 
@@ -2270,6 +2319,12 @@ poll();
 }
 
 
+/*
+============================================================
+CORRECTION
+============================================================
+*/
+
 correctionButton.onclick=async()=>{
 
 const instruction=clean(
@@ -2342,78 +2397,33 @@ updateButtons();
 };
 
 
-makePaymentButton.onclick=async()=>{
+/*
+============================================================
+EXACT PRODUCT PAYLOAD
+============================================================
 
-if(!reviewFinished){
+This payload is sent to /api/product/create.
 
-return setMessage(
-"Please wait until the complete document review is ready.",
-"error"
-);
+The Payment API receives the reviewed document exactly once
+for product creation.
 
-}
+No payment is created here.
+============================================================
+*/
 
-if(!jobId){
+function buildProductPayload(){
 
-return setMessage(
-"This document could not be prepared for payment.",
-"error"
-);
-
-}
-
-if(!versionId){
-
-return setMessage(
-"The current document version could not be identified. Please refresh Review and try again.",
-"error"
-);
-
-}
-
-if(paymentStarted){
-
-return setMessage(
-"Payment has already been prepared. Continue on the payment page.",
-"success"
-);
-
-}
-
-try{
-
-busy=true;
-
-updateButtons();
-
-setMessage(
-"Saving your exact reviewed document and preparing payment...",
-"success"
-);
-
-if(!documentTitle){
-
-documentTitle=
-extractDocumentTitle({
-pages:pages
-});
-
-}
-
-if(!documentTitle){
-
-throw Error(
-"The document title could not be identified. Please return to the document and try again."
-);
-
-}
-
-
-const payload={
+return {
 
 job_id:jobId,
 
 customer_id:customerId,
+
+customer_name:customerName,
+
+customer_email:customerEmail,
+
+customer_phone:customerPhone,
 
 service:service,
 
@@ -2423,7 +2433,7 @@ document_title:documentTitle,
 
 amount:amount,
 
-payment_method:"bank_transfer",
+currency:"NGN",
 
 version_id:versionId,
 
@@ -2460,77 +2470,262 @@ documentFilename ||
 
 };
 
-const data=await paymentPost(
-"/api/payment/create",
+}
+
+
+/*
+============================================================
+PRODUCT SAVE
+============================================================
+
+IMPORTANT:
+
+This is NOT /api/payment/create.
+
+It must not create a payment record.
+
+It only establishes the canonical product/document.
+============================================================
+*/
+
+async function saveProduct(){
+
+const payload=buildProductPayload();
+
+const data=await apiPost(
+"https://naija-pocket-payment-api.onrender.com/api/product/create",
 payload
 );
 
 if(data.ok!==true){
 
 throw Error(
-"Payment preparation did not return a successful confirmation."
+data.message||
+"Your reviewed document could not be saved."
 );
 
 }
 
-paymentStarted=true;
+productSaved=true;
 
-if(data.amount!=null){
+return data;
 
-const returnedAmount=
-Number(
-String(data.amount)
-.replace(/[^0-9.]/g,"")
+}
+
+
+/*
+============================================================
+BRANDED EMAIL DELIVERY
+============================================================
+
+The Payment API's /api/delivery/email endpoint is responsible
+for calling Resend and attaching the exact canonical file.
+
+This Review page does NOT send the file itself.
+
+It simply asks the Payment API to deliver the already-saved
+canonical document.
+
+No payment lookup is performed.
+No download unlock is performed.
+============================================================
+*/
+
+async function sendBrandedEmail(){
+
+if(!customerEmail){
+
+throw Error(
+"No customer email address was found. Please return to the document form and provide the email address for delivery."
 );
 
-if(
-isFinite(returnedAmount) &&
-returnedAmount>0
-){
+}
 
-amount=returnedAmount;
+const payload={
 
-amountValueTop.textContent=
-"₦"+
-Number(amount).toLocaleString("en-NG");
+service:service,
+
+document_title:documentTitle,
+
+recipient_email:customerEmail,
+
+customer_name:customerName,
+
+subject:
+"Your "+
+documentTitle+
+" — Naija Pocket Business Center"
+
+};
+
+const data=await apiPost(
+"https://naija-pocket-payment-api.onrender.com/api/delivery/email",
+payload
+);
+
+if(data.ok!==true){
+
+throw Error(
+data.message||
+"Branded email delivery could not be completed."
+);
 
 }
 
+emailSent=true;
+
+return data;
+
 }
 
-billing=
-clean(data.billing) ||
-billing;
 
-setMessage(
-"Your reviewed document is securely saved. Opening Payment & Delivery...",
+/*
+============================================================
+MAIN TEST BUTTON
+============================================================
+
+TEMPORARY TEST ACTION:
+
+SEND DOCUMENT BY EMAIL
+
+It deliberately does NOT call:
+
+/api/payment/create
+============================================================
+*/
+
+makePaymentButton.onclick=async()=>{
+
+if(!reviewFinished){
+
+return setMessage(
+"Please wait until the complete document review is ready.",
+"error"
+);
+
+}
+
+if(!jobId){
+
+return setMessage(
+"This document could not be prepared for delivery.",
+"error"
+);
+
+}
+
+if(!versionId){
+
+return setMessage(
+"The current document version could not be identified. Please refresh Review and try again.",
+"error"
+);
+
+}
+
+if(emailSent){
+
+return setMessage(
+"The document has already been sent to the customer email address.",
 "success"
 );
 
+}
 
-const paymentUrl=
-"payment.html"+
-"?job_id="+
-encodeURIComponent(jobId)+
-"&version_id="+
-encodeURIComponent(versionId)+
-"&service="+
-encodeURIComponent(service)+
-"&title="+
-encodeURIComponent(documentTitle)+
-"&amount="+
-encodeURIComponent(amount);
+try{
 
-window.location.href=paymentUrl;
+busy=true;
+
+updateButtons();
+
+setMessage(
+"Saving your exact reviewed document...",
+"success"
+);
+
+if(!documentTitle){
+
+documentTitle=
+extractDocumentTitle({
+pages:pages
+});
+
+}
+
+if(!documentTitle){
+
+throw Error(
+"The document title could not be identified. Please return to the document and try again."
+);
+
+}
+
+
+/*
+ * STEP 1
+ *
+ * Save the exact reviewed product.
+ */
+await saveProduct();
+
+
+/*
+ * STEP 2
+ *
+ * Send the exact canonical document by branded email.
+ */
+setMessage(
+"Your document is saved. Sending your branded email...",
+"success"
+);
+
+const delivery=await sendBrandedEmail();
+
+
+const returnedRecipient=
+clean(
+delivery?.delivery?.recipient
+) ||
+customerEmail;
+
+
+setMessage(
+"Your completed document has been sent by branded email to "+
+returnedRecipient+".",
+"success"
+);
+
+progressText.textContent=
+"Your completed document has been sent by branded email.";
+
+setStatus("DELIVERED");
 
 }
 catch(e){
 
+/*
+ * If product save succeeded but email failed,
+ * do NOT recreate the product and do NOT regenerate
+ * the document on retry.
+ */
+if(productSaved){
+
 setMessage(
-e.message ||
-"Payment preparation could not be completed. Please try again.",
+"Your document is saved, but email delivery could not be completed. "+
+(e.message||"Please try again."),
 "error"
 );
+
+}
+else{
+
+setMessage(
+e.message||
+"Your document could not be saved for delivery. Please try again.",
+"error"
+);
+
+}
 
 }
 finally{
@@ -2543,6 +2738,12 @@ updateButtons();
 
 };
 
+
+/*
+============================================================
+START
+============================================================
+*/
 
 async function start(){
 
