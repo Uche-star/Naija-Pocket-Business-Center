@@ -1,32 +1,30 @@
 """
 Naija Pocket Business Center
-Brevo Email Delivery Service
+Resend Email Delivery Service
 ================================
 
-Purpose
--------
-Send an NPBC document to a customer's email through Brevo.
+FIRST TEST VERSION
 
-This module is intentionally independent of:
-- Ada API
-- Payment API
-- Review API
-- Back Office
-- Customer download activation
+Purpose:
+    Send an exact existing NPBC document by email through Resend.
 
-It receives an already-prepared document and sends that exact
-document as an email attachment.
+This file is independent of:
+    - Ada API
+    - Payment API
+    - Review API
+    - Back Office
+    - Billing
+    - Payment verification
 
-Required Render environment variables
--------------------------------------
-BREVO_API_KEY
-BREVO_SENDER_EMAIL
-BREVO_SENDER_NAME       (optional)
+The document supplied to send_document_email() is treated as
+the exact final document. This service does not regenerate,
+rewrite, or modify it.
 
-Example:
+Render environment variable required:
+    RESEND_API_KEY
 
-BREVO_SENDER_EMAIL=your-verified-sender@example.com
-BREVO_SENDER_NAME=Naija Pocket Business Center
+Initial Resend test sender:
+    onboarding@resend.dev
 """
 
 from __future__ import annotations
@@ -40,23 +38,18 @@ from typing import Optional
 import httpx
 
 
-BREVO_API_URL = "https://api.brevo.com/v3/smtp/email"
+RESEND_API_URL = "https://api.resend.com/emails"
 
-BREVO_API_KEY = os.getenv("BREVO_API_KEY", "").strip()
-
-BREVO_SENDER_EMAIL = os.getenv(
-    "BREVO_SENDER_EMAIL",
+RESEND_API_KEY = os.getenv(
+    "RESEND_API_KEY",
     ""
 ).strip()
 
-BREVO_SENDER_NAME = os.getenv(
-    "BREVO_SENDER_NAME",
-    "Naija Pocket Business Center"
-).strip()
+RESEND_SENDER = "Naija Pocket Business Center <onboarding@resend.dev>"
 
 
 class EmailDeliveryError(Exception):
-    """Raised when NPBC email delivery cannot be completed."""
+    """Raised when NPBC email delivery fails."""
 
 
 def _clean(value: object) -> str:
@@ -64,11 +57,6 @@ def _clean(value: object) -> str:
 
 
 def _valid_email(email: str) -> bool:
-    """
-    Basic email validation.
-
-    Brevo remains responsible for final validation.
-    """
     email = _clean(email)
 
     if not email:
@@ -83,10 +71,6 @@ def _valid_email(email: str) -> bool:
 
 
 def _safe_filename(filename: str) -> str:
-    """
-    Keep the customer's document filename safe for use
-    as an email attachment.
-    """
     filename = _clean(filename)
 
     if not filename:
@@ -102,21 +86,21 @@ def _safe_filename(filename: str) -> str:
 
     filename = filename.strip()
 
-    if not filename:
-        filename = "Naija-Pocket-Document.docx"
-
-    return filename
+    return filename or "Naija-Pocket-Document.docx"
 
 
-def _read_document(
+def _read_exact_document(
     document_path: str
 ) -> tuple[str, bytes]:
     """
-    Read the exact existing document from disk.
+    Read the exact existing document.
 
-    The document is not regenerated or modified.
+    Nothing is regenerated or modified.
     """
-    path = Path(document_path)
+
+    path = Path(
+        _clean(document_path)
+    )
 
     if not path.exists():
         raise EmailDeliveryError(
@@ -129,26 +113,30 @@ def _read_document(
         )
 
     try:
-        content = path.read_bytes()
+        document_bytes = path.read_bytes()
     except Exception as exc:
         raise EmailDeliveryError(
             f"The document could not be read: {exc}"
         ) from exc
 
-    if not content:
+    if not document_bytes:
         raise EmailDeliveryError(
             "The document file is empty."
         )
 
-    return _safe_filename(path.name), content
+    return (
+        _safe_filename(path.name),
+        document_bytes
+    )
 
 
-def _document_to_base64(content: bytes) -> str:
-    """
-    Convert the exact document bytes to the base64 representation
-    required by Brevo's attachment API.
-    """
-    return base64.b64encode(content).decode("ascii")
+def _configuration_error() -> Optional[str]:
+    if not RESEND_API_KEY:
+        return (
+            "RESEND_API_KEY is not configured."
+        )
+
+    return None
 
 
 def build_email_html(
@@ -156,212 +144,235 @@ def build_email_html(
     document_title: str = ""
 ) -> str:
     """
-    Build the customer-facing NPBC email.
-
-    This is intentionally generated here for the first version so
-    the service can be tested without another dependency.
+    Build the NPBC customer-facing email.
     """
-    customer_name = _clean(customer_name)
 
+    customer_name = _clean(customer_name)
     document_title = _clean(document_title)
 
-    if not customer_name:
-        greeting = "Hello,"
-    else:
-        greeting = f"Hello {customer_name},"
+    greeting = (
+        f"Hello {customer_name},"
+        if customer_name
+        else "Hello,"
+    )
 
-    if not document_title:
-        document_title = "your document"
+    display_title = (
+        document_title
+        if document_title
+        else "Your completed document"
+    )
 
     return f"""
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Your document is ready</title>
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1.0"
+>
+
+<title>Your Document Is Ready</title>
+
 </head>
 
-<body style="
-    margin:0;
-    padding:0;
-    background:#050505;
-    font-family:Arial,Helvetica,sans-serif;
-    color:#eeeeee;
-">
-
-<table
-    width="100%"
-    cellpadding="0"
-    cellspacing="0"
-    border="0"
-    style="background:#050505;"
+<body
+style="
+margin:0;
+padding:0;
+background:#050505;
+font-family:Arial,Helvetica,sans-serif;
+color:#eeeeee;
+"
 >
-<tr>
-<td align="center" style="padding:32px 16px;">
 
 <table
-    width="100%"
-    cellpadding="0"
-    cellspacing="0"
-    border="0"
-    style="
-        max-width:620px;
-        background:#101010;
-        border:1px solid #2c2c2c;
-        border-radius:14px;
-        overflow:hidden;
-    "
+width="100%"
+cellpadding="0"
+cellspacing="0"
+border="0"
+style="background:#050505;"
 >
 
 <tr>
+
 <td
-    style="
-        padding:28px 30px;
-        text-align:center;
-        border-bottom:1px solid #2c2c2c;
-    "
+align="center"
+style="padding:32px 16px;"
 >
 
-<div style="
-    font-size:12px;
-    letter-spacing:3px;
-    color:#d4af37;
-    font-weight:bold;
-">
+<table
+width="100%"
+cellpadding="0"
+cellspacing="0"
+border="0"
+style="
+max-width:620px;
+background:#101010;
+border:1px solid #2c2c2c;
+border-radius:14px;
+overflow:hidden;
+"
+>
+
+<tr>
+
+<td
+style="
+padding:30px;
+text-align:center;
+border-bottom:1px solid #2c2c2c;
+"
+>
+
+<div
+style="
+font-size:12px;
+letter-spacing:3px;
+color:#d4af37;
+font-weight:bold;
+"
+>
 NAIJA POCKET BUSINESS CENTER
 </div>
 
-<div style="
-    margin-top:10px;
-    font-size:25px;
-    font-weight:bold;
-    color:#ffffff;
-">
+<div
+style="
+margin-top:10px;
+font-size:25px;
+font-weight:bold;
+color:#ffffff;
+"
+>
 Your Document Is Ready
 </div>
 
 </td>
+
 </tr>
 
 <tr>
+
 <td style="padding:30px;">
 
-<div style="
-    font-size:16px;
-    line-height:1.7;
-    color:#eeeeee;
-">
+<div
+style="
+font-size:16px;
+line-height:1.7;
+color:#eeeeee;
+"
+>
 {greeting}
 </div>
 
-<div style="
-    margin-top:16px;
-    font-size:16px;
-    line-height:1.7;
-    color:#eeeeee;
-">
+<div
+style="
+margin-top:16px;
+font-size:16px;
+line-height:1.7;
+color:#eeeeee;
+"
+>
 Your completed document is attached to this email.
 </div>
 
-<div style="
-    margin-top:22px;
-    padding:18px;
-    background:#181818;
-    border-left:3px solid #d4af37;
-    border-radius:6px;
-">
+<div
+style="
+margin-top:22px;
+padding:18px;
+background:#181818;
+border-left:3px solid #d4af37;
+border-radius:6px;
+"
+>
 
-<div style="
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:1.5px;
-    color:#a9a9a9;
-">
-Document
+<div
+style="
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:1.5px;
+color:#999999;
+"
+>
+DOCUMENT
 </div>
 
-<div style="
-    margin-top:7px;
-    font-size:17px;
-    font-weight:bold;
-    color:#d4af37;
-">
-{document_title}
+<div
+style="
+margin-top:8px;
+font-size:17px;
+font-weight:bold;
+color:#d4af37;
+"
+>
+{display_title}
 </div>
 
 </div>
 
-<div style="
-    margin-top:24px;
-    font-size:14px;
-    line-height:1.7;
-    color:#bdbdbd;
-">
+<div
+style="
+margin-top:24px;
+font-size:14px;
+line-height:1.7;
+color:#bdbdbd;
+"
+>
 Please keep this email and its attachment for your records.
 </div>
 
 </td>
+
 </tr>
 
 <tr>
+
 <td
-    style="
-        padding:22px 30px;
-        text-align:center;
-        border-top:1px solid #2c2c2c;
-    "
+style="
+padding:22px 30px;
+text-align:center;
+border-top:1px solid #2c2c2c;
+"
 >
 
-<div style="
-    font-size:12px;
-    color:#888888;
-">
+<div
+style="
+font-size:12px;
+color:#888888;
+"
+>
 Fast &bull; Convenient &bull; Open 24/7
 </div>
 
-<div style="
-    margin-top:8px;
-    font-size:11px;
-    color:#666666;
-">
+<div
+style="
+margin-top:8px;
+font-size:11px;
+color:#666666;
+"
+>
 Naija Pocket Business Center
 </div>
 
 </td>
+
 </tr>
 
 </table>
 
 </td>
+
 </tr>
+
 </table>
 
 </body>
+
 </html>
 """.strip()
-
-
-def _configuration_error() -> Optional[str]:
-    """
-    Check required Brevo configuration before making a request.
-    """
-    if not BREVO_API_KEY:
-        return (
-            "BREVO_API_KEY is not configured."
-        )
-
-    if not BREVO_SENDER_EMAIL:
-        return (
-            "BREVO_SENDER_EMAIL is not configured."
-        )
-
-    if not _valid_email(BREVO_SENDER_EMAIL):
-        return (
-            "BREVO_SENDER_EMAIL is not a valid email address."
-        )
-
-    return None
 
 
 def send_document_email(
@@ -372,7 +383,7 @@ def send_document_email(
     subject: str = "",
 ) -> dict:
     """
-    Send the exact document at document_path to the recipient.
+    Send an exact existing document through Resend.
 
     Parameters
     ----------
@@ -380,64 +391,78 @@ def send_document_email(
         Customer's email address.
 
     document_path:
-        Existing canonical document file.
+        Path to the exact canonical document.
 
     document_title:
-        Title shown inside the email.
+        Document title shown in the email.
 
     customer_name:
-        Optional customer's name.
+        Optional customer name.
 
     subject:
-        Optional custom subject.
+        Optional email subject.
 
     Returns
     -------
     dict
-        A normalized success response containing Brevo's message ID.
-
-    Important
-    ---------
-    This function does not:
-    - create a document
-    - modify a document
-    - regenerate a document
-    - verify payment
-    - unlock downloads
-    - access the Payment API
+        Normalized NPBC delivery result.
     """
 
-    recipient_email = _clean(recipient_email)
-    document_title = _clean(document_title)
-    customer_name = _clean(customer_name)
-    subject = _clean(subject)
+    recipient_email = _clean(
+        recipient_email
+    )
 
-    configuration_error = _configuration_error()
+    document_title = _clean(
+        document_title
+    )
+
+    customer_name = _clean(
+        customer_name
+    )
+
+    subject = _clean(
+        subject
+    )
+
+    configuration_error = (
+        _configuration_error()
+    )
 
     if configuration_error:
         raise EmailDeliveryError(
             configuration_error
         )
 
-    if not _valid_email(recipient_email):
+    if not _valid_email(
+        recipient_email
+    ):
         raise EmailDeliveryError(
             "The customer's email address is invalid."
         )
 
-    filename, document_bytes = _read_document(
-        document_path
+    filename, document_bytes = (
+        _read_exact_document(
+            document_path
+        )
     )
 
-    encoded_document = _document_to_base64(
-        document_bytes
+    encoded_document = (
+        base64.b64encode(
+            document_bytes
+        ).decode("ascii")
     )
 
     if not subject:
+
         if document_title:
+
             subject = (
-                f"Your completed document — {document_title}"
+                "Your completed document — "
+                f"{document_title}"
             )
+
         else:
+
             subject = (
                 "Your completed document — "
                 "Naija Pocket Business Center"
@@ -449,77 +474,94 @@ def send_document_email(
     )
 
     text_content = (
-        f"{'Hello ' + customer_name + ',' if customer_name else 'Hello,'}\n\n"
-        f"Your completed document is attached to this email.\n\n"
-        f"Document: {document_title or 'Your document'}\n\n"
-        "Naija Pocket Business Center\n"
-        "Fast • Convenient • Open 24/7"
+        (
+            f"Hello {customer_name},"
+            if customer_name
+            else "Hello,"
+        )
+        + "\n\n"
+        + "Your completed document is attached "
+          "to this email.\n\n"
+        + (
+            f"Document: {document_title}"
+            if document_title
+            else "Your completed document"
+        )
+        + "\n\n"
+        + "Naija Pocket Business Center\n"
+        + "Fast • Convenient • Open 24/7"
     )
 
     payload = {
-        "sender": {
-            "name": BREVO_SENDER_NAME,
-            "email": BREVO_SENDER_EMAIL,
-        },
+        "from": RESEND_SENDER,
+
         "to": [
-            {
-                "email": recipient_email,
-                **(
-                    {"name": customer_name}
-                    if customer_name
-                    else {}
-                ),
-            }
+            recipient_email
         ],
+
         "subject": subject,
-        "htmlContent": html_content,
-        "textContent": text_content,
-        "attachment": [
+
+        "html": html_content,
+
+        "text": text_content,
+
+        "attachments": [
             {
-                "content": encoded_document,
-                "name": filename,
+                "filename": filename,
+                "content": encoded_document
             }
-        ],
-        "tags": [
-            "NPBC",
-            "document-delivery",
-        ],
+        ]
     }
 
     headers = {
-        "accept": "application/json",
-        "api-key": BREVO_API_KEY,
-        "content-type": "application/json",
+        "Authorization": (
+            f"Bearer {RESEND_API_KEY}"
+        ),
+        "Content-Type": "application/json",
+        "Accept": "application/json"
     }
 
     try:
+
         response = httpx.post(
-            BREVO_API_URL,
+            RESEND_API_URL,
             headers=headers,
             json=payload,
-            timeout=30.0,
+            timeout=30.0
         )
 
     except httpx.TimeoutException as exc:
+
         raise EmailDeliveryError(
-            "Brevo email delivery timed out."
+            "Resend email delivery timed out."
         ) from exc
 
     except httpx.RequestError as exc:
+
         raise EmailDeliveryError(
-            f"Brevo could not be reached: {exc}"
+            f"Resend could not be reached: {exc}"
         ) from exc
 
     try:
+
         response_data = response.json()
+
     except Exception:
+
         response_data = {}
 
-    if response.status_code < 200 or response.status_code >= 300:
+    if (
+        response.status_code < 200
+        or response.status_code >= 300
+    ):
 
         detail = ""
 
-        if isinstance(response_data, dict):
+        if isinstance(
+            response_data,
+            dict
+        ):
+
             detail = (
                 response_data.get("message")
                 or response_data.get("error")
@@ -527,10 +569,13 @@ def send_document_email(
             )
 
         if not detail:
-            detail = response.text[:500].strip()
+
+            detail = (
+                response.text[:500].strip()
+            )
 
         raise EmailDeliveryError(
-            "Brevo rejected the email"
+            "Resend rejected the email"
             + (
                 f": {detail}"
                 if detail
@@ -540,9 +585,13 @@ def send_document_email(
 
     message_id = ""
 
-    if isinstance(response_data, dict):
+    if isinstance(
+        response_data,
+        dict
+    ):
+
         message_id = _clean(
-            response_data.get("messageId")
+            response_data.get("id")
         )
 
     return {
@@ -550,12 +599,12 @@ def send_document_email(
         "message": "EMAIL_SENT",
         "message_id": message_id,
         "recipient_email": recipient_email,
-        "filename": filename,
+        "filename": filename
     }
 
 
 __all__ = [
     "EmailDeliveryError",
     "build_email_html",
-    "send_document_email",
+    "send_document_email"
 ]
