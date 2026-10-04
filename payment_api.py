@@ -10,6 +10,7 @@ import sqlite3
 import urllib.parse
 import zipfile
 import smtplib
+import mimetypes
 from email.message import EmailMessage
 from html import escape as html_escape
 from xml.sax.saxutils import escape as xml_escape
@@ -1820,12 +1821,21 @@ def _send_customer_care_email(
     recipient: str,
     title: str,
     service: str,
-    download_url: str
+    download_url: str,
+    attachment_path: Path
 ) -> None:
 
     if not _smtp_configured():
         raise RuntimeError(
             "EMAIL_DELIVERY_NOT_CONFIGURED"
+        )
+
+    if (
+        not attachment_path.exists()
+        or not attachment_path.is_file()
+    ):
+        raise RuntimeError(
+            "SAVED_DOCUMENT_FILE_MISSING"
         )
 
     host = clean(
@@ -1878,9 +1888,10 @@ def _send_customer_care_email(
         f"and is now ready for download.\n\n"
         f"Service: {service}\n"
         f"Document: {title}\n\n"
-        "Please open this email and click "
-        "the download link to download your "
-        "completed document.\n\n"
+        "The exact prepared document is attached "
+        "to this email.\n\n"
+        "You can also open the download link below:\n"
+        f"{download_url}\n\n"
         "Thank you for choosing Naija Pocket "
         "Business Center. We appreciate your "
         "business and look forward to serving "
@@ -1897,6 +1908,36 @@ def _send_customer_care_email(
             download_url
         ),
         subtype="html"
+    )
+
+    # --------------------------------------------------------------
+    # ATTACH THE EXACT EXISTING CANONICAL FILE.
+    #
+    # This file is the same saved reviewed document already located
+    # by find_saved_file_from_product(). Nothing is regenerated,
+    # reformatted, or reconstructed here.
+    # --------------------------------------------------------------
+
+    attachment_bytes = attachment_path.read_bytes()
+
+    guessed_type, _ = mimetypes.guess_type(
+        attachment_path.name
+    )
+
+    if guessed_type:
+        maintype, subtype = guessed_type.split(
+            "/",
+            1
+        )
+    else:
+        maintype = "application"
+        subtype = "octet-stream"
+
+    msg.add_attachment(
+        attachment_bytes,
+        maintype=maintype,
+        subtype=subtype,
+        filename=attachment_path.name
     )
 
     if use_ssl:
@@ -1949,6 +1990,7 @@ def send_customer_care_email_for_product(
             "reason": "CUSTOMER_EMAIL_NOT_PROVIDED"
         }
 
+    # Locate the exact canonical saved document first.
     saved = find_saved_file_from_product(
         product
     )
@@ -1987,7 +2029,8 @@ def send_customer_care_email_for_product(
                     "service"
                 )
             ),
-            url
+            url,
+            saved
         )
 
         log_delivery(
@@ -1996,6 +2039,10 @@ def send_customer_care_email_for_product(
             "sent",
             {
                 "recipient": recipient,
+                "attachment":
+                    saved.name,
+                "attachment_path":
+                    str(saved),
                 "link_text":
                     "DOWNLOAD YOUR DOCUMENT"
             }
@@ -2004,6 +2051,8 @@ def send_customer_care_email_for_product(
         return {
             "sent": True,
             "recipient": recipient,
+            "attachment":
+                saved.name,
             "link_text":
                 "DOWNLOAD YOUR DOCUMENT"
         }
@@ -2016,6 +2065,10 @@ def send_customer_care_email_for_product(
             "failed",
             {
                 "recipient": recipient,
+                "attachment":
+                    saved.name,
+                "attachment_path":
+                    str(saved),
                 "error": str(exc)
             }
         )
@@ -2024,6 +2077,8 @@ def send_customer_care_email_for_product(
             "sent": False,
             "reason": "EMAIL_SEND_FAILED",
             "recipient": recipient,
+            "attachment":
+                saved.name,
             "error": str(exc)
         }
 
@@ -2109,8 +2164,6 @@ def delivery_channels(
                     + urllib.parse.quote(share)
             },
 
-            # Customer-facing Email is now an API action.
-            # It intentionally has no mailto URL.
             {
                 "id": "email",
                 "name": "Email",
@@ -2389,10 +2442,6 @@ class DeliveryRequest(BaseModel):
     channel: str
 
 
-# NEW:
-# Request used by the Review page's Customer Care Email button.
-# job_id and version_id are accepted for compatibility with Review,
-# but product identity remains service + document title.
 class CustomerCareEmailRequest(BaseModel):
     service: str = ""
     title: str = ""
@@ -2763,8 +2812,8 @@ def customer_care_email_delivery(
             "PRODUCT_NOT_FOUND"
         )
 
-    # Make sure the existing canonical document is available.
-    # This does not regenerate an existing saved document.
+    # Use the existing canonical saved document.
+    # This does not replace or regenerate it.
     product = repair_saved_snapshot(
         product
     )
