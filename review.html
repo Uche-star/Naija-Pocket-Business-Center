@@ -8,720 +8,449 @@
 <style>
 :root{
   --black:#050505;
+  --black2:#090909;
   --panel:#111;
-  --line:rgba(255,255,255,.12);
+  --panel2:#151515;
+  --panel3:#1b1b1b;
   --gold:#d4af37;
-  --gold2:#f0cf62;
-  --white:#fff;
-  --muted:#a2a2a2;
-  --red:#9d0000;
-  --green:#008000
+  --gold2:#f0d56a;
+  --green:#0d8a52;
+  --green2:#12b96f;
+  --white:#f7f7f7;
+  --muted:#a7a7a7;
+  --line:rgba(255,255,255,.12);
+  --danger:#d9534f;
 }
 
 *{
   box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent
 }
 
-html,body{
+html,
+body{
   margin:0;
   padding:0;
-  width:100%;
-  height:100%;
+  min-height:100%;
   background:var(--black);
   color:var(--white);
-  font-family:Inter,Arial,sans-serif
+  font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-  overflow:hidden
+  min-height:100vh;
 }
 
-button,textarea,input{
-  font:inherit
+button,
+input,
+textarea{
+  font:inherit;
 }
 
 button{
-  cursor:pointer
+  cursor:pointer;
 }
 
-button:disabled{
-  opacity:.45;
-  cursor:not-allowed
-}
-
-.header{
+.app{
   width:100%;
-  height:66px;
-  background:#000;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  min-height:64px;
+  padding:12px 18px;
   border-bottom:1px solid var(--line);
-  padding:11px 12px;
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:200
-}
-
-.header-inner{
-  width:100%;
-  max-width:950px;
-  height:100%;
-  margin:auto;
+  background:#070707;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px
+  gap:12px;
 }
 
 .brand{
-  min-width:0
-}
-
-.brand-title{
-  margin:0;
   color:var(--gold2);
-  font-family:Montserrat,Arial,sans-serif;
-  font-size:18px;
-  line-height:1.15;
-  font-weight:900
+  font-weight:700;
+  letter-spacing:.5px;
+  font-size:15px;
 }
 
-.brand-subtitle{
-  margin-top:3px;
-  color:#aaa;
-  font-size:10px
-}
-
-.service-badge{
-  flex:0 0 auto;
-  max-width:45%;
-  padding:7px 9px;
-  border:1px solid rgba(212,175,55,.4);
-  border-radius:8px;
+.status-pill{
+  border:1px solid rgba(212,175,55,.45);
   color:var(--gold2);
-  background:#111;
-  font-size:9px;
-  font-weight:800;
-  text-align:center
+  padding:7px 11px;
+  border-radius:999px;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
 }
 
 .main{
-  position:fixed;
-  top:66px;
-  left:0;
-  right:0;
-  bottom:0;
   width:100%;
-  max-width:1100px;
-  margin:auto;
-  padding:10px 5px 0;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden
+  max-width:1500px;
+  margin:0 auto;
+  padding:18px;
+  display:grid;
+  grid-template-columns:minmax(0,52%) minmax(0,48%);
+  gap:14px;
+  flex:1;
 }
 
-.top-panel{
-  flex:0 0 auto;
-  background:var(--panel);
+.chamber{
+  min-width:0;
   border:1px solid var(--line);
-  border-radius:13px;
-  padding:11px 13px;
-  margin-bottom:8px
+  background:var(--panel);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 18px 55px rgba(0,0,0,.3);
 }
 
-.review-title{
-  margin:0;
-  color:#fff;
-  font-family:Montserrat,Arial,sans-serif;
-  font-size:17px;
-  font-weight:900
-}
-
-.review-subtitle{
-  margin:4px 0 0;
-  color:#aaa;
-  font-size:10px;
-  line-height:1.45
-}
-
-.status-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  margin-top:8px
-}
-
-.status-label{
-  color:#aaa;
-  font-size:9px
-}
-
-.status-value{
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900
-}
-
-.progress-shell{
-  margin-top:6px;
-  width:100%;
-  height:6px;
-  background:#242424;
-  border-radius:20px;
-  overflow:hidden
-}
-
-.progress-bar{
-  width:0%;
-  height:100%;
-  background:var(--gold);
-  transition:width .25s ease
-}
-
-.progress-text{
-  margin-top:4px;
-  color:#888;
-  font-size:9px;
-  text-align:right
-}
-
-.review-card{
-  flex:1 1 auto;
-  min-height:0;
-  display:flex;
-  flex-direction:column;
-  background:#0b0b0b;
-  border:1px solid rgba(212,175,55,.22);
-  border-radius:13px;
-  overflow:hidden
-}
-
-.document-card-header{
-  flex:0 0 auto;
-  padding:10px 11px 8px;
-  background:#111;
+.chamber-head{
+  min-height:60px;
+  padding:14px 16px;
   border-bottom:1px solid var(--line);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:8px
+  gap:10px;
+  background:#0b0b0b;
 }
 
-.document-heading h3{
-  margin:0;
-  color:var(--gold2);
-  font-size:13px;
-  font-weight:900
+.chamber-title{
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.3px;
 }
 
-.page-count{
-  color:#aaa;
-  font-size:10px;
-  font-weight:800
+.page-counter{
+  color:var(--muted);
+  font-size:12px;
 }
 
-.document-scroll{
-  flex:1 1 auto;
-  min-height:0;
-  overflow-y:auto;
-  overflow-x:hidden;
-  padding:5px;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain
+.document-area{
+  min-height:calc(100vh - 140px);
+  padding:22px;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(212,175,55,.06),transparent 35%),
+    #0b0b0b;
 }
 
-.document-scroll::-webkit-scrollbar{
-  width:5px
-}
-
-.document-scroll::-webkit-scrollbar-track{
-  background:#090909
-}
-
-.document-scroll::-webkit-scrollbar-thumb{
-  background:#3a3a3a;
-  border-radius:20px
-}
-
-.page-viewer{
-  width:100%
-}
-
-.document-page{
-  position:relative;
+.paper{
   width:100%;
-  min-height:620px;
+  max-width:850px;
+  min-height:700px;
+  margin:0 auto;
   background:#fff;
   color:#111;
-  border-radius:2px;
-  box-shadow:0 8px 35px rgba(0,0,0,.45);
-  padding:42px 30px 58px;
-  overflow:visible;
-  user-select:text;
-  -webkit-user-select:text;
-  cursor:default
-}
-
-.page-number-inside{
-  color:#777;
-  font-family:Arial,sans-serif;
-  font-size:9px;
-  text-align:center;
-  margin-bottom:24px
-}
-
-.page-content{
-  width:100%;
-  color:#111;
-  font-family:"Times New Roman",Georgia,serif;
-  font-size:14px;
-  line-height:1.75;
-  white-space:pre-wrap;
+  border-radius:4px;
+  padding:52px 58px;
+  box-shadow:0 20px 60px rgba(0,0,0,.45);
+  line-height:1.65;
+  font-size:15px;
   overflow-wrap:anywhere;
-  word-break:normal
 }
 
-.page-content p{
-  margin-top:0;
-  margin-bottom:12px
+.paper p{
+  margin:0 0 12px;
 }
 
-.page-content h1,
-.page-content h2,
-.page-content h3,
-.page-content h4,
-.page-content h5,
-.page-content h6{
-  color:inherit;
-  font-family:inherit;
-  line-height:1.25;
-  margin-top:16px;
-  margin-bottom:10px
+.paper h1,
+.paper h2,
+.paper h3,
+.paper h4{
+  margin:0 0 14px;
+  line-height:1.3;
 }
 
-.page-content h1{font-size:2em}
-.page-content h2{font-size:1.6em}
-.page-content h3{font-size:1.35em}
-.page-content h4{font-size:1.15em}
-
-.page-content strong,
-.page-content b{
-  font-weight:700
-}
-
-.page-content em,
-.page-content i{
-  font-style:italic
-}
-
-.page-content u{
-  text-decoration:underline
-}
-
-.page-content ul,
-.page-content ol{
-  margin-top:8px;
-  margin-bottom:12px;
-  padding-left:28px
-}
-
-.page-content li{
-  margin-bottom:4px
-}
-
-.page-content blockquote{
-  margin:12px 0;
-  padding-left:14px;
-  border-left:3px solid #aaa
-}
-
-.page-content hr{
-  border:0;
-  border-top:1px solid #999;
-  margin:18px 0
-}
-
-.page-content table{
+.paper table{
   width:100%;
   border-collapse:collapse;
-  margin:14px 0;
-  font-family:inherit;
-  font-size:inherit
+  margin:15px 0;
 }
 
-.page-content th,
-.page-content td{
-  border:1px solid #555;
-  padding:6px 8px;
+.paper th,
+.paper td{
+  border:1px solid #bbb;
+  padding:7px;
   vertical-align:top;
-  text-align:left
 }
 
-.page-content th{
-  font-weight:700
+.paper ul,
+.paper ol{
+  margin-top:8px;
+  margin-bottom:14px;
 }
 
-.page-content pre{
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  font-family:monospace
+.paper img{
+  max-width:100%;
 }
 
-.empty-page{
+.empty-paper{
   min-height:500px;
   display:flex;
   align-items:center;
   justify-content:center;
+  text-align:center;
   color:#777;
-  font-family:Arial,sans-serif;
+}
+
+.right-panel{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.info-card{
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--panel);
+  padding:20px;
+}
+
+.info-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+.info-subtitle{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+}
+
+.meta-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:18px;
+}
+
+.meta{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:12px;
+}
+
+.meta-label{
+  color:#888;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+  margin-bottom:5px;
+}
+
+.meta-value{
+  font-size:13px;
+  font-weight:600;
+  word-break:break-word;
+}
+
+.action-card{
+  border:1px solid rgba(212,175,55,.28);
+  border-radius:16px;
+  background:
+    linear-gradient(145deg,rgba(212,175,55,.07),rgba(255,255,255,.015)),
+    var(--panel);
+  padding:20px;
+}
+
+.action-title{
+  color:var(--gold2);
+  font-size:15px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+.action-text{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+  margin-bottom:16px;
+}
+
+.primary-btn{
+  width:100%;
+  min-height:52px;
+  border:1px solid rgba(212,175,55,.8);
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#090909;
+  font-weight:800;
+  letter-spacing:.25px;
+  box-shadow:0 10px 28px rgba(212,175,55,.16);
+}
+
+.primary-btn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.secondary-btn{
+  width:100%;
+  min-height:48px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#101010;
+  color:var(--white);
+  font-weight:600;
+}
+
+.nav-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin-top:15px;
+}
+
+.nav-btn{
+  min-height:42px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#0d0d0d;
+  color:var(--white);
+}
+
+.nav-btn:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+.go-row{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.go-row input{
+  width:100%;
+  min-width:0;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#090909;
+  color:#fff;
+  padding:10px 12px;
+  outline:none;
+}
+
+.go-row button{
+  width:80px;
+  border:1px solid rgba(212,175,55,.4);
+  border-radius:9px;
+  background:#17130a;
+  color:var(--gold2);
+  font-weight:700;
+}
+
+.message{
+  display:none;
+  margin-top:12px;
+  padding:11px 12px;
+  border-radius:10px;
   font-size:12px;
-  text-align:center
+  line-height:1.5;
+}
+
+.message.show{
+  display:block;
+}
+
+.message.info{
+  background:rgba(212,175,55,.08);
+  border:1px solid rgba(212,175,55,.22);
+  color:#e8d891;
+}
+
+.message.error{
+  background:rgba(217,83,79,.08);
+  border:1px solid rgba(217,83,79,.25);
+  color:#ffaaa7;
+}
+
+.message.success{
+  background:rgba(18,185,111,.08);
+  border:1px solid rgba(18,185,111,.25);
+  color:#7ce0b1;
 }
 
 .loading{
-  min-height:500px;
+  min-height:300px;
   display:flex;
-  flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:10px;
-  color:#999;
-  font-size:11px;
-  text-align:center
+  color:var(--muted);
+  text-align:center;
+  padding:30px;
 }
 
 .spinner{
-  width:29px;
-  height:29px;
-  border:3px solid #333;
+  width:22px;
+  height:22px;
+  border:2px solid rgba(255,255,255,.15);
   border-top-color:var(--gold);
   border-radius:50%;
-  animation:spin .8s linear infinite
+  animation:spin .8s linear infinite;
+  margin:0 auto 12px;
 }
 
 @keyframes spin{
   to{transform:rotate(360deg)}
 }
 
-.page-navigation{
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  gap:7px;
-  margin-top:9px
+.hidden{
+  display:none!important;
 }
 
-.nav-button{
-  min-height:43px;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
-  background:#181818;
-  color:#fff;
-  font-size:10px;
-  font-weight:900
+@media(max-width:900px){
+  .main{
+    grid-template-columns:1fr;
+    padding:10px;
+  }
+
+  .document-area{
+    min-height:auto;
+    padding:10px;
+  }
+
+  .paper{
+    min-height:600px;
+    padding:30px 24px;
+    font-size:14px;
+  }
 }
 
-.nav-button.next{
-  background:#252525
-}
+@media(max-width:520px){
+  .topbar{
+    padding:10px 12px;
+  }
 
-.page-indicator{
-  min-width:85px;
-  color:var(--gold2);
-  text-align:center;
-  font-size:10px;
-  font-weight:900
-}
-
-.go-row{
-  display:flex;
-  gap:7px;
-  margin-top:7px
-}
-
-.page-number-input{
-  flex:1;
-  min-width:0;
-  height:39px;
-  background:#151515;
-  border:1px solid var(--line);
-  border-radius:8px;
-  color:#fff;
-  padding:0 10px;
-  outline:none;
-  font-size:11px
-}
-
-.go-button{
-  width:75px;
-  border:0;
-  border-radius:8px;
-  background:var(--gold);
-  color:#000;
-  font-size:10px;
-  font-weight:900
-}
-
-.page-review{
-  margin-top:8px;
-  padding:11px;
-  background:#101010;
-  border:1px solid var(--line);
-  border-radius:10px
-}
-
-.page-review-title{
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900;
-  margin-bottom:5px
-}
-
-.page-review-text{
-  color:#bbb;
-  font-size:10px;
-  line-height:1.55;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere
-}
-
-.action-area{
-  flex:0 0 auto;
-  background:#080808;
-  border-top:1px solid var(--line);
-  padding:8px 10px 9px;
-  box-shadow:0 -8px 25px rgba(0,0,0,.45);
-  position:relative;
-  z-index:20
-}
-
-.download-area{
-  display:flex;
-  flex-direction:column;
-  gap:7px
-}
-
-.download-button{
-  width:100%;
-  min-height:48px;
-  border:0;
-  border-radius:9px;
-  background:var(--gold);
-  color:#000;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.2px
-}
-
-.download-button:active{
-  transform:translateY(1px)
-}
-
-.download-note{
-  color:#888;
-  font-size:9px;
-  line-height:1.45;
-  text-align:center
-}
-
-.correction-box{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:7px;
-  align-items:end;
-  margin-top:8px
-}
-
-.correction-input{
-  width:100%;
-  height:43px;
-  min-height:43px;
-  max-height:100px;
-  resize:none;
-  padding:11px;
-  background:#171717;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
-  color:#fff;
-  outline:none;
-  font-size:11px;
-  line-height:1.4
-}
-
-.correction-button{
-  min-width:125px;
-  min-height:43px;
-  border:1px solid rgba(212,175,55,.38);
-  border-radius:8px;
-  background:#171717;
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:900
-}
-
-.message{
-  flex:0 0 auto;
-  min-height:17px;
-  margin-top:2px;
-  color:#888;
-  font-size:9px;
-  text-align:center
-}
-
-.message.error{
-  color:#ff7777
-}
-
-.message.success{
-  color:#75dc99
-}
-
-.header{
-  display:none!important
-}
-
-.main{
-  position:fixed!important;
-  top:0!important;
-  left:0!important;
-  right:0!important;
-  bottom:0!important;
-  width:100%!important;
-  max-width:1100px!important;
-  margin:0 auto!important;
-  padding:0!important;
-  display:grid!important;
-  grid-template-rows:50% 50%!important;
-  gap:0!important;
-  overflow:hidden!important
-}
-
-.review-card{
-  grid-row:1;
-  min-height:0!important;
-  height:100%!important;
-  display:flex!important;
-  flex-direction:column!important;
-  border-radius:0!important;
-  overflow:hidden!important
-}
-
-.document-card-header{
-  padding:8px 10px!important
-}
-
-.document-scroll{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  height:auto!important;
-  padding:5px!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important
-}
-
-.action-area{
-  grid-row:2;
-  min-height:0!important;
-  height:100%!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  padding:7px 8px 18px!important;
-  border-top:2px solid var(--gold)!important;
-  box-shadow:none!important
-}
-
-.message{
-  position:absolute!important;
-  left:5px!important;
-  right:5px!important;
-  bottom:1px!important;
-  z-index:50!important;
-  background:rgba(0,0,0,.92)!important
-}
-
-@media(max-width:600px){
+  .brand{
+    font-size:13px;
+  }
 
   .main{
-    grid-template-rows:50% 50%!important
+    padding:7px;
   }
 
-  .document-page{
-    min-height:560px!important;
-    padding:28px 16px 40px!important
+  .chamber,
+  .info-card,
+  .action-card{
+    border-radius:12px;
   }
 
-  .page-content{
-    font-size:13px!important;
-    line-height:1.65!important
+  .meta-grid{
+    grid-template-columns:1fr;
   }
 
-  .action-area{
-    padding:5px 5px 18px!important
+  .paper{
+    padding:24px 18px;
+    min-height:520px;
   }
 
-  .action-area .download-button{
-    min-height:44px!important;
-    font-size:10px!important
-  }
-
-  .action-area .download-note{
-    font-size:8px!important
-  }
-
-  .action-area .correction-box{
-    grid-template-columns:1fr auto!important;
-    gap:5px!important
-  }
-
-  .action-area .correction-input{
-    height:38px!important;
-    min-height:38px!important;
-    padding:8px!important;
-    font-size:9px!important
-  }
-
-  .action-area .correction-button{
-    min-width:105px!important;
-    min-height:38px!important;
-    font-size:8px!important
-  }
-
-  .page-navigation{
-    margin-top:7px!important
-  }
-
-  .nav-button{
-    min-height:38px!important;
-    font-size:9px!important
-  }
-
-  .go-row{
-    margin-top:5px!important
-  }
-
-  .page-number-input{
-    height:35px!important
-  }
-
-  .go-button{
-    width:65px!important
-  }
-}
-
-@media(min-width:800px){
-
-  .document-page{
-    max-width:820px;
-    margin:auto;
-    min-height:1050px;
-    padding:65px 70px 75px
-  }
-
-  .page-content{
-    font-size:15px;
-    line-height:1.8
+  .nav-row{
+    grid-template-columns:1fr 1fr 1fr;
   }
 }
 </style>
@@ -729,199 +458,179 @@ button:disabled{
 
 <body>
 
-<span id="serviceBadge" style="display:none">Service</span>
+<div class="app">
 
-<main class="main">
+  <div class="topbar">
+    <div class="brand">Naija Pocket Business Center</div>
+    <div class="status-pill" id="statusPill">Review</div>
+  </div>
 
-  <section class="review-card">
+  <main class="main">
 
-    <div class="document-card-header">
-      <div class="document-heading">
-        <h3>Your Complete Document</h3>
+    <section class="chamber">
+
+      <div class="chamber-head">
+        <div class="chamber-title">Your Complete Document</div>
+        <div class="page-counter" id="pageCounter">1 PAGE</div>
       </div>
 
-      <div id="pageCount" class="page-count">
-        0 PAGES
-      </div>
-    </div>
+      <div class="document-area">
 
-    <div id="documentScroll" class="document-scroll">
-
-      <div id="pageViewer" class="page-viewer">
-        <div class="loading">
-          <div class="spinner"></div>
-          <div>Your service is being carefully prepared.</div>
-        </div>
-      </div>
-
-      <div class="page-navigation">
-
-        <button id="previousButton"
-                class="nav-button"
-                type="button"
-                disabled>
-          ← Previous Page
-        </button>
-
-        <div id="pageIndicator" class="page-indicator">
-          Page 0 of 0
+        <div id="loadingBox" class="loading">
+          <div>
+            <div class="spinner"></div>
+            <div>Preparing your completed document...</div>
+          </div>
         </div>
 
-        <button id="nextButton"
-                class="nav-button next"
-                type="button"
-                disabled>
-          Next Page →
-        </button>
+        <div id="paper" class="paper hidden"></div>
 
-      </div>
-
-      <div class="go-row">
-
-        <input
-          id="pageNumberInput"
-          class="page-number-input"
-          type="number"
-          min="1"
-          placeholder="Enter page number">
-
-        <button
-          id="goButton"
-          class="go-button"
-          type="button">
-          GO
-        </button>
-
-      </div>
-
-      <div id="pageReview"
-           class="page-review"
-           style="display:none">
-
-        <div class="page-review-title">
-          PAGE REVIEW
-        </div>
-
-        <div id="pageReviewText"
-             class="page-review-text">
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section class="action-area">
-
-    <section class="top-panel">
-
-      <h2 class="review-title">
-        Review Your Complete Service
-      </h2>
-
-      <p class="review-subtitle">
-        Review every page carefully. If everything is correct, download your completed document.
-      </p>
-
-      <div class="status-row">
-
-        <span class="status-label">
-          Review status
-        </span>
-
-        <span id="statusValue"
-              class="status-value">
-          Preparing...
-        </span>
-
-      </div>
-
-      <div class="progress-shell">
-        <div id="progressBar"
-             class="progress-bar">
-        </div>
-      </div>
-
-      <div id="progressText"
-           class="progress-text">
-        Preparing the document...
       </div>
 
     </section>
 
+    <section class="right-panel">
 
-    <div class="download-area">
+      <div class="info-card">
 
-      <button id="downloadButton"
-              class="download-button"
-              type="button"
-              disabled>
-        ↓ DOWNLOAD COMPLETED DOCUMENT
-      </button>
+        <div class="info-title">Review Complete</div>
 
-      <div class="download-note">
-        Your reviewed document will be saved and downloaded exactly as prepared.
+        <div class="info-subtitle">
+          Your completed document is ready to download.
+        </div>
+
+        <div class="meta-grid">
+
+          <div class="meta">
+            <div class="meta-label">Service</div>
+            <div class="meta-value" id="serviceValue">—</div>
+          </div>
+
+          <div class="meta">
+            <div class="meta-label">Document</div>
+            <div class="meta-value" id="titleValue">—</div>
+          </div>
+
+          <div class="meta">
+            <div class="meta-label">Pages</div>
+            <div class="meta-value" id="pagesValue">—</div>
+          </div>
+
+          <div class="meta">
+            <div class="meta-label">Status</div>
+            <div class="meta-value" id="reviewStatusValue">READY</div>
+          </div>
+
+        </div>
+
       </div>
 
-    </div>
+      <div class="info-card">
 
+        <div class="info-title">Document Pages</div>
 
-    <div class="correction-box">
+        <div class="nav-row">
 
-      <textarea
-        id="correctionInput"
-        class="correction-input"
-        placeholder="Want anything changed? Tell us what to correct..."></textarea>
+          <button
+            type="button"
+            class="nav-btn"
+            id="prevBtn"
+            onclick="previousPage()"
+          >
+            Previous
+          </button>
 
-      <button
-        id="correctionButton"
-        class="correction-button"
-        type="button">
-        Apply Correction
-      </button>
+          <button
+            type="button"
+            class="nav-btn"
+            id="nextBtn"
+            onclick="nextPage()"
+          >
+            Next
+          </button>
 
-    </div>
+          <button
+            type="button"
+            class="nav-btn"
+            id="firstBtn"
+            onclick="firstPage()"
+          >
+            First
+          </button>
 
-  </section>
+        </div>
 
-  <div id="message"
-       class="message">
-  </div>
+        <div class="go-row">
+          <input
+            id="pageInput"
+            type="number"
+            min="1"
+            placeholder="Page"
+            inputmode="numeric"
+          >
+          <button type="button" onclick="goToPage()">GO</button>
+        </div>
 
-</main>
+      </div>
 
+      <div class="action-card">
+
+        <div class="action-title">Your document is ready</div>
+
+        <div class="action-text">
+          You can download the completed reviewed document now.
+          No payment is required for this download test.
+        </div>
+
+        <button
+          type="button"
+          class="primary-btn"
+          id="downloadBtn"
+          onclick="downloadReviewedDocument()"
+        >
+          DOWNLOAD COMPLETED DOCUMENT
+        </button>
+
+        <div
+          id="message"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
 
 <script>
 "use strict";
 
 /*
-===========================================================
-REVIEW PAGE
-===========================================================
+  REVIEW PAGE ARCHITECTURE
 
-CURRENT PURPOSE
+  Review data:
+    Current NPBC application
+    -> /api/review
 
-Review → Download
+  Document test-save:
+    Separate Payment/Document API
+    -> https://naija-pocket-payment-api.onrender.com/api/document/test-save
 
-PAYMENT IS INTENTIONALLY NOT USED HERE.
+  Temporary document download:
+    Separate Payment/Document API
+    -> https://naija-pocket-payment-api.onrender.com/api/document/test-download/{token}
 
-This page:
-1. Loads the reviewed document.
-2. Displays the reviewed pages.
-3. Allows corrections.
-4. Saves the exact reviewed document through:
-      /api/document/test-save
-5. Receives a temporary download URL.
-6. Downloads the exact canonical file through:
-      /api/document/test-download/{token}
-
-NO payment record is created.
-NO payment verification is performed.
-NO Back Office activation is required.
-NO Groq request is made by this page.
-===========================================================
+  IMPORTANT:
+  This page does NOT:
+    - create a payment
+    - verify a payment
+    - unlock a paid download
+    - contact Back Office
+    - send email
 */
 
 const API_BASE = "";
@@ -929,340 +638,405 @@ const API_BASE = "";
 const PAYMENT_API_BASE =
   "https://naija-pocket-payment-api.onrender.com";
 
-const params =
-  new URLSearchParams(location.search);
-
-const jobId =
-  (params.get("job_id") || "").trim();
-
-const service =
-  (params.get("service") ||
-   "Business Center Service").trim();
-
-const suppliedAmount =
-  (params.get("amount") || "").trim();
-
-
-const $ = id =>
-  document.getElementById(id);
-
-
-const serviceBadge =
-  $("serviceBadge");
-
-const statusValue =
-  $("statusValue");
-
-const progressBar =
-  $("progressBar");
-
-const progressText =
-  $("progressText");
-
-const pageCount =
-  $("pageCount");
-
-const documentScroll =
-  $("documentScroll");
-
-const pageViewer =
-  $("pageViewer");
-
-const previousButton =
-  $("previousButton");
-
-const nextButton =
-  $("nextButton");
-
-const pageIndicator =
-  $("pageIndicator");
-
-const pageNumberInput =
-  $("pageNumberInput");
-
-const goButton =
-  $("goButton");
-
-const pageReview =
-  $("pageReview");
-
-const pageReviewText =
-  $("pageReviewText");
-
-const correctionInput =
-  $("correctionInput");
-
-const correctionButton =
-  $("correctionButton");
-
-const downloadButton =
-  $("downloadButton");
-
-const message =
-  $("message");
-
-
+let reviewData = null;
 let pages = [];
-
-let currentPage = 1;
-
-let totalPages = 0;
-
-let currentVersion = 1;
-
-let versionId = "";
-
-let currentStatus = "";
-
-let reviewFinished = false;
-
-let busy = false;
-
-let downloading = false;
-
-let pollTimer = null;
-
-let polling = false;
-
-let customerId = "";
-
-let documentFilename = "";
-
-let documentTitle = "";
-
-let amount =
-  Number(
-    String(suppliedAmount)
-      .replace(/[^0-9.]/g, "")
-  ) || 0;
-
-let billing = "";
+let currentPage = 0;
+let currentJobId = "";
+let currentService = "";
+let currentTitle = "";
+let currentPayload = null;
 
 
 /* =========================================================
    BASIC HELPERS
-========================================================= */
+   ========================================================= */
 
-function clean(v){
-  return v == null
+function clean(value){
+  return value === null || value === undefined
     ? ""
-    : String(v).trim();
+    : String(value).trim();
 }
 
-
-function setMessage(t,type=""){
-  message.textContent = t || "";
-
-  message.className =
-    "message" +
-    (type ? " " + type : "");
+function escapeHtml(value){
+  return clean(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
+function showMessage(message,type="info"){
+  const box = document.getElementById("message");
 
-function setStatus(t){
-  statusValue.textContent =
-    t || "Preparing...";
+  if(!box) return;
+
+  box.textContent = clean(message);
+  box.className = "message show " + type;
 }
 
+function hideMessage(){
+  const box = document.getElementById("message");
 
-function state(){
-  return clean(currentStatus).toLowerCase();
+  if(!box) return;
+
+  box.textContent = "";
+  box.className = "message";
 }
 
+function setLoading(loading){
+  const loadingBox = document.getElementById("loadingBox");
+  const paper = document.getElementById("paper");
 
-function complete(d){
-
-  return !!d &&
-    (
-      state() === "review_complete" ||
-      d.review_finished === true
-    );
-
+  if(loading){
+    loadingBox.classList.remove("hidden");
+    paper.classList.add("hidden");
+  }else{
+    loadingBox.classList.add("hidden");
+    paper.classList.remove("hidden");
+  }
 }
 
 
 /* =========================================================
    API HELPERS
-========================================================= */
+   ========================================================= */
 
 async function apiGet(url){
 
-  const r =
-    await fetch(
-      API_BASE + url,
-      {
-        cache:"no-store"
-      }
+  const response = await fetch(
+    API_BASE + url,
+    {
+      method:"GET",
+      headers:{
+        "Accept":"application/json"
+      },
+      cache:"no-store"
+    }
+  );
+
+  const data = await response
+    .json()
+    .catch(()=>({}));
+
+  if(!response.ok){
+
+    const detail =
+      typeof data.detail === "string"
+        ? data.detail
+        : "";
+
+    throw new Error(
+      clean(
+        data.error_message ||
+        data.error ||
+        data.message ||
+        detail ||
+        "Unable to load the review."
+      )
     );
-
-  const d =
-    await r.json()
-      .catch(() => ({}));
-
-  if(!r.ok){
-
-    throw Error(
-      d.error_message ||
-      d.error ||
-      d.message ||
-      "Unable to load the document."
-    );
-
   }
 
-  return d;
+  return data;
 }
 
 
-async function apiPost(url,body){
+/*
+  IMPORTANT CORRECTION:
 
-  const r =
-    await fetch(
-      API_BASE + url,
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":
-            "application/json"
-        },
-        body:
-          JSON.stringify(body || {})
-      }
-    );
+  The document test endpoint is NOT on API_BASE.
 
-  const d =
-    await r.json()
-      .catch(() => ({}));
+  It belongs to the separate NPBC Payment/Document API.
 
-  if(
-    !r.ok ||
-    d.success === false
-  ){
+  Therefore this helper deliberately uses
+  PAYMENT_API_BASE.
+*/
+async function documentApiPost(url,body){
 
-    throw Error(
-      d.error_message ||
-      d.error ||
-      d.message ||
-      "The request could not be completed."
-    );
+  const response = await fetch(
+    PAYMENT_API_BASE.replace(/\/+$/,"") + url,
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Accept":"application/json"
+      },
+      body:JSON.stringify(body || {}),
+      cache:"no-store"
+    }
+  );
 
-  }
+  const data = await response
+    .json()
+    .catch(()=>({}));
 
-  return d;
-}
+  if(!response.ok){
 
+    let detail = "";
 
-/* =========================================================
-   PAYMENT API IS NOT USED
-=========================================================
-
-The old paymentPost() function has deliberately been removed.
-
-There is currently NO:
-
-/api/payment/create
-
-call from this Review page.
-
-Payment will be added later after the document download
-has been confirmed working.
-========================================================= */
-
-
-/* =========================================================
-   PAGE EXTRACTION
-========================================================= */
-
-function normalizePages(d){
-
-  let s = [];
-
-  if(
-    Array.isArray(d?.review_pages) &&
-    d.review_pages.length
-  ){
-
-    s = d.review_pages;
-
-  }else if(
-    Array.isArray(d?.document_pages) &&
-    d.document_pages.length
-  ){
-
-    s = d.document_pages;
-
-  }else if(
-    Array.isArray(d?.pages) &&
-    d.pages.length
-  ){
-
-    s = d.pages;
-
-  }
-
-  return s
-    .map((x,i)=>({
-
-      page_number:
-        Number(x.page_number) || i + 1,
-
-      position:
-        Number(x.position) || i + 1,
-
-      status:
-        clean(x.status) || "queued",
-
-      content:
-        x.content == null
-          ? ""
-          : String(x.content),
-
-      review:
-        clean(x.review),
-
-      error:
-        clean(x.error)
-
-    }))
-    .sort(
-      (a,b) =>
-        a.position - b.position
-    );
-}
-
-
-function extractPages(d){
-
-  let x =
-    normalizePages(d);
-
-  if(x.length){
-    return x;
-  }
-
-  for(
-    const c of [
-      d?.document,
-      d?.result,
-      d?.review,
-      d?.output
-    ]
-  ){
-
-    if(
-      c &&
-      typeof c === "object"
+    if(typeof data.detail === "string"){
+      detail = data.detail;
+    }else if(
+      data.detail &&
+      typeof data.detail === "object"
     ){
-
-      x =
-        normalizePages(c);
-
-      if(x.length){
-        return x;
-      }
-
+      detail = JSON.stringify(data.detail);
     }
 
+    throw new Error(
+      clean(
+        data.error_message ||
+        data.error ||
+        data.message ||
+        detail ||
+        "Unable to save the reviewed document."
+      )
+    );
+  }
+
+  if(
+    data &&
+    (
+      data.success === false ||
+      data.ok === false
+    )
+  ){
+
+    throw new Error(
+      clean(
+        data.error_message ||
+        data.error ||
+        data.message ||
+        "Unable to save the reviewed document."
+      )
+    );
+  }
+
+  return data;
+}
+
+
+/* =========================================================
+   URL HELPERS
+   ========================================================= */
+
+function makeDocumentApiUrl(url){
+
+  const base = PAYMENT_API_BASE.replace(/\/+$/,"");
+
+  if(/^https?:\/\//i.test(clean(url))){
+    return clean(url);
+  }
+
+  const path = clean(url);
+
+  if(path.startsWith("/")){
+    return base + path;
+  }
+
+  return base + "/" + path;
+}
+
+
+/* =========================================================
+   TEXT / DOCUMENT RENDERING
+   ========================================================= */
+
+function renderPlain(text){
+
+  let value = clean(text);
+
+  if(!value){
+    return "";
+  }
+
+  value = escapeHtml(value);
+
+  /*
+    Basic markdown cleanup for display.
+
+    This does not change the saved document.
+    It only makes the review screen easier to read.
+  */
+
+  value = value
+    .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
+    .replace(/__(.+?)__/g,"<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g,"<em>$1</em>")
+    .replace(/_(.+?)_/g,"<em>$1</em>");
+
+  value = value
+    .replace(/^###\s+(.+)$/gm,"<h3>$1</h3>")
+    .replace(/^##\s+(.+)$/gm,"<h2>$1</h2>")
+    .replace(/^#\s+(.+)$/gm,"<h1>$1</h1>");
+
+  value = value
+    .replace(/^\s*[-*]\s+(.+)$/gm,"• $1");
+
+  value = value.replace(/\n/g,"<br>");
+
+  return value;
+}
+
+
+function sanitizeHtml(value){
+
+  const text = clean(value);
+
+  if(!text){
+    return "";
+  }
+
+  /*
+    If the content appears to contain HTML,
+    allow only the small formatting set needed
+    by the document viewer.
+  */
+
+  if(/<\s*[a-z][^>]*>/i.test(text)){
+
+    const parser = new DOMParser();
+
+    const doc = parser.parseFromString(
+      "<div>" + text + "</div>",
+      "text/html"
+    );
+
+    const root = doc.body.firstElementChild;
+
+    if(root){
+
+      const allowed = new Set([
+        "P",
+        "BR",
+        "STRONG",
+        "B",
+        "EM",
+        "I",
+        "U",
+        "H1",
+        "H2",
+        "H3",
+        "H4",
+        "UL",
+        "OL",
+        "LI",
+        "TABLE",
+        "THEAD",
+        "TBODY",
+        "TR",
+        "TH",
+        "TD",
+        "DIV",
+        "SPAN"
+      ]);
+
+      root.querySelectorAll("*").forEach(node=>{
+
+        if(!allowed.has(node.tagName)){
+          node.replaceWith(
+            document.createTextNode(node.textContent || "")
+          );
+          return;
+        }
+
+        [...node.attributes].forEach(attr=>{
+          node.removeAttribute(attr.name);
+        });
+      });
+
+      return root.innerHTML;
+    }
+  }
+
+  return renderPlain(text);
+}
+
+
+/* =========================================================
+   NORMALIZE REVIEW PAGES
+   ========================================================= */
+
+function normalizePageItem(item){
+
+  if(item === null || item === undefined){
+    return "";
+  }
+
+  if(typeof item === "string"){
+    return item;
+  }
+
+  if(typeof item === "object"){
+
+    return clean(
+      item.html ||
+      item.content ||
+      item.text ||
+      item.body ||
+      item.page ||
+      item.value ||
+      ""
+    );
+  }
+
+  return String(item);
+}
+
+
+function extractPages(data){
+
+  const candidates = [
+    data && data.pages,
+    data && data.document_pages,
+    data && data.documentPages,
+    data && data.reviewed_pages,
+    data && data.reviewedPages,
+    data && data.document && data.document.pages,
+    data && data.review && data.review.pages
+  ];
+
+  for(const candidate of candidates){
+
+    if(Array.isArray(candidate)){
+
+      const result = candidate
+        .map(normalizePageItem)
+        .filter(Boolean);
+
+      if(result.length){
+        return result;
+      }
+    }
+  }
+
+  const documentText =
+    data?.document_text ||
+    data?.documentText ||
+    data?.text ||
+    data?.content ||
+    data?.document?.text ||
+    data?.document?.content ||
+    "";
+
+  if(clean(documentText)){
+
+    const text = String(documentText);
+
+    /*
+      If explicit form-feed page breaks exist,
+      preserve them.
+    */
+
+    const splitPages = text.split(/\f+/);
+
+    if(splitPages.length > 1){
+      return splitPages
+        .map(x=>clean(x))
+        .filter(Boolean);
+    }
+
+    return [text];
   }
 
   return [];
@@ -1270,1647 +1044,502 @@ function extractPages(d){
 
 
 /* =========================================================
-   SAFE DOCUMENT HTML
-========================================================= */
+   SERVICE / TITLE EXTRACTION
+   ========================================================= */
 
-const allowedTags =
-  new Set([
-    "DIV",
-    "P",
-    "BR",
-    "SPAN",
-    "STRONG",
-    "B",
-    "EM",
-    "I",
-    "U",
-    "S",
-    "STRIKE",
-    "H1",
-    "H2",
-    "H3",
-    "H4",
-    "H5",
-    "H6",
-    "UL",
-    "OL",
-    "LI",
-    "BLOCKQUOTE",
-    "HR",
-    "TABLE",
-    "THEAD",
-    "TBODY",
-    "TFOOT",
-    "TR",
-    "TH",
-    "TD",
-    "PRE",
-    "SUP",
-    "SUB"
-  ]);
+function extractService(data){
 
-
-const allowedAttrs =
-  new Set([
-    "style",
-    "align",
-    "colspan",
-    "rowspan"
-  ]);
-
-
-const allowedStyles =
-  new Set([
-    "color",
-    "background-color",
-    "font-family",
-    "font-size",
-    "font-weight",
-    "font-style",
-    "text-decoration",
-    "text-align",
-    "text-indent",
-    "line-height",
-    "letter-spacing",
-    "margin",
-    "margin-top",
-    "margin-right",
-    "margin-bottom",
-    "margin-left",
-    "padding",
-    "padding-top",
-    "padding-right",
-    "padding-bottom",
-    "padding-left",
-    "vertical-align",
-    "width",
-    "max-width",
-    "border",
-    "border-top",
-    "border-right",
-    "border-bottom",
-    "border-left",
-    "background"
-  ]);
-
-
-function normText(v){
-
-  return String(v == null ? "" : v)
-    .replace(/\r\n/g,"\n")
-    .replace(/\r/g,"\n")
-    .replace(/\u00a0/g," ")
-    .replace(
-      /^\s*#{1,6}\s+/gm,
-      ""
-    )
-    .replace(
-      /\n{5,}/g,
-      "\n\n"
-    )
-    .trim();
-
-}
-
-
-function safeStyle(s){
-
-  let out = [];
-
-  for(
-    const d of String(s || "").split(";")
-  ){
-
-    const i = d.indexOf(":");
-
-    if(i < 0){
-      continue;
-    }
-
-    const p =
-      d.slice(0,i)
-       .trim()
-       .toLowerCase();
-
-    const v =
-      d.slice(i + 1)
-       .trim();
-
-    if(
-      allowedStyles.has(p) &&
-      !/javascript:|expression\(|url\(|@import/i.test(v)
-    ){
-
-      out.push(
-        p + ":" + v
-      );
-
-    }
-
-  }
-
-  return out.join(";");
-}
-
-
-function renderPlain(t){
-
-  const f =
-    document.createDocumentFragment();
-
-  const lines =
-    normText(t).split("\n");
-
-  lines.forEach(
-    (line,i)=>{
-
-      if(line === ""){
-
-        f.appendChild(
-          document.createElement("br")
-        );
-
-        return;
-      }
-
-      const parts =
-        line.split(
-          /(\*\*[^*]+\*\*)/g
-        );
-
-      parts.forEach(p=>{
-
-        if(!p){
-          return;
-        }
-
-        if(
-          p.startsWith("**") &&
-          p.endsWith("**")
-        ){
-
-          const e =
-            document.createElement("strong");
-
-          e.textContent =
-            p.slice(2,-2);
-
-          f.appendChild(e);
-
-        }else{
-
-          f.appendChild(
-            document.createTextNode(
-              p.replace(
-                /^\*+|\*+$/g,
-                ""
-              )
-            )
-          );
-
-        }
-
-      });
-
-      if(
-        i <
-        lines.length - 1
-      ){
-
-        f.appendChild(
-          document.createElement("br")
-        );
-
-      }
-
-    }
+  return clean(
+    data?.service ||
+    data?.service_name ||
+    data?.serviceName ||
+    data?.product?.service ||
+    data?.document?.service ||
+    data?.job?.service ||
+    ""
   );
-
-  return f;
 }
 
 
-function sanitizeHtml(src){
+function extractTitle(data){
 
-  if(
-    !/<[a-z][\s\S]*>/i.test(
-      String(src || "")
-    )
-  ){
-
-    return renderPlain(src);
-
-  }
-
-  const doc =
-    new DOMParser()
-      .parseFromString(
-        String(src),
-        "text/html"
-      );
-
-  const out =
-    document.createDocumentFragment();
-
-
-  function walk(n,parent){
-
-    if(
-      n.nodeType ===
-      Node.TEXT_NODE
-    ){
-
-      parent.appendChild(
-        document.createTextNode(
-          normText(
-            n.nodeValue || ""
-          )
-        )
-      );
-
-      return;
-    }
-
-
-    if(
-      n.nodeType !==
-      Node.ELEMENT_NODE
-    ){
-
-      return;
-    }
-
-
-    const tag =
-      n.tagName.toUpperCase();
-
-
-    if(
-      [
-        "SCRIPT",
-        "STYLE",
-        "IFRAME",
-        "OBJECT",
-        "EMBED",
-        "FORM",
-        "INPUT",
-        "BUTTON",
-        "TEXTAREA",
-        "SELECT",
-        "VIDEO",
-        "AUDIO"
-      ].includes(tag)
-    ){
-
-      return;
-    }
-
-
-    if(
-      !allowedTags.has(tag)
-    ){
-
-      for(
-        const c of n.childNodes
-      ){
-
-        walk(c,parent);
-
-      }
-
-      return;
-    }
-
-
-    const e =
-      document.createElement(
-        tag.toLowerCase()
-      );
-
-
-    for(
-      const a of n.attributes
-    ){
-
-      const name =
-        a.name.toLowerCase();
-
-      const v =
-        a.value || "";
-
-
-      if(
-        !allowedAttrs.has(name)
-      ){
-
-        continue;
-      }
-
-
-      if(name === "style"){
-
-        const s =
-          safeStyle(v);
-
-        if(s){
-          e.setAttribute(
-            "style",
-            s
-          );
-        }
-
-      }else if(
-        name === "align" &&
-        [
-          "left",
-          "center",
-          "right",
-          "justify"
-        ].includes(
-          v.toLowerCase().trim()
-        )
-      ){
-
-        e.setAttribute(
-          "align",
-          v.toLowerCase().trim()
-        );
-
-      }else if(
-        (
-          name === "colspan" ||
-          name === "rowspan"
-        ) &&
-        /^\d+$/.test(v) &&
-        +v > 0 &&
-        +v <= 100
-      ){
-
-        e.setAttribute(
-          name,
-          v
-        );
-
-      }
-
-    }
-
-
-    for(
-      const c of n.childNodes
-    ){
-
-      walk(c,e);
-
-    }
-
-
-    parent.appendChild(e);
-
-  }
-
-
-  for(
-    const c of doc.body.childNodes
-  ){
-
-    walk(c,out);
-
-  }
-
-
-  return out;
+  return clean(
+    data?.title ||
+    data?.document_title ||
+    data?.documentTitle ||
+    data?.filename ||
+    data?.file_name ||
+    data?.fileName ||
+    data?.product?.title ||
+    data?.document?.title ||
+    data?.job?.title ||
+    "Completed Document"
+  );
 }
 
 
 /* =========================================================
-   BUTTON STATE
-========================================================= */
+   DOCUMENT PAYLOAD
+   ========================================================= */
 
-function updateButtons(){
+function buildDocumentPayload(){
 
-  previousButton.disabled =
-    busy ||
-    currentPage <= 1;
+  const pageObjects = pages.map((page,index)=>({
+    page_number:index + 1,
+    content:page
+  }));
 
-  nextButton.disabled =
-    busy ||
-    currentPage >= totalPages ||
-    !totalPages;
+  return {
+    service:currentService,
+    title:currentTitle,
 
-  correctionButton.disabled =
-    busy;
+    document_payload:{
+      service:currentService,
+      title:currentTitle,
+      pages:pageObjects,
+      document_text:pages.join("\n\n"),
+      filename:currentTitle,
+      page_count:pages.length
+    },
 
-  downloadButton.disabled =
-    busy ||
-    downloading ||
-    !reviewFinished ||
-    !pages.length;
+    pages:pageObjects,
 
+    document_text:pages.join("\n\n"),
+
+    filename:currentTitle,
+
+    page_count:pages.length,
+
+    job_id:currentJobId || undefined
+  };
 }
 
 
 /* =========================================================
-   RENDER PAGE
-========================================================= */
+   PAGE DISPLAY
+   ========================================================= */
 
-function renderPage(){
+function updatePageDisplay(){
 
-  pageViewer.innerHTML = "";
+  const paper = document.getElementById("paper");
+
+  if(!paper){
+    return;
+  }
 
   if(!pages.length){
 
-    pageViewer.innerHTML =
-      '<div class="loading">' +
-        '<div class="spinner"></div>' +
-        '<div>Your service is being carefully prepared.</div>' +
-      '</div>';
+    paper.innerHTML =
+      '<div class="empty-paper">No completed document content was returned.</div>';
 
-    pageIndicator.textContent =
-      "Page 0 of 0";
+    document.getElementById("pageCounter").textContent =
+      "0 PAGES";
 
-    updateButtons();
+    document.getElementById("pagesValue").textContent =
+      "0";
 
-    return;
-  }
-
-
-  const p =
-    pages[currentPage - 1];
-
-
-  if(!p){
-
-    pageViewer.innerHTML =
-      '<div class="empty-page">' +
-      "This document page is not available yet." +
-      "</div>";
+    updateNavigation();
 
     return;
   }
 
+  const page = pages[currentPage] || "";
 
-  const a =
-    document.createElement("article");
+  paper.innerHTML = sanitizeHtml(page);
 
-  a.className =
-    "document-page";
+  document.getElementById("pageCounter").textContent =
+    pages.length === 1
+      ? "1 PAGE"
+      : `${currentPage + 1} OF ${pages.length} PAGES`;
 
+  document.getElementById("pagesValue").textContent =
+    String(pages.length);
 
-  const n =
-    document.createElement("div");
-
-  n.className =
-    "page-number-inside";
-
-  n.textContent =
-    "PAGE " + p.page_number;
+  updateNavigation();
+}
 
 
-  const c =
-    document.createElement("div");
+function updateNavigation(){
 
-  c.className =
-    "page-content";
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const firstBtn = document.getElementById("firstBtn");
 
-  c.appendChild(
-    sanitizeHtml(
-      p.content ||
-      "This page is still being prepared."
-    )
-  );
+  if(!pages.length){
 
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    firstBtn.disabled = true;
 
-  a.append(
-    n,
-    c
-  );
-
-
-  pageViewer.appendChild(a);
-
-
-  pageIndicator.textContent =
-    `Page ${currentPage} of ${totalPages}`;
-
-
-  if(
-    p.review ||
-    p.error
-  ){
-
-    pageReview.style.display =
-      "block";
-
-    pageReviewText.textContent =
-      p.error
-        ? "Page information:\n\n" +
-          normText(p.error)
-        : normText(p.review);
-
-  }else{
-
-    pageReview.style.display =
-      "none";
-
+    return;
   }
 
-
-  updateButtons();
-
+  prevBtn.disabled = currentPage <= 0;
+  nextBtn.disabled = currentPage >= pages.length - 1;
+  firstBtn.disabled = currentPage <= 0;
 }
 
 
 /* =========================================================
    PAGE NAVIGATION
-========================================================= */
+   ========================================================= */
 
-function showPage(n){
+function previousPage(){
 
-  if(!totalPages){
+  if(currentPage <= 0){
     return;
   }
 
-  currentPage =
-    Math.max(
-      1,
-      Math.min(
-        totalPages,
-        Math.floor(
-          Number(n) || 1
-        )
-      )
-    );
+  currentPage--;
 
-  renderPage();
+  updatePageDisplay();
 
-  documentScroll.scrollTo({
+  window.scrollTo({
     top:0,
     behavior:"smooth"
   });
-
 }
 
 
-previousButton.onclick =
-  () =>
-    showPage(
-      currentPage - 1
-    );
+function nextPage(){
+
+  if(currentPage >= pages.length - 1){
+    return;
+  }
+
+  currentPage++;
+
+  updatePageDisplay();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
 
 
-nextButton.onclick =
-  () =>
-    showPage(
-      currentPage + 1
-    );
+function firstPage(){
+
+  if(!pages.length){
+    return;
+  }
+
+  currentPage = 0;
+
+  updatePageDisplay();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
 
 
-goButton.onclick = () => {
+function goToPage(){
 
-  const n =
-    Number(
-      pageNumberInput.value
-    );
+  const input = document.getElementById("pageInput");
+
+  const number = parseInt(
+    input.value,
+    10
+  );
 
   if(
-    !Number.isInteger(n) ||
-    n < 1 ||
-    n > totalPages
+    !Number.isFinite(number) ||
+    number < 1 ||
+    number > pages.length
   ){
 
-    return setMessage(
-      "Enter a page number from 1 to " +
-      totalPages +
-      ".",
+    showMessage(
+      `Please enter a page number between 1 and ${pages.length}.`,
       "error"
     );
 
+    return;
   }
 
-  setMessage("");
+  currentPage = number - 1;
 
-  showPage(n);
+  updatePageDisplay();
 
-};
+  input.value = "";
 
-
-pageNumberInput.onkeydown =
-  e => {
-
-    if(e.key === "Enter"){
-
-      e.preventDefault();
-
-      goButton.click();
-
-    }
-
-  };
-
-
-/* =========================================================
-   EXISTING BILLING DATA
-=========================================================
-
-Billing is retained only so the Review page remains
-compatible with the existing review response.
-
-It is NOT used to create a payment.
-========================================================= */
-
-function preserveExistingAmount(d){
-
-  if(amount > 0){
-    return amount;
-  }
-
-  const candidates = [
-    d?.amount,
-    d?.price,
-    d?.payment?.amount,
-    d?.billing?.amount,
-    d?.job?.amount,
-    d?.job?.price,
-    d?.result?.amount,
-    d?.document?.amount,
-    d?.review?.amount,
-    d?.output?.amount
-  ];
-
-
-  for(
-    const value of candidates
-  ){
-
-    const n =
-      Number(
-        String(
-          value == null
-            ? ""
-            : value
-        ).replace(
-          /[^0-9.]/g,
-          ""
-        )
-      );
-
-
-    if(
-      isFinite(n) &&
-      n > 0
-    ){
-
-      return n;
-
-    }
-
-  }
-
-
-  return amount;
-
-}
-
-
-function extractBilling(d){
-
-  const seen =
-    new Set();
-
-
-  function find(x){
-
-    if(x == null){
-      return "";
-    }
-
-
-    if(typeof x === "string"){
-      return x.trim();
-    }
-
-
-    if(
-      typeof x !== "object" ||
-      seen.has(x)
-    ){
-
-      return "";
-
-    }
-
-
-    seen.add(x);
-
-
-    if(
-      typeof x.billing === "string" &&
-      x.billing.trim()
-    ){
-
-      return x.billing.trim();
-
-    }
-
-
-    for(
-      const k of [
-        "billing",
-        "bill",
-        "payment",
-        "job",
-        "result",
-        "document",
-        "review",
-        "output"
-      ]
-    ){
-
-      const v =
-        find(x[k]);
-
-      if(v){
-        return v;
-      }
-
-    }
-
-
-    return "";
-
-  }
-
-
-  return find(d);
-
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
 }
 
 
 /* =========================================================
-   DOCUMENT TITLE
-========================================================= */
+   DOWNLOAD EXACT REVIEWED DOCUMENT
+   ========================================================= */
 
-function extractDocumentTitle(d){
+async function downloadReviewedDocument(){
 
-  const candidates = [
-    d?.title,
-    d?.document_title,
-    d?.documentTitle,
-    d?.job_title,
-    d?.jobTitle,
+  const button = document.getElementById("downloadBtn");
 
-    d?.document?.title,
-    d?.document?.document_title,
-    d?.document?.documentTitle,
+  if(!pages.length){
 
-    d?.result?.title,
-    d?.result?.document_title,
-
-    d?.review?.title,
-    d?.review?.document_title,
-
-    d?.output?.title,
-    d?.output?.document_title
-  ];
-
-
-  for(
-    const value of candidates
-  ){
-
-    const title =
-      clean(value);
-
-    if(title){
-      return title;
-    }
-
-  }
-
-
-  const sourcePages =
-    extractPages(d);
-
-
-  for(
-    const p of sourcePages
-  ){
-
-    const text =
-      normText(
-        p.content || ""
-      );
-
-    if(!text){
-      continue;
-    }
-
-
-    const match =
-      text.match(
-        /(?:^|\n)\s*(?:\*{0,2})Title(?:\*{0,2})\s*:\s*(?:\*{0,2})([^\n*]+?)(?:\*{0,2})\s*(?:\n|$)/i
-      );
-
-
-    if(match){
-
-      const title =
-        clean(match[1]);
-
-      if(title){
-        return title;
-      }
-
-    }
-
-
-    const lines =
-      text
-        .split("\n")
-        .map(x => clean(x))
-        .filter(Boolean);
-
-
-    for(
-      const line of lines.slice(0,15)
-    ){
-
-      const candidate =
-        line
-          .replace(
-            /^\*{1,3}/,
-            ""
-          )
-          .replace(
-            /\*{1,3}$/,
-            ""
-          )
-          .replace(
-            /^#+\s*/,
-            ""
-          )
-          .trim();
-
-
-      if(
-        candidate.length >= 8 &&
-        candidate.length <= 180 &&
-        /ghana|revenue|country|seminar|paper|project|assignment|report/i.test(candidate)
-      ){
-
-        return candidate;
-
-      }
-
-    }
-
-  }
-
-
-  return "";
-
-}
-
-
-/* =========================================================
-   APPLY REVIEW RESPONSE
-========================================================= */
-
-function applyJob(d){
-
-  currentStatus =
-    clean(d.status);
-
-  reviewFinished =
-    complete(d);
-
-
-  customerId =
-    clean(
-      d.customer_id ||
-      d.customerId ||
-      d.job?.customer_id ||
-      d.document?.customer_id ||
-      d.result?.customer_id ||
-      d.output?.customer_id
-    ) ||
-    customerId;
-
-
-  documentFilename =
-    clean(
-      d.filename ||
-      d.document_filename ||
-      d.document?.filename ||
-      d.result?.filename ||
-      d.output?.filename
-    ) ||
-    documentFilename;
-
-
-  const p =
-    extractPages(d);
-
-
-  if(p.length){
-
-    pages = p;
-
-    totalPages =
-      p.length;
-
-  }else{
-
-    totalPages =
-      Number(
-        d.total_pages ||
-        d.totalPages
-      ) || 0;
-
-  }
-
-
-  currentVersion =
-    Number(
-      d.current_version ||
-      d.currentVersion ||
-      d.version ||
-      d.document_version
-    ) || 1;
-
-
-  versionId =
-    clean(
-      d.version_id ||
-      d.versionId ||
-      d.document_version_id ||
-      d.documentVersionId ||
-      d.document_version ||
-      d.current_version_id ||
-      d.currentVersionId ||
-      d.document?.version_id ||
-      d.result?.version_id ||
-      d.output?.version_id
+    showMessage(
+      "There is no completed document available to download.",
+      "error"
     );
 
+    return;
+  }
 
-  amount =
-    preserveExistingAmount(d);
+  if(!currentService){
 
+    showMessage(
+      "The service information is missing from this document.",
+      "error"
+    );
 
-  billing =
-    clean(d.billing) ||
-    extractBilling(d) ||
-    billing;
+    return;
+  }
 
+  if(!currentTitle){
 
-  documentTitle =
-    extractDocumentTitle(d) ||
-    documentTitle;
+    showMessage(
+      "The document title is missing.",
+      "error"
+    );
 
+    return;
+  }
 
-  if(totalPages){
+  button.disabled = true;
+  button.textContent = "PREPARING DOWNLOAD...";
 
-    currentPage =
-      Math.max(
-        1,
-        Math.min(
-          currentPage,
-          totalPages
-        )
+  hideMessage();
+
+  try{
+
+    /*
+      THIS IS THE IMPORTANT CORRECTION.
+
+      Do NOT use:
+
+        apiPost("/api/document/test-save", payload)
+
+      because apiPost uses the current NPBC origin.
+
+      Instead, documentApiPost sends the request to:
+
+        https://naija-pocket-payment-api.onrender.com
+    */
+
+    const payload = buildDocumentPayload();
+
+    const response = await documentApiPost(
+      "/api/document/test-save",
+      payload
+    );
+
+    const downloadUrl = clean(
+      response.test_download_url ||
+      response.download_url ||
+      response.url ||
+      ""
+    );
+
+    if(!downloadUrl){
+
+      throw new Error(
+        "The document was saved, but no download link was returned."
       );
+    }
 
-  }
+    /*
+      The backend normally returns a relative path such as:
 
+        /api/document/test-download/ABC123
 
-  const pr =
-    d.progress || {};
+      That path belongs to the Payment/Document API,
+      not this Review page's origin.
 
+      Therefore it MUST be resolved against PAYMENT_API_BASE.
+    */
 
-  const done =
-    Number(pr.completed) || 0;
+    const finalUrl = makeDocumentApiUrl(downloadUrl);
 
-
-  const tot =
-    Number(pr.total) ||
-    totalPages ||
-    0;
-
-
-  let pct =
-    tot
-      ? Math.round(
-          done / tot * 100
-        )
-      : 0;
-
-
-  if(
-    reviewFinished &&
-    totalPages
-  ){
-
-    pct = 100;
-
-  }
-
-
-  progressBar.style.width =
-    Math.max(
-      0,
-      Math.min(
-        100,
-        pct
-      )
-    ) + "%";
-
-
-  pageCount.textContent =
-    totalPages +
-    (
-      totalPages === 1
-        ? " PAGE"
-        : " PAGES"
+    showMessage(
+      "Your document is ready. Starting download...",
+      "success"
     );
 
+    /*
+      Give the browser a moment to receive the status message,
+      then navigate directly to the exact canonical file endpoint.
+    */
 
-  if(reviewFinished){
+    setTimeout(()=>{
+      window.location.href = finalUrl;
+    },350);
 
-    setStatus("READY");
+  }catch(error){
 
-    progressText.textContent =
-      "Your completed document is ready to download.";
-
-  }else if(
-    state() === "reviewing"
-  ){
-
-    setStatus("REVIEWING");
-
-    progressText.textContent =
-      done +
-      " of " +
-      tot +
-      " pages reviewed.";
-
-  }else if(
-    state() === "correcting"
-  ){
-
-    setStatus("CORRECTING");
-
-    progressText.textContent =
-      "Your correction is being applied.";
-
-  }else if(
-    state() === "review_error" ||
-    state() === "correction_error"
-  ){
-
-    setStatus("ERROR");
-
-    progressText.textContent =
-      "The document review encountered an error.";
-
-  }else{
-
-    setStatus(
-      currentStatus
-        ? currentStatus.toUpperCase()
-        : "PREPARING"
+    console.error(
+      "Reviewed document download failed:",
+      error
     );
 
+    showMessage(
+      clean(error?.message) ||
+      "The request could not be completed.",
+      "error"
+    );
+
+    button.disabled = false;
+    button.textContent = "DOWNLOAD COMPLETED DOCUMENT";
   }
-
-
-  renderPage();
-
-  updateButtons();
-
 }
 
 
 /* =========================================================
    LOAD REVIEW
-========================================================= */
+   ========================================================= */
 
-async function loadJob(){
+async function loadReview(){
 
-  const d =
-    await apiGet(
-      "/api/review?job_id=" +
-      encodeURIComponent(jobId)
-    );
-
-  applyJob(d);
-
-  return d;
-
-}
-
-
-/* =========================================================
-   POLLING
-========================================================= */
-
-function startPolling(){
-
-  if(polling){
-    return;
-  }
-
-  polling = true;
-
-
-  const poll =
-    async () => {
-
-      try{
-
-        const d =
-          await loadJob();
-
-
-        if(
-          complete(d) &&
-          extractPages(d).length
-        ){
-
-          polling = false;
-
-          return;
-
-        }
-
-
-        if(
-          [
-            "review_error",
-            "correction_error"
-          ].includes(
-            state()
-          )
-        ){
-
-          polling = false;
-
-          return;
-
-        }
-
-
-        pollTimer =
-          setTimeout(
-            poll,
-            1200
-          );
-
-
-      }catch(e){
-
-        polling = false;
-
-
-        if(!pages.length){
-
-          setMessage(
-            e.message,
-            "error"
-          );
-
-        }
-
-      }
-
-    };
-
-
-  poll();
-
-}
-
-
-/* =========================================================
-   CORRECTION
-========================================================= */
-
-correctionButton.onclick =
-  async () => {
-
-    const instruction =
-      clean(
-        correctionInput.value
-      );
-
-
-    if(!instruction){
-
-      return setMessage(
-        "Please write the correction or change you want.",
-        "error"
-      );
-
-    }
-
-
-    try{
-
-      busy = true;
-
-      updateButtons();
-
-      setMessage(
-        "Applying your correction..."
-      );
-
-
-      await apiPost(
-        "/api/correct",
-        {
-          job_id:jobId,
-          instruction
-        }
-      );
-
-
-      correctionInput.value = "";
-
-      currentStatus =
-        "correcting";
-
-      pages = [];
-
-      totalPages = 0;
-
-      currentPage = 1;
-
-      reviewFinished = false;
-
-      renderPage();
-
-      updateButtons();
-
-
-      setMessage(
-        "Your correction has started.",
-        "success"
-      );
-
-
-      startPolling();
-
-
-    }catch(e){
-
-      setMessage(
-        e.message,
-        "error"
-      );
-
-    }finally{
-
-      busy = false;
-
-      updateButtons();
-
-    }
-
-  };
-
-
-/* =========================================================
-   DOWNLOAD EXACT REVIEWED DOCUMENT
-=========================================================
-
-This is the ONLY document-delivery action on this page.
-
-Flow:
-
-Review page
-    ↓
-POST /api/document/test-save
-    ↓
-Backend saves canonical reviewed document
-    ↓
-Backend creates temporary download token
-    ↓
-Returns test_download_url
-    ↓
-Browser opens exact canonical file
-========================================================= */
-
-async function downloadReviewedDocument(){
-
-  if(!reviewFinished){
-
-    return setMessage(
-      "Please wait until the complete document review is ready.",
-      "error"
-    );
-
-  }
-
-
-  if(!pages.length){
-
-    return setMessage(
-      "There is no completed document available to download.",
-      "error"
-    );
-
-  }
-
-
-  if(downloading){
-
-    return;
-
-  }
-
-
-  if(!service){
-
-    return setMessage(
-      "The document service could not be identified.",
-      "error"
-    );
-
-  }
-
+  setLoading(true);
+  hideMessage();
 
   try{
 
-    downloading = true;
-
-    busy = true;
-
-    updateButtons();
-
-
-    setMessage(
-      "Preparing your exact reviewed document..."
+    const params = new URLSearchParams(
+      window.location.search
     );
 
-
-    if(!documentTitle){
-
-      documentTitle =
-        extractDocumentTitle({
-          pages:pages
-        });
-
-    }
-
-
-    /*
-    The backend requires service + title + document payload.
-
-    The document payload is the SAME reviewed pages
-    currently displayed on this Review page.
-    */
-
-    const payload = {
-
-      job_id:jobId,
-
-      customer_id:customerId,
-
-      service:service,
-
-      title:
-        documentTitle ||
-        "Completed Document",
-
-      document_title:
-        documentTitle ||
-        "Completed Document",
-
-      version_id:
-        versionId,
-
-      document_version:
-        versionId,
-
-      document_status:
-        currentStatus,
-
-      review_finished:
-        true,
-
-      total_pages:
-        pages.length,
-
-      pages:
-        pages.map(p => ({
-
-          page_number:
-            p.page_number,
-
-          position:
-            p.position,
-
-          content:
-            p.content,
-
-          review:
-            p.review,
-
-          status:
-            p.status
-
-        })),
-
-      document_text:
-        pages
-          .map(
-            p => p.content || ""
-          )
-          .join("\n\n"),
-
-      filename:
-        documentFilename ||
-        "naija_pocket_document.docx"
-
-    };
-
-
-    const response =
-      await apiPost(
-        "/api/document/test-save",
-        payload
-      );
-
-
-    /*
-    The current payment API test endpoint returns
-    test_download_url.
-
-    It is the temporary secure link to the exact
-    canonical file that was just saved.
-    */
-
-    const downloadUrl =
+    currentJobId =
       clean(
-        response.test_download_url ||
-        response.download_url ||
-        response.url
+        params.get("job_id") ||
+        params.get("jobId") ||
+        params.get("id") ||
+        ""
       );
 
+    if(!currentJobId){
 
-    if(!downloadUrl){
-
-      throw Error(
-        "The document was saved, but a download link was not returned."
+      throw new Error(
+        "No review job was provided."
       );
-
     }
 
-
-    setMessage(
-      "Your completed document is ready. Downloading...",
-      "success"
+    reviewData = await apiGet(
+      "/api/review?job_id=" +
+      encodeURIComponent(currentJobId)
     );
 
+    currentService =
+      extractService(reviewData);
 
-    /*
-    Open the backend-generated download URL.
+    currentTitle =
+      extractTitle(reviewData);
 
-    If it is an absolute URL, use it directly.
-    If it is relative, keep it on the current origin.
-    */
+    pages =
+      extractPages(reviewData);
 
-    const finalUrl =
-      /^https?:\/\//i.test(downloadUrl)
-        ? downloadUrl
-        : (
-            location.origin +
-            (
-              downloadUrl.startsWith("/")
-                ? downloadUrl
-                : "/" + downloadUrl
-            )
-          );
+    if(!pages.length){
 
+      throw new Error(
+        "The completed document does not contain any pages."
+      );
+    }
 
-    /*
-    Navigate directly to the exact canonical
-    FileResponse endpoint.
+    currentPayload = buildDocumentPayload();
 
-    No regeneration occurs here.
-    */
+    document.getElementById("serviceValue").textContent =
+      currentService || "Document Service";
 
-    window.location.href =
-      finalUrl;
+    document.getElementById("titleValue").textContent =
+      currentTitle || "Completed Document";
 
+    document.getElementById("reviewStatusValue").textContent =
+      "READY";
 
-  }catch(e){
+    document.getElementById("statusPill").textContent =
+      "READY";
 
-    setMessage(
-      e.message ||
-      "The completed document could not be downloaded.",
-      "error"
+    currentPage = 0;
+
+    updatePageDisplay();
+
+    setLoading(false);
+
+  }catch(error){
+
+    console.error(
+      "Review loading failed:",
+      error
     );
 
-  }finally{
+    setLoading(false);
 
-    downloading = false;
+    const paper = document.getElementById("paper");
 
-    busy = false;
+    paper.classList.remove("hidden");
 
-    updateButtons();
-
-  }
-
-}
-
-
-downloadButton.onclick =
-  downloadReviewedDocument;
-
-
-/* =========================================================
-   START PAGE
-========================================================= */
-
-async function start(){
-
-  serviceBadge.textContent =
-    service;
-
-
-  if(!jobId){
-
-    setStatus(
-      "NO DOCUMENT"
-    );
-
-
-    pageViewer.innerHTML =
-      '<div class="empty-page">' +
-      "No document was supplied for review." +
+    paper.innerHTML =
+      '<div class="empty-paper">' +
+      escapeHtml(
+        clean(error?.message) ||
+        "Unable to load the completed document."
+      ) +
       "</div>";
 
+    document.getElementById("statusPill").textContent =
+      "ERROR";
 
-    setMessage(
-      "This review page needs a document.",
+    document.getElementById("reviewStatusValue").textContent =
+      "ERROR";
+
+    showMessage(
+      clean(error?.message) ||
+      "Unable to load the completed document.",
       "error"
     );
-
-
-    return;
-
   }
+}
 
 
-  try{
+/* =========================================================
+   KEYBOARD SUPPORT
+   ========================================================= */
 
-    const d =
-      await loadJob();
+document.addEventListener(
+  "keydown",
+  event=>{
 
+    if(event.key === "ArrowLeft"){
+      previousPage();
+    }
+
+    if(event.key === "ArrowRight"){
+      nextPage();
+    }
 
     if(
-      !complete(d) &&
-      ![
-        "review_error",
-        "correction_error"
-      ].includes(
-        state()
-      )
+      event.key === "Enter" &&
+      document.activeElement?.id === "pageInput"
     ){
-
-      startPolling();
-
+      goToPage();
     }
-
-
-  }catch(e){
-
-    setStatus(
-      "ERROR"
-    );
-
-
-    setMessage(
-      e.message,
-      "error"
-    );
-
-
-    pageViewer.innerHTML =
-      '<div class="empty-page">' +
-      String(e.message)
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;") +
-      "</div>";
-
   }
+);
 
-}
 
+/* =========================================================
+   START
+   ========================================================= */
 
-start();
-
+document.addEventListener(
+  "DOMContentLoaded",
+  ()=>{
+    loadReview();
+  }
+);
 </script>
 
 </body>
