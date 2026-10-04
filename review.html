@@ -156,55 +156,112 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .page-number-input{height:35px!important}.go-button{width:65px!important}
 }
 </style>
+</head>
 
-</head><body><span id="serviceBadge" style="display:none">Service</span>
+<body>
+<span id="serviceBadge" style="display:none">Service</span>
 
-<main class="main"><section class="review-card"><div class="document-card-header">
+<main class="main">
+
+<section class="review-card">
+<div class="document-card-header">
 <div class="document-heading"><h3>Your Complete Document</h3></div>
 <div id="pageCount" class="page-count">0 PAGES</div>
-</div><div id="documentScroll" class="document-scroll"><div id="pageViewer" class="page-viewer">
+</div>
+
+<div id="documentScroll" class="document-scroll">
+<div id="pageViewer" class="page-viewer">
 <div class="loading">
 <div class="spinner"></div>
 <div>Your service is being carefully prepared.</div>
 </div>
-</div><div class="page-navigation">
+</div>
+
+<div class="page-navigation">
 <button id="previousButton" class="nav-button" type="button" disabled>← Previous Page</button>
 <div id="pageIndicator" class="page-indicator">Page 0 of 0</div>
 <button id="nextButton" class="nav-button next" type="button" disabled>Next Page →</button>
-</div><div class="go-row">
+</div>
+
+<div class="go-row">
 <input id="pageNumberInput" class="page-number-input" type="number" min="1" placeholder="Enter page number">
 <button id="goButton" class="go-button" type="button">GO</button>
-</div><div id="pageReview" class="page-review" style="display:none">
+</div>
+
+<div id="pageReview" class="page-review" style="display:none">
 <div class="page-review-title">PAGE REVIEW</div>
 <div id="pageReviewText" class="page-review-text"></div>
-</div></div>
-</section><section class="action-area"><section class="top-panel">
+</div>
+</div>
+</section>
+
+<section class="action-area">
+
+<section class="top-panel">
 <h2 class="review-title">Review Your Complete Service</h2>
-<p class="review-subtitle">Review every page. Make any necessary correction, then download your reviewed document.</p><div class="status-row">
+<p class="review-subtitle">Review every page. Make any necessary correction, then download your reviewed document.</p>
+
+<div class="status-row">
 <span class="status-label">Review status</span>
 <span id="statusValue" class="status-value">Preparing...</span>
-</div><div class="progress-shell">
+</div>
+
+<div class="progress-shell">
 <div id="progressBar" class="progress-bar"></div>
-</div><div id="progressText" class="progress-text">Preparing the document...</div>
-</section><section class="top-amount-card">
-<div class="top-amount-head"><div>
+</div>
+
+<div id="progressText" class="progress-text">Preparing the document...</div>
+</section>
+
+<section class="top-amount-card">
+<div class="top-amount-head">
+
+<div>
 <div class="top-amount-label">AMOUNT TO PAY</div>
 <div id="amountValueTop" class="top-amount-value">₦0</div>
-</div><div class="top-action-buttons">
+</div>
+
+<div class="top-action-buttons">
 <button id="makePaymentButton" class="make-payment-button" type="button" style="display:none">💳 MAKE PAYMENT</button>
 <button id="paymentButton" class="confirm-payment-button" type="button" style="display:none">✓ I HAVE MADE PAYMENT</button>
 <button id="downloadButton" class="download-button active" type="button">⬇ DOWNLOAD DOCUMENT</button>
-</div></div>
-</section><div class="correction-box">
+</div>
+
+</div>
+</section>
+
+<div class="correction-box">
 <textarea id="correctionInput" class="correction-input" placeholder="Want anything changed? Tell us what to correct..."></textarea>
 <button id="correctionButton" class="correction-button" type="button">Apply Correction</button>
-</div><section id="paymentSection" class="payment-section" style="display:none"><div class="payment-title">PAYMENT</div><div class="payment-subtitle">
+</div>
+
+<section id="paymentSection" class="payment-section" style="display:none">
+
+<div class="payment-title">PAYMENT</div>
+
+<div class="payment-subtitle">
 Your reviewed document is ready. Choose how you want to receive it.
-</div><div id="paymentDetails" class="payment-details">
+</div>
+
+<div id="paymentDetails" class="payment-details">
 Payment has not been started.
-</div><div id="paymentId" class="payment-id" style="display:none"></div><div id="paymentMessage" class="payment-message">
+</div>
+
+<div id="paymentId" class="payment-id" style="display:none"></div>
+
+<div id="paymentMessage" class="payment-message">
 Download is available now.
-</div></section></section><div id="message" class="message"></div></main><script>
+</div>
+
+</section>
+
+</section>
+
+<div id="message" class="message"></div>
+
+</main>
+
+<script>
 "use strict";
 
 const API_BASE="";
@@ -259,16 +316,22 @@ amount=0,
 billing="",
 paymentIdentifier="";
 
-function clean(v){return v==null?"":String(v).trim()}
+function clean(v){
+return v==null?"":String(v).trim()
+}
 
 function setMessage(t,type=""){
 message.textContent=t||"";
 message.className="message"+(type?" "+type:"")
 }
 
-function setStatus(t){statusValue.textContent=t||"Preparing..."}
+function setStatus(t){
+statusValue.textContent=t||"Preparing..."
+}
 
-function state(){return clean(currentStatus).toLowerCase()}
+function state(){
+return clean(currentStatus).toLowerCase()
+}
 
 function complete(d){
 return !!d&&(state()==="review_complete"||d.review_finished===true)
@@ -294,9 +357,11 @@ return d
 
 function normalizePages(d){
 let s=[];
+
 if(Array.isArray(d?.review_pages)&&d.review_pages.length)s=d.review_pages;
 else if(Array.isArray(d?.document_pages)&&d.document_pages.length)s=d.document_pages;
 else if(Array.isArray(d?.pages)&&d.pages.length)s=d.pages;
+
 return s.map((x,i)=>({
 page_number:Number(x.page_number)||i+1,
 position:Number(x.position)||i+1,
@@ -309,12 +374,16 @@ error:clean(x.error)
 
 function extractPages(d){
 let x=normalizePages(d);
+
 if(x.length)return x;
+
 for(const c of [d?.document,d?.result,d?.review,d?.output]){
 if(c&&typeof c==="object"){
 x=normalizePages(c);
 if(x.length)return x
-}}
+}
+}
+
 return []
 }
 
@@ -347,27 +416,42 @@ return String(v==null?"":v)
 
 function safeStyle(s){
 let out=[];
+
 for(const d of String(s||"").split(";")){
 const i=d.indexOf(":");
 if(i<0)continue;
+
 const p=d.slice(0,i).trim().toLowerCase();
 const v=d.slice(i+1).trim();
-if(allowedStyles.has(p)&&!/javascript:|expression\(|url\(|@import/i.test(v))out.push(p+":"+v)
+
+if(
+allowedStyles.has(p)&&
+!/javascript:|expression\(|url\(|@import/i.test(v)
+){
+out.push(p+":"+v)
 }
+}
+
 return out.join(";")
 }
 
 function renderPlain(t){
 const f=document.createDocumentFragment();
 const lines=normText(t).split("\n");
+
 lines.forEach((line,i)=>{
+
 if(line===""){
 f.appendChild(document.createElement("br"));
 return
 }
+
 const parts=line.split(/(\*\*[^*]+\*\*)/g);
+
 parts.forEach(p=>{
+
 if(!p)return;
+
 if(p.startsWith("**")&&p.endsWith("**")){
 const e=document.createElement("strong");
 e.textContent=p.slice(2,-2);
@@ -375,311 +459,767 @@ f.appendChild(e)
 }else{
 f.appendChild(document.createTextNode(p.replace(/^\*+|\*+$/g,"")))
 }
+
 });
-if(i<lines.length-1)f.appendChild(document.createElement("br"))
+
+if(i<lines.length-1){
+f.appendChild(document.createElement("br"))
+}
+
 });
+
 return f
 }
 
 function sanitizeHtml(src){
-if(!/<[a-z][\s\S]*>/i.test(String(src||"")))return renderPlain(src);
+
+if(!/<[a-z][\s\S]*>/i.test(String(src||""))){
+return renderPlain(src)
+}
+
 const doc=new DOMParser().parseFromString(String(src),"text/html");
 const out=document.createDocumentFragment();
 
 function walk(n,parent){
+
 if(n.nodeType===Node.TEXT_NODE){
 parent.appendChild(document.createTextNode(normText(n.nodeValue||"")));
 return
 }
+
 if(n.nodeType!==Node.ELEMENT_NODE)return;
+
 const tag=n.tagName.toUpperCase();
-if(["SCRIPT","STYLE","IFRAME","OBJECT","EMBED","FORM","INPUT","BUTTON","TEXTAREA","SELECT","VIDEO","AUDIO"].includes(tag))return;
+
+if([
+"SCRIPT","STYLE","IFRAME","OBJECT","EMBED","FORM",
+"INPUT","BUTTON","TEXTAREA","SELECT","VIDEO","AUDIO"
+].includes(tag))return;
+
 if(!allowedTags.has(tag)){
 for(const c of n.childNodes)walk(c,parent);
 return
 }
+
 const e=document.createElement(tag.toLowerCase());
+
 for(const a of n.attributes){
-const name=a.name.toLowerCase(),v=a.value||"";
+
+const name=a.name.toLowerCase();
+const v=a.value||"";
+
 if(!allowedAttrs.has(name))continue;
+
 if(name==="style"){
 const s=safeStyle(v);
 if(s)e.setAttribute("style",s)
-}else if(name==="align"&&["left","center","right","justify"].includes(v.toLowerCase().trim())){
+}else if(
+name==="align"&&
+["left","center","right","justify"].includes(v.toLowerCase().trim())
+){
 e.setAttribute("align",v.toLowerCase().trim())
-}else if((name==="colspan"||name==="rowspan")&&/^\d+$/.test(v)&&+v>0&&+v<=100){
+}else if(
+(name==="colspan"||name==="rowspan")&&
+/^\d+$/.test(v)&&
++v>0&&
++v<=100
+){
 e.setAttribute(name,v)
-}}
+}
+
+}
+
 for(const c of n.childNodes)walk(c,e);
+
 parent.appendChild(e)
 }
+
 for(const c of doc.body.childNodes)walk(c,out);
+
 return out
 }
 
 function updateButtons(){
+
 previousButton.disabled=busy||currentPage<=1;
-nextButton.disabled=busy||currentPage>=totalPages||!totalPages;
+
+nextButton.disabled=
+busy||
+currentPage>=totalPages||
+!totalPages;
+
 correctionButton.disabled=busy;
-makePaymentButton.disabled=busy||paymentStarted||amount<=0||!reviewFinished;
-paymentButton.disabled=busy||!paymentStarted||!paymentPending||paid;
-downloadButton.disabled=busy||!reviewFinished;
-downloadButton.classList.toggle("active",reviewFinished)
+
+makePaymentButton.disabled=
+busy||
+paymentStarted||
+amount<=0||
+!reviewFinished;
+
+paymentButton.disabled=
+busy||
+!paymentStarted||
+!paymentPending||
+paid;
+
+downloadButton.disabled=
+busy||
+!reviewFinished;
+
+downloadButton.classList.toggle(
+"active",
+reviewFinished
+)
 }
 
 function renderPage(){
+
 pageViewer.innerHTML="";
+
 if(!pages.length){
-pageViewer.innerHTML='<div class="loading"><div class="spinner"></div><div>Your service is being carefully prepared.</div></div>';
+
+pageViewer.innerHTML=
+'<div class="loading">'+
+'<div class="spinner"></div>'+
+'<div>Your service is being carefully prepared.</div>'+
+'</div>';
+
 pageIndicator.textContent="Page 0 of 0";
+
 updateButtons();
+
 return
 }
+
 const p=pages[currentPage-1];
+
 if(!p){
-pageViewer.innerHTML='<div class="empty-page">This document page is not available yet.</div>';
+
+pageViewer.innerHTML=
+'<div class="empty-page">This document page is not available yet.</div>';
+
 return
 }
+
 const a=document.createElement("article");
 a.className="document-page";
+
 const n=document.createElement("div");
 n.className="page-number-inside";
 n.textContent="PAGE "+p.page_number;
+
 const c=document.createElement("div");
 c.className="page-content";
-c.appendChild(sanitizeHtml(p.content||"This page is still being prepared."));
+
+c.appendChild(
+sanitizeHtml(
+p.content||"This page is still being prepared."
+)
+);
+
 a.append(n,c);
 pageViewer.appendChild(a);
-pageIndicator.textContent=`Page ${currentPage} of ${totalPages}`;
+
+pageIndicator.textContent=
+`Page ${currentPage} of ${totalPages}`;
 
 if(p.review||p.error){
+
 pageReview.style.display="block";
-pageReviewText.textContent=p.error?"Page information:\n\n"+normText(p.error):normText(p.review)
-}else pageReview.style.display="none";
+
+pageReviewText.textContent=
+p.error
+?"Page information:\n\n"+normText(p.error)
+:normText(p.review)
+
+}else{
+
+pageReview.style.display="none"
+
+}
 
 updateButtons()
 }
 
 function showPage(n){
+
 if(!totalPages)return;
-currentPage=Math.max(1,Math.min(totalPages,Math.floor(Number(n)||1)));
+
+currentPage=
+Math.max(
+1,
+Math.min(
+totalPages,
+Math.floor(Number(n)||1)
+)
+);
+
 renderPage();
-documentScroll.scrollTo({top:0,behavior:"smooth"})
+
+documentScroll.scrollTo({
+top:0,
+behavior:"smooth"
+})
 }
 
-previousButton.onclick=()=>showPage(currentPage-1);
-nextButton.onclick=()=>showPage(currentPage+1);
+previousButton.onclick=()=>{
+showPage(currentPage-1)
+};
+
+nextButton.onclick=()=>{
+showPage(currentPage+1)
+};
 
 goButton.onclick=()=>{
+
 const n=Number(pageNumberInput.value);
-if(!Number.isInteger(n)||n<1||n>totalPages)return setMessage("Enter a page number from 1 to "+totalPages+".","error");
+
+if(
+!Number.isInteger(n)||
+n<1||
+n>totalPages
+){
+return setMessage(
+"Enter a page number from 1 to "+totalPages+".",
+"error"
+)
+}
+
 setMessage("");
 showPage(n)
 };
 
 pageNumberInput.onkeydown=e=>{
-if(e.key==="Enter"){e.preventDefault();goButton.click()}
+
+if(e.key==="Enter"){
+e.preventDefault();
+goButton.click()
+}
+
 };
 
 function extractAmount(d){
+
 const seen=new Set();
+
 function find(x){
+
 if(x==null)return 0;
-if(typeof x==="number"&&isFinite(x)&&x>0)return x;
+
+if(
+typeof x==="number"&&
+isFinite(x)&&
+x>0
+)return x;
+
 if(typeof x==="string"){
-const n=Number(x.replace(/[^0-9.]/g,""));
+
+const n=Number(
+x.replace(/[^0-9.]/g,"")
+);
+
 return isFinite(n)&&n>0?n:0
 }
-if(typeof x!=="object"||seen.has(x))return 0;
+
+if(
+typeof x!=="object"||
+seen.has(x)
+)return 0;
+
 seen.add(x);
-for(const k of ["amount","price"]){const n=find(x[k]);if(n>0)return n}
-for(const k of ["billing","bill","payment","job","result","document","review","output"]){const n=find(x[k]);if(n>0)return n}
+
+for(const k of ["amount","price"]){
+
+const n=find(x[k]);
+
+if(n>0)return n
+}
+
+for(const k of [
+"billing",
+"bill",
+"payment",
+"job",
+"result",
+"document",
+"review",
+"output"
+]){
+
+const n=find(x[k]);
+
+if(n>0)return n
+}
+
 return 0
 }
+
 return find(d)
 }
 
 function extractBilling(d){
+
 const seen=new Set();
+
 function find(x){
+
 if(x==null)return "";
+
 if(typeof x==="string")return x.trim();
-if(typeof x!=="object"||seen.has(x))return "";
+
+if(
+typeof x!=="object"||
+seen.has(x)
+)return "";
+
 seen.add(x);
-if(typeof x.billing==="string"&&x.billing.trim())return x.billing.trim();
-for(const k of ["billing","bill","payment","job","result","document","review","output"]){
-const v=find(x[k]);if(v)return v
+
+if(
+typeof x.billing==="string"&&
+x.billing.trim()
+){
+return x.billing.trim()
 }
+
+for(const k of [
+"billing",
+"bill",
+"payment",
+"job",
+"result",
+"document",
+"review",
+"output"
+]){
+
+const v=find(x[k]);
+
+if(v)return v
+}
+
 return ""
 }
+
 return find(d)
 }
 
 function extractDocumentTitle(d){
+
 const candidates=[
-d?.document_title,d?.title,d?.document?.title,d?.document?.document_title,
-d?.result?.document_title,d?.result?.title,d?.review?.document_title,
-d?.review?.title,d?.output?.document_title,d?.output?.title
+d?.document_title,
+d?.title,
+d?.document?.title,
+d?.document?.document_title,
+d?.result?.document_title,
+d?.result?.title,
+d?.review?.document_title,
+d?.review?.title,
+d?.output?.document_title,
+d?.output?.title
 ];
+
 for(const v of candidates){
+
 const x=clean(v);
+
 if(x)return x
 }
+
 return documentTitle
 }
 
 function updatePaymentPanel(){
-amountValueTop.textContent=amount>0?"₦"+amount.toLocaleString():"Quotation required";
+
+amountValueTop.textContent=
+amount>0
+?"₦"+amount.toLocaleString()
+:"Quotation required";
 
 paymentDetails.textContent=
-"Service: "+(service||"Business Center Service")+
-"\nBilling: "+(billing||"Fixed price");
+"Service: "+
+(service||"Business Center Service")+
+"\nBilling: "+
+(billing||"Fixed price");
 
 if(paymentIdentifier){
+
 paymentId.style.display="block";
-paymentId.textContent="Payment ID: "+paymentIdentifier
+
+paymentId.textContent=
+"Payment ID: "+
+paymentIdentifier
+
 }else{
+
 paymentId.style.display="none";
 paymentId.textContent=""
+
 }
 
 makePaymentButton.style.display="block";
 paymentButton.style.display="block";
 
-makePaymentButton.textContent=paymentStarted?"✓ PAYMENT STARTED":"💳 MAKE PAYMENT";
-paymentButton.textContent=paid?"✓ PAYMENT VERIFIED":"✓ I HAVE MADE PAYMENT";
+makePaymentButton.textContent=
+paymentStarted
+?"✓ PAYMENT STARTED"
+:"💳 MAKE PAYMENT";
+
+paymentButton.textContent=
+paid
+?"✓ PAYMENT VERIFIED"
+:"✓ I HAVE MADE PAYMENT";
 
 if(paid){
+
 downloadButton.disabled=false;
 downloadButton.classList.add("active");
 downloadButton.textContent="⬇ DOWNLOAD DOCUMENT";
-paymentMessage.textContent="Payment verified by Customer Care. Choose a delivery option."
+
+paymentMessage.textContent=
+"Payment verified by Customer Care. Choose a delivery option."
+
 }else if(paymentPending){
+
 downloadButton.disabled=true;
 downloadButton.classList.remove("active");
 downloadButton.textContent="🔒 DOWNLOAD DOCUMENT";
-paymentMessage.textContent="Payment reported. Please wait for Customer Care to verify your payment."
+
+paymentMessage.textContent=
+"Payment reported. Please wait for Customer Care to verify your payment."
+
 }else{
+
 downloadButton.disabled=false;
 downloadButton.classList.add("active");
 downloadButton.textContent="⬇ DOWNLOAD DOCUMENT";
-paymentMessage.textContent="Your reviewed document is ready. Choose a delivery option."
+
+paymentMessage.textContent=
+"Your reviewed document is ready. Choose a delivery option."
+
 }
+
 updateButtons()
 }
 
 function applyJob(d){
+
 currentStatus=clean(d.status);
+
 reviewFinished=complete(d);
+
 const p=extractPages(d);
 
-if(p.length){pages=p;totalPages=p.length}
-else totalPages=Number(d.total_pages)||0;
+if(p.length){
 
-currentVersion=Number(d.current_version)||1;
-versionId=clean(d.version_id);
+pages=p;
+totalPages=p.length
+
+}else{
+
+totalPages=Number(d.total_pages)||0
+
+}
+
+currentVersion=
+Number(d.current_version)||1;
+
+versionId=
+clean(d.version_id);
+
 paid=!!d.paid;
-paymentPending=!!d.payment_pending;
-paymentStarted=paymentPending||!!d.payment_id;
-amount=extractAmount(d)||amount;
-billing=clean(d.billing)||extractBilling(d)||billing;
-paymentIdentifier=clean(d.payment_id)||paymentIdentifier;
-documentTitle=extractDocumentTitle(d)||documentTitle;
 
-if(totalPages)currentPage=Math.max(1,Math.min(currentPage,totalPages));
+paymentPending=
+!!d.payment_pending;
+
+paymentStarted=
+paymentPending||
+!!d.payment_id;
+
+amount=
+extractAmount(d)||
+amount;
+
+billing=
+clean(d.billing)||
+extractBilling(d)||
+billing;
+
+paymentIdentifier=
+clean(d.payment_id)||
+paymentIdentifier;
+
+documentTitle=
+extractDocumentTitle(d)||
+documentTitle;
+
+if(totalPages){
+
+currentPage=
+Math.max(
+1,
+Math.min(
+currentPage,
+totalPages
+)
+)
+
+}
 
 const pr=d.progress||{};
-const done=Number(pr.completed)||0;
-const tot=Number(pr.total)||totalPages||0;
-let pct=tot?Math.round(done/tot*100):0;
-if(reviewFinished&&totalPages)pct=100;
 
-progressBar.style.width=Math.max(0,Math.min(100,pct))+"%";
-pageCount.textContent=totalPages+(totalPages===1?" PAGE":" PAGES");
+const done=
+Number(pr.completed)||0;
+
+const tot=
+Number(pr.total)||
+totalPages||
+0;
+
+let pct=
+tot
+?Math.round(done/tot*100)
+:0;
+
+if(reviewFinished&&totalPages){
+pct=100
+}
+
+progressBar.style.width=
+Math.max(
+0,
+Math.min(
+100,
+pct
+)
+)+"%";
+
+pageCount.textContent=
+totalPages+
+(totalPages===1?" PAGE":" PAGES");
 
 if(reviewFinished){
+
 setStatus("READY");
-progressText.textContent="Your document is ready to review and download."
+
+progressText.textContent=
+"Your document is ready to review and download."
+
 }else if(state()==="reviewing"){
+
 setStatus("REVIEWING");
-progressText.textContent=done+" of "+tot+" pages reviewed."
+
+progressText.textContent=
+done+
+" of "+
+tot+
+" pages reviewed."
+
 }else if(state()==="correcting"){
+
 setStatus("CORRECTING");
-progressText.textContent="Your correction is being applied."
-}else if(state()==="review_error"||state()==="correction_error"){
+
+progressText.textContent=
+"Your correction is being applied."
+
+}else if(
+state()==="review_error"||
+state()==="correction_error"
+){
+
 setStatus("ERROR");
-progressText.textContent="The document review encountered an error."
+
+progressText.textContent=
+"The document review encountered an error."
+
 }else{
-setStatus(currentStatus?currentStatus.toUpperCase():"PREPARING")
+
+setStatus(
+currentStatus
+?currentStatus.toUpperCase()
+:"PREPARING"
+)
+
 }
+
 renderPage();
 updatePaymentPanel()
 }
 
 async function loadPaymentState(){
+
 if(!versionId)return null;
+
 try{
-const d=await apiGet("/api/payment/status?job_id="+encodeURIComponent(jobId)+"&version_id="+encodeURIComponent(versionId));
+
+const d=
+await apiGet(
+"/api/payment/status?job_id="+
+encodeURIComponent(jobId)+
+"&version_id="+
+encodeURIComponent(versionId)
+);
+
 if(d.success){
+
 paid=!!d.paid;
-paymentPending=!!d.payment_pending||d.status==="pending";
-paymentStarted=paymentPending||!!d.payment_id||paid;
-amount=Number(d.amount)||amount;
-billing=clean(d.billing)||billing;
-paymentIdentifier=clean(d.payment_id)||paymentIdentifier;
+
+paymentPending=
+!!d.payment_pending||
+d.status==="pending";
+
+paymentStarted=
+paymentPending||
+!!d.payment_id||
+paid;
+
+amount=
+Number(d.amount)||
+amount;
+
+billing=
+clean(d.billing)||
+billing;
+
+paymentIdentifier=
+clean(d.payment_id)||
+paymentIdentifier;
+
 updatePaymentPanel();
+
 return d
 }
+
 }catch(_e){}
+
 return null
 }
 
 async function loadJob(){
-const d=await apiGet("/api/review?job_id="+encodeURIComponent(jobId));
+
+const d=
+await apiGet(
+"/api/review?job_id="+
+encodeURIComponent(jobId)
+);
+
 applyJob(d);
+
 await loadPaymentState();
+
 return d
 }
 
 function startPaymentPolling(){
+
 if(paymentPollTimer)return;
+
 const poll=async()=>{
+
 paymentPollTimer=null;
+
 if(!paymentStarted||paid)return;
+
 await loadPaymentState();
-if(!paid)paymentPollTimer=setTimeout(poll,2000)
+
+if(!paid){
+paymentPollTimer=
+setTimeout(poll,2000)
+}
+
 };
-paymentPollTimer=setTimeout(poll,2000)
+
+paymentPollTimer=
+setTimeout(poll,2000)
 }
 
 function startPolling(){
+
 if(polling)return;
+
 polling=true;
+
 const poll=async()=>{
+
 try{
-const d=await loadJob();
-if(complete(d)&&extractPages(d).length){polling=false;return}
-if(["review_error","correction_error"].includes(state())){polling=false;return}
-pollTimer=setTimeout(poll,1200)
-}catch(e){
+
+const d=
+await loadJob();
+
+if(
+complete(d)&&
+extractPages(d).length
+){
+
 polling=false;
-if(!pages.length)setMessage(e.message,"error")
-}};
+return
+}
+
+if([
+"review_error",
+"correction_error"
+].includes(state())){
+
+polling=false;
+return
+}
+
+pollTimer=
+setTimeout(
+poll,
+1200
+)
+
+}catch(e){
+
+polling=false;
+
+if(!pages.length){
+setMessage(
+e.message,
+"error"
+)
+}
+
+}
+
+};
+
 poll()
 }
 
 correctionButton.onclick=async()=>{
-const instruction=clean(correctionInput.value);
-if(!instruction)return setMessage("Please write the correction or change you want.","error");
+
+const instruction=
+clean(correctionInput.value);
+
+if(!instruction){
+
+return setMessage(
+"Please write the correction or change you want.",
+"error"
+)
+
+}
 
 try{
+
 busy=true;
 updateButtons();
-setMessage("Applying your correction...");
 
-await apiPost("/api/correct",{job_id:jobId,instruction});
+setMessage(
+"Applying your correction..."
+);
+
+await apiPost(
+"/api/correct",
+{
+job_id:jobId,
+instruction
+}
+);
 
 correctionInput.value="";
+
 paid=false;
 paymentStarted=false;
 paymentPending=false;
@@ -688,7 +1228,9 @@ amount=0;
 billing="";
 
 if(paymentPollTimer){
+
 clearTimeout(paymentPollTimer);
+
 paymentPollTimer=null
 }
 
@@ -699,144 +1241,392 @@ currentPage=1;
 
 renderPage();
 updatePaymentPanel();
-setMessage("Your correction has started.","success");
+
+setMessage(
+"Your correction has started.",
+"success"
+);
+
 startPolling()
+
 }catch(e){
-setMessage(e.message,"error")
+
+setMessage(
+e.message,
+"error"
+)
+
 }finally{
+
 busy=false;
 updateButtons()
+
 }
+
 };
 
 makePaymentButton.onclick=async()=>{
-if(!reviewFinished)return setMessage("Please wait until the complete document review is ready.","error");
-if(amount<=0)return setMessage("This service requires a quotation before payment.","error");
+
+if(!reviewFinished){
+
+return setMessage(
+"Please wait until the complete document review is ready.",
+"error"
+)
+
+}
+
+if(amount<=0){
+
+return setMessage(
+"This service requires a quotation before payment.",
+"error"
+)
+
+}
 
 try{
+
 busy=true;
 updateButtons();
-setMessage("Starting payment...");
 
-const d=await apiPost(
-"/api/payment/create?job_id="+encodeURIComponent(jobId)+"&amount="+encodeURIComponent(amount)+"&payment_method=bank_transfer",
+setMessage(
+"Starting payment..."
+);
+
+const d=
+await apiPost(
+"/api/payment/create?job_id="+
+encodeURIComponent(jobId)+
+"&amount="+
+encodeURIComponent(amount)+
+"&payment_method=bank_transfer",
 {}
 );
 
 paymentStarted=true;
 paymentPending=true;
-paymentIdentifier=clean(d.payment_id)||clean(d.order_number)||clean(d.reference);
-amount=Number(d.amount)||amount;
-billing=clean(d.billing)||billing;
+
+paymentIdentifier=
+clean(d.payment_id)||
+clean(d.order_number)||
+clean(d.reference);
+
+amount=
+Number(d.amount)||
+amount;
+
+billing=
+clean(d.billing)||
+billing;
 
 updatePaymentPanel();
-setMessage("Payment started. Complete the payment, then tap I HAVE MADE PAYMENT. Customer Care must verify it before download.","success");
+
+setMessage(
+"Payment started. Complete the payment, then tap I HAVE MADE PAYMENT. Customer Care must verify it before download.",
+"success"
+);
+
 startPaymentPolling()
+
 }catch(e){
-setMessage(e.message,"error")
+
+setMessage(
+e.message,
+"error"
+)
+
 }finally{
+
 busy=false;
 updateButtons()
+
 }
+
 };
 
 paymentButton.onclick=async()=>{
-if(!paymentStarted)return setMessage("Tap MAKE PAYMENT first, then complete your payment.","error");
-if(!paymentPending&&!paid)return setMessage("Your payment report is not pending. Please contact Customer Care.","error");
-if(paid)return setMessage("Payment has already been verified.","success");
 
-paymentMessage.textContent="Payment reported. Customer Care will verify the payment before download is unlocked.";
-setMessage("Your payment has been reported. Please wait for Customer Care verification.","success");
+if(!paymentStarted){
+
+return setMessage(
+"Tap MAKE PAYMENT first, then complete your payment.",
+"error"
+)
+
+}
+
+if(!paymentPending&&!paid){
+
+return setMessage(
+"Your payment report is not pending. Please contact Customer Care.",
+"error"
+)
+
+}
+
+if(paid){
+
+return setMessage(
+"Payment has already been verified.",
+"success"
+)
+
+}
+
+paymentMessage.textContent=
+"Payment reported. Customer Care will verify the payment before download is unlocked.";
+
+setMessage(
+"Your payment has been reported. Please wait for Customer Care verification.",
+"success"
+);
+
 updatePaymentPanel();
+
 startPaymentPolling()
 };
 
-/*
-CUSTOMER CARE / DELIVERY
 
-The Review page does NOT construct or send the Customer Care email.
+/* =========================================================
+   CUSTOMER CARE DELIVERY
+   =========================================================
 
-The Email delivery button is restored.
+   IMPORTANT:
+   The Email button is ALWAYS rendered.
 
-The Email URL is taken from the API delivery-channel response.
-There is intentionally no mailto: fallback here.
+   The Review page does not use mailto:.
 
-The API remains responsible for the Customer Care email.
-The Review page only displays the email delivery option
-returned by the API.
+   If the delivery-channel API supplies an email URL,
+   that URL is used.
 
-The exact prepared document is still served by the existing
-download route. No document is regenerated here.
-*/
+   If the API does not supply an email URL, clicking
+   the Email button calls the server-side Customer Care
+   email API directly.
+
+   The Review page never creates the email itself.
+   ========================================================= */
 
 function buildFallbackDownloadUrl(){
-return "/api/download?job_id="+encodeURIComponent(jobId)+"&version_id="+encodeURIComponent(versionId)
+
+return "/api/download?job_id="+
+encodeURIComponent(jobId)+
+"&version_id="+
+encodeURIComponent(versionId)
+
+}
+
+function buildEmailApiRequest(){
+
+return {
+job_id:jobId,
+version_id:versionId,
+service:service,
+title:documentTitle
+}
+
+}
+
+async function sendCustomerCareEmail(){
+
+if(!jobId){
+
+setMessage(
+"No document job was supplied.",
+"error"
+);
+
+return
+}
+
+if(!versionId){
+
+setMessage(
+"The current document version could not be identified.",
+"error"
+);
+
+return
+}
+
+try{
+
+busy=true;
+updateButtons();
+
+setMessage(
+"Sending the Customer Care email..."
+);
+
+const result=
+await apiPost(
+"/api/delivery/email",
+buildEmailApiRequest()
+);
+
+paymentMessage.textContent=
+"Customer Care email has been sent successfully.";
+
+setMessage(
+clean(result.message)||
+"Customer Care email has been sent successfully.",
+"success"
+);
+
+}catch(e){
+
+setMessage(
+e.message||
+"Customer Care email could not be sent.",
+"error"
+)
+
+}finally{
+
+busy=false;
+updateButtons()
+
+}
+
 }
 
 function renderDeliveryChannels(ch){
 
-const channels=Array.isArray(ch?.channels)?ch.channels:[];
-const findChannel=id=>channels.find(x=>clean(x?.id).toLowerCase()===id);
+const channels=
+Array.isArray(ch?.channels)
+?ch.channels
+:[];
 
-const phone=findChannel("phone");
-const whatsapp=findChannel("whatsapp");
-const telegram=findChannel("telegram");
-const email=findChannel("email");
-
-const fallbackDownload=buildFallbackDownloadUrl();
-
-const phoneUrl=clean(phone?.url)||fallbackDownload;
-
-const whatsappUrl=clean(whatsapp?.url)||(
-"https://wa.me/?text="+encodeURIComponent(
-"Your document is ready: "+
-new URL(phoneUrl,window.location.origin).href
-));
-
-const telegramUrl=clean(telegram?.url)||(
-"https://t.me/share/url?url="+
-encodeURIComponent(new URL(phoneUrl,window.location.origin).href)+
-"&text="+encodeURIComponent("Your document is ready.")
+const findChannel=id=>
+channels.find(
+x=>
+clean(x?.id).toLowerCase()===id
 );
 
-/*
-The API must provide the email channel URL.
+const phone=
+findChannel("phone");
 
-No mailto fallback is generated here because Customer Care
-email handling belongs to the API.
-*/
-const emailUrl=clean(email?.url);
+const whatsapp=
+findChannel("whatsapp");
+
+const telegram=
+findChannel("telegram");
+
+const email=
+findChannel("email");
+
+const fallbackDownload=
+buildFallbackDownloadUrl();
+
+const phoneUrl=
+clean(phone?.url)||
+fallbackDownload;
+
+const whatsappUrl=
+clean(whatsapp?.url)||
+(
+"https://wa.me/?text="+
+encodeURIComponent(
+"Your document is ready: "+
+new URL(
+phoneUrl,
+window.location.origin
+).href
+)
+);
+
+const telegramUrl=
+clean(telegram?.url)||
+(
+"https://t.me/share/url?url="+
+encodeURIComponent(
+new URL(
+phoneUrl,
+window.location.origin
+).href
+)+
+"&text="+
+encodeURIComponent(
+"Your document is ready."
+)
+);
+
+const emailUrl=
+clean(email?.url);
 
 paymentSection.style.display="block";
 
-let emailHtml="";
+/*
+   IMPORTANT:
+   Do NOT make Email conditional.
 
-if(emailUrl){
-emailHtml=`
-<a class="delivery-channel email" href="${emailUrl}" target="_blank" rel="noopener">
-📧 Email
-</a>
-`;
-}
+   The button is always included.
+
+   If the API has supplied an email URL,
+   the button navigates to that API URL.
+
+   Otherwise the button calls /api/delivery/email.
+*/
 
 paymentDetails.innerHTML=`
-<div class="delivery-heading">YOUR DOCUMENT IS READY</div>
+
+<div class="delivery-heading">
+YOUR DOCUMENT IS READY
+</div>
 
 <div class="delivery-channels">
 
-<a class="delivery-channel phone" href="${phoneUrl}" rel="noopener">
+<a
+class="delivery-channel phone"
+href="${phoneUrl}"
+rel="noopener"
+>
 📱 Download to Phone
 </a>
 
-<a class="delivery-channel whatsapp" href="${whatsappUrl}" target="_blank" rel="noopener">
+<a
+class="delivery-channel whatsapp"
+href="${whatsappUrl}"
+target="_blank"
+rel="noopener"
+>
 💬 WhatsApp
 </a>
 
-<a class="delivery-channel telegram" href="${telegramUrl}" target="_blank" rel="noopener">
+<a
+class="delivery-channel telegram"
+href="${telegramUrl}"
+target="_blank"
+rel="noopener"
+>
 ✈️ Telegram
 </a>
 
-${emailHtml}
+${
+emailUrl
+?
+`
+<a
+id="customerCareEmailLink"
+class="delivery-channel email"
+href="${emailUrl}"
+target="_blank"
+rel="noopener"
+>
+📧 Email
+</a>
+`
+:
+`
+<button
+id="customerCareEmailButton"
+class="delivery-channel email"
+type="button"
+>
+📧 Email
+</button>
+`
+}
 
 </div>
 
@@ -850,52 +1640,84 @@ Your document has already been prepared. The Review page does not regenerate it.
 </div>
 `;
 
-paymentMessage.textContent=emailUrl
-?"Your document is ready. Customer Care email is handled by the service API."
-:"Your document is ready. Customer Care email is handled by the service API.";
+const emailButton=
+$("customerCareEmailButton");
 
-setMessage("Your delivery options are ready.","success")
+if(emailButton){
+
+emailButton.onclick=
+sendCustomerCareEmail;
+
+}
+
+paymentMessage.textContent=
+"Your document is ready. Choose a delivery option.";
+
+setMessage(
+"Your delivery options are ready.",
+"success"
+)
+
 }
 
 async function showDeliveryChannels(){
 
 if(!reviewFinished){
-return setMessage("Please wait until the complete document is ready.","error")
+
+return setMessage(
+"Please wait until the complete document is ready.",
+"error"
+)
+
 }
 
 if(!versionId){
-return setMessage("The current document version could not be identified.","error")
+
+return setMessage(
+"The current document version could not be identified.",
+"error"
+)
+
 }
 
 try{
 
 busy=true;
 downloadButton.disabled=true;
-setMessage("Preparing your delivery options...");
 
-let title=clean(documentTitle)||"";
+setMessage(
+"Preparing your delivery options..."
+);
+
+let title=
+clean(documentTitle)||"";
 
 if(!title){
-title=clean(params.get("document_title"))||clean(params.get("title"))
+
+title=
+clean(params.get("document_title"))||
+clean(params.get("title"))
+
 }
 
 if(!title){
 
+/*
+   Even without a title, keep ALL delivery
+   buttons visible. Do not remove Email.
+*/
+
 renderDeliveryChannels({
 channels:[
-{id:"phone",url:buildFallbackDownloadUrl()}
+{
+id:"phone",
+url:buildFallbackDownloadUrl()
+}
 ]
 });
 
 return
 }
-
-/*
-Only request delivery information from the API.
-
-There is intentionally no customer-side email creation,
-mailto link, email API call, or email sending here.
-*/
 
 const url=
 "/api/delivery/channels?service="+
@@ -903,19 +1725,35 @@ encodeURIComponent(service)+
 "&title="+
 encodeURIComponent(title);
 
-const ch=await apiGet(url);
+const ch=
+await apiGet(url);
 
 renderDeliveryChannels(ch);
 
 }catch(e){
 
+/*
+   If the channel lookup fails, do not remove
+   the Email button.
+
+   Render the delivery area locally with the
+   existing exact download path and the API
+   Customer Care email action.
+*/
+
 renderDeliveryChannels({
 channels:[
-{id:"phone",url:buildFallbackDownloadUrl()}
+{
+id:"phone",
+url:buildFallbackDownloadUrl()
+}
 ]
 });
 
-setMessage("Your phone download is ready.","success")
+setMessage(
+"Your delivery options are ready.",
+"success"
+)
 
 }finally{
 
@@ -923,49 +1761,70 @@ busy=false;
 updateButtons()
 
 }
+
 }
 
-downloadButton.onclick=showDeliveryChannels;
+downloadButton.onclick=
+showDeliveryChannels;
 
 async function start(){
 
-serviceBadge.textContent=service;
+serviceBadge.textContent=
+service;
 
 if(!jobId){
 
 setStatus("NO DOCUMENT");
 
-pageViewer.innerHTML='<div class="empty-page">No document job was supplied.</div>';
+pageViewer.innerHTML=
+'<div class="empty-page">No document job was supplied.</div>';
 
-setMessage("This review page needs a document job.","error");
+setMessage(
+"This review page needs a document job.",
+"error"
+);
 
 return
 }
 
 try{
 
-const d=await loadJob();
+const d=
+await loadJob();
 
 if(
 !complete(d)&&
-!["review_error","correction_error"].includes(state())
+![
+"review_error",
+"correction_error"
+].includes(state())
 ){
+
 startPolling()
+
 }
 
 }catch(e){
 
 setStatus("ERROR");
 
-setMessage(e.message,"error");
+setMessage(
+e.message,
+"error"
+);
 
 pageViewer.innerHTML=
 '<div class="empty-page">'+
-String(e.message).replaceAll("<","&lt;").replaceAll(">","&gt;")+
+String(e.message)
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")+
 '</div>'
+
 }
+
 }
 
 start();
-</script></body>
+</script>
+</body>
 </html>
