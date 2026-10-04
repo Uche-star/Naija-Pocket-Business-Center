@@ -1,5 +1,4 @@
-<!DOCTYPE html><html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Review Your Complete Service — Naija Pocket Business Center</title>
@@ -91,14 +90,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .payment-id{margin-top:6px;color:#aaa;font-size:9px;word-break:break-all}
 .payment-message{margin-top:7px;color:#888;font-size:9px;text-align:center;line-height:1.45}
 .message{flex:0 0 auto;min-height:17px;margin-top:2px;color:#888;font-size:9px;text-align:center}
-.message.error{color:#ff7777}.message.success{color:#75dc99}
-
-/* CUSTOMER CARE DELIVERY */
-.delivery-channels{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.message.error{color:#ff7777}.message.success{color:#75dc99}/* CUSTOMER CARE DELIVERY */
+.delivery-channels{margin-top:8px;display:grid;grid-template-columns:1fr;gap:6px}
 .delivery-channel{display:flex;align-items:center;justify-content:center;min-height:42px;padding:8px 6px;border:1px solid rgba(212,175,55,.35);border-radius:8px;background:#171717;color:#fff;text-decoration:none;font-size:9px;font-weight:900;text-align:center}
-.delivery-channel.phone{background:#007bff;border-color:#007bff;color:#fff}
-.delivery-channel.whatsapp{background:#075e54;border-color:#075e54;color:#fff}
-.delivery-channel.telegram{background:#168acd;border-color:#168acd;color:#fff}
 .delivery-channel.email{background:#333;border-color:#555;color:#fff}
 .delivery-heading{margin-top:8px;color:var(--gold2);font-size:10px;font-weight:900;text-align:center}
 .delivery-note{margin-top:5px;color:#888;font-size:8px;line-height:1.4;text-align:center}
@@ -156,112 +150,57 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .page-number-input{height:35px!important}.go-button{width:65px!important}
 }
 </style>
-</head>
 
-<body>
-<span id="serviceBadge" style="display:none">Service</span>
-
-<main class="main">
-
-<section class="review-card">
+</head><body>
+<span id="serviceBadge" style="display:none">Service</span><main class="main"><section class="review-card">
 <div class="document-card-header">
 <div class="document-heading"><h3>Your Complete Document</h3></div>
 <div id="pageCount" class="page-count">0 PAGES</div>
-</div>
-
-<div id="documentScroll" class="document-scroll">
+</div><div id="documentScroll" class="document-scroll">
 <div id="pageViewer" class="page-viewer">
 <div class="loading">
 <div class="spinner"></div>
 <div>Your service is being carefully prepared.</div>
 </div>
-</div>
-
-<div class="page-navigation">
+</div><div class="page-navigation">
 <button id="previousButton" class="nav-button" type="button" disabled>← Previous Page</button>
 <div id="pageIndicator" class="page-indicator">Page 0 of 0</div>
 <button id="nextButton" class="nav-button next" type="button" disabled>Next Page →</button>
-</div>
-
-<div class="go-row">
+</div><div class="go-row">
 <input id="pageNumberInput" class="page-number-input" type="number" min="1" placeholder="Enter page number">
 <button id="goButton" class="go-button" type="button">GO</button>
-</div>
-
-<div id="pageReview" class="page-review" style="display:none">
+</div><div id="pageReview" class="page-review" style="display:none">
 <div class="page-review-title">PAGE REVIEW</div>
 <div id="pageReviewText" class="page-review-text"></div>
 </div>
 </div>
-</section>
-
-<section class="action-area">
-
-<section class="top-panel">
+</section><section class="action-area"><section class="top-panel">
 <h2 class="review-title">Review Your Complete Service</h2>
-<p class="review-subtitle">Review every page. Make any necessary correction, then download your reviewed document.</p>
-
-<div class="status-row">
+<p class="review-subtitle">Review every page. Make any necessary correction, then download your reviewed document.</p><div class="status-row">
 <span class="status-label">Review status</span>
 <span id="statusValue" class="status-value">Preparing...</span>
-</div>
-
-<div class="progress-shell">
+</div><div class="progress-shell">
 <div id="progressBar" class="progress-bar"></div>
-</div>
-
-<div id="progressText" class="progress-text">Preparing the document...</div>
-</section>
-
-<section class="top-amount-card">
-<div class="top-amount-head">
-
-<div>
+</div><div id="progressText" class="progress-text">Preparing the document...</div>
+</section><section class="top-amount-card">
+<div class="top-amount-head"><div>
 <div class="top-amount-label">AMOUNT TO PAY</div>
 <div id="amountValueTop" class="top-amount-value">₦0</div>
-</div>
-
-<div class="top-action-buttons">
+</div><div class="top-action-buttons">
 <button id="makePaymentButton" class="make-payment-button" type="button" style="display:none">💳 MAKE PAYMENT</button>
 <button id="paymentButton" class="confirm-payment-button" type="button" style="display:none">✓ I HAVE MADE PAYMENT</button>
 <button id="downloadButton" class="download-button active" type="button">⬇ DOWNLOAD DOCUMENT</button>
-</div>
-
-</div>
-</section>
-
-<div class="correction-box">
+</div></div>
+</section><div class="correction-box">
 <textarea id="correctionInput" class="correction-input" placeholder="Want anything changed? Tell us what to correct..."></textarea>
 <button id="correctionButton" class="correction-button" type="button">Apply Correction</button>
-</div>
-
-<section id="paymentSection" class="payment-section" style="display:none">
-
-<div class="payment-title">PAYMENT</div>
-
-<div class="payment-subtitle">
+</div><section id="paymentSection" class="payment-section" style="display:none"><div class="payment-title">PAYMENT</div><div class="payment-subtitle">
 Your reviewed document is ready. Choose how you want to receive it.
-</div>
-
-<div id="paymentDetails" class="payment-details">
+</div><div id="paymentDetails" class="payment-details">
 Payment has not been started.
-</div>
-
-<div id="paymentId" class="payment-id" style="display:none"></div>
-
-<div id="paymentMessage" class="payment-message">
+</div><div id="paymentId" class="payment-id" style="display:none"></div><div id="paymentMessage" class="payment-message">
 Download is available now.
-</div>
-
-</section>
-
-</section>
-
-<div id="message" class="message"></div>
-
-</main>
-
-<script>
+</div></section></section><div id="message" class="message"></div></main><script>
 "use strict";
 
 const API_BASE="";
@@ -1392,29 +1331,23 @@ startPaymentPolling()
    CUSTOMER CARE DELIVERY
    =========================================================
 
-   IMPORTANT:
-   The Email button is ALWAYS rendered.
+   CURRENT DELIVERY FLOW:
 
-   The Review page does not use mailto:.
+   DOWNLOAD DOCUMENT
+          ↓
+   SHOW EMAIL BUTTON
+          ↓
+   EMAIL BUTTON
+          ↓
+   POST /api/delivery/email
+          ↓
+   CUSTOMER CARE EMAIL IS SENT
 
-   If the delivery-channel API supplies an email URL,
-   that URL is used.
-
-   If the API does not supply an email URL, clicking
-   the Email button calls the server-side Customer Care
-   email API directly.
-
-   The Review page never creates the email itself.
+   No mailto.
+   No email-app handoff.
+   No direct download from the delivery button.
+   No regeneration of the finished document.
    ========================================================= */
-
-function buildFallbackDownloadUrl(){
-
-return "/api/download?job_id="+
-encodeURIComponent(jobId)+
-"&version_id="+
-encodeURIComponent(versionId)
-
-}
 
 function buildEmailApiRequest(){
 
@@ -1422,7 +1355,8 @@ return {
 job_id:jobId,
 version_id:versionId,
 service:service,
-title:documentTitle
+title:documentTitle,
+document_title:documentTitle
 }
 
 }
@@ -1443,6 +1377,16 @@ if(!versionId){
 
 setMessage(
 "The current document version could not be identified.",
+"error"
+);
+
+return
+}
+
+if(!documentTitle){
+
+setMessage(
+"The document title could not be identified.",
 "error"
 );
 
@@ -1490,83 +1434,9 @@ updateButtons()
 
 }
 
-function renderDeliveryChannels(ch){
-
-const channels=
-Array.isArray(ch?.channels)
-?ch.channels
-:[];
-
-const findChannel=id=>
-channels.find(
-x=>
-clean(x?.id).toLowerCase()===id
-);
-
-const phone=
-findChannel("phone");
-
-const whatsapp=
-findChannel("whatsapp");
-
-const telegram=
-findChannel("telegram");
-
-const email=
-findChannel("email");
-
-const fallbackDownload=
-buildFallbackDownloadUrl();
-
-const phoneUrl=
-clean(phone?.url)||
-fallbackDownload;
-
-const whatsappUrl=
-clean(whatsapp?.url)||
-(
-"https://wa.me/?text="+
-encodeURIComponent(
-"Your document is ready: "+
-new URL(
-phoneUrl,
-window.location.origin
-).href
-)
-);
-
-const telegramUrl=
-clean(telegram?.url)||
-(
-"https://t.me/share/url?url="+
-encodeURIComponent(
-new URL(
-phoneUrl,
-window.location.origin
-).href
-)+
-"&text="+
-encodeURIComponent(
-"Your document is ready."
-)
-);
-
-const emailUrl=
-clean(email?.url);
+function renderDeliveryChannels(){
 
 paymentSection.style.display="block";
-
-/*
-   IMPORTANT:
-   Do NOT make Email conditional.
-
-   The button is always included.
-
-   If the API has supplied an email URL,
-   the button navigates to that API URL.
-
-   Otherwise the button calls /api/delivery/email.
-*/
 
 paymentDetails.innerHTML=`
 
@@ -1576,48 +1446,6 @@ YOUR DOCUMENT IS READY
 
 <div class="delivery-channels">
 
-<a
-class="delivery-channel phone"
-href="${phoneUrl}"
-rel="noopener"
->
-📱 Download to Phone
-</a>
-
-<a
-class="delivery-channel whatsapp"
-href="${whatsappUrl}"
-target="_blank"
-rel="noopener"
->
-💬 WhatsApp
-</a>
-
-<a
-class="delivery-channel telegram"
-href="${telegramUrl}"
-target="_blank"
-rel="noopener"
->
-✈️ Telegram
-</a>
-
-${
-emailUrl
-?
-`
-<a
-id="customerCareEmailLink"
-class="delivery-channel email"
-href="${emailUrl}"
-target="_blank"
-rel="noopener"
->
-📧 Email
-</a>
-`
-:
-`
 <button
 id="customerCareEmailButton"
 class="delivery-channel email"
@@ -1625,18 +1453,16 @@ type="button"
 >
 📧 Email
 </button>
-`
-}
 
 </div>
 
 <div class="customer-care-message">
 <strong>Customer Care</strong><br>
-Your document is already prepared. Customer Care email is handled through the service API.
+Tap Email to send your finished document through Customer Care.
 </div>
 
 <div class="delivery-note">
-Your document has already been prepared. The Review page does not regenerate it.
+Your finished document has already been prepared. It will not be regenerated.
 </div>
 `;
 
@@ -1644,17 +1470,14 @@ const emailButton=
 $("customerCareEmailButton");
 
 if(emailButton){
-
-emailButton.onclick=
-sendCustomerCareEmail;
-
+emailButton.onclick=sendCustomerCareEmail;
 }
 
 paymentMessage.textContent=
-"Your document is ready. Choose a delivery option.";
+"Tap Email to send your finished document.";
 
 setMessage(
-"Your delivery options are ready.",
+"Email delivery is ready.",
 "success"
 )
 
@@ -1686,73 +1509,17 @@ busy=true;
 downloadButton.disabled=true;
 
 setMessage(
-"Preparing your delivery options..."
+"Preparing your email delivery..."
 );
 
-let title=
-clean(documentTitle)||"";
-
-if(!title){
-
-title=
-clean(params.get("document_title"))||
-clean(params.get("title"))
-
-}
-
-if(!title){
-
-/*
-   Even without a title, keep ALL delivery
-   buttons visible. Do not remove Email.
-*/
-
-renderDeliveryChannels({
-channels:[
-{
-id:"phone",
-url:buildFallbackDownloadUrl()
-}
-]
-});
-
-return
-}
-
-const url=
-"/api/delivery/channels?service="+
-encodeURIComponent(service)+
-"&title="+
-encodeURIComponent(title);
-
-const ch=
-await apiGet(url);
-
-renderDeliveryChannels(ch);
+renderDeliveryChannels();
 
 }catch(e){
 
-/*
-   If the channel lookup fails, do not remove
-   the Email button.
-
-   Render the delivery area locally with the
-   existing exact download path and the API
-   Customer Care email action.
-*/
-
-renderDeliveryChannels({
-channels:[
-{
-id:"phone",
-url:buildFallbackDownloadUrl()
-}
-]
-});
-
 setMessage(
-"Your delivery options are ready.",
-"success"
+e.message||
+"Email delivery could not be prepared.",
+"error"
 )
 
 }finally{
@@ -1825,6 +1592,5 @@ String(e.message)
 }
 
 start();
-</script>
-</body>
+</script></body>
 </html>
