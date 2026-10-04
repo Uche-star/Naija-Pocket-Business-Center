@@ -11,7 +11,6 @@
   --black2:#090909;
   --panel:#111;
   --panel2:#151515;
-  --panel3:#1b1b1b;
   --gold:#d4af37;
   --gold2:#f0d56a;
   --green:#0d8a52;
@@ -41,8 +40,7 @@ body{
 }
 
 button,
-input,
-textarea{
+input{
   font:inherit;
 }
 
@@ -162,27 +160,10 @@ button{
   line-height:1.3;
 }
 
-.paper table{
-  width:100%;
-  border-collapse:collapse;
-  margin:15px 0;
-}
-
-.paper th,
-.paper td{
-  border:1px solid #bbb;
-  padding:7px;
-  vertical-align:top;
-}
-
 .paper ul,
 .paper ol{
   margin-top:8px;
   margin-bottom:14px;
-}
-
-.paper img{
-  max-width:100%;
 }
 
 .empty-paper{
@@ -394,6 +375,7 @@ button{
 }
 
 @media(max-width:900px){
+
   .main{
     grid-template-columns:1fr;
     padding:10px;
@@ -412,6 +394,7 @@ button{
 }
 
 @media(max-width:520px){
+
   .topbar{
     padding:10px 12px;
   }
@@ -517,15 +500,30 @@ button{
 
         <div class="nav-row">
 
-          <button type="button" class="nav-btn" id="prevBtn" onclick="previousPage()">
+          <button
+            type="button"
+            class="nav-btn"
+            id="prevBtn"
+            onclick="previousPage()"
+          >
             Previous
           </button>
 
-          <button type="button" class="nav-btn" id="nextBtn" onclick="nextPage()">
+          <button
+            type="button"
+            class="nav-btn"
+            id="nextBtn"
+            onclick="nextPage()"
+          >
             Next
           </button>
 
-          <button type="button" class="nav-btn" id="firstBtn" onclick="firstPage()">
+          <button
+            type="button"
+            class="nav-btn"
+            id="firstBtn"
+            onclick="firstPage()"
+          >
             First
           </button>
 
@@ -541,7 +539,12 @@ button{
             inputmode="numeric"
           >
 
-          <button type="button" onclick="goToPage()">GO</button>
+          <button
+            type="button"
+            onclick="goToPage()"
+          >
+            GO
+          </button>
 
         </div>
 
@@ -549,7 +552,9 @@ button{
 
       <div class="action-card">
 
-        <div class="action-title">Your document is ready</div>
+        <div class="action-title">
+          Your document is ready
+        </div>
 
         <div class="action-text">
           You can download the completed reviewed document now.
@@ -565,7 +570,12 @@ button{
           DOWNLOAD COMPLETED DOCUMENT
         </button>
 
-        <div id="message" class="message" role="status" aria-live="polite"></div>
+        <div
+          id="message"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></div>
 
       </div>
 
@@ -578,10 +588,20 @@ button{
 <script>
 "use strict";
 
+
+/* =========================================================
+   API CONFIGURATION
+   ========================================================= */
+
 const API_BASE = "";
 
-const PAYMENT_API_BASE =
+const DOWNLOAD_API_BASE =
   "https://naija-pocket-payment-api.onrender.com";
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
 
 let reviewData = null;
 let pages = [];
@@ -596,12 +616,15 @@ let currentTitle = "";
    ========================================================= */
 
 function clean(value){
+
   return value === null || value === undefined
     ? ""
     : String(value).trim();
 }
 
+
 function escapeHtml(value){
+
   return clean(value)
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
@@ -610,25 +633,39 @@ function escapeHtml(value){
     .replace(/'/g,"&#039;");
 }
 
+
 function showMessage(message,type="info"){
 
-  const box = document.getElementById("message");
+  const box =
+    document.getElementById("message");
 
-  if(!box) return;
+  if(!box){
+    return;
+  }
 
-  box.textContent = clean(message);
-  box.className = "message show " + type;
+  box.textContent =
+    clean(message);
+
+  box.className =
+    "message show " + type;
 }
+
 
 function hideMessage(){
 
-  const box = document.getElementById("message");
+  const box =
+    document.getElementById("message");
 
-  if(!box) return;
+  if(!box){
+    return;
+  }
 
   box.textContent = "";
-  box.className = "message";
+
+  box.className =
+    "message";
 }
+
 
 function setLoading(loading){
 
@@ -647,6 +684,7 @@ function setLoading(loading){
 
     loadingBox.classList.add("hidden");
     paper.classList.remove("hidden");
+
   }
 }
 
@@ -657,20 +695,22 @@ function setLoading(loading){
 
 async function apiGet(url){
 
-  const response = await fetch(
-    API_BASE + url,
-    {
-      method:"GET",
-      headers:{
-        "Accept":"application/json"
-      },
-      cache:"no-store"
-    }
-  );
+  const response =
+    await fetch(
+      API_BASE + url,
+      {
+        method:"GET",
+        headers:{
+          "Accept":"application/json"
+        },
+        cache:"no-store"
+      }
+    );
 
-  const data = await response
-    .json()
-    .catch(()=>({}));
+  const data =
+    await response
+      .json()
+      .catch(()=>({}));
 
   if(!response.ok){
 
@@ -695,327 +735,15 @@ async function apiGet(url){
 
 
 /* =========================================================
-   DOCUMENT API
-   ========================================================= */
-
-async function documentApiPost(url,body){
-
-  const endpoint =
-    PAYMENT_API_BASE.replace(/\/+$/,"") + url;
-
-  const response = await fetch(
-    endpoint,
-    {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Accept":"application/json"
-      },
-      body:JSON.stringify(body || {}),
-      cache:"no-store"
-    }
-  );
-
-  const data = await response
-    .json()
-    .catch(()=>({}));
-
-  if(!response.ok){
-
-    let detail = "";
-
-    if(typeof data.detail === "string"){
-      detail = data.detail;
-    }else if(data.detail){
-      detail = JSON.stringify(data.detail);
-    }
-
-    throw new Error(
-      clean(
-        data.error_message ||
-        data.error ||
-        data.message ||
-        detail ||
-        "Unable to save the reviewed document."
-      )
-    );
-  }
-
-  if(
-    data &&
-    (
-      data.success === false ||
-      data.ok === false
-    )
-  ){
-
-    throw new Error(
-      clean(
-        data.error_message ||
-        data.error ||
-        data.message ||
-        "Unable to save the reviewed document."
-      )
-    );
-  }
-
-  return data;
-}
-
-
-/* =========================================================
-   DOWNLOAD URL EXTRACTION
-   ========================================================= */
-
-/*
-  The deployed document API may return the URL directly,
-  or inside a response/data/result/document object.
-
-  This function accepts all of those forms.
-
-  Most importantly, it does NOT invent a download URL.
-  It only uses a URL actually returned by the API.
-*/
-
-function extractDownloadUrl(response){
-
-  if(!response){
-    return "";
-  }
-
-  const candidates = [
-
-    response.test_download_url,
-
-    response.testDownloadUrl,
-
-    response.download_url,
-
-    response.downloadUrl,
-
-    response.url,
-
-    response.download,
-
-    response.test_download,
-
-    response.testDownload,
-
-    response.path,
-
-    response.download_path,
-
-    response.downloadPath,
-
-    response.data?.test_download_url,
-
-    response.data?.testDownloadUrl,
-
-    response.data?.download_url,
-
-    response.data?.downloadUrl,
-
-    response.data?.url,
-
-    response.data?.download,
-
-    response.data?.test_download,
-
-    response.data?.testDownload,
-
-    response.data?.path,
-
-    response.result?.test_download_url,
-
-    response.result?.testDownloadUrl,
-
-    response.result?.download_url,
-
-    response.result?.downloadUrl,
-
-    response.result?.url,
-
-    response.result?.download,
-
-    response.result?.test_download,
-
-    response.result?.testDownload,
-
-    response.result?.path,
-
-    response.document?.test_download_url,
-
-    response.document?.testDownloadUrl,
-
-    response.document?.download_url,
-
-    response.document?.downloadUrl,
-
-    response.document?.url,
-
-    response.document?.download,
-
-    response.document?.test_download,
-
-    response.document?.testDownload,
-
-    response.document?.path
-  ];
-
-  for(const candidate of candidates){
-
-    if(typeof candidate === "string" && clean(candidate)){
-      return clean(candidate);
-    }
-  }
-
-  return "";
-}
-
-
-/* =========================================================
-   MAKE ABSOLUTE DOCUMENT API URL
-   ========================================================= */
-
-function makeDocumentApiUrl(url){
-
-  const value = clean(url);
-
-  if(!value){
-    return "";
-  }
-
-  if(/^https?:\/\//i.test(value)){
-    return value;
-  }
-
-  const base =
-    PAYMENT_API_BASE.replace(/\/+$/,"");
-
-  if(value.startsWith("/")){
-    return base + value;
-  }
-
-  return base + "/" + value;
-}
-
-
-/* =========================================================
-   DISPLAY
-   ========================================================= */
-
-function renderPlain(text){
-
-  let value = clean(text);
-
-  if(!value){
-    return "";
-  }
-
-  value = escapeHtml(value);
-
-  value = value
-    .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
-    .replace(/__(.+?)__/g,"<strong>$1</strong>")
-    .replace(/\*(.+?)\*/g,"<em>$1</em>")
-    .replace(/_(.+?)_/g,"<em>$1</em>");
-
-  value = value
-    .replace(/^###\s+(.+)$/gm,"<h3>$1</h3>")
-    .replace(/^##\s+(.+)$/gm,"<h2>$1</h2>")
-    .replace(/^#\s+(.+)$/gm,"<h1>$1</h1>");
-
-  value = value
-    .replace(/^\s*[-*]\s+(.+)$/gm,"• $1");
-
-  value = value.replace(/\n/g,"<br>");
-
-  return value;
-}
-
-
-function sanitizeHtml(value){
-
-  const text = clean(value);
-
-  if(!text){
-    return "";
-  }
-
-  if(/<\s*[a-z][^>]*>/i.test(text)){
-
-    const parser = new DOMParser();
-
-    const doc = parser.parseFromString(
-      "<div>" + text + "</div>",
-      "text/html"
-    );
-
-    const root =
-      doc.body.firstElementChild;
-
-    if(root){
-
-      const allowed = new Set([
-        "P",
-        "BR",
-        "STRONG",
-        "B",
-        "EM",
-        "I",
-        "U",
-        "H1",
-        "H2",
-        "H3",
-        "H4",
-        "UL",
-        "OL",
-        "LI",
-        "TABLE",
-        "THEAD",
-        "TBODY",
-        "TR",
-        "TH",
-        "TD",
-        "DIV",
-        "SPAN"
-      ]);
-
-      root.querySelectorAll("*").forEach(node=>{
-
-        if(!allowed.has(node.tagName)){
-
-          node.replaceWith(
-            document.createTextNode(
-              node.textContent || ""
-            )
-          );
-
-          return;
-        }
-
-        [...node.attributes].forEach(
-          attr=>{
-            node.removeAttribute(attr.name);
-          }
-        );
-      });
-
-      return root.innerHTML;
-    }
-  }
-
-  return renderPlain(text);
-}
-
-
-/* =========================================================
-   PAGE NORMALIZATION
+   REVIEW CONTENT NORMALIZATION
    ========================================================= */
 
 function normalizePageItem(item){
 
-  if(item === null || item === undefined){
+  if(
+    item === null ||
+    item === undefined
+  ){
     return "";
   }
 
@@ -1057,9 +785,13 @@ function extractPages(data){
     data?.document?.pages,
 
     data?.review?.pages
+
   ];
 
-  for(const candidate of candidates){
+  for(
+    const candidate
+    of candidates
+  ){
 
     if(Array.isArray(candidate)){
 
@@ -1074,6 +806,7 @@ function extractPages(data){
     }
   }
 
+
   const documentText =
     data?.document_text ||
     data?.documentText ||
@@ -1083,10 +816,12 @@ function extractPages(data){
     data?.document?.content ||
     "";
 
+
   if(clean(documentText)){
 
     const splitPages =
-      String(documentText).split(/\f+/);
+      String(documentText)
+        .split(/\f+/);
 
     if(splitPages.length > 1){
 
@@ -1095,7 +830,9 @@ function extractPages(data){
         .filter(Boolean);
     }
 
-    return [String(documentText)];
+    return [
+      String(documentText)
+    ];
   }
 
   return [];
@@ -1138,44 +875,185 @@ function extractTitle(data){
 
 
 /* =========================================================
-   DOCUMENT PAYLOAD
+   MARKDOWN / DOCUMENT DISPLAY CLEANING
    ========================================================= */
 
-function buildDocumentPayload(){
+function cleanDocumentText(text){
 
-  const pageObjects =
-    pages.map(
-      (page,index)=>({
-        page_number:index + 1,
-        content:page
-      })
+  let value =
+    clean(text);
+
+  if(!value){
+    return "";
+  }
+
+
+  value =
+    value.replace(/\r\n/g,"\n");
+
+
+  /*
+    Remove horizontal Markdown separators.
+  */
+
+  value =
+    value.replace(
+      /^\s*---+\s*$/gm,
+      ""
     );
 
-  return {
 
-    service:currentService,
+  /*
+    Remove heading markers while
+    preserving the heading text.
+  */
 
-    title:currentTitle,
+  value =
+    value.replace(
+      /^\s*#{1,6}\s*/gm,
+      ""
+    );
 
-    document_payload:{
-      service:currentService,
-      title:currentTitle,
-      pages:pageObjects,
-      document_text:pages.join("\n\n"),
-      filename:currentTitle,
-      page_count:pages.length
-    },
 
-    pages:pageObjects,
+  /*
+    Convert Markdown bold/italic markers
+    into plain text for the downloaded file.
 
-    document_text:pages.join("\n\n"),
+    The download test is intentionally
+    a clean text document, not raw Markdown.
+  */
 
-    filename:currentTitle,
+  value =
+    value.replace(
+      /\*\*(.*?)\*\*/gs,
+      "$1"
+    );
 
-    page_count:pages.length,
+  value =
+    value.replace(
+      /__(.*?)__/gs,
+      "$1"
+    );
 
-    job_id:currentJobId || undefined
-  };
+  value =
+    value.replace(
+      /\*(.*?)\*/gs,
+      "$1"
+    );
+
+  value =
+    value.replace(
+      /_(.*?)_/gs,
+      "$1"
+    );
+
+
+  /*
+    Remove Markdown code markers.
+  */
+
+  value =
+    value.replace(/`/g,"");
+
+
+  /*
+    Clean excessive spaces around
+    line breaks.
+  */
+
+  value =
+    value.replace(
+      /[ \t]+\n/g,
+      "\n"
+    );
+
+
+  value =
+    value.replace(
+      /\n{4,}/g,
+      "\n\n"
+    );
+
+
+  return value.trim();
+}
+
+
+/* =========================================================
+   SAFE HTML DISPLAY
+   ========================================================= */
+
+function renderPlain(text){
+
+  let value =
+    cleanDocumentText(text);
+
+  if(!value){
+    return "";
+  }
+
+
+  value =
+    escapeHtml(value);
+
+
+  /*
+    Convert heading lines to visual headings.
+  */
+
+  value =
+    value.replace(
+      /^([^\n]+)$/gm,
+      function(line){
+
+        /*
+          Keep ordinary text as text.
+          Only visually emphasize obvious
+          document headings.
+        */
+
+        if(
+          line.length < 100 &&
+          (
+            /^Abstract$/i.test(line) ||
+            /^Introduction$/i.test(line) ||
+            /^Conclusion$/i.test(line) ||
+            /^References$/i.test(line) ||
+            /^\d+\.\s+/.test(line) ||
+            /^\d+\.\d+\s+/.test(line)
+          )
+        ){
+
+          return "<strong>" +
+            line +
+            "</strong>";
+        }
+
+        return line;
+      }
+    );
+
+
+  value =
+    value.replace(
+      /\n/g,
+      "<br>"
+    );
+
+
+  return value;
+}
+
+
+function sanitizeHtml(value){
+
+  /*
+    The review document is normally plain text.
+    Escape it before displaying it so that
+    customer content cannot inject HTML.
+  */
+
+  return renderPlain(value);
 }
 
 
@@ -1192,36 +1070,49 @@ function updatePageDisplay(){
     return;
   }
 
+
   if(!pages.length){
 
     paper.innerHTML =
-      '<div class="empty-paper">No completed document content was returned.</div>';
+      '<div class="empty-paper">' +
+      'No completed document content was returned.' +
+      '</div>';
 
-    document.getElementById("pageCounter")
-      .textContent = "0 PAGES";
+    document.getElementById(
+      "pageCounter"
+    ).textContent =
+      "0 PAGES";
 
-    document.getElementById("pagesValue")
-      .textContent = "0";
+    document.getElementById(
+      "pagesValue"
+    ).textContent =
+      "0";
 
     updateNavigation();
 
     return;
   }
 
+
   paper.innerHTML =
     sanitizeHtml(
       pages[currentPage] || ""
     );
 
-  document.getElementById("pageCounter")
-    .textContent =
-      pages.length === 1
-        ? "1 PAGE"
-        : `${currentPage + 1} OF ${pages.length} PAGES`;
 
-  document.getElementById("pagesValue")
-    .textContent =
-      String(pages.length);
+  document.getElementById(
+    "pageCounter"
+  ).textContent =
+    pages.length === 1
+      ? "1 PAGE"
+      : `${currentPage + 1} OF ${pages.length} PAGES`;
+
+
+  document.getElementById(
+    "pagesValue"
+  ).textContent =
+    String(pages.length);
+
 
   updateNavigation();
 }
@@ -1238,6 +1129,7 @@ function updateNavigation(){
   const firstBtn =
     document.getElementById("firstBtn");
 
+
   if(!pages.length){
 
     prevBtn.disabled = true;
@@ -1246,6 +1138,7 @@ function updateNavigation(){
 
     return;
   }
+
 
   prevBtn.disabled =
     currentPage <= 0;
@@ -1259,7 +1152,7 @@ function updateNavigation(){
 
 
 /* =========================================================
-   NAVIGATION
+   PAGE NAVIGATION
    ========================================================= */
 
 function previousPage(){
@@ -1281,7 +1174,10 @@ function previousPage(){
 
 function nextPage(){
 
-  if(currentPage >= pages.length - 1){
+  if(
+    currentPage >=
+    pages.length - 1
+  ){
     return;
   }
 
@@ -1319,7 +1215,11 @@ function goToPage(){
     document.getElementById("pageInput");
 
   const number =
-    parseInt(input.value,10);
+    parseInt(
+      input.value,
+      10
+    );
+
 
   if(
     !Number.isFinite(number) ||
@@ -1334,6 +1234,7 @@ function goToPage(){
 
     return;
   }
+
 
   currentPage =
     number - 1;
@@ -1350,13 +1251,291 @@ function goToPage(){
 
 
 /* =========================================================
+   BUILD DOWNLOAD FILE
+   ========================================================= */
+
+function buildDownloadText(){
+
+  const sections = [];
+
+
+  /*
+    Service information
+  */
+
+  if(currentService){
+
+    sections.push(
+      currentService
+    );
+  }
+
+
+  /*
+    Document title
+  */
+
+  if(currentTitle){
+
+    sections.push(
+      currentTitle
+    );
+  }
+
+
+  sections.push(
+    ""
+  );
+
+
+  /*
+    Add every reviewed page in order.
+
+    Each page is cleaned before being
+    placed into the downloadable file.
+  */
+
+  pages.forEach(
+    (page,index)=>{
+
+      const cleaned =
+        cleanDocumentText(page);
+
+      if(!cleaned){
+        return;
+      }
+
+
+      if(pages.length > 1){
+
+        sections.push(
+          `Page ${index + 1}`
+        );
+
+        sections.push(
+          ""
+        );
+      }
+
+
+      sections.push(
+        cleaned
+      );
+
+      sections.push(
+        ""
+      );
+    }
+  );
+
+
+  return sections
+    .join("\n")
+    .replace(/\n{3,}/g,"\n\n")
+    .trim() + "\n";
+}
+
+
+/* =========================================================
+   SAFE DOWNLOAD FILENAME
+   ========================================================= */
+
+function safeDownloadFilename(){
+
+  let title =
+    clean(currentTitle) ||
+    "Completed Document";
+
+
+  /*
+    Remove characters that are unsafe
+    in normal filenames.
+  */
+
+  title =
+    title.replace(
+      /[<>:"/\\|?*\x00-\x1F]/g,
+      ""
+    );
+
+
+  title =
+    title.replace(
+      /\s+/g,
+      " "
+    ).trim();
+
+
+  if(!title){
+    title = "Completed Document";
+  }
+
+
+  /*
+    The external engineer's API explicitly
+    allows .txt files.
+  */
+
+  return title + ".txt";
+}
+
+
+/* =========================================================
+   EXTERNAL ENGINEER /upload
+   ========================================================= */
+
+async function uploadToDownloadService(){
+
+  const text =
+    buildDownloadText();
+
+
+  if(!text){
+
+    throw new Error(
+      "The reviewed document is empty."
+    );
+  }
+
+
+  const filename =
+    safeDownloadFilename();
+
+
+  /*
+    The engineer's endpoint requires:
+
+      document: UploadFile
+      document_title: Form(...)
+
+    Therefore we MUST use FormData.
+
+    We do NOT send JSON here.
+  */
+
+  const formData =
+    new FormData();
+
+
+  const file =
+    new Blob(
+      [text],
+      {
+        type:"text/plain;charset=utf-8"
+      }
+    );
+
+
+  formData.append(
+    "document",
+    file,
+    filename
+  );
+
+
+  formData.append(
+    "document_title",
+    currentTitle ||
+    "Completed Document"
+  );
+
+
+  const endpoint =
+    DOWNLOAD_API_BASE.replace(
+      /\/+$/,
+      ""
+    ) + "/upload";
+
+
+  const response =
+    await fetch(
+      endpoint,
+      {
+        method:"POST",
+        body:formData,
+        cache:"no-store"
+      }
+    );
+
+
+  const data =
+    await response
+      .json()
+      .catch(()=>({}));
+
+
+  if(!response.ok){
+
+    const detail =
+      typeof data.detail === "string"
+        ? data.detail
+        : "";
+
+
+    throw new Error(
+      clean(
+        data.error ||
+        data.message ||
+        detail ||
+        `Download service returned HTTP ${response.status}.`
+      )
+    );
+  }
+
+
+  if(
+    !data ||
+    data.success !== true
+  ){
+
+    throw new Error(
+      clean(
+        data?.error ||
+        data?.message ||
+        "The download service did not accept the document."
+      )
+    );
+  }
+
+
+  /*
+    This is the exact field returned
+    by the external engineer's /upload
+    endpoint.
+  */
+
+  const relativeUrl =
+    clean(
+      data.download_url
+    );
+
+
+  if(!relativeUrl){
+
+    throw new Error(
+      "The document was uploaded, but the download URL was not returned."
+    );
+  }
+
+
+  return {
+    data:data,
+    downloadUrl:relativeUrl
+  };
+}
+
+
+/* =========================================================
    DOWNLOAD
    ========================================================= */
 
 async function downloadReviewedDocument(){
 
   const button =
-    document.getElementById("downloadBtn");
+    document.getElementById(
+      "downloadBtn"
+    );
+
 
   if(!pages.length){
 
@@ -1368,6 +1547,7 @@ async function downloadReviewedDocument(){
     return;
   }
 
+
   if(!currentService){
 
     showMessage(
@@ -1377,6 +1557,7 @@ async function downloadReviewedDocument(){
 
     return;
   }
+
 
   if(!currentTitle){
 
@@ -1388,6 +1569,7 @@ async function downloadReviewedDocument(){
     return;
   }
 
+
   button.disabled = true;
 
   button.textContent =
@@ -1395,104 +1577,101 @@ async function downloadReviewedDocument(){
 
   hideMessage();
 
+
   try{
 
-    const payload =
-      buildDocumentPayload();
-
-    /*
-      Save the exact reviewed document
-      through the separate document API.
-    */
-
-    const response =
-      await documentApiPost(
-        "/api/document/test-save",
-        payload
-      );
-
-    console.log(
-      "Document test-save response:",
-      response
+    showMessage(
+      "Preparing your completed document...",
+      "info"
     );
 
-    /*
-      Extract the URL from the actual API response.
-    */
-
-    const downloadUrl =
-      extractDownloadUrl(response);
-
-    if(!downloadUrl){
-
-      /*
-        This is deliberately different from a network error.
-
-        The API has already accepted/saved the document,
-        but the response did not contain a recognized
-        download URL.
-
-        We do not invent a token or construct one.
-      */
-
-      console.error(
-        "No download URL found in test-save response:",
-        response
-      );
-
-      throw new Error(
-        "The document was saved, but the download link was not returned by the document API."
-      );
-    }
 
     /*
-      Resolve a relative URL against the
-      document/payment API, never against
-      the Review page origin.
+      Send the actual reviewed document
+      as multipart/form-data to the
+      external engineer's /upload endpoint.
     */
 
-    const finalUrl =
-      makeDocumentApiUrl(downloadUrl);
+    const result =
+      await uploadToDownloadService();
 
-    if(!finalUrl){
 
-      throw new Error(
-        "The document API returned an invalid download link."
-      );
+    console.log(
+      "NPBC download upload response:",
+      result.data
+    );
+
+
+    let finalUrl =
+      result.downloadUrl;
+
+
+    /*
+      The engineer currently returns
+      a relative URL such as:
+
+        /download/<uuid>
+
+      Resolve it against the external
+      engineer's service.
+    */
+
+    if(
+      !/^https?:\/\//i.test(finalUrl)
+    ){
+
+      finalUrl =
+        DOWNLOAD_API_BASE.replace(
+          /\/+$/,
+          ""
+        ) +
+        (
+          finalUrl.startsWith("/")
+            ? finalUrl
+            : "/" + finalUrl
+        );
     }
+
 
     showMessage(
       "Your document is ready. Starting download...",
       "success"
     );
 
-    /*
-      Navigate directly to the temporary
-      document-download endpoint.
 
-      That endpoint returns the exact
-      canonical saved file.
+    /*
+      This goes directly to:
+
+        /download/{token}
+
+      on the external engineer's service.
+
+      That endpoint returns FileResponse.
     */
 
     setTimeout(
       ()=>{
-        window.location.href = finalUrl;
+        window.location.href =
+          finalUrl;
       },
-      350
+      400
     );
+
 
   }catch(error){
 
     console.error(
-      "Reviewed document download failed:",
+      "Direct document download failed:",
       error
     );
+
 
     showMessage(
       clean(error?.message) ||
       "The request could not be completed.",
       "error"
     );
+
 
     button.disabled = false;
 
@@ -1512,12 +1691,14 @@ async function loadReview(){
 
   hideMessage();
 
+
   try{
 
     const params =
       new URLSearchParams(
         window.location.search
       );
+
 
     currentJobId =
       clean(
@@ -1527,6 +1708,7 @@ async function loadReview(){
         ""
       );
 
+
     if(!currentJobId){
 
       throw new Error(
@@ -1534,20 +1716,33 @@ async function loadReview(){
       );
     }
 
+
     reviewData =
       await apiGet(
         "/api/review?job_id=" +
-        encodeURIComponent(currentJobId)
+        encodeURIComponent(
+          currentJobId
+        )
       );
 
+
     currentService =
-      extractService(reviewData);
+      extractService(
+        reviewData
+      );
+
 
     currentTitle =
-      extractTitle(reviewData);
+      extractTitle(
+        reviewData
+      );
+
 
     pages =
-      extractPages(reviewData);
+      extractPages(
+        reviewData
+      );
+
 
     if(!pages.length){
 
@@ -1556,27 +1751,40 @@ async function loadReview(){
       );
     }
 
-    document.getElementById("serviceValue")
-      .textContent =
-      currentService || "Document Service";
 
-    document.getElementById("titleValue")
-      .textContent =
-      currentTitle || "Completed Document";
+    document.getElementById(
+      "serviceValue"
+    ).textContent =
+      currentService ||
+      "Document Service";
 
-    document.getElementById("reviewStatusValue")
-      .textContent =
+
+    document.getElementById(
+      "titleValue"
+    ).textContent =
+      currentTitle ||
+      "Completed Document";
+
+
+    document.getElementById(
+      "reviewStatusValue"
+    ).textContent =
       "READY";
 
-    document.getElementById("statusPill")
-      .textContent =
+
+    document.getElementById(
+      "statusPill"
+    ).textContent =
       "READY";
+
 
     currentPage = 0;
+
 
     updatePageDisplay();
 
     setLoading(false);
+
 
   }catch(error){
 
@@ -1585,12 +1793,20 @@ async function loadReview(){
       error
     );
 
+
     setLoading(false);
 
-    const paper =
-      document.getElementById("paper");
 
-    paper.classList.remove("hidden");
+    const paper =
+      document.getElementById(
+        "paper"
+      );
+
+
+    paper.classList.remove(
+      "hidden"
+    );
+
 
     paper.innerHTML =
       '<div class="empty-paper">' +
@@ -1600,13 +1816,18 @@ async function loadReview(){
       ) +
       "</div>";
 
-    document.getElementById("statusPill")
-      .textContent =
+
+    document.getElementById(
+      "statusPill"
+    ).textContent =
       "ERROR";
 
-    document.getElementById("reviewStatusValue")
-      .textContent =
+
+    document.getElementById(
+      "reviewStatusValue"
+    ).textContent =
       "ERROR";
+
 
     showMessage(
       clean(error?.message) ||
@@ -1629,16 +1850,21 @@ document.addEventListener(
       previousPage();
     }
 
+
     if(event.key === "ArrowRight"){
       nextPage();
     }
 
+
     if(
       event.key === "Enter" &&
-      document.activeElement?.id === "pageInput"
+      document.activeElement?.id ===
+      "pageInput"
     ){
+
       goToPage();
     }
+
   }
 );
 
