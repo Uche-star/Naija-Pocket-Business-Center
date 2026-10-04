@@ -7,2794 +7,2611 @@
 
 <style>
 :root{
-  --black:#050505;
-  --black2:#080808;
-  --panel:#101010;
-  --panel2:#151515;
-  --panel3:#1b1b1b;
-  --gold:#d4af37;
-  --gold2:#f0cf62;
-  --gold3:#a8861f;
-  --white:#f7f7f7;
-  --muted:#aaa;
-  --green:#36c878;
-  --red:#e05b5b;
-  --line:rgba(212,175,55,.25);
+--black:#050505;
+--panel:#111;
+--line:rgba(255,255,255,.12);
+--gold:#d4af37;
+--gold2:#f0cf62;
+--white:#fff;
+--muted:#a2a2a2;
+--red:#9d0000;
+--green:#008000
 }
 
 *{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent
 }
 
-html,
+html,body{
+margin:0;
+padding:0;
+width:100%;
+height:100%;
+background:var(--black);
+color:var(--white);
+font-family:Inter,Arial,sans-serif
+}
+
 body{
-  margin:0;
-  width:100%;
-  height:100%;
-  background:var(--black);
-  color:var(--white);
-  font-family:Arial,Helvetica,sans-serif;
-  overflow:hidden;
+overflow:hidden
 }
 
-body{
-  min-height:100vh;
-}
-
-button,
-input,
-textarea{
-  font:inherit;
+button,textarea,input{
+font:inherit
 }
 
 button{
-  cursor:pointer;
+cursor:pointer
 }
 
-#app{
-  width:100%;
-  height:100vh;
-  display:grid;
-  grid-template-rows:50% 50%;
-  background:
-    radial-gradient(circle at 50% 0%,rgba(212,175,55,.07),transparent 35%),
-    var(--black);
+button:disabled{
+opacity:.45;
+cursor:not-allowed
 }
 
-/* =========================================================
-   DOCUMENT AREA
-   ========================================================= */
-
-.document-zone{
-  min-height:0;
-  display:flex;
-  flex-direction:column;
-  border-bottom:1px solid var(--line);
-  background:#070707;
+.header{
+display:none!important
 }
 
-.document-top{
-  height:54px;
-  min-height:54px;
-  padding:0 14px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  border-bottom:1px solid rgba(255,255,255,.07);
-  background:linear-gradient(180deg,#111,#080808);
+.main{
+position:fixed!important;
+top:0!important;
+left:0!important;
+right:0!important;
+bottom:0!important;
+width:100%!important;
+max-width:1100px!important;
+margin:0 auto!important;
+padding:0!important;
+display:grid!important;
+grid-template-rows:50% 50%!important;
+gap:0!important;
+overflow:hidden!important
 }
 
-.document-brand{
-  min-width:0;
-  display:flex;
-  flex-direction:column;
-  gap:3px;
+.review-card{
+grid-row:1;
+min-height:0!important;
+height:100%!important;
+display:flex!important;
+flex-direction:column!important;
+background:#0b0b0b;
+border:1px solid rgba(212,175,55,.22);
+border-radius:0!important;
+overflow:hidden!important
 }
 
-.document-label{
-  color:var(--gold2);
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:1.7px;
-  text-transform:uppercase;
+.document-card-header{
+flex:0 0 auto;
+padding:8px 10px!important;
+background:#111;
+border-bottom:1px solid var(--line);
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:8px
 }
 
-.document-title-top{
-  max-width:65vw;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  color:#eee;
-  font-size:12px;
+.document-heading h3{
+margin:0;
+color:var(--gold2);
+font-size:13px;
+font-weight:900
 }
 
 .page-count{
-  flex-shrink:0;
-  color:var(--gold);
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:1px;
-  text-transform:uppercase;
+color:#aaa;
+font-size:10px;
+font-weight:800
 }
 
 .document-scroll{
-  flex:1;
-  min-height:0;
-  overflow:auto;
-  padding:12px;
-  -webkit-overflow-scrolling:touch;
+flex:1 1 auto!important;
+min-height:0!important;
+height:auto!important;
+padding:5px!important;
+overflow-y:auto!important;
+overflow-x:hidden!important;
+-webkit-overflow-scrolling:touch;
+overscroll-behavior:contain
+}
+
+.document-scroll::-webkit-scrollbar{
+width:5px
+}
+
+.document-scroll::-webkit-scrollbar-track{
+background:#090909
+}
+
+.document-scroll::-webkit-scrollbar-thumb{
+background:#3a3a3a;
+border-radius:20px
+}
+
+.page-viewer{
+width:100%
 }
 
 .document-page{
-  width:min(900px,100%);
-  min-height:100%;
-  margin:0 auto;
-  padding:28px 25px;
-  background:#fff;
-  color:#111;
-  box-shadow:
-    0 0 0 1px rgba(212,175,55,.25),
-    0 12px 45px rgba(0,0,0,.45);
+position:relative;
+width:100%;
+min-height:620px;
+background:#fff;
+color:#111;
+border-radius:2px;
+box-shadow:0 8px 35px rgba(0,0,0,.45);
+padding:42px 30px 58px;
+overflow:visible;
+user-select:text;
+-webkit-user-select:text;
+cursor:default
 }
 
-.document-page.empty{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  color:#777;
-  font-size:14px;
+.page-number-inside{
+color:#777;
+font-family:Arial,sans-serif;
+font-size:9px;
+text-align:center;
+margin-bottom:24px
 }
 
 .page-content{
-  width:100%;
-  font-size:14px;
-  line-height:1.7;
-  overflow-wrap:anywhere;
-  word-break:normal;
+width:100%;
+color:#111;
+font-family:"Times New Roman",Georgia,serif;
+font-size:14px;
+line-height:1.75;
+white-space:pre-wrap;
+overflow-wrap:anywhere;
+word-break:normal
+}
+
+.page-content p{
+margin-top:0;
+margin-bottom:12px
 }
 
 .page-content h1,
 .page-content h2,
 .page-content h3,
-.page-content h4{
-  color:#111;
-  margin:0 0 15px;
-  line-height:1.35;
+.page-content h4,
+.page-content h5,
+.page-content h6{
+color:inherit;
+font-family:inherit;
+line-height:1.25;
+margin-top:16px;
+margin-bottom:10px
 }
 
-.page-content p{
-  margin:0 0 13px;
+.page-content h1{font-size:2em}
+.page-content h2{font-size:1.6em}
+.page-content h3{font-size:1.35em}
+.page-content h4{font-size:1.15em}
+
+.page-content strong,
+.page-content b{
+font-weight:700
+}
+
+.page-content em,
+.page-content i{
+font-style:italic
+}
+
+.page-content u{
+text-decoration:underline
 }
 
 .page-content ul,
 .page-content ol{
-  margin:0 0 15px 24px;
+margin-top:8px;
+margin-bottom:12px;
+padding-left:28px
 }
 
 .page-content li{
-  margin-bottom:7px;
+margin-bottom:4px
+}
+
+.page-content blockquote{
+margin:12px 0;
+padding-left:14px;
+border-left:3px solid #aaa
+}
+
+.page-content hr{
+border:0;
+border-top:1px solid #999;
+margin:18px 0
 }
 
 .page-content table{
-  width:100%;
-  border-collapse:collapse;
-  margin:15px 0;
+width:100%;
+border-collapse:collapse;
+margin:14px 0;
+font-family:inherit;
+font-size:inherit
 }
 
 .page-content th,
 .page-content td{
-  border:1px solid #bbb;
-  padding:7px;
-  text-align:left;
+border:1px solid #555;
+padding:6px 8px;
+vertical-align:top;
+text-align:left
 }
 
-.document-footer{
-  height:44px;
-  min-height:44px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  border-top:1px solid rgba(255,255,255,.07);
-  background:#090909;
+.page-content th{
+font-weight:700
+}
+
+.page-content pre{
+white-space:pre-wrap;
+overflow-wrap:anywhere;
+font-family:monospace
+}
+
+.empty-page{
+min-height:500px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#777;
+font-family:Arial,sans-serif;
+font-size:12px;
+text-align:center;
+padding:20px
+}
+
+.loading{
+min-height:500px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:10px;
+color:#999;
+font-size:11px;
+text-align:center
+}
+
+.spinner{
+width:29px;
+height:29px;
+border:3px solid #333;
+border-top-color:var(--gold);
+border-radius:50%;
+animation:spin .8s linear infinite
+}
+
+@keyframes spin{
+to{transform:rotate(360deg)}
+}
+
+.page-navigation{
+display:grid;
+grid-template-columns:1fr auto 1fr;
+align-items:center;
+gap:7px;
+margin-top:9px
 }
 
 .nav-button{
-  height:32px;
-  min-width:88px;
-  padding:0 13px;
-  border:1px solid var(--gold3);
-  border-radius:5px;
-  background:#0d0d0d;
-  color:var(--gold2);
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.7px;
+min-height:43px;
+border:1px solid rgba(255,255,255,.14);
+border-radius:8px;
+background:#181818;
+color:#fff;
+font-size:10px;
+font-weight:900
 }
 
-.nav-button:active{
-  transform:scale(.98);
-}
-
-.nav-button:disabled{
-  opacity:.35;
-  cursor:not-allowed;
+.nav-button.next{
+background:#252525
 }
 
 .page-indicator{
-  min-width:90px;
-  text-align:center;
-  color:#ddd;
-  font-size:11px;
+min-width:85px;
+color:var(--gold2);
+text-align:center;
+font-size:10px;
+font-weight:900
 }
 
-.go-wrap{
-  display:flex;
-  align-items:center;
-  gap:5px;
+.go-row{
+display:flex;
+gap:7px;
+margin-top:7px
 }
 
-.go-input{
-  width:48px;
-  height:32px;
-  border:1px solid #444;
-  border-radius:4px;
-  background:#101010;
-  color:#fff;
-  text-align:center;
-  outline:none;
-}
-
-.go-input:focus{
-  border-color:var(--gold);
+.page-number-input{
+flex:1;
+min-width:0;
+height:39px;
+background:#151515;
+border:1px solid var(--line);
+border-radius:8px;
+color:#fff;
+padding:0 10px;
+outline:none;
+font-size:11px
 }
 
 .go-button{
-  height:32px;
-  min-width:42px;
-  border:1px solid var(--gold);
-  border-radius:4px;
-  background:var(--gold);
-  color:#050505;
-  font-size:10px;
-  font-weight:800;
+width:75px;
+border:0;
+border-radius:8px;
+background:var(--gold);
+color:#000;
+font-size:10px;
+font-weight:900
 }
 
-/* =========================================================
-   REVIEW AREA
-   ========================================================= */
-
-.review-zone{
-  min-height:0;
-  display:flex;
-  flex-direction:column;
-  background:
-    radial-gradient(circle at 80% 10%,rgba(212,175,55,.06),transparent 35%),
-    var(--black);
+.page-review{
+margin-top:8px;
+padding:11px;
+background:#101010;
+border:1px solid var(--line);
+border-radius:10px
 }
 
-.review-heading{
-  padding:13px 15px 9px;
-  border-bottom:1px solid rgba(255,255,255,.06);
+.page-review-title{
+color:var(--gold2);
+font-size:10px;
+font-weight:900;
+margin-bottom:5px
 }
 
-.review-heading h1{
-  margin:0;
-  color:var(--gold2);
-  font-size:18px;
-  line-height:1.2;
-  letter-spacing:.2px;
+.page-review-text{
+color:#bbb;
+font-size:10px;
+line-height:1.55;
+white-space:pre-wrap;
+overflow-wrap:anywhere
 }
 
-.review-heading p{
-  margin:5px 0 0;
-  color:#999;
-  font-size:11px;
-  line-height:1.4;
+.action-area{
+grid-row:2;
+min-height:0!important;
+height:100%!important;
+overflow-y:auto!important;
+overflow-x:hidden!important;
+padding:7px 8px 18px!important;
+background:#080808;
+border-top:2px solid var(--gold)!important;
+box-shadow:none!important;
+position:relative;
+z-index:20
 }
 
-.review-body{
-  flex:1;
-  min-height:0;
-  overflow:auto;
-  padding:10px 15px 14px;
-  -webkit-overflow-scrolling:touch;
+.top-panel{
+background:var(--panel);
+border:1px solid var(--line);
+border-radius:13px;
+padding:7px 9px!important;
+margin:0 0 6px!important
 }
 
-.service-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  margin-bottom:9px;
+.review-title{
+margin:0;
+color:#fff;
+font-family:Montserrat,Arial,sans-serif;
+font-size:17px;
+font-weight:900
 }
 
-.tag{
-  max-width:100%;
-  padding:6px 9px;
-  border:1px solid rgba(212,175,55,.35);
-  border-radius:4px;
-  background:rgba(212,175,55,.06);
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:.5px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.review-box{
-  border:1px solid rgba(212,175,55,.2);
-  background:linear-gradient(180deg,#111,#0b0b0b);
-  border-radius:7px;
-  padding:10px;
-  margin-bottom:9px;
-}
-
-.review-box-label{
-  margin-bottom:5px;
-  color:#999;
-  font-size:9px;
-  font-weight:700;
-  letter-spacing:1.2px;
-  text-transform:uppercase;
-}
-
-.review-document-title{
-  color:#f5f5f5;
-  font-size:14px;
-  line-height:1.4;
-  font-weight:700;
-  overflow-wrap:anywhere;
+.review-subtitle{
+margin:4px 0 0;
+color:#aaa;
+font-size:10px;
+line-height:1.45
 }
 
 .status-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:9px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:8px;
+margin-top:8px
 }
 
-.status{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  color:#bbb;
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:.8px;
-  text-transform:uppercase;
+.status-label{
+color:#aaa;
+font-size:9px
 }
 
-.status-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:#777;
+.status-value{
+color:var(--gold2);
+font-size:10px;
+font-weight:900
 }
 
-.status.ready{
-  color:var(--green);
-}
-
-.status.ready .status-dot{
-  background:var(--green);
-  box-shadow:0 0 8px rgba(54,200,120,.55);
-}
-
-.status.error{
-  color:var(--red);
-}
-
-.status.error .status-dot{
-  background:var(--red);
-}
-
-.amount{
-  color:var(--gold2);
-  font-size:15px;
-  font-weight:800;
-}
-
-.progress{
-  height:3px;
-  width:100%;
-  margin-bottom:9px;
-  overflow:hidden;
-  border-radius:10px;
-  background:#1d1d1d;
+.progress-shell{
+margin-top:6px;
+width:100%;
+height:6px;
+background:#242424;
+border-radius:20px;
+overflow:hidden
 }
 
 .progress-bar{
-  width:0%;
-  height:100%;
-  background:var(--gold);
-  transition:width .25s ease;
+width:0%;
+height:100%;
+background:var(--gold);
+transition:width .25s ease
 }
 
-.message{
-  display:none;
-  margin-bottom:9px;
-  padding:9px 10px;
-  border:1px solid rgba(212,175,55,.25);
-  border-radius:5px;
-  background:#101010;
-  color:#ddd;
-  font-size:11px;
-  line-height:1.45;
+.progress-text{
+margin-top:4px;
+color:#888;
+font-size:9px;
+text-align:right
 }
 
-.message.show{
-  display:block;
+.top-amount-card{
+margin:0 0 6px!important;
+padding:6px!important;
+background:#111;
+border:1px solid rgba(212,175,55,.45);
+border-radius:13px;
+text-align:left
 }
 
-.message.error{
-  border-color:rgba(224,91,91,.4);
-  color:#ffb1b1;
+.top-amount-head{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:6px!important
 }
 
-.message.success{
-  border-color:rgba(54,200,120,.35);
-  color:#a9f0c8;
+.top-amount-card>.top-amount-head>div:first-child{
+flex:0 0 108px;
+text-align:center
 }
 
-.actions{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:8px;
+.top-amount-label{
+color:#aaa;
+font-size:10px;
+font-weight:900;
+letter-spacing:.8px
 }
 
-.make-payment{
-  width:100%;
-  min-height:44px;
-  border:1px solid var(--gold);
-  border-radius:5px;
-  background:linear-gradient(180deg,var(--gold2),var(--gold));
-  color:#050505;
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:1px;
+.top-amount-value{
+margin-top:2px;
+color:var(--gold2);
+font-size:27px;
+font-weight:900
 }
 
-.make-payment:disabled{
-  opacity:.4;
-  cursor:not-allowed;
+.top-action-buttons{
+display:grid;
+grid-template-columns:1fr;
+gap:5px;
+flex:1;
+max-width:none!important
+}
+
+.top-action-buttons button{
+width:100%;
+min-height:42px;
+height:42px;
+padding:4px 8px;
+border-radius:8px;
+font-size:10px;
+font-weight:900;
+line-height:1.05
+}
+
+.make-payment-button{
+background:#d4af37!important;
+color:#000!important;
+border:0!important
 }
 
 .correction-box{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:7px;
+display:grid;
+grid-template-columns:1fr auto;
+gap:7px;
+align-items:end;
+margin-top:6px!important
 }
 
 .correction-input{
-  width:100%;
-  min-height:42px;
-  resize:none;
-  border:1px solid #333;
-  border-radius:5px;
-  background:#101010;
-  color:#eee;
-  padding:10px;
-  outline:none;
-  font-size:11px;
-}
-
-.correction-input:focus{
-  border-color:var(--gold3);
+width:100%;
+height:43px;
+min-height:43px;
+max-height:100px;
+resize:none;
+padding:11px;
+background:#171717;
+border:1px solid rgba(255,255,255,.14);
+border-radius:8px;
+color:#fff;
+outline:none;
+font-size:11px;
+line-height:1.4
 }
 
 .correction-button{
-  min-width:118px;
-  min-height:42px;
-  border:1px solid #555;
-  border-radius:5px;
-  background:#171717;
-  color:var(--gold2);
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.6px;
+min-width:125px;
+min-height:43px;
+border:1px solid rgba(212,175,55,.38);
+border-radius:8px;
+background:#171717;
+color:var(--gold2);
+font-size:10px;
+font-weight:900
 }
 
-.correction-button:disabled{
-  opacity:.4;
-  cursor:not-allowed;
+.message{
+position:absolute!important;
+left:5px!important;
+right:5px!important;
+bottom:1px!important;
+z-index:50!important;
+background:rgba(0,0,0,.92)!important;
+min-height:17px;
+margin-top:2px;
+color:#888;
+font-size:9px;
+text-align:center
 }
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+.message.error{
+color:#ff7777
+}
+
+.message.success{
+color:#75dc99
+}
 
 @media(max-width:600px){
 
-  #app{
-    grid-template-rows:50% 50%;
-  }
-
-  .document-page{
-    padding:20px 17px;
-  }
-
-  .page-content{
-    font-size:13px;
-    line-height:1.65;
-  }
-
-  .document-title-top{
-    max-width:52vw;
-  }
-
-  .review-heading h1{
-    font-size:16px;
-  }
-
-  .review-body{
-    padding-left:11px;
-    padding-right:11px;
-  }
-
-  .correction-box{
-    grid-template-columns:1fr;
-  }
-
-  .correction-button{
-    width:100%;
-  }
+.document-page{
+min-height:560px!important;
+padding:28px 16px 40px!important
 }
 
-@media(max-height:700px){
+.page-content{
+font-size:13px!important;
+line-height:1.65!important
+}
 
-  .document-top{
-    height:47px;
-    min-height:47px;
-  }
+.action-area{
+padding:5px 5px 18px!important
+}
 
-  .document-footer{
-    height:39px;
-    min-height:39px;
-  }
+.action-area .top-panel{
+padding:6px 8px!important
+}
 
-  .review-heading{
-    padding-top:8px;
-    padding-bottom:7px;
-  }
+.action-area .review-title{
+font-size:14px!important
+}
 
-  .review-heading p{
-    display:none;
-  }
+.action-area .review-subtitle{
+font-size:8px!important;
+margin-top:2px!important
+}
 
-  .review-body{
-    padding-top:7px;
-  }
+.action-area .status-row{
+margin-top:5px!important
+}
 
-  .review-box{
-    padding:8px;
-    margin-bottom:7px;
-  }
+.action-area .progress-shell{
+margin-top:4px!important;
+height:5px!important
+}
 
-  .make-payment{
-    min-height:40px;
-  }
+.action-area .progress-text{
+margin-top:3px!important;
+font-size:8px!important
+}
+
+.action-area .top-amount-head{
+align-items:center!important
+}
+
+.action-area .top-amount-card>.top-amount-head>div:first-child{
+flex:0 0 72px!important
+}
+
+.action-area .top-amount-label{
+font-size:8px!important
+}
+
+.action-area .top-amount-value{
+font-size:19px!important
+}
+
+.action-area .top-action-buttons{
+gap:3px!important
+}
+
+.action-area .top-action-buttons button{
+min-height:38px!important;
+height:38px!important;
+font-size:8px!important;
+padding:3px 2px!important
+}
+
+.action-area .correction-box{
+grid-template-columns:1fr auto!important;
+gap:5px!important
+}
+
+.action-area .correction-input{
+height:38px!important;
+min-height:38px!important;
+padding:8px!important;
+font-size:9px!important
+}
+
+.action-area .correction-button{
+min-width:105px!important;
+min-height:38px!important;
+font-size:8px!important
+}
+
+.page-navigation{
+margin-top:7px!important
+}
+
+.nav-button{
+min-height:38px!important;
+font-size:9px!important
+}
+
+.go-row{
+margin-top:5px!important
+}
+
+.page-number-input{
+height:35px!important
+}
+
+.go-button{
+width:65px!important
+}
+}
+
+@media(min-width:800px){
+
+.document-page{
+max-width:820px;
+margin:auto;
+min-height:1050px;
+padding:65px 70px 75px
+}
+
+.page-content{
+font-size:15px;
+line-height:1.8
+}
 }
 </style>
 </head>
 
 <body>
 
-<div id="app">
+<span id="serviceBadge" style="display:none">Service</span>
 
-  <!-- =====================================================
-       DOCUMENT VIEWER
-       ===================================================== -->
+<main class="main">
 
-  <section class="document-zone">
+<section class="review-card">
 
-    <div class="document-top">
+<div class="document-card-header">
+<div class="document-heading">
+<h3>Your Complete Document</h3>
+</div>
 
-      <div class="document-brand">
-        <div class="document-label">Your Complete Document</div>
-        <div class="document-title-top" id="documentTitleTop">
-          Preparing document...
-        </div>
-      </div>
+<div id="pageCount" class="page-count">
+0 PAGES
+</div>
+</div>
 
-      <div class="page-count" id="pageCount">
-        0 PAGES
-      </div>
+<div id="documentScroll" class="document-scroll">
 
-    </div>
+<div id="pageViewer" class="page-viewer">
 
-    <div class="document-scroll" id="documentScroll">
-
-      <div class="document-page empty" id="documentPage">
-        <div id="emptyDocumentMessage">
-          Preparing your completed document...
-        </div>
-      </div>
-
-    </div>
-
-    <div class="document-footer">
-
-      <button
-        class="nav-button"
-        id="previousButton"
-        type="button"
-        disabled
-      >
-        PREVIOUS
-      </button>
-
-      <div class="page-indicator" id="pageIndicator">
-        PAGE 0 OF 0
-      </div>
-
-      <button
-        class="nav-button"
-        id="nextButton"
-        type="button"
-        disabled
-      >
-        NEXT
-      </button>
-
-      <div class="go-wrap">
-
-        <input
-          class="go-input"
-          id="goInput"
-          type="number"
-          min="1"
-          inputmode="numeric"
-          placeholder="GO"
-        >
-
-        <button
-          class="go-button"
-          id="goButton"
-          type="button"
-        >
-          GO
-        </button>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =====================================================
-       REVIEW / ACTION AREA
-       ===================================================== -->
-
-  <section class="review-zone">
-
-    <div class="review-heading">
-      <h1>Review Your Complete Service</h1>
-      <p>
-        Carefully review the completed document before payment and delivery.
-      </p>
-    </div>
-
-    <div class="review-body">
-
-      <div class="service-row">
-
-        <div class="tag" id="serviceTag">
-          SERVICE
-        </div>
-
-        <div class="tag" id="titleTag">
-          DOCUMENT
-        </div>
-
-      </div>
-
-      <div class="review-box">
-
-        <div class="review-box-label">
-          Document Title
-        </div>
-
-        <div
-          class="review-document-title"
-          id="reviewDocumentTitle"
-        >
-          Preparing document...
-        </div>
-
-      </div>
-
-      <div class="status-row">
-
-        <div
-          class="status"
-          id="status"
-        >
-          <span class="status-dot"></span>
-          <span id="statusText">PREPARING</span>
-        </div>
-
-        <div
-          class="amount"
-          id="amount"
-        >
-          ₦0
-        </div>
-
-      </div>
-
-      <div class="progress">
-        <div
-          class="progress-bar"
-          id="progressBar"
-        ></div>
-      </div>
-
-      <div
-        class="message"
-        id="message"
-      ></div>
-
-      <div class="actions">
-
-        <button
-          class="make-payment"
-          id="makePaymentButton"
-          type="button"
-          disabled
-        >
-          MAKE PAYMENT
-        </button>
-
-        <div class="correction-box">
-
-          <textarea
-            class="correction-input"
-            id="correctionInput"
-            rows="2"
-            placeholder="Tell us what you want corrected..."
-          ></textarea>
-
-          <button
-            class="correction-button"
-            id="correctionButton"
-            type="button"
-            disabled
-          >
-            APPLY CORRECTION
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
+<div class="loading">
+<div class="spinner"></div>
+<div>Your service is being carefully prepared.</div>
+</div>
 
 </div>
 
+<div class="page-navigation">
+
+<button
+id="previousButton"
+class="nav-button"
+type="button"
+disabled>
+← Previous Page
+</button>
+
+<div id="pageIndicator" class="page-indicator">
+Page 0 of 0
+</div>
+
+<button
+id="nextButton"
+class="nav-button next"
+type="button"
+disabled>
+Next Page →
+</button>
+
+</div>
+
+<div class="go-row">
+
+<input
+id="pageNumberInput"
+class="page-number-input"
+type="number"
+min="1"
+placeholder="Enter page number">
+
+<button
+id="goButton"
+class="go-button"
+type="button">
+GO
+</button>
+
+</div>
+
+<div
+id="pageReview"
+class="page-review"
+style="display:none">
+
+<div class="page-review-title">
+PAGE REVIEW
+</div>
+
+<div
+id="pageReviewText"
+class="page-review-text">
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="action-area">
+
+<section class="top-panel">
+
+<h2 class="review-title">
+Review Your Complete Service
+</h2>
+
+<p class="review-subtitle">
+Review every page. Make any necessary correction, then pay and continue to Payment &amp; Delivery.
+</p>
+
+<div class="status-row">
+
+<span class="status-label">
+Review status
+</span>
+
+<span
+id="statusValue"
+class="status-value">
+Preparing...
+</span>
+
+</div>
+
+<div class="progress-shell">
+
+<div
+id="progressBar"
+class="progress-bar">
+</div>
+
+</div>
+
+<div
+id="progressText"
+class="progress-text">
+Preparing the document...
+</div>
+
+</section>
+
+<section class="top-amount-card">
+
+<div class="top-amount-head">
+
+<div>
+
+<div class="top-amount-label">
+AMOUNT TO PAY
+</div>
+
+<div
+id="amountValueTop"
+class="top-amount-value">
+₦0
+</div>
+
+</div>
+
+<div class="top-action-buttons">
+
+<button
+id="makePaymentButton"
+class="make-payment-button"
+type="button">
+💳 MAKE PAYMENT
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<div class="correction-box">
+
+<textarea
+id="correctionInput"
+class="correction-input"
+placeholder="Want anything changed? Tell us what to correct..."></textarea>
+
+<button
+id="correctionButton"
+class="correction-button"
+type="button">
+Apply Correction
+</button>
+
+</div>
+
+</section>
+
+<div id="message" class="message"></div>
+
+</main>
 
 <script>
-(function(){
-
 "use strict";
 
-/* =========================================================
-   CORE CONFIGURATION
+const API_BASE="";
+const PAYMENT_API_BASE="https://naija-pocket-payment-api.onrender.com";
 
-   IMPORTANT:
-   This Review page does NOT use job_id.
+const params=new URLSearchParams(location.search);
 
-   DOCUMENT IDENTITY:
-       service + document title
+const jobId=(params.get("job_id")||"").trim();
 
-   The completed document itself is the source material.
-   ========================================================= */
+const service=(params.get("service")||"Business Center Service").trim();
 
-const REVIEW_API_BASE = "";
-const PAYMENT_API_BASE = "https://naija-pocket-payment-api.onrender.com";
+const suppliedAmount=(params.get("amount")||"").trim();
 
-const params = new URLSearchParams(window.location.search);
+const $=id=>document.getElementById(id);
 
-const service =
-  clean(
-    params.get("service") ||
-    params.get("service_name") ||
-    "Business Center Service"
-  );
+const serviceBadge=$("serviceBadge");
+const statusValue=$("statusValue");
+const progressBar=$("progressBar");
+const progressText=$("progressText");
+const pageCount=$("pageCount");
+const amountValueTop=$("amountValueTop");
+const documentScroll=$("documentScroll");
+const pageViewer=$("pageViewer");
+const previousButton=$("previousButton");
+const nextButton=$("nextButton");
+const pageIndicator=$("pageIndicator");
+const pageNumberInput=$("pageNumberInput");
+const goButton=$("goButton");
+const pageReview=$("pageReview");
+const pageReviewText=$("pageReviewText");
+const correctionInput=$("correctionInput");
+const correctionButton=$("correctionButton");
+const makePaymentButton=$("makePaymentButton");
+const message=$("message");
 
-const suppliedTitle =
-  clean(
-    params.get("document_title") ||
-    params.get("title") ||
-    ""
-  );
+let pages=[];
+let currentPage=1;
+let totalPages=0;
+let currentVersion=1;
+let versionId="";
+let currentStatus="";
+let reviewFinished=false;
+let paymentStarted=false;
+let busy=false;
+let pollTimer=null;
+let polling=false;
 
-const suppliedAmount =
-  clean(
-    params.get("amount") ||
-    ""
-  );
+let amount=
+Number(
+String(suppliedAmount)
+.replace(/[^0-9.]/g,"")
+)||0;
 
-
-/* =========================================================
-   STATE
-   ========================================================= */
-
-let pages = [];
-let currentPage = 0;
-
-let currentDocument = null;
-
-let documentTitle = suppliedTitle;
-let currentService = service;
-
-let amountToPay = suppliedAmount;
-
-let reviewReady = false;
-let loading = false;
-let correcting = false;
-let paymentPreparing = false;
-
-let pollTimer = null;
+let billing="";
+let customerId="";
+let documentFilename="";
+let documentTitle="";
 
 
-/* =========================================================
-   DOM
-   ========================================================= */
-
-const documentPage =
-  document.getElementById("documentPage");
-
-const documentScroll =
-  document.getElementById("documentScroll");
-
-const emptyDocumentMessage =
-  document.getElementById("emptyDocumentMessage");
-
-const documentTitleTop =
-  document.getElementById("documentTitleTop");
-
-const pageCount =
-  document.getElementById("pageCount");
-
-const pageIndicator =
-  document.getElementById("pageIndicator");
-
-const previousButton =
-  document.getElementById("previousButton");
-
-const nextButton =
-  document.getElementById("nextButton");
-
-const goInput =
-  document.getElementById("goInput");
-
-const goButton =
-  document.getElementById("goButton");
-
-const serviceTag =
-  document.getElementById("serviceTag");
-
-const titleTag =
-  document.getElementById("titleTag");
-
-const reviewDocumentTitle =
-  document.getElementById("reviewDocumentTitle");
-
-const status =
-  document.getElementById("status");
-
-const statusText =
-  document.getElementById("statusText");
-
-const amount =
-  document.getElementById("amount");
-
-const progressBar =
-  document.getElementById("progressBar");
-
-const message =
-  document.getElementById("message");
-
-const makePaymentButton =
-  document.getElementById("makePaymentButton");
-
-const correctionInput =
-  document.getElementById("correctionInput");
-
-const correctionButton =
-  document.getElementById("correctionButton");
-
-
-/* =========================================================
-   GENERAL HELPERS
-   ========================================================= */
-
-function clean(value){
-  return String(value == null ? "" : value)
-    .replace(/\u0000/g,"")
-    .trim();
+function clean(v){
+return v==null ? "" : String(v).trim();
 }
 
 
-function escapeHtml(value){
-  return String(value == null ? "" : value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+function setMessage(t,type=""){
+message.textContent=t||"";
+message.className="message"+(type?" "+type:"");
 }
 
 
-function formatAmount(value){
-
-  const n = Number(
-    String(value || "")
-      .replace(/[₦,\s]/g,"")
-  );
-
-  if(!Number.isFinite(n) || n <= 0){
-    return "₦0";
-  }
-
-  return "₦" + n.toLocaleString("en-NG");
+function setStatus(t){
+statusValue.textContent=t||"Preparing...";
 }
 
 
-function showMessage(text,type){
-
-  message.textContent = clean(text);
-
-  message.className =
-    "message show" +
-    (type ? " " + type : "");
+function state(){
+return clean(currentStatus).toLowerCase();
 }
 
 
-function hideMessage(){
-
-  message.textContent = "";
-
-  message.className = "message";
+function complete(d){
+return !!d &&
+(
+state()==="review_complete" ||
+d.review_finished===true
+);
 }
 
 
-function setStatus(text,type){
+async function apiGet(url){
 
-  statusText.textContent =
-    clean(text).toUpperCase();
+const r=await fetch(
+API_BASE+url,
+{
+cache:"no-store"
+}
+);
 
-  status.className =
-    "status" +
-    (type ? " " + type : "");
+const d=await r.json().catch(()=>({}));
+
+if(!r.ok){
+
+throw Error(
+d.error_message||
+d.error||
+d.message||
+"Unable to load the document."
+);
+
+}
+
+return d;
 }
 
 
-function setProgress(value){
+async function apiPost(url,body){
 
-  let n = Number(value);
+const r=await fetch(
+API_BASE+url,
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(body||{})
+}
+);
 
-  if(!Number.isFinite(n)){
-    n = 0;
-  }
+const d=await r.json().catch(()=>({}));
 
-  n = Math.max(0,Math.min(100,n));
+if(!r.ok || d.success===false){
 
-  progressBar.style.width = n + "%";
+throw Error(
+d.error_message||
+d.error||
+d.message||
+"The request could not be completed."
+);
+
+}
+
+return d;
 }
 
 
-/* =========================================================
-   MARKDOWN / DOCUMENT CLEANING
-   ========================================================= */
+async function paymentPost(url,body){
+
+const controller=new AbortController();
+
+const timeout=setTimeout(
+()=>controller.abort(),
+60000
+);
+
+let response;
+
+try{
+
+response=await fetch(
+PAYMENT_API_BASE+url,
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Accept":"application/json"
+},
+body:JSON.stringify(body||{}),
+cache:"no-store",
+mode:"cors",
+signal:controller.signal
+}
+);
+
+}catch(e){
+
+clearTimeout(timeout);
+
+if(e&&e.name==="AbortError"){
+
+throw Error(
+"The payment service took too long to respond. Please try MAKE PAYMENT again."
+);
+
+}
+
+throw Error(
+"Payment preparation could not connect to the payment service. Please try again."
+);
+
+}
+
+clearTimeout(timeout);
+
+const responseText=await response.text();
+
+let data={};
+
+if(responseText){
+
+try{
+data=JSON.parse(responseText);
+}catch(e){
+data={raw:responseText};
+}
+
+}
+
+if(!response.ok){
+
+const detail=
+data.error_message||
+data.error||
+data.message||
+(
+typeof data.detail==="string"
+?data.detail
+:""
+)||
+(
+typeof data.raw==="string"
+?data.raw.slice(0,300)
+:""
+);
+
+throw Error(
+detail
+?
+"Payment preparation failed: "+detail
+:
+"Payment preparation failed. The payment service returned HTTP "+response.status+"."
+);
+
+}
+
+if(data.ok===false || data.success===false){
+
+throw Error(
+data.error_message||
+data.error||
+data.message||
+"Payment preparation could not be completed."
+);
+
+}
+
+return data;
+}
+
 
 function cleanMarkdownText(value){
 
-  let text = String(value == null ? "" : value);
+let text=String(value==null?"":value)
+.replace(/\r\n/g,"\n")
+.replace(/\r/g,"\n")
+.replace(/\u00a0/g," ");
 
-  text = text
-    .replace(/\r\n/g,"\n")
-    .replace(/\r/g,"\n");
+text=text.replace(/```[\s\S]*?```/g,"");
 
-  text = text.replace(/```[\s\S]*?```/g,function(match){
+text=text.replace(/^\s{0,3}#{1,6}\s+/gm,"");
 
-    return match
-      .replace(/^```[a-zA-Z0-9_-]*\s*/,"")
-      .replace(/```\s*$/,"");
-  });
+text=text.replace(/^\s*(?:[-*_]\s*){3,}$/gm,"");
 
-  text = text
-    .replace(/^#{1,6}\s+/gm,"")
-    .replace(/^\s*[-*+]\s+/gm,"")
-    .replace(/^\s*\d+\.\s+/gm,"")
-    .replace(/\*\*(.*?)\*\*/g,"$1")
-    .replace(/__(.*?)__/g,"$1")
-    .replace(/\*(.*?)\*/g,"$1")
-    .replace(/_(.*?)_/g,"$1")
-    .replace(/`([^`]+)`/g,"$1")
-    .replace(/^\s*>\s?/gm,"")
-    .replace(/^\s*---+\s*$/gm,"")
-    .replace(/^\s*\*\*\*\s*$/gm,"");
+text=text.replace(/^\s*>\s?/gm,"");
 
-  return text.trim();
+text=text.replace(
+/\[([^\]]+)\]\((?:[^()]|\([^()]*\))*\)/g,
+"$1"
+);
+
+for(let i=0;i<3;i++){
+
+text=text
+.replace(/\*\*\*(.*?)\*\*\*/g,"$1")
+.replace(/___(.*?)___/g,"$1")
+.replace(/\*\*(.*?)\*\*/g,"$1")
+.replace(/__(.*?)__/g,"$1")
+.replace(/~~(.*?)~~/g,"$1")
+.replace(/\*(.*?)\*/g,"$1")
+.replace(/_(.*?)_/g,"$1");
+
+}
+
+text=text.replace(/^\s*[-*+]\s+/gm,"");
+text=text.replace(/^\s*\d+\.\s+/gm,"");
+
+text=text.replace(
+/^\s*\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)+\|?\s*$/gm,
+""
+);
+
+text=text.replace(/\|/g," ");
+
+text=text.replace(/[ \t]{2,}/g," ");
+
+text=text.replace(/\n{4,}/g,"\n\n\n");
+
+return text.trim();
 }
 
 
-function sanitizeHtml(html){
-
-  const template =
-    document.createElement("template");
-
-  template.innerHTML =
-    String(html == null ? "" : html);
-
-  const allowedTags = new Set([
-    "P",
-    "BR",
-    "H1",
-    "H2",
-    "H3",
-    "H4",
-    "H5",
-    "H6",
-    "STRONG",
-    "B",
-    "EM",
-    "I",
-    "U",
-    "UL",
-    "OL",
-    "LI",
-    "TABLE",
-    "THEAD",
-    "TBODY",
-    "TR",
-    "TH",
-    "TD"
-  ]);
-
-  const walker =
-    document.createTreeWalker(
-      template.content,
-      NodeFilter.SHOW_ELEMENT
-    );
-
-  const nodes = [];
-
-  while(walker.nextNode()){
-    nodes.push(walker.currentNode);
-  }
-
-  nodes.forEach(function(node){
-
-    if(!allowedTags.has(node.tagName)){
-
-      const parent =
-        node.parentNode;
-
-      if(parent){
-
-        while(node.firstChild){
-          parent.insertBefore(
-            node.firstChild,
-            node
-          );
-        }
-
-        parent.removeChild(node);
-      }
-
-      return;
-    }
-
-    Array.from(node.attributes)
-      .forEach(function(attribute){
-
-        node.removeAttribute(
-          attribute.name
-        );
-
-      });
-
-  });
-
-  return template.innerHTML;
+function normText(v){
+return cleanMarkdownText(v);
 }
 
 
-/* =========================================================
-   TEXT TO DISPLAYABLE HTML
-   ========================================================= */
+function renderPlain(t){
 
-function textToHtml(text){
+const fragment=document.createDocumentFragment();
 
-  const cleaned =
-    cleanMarkdownText(text);
+const lines=normText(t).split("\n");
 
-  if(!cleaned){
-    return "";
-  }
+lines.forEach((line,index)=>{
 
-  const paragraphs =
-    cleaned
-      .split(/\n{2,}/)
-      .map(function(block){
+if(line===""){
 
-        const lines =
-          block
-            .split("\n")
-            .map(function(line){
-              return line.trim();
-            })
-            .filter(Boolean);
+fragment.appendChild(
+document.createElement("br")
+);
 
-        if(!lines.length){
-          return "";
-        }
+return;
 
-        return "<p>" +
-          lines
-            .map(escapeHtml)
-            .join("<br>") +
-          "</p>";
-      })
-      .filter(Boolean);
+}
 
-  return paragraphs.join("");
+fragment.appendChild(
+document.createTextNode(line)
+);
+
+if(index<lines.length-1){
+
+fragment.appendChild(
+document.createElement("br")
+);
+
+}
+
+});
+
+return fragment;
 }
 
 
-/* =========================================================
-   PAGE NORMALIZATION
-   ========================================================= */
+const allowedTags=new Set([
+"DIV","P","BR","SPAN",
+"STRONG","B","EM","I","U",
+"S","STRIKE",
+"H1","H2","H3","H4","H5","H6",
+"UL","OL","LI",
+"BLOCKQUOTE","HR",
+"TABLE","THEAD","TBODY","TFOOT",
+"TR","TH","TD",
+"PRE","SUP","SUB"
+]);
 
-function normalizePages(value){
 
-  if(value == null){
-    return [];
-  }
+const allowedAttrs=new Set([
+"style",
+"align",
+"colspan",
+"rowspan"
+]);
 
-  if(Array.isArray(value)){
 
-    return value
-      .map(function(item){
+const allowedStyles=new Set([
+"color",
+"background-color",
+"font-family",
+"font-size",
+"font-weight",
+"font-style",
+"text-decoration",
+"text-align",
+"text-indent",
+"line-height",
+"letter-spacing",
+"margin",
+"margin-top",
+"margin-right",
+"margin-bottom",
+"margin-left",
+"padding",
+"padding-top",
+"padding-right",
+"padding-bottom",
+"padding-left",
+"vertical-align",
+"width",
+"max-width",
+"border",
+"border-top",
+"border-right",
+"border-bottom",
+"border-left",
+"background"
+]);
 
-        if(item == null){
-          return "";
-        }
 
-        if(typeof item === "string"){
-          return item;
-        }
+function safeStyle(s){
 
-        if(typeof item === "object"){
+const out=[];
 
-          return (
-            item.content ??
-            item.text ??
-            item.html ??
-            item.body ??
-            item.page ??
-            item.document ??
-            ""
-          );
-        }
+for(const declaration of String(s||"").split(";")){
 
-        return String(item);
-      })
-      .map(function(item){
+const i=declaration.indexOf(":");
 
-        const raw =
-          String(item == null ? "" : item);
+if(i<0) continue;
 
-        const looksHtml =
-          /<[a-z][\s\S]*>/i.test(raw);
+const property=
+declaration.slice(0,i).trim().toLowerCase();
 
-        if(looksHtml){
-          return sanitizeHtml(raw);
-        }
+const value=
+declaration.slice(i+1).trim();
 
-        return textToHtml(raw);
+if(
+allowedStyles.has(property) &&
+!/javascript:|expression\(|url\(|@import/i.test(value)
+){
 
-      })
-      .filter(function(item){
-        return clean(item).length > 0;
-      });
-  }
+out.push(property+":"+value);
 
-  if(typeof value === "object"){
+}
 
-    if(Array.isArray(value.pages)){
-      return normalizePages(value.pages);
-    }
+}
 
-    if(Array.isArray(value.document_pages)){
-      return normalizePages(value.document_pages);
-    }
-
-    if(Array.isArray(value.review_pages)){
-      return normalizePages(value.review_pages);
-    }
-
-    if(value.content != null){
-      return normalizePages([value.content]);
-    }
-
-    if(value.text != null){
-      return normalizePages([value.text]);
-    }
-
-    if(value.html != null){
-      return normalizePages([value.html]);
-    }
-  }
-
-  const raw =
-    String(value);
-
-  if(!raw.trim()){
-    return [];
-  }
-
-  return normalizePages([raw]);
+return out.join(";");
 }
 
 
-/* =========================================================
-   EXTRACT DOCUMENT PAGES FROM FLEXIBLE RESPONSE SHAPES
-   ========================================================= */
+function sanitizeHtml(src){
 
-function extractPages(data){
+const raw=String(src==null?"":src);
 
-  if(!data || typeof data !== "object"){
-    return [];
-  }
+if(!/<[a-z][\s\S]*>/i.test(raw)){
+return renderPlain(raw);
+}
 
-  const candidates = [
+const doc=new DOMParser().parseFromString(
+raw,
+"text/html"
+);
 
-    data.pages,
+const fragment=document.createDocumentFragment();
 
-    data.review_pages,
 
-    data.document_pages,
+function walk(node,parent){
 
-    data.documentPages,
+if(node.nodeType===Node.TEXT_NODE){
 
-    data.page_content,
+const cleaned=cleanMarkdownText(
+node.nodeValue||""
+);
 
-    data.document_content,
+if(cleaned){
+parent.appendChild(
+document.createTextNode(cleaned)
+);
+}
 
-    data.content,
+return;
+}
 
-    data.document,
+if(node.nodeType!==Node.ELEMENT_NODE)
+return;
 
-    data.output,
+const tag=node.tagName.toUpperCase();
 
-    data.result,
+if([
+"SCRIPT",
+"STYLE",
+"IFRAME",
+"OBJECT",
+"EMBED",
+"FORM",
+"INPUT",
+"BUTTON",
+"TEXTAREA",
+"SELECT",
+"VIDEO",
+"AUDIO"
+].includes(tag)){
+return;
+}
 
-    data.data
+if(!allowedTags.has(tag)){
 
-  ];
+for(const child of node.childNodes){
+walk(child,parent);
+}
 
-  for(const candidate of candidates){
+return;
+}
 
-    const found =
-      normalizePages(candidate);
+const element=document.createElement(
+tag.toLowerCase()
+);
 
-    if(found.length){
-      return found;
-    }
-  }
+for(const attribute of node.attributes){
 
-  return [];
+const name=attribute.name.toLowerCase();
+const value=attribute.value||"";
+
+if(!allowedAttrs.has(name))
+continue;
+
+if(name==="style"){
+
+const style=safeStyle(value);
+
+if(style){
+element.setAttribute("style",style);
+}
+
+}
+else if(
+name==="align" &&
+[
+"left",
+"center",
+"right",
+"justify"
+].includes(value.toLowerCase().trim())
+){
+
+element.setAttribute(
+"align",
+value.toLowerCase().trim()
+);
+
+}
+else if(
+(
+name==="colspan" ||
+name==="rowspan"
+) &&
+/^\d+$/.test(value) &&
+Number(value)>0 &&
+Number(value)<=100
+){
+
+element.setAttribute(name,value);
+
+}
+
+}
+
+for(const child of node.childNodes){
+walk(child,element);
+}
+
+parent.appendChild(element);
+
 }
 
 
-/* =========================================================
-   DOCUMENT TITLE
-   ========================================================= */
+for(const child of doc.body.childNodes){
+walk(child,fragment);
+}
 
-function extractDocumentTitle(data){
-
-  if(data && typeof data === "object"){
-
-    const candidates = [
-
-      data.document_title,
-
-      data.documentTitle,
-
-      data.title,
-
-      data.document_name,
-
-      data.name,
-
-      data.product_title,
-
-      data.productTitle
-
-    ];
-
-    for(const candidate of candidates){
-
-      const value =
-        clean(candidate);
-
-      if(value){
-        return value;
-      }
-    }
-  }
-
-  if(documentTitle){
-    return documentTitle;
-  }
-
-  const firstPage =
-    cleanMarkdownText(
-      pages[0] || ""
-    );
-
-  if(!firstPage){
-    return "Completed Document";
-  }
-
-  const plain =
-    firstPage
-      .replace(/<[^>]+>/g," ")
-      .replace(/\s+/g," ")
-      .trim();
-
-  const introductionIndex =
-    plain.search(/\bIntroduction\b/i);
-
-  if(introductionIndex > 0){
-
-    const before =
-      plain
-        .slice(0,introductionIndex)
-        .trim();
-
-    if(
-      before.length >= 3 &&
-      before.length <= 250
-    ){
-      return before;
-    }
-  }
-
-  return plain.length > 120
-    ? plain.slice(0,120).trim()
-    : plain;
+return fragment;
 }
 
 
-/* =========================================================
-   SERVICE + TITLE IDENTITY
-   ========================================================= */
+function normalizePages(d){
 
-function getProductIdentity(){
+let source=[];
 
-  return {
-    service:
-      clean(currentService),
+if(
+Array.isArray(d?.review_pages) &&
+d.review_pages.length
+){
 
-    document_title:
-      clean(documentTitle),
+source=d.review_pages;
 
-    title:
-      clean(documentTitle)
-  };
+}
+else if(
+Array.isArray(d?.document_pages) &&
+d.document_pages.length
+){
+
+source=d.document_pages;
+
+}
+else if(
+Array.isArray(d?.pages) &&
+d.pages.length
+){
+
+source=d.pages;
+
+}
+
+return source.map((x,index)=>({
+
+page_number:Number(x?.page_number)||index+1,
+
+position:Number(x?.position)||index+1,
+
+status:clean(x?.status)||"queued",
+
+content:x?.content==null
+?""
+:String(x.content),
+
+review:clean(x?.review),
+
+error:clean(x?.error)
+
+})).sort(
+(a,b)=>a.position-b.position
+);
+
 }
 
 
-/* =========================================================
-   RESPONSE UNWRAPPING
-   ========================================================= */
+function extractPages(d){
 
-function unwrapResponse(raw){
+let result=normalizePages(d);
 
-  if(!raw || typeof raw !== "object"){
-    return {};
-  }
+if(result.length)
+return result;
 
-  const candidates = [
+for(const candidate of [
+d?.document,
+d?.result,
+d?.review,
+d?.output
+]){
 
-    raw,
+if(candidate&&typeof candidate==="object"){
 
-    raw.data,
+result=normalizePages(candidate);
 
-    raw.review,
+if(result.length)
+return result;
 
-    raw.document,
+}
 
-    raw.result,
+}
 
-    raw.output,
-
-    raw.job
-
-  ];
-
-  for(const item of candidates){
-
-    if(!item || typeof item !== "object"){
-      continue;
-    }
-
-    const hasDocument =
-      extractPages(item).length > 0;
-
-    const hasIdentity =
-      clean(
-        item.document_title ||
-        item.title ||
-        item.service
-      ).length > 0;
-
-    const hasStatus =
-      clean(item.status).length > 0 ||
-      item.review_finished != null ||
-      item.review_ready != null;
-
-    if(
-      hasDocument ||
-      hasIdentity ||
-      hasStatus
-    ){
-      return item;
-    }
-  }
-
-  return raw;
+return [];
 }
 
 
-/* =========================================================
-   REVIEW READINESS
-   ========================================================= */
+function updateButtons(){
 
-function isReviewReady(data){
+previousButton.disabled=
+busy ||
+currentPage<=1;
 
-  if(!data || typeof data !== "object"){
-    return false;
-  }
+nextButton.disabled=
+busy ||
+currentPage>=totalPages ||
+!totalPages;
 
-  if(
-    data.review_finished === true ||
-    data.reviewFinished === true ||
-    data.review_ready === true ||
-    data.reviewReady === true ||
-    data.complete === true ||
-    data.completed === true
-  ){
-    return true;
-  }
+correctionButton.disabled=busy;
 
-  const state =
-    clean(
-      data.status ||
-      data.state ||
-      data.review_status
-    )
-      .toLowerCase()
-      .replace(/[\s-]+/g,"_");
-
-  return [
-    "ready",
-    "review_ready",
-    "review_complete",
-    "review_completed",
-    "completed",
-    "complete",
-    "finished",
-    "done"
-  ].includes(state);
+makePaymentButton.disabled=
+busy ||
+paymentStarted ||
+!reviewFinished;
 }
 
-
-/* =========================================================
-   APPLY DOCUMENT DATA
-   ========================================================= */
-
-function applyDocument(data){
-
-  const d =
-    unwrapResponse(data);
-
-  currentDocument =
-    d;
-
-  const foundPages =
-    extractPages(d);
-
-  if(foundPages.length){
-    pages =
-      foundPages;
-  }
-
-  const foundService =
-    clean(
-      d.service ||
-      d.service_name ||
-      d.serviceName ||
-      currentService
-    );
-
-  if(foundService){
-    currentService =
-      foundService;
-  }
-
-  const foundTitle =
-    extractDocumentTitle(d);
-
-  if(foundTitle){
-    documentTitle =
-      foundTitle;
-  }
-
-  const foundAmount =
-    d.amount ??
-    d.total_amount ??
-    d.price ??
-    d.total ??
-    amountToPay;
-
-  if(
-    foundAmount !== undefined &&
-    foundAmount !== null &&
-    clean(foundAmount)
-  ){
-    amountToPay =
-      clean(foundAmount);
-  }
-
-  reviewReady =
-    isReviewReady(d) ||
-    pages.length > 0;
-
-  updateIdentityUI();
-
-  if(pages.length){
-
-    if(currentPage >= pages.length){
-      currentPage =
-        pages.length - 1;
-    }
-
-    if(currentPage < 0){
-      currentPage = 0;
-    }
-
-    renderPage();
-
-  }else{
-
-    showEmptyDocument(
-      "Your completed document is being prepared..."
-    );
-
-  }
-
-  updateStatusUI();
-
-  saveReviewLocally(d);
-}
-
-
-/* =========================================================
-   UI IDENTITY
-   ========================================================= */
-
-function updateIdentityUI(){
-
-  serviceTag.textContent =
-    currentService || "SERVICE";
-
-  titleTag.textContent =
-    documentTitle || "DOCUMENT";
-
-  reviewDocumentTitle.textContent =
-    documentTitle ||
-    "Completed Document";
-
-  documentTitleTop.textContent =
-    documentTitle ||
-    "Completed Document";
-
-  amount.textContent =
-    formatAmount(amountToPay);
-}
-
-
-/* =========================================================
-   STATUS UI
-   ========================================================= */
-
-function updateStatusUI(){
-
-  const ready =
-    reviewReady &&
-    pages.length > 0;
-
-  if(ready){
-
-    setStatus("READY","ready");
-
-    setProgress(100);
-
-    makePaymentButton.disabled =
-      false;
-
-    correctionButton.disabled =
-      false;
-
-  }else{
-
-    setStatus(
-      loading ? "PREPARING" : "WAITING"
-    );
-
-    setProgress(
-      pages.length ? 75 : 20
-    );
-
-    makePaymentButton.disabled =
-      true;
-
-    correctionButton.disabled =
-      true;
-  }
-}
-
-
-/* =========================================================
-   DOCUMENT PAGE RENDER
-   ========================================================= */
 
 function renderPage(){
 
-  const total =
-    pages.length;
+pageViewer.innerHTML="";
 
-  pageCount.textContent =
-    total === 1
-      ? "1 PAGE"
-      : total + " PAGES";
+if(!pages.length){
 
-  if(!total){
+pageViewer.innerHTML=
+'<div class="loading">'+
+'<div class="spinner"></div>'+
+'<div>Your service is being carefully prepared.</div>'+
+'</div>';
 
-    showEmptyDocument(
-      "No completed document is available yet."
-    );
+pageIndicator.textContent="Page 0 of 0";
 
-    updateNavigation();
+updateButtons();
 
-    return;
-  }
+return;
+}
 
-  const html =
-    pages[currentPage] || "";
+const page=pages[currentPage-1];
 
-  documentPage.classList.remove("empty");
+if(!page){
 
-  documentPage.innerHTML =
-    '<div class="page-content">' +
-      html +
-    '</div>';
+pageViewer.innerHTML=
+'<div class="empty-page">'+
+"This document page is not available yet."+
+'</div>';
 
-  pageIndicator.textContent =
-    "PAGE " +
-    (currentPage + 1) +
-    " OF " +
-    total;
+return;
+}
 
-  updateNavigation();
+const article=document.createElement("article");
 
-  documentScroll.scrollTop = 0;
+article.className="document-page";
+
+const pageNumber=document.createElement("div");
+
+pageNumber.className="page-number-inside";
+
+pageNumber.textContent=
+"PAGE "+page.page_number;
+
+const content=document.createElement("div");
+
+content.className="page-content";
+
+content.appendChild(
+sanitizeHtml(
+page.content ||
+"This page is still being prepared."
+)
+);
+
+article.append(
+pageNumber,
+content
+);
+
+pageViewer.appendChild(article);
+
+pageIndicator.textContent=
+`Page ${currentPage} of ${totalPages}`;
+
+if(page.review || page.error){
+
+pageReview.style.display="block";
+
+pageReviewText.textContent=
+page.error
+?
+"Page information:\n\n"+normText(page.error)
+:
+normText(page.review);
+
+}
+else{
+
+pageReview.style.display="none";
+
+}
+
+updateButtons();
+
 }
 
 
-function showEmptyDocument(text){
+function showPage(number){
 
-  documentPage.classList.add("empty");
+if(!totalPages)
+return;
 
-  documentPage.innerHTML =
-    '<div id="emptyDocumentMessage">' +
-      escapeHtml(text) +
-    '</div>';
+currentPage=Math.max(
+1,
+Math.min(
+totalPages,
+Math.floor(Number(number)||1)
+)
+);
 
-  pageCount.textContent =
-    pages.length
-      ? pages.length + " PAGES"
-      : "0 PAGES";
+renderPage();
 
-  pageIndicator.textContent =
-    pages.length
-      ? "PAGE " + (currentPage + 1) +
-        " OF " + pages.length
-      : "PAGE 0 OF 0";
+documentScroll.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
-  updateNavigation();
 }
 
 
-function updateNavigation(){
+previousButton.onclick=
+()=>showPage(currentPage-1);
 
-  const total =
-    pages.length;
+nextButton.onclick=
+()=>showPage(currentPage+1);
 
-  previousButton.disabled =
-    total === 0 ||
-    currentPage <= 0;
 
-  nextButton.disabled =
-    total === 0 ||
-    currentPage >= total - 1;
+goButton.onclick=()=>{
+
+const number=Number(
+pageNumberInput.value
+);
+
+if(
+!Number.isInteger(number) ||
+number<1 ||
+number>totalPages
+){
+
+return setMessage(
+"Enter a page number from 1 to "+totalPages+".",
+"error"
+);
+
+}
+
+setMessage("");
+
+showPage(number);
+
+};
+
+
+pageNumberInput.onkeydown=e=>{
+
+if(e.key==="Enter"){
+
+e.preventDefault();
+
+goButton.click();
+
+}
+
+};
+
+
+function preserveExistingAmount(d){
+
+if(amount>0)
+return amount;
+
+const candidates=[
+d?.amount,
+d?.price,
+d?.payment?.amount,
+d?.billing?.amount,
+d?.job?.amount,
+d?.job?.price,
+d?.result?.amount,
+d?.document?.amount,
+d?.review?.amount,
+d?.output?.amount
+];
+
+for(const value of candidates){
+
+const number=
+Number(
+String(value==null?"":value)
+.replace(/[^0-9.]/g,"")
+);
+
+if(isFinite(number)&&number>0)
+return number;
+
+}
+
+return amount;
 }
 
 
-/* =========================================================
-   PAGE NAVIGATION
-   ========================================================= */
+function extractBilling(d){
 
-function goToPage(index){
+const seen=new Set();
 
-  if(!pages.length){
-    return;
-  }
+function find(value){
 
-  const n =
-    Number(index);
+if(value==null)
+return "";
 
-  if(!Number.isFinite(n)){
-    return;
-  }
+if(typeof value==="string")
+return value.trim();
 
-  currentPage =
-    Math.max(
-      0,
-      Math.min(
-        pages.length - 1,
-        Math.floor(n)
-      )
-    );
+if(
+typeof value!=="object" ||
+seen.has(value)
+)
+return "";
 
-  renderPage();
+seen.add(value);
+
+if(
+typeof value.billing==="string" &&
+value.billing.trim()
+)
+return value.billing.trim();
+
+for(const key of [
+"billing",
+"bill",
+"payment",
+"job",
+"result",
+"document",
+"review",
+"output"
+]){
+
+const found=find(value[key]);
+
+if(found)
+return found;
+
+}
+
+return "";
+}
+
+return find(d);
 }
 
 
-previousButton.addEventListener(
-  "click",
-  function(){
-    goToPage(currentPage - 1);
-  }
-);
+/*
+* DOCUMENT TITLE EXTRACTION
+*
+* Priority:
+* 1. Explicit title fields.
+* 2. "Title:" line.
+* 3. Title immediately before "Introduction".
+* 4. First meaningful line.
+*
+* The Introduction rule is important because the current
+* document can arrive as:
+*
+* Why Nigeria is Poor in the Midst of AbundanceIntroductionNigeria...
+*
+* In that case the title is everything before "Introduction".
+*/
+function extractDocumentTitle(d){
 
+const candidates=[
 
-nextButton.addEventListener(
-  "click",
-  function(){
-    goToPage(currentPage + 1);
-  }
-);
+d?.title,
+d?.document_title,
+d?.documentTitle,
+d?.job_title,
+d?.jobTitle,
 
+d?.document?.title,
+d?.document?.document_title,
+d?.document?.documentTitle,
 
-goButton.addEventListener(
-  "click",
-  function(){
+d?.result?.title,
+d?.result?.document_title,
+d?.result?.documentTitle,
 
-    const requested =
-      Number(goInput.value);
+d?.review?.title,
+d?.review?.document_title,
+d?.review?.documentTitle,
 
-    if(!Number.isFinite(requested)){
-      return;
-    }
-
-    goToPage(requested - 1);
-
-    goInput.value = "";
-  }
-);
-
-
-goInput.addEventListener(
-  "keydown",
-  function(event){
-
-    if(event.key === "Enter"){
-      event.preventDefault();
-      goButton.click();
-    }
-
-  }
-);
-
-
-/* =========================================================
-   LOCAL REVIEW STORAGE
-   ========================================================= */
-
-const LOCAL_REVIEW_KEYS = [
-
-  "npbc_review_data",
-  "npbc_current_review",
-  "npbc_review",
-  "review_data",
-  "review_document",
-  "npbc_last_review_data"
+d?.output?.title,
+d?.output?.document_title,
+d?.output?.documentTitle
 
 ];
 
+for(const value of candidates){
 
-function saveReviewLocally(data){
+const title=cleanMarkdownText(value);
 
-  if(!data || typeof data !== "object"){
-    return;
-  }
+if(title)
+return title;
 
-  try{
+}
 
-    const payload =
-      JSON.stringify(data);
+const sourcePages=extractPages(d);
 
-    sessionStorage.setItem(
-      "npbc_last_review_data",
-      payload
-    );
+for(const page of sourcePages){
 
-  }catch(error){
-    /* Local storage is only a fallback. */
-  }
+const text=normText(page.content||"");
+
+if(!text)
+continue;
+
+
+/*
+* Explicit:
+*
+* Title: My Document
+*/
+const explicit=text.match(
+/(?:^|\n)\s*Title\s*:\s*([^\n]+)/i
+);
+
+if(explicit){
+
+const title=clean(explicit[1]);
+
+if(title)
+return title;
+
 }
 
 
-function readStoredReview(){
+/*
+* IMPORTANT:
+*
+* Handles both:
+*
+* My Title
+* Introduction
+*
+* and:
+*
+* My TitleIntroduction
+*
+* The second form is the problem currently seen
+* in the Review page.
+*/
+const introductionMatch=text.match(
+/^(.{8,180}?)(?:\s*)Introduction\b/i
+);
 
-  const stores = [
+if(introductionMatch){
 
-    window.sessionStorage,
-    window.localStorage
+let title=clean(
+introductionMatch[1]
+);
 
-  ];
+title=title
+.replace(/^#+\s*/,"")
+.replace(/^[*_\s]+/,"")
+.replace(/[*_\s]+$/,"")
+.trim();
 
-  for(const store of stores){
+if(
+title.length>=8 &&
+title.length<=180
+){
 
-    for(const key of LOCAL_REVIEW_KEYS){
+return title;
 
-      try{
+}
 
-        const raw =
-          store.getItem(key);
-
-        if(!raw){
-          continue;
-        }
-
-        const parsed =
-          JSON.parse(raw);
-
-        if(
-          parsed &&
-          typeof parsed === "object"
-        ){
-
-          const d =
-            unwrapResponse(parsed);
-
-          if(
-            extractPages(d).length ||
-            clean(
-              d.document_title ||
-              d.title
-            )
-          ){
-            return d;
-          }
-        }
-
-      }catch(error){
-        /* Ignore invalid stored entries. */
-      }
-
-    }
-
-  }
-
-  return null;
 }
 
 
-/* =========================================================
-   OPTIONAL DIRECT REVIEW DATA
-   ========================================================= */
+/*
+* If Introduction is not found at the very beginning,
+* search the first 250 characters for a plausible title
+* immediately before it.
+*/
+const earlyIntroduction=text.match(
+/^([\s\S]{8,250}?)(?:\s*)Introduction\b/i
+);
 
-function readUrlReviewData(){
+if(earlyIntroduction){
 
-  const candidates = [
+let title=clean(
+earlyIntroduction[1]
+);
 
-    params.get("review_data"),
-    params.get("document_data"),
-    params.get("data")
+title=title
+.replace(/\s+/g," ")
+.replace(/^#+\s*/,"")
+.replace(/^[*_\s]+/,"")
+.replace(/[*_\s]+$/,"")
+.trim();
 
-  ];
+if(
+title.length>=8 &&
+title.length<=180
+){
 
-  for(const raw of candidates){
+return title;
 
-    if(!raw){
-      continue;
-    }
+}
 
-    try{
-
-      const parsed =
-        JSON.parse(
-          decodeURIComponent(raw)
-        );
-
-      if(
-        parsed &&
-        typeof parsed === "object"
-      ){
-        return parsed;
-      }
-
-    }catch(error){
-
-      try{
-
-        const parsed =
-          JSON.parse(raw);
-
-        if(
-          parsed &&
-          typeof parsed === "object"
-        ){
-          return parsed;
-        }
-
-      }catch(ignore){}
-
-    }
-
-  }
-
-  return null;
 }
 
 
-/* =========================================================
-   API HELPERS
-   ========================================================= */
+/*
+* Normal first-line fallback.
+*/
+const lines=text
+.split("\n")
+.map(x=>clean(x))
+.filter(Boolean);
 
-async function apiGet(path){
+if(lines.length){
 
-  const url =
-    REVIEW_API_BASE + path;
+let first=lines[0];
 
-  const response =
-    await fetch(
-      url,
-      {
-        method:"GET",
-        credentials:"include",
-        cache:"no-store",
-        headers:{
-          "Accept":"application/json"
-        }
-      }
-    );
+first=first
+.replace(/^#+\s*/,"")
+.replace(/^[*_\s]+/,"")
+.replace(/[*_\s]+$/,"")
+.trim();
 
-  const text =
-    await response.text();
+if(
+first.length>=8 &&
+first.length<=180 &&
+!/^page\s+\d+/i.test(first) &&
+!/^your complete document$/i.test(first)
+){
 
-  let data = null;
+return first;
 
-  try{
-    data =
-      text
-        ? JSON.parse(text)
-        : {};
-  }catch(error){
+}
 
-    throw new Error(
-      "The Review service returned an invalid response."
-    );
-
-  }
-
-  if(!response.ok){
-
-    throw new Error(
-      clean(
-        data.message ||
-        data.error ||
-        data.detail ||
-        "The Review service could not provide the document."
-      )
-    );
-
-  }
-
-  return data;
 }
 
 
-async function apiPost(path,payload){
+/*
+* Existing subject-based fallback retained.
+*/
+for(const line of lines.slice(0,15)){
 
-  const url =
-    REVIEW_API_BASE + path;
+const candidate=line
+.replace(/^#+\s*/,"")
+.replace(/^\*+/,"")
+.replace(/\*+$/,"")
+.trim();
 
-  const response =
-    await fetch(
-      url,
-      {
-        method:"POST",
-        credentials:"include",
-        cache:"no-store",
-        headers:{
-          "Content-Type":"application/json",
-          "Accept":"application/json"
-        },
-        body:JSON.stringify(payload)
-      }
-    );
+if(
+candidate.length>=8 &&
+candidate.length<=180 &&
+/ghana|revenue|country|seminar|paper|project|assignment|report/i.test(candidate)
+){
 
-  const text =
-    await response.text();
+return candidate;
 
-  let data = {};
+}
 
-  try{
-    data =
-      text
-        ? JSON.parse(text)
-        : {};
-  }catch(error){
+}
 
-    throw new Error(
-      "The Review service returned an invalid response."
-    );
+}
 
-  }
-
-  if(!response.ok){
-
-    throw new Error(
-      clean(
-        data.message ||
-        data.error ||
-        data.detail ||
-        "The correction could not be applied."
-      )
-    );
-
-  }
-
-  return data;
+return "";
 }
 
 
-async function paymentPost(path,payload){
+function applyJob(d){
 
-  const response =
-    await fetch(
-      PAYMENT_API_BASE + path,
-      {
-        method:"POST",
-        credentials:"omit",
-        cache:"no-store",
-        headers:{
-          "Content-Type":"application/json",
-          "Accept":"application/json"
-        },
-        body:JSON.stringify(payload)
-      }
-    );
+currentStatus=clean(d.status);
 
-  const text =
-    await response.text();
+reviewFinished=complete(d);
 
-  let data = {};
+customerId=
+clean(
+d.customer_id ||
+d.customerId ||
+d.job?.customer_id ||
+d.document?.customer_id ||
+d.result?.customer_id ||
+d.output?.customer_id
+) ||
+customerId;
 
-  try{
-    data =
-      text
-        ? JSON.parse(text)
-        : {};
-  }catch(error){
+documentFilename=
+clean(
+d.filename ||
+d.document_filename ||
+d.document?.filename ||
+d.result?.filename ||
+d.output?.filename
+) ||
+documentFilename;
 
-    throw new Error(
-      "The payment service returned an invalid response."
-    );
+const extractedPages=extractPages(d);
 
-  }
+if(extractedPages.length){
 
-  if(!response.ok){
+pages=extractedPages;
+totalPages=extractedPages.length;
 
-    throw new Error(
-      clean(
-        data.message ||
-        data.error ||
-        data.detail ||
-        "The payment service could not prepare payment."
-      )
-    );
+}
+else{
 
-  }
+totalPages=
+Number(
+d.total_pages ||
+d.totalPages
+) || 0;
 
-  return data;
+}
+
+currentVersion=
+Number(
+d.current_version ||
+d.currentVersion ||
+d.version ||
+d.document_version
+) || 1;
+
+versionId=
+clean(
+d.version_id ||
+d.versionId ||
+d.document_version_id ||
+d.documentVersionId ||
+d.document_version ||
+d.current_version_id ||
+d.currentVersionId ||
+d.document?.version_id ||
+d.result?.version_id ||
+d.output?.version_id
+);
+
+amount=preserveExistingAmount(d);
+
+billing=
+clean(d.billing) ||
+extractBilling(d) ||
+billing;
+
+documentTitle=
+extractDocumentTitle(d) ||
+documentTitle;
+
+if(totalPages){
+
+currentPage=Math.max(
+1,
+Math.min(
+currentPage,
+totalPages
+)
+);
+
+}
+
+const progress=d.progress||{};
+
+const completed=Number(progress.completed)||0;
+
+const total=
+Number(progress.total) ||
+totalPages ||
+0;
+
+let percent=
+total
+?
+Math.round(completed/total*100)
+:0;
+
+if(reviewFinished && totalPages)
+percent=100;
+
+progressBar.style.width=
+Math.max(
+0,
+Math.min(100,percent)
+)+"%";
+
+pageCount.textContent=
+totalPages+
+(totalPages===1?" PAGE":" PAGES");
+
+if(amount>0){
+
+amountValueTop.textContent=
+"₦"+
+Number(amount).toLocaleString("en-NG");
+
+}
+else{
+
+amountValueTop.textContent="₦0";
+
+}
+
+if(reviewFinished){
+
+setStatus("READY");
+
+progressText.textContent=
+"Your document is ready to review and continue to payment.";
+
+}
+else if(state()==="reviewing"){
+
+setStatus("REVIEWING");
+
+progressText.textContent=
+completed+" of "+total+" pages reviewed.";
+
+}
+else if(state()==="correcting"){
+
+setStatus("CORRECTING");
+
+progressText.textContent=
+"Your correction is being applied.";
+
+}
+else if(
+state()==="review_error" ||
+state()==="correction_error"
+){
+
+setStatus("ERROR");
+
+progressText.textContent=
+"The document review encountered an error.";
+
+}
+else{
+
+setStatus(
+currentStatus
+?
+currentStatus.toUpperCase()
+:
+"PREPARING"
+);
+
+}
+
+renderPage();
+
+updateButtons();
+
 }
 
 
-/* =========================================================
-   LOAD REVIEW DATA
-   ========================================================= */
+async function loadJob(){
 
-async function loadReview(){
+const data=await apiGet(
+"/api/review?job_id="+
+encodeURIComponent(jobId)
+);
 
-  if(loading){
-    return;
-  }
+applyJob(data);
 
-  loading = true;
-
-  updateStatusUI();
-
-  hideMessage();
-
-  try{
-
-    /*
-      PRIMARY SOURCE
-
-      The Review page now asks the existing Review API for
-      the completed document using SERVICE + DOCUMENT TITLE.
-
-      No job_id is used.
-    */
-
-    if(
-      currentService &&
-      documentTitle
-    ){
-
-      const query =
-        "?service=" +
-        encodeURIComponent(currentService) +
-        "&document_title=" +
-        encodeURIComponent(documentTitle);
-
-      const data =
-        await apiGet(
-          "/api/review" + query
-        );
-
-      const unwrapped =
-        unwrapResponse(data);
-
-      applyDocument(unwrapped);
-
-      if(
-        pages.length &&
-        reviewReady
-      ){
-
-        loading = false;
-        updateStatusUI();
-        stopPolling();
-        return;
-      }
-    }
-
-    /*
-      SECOND SOURCE
-
-      Direct review data passed into the page.
-    */
-
-    const urlData =
-      readUrlReviewData();
-
-    if(urlData){
-
-      applyDocument(urlData);
-
-      if(
-        pages.length &&
-        reviewReady
-      ){
-
-        loading = false;
-        updateStatusUI();
-        stopPolling();
-        return;
-      }
-    }
-
-    /*
-      THIRD SOURCE
-
-      Existing session/local review state.
-    */
-
-    const stored =
-      readStoredReview();
-
-    if(stored){
-
-      applyDocument(stored);
-
-      if(
-        pages.length &&
-        reviewReady
-      ){
-
-        loading = false;
-        updateStatusUI();
-        stopPolling();
-        return;
-      }
-    }
-
-    if(!pages.length){
-
-      setStatus("WAITING");
-
-      showMessage(
-        "Your completed document is not available yet. Please wait while it is prepared.",
-        ""
-      );
-
-    }
-
-  }catch(error){
-
-    /*
-      If the API cannot be reached, do not destroy an already
-      available document. Try the locally available document.
-    */
-
-    const stored =
-      readStoredReview();
-
-    if(stored){
-
-      applyDocument(stored);
-
-      if(pages.length){
-
-        showMessage(
-          "Your document is being displayed from the current review session.",
-          "success"
-        );
-
-      }else{
-
-        showMessage(
-          error.message ||
-          "The completed document could not be loaded.",
-          "error"
-        );
-
-      }
-
-    }else{
-
-      setStatus("REVIEW ERROR","error");
-
-      showMessage(
-        error.message ||
-        "The completed document could not be loaded.",
-        "error"
-      );
-
-    }
-
-  }finally{
-
-    loading = false;
-
-    updateStatusUI();
-
-  }
+return data;
 }
 
-
-/* =========================================================
-   POLLING
-   ========================================================= */
 
 function startPolling(){
 
-  stopPolling();
+if(polling)
+return;
 
-  pollTimer =
-    setInterval(
-      async function(){
+polling=true;
 
-        if(
-          reviewReady &&
-          pages.length
-        ){
-          stopPolling();
-          return;
-        }
+const poll=async()=>{
 
-        await loadReview();
+try{
 
-      },
-      2500
-    );
+const data=await loadJob();
+
+if(
+complete(data) &&
+extractPages(data).length
+){
+
+polling=false;
+return;
+
 }
 
+if(
+[
+"review_error",
+"correction_error"
+].includes(state())
+){
 
-function stopPolling(){
+polling=false;
+return;
 
-  if(pollTimer){
-
-    clearInterval(
-      pollTimer
-    );
-
-    pollTimer = null;
-  }
 }
 
-
-/* =========================================================
-   CORRECTION
-   ========================================================= */
-
-correctionButton.addEventListener(
-  "click",
-  async function(){
-
-    if(
-      correcting ||
-      !pages.length
-    ){
-      return;
-    }
-
-    const instruction =
-      clean(
-        correctionInput.value
-      );
-
-    if(!instruction){
-
-      showMessage(
-        "Please enter the correction you want applied.",
-        "error"
-      );
-
-      correctionInput.focus();
-
-      return;
-    }
-
-    if(
-      !currentService ||
-      !documentTitle
-    ){
-
-      showMessage(
-        "The service and document title are required to apply a correction.",
-        "error"
-      );
-
-      return;
-    }
-
-    correcting = true;
-
-    correctionButton.disabled = true;
-
-    makePaymentButton.disabled = true;
-
-    setStatus("APPLYING CORRECTION");
-
-    setProgress(55);
-
-    hideMessage();
-
-    try{
-
-      /*
-        IMPORTANT:
-
-        Correction is identified by SERVICE + DOCUMENT TITLE.
-        The existing document is supplied as the exact source.
-      */
-
-      const payload = {
-
-        service:
-          currentService,
-
-        document_title:
-          documentTitle,
-
-        title:
-          documentTitle,
-
-        instruction:
-          instruction,
-
-        correction:
-          instruction,
-
-        document:
-          currentDocument,
-
-        pages:
-          pages
-
-      };
-
-      const data =
-        await apiPost(
-          "/api/correct",
-          payload
-        );
-
-      applyDocument(
-        unwrapResponse(data)
-      );
-
-      correctionInput.value = "";
-
-      if(pages.length){
-
-        reviewReady = true;
-
-        setStatus(
-          "READY",
-          "ready"
-        );
-
-        setProgress(100);
-
-        makePaymentButton.disabled =
-          false;
-
-        correctionButton.disabled =
-          false;
-
-        showMessage(
-          "Correction applied. Please review the updated document.",
-          "success"
-        );
-
-      }else{
-
-        reviewReady = false;
-
-        showMessage(
-          "The correction was submitted and the document is being prepared again.",
-          ""
-        );
-
-        startPolling();
-      }
-
-    }catch(error){
-
-      setStatus(
-        reviewReady ? "READY" : "REVIEW ERROR",
-        reviewReady ? "ready" : "error"
-      );
-
-      showMessage(
-        error.message ||
-        "The correction could not be applied.",
-        "error"
-      );
-
-      updateStatusUI();
-
-    }finally{
-
-      correcting = false;
-
-      updateStatusUI();
-
-    }
-
-  }
+pollTimer=setTimeout(
+poll,
+1200
 );
 
+}
+catch(e){
 
-/* =========================================================
-   MAKE PAYMENT
-   ========================================================= */
+polling=false;
 
-makePaymentButton.addEventListener(
-  "click",
-  async function(){
+if(!pages.length){
 
-    if(
-      paymentPreparing ||
-      !pages.length ||
-      !reviewReady
-    ){
-      return;
-    }
-
-    if(
-      !currentService ||
-      !documentTitle
-    ){
-
-      showMessage(
-        "The service and document title are required before payment can be prepared.",
-        "error"
-      );
-
-      return;
-    }
-
-    paymentPreparing = true;
-
-    makePaymentButton.disabled =
-      true;
-
-    correctionButton.disabled =
-      true;
-
-    setStatus(
-      "PREPARING PAYMENT"
-    );
-
-    setProgress(80);
-
-    hideMessage();
-
-    try{
-
-      /*
-        PRODUCT IDENTITY:
-
-            service + document_title
-
-        The exact reviewed document is included.
-
-        No job ID is sent.
-        No payment ID is used.
-        No transaction ID is used.
-        No version ID is used.
-      */
-
-      const identity =
-        getProductIdentity();
-
-      const payload = {
-
-        service:
-          identity.service,
-
-        document_title:
-          identity.document_title,
-
-        title:
-          identity.document_title,
-
-        amount:
-          amountToPay,
-
-        currency:
-          "NGN",
-
-        document_payload:{
-
-          service:
-            identity.service,
-
-          document_title:
-            identity.document_title,
-
-          pages:
-            pages,
-
-          document:
-            currentDocument
-
-        },
-
-        pages:
-          pages
-
-      };
-
-      const result =
-        await paymentPost(
-          "/api/payment/create",
-          payload
-        );
-
-      setProgress(100);
-
-      setStatus(
-        "PAYMENT READY",
-        "ready"
-      );
-
-      /*
-        Preserve the payment page handoff, but use only
-        SERVICE + DOCUMENT TITLE for document identity.
-      */
-
-      const paymentUrl =
-        "payment.html" +
-        "?service=" +
-        encodeURIComponent(
-          identity.service
-        ) +
-        "&document_title=" +
-        encodeURIComponent(
-          identity.document_title
-        ) +
-        (
-          amountToPay
-            ? "&amount=" +
-              encodeURIComponent(
-                amountToPay
-              )
-            : ""
-        );
-
-      showMessage(
-        clean(
-          result.message ||
-          "Your document has been prepared for payment."
-        ),
-        "success"
-      );
-
-      setTimeout(
-        function(){
-          window.location.href =
-            paymentUrl;
-        },
-        350
-      );
-
-    }catch(error){
-
-      setStatus(
-        "PAYMENT ERROR",
-        "error"
-      );
-
-      setProgress(
-        reviewReady ? 100 : 75
-      );
-
-      showMessage(
-        error.message ||
-        "Payment preparation could not connect to the payment service. Please try again.",
-        "error"
-      );
-
-      makePaymentButton.disabled =
-        false;
-
-      correctionButton.disabled =
-        false;
-
-    }finally{
-
-      paymentPreparing = false;
-
-    }
-
-  }
+setMessage(
+e.message,
+"error"
 );
 
+}
 
-/* =========================================================
-   INITIALIZATION
-   ========================================================= */
+}
 
-function initialize(){
+};
 
-  updateIdentityUI();
-
-  setStatus(
-    "PREPARING"
-  );
-
-  setProgress(10);
-
-  /*
-    First attempt:
-
-    If direct document data or an existing review session is
-    already available, show it immediately instead of waiting
-    for an unnecessary API round trip.
-  */
-
-  const directData =
-    readUrlReviewData();
-
-  if(directData){
-
-    applyDocument(
-      directData
-    );
-
-    if(
-      pages.length &&
-      reviewReady
-    ){
-
-      stopPolling();
-
-      return;
-    }
-  }
-
-  const stored =
-    readStoredReview();
-
-  if(stored){
-
-    applyDocument(
-      stored
-    );
-
-    if(
-      pages.length &&
-      reviewReady
-    ){
-
-      stopPolling();
-
-      return;
-    }
-  }
-
-  /*
-    Then load from the existing Review service using:
-
-        service + document_title
-  */
-
-  loadReview();
-
-  startPolling();
+poll();
 
 }
 
 
-initialize();
+correctionButton.onclick=async()=>{
 
-
-/* =========================================================
-   CLEANUP
-   ========================================================= */
-
-window.addEventListener(
-  "beforeunload",
-  function(){
-    stopPolling();
-  }
+const instruction=clean(
+correctionInput.value
 );
 
-})();
+if(!instruction){
+
+return setMessage(
+"Please write the correction or change you want.",
+"error"
+);
+
+}
+
+try{
+
+busy=true;
+
+updateButtons();
+
+setMessage(
+"Applying your correction..."
+);
+
+await apiPost(
+"/api/correct",
+{
+job_id:jobId,
+instruction
+}
+);
+
+correctionInput.value="";
+
+currentStatus="correcting";
+
+pages=[];
+totalPages=0;
+currentPage=1;
+
+renderPage();
+
+updateButtons();
+
+setMessage(
+"Your correction has started.",
+"success"
+);
+
+startPolling();
+
+}
+catch(e){
+
+setMessage(
+e.message,
+"error"
+);
+
+}
+finally{
+
+busy=false;
+
+updateButtons();
+
+}
+
+};
+
+
+makePaymentButton.onclick=async()=>{
+
+if(!reviewFinished){
+
+return setMessage(
+"Please wait until the complete document review is ready.",
+"error"
+);
+
+}
+
+if(!jobId){
+
+return setMessage(
+"This document could not be prepared for payment.",
+"error"
+);
+
+}
+
+if(!versionId){
+
+return setMessage(
+"The current document version could not be identified. Please refresh Review and try again.",
+"error"
+);
+
+}
+
+if(paymentStarted){
+
+return setMessage(
+"Payment has already been prepared. Continue on the payment page.",
+"success"
+);
+
+}
+
+try{
+
+busy=true;
+
+updateButtons();
+
+setMessage(
+"Saving your exact reviewed document and preparing payment...",
+"success"
+);
+
+if(!documentTitle){
+
+documentTitle=
+extractDocumentTitle({
+pages:pages
+});
+
+}
+
+if(!documentTitle){
+
+throw Error(
+"The document title could not be identified. Please return to the document and try again."
+);
+
+}
+
+
+const payload={
+
+job_id:jobId,
+
+customer_id:customerId,
+
+service:service,
+
+title:documentTitle,
+
+document_title:documentTitle,
+
+amount:amount,
+
+payment_method:"bank_transfer",
+
+version_id:versionId,
+
+document_version:versionId,
+
+document_status:currentStatus,
+
+review_finished:reviewFinished,
+
+total_pages:pages.length,
+
+pages:pages.map(page=>({
+
+page_number:page.page_number,
+
+position:page.position,
+
+content:cleanMarkdownText(page.content),
+
+review:cleanMarkdownText(page.review),
+
+status:page.status
+
+})),
+
+document_text:
+pages
+.map(page=>cleanMarkdownText(page.content||""))
+.join("\n\n"),
+
+filename:
+documentFilename ||
+"naija_pocket_document.docx"
+
+};
+
+const data=await paymentPost(
+"/api/payment/create",
+payload
+);
+
+if(data.ok!==true){
+
+throw Error(
+"Payment preparation did not return a successful confirmation."
+);
+
+}
+
+paymentStarted=true;
+
+if(data.amount!=null){
+
+const returnedAmount=
+Number(
+String(data.amount)
+.replace(/[^0-9.]/g,"")
+);
+
+if(
+isFinite(returnedAmount) &&
+returnedAmount>0
+){
+
+amount=returnedAmount;
+
+amountValueTop.textContent=
+"₦"+
+Number(amount).toLocaleString("en-NG");
+
+}
+
+}
+
+billing=
+clean(data.billing) ||
+billing;
+
+setMessage(
+"Your reviewed document is securely saved. Opening Payment & Delivery...",
+"success"
+);
+
+
+const paymentUrl=
+"payment.html"+
+"?job_id="+
+encodeURIComponent(jobId)+
+"&version_id="+
+encodeURIComponent(versionId)+
+"&service="+
+encodeURIComponent(service)+
+"&title="+
+encodeURIComponent(documentTitle)+
+"&amount="+
+encodeURIComponent(amount);
+
+window.location.href=paymentUrl;
+
+}
+catch(e){
+
+setMessage(
+e.message ||
+"Payment preparation could not be completed. Please try again.",
+"error"
+);
+
+}
+finally{
+
+busy=false;
+
+updateButtons();
+
+}
+
+};
+
+
+async function start(){
+
+serviceBadge.textContent=service;
+
+if(!jobId){
+
+setStatus("NO DOCUMENT");
+
+pageViewer.innerHTML=
+'<div class="empty-page">'+
+"No document was supplied for review."+
+'</div>';
+
+setMessage(
+"This review page needs a document.",
+"error"
+);
+
+return;
+}
+
+try{
+
+const data=await loadJob();
+
+if(
+!complete(data) &&
+![
+"review_error",
+"correction_error"
+].includes(state())
+){
+
+startPolling();
+
+}
+
+}
+catch(e){
+
+setStatus("ERROR");
+
+setMessage(
+e.message,
+"error"
+);
+
+pageViewer.innerHTML=
+'<div class="empty-page"></div>';
+
+const errorBox=document.createElement("div");
+
+errorBox.textContent=e.message;
+
+errorBox.style.color="#777";
+errorBox.style.padding="20px";
+
+pageViewer
+.querySelector(".empty-page")
+.appendChild(errorBox);
+
+}
+
+}
+
+start();
+
 </script>
 
 </body>
-</html>
+</html> 
