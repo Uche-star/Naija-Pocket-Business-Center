@@ -11,6 +11,7 @@ CANONICAL RULE:
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from typing import Any, Optional
+
 import json
 import os
 import re
@@ -755,10 +756,12 @@ def make_docx(
             "[Content_Types].xml",
             content_types,
         )
+
         archive.writestr(
             "_rels/.rels",
             root_rels,
         )
+
         archive.writestr(
             "word/document.xml",
             document_xml,
@@ -777,7 +780,6 @@ def save_exact_snapshot(
     payload: dict,
     existing_product: Optional[dict] = None,
 ) -> Path:
-
     # Preserve an already-established canonical file.
     existing_file = existing_saved_file(
         existing_product or get_product(
@@ -912,7 +914,6 @@ def upsert_product(
     currency: str = "NGN",
     job_id: str = "",
 ) -> dict:
-
     service_clean = clean(service)
     title_clean = clean(title)
 
@@ -961,42 +962,36 @@ def upsert_product(
                             THEN ?
                             ELSE customer_name
                         END,
-
                     customer_email=
                         CASE
                             WHEN ? <> ''
                             THEN ?
                             ELSE customer_email
                         END,
-
                     customer_phone=
                         CASE
                             WHEN ? <> ''
                             THEN ?
                             ELSE customer_phone
                         END,
-
                     amount=
                         CASE
                             WHEN ? <> ''
                             THEN ?
                             ELSE amount
                         END,
-
                     currency=
                         CASE
                             WHEN ? <> ''
                             THEN ?
                             ELSE currency
                         END,
-
                     job_id=
                         CASE
                             WHEN ? <> ''
                             THEN ?
                             ELSE job_id
                         END,
-
                     document_payload=
                         CASE
                             WHEN document_saved_path IS NULL
@@ -1004,7 +999,6 @@ def upsert_product(
                             THEN ?
                             ELSE document_payload
                         END,
-
                     document_text=
                         CASE
                             WHEN document_saved_path IS NULL
@@ -1012,33 +1006,24 @@ def upsert_product(
                             THEN ?
                             ELSE document_text
                         END,
-
                     updated_at=?
-
                 WHERE business_key=?
                 """,
                 (
                     clean(customer_name),
                     clean(customer_name),
-
                     clean(customer_email),
                     clean(customer_email),
-
                     clean(customer_phone),
                     clean(customer_phone),
-
                     clean(amount),
                     clean(amount),
-
                     clean(currency),
                     clean(currency),
-
                     clean(job_id),
                     clean(job_id),
-
                     to_json(normalized),
                     extract_document_text(normalized),
-
                     timestamp,
                     business_key_value,
                 ),
@@ -1067,7 +1052,7 @@ def upsert_product(
                     updated_at
                 )
                 VALUES (
-                    ?,?,?,?,?,?,?,?,?,?,?,?,'',
+                    ?,?,?,?,?,?,?,?,?,?,?, '',
                     NULL,0,0,?,?
                 )
                 """,
@@ -1109,7 +1094,6 @@ def upsert_product(
 def ensure_payment_record(
     product: dict,
 ) -> dict:
-
     business_key_value = clean(
         product.get("business_key")
     )
@@ -1147,7 +1131,8 @@ def ensure_payment_record(
                 updated_at
             )
             VALUES (
-                ?,?,?,?,?,?,?,?,?, 'pending',?,?
+                ?,?,?,?,?,?,?,?,?,
+                'pending',?,?
             )
             """,
             (
@@ -1185,7 +1170,6 @@ def update_payment(
     reported_at: Optional[str] = None,
     completed_at: Optional[str] = None,
 ) -> Optional[dict]:
-
     updates = []
     values = []
 
@@ -1252,7 +1236,6 @@ def update_payment(
 def repair_saved_snapshot(
     product: dict,
 ) -> Optional[Path]:
-
     saved = existing_saved_file(
         product
     )
@@ -1309,7 +1292,6 @@ def repair_saved_snapshot(
 def activate_download(
     business_key_value: str,
 ) -> Optional[dict]:
-
     business_key_value = clean(
         business_key_value
     )
@@ -1348,7 +1330,6 @@ def activate_download(
 def public_product(
     product: Optional[dict],
 ) -> Optional[dict]:
-
     if not product:
         return None
 
@@ -1433,7 +1414,6 @@ def public_product(
 def api_base(
     request: Optional[Request] = None,
 ) -> str:
-
     if PUBLIC_API_BASE_URL:
         return PUBLIC_API_BASE_URL.rstrip("/")
 
@@ -1450,7 +1430,6 @@ def download_url(
     title: str,
     request: Optional[Request] = None,
 ) -> str:
-
     base = api_base(request)
 
     query = urllib.parse.urlencode(
@@ -1469,7 +1448,6 @@ def delivery_channels(
     product: dict,
     request: Optional[Request] = None,
 ) -> list[dict]:
-
     service = clean(
         product.get("service")
     )
@@ -1523,7 +1501,6 @@ def delivery_channels(
 def create_back_office_download_token(
     product: dict,
 ) -> str:
-
     token = secrets.token_urlsafe(32)
 
     created = datetime.now(
@@ -1577,7 +1554,6 @@ def create_back_office_download_token(
 def validate_back_office_download_token(
     token: str,
 ) -> Optional[dict]:
-
     token_clean = clean(token)
 
     if not token_clean:
@@ -1628,7 +1604,6 @@ def validate_back_office_download_token(
 def record_back_office_token_download(
     token: str,
 ) -> None:
-
     with db(PRODUCT_DB_PATH) as connection:
         connection.execute(
             """
@@ -1650,7 +1625,6 @@ def back_office_delivery_channels(
     product: dict,
     request: Optional[Request] = None,
 ) -> list[dict]:
-
     token = create_back_office_download_token(
         product
     )
@@ -1701,7 +1675,6 @@ def select_channel(
     channels: list[dict],
     requested: str,
 ) -> Optional[dict]:
-
     requested_clean = clean(
         requested
     ).lower()
@@ -1726,7 +1699,6 @@ def log_delivery(
     recipient: str = "",
     detail: str = "",
 ) -> None:
-
     with db(PRODUCT_DB_PATH) as connection:
         connection.execute(
             """
@@ -1754,7 +1726,6 @@ def log_delivery(
 def require_back_office(
     admin_key: Optional[str],
 ) -> None:
-
     if clean(admin_key) != BACK_OFFICE_ADMIN_KEY:
         raise HTTPException(
             status_code=401,
@@ -1769,9 +1740,7 @@ def require_back_office(
 class PaymentCreateRequest(BaseModel):
     """
     Compatibility model.
-
     Review remains unchanged.
-
     The endpoint also accepts additional fields because the
     existing Review page may send document/service information
     under different names.
@@ -1780,7 +1749,6 @@ class PaymentCreateRequest(BaseModel):
     service: Optional[str] = ""
     document_title: Optional[str] = ""
     document_payload: Any = None
-
     customer_name: str = ""
     customer_email: str = ""
     customer_phone: str = ""
@@ -1854,7 +1822,6 @@ async def create_payment(
 
     try:
         incoming = await request.json()
-
     except Exception:
         raise HTTPException(
             status_code=400,
@@ -1983,7 +1950,6 @@ async def create_payment(
     # --------------------------------------------------------
 
     if document_payload is None:
-
         possible_fields = (
             "pages",
             "page_text",
@@ -2016,7 +1982,6 @@ async def create_payment(
         document_payload,
         str,
     ):
-
         parsed_payload = from_json(
             document_payload
         )
@@ -2140,7 +2105,6 @@ async def create_payment(
     )
 
     if saved_path is None:
-
         saved_path = save_exact_snapshot(
             service,
             document_title,
@@ -2343,7 +2307,6 @@ def complete_payment(
 
 @app.get("/api/customer-care/payments")
 def customer_care_payments():
-
     with db(PAYMENT_DB_PATH) as connection:
         rows = connection.execute(
             """
@@ -2367,7 +2330,6 @@ def customer_care_verify_payment(
     service: str,
     title: str,
 ):
-
     product = get_product(
         service,
         title,
@@ -2933,7 +2895,6 @@ def canonical_file_response(
     path: Path,
     attachment: bool = True,
 ) -> FileResponse:
-
     if not path.exists():
         raise HTTPException(
             status_code=404,
@@ -2990,6 +2951,7 @@ def customer_download(
     Customer download.
 
     Returns the exact canonical saved file.
+
     No fallback.
     No regeneration.
     """
@@ -3092,7 +3054,6 @@ def customer_delivery_channels(
     title: str,
     request: Request,
 ):
-
     product = get_product(
         service,
         title,
@@ -3119,7 +3080,6 @@ def prepare_customer_delivery(
     body: DeliveryRequest,
     request: Request,
 ):
-
     product = get_product(
         body.service,
         body.document_title,
@@ -3203,7 +3163,6 @@ def get_back_office_delivery_channels(
         alias="X-Back-Office-Key",
     ),
 ):
-
     require_back_office(
         admin_key
     )
@@ -3244,7 +3203,6 @@ def get_back_office_delivery_channels(
 def back_office_delivery_file(
     token: str,
 ):
-
     record = validate_back_office_download_token(
         token
     )
@@ -3308,7 +3266,6 @@ def back_office_direct_download(
         alias="X-Back-Office-Key",
     ),
 ):
-
     require_back_office(
         admin_key
     )
@@ -3359,7 +3316,6 @@ def back_office_delivery_history(
         alias="X-Back-Office-Key",
     ),
 ):
-
     require_back_office(
         admin_key
     )
@@ -3411,7 +3367,6 @@ def product_status(
     service: str,
     title: str,
 ):
-
     product = get_product(
         service,
         title,
@@ -3512,7 +3467,6 @@ def back_office_delivery(
         alias="X-Back-Office-Key",
     ),
 ):
-
     require_back_office(
         admin_key
     )
@@ -3605,4 +3559,4 @@ if __name__ == "__main__":
                 "8000",
             )
         ),
-    ) 
+    )
