@@ -91,7 +91,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .payment-id{margin-top:6px;color:#aaa;font-size:9px;word-break:break-all}
 .payment-message{margin-top:7px;color:#888;font-size:9px;text-align:center;line-height:1.45}
 .message{flex:0 0 auto;min-height:17px;margin-top:2px;color:#888;font-size:9px;text-align:center}
-.message.error{color:#ff7777}.message.success{color:#75dc99}/* CUSTOMER CARE DELIVERY */
+.message.error{color:#ff7777}.message.success{color:#75dc99}
+
+/* CUSTOMER CARE DELIVERY */
 .delivery-channels{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .delivery-channel{display:flex;align-items:center;justify-content:center;min-height:42px;padding:8px 6px;border:1px solid rgba(212,175,55,.35);border-radius:8px;background:#171717;color:#fff;text-decoration:none;font-size:9px;font-weight:900;text-align:center}
 .delivery-channel.phone{background:#007bff;border-color:#007bff;color:#fff}
@@ -752,13 +754,16 @@ startPaymentPolling()
 /*
 CUSTOMER CARE / DELIVERY
 
-The Review page does NOT construct or send an email.
+The Review page does NOT construct or send the Customer Care email.
 
-There is deliberately no mailto: fallback here.
+The Email delivery button is restored.
 
-The API is responsible for Customer Care email delivery.
-The Review page only consumes delivery information returned
-by the API and displays the available customer-facing options.
+The Email URL is taken from the API delivery-channel response.
+There is intentionally no mailto: fallback here.
+
+The API remains responsible for the Customer Care email.
+The Review page only displays the email delivery option
+returned by the API.
 
 The exact prepared document is still served by the existing
 download route. No document is regenerated here.
@@ -776,6 +781,7 @@ const findChannel=id=>channels.find(x=>clean(x?.id).toLowerCase()===id);
 const phone=findChannel("phone");
 const whatsapp=findChannel("whatsapp");
 const telegram=findChannel("telegram");
+const email=findChannel("email");
 
 const fallbackDownload=buildFallbackDownloadUrl();
 
@@ -793,7 +799,25 @@ encodeURIComponent(new URL(phoneUrl,window.location.origin).href)+
 "&text="+encodeURIComponent("Your document is ready.")
 );
 
+/*
+The API must provide the email channel URL.
+
+No mailto fallback is generated here because Customer Care
+email handling belongs to the API.
+*/
+const emailUrl=clean(email?.url);
+
 paymentSection.style.display="block";
+
+let emailHtml="";
+
+if(emailUrl){
+emailHtml=`
+<a class="delivery-channel email" href="${emailUrl}" target="_blank" rel="noopener">
+📧 Email
+</a>
+`;
+}
 
 paymentDetails.innerHTML=`
 <div class="delivery-heading">YOUR DOCUMENT IS READY</div>
@@ -812,11 +836,13 @@ paymentDetails.innerHTML=`
 ✈️ Telegram
 </a>
 
+${emailHtml}
+
 </div>
 
 <div class="customer-care-message">
 <strong>Customer Care</strong><br>
-Your document is already prepared. Customer Care will send the document email through the service API. No email is created or sent from this review page.
+Your document is already prepared. Customer Care email is handled through the service API.
 </div>
 
 <div class="delivery-note">
@@ -824,7 +850,9 @@ Your document has already been prepared. The Review page does not regenerate it.
 </div>
 `;
 
-paymentMessage.textContent="Your Customer Care email is handled by the service API.";
+paymentMessage.textContent=emailUrl
+?"Your document is ready. Customer Care email is handled by the service API."
+:"Your document is ready. Customer Care email is handled by the service API.";
 
 setMessage("Your delivery options are ready.","success")
 }
