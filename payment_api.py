@@ -11,6 +11,7 @@ import urllib.parse
 import zipfile
 import smtplib
 from email.message import EmailMessage
+from html import escape as html_escape
 from xml.sax.saxutils import escape as xml_escape
 
 from fastapi import FastAPI, Header, HTTPException, Request
@@ -370,8 +371,7 @@ def make_docx(
         'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
         '<w:body>'
         + "".join(body)
-        +
-        '<w:sectPr>'
+        + '<w:sectPr>'
         '<w:pgSz w:w="12240" w:h="15840"/>'
         '<w:pgMar w:top="1440" w:right="1440" '
         'w:bottom="1440" w:left="1440"/>'
@@ -536,7 +536,6 @@ def init_databases() -> None:
     c.commit()
     c.close()
 
-    # Existing production databases receive these columns automatically.
     ensure_column(
         PRODUCT_DB_PATH,
         "document_products",
@@ -1463,8 +1462,16 @@ def _customer_care_email_html(
     download_url: str
 ) -> str:
 
-    safe_title = html_escape(title)
-    safe_service = html_escape(service)
+    safe_title = html_escape(
+        title,
+        quote=True
+    )
+
+    safe_service = html_escape(
+        service,
+        quote=True
+    )
+
     safe_url = html_escape(
         download_url,
         quote=True
@@ -1481,76 +1488,326 @@ def _customer_care_email_html(
 
 <body style="
     margin:0;
-    padding:24px;
-    background:#fff;
-    color:#222;
-    font-family:Arial,sans-serif;
+    padding:0;
+    background:#050505;
+    color:#f5f5f5;
+    font-family:Arial,Helvetica,sans-serif;
 ">
+
+<table
+    role="presentation"
+    width="100%"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    style="
+        width:100%;
+        margin:0;
+        padding:0;
+        background:#050505;
+    "
+>
+<tr>
+<td
+    align="center"
+    style="
+        padding:36px 16px;
+        background:#050505;
+    "
+>
+
+<table
+    role="presentation"
+    width="100%"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    style="
+        max-width:600px;
+        width:100%;
+        background:#111111;
+        border:1px solid #d4af37;
+        border-radius:18px;
+        overflow:hidden;
+    "
+>
+
+<tr>
+<td
+    align="center"
+    style="
+        padding:30px 24px 24px;
+        background:#080808;
+        border-bottom:1px solid #2d2410;
+    "
+>
 
 <div style="
-    max-width:560px;
-    margin:0 auto;
+    font-size:12px;
+    letter-spacing:3px;
+    color:#d4af37;
+    font-weight:bold;
+    margin-bottom:10px;
+">
+    NAIJA POCKET
+</div>
+
+<div style="
+    font-size:27px;
+    line-height:1.2;
+    color:#ffffff;
+    font-weight:800;
+">
+    BUSINESS CENTER
+</div>
+
+<div style="
+    margin-top:12px;
+    color:#19a463;
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:1.5px;
+">
+    FAST • CONVENIENT • OPEN 24/7
+</div>
+
+</td>
+</tr>
+
+<tr>
+<td
+    style="
+        padding:34px 30px 30px;
+        background:#111111;
+    "
+>
+
+<p style="
+    margin:0 0 18px;
+    color:#ffffff;
+    font-size:17px;
     line-height:1.6;
 ">
-
-<p style="margin:0 0 18px;">
     Dear Customer,
 </p>
 
-<p style="margin:0 0 18px;">
-    Thank you for using Naija Pocket Business Center.
+<p style="
+    margin:0 0 20px;
+    color:#e9e9e9;
+    font-size:15px;
+    line-height:1.7;
+">
+    Thank you for using
+    <strong style="color:#d4af37;">
+        Naija Pocket Business Center
+    </strong>.
 </p>
 
-<p style="margin:0 0 18px;">
-    Your document has been completed and is now ready for download.
+<p style="
+    margin:0 0 24px;
+    color:#e9e9e9;
+    font-size:15px;
+    line-height:1.7;
+">
+    Your prepared document is ready.
+    You can now download the exact document
+    prepared for you by clicking the button below.
 </p>
 
-<p style="margin:0 0 6px;">
-    <strong>Service:</strong> {safe_service}
+<table
+    role="presentation"
+    width="100%"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    style="
+        width:100%;
+        margin:0 0 26px;
+        background:#080808;
+        border:1px solid #2f2f2f;
+        border-radius:12px;
+    "
+>
+<tr>
+<td style="padding:18px 20px;">
+
+<p style="
+    margin:0 0 8px;
+    color:#8f8f8f;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+">
+    Service
 </p>
 
-<p style="margin:0 0 22px;">
-    <strong>Document:</strong> {safe_title}
+<p style="
+    margin:0 0 16px;
+    color:#ffffff;
+    font-size:15px;
+    font-weight:bold;
+">
+    {safe_service}
 </p>
 
-<p style="margin:0 0 12px;">
-    Please click the link below to download your completed document:
+<p style="
+    margin:0 0 8px;
+    color:#8f8f8f;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+">
+    Document
 </p>
 
-<p style="margin:0 0 24px;">
-    <a
-        href="{safe_url}"
-        style="
-            color:#b8860b;
-            text-decoration:underline;
-            font-weight:700;
-        "
-    >
-        Click here to download your document
-    </a>
+<p style="
+    margin:0;
+    color:#d4af37;
+    font-size:15px;
+    font-weight:bold;
+    line-height:1.5;
+">
+    {safe_title}
 </p>
 
-<p style="margin:0 0 18px;">
-    Thank you for choosing Naija Pocket Business Center.
-    We appreciate your business and look forward to serving you again.
+</td>
+</tr>
+</table>
+
+<p style="
+    margin:0 0 16px;
+    color:#ffffff;
+    font-size:15px;
+    line-height:1.6;
+    text-align:center;
+    font-weight:bold;
+">
+    Your document is ready for download
+</p>
+
+<table
+    role="presentation"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    align="center"
+    style="
+        margin:0 auto 28px;
+    "
+>
+<tr>
+<td
+    align="center"
+    style="
+        border-radius:9px;
+        background:#d4af37;
+    "
+>
+
+<a
+    href="{safe_url}"
+    target="_blank"
+    rel="noopener noreferrer"
+    style="
+        display:inline-block;
+        padding:15px 28px;
+        border-radius:9px;
+        background:#d4af37;
+        color:#050505;
+        text-decoration:none;
+        font-size:14px;
+        font-weight:800;
+        letter-spacing:.6px;
+    "
+>
+    DOWNLOAD YOUR DOCUMENT
+</a>
+
+</td>
+</tr>
+</table>
+
+<p style="
+    margin:0 0 20px;
+    color:#bdbdbd;
+    font-size:13px;
+    line-height:1.7;
+    text-align:center;
+">
+    Simply tap the button above to open your
+    prepared document.
+</p>
+
+<div style="
+    height:1px;
+    background:#2d2d2d;
+    margin:24px 0;
+"></div>
+
+<p style="
+    margin:0 0 18px;
+    color:#e9e9e9;
+    font-size:14px;
+    line-height:1.7;
+">
+    Thank you for choosing
+    <strong style="color:#d4af37;">
+        Naija Pocket Business Center
+    </strong>.
+    We appreciate your business and look forward
+    to serving you again.
 </p>
 
 <p style="
     margin:0 0 4px;
-    font-weight:700;
+    color:#ffffff;
+    font-size:14px;
+    font-weight:bold;
 ">
-    Naija Pocket Business Center
+    Customer Care
 </p>
 
-<p style="margin:0 0 18px;">
+<p style="
+    margin:0;
+    color:#19a463;
+    font-size:13px;
+    line-height:1.6;
+">
     Fast • Convenient • Open 24/7
 </p>
 
-<p style="margin:0;">
-    If you need any assistance, please contact Customer Care.
+</td>
+</tr>
+
+<tr>
+<td
+    align="center"
+    style="
+        padding:20px 24px;
+        background:#080808;
+        border-top:1px solid #2d2410;
+    "
+>
+
+<p style="
+    margin:0;
+    color:#777777;
+    font-size:11px;
+    line-height:1.6;
+">
+    This email was sent by Naija Pocket Business Center
+    regarding your prepared document.
 </p>
 
-</div>
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
 </body>
 </html>"""
 
@@ -1736,7 +1993,7 @@ def send_customer_care_email_for_product(
             {
                 "recipient": recipient,
                 "link_text":
-                    "Click here to download your document"
+                    "DOWNLOAD YOUR DOCUMENT"
             }
         )
 
@@ -1744,7 +2001,7 @@ def send_customer_care_email_for_product(
             "sent": True,
             "recipient": recipient,
             "link_text":
-                "Click here to download your document"
+                "DOWNLOAD YOUR DOCUMENT"
         }
 
     except Exception as exc:
