@@ -280,14 +280,42 @@ if(!r.ok)throw Error(d.error_message||d.error||d.message||"Unable to load the do
 return d
 }
 
+/* ONLY CHANGE IN THIS COMPLETE REPLACEMENT:
+   Preserve the API call, but expose the real backend error. */
 async function apiPost(url,body){
+
 const r=await fetch(API_BASE+url,{
 method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify(body||{})
 });
-const d=await r.json().catch(()=>({}));
-if(!r.ok||d.success===false)throw Error(d.error_message||d.error||d.message||"The request could not be completed.");
+
+const raw=await r.text();
+
+let d={};
+
+try{
+d=raw?JSON.parse(raw):{};
+}catch(_e){
+d={raw:raw};
+}
+
+if(!r.ok||d.success===false){
+
+const detail=
+d.detail||
+d.error_message||
+d.error||
+d.message||
+d.raw||
+("HTTP "+r.status);
+
+throw Error(
+"Email API error: "+
+detail
+);
+}
+
 return d
 }
 
@@ -739,16 +767,6 @@ return ""
 return find(d)
 }
 
-/* =========================================================
-   DOCUMENT TITLE RESOLUTION
-
-   The title is first taken from the normal API fields.
-   If those fields are missing, the already-loaded Review
-   document is inspected for a "Title:" heading.
-
-   This does not regenerate or modify the document.
-   ========================================================= */
-
 function titleFromText(text){
 
 const source=clean(text);
@@ -802,8 +820,6 @@ const x=clean(v);
 if(x)return x
 }
 
-/* Try the document pages returned by the Review API. */
-
 const apiPages=extractPages(d);
 
 for(const p of apiPages){
@@ -812,8 +828,6 @@ const found=titleFromText(p.content);
 
 if(found)return found
 }
-
-/* Try the pages already loaded and displayed by Review. */
 
 for(const p of pages){
 
@@ -944,8 +958,6 @@ billing;
 paymentIdentifier=
 clean(d.payment_id)||
 paymentIdentifier;
-
-/* Resolve the title after the pages have been loaded. */
 
 documentTitle=
 extractDocumentTitle(d)||
@@ -1386,29 +1398,6 @@ updatePaymentPanel();
 startPaymentPolling()
 };
 
-
-/* =========================================================
-   CUSTOMER CARE DELIVERY
-   =========================================================
-
-   CURRENT DELIVERY FLOW:
-
-   DOWNLOAD DOCUMENT
-          ↓
-   SHOW EMAIL BUTTON
-          ↓
-   EMAIL BUTTON
-          ↓
-   POST /api/delivery/email
-          ↓
-   CUSTOMER CARE EMAIL IS SENT
-
-   No mailto.
-   No email-app handoff.
-   No direct download from the delivery button.
-   No regeneration of the finished document.
-   ========================================================= */
-
 function buildEmailApiRequest(){
 
 return {
@@ -1443,12 +1432,6 @@ setMessage(
 return
 }
 
-/*
-   Do not block the API call merely because the title was
-   absent from the URL. Try one final resolution from the
-   document already loaded on this page.
-*/
-
 if(!documentTitle){
 
 documentTitle=
@@ -1457,12 +1440,6 @@ pages:pages
 })||
 documentTitle
 }
-
-/*
-   The API receives the available service/title/job/version
-   information. The Review page does not generate or
-   regenerate the finished document.
-*/
 
 try{
 
