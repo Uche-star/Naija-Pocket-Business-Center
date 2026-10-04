@@ -1,5 +1,4 @@
-<!DOCTYPE html><html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Review Your Complete Service — Naija Pocket Business Center</title>
@@ -73,9 +72,7 @@
 }
 .direct-download-section{margin-top:7px;padding:10px;background:linear-gradient(180deg,#121212 0%,#090909 100%);border:1px solid rgba(212,175,55,.42);border-radius:10px;text-align:center}.direct-download-title{color:var(--gold2);font-size:11px;font-weight:900;letter-spacing:.5px}.direct-download-subtitle{margin-top:4px;color:#aaa;font-size:8.5px;line-height:1.45}.direct-download-main-button{width:100%;margin-top:8px;min-height:40px;border:0;border-radius:8px;background:#008000;color:#fff;font-size:10px;font-weight:900}.direct-download-main-button:disabled{background:#444;color:#aaa;opacity:1}.direct-download-status{margin-top:5px;color:#888;font-size:8px;line-height:1.35}.direct-download-main-button:not(:disabled){box-shadow:0 0 0 1px rgba(117,220,153,.2),0 4px 14px rgba(0,0,0,.25)}
 @media(max-width:600px){.direct-download-section{padding:8px!important}.direct-download-title{font-size:9px!important}.direct-download-subtitle{font-size:7.5px!important}.direct-download-main-button{min-height:38px!important;font-size:9px!important}.direct-download-status{font-size:7.5px!important}}
-</style>
-
-<body>
+</style><body>
 <span id="serviceBadge" style="display:none">Service</span>
 <main class="main">
 <section class="review-card">
@@ -112,7 +109,7 @@
 "use strict";
 const API_BASE="";
 const PAYMENT_API_BASE="https://naija-pocket-payment-api.onrender.com";
-const DOWNLOAD_API_BASE="https://naija-pocket-business-center.onrender.com";
+const DOWNLOAD_API_BASE=PAYMENT_API_BASE;
 const params=new URLSearchParams(location.search);
 const jobId=(params.get("job_id")||"").trim();
 const service=(params.get("service")||"Business Center Service").trim();
@@ -171,62 +168,104 @@ async function directDownloadReviewedDocument(){
  if(!reviewFinished||!pages.length)return setMessage("Please wait until the complete reviewed document is ready.","error");
  if(directDownloadBusy)return;
  const downloadText=buildDirectDownloadText();
- if(!downloadText)return setMessage("The reviewed document has no downloadable content yet.","error");
- directDownloadBusy=true;downloadButton.disabled=true;downloadButton.textContent="PREPARING DOWNLOAD...";setMessage("Preparing your reviewed document for download...","success");
- try{
-  const filename=safeFilename(documentTitle||extractDocumentTitle({}));
-  const blob=new Blob([downloadText],{type:"text/plain;charset=utf-8"});
-  const file=new File([blob],filename,{type:"text/plain"});
-  const form=new FormData();
-  form.append("document",file,file.name);
-  form.append("document_title",documentTitle||"Completed Document");
-  const r=await fetch(DOWNLOAD_API_BASE+"/upload",{method:"POST",body:form});
-  const d=await r.json().catch(()=>({}));
-  if(!r.ok||d.success!==true)throw Error(d.error||d.message||d.detail||"The download service could not prepare your document.");
-  const relative=clean(d.download_url);
-  if(!relative)throw Error("The download service did not return a download link.");
-  const url=/^https?:\/\//i.test(relative)?relative:DOWNLOAD_API_BASE+(relative.startsWith("/")?relative:"/"+relative);
-  setMessage("Your reviewed document is ready. Opening the download...","success");
-  window.location.href=url;
- }catch(e){
-  setMessage(e.message||"The document could not be prepared for download.","error");
- }finally{
-  directDownloadBusy=false;
-  updateButtons();
-  if(reviewFinished&&pages.length){downloadButton.disabled=false;downloadButton.classList.add("active");downloadButton.textContent="DOWNLOAD COMPLETED DOCUMENT"}
- }
+ if(!downloadText)return setMessage("The reviewed document has no downloadable content yet.","error");directDownloadBusy=true;
+downloadButton.disabled=true;
+directDownloadButton.disabled=true;
+downloadButton.textContent="PREPARING DOWNLOAD...";
+directDownloadButton.textContent="PREPARING DOWNLOAD...";
+directDownloadStatus.textContent="Preparing your secure download...";
+setMessage("Preparing your reviewed document for download...","success");
+
+try{
+const filename=safeFilename(documentTitle||extractDocumentTitle({}));
+const blob=new Blob([downloadText],{type:"text/plain;charset=utf-8"});
+const file=new File([blob],filename,{type:"text/plain"});
+const form=new FormData();
+
+form.append("document",file,file.name);
+form.append("document_title",documentTitle||"Completed Document");
+
+const r=await fetch(DOWNLOAD_API_BASE+"/api/document/test-save",{
+method:"POST",
+body:form
+});
+
+const text=await r.text();
+let d={};
+try{d=text?JSON.parse(text):{}}catch(_e){d={raw:text}}
+
+if(!r.ok||d.success!==true){
+const detail=d.error||d.message||d.detail||((d.raw||"").slice(0,220));
+throw Error(detail||"Save failed HTTP ${r.status}");
+}
+
+let relative=clean(d.download_url);
+const token=clean(d.token);
+
+if(!relative&&token){
+relative="/api/document/test-download/"+encodeURIComponent(token);
+}
+
+if(!relative){
+throw Error("Document saved but no download link returned.");
+}
+
+const url=/^https?:///i.test(relative)
+?relative
+:DOWNLOAD_API_BASE+(relative.startsWith("/")?relative:"/"+relative);
+
+setMessage("Your reviewed document is ready. Starting download...","success");
+directDownloadStatus.textContent="Your reviewed document is ready. Starting download...";
+window.location.href=url;
+
+}catch(e){
+console.error(e);
+setMessage(e.message||"The document could not be prepared for download.","error");
+directDownloadStatus.textContent=e.message||"The document could not be prepared for download.";
+}finally{
+directDownloadBusy=false;
+updateButtons();
+
+if(reviewFinished&&pages.length){
+downloadButton.disabled=false;
+directDownloadButton.disabled=false;
+downloadButton.classList.add("active");
+downloadButton.textContent="DOWNLOAD COMPLETED DOCUMENT";
+directDownloadButton.textContent="DOWNLOAD COMPLETED DOCUMENT";
+}
+}
 }
 function updateButtons(){directDownloadButton.disabled=busy||directDownloadBusy||!reviewFinished||!pages.length;directDownloadButton.textContent=directDownloadBusy?"PREPARING DOWNLOAD...":"DOWNLOAD COMPLETED DOCUMENT";directDownloadStatus.textContent=reviewFinished&&pages.length?(directDownloadBusy?"Preparing your secure download...":"Your reviewed document is ready to download. No payment is required for this download test."):"Waiting for the completed document...";previousButton.disabled=busy||currentPage<=1;nextButton.disabled=busy||currentPage>=totalPages||!totalPages;correctionButton.disabled=busy;makePaymentButton.disabled=busy||paymentStarted||amount<=0||!reviewFinished;paymentButton.disabled=busy||!paymentStarted||!paymentPending||paid;downloadButton.disabled=busy||directDownloadBusy||!reviewFinished||!pages.length;downloadButton.classList.toggle("active",reviewFinished&&pages.length)}
-function renderPage(){pageViewer.innerHTML="";if(!pages.length){pageViewer.innerHTML='<div class="loading"><div class="spinner"></div><div>Your service is being carefully prepared.</div></div>';pageIndicator.textContent="Page 0 of 0";updateButtons();return}const p=pages[currentPage-1];if(!p){pageViewer.innerHTML='<div class="empty-page">This document page is not available yet.</div>';return}const a=document.createElement("article");a.className="document-page";const n=document.createElement("div");n.className="page-number-inside";n.textContent="PAGE "+p.page_number;const c=document.createElement("div");c.className="page-content";c.appendChild(sanitizeHtml(p.content||"This page is still being prepared."));a.append(n,c);pageViewer.appendChild(a);pageIndicator.textContent=`Page ${currentPage} of ${totalPages}`;if(p.review||p.error){pageReview.style.display="block";pageReviewText.textContent=p.error?"Page information:\n\n"+normText(p.error):normText(p.review)}else pageReview.style.display="none";updateButtons()}
+function renderPage(){pageViewer.innerHTML="";if(!pages.length){pageViewer.innerHTML='<div class="loading"><div class="spinner"></div><div>Your service is being carefully prepared.</div></div>';pageIndicator.textContent="Page 0 of 0";updateButtons();return}const p=pages[currentPage-1];if(!p){pageViewer.innerHTML='<div class="empty-page">This document page is not available yet.</div>';return}const a=document.createElement("article");a.className="document-page";const n=document.createElement("div");n.className="page-number-inside";n.textContent="PAGE "+p.page_number;const c=document.createElement("div");c.className="page-content";c.appendChild(sanitizeHtml(p.content||"This page is still being prepared."));a.append(n,c);pageViewer.appendChild(a);pageIndicator.textContent="Page ${currentPage} of ${totalPages}";if(p.review||p.error){pageReview.style.display="block";pageReviewText.textContent=p.error?"Page information:\n\n"+normText(p.error):normText(p.review)}else pageReview.style.display="none";updateButtons()}
 function showPage(n){if(!totalPages)return;currentPage=Math.max(1,Math.min(totalPages,Math.floor(Number(n)||1)));renderPage();documentScroll.scrollTo({top:0,behavior:"smooth"})}
 previousButton.onclick=()=>showPage(currentPage-1);nextButton.onclick=()=>showPage(currentPage+1);goButton.onclick=()=>{const n=Number(pageNumberInput.value);if(!Number.isInteger(n)||n<1||n>totalPages)return setMessage("Enter a page number from 1 to "+totalPages+".","error");setMessage("");showPage(n)};pageNumberInput.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();goButton.click()}};
 function extractAmount(d){const seen=new Set();function find(x){if(x==null)return 0;if(typeof x==="number"&&isFinite(x)&&x>0)return x;if(typeof x==="string"){const n=Number(x.replace(/[^0-9.]/g,""));return isFinite(n)&&n>0?n:0}if(typeof x!=="object"||seen.has(x))return 0;seen.add(x);for(const k of ["amount","price"]){const n=find(x[k]);if(n>0)return n}for(const k of ["billing","bill","payment","job","result","document","review","output"]){const n=find(x[k]);if(n>0)return n}return 0}return find(d)}
 function extractBilling(d){const seen=new Set();function find(x){if(x==null)return "";if(typeof x==="string")return x.trim();if(typeof x!=="object"||seen.has(x))return "";seen.add(x);if(typeof x.billing==="string"&&x.billing.trim())return x.billing.trim();for(const k of ["billing","bill","payment","job","result","document","review","output"]){const v=find(x[k]);if(v)return v}return ""}return find(d)}
 function updatePaymentPanel(){
- amountValueTop.textContent=amount>0?"₦"+amount.toLocaleString():"Quotation required";
- if(paid){
-  paymentDetails.textContent="Service: "+(service||"Business Center Service")+"\nPayment status: VERIFIED\nYour approved document is ready for download.";
-  paymentMessage.className="payment-message payment-ready";
-  paymentMessage.textContent="Payment verified by Customer Care. Your approved document is now available for download.";
- }else if(paymentPending){
-  paymentDetails.textContent="Service: "+(service||"Business Center Service")+"\nAmount: ₦"+Number(amount||0).toLocaleString()+"\nPayment status: AWAITING VERIFICATION";
-  paymentMessage.className="payment-message payment-waiting";
-  paymentMessage.textContent="Payment Reported — Awaiting Verification. Customer Care will verify your payment before download is unlocked.";
- }else if(paymentStarted){
-  paymentDetails.textContent="Service: "+(service||"Business Center Service")+"\nAmount: ₦"+Number(amount||0).toLocaleString()+"\nPayment status: PAYMENT INITIATED";
-  paymentMessage.className="payment-message payment-waiting";
-  paymentMessage.textContent="Payment has been initiated. Complete payment on the payment page, then report your payment there.";
- }else{
-  paymentDetails.textContent="Service: "+(service||"Business Center Service")+"\nAmount: "+(amount>0?"₦"+amount.toLocaleString():"Quotation required")+"\nPayment status: NOT STARTED";
-  paymentMessage.className="payment-message payment-locked";
-  paymentMessage.textContent=amount>0?"Your approved document will be securely saved when you select Make Payment. Download remains locked until Customer Care verifies payment.":"A quotation is required before payment can be started.";
- }
- if(paymentIdentifier){paymentId.style.display="block";paymentId.textContent="Payment reference: "+paymentIdentifier}else{paymentId.style.display="none";paymentId.textContent=""}
- makePaymentButton.style.display="block";
- paymentButton.style.display="none";
- makePaymentButton.textContent=paid?"✓ PAYMENT VERIFIED":paymentStarted?"✓ PAYMENT INITIATED":"MAKE PAYMENT";
- if(reviewFinished&&pages.length){downloadButton.disabled=false;downloadButton.classList.add("active");downloadButton.textContent="DOWNLOAD COMPLETED DOCUMENT"}else{downloadButton.disabled=true;downloadButton.classList.remove("active");downloadButton.textContent="DOWNLOAD COMPLETED DOCUMENT"}
- updateButtons()
+amountValueTop.textContent=amount>0?"₦"+amount.toLocaleString():"Quotation required";
+if(paid){
+paymentDetails.textContent="Service: "+(service||"Business Center Service")+"\nPayment status: VERIFIED\nYour approved document is ready for download.";
+paymentMessage.className="payment-message payment-ready";
+paymentMessage.textContent="Payment verified by Customer Care. Your approved document is now available for download.";
+}else if(paymentPending){
+paymentDetails.textContent="Service: "+(service||"Business Center Service")+"\nAmount: ₦"+Number(amount||0).toLocaleString()+"\nPayment status: AWAITING VERIFICATION";
+paymentMessage.className="payment-message payment-waiting";
+paymentMessage.textContent="Payment Reported — Awaiting Verification. Customer Care will verify your payment before download is unlocked.";
+}else if(paymentStarted){
+paymentDetails.textContent="Service: "+(service||"Business Center Service")+"\nAmount: ₦"+Number(amount||0).toLocaleString()+"\nPayment status: PAYMENT INITIATED";
+paymentMessage.className="payment-message payment-waiting";
+paymentMessage.textContent="Payment has been initiated. Complete payment on the payment page, then report your payment there.";
+}else{
+paymentDetails.textContent="Service: "+(service||"Business Center Service")+"\nAmount: "+(amount>0?"₦"+amount.toLocaleString():"Quotation required")+"\nPayment status: NOT STARTED";
+paymentMessage.className="payment-message payment-locked";
+paymentMessage.textContent=amount>0?"Your approved document will be securely saved when you select Make Payment. Download remains locked until Customer Care verifies payment.":"A quotation is required before payment can be started.";
+}
+if(paymentIdentifier){paymentId.style.display="block";paymentId.textContent="Payment reference: "+paymentIdentifier}else{paymentId.style.display="none";paymentId.textContent=""}
+makePaymentButton.style.display="block";
+paymentButton.style.display="none";
+makePaymentButton.textContent=paid?"✓ PAYMENT VERIFIED":paymentStarted?"✓ PAYMENT INITIATED":"MAKE PAYMENT";
+if(reviewFinished&&pages.length){downloadButton.disabled=false;downloadButton.classList.add("active");downloadButton.textContent="DOWNLOAD COMPLETED DOCUMENT"}else{downloadButton.disabled=true;downloadButton.classList.remove("active");downloadButton.textContent="DOWNLOAD COMPLETED DOCUMENT"}
+updateButtons()
 }
 function applyJob(d){documentTitle=extractDocumentTitle(d)||documentTitle;currentStatus=clean(d.status);reviewFinished=complete(d);customerId=clean(d.customer_id||d.customerId||d.job?.customer_id||d.document?.customer_id||d.result?.customer_id||d.output?.customer_id)||customerId;documentFilename=clean(d.filename||d.document_filename||d.document?.filename||d.result?.filename||d.output?.filename)||documentFilename;const p=extractPages(d);if(p.length){pages=p;totalPages=p.length}else totalPages=Number(d.total_pages||d.totalPages)||0;currentVersion=Number(d.current_version||d.currentVersion||d.version||d.document_version)||1;versionId=clean(d.version_id||d.versionId||d.document_version_id||d.documentVersionId||d.document_version||d.current_version_id||d.currentVersionId||d.document?.version_id||d.result?.version_id||d.output?.version_id);paid=!!d.paid;paymentPending=!!d.payment_pending;paymentStarted=paymentPending||!!d.payment_id;amount=extractAmount(d)||amount;billing=clean(d.billing)||extractBilling(d)||billing;paymentIdentifier=clean(d.payment_id)||paymentIdentifier;if(totalPages)currentPage=Math.max(1,Math.min(currentPage,totalPages));const pr=d.progress||{},done=Number(pr.completed)||0,tot=Number(pr.total)||totalPages||0;let pct=tot?Math.round(done/tot*100):0;if(reviewFinished&&totalPages)pct=100;progressBar.style.width=Math.max(0,Math.min(100,pct))+"%";pageCount.textContent=totalPages+(totalPages===1?" PAGE":" PAGES");if(reviewFinished){setStatus("READY");progressText.textContent="Your document is ready to review and download after payment."}else if(state()==="reviewing"){setStatus("REVIEWING");progressText.textContent=done+" of "+tot+" pages reviewed."}else if(state()==="correcting"){setStatus("CORRECTING");progressText.textContent="Your correction is being applied."}else if(state()==="review_error"||state()==="correction_error"){setStatus("ERROR");progressText.textContent="The document review encountered an error."}else setStatus(currentStatus?currentStatus.toUpperCase():"PREPARING");renderPage();updatePaymentPanel()}
 async function loadPaymentState(){if(!versionId&&!paymentIdentifier)return null;try{let q=paymentIdentifier?"?payment_id="+encodeURIComponent(paymentIdentifier):"?job_id="+encodeURIComponent(jobId)+"&version_id="+encodeURIComponent(versionId);const d=await fetch(PAYMENT_API_BASE+"/api/payment/status"+q,{cache:"no-store"}).then(async r=>{const x=await r.json().catch(()=>({}));if(!r.ok)throw Error(x.error_message||x.error||x.message||"Unable to check payment status.");return x});const p=d.payment&&typeof d.payment==="object"?d.payment:{};if(d.ok||d.success){paymentIdentifier=clean(d.payment_id||p.payment_id)||paymentIdentifier;const status=clean(d.payment_status||d.status||p.payment_status).toLowerCase();paid=!!(d.paid||d.payment_verified||d.download_unlocked||p.paid||p.payment_verified||p.download_unlocked);paymentPending=!paid&&["pending","reported","payment_reported","verification_pending","awaiting_verification","pending_verification","payment_pending"].includes(status);paymentStarted=paymentStarted||paymentPending||!!paymentIdentifier||paid;amount=Number(d.amount||p.amount)||amount;billing=clean(d.billing||p.billing)||billing;updatePaymentPanel();return d}}catch(e){if(paymentStarted||paymentIdentifier){paymentMessage.className="payment-message payment-waiting";paymentMessage.textContent="Payment status could not be checked right now. Your payment record has not been removed. Please try again shortly.";}return null}
@@ -236,28 +275,29 @@ function startPaymentPolling(){if(paymentPollTimer)return;const poll=async()=>{p
 function startPolling(){if(polling)return;polling=true;const poll=async()=>{try{const d=await loadJob();if(complete(d)&&extractPages(d).length){polling=false;return}if(["review_error","correction_error"].includes(state())){polling=false;return}pollTimer=setTimeout(poll,1200)}catch(e){polling=false;if(!pages.length)setMessage(e.message,"error")}};poll()}
 correctionButton.onclick=async()=>{const instruction=clean(correctionInput.value);if(!instruction)return setMessage("Please write the correction or change you want.","error");try{busy=true;updateButtons();setMessage("Applying your correction...");await apiPost("/api/correct",{job_id:jobId,instruction});correctionInput.value="";paid=false;paymentStarted=false;paymentPending=false;paymentIdentifier="";amount=0;billing="";if(paymentPollTimer){clearTimeout(paymentPollTimer);paymentPollTimer=null}currentStatus="correcting";pages=[];totalPages=0;currentPage=1;renderPage();updatePaymentPanel();setMessage("Your correction has started.","success");startPolling()}catch(e){setMessage(e.message,"error")}finally{busy=false;updateButtons()}};
 makePaymentButton.onclick=async()=>{
- if(!reviewFinished)return setMessage("Please wait until the complete document review is ready.","error");
- if(!jobId)return setMessage("This document job could not be identified.","error");
- if(!versionId)return setMessage("The current document version could not be identified. Please refresh Review and try again.","error");
- if(amount<=0)return setMessage("This service requires a quotation before payment.","error");
- if(paymentStarted&&paymentIdentifier){return setMessage("Payment has already been initiated. Continue on the payment page.","success")}
- try{
-  busy=true;updateButtons();setMessage("Saving your exact reviewed document and preparing payment...","success");
-  const payload={job_id:jobId,customer_id:customerId,service:service,amount:amount,payment_method:"bank_transfer",version_id:versionId,document_version:versionId,document_status:currentStatus,review_finished:reviewFinished,total_pages:pages.length,pages:pages.map(p=>({page_number:p.page_number,position:p.position,content:p.content,review:p.review,status:p.status})),document_text:pages.map(p=>p.content||"").join("\n\n"),filename:documentFilename||("naija_pocket_"+jobId+".docx")};
-  const d=await paymentPost("/api/payment/create",payload);
-  if(!d.payment_id)throw Error("The payment service did not return a payment ID.");
-  if(d.document_saved!==true)throw Error("The reviewed document could not be securely saved for this payment.");
-  paymentIdentifier=clean(d.payment_id);paymentStarted=true;paymentPending=false;amount=Number(d.amount)||amount;billing=clean(d.billing)||billing;updatePaymentPanel();
-  setMessage("Your reviewed document is securely saved. Opening the payment page...","success");
-  const paymentUrl="payment.html?job_id="+encodeURIComponent(jobId)+"&version_id="+encodeURIComponent(versionId)+"&payment_id="+encodeURIComponent(paymentIdentifier)+"&service="+encodeURIComponent(service)+"&amount="+encodeURIComponent(amount);
-  window.location.href=paymentUrl;
- }catch(e){setMessage(e.message,"error")}finally{busy=false;updateButtons()}
+if(!reviewFinished)return setMessage("Please wait until the complete document review is ready.","error");
+if(!jobId)return setMessage("This document job could not be identified.","error");
+if(!versionId)return setMessage("The current document version could not be identified. Please refresh Review and try again.","error");
+if(amount<=0)return setMessage("This service requires a quotation before payment.","error");
+if(paymentStarted&&paymentIdentifier){return setMessage("Payment has already been initiated. Continue on the payment page.","success")}
+try{
+busy=true;updateButtons();setMessage("Saving your exact reviewed document and preparing payment...","success");
+const payload={job_id:jobId,customer_id:customerId,service:service,amount:amount,payment_method:"bank_transfer",version_id:versionId,document_version:versionId,document_status:currentStatus,review_finished:reviewFinished,total_pages:pages.length,pages:pages.map(p=>({page_number:p.page_number,position:p.position,content:p.content,review:p.review,status:p.status})),document_text:pages.map(p=>p.content||"").join("\n\n"),filename:documentFilename||("naija_pocket_"+jobId+".docx")};
+const d=await paymentPost("/api/payment/create",payload);
+if(!d.payment_id)throw Error("The payment service did not return a payment ID.");
+if(d.document_saved!==true)throw Error("The reviewed document could not be securely saved for this payment.");
+paymentIdentifier=clean(d.payment_id);paymentStarted=true;paymentPending=false;amount=Number(d.amount)||amount;billing=clean(d.billing)||billing;updatePaymentPanel();
+setMessage("Your reviewed document is securely saved. Opening the payment page...","success");
+const paymentUrl="payment.html?job_id="+encodeURIComponent(jobId)+"&version_id="+encodeURIComponent(versionId)+"&payment_id="+encodeURIComponent(paymentIdentifier)+"&service="+encodeURIComponent(service)+"&amount="+encodeURIComponent(amount);
+window.location.href=paymentUrl;
+}catch(e){setMessage(e.message,"error")}finally{busy=false;updateButtons()}
 };
 paymentButton.onclick=async()=>{if(!paymentStarted)return setMessage("Tap MAKE PAYMENT first, then complete your payment.","error");if(!paymentPending&&!paid)return setMessage("Your payment report is not pending. Please contact Customer Care.","error");if(paid)return setMessage("Payment has already been verified.","success");paymentMessage.textContent="Payment reported. Customer Care will verify the payment before download is unlocked.";setMessage("Your payment has been reported. Please wait for Customer Care verification.","success");updatePaymentPanel();startPaymentPolling()};
 downloadButton.onclick=directDownloadReviewedDocument;
 directDownloadButton.onclick=directDownloadReviewedDocument;
-async function start(){serviceBadge.textContent=service;if(!jobId){setStatus("NO DOCUMENT");pageViewer.innerHTML='<div class="empty-page">No document job was supplied.</div>';setMessage("This review page needs a document job.","error");return}try{const d=await loadJob();if(!complete(d)&&!["review_error","correction_error"].includes(state()))startPolling();if(paymentStarted&&!paid)startPaymentPolling()}catch(e){setStatus("ERROR");setMessage(e.message,"error");pageViewer.innerHTML='<div class="empty-page">'+String(e.message).replaceAll("<","&lt;").replaceAll(">","&gt;")+'</div>'}}
+async function start(){serviceBadge.textContent=service;if(!jobId){setStatus("NO DOCUMENT");pageViewer.innerHTML='<div class="empty-page">No document job was supplied.</div>';setMessage("This review page needs a document job.","error");return}try{const d=await loadJob();if(!complete(d)&&!["review_error","correction_error"].includes(state()))startPolling();if(paymentStarted&&!paid)startPaymentPolling()}catch(e){setStatus("ERROR");setMessage(e.message,"error");pageViewer.innerHTML='<div class="empty-page">'+String(e.message).replaceAll("<","<").replaceAll(">",">")+'</div>'}}
 start();
 </script>
+
 </body>
 </html>
