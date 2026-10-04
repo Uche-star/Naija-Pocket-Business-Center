@@ -226,6 +226,7 @@ def normalize_pages(value: Any) -> list[str]:
                     item.get("content"),
                     item.get("page_text"),
                 )
+
                 if page is not None:
                     pages.append(clean(page))
                 else:
@@ -233,7 +234,11 @@ def normalize_pages(value: Any) -> list[str]:
             else:
                 pages.append(clean(item))
 
-        return [page for page in pages if page]
+        return [
+            page
+            for page in pages
+            if page
+        ]
 
     return [clean(value)]
 
@@ -303,10 +308,29 @@ def _format_saved_text(text: str) -> str:
     if not text:
         return ""
 
-    text = re.sub(r"\*\*(.*?)\*\*", r"\1", text)
-    text = re.sub(r"(?m)^\s*#{1,6}\s*", "", text)
-    text = re.sub(r"(?m)^\s*---+\s*$", "", text)
-    text = re.sub(r"`{1,3}", "", text)
+    text = re.sub(
+        r"\*\*(.*?)\*\*",
+        r"\1",
+        text,
+    )
+
+    text = re.sub(
+        r"(?m)^\s*#{1,6}\s*",
+        "",
+        text,
+    )
+
+    text = re.sub(
+        r"(?m)^\s*---+\s*$",
+        "",
+        text,
+    )
+
+    text = re.sub(
+        r"`{1,3}",
+        "",
+        text,
+    )
 
     markers = [
         "Your Complete Document",
@@ -320,17 +344,39 @@ def _format_saved_text(text: str) -> str:
     ]
 
     for marker in markers:
-        text = text.replace(marker, "")
+        text = text.replace(
+            marker,
+            "",
+        )
 
-    text = re.sub(r"(?m)^\s*GO\s*$", "", text)
-    text = re.sub(r"(?m)^\s*\d+\s+PAGES?\s*$", "", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
+    text = re.sub(
+        r"(?m)^\s*GO\s*$",
+        "",
+        text,
+    )
+
+    text = re.sub(
+        r"(?m)^\s*\d+\s+PAGES?\s*$",
+        "",
+        text,
+    )
+
+    text = re.sub(
+        r"\n{3,}",
+        "\n\n",
+        text,
+    )
 
     return text.strip()
 
 
-def clean_saved_document_payload(payload: Any) -> dict:
-    normalized = normalize_payload(payload)
+def clean_saved_document_payload(
+    payload: Any,
+) -> dict:
+
+    normalized = normalize_payload(
+        payload
+    )
 
     pages = [
         _format_saved_text(page)
@@ -338,7 +384,8 @@ def clean_saved_document_payload(payload: Any) -> dict:
     ]
 
     pages = [
-        page for page in pages
+        page
+        for page in pages
         if page
     ]
 
@@ -376,14 +423,17 @@ def _docx_p(text: str) -> str:
         },
     )
 
-    escaped = escaped.replace("\n", "</w:t><w:br/><w:t>")
+    escaped = escaped.replace(
+        "\n",
+        "</w:t><w:br/><w:t>",
+    )
 
     return (
-        '<w:p>'
-        '<w:r>'
+        "<w:p>"
+        "<w:r>"
         f'<w:t xml:space="preserve">{escaped}</w:t>'
-        '</w:r>'
-        '</w:p>'
+        "</w:r>"
+        "</w:p>"
     )
 
 
@@ -403,16 +453,20 @@ def make_docx(
 
     paragraphs: list[str] = []
 
-    for index, page in enumerate(page_list):
-        paragraphs.append(_docx_p(page))
+    for index, page in enumerate(
+        page_list,
+    ):
+        paragraphs.append(
+            _docx_p(page)
+        )
 
         if index < len(page_list) - 1:
             paragraphs.append(
-                '<w:p>'
-                '<w:r>'
+                "<w:p>"
+                "<w:r>"
                 '<w:br w:type="page"/>'
-                '</w:r>'
-                '</w:p>'
+                "</w:r>"
+                "</w:p>"
             )
 
     document_xml = f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -516,7 +570,9 @@ def ensure_column(
 
 def init_databases() -> None:
 
-    connection = db(PRODUCT_DB_PATH)
+    connection = db(
+        PRODUCT_DB_PATH
+    )
 
     try:
         connection.execute(
@@ -575,7 +631,9 @@ def init_databases() -> None:
         "TEXT DEFAULT ''",
     )
 
-    connection = db(PAYMENT_DB_PATH)
+    connection = db(
+        PAYMENT_DB_PATH
+    )
 
     try:
         connection.execute(
@@ -632,9 +690,14 @@ def get_product(
     title: str,
 ) -> Optional[dict]:
 
-    key = business_key(service, title)
+    key = business_key(
+        service,
+        title,
+    )
 
-    connection = db(PRODUCT_DB_PATH)
+    connection = db(
+        PRODUCT_DB_PATH
+    )
 
     try:
         row = connection.execute(
@@ -655,7 +718,9 @@ def get_product(
 
 def get_single_product() -> Optional[dict]:
 
-    connection = db(PRODUCT_DB_PATH)
+    connection = db(
+        PRODUCT_DB_PATH
+    )
 
     try:
         row = connection.execute(
@@ -678,9 +743,14 @@ def get_payment(
     title: str,
 ) -> Optional[dict]:
 
-    key = business_key(service, title)
+    key = business_key(
+        service,
+        title,
+    )
 
-    connection = db(PAYMENT_DB_PATH)
+    connection = db(
+        PAYMENT_DB_PATH
+    )
 
     try:
         row = connection.execute(
@@ -711,7 +781,9 @@ def existing_saved_file(
         return None
 
     explicit = clean(
-        product.get("document_saved_path")
+        product.get(
+            "document_saved_path"
+        )
     )
 
     if explicit:
@@ -720,8 +792,13 @@ def existing_saved_file(
         if path.exists() and path.is_file():
             return path
 
-    service = clean(product.get("service"))
-    title = clean(product.get("document_title"))
+    service = clean(
+        product.get("service")
+    )
+
+    title = clean(
+        product.get("document_title")
+    )
 
     if not service or not title:
         return None
@@ -733,7 +810,9 @@ def existing_saved_file(
     )
 
     filename = safe_filename(
-        product.get("document_filename"),
+        product.get(
+            "document_filename"
+        ),
         "document.docx",
     )
 
@@ -747,7 +826,8 @@ def existing_saved_file(
             item
             for item in folder.iterdir()
             if item.is_file()
-            and item.suffix.lower() in {".docx", ".pdf"}
+            and item.suffix.lower()
+            in {".docx", ".pdf"}
         ]
 
         if files:
@@ -755,6 +835,7 @@ def existing_saved_file(
                 key=lambda item: item.stat().st_mtime,
                 reverse=True,
             )
+
             return files[0]
 
     return None
@@ -770,16 +851,23 @@ def find_saved_file_from_product(
 
     if use_path:
         path = clean(
-            product.get("document_saved_path")
+            product.get(
+                "document_saved_path"
+            )
         )
 
         if path:
             candidate = Path(path)
 
-            if candidate.exists() and candidate.is_file():
+            if (
+                candidate.exists()
+                and candidate.is_file()
+            ):
                 return candidate
 
-    return existing_saved_file(product)
+    return existing_saved_file(
+        product
+    )
 
 
 def read_saved_docx(
@@ -787,13 +875,18 @@ def read_saved_docx(
 ) -> dict:
 
     try:
-        with zipfile.ZipFile(path, "r") as archive:
+        with zipfile.ZipFile(
+            path,
+            "r",
+        ) as archive:
+
             xml = archive.read(
                 "word/document.xml"
             ).decode(
                 "utf-8",
                 errors="replace",
             )
+
     except Exception:
         return {
             "pages": [],
@@ -815,21 +908,31 @@ def read_saved_docx(
     )
 
     for match in tokens:
+
         if match[0]:
-            current.append(match[0])
+            current.append(
+                match[0]
+            )
+
         elif match[1]:
             current.append("\t")
+
         elif match[2] or match[3]:
             current.append("\n")
+
         elif match[4]:
             text = "".join(current)
             paragraphs.append(text)
             current = []
 
     if current:
-        paragraphs.append("".join(current))
+        paragraphs.append(
+            "".join(current)
+        )
 
-    text = "\n".join(paragraphs)
+    text = "\n".join(
+        paragraphs
+    )
 
     text = (
         text.replace("&amp;", "&")
@@ -839,7 +942,9 @@ def read_saved_docx(
         .replace("&apos;", "'")
     )
 
-    text = _format_saved_text(text)
+    text = _format_saved_text(
+        text
+    )
 
     pages = [
         page.strip()
@@ -864,14 +969,21 @@ def read_actual_saved_document(
     product: Optional[dict],
 ) -> dict:
 
-    path = find_saved_file_from_product(product)
+    path = find_saved_file_from_product(
+        product
+    )
 
-    if path and path.suffix.lower() == ".docx":
+    if (
+        path
+        and path.suffix.lower() == ".docx"
+    ):
         return read_saved_docx(path)
 
     if product:
         payload = from_json(
-            product.get("document_payload"),
+            product.get(
+                "document_payload"
+            ),
             {},
         )
 
@@ -898,10 +1010,16 @@ def store_saved_path(
     path: Path,
 ) -> None:
 
-    key = business_key(service, title)
+    key = business_key(
+        service,
+        title,
+    )
+
     timestamp = now_iso()
 
-    connection = db(PRODUCT_DB_PATH)
+    connection = db(
+        PRODUCT_DB_PATH
+    )
 
     try:
         connection.execute(
@@ -936,7 +1054,10 @@ def save_exact_snapshot(
     product = (
         existing_product
         if existing_product is not None
-        else get_product(service, title)
+        else get_product(
+            service,
+            title,
+        )
     )
 
     existing = find_saved_file_from_product(
@@ -1005,14 +1126,23 @@ def repair_saved_snapshot(
         return existing
 
     payload = from_json(
-        product.get("document_payload"),
+        product.get(
+            "document_payload"
+        ),
         {},
     )
 
     if not payload:
+
         payment = get_payment(
-            product.get("service", ""),
-            product.get("document_title", ""),
+            product.get(
+                "service",
+                "",
+            ),
+            product.get(
+                "document_title",
+                "",
+            ),
         )
 
         if payment:
@@ -1036,8 +1166,14 @@ def repair_saved_snapshot(
             }
 
     return save_exact_snapshot(
-        product.get("service", ""),
-        product.get("document_title", ""),
+        product.get(
+            "service",
+            "",
+        ),
+        product.get(
+            "document_title",
+            "",
+        ),
         payload,
         existing_product=product,
     )
@@ -1047,16 +1183,22 @@ def extract_document_text(
     product: Optional[dict],
 ) -> str:
 
-    actual = read_actual_saved_document(product)
+    actual = read_actual_saved_document(
+        product
+    )
 
-    text = clean(actual.get("text"))
+    text = clean(
+        actual.get("text")
+    )
 
     if text:
         return text
 
     if product:
         payload = from_json(
-            product.get("document_payload"),
+            product.get(
+                "document_payload"
+            ),
             {},
         )
 
@@ -1064,7 +1206,9 @@ def extract_document_text(
             payload
         )
 
-        return normalized["document_text"]
+        return normalized[
+            "document_text"
+        ]
 
     return ""
 
@@ -1075,8 +1219,13 @@ def extract_document_text(
 
 def upsert_product(data: dict) -> dict:
 
-    service = clean(data.get("service"))
-    title = clean(data.get("document_title"))
+    service = clean(
+        data.get("service")
+    )
+
+    title = clean(
+        data.get("document_title")
+    )
 
     if not service or not title:
         raise HTTPException(
@@ -1088,8 +1237,13 @@ def upsert_product(data: dict) -> dict:
         "document_payload"
     )
 
-    if isinstance(incoming_payload, dict):
-        payload_source = dict(incoming_payload)
+    if isinstance(
+        incoming_payload,
+        dict,
+    ):
+        payload_source = dict(
+            incoming_payload
+        )
     else:
         payload_source = dict(data)
 
@@ -1134,7 +1288,10 @@ def upsert_product(data: dict) -> dict:
     )
 
     if old:
-        connection = db(PRODUCT_DB_PATH)
+
+        connection = db(
+            PRODUCT_DB_PATH
+        )
 
         try:
             connection.execute(
@@ -1158,9 +1315,15 @@ def upsert_product(data: dict) -> dict:
                     customer_email,
                     amount,
                     currency,
-                    payload["document_version"],
-                    payload["filename"],
-                    payload["page_count"],
+                    payload[
+                        "document_version"
+                    ],
+                    payload[
+                        "filename"
+                    ],
+                    payload[
+                        "page_count"
+                    ],
                     to_json(payload),
                     timestamp,
                     key,
@@ -1173,7 +1336,10 @@ def upsert_product(data: dict) -> dict:
             connection.close()
 
     else:
-        connection = db(PRODUCT_DB_PATH)
+
+        connection = db(
+            PRODUCT_DB_PATH
+        )
 
         try:
             connection.execute(
@@ -1205,9 +1371,15 @@ def upsert_product(data: dict) -> dict:
                     customer_email,
                     amount,
                     currency,
-                    payload["document_version"],
-                    payload["filename"],
-                    payload["page_count"],
+                    payload[
+                        "document_version"
+                    ],
+                    payload[
+                        "filename"
+                    ],
+                    payload[
+                        "page_count"
+                    ],
                     to_json(payload),
                     timestamp,
                     timestamp,
@@ -1267,7 +1439,10 @@ def ensure_payment_record(
     )
 
     if payment:
-        connection = db(PAYMENT_DB_PATH)
+
+        connection = db(
+            PAYMENT_DB_PATH
+        )
 
         try:
             connection.execute(
@@ -1286,10 +1461,22 @@ def ensure_payment_record(
                 WHERE business_key = ?
                 """,
                 (
-                    product.get("customer_name", ""),
-                    product.get("customer_id", ""),
-                    product.get("amount", 0),
-                    product.get("currency", "NGN"),
+                    product.get(
+                        "customer_name",
+                        "",
+                    ),
+                    product.get(
+                        "customer_id",
+                        "",
+                    ),
+                    product.get(
+                        "amount",
+                        0,
+                    ),
+                    product.get(
+                        "currency",
+                        "NGN",
+                    ),
                     payment_method
                     or payment.get(
                         "payment_method",
@@ -1319,7 +1506,10 @@ def ensure_payment_record(
             connection.close()
 
     else:
-        connection = db(PAYMENT_DB_PATH)
+
+        connection = db(
+            PAYMENT_DB_PATH
+        )
 
         try:
             connection.execute(
@@ -1347,10 +1537,22 @@ def ensure_payment_record(
                     key,
                     service,
                     title,
-                    product.get("customer_name", ""),
-                    product.get("customer_id", ""),
-                    product.get("amount", 0),
-                    product.get("currency", "NGN"),
+                    product.get(
+                        "customer_name",
+                        "",
+                    ),
+                    product.get(
+                        "customer_id",
+                        "",
+                    ),
+                    product.get(
+                        "amount",
+                        0,
+                    ),
+                    product.get(
+                        "currency",
+                        "NGN",
+                    ),
                     payment_method
                     or "bank_transfer",
                     "payment_ready",
@@ -1415,10 +1617,13 @@ def update_payment(
     values: list[Any] = []
 
     if status is not None:
-        updates.append("payment_status = ?")
+        updates.append(
+            "payment_status = ?"
+        )
         values.append(status)
 
     for field, value in fields.items():
+
         if field in allowed:
             updates.append(
                 f"{field} = ?"
@@ -1428,11 +1633,16 @@ def update_payment(
     updates.append(
         "updated_at = ?"
     )
-    values.append(now_iso())
+
+    values.append(
+        now_iso()
+    )
 
     values.append(key)
 
-    connection = db(PAYMENT_DB_PATH)
+    connection = db(
+        PAYMENT_DB_PATH
+    )
 
     try:
         connection.execute(
@@ -1475,7 +1685,9 @@ def public_product(
         "business_key": product.get(
             "business_key"
         ),
-        "service": product.get("service"),
+        "service": product.get(
+            "service"
+        ),
         "document_title": product.get(
             "document_title"
         ),
@@ -1516,7 +1728,9 @@ def public_product(
                 "",
             )
         ),
-        "download_unlocked": bool(saved),
+        "download_unlocked": bool(
+            saved
+        ),
         "created_at": product.get(
             "created_at",
             "",
@@ -1595,9 +1809,18 @@ def back_office_product(
 
 def _smtp_configured() -> bool:
     return bool(
-        os.getenv("SMTP_HOST", "").strip()
-        and os.getenv("SMTP_USERNAME", "").strip()
-        and os.getenv("SMTP_PASSWORD", "").strip()
+        os.getenv(
+            "SMTP_HOST",
+            "",
+        ).strip()
+        and os.getenv(
+            "SMTP_USERNAME",
+            "",
+        ).strip()
+        and os.getenv(
+            "SMTP_PASSWORD",
+            "",
+        ).strip()
     )
 
 
@@ -1607,12 +1830,12 @@ def _customer_care_email_html(
     download_url: str,
 ) -> str:
 
-    safe_title = html_escape(
-        title
-    )
-
     safe_service = html_escape(
         service
+    )
+
+    safe_title = html_escape(
+        title
     )
 
     safe_url = html_escape(
@@ -1620,29 +1843,35 @@ def _customer_care_email_html(
         quote=True,
     )
 
+    # EXACT CUSTOMER-SUPPLIED TABLE EMAIL.
+    # Only YOUR_SERVICE / YOUR_TITLE are replaced
+    # dynamically in the download URL.
     return f"""<!DOCTYPE html>
-<html><body>
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#050505;padding:30px 0;">
-<tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="background:#111;border:1px solid #d4af37;border-radius:14px;">
-<tr><td align="center" style="padding:25px;border-bottom:1px solid #d4af37;">
-<b style="color:#f0cf62;font-size:22px;">NAIJA POCKET</b><br>
-<span style="color:#aaa;font-size:11px;">BUSINESS CENTER</span>
+<html>
+<body style="margin:0;padding:0;background:#050505;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#050505;">
+<tr><td align="center" style="padding:30px 10px;">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#111111;border:1px solid #d4af37;border-radius:14px;">
+<tr><td align="center" style="padding:25px;background:#050505;border-bottom:1px solid #d4af37;">
+<div style="color:#f0cf62;font-size:22px;font-weight:900;">NAIJA POCKET</div>
+<div style="color:#aaa;font-size:11px;letter-spacing:2px;">BUSINESS CENTER</div>
 </td></tr>
 <tr><td align="center" style="padding:30px;">
-<b style="color:#f0cf62;font-size:18px;">YOUR DOCUMENT IS READY</b><br><br>
-<span style="color:#ddd;font-size:14px;">Your requested document is ready for delivery.</span><br><br>
-<span style="color:#999;font-size:12px;">{safe_service} — {safe_title}</span><br><br><br>
-<a href="{safe_url}" style="background:#d4af37;color:#000;padding:16px 30px;text-decoration:none;font-weight:900;border-radius:7px;display:inline-block;">📱 DOWNLOAD YOUR DOCUMENT</a><br><br><br>
-<span style="color:#999;font-size:12px;">Contact Customer Care if you need help.</span>
+<div style="color:#f0cf62;font-size:18px;font-weight:900;">YOUR DOCUMENT IS READY</div>
+<div style="color:#ddd;font-size:14px;margin-top:15px;line-height:1.6;">Thank you for using Naija Pocket Business Center. Your document is ready for delivery.</div>
+<div style="margin:28px 0;">
+<a href="{safe_url}" style="background:#d4af37;color:#000000;padding:16px 30px;text-decoration:none;font-weight:900;border-radius:7px;display:inline-block;font-size:14px;">📱 DOWNLOAD YOUR DOCUMENT</a>
+</div>
+<div style="color:#999;font-size:12px;">Contact Customer Care if you need help.</div>
 </td></tr>
-<tr><td align="center" style="padding:15px;background:#080808;border-top:1px solid #333;">
-<span style="color:#d4af37;font-size:11px;"><b>Fast • Convenient • Open 24/7</b></span>
+<tr><td align="center" style="padding:15px;background:#080808;">
+<div style="color:#d4af37;font-size:11px;font-weight:800;">Fast • Convenient • Open 24/7</div>
 </td></tr>
 </table>
 </td></tr>
 </table>
-</body></html>"""
+</body>
+</html>"""
 
 
 def _send_customer_care_email(
@@ -1652,7 +1881,9 @@ def _send_customer_care_email(
     download_url: str,
 ) -> dict:
 
-    recipient = clean(recipient)
+    recipient = clean(
+        recipient
+    )
 
     if not recipient:
         return {
@@ -1671,12 +1902,15 @@ def _send_customer_care_email(
         "",
     ).strip()
 
-    smtp_port = int(
-        os.getenv(
-            "SMTP_PORT",
-            "465",
+    try:
+        smtp_port = int(
+            os.getenv(
+                "SMTP_PORT",
+                "465",
+            )
         )
-    )
+    except Exception:
+        smtp_port = 465
 
     smtp_username = os.getenv(
         "SMTP_USERNAME",
@@ -1737,7 +1971,9 @@ def _send_customer_care_email(
     )
 
     try:
+
         if smtp_use_ssl:
+
             with smtplib.SMTP_SSL(
                 smtp_host,
                 smtp_port,
@@ -1749,9 +1985,12 @@ def _send_customer_care_email(
                     smtp_password,
                 )
 
-                server.send_message(msg)
+                server.send_message(
+                    msg
+                )
 
         else:
+
             with smtplib.SMTP(
                 smtp_host,
                 smtp_port,
@@ -1769,7 +2008,9 @@ def _send_customer_care_email(
                     smtp_password,
                 )
 
-                server.send_message(msg)
+                server.send_message(
+                    msg
+                )
 
         return {
             "sent": True,
@@ -1777,6 +2018,7 @@ def _send_customer_care_email(
         }
 
     except Exception as exc:
+
         return {
             "sent": False,
             "reason": str(exc),
@@ -1789,7 +2031,9 @@ def send_customer_care_email_for_product(
 ) -> dict:
 
     recipient = clean(
-        product.get("customer_email")
+        product.get(
+            "customer_email"
+        )
     )
 
     if not recipient:
@@ -1810,8 +2054,14 @@ def send_customer_care_email_for_product(
 
     url = download_url(
         request,
-        product.get("service", ""),
-        product.get("document_title", ""),
+        product.get(
+            "service",
+            "",
+        ),
+        product.get(
+            "document_title",
+            "",
+        ),
     )
 
     result = _send_customer_care_email(
@@ -1830,7 +2080,9 @@ def send_customer_care_email_for_product(
     log_delivery(
         product,
         "email",
-        "sent" if result.get("sent") else "failed",
+        "sent"
+        if result.get("sent")
+        else "failed",
         result,
     )
 
@@ -1841,7 +2093,10 @@ def send_customer_care_email_for_product(
 # DELIVERY HELPERS
 # ============================================================
 
-def api_base(request: Request) -> str:
+def api_base(
+    request: Request,
+) -> str:
+
     configured = PUBLIC_API_BASE_URL
 
     if configured:
@@ -1858,7 +2113,9 @@ def download_url(
     title: str,
 ) -> str:
 
-    base = api_base(request)
+    base = api_base(
+        request
+    )
 
     query = urllib.parse.urlencode(
         {
@@ -1878,16 +2135,23 @@ def delivery_channels(
 ) -> dict:
 
     phone = clean(
-        product.get("customer_id")
+        product.get(
+            "customer_id"
+        )
     )
 
     email = clean(
-        product.get("customer_email")
+        product.get(
+            "customer_email"
+        )
     )
 
     url = download_url(
         request,
-        product.get("service", ""),
+        product.get(
+            "service",
+            "",
+        ),
         product.get(
             "document_title",
             "",
@@ -1956,7 +2220,9 @@ def back_office_delivery_channels(
         product,
     )
 
-    channels["back_office_download"] = {
+    channels[
+        "back_office_download"
+    ] = {
         "url": url,
         "requires_key": True,
         "available": True,
@@ -2136,6 +2402,7 @@ class DeliveryRequest(BaseModel):
 @app.post("/api/payment/create")
 def payment_create(
     payload: PaymentCreateRequest,
+    request: Request,
 ):
 
     service = clean(
@@ -2159,14 +2426,18 @@ def payment_create(
         )
 
     if payload.document_payload is not None:
+
         incoming = (
-            dict(payload.document_payload)
+            dict(
+                payload.document_payload
+            )
             if isinstance(
                 payload.document_payload,
                 dict,
             )
             else {}
         )
+
     else:
         incoming = {}
 
@@ -2175,15 +2446,11 @@ def payment_create(
             "document_version": (
                 payload.document_version
             ),
-            "pages": (
-                payload.pages
-            ),
+            "pages": payload.pages,
             "document_pages": (
                 payload.document_pages
             ),
-            "page_text": (
-                payload.page_text
-            ),
+            "page_text": payload.page_text,
             "document_text": (
                 payload.document_text
             ),
@@ -2203,7 +2470,10 @@ def payment_create(
         incoming
     )
 
-    if not normalized["document_text"] and not normalized["pages"]:
+    if (
+        not normalized["document_text"]
+        and not normalized["pages"]
+    ):
         raise HTTPException(
             status_code=400,
             detail="Document content is required",
@@ -2253,8 +2523,12 @@ def payment_create(
 
     return {
         "success": True,
-        "message": "Payment record created successfully",
-        "product": public_product(product),
+        "message": (
+            "Payment record created successfully"
+        ),
+        "product": public_product(
+            product
+        ),
         "payment": payment,
         "saved_document": {
             "saved": True,
@@ -2268,13 +2542,9 @@ def payment_create(
             )
         ),
         "delivery": delivery_channels(
-            Request,
+            request,
             product,
-        )
-        if False
-        else {
-            "available": True,
-        },
+        ),
     }
 
 
@@ -2357,7 +2627,9 @@ def payment_status(
 
     return {
         "found": True,
-        "product": public_product(product),
+        "product": public_product(
+            product
+        ),
         "payment": get_payment(
             service,
             title,
@@ -2463,6 +2735,7 @@ def back_office_payments(
     items = []
 
     for product in products:
+
         repaired = repair_saved_snapshot(
             product
         )
@@ -2811,9 +3084,11 @@ def back_office_activate_download(
         payload.document_title,
     )
 
-    email_result = send_customer_care_email_for_product(
-        product,
-        request,
+    email_result = (
+        send_customer_care_email_for_product(
+            product,
+            request,
+        )
     )
 
     return {
@@ -2940,7 +3215,10 @@ def canonical_file_or_404(
             product
         )
 
-    if not saved or not saved.exists():
+    if (
+        not saved
+        or not saved.exists()
+    ):
         raise HTTPException(
             status_code=404,
             detail="Saved document not found",
@@ -2956,15 +3234,18 @@ def file_response(
     suffix = path.suffix.lower()
 
     if suffix == ".pdf":
+
         media_type = "application/pdf"
 
     elif suffix == ".docx":
+
         media_type = (
             "application/vnd.openxmlformats-officedocument."
             "wordprocessingml.document"
         )
 
     else:
+
         media_type = (
             "application/octet-stream"
         )
@@ -2974,7 +3255,10 @@ def file_response(
         media_type=media_type,
         filename=path.name,
         headers={
-            "Cache-Control": "no-store, no-cache, must-revalidate",
+            "Cache-Control": (
+                "no-store, no-cache, "
+                "must-revalidate"
+            ),
             "Pragma": "no-cache",
             "Expires": "0",
         },
@@ -3015,7 +3299,8 @@ def download_document(
         connection.execute(
             """
             UPDATE document_products
-            SET download_count = COALESCE(download_count, 0) + 1,
+            SET download_count =
+                    COALESCE(download_count, 0) + 1,
                 downloaded_at = ?,
                 updated_at = ?
             WHERE business_key = ?
@@ -3230,6 +3515,7 @@ def back_office_delivery_history(
     try:
 
         if service and title:
+
             rows = connection.execute(
                 """
                 SELECT *
@@ -3246,6 +3532,7 @@ def back_office_delivery_history(
             ).fetchall()
 
         else:
+
             rows = connection.execute(
                 """
                 SELECT *
@@ -3418,6 +3705,7 @@ def back_office_jobs(
         items = []
 
         for row in rows:
+
             product = dict(row)
 
             items.append(
@@ -3599,6 +3887,7 @@ def back_office_document_preview(
         pages,
         start=1,
     ):
+
         safe_page = html_escape(
             page
         )
