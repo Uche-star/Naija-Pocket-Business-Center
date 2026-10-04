@@ -288,16 +288,6 @@ button{
   cursor:not-allowed;
 }
 
-.secondary-btn{
-  width:100%;
-  min-height:48px;
-  border:1px solid var(--line);
-  border-radius:11px;
-  background:#101010;
-  color:var(--white);
-  font-weight:600;
-}
-
 .nav-row{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
@@ -448,10 +438,6 @@ button{
     padding:24px 18px;
     min-height:520px;
   }
-
-  .nav-row{
-    grid-template-columns:1fr 1fr 1fr;
-  }
 }
 </style>
 </head>
@@ -531,36 +517,22 @@ button{
 
         <div class="nav-row">
 
-          <button
-            type="button"
-            class="nav-btn"
-            id="prevBtn"
-            onclick="previousPage()"
-          >
+          <button type="button" class="nav-btn" id="prevBtn" onclick="previousPage()">
             Previous
           </button>
 
-          <button
-            type="button"
-            class="nav-btn"
-            id="nextBtn"
-            onclick="nextPage()"
-          >
+          <button type="button" class="nav-btn" id="nextBtn" onclick="nextPage()">
             Next
           </button>
 
-          <button
-            type="button"
-            class="nav-btn"
-            id="firstBtn"
-            onclick="firstPage()"
-          >
+          <button type="button" class="nav-btn" id="firstBtn" onclick="firstPage()">
             First
           </button>
 
         </div>
 
         <div class="go-row">
+
           <input
             id="pageInput"
             type="number"
@@ -568,7 +540,9 @@ button{
             placeholder="Page"
             inputmode="numeric"
           >
+
           <button type="button" onclick="goToPage()">GO</button>
+
         </div>
 
       </div>
@@ -591,12 +565,7 @@ button{
           DOWNLOAD COMPLETED DOCUMENT
         </button>
 
-        <div
-          id="message"
-          class="message"
-          role="status"
-          aria-live="polite"
-        ></div>
+        <div id="message" class="message" role="status" aria-live="polite"></div>
 
       </div>
 
@@ -609,30 +578,6 @@ button{
 <script>
 "use strict";
 
-/*
-  REVIEW PAGE ARCHITECTURE
-
-  Review data:
-    Current NPBC application
-    -> /api/review
-
-  Document test-save:
-    Separate Payment/Document API
-    -> https://naija-pocket-payment-api.onrender.com/api/document/test-save
-
-  Temporary document download:
-    Separate Payment/Document API
-    -> https://naija-pocket-payment-api.onrender.com/api/document/test-download/{token}
-
-  IMPORTANT:
-  This page does NOT:
-    - create a payment
-    - verify a payment
-    - unlock a paid download
-    - contact Back Office
-    - send email
-*/
-
 const API_BASE = "";
 
 const PAYMENT_API_BASE =
@@ -644,7 +589,6 @@ let currentPage = 0;
 let currentJobId = "";
 let currentService = "";
 let currentTitle = "";
-let currentPayload = null;
 
 
 /* =========================================================
@@ -667,6 +611,7 @@ function escapeHtml(value){
 }
 
 function showMessage(message,type="info"){
+
   const box = document.getElementById("message");
 
   if(!box) return;
@@ -676,6 +621,7 @@ function showMessage(message,type="info"){
 }
 
 function hideMessage(){
+
   const box = document.getElementById("message");
 
   if(!box) return;
@@ -685,13 +631,20 @@ function hideMessage(){
 }
 
 function setLoading(loading){
-  const loadingBox = document.getElementById("loadingBox");
-  const paper = document.getElementById("paper");
+
+  const loadingBox =
+    document.getElementById("loadingBox");
+
+  const paper =
+    document.getElementById("paper");
 
   if(loading){
+
     loadingBox.classList.remove("hidden");
     paper.classList.add("hidden");
+
   }else{
+
     loadingBox.classList.add("hidden");
     paper.classList.remove("hidden");
   }
@@ -699,7 +652,7 @@ function setLoading(loading){
 
 
 /* =========================================================
-   API HELPERS
+   REVIEW API
    ========================================================= */
 
 async function apiGet(url){
@@ -741,20 +694,17 @@ async function apiGet(url){
 }
 
 
-/*
-  IMPORTANT CORRECTION:
+/* =========================================================
+   DOCUMENT API
+   ========================================================= */
 
-  The document test endpoint is NOT on API_BASE.
-
-  It belongs to the separate NPBC Payment/Document API.
-
-  Therefore this helper deliberately uses
-  PAYMENT_API_BASE.
-*/
 async function documentApiPost(url,body){
 
+  const endpoint =
+    PAYMENT_API_BASE.replace(/\/+$/,"") + url;
+
   const response = await fetch(
-    PAYMENT_API_BASE.replace(/\/+$/,"") + url,
+    endpoint,
     {
       method:"POST",
       headers:{
@@ -776,10 +726,7 @@ async function documentApiPost(url,body){
 
     if(typeof data.detail === "string"){
       detail = data.detail;
-    }else if(
-      data.detail &&
-      typeof data.detail === "object"
-    ){
+    }else if(data.detail){
       detail = JSON.stringify(data.detail);
     }
 
@@ -817,29 +764,144 @@ async function documentApiPost(url,body){
 
 
 /* =========================================================
-   URL HELPERS
+   DOWNLOAD URL EXTRACTION
    ========================================================= */
 
-function makeDocumentApiUrl(url){
+/*
+  The deployed document API may return the URL directly,
+  or inside a response/data/result/document object.
 
-  const base = PAYMENT_API_BASE.replace(/\/+$/,"");
+  This function accepts all of those forms.
 
-  if(/^https?:\/\//i.test(clean(url))){
-    return clean(url);
+  Most importantly, it does NOT invent a download URL.
+  It only uses a URL actually returned by the API.
+*/
+
+function extractDownloadUrl(response){
+
+  if(!response){
+    return "";
   }
 
-  const path = clean(url);
+  const candidates = [
 
-  if(path.startsWith("/")){
-    return base + path;
+    response.test_download_url,
+
+    response.testDownloadUrl,
+
+    response.download_url,
+
+    response.downloadUrl,
+
+    response.url,
+
+    response.download,
+
+    response.test_download,
+
+    response.testDownload,
+
+    response.path,
+
+    response.download_path,
+
+    response.downloadPath,
+
+    response.data?.test_download_url,
+
+    response.data?.testDownloadUrl,
+
+    response.data?.download_url,
+
+    response.data?.downloadUrl,
+
+    response.data?.url,
+
+    response.data?.download,
+
+    response.data?.test_download,
+
+    response.data?.testDownload,
+
+    response.data?.path,
+
+    response.result?.test_download_url,
+
+    response.result?.testDownloadUrl,
+
+    response.result?.download_url,
+
+    response.result?.downloadUrl,
+
+    response.result?.url,
+
+    response.result?.download,
+
+    response.result?.test_download,
+
+    response.result?.testDownload,
+
+    response.result?.path,
+
+    response.document?.test_download_url,
+
+    response.document?.testDownloadUrl,
+
+    response.document?.download_url,
+
+    response.document?.downloadUrl,
+
+    response.document?.url,
+
+    response.document?.download,
+
+    response.document?.test_download,
+
+    response.document?.testDownload,
+
+    response.document?.path
+  ];
+
+  for(const candidate of candidates){
+
+    if(typeof candidate === "string" && clean(candidate)){
+      return clean(candidate);
+    }
   }
 
-  return base + "/" + path;
+  return "";
 }
 
 
 /* =========================================================
-   TEXT / DOCUMENT RENDERING
+   MAKE ABSOLUTE DOCUMENT API URL
+   ========================================================= */
+
+function makeDocumentApiUrl(url){
+
+  const value = clean(url);
+
+  if(!value){
+    return "";
+  }
+
+  if(/^https?:\/\//i.test(value)){
+    return value;
+  }
+
+  const base =
+    PAYMENT_API_BASE.replace(/\/+$/,"");
+
+  if(value.startsWith("/")){
+    return base + value;
+  }
+
+  return base + "/" + value;
+}
+
+
+/* =========================================================
+   DISPLAY
    ========================================================= */
 
 function renderPlain(text){
@@ -851,13 +913,6 @@ function renderPlain(text){
   }
 
   value = escapeHtml(value);
-
-  /*
-    Basic markdown cleanup for display.
-
-    This does not change the saved document.
-    It only makes the review screen easier to read.
-  */
 
   value = value
     .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
@@ -887,12 +942,6 @@ function sanitizeHtml(value){
     return "";
   }
 
-  /*
-    If the content appears to contain HTML,
-    allow only the small formatting set needed
-    by the document viewer.
-  */
-
   if(/<\s*[a-z][^>]*>/i.test(text)){
 
     const parser = new DOMParser();
@@ -902,7 +951,8 @@ function sanitizeHtml(value){
       "text/html"
     );
 
-    const root = doc.body.firstElementChild;
+    const root =
+      doc.body.firstElementChild;
 
     if(root){
 
@@ -934,15 +984,21 @@ function sanitizeHtml(value){
       root.querySelectorAll("*").forEach(node=>{
 
         if(!allowed.has(node.tagName)){
+
           node.replaceWith(
-            document.createTextNode(node.textContent || "")
+            document.createTextNode(
+              node.textContent || ""
+            )
           );
+
           return;
         }
 
-        [...node.attributes].forEach(attr=>{
-          node.removeAttribute(attr.name);
-        });
+        [...node.attributes].forEach(
+          attr=>{
+            node.removeAttribute(attr.name);
+          }
+        );
       });
 
       return root.innerHTML;
@@ -954,7 +1010,7 @@ function sanitizeHtml(value){
 
 
 /* =========================================================
-   NORMALIZE REVIEW PAGES
+   PAGE NORMALIZATION
    ========================================================= */
 
 function normalizePageItem(item){
@@ -987,22 +1043,30 @@ function normalizePageItem(item){
 function extractPages(data){
 
   const candidates = [
-    data && data.pages,
-    data && data.document_pages,
-    data && data.documentPages,
-    data && data.reviewed_pages,
-    data && data.reviewedPages,
-    data && data.document && data.document.pages,
-    data && data.review && data.review.pages
+
+    data?.pages,
+
+    data?.document_pages,
+
+    data?.documentPages,
+
+    data?.reviewed_pages,
+
+    data?.reviewedPages,
+
+    data?.document?.pages,
+
+    data?.review?.pages
   ];
 
   for(const candidate of candidates){
 
     if(Array.isArray(candidate)){
 
-      const result = candidate
-        .map(normalizePageItem)
-        .filter(Boolean);
+      const result =
+        candidate
+          .map(normalizePageItem)
+          .filter(Boolean);
 
       if(result.length){
         return result;
@@ -1021,22 +1085,17 @@ function extractPages(data){
 
   if(clean(documentText)){
 
-    const text = String(documentText);
-
-    /*
-      If explicit form-feed page breaks exist,
-      preserve them.
-    */
-
-    const splitPages = text.split(/\f+/);
+    const splitPages =
+      String(documentText).split(/\f+/);
 
     if(splitPages.length > 1){
+
       return splitPages
         .map(x=>clean(x))
         .filter(Boolean);
     }
 
-    return [text];
+    return [String(documentText)];
   }
 
   return [];
@@ -1044,7 +1103,7 @@ function extractPages(data){
 
 
 /* =========================================================
-   SERVICE / TITLE EXTRACTION
+   SERVICE / TITLE
    ========================================================= */
 
 function extractService(data){
@@ -1084,13 +1143,18 @@ function extractTitle(data){
 
 function buildDocumentPayload(){
 
-  const pageObjects = pages.map((page,index)=>({
-    page_number:index + 1,
-    content:page
-  }));
+  const pageObjects =
+    pages.map(
+      (page,index)=>({
+        page_number:index + 1,
+        content:page
+      })
+    );
 
   return {
+
     service:currentService,
+
     title:currentTitle,
 
     document_payload:{
@@ -1121,7 +1185,8 @@ function buildDocumentPayload(){
 
 function updatePageDisplay(){
 
-  const paper = document.getElementById("paper");
+  const paper =
+    document.getElementById("paper");
 
   if(!paper){
     return;
@@ -1132,28 +1197,31 @@ function updatePageDisplay(){
     paper.innerHTML =
       '<div class="empty-paper">No completed document content was returned.</div>';
 
-    document.getElementById("pageCounter").textContent =
-      "0 PAGES";
+    document.getElementById("pageCounter")
+      .textContent = "0 PAGES";
 
-    document.getElementById("pagesValue").textContent =
-      "0";
+    document.getElementById("pagesValue")
+      .textContent = "0";
 
     updateNavigation();
 
     return;
   }
 
-  const page = pages[currentPage] || "";
+  paper.innerHTML =
+    sanitizeHtml(
+      pages[currentPage] || ""
+    );
 
-  paper.innerHTML = sanitizeHtml(page);
+  document.getElementById("pageCounter")
+    .textContent =
+      pages.length === 1
+        ? "1 PAGE"
+        : `${currentPage + 1} OF ${pages.length} PAGES`;
 
-  document.getElementById("pageCounter").textContent =
-    pages.length === 1
-      ? "1 PAGE"
-      : `${currentPage + 1} OF ${pages.length} PAGES`;
-
-  document.getElementById("pagesValue").textContent =
-    String(pages.length);
+  document.getElementById("pagesValue")
+    .textContent =
+      String(pages.length);
 
   updateNavigation();
 }
@@ -1161,9 +1229,14 @@ function updatePageDisplay(){
 
 function updateNavigation(){
 
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const firstBtn = document.getElementById("firstBtn");
+  const prevBtn =
+    document.getElementById("prevBtn");
+
+  const nextBtn =
+    document.getElementById("nextBtn");
+
+  const firstBtn =
+    document.getElementById("firstBtn");
 
   if(!pages.length){
 
@@ -1174,14 +1247,19 @@ function updateNavigation(){
     return;
   }
 
-  prevBtn.disabled = currentPage <= 0;
-  nextBtn.disabled = currentPage >= pages.length - 1;
-  firstBtn.disabled = currentPage <= 0;
+  prevBtn.disabled =
+    currentPage <= 0;
+
+  nextBtn.disabled =
+    currentPage >= pages.length - 1;
+
+  firstBtn.disabled =
+    currentPage <= 0;
 }
 
 
 /* =========================================================
-   PAGE NAVIGATION
+   NAVIGATION
    ========================================================= */
 
 function previousPage(){
@@ -1237,12 +1315,11 @@ function firstPage(){
 
 function goToPage(){
 
-  const input = document.getElementById("pageInput");
+  const input =
+    document.getElementById("pageInput");
 
-  const number = parseInt(
-    input.value,
-    10
-  );
+  const number =
+    parseInt(input.value,10);
 
   if(
     !Number.isFinite(number) ||
@@ -1258,7 +1335,8 @@ function goToPage(){
     return;
   }
 
-  currentPage = number - 1;
+  currentPage =
+    number - 1;
 
   updatePageDisplay();
 
@@ -1272,12 +1350,13 @@ function goToPage(){
 
 
 /* =========================================================
-   DOWNLOAD EXACT REVIEWED DOCUMENT
+   DOWNLOAD
    ========================================================= */
 
 async function downloadReviewedDocument(){
 
-  const button = document.getElementById("downloadBtn");
+  const button =
+    document.getElementById("downloadBtn");
 
   if(!pages.length){
 
@@ -1310,59 +1389,77 @@ async function downloadReviewedDocument(){
   }
 
   button.disabled = true;
-  button.textContent = "PREPARING DOWNLOAD...";
+
+  button.textContent =
+    "PREPARING DOWNLOAD...";
 
   hideMessage();
 
   try{
 
+    const payload =
+      buildDocumentPayload();
+
     /*
-      THIS IS THE IMPORTANT CORRECTION.
-
-      Do NOT use:
-
-        apiPost("/api/document/test-save", payload)
-
-      because apiPost uses the current NPBC origin.
-
-      Instead, documentApiPost sends the request to:
-
-        https://naija-pocket-payment-api.onrender.com
+      Save the exact reviewed document
+      through the separate document API.
     */
 
-    const payload = buildDocumentPayload();
+    const response =
+      await documentApiPost(
+        "/api/document/test-save",
+        payload
+      );
 
-    const response = await documentApiPost(
-      "/api/document/test-save",
-      payload
+    console.log(
+      "Document test-save response:",
+      response
     );
 
-    const downloadUrl = clean(
-      response.test_download_url ||
-      response.download_url ||
-      response.url ||
-      ""
-    );
+    /*
+      Extract the URL from the actual API response.
+    */
+
+    const downloadUrl =
+      extractDownloadUrl(response);
 
     if(!downloadUrl){
 
+      /*
+        This is deliberately different from a network error.
+
+        The API has already accepted/saved the document,
+        but the response did not contain a recognized
+        download URL.
+
+        We do not invent a token or construct one.
+      */
+
+      console.error(
+        "No download URL found in test-save response:",
+        response
+      );
+
       throw new Error(
-        "The document was saved, but no download link was returned."
+        "The document was saved, but the download link was not returned by the document API."
       );
     }
 
     /*
-      The backend normally returns a relative path such as:
-
-        /api/document/test-download/ABC123
-
-      That path belongs to the Payment/Document API,
-      not this Review page's origin.
-
-      Therefore it MUST be resolved against PAYMENT_API_BASE.
+      Resolve a relative URL against the
+      document/payment API, never against
+      the Review page origin.
     */
 
-    const finalUrl = makeDocumentApiUrl(downloadUrl);
+    const finalUrl =
+      makeDocumentApiUrl(downloadUrl);
+
+    if(!finalUrl){
+
+      throw new Error(
+        "The document API returned an invalid download link."
+      );
+    }
 
     showMessage(
       "Your document is ready. Starting download...",
@@ -1370,13 +1467,19 @@ async function downloadReviewedDocument(){
     );
 
     /*
-      Give the browser a moment to receive the status message,
-      then navigate directly to the exact canonical file endpoint.
+      Navigate directly to the temporary
+      document-download endpoint.
+
+      That endpoint returns the exact
+      canonical saved file.
     */
 
-    setTimeout(()=>{
-      window.location.href = finalUrl;
-    },350);
+    setTimeout(
+      ()=>{
+        window.location.href = finalUrl;
+      },
+      350
+    );
 
   }catch(error){
 
@@ -1392,7 +1495,9 @@ async function downloadReviewedDocument(){
     );
 
     button.disabled = false;
-    button.textContent = "DOWNLOAD COMPLETED DOCUMENT";
+
+    button.textContent =
+      "DOWNLOAD COMPLETED DOCUMENT";
   }
 }
 
@@ -1404,13 +1509,15 @@ async function downloadReviewedDocument(){
 async function loadReview(){
 
   setLoading(true);
+
   hideMessage();
 
   try{
 
-    const params = new URLSearchParams(
-      window.location.search
-    );
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
 
     currentJobId =
       clean(
@@ -1427,10 +1534,11 @@ async function loadReview(){
       );
     }
 
-    reviewData = await apiGet(
-      "/api/review?job_id=" +
-      encodeURIComponent(currentJobId)
-    );
+    reviewData =
+      await apiGet(
+        "/api/review?job_id=" +
+        encodeURIComponent(currentJobId)
+      );
 
     currentService =
       extractService(reviewData);
@@ -1448,18 +1556,20 @@ async function loadReview(){
       );
     }
 
-    currentPayload = buildDocumentPayload();
-
-    document.getElementById("serviceValue").textContent =
+    document.getElementById("serviceValue")
+      .textContent =
       currentService || "Document Service";
 
-    document.getElementById("titleValue").textContent =
+    document.getElementById("titleValue")
+      .textContent =
       currentTitle || "Completed Document";
 
-    document.getElementById("reviewStatusValue").textContent =
+    document.getElementById("reviewStatusValue")
+      .textContent =
       "READY";
 
-    document.getElementById("statusPill").textContent =
+    document.getElementById("statusPill")
+      .textContent =
       "READY";
 
     currentPage = 0;
@@ -1477,7 +1587,8 @@ async function loadReview(){
 
     setLoading(false);
 
-    const paper = document.getElementById("paper");
+    const paper =
+      document.getElementById("paper");
 
     paper.classList.remove("hidden");
 
@@ -1489,10 +1600,12 @@ async function loadReview(){
       ) +
       "</div>";
 
-    document.getElementById("statusPill").textContent =
+    document.getElementById("statusPill")
+      .textContent =
       "ERROR";
 
-    document.getElementById("reviewStatusValue").textContent =
+    document.getElementById("reviewStatusValue")
+      .textContent =
       "ERROR";
 
     showMessage(
@@ -1505,7 +1618,7 @@ async function loadReview(){
 
 
 /* =========================================================
-   KEYBOARD SUPPORT
+   KEYBOARD
    ========================================================= */
 
 document.addEventListener(
