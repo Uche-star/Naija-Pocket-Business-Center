@@ -1,5 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Review Your Complete Service — Naija Pocket Business Center</title>
 <style>
 :root{--black:#050505;--panel:#111;--line:rgba(255,255,255,.12);--gold:#d4af37;--gold2:#f0cf62;--white:#fff;--muted:#a2a2a2;--red:#9d0000;--green:#008000}
@@ -105,7 +104,7 @@
 <div id="message" class="message"></div>
 </main>
 <script>
-"use strict";const API_BASE="";
+"use strict";const API_BASE="https://naija-pocket-business-center.onrender.com";
 const PAYMENT_API_BASE="https://naija-pocket-payment-api.onrender.com";
 const DOWNLOAD_API_BASE=PAYMENT_API_BASE;
 
@@ -189,7 +188,17 @@ return !!d&&(state()==="review_complete"||d.review_finished===true);
 async function apiGet(url){
 const r=await fetch(API_BASE+url,{cache:"no-store"});
 const d=await r.json().catch(()=>({}));
-if(!r.ok)throw Error(d.error_message||d.error||d.message||"Unable to load the document.");
+
+if(!r.ok){
+throw Error(
+d.error_message||
+d.error||
+d.message||
+d.detail||
+"Unable to load the document."
+);
+}
+
 return d;
 }
 
@@ -199,13 +208,25 @@ method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify(body||{})
 });
+
 const d=await r.json().catch(()=>({}));
-if(!r.ok||d.success===false)throw Error(d.error_message||d.error||d.message||"The request could not be completed.");
+
+if(!r.ok||d.success===false){
+throw Error(
+d.error_message||
+d.error||
+d.message||
+d.detail||
+"The request could not be completed."
+);
+}
+
 return d;
 }
 
 async function paymentPost(url,body){
 let r;
+
 try{
 r=await fetch(PAYMENT_API_BASE+url,{
 method:"POST",
@@ -213,7 +234,9 @@ headers:{"Content-Type":"application/json"},
 body:JSON.stringify(body||{})
 });
 }catch(e){
-throw Error("The payment service could not be reached. Please check your internet connection and try again.");
+throw Error(
+"The payment service could not be reached. Please check your internet connection and try again."
+);
 }
 
 const text=await r.text();
@@ -310,6 +333,7 @@ let out=[];
 
 for(const d of String(s||"").split(";")){
 const i=d.indexOf(":");
+
 if(i<0)continue;
 
 const p=d.slice(0,i).trim().toLowerCase();
@@ -317,7 +341,7 @@ const v=d.slice(i+1).trim();
 
 if(
 allowedStyles.has(p)&&
-!/javascript:|expression(|url(|@import/i.test(v)
+!/javascript:|expression\s*(|url\s*(|@import/i.test(v)
 ){
 out.push(p+":"+v);
 }
@@ -331,6 +355,7 @@ const f=document.createDocumentFragment();
 const lines=normText(t).split("\n");
 
 lines.forEach((line,i)=>{
+
 if(line===""){
 f.appendChild(document.createElement("br"));
 return;
@@ -339,40 +364,56 @@ return;
 const parts=line.split(/(**[^*]+**)/g);
 
 parts.forEach(p=>{
+
 if(!p)return;
 
 if(p.startsWith("")&&p.endsWith("")){
+
 const e=document.createElement("strong");
 e.textContent=p.slice(2,-2);
 f.appendChild(e);
+
 }else{
+
 f.appendChild(
 document.createTextNode(
 p.replace(/^*+|*+$/g,"")
 )
 );
+
 }
 });
 
 if(i<lines.length-1)
 f.appendChild(document.createElement("br"));
+
 });
 
 return f;
 }
 
 function sanitizeHtml(src){
+
 if(!/<[a-z][\s\S]*>/i.test(String(src||"")))
 return renderPlain(src);
 
-const doc=new DOMParser().parseFromString(String(src),"text/html");
+const doc=new DOMParser().parseFromString(
+String(src),
+"text/html"
+);
+
 const out=document.createDocumentFragment();
 
 function walk(n,parent){
+
 if(n.nodeType===Node.TEXT_NODE){
+
 parent.appendChild(
-document.createTextNode(normText(n.nodeValue||""))
+document.createTextNode(
+normText(n.nodeValue||"")
+)
 );
+
 return;
 }
 
@@ -386,37 +427,56 @@ if([
 ].includes(tag))return;
 
 if(!allowedTags.has(tag)){
-for(const c of n.childNodes)walk(c,parent);
+
+for(const c of n.childNodes)
+walk(c,parent);
+
 return;
 }
 
-const e=document.createElement(tag.toLowerCase());
+const e=document.createElement(
+tag.toLowerCase()
+);
 
 for(const a of n.attributes){
+
 const name=a.name.toLowerCase();
 const v=a.value||"";
 
 if(!allowedAttrs.has(name))continue;
 
 if(name==="style"){
+
 const s=safeStyle(v);
+
 if(s)e.setAttribute("style",s);
+
 }else if(
 name==="align"&&
-["left","center","right","justify"].includes(v.toLowerCase().trim())
+["left","center","right","justify"].includes(
+v.toLowerCase().trim()
+)
 ){
-e.setAttribute("align",v.toLowerCase().trim());
+
+e.setAttribute(
+"align",
+v.toLowerCase().trim()
+);
+
 }else if(
 (name==="colspan"||name==="rowspan")&&
 /^\d+$/.test(v)&&
 +v>0&&
 +v<=100
 ){
+
 e.setAttribute(name,v);
+
 }
 }
 
-for(const c of n.childNodes)walk(c,e);
+for(const c of n.childNodes)
+walk(c,e);
 
 parent.appendChild(e);
 }
@@ -428,11 +488,23 @@ return out;
 }
 
 function stripMarkupText(v){
+
 const raw=String(v==null?"":v);
 
 if(/<[^>]+>/i.test(raw)){
-const doc=new DOMParser().parseFromString(raw,"text/html");
-return normText(doc.body.innerText||doc.body.textContent||"");
+
+const doc=
+new DOMParser().parseFromString(
+raw,
+"text/html"
+);
+
+return normText(
+doc.body.innerText||
+doc.body.textContent||
+""
+);
+
 }
 
 return normText(raw)
@@ -443,6 +515,7 @@ return normText(raw)
 }
 
 function extractDocumentTitle(d){
+
 const candidates=[
 d?.document_title,
 d?.documentTitle,
@@ -459,40 +532,64 @@ params.get("title")
 ];
 
 for(const c of candidates){
+
 const t=stripMarkupText(c);
 
 if(t&&t.length<180)
 return t;
+
 }
 
 for(const p of (extractPages(d)||[])){
+
 const t=stripMarkupText(p.content||"");
-const lines=t.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+
+const lines=
+t.split(/\n+/)
+.map(x=>x.trim())
+.filter(Boolean);
 
 if(lines.length){
-const first=lines[0].replace(/^page\s*\d+$/i,"").trim();
+
+const first=
+lines[0]
+.replace(/^page\s*\d+$/i,"")
+.trim();
 
 if(first&&first.length<180)
 return first;
+
 }
 }
 
 if(pages.length){
-const t=stripMarkupText(pages[0].content||"");
-const first=t.split(/\n+/).map(x=>x.trim()).filter(Boolean)[0]||"";
+
+const t=
+stripMarkupText(
+pages[0].content||""
+);
+
+const first=
+t.split(/\n+/)
+.map(x=>x.trim())
+.filter(Boolean)[0]||"";
 
 if(first&&first.length<180)
 return first;
+
 }
 
 return service||"Completed Document";
 }
 
 function safeFilename(v){
-let x=stripMarkupText(v)||"Completed Document";
+
+let x=
+stripMarkupText(v)||
+"Completed Document";
 
 x=x
-.replace(/[\/:*?"<>|]+/g," ")
+.replace(/[/:*?"<>|]+/g," ")
 .replace(/\s+/g," ")
 .trim()
 .slice(0,120);
@@ -501,6 +598,7 @@ return (x||"Completed Document")+".txt";
 }
 
 function buildDirectDownloadText(){
+
 return pages
 .map(p=>stripMarkupText(p.content||""))
 .filter(Boolean)
@@ -511,33 +609,37 @@ return pages
 /*
 DOCUMENT TEST DOWNLOAD — PAYMENT API v19
 
-This is deliberately separate from the normal paid download flow.
-
-Flow:
-
 1. Take the already-reviewed document.
 2. Send the reviewed document to /api/document/test-save.
 3. Receive a temporary test token/direct URL.
 4. Open /api/document/test-download/{token}.
-   */
-   async function directDownloadReviewedDocument(){
+
+No payment is created or verified by this test path.
+*/
+
+async function directDownloadReviewedDocument(){
 
 if(!reviewFinished||!pages.length){
+
 return setMessage(
 "Please wait until the complete reviewed document is ready.",
 "error"
 );
+
 }
 
 if(directDownloadBusy)return;
 
-const downloadText=buildDirectDownloadText();
+const downloadText=
+buildDirectDownloadText();
 
 if(!downloadText){
+
 return setMessage(
 "No content to download",
 "error"
 );
+
 }
 
 directDownloadBusy=true;
@@ -545,8 +647,11 @@ directDownloadBusy=true;
 downloadButton.disabled=true;
 directDownloadButton.disabled=true;
 
-downloadButton.textContent="PREPARING DOWNLOAD...";
-directDownloadButton.textContent="PREPARING DOWNLOAD...";
+downloadButton.textContent=
+"PREPARING DOWNLOAD...";
+
+directDownloadButton.textContent=
+"PREPARING DOWNLOAD...";
 
 directDownloadStatus.textContent=
 "Preparing your secure download...";
@@ -558,27 +663,31 @@ setMessage(
 
 try{
 
-const filename=safeFilename(
-documentTitle||extractDocumentTitle({})
+const filename=
+safeFilename(
+documentTitle||
+extractDocumentTitle({})
 );
 
-/*
-v19 document-test request.
-
-The test path receives the already-reviewed document.
-No payment is created or verified here.
-*/
 const payload={
 document_text:downloadText,
-document_title:documentTitle||"Completed Document",
-title:documentTitle||"Completed Document",
-service:service||"Business Center Service",
+document_title:
+documentTitle||
+"Completed Document",
+title:
+documentTitle||
+"Completed Document",
+service:
+service||
+"Business Center Service",
 job_id:jobId,
 filename:filename
 };
 
-const r=await fetch(
-DOWNLOAD_API_BASE+"/api/document/test-save",
+const r=
+await fetch(
+DOWNLOAD_API_BASE+
+"/api/document/test-save",
 {
 method:"POST",
 headers:{
@@ -606,6 +715,7 @@ r.status
 );
 
 if(!r.ok){
+
 throw Error(
 d.detail||
 d.error||
@@ -614,6 +724,7 @@ d.error_message||
 d.raw||
 ("Document test save failed (HTTP "+r.status+").")
 );
+
 }
 
 let token="";
@@ -636,6 +747,7 @@ d.download_url||
 d.downloadUrl||
 d.url||
 "";
+
 }
 
 if(!downloadUrl&&token){
@@ -643,6 +755,7 @@ if(!downloadUrl&&token){
 downloadUrl=
 "/api/document/test-download/"+
 encodeURIComponent(token);
+
 }
 
 if(!downloadUrl){
@@ -650,6 +763,7 @@ if(!downloadUrl){
 throw Error(
 "The document was saved, but no temporary download link was returned."
 );
+
 }
 
 const finalUrl=
@@ -670,7 +784,8 @@ setMessage(
 directDownloadStatus.textContent=
 "Your reviewed document is ready. Starting download...";
 
-window.location.href=finalUrl;
+window.location.href=
+finalUrl;
 
 }catch(e){
 
@@ -688,7 +803,8 @@ errorText,
 "error"
 );
 
-directDownloadStatus.textContent=errorText;
+directDownloadStatus.textContent=
+errorText;
 
 }finally{
 
@@ -708,6 +824,7 @@ downloadButton.textContent=
 
 directDownloadButton.textContent=
 "DOWNLOAD COMPLETED DOCUMENT";
+
 }
 }
 }
@@ -778,7 +895,8 @@ if(!pages.length){
 pageViewer.innerHTML=
 '<div class="loading"><div class="spinner"></div><div>Your service is being carefully prepared.</div></div>';
 
-pageIndicator.textContent="Page 0 of 0";
+pageIndicator.textContent=
+"Page 0 of 0";
 
 updateButtons();
 
@@ -796,18 +914,24 @@ return;
 }
 
 const a=document.createElement("article");
+
 a.className="document-page";
 
 const n=document.createElement("div");
+
 n.className="page-number-inside";
-n.textContent="PAGE "+p.page_number;
+
+n.textContent=
+"PAGE "+p.page_number;
 
 const c=document.createElement("div");
+
 c.className="page-content";
 
 c.appendChild(
 sanitizeHtml(
-p.content||"This page is still being prepared."
+p.content||
+"This page is still being prepared."
 )
 );
 
@@ -816,7 +940,8 @@ a.append(n,c);
 pageViewer.appendChild(a);
 
 pageIndicator.textContent=
-"Page "+currentPage+" of "+totalPages;
+"Page "+currentPage+
+" of "+totalPages;
 
 if(p.review||p.error){
 
@@ -824,12 +949,14 @@ pageReview.style.display="block";
 
 pageReviewText.textContent=
 p.error
-?"Page information:\n\n"+normText(p.error)
+?"Page information:\n\n"+
+normText(p.error)
 :normText(p.review);
 
 }else{
 
 pageReview.style.display="none";
+
 }
 
 updateButtons();
@@ -863,7 +990,8 @@ nextButton.onclick=
 
 goButton.onclick=()=>{
 
-const n=Number(pageNumberInput.value);
+const n=
+Number(pageNumberInput.value);
 
 if(
 !Number.isInteger(n)||
@@ -872,9 +1000,11 @@ n>totalPages
 ){
 
 return setMessage(
-"Enter a page number from 1 to "+totalPages+".",
+"Enter a page number from 1 to "+
+totalPages+".",
 "error"
 );
+
 }
 
 setMessage("");
@@ -889,6 +1019,7 @@ if(e.key==="Enter"){
 e.preventDefault();
 
 goButton.click();
+
 }
 };
 
@@ -910,7 +1041,8 @@ return x;
 
 if(typeof x==="string"){
 
-const n=Number(
+const n=
+Number(
 x.replace(/[^0-9.]/g,"")
 );
 
@@ -996,6 +1128,7 @@ for(const k of [
 const v=find(x[k]);
 
 if(v)return v;
+
 }
 
 return "";
@@ -1074,6 +1207,7 @@ paymentMessage.textContent=
 amount>0
 ?"Your approved document will be securely saved when you select Make Payment. Download remains locked until Customer Care verifies payment."
 :"A quotation is required before payment can be started.";
+
 }
 
 if(paymentIdentifier){
@@ -1081,7 +1215,8 @@ if(paymentIdentifier){
 paymentId.style.display="block";
 
 paymentId.textContent=
-"Payment reference: "+paymentIdentifier;
+"Payment reference: "+
+paymentIdentifier;
 
 }else{
 
@@ -1090,6 +1225,7 @@ paymentId.textContent="";
 }
 
 makePaymentButton.style.display="block";
+
 paymentButton.style.display="none";
 
 makePaymentButton.textContent=
@@ -1102,16 +1238,21 @@ paid
 if(reviewFinished&&pages.length){
 
 downloadButton.disabled=false;
+
 downloadButton.classList.add("active");
+
 downloadButton.textContent=
 "DOWNLOAD COMPLETED DOCUMENT";
 
 }else{
 
 downloadButton.disabled=true;
+
 downloadButton.classList.remove("active");
+
 downloadButton.textContent=
 "DOWNLOAD COMPLETED DOCUMENT";
+
 }
 
 updateButtons();
@@ -1123,9 +1264,11 @@ documentTitle=
 extractDocumentTitle(d)||
 documentTitle;
 
-currentStatus=clean(d.status);
+currentStatus=
+clean(d.status);
 
-reviewFinished=complete(d);
+reviewFinished=
+complete(d);
 
 customerId=
 clean(
@@ -1148,18 +1291,24 @@ d.output?.filename
 )||
 documentFilename;
 
-const p=extractPages(d);
+const p=
+extractPages(d);
 
 if(p.length){
 
 pages=p;
+
 totalPages=p.length;
 
 }else{
 
 totalPages=
-Number(d.total_pages||d.totalPages)||
+Number(
+d.total_pages||
+d.totalPages
+)||
 0;
+
 }
 
 currentVersion=
@@ -1168,7 +1317,8 @@ d.current_version||
 d.currentVersion||
 d.version||
 d.document_version
-)||1;
+)||
+1;
 
 versionId=
 clean(
@@ -1186,7 +1336,8 @@ d.output?.version_id
 
 paid=!!d.paid;
 
-paymentPending=!!d.payment_pending;
+paymentPending=
+!!d.payment_pending;
 
 paymentStarted=
 paymentPending||
@@ -1209,11 +1360,18 @@ if(totalPages)
 currentPage=
 Math.max(
 1,
-Math.min(currentPage,totalPages)
+Math.min(
+currentPage,
+totalPages
+)
 );
 
-const pr=d.progress||{};
-const done=Number(pr.completed)||0;
+const pr=
+d.progress||{};
+
+const done=
+Number(pr.completed)||0;
+
 const tot=
 Number(pr.total)||
 totalPages||
@@ -1249,7 +1407,10 @@ progressText.textContent=
 setStatus("REVIEWING");
 
 progressText.textContent=
-done+" of "+tot+" pages reviewed.";
+done+
+" of "+
+tot+
+" pages reviewed.";
 
 }else if(state()==="correcting"){
 
@@ -1275,9 +1436,11 @@ currentStatus
 ?currentStatus.toUpperCase()
 :"PREPARING"
 );
+
 }
 
 renderPage();
+
 updatePaymentPanel();
 }
 
@@ -1290,28 +1453,31 @@ try{
 
 let q=
 paymentIdentifier
-?" ?payment_id="+encodeURIComponent(paymentIdentifier)
-:" ?job_id="+encodeURIComponent(jobId)+
-"&version_id="+encodeURIComponent(versionId);
-
-q=q.trim();
+?"?payment_id="+
+encodeURIComponent(paymentIdentifier)
+:"?job_id="+
+encodeURIComponent(jobId)+
+"&version_id="+
+encodeURIComponent(versionId);
 
 const d=
 await fetch(
-PAYMENT_API_BASE+"/api/payment/status"+q,
+PAYMENT_API_BASE+
+"/api/payment/status"+
+q,
 {cache:"no-store"}
 ).then(async r=>{
 
 const x=
- await r.json().catch(()=>({}));
+await r.json().catch(()=>({}));
 
 if(!r.ok)
- throw Error(
-  x.error_message||
-  x.error||
-  x.message||
-  "Unable to check payment status."
- );
+throw Error(
+x.error_message||
+x.error||
+x.message||
+"Unable to check payment status."
+);
 
 return x;
 
@@ -1326,7 +1492,10 @@ typeof d.payment==="object"
 if(d.ok||d.success){
 
 paymentIdentifier=
-clean(d.payment_id||p.payment_id)||
+clean(
+d.payment_id||
+p.payment_id
+)||
 paymentIdentifier;
 
 const status=
@@ -1374,6 +1543,7 @@ billing;
 updatePaymentPanel();
 
 return d;
+
 }
 
 }catch(e){
@@ -1385,6 +1555,7 @@ paymentMessage.className=
 
 paymentMessage.textContent=
 "Payment status could not be checked right now. Your payment record has not been removed. Please try again shortly.";
+
 }
 
 return null;
@@ -1393,10 +1564,23 @@ return null;
 
 async function loadJob(){
 
-const d=
-await apiGet(
+const url=
 "/api/review?job_id="+
-encodeURIComponent(jobId)
+encodeURIComponent(jobId);
+
+console.log(
+"Loading review from:",
+API_BASE+url,
+"jobId=",
+jobId
+);
+
+const d=
+await apiGet(url);
+
+console.log(
+"review response:",
+d
 );
 
 applyJob(d);
@@ -1421,6 +1605,7 @@ await loadPaymentState();
 if(!paid)
 paymentPollTimer=
 setTimeout(poll,2000);
+
 };
 
 paymentPollTimer=
@@ -1437,7 +1622,8 @@ const poll=async()=>{
 
 try{
 
-const d=await loadJob();
+const d=
+await loadJob();
 
 if(
 complete(d)&&
@@ -1460,14 +1646,21 @@ return;
 }
 
 pollTimer=
-setTimeout(poll,1200);
+setTimeout(
+poll,
+1200
+);
 
 }catch(e){
 
 polling=false;
 
 if(!pages.length)
-setMessage(e.message,"error");
+setMessage(
+e.message,
+"error"
+);
+
 }
 };
 
@@ -1515,7 +1708,9 @@ billing="";
 if(paymentPollTimer){
 
 clearTimeout(paymentPollTimer);
+
 paymentPollTimer=null;
+
 }
 
 currentStatus="correcting";
@@ -1525,6 +1720,7 @@ totalPages=0;
 currentPage=1;
 
 renderPage();
+
 updatePaymentPanel();
 
 setMessage(
@@ -1546,6 +1742,7 @@ e.message,
 busy=false;
 
 updateButtons();
+
 }
 };
 
@@ -1581,6 +1778,7 @@ return setMessage(
 "Payment has already been initiated. Continue on the payment page.",
 "success"
 );
+
 }
 
 try{
@@ -1613,7 +1811,9 @@ review:p.review,
 status:p.status
 })),
 document_text:
-pages.map(p=>p.content||"").join("\n\n"),
+pages.map(
+p=>p.content||""
+).join("\n\n"),
 filename:
 documentFilename||
 ("naija_pocket_"+jobId+".docx")
@@ -1639,6 +1839,7 @@ paymentIdentifier=
 clean(d.payment_id);
 
 paymentStarted=true;
+
 paymentPending=false;
 
 amount=
@@ -1668,7 +1869,8 @@ encodeURIComponent(service)+
 "&amount="+
 encodeURIComponent(amount);
 
-window.location.href=paymentUrl;
+window.location.href=
+paymentUrl;
 
 }catch(e){
 
@@ -1682,6 +1884,7 @@ e.message,
 busy=false;
 
 updateButtons();
+
 }
 };
 
@@ -1726,7 +1929,8 @@ directDownloadReviewedDocument;
 
 async function start(){
 
-serviceBadge.textContent=service;
+serviceBadge.textContent=
+service;
 
 if(!jobId){
 
@@ -1745,20 +1949,28 @@ return;
 
 try{
 
-const d=await loadJob();
+const d=
+await loadJob();
 
 if(
 !complete(d)&&
 !["review_error","correction_error"]
 .includes(state())
 ){
+
 startPolling();
+
 }
 
 if(paymentStarted&&!paid)
 startPaymentPolling();
 
 }catch(e){
+
+console.error(
+"Review page startup error:",
+e
+);
 
 setStatus("ERROR");
 
@@ -1769,10 +1981,10 @@ e.message,
 
 pageViewer.innerHTML=
 '<div class="empty-page">'+
-String(e.message)
-.replaceAll("<","<")
-.replaceAll(">",">")+
+clean(e.message)||
+"Unable to load the document."+
 '</div>';
+
 }
 }
 
