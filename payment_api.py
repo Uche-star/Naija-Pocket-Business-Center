@@ -28,7 +28,11 @@ PAYMENT_DB_PATH = BASE_DIR / "payment_gateway.db"
 BACK_OFFICE_ADMIN_KEY = "NPBC-2026"
 PUBLIC_API_BASE_URL = os.getenv("PUBLIC_API_BASE_URL", "").strip()
 
-app = FastAPI(title="Naija Pocket Business Center Payment API", version=APP_VERSION)
+app = FastAPI(
+    title="Naija Pocket Business Center Payment API",
+    version=APP_VERSION
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -2105,21 +2109,14 @@ def delivery_channels(
                     + urllib.parse.quote(share)
             },
 
+            # Customer-facing Email is now an API action.
+            # It intentionally has no mailto URL.
             {
                 "id": "email",
                 "name": "Email",
-                "type": "share",
+                "type": "api",
                 "available": unlocked,
-                "url":
-                    "mailto:?subject="
-                    + urllib.parse.quote(
-                        title
-                        + " — Naija Pocket Business Center"
-                    )
-                    + "&body="
-                    + urllib.parse.quote(
-                        share
-                    )
+                "url": ""
             },
 
             {
@@ -2390,6 +2387,18 @@ class DeliveryRequest(BaseModel):
     service: str
     document_title: str
     channel: str
+
+
+# NEW:
+# Request used by the Review page's Customer Care Email button.
+# job_id and version_id are accepted for compatibility with Review,
+# but product identity remains service + document title.
+class CustomerCareEmailRequest(BaseModel):
+    service: str = ""
+    title: str = ""
+    document_title: str = ""
+    job_id: str = ""
+    version_id: str = ""
 
 
 # ------------------------------------------------------------------
@@ -2715,6 +2724,107 @@ def payment_complete(
             payment,
         "download_unlocked":
             bool(product.get("download_unlocked"))
+    }
+
+
+# ------------------------------------------------------------------
+# CUSTOMER CARE EMAIL API
+# ------------------------------------------------------------------
+
+@app.post("/api/delivery/email")
+def customer_care_email_delivery(
+    body: CustomerCareEmailRequest,
+    request: Request
+):
+
+    service = clean(
+        body.service
+    )
+
+    title = first(
+        body.document_title,
+        body.title
+    )
+
+    if not service or not title:
+        raise HTTPException(
+            400,
+            "SERVICE_AND_TITLE_REQUIRED"
+        )
+
+    product = get_product(
+        service,
+        title
+    )
+
+    if not product:
+        raise HTTPException(
+            404,
+            "PRODUCT_NOT_FOUND"
+        )
+
+    # Make sure the existing canonical document is available.
+    # This does not regenerate an existing saved document.
+    product = repair_saved_snapshot(
+        product
+    )
+
+    recipient = clean(
+        product.get("customer_email")
+    )
+
+    if not recipient:
+        raise HTTPException(
+            400,
+            "CUSTOMER_EMAIL_NOT_PROVIDED"
+        )
+
+    saved = find_saved_file_from_product(
+        product
+    )
+
+    if not saved:
+        raise HTTPException(
+            404,
+            "SAVED_DOCUMENT_FILE_MISSING"
+        )
+
+    result = send_customer_care_email_for_product(
+        product,
+        request
+    )
+
+    if not result.get("sent"):
+
+        reason = clean(
+            result.get("reason")
+        ) or "EMAIL_SEND_FAILED"
+
+        detail = reason
+
+        error = clean(
+            result.get("error")
+        )
+
+        if error:
+            detail = (
+                f"{reason}: {error}"
+            )
+
+        raise HTTPException(
+            503,
+            detail
+        )
+
+    return {
+        "ok": True,
+        "sent": True,
+        "message":
+            "Customer Care email sent successfully.",
+        "customer_care_email":
+            result,
+        "product":
+            public_product(product)
     }
 
 
