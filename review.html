@@ -2848,184 +2848,30 @@ setMessage(
 );
 
 downloadButton.textContent=
-"⏳ DOWNLOADING...";
-
-
-/*
-Request the exact prepared file.
-
-The response is treated as a file, not as HTML,
-JSON, or rendered page content.
-*/
-
-const response=
-await fetch(
-API_BASE+url,
-{
-method:"GET",
-cache:"no-store",
-credentials:"same-origin"
-}
-);
-
-
-if(!response.ok){
-
-let errorMessage=
-"Unable to download your prepared document.";
-
-const contentType=
-response.headers.get("content-type")||"";
-
-
-if(
-contentType.includes("application/json")
-){
-
-const data=
-await response.json().catch(()=>({}));
-
-errorMessage=
-data.error_message||
-data.error||
-data.message||
-errorMessage;
-
-}
-else{
-
-const text=
-await response.text().catch(()=>"");
-
-if(text&&text.length<500){
-
-errorMessage=
-text.replace(/<[^>]*>/g,"").trim()||
-errorMessage;
-
-}
-
-}
-
-throw new Error(errorMessage);
-
-}
-
+"⏳ OPENING DOCUMENT...";
 
 /*
-The server must return the exact prepared file.
+ * IMPORTANT:
+ *
+ * Do not fetch the document into a Blob.
+ * Do not create a temporary object URL.
+ * Do not use the HTML download attribute.
+ *
+ * The server already has the exact prepared document.
+ * Let Android/browser receive that file directly.
+ */
 
-Read the response as a Blob so the browser receives
-the document itself rather than displaying an API page.
-*/
-
-const blob=
-await response.blob();
-
-if(!blob||blob.size===0){
-
-throw new Error(
-"The prepared document is empty."
-);
-
-}
-
-
-/*
-Try to preserve the filename supplied by the server.
-*/
-
-let filename=
-"Naija-Pocket-Business-Center-Document.docx";
-
-const disposition=
-response.headers.get(
-"content-disposition"
-);
-
-if(disposition){
-
-const utfMatch=
-disposition.match(
-/filename\*=UTF-8''([^;]+)/i
-);
-
-const normalMatch=
-disposition.match(
-/filename\s*=\s*"?([^";]+)"?/i
-);
-
-if(utfMatch){
-
-try{
-
-filename=
-decodeURIComponent(
-utfMatch[1]
-);
-
-}
-catch(_e){}
-
-}
-else if(normalMatch){
-
-filename=
-normalMatch[1];
-
-}
-
-}
-
-
-/*
-Create one temporary browser download link.
-No second server save is performed.
-*/
-
-const objectUrl=
-URL.createObjectURL(blob);
-
-const anchor=
-document.createElement("a");
-
-anchor.href=objectUrl;
-
-anchor.download=
-filename||
-"Naija-Pocket-Business-Center-Document.docx";
-
-anchor.style.display="none";
-
-document.body.appendChild(anchor);
-
-anchor.click();
-
-setTimeout(()=>{
-
-anchor.remove();
-
-URL.revokeObjectURL(objectUrl);
-
-},1500);
-
-
-setMessage(
-"Your prepared document is ready.",
-"success"
-);
+window.location.href=
+API_BASE+url;
 
 }
 catch(e){
 
 setMessage(
 e.message||
-"Unable to download your prepared document.",
+"Unable to open your prepared document.",
 "error"
 );
-
-}
-finally{
 
 busy=false;
 
