@@ -1,351 +1,272 @@
 """
-NPBC Email Delivery Test API - Standalone Bridge
-
+NPBC Gmail SMTP Test API
 Architecture:
-npbc_email_test.html
-    ->
-email_test_api.py
-    ->
-email_delivery.py
-    ->
-Resend
-    ->
-recipient
+Render -> email_test_api.py -> email_delivery.py -> Gmail SMTP
 
-STANDALONE ONLY
-- No Payment API
-- No Ada API
-- No Workspace
-- No database
-- No permanent document storage
+Standalone test service.
+No Resend.
+No Payment API.
+No Ada API.
+No Workspace.
+No database.
 """
 
+import logging
 import os
 import tempfile
+import zipfile
 from pathlib import Path
+from xml.sax.saxutils import escape
 
-from fastapi import (
-    FastAPI,
-    UploadFile,
-    File,
-    Form,
-    HTTPException,
-)
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-from email_delivery import (
-    send_document_email,
-    configuration_status,
-)
+from email_delivery import send_document_email, configuration_status
 
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("npbc_gmail_test")
 
 app = FastAPI(
-    title="NPBC Email Test API",
-    description=(
-        "Standalone email delivery test bridge "
-        "-> email_delivery.py -> Resend"
-    ),
-    version="1.0.0",
+    title="NPBC Gmail SMTP Test API",
+    description="Standalone Gmail SMTP email delivery test",
+    version="2.0.0",
 )
-
-
-# --------------------------------------------------
-# CORS
-# --------------------------------------------------
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=False,
-    allow_methods=["*"],
+    allow_methods=["GET"],
     allow_headers=["*"],
 )
 
 
-# --------------------------------------------------
-# SETTINGS
-# --------------------------------------------------
+def create_test_docx(file_path: str) -> None:
+    """Create a small valid DOCX without requiring python-docx."""
 
-ALLOWED_EXTENSIONS = {
-    ".docx",
-    ".pdf",
-    ".xlsx",
-    ".pptx",
-    ".txt",
-}
+    document_xml = f'''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document
+ xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+ <w:body>
+  <w:p>
+   <w:r>
+    <w:t>{escape("NPBC Gmail SMTP test attachment")}</w:t>
+   </w:r>
+  </w:p>
+  <w:p>
+   <w:r>
+    <w:t>{escape("If you received this file, Gmail email delivery is working.")}</w:t>
+   </w:r>
+  </w:p>
+  <w:sectPr/>
+ </w:body>
+</w:document>'''
 
-MAX_FILE_SIZE = 25 * 1024 * 1024
+    content_types_xml = '''<?xml version="1.0" encoding="UTF-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+ <Default Extension="rels"
+  ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+ <Default Extension="xml" ContentType="application/xml"/>
+ <Override PartName="/word/document.xml"
+  ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>'''
 
+    relationships_xml = '''<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+ <Relationship Id="rId1"
+  Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+  Target="word/document.xml"/>
+</Relationships>'''
 
-# --------------------------------------------------
-# HELPERS
-# --------------------------------------------------
+    with zipfile.ZipFile(file_path, "w", zipfile.ZIP_DEFLATED) as docx:
+        docx.writestr("[Content_Types].xml", content_types_xml)
+        docx.writestr("_rels/.rels", relationships_xml)
+        docx.writestr("word/document.xml", document_xml)
 
-def get_extension(filename: str) -> str:
-    return Path(filename).suffix.lower()
-
-
-def is_allowed_file(filename: str) -> bool:
-    return get_extension(filename) in ALLOWED_EXTENSIONS
-
-
-# --------------------------------------------------
-# BASIC ROUTES
-# --------------------------------------------------
 
 @app.get("/")
 def root():
     return {
-        "service": "NPBC Email Test API",
+        "service": "NPBC Gmail SMTP Test API",
         "status": "running",
-        "architecture": (
-            "npbc_email_test.html -> "
-            "email_test_api.py -> "
-            "email_delivery.py -> Resend"
-        ),
-        "payment_api": False,
-        "ada_api": False,
-        "workspace": False,
+        "credentials_configured": True,
+        "smtp_server": "smtp.gmail.com",
+        "smtp_port": 587,
+        "test_endpoint": "/test-email?to=recipient@example.com",
     }
 
 
 @app.get("/health")
 def health():
-    return {
-        "status": "ok",
-        "service": "npbc-email-test",
-    }
+    return {"status": "ok"}
 
 
-# --------------------------------------------------
-# EMAIL CONFIGURATION STATUS
-# --------------------------------------------------
+@app.get("/test-email")
+def test_email(to: str = Query(..., description="Recipient email address")):
+    recipient = to.strip()
 
-@app.get("/api/test-email/status")
-def test_email_status():
-
-    try:
-
-        status = configuration_status()
-
-        if isinstance(status, dict):
-
-            sanitized = {
-                key: value
-                for key, value in status.items()
-                if "key" not in key.lower()
-                and "secret" not in key.lower()
-            }
-
-            return {
-                "success": True,
-                "config": sanitized,
-            }
-
-        return {
-            "success": True,
-            "config": status,
-        }
-
-    except Exception:
-
+    if (
+        not recipient
+        or "@" not in recipient
+        or recipient.startswith("@")
+        or recipient.endswith("@")
+    ):
         return JSONResponse(
-            status_code=500,
+            status_code=400,
             content={
                 "success": False,
-                "error": "Configuration check failed.",
+                "error": "Enter a valid recipient email address.",
             },
-        )
-
-
-# --------------------------------------------------
-# EMAIL TEST
-# --------------------------------------------------
-
-@app.post("/api/test-email")
-async def send_test_email(
-    recipient_email: str = Form(...),
-    document: UploadFile = File(...),
-    service: str = Form("NPBC Test"),
-    document_title: str = Form("Test Document"),
-    customer_name: str = Form("NPBC Test User"),
-    subject: str = Form("NPBC Email Delivery Test"),
-):
-
-    recipient_email = recipient_email.strip()
-
-    if not recipient_email or "@" not in recipient_email:
-
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid recipient_email",
-        )
-
-    if not document.filename:
-
-        raise HTTPException(
-            status_code=400,
-            detail="No file provided",
-        )
-
-    filename = Path(
-        document.filename
-    ).name
-
-    if not is_allowed_file(filename):
-
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                "File type not allowed. "
-                "Allowed: "
-                ".docx, .pdf, .xlsx, .pptx, .txt"
-            ),
         )
 
     temp_path = None
 
     try:
+        # Check the existing email_delivery.py configuration.
+        status = configuration_status()
 
-        # ------------------------------------------
-        # Read uploaded document
-        # ------------------------------------------
+        if isinstance(status, dict):
+            logger.info("Email configuration status checked.")
 
-        contents = await document.read()
+            # Do not expose secrets or passwords in the response.
+            configured = status.get("configured")
 
-        file_size = len(contents)
-
-        if file_size == 0:
-
-            raise HTTPException(
-                status_code=400,
-                detail="Empty file",
-            )
-
-        if file_size > MAX_FILE_SIZE:
-
-            raise HTTPException(
-                status_code=413,
-                detail=(
-                    "File too large. "
-                    "Maximum size is 25 MB."
-                ),
-            )
-
-        # ------------------------------------------
-        # Create temporary file
-        # ------------------------------------------
-
-        suffix = get_extension(filename)
-
-        fd, temp_path = tempfile.mkstemp(
-            suffix=suffix
-        )
-
-        os.close(fd)
-
-        with open(
-            temp_path,
-            "wb",
-        ) as temporary_file:
-
-            temporary_file.write(contents)
-
-        # ------------------------------------------
-        # Send using existing email_delivery.py
-        # ------------------------------------------
-
-        result = send_document_email(
-            recipient_email=recipient_email,
-            document_path=temp_path,
-            service=service.strip(),
-            document_title=document_title.strip(),
-            customer_name=customer_name.strip(),
-            subject=subject.strip() or None,
-        )
-
-        # ------------------------------------------
-        # Handle email_delivery.py result
-        # ------------------------------------------
-
-        if isinstance(result, dict):
-
-            if result.get("ok") is not True:
-
+            if configured is False:
                 return JSONResponse(
-                    status_code=500,
+                    status_code=503,
                     content={
                         "success": False,
-                        "error": result.get(
-                            "message",
-                            "Email delivery failed.",
+                        "error": (
+                            "Gmail SMTP configuration is incomplete. "
+                            "Check the required environment variables on Render."
                         ),
-                        "recipient": recipient_email,
-                        "filename": filename,
                     },
                 )
 
-            return {
-                "success": True,
-                "message": (
-                    "Email sent successfully via Resend."
-                ),
-                "recipient": result.get(
-                    "recipient",
-                    recipient_email,
-                ),
-                "filename": result.get(
-                    "filename",
-                    filename,
-                ),
-                "message_id": result.get(
-                    "message_id"
-                ),
-            }
+        # Create a temporary test attachment.
+        with tempfile.NamedTemporaryFile(
+            suffix=".docx",
+            delete=False,
+        ) as temp_file:
+            temp_path = temp_file.name
 
-        # ------------------------------------------
-        # Unexpected return type
-        # ------------------------------------------
+        create_test_docx(temp_path)
+
+        logger.info("Starting Gmail email test for recipient: %s", recipient)
+
+        result = send_document_email(
+            recipient_email=recipient,
+            document_path=temp_path,
+            service="NPBC Gmail SMTP Test",
+            document_title="Gmail SMTP Test Document",
+            customer_name="NPBC Test",
+            subject="NPBC Gmail SMTP Test",
+        )
+
+        if isinstance(result, dict):
+            if result.get("ok") is True:
+                logger.info("Gmail test email sent successfully.")
+
+                return {
+                    "success": True,
+                    "message": "Test email sent successfully.",
+                    "recipient": result.get("recipient", recipient),
+                    "filename": result.get(
+                        "filename",
+                        "NPBC_Gmail_SMTP_Test.docx",
+                    ),
+                    "message_id": result.get("message_id"),
+                }
+
+            error_message = result.get("message") or (
+                "Gmail email delivery failed. Check the Render logs."
+            )
+
+            logger.error("Email delivery reported failure: %s", error_message)
+
+            return JSONResponse(
+                status_code=502,
+                content={
+                    "success": False,
+                    "error": str(error_message),
+                    "recipient": recipient,
+                },
+            )
+
+        logger.error("Unexpected response from email_delivery.py.")
 
         return JSONResponse(
-            status_code=500,
+            status_code=502,
             content={
                 "success": False,
                 "error": (
-                    "Unexpected response from "
-                    "email_delivery.py."
+                    "email_delivery.py returned an unexpected response. "
+                    "Check its send_document_email() function."
                 ),
-                "recipient": recipient_email,
-                "filename": filename,
             },
         )
 
-    except HTTPException:
-        raise
+    except Exception as exc:
+        logger.exception("Gmail SMTP test failed.")
 
-    except Exception:
-
+        # Return the error message without exposing environment variables.
         return JSONResponse(
             status_code=500,
             content={
                 "success": False,
-                "error": "Email delivery failed.",
-                "recipient": recipient_email,
-                "filename": filename,
+                "error": str(exc) or "Unexpected Gmail SMTP error.",
+                "recipient": recipient,
+                "hint": (
+                    "Check the Render logs and the Gmail SMTP settings "
+                    "inside email_delivery.py."
+                ),
             },
         )
 
     finally:
-
-        # ------------------------------------------
-        # Delete temporary document
-        # ------------------------------------------
-
         if temp_path and os.path.exists(temp_path):
-
             try:
-                os.unlink(temp_path)
+                os.remove(temp_path)
+            except OSError:
+                logger.warning("Could not remove temporary test attachment.")
 
-            except Exception:
-                pass
+
+@app.get("/api/test-email/status")
+def email_status():
+    try:
+        status = configuration_status()
+
+        if isinstance(status, dict):
+            safe_status = {
+                key: value
+                for key, value in status.items()
+                if not any(
+                    word in key.lower()
+                    for word in (
+                        "password",
+                        "secret",
+                        "token",
+                        "app_password",
+                    )
+                )
+            }
+        else:
+            safe_status = str(status)
+
+        return {
+            "success": True,
+            "configuration": safe_status,
+        }
+
+    except Exception:
+        logger.exception("Unable to check email configuration.")
+
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "error": "Could not check the email configuration.",
+            },
+        )
