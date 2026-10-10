@@ -1,64 +1,44 @@
 """
-NPBC Email Delivery Test API - Standalone Bridge
-Architecture:
-npbc_email_test.html
-    ->
-email_test_api.py
-    ->
-email_delivery.py
-    ->
-Resend
-    ->
-recipient
+Naija Pocket Business Center (NPBC)
+Gmail SMTP Email Delivery Module
 
-STANDALONE ONLY
-- No Payment API
-- No Ada API
-- No Workspace
-- No database
-- No permanent document storage
+Provider:
+    Gmail SMTP
+
+Required Render Environment Variables:
+    GMAIL_ADDRESS
+    GMAIL_APP_PASSWORD
+
+SMTP:
+    smtp.gmail.com
+    Port 587
+    STARTTLS
+
+Features:
+    - Sends documents as email attachments.
+    - Supports DOCX, PDF, XLSX, PPTX, and TXT.
+    - Provides plain-text and HTML email alternatives.
+    - Uses temporary files supplied by the calling API.
+    - Does not permanently store documents.
+    - Never returns email passwords in responses.
 """
 
 import os
-import tempfile
+import re
+import smtplib
+import mimetypes
+
 from pathlib import Path
-
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-
-from email_delivery import (
-    send_document_email,
-    configuration_status,
-)
-
-
-app = FastAPI(
-    title="NPBC Email Test API",
-    description=(
-        "Standalone email delivery test bridge "
-        "-> email_delivery.py -> Resend"
-    ),
-    version="1.0.0",
-)
+from email.message import EmailMessage
+from email.utils import formataddr
 
 
 # --------------------------------------------------
-# CORS
+# CONFIGURATION
 # --------------------------------------------------
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-# --------------------------------------------------
-# SETTINGS
-# --------------------------------------------------
+SMTP_HOST = "smtp.gmail.com"
+SMTP_PORT = 587
 
 ALLOWED_EXTENSIONS = {
     ".docx",
@@ -68,278 +48,538 @@ ALLOWED_EXTENSIONS = {
     ".txt",
 }
 
-MAX_FILE_SIZE = 25 * 1024 * 1024
+MAX_ATTACHMENT_SIZE = 25 * 1024 * 1024
+
+DEFAULT_SUBJECT = "Your NPBC Document Is Ready"
 
 
 # --------------------------------------------------
-# HELPERS
+# ENVIRONMENT CONFIGURATION
 # --------------------------------------------------
 
-def get_extension(filename: str) -> str:
-    return Path(filename).suffix.lower()
+def configuration_status():
+    """
+    Return a safe summary of Gmail configuration.
+    Never expose the app password.
+    """
 
+    gmail_address = os.getenv(
+        "GMAIL_ADDRESS", ""
+    ).strip()
 
-def is_allowed_file(filename: str) -> bool:
-    return get_extension(filename) in ALLOWED_EXTENSIONS
+    gmail_password = os.getenv(
+        "GMAIL_APP_PASSWORD", ""
+    ).strip().replace(" ", "")
 
-
-# --------------------------------------------------
-# BASIC ROUTES
-# --------------------------------------------------
-
-@app.get("/")
-def root():
     return {
-        "service": "NPBC Email Test API",
-        "status": "running",
-        "architecture": (
-            "npbc_email_test.html -> "
-            "email_test_api.py -> "
-            "email_delivery.py -> Resend"
+        "provider": "Gmail SMTP",
+        "configured": bool(
+            gmail_address and gmail_password
         ),
-        "payment_api": False,
-        "ada_api": False,
-        "workspace": False,
+        "gmail_address_configured": bool(
+            gmail_address
+        ),
+        "gmail_app_password_configured": bool(
+            gmail_password
+        ),
+        "smtp_host": SMTP_HOST,
+        "smtp_port": SMTP_PORT,
+        "security": "STARTTLS",
     }
 
 
-@app.get("/health")
-def health():
-    return {
-        "status": "ok",
-        "service": "npbc-email-test",
-    }
+# --------------------------------------------------
+# HTML HELPERS
+# --------------------------------------------------
+
+def escape_html(value):
+    """
+    Escape user-provided text before placing it in HTML.
+    """
+
+    value = str(value or "")
+
+    return (
+        value.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+        .replace("'", "&#x27;")
+    )
+
+
+def safe_filename(value):
+    """
+    Return a safe attachment filename.
+    """
+
+    name = Path(str(value or "")).name
+
+    name = re.sub(
+        r"[\r\n\x00]",
+        "",
+        name,
+    )
+
+    return name or "NPBC_Document"
 
 
 # --------------------------------------------------
-# EMAIL CONFIGURATION STATUS
+# EMAIL CONTENT
 # --------------------------------------------------
 
-@app.get("/api/test-email/status")
-def test_email_status():
-
-    try:
-
-        status = configuration_status()
-
-        if isinstance(status, dict):
-
-            sanitized = {
-                key: value
-                for key, value in status.items()
-                if "key" not in key.lower()
-                and "secret" not in key.lower()
-            }
-
-            return {
-                "success": True,
-                "config": sanitized,
-            }
-
-        return {
-            "success": True,
-            "config": status,
-        }
-
-    except Exception as exc:
-
-        return JSONResponse(
-            status_code=500,
-            content={
-                "success": False,
-                "error": (
-                    "Configuration check failed."
-                ),
-            },
-        )
-
-
-# --------------------------------------------------
-# EMAIL TEST
-# --------------------------------------------------
-
-@app.post("/api/test-email")
-async def send_test_email(
-    recipient_email: str = Form(...),
-    document: UploadFile = File(...),
-    service: str = Form("NPBC Test"),
-    document_title: str = Form("Test Document"),
-    customer_name: str = Form("NPBC Test User"),
-    subject: str = Form("NPBC Email Delivery Test"),
+def build_email_content(
+    service,
+    document_title,
+    customer_name,
 ):
+    """
+    Build plain-text and Gmail-compatible HTML bodies.
+    """
 
-    recipient_email = recipient_email.strip()
+    service = str(
+        service or "NPBC Service"
+    ).strip()
 
-    if not recipient_email or "@" not in recipient_email:
+    document_title = str(
+        document_title or "Your Document"
+    ).strip()
 
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid recipient_email",
-        )
+    customer_name = str(
+        customer_name or "Valued Customer"
+    ).strip()
 
-    if not document.filename:
+    plain_text = (
+        f"Hello {customer_name},\n\n"
+        "Your document from Naija Pocket Business "
+        "Center is ready.\n\n"
+        f"Service: {service}\n"
+        f"Document: {document_title}\n\n"
+        "Your document is attached to this email.\n\n"
+        "Thank you for choosing Naija Pocket "
+        "Business Center.\n\n"
+        "Fast • Convenient • Open 24/7\n"
+        "Naija Pocket Business Center"
+    )
 
-        raise HTTPException(
-            status_code=400,
-            detail="No file provided",
-        )
+    safe_customer = escape_html(customer_name)
+    safe_service = escape_html(service)
+    safe_title = escape_html(document_title)
 
-    filename = Path(
-        document.filename
-    ).name
+    html_text = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+<title>Your NPBC Document Is Ready</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f4;
+             font-family:Arial,Helvetica,sans-serif;">
 
-    if not is_allowed_file(filename):
+<table role="presentation" width="100%" cellpadding="0"
+       cellspacing="0" border="0"
+       style="background:#f4f4f4;">
+<tr>
+<td align="center" style="padding:24px 10px;">
 
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                "File type not allowed. "
-                "Allowed: "
-                ".docx, .pdf, .xlsx, .pptx, .txt"
-            ),
-        )
+<table role="presentation" width="100%" cellpadding="0"
+       cellspacing="0" border="0"
+       style="max-width:600px;background:#ffffff;
+              border:1px solid #e5e5e5;">
 
-    temp_path = None
+<tr>
+<td align="center"
+    style="background:#111111;padding:28px 20px;">
 
-    try:
+<p style="margin:0;color:#d4af37;font-size:23px;
+          font-weight:bold;letter-spacing:1px;">
+Naija Pocket Business Center
+</p>
 
-        # ------------------------------------------
-        # Read uploaded document
-        # ------------------------------------------
+<p style="margin:10px 0 0;color:#ffffff;
+          font-size:13px;">
+Fast • Convenient • Open 24/7
+</p>
 
-        contents = await document.read()
+</td>
+</tr>
 
-        file_size = len(contents)
+<tr>
+<td style="padding:28px 24px;color:#333333;">
 
-        if file_size == 0:
+<p style="margin:0 0 18px;font-size:16px;">
+Hello {safe_customer},
+</p>
 
-            raise HTTPException(
-                status_code=400,
-                detail="Empty file",
-            )
+<p style="font-size:15px;line-height:1.7;">
+Your document from Naija Pocket Business Center
+is ready. Please find your document attached
+to this email.
+</p>
 
-        if file_size > MAX_FILE_SIZE:
+<table role="presentation" width="100%"
+       cellpadding="0" cellspacing="0" border="0"
+       style="background:#faf8f0;
+              border:1px solid #eadca7;">
+<tr>
+<td style="padding:16px;">
 
-            raise HTTPException(
-                status_code=413,
-                detail=(
-                    "File too large. "
-                    "Maximum size is 25 MB."
-                ),
-            )
+<p style="margin:0 0 10px;font-size:14px;">
+<strong>Service:</strong> {safe_service}
+</p>
 
-        # ------------------------------------------
-        # Create temporary file
-        # ------------------------------------------
+<p style="margin:0;font-size:14px;">
+<strong>Document:</strong> {safe_title}
+</p>
 
-        suffix = get_extension(filename)
+</td>
+</tr>
+</table>
 
-        fd, temp_path = tempfile.mkstemp(
-            suffix=suffix
-        )
+<p style="margin:22px 0 0;font-size:14px;
+          line-height:1.7;">
+The document is attached to this email.
+You can open the attachment to view your file.
+</p>
 
-        os.close(fd)
+<p style="margin:24px 0 0;font-size:14px;
+          line-height:1.7;">
+Thank you for choosing Naija Pocket Business Center.
+</p>
 
-        with open(
-            temp_path,
-            "wb",
-        ) as temporary_file:
+</td>
+</tr>
 
-            temporary_file.write(contents)
+<tr>
+<td align="center"
+    style="background:#111111;padding:18px 15px;">
 
-        # ------------------------------------------
-        # Send using existing email_delivery.py
-        # ------------------------------------------
+<p style="margin:0;color:#d4af37;font-size:13px;">
+Naija Pocket Business Center
+</p>
+
+<p style="margin:8px 0 0;color:#ffffff;
+          font-size:12px;">
+Fast • Convenient • Open 24/7
+</p>
+
+</td>
+</tr>
+
+</table>
+</td>
+</tr>
+</table>
+
+</body>
+</html>"""
+
+    return plain_text, html_text
+
+
+# --------------------------------------------------
+# SEND DOCUMENT EMAIL
+# --------------------------------------------------
+
+def send_document_email(
+    recipient_email,
+    document_path,
+    service="NPBC Service",
+    document_title="Your Document",
+    customer_name="Valued Customer",
+    subject=None,
+):
+    """
+    Send a document through Gmail SMTP.
+
+    Compatible with email_test_api.py:
 
         result = send_document_email(
-            recipient_email=recipient_email,
-            document_path=temp_path,
-            service=service.strip(),
-            document_title=document_title.strip(),
-            customer_name=customer_name.strip(),
-            subject=subject.strip() or None,
+            recipient_email=...,
+            document_path=...,
+            service=...,
+            document_title=...,
+            customer_name=...,
+            subject=...,
         )
 
-        # ------------------------------------------
-        # Handle existing email_delivery.py result
-        # ------------------------------------------
+    Returns:
+        {
+            "ok": True or False,
+            "message": "...",
+            "recipient": "...",
+            "filename": "...",
+            "message_id": "..."
+        }
+    """
 
-        if isinstance(result, dict):
+    recipient_email = str(
+        recipient_email or ""
+    ).strip()
 
-            if result.get("ok") is not True:
+    if (
+        not recipient_email
+        or "\r" in recipient_email
+        or "\n" in recipient_email
+        or not re.fullmatch(
+            r"[^@\s]+@[^@\s]+\.[^@\s]+",
+            recipient_email,
+        )
+    ):
+        return {
+            "ok": False,
+            "message": "A valid recipient email is required.",
+            "recipient": recipient_email,
+        }
 
-                return JSONResponse(
-                    status_code=500,
-                    content={
-                        "success": False,
-                        "error": result.get(
-                            "message",
-                            "Email delivery failed.",
-                        ),
-                        "recipient": recipient_email,
-                        "filename": filename,
-                    },
-                )
+    gmail_address = os.getenv(
+        "GMAIL_ADDRESS", ""
+    ).strip()
 
+    gmail_password = os.getenv(
+        "GMAIL_APP_PASSWORD", ""
+    ).strip().replace(" ", "")
+
+    if not gmail_address or not gmail_password:
+        return {
+            "ok": False,
+            "message": (
+                "Gmail is not configured. Check the "
+                "GMAIL_ADDRESS and GMAIL_APP_PASSWORD "
+                "environment variables in Render."
+            ),
+            "recipient": recipient_email,
+        }
+
+    if (
+        "\r" in gmail_address
+        or "\n" in gmail_address
+    ):
+        return {
+            "ok": False,
+            "message": "Invalid Gmail sender configuration.",
+            "recipient": recipient_email,
+        }
+
+    if (
+        "\r" in str(subject or "")
+        or "\n" in str(subject or "")
+    ):
+        return {
+            "ok": False,
+            "message": "Invalid email subject.",
+            "recipient": recipient_email,
+        }
+
+    if not document_path:
+        return {
+            "ok": False,
+            "message": "No document was provided.",
+            "recipient": recipient_email,
+        }
+
+    path = Path(document_path)
+
+    if not path.is_file():
+        return {
+            "ok": False,
+            "message": "The document file could not be found.",
+            "recipient": recipient_email,
+        }
+
+    filename = safe_filename(path.name)
+    extension = Path(filename).suffix.lower()
+
+    if extension not in ALLOWED_EXTENSIONS:
+        return {
+            "ok": False,
+            "message": (
+                "Unsupported attachment type. "
+                "Allowed: DOCX, PDF, XLSX, PPTX, TXT."
+            ),
+            "recipient": recipient_email,
+            "filename": filename,
+        }
+
+    try:
+        file_size = path.stat().st_size
+    except OSError:
+        return {
+            "ok": False,
+            "message": "Unable to inspect the document file.",
+            "recipient": recipient_email,
+            "filename": filename,
+        }
+
+    if file_size <= 0:
+        return {
+            "ok": False,
+            "message": "The document file is empty.",
+            "recipient": recipient_email,
+            "filename": filename,
+        }
+
+    if file_size > MAX_ATTACHMENT_SIZE:
+        return {
+            "ok": False,
+            "message": (
+                "The document exceeds the 25 MB "
+                "attachment limit."
+            ),
+            "recipient": recipient_email,
+            "filename": filename,
+        }
+
+    try:
+        with path.open("rb") as document_file:
+            attachment_data = document_file.read(
+                MAX_ATTACHMENT_SIZE + 1
+            )
+
+        if len(attachment_data) > MAX_ATTACHMENT_SIZE:
             return {
-                "success": True,
+                "ok": False,
                 "message": (
-                    "Email sent successfully via Resend."
+                    "The document exceeds the 25 MB "
+                    "attachment limit."
                 ),
-                "recipient": result.get(
-                    "recipient",
-                    recipient_email,
-                ),
-                "filename": result.get(
-                    "filename",
-                    filename,
-                ),
-                "message_id": result.get(
-                    "message_id"
-                ),
+                "recipient": recipient_email,
+                "filename": filename,
             }
 
-        # ------------------------------------------
-        # Unexpected return type
-        # ------------------------------------------
+        mime_type, _ = mimetypes.guess_type(filename)
 
-        return JSONResponse(
-            status_code=500,
-            content={
-                "success": False,
-                "error": (
-                    "Unexpected response from "
-                    "email_delivery.py."
-                ),
-                "recipient": recipient_email,
-                "filename": filename,
-            },
+        if mime_type and "/" in mime_type:
+            maintype, subtype = mime_type.split("/", 1)
+        else:
+            maintype, subtype = (
+                "application",
+                "octet-stream",
+            )
+
+        message = EmailMessage()
+
+        message["From"] = formataddr(
+            (
+                "Naija Pocket Business Center",
+                gmail_address,
+            )
         )
 
-    except HTTPException:
-        raise
+        message["To"] = recipient_email
+
+        message["Subject"] = (
+            str(subject).strip()
+            if subject and str(subject).strip()
+            else DEFAULT_SUBJECT
+        )
+
+        plain_text, html_text = build_email_content(
+            service=service,
+            document_title=document_title,
+            customer_name=customer_name,
+        )
+
+        message.set_content(plain_text)
+
+        message.add_alternative(
+            html_text,
+            subtype="html",
+        )
+
+        message.add_attachment(
+            attachment_data,
+            maintype=maintype,
+            subtype=subtype,
+            filename=filename,
+        )
+
+        # ------------------------------------------
+        # Gmail SMTP + STARTTLS
+        # ------------------------------------------
+
+        with smtplib.SMTP(
+            SMTP_HOST,
+            SMTP_PORT,
+            timeout=30,
+        ) as smtp:
+
+            smtp.ehlo()
+
+            smtp.starttls()
+
+            smtp.ehlo()
+
+            smtp.login(
+                gmail_address,
+                gmail_password,
+            )
+
+            smtp.send_message(message)
+
+        return {
+            "ok": True,
+            "message": "Email sent successfully via Gmail SMTP.",
+            "recipient": recipient_email,
+            "filename": filename,
+            "message_id": message.get("Message-ID"),
+        }
+
+    except smtplib.SMTPAuthenticationError:
+        return {
+            "ok": False,
+            "message": (
+                "Gmail authentication failed. Check that "
+                "GMAIL_ADDRESS matches the Google account "
+                "that generated the app password, and "
+                "verify GMAIL_APP_PASSWORD in Render."
+            ),
+            "recipient": recipient_email,
+            "filename": filename,
+        }
+
+    except smtplib.SMTPRecipientsRefused:
+        return {
+            "ok": False,
+            "message": (
+                "Gmail refused the recipient address. "
+                "Check the destination email address."
+            ),
+            "recipient": recipient_email,
+            "filename": filename,
+        }
+
+    except smtplib.SMTPException:
+        return {
+            "ok": False,
+            "message": (
+                "Gmail SMTP could not complete delivery. "
+                "Check the Render logs for the SMTP error."
+            ),
+            "recipient": recipient_email,
+            "filename": filename,
+        }
+
+    except (OSError, TimeoutError):
+        return {
+            "ok": False,
+            "message": (
+                "A network or file error interrupted "
+                "email delivery. Check the Render logs."
+            ),
+            "recipient": recipient_email,
+            "filename": filename,
+        }
 
     except Exception:
-
-        return JSONResponse(
-            status_code=500,
-            content={
-                "success": False,
-                "error": "Email delivery failed.",
-                "recipient": recipient_email,
-                "filename": filename,
-            },
-        )
-
-    finally:
-
-        # ------------------------------------------
-        # Delete temporary document
-        # ------------------------------------------
-
-        if temp_path and os.path.exists(temp_path):
-
-            try:
-                os.unlink(temp_path)
-            except Exception:
-                pass
+        # Do not expose credentials or internal details.
+        return {
+            "ok": False,
+            "message": (
+                "Unexpected email delivery error. "
+                "Check the Render logs for details."
+            ),
+            "recipient": recipient_email,
+            "filename": filename,
+        }
