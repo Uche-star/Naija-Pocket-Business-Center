@@ -1,361 +1,335 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Naija Pocket Business Center</title>
-
 <style>
 * {
     box-sizing: border-box;
-}
-
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #020202;
-    color: #fff;
-    font-family: Arial, Helvetica, sans-serif;
+}html, body {
+margin: 0;
+padding: 0;
+width: 100%;
+height: 100%;
+overflow: hidden;
+background: #020202;
+color: #fff;
+font-family: Arial, Helvetica, sans-serif;
 }
 
 .page {
-    width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    padding: 4px;
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    gap: 6px;
-    overflow: hidden;
-    background:
-        radial-gradient(circle at 50% -10%, rgba(212,175,55,.085), transparent 30%),
-        linear-gradient(145deg, #010101 0%, #070707 43%, #020202 100%);
+width: 100%;
+height: 100vh;
+height: 100dvh;
+min-height: 0;
+background: radial-gradient(circle at 50% -10%, rgba(212,175,55,.085), transparent 30%), linear-gradient(145deg,#010101 0%,#070707 43%,#020202 100%);
+padding: 4px;
+display: grid;
+grid-template-rows: auto minmax(0, 1fr);
+gap: 4px;
+overflow: hidden;
 }
 
 .welcome-half {
-    position: relative;
-    width: 100%;
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-    text-align: center;
-    padding: 10px 8px;
-    background:
-        radial-gradient(ellipse at 50% 35%, #202020 0%, #0e0e0e 42%, #050505 78%, #000 100%);
-    border: 1px solid rgba(212,175,55,.34);
-    border-bottom: 2px solid rgba(212,175,55,.82);
-    border-radius: 10px;
+position: relative;
+width: 100%;
+min-height: 0;
+flex: 0 0 auto;
+display: flex;
+flex-direction: column;
+align-items: center;
+overflow: hidden;
+text-align: center;
+background: radial-gradient(ellipse at 50% 35%,#202020 0%,#0e0e0e 42%,#050505 78%,#000 100%);
+border: 1px solid rgba(212,175,55,.34);
+border-bottom: 2px solid rgba(212,175,55,.82);
+border-radius: 10px;
 }
 
 .welcome-content {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 0;
+width: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 8px;
+padding: 10px 8px 12px;
 }
 
 .brand-name {
-    margin: 0;
-    color: #fff;
-    font-family: Georgia, serif;
-    font-size: 32px;
-    line-height: 1.12;
-    font-weight: 700;
-    text-transform: uppercase;
+margin: 0;
+color: #fff;
+font-family: Georgia, serif;
+font-size: 32px;
+line-height: 1.12;
+font-weight: 700;
+text-transform: uppercase;
 }
 
 .brand-name .green {
-    color: #39B87F;
+color: #39B87F;
 }
 
 .brand-name .gold {
-    color: #E8C96A;
+color: #E8C96A;
 }
 
 .gold-divider {
-    width: 120px;
-    height: 1px;
-    flex: 0 0 auto;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        #D4AF37 25%,
-        #F4D878 50%,
-        #D4AF37 75%,
-        transparent
-    );
+width: 120px;
+height: 1px;
+flex-shrink: 0;
+background: linear-gradient(90deg,transparent,#D4AF37 25%,#F4D878 50%,#D4AF37 75%,transparent);
 }
 
 .value {
-    color: #f4f1e8;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 1px;
+color: #f4f1e8;
+font-size: 14px;
+font-weight: 600;
+letter-spacing: 1px;
 }
 
 .value.luxury-value {
-    width: calc(100% - 8px);
-    padding: 14px 12px;
-    background: #fffefb;
-    border: 1px solid #d4af37;
-    border-radius: 8px;
-    color: #111;
-    font-family: Georgia, serif;
-    text-transform: uppercase;
-    text-align: center;
+width: calc(100% - 8px);
+padding: 14px 12px;
+background: #fffefb;
+border: 1px solid #d4af37;
+border-radius: 8px;
+color: #111;
+font-family: Georgia, serif;
+text-transform: uppercase;
+text-align: center;
 }
 
 .services-half {
-    width: 100%;
-    min-height: 0;
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    overflow: hidden;
+width: 100%;
+min-height: 0;
+display: grid;
+grid-template-rows: auto minmax(0, 1fr);
+overflow: hidden;
+padding-top: 2px;
 }
 
 .service-instruction {
-    text-align: center;
-    color: #FFFDF5;
-    font-family: Georgia, serif;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    line-height: 1.25;
-    padding: 7px;
-    border-top: 1px solid rgba(212,175,106,.7);
-    border-bottom: 1px solid rgba(212,175,106,.45);
-    margin-bottom: 5px;
+text-align: center;
+color: #FFFDF5;
+font-family: Georgia, serif;
+font-size: 13px;
+font-weight: 700;
+text-transform: uppercase;
+line-height: 1.2;
+padding: 7px;
+border-top: 1px solid rgba(212,175,106,.7);
+border-bottom: 1px solid rgba(212,175,106,.45);
+margin-bottom: 5px;
 }
 
 .services {
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(9, minmax(0, 1fr));
-    gap: 4px;
-    overflow: hidden;
+width: 100%;
+height: 100%;
+min-height: 0;
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+grid-template-rows: repeat(9, minmax(0, 1fr));
+gap: 4px;
+overflow: hidden;
 }
 
 .service-button {
-    width: 100%;
-    height: 100%;
-    min-width: 0;
-    min-height: 0;
-    padding: 4px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.065);
-    border-radius: 5px;
-    font-size: 11px;
-    line-height: 1.15;
-    font-weight: 700;
-    cursor: pointer;
-    color: #F4D58D;
-    text-align: center;
-    overflow-wrap: anywhere;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    -webkit-tap-highlight-color: transparent;
+width: 100%;
+height: 100%;
+min-width: 0;
+min-height: 0;
+padding: 4px;
+background: rgba(255,255,255,.04);
+border: 1px solid rgba(255,255,255,.065);
+border-radius: 5px;
+font-family: Arial, Helvetica, sans-serif;
+font-size: 11px;
+line-height: 1.15;
+font-weight: 700;
+cursor: pointer;
+color: #F4D58D;
+text-align: center;
+overflow-wrap: anywhere;
+display: flex;
+align-items: center;
+justify-content: center;
+-webkit-tap-highlight-color: transparent;
 }
 
 .service-button:active {
-    background: rgba(212,175,55,.15);
-    border-color: #D4AF37;
+background: rgba(212,175,55,.15);
+border-color: #D4AF37;
 }
 
-/* Adapt spacing to short Android screens. */
 @media (max-height: 750px) {
-    .page {
-        padding: 3px;
-        gap: 4px;
-    }
-
-    .welcome-half {
-        padding: 6px;
-    }
-
-    .welcome-content {
-        gap: 5px;
-    }
-
-    .gold-divider {
-        margin: 2px 0;
-    }
-
-    .value.luxury-value {
-        padding: 8px;
-    }
-
-    .service-instruction {
-        padding: 5px 4px;
-        margin-bottom: 3px;
-    }
-
-    .services {
-        gap: 3px;
-    }
+.page {
+padding: 3px;
+gap: 3px;
 }
 
-/* Preserve three columns on narrow Android phones. */
+.welcome-content {
+    gap: 5px;
+    padding: 7px 6px 8px;
+}
+
+.value.luxury-value {
+    padding: 8px;
+}
+
+.service-instruction {
+    padding: 5px 4px;
+    margin-bottom: 3px;
+}
+
+.services {
+    gap: 3px;
+}
+
+}
+
 @media (max-width: 360px) {
-    .brand-name {
-        font-size: 28px;
-    }
-
-    .value {
-        font-size: 12px;
-    }
-
-    .value.luxury-value {
-        padding: 8px 6px;
-    }
-
-    .service-instruction {
-        font-size: 11px;
-    }
-
-    .services {
-        gap: 2px;
-    }
-
-    .service-button {
-        padding: 2px;
-        font-size: 10px;
-    }
+.brand-name {
+font-size: 28px;
 }
 
-/* Use compact vertical spacing on especially short screens. */
+.value {
+    font-size: 12px;
+}
+
+.value.luxury-value {
+    padding: 8px 6px;
+}
+
+.service-instruction {
+    font-size: 11px;
+}
+
+.services {
+    gap: 2px;
+}
+
+.service-button {
+    padding: 3px;
+    font-size: 10px;
+}
+
+}
+
 @media (max-height: 620px) {
-    .welcome-half {
-        padding: 3px 5px;
-    }
+.welcome-content {
+gap: 3px;
+padding: 4px 5px;
+}
 
-    .welcome-content {
-        gap: 3px;
-    }
+.brand-name {
+    font-size: 25px;
+    line-height: 1;
+}
 
-    .brand-name {
-        font-size: 25px;
-        line-height: 1;
-    }
+.gold-divider {
+    margin: 1px 0;
+}
 
-    .gold-divider {
-        margin: 1px 0;
-    }
+.value {
+    font-size: 11px;
+}
 
-    .value {
-        font-size: 11px;
-    }
+.value.luxury-value {
+    padding: 4px;
+    font-size: 10px;
+    line-height: 1.15;
+}
 
-    .value.luxury-value {
-        padding: 4px;
-        font-size: 10px;
-        line-height: 1.15;
-    }
+.service-instruction {
+    padding: 3px;
+    font-size: 10px;
+    line-height: 1.1;
+}
 
-    .service-instruction {
-        padding: 3px;
-        font-size: 10px;
-        line-height: 1.1;
-    }
+.services {
+    gap: 2px;
+}
 
-    .services {
-        gap: 2px;
-    }
+.service-button {
+    padding: 2px;
+    font-size: 9px;
+    line-height: 1.05;
+}
 
-    .service-button {
-        padding: 1px;
-        font-size: 9px;
-        line-height: 1.05;
-    }
 }
 </style>
+
 </head>
+<body><div class="page"><section class="welcome-half">
+    <div class="welcome-content">
 
-<body>
-<div class="page">
+        <h1 class="brand-name">
+            <span class="green">NAIJA POCKET</span><br>
+            BUSINESS <span class="gold">CENTER</span>
+        </h1>
 
-    <section class="welcome-half">
-        <div class="welcome-content">
+        <div class="gold-divider"></div>
 
-            <h1 class="brand-name">
-                <span class="green">NAIJA POCKET</span><br>
-                BUSINESS <span class="gold">CENTER</span>
-            </h1>
-
-            <div class="gold-divider"></div>
-
-            <div class="value">
-                FAST • CONVENIENT • OPEN 24/7
-            </div>
-
-            <div class="value luxury-value">
-                THIS WEB APP PROFESSIONALLY TYPES AND PREPARES YOUR DOCUMENTS IN MINUTES, USING JUST YOUR PHONE
-            </div>
-
-        </div>
-    </section>
-
-    <section class="services-half">
-
-        <div class="service-instruction">
-            TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
+        <div class="value">
+            FAST • CONVENIENT • OPEN 24/7
         </div>
 
-        <div class="services">
-
-            <button class="service-button" data-service="Document Typing">Document Typing</button>
-            <button class="service-button" data-service="Document Formatting">Document Formatting</button>
-            <button class="service-button" data-service="Document Editing">Document Editing</button>
-
-            <button class="service-button" data-service="Grammar Correction">Grammar Correction</button>
-            <button class="service-button" data-service="Assignments">Assignments</button>
-            <button class="service-button" data-service="Projects">Projects</button>
-
-            <button class="service-button" data-service="Research Assistance">Research Assistance</button>
-            <button class="service-button" data-service="Seminar Papers">Seminar Papers</button>
-            <button class="service-button" data-service="CVs & Résumés">CVs &amp; Résumés</button>
-
-            <button class="service-button" data-service="Cover Letters">Cover Letters</button>
-            <button class="service-button" data-service="Business Proposals">Business Proposals</button>
-            <button class="service-button" data-service="Company Profiles">Company Profiles</button>
-
-            <button class="service-button" data-service="Invoices">Invoices</button>
-            <button class="service-button" data-service="Quotations">Quotations</button>
-            <button class="service-button" data-service="Meeting Minutes">Meeting Minutes</button>
-
-            <button class="service-button" data-service="AI Writing Assistance">AI Writing Assistance</button>
-            <button class="service-button" data-service="Document Rewriting">Document Rewriting</button>
-            <button class="service-button" data-service="Translation">Translation</button>
-
-            <button class="service-button" data-service="PDF Conversion">PDF Conversion</button>
-            <button class="service-button" data-service="Topic Explanations">Topic Explanations</button>
-            <button class="service-button" data-service="Printing Preparation">Printing Preparation</button>
-
-            <button class="service-button" data-service="Excel Spreadsheets">Excel Spreadsheets</button>
-            <button class="service-button" data-service="Data Entry">Data Entry</button>
-            <button class="service-button" data-service="Data Analysis">Data Analysis</button>
-
-            <button class="service-button" data-service="Presentations">Presentations</button>
-            <button class="service-button" data-service="Document Summarization">Document Summarization</button>
-            <button class="service-button" data-service="Business Letters & Letterhead">Business Letters &amp; Letterhead</button>
-
+        <div class="value luxury-value">
+            THIS WEB APP PROFESSIONALLY TYPES AND PREPARES YOUR DOCUMENTS IN MINUTES, USING JUST YOUR PHONE
         </div>
 
-    </section>
+    </div>
+</section>
 
-</div>
+<section class="services-half">
 
-<script>
+    <div class="service-instruction">
+        TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
+    </div>
+
+    <div class="services">
+
+        <button class="service-button" data-service="Document Typing">Document Typing</button>
+        <button class="service-button" data-service="Document Formatting">Document Formatting</button>
+        <button class="service-button" data-service="Document Editing">Document Editing</button>
+
+        <button class="service-button" data-service="Grammar Correction">Grammar Correction</button>
+        <button class="service-button" data-service="Assignments">Assignments</button>
+        <button class="service-button" data-service="Projects">Projects</button>
+
+        <button class="service-button" data-service="Research Assistance">Research Assistance</button>
+        <button class="service-button" data-service="Seminar Papers">Seminar Papers</button>
+        <button class="service-button" data-service="CVs & Résumés">CVs &amp; Résumés</button>
+
+        <button class="service-button" data-service="Cover Letters">Cover Letters</button>
+        <button class="service-button" data-service="Business Proposals">Business Proposals</button>
+        <button class="service-button" data-service="Company Profiles">Company Profiles</button>
+
+        <button class="service-button" data-service="Invoices">Invoices</button>
+        <button class="service-button" data-service="Quotations">Quotations</button>
+        <button class="service-button" data-service="Meeting Minutes">Meeting Minutes</button>
+
+        <button class="service-button" data-service="AI Writing Assistance">AI Writing Assistance</button>
+        <button class="service-button" data-service="Document Rewriting">Document Rewriting</button>
+        <button class="service-button" data-service="Translation">Translation</button>
+
+        <button class="service-button" data-service="PDF Conversion">PDF Conversion</button>
+        <button class="service-button" data-service="Topic Explanations">Topic Explanations</button>
+        <button class="service-button" data-service="Printing Preparation">Printing Preparation</button>
+
+        <button class="service-button" data-service="Excel Spreadsheets">Excel Spreadsheets</button>
+        <button class="service-button" data-service="Data Entry">Data Entry</button>
+        <button class="service-button" data-service="Data Analysis">Data Analysis</button>
+
+        <button class="service-button" data-service="Presentations">Presentations</button>
+        <button class="service-button" data-service="Document Summarization">Document Summarization</button>
+        <button class="service-button" data-service="Business Letters & Letterhead">Business Letters &amp; Letterhead</button>
+
+    </div>
+
+</section>
+
+</div><script>
 const serviceButtons = document.querySelectorAll(".service-button");
 
 function openWorkspace(service) {
@@ -380,7 +354,5 @@ serviceButtons.forEach(button => {
         openWorkspace(button.getAttribute("data-service"));
     });
 });
-</script>
-
-</body>
+</script></body>
 </html>
