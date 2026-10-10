@@ -1,84 +1,291 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Naija Pocket Business Center</title>
+
 <style>
-* { box-sizing: border-box; } html, body { margin:0; padding:0; width:100%; background:#020202; color:#fff; font-family:Arial,Helvetica,sans-serif; }
-.page { width:100%; min-height:100vh; background:radial-gradient(circle at 50% -10%, rgba(212,175,55,.085), transparent 30%), linear-gradient(145deg,#010101 0%,#070707 43%,#020202 100%); padding:4px; display:flex; flex-direction:column; }
-.welcome-half { position:relative; width:100%; flex:0 0 auto; display:flex; flex-direction:column; align-items:center; overflow:hidden; text-align:center; background:radial-gradient(ellipse at 50% 35%,#202020 0%,#0e0e0e 42%,#050505 78%,#000 100%); border:1px solid rgba(212,175,55,.34); border-bottom:2px solid rgba(212,175,55,.82); border-radius:10px; }
-.lady-heading { width:100%; background:#f5efe6; padding:14px 0 6px; text-align:center; }
-.lady-heading h1 { margin:0; color:#a68027; font-family:Georgia,serif; font-size:22px; font-weight:700; }
-.lady-image-wrap { width:100%; display:flex; justify-content:center; background:#f5efe6; padding-bottom:10px; }
-.lady-image-wrap img { width:260px; max-width:70%; height:auto; border-radius:6px; }
-.welcome-content { width:100%; display:flex; flex-direction:column; align-items:center; gap:8px; padding:10px 8px 12px; }
-.brand-name { color:#fff; font-family:Georgia,serif; font-size:32px; font-weight:700; text-transform:uppercase; } .brand-name .green { color:#39B87F; } .brand-name .gold { color:#E8C96A; }
-.gold-divider { width:120px; height:1px; background:linear-gradient(90deg,transparent,#D4AF37 25%,#F4D878 50%,#D4AF37 75%,transparent); }
-.value { color:#f4f1e8; font-size:14px; font-weight:600; letter-spacing:1px; }
-.value.luxury-value { width:calc(100% - 8px); padding:14px 12px; background:#fffefb; border:1px solid #d4af37; border-radius:8px; color:#111; font-family:Georgia,serif; text-transform:uppercase; text-align:center; }
-.services-half { width:100%; flex:1; display:flex; flex-direction:column; padding-top:6px; }
-.service-instruction { text-align:center; color:#FFFDF5; font-family:Georgia,serif; font-size:13px; font-weight:700; text-transform:uppercase; padding:7px; border-top:1px solid rgba(212,175,106,.7); border-bottom:1px solid rgba(212,175,106,.45); margin-bottom:5px; }
-.services { width:100%; display:grid; grid-template-columns:repeat(3,1fr); gap:4px; }
-.service-button { width:100%; padding:10px 4px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.065); border-radius:5px; font-size:11px; font-weight:700; cursor:pointer; color:#F4D58D; }
-.luxury-tagline { grid-column:1/-1; display:flex; align-items:center; justify-content:center; color:#d4af37; font-family:Georgia,serif; font-size:10px; font-weight:700; text-transform:uppercase; padding:8px 0; }
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #020202;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+.page {
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background:
+        radial-gradient(circle at 50% -10%, rgba(212,175,55,.085), transparent 30%),
+        linear-gradient(145deg, #010101 0%, #070707 43%, #020202 100%);
+}
+
+.welcome-half {
+    width: 100%;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 12px 8px 10px;
+    background:
+        radial-gradient(ellipse at 50% 35%, #202020 0%, #0e0e0e 42%, #050505 78%, #000 100%);
+    border: 1px solid rgba(212,175,55,.34);
+    border-bottom: 2px solid rgba(212,175,55,.82);
+    border-radius: 10px;
+}
+
+.brand-name {
+    margin: 0;
+    color: #fff;
+    font-family: Georgia, serif;
+    font-size: clamp(25px, 7vw, 32px);
+    line-height: 1.12;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.brand-name .green {
+    color: #39B87F;
+}
+
+.brand-name .gold {
+    color: #E8C96A;
+}
+
+.gold-divider {
+    width: 100px;
+    height: 1px;
+    margin: 9px 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #D4AF37 25%,
+        #F4D878 50%,
+        #D4AF37 75%,
+        transparent
+    );
+}
+
+.value {
+    color: #f4f1e8;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.value.luxury-value {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 9px;
+    background: #fffefb;
+    border: 1px solid #d4af37;
+    border-radius: 7px;
+    color: #111;
+    font-family: Georgia, serif;
+    font-size: 11px;
+    line-height: 1.45;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.services-half {
+    width: 100%;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.service-instruction {
+    text-align: center;
+    color: #FFFDF5;
+    font-family: Georgia, serif;
+    font-size: 11px;
+    line-height: 1.4;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 8px 5px;
+    border-top: 1px solid rgba(212,175,106,.7);
+    border-bottom: 1px solid rgba(212,175,106,.45);
+    margin-bottom: 6px;
+}
+
+.services {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+}
+
+.service-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 7px 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(212,175,55,.24);
+    border-radius: 5px;
+    font-size: 10px;
+    line-height: 1.25;
+    font-weight: 700;
+    text-align: center;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    color: #F4D58D;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.service-button:active {
+    background: rgba(212,175,55,.16);
+    border-color: #D4AF37;
+}
+
+@media (max-width: 360px) {
+    .page {
+        padding: 3px;
+        gap: 4px;
+    }
+
+    .welcome-half {
+        padding: 9px 6px;
+    }
+
+    .brand-name {
+        font-size: 25px;
+    }
+
+    .value.luxury-value {
+        font-size: 10px;
+        padding: 8px 6px;
+    }
+
+    .services {
+        gap: 3px;
+    }
+
+    .service-button {
+        min-height: 39px;
+        padding: 6px 2px;
+        font-size: 9px;
+    }
+}
 </style>
 </head>
+
 <body>
 <div class="page">
-<section class="welcome-half">
-<div class="lady-heading"><h1>Naija Pocket Business Center</h1></div>
-<div class="lady-image-wrap"><img src="image_20261010_154358.webp" alt="Naija Pocket Business Center"></div>
-<div class="welcome-content">
-<h1 class="brand-name"><span class="green">NAIJA POCKET</span><br>BUSINESS <span class="gold">CENTER</span></h1>
-<div class="gold-divider"></div>
-<div class="value">FAST • CONVENIENT • OPEN 24/7</div>
-<div class="value luxury-value">THIS WEB APP PROFESSIONALLY TYPES AND PREPARES YOUR DOCUMENTS IN MINUTES, USING JUST YOUR PHONE</div>
+
+    <section class="welcome-half">
+        <h1 class="brand-name">
+            <span class="green">NAIJA POCKET</span><br>
+            BUSINESS <span class="gold">CENTER</span>
+        </h1>
+
+        <div class="gold-divider"></div>
+
+        <div class="value">FAST • CONVENIENT • OPEN 24/7</div>
+
+        <div class="value luxury-value">
+            THIS WEB APP PROFESSIONALLY TYPES AND PREPARES YOUR DOCUMENTS IN MINUTES, USING JUST YOUR PHONE
+        </div>
+    </section>
+
+    <section class="services-half">
+        <div class="service-instruction">
+            TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES
+        </div>
+
+        <div class="services">
+
+            <button class="service-button" data-service="Document Typing">Document Typing</button>
+            <button class="service-button" data-service="Document Formatting">Document Formatting</button>
+            <button class="service-button" data-service="Document Editing">Document Editing</button>
+
+            <button class="service-button" data-service="Grammar Correction">Grammar Correction</button>
+            <button class="service-button" data-service="Assignments">Assignments</button>
+            <button class="service-button" data-service="Projects">Projects</button>
+
+            <button class="service-button" data-service="Research Assistance">Research Assistance</button>
+            <button class="service-button" data-service="Seminar Papers">Seminar Papers</button>
+            <button class="service-button" data-service="CVs & Résumés">CVs &amp; Résumés</button>
+
+            <button class="service-button" data-service="Cover Letters">Cover Letters</button>
+            <button class="service-button" data-service="Business Proposals">Business Proposals</button>
+            <button class="service-button" data-service="Company Profiles">Company Profiles</button>
+
+            <button class="service-button" data-service="Invoices">Invoices</button>
+            <button class="service-button" data-service="Quotations">Quotations</button>
+            <button class="service-button" data-service="Meeting Minutes">Meeting Minutes</button>
+
+            <button class="service-button" data-service="AI Writing Assistance">AI Writing Assistance</button>
+            <button class="service-button" data-service="Document Rewriting">Document Rewriting</button>
+            <button class="service-button" data-service="Translation">Translation</button>
+
+            <button class="service-button" data-service="PDF Conversion">PDF Conversion</button>
+            <button class="service-button" data-service="Topic Explanations">Topic Explanations</button>
+            <button class="service-button" data-service="Printing Preparation">Printing Preparation</button>
+
+            <button class="service-button" data-service="Excel Spreadsheets">Excel Spreadsheets</button>
+            <button class="service-button" data-service="Data Entry">Data Entry</button>
+            <button class="service-button" data-service="Data Analysis">Data Analysis</button>
+
+            <button class="service-button" data-service="Presentations">Presentations</button>
+            <button class="service-button" data-service="Document Summarization">Document Summarization</button>
+            <button class="service-button" data-service="Business Letters & Letterhead">Business Letters &amp; Letterhead</button>
+
+        </div>
+    </section>
+
 </div>
-</section>
-<section class="services-half">
-<div class="service-instruction">TAP ANY SERVICE YOU NEED AND GET YOUR DOCUMENTS PROCESSED IN MINUTES</div>
-<div class="services">
-<button class="service-button" data-service="Document Typing">Document Typing</button>
-<button class="service-button" data-service="Document Formatting">Document Formatting</button>
-<button class="service-button" data-service="Document Editing">Document Editing</button>
-<button class="service-button" data-service="Grammar Correction">Grammar Correction</button>
-<button class="service-button" data-service="Assignments">Assignments</button>
-<button class="service-button" data-service="Projects">Projects</button>
-<button class="service-button" data-service="Research Assistance">Research Assistance</button>
-<button class="service-button" data-service="Seminar Papers">Seminar Papers</button>
-<button class="service-button" data-service="CVs & Résumés">CVs & Résumés</button>
-<button class="service-button" data-service="Cover Letters">Cover Letters</button>
-<button class="service-button" data-service="Business Proposals">Business Proposals</button>
-<button class="service-button" data-service="Company Profiles">Company Profiles</button>
-<button class="service-button" data-service="Invoices">Invoices</button>
-<button class="service-button" data-service="Quotations">Quotations</button>
-<button class="service-button" data-service="Meeting Minutes">Meeting Minutes</button>
-<button class="service-button" data-service="AI Writing Assistance">AI Writing Assistance</button>
-<button class="service-button" data-service="Document Rewriting">Document Rewriting</button>
-<button class="service-button" data-service="Translation">Translation</button>
-<button class="service-button" data-service="PDF Conversion">PDF Conversion</button>
-<button class="service-button" data-service="Topic Explanations">Topic Explanations</button>
-<button class="service-button" data-service="Printing Preparation">Printing Preparation</button>
-<button class="service-button" data-service="Excel Spreadsheets">Excel Spreadsheets</button>
-<button class="service-button" data-service="Data Entry">Data Entry</button>
-<button class="service-button" data-service="Data Analysis">Data Analysis</button>
-<button class="service-button" data-service="Presentations">Presentations</button>
-<button class="service-button" data-service="Document Summarization">Document Summarization</button>
-<button class="service-button" data-service="Business Letters & Letterhead">Business Letters & Letterhead</button>
-<div class="luxury-tagline"><span>NAIJA POCKET BUSINESS CENTER - YOUR BUSINESS CENTER IN YOUR POCKET</span></div>
-</div>
-</section>
-</div>
+
 <script>
-const serviceButtons=document.querySelectorAll(".service-button");
-function openWorkspace(service){
-let customerId=localStorage.getItem("npbc_customer_id");
-if(!customerId){customerId="customer_"+Date.now();localStorage.setItem("npbc_customer_id",customerId)}
-localStorage.setItem("selectedService",service);
-location.href="workspace.html?service="+encodeURIComponent(service)+"&customer_id="+encodeURIComponent(customerId)
+const serviceButtons = document.querySelectorAll(".service-button");
+
+function openWorkspace(service) {
+    let customerId = localStorage.getItem("npbc_customer_id");
+
+    if (!customerId) {
+        customerId = "customer_" + Date.now();
+        localStorage.setItem("npbc_customer_id", customerId);
+    }
+
+    localStorage.setItem("selectedService", service);
+
+    location.href =
+        "workspace.html?service=" +
+        encodeURIComponent(service) +
+        "&customer_id=" +
+        encodeURIComponent(customerId);
 }
-serviceButtons.forEach(b=>{b.addEventListener("click",()=>{openWorkspace(b.getAttribute("data-service"))})});
+
+serviceButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        openWorkspace(button.getAttribute("data-service"));
+    });
+});
 </script>
+
 </body>
 </html>
