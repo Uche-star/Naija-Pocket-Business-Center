@@ -28,12 +28,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import (
-    FastAPI,
-    HTTPException,
-    Header,
-    Query,
-)
+from fastapi import FastAPI, HTTPException, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
@@ -61,7 +56,7 @@ PUBLIC_API_BASE_URL = os.getenv(
     "https://naija-pocket-business-center.onrender.com",
 ).rstrip("/")
 
-APP_VERSION = "npbc-email-delivery-priority-v21"
+APP_VERSION = "npbc-email-delivery-priority-v22"
 
 SUPPORTED_EXTENSIONS = {
     ".docx",
@@ -69,8 +64,13 @@ SUPPORTED_EXTENSIONS = {
     ".xlsx",
     ".xls",
     ".pptx",
+    ".ppt",
     ".txt",
     ".csv",
+    ".rtf",
+    ".odt",
+    ".ods",
+    ".zip",
 }
 
 TOKEN_TTL_SECONDS = 3600
@@ -110,7 +110,7 @@ app.add_middleware(
 
 
 # ============================================================
-# MODELS
+# REQUEST MODELS
 # ============================================================
 
 class EmailDeliveryRequest(BaseModel):
@@ -172,17 +172,26 @@ def valid_email(value):
     if len(value) > 320:
         return False
 
-    if not re.fullmatch(
-        r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+"
-        r"@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}"
-        r"[A-Za-z0-9])?"
-        r"(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}"
-        r"[A-Za-z0-9])?)+",
-        value,
-    ):
-        return False
+    return bool(
+        re.fullmatch(
+            r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+"
+            r"@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}"
+            r"[A-Za-z0-9])?"
+            r"(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}"
+            r"[A-Za-z0-9])?)+",
+            value,
+        )
+    )
 
-    return True
+
+def normalized_match(value):
+    """
+    Normalize text for comparisons without changing the saved file.
+    """
+    value = str(value or "").strip().casefold()
+    value = re.sub(r"\.[a-z0-9]{1,8}$", "", value)
+    value = re.sub(r"[^a-z0-9]+", " ", value)
+    return " ".join(value.split())
 
 
 def db_connect(path):
@@ -302,7 +311,7 @@ except Exception:
 
 
 # ============================================================
-# SAVED DOCUMENT LOOKUP
+# SAFE FILE PATH HELPERS
 # ============================================================
 
 def valid_saved_path(value):
@@ -310,7 +319,7 @@ def valid_saved_path(value):
         return None
 
     try:
-        path = Path(str(value))
+        path = Path(str(value).strip())
 
         if not path.is_absolute():
             path = BASE_DIR / path
@@ -340,6 +349,25 @@ def inside_download_directory(path):
         return False
 
 
+def inside_project_directory(path):
+    """
+    Only search inside this application's directory.
+    Do not search the whole server filesystem.
+    """
+    try:
+        resolved = path.resolve()
+        root = BASE_DIR.resolve()
+
+        return resolved == root or root in resolved.parents
+
+    except Exception:
+        return False
+
+
+# ============================================================
+# DATABASE PRODUCT LOOKUP
+# ============================================================
+
 def get_product_record(service, document_title):
     try:
         with db_connect(PRODUCT_DB) as connection:
@@ -351,7 +379,10 @@ def get_product_record(service, document_title):
                 "document_products",
             )
 
-            if not {"service", "document_title"}.issubset(columns):
+            if not {
+                "service",
+                "document_title",
+            }.issubset(columns):
                 return None
 
             row = connection.execute(
@@ -374,96 +405,279 @@ def get_product_record(service, document_title):
         return None
 
 
+def find_product_record_by_title(document_title):
+    """
+    Find an existing product record by title even when the
+    caller supplies a generic or incorrect service name.
+    """
+    try:
+        with db_connect(PRODUCT_DB) as connection:
+            if not table_exists(connection, "document_products"):
+                return None
+
+            columns = table_columns(
+                connection,
+                "document_products",
+            )
+
+            if not {
+                "service",
+                "document_title",
+            }.issubset(columns):
+                return None
+
+            rows = connection.execute(
+                """
+                SELECT *
+                FROM document_products
+                WHERE LOWER(TRIM(document_title)) =
+                      LOWER(TRIM(?))
+                ORDER BY id DESC
+                LIMIT 100
+                """,
+                (document_title,),
+            ).fetchall()
+
+            for row in rows:
+                record = dict(row)
+
+                for field in (
+                    "document_saved_path",
+                    "saved_path",
+                    "file_path",
+                    "document_path",
+                    "prepared_file_path",
+                    "output_path",
+                ):
+                    path = valid_saved_path(record.get(field))
+
+                    if path:
+                        return {
+                            "record": record,
+                            "path": path,
+                        }
+
+    except Exception:
+        logger.exception(
+            "Could not search product records by document title."
+        )
+
+    return None
+
+
+# ============================================================
+# SAVED DOCUMENT LOOKUP
+# ============================================================
+
 def find_saved_document(service, document_title):
     """
-    Locate the exact existing document.
-    Never generate or rewrite the document.
+    Locate the exact existing saved document.
+
+    Lookup order:
+      1. Exact service and title in product database.
+      2. Exact title in product database, regardless of service.
+      3. Canonical downloads/service/title directory.
+      4. Exact title under the downloads directory, regardless
+         of the service directory.
+      5. Exact title elsewhere inside the project directory.
+
+    This function never generates, rewrites or recreates a
+    customer document.
     """
 
     service = normalize_text(service)
     document_title = normalize_text(document_title)
 
-    if not service or not document_title:
+    if not document_title:
         return None
 
-    record = get_product_record(service, document_title)
+    expected_title = normalized_match(document_title)
+    expected_service = normalized_match(service)
 
-    if record:
-        for field in (
-            "document_saved_path",
-            "saved_path",
-            "file_path",
-            "document_path",
-            "prepared_file_path",
-            "output_path",
-        ):
-            path = valid_saved_path(record.get(field))
+    # --------------------------------------------------------
+    # 1. Exact database service and title.
+    # --------------------------------------------------------
 
-            if path:
-                return path
+    if service:
+        record = get_product_record(service, document_title)
 
-    canonical_directory = (
-        DOWNLOAD_DIR
-        / safe_name(service)
-        / safe_name(document_title)
-    )
+        if record:
+            for field in (
+                "document_saved_path",
+                "saved_path",
+                "file_path",
+                "document_path",
+                "prepared_file_path",
+                "output_path",
+            ):
+                path = valid_saved_path(record.get(field))
 
-    if canonical_directory.is_dir():
-        candidates = [
-            path
-            for path in canonical_directory.iterdir()
-            if path.is_file()
-            and path.suffix.lower() in SUPPORTED_EXTENSIONS
-        ]
+                if path:
+                    return path
 
-        if candidates:
-            return max(
-                candidates,
-                key=lambda item: item.stat().st_mtime,
-            ).resolve()
+    # --------------------------------------------------------
+    # 2. Search database by exact title without requiring the
+    #    caller's service name to match.
+    # --------------------------------------------------------
 
-    if not DOWNLOAD_DIR.exists():
-        return None
+    title_record = find_product_record_by_title(document_title)
 
-    expected_service = safe_name(service).casefold()
-    expected_title = safe_name(document_title).casefold()
+    if title_record:
+        return title_record["path"]
 
-    matches = []
+    # --------------------------------------------------------
+    # 3. Canonical directory.
+    # --------------------------------------------------------
 
-    try:
-        for path in DOWNLOAD_DIR.rglob("*"):
-            if not path.is_file():
-                continue
+    if service:
+        canonical_directory = (
+            DOWNLOAD_DIR
+            / safe_name(service)
+            / safe_name(document_title)
+        )
 
-            if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
-                continue
-
-            if not inside_download_directory(path):
-                continue
-
-            parts = [
-                safe_name(part).casefold()
-                for part in path.parts
+        if canonical_directory.is_dir():
+            candidates = [
+                path.resolve()
+                for path in canonical_directory.iterdir()
+                if path.is_file()
+                and path.suffix.lower() in SUPPORTED_EXTENSIONS
+                and inside_project_directory(path)
             ]
 
-            title_match = (
-                safe_name(path.stem).casefold()
-                == expected_title
-            )
+            if candidates:
+                return max(
+                    candidates,
+                    key=lambda item: item.stat().st_mtime,
+                )
 
-            service_match = expected_service in parts
+    # --------------------------------------------------------
+    # 4. Search downloads by exact document title, without
+    #    requiring the service directory to match.
+    # --------------------------------------------------------
 
-            if title_match and service_match:
-                matches.append(path.resolve())
+    download_matches = []
+
+    try:
+        if DOWNLOAD_DIR.exists():
+            for path in DOWNLOAD_DIR.rglob("*"):
+                if not path.is_file():
+                    continue
+
+                if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
+                    continue
+
+                if not inside_download_directory(path):
+                    continue
+
+                if normalized_match(path.stem) != expected_title:
+                    continue
+
+                download_matches.append(path.resolve())
 
     except OSError:
-        logger.exception("Document search failed.")
+        logger.exception("Downloads directory search failed.")
 
-    if matches:
+    if download_matches:
+        # Prefer a path whose directory contains the requested
+        # service, but do not require that match.
+        if expected_service:
+            service_matches = [
+                path
+                for path in download_matches
+                if any(
+                    normalized_match(part) == expected_service
+                    for part in path.parts
+                )
+            ]
+
+            if service_matches:
+                return max(
+                    service_matches,
+                    key=lambda item: item.stat().st_mtime,
+                )
+
         return max(
-            matches,
+            download_matches,
             key=lambda item: item.stat().st_mtime,
         )
+
+    # --------------------------------------------------------
+    # 5. Search other project folders for an exact title.
+    #
+    # Excludes virtual environments, Git internals, Python
+    # caches and database files.
+    # --------------------------------------------------------
+
+    excluded_directories = {
+        ".git",
+        ".venv",
+        "venv",
+        "env",
+        "__pycache__",
+        "node_modules",
+        ".pytest_cache",
+    }
+
+    project_matches = []
+
+    try:
+        for current_root, directories, filenames in os.walk(BASE_DIR):
+            directories[:] = [
+                name
+                for name in directories
+                if name not in excluded_directories
+            ]
+
+            current_path = Path(current_root)
+
+            for filename in filenames:
+                path = current_path / filename
+
+                if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
+                    continue
+
+                if not inside_project_directory(path):
+                    continue
+
+                if not path.is_file():
+                    continue
+
+                if normalized_match(path.stem) != expected_title:
+                    continue
+
+                project_matches.append(path.resolve())
+
+    except OSError:
+        logger.exception("Project document search failed.")
+
+    if project_matches:
+        if expected_service:
+            service_matches = [
+                path
+                for path in project_matches
+                if any(
+                    normalized_match(part) == expected_service
+                    for part in path.parts
+                )
+            ]
+
+            if service_matches:
+                return max(
+                    service_matches,
+                    key=lambda item: item.stat().st_mtime,
+                )
+
+        return max(
+            project_matches,
+            key=lambda item: item.stat().st_mtime,
+        )
+
+    logger.warning(
+        "Saved document lookup failed. service=%r title=%r",
+        service,
+        document_title,
+    )
 
     return None
 
@@ -660,6 +874,7 @@ def invoke_email_sender(
         "attachment_path": str(file_path),
         "file": str(file_path),
         "document_file": str(file_path),
+        "saved_document_path": str(file_path),
 
         "service": service,
         "service_name": service,
@@ -743,11 +958,11 @@ def send_existing_document_email(
     if not valid_email(recipient_email):
         raise ValueError("Enter a valid customer email address.")
 
-    if not service:
-        raise ValueError("Service name is required.")
-
     if not document_title:
         raise ValueError("Document title is required.")
+
+    if not service:
+        service = "Business Center Service"
 
     status = email_configuration_status()
 
@@ -757,6 +972,7 @@ def send_existing_document_email(
             "and GMAIL_APP_PASSWORD in Render environment variables."
         )
 
+    # Search by title even when Review supplies a generic service.
     file_path = find_saved_document(
         service,
         document_title,
@@ -764,10 +980,15 @@ def send_existing_document_email(
 
     if not file_path:
         raise FileNotFoundError(
-            "Saved document not found for service "
-            f"'{service}' and title '{document_title}'."
+            "The saved document could not be found. "
+            f"Requested service: '{service}'. "
+            f"Document title: '{document_title}'. "
+            "The API searched the product database and available "
+            "project document folders. Confirm that the original "
+            "generated document is saved in this Render service."
         )
 
+    # Register the exact file found. Do not regenerate the document.
     register_saved_document(
         service=service,
         document_title=document_title,
@@ -890,8 +1111,7 @@ def email_status():
 def deliver_document(payload: EmailDeliveryRequest):
     """
     Email the exact existing saved document.
-
-    Payment confirmation is deliberately not checked.
+    Payment confirmation is not required.
     """
 
     try:
@@ -967,7 +1187,10 @@ def find_document(
     if not path:
         raise HTTPException(
             status_code=404,
-            detail="Saved document not found.",
+            detail=(
+                "Saved document not found. The API searched by "
+                "service and exact document title."
+            ),
         )
 
     return {
@@ -1110,14 +1333,7 @@ def complete_payment(
     payload: PaymentStatusRequest,
     x_back_office_key: Optional[str] = Header(None),
 ):
-    if not secrets.compare_digest(
-        str(x_back_office_key or ""),
-        str(BACK_OFFICE_ADMIN_KEY),
-    ):
-        raise HTTPException(
-            status_code=401,
-            detail="Unauthorized.",
-        )
+    require_back_office(x_back_office_key)
 
     status = normalize_text(payload.payment_status).lower()
 
