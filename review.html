@@ -1,8 +1,10 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Review Your Complete Service — Naija Pocket Business Center</title>
+
 <style>
 :root{--black:#050505;--panel:#111;--line:rgba(255,255,255,.12);--gold:#d4af37;--gold2:#f0cf62;--white:#fff;--muted:#a2a2a2}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -92,88 +94,112 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .bottom-btn.email{background:#fff!important;color:#000!important}
 </style>
 </head>
+
 <body>
-<span id="serviceBadge" style="display:none">Service</span><main class="main">
+<span id="serviceBadge" style="display:none">Service</span>
+
+<main class="main">
 <section class="review-card">
-<div class="document-card-header">
-<div class="document-heading"><h3>Your Complete Document</h3></div>
-<div id="pageCount" class="page-count">0 PAGES</div>
-</div>
-<div id="documentScroll" class="document-scroll">
-<div id="pageViewer" class="page-viewer">
-<div class="loading"><div class="spinner"></div><div>Your service is being carefully prepared.</div></div>
-</div>
-<div class="page-navigation">
-<button id="previousButton" class="nav-button" type="button" disabled>← Previous Page</button>
-<div id="pageIndicator" class="page-indicator">Page 0 of 0</div>
-<button id="nextButton" class="nav-button next" type="button" disabled>Next Page →</button>
-</div>
-<div class="go-row">
-<input id="pageNumberInput" class="page-number-input" type="number" min="1" placeholder="Enter page number">
-<button id="goButton" class="go-button" type="button">GO</button>
-</div>
-<div id="pageReview" class="page-review" style="display:none">
-<div class="page-review-title">PAGE REVIEW</div>
-<div id="pageReviewText" class="page-review-text"></div>
-</div>
-</div>
-</section><section class="action-area">
-<section class="top-panel">
-<h2 class="review-title">Review Your Complete Service</h2>
-<p class="review-subtitle">Review every page. Make any necessary correction, then download your reviewed document.</p>
-<div class="status-row">
-<span class="status-label">Review status</span>
-<span id="statusValue" class="status-value">Preparing...</span>
-</div>
-<div class="progress-shell"><div id="progressBar" class="progress-bar"></div></div>
-<div id="progressText" class="progress-text">Preparing the document...</div>
+    <div class="document-card-header">
+        <div class="document-heading"><h3>Your Complete Document</h3></div>
+        <div id="pageCount" class="page-count">0 PAGES</div>
+    </div>
+
+    <div id="documentScroll" class="document-scroll">
+        <div id="pageViewer" class="page-viewer">
+            <div class="loading">
+                <div class="spinner"></div>
+                <div>Your service is being carefully prepared.</div>
+            </div>
+        </div>
+
+        <div class="page-navigation">
+            <button id="previousButton" class="nav-button" type="button" disabled>← Previous Page</button>
+            <div id="pageIndicator" class="page-indicator">Page 0 of 0</div>
+            <button id="nextButton" class="nav-button next" type="button" disabled>Next Page →</button>
+        </div>
+
+        <div class="go-row">
+            <input id="pageNumberInput" class="page-number-input" type="number" min="1" placeholder="Enter page number">
+            <button id="goButton" class="go-button" type="button">GO</button>
+        </div>
+
+        <div id="pageReview" class="page-review" style="display:none">
+            <div class="page-review-title">PAGE REVIEW</div>
+            <div id="pageReviewText" class="page-review-text"></div>
+        </div>
+    </div>
 </section>
-<section class="top-amount-card">
-<div class="top-amount-head">
-<div>
-<div class="top-amount-label">AMOUNT TO PAY</div>
-<div id="amountValueTop" class="top-amount-value">₦0</div>
-</div>
-<div class="top-action-buttons">
-<button id="makePaymentButton" class="make-payment-button" type="button" style="display:none">💳 MAKE PAYMENT</button>
-<button id="paymentButton" class="confirm-payment-button" type="button" style="display:none">✓ I HAVE MADE PAYMENT</button>
-</div>
-</div>
+
+<section class="action-area">
+    <section class="top-panel">
+        <h2 class="review-title">Review Your Complete Service</h2>
+        <p class="review-subtitle">Review every page. Make any necessary correction, then download your reviewed document.</p>
+
+        <div class="status-row">
+            <span class="status-label">Review status</span>
+            <span id="statusValue" class="status-value">Preparing...</span>
+        </div>
+
+        <div class="progress-shell"><div id="progressBar" class="progress-bar"></div></div>
+        <div id="progressText" class="progress-text">Preparing the document...</div>
+    </section>
+
+    <section class="top-amount-card">
+        <div class="top-amount-head">
+            <div>
+                <div class="top-amount-label">AMOUNT TO PAY</div>
+                <div id="amountValueTop" class="top-amount-value">₦0</div>
+            </div>
+
+            <div class="top-action-buttons">
+                <button id="makePaymentButton" class="make-payment-button" type="button" style="display:none">💳 MAKE PAYMENT</button>
+                <button id="paymentButton" class="confirm-payment-button" type="button" style="display:none">✓ I HAVE MADE PAYMENT</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="correction-box">
+        <textarea id="correctionInput" class="correction-input" placeholder="Want anything changed? Tell us what to correct..."></textarea>
+        <button id="correctionButton" class="correction-button" type="button">Apply Correction</button>
+    </div>
+
+    <section id="paymentSection" class="payment-section" style="display:none">
+        <div class="payment-title">PAYMENT</div>
+        <div class="payment-subtitle">Your reviewed document is ready.</div>
+        <div id="paymentDetails" class="payment-details">Payment has not been started.</div>
+        <div id="paymentId" class="payment-id" style="display:none"></div>
+        <div id="paymentMessage" class="payment-message">Download is available now.</div>
+    </section>
 </section>
-<div class="correction-box">
-<textarea id="correctionInput" class="correction-input" placeholder="Want anything changed? Tell us what to correct..."></textarea>
-<button id="correctionButton" class="correction-button" type="button">Apply Correction</button>
-</div>
-<section id="paymentSection" class="payment-section" style="display:none">
-<div class="payment-title">PAYMENT</div>
-<div class="payment-subtitle">Your reviewed document is ready.</div>
-<div id="paymentDetails" class="payment-details">Payment has not been started.</div>
-<div id="paymentId" class="payment-id" style="display:none"></div>
-<div id="paymentMessage" class="payment-message">Download is available now.</div>
-</section>
-</section>
+
 <div id="message" class="message"></div>
-</main><div class="fixed-bottom-bar">
-<div class="bottom-email-row">
-<input id="customerEmailForDelivery" class="bottom-email-input" type="email" autocomplete="email" placeholder="Customer email e.g uchemuonaka@gmail.com">
+</main>
+
+<div class="fixed-bottom-bar">
+    <div class="bottom-email-row">
+        <input id="customerEmailForDelivery" class="bottom-email-input" type="email" autocomplete="email" placeholder="Customer email e.g uchemuonaka@gmail.com">
+    </div>
+
+    <div class="bottom-buttons-row">
+        <button id="outsideDownloadBtn" class="bottom-btn download" type="button">⬇ DOWNLOAD DOCUMENT</button>
+        <button id="outsideEmailBtn" class="bottom-btn email" type="button">📧 SEND TO EMAIL</button>
+    </div>
 </div>
-<div class="bottom-buttons-row">
-<button id="outsideDownloadBtn" class="bottom-btn download" type="button">⬇ DOWNLOAD DOCUMENT</button>
-<button id="outsideEmailBtn" class="bottom-btn email" type="button">📧 SEND TO EMAIL</button>
-</div>
-</div>
-<iframe id="downloadFrame" title="Document download" style="display:none;width:0;height:0;border:0"></iframe><script>
+
+<iframe id="downloadFrame" title="Document download" style="display:none;width:0;height:0;border:0"></iframe>
+
+<script>
 "use strict";
 
 /*
 NPBC Review Page
 
-Email path:
-Review page -> configured email-delivery API -> Gmail SMTP.
+Email delivery:
+Review page -> Payment API -> email_delivery.py -> Gmail SMTP.
 
+The email request includes the actual content of the reviewed pages.
 Email delivery does not require payment confirmation.
-The email API must attach the exact already-saved reviewed
-document. This page does not regenerate or upload a document.
 */
 
 const API_BASE = "";
@@ -256,9 +282,11 @@ function complete(d) {
 async function apiGet(url) {
     const r = await fetch(API_BASE + url, {cache:"no-store"});
     const d = await r.json().catch(() => ({}));
+
     if (!r.ok) {
         throw Error(d.error_message || d.error || d.message || d.detail || "Unable to load the document.");
     }
+
     return d;
 }
 
@@ -268,15 +296,19 @@ async function apiPost(url, body) {
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(body || {})
     });
+
     const d = await r.json().catch(() => ({}));
+
     if (!r.ok || d.success === false) {
         throw Error(d.error_message || d.error || d.message || d.detail || "The request could not be completed.");
     }
+
     return d;
 }
 
 function normalizePages(d) {
     let s = [];
+
     if (Array.isArray(d?.review_pages) && d.review_pages.length) s = d.review_pages;
     else if (Array.isArray(d?.document_pages) && d.document_pages.length) s = d.document_pages;
     else if (Array.isArray(d?.pages) && d.pages.length) s = d.pages;
@@ -293,6 +325,7 @@ function normalizePages(d) {
 
 function extractPages(d) {
     let x = normalizePages(d);
+
     if (x.length) return x;
 
     for (const c of [d?.document,d?.result,d?.review,d?.output]) {
@@ -301,6 +334,7 @@ function extractPages(d) {
             if (x.length) return x;
         }
     }
+
     return [];
 }
 
@@ -309,7 +343,9 @@ const allowedTags = new Set([
     "H1","H2","H3","H4","H5","H6","UL","OL","LI","BLOCKQUOTE","HR",
     "TABLE","THEAD","TBODY","TFOOT","TR","TH","TD","PRE","SUP","SUB"
 ]);
+
 const allowedAttrs = new Set(["style","align","colspan","rowspan"]);
+
 const allowedStyles = new Set([
     "color","background-color","font-family","font-size","font-weight",
     "font-style","text-decoration","text-align","text-indent","line-height",
@@ -331,15 +367,19 @@ function normText(v) {
 
 function safeStyle(s) {
     const out = [];
+
     for (const d of String(s || "").split(";")) {
         const i = d.indexOf(":");
         if (i < 0) continue;
+
         const p = d.slice(0,i).trim().toLowerCase();
         const v = d.slice(i+1).trim();
+
         if (allowedStyles.has(p) && !/javascript:|expression\(|url\(|@import/i.test(v)) {
             out.push(p+":"+v);
         }
     }
+
     return out.join(";");
 }
 
@@ -358,8 +398,10 @@ function renderPlain(t) {
         }
 
         const parts = line.split(/(\*\*[^*]+\*\*)/g);
+
         parts.forEach(p => {
             if (!p) return;
+
             if (p.startsWith("**") && p.endsWith("**")) {
                 const e = document.createElement("strong");
                 e.textContent = p.slice(2,-2);
@@ -374,6 +416,7 @@ function renderPlain(t) {
 
         if (i < lines.length-1) f.appendChild(document.createElement("br"));
     });
+
     return f;
 }
 
@@ -388,9 +431,11 @@ function sanitizeHtml(src) {
             parent.appendChild(document.createTextNode(n.nodeValue || ""));
             return;
         }
+
         if (n.nodeType !== Node.ELEMENT_NODE) return;
 
         const tag = n.tagName.toUpperCase();
+
         if (["SCRIPT","STYLE","IFRAME","OBJECT","EMBED","FORM","INPUT","BUTTON",
              "TEXTAREA","SELECT","VIDEO","AUDIO"].includes(tag)) return;
 
@@ -400,9 +445,11 @@ function sanitizeHtml(src) {
         }
 
         const e = document.createElement(tag.toLowerCase());
+
         for (const a of n.attributes) {
             const name = a.name.toLowerCase();
             const v = a.value || "";
+
             if (!allowedAttrs.has(name)) continue;
 
             if (name === "style") {
@@ -414,11 +461,13 @@ function sanitizeHtml(src) {
                 e.setAttribute(name,v);
             }
         }
+
         for (const c of n.childNodes) walk(c,e);
         parent.appendChild(e);
     }
 
     for (const c of doc.body.childNodes) walk(c,out);
+
     return out;
 }
 
@@ -443,6 +492,7 @@ function renderPage() {
     }
 
     const p = pages[currentPage-1];
+
     if (!p) {
         pageViewer.innerHTML = '<div class="empty-page">This document page is not available yet.</div>';
         return;
@@ -450,14 +500,18 @@ function renderPage() {
 
     const a = document.createElement("article");
     a.className = "document-page";
+
     const n = document.createElement("div");
     n.className = "page-number-inside";
     n.textContent = "PAGE " + p.page_number;
+
     const c = document.createElement("div");
     c.className = "page-content";
     c.appendChild(sanitizeHtml(p.content || "This page is still being prepared."));
+
     a.append(n,c);
     pageViewer.appendChild(a);
+
     pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
 
     if (p.review || p.error) {
@@ -468,11 +522,13 @@ function renderPage() {
     } else {
         pageReview.style.display = "none";
     }
+
     updateButtons();
 }
 
 function showPage(n) {
     if (!totalPages) return;
+
     currentPage = Math.max(1,Math.min(totalPages,Math.floor(Number(n)||1)));
     renderPage();
     documentScroll.scrollTo({top:0,behavior:"smooth"});
@@ -480,14 +536,18 @@ function showPage(n) {
 
 previousButton.onclick = () => showPage(currentPage-1);
 nextButton.onclick = () => showPage(currentPage+1);
+
 goButton.onclick = () => {
     const n = Number(pageNumberInput.value);
+
     if (!Number.isInteger(n) || n < 1 || n > totalPages) {
         return setMessage("Enter a page number from 1 to "+totalPages+".","error");
     }
+
     setMessage("");
     showPage(n);
 };
+
 pageNumberInput.onkeydown = e => {
     if (e.key === "Enter") {
         e.preventDefault();
@@ -497,42 +557,57 @@ pageNumberInput.onkeydown = e => {
 
 function extractAmount(d) {
     const seen = new Set();
+
     function find(x) {
         if (x == null) return 0;
+
         if (typeof x === "number" && isFinite(x) && x > 0) return x;
+
         if (typeof x === "string") {
             const n = Number(x.replace(/[^0-9.]/g,""));
             return isFinite(n) && n > 0 ? n : 0;
         }
+
         if (typeof x !== "object" || seen.has(x)) return 0;
+
         seen.add(x);
+
         for (const k of ["amount","price"]) {
             const n = find(x[k]);
             if (n > 0) return n;
         }
+
         for (const k of ["billing","bill","payment","job","result","document","review","output"]) {
             const n = find(x[k]);
             if (n > 0) return n;
         }
+
         return 0;
     }
+
     return find(d);
 }
 
 function extractBilling(d) {
     const seen = new Set();
+
     function find(x) {
         if (x == null) return "";
         if (typeof x === "string") return x.trim();
         if (typeof x !== "object" || seen.has(x)) return "";
+
         seen.add(x);
+
         if (typeof x.billing === "string" && x.billing.trim()) return x.billing.trim();
+
         for (const k of ["billing","bill","payment","job","result","document","review","output"]) {
             const v = find(x[k]);
             if (v) return v;
         }
+
         return "";
     }
+
     return find(d);
 }
 
@@ -542,30 +617,36 @@ function extractDocumentTitle(d) {
         d?.result?.document_title,d?.result?.title,d?.review?.document_title,
         d?.review?.title,d?.output?.document_title,d?.output?.title
     ];
+
     for (const v of candidates) {
         const x = clean(v);
         if (x) return x;
     }
+
     return documentTitle;
 }
 
 function deriveDocumentTitleFromContent(content) {
     const original = String(content == null ? "" : content);
     const bold = original.match(/^\s*\*\*([^*]{4,180})\*\*/);
+
     if (bold && bold[1]) return clean(bold[1]).replace(/\s+/g," ");
 
     const heading = original.match(/<h[1-3][^>]*>([\s\S]*?)<\/h[1-3]>/i);
+
     if (heading && heading[1]) {
         const headingText = heading[1].replace(/<[^>]*>/g," ")
             .replace(/&nbsp;/gi," ").replace(/&amp;/gi,"&")
             .replace(/&quot;/gi,'"').replace(/&#39;/gi,"'")
             .replace(/&lt;/gi,"<").replace(/&gt;/gi,">")
             .replace(/\*\*/g,"").replace(/\s+/g," ").trim();
+
         if (headingText.length >= 4 && headingText.length <= 180) return headingText;
     }
 
     const raw = original.replace(/<[^>]*>/g," ")
         .replace(/\u00a0/g," ").replace(/\r\n?/g,"\n").trim();
+
     const firstLine = raw.split(/\n|---+/)[0]
         .replace(/^#{1,6}\s*/,"").replace(/\*\*/g,"")
         .replace(/^\*+|\*+$/g,"").trim();
@@ -574,18 +655,22 @@ function deriveDocumentTitleFromContent(content) {
         !/^(abstract|introduction|conclusion|references)$/i.test(firstLine)) {
         return firstLine;
     }
+
     return "";
 }
 
 function resolveDocumentTitle() {
     if (clean(documentTitle)) return clean(documentTitle);
+
     if (pages.length) {
         const t = deriveDocumentTitleFromContent(pages[0].content);
+
         if (t) {
             documentTitle = t;
             return t;
         }
     }
+
     return "";
 }
 
@@ -594,15 +679,18 @@ function resolveService(d) {
         d?.service,d?.service_name,d?.document?.service,d?.result?.service,
         d?.review?.service,d?.output?.service
     ];
+
     for (const v of candidates) {
         const s = clean(v);
         if (s) return s;
     }
+
     return service;
 }
 
 function updatePaymentPanel() {
     amountValueTop.textContent = amount > 0 ? "₦"+amount.toLocaleString() : "Quotation required";
+
     paymentDetails.textContent = "Service: "+(service || "Business Center Service")+
         "\nBilling: "+(billing || "Fixed price");
 
@@ -616,8 +704,10 @@ function updatePaymentPanel() {
 
     makePaymentButton.style.display = "block";
     paymentButton.style.display = "block";
+
     makePaymentButton.textContent = paymentStarted ? "✓ PAYMENT STARTED" : "💳 MAKE PAYMENT";
     paymentButton.textContent = paid ? "✓ PAYMENT VERIFIED" : "✓ I HAVE MADE PAYMENT";
+
     updateButtons();
 }
 
@@ -626,6 +716,7 @@ function applyJob(d) {
     reviewFinished = complete(d);
 
     const p = extractPages(d);
+
     if (p.length) {
         pages = p;
         totalPages = p.length;
@@ -654,6 +745,7 @@ function applyJob(d) {
     const pr = d.progress || {};
     const done = Number(pr.completed) || 0;
     const tot = Number(pr.total) || totalPages || 0;
+
     let pct = tot ? Math.round(done/tot*100) : 0;
     if (reviewFinished && totalPages) pct = 100;
 
@@ -682,9 +774,11 @@ function applyJob(d) {
 
 async function loadPaymentState() {
     if (!versionId) return null;
+
     try {
         const d = await apiGet("/api/payment/status?job_id="+encodeURIComponent(jobId)+
             "&version_id="+encodeURIComponent(versionId));
+
         if (d.success) {
             paid = !!d.paid;
             paymentPending = !!d.payment_pending || d.status === "pending";
@@ -692,53 +786,68 @@ async function loadPaymentState() {
             amount = Number(d.amount) || amount;
             billing = clean(d.billing) || billing;
             paymentIdentifier = clean(d.payment_id) || paymentIdentifier;
+
             updatePaymentPanel();
             return d;
         }
     } catch (_) {
         return null;
     }
+
     return null;
 }
 
 async function loadJob() {
     const d = await apiGet("/api/review?job_id="+encodeURIComponent(jobId));
+
     applyJob(d);
     await loadPaymentState();
+
     return d;
 }
 
 function startPaymentPolling() {
     if (paymentPollTimer) return;
+
     const poll = async () => {
         paymentPollTimer = null;
+
         if (!paymentStarted || paid) return;
+
         await loadPaymentState();
+
         if (!paid) paymentPollTimer = setTimeout(poll,2000);
     };
+
     paymentPollTimer = setTimeout(poll,2000);
 }
 
 function startPolling() {
     if (polling) return;
+
     polling = true;
 
     const poll = async () => {
         try {
             const d = await loadJob();
+
             if (complete(d) && extractPages(d).length) {
                 polling = false;
                 return;
             }
+
             if (["review_error","correction_error"].includes(state())) {
                 polling = false;
                 return;
             }
+
             pollTimer = setTimeout(poll,1200);
         } catch (e) {
             polling = false;
+
             if (!pages.length) {
                 console.log("poll retry",e.message);
+
                 setTimeout(() => {
                     polling = false;
                     startPolling();
@@ -746,17 +855,22 @@ function startPolling() {
             }
         }
     };
+
     poll();
 }
 
 correctionButton.onclick = async () => {
     const instruction = clean(correctionInput.value);
-    if (!instruction) return setMessage("Please write the correction or change you want.","error");
+
+    if (!instruction) {
+        return setMessage("Please write the correction or change you want.","error");
+    }
 
     try {
         busy = true;
         updateButtons();
         setMessage("Applying your correction...");
+
         await apiPost("/api/correct",{job_id:jobId,instruction});
 
         correctionInput.value = "";
@@ -776,10 +890,13 @@ correctionButton.onclick = async () => {
         pages = [];
         totalPages = 0;
         currentPage = 1;
+
         renderPage();
         updatePaymentPanel();
+
         setMessage("Your correction has started.","success");
         startPolling();
+
     } catch (e) {
         setMessage(e.message,"error");
     } finally {
@@ -789,13 +906,19 @@ correctionButton.onclick = async () => {
 };
 
 makePaymentButton.onclick = async () => {
-    if (!reviewFinished) return setMessage("Please wait until the complete document review is ready.","error");
-    if (amount <= 0) return setMessage("This service requires a quotation before payment.","error");
+    if (!reviewFinished) {
+        return setMessage("Please wait until the complete document review is ready.","error");
+    }
+
+    if (amount <= 0) {
+        return setMessage("This service requires a quotation before payment.","error");
+    }
 
     try {
         busy = true;
         updateButtons();
         setMessage("Starting payment...");
+
         const d = await apiPost("/api/payment/create?job_id="+encodeURIComponent(jobId)+
             "&amount="+encodeURIComponent(amount)+"&payment_method=bank_transfer",{});
 
@@ -804,10 +927,12 @@ makePaymentButton.onclick = async () => {
         paymentIdentifier = clean(d.payment_id) || clean(d.order_number) || clean(d.reference);
         amount = Number(d.amount) || amount;
         billing = clean(d.billing) || billing;
+
         updatePaymentPanel();
 
         setMessage("Payment started. Complete the payment, then tap I HAVE MADE PAYMENT.","success");
         startPaymentPolling();
+
     } catch (e) {
         setMessage(e.message,"error");
     } finally {
@@ -817,11 +942,20 @@ makePaymentButton.onclick = async () => {
 };
 
 paymentButton.onclick = async () => {
-    if (!paymentStarted) return setMessage("Tap MAKE PAYMENT first, then complete your payment.","error");
-    if (!paymentPending && !paid) return setMessage("Your payment report is not pending. Please contact Customer Care.","error");
-    if (paid) return setMessage("Payment has already been verified.","success");
+    if (!paymentStarted) {
+        return setMessage("Tap MAKE PAYMENT first, then complete your payment.","error");
+    }
+
+    if (!paymentPending && !paid) {
+        return setMessage("Your payment report is not pending. Please contact Customer Care.","error");
+    }
+
+    if (paid) {
+        return setMessage("Payment has already been verified.","success");
+    }
 
     paymentMessage.textContent = "Payment reported. Customer Care will verify the payment before download is unlocked.";
+
     setMessage("Your payment has been reported. Please wait for Customer Care verification.","success");
     updatePaymentPanel();
     startPaymentPolling();
@@ -829,22 +963,31 @@ paymentButton.onclick = async () => {
 
 function buildDownloadUrl() {
     if (!jobId) return "";
+
     let url = "/api/download?job_id="+encodeURIComponent(jobId);
+
     if (versionId) url += "&version_id="+encodeURIComponent(versionId);
+
     return url;
 }
 
 async function downloadPreparedDocument() {
-    if (!reviewFinished) return setMessage("Please wait until the complete document is ready.","error");
+    if (!reviewFinished) {
+        return setMessage("Please wait until the complete document is ready.","error");
+    }
 
     const url = buildDownloadUrl();
-    if (!url) return setMessage("The prepared document could not be identified.","error");
+
+    if (!url) {
+        return setMessage("The prepared document could not be identified.","error");
+    }
 
     try {
         busy = true;
         updateButtons();
         setMessage("Preparing your document download...");
         outsideDownloadBtn.textContent = "⏳ OPENING...";
+
         downloadFrame.src = API_BASE+url;
 
         setTimeout(() => {
@@ -853,40 +996,80 @@ async function downloadPreparedDocument() {
             setMessage("Your download should start. If not, tap again.","success");
             updateButtons();
         },2000);
+
     } catch (e) {
         setMessage(e.message || "Unable to open your prepared document.","error");
+
         busy = false;
         outsideDownloadBtn.textContent = "⬇ DOWNLOAD DOCUMENT";
         updateButtons();
     }
 }
 
+/*
+ * EMAIL DELIVERY FIX
+ *
+ * Sends the actual content from the pages currently loaded in Review.
+ * Does not require payment confirmation.
+ * Does not ask the email API to search another Render service's filesystem.
+ * Does not regenerate the document.
+ */
 async function emailDocumentToCustomer() {
     if (!reviewFinished) {
         return setMessage("Please wait until the complete document is ready.","error");
     }
 
     const email = clean(customerEmailForDelivery.value);
+
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         customerEmailForDelivery.focus();
         return setMessage("Please enter a valid customer email address.","error");
     }
 
+    if (!pages.length) {
+        return setMessage("The reviewed document pages are not available to send.","error");
+    }
+
     const title = resolveDocumentTitle();
+
     if (!title) {
         return setMessage("The document title could not be identified from the review data.","error");
     }
 
     const serviceName = clean(service);
+
     if (!serviceName) {
         return setMessage("The service name could not be identified from the review data.","error");
+    }
+
+    /*
+     * Use the page content supplied by the review API.
+     * Preserve page order and keep page boundaries.
+     */
+    const documentContent = pages
+        .map(page => String(page.content == null ? "" : page.content))
+        .join("\n\n")
+        .trim();
+
+    if (!documentContent) {
+        return setMessage("The reviewed document has no content to send.","error");
     }
 
     try {
         busy = true;
         updateButtons();
+
         outsideEmailBtn.textContent = "⏳ SENDING...";
         setMessage("Sending the reviewed document to "+email+"...");
+
+        const payload = {
+            recipient_email: email,
+            service: serviceName,
+            document_title: title,
+            job_id: jobId,
+            document_content: documentContent,
+            file_format: "docx"
+        };
 
         const response = await fetch(EMAIL_API,{
             method:"POST",
@@ -895,12 +1078,7 @@ async function emailDocumentToCustomer() {
                 "Content-Type":"application/json",
                 "Accept":"application/json"
             },
-            body:JSON.stringify({
-                recipient_email:email,
-                service:serviceName,
-                document_title:title,
-                job_id:jobId
-            })
+            body:JSON.stringify(payload)
         });
 
         const result = await response.json().catch(() => ({}));
@@ -915,7 +1093,11 @@ async function emailDocumentToCustomer() {
             );
         }
 
-        if (result.success !== true && result.ok !== true && result.status !== "sent") {
+        if (
+            result.success !== true &&
+            result.ok !== true &&
+            result.status !== "sent"
+        ) {
             throw new Error(
                 result.detail ||
                 result.error_message ||
@@ -924,21 +1106,29 @@ async function emailDocumentToCustomer() {
             );
         }
 
-        setMessage("Document email accepted for "+(result.recipient || email)+".","success");
+        setMessage(
+            "Document email sent successfully to "+(result.recipient || email)+".",
+            "success"
+        );
+
         outsideEmailBtn.textContent = "✅ SENT";
+
     } catch (e) {
         console.error("NPBC email delivery failed:",e);
+
         let errorText = e.message || "Email delivery failed.";
 
         if (e instanceof TypeError) {
-            errorText = "The email API could not be reached. Check its Render service status and CORS configuration.";
+            errorText = "The email API could not be reached. Check its Render status and CORS configuration.";
         }
 
         setMessage(errorText,"error");
         outsideEmailBtn.textContent = "📧 SEND TO EMAIL";
+
     } finally {
         busy = false;
         updateButtons();
+
         setTimeout(() => {
             outsideEmailBtn.textContent = "📧 SEND TO EMAIL";
         },3000);
@@ -950,18 +1140,25 @@ outsideEmailBtn.onclick = emailDocumentToCustomer;
 
 async function start() {
     const serviceBadge = $("serviceBadge");
+
     if (serviceBadge) serviceBadge.textContent = service || "Service";
 
     if (!jobId) {
         setStatus("NO DOCUMENT");
+
         pageViewer.innerHTML = '<div class="empty-page">No document job was supplied. Check your link.</div>';
+
         setMessage("This review page needs a document job.","error");
         return;
     }
 
     try {
         const d = await loadJob();
-        if (!complete(d) && !["review_error","correction_error"].includes(state())) startPolling();
+
+        if (!complete(d) && !["review_error","correction_error"].includes(state())) {
+            startPolling();
+        }
+
     } catch (e) {
         console.log("Initial load retry:",e.message);
         setStatus("READY");
@@ -972,7 +1169,10 @@ async function start() {
             setTimeout(async () => {
                 try {
                     const d2 = await loadJob();
-                    if (complete(d2)) setMessage("Document loaded","success");
+
+                    if (complete(d2)) {
+                        setMessage("Document loaded","success");
+                    }
                 } catch (_) {
                     setStatus("READY");
                     pageViewer.innerHTML = '<div class="empty-page">Document is loading. Please refresh page.</div>';
@@ -983,5 +1183,6 @@ async function start() {
 }
 
 start();
-</script></body>
+</script>
+</body>
 </html>
