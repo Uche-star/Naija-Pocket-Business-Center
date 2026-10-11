@@ -5,45 +5,34 @@ Complete Gmail SMTP Email Delivery Module
 FILE NAME:
     email_delivery.py
 
-PURPOSE:
-    Send an existing, saved NPBC document directly to a customer's email.
-
-EMAIL PROVIDER:
-    Gmail SMTP
-
-RENDER ENVIRONMENT VARIABLES:
-    GMAIL_ADDRESS
-    GMAIL_APP_PASSWORD
-
-SMTP:
-    Host: smtp.gmail.com
-    Port: 587
-    Security: STARTTLS
-
-IMPORTANT:
-    - Email delivery does not require payment confirmation.
-    - Does not regenerate documents.
-    - Does not create missing documents.
-    - Attaches the exact existing document supplied to it.
+FEATURES:
+    - Sends existing saved documents.
+    - Accepts reviewed document content directly from Review.
+    - Creates a valid DOCX attachment from supplied document content.
+    - Does not regenerate the document using AI.
+    - Does not require payment confirmation.
+    - Uses Gmail SMTP and Google App Password.
+    - Supports existing payment_api.py argument names.
     - Uses Python standard library only.
-    - Supports multiple argument names for compatibility with payment_api.py.
-    - Provides detailed configuration and SMTP error messages.
 """
 
 from __future__ import annotations
 
 import html
-import mimetypes
 import os
 import re
 import smtplib
 import socket
 import ssl
+import tempfile
+import mimetypes
+import zipfile
 
-from email.message import EmailMessage
-from email.utils import formataddr, parseaddr
 from pathlib import Path
 from typing import Any, Dict
+from email.message import EmailMessage
+from email.utils import formataddr, parseaddr
+from xml.sax.saxutils import escape
 
 
 # ============================================================
@@ -59,27 +48,15 @@ GMAIL_APP_PASSWORD_ENV = "GMAIL_APP_PASSWORD"
 
 BRAND_NAME = "Naija Pocket Business Center"
 
-BRAND_GOLD = "#D4AF37"
-BRAND_BLACK = "#080808"
-
 MAX_ATTACHMENT_SIZE_MB = 25
 MAX_ATTACHMENT_SIZE_BYTES = MAX_ATTACHMENT_SIZE_MB * 1024 * 1024
 
 DEFAULT_SUBJECT = "Your Document from Naija Pocket Business Center"
 
 SUPPORTED_EXTENSIONS = {
-    ".docx",
-    ".pdf",
-    ".xlsx",
-    ".xls",
-    ".pptx",
-    ".ppt",
-    ".txt",
-    ".csv",
-    ".rtf",
-    ".odt",
-    ".ods",
-    ".zip",
+    ".docx", ".pdf", ".xlsx", ".xls",
+    ".pptx", ".ppt", ".txt", ".csv",
+    ".rtf", ".odt", ".ods", ".zip",
 }
 
 
@@ -87,59 +64,55 @@ SUPPORTED_EXTENSIONS = {
 # GENERAL HELPERS
 # ============================================================
 
-def _clean_text(value: Any, default: str = "") -> str:
+def _text(value: Any, default: str = "") -> str:
     if value is None:
         return default
 
     try:
-        result = str(value).strip()
+        value = str(value).strip()
     except Exception:
         return default
 
-    return result if result else default
+    return value if value else default
 
 
-def _clean_header(value: Any, default: str = "") -> str:
-    value = _clean_text(value, default)
+def _header(value: Any, default: str = "") -> str:
+    value = _text(value, default)
     value = value.replace("\r", " ").replace("\n", " ")
     return " ".join(value.split())
 
 
-def _safe_html(value: Any) -> str:
-    return html.escape(_clean_text(value), quote=True)
-
-
-def _valid_email_address(address: str) -> bool:
-    address = _clean_header(address)
+def _valid_email(address: str) -> bool:
+    address = _header(address)
 
     if not address or len(address) > 254:
         return False
 
-    if any(character.isspace() for character in address):
+    if any(ch.isspace() for ch in address):
         return False
 
-    parsed_name, parsed_address = parseaddr(address)
+    display_name, parsed_address = parseaddr(address)
 
-    if parsed_name or parsed_address.lower() != address.lower():
+    if display_name or parsed_address.lower() != address.lower():
         return False
 
     if address.count("@") != 1 or ".." in address:
         return False
 
-    local_part, domain = address.rsplit("@", 1)
+    local, domain = address.rsplit("@", 1)
 
-    if not local_part or not domain or len(local_part) > 64:
-        return False
-
-    if domain.startswith(".") or domain.endswith("."):
+    if not local or not domain or len(local) > 64:
         return False
 
     if "." not in domain:
         return False
 
+    if domain.startswith(".") or domain.endswith("."):
+        return False
+
     if not re.fullmatch(
         r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+",
-        local_part,
+        local,
     ):
         return False
 
@@ -155,65 +128,49 @@ def _valid_email_address(address: str) -> bool:
     return True
 
 
+def _safe_filename(value: str) -> str:
+    value = _text(value, "NPBC Document")
+    value = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", value)
+    value = re.sub(r"\s+", " ", value).strip(" .")
+
+    return value[:150] or "NPBC Document"
+
+
 # ============================================================
 # GMAIL CONFIGURATION
 # ============================================================
 
-def _get_smtp_credentials() -> tuple[str, str]:
-    """
-    Read the current environment variables directly.
+def _get_credentials() -> tuple[str, str]:
+    sender = _text(os.environ.get(GMAIL_ADDRESS_ENV))
+    password = _text(os.environ.get(GMAIL_APP_PASSWORD_ENV))
 
-    Render environment variables are read when this function runs,
-    rather than being cached when the module is first imported.
-    """
-
-    gmail_address = _clean_text(
-        os.environ.get(GMAIL_ADDRESS_ENV)
-    )
-
-    app_password = _clean_text(
-        os.environ.get(GMAIL_APP_PASSWORD_ENV)
-    )
-
-    if not gmail_address:
+    if not sender:
         raise RuntimeError(
-            "GMAIL_ADDRESS is missing or empty in the running application. "
-            "Check the Render environment variable name and redeploy."
+            "GMAIL_ADDRESS is missing from the application environment."
         )
 
-    if not app_password:
+    if not password:
         raise RuntimeError(
-            "GMAIL_APP_PASSWORD is missing or empty in the running "
-            "application. Check the Render environment variable name "
-            "and redeploy."
+            "GMAIL_APP_PASSWORD is missing from the application environment."
         )
 
-    if not _valid_email_address(gmail_address):
+    if not _valid_email(sender):
         raise RuntimeError(
-            "GMAIL_ADDRESS was found, but its value is not a valid "
-            "email address. Check the value configured on Render."
+            "GMAIL_ADDRESS is not a valid email address."
         )
 
-    # Google may display an app password with spaces.
-    # Remove spaces before authenticating with Gmail.
-    app_password = re.sub(r"\s+", "", app_password)
+    # Google sometimes displays app passwords with spaces.
+    password = re.sub(r"\s+", "", password)
 
-    if not app_password:
-        raise RuntimeError(
-            "GMAIL_APP_PASSWORD contains no usable characters."
-        )
+    if not password:
+        raise RuntimeError("GMAIL_APP_PASSWORD is empty.")
 
-    return gmail_address, app_password
+    return sender, password
 
 
 def configuration_status() -> Dict[str, Any]:
-    """
-    Return the actual configuration state without exposing the password.
-    Does not attempt to send an email or connect to Gmail.
-    """
-
     try:
-        gmail_address, _app_password = _get_smtp_credentials()
+        sender, _password = _get_credentials()
 
         return {
             "configured": True,
@@ -222,20 +179,11 @@ def configuration_status() -> Dict[str, Any]:
             "smtp_host": SMTP_HOST,
             "smtp_port": SMTP_PORT,
             "security": "STARTTLS",
-            "gmail_address": gmail_address,
-            "gmail_address_configured": True,
-            "app_password_configured": True,
-            "message": "Gmail SMTP credentials are present and valid in format.",
+            "gmail_address": sender,
+            "message": "Gmail credentials are configured.",
         }
 
     except RuntimeError as exc:
-        gmail_address = _clean_text(
-            os.environ.get(GMAIL_ADDRESS_ENV)
-        )
-        app_password = _clean_text(
-            os.environ.get(GMAIL_APP_PASSWORD_ENV)
-        )
-
         return {
             "configured": False,
             "ready": False,
@@ -243,18 +191,9 @@ def configuration_status() -> Dict[str, Any]:
             "smtp_host": SMTP_HOST,
             "smtp_port": SMTP_PORT,
             "security": "STARTTLS",
-            "gmail_address": (
-                gmail_address
-                if _valid_email_address(gmail_address)
-                else ""
-            ),
-            "gmail_address_configured": bool(gmail_address),
-            "app_password_configured": bool(app_password),
             "message": str(exc),
         }
 
-
-# Compatibility aliases for applications using other status names.
 
 def get_configuration_status() -> Dict[str, Any]:
     return configuration_status()
@@ -265,69 +204,284 @@ def is_configured() -> bool:
 
 
 # ============================================================
-# DOCUMENT VALIDATION
+# REVIEWED CONTENT TO DOCX
+# ============================================================
+
+def _clean_document_content(content: Any) -> str:
+    """
+    Prepare content supplied by the Review page.
+
+    This does not generate new document content. It removes common
+    Markdown formatting markers and HTML tags from the supplied text.
+    """
+
+    content = _text(content)
+
+    if not content:
+        raise ValueError(
+            "The reviewed document content is empty."
+        )
+
+    # Decode common HTML entities.
+    content = html.unescape(content)
+
+    # Convert common HTML line endings before removing remaining tags.
+    content = re.sub(
+        r"(?i)<\s*br\s*/?\s*>",
+        "\n",
+        content,
+    )
+    content = re.sub(
+        r"(?i)</\s*(p|div|h[1-6]|li|tr)\s*>",
+        "\n",
+        content,
+    )
+    content = re.sub(r"<[^>]*>", "", content)
+
+    # Remove Markdown heading markers.
+    content = re.sub(
+        r"(?m)^\s{0,3}#{1,6}\s*",
+        "",
+        content,
+    )
+
+    # Remove horizontal Markdown rules.
+    content = re.sub(
+        r"(?m)^\s*(?:-{3,}|\*{3,}|_{3,})\s*$",
+        "",
+        content,
+    )
+
+    # Remove bold and italic markers.
+    content = re.sub(r"\*\*(.*?)\*\*", r"\1", content, flags=re.S)
+    content = re.sub(r"__(.*?)__", r"\1", content, flags=re.S)
+    content = re.sub(r"(?<!\*)\*([^*\n]+)\*(?!\*)", r"\1", content)
+    content = re.sub(r"(?<!_)_([^_\n]+)_(?!_)", r"\1", content)
+
+    # Remove inline-code markers.
+    content = re.sub(r"`([^`]*)`", r"\1", content)
+
+    # Normalize line endings.
+    content = content.replace("\r\n", "\n").replace("\r", "\n")
+
+    # Remove excessive blank lines without joining paragraphs.
+    content = re.sub(r"\n[ \t]+\n", "\n\n", content)
+    content = re.sub(r"\n{3,}", "\n\n", content)
+
+    content = content.strip()
+
+    if not content:
+        raise ValueError(
+            "No usable document text remains after cleaning."
+        )
+
+    return content
+
+
+def _paragraph_xml(text: str) -> str:
+    """
+    Create a WordprocessingML paragraph.
+
+    Leading and trailing spaces are preserved when needed.
+    """
+
+    safe_text = escape(text)
+
+    return (
+        "<w:p>"
+        "<w:r>"
+        '<w:rPr><w:sz w:val="24"/></w:rPr>'
+        f'<w:t xml:space="preserve">{safe_text}</w:t>'
+        "</w:r>"
+        "</w:p>"
+    )
+
+
+def _create_docx_from_content(
+    content: Any,
+    document_title: str,
+    output_path: Path,
+) -> Path:
+    """
+    Create a valid DOCX attachment using only Python's standard library.
+
+    The supplied reviewed text is used as the document content.
+    No AI generation or external service is called.
+    """
+
+    cleaned = _clean_document_content(content)
+    paragraphs = []
+
+    for line in cleaned.split("\n"):
+        line = line.strip()
+
+        if line:
+            paragraphs.append(_paragraph_xml(line))
+        else:
+            paragraphs.append("<w:p/>")
+
+    document_body = "".join(paragraphs)
+
+    document_xml = f'''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document
+ xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+ <w:body>
+  {document_body}
+  <w:sectPr>
+   <w:pgSz w:w="11906" w:h="16838"/>
+   <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"
+    w:header="708" w:footer="708" w:gutter="0"/>
+  </w:sectPr>
+ </w:body>
+</w:document>'''
+
+    styles_xml = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+ <w:docDefaults>
+  <w:rPrDefault>
+   <w:rPr>
+    <w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>
+    <w:sz w:val="24"/>
+   </w:rPr>
+  </w:rPrDefault>
+  <w:pPrDefault>
+   <w:pPr>
+    <w:spacing w:after="160" w:line="360" w:lineRule="auto"/>
+   </w:pPr>
+  </w:pPrDefault>
+ </w:docDefaults>
+</w:styles>'''
+
+    content_types_xml = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+ <Default Extension="rels"
+  ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+ <Default Extension="xml" ContentType="application/xml"/>
+ <Override PartName="/word/document.xml"
+  ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+ <Override PartName="/word/styles.xml"
+  ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+ <Override PartName="/docProps/core.xml"
+  ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+</Types>'''
+
+    relationships_xml = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+ <Relationship Id="rId1"
+  Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+  Target="word/document.xml"/>
+ <Relationship Id="rId2"
+  Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties"
+  Target="docProps/core.xml"/>
+</Relationships>'''
+
+    document_relationships_xml = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+ <Relationship Id="rId1"
+  Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"
+  Target="styles.xml"/>
+</Relationships>'''
+
+    safe_title = escape(_text(document_title, "NPBC Document"))
+
+    core_xml = f'''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties
+ xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:dcterms="http://purl.org/dc/terms/"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ <dc:title>{safe_title}</dc:title>
+ <dc:creator>Naija Pocket Business Center</dc:creator>
+ <cp:lastModifiedBy>Naija Pocket Business Center</cp:lastModifiedBy>
+</cp:coreProperties>'''
+
+    try:
+        with zipfile.ZipFile(
+            output_path,
+            "w",
+            compression=zipfile.ZIP_DEFLATED,
+        ) as archive:
+            archive.writestr(
+                "[Content_Types].xml",
+                content_types_xml,
+            )
+            archive.writestr(
+                "_rels/.rels",
+                relationships_xml,
+            )
+            archive.writestr(
+                "word/document.xml",
+                document_xml,
+            )
+            archive.writestr(
+                "word/styles.xml",
+                styles_xml,
+            )
+            archive.writestr(
+                "word/_rels/document.xml.rels",
+                document_relationships_xml,
+            )
+            archive.writestr(
+                "docProps/core.xml",
+                core_xml,
+            )
+
+    except Exception:
+        try:
+            output_path.unlink(missing_ok=True)
+        except Exception:
+            pass
+        raise
+
+    if not output_path.exists() or output_path.stat().st_size <= 0:
+        raise RuntimeError("The DOCX attachment could not be created.")
+
+    return output_path
+
+
+# ============================================================
+# EXISTING DOCUMENT VALIDATION
 # ============================================================
 
 def _resolve_existing_document(document_path: Any) -> Path:
     if document_path is None:
         raise ValueError(
-            "A saved document path is required for email delivery."
+            "A saved document path or reviewed document content is required."
         )
 
-    try:
-        path = Path(str(document_path)).expanduser().resolve()
-    except Exception as exc:
-        raise ValueError(
-            "The supplied document path is invalid."
-        ) from exc
+    path = Path(str(document_path)).expanduser().resolve()
 
     if not path.exists():
         raise FileNotFoundError(
-            "The saved document could not be found. "
-            "No document was generated or recreated. "
-            f"Checked path: {path}"
+            "The saved document could not be found at the supplied path."
         )
 
     if not path.is_file():
-        raise ValueError(
-            "The supplied document path does not point to a file."
-        )
+        raise ValueError("The supplied document path is not a file.")
 
     if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
         raise ValueError(
-            f"Unsupported attachment format: {path.suffix or '(no extension)'}. "
-            "Supported formats include DOCX, PDF, XLSX, XLS, PPTX, PPT, "
-            "TXT, CSV, RTF, ODT, ODS and ZIP."
-        )
-
-    try:
-        file_size = path.stat().st_size
-    except OSError as exc:
-        raise OSError(
-            "The saved document could not be accessed."
-        ) from exc
-
-    if file_size <= 0:
-        raise ValueError(
-            "The saved document is empty and cannot be emailed."
-        )
-
-    if file_size > MAX_ATTACHMENT_SIZE_BYTES:
-        raise ValueError(
-            f"The document exceeds the {MAX_ATTACHMENT_SIZE_MB} MB "
-            "attachment limit."
+            f"Unsupported document format: {path.suffix or '(no extension)'}."
         )
 
     if not os.access(str(path), os.R_OK):
-        raise PermissionError(
-            "The saved document cannot be read by the application."
+        raise PermissionError("The saved document cannot be read.")
+
+    size = path.stat().st_size
+
+    if size <= 0:
+        raise ValueError("The saved document is empty.")
+
+    if size > MAX_ATTACHMENT_SIZE_BYTES:
+        raise ValueError(
+            f"The document exceeds the {MAX_ATTACHMENT_SIZE_MB} MB limit."
         )
 
     return path
 
 
-def _get_attachment_mime_type(path: Path) -> tuple[str, str]:
-    known_types = {
+def _mime_type(path: Path) -> tuple[str, str]:
+    known = {
         ".docx": (
             "application",
             "vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -353,167 +507,99 @@ def _get_attachment_mime_type(path: Path) -> tuple[str, str]:
 
     extension = path.suffix.lower()
 
-    if extension in known_types:
-        return known_types[extension]
+    if extension in known:
+        return known[extension]
 
-    guessed_type, _encoding = mimetypes.guess_type(str(path))
+    guessed, _encoding = mimetypes.guess_type(str(path))
 
-    if guessed_type and "/" in guessed_type:
-        return tuple(guessed_type.split("/", 1))
+    if guessed and "/" in guessed:
+        return tuple(guessed.split("/", 1))
 
     return "application", "octet-stream"
 
 
 # ============================================================
-# EMAIL CONTENT
+# EMAIL BODY
 # ============================================================
 
-def _build_plain_text(
+def _plain_email(
     customer_name: str,
     service: str,
     document_title: str,
 ) -> str:
-
     greeting = (
         f"Dear {customer_name},"
         if customer_name
         else "Hello,"
     )
 
-    return "\n".join([
-        greeting,
-        "",
-        "Your document from Naija Pocket Business Center "
-        "is attached to this email.",
-        "",
-        f"Service: {service}",
-        f"Document title: {document_title}",
-        "",
-        "Please open the attachment to access your document.",
-        "",
-        "If you need assistance, please contact NPBC Customer Care.",
-        "",
-        "Thank you for choosing Naija Pocket Business Center.",
-        "",
-        "Fast • Convenient • Open 24/7",
-        "",
-        "Naija Pocket Business Center",
-    ])
+    return (
+        f"{greeting}\n\n"
+        "Your document from Naija Pocket Business Center is attached.\n\n"
+        f"Service: {service}\n"
+        f"Document title: {document_title}\n\n"
+        "Please open the attachment to access your document.\n\n"
+        "If you need assistance, please contact NPBC Customer Care.\n\n"
+        "Thank you for choosing Naija Pocket Business Center.\n\n"
+        "Fast • Convenient • Open 24/7\n"
+        "Naija Pocket Business Center"
+    )
 
 
-def _build_html_email(
+def _html_email(
     customer_name: str,
     service: str,
     document_title: str,
 ) -> str:
-
-    safe_name = _safe_html(customer_name)
-    safe_service = _safe_html(service)
-    safe_title = _safe_html(document_title)
-
     greeting = (
-        f"Dear {safe_name},"
-        if safe_name
+        f"Dear {html.escape(customer_name)},"
+        if customer_name
         else "Hello,"
     )
+
+    safe_service = html.escape(service)
+    safe_title = html.escape(document_title)
 
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Your NPBC Document</title>
 </head>
-<body style="margin:0;padding:0;background-color:#f2f2f2;font-family:Arial,Helvetica,sans-serif;color:#202020;">
-
-<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#f2f2f2;">
-<tr>
-<td align="center" style="padding:24px 10px;">
-
-<table role="presentation" width="600" border="0" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background-color:#ffffff;border:1px solid #e5e5e5;">
-
-<tr>
-<td align="center" style="padding:28px 20px;background-color:#080808;border-bottom:4px solid #D4AF37;">
+<body style="margin:0;padding:0;background:#f2f2f2;font-family:Arial,Helvetica,sans-serif;color:#202020;">
+<table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:#f2f2f2;">
+<tr><td align="center" style="padding:24px 10px;">
+<table role="presentation" width="600" border="0" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #e5e5e5;">
+<tr><td align="center" style="padding:28px 20px;background:#080808;border-bottom:4px solid #D4AF37;">
 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td align="center" style="font-size:24px;line-height:32px;font-weight:bold;color:#D4AF37;">
-Naija Pocket Business Center
-</td>
-</tr>
-<tr>
-<td align="center" style="padding-top:8px;font-size:13px;line-height:20px;color:#ffffff;">
-Fast &bull; Convenient &bull; Open 24/7
-</td>
-</tr>
+<tr><td align="center" style="font-size:24px;line-height:32px;font-weight:bold;color:#D4AF37;">Naija Pocket Business Center</td></tr>
+<tr><td align="center" style="padding-top:8px;font-size:13px;line-height:20px;color:#ffffff;">Fast &bull; Convenient &bull; Open 24/7</td></tr>
 </table>
-</td>
-</tr>
-
-<tr>
-<td style="padding:30px 24px 12px;font-size:15px;line-height:25px;color:#202020;">
+</td></tr>
+<tr><td style="padding:30px 24px 12px;font-size:15px;line-height:25px;">
 <p style="margin:0 0 18px;">{greeting}</p>
-<p style="margin:0 0 18px;">
-Your document from <strong>Naija Pocket Business Center</strong>
-is attached to this email.
-</p>
-<p style="margin:0 0 18px;">
-Please open the attachment to access your document.
-</p>
-</td>
-</tr>
-
-<tr>
-<td style="padding:0 24px 26px;">
+<p style="margin:0 0 18px;">Your document from <strong>Naija Pocket Business Center</strong> is attached to this email.</p>
+<p style="margin:0 0 18px;">Please open the attachment to access your document.</p>
+</td></tr>
+<tr><td style="padding:0 24px 26px;">
 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="border:1px solid #e5e5e5;">
-<tr>
-<td colspan="2" style="padding:14px 16px;background-color:#080808;color:#D4AF37;font-size:15px;line-height:22px;font-weight:bold;">
-Document Details
-</td>
-</tr>
-<tr>
-<td width="34%" valign="top" style="padding:12px 10px 12px 16px;border-bottom:1px solid #eeeeee;font-size:13px;line-height:21px;font-weight:bold;color:#555555;">
-Service
-</td>
-<td width="66%" valign="top" style="padding:12px 16px 12px 10px;border-bottom:1px solid #eeeeee;font-size:13px;line-height:21px;color:#202020;word-break:break-word;">
-{safe_service}
-</td>
-</tr>
-<tr>
-<td width="34%" valign="top" style="padding:12px 10px 12px 16px;font-size:13px;line-height:21px;font-weight:bold;color:#555555;">
-Document Title
-</td>
-<td width="66%" valign="top" style="padding:12px 16px 12px 10px;font-size:13px;line-height:21px;color:#202020;word-break:break-word;">
-{safe_title}
-</td>
-</tr>
+<tr><td colspan="2" style="padding:14px 16px;background:#080808;color:#D4AF37;font-weight:bold;">Document Details</td></tr>
+<tr><td width="34%" style="padding:12px 10px 12px 16px;border-bottom:1px solid #eeeeee;font-weight:bold;color:#555555;">Service</td><td width="66%" style="padding:12px 16px 12px 10px;border-bottom:1px solid #eeeeee;word-break:break-word;">{safe_service}</td></tr>
+<tr><td width="34%" style="padding:12px 10px 12px 16px;font-weight:bold;color:#555555;">Document Title</td><td width="66%" style="padding:12px 16px 12px 10px;word-break:break-word;">{safe_title}</td></tr>
 </table>
-</td>
-</tr>
-
-<tr>
-<td style="padding:0 24px 28px;font-size:14px;line-height:23px;color:#444444;">
-<p style="margin:0 0 14px;">
-If you need assistance, please contact NPBC Customer Care.
-</p>
-<p style="margin:0;">
-Thank you for choosing Naija Pocket Business Center.
-</p>
-</td>
-</tr>
-
-<tr>
-<td align="center" style="padding:20px 16px;background-color:#080808;border-top:3px solid #D4AF37;font-size:12px;line-height:20px;color:#ffffff;">
-<strong style="color:#D4AF37;">Naija Pocket Business Center</strong>
-<br>
+</td></tr>
+<tr><td style="padding:0 24px 28px;font-size:14px;line-height:23px;color:#444444;">
+<p>If you need assistance, please contact NPBC Customer Care.</p>
+<p>Thank you for choosing Naija Pocket Business Center.</p>
+</td></tr>
+<tr><td align="center" style="padding:20px 16px;background:#080808;border-top:3px solid #D4AF37;font-size:12px;line-height:20px;color:#ffffff;">
+<strong style="color:#D4AF37;">Naija Pocket Business Center</strong><br>
 Fast &bull; Convenient &bull; Open 24/7
-</td>
-</tr>
-
+</td></tr>
 </table>
-</td>
-</tr>
+</td></tr>
 </table>
-
 </body>
 </html>"""
 
@@ -522,79 +608,64 @@ Fast &bull; Convenient &bull; Open 24/7
 # EMAIL MESSAGE
 # ============================================================
 
-def _build_email_message(
-    sender_email: str,
-    recipient_email: str,
-    document_path: Path,
+def _build_message(
+    sender: str,
+    recipient: str,
+    attachment_path: Path,
     service: str,
     document_title: str,
     customer_name: str,
     subject: str,
 ) -> EmailMessage:
-
     message = EmailMessage()
 
-    message["From"] = formataddr(
-        (BRAND_NAME, sender_email)
-    )
-    message["To"] = recipient_email
-    message["Subject"] = _clean_header(
-        subject,
-        DEFAULT_SUBJECT,
-    )
-    message["X-Mailer"] = (
-        "Naija Pocket Business Center Email Delivery"
-    )
+    message["From"] = formataddr((BRAND_NAME, sender))
+    message["To"] = recipient
+    message["Subject"] = _header(subject, DEFAULT_SUBJECT)
+    message["X-Mailer"] = "NPBC Gmail SMTP Delivery"
 
     message.set_content(
-        _build_plain_text(
-            customer_name,
-            service,
-            document_title,
-        )
+        _plain_email(customer_name, service, document_title)
     )
 
     message.add_alternative(
-        _build_html_email(
-            customer_name,
-            service,
-            document_title,
-        ),
+        _html_email(customer_name, service, document_title),
         subtype="html",
     )
 
-    # Attach the existing document without changing its contents.
-    with document_path.open("rb") as document_file:
-        attachment_bytes = document_file.read()
+    with attachment_path.open("rb") as file_handle:
+        attachment = file_handle.read()
 
-    if not attachment_bytes:
-        raise ValueError("The saved document is empty.")
+    if not attachment:
+        raise ValueError("The attachment is empty.")
 
-    main_type, sub_type = _get_attachment_mime_type(
-        document_path
-    )
+    if len(attachment) > MAX_ATTACHMENT_SIZE_BYTES:
+        raise ValueError(
+            f"The attachment exceeds the {MAX_ATTACHMENT_SIZE_MB} MB limit."
+        )
+
+    main_type, sub_type = _mime_type(attachment_path)
 
     message.add_attachment(
-        attachment_bytes,
+        attachment,
         maintype=main_type,
         subtype=sub_type,
-        filename=document_path.name,
+        filename=attachment_path.name,
     )
 
     return message
 
 
 # ============================================================
-# GMAIL SMTP TRANSPORT
+# GMAIL TRANSPORT
 # ============================================================
 
 def _send_via_gmail(
-    sender_email: str,
-    app_password: str,
-    recipient_email: str,
+    sender: str,
+    password: str,
+    recipient: str,
     message: EmailMessage,
 ) -> None:
-
     context = ssl.create_default_context()
 
     with smtplib.SMTP(
@@ -602,20 +673,15 @@ def _send_via_gmail(
         SMTP_PORT,
         timeout=SMTP_TIMEOUT,
     ) as smtp:
-
         smtp.ehlo()
         smtp.starttls(context=context)
         smtp.ehlo()
-
-        smtp.login(
-            sender_email,
-            app_password,
-        )
+        smtp.login(sender, password)
 
         refused = smtp.send_message(
             message,
-            from_addr=sender_email,
-            to_addrs=[recipient_email],
+            from_addr=sender,
+            to_addrs=[recipient],
         )
 
         if refused:
@@ -634,12 +700,11 @@ def _failure(
     document_title: str = "",
     details: str = "",
 ) -> Dict[str, Any]:
-
     result = {
         "ok": False,
         "success": False,
         "sent": False,
-        "configured": bool(configuration_status()["configured"]),
+        "configured": is_configured(),
         "provider": "Gmail SMTP",
         "message": message,
         "error": error,
@@ -655,7 +720,7 @@ def _failure(
 
 
 # ============================================================
-# PUBLIC EMAIL DELIVERY FUNCTION
+# PUBLIC DELIVERY FUNCTION
 # ============================================================
 
 def send_document_email(
@@ -681,79 +746,49 @@ def send_document_email(
     filename: str = "",
     file_name: str = "",
     name: str = "",
+    document_content: Any = None,
+    content: Any = None,
+    reviewed_content: Any = None,
+    document_text: Any = None,
+    file_format: str = "docx",
     **kwargs: Any,
 ) -> Dict[str, Any]:
     """
-    Send an existing saved document.
+    Send a saved document or content supplied by the Review page.
 
-    Supports argument names commonly used by payment_api.py.
+    Content aliases:
+        document_content, content, reviewed_content, document_text
 
-    Recipient aliases:
-        recipient_email, customer_email, email, to_email, to, recipient
+    If document_content is supplied, it takes priority over saved-file
+    lookup. The supplied reviewed text is placed in a DOCX attachment.
 
-    Document path aliases:
-        document_path, file_path, saved_path, attachment_path,
-        file, document_file, saved_document_path
-
-    Title aliases:
-        document_title, title, filename, file_name
-
-    Service aliases:
-        service, service_name
-
-    No payment confirmation is required by this function.
+    No payment confirmation is required.
     """
 
-    # --------------------------------------------------------
-    # Resolve recipient
-    # --------------------------------------------------------
-
     recipient_email = (
-        recipient_email
-        or customer_email
-        or email
-        or to_email
-        or to
-        or recipient
+        recipient_email or customer_email or email
+        or to_email or to or recipient
         or kwargs.get("recipient_email")
         or kwargs.get("customer_email")
         or kwargs.get("email")
         or kwargs.get("to_email")
-        or kwargs.get("to")
         or kwargs.get("recipient")
         or ""
     )
 
-    # --------------------------------------------------------
-    # Resolve document path
-    # --------------------------------------------------------
-
     document_path = (
-        document_path
-        or file_path
-        or saved_path
-        or attachment_path
-        or file
-        or document_file
+        document_path or file_path or saved_path
+        or attachment_path or file or document_file
         or saved_document_path
         or kwargs.get("document_path")
         or kwargs.get("file_path")
         or kwargs.get("saved_path")
         or kwargs.get("attachment_path")
-        or kwargs.get("file")
-        or kwargs.get("document_file")
         or kwargs.get("saved_document_path")
     )
 
-    # --------------------------------------------------------
-    # Resolve document title, service and customer name
-    # --------------------------------------------------------
-
     document_title = (
-        document_title
-        or title
-        or filename
-        or file_name
+        document_title or title or filename or file_name
         or kwargs.get("document_title")
         or kwargs.get("title")
         or kwargs.get("filename")
@@ -763,142 +798,203 @@ def send_document_email(
     )
 
     service = (
-        service
-        or service_name
+        service or service_name
         or kwargs.get("service")
         or kwargs.get("service_name")
         or "Document Service"
     )
 
     customer_name = (
-        customer_name
-        or name
+        customer_name or name
         or kwargs.get("customer_name")
         or kwargs.get("name")
         or ""
     )
 
-    subject = (
-        subject
-        or kwargs.get("subject")
-        or DEFAULT_SUBJECT
+    subject = _header(
+        subject or kwargs.get("subject"),
+        DEFAULT_SUBJECT,
     )
 
-    recipient_email = _clean_header(recipient_email)
-    service = _clean_text(service, "Document Service")
-    document_title = _clean_text(document_title)
-    customer_name = _clean_header(customer_name)
-    subject = _clean_header(subject, DEFAULT_SUBJECT)
+    recipient_email = _header(recipient_email)
+    service = _text(service, "Document Service")
+    document_title = _text(document_title)
+    customer_name = _header(customer_name)
 
-    # --------------------------------------------------------
-    # Validate customer email
-    # --------------------------------------------------------
+    document_content = (
+        document_content
+        if document_content is not None
+        else content
+    )
 
-    if not _valid_email_address(recipient_email):
+    if document_content is None:
+        document_content = reviewed_content
+
+    if document_content is None:
+        document_content = document_text
+
+    if document_content is None:
+        document_content = kwargs.get("document_content")
+
+    if document_content is None:
+        document_content = kwargs.get("reviewed_content")
+
+    if document_content is None:
+        document_content = kwargs.get("document_text")
+
+    if not _valid_email(recipient_email):
         return _failure(
-            message="A valid customer email address is required.",
-            error="invalid_recipient_email",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
+            "A valid customer email address is required.",
+            "invalid_recipient_email",
+            recipient_email,
+            service,
+            document_title,
         )
-
-    # --------------------------------------------------------
-    # Validate document title
-    # --------------------------------------------------------
 
     if not document_title:
         return _failure(
-            message="The document title is required for email delivery.",
-            error="missing_document_title",
-            recipient_email=recipient_email,
-            service=service,
+            "The document title is required.",
+            "missing_document_title",
+            recipient_email,
+            service,
+        )
+
+    if not document_content and not document_path:
+        return _failure(
+            "The reviewed document content or a saved document path is required.",
+            "missing_document",
+            recipient_email,
+            service,
+            document_title,
         )
 
     # --------------------------------------------------------
-    # Validate existing saved document
+    # Gmail credentials
     # --------------------------------------------------------
 
     try:
-        saved_document = _resolve_existing_document(document_path)
-
-    except FileNotFoundError as exc:
-        return _failure(
-            message=str(exc),
-            error="document_not_found",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-        )
-
-    except PermissionError as exc:
-        return _failure(
-            message=str(exc),
-            error="document_access_denied",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-        )
-
-    except (ValueError, OSError) as exc:
-        return _failure(
-            message=str(exc),
-            error="invalid_document",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-        )
-
-    # --------------------------------------------------------
-    # Read Gmail credentials directly from the environment
-    # --------------------------------------------------------
-
-    try:
-        sender_email, app_password = _get_smtp_credentials()
+        sender, password = _get_credentials()
 
     except RuntimeError as exc:
         return _failure(
-            message=str(exc),
-            error="smtp_not_configured",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
+            str(exc),
+            "smtp_not_configured",
+            recipient_email,
+            service,
+            document_title,
         )
 
     # --------------------------------------------------------
-    # Build message and attach existing document
+    # Prepare attachment
     # --------------------------------------------------------
 
+    temporary_path = None
+
     try:
-        message = _build_email_message(
-            sender_email=sender_email,
-            recipient_email=recipient_email,
-            document_path=saved_document,
+        if document_content:
+            # This path is used when Review sends its document text
+            # directly to the email API.
+            requested_format = _text(file_format, "docx").lower().lstrip(".")
+
+            if requested_format not in {"docx", "txt"}:
+                requested_format = "docx"
+
+            with tempfile.NamedTemporaryFile(
+                prefix="npbc_email_",
+                suffix="." + requested_format,
+                delete=False,
+            ) as temporary_file:
+                temporary_path = Path(temporary_file.name)
+
+            if requested_format == "txt":
+                cleaned = _clean_document_content(document_content)
+                temporary_path.write_text(
+                    cleaned,
+                    encoding="utf-8",
+                )
+            else:
+                _create_docx_from_content(
+                    content=document_content,
+                    document_title=document_title,
+                    output_path=temporary_path,
+                )
+
+            attachment_name = _safe_filename(document_title)
+
+            final_name = attachment_name + "." + requested_format
+
+            message_path = temporary_path
+
+            # The email attachment uses the document title as its filename.
+            # The temporary file itself remains in the secure system temp folder.
+
+        else:
+            message_path = _resolve_existing_document(document_path)
+            final_name = message_path.name
+
+        message = _build_message(
+            sender=sender,
+            recipient=recipient_email,
+            attachment_path=message_path,
             service=service,
             document_title=document_title,
             customer_name=customer_name,
             subject=subject,
         )
 
+        # Replace the attachment filename with the clean document title.
+        for part in message.iter_attachments():
+            part.replace_header(
+                "Content-Disposition",
+                f'attachment; filename="{final_name}"',
+            )
+
+    except FileNotFoundError as exc:
+        return _failure(
+            str(exc),
+            "document_not_found",
+            recipient_email,
+            service,
+            document_title,
+        )
+
+    except PermissionError as exc:
+        return _failure(
+            str(exc),
+            "document_access_denied",
+            recipient_email,
+            service,
+            document_title,
+        )
+
+    except (ValueError, OSError) as exc:
+        return _failure(
+            str(exc),
+            "document_preparation_failed",
+            recipient_email,
+            service,
+            document_title,
+        )
+
     except Exception as exc:
         return _failure(
-            message="The email could not be prepared.",
-            error="email_preparation_failed",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-            details=str(exc),
+            "The email attachment could not be prepared.",
+            "email_preparation_failed",
+            recipient_email,
+            service,
+            document_title,
+            str(exc),
         )
 
     # --------------------------------------------------------
-    # Send email through Gmail
+    # Send email
     # --------------------------------------------------------
 
     try:
         _send_via_gmail(
-            sender_email=sender_email,
-            app_password=app_password,
-            recipient_email=recipient_email,
+            sender=sender,
+            password=password,
+            recipient=recipient_email,
             message=message,
         )
 
@@ -908,105 +1004,99 @@ def send_document_email(
             "sent": True,
             "configured": True,
             "provider": "Gmail SMTP",
-            "message": (
-                "The document email was accepted by Gmail SMTP."
-            ),
+            "message": "The document email was accepted by Gmail SMTP.",
             "recipient_email": recipient_email,
             "service": service,
             "document_title": document_title,
-            "attachment": saved_document.name,
-            "attachment_path": str(saved_document),
+            "attachment": final_name,
         }
 
     except smtplib.SMTPAuthenticationError as exc:
         return _failure(
-            message=(
-                "Gmail rejected the login. Verify that GMAIL_ADDRESS "
-                "matches the Google account that created the app password, "
-                "and that GMAIL_APP_PASSWORD contains that account's "
-                "current Google app password."
-            ),
-            error="smtp_authentication_failed",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-            details=str(exc),
+            "Gmail rejected the login. Check GMAIL_ADDRESS and the Google app password.",
+            "smtp_authentication_failed",
+            recipient_email,
+            service,
+            document_title,
+            str(exc),
         )
 
     except smtplib.SMTPRecipientsRefused as exc:
         return _failure(
-            message=(
-                "Gmail refused the recipient address. "
-                "Check the customer's email address."
-            ),
-            error="recipient_refused",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-            details=str(exc),
+            "Gmail refused the recipient address. Check the customer's email.",
+            "recipient_refused",
+            recipient_email,
+            service,
+            document_title,
+            str(exc),
         )
 
     except smtplib.SMTPConnectError as exc:
         return _failure(
-            message="Could not establish a connection to Gmail SMTP.",
-            error="smtp_connection_failed",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-            details=str(exc),
+            "Could not establish a connection to Gmail SMTP.",
+            "smtp_connection_failed",
+            recipient_email,
+            service,
+            document_title,
+            str(exc),
         )
 
     except smtplib.SMTPServerDisconnected as exc:
         return _failure(
-            message=(
-                "Gmail disconnected before confirming the email operation."
-            ),
-            error="smtp_disconnected",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-            details=str(exc),
+            "Gmail disconnected before confirming the email operation.",
+            "smtp_disconnected",
+            recipient_email,
+            service,
+            document_title,
+            str(exc),
         )
 
     except smtplib.SMTPException as exc:
         return _failure(
-            message="Gmail SMTP could not send the document email.",
-            error="smtp_error",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-            details=str(exc),
+            "Gmail SMTP could not send the document email.",
+            "smtp_error",
+            recipient_email,
+            service,
+            document_title,
+            str(exc),
         )
 
     except (socket.timeout, TimeoutError) as exc:
         return _failure(
-            message="The connection to Gmail timed out.",
-            error="smtp_timeout",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-            details=str(exc),
+            "The connection to Gmail timed out.",
+            "smtp_timeout",
+            recipient_email,
+            service,
+            document_title,
+            str(exc),
         )
 
     except OSError as exc:
         return _failure(
-            message="A network or system error prevented email delivery.",
-            error="network_error",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-            details=str(exc),
+            "A network or system error prevented email delivery.",
+            "network_error",
+            recipient_email,
+            service,
+            document_title,
+            str(exc),
         )
 
     except Exception as exc:
         return _failure(
-            message="An unexpected error occurred during email delivery.",
-            error="unexpected_delivery_error",
-            recipient_email=recipient_email,
-            service=service,
-            document_title=document_title,
-            details=str(exc),
+            "An unexpected error occurred during email delivery.",
+            "unexpected_delivery_error",
+            recipient_email,
+            service,
+            document_title,
+            str(exc),
         )
+
+    finally:
+        if temporary_path is not None:
+            try:
+                temporary_path.unlink(missing_ok=True)
+            except Exception:
+                pass
 
 
 # ============================================================
@@ -1022,7 +1112,6 @@ def send_email(
     subject: str = "",
     **kwargs: Any,
 ) -> Dict[str, Any]:
-
     return send_document_email(
         recipient_email=recipient_email,
         document_path=document_path,
@@ -1043,7 +1132,6 @@ def send_document(
     subject: str = "",
     **kwargs: Any,
 ) -> Dict[str, Any]:
-
     return send_document_email(
         recipient_email=recipient_email,
         document_path=document_path,
@@ -1072,11 +1160,11 @@ if __name__ == "__main__":
 
     if status["configured"]:
         print(
-            "Both Gmail environment variables were detected. "
-            "This check does not send an email or verify the Gmail login."
+            "Gmail credentials were detected. "
+            "This check does not send a test email."
         )
     else:
         print(
-            "The running Python process cannot use the required Gmail "
-            "configuration. Review the message above."
+            "Gmail is not configured correctly. "
+            "Check the environment variables shown above."
         )
