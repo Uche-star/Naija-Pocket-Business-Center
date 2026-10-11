@@ -2,18 +2,15 @@
 Naija Pocket Business Center (NPBC)
 Payment API and Gmail SMTP Document Delivery
 
-Email delivery:
-- Uses Gmail SMTP through email_delivery.py.
-- Does not require payment confirmation before sending an email.
-- Attaches the exact existing saved document.
-- Does not regenerate documents during delivery.
-- Identifies documents by service and document title.
+Email delivery is independent of payment confirmation.
 
 Required Render environment variables:
     GMAIL_ADDRESS
     GMAIL_APP_PASSWORD
+    BACK_OFFICE_ADMIN_KEY (optional)
+    PUBLIC_API_BASE_URL (optional)
 
-SMTP:
+Gmail SMTP:
     smtp.gmail.com
     Port 587
     STARTTLS
@@ -21,28 +18,25 @@ SMTP:
 
 import os
 import re
-import json
 import time
-import uuid
-import sqlite3
 import secrets
-import inspect
+import sqlite3
 import logging
+import inspect
 
 from pathlib import Path
-from datetime import datetime, timezone, timedelta
-from typing import Optional, Any
+from datetime import datetime, timezone
+from typing import Optional
 
 from fastapi import (
     FastAPI,
     HTTPException,
     Header,
     Query,
-    Request,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
-from pydantic import BaseModel, EmailStr, Field
+from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
 
 
 # ============================================================
@@ -67,9 +61,7 @@ PUBLIC_API_BASE_URL = os.getenv(
     "https://naija-pocket-business-center.onrender.com",
 ).rstrip("/")
 
-APP_VERSION = "npbc-email-delivery-priority-v20"
-
-TOKEN_TTL_SECONDS = 60 * 60
+APP_VERSION = "npbc-email-delivery-priority-v21"
 
 SUPPORTED_EXTENSIONS = {
     ".docx",
@@ -81,6 +73,8 @@ SUPPORTED_EXTENSIONS = {
     ".csv",
 }
 
+TOKEN_TTL_SECONDS = 3600
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("npbc.payment_api")
 
@@ -91,9 +85,9 @@ logger = logging.getLogger("npbc.payment_api")
 
 try:
     import email_delivery
-except Exception as exc:
+except Exception:
     email_delivery = None
-    logger.exception("Could not import email_delivery.py: %s", exc)
+    logger.exception("Could not import email_delivery.py")
 
 
 # ============================================================
@@ -103,10 +97,7 @@ except Exception as exc:
 app = FastAPI(
     title="Naija Pocket Business Center API",
     version=APP_VERSION,
-    description=(
-        "NPBC document delivery, Gmail SMTP email, "
-        "saved document access and payment management."
-    ),
+    description="NPBC document delivery, email and payment API.",
 )
 
 app.add_middleware(
@@ -119,40 +110,84 @@ app.add_middleware(
 
 
 # ============================================================
+# MODELS
+# ============================================================
+
+class EmailDeliveryRequest(BaseModel):
+    recipient_email: str = Field(..., min_length=3, max_length=320)
+    service: str = Field(..., min_length=1, max_length=200)
+    document_title: str = Field(..., min_length=1, max_length=500)
+    customer_name: Optional[str] = None
+
+
+class ProductRequest(BaseModel):
+    service: str = Field(..., min_length=1, max_length=200)
+    document_title: str = Field(..., min_length=1, max_length=500)
+    customer_email: Optional[str] = None
+    customer_name: Optional[str] = None
+    amount: Optional[float] = 0
+
+
+class PaymentStatusRequest(BaseModel):
+    order_reference: str
+    payment_status: str
+
+
+class DownloadTokenRequest(BaseModel):
+    service: str
+    document_title: str
+
+
+class BackOfficeLoginRequest(BaseModel):
+    admin_key: str
+
+
+# ============================================================
 # GENERAL HELPERS
 # ============================================================
 
-def utc_now() -> str:
+def utc_now():
     return datetime.now(timezone.utc).isoformat()
 
 
-def safe_name(value: str) -> str:
-    """
-    Convert a service or title into a safe folder name.
-    """
+def safe_name(value):
     value = str(value or "").strip()
-
     value = re.sub(r"[\\/]+", " ", value)
     value = re.sub(r"[^A-Za-z0-9 ._()&'-]", "", value)
     value = re.sub(r"\s+", " ", value)
-
     return value.strip(" ._-") or "Untitled"
 
 
-def normalize_text(value: Any) -> str:
-    if value is None:
-        return ""
-
-    return str(value).strip()
+def normalize_text(value):
+    return str(value or "").strip()
 
 
-def normalize_email(value: Any) -> str:
+def normalize_email(value):
     return normalize_text(value).lower()
 
 
-def database_connection(database_path: Path):
+def valid_email(value):
+    value = normalize_email(value)
+
+    if len(value) > 320:
+        return False
+
+    if not re.fullmatch(
+        r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+"
+        r"@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}"
+        r"[A-Za-z0-9])?"
+        r"(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}"
+        r"[A-Za-z0-9])?)+",
+        value,
+    ):
+        return False
+
+    return True
+
+
+def db_connect(path):
     connection = sqlite3.connect(
-        str(database_path),
+        str(path),
         timeout=30,
         check_same_thread=False,
     )
@@ -160,11 +195,8 @@ def database_connection(database_path: Path):
     return connection
 
 
-def table_exists(
-    connection: sqlite3.Connection,
-    table_name: str,
-) -> bool:
-    row = connection.execute(
+def table_exists(connection, table_name):
+    result = connection.execute(
         """
         SELECT name
         FROM sqlite_master
@@ -173,38 +205,27 @@ def table_exists(
         (table_name,),
     ).fetchone()
 
-    return row is not None
+    return result is not None
 
 
-def table_columns(
-    connection: sqlite3.Connection,
-    table_name: str,
-) -> set:
+def table_columns(connection, table_name):
     if not table_exists(connection, table_name):
         return set()
 
-    rows = connection.execute(
-        f'PRAGMA table_info("{table_name}")'
-    ).fetchall()
+    return {
+        row["name"]
+        for row in connection.execute(
+            f'PRAGMA table_info("{table_name}")'
+        ).fetchall()
+    }
 
-    return {row["name"] for row in rows}
 
-
-def row_to_dict(row):
-    if row is None:
-        return None
-
-    return dict(row)
-
+# ============================================================
+# DATABASE INITIALIZATION
+# ============================================================
 
 def initialize_databases():
-    """
-    Create the basic tables if they do not exist.
-
-    Existing tables are not dropped or reset.
-    """
-
-    with database_connection(PRODUCT_DB) as connection:
+    with db_connect(PRODUCT_DB) as connection:
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS document_products (
@@ -254,7 +275,7 @@ def initialize_databases():
 
         connection.commit()
 
-    with database_connection(PAYMENT_DB) as connection:
+    with db_connect(PAYMENT_DB) as connection:
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS payment_orders (
@@ -277,60 +298,14 @@ def initialize_databases():
 try:
     initialize_databases()
 except Exception:
-    logger.exception("Database initialization encountered an error.")
+    logger.exception("Database initialization failed.")
 
 
 # ============================================================
-# REQUEST MODELS
+# SAVED DOCUMENT LOOKUP
 # ============================================================
 
-class EmailDeliveryRequest(BaseModel):
-    recipient_email: EmailStr
-    service: str = Field(..., min_length=1, max_length=200)
-    document_title: str = Field(..., min_length=1, max_length=500)
-    customer_name: Optional[str] = None
-
-
-class ProductRequest(BaseModel):
-    service: str = Field(..., min_length=1, max_length=200)
-    document_title: str = Field(..., min_length=1, max_length=500)
-    customer_email: Optional[str] = None
-    customer_name: Optional[str] = None
-    amount: Optional[float] = 0
-
-
-class PaymentStatusRequest(BaseModel):
-    order_reference: str
-    payment_status: str
-
-
-class DownloadTokenRequest(BaseModel):
-    service: str
-    document_title: str
-
-
-class BackOfficeLoginRequest(BaseModel):
-    admin_key: str
-
-
-# ============================================================
-# SAVED DOCUMENT DISCOVERY
-# ============================================================
-
-def _path_is_inside_download_directory(path: Path) -> bool:
-    try:
-        resolved_path = path.resolve()
-        resolved_root = DOWNLOAD_DIR.resolve()
-
-        return (
-            resolved_path == resolved_root
-            or resolved_root in resolved_path.parents
-        )
-    except Exception:
-        return False
-
-
-def _valid_document_path(value: Any) -> Optional[Path]:
+def valid_saved_path(value):
     if not value:
         return None
 
@@ -354,16 +329,20 @@ def _valid_document_path(value: Any) -> Optional[Path]:
         return None
 
 
-def _product_record(
-    service: str,
-    document_title: str,
-) -> Optional[dict]:
-    """
-    Find the existing product record using service and title.
-    """
-
+def inside_download_directory(path):
     try:
-        with database_connection(PRODUCT_DB) as connection:
+        resolved = path.resolve()
+        root = DOWNLOAD_DIR.resolve()
+
+        return resolved == root or root in resolved.parents
+
+    except Exception:
+        return False
+
+
+def get_product_record(service, document_title):
+    try:
+        with db_connect(PRODUCT_DB) as connection:
             if not table_exists(connection, "document_products"):
                 return None
 
@@ -380,55 +359,25 @@ def _product_record(
                 SELECT *
                 FROM document_products
                 WHERE LOWER(TRIM(service)) = LOWER(TRIM(?))
-                  AND LOWER(TRIM(document_title)) = LOWER(TRIM(?))
+                  AND LOWER(TRIM(document_title)) =
+                      LOWER(TRIM(?))
                 ORDER BY id DESC
                 LIMIT 1
                 """,
                 (service, document_title),
             ).fetchone()
 
-            return row_to_dict(row)
+            return dict(row) if row else None
 
     except Exception:
-        logger.exception("Could not find product record.")
+        logger.exception("Could not read product record.")
         return None
 
 
-def _saved_path_from_record(record: Optional[dict]) -> Optional[Path]:
-    if not record:
-        return None
-
-    possible_fields = (
-        "document_saved_path",
-        "saved_path",
-        "file_path",
-        "document_path",
-        "prepared_file_path",
-        "output_path",
-    )
-
-    for field in possible_fields:
-        path = _valid_document_path(record.get(field))
-
-        if path:
-            return path
-
-    return None
-
-
-def find_saved_document(
-    service: str,
-    document_title: str,
-) -> Optional[Path]:
+def find_saved_document(service, document_title):
     """
-    Find the exact existing saved document.
-
-    Search order:
-    1. Saved path in the product database.
-    2. Canonical downloads/service/title directory.
-    3. Existing files elsewhere inside downloads.
-
-    This function does not generate or modify documents.
+    Locate the exact existing document.
+    Never generate or rewrite the document.
     """
 
     service = normalize_text(service)
@@ -437,48 +386,49 @@ def find_saved_document(
     if not service or not document_title:
         return None
 
-    record = _product_record(service, document_title)
+    record = get_product_record(service, document_title)
 
-    recorded_path = _saved_path_from_record(record)
+    if record:
+        for field in (
+            "document_saved_path",
+            "saved_path",
+            "file_path",
+            "document_path",
+            "prepared_file_path",
+            "output_path",
+        ):
+            path = valid_saved_path(record.get(field))
 
-    if recorded_path:
-        return recorded_path
-
-    service_directory = safe_name(service)
-    title_directory = safe_name(document_title)
+            if path:
+                return path
 
     canonical_directory = (
-        DOWNLOAD_DIR / service_directory / title_directory
+        DOWNLOAD_DIR
+        / safe_name(service)
+        / safe_name(document_title)
     )
 
     if canonical_directory.is_dir():
-        candidates = []
-
-        try:
-            for path in canonical_directory.iterdir():
-                if (
-                    path.is_file()
-                    and path.suffix.lower() in SUPPORTED_EXTENSIONS
-                ):
-                    candidates.append(path)
-        except OSError:
-            logger.exception("Could not inspect canonical directory.")
+        candidates = [
+            path
+            for path in canonical_directory.iterdir()
+            if path.is_file()
+            and path.suffix.lower() in SUPPORTED_EXTENSIONS
+        ]
 
         if candidates:
-            candidates.sort(
+            return max(
+                candidates,
                 key=lambda item: item.stat().st_mtime,
-                reverse=True,
-            )
-
-            return candidates[0].resolve()
+            ).resolve()
 
     if not DOWNLOAD_DIR.exists():
         return None
 
-    matching_candidates = []
+    expected_service = safe_name(service).casefold()
+    expected_title = safe_name(document_title).casefold()
 
-    expected_service = service.casefold()
-    expected_title = document_title.casefold()
+    matches = []
 
     try:
         for path in DOWNLOAD_DIR.rglob("*"):
@@ -488,88 +438,70 @@ def find_saved_document(
             if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
                 continue
 
-            if not _path_is_inside_download_directory(path):
+            if not inside_download_directory(path):
                 continue
 
-            path_parts = [
-                part.casefold()
+            parts = [
+                safe_name(part).casefold()
                 for part in path.parts
             ]
 
-            filename = path.stem.casefold()
-
             title_match = (
-                filename == expected_title
-                or safe_name(filename).casefold()
-                == safe_name(expected_title).casefold()
+                safe_name(path.stem).casefold()
+                == expected_title
             )
 
-            service_match = expected_service in path_parts
+            service_match = expected_service in parts
 
             if title_match and service_match:
-                matching_candidates.append(path)
+                matches.append(path.resolve())
 
     except OSError:
-        logger.exception("Error searching saved documents.")
+        logger.exception("Document search failed.")
 
-    if matching_candidates:
-        matching_candidates.sort(
+    if matches:
+        return max(
+            matches,
             key=lambda item: item.stat().st_mtime,
-            reverse=True,
         )
-
-        return matching_candidates[0].resolve()
 
     return None
 
 
 # ============================================================
-# PRODUCT RECORD MANAGEMENT
+# REGISTER EXISTING DOCUMENT
 # ============================================================
 
 def register_saved_document(
-    service: str,
-    document_title: str,
-    file_path: Path,
-    customer_email: Optional[str] = None,
-    customer_name: Optional[str] = None,
+    service,
+    document_title,
+    file_path,
+    customer_email=None,
+    customer_name=None,
 ):
-    """
-    Register an already-existing document.
-
-    The document itself is never regenerated.
-    """
-
     if not file_path or not file_path.is_file():
         raise FileNotFoundError("Saved document does not exist.")
 
-    service = normalize_text(service)
-    document_title = normalize_text(document_title)
+    now = utc_now()
 
-    with database_connection(PRODUCT_DB) as connection:
+    with db_connect(PRODUCT_DB) as connection:
         columns = table_columns(
             connection,
             "document_products",
         )
-
-        if not columns:
-            raise RuntimeError(
-                "The document_products table is unavailable."
-            )
 
         existing = connection.execute(
             """
             SELECT id
             FROM document_products
             WHERE LOWER(TRIM(service)) = LOWER(TRIM(?))
-              AND LOWER(TRIM(document_title)) = LOWER(TRIM(?))
+              AND LOWER(TRIM(document_title)) =
+                  LOWER(TRIM(?))
             ORDER BY id DESC
             LIMIT 1
             """,
             (service, document_title),
         ).fetchone()
-
-        now = utc_now()
 
         values = {
             "service": service,
@@ -581,17 +513,17 @@ def register_saved_document(
         }
 
         if existing:
-            update_fields = {
+            updates = {
                 key: value
                 for key, value in values.items()
-                if key in columns and key != "service"
-                and key != "document_title"
+                if key in columns
+                and key not in {"service", "document_title"}
             }
 
-            if update_fields:
+            if updates:
                 assignments = ", ".join(
                     f'"{key}" = ?'
-                    for key in update_fields
+                    for key in updates
                 )
 
                 connection.execute(
@@ -600,12 +532,11 @@ def register_saved_document(
                     SET {assignments}
                     WHERE id = ?
                     """,
-                    list(update_fields.values()) + [existing["id"]],
+                    list(updates.values()) + [existing["id"]],
                 )
 
         else:
-            if "created_at" in columns:
-                values["created_at"] = now
+            values["created_at"] = now
 
             insert_values = {
                 key: value
@@ -613,114 +544,109 @@ def register_saved_document(
                 if key in columns
             }
 
-            if insert_values:
-                fields = ", ".join(
-                    f'"{key}"'
-                    for key in insert_values
-                )
+            fields = ", ".join(
+                f'"{key}"'
+                for key in insert_values
+            )
 
-                placeholders = ", ".join(
-                    "?"
-                    for _ in insert_values
-                )
+            placeholders = ", ".join(
+                "?"
+                for _ in insert_values
+            )
 
-                connection.execute(
-                    f"""
-                    INSERT INTO document_products ({fields})
-                    VALUES ({placeholders})
-                    """,
-                    list(insert_values.values()),
-                )
+            connection.execute(
+                f"""
+                INSERT INTO document_products ({fields})
+                VALUES ({placeholders})
+                """,
+                list(insert_values.values()),
+            )
 
         connection.commit()
 
 
 # ============================================================
-# GMAIL SMTP DELIVERY
+# EMAIL CONFIGURATION
 # ============================================================
 
-def _email_configuration_status() -> dict:
+def email_configuration_status():
     if email_delivery is None:
         return {
             "configured": False,
-            "message": (
-                "email_delivery.py could not be imported."
-            ),
+            "message": "Could not import email_delivery.py.",
         }
 
-    status_function = getattr(
+    function = getattr(
         email_delivery,
         "configuration_status",
         None,
     )
 
-    if not callable(status_function):
-        configured = bool(
-            os.getenv("GMAIL_ADDRESS")
-            and os.getenv("GMAIL_APP_PASSWORD")
-        )
+    if callable(function):
+        try:
+            result = function()
 
-        return {
-            "configured": configured,
-            "message": (
-                "Gmail credentials are configured."
-                if configured
-                else "Gmail credentials are missing."
-            ),
-        }
+            if isinstance(result, dict):
+                return result
 
-    try:
-        result = status_function()
+            return {
+                "configured": bool(result),
+                "message": str(result),
+            }
 
-        if isinstance(result, dict):
-            return result
+        except Exception as exc:
+            logger.exception("Email configuration check failed.")
 
-        return {
-            "configured": bool(result),
-            "message": str(result),
-        }
+            return {
+                "configured": False,
+                "message": str(exc),
+            }
 
-    except Exception as exc:
-        logger.exception("Email configuration check failed.")
+    configured = bool(
+        os.getenv("GMAIL_ADDRESS")
+        and os.getenv("GMAIL_APP_PASSWORD")
+    )
 
-        return {
-            "configured": False,
-            "message": str(exc),
-        }
+    return {
+        "configured": configured,
+        "message": (
+            "Gmail credentials are configured."
+            if configured
+            else "Set GMAIL_ADDRESS and GMAIL_APP_PASSWORD."
+        ),
+    }
 
 
-def _invoke_email_function(
-    recipient_email: str,
-    file_path: Path,
-    service: str,
-    document_title: str,
-    customer_name: Optional[str],
+# ============================================================
+# SEND DOCUMENT EMAIL
+# ============================================================
+
+def invoke_email_sender(
+    recipient_email,
+    file_path,
+    service,
+    document_title,
+    customer_name=None,
 ):
-    """
-    Call the installed email_delivery.py function while
-    accommodating supported parameter naming variations.
-    """
-
     if email_delivery is None:
         raise RuntimeError(
-            "The email_delivery.py module could not be imported."
+            "email_delivery.py could not be imported."
         )
 
-    function = getattr(
+    sender = getattr(
         email_delivery,
         "send_document_email",
         None,
     )
 
-    if not callable(function):
+    if not callable(sender):
         raise RuntimeError(
-            "email_delivery.py must provide send_document_email()."
+            "email_delivery.py must define send_document_email()."
         )
 
-    signature = inspect.signature(function)
-    parameters = signature.parameters
+    parameters = inspect.signature(sender).parameters
 
-    values = {
+    available_values = {
         "recipient_email": recipient_email,
         "customer_email": recipient_email,
         "email": recipient_email,
@@ -749,31 +675,27 @@ def _invoke_email_function(
 
     kwargs = {}
 
-    has_var_keyword = any(
+    accepts_extra_keywords = any(
         parameter.kind == inspect.Parameter.VAR_KEYWORD
         for parameter in parameters.values()
     )
 
-    for name, parameter in parameters.items():
-        if name in values:
-            kwargs[name] = values[name]
+    for name in parameters:
+        if name in available_values:
+            kwargs[name] = available_values[name]
 
-    if has_var_keyword:
-        for name in (
-            "recipient_email",
-            "file_path",
-            "service",
-            "document_title",
-            "customer_name",
-        ):
-            kwargs.setdefault(name, values[name])
+    if accepts_extra_keywords:
+        kwargs.setdefault("recipient_email", recipient_email)
+        kwargs.setdefault("file_path", str(file_path))
+        kwargs.setdefault("service", service)
+        kwargs.setdefault("document_title", document_title)
+        kwargs.setdefault("customer_name", customer_name or "")
 
-    required_unknown = [
+    missing = [
         name
         for name, parameter in parameters.items()
         if parameter.default is inspect.Parameter.empty
-        and parameter.kind
-        in (
+        and parameter.kind in (
             inspect.Parameter.POSITIONAL_ONLY,
             inspect.Parameter.POSITIONAL_OR_KEYWORD,
             inspect.Parameter.KEYWORD_ONLY,
@@ -781,58 +703,45 @@ def _invoke_email_function(
         and name not in kwargs
     ]
 
-    if required_unknown:
+    if missing:
         raise RuntimeError(
-            "Unsupported required email_delivery.py parameters: "
-            + ", ".join(required_unknown)
+            "Email sender has unsupported required parameters: "
+            + ", ".join(missing)
         )
 
-    result = function(**kwargs)
+    result = sender(**kwargs)
 
     if inspect.isawaitable(result):
         raise RuntimeError(
-            "send_document_email() must be a synchronous function."
+            "send_document_email() must be a normal synchronous function."
         )
 
-    if isinstance(result, dict):
-        if result.get("success") is False:
-            raise RuntimeError(
-                result.get("message")
-                or result.get("error")
-                or "Gmail delivery failed."
-            )
-
-        if result.get("ok") is False:
-            raise RuntimeError(
-                result.get("message")
-                or result.get("error")
-                or "Gmail delivery failed."
-            )
-
-    elif result is False:
+    if result is False:
         raise RuntimeError("Gmail delivery failed.")
+
+    if isinstance(result, dict):
+        if result.get("success") is False or result.get("ok") is False:
+            raise RuntimeError(
+                result.get("message")
+                or result.get("error")
+                or "Gmail delivery failed."
+            )
 
     return result
 
 
 def send_existing_document_email(
-    recipient_email: str,
-    service: str,
-    document_title: str,
-    customer_name: Optional[str] = None,
-) -> dict:
-    """
-    Send an existing saved document by email.
-
-    Payment status is intentionally not checked here.
-    """
-
+    recipient_email,
+    service,
+    document_title,
+    customer_name=None,
+):
     recipient_email = normalize_email(recipient_email)
     service = normalize_text(service)
     document_title = normalize_text(document_title)
 
-    if not recipient_email:
-        raise ValueError("Customer email address is required.")
+    if not valid_email(recipient_email):
+        raise ValueError("Enter a valid customer email address.")
 
     if not service:
         raise ValueError("Service name is required.")
@@ -840,13 +749,12 @@ def send_existing_document_email(
     if not document_title:
         raise ValueError("Document title is required.")
 
-    configuration = _email_configuration_status()
+    status = email_configuration_status()
 
-    if not configuration.get("configured", False):
+    if not status.get("configured", False):
         raise RuntimeError(
-            "Gmail SMTP is not configured. Check the "
-            "GMAIL_ADDRESS and GMAIL_APP_PASSWORD environment "
-            "variables in Render."
+            "Gmail SMTP is not configured. Check GMAIL_ADDRESS "
+            "and GMAIL_APP_PASSWORD in Render environment variables."
         )
 
     file_path = find_saved_document(
@@ -856,11 +764,10 @@ def send_existing_document_email(
 
     if not file_path:
         raise FileNotFoundError(
-            "The saved document could not be found for "
-            f"service '{service}' and title '{document_title}'."
+            "Saved document not found for service "
+            f"'{service}' and title '{document_title}'."
         )
 
-    # Register the existing file without regenerating it.
     register_saved_document(
         service=service,
         document_title=document_title,
@@ -869,7 +776,7 @@ def send_existing_document_email(
         customer_name=customer_name,
     )
 
-    result = _invoke_email_function(
+    result = invoke_email_sender(
         recipient_email=recipient_email,
         file_path=file_path,
         service=service,
@@ -877,14 +784,13 @@ def send_existing_document_email(
         customer_name=customer_name,
     )
 
-    message = (
-        result.get("message", "Email sent successfully.")
-        if isinstance(result, dict)
-        else "Email sent successfully."
-    )
+    message = "Document emailed successfully."
+
+    if isinstance(result, dict):
+        message = result.get("message", message)
 
     try:
-        with database_connection(PRODUCT_DB) as connection:
+        with db_connect(PRODUCT_DB) as connection:
             connection.execute(
                 """
                 INSERT INTO delivery_events (
@@ -910,13 +816,11 @@ def send_existing_document_email(
             connection.commit()
 
     except Exception:
-        logger.exception(
-            "Email was sent, but delivery history could not be saved."
-        )
+        logger.exception("Could not record email delivery event.")
 
     return {
         "success": True,
-        "message": "Document emailed successfully.",
+        "message": message,
         "service": service,
         "document_title": document_title,
         "recipient_email": recipient_email,
@@ -925,7 +829,7 @@ def send_existing_document_email(
 
 
 # ============================================================
-# ROOT AND HEALTH
+# HEALTH AND STATUS
 # ============================================================
 
 @app.get("/")
@@ -955,18 +859,14 @@ def api_status():
     return {
         "success": True,
         "version": APP_VERSION,
-        "email": _email_configuration_status(),
+        "email": email_configuration_status(),
     }
 
 
-# ============================================================
-# EMAIL DELIVERY ENDPOINTS
-# ============================================================
-
 @app.get("/api/email-delivery/status")
 @app.get("/api/delivery/email/status")
-def email_delivery_status():
-    status = _email_configuration_status()
+def email_status():
+    status = email_configuration_status()
 
     return {
         "success": bool(status.get("configured", False)),
@@ -979,68 +879,54 @@ def email_delivery_status():
     }
 
 
+# ============================================================
+# EMAIL DELIVERY ENDPOINTS
+# ============================================================
+
 @app.post("/api/delivery/email")
 @app.post("/api/delivery/send-email")
 @app.post("/api/email-delivery")
-def deliver_document_by_email(
-    payload: EmailDeliveryRequest,
-):
+@app.post("/api/customer-care/email")
+def deliver_document(payload: EmailDeliveryRequest):
     """
-    Send an existing saved document to the customer.
+    Email the exact existing saved document.
 
-    No payment confirmation is required for this endpoint.
+    Payment confirmation is deliberately not checked.
     """
 
     try:
-        result = send_existing_document_email(
-            recipient_email=str(payload.recipient_email),
+        return send_existing_document_email(
+            recipient_email=payload.recipient_email,
             service=payload.service,
             document_title=payload.document_title,
             customer_name=payload.customer_name,
         )
 
-        return result
-
     except FileNotFoundError as exc:
-        raise HTTPException(
-            status_code=404,
-            detail=str(exc),
-        )
+        raise HTTPException(status_code=404, detail=str(exc))
 
     except ValueError as exc:
-        raise HTTPException(
-            status_code=400,
-            detail=str(exc),
-        )
+        raise HTTPException(status_code=400, detail=str(exc))
 
     except RuntimeError as exc:
-        logger.error("Email delivery configuration/error: %s", exc)
-
-        raise HTTPException(
-            status_code=503,
-            detail=str(exc),
-        )
+        logger.error("Email delivery unavailable: %s", exc)
+        raise HTTPException(status_code=503, detail=str(exc))
 
     except Exception:
-        logger.exception("Unexpected email delivery error.")
-
+        logger.exception("Email delivery failed.")
         raise HTTPException(
             status_code=500,
-            detail="Email delivery failed. Check the Render logs.",
+            detail="Email delivery failed. Check Render logs.",
         )
 
 
 @app.get("/api/delivery/email")
-def deliver_document_by_email_get(
+def deliver_document_get(
     recipient_email: str = Query(...),
     service: str = Query(...),
     document_title: str = Query(...),
     customer_name: Optional[str] = Query(None),
 ):
-    """
-    GET compatibility endpoint for existing front-end callers.
-    """
-
     try:
         return send_existing_document_email(
             recipient_email=recipient_email,
@@ -1060,20 +946,19 @@ def deliver_document_by_email_get(
 
     except Exception:
         logger.exception("GET email delivery failed.")
-
         raise HTTPException(
             status_code=500,
-            detail="Email delivery failed. Check the Render logs.",
+            detail="Email delivery failed. Check Render logs.",
         )
 
 
 # ============================================================
-# SAVED DOCUMENT LOOKUP
+# DOCUMENT LOOKUP AND DOWNLOAD
 # ============================================================
 
 @app.get("/api/document/find")
 @app.get("/api/delivery/document")
-def document_lookup(
+def find_document(
     service: str = Query(...),
     title: str = Query(...),
 ):
@@ -1094,39 +979,10 @@ def document_lookup(
     }
 
 
-# ============================================================
-# CUSTOMER DOCUMENT DOWNLOAD
-# ============================================================
-
 @app.get("/api/download")
-def customer_download(
-    service: str = Query(...),
-    title: str = Query(...),
-):
-    """
-    Return the existing saved document.
-
-    No new document is generated here.
-    """
-
-    path = find_saved_document(service, title)
-
-    if not path:
-        raise HTTPException(
-            status_code=404,
-            detail="Saved document not found.",
-        )
-
-    return FileResponse(
-        path=str(path),
-        filename=path.name,
-        media_type="application/octet-stream",
-    )
-
-
 @app.get("/api/delivery/file")
 @app.get("/api/delivery-file")
-def delivery_file(
+def download_document(
     service: str = Query(...),
     title: str = Query(...),
 ):
@@ -1144,17 +1000,13 @@ def delivery_file(
         media_type="application/octet-stream",
     )
 
-
-# ============================================================
-# PRODUCT STATUS
-# ============================================================
 
 @app.get("/api/product/status")
 def product_status(
     service: str = Query(...),
     title: str = Query(...),
 ):
-    record = _product_record(service, title)
+    record = get_product_record(service, title)
     path = find_saved_document(service, title)
 
     return {
@@ -1165,7 +1017,7 @@ def product_status(
         "filename": path.name if path else None,
         "product_registered": record is not None,
         "email_delivery_available": bool(
-            _email_configuration_status().get("configured", False)
+            email_configuration_status().get("configured", False)
         ),
     }
 
@@ -1176,22 +1028,12 @@ def product_status(
 
 @app.post("/api/payment/create")
 @app.post("/api/payments/create")
-def create_payment_order(payload: ProductRequest):
-    """
-    Register a payment order.
-
-    This endpoint is separate from email delivery.
-    Email delivery does not call this endpoint.
-    """
-
-    order_reference = (
-        "NPBC-" + secrets.token_hex(8).upper()
-    )
-
+def create_payment(payload: ProductRequest):
+    reference = "NPBC-" + secrets.token_hex(8).upper()
     now = utc_now()
 
     try:
-        with database_connection(PAYMENT_DB) as connection:
+        with db_connect(PAYMENT_DB) as connection:
             connection.execute(
                 """
                 INSERT INTO payment_orders (
@@ -1207,7 +1049,7 @@ def create_payment_order(payload: ProductRequest):
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
-                    order_reference,
+                    reference,
                     normalize_text(payload.service),
                     normalize_text(payload.document_title),
                     normalize_email(payload.customer_email),
@@ -1222,19 +1064,12 @@ def create_payment_order(payload: ProductRequest):
 
         return {
             "success": True,
-            "order_reference": order_reference,
+            "order_reference": reference,
             "payment_status": "pending",
         }
 
-    except sqlite3.IntegrityError:
-        raise HTTPException(
-            status_code=409,
-            detail="Could not create a unique payment order.",
-        )
-
     except Exception:
-        logger.exception("Payment order creation failed.")
-
+        logger.exception("Could not create payment order.")
         raise HTTPException(
             status_code=500,
             detail="Could not create payment order.",
@@ -1243,42 +1078,30 @@ def create_payment_order(payload: ProductRequest):
 
 @app.get("/api/payment/status")
 @app.get("/api/payments/status")
-def get_payment_status(
+def payment_status(
     order_reference: str = Query(...),
 ):
-    try:
-        with database_connection(PAYMENT_DB) as connection:
-            row = connection.execute(
-                """
-                SELECT *
-                FROM payment_orders
-                WHERE order_reference = ?
-                LIMIT 1
-                """,
-                (order_reference,),
-            ).fetchone()
+    with db_connect(PAYMENT_DB) as connection:
+        row = connection.execute(
+            """
+            SELECT *
+            FROM payment_orders
+            WHERE order_reference = ?
+            LIMIT 1
+            """,
+            (order_reference,),
+        ).fetchone()
 
-        if not row:
-            raise HTTPException(
-                status_code=404,
-                detail="Payment order not found.",
-            )
-
-        return {
-            "success": True,
-            "payment": dict(row),
-        }
-
-    except HTTPException:
-        raise
-
-    except Exception:
-        logger.exception("Payment status lookup failed.")
-
+    if not row:
         raise HTTPException(
-            status_code=500,
-            detail="Could not retrieve payment status.",
+            status_code=404,
+            detail="Payment order not found.",
         )
+
+    return {
+        "success": True,
+        "payment": dict(row),
+    }
 
 
 @app.post("/api/payment/complete")
@@ -1287,10 +1110,6 @@ def complete_payment(
     payload: PaymentStatusRequest,
     x_back_office_key: Optional[str] = Header(None),
 ):
-    """
-    Mark a payment order complete through an authorized request.
-    """
-
     if not secrets.compare_digest(
         str(x_back_office_key or ""),
         str(BACK_OFFICE_ADMIN_KEY),
@@ -1300,9 +1119,9 @@ def complete_payment(
             detail="Unauthorized.",
         )
 
-    new_status = normalize_text(payload.payment_status).lower()
+    status = normalize_text(payload.payment_status).lower()
 
-    if new_status not in {
+    if status not in {
         "pending",
         "paid",
         "completed",
@@ -1315,49 +1134,36 @@ def complete_payment(
             detail="Unsupported payment status.",
         )
 
-    if new_status == "completed":
-        new_status = "paid"
+    if status == "completed":
+        status = "paid"
 
-    try:
-        with database_connection(PAYMENT_DB) as connection:
-            cursor = connection.execute(
-                """
-                UPDATE payment_orders
-                SET payment_status = ?,
-                    updated_at = ?
-                WHERE order_reference = ?
-                """,
-                (
-                    new_status,
-                    utc_now(),
-                    payload.order_reference,
-                ),
+    with db_connect(PAYMENT_DB) as connection:
+        cursor = connection.execute(
+            """
+            UPDATE payment_orders
+            SET payment_status = ?, updated_at = ?
+            WHERE order_reference = ?
+            """,
+            (
+                status,
+                utc_now(),
+                payload.order_reference,
+            ),
+        )
+
+        connection.commit()
+
+        if cursor.rowcount == 0:
+            raise HTTPException(
+                status_code=404,
+                detail="Payment order not found.",
             )
 
-            connection.commit()
-
-            if cursor.rowcount == 0:
-                raise HTTPException(
-                    status_code=404,
-                    detail="Payment order not found.",
-                )
-
-        return {
-            "success": True,
-            "order_reference": payload.order_reference,
-            "payment_status": new_status,
-        }
-
-    except HTTPException:
-        raise
-
-    except Exception:
-        logger.exception("Payment update failed.")
-
-        raise HTTPException(
-            status_code=500,
-            detail="Could not update payment status.",
-        )
+    return {
+        "success": True,
+        "order_reference": payload.order_reference,
+        "payment_status": status,
+    }
 
 
 @app.get("/api/payment/report")
@@ -1365,8 +1171,32 @@ def complete_payment(
 def payment_report(
     x_back_office_key: Optional[str] = Header(None),
 ):
+    require_back_office(x_back_office_key)
+
+    with db_connect(PAYMENT_DB) as connection:
+        rows = connection.execute(
+            """
+            SELECT *
+            FROM payment_orders
+            ORDER BY id DESC
+            LIMIT 500
+            """
+        ).fetchall()
+
+    return {
+        "success": True,
+        "count": len(rows),
+        "payments": [dict(row) for row in rows],
+    }
+
+
+# ============================================================
+# BACK OFFICE
+# ============================================================
+
+def require_back_office(key):
     if not secrets.compare_digest(
-        str(x_back_office_key or ""),
+        str(key or ""),
         str(BACK_OFFICE_ADMIN_KEY),
     ):
         raise HTTPException(
@@ -1374,35 +1204,6 @@ def payment_report(
             detail="Unauthorized.",
         )
 
-    try:
-        with database_connection(PAYMENT_DB) as connection:
-            rows = connection.execute(
-                """
-                SELECT *
-                FROM payment_orders
-                ORDER BY id DESC
-                LIMIT 500
-                """
-            ).fetchall()
-
-        return {
-            "success": True,
-            "count": len(rows),
-            "payments": [dict(row) for row in rows],
-        }
-
-    except Exception:
-        logger.exception("Payment report failed.")
-
-        raise HTTPException(
-            status_code=500,
-            detail="Could not load payment report.",
-        )
-
-
-# ============================================================
-# BACK OFFICE AUTHENTICATION
-# ============================================================
 
 @app.post("/api/back-office/login")
 def back_office_login(payload: BackOfficeLoginRequest):
@@ -1418,26 +1219,8 @@ def back_office_login(payload: BackOfficeLoginRequest):
     return {
         "success": True,
         "authenticated": True,
-        "message": "Back Office authentication successful.",
     }
 
-
-def require_back_office(
-    x_back_office_key: Optional[str],
-):
-    if not secrets.compare_digest(
-        str(x_back_office_key or ""),
-        str(BACK_OFFICE_ADMIN_KEY),
-    ):
-        raise HTTPException(
-            status_code=401,
-            detail="Unauthorized.",
-        )
-
-
-# ============================================================
-# BACK OFFICE PRODUCT AND DELIVERY RECORDS
-# ============================================================
 
 @app.get("/api/back-office/products")
 @app.get("/api/back-office/records")
@@ -1446,30 +1229,21 @@ def back_office_products(
 ):
     require_back_office(x_back_office_key)
 
-    try:
-        with database_connection(PRODUCT_DB) as connection:
-            rows = connection.execute(
-                """
-                SELECT *
-                FROM document_products
-                ORDER BY id DESC
-                LIMIT 500
-                """
-            ).fetchall()
+    with db_connect(PRODUCT_DB) as connection:
+        rows = connection.execute(
+            """
+            SELECT *
+            FROM document_products
+            ORDER BY id DESC
+            LIMIT 500
+            """
+        ).fetchall()
 
-        return {
-            "success": True,
-            "count": len(rows),
-            "products": [dict(row) for row in rows],
-        }
-
-    except Exception:
-        logger.exception("Back Office product listing failed.")
-
-        raise HTTPException(
-            status_code=500,
-            detail="Could not load product records.",
-        )
+    return {
+        "success": True,
+        "count": len(rows),
+        "products": [dict(row) for row in rows],
+    }
 
 
 @app.get("/api/back-office/product")
@@ -1480,7 +1254,7 @@ def back_office_product(
 ):
     require_back_office(x_back_office_key)
 
-    record = _product_record(service, title)
+    record = get_product_record(service, title)
     path = find_saved_document(service, title)
 
     if not record and not path:
@@ -1529,41 +1303,29 @@ def back_office_delivery_history(
 ):
     require_back_office(x_back_office_key)
 
-    try:
-        with database_connection(PRODUCT_DB) as connection:
-            rows = connection.execute(
-                """
-                SELECT *
-                FROM delivery_events
-                ORDER BY id DESC
-                LIMIT ?
-                """,
-                (limit,),
-            ).fetchall()
+    with db_connect(PRODUCT_DB) as connection:
+        rows = connection.execute(
+            """
+            SELECT *
+            FROM delivery_events
+            ORDER BY id DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
 
-        return {
-            "success": True,
-            "count": len(rows),
-            "events": [dict(row) for row in rows],
-        }
-
-    except Exception:
-        logger.exception("Delivery history lookup failed.")
-
-        raise HTTPException(
-            status_code=500,
-            detail="Could not load delivery history.",
-        )
+    return {
+        "success": True,
+        "count": len(rows),
+        "events": [dict(row) for row in rows],
+    }
 
 
 # ============================================================
-# BACK OFFICE DOWNLOAD TOKENS
+# TEMPORARY DOWNLOAD TOKENS
 # ============================================================
 
-def create_download_token(
-    service: str,
-    document_title: str,
-) -> dict:
+def create_download_token(service, document_title):
     path = find_saved_document(service, document_title)
 
     if not path:
@@ -1572,7 +1334,7 @@ def create_download_token(
     token = secrets.token_urlsafe(32)
     expires_at = time.time() + TOKEN_TTL_SECONDS
 
-    with database_connection(PRODUCT_DB) as connection:
+    with db_connect(PRODUCT_DB) as connection:
         connection.execute(
             """
             INSERT INTO back_office_download_tokens (
@@ -1601,8 +1363,7 @@ def create_download_token(
         "success": True,
         "token": token,
         "download_url": (
-            f"{PUBLIC_API_BASE_URL}/api/download/token"
-            f"?token={token}"
+            f"{PUBLIC_API_BASE_URL}/api/download/token?token={token}"
         ),
         "expires_in_seconds": TOKEN_TTL_SECONDS,
     }
@@ -1625,8 +1386,7 @@ def back_office_download_token(
         raise HTTPException(status_code=404, detail=str(exc))
 
     except Exception:
-        logger.exception("Download token creation failed.")
-
+        logger.exception("Could not create download token.")
         raise HTTPException(
             status_code=500,
             detail="Could not create download token.",
@@ -1634,119 +1394,48 @@ def back_office_download_token(
 
 
 @app.get("/api/download/token")
-def download_by_token(
-    token: str = Query(...),
-):
-    try:
-        with database_connection(PRODUCT_DB) as connection:
-            row = connection.execute(
-                """
-                SELECT *
-                FROM back_office_download_tokens
-                WHERE token = ?
-                LIMIT 1
-                """,
-                (token,),
-            ).fetchone()
+def download_by_token(token: str = Query(...)):
+    with db_connect(PRODUCT_DB) as connection:
+        row = connection.execute(
+            """
+            SELECT *
+            FROM back_office_download_tokens
+            WHERE token = ?
+            LIMIT 1
+            """,
+            (token,),
+        ).fetchone()
 
-        if not row:
-            raise HTTPException(
-                status_code=404,
-                detail="Download token not found.",
-            )
-
-        record = dict(row)
-
-        if float(record["expires_at"]) < time.time():
-            raise HTTPException(
-                status_code=410,
-                detail="Download token has expired.",
-            )
-
-        path = _valid_document_path(record.get("file_path"))
-
-        if not path:
-            path = find_saved_document(
-                record["service"],
-                record["document_title"],
-            )
-
-        if not path:
-            raise HTTPException(
-                status_code=404,
-                detail="Saved document not found.",
-            )
-
-        return FileResponse(
-            path=str(path),
-            filename=path.name,
-            media_type="application/octet-stream",
-        )
-
-    except HTTPException:
-        raise
-
-    except Exception:
-        logger.exception("Token download failed.")
-
+    if not row:
         raise HTTPException(
-            status_code=500,
-            detail="Could not deliver saved document.",
+            status_code=404,
+            detail="Download token not found.",
         )
 
+    record = dict(row)
 
-# ============================================================
-# CUSTOMER CARE EMAIL ALIAS
-# ============================================================
+    if float(record["expires_at"]) < time.time():
+        raise HTTPException(
+            status_code=410,
+            detail="Download token has expired.",
+        )
 
-@app.post("/api/customer-care/email")
-def customer_care_email(
-    payload: EmailDeliveryRequest,
-):
-    """
-    Customer Care email alias.
+    path = valid_saved_path(record.get("file_path"))
 
-    This endpoint sends the existing document directly.
-    Payment confirmation is not required.
-    """
+    if not path:
+        path = find_saved_document(
+            record["service"],
+            record["document_title"],
+        )
 
-    return deliver_document_by_email(payload)
+    if not path:
+        raise HTTPException(
+            status_code=404,
+            detail="Saved document not found.",
+        )
 
-
-# ============================================================
-# ERROR HANDLING
-# ============================================================
-
-@app.exception_handler(HTTPException)
-async def http_exception_handler(
-    request: Request,
-    exc: HTTPException,
-):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={
-            "success": False,
-            "detail": exc.detail,
-            "path": request.url.path,
-        },
-    )
-
-
-@app.exception_handler(Exception)
-async def general_exception_handler(
-    request: Request,
-    exc: Exception,
-):
-    logger.exception(
-        "Unhandled API error at %s",
-        request.url.path,
-    )
-
-    return JSONResponse(
-        status_code=500,
-        content={
-            "success": False,
-            "detail": "An internal server error occurred.",
-            "path": request.url.path,
-        },
+    return FileResponse(
+        path=str(path),
+        filename=path.name,
+        media_type="application/octet-stream",
     )
