@@ -2,285 +2,212 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Naija Pocket Business Center</title>
-<style>
+<title>Naija Pocket Business Center</title><style>
 * {
     box-sizing: border-box;
-}html, body {
-margin: 0;
-padding: 0;
-width: 100%;
-height: 100%;
-overflow: hidden;
-background: #020202;
-color: #fff;
-font-family: Arial, Helvetica, sans-serif;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #020202;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .page {
-width: 100%;
-height: 100vh;
-height: 100dvh;
-min-height: 0;
-background: radial-gradient(circle at 50% -10%, rgba(212,175,55,.085), transparent 30%), linear-gradient(145deg,#010101 0%,#070707 43%,#020202 100%);
-padding: 4px;
-display: grid;
-grid-template-rows: auto minmax(0, 1fr);
-gap: 4px;
-overflow: hidden;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    padding: 4px;
+    display: grid;
+    grid-template-rows: minmax(0, 38%) minmax(0, 1fr);
+    gap: 4px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% -10%, rgba(212,175,55,.085), transparent 30%),
+        linear-gradient(145deg, #010101 0%, #070707 43%, #020202 100%);
 }
+
+/* PROMOTIONAL IMAGE */
 
 .welcome-half {
-position: relative;
-width: 100%;
-min-height: 0;
-flex: 0 0 auto;
-display: flex;
-flex-direction: column;
-align-items: center;
-overflow: hidden;
-text-align: center;
-background: radial-gradient(ellipse at 50% 35%,#202020 0%,#0e0e0e 42%,#050505 78%,#000 100%);
-border: 1px solid rgba(212,175,55,.34);
-border-bottom: 2px solid rgba(212,175,55,.82);
-border-radius: 10px;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid rgba(212,175,55,.75);
+    border-radius: 8px;
 }
 
-.welcome-content {
-width: 100%;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 8px;
-padding: 10px 8px 12px;
+.welcome-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    background: #fff;
 }
 
-.brand-name {
-margin: 0;
-color: #fff;
-font-family: Georgia, serif;
-font-size: 32px;
-line-height: 1.12;
-font-weight: 700;
-text-transform: uppercase;
-}
-
-.brand-name .green {
-color: #39B87F;
-}
-
-.brand-name .gold {
-color: #E8C96A;
-}
-
-.gold-divider {
-width: 120px;
-height: 1px;
-flex-shrink: 0;
-background: linear-gradient(90deg,transparent,#D4AF37 25%,#F4D878 50%,#D4AF37 75%,transparent);
-}
-
-.value {
-color: #f4f1e8;
-font-size: 14px;
-font-weight: 600;
-letter-spacing: 1px;
-}
-
-.value.luxury-value {
-width: calc(100% - 8px);
-padding: 14px 12px;
-background: #fffefb;
-border: 1px solid #d4af37;
-border-radius: 8px;
-color: #111;
-font-family: Georgia, serif;
-text-transform: uppercase;
-text-align: center;
-}
+/* SERVICES SECTION */
 
 .services-half {
-width: 100%;
-min-height: 0;
-display: grid;
-grid-template-rows: auto minmax(0, 1fr);
-overflow: hidden;
-padding-top: 2px;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    padding-top: 2px;
 }
 
 .service-instruction {
-text-align: center;
-color: #FFFDF5;
-font-family: Georgia, serif;
-font-size: 13px;
-font-weight: 700;
-text-transform: uppercase;
-line-height: 1.2;
-padding: 7px;
-border-top: 1px solid rgba(212,175,106,.7);
-border-bottom: 1px solid rgba(212,175,106,.45);
-margin-bottom: 5px;
+    text-align: center;
+    color: #FFFFFF;
+    font-family: Georgia, serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.2;
+    padding: 7px 4px;
+    border-top: 1px solid rgba(212,175,106,.7);
+    border-bottom: 1px solid rgba(212,175,106,.45);
+    margin-bottom: 5px;
+    flex-shrink: 0;
 }
 
 .services {
-width: 100%;
-height: 100%;
-min-height: 0;
-display: grid;
-grid-template-columns: repeat(3, minmax(0, 1fr));
-grid-template-rows: repeat(9, minmax(0, 1fr));
-gap: 4px;
-overflow: hidden;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(9, minmax(0, 1fr));
+    gap: 4px;
+    overflow: hidden;
 }
 
 .service-button {
-width: 100%;
-height: 100%;
-min-width: 0;
-min-height: 0;
-padding: 4px;
-background: rgba(255,255,255,.04);
-border: 1px solid rgba(255,255,255,.065);
-border-radius: 5px;
-font-family: Arial, Helvetica, sans-serif;
-font-size: 11px;
-line-height: 1.15;
-font-weight: 700;
-cursor: pointer;
-color: #FFFFFF;
-text-align: center;
-overflow-wrap: anywhere;
-display: flex;
-align-items: center;
-justify-content: center;
--webkit-tap-highlight-color: transparent;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 4px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(212,175,55,.3);
+    border-radius: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    line-height: 1.15;
+    font-weight: 700;
+    cursor: pointer;
+    color: #FFFFFF;
+    text-align: center;
+    overflow-wrap: anywhere;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .service-button:active {
-background: rgba(212,175,55,.15);
-border-color: #D4AF37;
+    background: rgba(212,175,55,.2);
+    border-color: #D4AF37;
 }
+
+/* SHORT SCREENS */
 
 @media (max-height: 750px) {
-.page {
-padding: 3px;
-gap: 3px;
+    .page {
+        padding: 3px;
+        gap: 3px;
+        grid-template-rows: minmax(0, 35%) minmax(0, 1fr);
+    }
+
+    .service-instruction {
+        padding: 5px 4px;
+        margin-bottom: 3px;
+        font-size: 12px;
+    }
+
+    .services {
+        gap: 3px;
+    }
 }
 
-.welcome-content {
-    gap: 5px;
-    padding: 7px 6px 8px;
-}
-
-.value.luxury-value {
-    padding: 8px;
-}
-
-.service-instruction {
-    padding: 5px 4px;
-    margin-bottom: 3px;
-}
-
-.services {
-    gap: 3px;
-}
-
-}
+/* SMALL ANDROID PHONES */
 
 @media (max-width: 360px) {
-.brand-name {
-font-size: 28px;
+    .service-instruction {
+        font-size: 11px;
+        padding: 5px 3px;
+    }
+
+    .services {
+        gap: 2px;
+    }
+
+    .service-button {
+        padding: 3px 2px;
+        font-size: 10px;
+    }
 }
 
-.value {
-    font-size: 12px;
-}
-
-.value.luxury-value {
-    padding: 8px 6px;
-}
-
-.service-instruction {
-    font-size: 11px;
-}
-
-.services {
-    gap: 2px;
-}
-
-.service-button {
-    padding: 3px;
-    font-size: 10px;
-}
-
-}
+/* VERY SHORT SCREENS */
 
 @media (max-height: 620px) {
-.welcome-content {
-gap: 3px;
-padding: 4px 5px;
+    .page {
+        grid-template-rows: minmax(0, 30%) minmax(0, 1fr);
+    }
+
+    .service-instruction {
+        padding: 3px;
+        font-size: 10px;
+        line-height: 1.1;
+    }
+
+    .services {
+        gap: 2px;
+    }
+
+    .service-button {
+        padding: 2px;
+        font-size: 9px;
+        line-height: 1.05;
+    }
 }
 
-.brand-name {
-    font-size: 25px;
-    line-height: 1;
+/* EXTRA SMALL SCREENS */
+
+@media (max-width: 320px) {
+    .service-button {
+        font-size: 8px;
+        padding: 2px 1px;
+    }
+
+    .service-instruction {
+        font-size: 9px;
+    }
 }
-
-.gold-divider {
-    margin: 1px 0;
-}
-
-.value {
-    font-size: 11px;
-}
-
-.value.luxury-value {
-    padding: 4px;
-    font-size: 10px;
-    line-height: 1.15;
-}
-
-.service-instruction {
-    padding: 3px;
-    font-size: 10px;
-    line-height: 1.1;
-}
-
-.services {
-    gap: 2px;
-}
-
-.service-button {
-    padding: 2px;
-    font-size: 9px;
-    line-height: 1.05;
-}
-
-}
-</style>
-
-</head>
-<body><div class="page"><section class="welcome-half">
-    <div class="welcome-content">
-
-        <h1 class="brand-name">
-            <span class="green">NAIJA POCKET</span><br>
-            BUSINESS <span class="gold">CENTER</span>
-        </h1>
-
-        <div class="gold-divider"></div>
-
-        <div class="value">
-            FAST • CONVENIENT • OPEN 24/7
-        </div>
-
-        <div class="value luxury-value">
-            THIS WEB APP PROFESSIONALLY TYPES AND PREPARES YOUR DOCUMENTS IN MINUTES, USING JUST YOUR PHONE
-        </div>
-
-    </div>
+</style></head><body><div class="page"><!-- NPBC PROMOTIONAL IMAGE -->
+<section class="welcome-half">
+    <img
+        class="welcome-image"
+        src="npbc-welcome-image.png"
+        alt="Naija Pocket Business Center: Tap any service you need and get your documents prepared in minutes using your phone"
+    >
 </section>
 
+<!-- EXISTING NPBC SERVICES -->
 <section class="services-half">
 
     <div class="service-instruction">
