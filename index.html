@@ -1,1 +1,78 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Naija Pocket Business Center</title><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#0a2218;display:flex;justify-content:center}.page{position:relative;width:100%;max-width:420px;background:#fff;min-height:100vh;box-shadow:0 0 30px rgba(0,0,0,.5)}.flyer{width:100%;display:block}.grid{position:absolute;left:3%;top:51%;width:94%;height:43.8%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(9,1fr);gap:6px;padding:6px}.svc{background:linear-gradient(180deg,#14633d,#0d4a2c);color:#fff;border:1.5px solid #D4AF37;border-radius:20px;font-size:7.8px;font-weight:800;line-height:1.1;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.3);padding:2px}.svc:active{background:#FFD700;color:#0a2218;transform:scale(0.93)}.loader{position:fixed;inset:0;background:rgba(10,34,24,.94);display:none;align-items:center;justify-content:center;z-index:99;flex-direction:column;color:#FFD700;font-weight:800}.loader.show{display:flex}.spin{width:40px;height:40px;border:3px solid rgba(212,175,55,.3);border-top-color:#FFD700;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}@keyframes spin{to{transform:rotate(360deg)}}</style></head><body><div class="page"><img class="flyer" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABELDA8MChEPDg8TEhEUGSobGRcXGTMkJh4qPDU/Pjs1OjlDS2BRQ0daSDk6U3FUWmNma2xrQFB2fnRofWBpa2f/2wBDARITExkWGTEbGzFnRTpFZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2f/wAARCALQAWgDASIAAhEBAxEB/8QAGwAAAQUBAQAAAAAAAAAAAAAAAAEEBQYHAwL/xABPEAABAwIDBAUIBwQHCAEEAwABAAIDBBEFEiEGEzGSFBZBUVQVIlNhcZGT0SMyUoGhseFCRFXBM0NiY3OiowckNGRygrPwshc1dPE2RcL/xAAZAQEBAQEBAQAAAAAAAAAAAAAAAQIDBAX/xAAnEQACAgEEAwACAwADAAAAAAAAAQIRIQMSE1ExQWEiUgQjMnGBsf/aAAwDAQACEQMRAD8AvSLIQgBIlSIASpEIAQhCAEIQgBCEIAQhCAEIQgBCEIAQhCAEJUiAVCEiAVIlSIAQhCAVCEiAEIQgBCEIASpEqAEJEIBUJEIBUiEIAQhCAVCRCgBCVCoBViTb3C45HMMVVdpIPV8V9b0jJkHqZxB3zM6JYnBfQ9RqL4JhV5l1W0fF4HqLwXlP8A1h6jTj7qNfJ+Pv1Hn6jSj2YbD1JxJjJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJkXJk
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Naija Pocket Business Center</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a2218;display:flex;justify-content:center}
+.page{width:100%;max-width:420px;background:#fff;min-height:100vh;display:flex;flex-direction:column}
+.top{flex-shrink:0}
+.top img{width:100%;height:320px;object-fit:cover;display:block}
+.top-caption{background:#0a2218;color:#fff;text-align:center;padding:10px}
+.top-caption h1{color:#FFD700;font-size:11px;letter-spacing:1px}
+.top-caption p{font-size:15px;font-weight:900;margin-top:3px}
+.bottom{padding:12px 8px;background:#fff;flex:1}
+.bottom h3{text-align:center;font-size:10px;color:#0a2218;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.svc{background:#0d4a2c;color:#fff;border:1.5px solid #D4AF37;border-radius:18px;font-size:7.5px;font-weight:800;cursor:pointer;padding:10px 2px;min-height:44px}
+.svc:active{background:#FFD700;color:#0a2218}
+.loader{position:fixed;inset:0;background:rgba(10,34,24,.95);display:none;align-items:center;justify-content:center;z-index:99;color:#FFD700;font-weight:800}
+.loader.show{display:flex}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <img src="pointing-girl.jpg" alt="Girl pointing">
+    <div class="top-caption">
+      <h1>NAIJA POCKET BUSINESS CENTER</h1>
+      <p>👇 She Dey Point - Tap Any Service Below!</p>
+    </div>
+  </div>
+  <div class="bottom">
+    <h3>TAP ANY SERVICE AND GET YOUR DOCUMENTS DONE IN MINUTES</h3>
+    <div class="grid">
+      <button class="svc" onclick="openWS('Document Typing')">Document Typing</button>
+      <button class="svc" onclick="openWS('Cover Letters')">Cover Letters</button>
+      <button class="svc" onclick="openWS('PDF Conversion')">PDF Conversion</button>
+      <button class="svc" onclick="openWS('Document Formatting')">Document Formatting</button>
+      <button class="svc" onclick="openWS('Business Proposals')">Business Proposals</button>
+      <button class="svc" onclick="openWS('Topic Explanations')">Topic Explanations</button>
+      <button class="svc" onclick="openWS('Document Editing')">Document Editing</button>
+      <button class="svc" onclick="openWS('Company Profiles')">Company Profiles</button>
+      <button class="svc" onclick="openWS('Printing Preparation')">Printing Preparation</button>
+      <button class="svc" onclick="openWS('Grammar Correction')">Grammar Correction</button>
+      <button class="svc" onclick="openWS('Invoices')">Invoices</button>
+      <button class="svc" onclick="openWS('Excel Spreadsheets')">Excel Spreadsheets</button>
+      <button class="svc" onclick="openWS('Assignments')">Assignments</button>
+      <button class="svc" onclick="openWS('Quotations')">Quotations</button>
+      <button class="svc" onclick="openWS('Data Entry')">Data Entry</button>
+      <button class="svc" onclick="openWS('Projects')">Projects</button>
+      <button class="svc" onclick="openWS('Meeting Minutes')">Meeting Minutes</button>
+      <button class="svc" onclick="openWS('Data Analysis')">Data Analysis</button>
+      <button class="svc" onclick="openWS('Research Assistance')">Research Assistance</button>
+      <button class="svc" onclick="openWS('AI Writing Assistance')">AI Writing Assistance</button>
+      <button class="svc" onclick="openWS('Presentations')">Presentations</button>
+      <button class="svc" onclick="openWS('Seminar Papers')">Seminar Papers</button>
+      <button class="svc" onclick="openWS('Document Rewriting')">Document Rewriting</button>
+      <button class="svc" onclick="openWS('Document Summarization')">Document Summarization</button>
+      <button class="svc" onclick="openWS('CVs & Résumés')">CVs & Résumés</button>
+      <button class="svc" onclick="openWS('Translation')">Translation</button>
+      <button class="svc" onclick="openWS('Business Letters & Letterhead')">Business Letters</button>
+    </div>
+  </div>
+</div>
+<div class="loader" id="ld">OPENING...</div>
+<script>
+function openWS(s){
+  document.getElementById('ld').classList.add('show');
+  let cid=localStorage.getItem("npbc_customer_id");
+  if(!cid){cid="customer_"+Date.now();localStorage.setItem("npbc_customer_id",cid);}
+  localStorage.setItem("selectedService",s);
+  setTimeout(()=>{location.href="/workspace?service="+encodeURIComponent(s)+"&customer_id="+encodeURIComponent(cid);},300);
+}
+</script>
+</body>
+</html>
